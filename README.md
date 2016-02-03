@@ -14,4 +14,5 @@
 ## Installation
 
 For Windows binaries please look [here](https://mpvqc.rekt.cc/download/).
+
 Since all dependencies are cross-platform, you might be able to get mpvQC to run on Linux or OSX. Just make sure, you have correcftly installed all the dependecies.
