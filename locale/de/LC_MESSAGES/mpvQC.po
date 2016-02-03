@@ -1,0 +1,287 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2016-01-20 20:14+Mitteleuropäische Zeit\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: mpvQC.py:51
+msgid "Spelling"
+msgstr "Rechtschreibung"
+
+#: mpvQC.py:52
+msgid "Punctuation"
+msgstr "Interpunktion"
+
+#: mpvQC.py:53
+msgid "Translation"
+msgstr "Übersetzung"
+
+#: mpvQC.py:54
+msgid "Phrasing"
+msgstr "Ausdruck"
+
+#: mpvQC.py:55
+msgid "Timing"
+msgstr "Timing"
+
+#: mpvQC.py:56
+msgid "Typeset"
+msgstr "Typeset"
+
+#: mpvQC.py:57
+msgid "Note"
+msgstr "Hinweis"
+
+#: mpvQC.py:76
+msgid "New QC Document"
+msgstr "Neues QC-Dokument"
+
+#: mpvQC.py:78
+msgid "Open QC Document..."
+msgstr "QC-Dokument öffnen ..."
+
+#: mpvQC.py:80
+msgid "Save QC Document"
+msgstr "QC-Dokument speichern"
+
+#: mpvQC.py:82
+msgid "Save QC Document as..."
+msgstr "QC-Dokument speichern unter ..."
+
+#: mpvQC.py:84
+msgid "Exit"
+msgstr "Beenden"
+
+#: mpvQC.py:91
+msgid "File"
+msgstr "Datei"
+
+#: mpvQC.py:98
+msgid "Open Video File..."
+msgstr "Videodatei öffnen"
+
+#: mpvQC.py:100
+msgid "Resize Video to its Original Resolution"
+msgstr "Video auf Originalgröße skalieren"
+
+#: mpvQC.py:104
+msgid "Video"
+msgstr "Video"
+
+#: mpvQC.py:108
+msgid "Nickname..."
+msgstr "Nickname ..."
+
+#: mpvQC.py:109
+msgid "Comment Types..."
+msgstr "Kommentartypen ..."
+
+#: mpvQC.py:110
+msgid "Autosave Interval..."
+msgstr "Autosaveintervall ..."
+
+#: mpvQC.py:111
+msgid "Edit input.conf..."
+msgstr "input.conf editieren ..."
+
+#: mpvQC.py:112
+msgid "Edit mpv.conf..."
+msgstr "mpv.conf editieren ..."
+
+#: mpvQC.py:118
+msgid "Options"
+msgstr "Optionen"
+
+#: mpvQC.py:125
+msgid "Check for Updates..."
+msgstr "Auf Updates prüfen ..."
+
+#: mpvQC.py:126
+msgid "About Qt"
+msgstr "Über Qt"
+
+#: mpvQC.py:127
+msgid "About {}"
+msgstr "Über {}"
+
+#: mpvQC.py:131
+msgid "Help"
+msgstr "Hilfe"
+
+#: mpvQC.py:155 mpvQC.py:1307 mpvQC.py:1322 mpvQC.py:1358 mpvQC.py:1360
+#: mpvQC.py:1374 mpvQC.py:1378 mpvQC.py:1387
+msgid "Warning"
+msgstr "Warnung"
+
+#: mpvQC.py:156
+msgid "Do you really want to quit without saving?"
+msgstr "Möchten Sie das Programm wirklich schließen, ohne zu speichern?"
+
+#: mpvQC.py:548 mpvQC.py:570 mpvQC.py:600 mpvQC.py:631 mpvQC.py:678
+#: mpvQC.py:1096 mpvQC.py:1105 mpvQC.py:1114
+msgid "OK"
+msgstr "OK"
+
+#: mpvQC.py:576
+msgid "<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>"
+msgstr "<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> ist ein freies, quelloffenes und <b>libmpv</b>-basiertes Programm zur einfachen und schnellen Anfertigung von QC-Berichten zu Videodateien.</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>"
+
+#: mpvQC.py:586
+msgid "About"
+msgstr "Über"
+
+#: mpvQC.py:587
+msgid "Credits"
+msgstr "Credits"
+
+#: mpvQC.py:588
+msgid "License"
+msgstr "Lizenz"
+
+#: mpvQC.py:612
+msgid "You are already using the most recent version of {}. {}"
+msgstr "Sie nutzen bereits die aktuellste Version von {}. {}"
+
+#: mpvQC.py:616
+msgid "A connection to the server could not be established."
+msgstr "Eine Verbindung zum Server konnte nicht aufgebaut werden."
+
+#: mpvQC.py:618
+msgid "The server did not respond quickly enough."
+msgstr "Der Server antwortete nicht schnell genug."
+
+#: mpvQC.py:628 mpvQC.py:640
+msgid "Yes"
+msgstr "Ja"
+
+#: mpvQC.py:629 mpvQC.py:641
+msgid "No"
+msgstr "Nein"
+
+#: mpvQC.py:657
+msgid "Hours"
+msgstr "Stunden"
+
+#: mpvQC.py:658
+msgid "Minutes"
+msgstr "Minuten"
+
+#: mpvQC.py:659
+msgid "Seconds"
+msgstr "Sekunden"
+
+#: mpvQC.py:1094
+msgid "Set nickname"
+msgstr "Nickname festlegen"
+
+#: mpvQC.py:1103
+msgid "Set comment types (comma separated list)"
+msgstr "Kommentartypen festlegen (durch Komma getrennte Liste)"
+
+#: mpvQC.py:1112
+msgid "Set autosave interval in minutes (0 to deactivate)"
+msgstr "Autosaveintervall in Minuten festlegen (0 zum Deaktivieren)"
+
+#: mpvQC.py:1308
+msgid "Do you really want to create a new QC document without saving the old one?"
+msgstr "Möchten Sie wirklich ein neues QC-Dokument erstellen, ohne das alte zu speichern?"
+
+#: mpvQC.py:1323
+msgid "Do you really want to open a new QC document without saving the old one?"
+msgstr "Möchten Sie wirklich ein neues QC-Dokument öffnen, ohne das alte zu speichern?"
+
+#: mpvQC.py:1330
+msgid "Open QC document"
+msgstr "QC-Dokument öffnen"
+
+#: mpvQC.py:1332
+msgid "QC documents (*.txt *.qcr);;All files (*.*)"
+msgstr "QC-Dokumente (*.txt *.qcr);;Alle Dateien (*.*)"
+
+#: mpvQC.py:1358 mpvQC.py:1374
+msgid "Not a valid QC document!"
+msgstr "Kein gültiges QC-Dokument!"
+
+#: mpvQC.py:1360
+msgid "The QC document contains no comments!"
+msgstr "Das QC-Dokument ethält keine Kommentare!"
+
+#: mpvQC.py:1369
+msgid "Open Video?"
+msgstr "Video öffnen?"
+
+#: mpvQC.py:1370
+msgid "Do you want to open the associated video file?"
+msgstr "Möchten Sie die dazugehörige Videodatei öffnen?"
+
+#: mpvQC.py:1379
+msgid ""
+"Invalid Timestamp found: {}\n"
+"The only allowed format is: 'hh:mm:ss'\n"
+"'mm' and 'ss' have to be lower than 60.\n"
+"\n"
+"Please correct the document before trying to open it again."
+msgstr ""
+"Ungültiger Timestamp gefunden: {}\n"
+"Das einzige erlaubte Format ist: 'hh:mm:ss'\n"
+"'mm' und 'ss' müssen niedriger als 60 sein.\n"
+"\n"
+"Bitte korrigieren Sie das Dokument, bevor Sie erneut versuchen es zu öffnen."
+
+#: mpvQC.py:1388
+msgid ""
+"Invalid comment line found: {}\n"
+"The only allowed format is: '[hh:mm:ss] [comment type] comment'\n"
+"\n"
+"Please correct the document before trying to open it again."
+msgstr ""
+"Ungültige Kommentarzeile gefunden: {}\n"
+"Das einzige erlaubte Format ist: '[hh:mm:ss] [Kommentartyp] Kommentar'\n"
+"\n"
+"Bitte korrigieren Sie das Dokument, bevor Sie erneut versuchen es zu öffnen."
+
+#: mpvQC.py:1399
+msgid "Open video file"
+msgstr "Videodatei öffnen"
+
+#: mpvQC.py:1401
+msgid "Video files (*.mkv *.mp4);;All files (*.*)"
+msgstr "Videodateien (*.mkv *.mp4);;Alle Dateien (*.*)"
+
+#: mpvQC.py:1424 mpvQC.py:1431 mpvQC.py:1439
+msgid "Save QC document"
+msgstr "QC-Dokument speichern"
+
+#: mpvQC.py:1426 mpvQC.py:1433 mpvQC.py:1441
+msgid "QC documents (*.txt *.qcr)"
+msgstr "QC-Dokumente (*.txt *.qcr)"
+
+msgid "There is a new version of {} available ({}).<br>Visit <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a> to download it."
+msgstr "Es gibt eine neue Version von {} ({}).<br> Gehen Sie auf <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a>, um sie herunterzuladen."
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "The changes will only take effect after restarting the program."
+msgstr "Die Änderungen werden erst nach einem Neustart des Programms wirksam."
+
