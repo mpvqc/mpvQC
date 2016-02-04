@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+
 # Copyright (C) 2016 Frechdachs <frechdachs@rekt.cc>
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, version 3.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -12,7 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from mpv import MPV  # https://github.com/jaseg/python-mpv
+try:
+    from mpv import MPV  # https://github.com/jaseg/python-mpv
+except ImportError:
+    pass
+try:
+    from mpv_python_ipc import MpvProcess  # https://github.com/siikamiika/mpv-python-ipc
+except ImportError:
+    pass
 from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
@@ -37,6 +46,11 @@ import gettext
 import locale
 import pyperclip  # https://github.com/asweigart/pyperclip
 import requests  # https://github.com/kennethreitz/requests
+
+
+# If this global variable is set to 'True', mpv will be used
+# in a slave-mode-kinda way instead of libmpv
+mpvslave = True
 
 
 class MainWindow(QMainWindow):
@@ -144,16 +158,36 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event=None):
         if event:
             event.ignore()
-        setPause()
-        if self.mpvwindow.fullscreen:
-            cycleFullscreen()
-        if not currentstatesaved and WarningMessageBox(
-                                    mainwindow,
-                                    _("Warning"),
-                                    _("Do you really want to quit without saving?"),
-                                    question=True,
-                                    ).exec_() != 0:
-            return
+        if mpvslave:
+            try:
+                setPause()
+            except OSError as e:
+                pass
+            if self.mpvwindow.fullscreen:
+                cycleFullscreen()
+            if not currentstatesaved and WarningMessageBox(
+                                        mainwindow,
+                                        _("Warning"),
+                                        _("Do you really want to quit without saving?"),
+                                        question=True,
+                                        ).exec_() != 0:
+                return
+            self.mpvwindow.close()
+            try:
+                mp.commandv("quit")
+            except OSError as e:
+                pass
+        else:
+            setPause()
+            if self.mpvwindow.fullscreen:
+                cycleFullscreen()
+            if not currentstatesaved and WarningMessageBox(
+                                        mainwindow,
+                                        _("Warning"),
+                                        _("Do you really want to quit without saving?"),
+                                        question=True,
+                                        ).exec_() != 0:
+                return
         sys.exit()
 
     def dragEnterEvent(self, event):
@@ -388,7 +422,10 @@ class MpvWindowEventFilter(QObject):
             else:
                 pos_x = event.pos().x()
                 pos_y = event.pos().y()
-            mp.command("mouse", pos_x, pos_y)
+            try:
+                mp.command("mouse", pos_x, pos_y)
+            except OSError:  # Stop the spamming of error messages while moving mouse if mpv (in slave mode) crashed
+                print("mpv probably crashed. Please restart the application.")
             if receiver.fullscreen:
                 showCursor()
             return True
@@ -1179,9 +1216,10 @@ def timestampToSeconds(timestamp):
 
 
 def newComment(commenttype):
-    try:
-        currentposition = int(mp.time_pos)
-    except TypeError:  # If no video is loaded
+    currentvideofile = mp.get_property("path") if mpvslave else mp.path
+    if currentvideofile and currentvideofile != "None":
+        currentposition = int(mp.get_property("time-pos").split(".")[0]) if mpvslave else int(mp.time_pos)
+    else:
         currentposition = 0
     newentry = (currentposition, commenttype, "")
     commentslist = getCommentListViewContents(seconds=True)
@@ -1430,7 +1468,7 @@ def saveQcFile(event=None):
 
 def saveQcFileAs(event=None):
     exitFullscreen()
-    currentvideofile = mp.path
+    currentvideofile = mp.get_property("path") if mpvslave else mp.path
     if currentvideofile and currentvideofile != "None" and not currentqcfile: # mp.path returns "None" instead of None if no video is loaded
         basename = path.basename(currentvideofile)
         basename = "[QC]_{}_{}".format(path.splitext(basename)[0], qcauthor)
@@ -1474,7 +1512,7 @@ def writeQcFile(filename=None, autosave=False):
                         "date: {} {}\n".format(datetoday, timetoday),
                         "generator: {}\n".format(v),
                         ])
-    currentvideofile = mp.path
+    currentvideofile = mp.get_property("path") if mpvslave else mp.path
     if currentvideofile and currentvideofile != "None": # mp.path returns "None" instead of None if no video is loaded
         qcfilecontents.append("path: {}\n".format(currentvideofile))
     qcfilecontents.extend([
@@ -1525,7 +1563,8 @@ def cycleFullscreen():
         # TODO: Find a better way to do this
         mp.command("mouse", 0, 0)
         mainwindow.mpvwindow.fullscreen = True
-        showCursor()
+        if not sys.platform.startswith("linux"):
+            showCursor()
     else:
         mainwindow.mpvwindow.showNormal()
         # Needed because if the video is paused, mpv won't repaint
@@ -1543,7 +1582,10 @@ def exitFullscreen():
 
 
 def setPause(value=True):
-    mp.pause = value
+    if mpvslave:
+        mp.set_property("pause", "yes" if value else "no")
+    else:
+        mp.pause = value
 
 
 def showCursor():
@@ -1586,8 +1628,8 @@ def resizeVideo(width=None, height=None):
     if mainwindow.mpvwindow.fullscreen:
         return
     try:
-        size_x = width or int(mp.width)
-        size_y = height or int(mp.height)
+        size_x = width or int(mp.get_property("width") if mpvslave else mp.width)
+        size_y = height or int(mp.get_property("height") if mpvslave else mp.height)
     except TypeError:
         return
     additionalheight = (
@@ -1672,6 +1714,7 @@ commenttypeoptions = [
 sys.excepthook = exceptHook
 
 app = QApplication(sys.argv)
+locale.setlocale(locale.LC_NUMERIC, "C")
 
 QApplication.setStyle(QStyleFactory.create("Fusion"))
 
@@ -1763,15 +1806,25 @@ mainwindow.mpvwindow.installEventFilter(mpvwindoweventfilter)
 # Create config files for mpv if they are not present
 checkMpvConf()
 
-mp = MPV(
-        wid=str(int(mainwindow.mpvwindow.winId())),
-        keep_open="yes",
-        idle="yes",
-        osc="yes",
-        input_default_bindings="no",
-        config="yes",
-        config_dir=programlocation,
-        )
+if mpvslave:
+    mp = MpvProcess([
+            "--wid={}".format(int(mainwindow.mpvwindow.winId())),
+            "--keep-open",
+            "--osc=yes",
+            "--input-default-bindings=no",
+            "--config-dir={}".format(programlocation),
+            ])
+    mp.command = mp.commandv
+else:
+    mp = MPV(
+            wid=str(int(mainwindow.mpvwindow.winId())),
+            keep_open="yes",
+            idle="yes",
+            osc="yes",
+            input_default_bindings="no",
+            config="yes",
+            config_dir=programlocation,
+            )
 
 autosavetimer = QTimer()
 autosavetimer.timeout.connect(autosave)
