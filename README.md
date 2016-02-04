@@ -28,6 +28,8 @@ It's possible to use **libmpv** via [python-mpv](https://github.com/jaseg/python
 - If you want to use _mpv_ instead of _libmpv_ open `mpvQC.py` and change the global variable `mpvslave` from `False` to `True` (It's located right below the imports)
 - You can now start _mpvQC_ by executing `mpvQC.py`
 
+> **Note:** Unfortunately mpv/libmpv still catches mouse events even when embedded in another window on Linux. Because of that some things dont't work: Double clicking to go fullscreen and right mouse click to open the context menu. You have to use keybindings to go to fullscreen (f) and to open the context menu (e). If the keybindings don't work, then the mainwindow currently is not active, meaning you have to click on something inside the application that is not the video. (Clicking on the video again after that fortunately won't deactivate the application window again.) This will be fixed as soon (or if) the following feature request gets addressed: [#2750](https://github.com/mpv-player/mpv/issues/2750).
+
 ### OS X
 
 On OS X you can't use _mpv_ instead of _libmpv_, because OS X does not support window embedding of foreign processes. Other than that the installation process should be the same as on Linux.
