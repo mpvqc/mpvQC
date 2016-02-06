@@ -4,8 +4,8 @@
 
 ## Dependencies
 
-- [libmpv](https://github.com/mpv-player/mpv) or [mpv](https://mpv.io/installation/)
-- Python 3.4
+- [libmpv](https://github.com/mpv-player/mpv) or [mpv](https://mpv.io/installation/) (0.16.0 or later)
+- Python 3.4 or later
 - [python-mpv](https://github.com/jaseg/python-mpv) or [mpv-python-ipc](https://github.com/siikamiika/mpv-python-ipc)
 - PyQt5
 - [Requests](https://github.com/kennethreitz/requests)
@@ -15,7 +15,7 @@
 
 ### Windows
 
-For Windows binaries please look [here](https://mpvqc.rekt.cc/download/).
+For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/).
 
 ### Linux
 
@@ -27,8 +27,6 @@ It's possible to use **libmpv** via [python-mpv](https://github.com/jaseg/python
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip)
 - If you want to use _mpv_ instead of _libmpv_ open `mpvQC.py` and change the global variable `mpvslave` from `False` to `True` (It's located right below the imports)
 - You can now start _mpvQC_ by executing `mpvQC.py`
-
-> **Note:** Unfortunately mpv/libmpv still catches mouse events even when embedded in another window on Linux. Because of that some things won't work: Double clicking to go fullscreen and right mouse click to open the context menu. You have to use the keyboard to go to fullscreen (f) and to open the context menu (e). If pressing a key doesn't work, then the mainwindow currently is not active, meaning you have to click on something inside the application that is not the video. (Clicking on the video again after that fortunately won't deactivate the application window again.) This will be fixed as soon (or if) the following feature request gets addressed: [#2750](https://github.com/mpv-player/mpv/issues/2750).
 
 ### OS X
 

@@ -50,7 +50,7 @@ import requests  # https://github.com/kennethreitz/requests
 
 # If this global variable is set to 'True', mpv will be used
 # in a slave-mode-kinda way instead of libmpv
-mpvslave = True
+mpvslave = False
 
 
 class MainWindow(QMainWindow):
@@ -166,7 +166,7 @@ class MainWindow(QMainWindow):
             if self.mpvwindow.fullscreen:
                 cycleFullscreen()
             if not currentstatesaved and WarningMessageBox(
-                                        mainwindow,
+                                        self,
                                         _("Warning"),
                                         _("Do you really want to quit without saving?"),
                                         question=True,
@@ -182,7 +182,7 @@ class MainWindow(QMainWindow):
             if self.mpvwindow.fullscreen:
                 cycleFullscreen()
             if not currentstatesaved and WarningMessageBox(
-                                        mainwindow,
+                                        self,
                                         _("Warning"),
                                         _("Do you really want to quit without saving?"),
                                         question=True,
@@ -194,8 +194,9 @@ class MainWindow(QMainWindow):
         event.acceptProposedAction()
 
     def dropEvent(self, event):
-        filename = event.mimeData().text().split("\n")[0][8:]
-        openQcFile(filename)
+        filename = event.mimeData().urls()[0].toLocalFile()
+        if path.isfile(filename):
+            openQcFile(filename)
 
     def contextMenu(self, pos=None):
         setPause()
@@ -240,8 +241,9 @@ class MpvWindow(QWidget):
         event.acceptProposedAction()
 
     def dropEvent(self, event):
-        filename = event.mimeData().text().split("\n")[0][8:]
-        openVideoFile(filename=filename)
+        filename = event.mimeData().urls()[0].toLocalFile()
+        if path.isfile(filename):
+            openVideoFile(filename=filename)
 
     def contextMenu(self, pos=None):
         setPause()
@@ -1459,14 +1461,14 @@ def openVideoFile(filename=None):
         setPause(False)
 
 
-def saveQcFile(event=None):
+def saveQcFile():
     if not currentqcfile:
         saveQcFileAs()
         return
     writeQcFile(currentqcfile)
 
 
-def saveQcFileAs(event=None):
+def saveQcFileAs():
     exitFullscreen()
     currentvideofile = mp.get_property("path") if mpvslave else mp.path
     if currentvideofile and currentvideofile != "None" and not currentqcfile: # mp.path returns "None" instead of None if no video is loaded
@@ -1563,8 +1565,7 @@ def cycleFullscreen():
         # TODO: Find a better way to do this
         mp.command("mouse", 0, 0)
         mainwindow.mpvwindow.fullscreen = True
-        if not sys.platform.startswith("linux"):
-            showCursor()
+        showCursor()
     else:
         mainwindow.mpvwindow.showNormal()
         # Needed because if the video is paused, mpv won't repaint
@@ -1811,6 +1812,8 @@ if mpvslave:
             "--wid={}".format(int(mainwindow.mpvwindow.winId())),
             "--keep-open",
             "--osc=yes",
+            "--cursor-autohide=no",
+            "--input-cursor=no",
             "--input-default-bindings=no",
             "--config-dir={}".format(programlocation),
             ])
@@ -1821,6 +1824,8 @@ else:
             keep_open="yes",
             idle="yes",
             osc="yes",
+            cursor_autohide="no",
+            input_cursor="no",
             input_default_bindings="no",
             config="yes",
             config_dir=programlocation,
