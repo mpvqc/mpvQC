@@ -21,8 +21,6 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 It's possible to use **libmpv** via [python-mpv](https://github.com/jaseg/python-mpv) or **mpv** in a slave-mode-kinda way via [mpv-python-ipc](https://github.com/siikamiika/mpv-python-ipc).
 
-> **Note:** I wasn't able to get _libmpv_ via _python-mpv_ working while testing on OpenSUSE, only _mpv_ via _mpv-python-ipc_, I don't know wether it's a problem with _python-mpv_ or the _libmpv_ package. But you could still try, I guess.
-
 - Make sure all the dependencies are properly installed and working (Also make sure that libmpv/mpv is up to date)
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip)
 - If you want to use _mpv_ instead of _libmpv_ open `mpvQC.py` and change the global variable `mpvslave` from `False` to `True` (It's located right below the imports)

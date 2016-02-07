@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
                 setPause()
             except OSError as e:
                 pass
-            if self.mpvwindow.fullscreen:
+            if self.isFullScreen():
                 cycleFullscreen()
             if not currentstatesaved and WarningMessageBox(
                                         self,
@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
                 pass
         else:
             setPause()
-            if self.mpvwindow.fullscreen:
+            if self.isFullScreen():
                 cycleFullscreen()
             if not currentstatesaved and WarningMessageBox(
                                         self,
@@ -195,15 +195,18 @@ class MainWindow(QMainWindow):
 
     def dropEvent(self, event):
         filename = event.mimeData().urls()[0].toLocalFile()
-        if path.isfile(filename):
+        if not path.isfile(filename):
+            return
+        if mainwindow.mpvwindow.geometry().contains(event.pos()):
+            openVideoFile(filename)
+        else:
             openQcFile(filename)
 
     def contextMenu(self, pos=None):
         setPause()
-        if self.mpvwindow.fullscreen:  # Fixes a strange bug a user had
-            cycleFullscreen()          # Could very well be coincidence
-        contextmenu = QMenu()          # This context menu should never
-        for x in commenttypeoptions:   # be called while in fullscreen
+        exitFullscreen()
+        contextmenu = QMenu()
+        for x in commenttypeoptions:
             contextmenu.addAction(x).triggered.connect(partial(newComment, x))
         m_pos = QCursor.pos()
         # Fixes following: Qt puts the context menu in a place
@@ -213,42 +216,25 @@ class MainWindow(QMainWindow):
         m_pos = QPoint(m_pos.x()+1, m_pos.y())
         contextmenu.exec_(m_pos)
 
-
-class MpvWindow(QWidget):
+from PyQt5.QtWidgets import QFrame
+class MpvWindow(QFrame):
 
     def __init__(self, parent=None):
         super(MpvWindow, self).__init__(parent)
-        self.fullscreen = False
-        mpvwindowflags = Qt.Window
-        mpvwindowflags |= Qt.FramelessWindowHint
-        # Keep mainwindow in focus
-        mpvwindowflags |= Qt.WindowDoesNotAcceptFocus
-        self.setWindowFlags(mpvwindowflags)
-        self.setWindowTitle("mpv")
         # Make the frame black, so that the video frame
         # is distinguishable from the rest when no
         # video is loaded yet
         self.setStyleSheet("background-color:black;")
         self.setMouseTracking(True)
-        self.setAcceptDrops(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.contextMenu)
         self.cursortimer = QTimer(self)
         self.cursortimer.setSingleShot(True)
         self.cursortimer.timeout.connect(hideCursor)
 
-    def dragEnterEvent(self, event):
-        event.acceptProposedAction()
-
-    def dropEvent(self, event):
-        filename = event.mimeData().urls()[0].toLocalFile()
-        if path.isfile(filename):
-            openVideoFile(filename=filename)
-
     def contextMenu(self, pos=None):
         setPause()
-        if self.fullscreen:
-            cycleFullscreen()
+        exitFullscreen()
         contextmenu = QMenu()
         for x in commenttypeoptions:
             contextmenu.addAction(x).triggered.connect(partial(newComment, x))
@@ -264,33 +250,9 @@ class MpvWindow(QWidget):
 class MainWindowEventFilter(QObject):
 
     def eventFilter(self, receiver, event):
-        if event.type() == QEvent.Move:
-            mainwindowgeo = receiver.geometry()
-            centralwidgetgeo = receiver.centralWidget().geometry()
-            receiver.mpvwindow.move(
-                        mainwindowgeo.x()+centralwidgetgeo.x(),
-                        mainwindowgeo.y()+centralwidgetgeo.y()
-                        )
-            return True
-        elif event.type() == QEvent.Resize:
-            mainwindowgeo = receiver.geometry()
-            centralwidgetgeo = receiver.centralWidget().geometry()
-            placeholderframegeo = placeholderframe.geometry()
-            receiver.mpvwindow.resize(
-                        placeholderframegeo.width(),
-                        placeholderframegeo.height()
-                        )
-            receiver.mpvwindow.move(
-                        mainwindowgeo.x()+centralwidgetgeo.x(),
-                        mainwindowgeo.y()+centralwidgetgeo.y()
-                        )
-            resizeCommentListViewToContents()
-            # Needed because if the video is paused, mpv won't repaint
-            # the display until something else happens, like triggering
-            # the osd via mouse movement
-            # TODO: Find a better way to do this
-            mp.command("mouse", 0, randint(0, 20))
-            return True
+        if event.type() == QEvent.Resize:
+                afterResize()
+                return True
         elif event.type() == QEvent.MouseButtonPress:
             if event.button() == Qt.MiddleButton:
                 mp.command("keypress", "MOUSE_BTN1")
@@ -399,18 +361,14 @@ class MainWindowEventFilter(QObject):
 class MpvWindowEventFilter(QObject):
 
     def eventFilter(self, receiver, event):
-        # Because mpvwindow doesn't accept
-        # focus now, we have to
-        # explicitly activate the mainwindow
-        # if a mouse button is pressed
         if event.type() == QEvent.MouseMove:
-            mainwindowgeo = receiver.parentWidget().geometry()
+            mainwindowgeo = mainwindow.geometry()
             centralwidgetgeo = (
-                                receiver.parentWidget()
+                                mainwindow
                                 .centralWidget()
                                 .geometry()
                                 )
-            if not receiver.fullscreen:
+            if not mainwindow.isFullScreen():
                 pos_x = (
                     -mainwindowgeo.x()
                     -centralwidgetgeo.x()
@@ -428,11 +386,10 @@ class MpvWindowEventFilter(QObject):
                 mp.command("mouse", pos_x, pos_y)
             except OSError:  # Stop the spamming of error messages while moving mouse if mpv (in slave mode) crashed
                 print("mpv probably crashed. Please restart the application.")
-            if receiver.fullscreen:
+            if mainwindow.isFullScreen():
                 showCursor()
             return True
         elif event.type() == QEvent.MouseButtonPress:
-            receiver.parentWidget().activateWindow()
             if event.button() == Qt.LeftButton:
                 mp.command("keydown", "MOUSE_BTN0")
             if event.button() == Qt.MiddleButton:
@@ -448,14 +405,7 @@ class MpvWindowEventFilter(QObject):
             return True
         elif event.type() == QEvent.MouseButtonDblClick:
             if event.button() == Qt.LeftButton:
-                if not receiver.fullscreen:
-                    receiver.showFullScreen()
-                    receiver.fullscreen = True
-                    showCursor()
-                else:
-                    receiver.showNormal()
-                    receiver.fullscreen = False
-                    showCursor()
+                cycleFullscreen()
                 mp.command("keypress", "MOUSE_BTN0")
                 return True
             elif event.button() == Qt.MiddleButton:
@@ -1230,7 +1180,6 @@ def newComment(commenttype):
     newindex = commentslist.index(newentry)
     writeCommentListViewContents(commentslist, seconds=True)
     newmodelindex = commentmodel.item(newindex, 2).index()
-    mainwindow.activateWindow()
     commentlistview.scrollTo(newmodelindex)
     commentlistview.setCurrentIndex(newmodelindex)
     commentlistview.edit(newmodelindex)
@@ -1546,39 +1495,46 @@ def writeQcFile(filename=None, autosave=False):
                             )
         try:
             filename = "{}.{}".format(
-                                datetimetoday.replace(":","-").replace(" ","_"),
+                                datetimetoday.replace(":", "-").replace(" ", "_"),
                                 path.basename(currentqcfile) if currentqcfile else "UNNAMED.txt"
                                 )
+            qcfilestring = "".join(qcfilecontents)
             # 'writestr' does not automatically use Windows line breaks on a Windows machine
             # So they have to be set explicitly
-            autosavezip.writestr(filename, "".join(qcfilecontents).replace("\n","\r\n"))
+            if sys.platform.startswith("win32"):
+                qcfilestring = qcfilestring.replace("\n", "\r\n")
+            autosavezip.writestr(filename, qcfilestring)
         finally:
             autosavezip.close()
 
 
 def cycleFullscreen():
-    if not mainwindow.mpvwindow.fullscreen:
-        mainwindow.mpvwindow.showFullScreen()
+    if not mainwindow.isFullScreen():
+        mainlayout.addWidget(mainwindow.mpvwindow)
+        mainwindowsplitter.setVisible(False)
+        mainwindow.menuBar().setVisible(False)
+        mainwindow.showFullScreen()
         # Needed because if the video is paused, mpv won't repaint
         # the display until something else happens, like triggering
         # the osd via mouse movement
         # TODO: Find a better way to do this
         mp.command("mouse", 0, 0)
-        mainwindow.mpvwindow.fullscreen = True
         showCursor()
     else:
-        mainwindow.mpvwindow.showNormal()
+        mainwindow.showNormal()
+        mainwindowsplitter.insertWidget(0, mainwindow.mpvwindow)
+        mainwindowsplitter.setVisible(True)
+        mainwindow.menuBar().setVisible(True)
         # Needed because if the video is paused, mpv won't repaint
         # the display until something else happens, like triggering
         # the osd via mouse movement
         # TODO: Find a better way to do this
         mp.command("mouse", 3, 3)
-        mainwindow.mpvwindow.fullscreen = False
         showCursor()
 
 
 def exitFullscreen():
-    if mainwindow.mpvwindow.fullscreen:
+    if mainwindow.isFullScreen():
         cycleFullscreen()
 
 
@@ -1596,22 +1552,11 @@ def showCursor():
 
 
 def hideCursor():
-    if mainwindow.mpvwindow.fullscreen:
+    if mainwindow.isFullScreen():
         app.setOverrideCursor(QCursor(Qt.BlankCursor))
 
 
-def updateMpvWindowSize():
-    mainwindowgeo = mainwindow.geometry()
-    centralwidgetgeo = mainwindow.centralWidget().geometry()
-    placeholderframegeo = placeholderframe.geometry()
-    mainwindow.mpvwindow.resize(
-                placeholderframegeo.width(),
-                placeholderframegeo.height(),
-                )
-    mainwindow.mpvwindow.move(
-                mainwindowgeo.x()+centralwidgetgeo.x(),
-                mainwindowgeo.y()+centralwidgetgeo.y(),
-                )
+def afterResize():
     resizeCommentListViewToContents()
     try:
         # Needed because if the video is paused, mpv won't repaint
@@ -1626,7 +1571,7 @@ def updateMpvWindowSize():
 
 
 def resizeVideo(width=None, height=None):
-    if mainwindow.mpvwindow.fullscreen:
+    if mainwindow.isFullScreen() or mainwindow.isMaximized():
         return
     try:
         size_x = width or int(mp.get_property("width") if mpvslave else mp.width)
@@ -1635,10 +1580,10 @@ def resizeVideo(width=None, height=None):
         return
     additionalheight = (
                         mainwindow.geometry().height()
-                        -placeholderframe.geometry().height()
+                        -mainwindow.mpvwindow.geometry().height()
                         )
     mainwindow.resize(size_x, size_y+additionalheight)
-    updateMpvWindowSize()
+    afterResize()
 
 
 def autosave():
@@ -1745,10 +1690,11 @@ font.setFamily(font.defaultFamily())
 app.setFont(font)
 
 mainwindow = MainWindow()
+#from PyQt5.QtWidgets import QSizePolicy
+#mainwindow.mpvwindow.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
 mainlayout = QVBoxLayout()
 mainlayout.setContentsMargins(0, 0, 0, 0)
-placeholderframe = QWidget()
 
 commentlistview = CommentListView()
 commentmodel = QStandardItemModel(commentlistview)
@@ -1759,16 +1705,15 @@ commentlistview.setModel(commentmodel)
 
 mainwindowsplitter = QSplitter(mainwindow.centralWidget())
 mainwindowsplitter.setOrientation(Qt.Vertical)
-mainwindowsplitter.addWidget(placeholderframe)
+mainwindowsplitter.addWidget(mainwindow.mpvwindow)
 mainwindowsplitter.addWidget(commentlistview)
 mainwindowsplitter.setStretchFactor(0, 2)
 mainwindowsplitter.setStretchFactor(1, 0)
-mainwindowsplitter.splitterMoved.connect(updateMpvWindowSize)
+mainwindowsplitter.splitterMoved.connect(afterResize)
 mainlayout.addWidget(mainwindowsplitter)
 mainwindow.centralWidget().setLayout(mainlayout)
 
 mainwindow.show()
-mainwindow.mpvwindow.show()
 
 
 # Resize mainwindow and mpv to make the video take exactly 66.6%
@@ -1780,7 +1725,7 @@ size_y = int(QDesktopWidget().screenGeometry(mainwindow).width()/16*9 * (2/3))
 resizeVideo(size_x, size_y)
 resizeVideo(size_x, size_y)
 
-# Move mainwidow to center and move mpv on top
+# Move mainwidow to center
 deskrect = QDesktopWidget().screenGeometry(
                                 QDesktopWidget().screenNumber(QCursor.pos())
                                 )
@@ -1794,10 +1739,6 @@ mainwindow.move(
             )
 mainwindowgeo = mainwindow.geometry()
 centralwidgetgeo = mainwindow.centralWidget().geometry()
-mainwindow.mpvwindow.move(
-                    mainwindowgeo.x()+centralwidgetgeo.x(),
-                    mainwindowgeo.y()+centralwidgetgeo.y(),
-                    )
 
 mainwindoweventfilter = MainWindowEventFilter()
 mainwindow.installEventFilter(mainwindoweventfilter)
@@ -1838,6 +1779,5 @@ if autosaveinterval > 0:
 
 
 mainwindow.setWindowTitle(v)
-mainwindow.activateWindow()
 app.setWindowIcon(QIcon(path.join(programlocation, "icon.ico")))
 app.exec_()
