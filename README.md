@@ -9,7 +9,6 @@
 - [python-mpv](https://github.com/jaseg/python-mpv) or [mpv-python-ipc](https://github.com/siikamiika/mpv-python-ipc)
 - PyQt5
 - [Requests](https://github.com/kennethreitz/requests)
-- [Pyperclip](https://github.com/asweigart/pyperclip)
 
 ## Installation
 

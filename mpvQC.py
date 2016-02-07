@@ -32,7 +32,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QLabel, QLineEdit, QTextEdit, QTextBrowser,
                             QPushButton, QTabWidget, QGroupBox, QSpinBox,
                             QSplitter, QDesktopWidget, QFileDialog, QMenu,
-                            QAction, QActionGroup, QStyleFactory)
+                            QAction, QActionGroup, QStyleFactory, QFrame)
 import sys
 from os import path, mkdir
 import platform
@@ -44,7 +44,6 @@ from functools import partial
 from random import randint
 import gettext
 import locale
-import pyperclip  # https://github.com/asweigart/pyperclip
 import requests  # https://github.com/kennethreitz/requests
 
 
@@ -216,7 +215,6 @@ class MainWindow(QMainWindow):
         m_pos = QPoint(m_pos.x()+1, m_pos.y())
         contextmenu.exec_(m_pos)
 
-from PyQt5.QtWidgets import QFrame
 class MpvWindow(QFrame):
 
     def __init__(self, parent=None):
@@ -513,7 +511,7 @@ class AboutDialog(QDialog):
 
         self.credits = QTextBrowser()
         self.credits.setTextInteractionFlags(Qt.NoTextInteraction)
-        self.credits.setHtml("<p>mpv<br>GPLv2+ &lt;mpv.io&gt;</p><p>libmpv build<br>GPLv3 &lt;lachs0r&gt;</p><p>python-mpv<br>AGPLv3 &lt;jaseg&gt;</p><p>PyQt5<br>GPLv3 &lt;Riverbank Computing Limited&gt;</p><p>Qt5<br>LGPLv3 &lt;The Qt Company Ltd and other contributors&gt;</p><p>Requests<br>Apache Version 2 &lt;Kenneth Reitz&gt;</p>Pyperclip<br>BSD License &lt;Al Sweigart&gt;<p>")
+        self.credits.setHtml("<p>mpv<br>GPLv2+ &lt;mpv.io&gt;</p><p>libmpv build<br>GPLv3 &lt;lachs0r&gt;</p><p>python-mpv<br>AGPLv3 &lt;jaseg&gt;</p><p>PyQt5<br>GPLv3 &lt;Riverbank Computing Limited&gt;</p><p>Qt5<br>LGPLv3 &lt;The Qt Company Ltd and other contributors&gt;</p><p>Requests<br>Apache Version 2 &lt;Kenneth Reitz&gt;</p>")
 
         self.license = QTextBrowser()
         self.license.setTextInteractionFlags(Qt.TextBrowserInteraction)
@@ -1212,7 +1210,7 @@ def copySelection():
     timestamp = commentmodel.item(selectedrow, 0).text()
     commenttype = commentmodel.item(selectedrow, 1).text()
     comment = commentmodel.item(selectedrow, 2).text()
-    pyperclip.copy("[{}] [{}] {}".format(timestamp, commenttype, comment))
+    app.clipboard().setText("[{}] [{}] {}".format(timestamp, commenttype, comment))
 
 
 def commentDataChanged():
