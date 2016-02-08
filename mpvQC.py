@@ -813,6 +813,10 @@ class CommentListView(QTableView):
         self.doubleClicked.connect(doubleClickedOnCommentListView)
         self.horizontalHeader().setStretchLastSection(True)
         self.setEditTriggers(QAbstractItemView.DoubleClicked)
+        # Remember the scroll position, because to go to fullscreen,
+        # this Widget has to be hidden which loses the scroll position,
+        # it has to be set again manually after leaving fullscreen
+        self.scrollposition = 0
 
     def keyPressEvent(self, event):
         pressedkey = event.key()
@@ -1508,6 +1512,7 @@ def writeQcFile(filename=None, autosave=False):
 
 def cycleFullscreen():
     if not mainwindow.isFullScreen():
+        commentlistview.scrollposition = commentlistview.verticalScrollBar().value()
         mainlayout.addWidget(mainwindow.mpvwindow)
         mainwindowsplitter.setVisible(False)
         mainwindow.menuBar().setVisible(False)
@@ -1523,6 +1528,7 @@ def cycleFullscreen():
         mainwindowsplitter.insertWidget(0, mainwindow.mpvwindow)
         mainwindowsplitter.setVisible(True)
         mainwindow.menuBar().setVisible(True)
+        commentlistview.verticalScrollBar().setValue(commentlistview.scrollposition)
         # Needed because if the video is paused, mpv won't repaint
         # the display until something else happens, like triggering
         # the osd via mouse movement
