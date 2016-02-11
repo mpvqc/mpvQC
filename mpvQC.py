@@ -215,6 +215,7 @@ class MainWindow(QMainWindow):
         m_pos = QPoint(m_pos.x()+1, m_pos.y())
         contextmenu.exec_(m_pos)
 
+
 class MpvWindow(QFrame):
 
     def __init__(self, parent=None):
@@ -651,6 +652,7 @@ class TimestampDialog(QDialog):
                         self.index.column(),
                         ).setText(standardizeTimestamp(":".join([str(h), str(m), str(s)])))
         sortCommentListView(self.index.row())
+        resizeCommentListViewToContents()
         self.done(1)
 
 
@@ -676,6 +678,7 @@ class CommentTypeDialog(QDialog):
 
     def clickedDialogButton(self, value):
         commentmodel.item(self.index.row(), self.index.column()).setText(commenttypeoptions[value])
+        resizeCommentListViewToContents()
         self.done(1)
 
 
@@ -1694,8 +1697,6 @@ font.setFamily(font.defaultFamily())
 app.setFont(font)
 
 mainwindow = MainWindow()
-#from PyQt5.QtWidgets import QSizePolicy
-#mainwindow.mpvwindow.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
 mainlayout = QVBoxLayout()
 mainlayout.setContentsMargins(0, 0, 0, 0)
