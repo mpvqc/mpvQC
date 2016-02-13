@@ -1174,7 +1174,7 @@ def timestampToSeconds(timestamp):
 
 def newComment(commenttype):
     currentvideofile = mp.get_property("path") if mpvslave else mp.path
-    if currentvideofile and currentvideofile != "None":
+    if currentvideofile:
         currentposition = int(mp.get_property("time-pos").split(".")[0]) if mpvslave else int(mp.time_pos)
     else:
         currentposition = 0
@@ -1425,7 +1425,7 @@ def saveQcFile():
 def saveQcFileAs():
     exitFullscreen()
     currentvideofile = mp.get_property("path") if mpvslave else mp.path
-    if currentvideofile and currentvideofile != "None" and not currentqcfile: # mp.path returns "None" instead of None if no video is loaded
+    if currentvideofile and not currentqcfile:
         basename = path.basename(currentvideofile)
         basename = "[QC]_{}_{}".format(path.splitext(basename)[0], qcauthor)
         dirname = path.dirname(currentvideofile)
@@ -1469,7 +1469,7 @@ def writeQcFile(filename=None, autosave=False):
                         "generator: {}\n".format(v),
                         ])
     currentvideofile = mp.get_property("path") if mpvslave else mp.path
-    if currentvideofile and currentvideofile != "None": # mp.path returns "None" instead of None if no video is loaded
+    if currentvideofile:
         qcfilecontents.append("path: {}\n".format(currentvideofile))
     qcfilecontents.extend([
                         "\n",
