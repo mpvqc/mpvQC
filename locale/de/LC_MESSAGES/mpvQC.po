@@ -285,3 +285,9 @@ msgstr "Information"
 msgid "The changes will only take effect after restarting the program."
 msgstr "Die Änderungen werden erst nach einem Neustart des Programms wirksam."
 
+msgid "Restore Default Configuration"
+msgstr "Standardkonfiguration wiederherstellen"
+
+msgid "Do you really want to restore the default configuration? (Your changes will be lost.)"
+msgstr "Möchten Sie wirklich die Standardkonfiguration wiederherstellen? (Ihre Änderungen gehen verloren.)"
+

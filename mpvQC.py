@@ -34,7 +34,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QSplitter, QDesktopWidget, QFileDialog, QMenu,
                             QAction, QActionGroup, QStyleFactory, QFrame)
 import sys
-from os import path, mkdir
+from os import path, mkdir, remove
 import platform
 import datetime
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -79,6 +79,7 @@ class MainWindow(QMainWindow):
         autosaveintervalaction = QAction(_("Autosave Interval..."), self)
         inputconfaction = QAction(_("Edit input.conf..."), self)
         mpvconfaction = QAction(_("Edit mpv.conf..."), self)
+        restoreaction = QAction(_("Restore Default Configuration"), self)
         englishaction = QAction(_("English"), self)
         englishaction.setCheckable(True)
         germanaction = QAction(_("German"), self)
@@ -106,6 +107,7 @@ class MainWindow(QMainWindow):
         autosaveintervalaction.triggered.connect(openOptionsDialogAutosaveInterval)
         inputconfaction.triggered.connect(openInputConfOptionDialog)
         mpvconfaction.triggered.connect(openMpvConfOptionDialog)
+        restoreaction.triggered.connect(restoreDefaultConfiguration)
         englishaction.triggered.connect(partial(setOption, "language", "en"))
         germanaction.triggered.connect(partial(setOption, "language", "de"))
         updateaction.triggered.connect(checkForUpdates)
@@ -134,6 +136,8 @@ class MainWindow(QMainWindow):
         optionsmenu.addSeparator()
         optionsmenu.addAction(inputconfaction)
         optionsmenu.addAction(mpvconfaction)
+        optionsmenu.addSeparator()
+        optionsmenu.addAction(restoreaction)
 
         helpmenu = topmenubar.addMenu(_("Help"))
         helpmenu.addAction(updateaction)
@@ -1029,6 +1033,26 @@ def readOptionsFile():
     else:
         with open(optionsfile, "w", encoding="utf-8") as of:
             of.write("")
+
+
+def restoreDefaultConfiguration():
+    if WarningMessageBox(
+                mainwindow,
+                _("Warning"),
+                _("Do you really want to restore the default configuration? (Your changes will be lost.)"),
+                question=True,
+                ).exec_() != 0:
+        return
+    remove(optionsfile)
+    remove(path.join(programlocation, "mpv.conf"))
+    remove(path.join(programlocation, "input.conf"))
+    readOptionsFile()
+    checkMpvConf()
+    InformationMessageBox(
+                    mainwindow,
+                    _("Information"),
+                    _("The changes will only take effect after restarting the program."),
+                    ).exec_()
 
 
 def writeOptionToFile(option, value):
