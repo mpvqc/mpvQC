@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
         if mpvslave:
             try:
                 setPause()
-            except OSError as e:
+            except OSError:
                 pass
             if self.isFullScreen():
                 cycleFullscreen()
@@ -178,7 +178,7 @@ class MainWindow(QMainWindow):
             self.mpvwindow.close()
             try:
                 mp.commandv("quit")
-            except OSError as e:
+            except OSError:
                 pass
         else:
             setPause()
@@ -497,6 +497,7 @@ class TextEditOptionDialog(QDialog):
             configfile.write(config)
         self.done(1)
 
+
 class AboutDialog(QDialog):
 
     def __init__(self, parent):
@@ -727,7 +728,6 @@ class CommentTextEdit(QTextEdit):
 
     def showEvent(self, event):
         """ Needed, because during creation document().size() seems to be unreliable """
-        newheight = self.document().size().height() + 2
         self.sizeChange()
         event.ignore()
 
@@ -864,7 +864,7 @@ class CommentListView(QTableView):
         elif pressedbutton == Qt.ForwardButton:
             event.ignore()
         else:
-            super(CommentListView, self).mouseDoubleClickEvent(event)       
+            super(CommentListView, self).mouseDoubleClickEvent(event)
 
 
 class InvalidTimestampError(Exception):
@@ -1013,14 +1013,14 @@ def readOptionsFile():
         with open(optionsfile, "r", encoding="utf-8") as of:
             optionsfilecontents = of.readlines()
             for line in optionsfilecontents:
-                if line.startswith("AUTHOR="):
+                if line.upper().startswith("AUTHOR"):
                     qcauthor = "=".join(line.split("=")[1:]).strip()
-                if line.startswith("TYPES="):
+                if line.upper().startswith("TYPES"):
                     commenttypeoptions = "".join(
                                                 line.strip()
                                                 .split("=")[1:]
                                                 ).strip(" ,").split(",")
-                if line.startswith("AUTOSAVEINTERVAL="):
+                if line.upper().startswith("AUTOSAVEINTERVAL"):
                     try:
                         autosaveinterval = float(
                                             "=".join(line.split("=")[1:])
@@ -1028,8 +1028,8 @@ def readOptionsFile():
                                             )
                     except ValueError:
                         pass
-                if line.startswith("LANGUAGE="):
-                    language  = "=".join(line.split("=")[1:]).strip()
+                if line.upper().startswith("LANGUAGE"):
+                    language = "=".join(line.split("=")[1:]).strip()
     else:
         with open(optionsfile, "w", encoding="utf-8") as of:
             of.write("")
@@ -1064,14 +1064,14 @@ def writeOptionToFile(option, value):
         found = False
         previousline = ""
         for line in optionsfilecontents:
-            if line.startswith(option):
+            if line.upper().startswith(option):
                 found = True
-                of.write("{}{}\n".format(option, value))
+                of.write("{}={}\n".format(option, value))
             else:
                 of.write(line)
             previousline = line
         if not found:
-            optionline = "{}{}\n".format(option, value)
+            optionline = "{}={}\n".format(option, value)
             if not previousline.endswith("\n") and not previousline == "":
                 optionline = "\n"+optionline
             of.write(optionline)
@@ -1083,10 +1083,10 @@ def setOption(option, value):
     global autosaveinterval
     global optionsfile
     if option == "nickname":
-        writeOptionToFile("AUTHOR=", value)
+        writeOptionToFile("AUTHOR", value)
         qcauthor = value
     if option == "commenttypes":
-        writeOptionToFile("TYPES=", ",".join(x.strip() for x in value.split(",") if x.strip()))
+        writeOptionToFile("TYPES", ",".join(x.strip() for x in value.split(",") if x.strip()))
         commenttypeoptions.clear()
         commenttypeoptions.extend(x.strip() for x in value.split(",") if x.strip())
     if option == "autosaveinterval":
@@ -1094,14 +1094,14 @@ def setOption(option, value):
             value = float(value.replace(",", "."))
         except ValueError:
             return
-        writeOptionToFile("AUTOSAVEINTERVAL=", str(value))
+        writeOptionToFile("AUTOSAVEINTERVAL", str(value))
         autosaveinterval = value
         if value > 0:
             autosavetimer.start(int(60000*value))
         else:
             autosavetimer.stop()
     if option == "language":
-        writeOptionToFile("LANGUAGE=", value)
+        writeOptionToFile("LANGUAGE", value)
         InformationMessageBox(
                         mainwindow,
                         _("Information"),
@@ -1175,7 +1175,7 @@ def standardizeTimestamp(timestamp):
     splittedtimestamp = timestamp.split(":")
     for i in range(len(splittedtimestamp)):
         while splittedtimestamp[i].startswith("0"):
-            splittedtimestamp[i]=splittedtimestamp[i][1:]
+            splittedtimestamp[i] = splittedtimestamp[i][1:]
     for i in range(len(splittedtimestamp)):
         while len(splittedtimestamp[i]) < 2:
             splittedtimestamp[i] = "0"+splittedtimestamp[i]
@@ -1218,7 +1218,7 @@ def deleteSelection():
     if commentListViewIsEmpty():
         return
     commentmodel.removeRows(
-                    commentlistview.selectionModel().selectedRows()[0].row(), 
+                    commentlistview.selectionModel().selectedRows()[0].row(),
                     1,
                     )
 
@@ -1309,7 +1309,7 @@ def writeCommentListViewContents(comments, seconds=False):
         commenttype = QStandardItem(comment[1])
         commenttype.setEditable(False)
         commenttype.setTextAlignment(Qt.AlignCenter)
-        commentmodel.appendRow([timestamp,commenttype,QStandardItem(comment[2])])
+        commentmodel.appendRow([timestamp, commenttype, QStandardItem(comment[2])])
     resizeCommentListViewToContents()
 
 
@@ -1710,8 +1710,8 @@ if not path.isfile(path.join(programlocation, "disable-dark-palette")):
     darkpalette.setColor(QPalette.Button, QColor(53, 53, 53))
     darkpalette.setColor(QPalette.ButtonText, Qt.white)
     darkpalette.setColor(QPalette.BrightText, Qt.red)
-    darkpalette.setColor(QPalette.Link, QColor(42, 130, 218)) # blue
-    darkpalette.setColor(QPalette.Highlight, QColor(42, 130, 218)) # blue
+    darkpalette.setColor(QPalette.Link, QColor(42, 130, 218))
+    darkpalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
     darkpalette.setColor(QPalette.HighlightedText, Qt.black)
     app.setPalette(darkpalette)
     app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
