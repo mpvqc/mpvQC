@@ -1510,15 +1510,16 @@ def writeQcFile(filename=None, autosave=False):
     else:
         if not path.isdir(path.join(programlocation, "autosave")):
             mkdir(path.join(programlocation, "autosave"))
-        if path.isfile(path.join(programlocation, "autosave/saves.zip")):
+        zipname = "{}.zip".format("-".join(datetimetoday.split("-")[:2]))
+        if path.isfile(path.join(programlocation, "autosave", zipname)):
             autosavezip = ZipFile(
-                            path.join(programlocation, "autosave/saves.zip"),
+                            path.join(programlocation, "autosave", zipname),
                             "a",
                             compression=ZIP_DEFLATED
                             )
         else:
             autosavezip = ZipFile(
-                            path.join(programlocation, "autosave/saves.zip"),
+                            path.join(programlocation, "autosave", zipname),
                             "w",
                             compression=ZIP_DEFLATED
                             )
