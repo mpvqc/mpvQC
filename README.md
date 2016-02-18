@@ -31,15 +31,15 @@ On OS X you can't use _mpv_ instead of _libmpv_, because OS X does not support w
 
 ## Keybindings
 
-To change the keybindings, you have to go to `Options --> Edit input.conf...`.
+To change the keybindings, you have to go to `Options --> Edit input.conf...`.<br>
 You can use most of the input commands listed [here](https://mpv.io/manual/master/#list-of-input-commands).
 
 ### Default Bindings
 
-Keybindings marked with (*) cannot be changed.
+Keybindings marked with \* cannot be changed.
 
-- `Right click`(*), `e`(*): Open context menu
-- `Left double-click`(*), `f`(*): Enter/leave fullscreen mode
+- `Right click`\*, `e`\*: Open context menu
+- `Left double-click`\*, `f`\*: Enter/leave fullscreen mode
 - `Left click`: Play/pause
 - `SPACE`: Play/pause
 - `LEFT`, `RIGHT`: Seek backward/forward by exactly 2 seconds
