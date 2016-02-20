@@ -191,6 +191,7 @@ class MainWindow(QMainWindow):
                                         question=True,
                                         ).exec_() != 0:
                 return
+            mp.terminate()
         sys.exit()
 
     def dragEnterEvent(self, event):
