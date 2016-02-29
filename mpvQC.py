@@ -1646,7 +1646,7 @@ def exceptHook(exceptiontype, exceptionvalue, tracebackobject):
             )
 
 
-v = "mpvQC 0.2.1"
+v = "mpvQC 0.3.0"
 
 commenttypeoptions = None
 qcauthor = "QC"

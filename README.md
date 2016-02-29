@@ -25,10 +25,6 @@ It's possible to use **libmpv** via [python-mpv](https://github.com/jaseg/python
 - If you want to use _mpv_ instead of _libmpv_ open `mpvQC.py` in a text editor and change the global variable `mpvslave` from `False` to `True` (It's located right below the imports)
 - You can now start _mpvQC_ by executing `mpvQC.py`
 
-### OS X
-
-On OS X you can't use _mpv_ instead of _libmpv_, because OS X does not support window embedding of foreign processes. Other than that the installation process should be the same as on Linux.
-
 ## Keybindings
 
 To change the keybindings, you have to go to `Options --> Edit input.conf...`.<br>
@@ -40,8 +36,7 @@ Keybindings marked with \* cannot be changed.
 
 - `Right click`\*, `e`\*: Open context menu
 - `Left double-click`\*, `f`\*: Enter/leave fullscreen mode
-- `Left click`: Play/pause
-- `SPACE`: Play/pause
+- `Left click`, `SPACE`: Play/pause
 - `LEFT`, `RIGHT`: Seek backward/forward by exactly 2 seconds
 - `Shift+LEFT`, `Shift+Right`: Seek backward/forward by 5 seconds to a keyframe
 - `9`, `0`: Decrease/increase volume
