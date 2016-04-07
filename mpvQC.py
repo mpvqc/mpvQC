@@ -394,6 +394,8 @@ class MpvWindowEventFilter(QObject):
                 showCursor()
             return True
         elif event.type() == QEvent.MouseButtonPress:
+            receiver.setFocus()  # If a comment line is currently being edited, then a click on the video area
+                                 # should close the editor, which is implicitly done by removing keyboard focus
             if event.button() == Qt.LeftButton:
                 mp.command("keydown", "MOUSE_BTN0")
             if event.button() == Qt.MiddleButton:
