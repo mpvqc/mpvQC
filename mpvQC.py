@@ -254,6 +254,28 @@ class MpvWindow(QFrame):
 class MainWindowEventFilter(QObject):
 
     def eventFilter(self, receiver, event):
+        def commandGenerator(keymodifiers, keystring, modrequired=False, ischar=False):
+            shift = None
+            ctrl = None
+            alt = None
+            if keymodifiers & Qt.SHIFT:
+                shift = "shift"
+            if keymodifiers & Qt.CTRL:
+                ctrl = "ctrl"
+            if keymodifiers & Qt.ALT:
+                alt = "alt"
+            if modrequired and not (shift or ctrl or alt):
+                return None
+            if ischar:
+                alphabet = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÉÈÊÍÌÎÓÒÔÚÙÛÝ"
+                if not keystring in alphabet:
+                    ctrl = None
+                    alt = None
+                if not shift and keystring in alphabet:
+                    keystring = keystring.lower()
+                shift = None
+            keystring = "+".join([x for x in [shift, ctrl, alt, keystring] if x])
+            return ("keypress", keystring)
         if event.type() == QEvent.Resize:
                 afterResize()
                 return True
@@ -286,79 +308,78 @@ class MainWindowEventFilter(QObject):
             elif pressedkey == Qt.Key_E and keymodifiers == Qt.NoModifier:
                 receiver.contextMenu()
                 return True
+            elif pressedkey == Qt.Key_PageUp:
+                command = commandGenerator(keymodifiers, "PGUP")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_PageDown:
+                command = commandGenerator(keymodifiers, "PGDWN")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_Play:
+                command = commandGenerator(keymodifiers, "PLAY")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_Pause:
+                command = commandGenerator(keymodifiers, "PAUSE")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_Stop:
+                command = commandGenerator(keymodifiers, "STOP")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_Forward:
+                command = commandGenerator(keymodifiers, "FORWARD")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_Back:
+                command = commandGenerator(keymodifiers, "REWIND")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_MediaPlay:
+                command = commandGenerator(keymodifiers, "PLAY")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_MediaStop:
+                command = commandGenerator(keymodifiers, "STOP")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_MediaNext:
+                command = commandGenerator(keymodifiers, "NEXT")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_MediaPrevious:
+                command = commandGenerator(keymodifiers, "PREV")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_MediaPause:
+                command = commandGenerator(keymodifiers, "PAUSE")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_MediaTogglePlayPause:
+                command = commandGenerator(keymodifiers, "PLAYPAUSE")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_Home:
+                command = commandGenerator(keymodifiers, "HOME")
+                mp.command(*command)
+            elif pressedkey == Qt.Key_End:
+                command = commandGenerator(keymodifiers, "END")
+                mp.command(*command)
             elif pressedkey == Qt.Key_Left:
-                shift = ""
-                ctrl = ""
-                alt = ""
-                if keymodifiers & Qt.SHIFT:
-                    shift = "shift"
-                if keymodifiers & Qt.CTRL:
-                    ctrl = "ctrl"
-                if keymodifiers & Qt.ALT:
-                    alt = "alt"
-                keystring = "+".join([x for x in [shift, ctrl, alt, "LEFT"] if x])
-                mp.command("keypress", keystring)
+                command = commandGenerator(keymodifiers, "LEFT")
+                mp.command(*command)
                 return True
             elif pressedkey == Qt.Key_Right:
-                shift = ""
-                ctrl = ""
-                alt = ""
-                if keymodifiers & Qt.SHIFT:
-                    shift = "shift"
-                if keymodifiers & Qt.CTRL:
-                    ctrl = "ctrl"
-                if keymodifiers & Qt.ALT:
-                    alt = "alt"
-                keystring = "+".join([x for x in [shift, ctrl, alt, "RIGHT"] if x])
-                mp.command("keypress", keystring)
+                command = commandGenerator(keymodifiers, "RIGHT")
+                mp.command(*command)
                 return True
             elif pressedkey == Qt.Key_Up:
-                shift = ""
-                ctrl = ""
-                alt = ""
-                if keymodifiers & Qt.SHIFT:
-                    shift = "shift"
-                if keymodifiers & Qt.CTRL:
-                    ctrl = "ctrl"
-                if keymodifiers & Qt.ALT:
-                    alt = "alt"
-                if shift or ctrl or alt:
-                    keystring = "+".join([x for x in [shift, ctrl, alt, "UP"] if x])
-                    mp.command("keypress", keystring)
+                command = commandGenerator(keymodifiers, "UP", modrequired=True)
+                if command:
+                    mp.command(*command)
                     return True
             elif pressedkey == Qt.Key_Down:
-                shift = ""
-                ctrl = ""
-                alt = ""
-                if keymodifiers & Qt.SHIFT:
-                    shift = "shift"
-                if keymodifiers & Qt.CTRL:
-                    ctrl = "ctrl"
-                if keymodifiers & Qt.ALT:
-                    alt = "alt"
-                if shift or ctrl or alt:
-                    keystring = "+".join([x for x in [shift, ctrl, alt, "DOWN"] if x])
-                    mp.command("keypress", keystring)
+                command = commandGenerator(keymodifiers, "DOWN", modrequired=True)
+                if command:
+                    mp.command(*command)
                     return True
             elif pressedkey != 0:  # Sending a null character results in an exception
                 try:
-                    char = chr(pressedkey)
-                    alphabet = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÉÈÊÍÌÎÓÒÔÚÙÛÝ"
-                    ctrl = ""
-                    alt = ""
-                    if char in alphabet:
-                        if keymodifiers & Qt.CTRL:
-                            ctrl = "ctrl"
-                        if keymodifiers & Qt.ALT:
-                            alt = "alt"
-                        if not keymodifiers & Qt.SHIFT:
-                            char = char.lower()
-                    keystring = "+".join([x for x in [ctrl, alt, char] if x])
-                    mp.command("keypress", keystring)
-                    return True
-                # Key is unhandled and is no char
-                except ValueError:
+                    keystring = chr(pressedkey)
+                except ValueError:  # Key is unhandled and is no char
                     pass
+                else:
+                    command = commandGenerator(keymodifiers, keystring, ischar=True)
+                    mp.command(*command)
+                    return True
         return super(MainWindowEventFilter, self).eventFilter(receiver, event)
 
 
@@ -396,6 +417,7 @@ class MpvWindowEventFilter(QObject):
         elif event.type() == QEvent.MouseButtonPress:
             receiver.setFocus()  # If a comment line is currently being edited, then a click on the video area
                                  # should close the editor, which is implicitly done by removing keyboard focus
+            commentlistview.setFocus()
             if event.button() == Qt.LeftButton:
                 mp.command("keydown", "MOUSE_BTN0")
             if event.button() == Qt.MiddleButton:
