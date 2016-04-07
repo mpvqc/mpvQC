@@ -423,6 +423,15 @@ class MpvWindowEventFilter(QObject):
             elif event.button() == Qt.ForwardButton:
                 mp.command("keypress", "MOUSE_BTN6")
                 return True
+        elif event.type() == QEvent.Wheel:
+            xdelta = event.angleDelta().x()
+            ydelta = event.angleDelta().y()
+            if xdelta == 0 and ydelta != 0:
+                if ydelta > 0:
+                    mp.command("keypress", "MOUSE_BTN3")
+                else:
+                    mp.command("keypress", "MOUSE_BTN4")
+                return True
         return super(MpvWindowEventFilter, self).eventFilter(receiver, event)
 
 
@@ -963,9 +972,7 @@ ctrl+o ignore
 ctrl+q ignore
 ctrl+O ignore
 ctrl+r ignore
-MOUSE_BTN2 ignore
-MOUSE_BTN3 ignore
-MOUSE_BTN4 ignore
+MOUSE_BTN2 ignore    # Right mouse click
 
 ##################################################
 # The following keys can be bound to anything    #
@@ -981,9 +988,12 @@ shift+LEFT osd-bar seek -5 relative+keyframes
 shift+RIGHT osd-bar seek 5 relative+keyframes
 ctrl+LEFT no-osd sub-seek -1
 ctrl+RIGHT no-osd sub-seek 1
-MOUSE_BTN0 cycle pause
-MOUSE_BTN5 add chapter -1
-MOUSE_BTN6 add chapter 1
+
+MOUSE_BTN0 cycle pause       # Left click on mouse
+MOUSE_BTN3 add volume 2      # Mouse wheel up
+MOUSE_BTN4 add volume -2     # Mouse wheel down
+MOUSE_BTN5 add chapter -1    # Backward button on mouse
+MOUSE_BTN6 add chapter 1     # Forward button on mouse
 
 p cycle pause
 . frame-step
