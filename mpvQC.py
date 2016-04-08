@@ -268,7 +268,7 @@ class MainWindowEventFilter(QObject):
                 return None
             if ischar:
                 alphanumerics = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÀÁÂÃÇÉÈÊËÍÌÎÏÑÓÒÔÕÚÙÛÝŸ"
-                if not keystring in alphanumerics:
+                if not keystring in alphanumerics and sys.platform.startswith("win32"):
                     ctrl = None
                     alt = None
                 if not shift and keystring in alphanumerics:
