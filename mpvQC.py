@@ -267,15 +267,37 @@ class MainWindowEventFilter(QObject):
             if modrequired and not (shift or ctrl or alt):
                 return None
             if ischar:
-                alphabet = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÉÈÊÍÌÎÓÒÔÚÙÛÝ"
-                if not keystring in alphabet:
+                alphanumerics = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÀÁÂÃÇÉÈÊËÍÌÎÏÑÓÒÔÕÚÙÛÝŸ"
+                if not keystring in alphanumerics:
                     ctrl = None
                     alt = None
-                if not shift and keystring in alphabet:
+                if not shift and keystring in alphanumerics:
                     keystring = keystring.lower()
                 shift = None
             keystring = "+".join([x for x in [shift, ctrl, alt, keystring] if x])
             return ("keypress", keystring)
+
+        keymappings = {Qt.Key_PageUp: ("PGUP",),
+                       Qt.Key_PageDown: ("PGDWN",),
+                       Qt.Key_Play: ("PLAY",),
+                       Qt.Key_Pause: ("PAUSE",),
+                       Qt.Key_Stop: ("STOP",),
+                       Qt.Key_Forward: ("FORWARD",),
+                       Qt.Key_Back: ("REWIND",),
+                       Qt.Key_MediaPlay: ("PLAY",),
+                       Qt.Key_MediaStop: ("STOP",),
+                       Qt.Key_MediaNext: ("NEXT",),
+                       Qt.Key_MediaPrevious: ("PREV",),
+                       Qt.Key_MediaPause: ("PAUSE",),
+                       Qt.Key_MediaTogglePlayPause: ("PLAYPAUSE",),
+                       Qt.Key_Home: ("HOME",),
+                       Qt.Key_End: ("END",),
+                       Qt.Key_Left: ("LEFT",),
+                       Qt.Key_Right: ("RIGHT",),
+                       Qt.Key_Up: ("UP", True),
+                       Qt.Key_Down: ("DOWN", True),
+                       }
+
         if event.type() == QEvent.Resize:
                 afterResize()
                 return True
@@ -308,66 +330,8 @@ class MainWindowEventFilter(QObject):
             elif pressedkey == Qt.Key_E and keymodifiers == Qt.NoModifier:
                 receiver.contextMenu()
                 return True
-            elif pressedkey == Qt.Key_PageUp:
-                command = commandGenerator(keymodifiers, "PGUP")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_PageDown:
-                command = commandGenerator(keymodifiers, "PGDWN")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Play:
-                command = commandGenerator(keymodifiers, "PLAY")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Pause:
-                command = commandGenerator(keymodifiers, "PAUSE")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Stop:
-                command = commandGenerator(keymodifiers, "STOP")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Forward:
-                command = commandGenerator(keymodifiers, "FORWARD")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Back:
-                command = commandGenerator(keymodifiers, "REWIND")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_MediaPlay:
-                command = commandGenerator(keymodifiers, "PLAY")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_MediaStop:
-                command = commandGenerator(keymodifiers, "STOP")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_MediaNext:
-                command = commandGenerator(keymodifiers, "NEXT")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_MediaPrevious:
-                command = commandGenerator(keymodifiers, "PREV")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_MediaPause:
-                command = commandGenerator(keymodifiers, "PAUSE")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_MediaTogglePlayPause:
-                command = commandGenerator(keymodifiers, "PLAYPAUSE")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Home:
-                command = commandGenerator(keymodifiers, "HOME")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_End:
-                command = commandGenerator(keymodifiers, "END")
-                mp.command(*command)
-            elif pressedkey == Qt.Key_Left:
-                command = commandGenerator(keymodifiers, "LEFT")
-                mp.command(*command)
-                return True
-            elif pressedkey == Qt.Key_Right:
-                command = commandGenerator(keymodifiers, "RIGHT")
-                mp.command(*command)
-                return True
-            elif pressedkey == Qt.Key_Up:
-                command = commandGenerator(keymodifiers, "UP", modrequired=True)
-                if command:
-                    mp.command(*command)
-                    return True
-            elif pressedkey == Qt.Key_Down:
-                command = commandGenerator(keymodifiers, "DOWN", modrequired=True)
+            elif pressedkey in keymappings:
+                command = commandGenerator(keymodifiers, *keymappings[pressedkey])
                 if command:
                     mp.command(*command)
                     return True
