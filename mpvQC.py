@@ -292,6 +292,7 @@ class MainWindowEventFilter(QObject):
                        Qt.Key_MediaTogglePlayPause: ("PLAYPAUSE",),
                        Qt.Key_Home: ("HOME",),
                        Qt.Key_End: ("END",),
+                       Qt.Key_Escape: ("ESC",),
                        Qt.Key_Left: ("LEFT",),
                        Qt.Key_Right: ("RIGHT",),
                        Qt.Key_Up: ("UP", True),
@@ -329,6 +330,9 @@ class MainWindowEventFilter(QObject):
                 return True
             elif pressedkey == Qt.Key_E and keymodifiers == Qt.NoModifier:
                 receiver.contextMenu()
+                return True
+            elif pressedkey == Qt.Key_Escape and keymodifiers == Qt.NoModifier:
+                exitFullscreen()
                 return True
             elif pressedkey in keymappings:
                 command = commandGenerator(keymodifiers, *keymappings[pressedkey])
@@ -1693,32 +1697,33 @@ sys.excepthook = exceptHook
 app = QApplication(sys.argv)
 locale.setlocale(locale.LC_NUMERIC, "C")
 
-QApplication.setStyle(QStyleFactory.create("Fusion"))
-
-# Disable theme if a file called 'disable-dark-palette' is present
-if not path.isfile(path.join(programlocation, "disable-dark-palette")):
-    darkpalette = QPalette()  # https://gist.github.com/QuantumCD/6245215
-    darkpalette.setColor(QPalette.Window, QColor(53, 53, 53))
-    darkpalette.setColor(QPalette.WindowText, Qt.white)
-    darkpalette.setColor(QPalette.Base, QColor(25, 25, 25))
-    darkpalette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-    darkpalette.setColor(QPalette.ToolTipBase, Qt.white)
-    darkpalette.setColor(QPalette.ToolTipText, Qt.white)
-    darkpalette.setColor(QPalette.Text, Qt.white)
-    darkpalette.setColor(QPalette.Light, Qt.transparent)  # text shadow color of the disabled options in context menu
-    darkpalette.setColor(QPalette.Disabled, QPalette.Text, Qt.gray)
-    darkpalette.setColor(QPalette.Button, QColor(53, 53, 53))
-    darkpalette.setColor(QPalette.ButtonText, Qt.white)
-    darkpalette.setColor(QPalette.BrightText, Qt.red)
-    darkpalette.setColor(QPalette.Link, QColor(42, 130, 218))
-    darkpalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-    darkpalette.setColor(QPalette.HighlightedText, Qt.black)
-    app.setPalette(darkpalette)
-    app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
-
-font = QFont()
-font.setFamily(font.defaultFamily())
-app.setFont(font)
+# Don't use the Fusion theme on Linux
+# to let the user use his GTK+ theme instead
+if not sys.platform.startswith("linux"):
+    QApplication.setStyle(QStyleFactory.create("Fusion"))
+    # Disable theme if a file called 'disable-dark-palette' is present
+    if not path.isfile(path.join(programlocation, "disable-dark-palette")):
+        darkpalette = QPalette()  # https://gist.github.com/QuantumCD/6245215
+        darkpalette.setColor(QPalette.Window, QColor(53, 53, 53))
+        darkpalette.setColor(QPalette.WindowText, Qt.white)
+        darkpalette.setColor(QPalette.Base, QColor(25, 25, 25))
+        darkpalette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+        darkpalette.setColor(QPalette.ToolTipBase, Qt.white)
+        darkpalette.setColor(QPalette.ToolTipText, Qt.white)
+        darkpalette.setColor(QPalette.Text, Qt.white)
+        darkpalette.setColor(QPalette.Light, Qt.transparent)  # text shadow color of the disabled options in context menu
+        darkpalette.setColor(QPalette.Disabled, QPalette.Text, Qt.gray)
+        darkpalette.setColor(QPalette.Button, QColor(53, 53, 53))
+        darkpalette.setColor(QPalette.ButtonText, Qt.white)
+        darkpalette.setColor(QPalette.BrightText, Qt.red)
+        darkpalette.setColor(QPalette.Link, QColor(42, 130, 218))
+        darkpalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        darkpalette.setColor(QPalette.HighlightedText, Qt.black)
+        app.setPalette(darkpalette)
+        app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
+    font = QFont()
+    font.setFamily(font.defaultFamily())
+    app.setFont(font)
 
 mainwindow = MainWindow()
 
