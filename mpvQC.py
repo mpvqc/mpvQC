@@ -22,7 +22,8 @@ try:
     from mpv_python_ipc import MpvProcess  # https://github.com/siikamiika/mpv-python-ipc
 except ImportError:
     pass
-from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint
+from PyQt5.QtCore import (Qt, QObject, QTimer, QEvent, QPoint, QTranslator,
+                         QLocale, QLibraryInfo)
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
                         QTextOption)
@@ -32,7 +33,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QLabel, QLineEdit, QTextEdit, QTextBrowser,
                             QPushButton, QTabWidget, QGroupBox, QSpinBox,
                             QSplitter, QDesktopWidget, QFileDialog, QMenu,
-                            QAction, QActionGroup, QStyleFactory, QFrame)
+                            QAction, QActionGroup, QStyleFactory, QFrame,
+                            QFontDialog)
 import sys
 from os import path, mkdir, remove
 import platform
@@ -77,6 +79,8 @@ class MainWindow(QMainWindow):
         nicknameaction = QAction(_("Nickname..."), self)
         commenttypeaction = QAction(_("Comment Types..."), self)
         autosaveintervalaction = QAction(_("Autosave Interval..."), self)
+        fontaction = QAction(_("Font..."), self)
+        monospacefontaction = QAction(_("Monospace Font..."), self)
         inputconfaction = QAction(_("Edit input.conf..."), self)
         mpvconfaction = QAction(_("Edit mpv.conf..."), self)
         restoreaction = QAction(_("Restore Default Configuration"), self)
@@ -105,6 +109,8 @@ class MainWindow(QMainWindow):
         nicknameaction.triggered.connect(openOptionsDialogNickname)
         commenttypeaction.triggered.connect(openOptionsDialogCommentTypes)
         autosaveintervalaction.triggered.connect(openOptionsDialogAutosaveInterval)
+        fontaction.triggered.connect(openOptionsDialogFont)
+        monospacefontaction.triggered.connect(openOptionsDialogMonospaceFont)
         inputconfaction.triggered.connect(openInputConfOptionDialog)
         mpvconfaction.triggered.connect(openMpvConfOptionDialog)
         restoreaction.triggered.connect(restoreDefaultConfiguration)
@@ -130,6 +136,8 @@ class MainWindow(QMainWindow):
         optionsmenu.addAction(nicknameaction)
         optionsmenu.addAction(commenttypeaction)
         optionsmenu.addAction(autosaveintervalaction)
+        optionsmenu.addAction(fontaction)
+        optionsmenu.addAction(monospacefontaction)
         languagemenu = optionsmenu.addMenu(_("Language"))
         languagemenu.addAction(englishaction)
         languagemenu.addAction(germanaction)
@@ -430,7 +438,10 @@ class RegularTextEdit(QTextEdit):
     def __init__(self, parent=None):
         super(RegularTextEdit, self).__init__(parent)
         self.setAcceptRichText(False)
-        self.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
+        if not monospacefont:
+            self.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
+        else:
+            self.setFont(monospacefont)
 
     def mousePressEvent(self, event):
         """ Disable stupid dragging feature """
@@ -1012,6 +1023,8 @@ def readOptionsFile():
     global autosaveinterval
     global optionsfile
     global language
+    global font
+    global monospacefont
     if path.isfile(optionsfile):
         with open(optionsfile, "r", encoding="utf-8") as of:
             optionsfilecontents = of.readlines()
@@ -1033,6 +1046,12 @@ def readOptionsFile():
                         pass
                 if line.upper().startswith("LANGUAGE"):
                     language = "=".join(line.split("=")[1:]).strip()
+                if line.upper().startswith("FONT"):
+                    font = QFont()
+                    font.fromString("=".join(line.split("=")[1:]).strip())
+                if line.upper().startswith("MONOSPACEFONT"):
+                    monospacefont = QFont()
+                    monospacefont.fromString("=".join(line.split("=")[1:]).strip())
     else:
         with open(optionsfile, "w", encoding="utf-8") as of:
             of.write("")
@@ -1085,14 +1104,16 @@ def setOption(option, value):
     global commenttypeoptions
     global autosaveinterval
     global optionsfile
+    global font
+    global monospacefont
     if option == "nickname":
         writeOptionToFile("AUTHOR", value)
         qcauthor = value
-    if option == "commenttypes":
+    elif option == "commenttypes":
         writeOptionToFile("TYPES", ",".join(x.strip() for x in value.split(",") if x.strip()))
         commenttypeoptions.clear()
         commenttypeoptions.extend(x.strip() for x in value.split(",") if x.strip())
-    if option == "autosaveinterval":
+    elif option == "autosaveinterval":
         try:
             value = float(value.replace(",", "."))
         except ValueError:
@@ -1103,13 +1124,20 @@ def setOption(option, value):
             autosavetimer.start(int(60000*value))
         else:
             autosavetimer.stop()
-    if option == "language":
+    elif option == "language":
         writeOptionToFile("LANGUAGE", value)
         InformationMessageBox(
                         mainwindow,
                         _("Information"),
                         _("The changes will only take effect after restarting the program."),
                         ).exec_()
+    elif option == "font":
+        app.setFont(value)
+        writeOptionToFile("FONT", value.toString())
+        font = value
+    elif option == "monospacefont":
+        writeOptionToFile("MONOSPACEFONT", value.toString())
+        monospacefont = value
 
 
 def openOptionsDialogNickname():
@@ -1140,6 +1168,23 @@ def openOptionsDialogAutosaveInterval():
             _("OK"),
             "autosaveinterval",
             ).exec_()
+
+
+def openOptionsDialogFont():
+    oldfont = app.font()
+    newfont, changed = QFontDialog.getFont(oldfont, mainwindow)
+    if changed:
+        setOption("font", newfont)
+
+
+def openOptionsDialogMonospaceFont():
+    if monospacefont:
+        oldfont = monospacefont
+    else:
+        oldfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+    newfont, changed = QFontDialog.getFont(oldfont, mainwindow)
+    if changed:
+        setOption("monospacefont", newfont)
 
 
 def openMpvConfOptionDialog():
@@ -1650,6 +1695,9 @@ def exceptHook(exceptiontype, exceptionvalue, tracebackobject):
 
 v = "mpvQC 0.3.0"
 
+app = QApplication(sys.argv)
+locale.setlocale(locale.LC_NUMERIC, "C")
+
 commenttypeoptions = None
 qcauthor = "QC"
 autosaveinterval = 2.5
@@ -1665,6 +1713,8 @@ else:
 optionsfile = path.join(programlocation, "mpvQC.conf")
 
 language = None
+font = None
+monospacefont = None
 
 readOptionsFile()
 
@@ -1673,10 +1723,16 @@ systemlanguage = locale.getdefaultlocale()[0]
 if language:
     if language == "de":
         gettext.translation("mpvQC", localedir="locale", languages=["de"]).install()
+        qtranslator = QTranslator()
+        qtranslator.load("qt_de", path.join(programlocation, "locale", "de", "LC_MESSAGES"))
+        app.installTranslator(qtranslator)
     else:
         _ = lambda s: s
 elif systemlanguage.startswith("de"):
     gettext.translation("mpvQC", localedir="locale", languages=["de"]).install()
+    qtranslator = QTranslator()
+    qtranslator.load("qt_de", path.join(programlocation, "locale", "de", "LC_MESSAGES"))
+    app.installTranslator(qtranslator)
     language = "de"
 else:
     _ = lambda s: s
@@ -1693,9 +1749,6 @@ commenttypeoptions = [
 
 
 sys.excepthook = exceptHook
-
-app = QApplication(sys.argv)
-locale.setlocale(locale.LC_NUMERIC, "C")
 
 # Don't use the Fusion theme on Linux
 # to let the user use his GTK+ theme instead
@@ -1721,8 +1774,10 @@ if not sys.platform.startswith("linux"):
         darkpalette.setColor(QPalette.HighlightedText, Qt.black)
         app.setPalette(darkpalette)
         app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
-    font = QFont()
-    font.setFamily(font.defaultFamily())
+    defaultfont = QFont()
+    defaultfont.setFamily(defaultfont.defaultFamily())
+    app.setFont(defaultfont)
+if font:
     app.setFont(font)
 
 mainwindow = MainWindow()

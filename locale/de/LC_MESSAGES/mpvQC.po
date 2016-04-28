@@ -69,7 +69,7 @@ msgstr "Datei"
 
 #: mpvQC.py:98
 msgid "Open Video File..."
-msgstr "Videodatei öffnen"
+msgstr "Videodatei öffnen ..."
 
 #: mpvQC.py:100
 msgid "Resize Video to its Original Resolution"
@@ -290,4 +290,10 @@ msgstr "Standardkonfiguration wiederherstellen"
 
 msgid "Do you really want to restore the default configuration? (Your changes will be lost.)"
 msgstr "Möchten Sie wirklich die Standardkonfiguration wiederherstellen? (Ihre Änderungen gehen verloren.)"
+
+msgid "Font..."
+msgstr "Schriftart ..."
+
+msgid "Monospace Font..."
+msgstr "Nichtproportionale Schriftart ..."
 
