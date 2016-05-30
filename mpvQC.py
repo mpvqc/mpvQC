@@ -22,8 +22,7 @@ try:
     from mpv_python_ipc import MpvProcess  # https://github.com/siikamiika/mpv-python-ipc
 except ImportError:
     pass
-from PyQt5.QtCore import (Qt, QObject, QTimer, QEvent, QPoint, QTranslator,
-                         QLocale, QLibraryInfo)
+from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint, QTranslator
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
                         QTextOption)
@@ -84,6 +83,22 @@ class MainWindow(QMainWindow):
         inputconfaction = QAction(_("Edit input.conf..."), self)
         mpvconfaction = QAction(_("Edit mpv.conf..."), self)
         restoreaction = QAction(_("Restore Default Configuration"), self)
+        themesystemaction = QAction(_("System"), self)
+        themesystemaction.setCheckable(True)
+        themefusionaction = QAction(_("Fusion"), self)
+        themefusionaction.setCheckable(True)
+        themefusiondarkaction = QAction(_("Fusion Dark"), self)
+        themefusiondarkaction.setCheckable(True)
+        themeactiongroup = QActionGroup(self)
+        themeactiongroup.addAction(themesystemaction)
+        themeactiongroup.addAction(themefusionaction)
+        themeactiongroup.addAction(themefusiondarkaction)
+        if theme == "fusion":
+            themefusionaction.setChecked(True)
+        elif theme == "fusiondark":
+            themefusiondarkaction.setChecked(True)
+        else:
+            themesystemaction.setChecked(True)
         englishaction = QAction(_("English"), self)
         englishaction.setCheckable(True)
         germanaction = QAction(_("German"), self)
@@ -114,6 +129,9 @@ class MainWindow(QMainWindow):
         inputconfaction.triggered.connect(openInputConfOptionDialog)
         mpvconfaction.triggered.connect(openMpvConfOptionDialog)
         restoreaction.triggered.connect(restoreDefaultConfiguration)
+        themesystemaction.triggered.connect(partial(setOption, "theme", "system"))
+        themefusionaction.triggered.connect(partial(setOption, "theme", "fusion"))
+        themefusiondarkaction.triggered.connect(partial(setOption, "theme", "fusiondark"))
         englishaction.triggered.connect(partial(setOption, "language", "en"))
         germanaction.triggered.connect(partial(setOption, "language", "de"))
         updateaction.triggered.connect(checkForUpdates)
@@ -136,8 +154,13 @@ class MainWindow(QMainWindow):
         optionsmenu.addAction(nicknameaction)
         optionsmenu.addAction(commenttypeaction)
         optionsmenu.addAction(autosaveintervalaction)
+        optionsmenu.addSeparator()
         optionsmenu.addAction(fontaction)
         optionsmenu.addAction(monospacefontaction)
+        thememenu = optionsmenu.addMenu(_("Theme"))
+        thememenu.addAction(themesystemaction)
+        thememenu.addAction(themefusionaction)
+        thememenu.addAction(themefusiondarkaction)
         languagemenu = optionsmenu.addMenu(_("Language"))
         languagemenu.addAction(englishaction)
         languagemenu.addAction(germanaction)
@@ -1025,6 +1048,7 @@ def readOptionsFile():
     global language
     global font
     global monospacefont
+    global theme
     if path.isfile(optionsfile):
         with open(optionsfile, "r", encoding="utf-8") as of:
             optionsfilecontents = of.readlines()
@@ -1052,6 +1076,8 @@ def readOptionsFile():
                 if line.upper().startswith("MONOSPACEFONT"):
                     monospacefont = QFont()
                     monospacefont.fromString("=".join(line.split("=")[1:]).strip())
+                if line.upper().startswith("THEME"):
+                    theme = "=".join(line.split("=")[1:]).strip()
     else:
         with open(optionsfile, "w", encoding="utf-8") as of:
             of.write("")
@@ -1138,6 +1164,13 @@ def setOption(option, value):
     elif option == "monospacefont":
         writeOptionToFile("MONOSPACEFONT", value.toString())
         monospacefont = value
+    elif option == "theme":
+        writeOptionToFile("THEME", value)
+        InformationMessageBox(
+                        mainwindow,
+                        _("Information"),
+                        _("The changes will only take effect after restarting the program."),
+                        ).exec_()
 
 
 def openOptionsDialogNickname():
@@ -1715,6 +1748,7 @@ optionsfile = path.join(programlocation, "mpvQC.conf")
 language = None
 font = None
 monospacefont = None
+theme = ""
 
 readOptionsFile()
 
@@ -1750,12 +1784,9 @@ commenttypeoptions = [
 
 sys.excepthook = exceptHook
 
-# Don't use the Fusion theme on Linux
-# to let the user use his GTK+ theme instead
-if not sys.platform.startswith("linux"):
+if theme.startswith("fusion") or (not sys.platform.startswith("linux") and not theme):
     QApplication.setStyle(QStyleFactory.create("Fusion"))
-    # Disable theme if a file called 'disable-dark-palette' is present
-    if not path.isfile(path.join(programlocation, "disable-dark-palette")):
+    if theme.endswith("dark") or not theme:
         darkpalette = QPalette()  # https://gist.github.com/QuantumCD/6245215
         darkpalette.setColor(QPalette.Window, QColor(53, 53, 53))
         darkpalette.setColor(QPalette.WindowText, Qt.white)
@@ -1774,9 +1805,9 @@ if not sys.platform.startswith("linux"):
         darkpalette.setColor(QPalette.HighlightedText, Qt.black)
         app.setPalette(darkpalette)
         app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
-    defaultfont = QFont()
-    defaultfont.setFamily(defaultfont.defaultFamily())
-    app.setFont(defaultfont)
+        theme = "fusiondark"
+    else:
+        theme = "fusion"
 if font:
     app.setFont(font)
 
