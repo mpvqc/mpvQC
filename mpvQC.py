@@ -955,18 +955,18 @@ demuxer-mkv-subtitle-preroll
 ###########
 
 # Very slim On Screen Controller that consists of only a seekbar
-script-opts=osc-minmousemove=1,osc-hidetimeout=200,osc-layout=slimbox
+script-opts=osc-minmousemove=0,osc-hidetimeout=200,osc-layout=slimbox
 
 # Same as the previous one except it is positioned at the top
 # (Use this if you don't want the OSC to occasionally cover the subtitles)
-#script-opts=osc-minmousemove=1,osc-hidetimeout=200,osc-layout=slimbox,osc-valign=-0.8
+#script-opts=osc-minmousemove=0,osc-hidetimeout=200,osc-layout=slimbox,osc-valign=-0.8
 
 # Bigger On Screen Controller with many buttons
-#script-opts=osc-minmousemove=1,osc-hidetimeout=200,osc-layout=box
+#script-opts=osc-minmousemove=0,osc-hidetimeout=200,osc-layout=box
 
 # Same as the previous one except it is positioned at the top
 # (Use this if you don't want the OSC to occasionally cover the subtitles)
-#script-opts=osc-minmousemove=1,osc-hidetimeout=200,osc-layout=box,osc-valign=-0.8
+#script-opts=osc-minmousemove=0,osc-hidetimeout=200,osc-layout=box,osc-valign=-0.8
 
 
 ###############
