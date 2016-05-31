@@ -38,8 +38,8 @@ Keybindings marked with \* cannot be changed.
 - `Left double-click`\*, `f`\*: Enter/leave fullscreen mode
 - `Left click`, `SPACE`: Play/pause
 - `LEFT`, `RIGHT`: Seek backward/forward by exactly 2 seconds
-- `Shift+LEFT`, `Shift+Right`: Seek backward/forward by 5 seconds to a keyframe
-- `9`, `0`: Decrease/increase volume
+- `Shift+LEFT`, `Shift+RIGHT`: Seek backward/forward by 5 seconds to a keyframe
+- `9`, `0`, `Mouse Wheel`: Decrease/increase volume
 - `m`: Mute/unmute
 - `.`, `,`: Go forward/backward by one frame
 - `j`: Cycle through subtitle tracks

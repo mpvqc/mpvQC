@@ -1726,7 +1726,7 @@ def exceptHook(exceptiontype, exceptionvalue, tracebackobject):
             )
 
 
-v = "mpvQC 0.3.0"
+v = "mpvQC 0.4.0"
 
 app = QApplication(sys.argv)
 locale.setlocale(locale.LC_NUMERIC, "C")
