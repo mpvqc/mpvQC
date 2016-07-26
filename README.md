@@ -29,26 +29,27 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 #### Arch/Manjaro
 
-1. Install dependencies: ```
-sudo pacman -S python-pyqt5 python-requests mpv```
-2. Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory where this program would have write permissions
-3. Mark `mpvQC.py` as executable and run it.
+- Install dependencies: ```sudo pacman -S python-pyqt5 python-requests mpv```
+- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory, where this program would have write permissions
+- Mark `mpvQC.py` as executable and run it.
 
 #### Debian/Ubuntu
 
 Unfortunately, the _libmpv_ package on Debian and Ubuntu is way too old to be used with this program.
 
-1. Remove previously installed mpv and/or libmpv packages.
-2. Build and install mpv/libmpv: ```
+- Remove previously installed mpv and/or libmpv packages.
+- Build and install mpv/libmpv:
+```
 sudo apt-get install git devscripts equivs
 git clone https://github.com/mpv-player/mpv-build.git
 cd mpv-build
 mk-build-deps -s sudo -i
 echo --enable-libmpv-shared > mpv_options
 ./rebuild -j4
-sudo ./install```
-3. Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory where this program would have write permissions
-4. Mark `mpvQC.py` as executable and run it.
+sudo ./install
+```
+- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory, where this program would have write permissions
+- Mark `mpvQC.py` as executable and run it.
 
 ## Keybindings
 
