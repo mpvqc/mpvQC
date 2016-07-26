@@ -14,14 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    from mpv import MPV  # https://github.com/jaseg/python-mpv
-except ImportError:
-    pass
-try:
-    from mpv_python_ipc import MpvProcess  # https://github.com/siikamiika/mpv-python-ipc
-except ImportError:
-    pass
+from mpv import MPV  # https://github.com/jaseg/python-mpv
 from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint, QTranslator
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
@@ -46,11 +39,6 @@ from random import randint
 import gettext
 import locale
 import requests  # https://github.com/kennethreitz/requests
-
-
-# If this global variable is set to 'True', mpv will be used
-# in a slave-mode-kinda way instead of libmpv
-mpvslave = False
 
 
 class MainWindow(QMainWindow):
@@ -192,37 +180,17 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event=None):
         if event:
             event.ignore()
-        if mpvslave:
-            try:
-                setPause()
-            except OSError:
-                pass
-            if self.isFullScreen():
-                cycleFullscreen()
-            if not currentstatesaved and WarningMessageBox(
-                                        self,
-                                        _("Warning"),
-                                        _("Do you really want to quit without saving?"),
-                                        question=True,
-                                        ).exec_() != 0:
-                return
-            self.mpvwindow.close()
-            try:
-                mp.commandv("quit")
-            except OSError:
-                pass
-        else:
-            setPause()
-            if self.isFullScreen():
-                cycleFullscreen()
-            if not currentstatesaved and WarningMessageBox(
-                                        self,
-                                        _("Warning"),
-                                        _("Do you really want to quit without saving?"),
-                                        question=True,
-                                        ).exec_() != 0:
-                return
-            mp.terminate()
+        setPause()
+        if self.isFullScreen():
+            cycleFullscreen()
+        if not currentstatesaved and WarningMessageBox(
+                                    self,
+                                    _("Warning"),
+                                    _("Do you really want to quit without saving?"),
+                                    question=True,
+                                    ).exec_() != 0:
+            return
+        mp.terminate()
         sys.exit()
 
     def dragEnterEvent(self, event):
@@ -1278,9 +1246,9 @@ def timestampToSeconds(timestamp):
 
 
 def newComment(commenttype):
-    currentvideofile = mp.get_property("path") if mpvslave else mp.path
+    currentvideofile = mp.path
     if currentvideofile:
-        currentposition = int(mp.get_property("time-pos").split(".")[0]) if mpvslave else int(mp.time_pos)
+        currentposition = int(mp.time_pos)
     else:
         currentposition = 0
     newentry = (currentposition, commenttype, "")
@@ -1529,7 +1497,7 @@ def saveQcFile():
 
 def saveQcFileAs():
     exitFullscreen()
-    currentvideofile = mp.get_property("path") if mpvslave else mp.path
+    currentvideofile = mp.path
     if currentvideofile and not currentqcfile:
         basename = path.basename(currentvideofile)
         basename = "[QC]_{}_{}".format(path.splitext(basename)[0], qcauthor)
@@ -1573,7 +1541,7 @@ def writeQcFile(filename=None, autosave=False):
                         "date: {} {}\n".format(datetoday, timetoday),
                         "generator: {}\n".format(v),
                         ])
-    currentvideofile = mp.get_property("path") if mpvslave else mp.path
+    currentvideofile = mp.path
     if currentvideofile:
         qcfilecontents.append("path: {}\n".format(currentvideofile))
     qcfilecontents.extend([
@@ -1652,10 +1620,7 @@ def exitFullscreen():
 
 
 def setPause(value=True):
-    if mpvslave:
-        mp.set_property("pause", "yes" if value else "no")
-    else:
-        mp.pause = value
+    mp.pause = value
 
 
 def showCursor():
@@ -1687,8 +1652,8 @@ def resizeVideo(width=None, height=None):
     if mainwindow.isFullScreen() or mainwindow.isMaximized():
         return
     try:
-        size_x = width or int(mp.get_property("width") if mpvslave else mp.width)
-        size_y = height or int(mp.get_property("height") if mpvslave else mp.height)
+        size_x = width or int(mp.width)
+        size_y = height or int(mp.height)
     except TypeError:
         return
     additionalheight = (
@@ -1868,29 +1833,17 @@ mainwindow.mpvwindow.installEventFilter(mpvwindoweventfilter)
 # Create config files for mpv if they are not present
 checkMpvConf()
 
-if mpvslave:
-    mp = MpvProcess([
-            "--wid={}".format(int(mainwindow.mpvwindow.winId())),
-            "--keep-open",
-            "--osc=yes",
-            "--cursor-autohide=no",
-            "--input-cursor=no",
-            "--input-default-bindings=no",
-            "--config-dir={}".format(programlocation),
-            ])
-    mp.command = mp.commandv
-else:
-    mp = MPV(
-            wid=str(int(mainwindow.mpvwindow.winId())),
-            keep_open="yes",
-            idle="yes",
-            osc="yes",
-            cursor_autohide="no",
-            input_cursor="no",
-            input_default_bindings="no",
-            config="yes",
-            config_dir=programlocation,
-            )
+mp = MPV(
+        wid=str(int(mainwindow.mpvwindow.winId())),
+        keep_open="yes",
+        idle="yes",
+        osc="yes",
+        cursor_autohide="no",
+        input_cursor="no",
+        input_default_bindings="no",
+        config="yes",
+        config_dir=programlocation,
+        )
 
 autosavetimer = QTimer()
 autosavetimer.timeout.connect(autosave)
