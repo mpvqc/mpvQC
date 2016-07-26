@@ -1,12 +1,21 @@
 # mpvQC
 
-**mpvQC** is a **libmpv** or (at your choice) **mpv** based application for the quick and easy creation of quality control reports of video files, initially intended to be a less broken alternative to [kSub](http://dakoworks.ath.cx/projects/ksub).
+**mpvQC** is a **libmpv** based application for the quick and easy creation of quality control reports of video files, initially intended to be a less broken alternative to [kSub](http://dakoworks.ath.cx/projects/ksub).
+
+- [Dependencies](#dependencies)
+- [Installation](#installation)
+  - [Windows](#windows)
+  - [Linux](#linux)
+     - [Arch/Manjaro](#archmanjaro)
+     - [Debian/Ubuntu](#debianubuntu)
+- [Keybindings](#keybindings)
+  - [Default Bindings](#default-bindings)
 
 ## Dependencies
 
-- [libmpv](https://github.com/mpv-player/mpv) or [mpv](https://mpv.io/installation/) (0.16.0 or later)
+- [libmpv](https://github.com/mpv-player/mpv) (0.16.0 or later)
 - Python 3.4 or later
-- [python-mpv](https://github.com/jaseg/python-mpv) or [mpv-python-ipc](https://github.com/siikamiika/mpv-python-ipc)
+- [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - PyQt5
 - [Requests](https://github.com/kennethreitz/requests)
 
@@ -18,12 +27,28 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 ### Linux
 
-It's possible to use **libmpv** via [python-mpv](https://github.com/jaseg/python-mpv) or **mpv** in a slave-mode-kinda way via [mpv-python-ipc](https://github.com/siikamiika/mpv-python-ipc).
+#### Arch/Manjaro
 
-- Make sure all the dependencies are properly installed and working (Also make sure that libmpv/mpv is up to date)
-- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) or a [Release](https://github.com/Frechdachs/mpvQC/releases) (0.3.0 or later)
-- If you want to use _mpv_ instead of _libmpv_ open `mpvQC.py` in a text editor and change the global variable `mpvslave` from `False` to `True` (It's located right below the imports)
-- You can now start _mpvQC_ by executing `mpvQC.py`
+1. Install dependencies: ```
+sudo pacman -S python-pyqt5 python-requests mpv```
+2. Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory where this program would have write permissions
+3. Mark `mpvQC.py` as executable and run it.
+
+#### Debian/Ubuntu
+
+Unfortunately, the _libmpv_ package on Debian and Ubuntu is way too old to be used with this program.
+
+1. Remove previously installed mpv and/or libmpv packages.
+2. Build and install mpv/libmpv: ```
+sudo apt-get install git devscripts equivs
+git clone https://github.com/mpv-player/mpv-build.git
+cd mpv-build
+mk-build-deps -s sudo -i
+echo --enable-libmpv-shared > mpv_options
+./rebuild -j4
+sudo ./install```
+3. Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory where this program would have write permissions
+4. Mark `mpvQC.py` as executable and run it.
 
 ## Keybindings
 
