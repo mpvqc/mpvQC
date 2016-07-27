@@ -48,6 +48,7 @@ echo --enable-libmpv-shared > mpv_options
 ./rebuild -j4
 sudo ./install
 ```
+- Install dependencies: ```sudo apt-get install python3-pyqt5 python3-requests```
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory, where this program would have write permissions
 - Mark `mpvQC.py` as executable and run it.
 
