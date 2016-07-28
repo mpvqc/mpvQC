@@ -1261,6 +1261,7 @@ def newComment(commenttype):
     commentlistview.scrollTo(newmodelindex)
     commentlistview.setCurrentIndex(newmodelindex)
     commentlistview.edit(newmodelindex)
+    commentlistview.horizontalHeader().setSectionResizeMode(2, 1)
 
 
 def deleteSelection():
