@@ -1692,6 +1692,10 @@ def exceptHook(exceptiontype, exceptionvalue, tracebackobject):
             )
 
 
+def mpvLogHandler(loglevel, component, message):
+    print("[{}] {}: {}".format(loglevel, component, message))
+
+
 v = "mpvQC 0.4.0"
 
 app = QApplication(sys.argv)
@@ -1844,6 +1848,7 @@ mp = MPV(
         input_default_bindings="no",
         config="yes",
         config_dir=programlocation,
+        log_handler=mpvLogHandler,
         )
 
 autosavetimer = QTimer()
