@@ -134,8 +134,8 @@ msgid "OK"
 msgstr "OK"
 
 #: mpvQC.py:576
-msgid "<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>"
-msgstr "<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> ist ein freies, quelloffenes und <b>libmpv</b>-basiertes Programm zur einfachen und schnellen Anfertigung von QC-Berichten zu Videodateien.</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>"
+msgid "<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Based on {} and ffmpeg {}</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>"
+msgstr "<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> ist ein freies, quelloffenes und <b>libmpv</b>-basiertes Programm zur einfachen und schnellen Anfertigung von QC-Berichten zu Videodateien.</p><p>Basiert auf {} und ffmpeg {}</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>"
 
 #: mpvQC.py:586
 msgid "About"

@@ -691,7 +691,10 @@ ALL_PROPERTIES = {
         'playlist-pos':                (int,    'rw'),
         'playlist-count':              (int,    'r'),
         'quvi-format':                 (str,    'rw'),
-        'seekable':                    (ynbool, 'r')}
+        'seekable':                    (ynbool, 'r'),
+        'mpv-version':                 (str,    'r'),
+        'mpv-configuration':           (str,    'r'),
+        'ffmpeg-version':              (str,    'r'),}
 
 def bindproperty(MPV, name, proptype, access):
     def getter(self):

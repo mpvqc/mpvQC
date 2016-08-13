@@ -517,7 +517,7 @@ class AboutDialog(QDialog):
         self.about = QTextBrowser()
         self.about.setOpenExternalLinks(True)
         self.about.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-        self.about.setHtml(_("<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>").format(v, platform.architecture()[0], v.split(" ")[0]))
+        self.about.setHtml(_("<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Based on {} and ffmpeg {}</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>").format(v, platform.architecture()[0], v.split(" ")[0], mp.mpv_version, mp.ffmpeg_version))
 
         self.credits = QTextBrowser()
         self.credits.setTextInteractionFlags(Qt.NoTextInteraction)
