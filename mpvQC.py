@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QPushButton, QTabWidget, QGroupBox, QSpinBox,
                             QSplitter, QDesktopWidget, QFileDialog, QMenu,
                             QAction, QActionGroup, QStyleFactory, QFrame,
-                            QFontDialog)
+                            QFontDialog, QHeaderView)
 import sys
 from os import path, mkdir, remove
 import platform
@@ -1261,7 +1261,6 @@ def newComment(commenttype):
     commentlistview.scrollTo(newmodelindex)
     commentlistview.setCurrentIndex(newmodelindex)
     commentlistview.edit(newmodelindex)
-    commentlistview.horizontalHeader().setSectionResizeMode(2, 1)
 
 
 def deleteSelection():
@@ -1360,6 +1359,7 @@ def writeCommentListViewContents(comments, seconds=False):
         commenttype.setEditable(False)
         commenttype.setTextAlignment(Qt.AlignCenter)
         commentmodel.appendRow([timestamp, commenttype, QStandardItem(comment[2])])
+    commentlistview.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
     resizeCommentListViewToContents()
 
 
