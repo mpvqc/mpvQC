@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QPushButton, QTabWidget, QGroupBox, QSpinBox,
                             QSplitter, QDesktopWidget, QFileDialog, QMenu,
                             QAction, QActionGroup, QStyleFactory, QFrame,
-                            QFontDialog, QHeaderView)
+                            QFontDialog, QHeaderView, QInputDialog)
 import sys
 from os import path, mkdir, remove
 import platform
@@ -61,6 +61,8 @@ class MainWindow(QMainWindow):
         closeaction.setShortcut("Ctrl+Q")
         videoopenaction = QAction(_("Open Video File..."), self)
         videoopenaction.setShortcut("Ctrl+Shift+O")
+        streamopenaction = QAction(_("Open Network Stream..."), self)
+        streamopenaction.setShortcut("Ctrl+Shift+Alt+O")
         videoresizeaction = QAction(_("Resize Video to its Original Resolution"), self)
         videoresizeaction.setShortcut("Ctrl+R")
         nicknameaction = QAction(_("Nickname..."), self)
@@ -108,6 +110,7 @@ class MainWindow(QMainWindow):
         saveasaction.triggered.connect(saveQcFileAs)
         closeaction.triggered.connect(self.closeEvent)
         videoopenaction.triggered.connect(openVideoFile)
+        streamopenaction.triggered.connect(openVideoStream)
         videoresizeaction.triggered.connect(resizeVideo)
         nicknameaction.triggered.connect(openOptionsDialogNickname)
         commenttypeaction.triggered.connect(openOptionsDialogCommentTypes)
@@ -135,6 +138,7 @@ class MainWindow(QMainWindow):
         filemenu.addAction(closeaction)
         videomenu = topmenubar.addMenu(_("Video"))
         videomenu.addAction(videoopenaction)
+        videomenu.addAction(streamopenaction)
         videomenu.addSeparator()
         videomenu.addAction(videoresizeaction)
 
@@ -1489,6 +1493,19 @@ def openVideoFile(filename=None):
         setPause(False)
 
 
+def openVideoStream(url=None):
+    exitFullscreen()
+    if not url:
+        url = QInputDialog.getText(
+                            mainwindow,
+                            _("Open network stream"),
+                            _("Enter URL"),
+                            )[0]
+    if url:
+        mp.command("loadfile", url, "replace")
+        setPause(False)
+
+
 def saveQcFile():
     if not currentqcfile:
         saveQcFileAs()
@@ -1543,7 +1560,7 @@ def writeQcFile(filename=None, autosave=False):
                         "generator: {}\n".format(v),
                         ])
     currentvideofile = mp.path
-    if currentvideofile:
+    if currentvideofile and "://" not in currentvideofile:
         qcfilecontents.append("path: {}\n".format(currentvideofile))
     qcfilecontents.extend([
                         "\n",
@@ -1848,6 +1865,7 @@ mp = MPV(
         input_default_bindings="no",
         config="yes",
         config_dir=programlocation,
+        ytdl="yes",
         log_handler=mpvLogHandler,
         )
 
