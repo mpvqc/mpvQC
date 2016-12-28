@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QAction, QActionGroup, QStyleFactory, QFrame,
                             QFontDialog, QHeaderView, QInputDialog)
 import sys
-from os import path, mkdir, remove
+from os import path, mkdir, remove, getenv
 import platform
 import datetime
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -36,6 +36,7 @@ from operator import itemgetter
 from traceback import format_exception
 from functools import partial
 from random import randint
+from pathlib import Path
 import gettext
 import locale
 import requests  # https://github.com/kennethreitz/requests
@@ -484,7 +485,7 @@ class TextEditOptionDialog(QDialog):
         super(TextEditOptionDialog, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
         self.setWindowFlags(self.windowFlags()&~Qt.WindowContextHelpButtonHint)
-        self.conf = path.join(programlocation, relativeconfpath)
+        self.conf = path.join(configlocation, relativeconfpath)
         with open(self.conf, "r", encoding="utf-8") as configfile:
             config = configfile.read()
         self.resize(640, 480)
@@ -894,8 +895,8 @@ class InvalidCommentLineError(Exception):
 
 
 def checkMpvConf():
-    mpvconf = path.join(programlocation, "mpv.conf")
-    inputconf = path.join(programlocation, "input.conf")
+    mpvconf = path.join(configlocation, "mpv.conf")
+    inputconf = path.join(configlocation, "input.conf")
     if not path.isfile(mpvconf):
         with open(mpvconf, "w", encoding="utf-8") as configfile:
             configfile.write(
@@ -947,7 +948,7 @@ script-opts=osc-minmousemove=0,osc-hidetimeout=200,osc-layout=slimbox
 
 screenshot-format=png
 screenshot-high-bit-depth=no
-screenshot-directory=./Screenshots
+screenshot-directory=~~/Screenshots/
 """)
     if not path.isfile(inputconf):
         with open(inputconf, "w", encoding="utf-8") as configfile:
@@ -1064,8 +1065,8 @@ def restoreDefaultConfiguration():
                 ).exec_() != 0:
         return
     remove(optionsfile)
-    remove(path.join(programlocation, "mpv.conf"))
-    remove(path.join(programlocation, "input.conf"))
+    remove(path.join(configlocation, "mpv.conf"))
+    remove(path.join(configlocation, "input.conf"))
     readOptionsFile()
     checkMpvConf()
     InformationMessageBox(
@@ -1575,21 +1576,15 @@ def writeQcFile(filename=None, autosave=False):
         currentqcfile = filename
         currentstatesaved = True
     else:
-        if not path.isdir(path.join(programlocation, "autosave")):
-            mkdir(path.join(programlocation, "autosave"))
+        if not path.isdir(path.join(configlocation, "autosave")):
+            mkdir(path.join(configlocation, "autosave"))
         zipname = "{}.zip".format("-".join(datetimetoday.split("-")[:2]))
-        if path.isfile(path.join(programlocation, "autosave", zipname)):
-            autosavezip = ZipFile(
-                            path.join(programlocation, "autosave", zipname),
-                            "a",
-                            compression=ZIP_DEFLATED
-                            )
-        else:
-            autosavezip = ZipFile(
-                            path.join(programlocation, "autosave", zipname),
-                            "w",
-                            compression=ZIP_DEFLATED
-                            )
+        autosavename = path.join(configlocation, "autosave", zipname)
+        autosavezip = ZipFile(
+                        autosavename,
+                        "a" if path.isfile(autosavename) else "w",
+                        compression=ZIP_DEFLATED
+                        )
         try:
             filename = "{}.{}".format(
                                 datetimetoday.replace(":", "-").replace(" ", "_"),
@@ -1730,7 +1725,18 @@ if getattr(sys, "frozen", False):
 else:
     programlocation = path.dirname(path.realpath(__file__))
 
-optionsfile = path.join(programlocation, "mpvQC.conf")
+if path.isfile(path.join(programlocation, "portable")):
+    configlocation = programlocation
+else:
+    if sys.platform.startswith("win32"):
+        configlocation = path.join(getenv("APPDATA"), "mpvqc")
+    else:
+        configlocation = path.join(path.expanduser("~"), ".config", "mpvqc")
+    if not path.isdir(configlocation):
+        configpath = Path(configlocation)
+        configpath.mkdir(parents=True)
+
+optionsfile = path.join(configlocation, "mpvQC.conf")
 
 language = None
 font = None
@@ -1740,21 +1746,14 @@ theme = ""
 readOptionsFile()
 
 systemlanguage = locale.getdefaultlocale()[0]
+if not language and systemlanguage.startswith("de"):
+    language = "de"
 
-if language:
-    if language == "de":
-        gettext.translation("mpvQC", localedir="locale", languages=["de"]).install()
-        qtranslator = QTranslator()
-        qtranslator.load("qt_de", path.join(programlocation, "locale", "de", "LC_MESSAGES"))
-        app.installTranslator(qtranslator)
-    else:
-        _ = lambda s: s
-elif systemlanguage.startswith("de"):
-    gettext.translation("mpvQC", localedir="locale", languages=["de"]).install()
+if language == "de":
+    gettext.translation("mpvQC", localedir=path.join(programlocation, "locale"), languages=["de"]).install()
     qtranslator = QTranslator()
     qtranslator.load("qt_de", path.join(programlocation, "locale", "de", "LC_MESSAGES"))
     app.installTranslator(qtranslator)
-    language = "de"
 else:
     _ = lambda s: s
 
@@ -1864,7 +1863,7 @@ mp = MPV(
         input_cursor="no",
         input_default_bindings="no",
         config="yes",
-        config_dir=programlocation,
+        config_dir=configlocation,
         ytdl="yes",
         log_handler=mpvLogHandler,
         )
