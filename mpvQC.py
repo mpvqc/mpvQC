@@ -1730,7 +1730,7 @@ else:
     if sys.platform.startswith("win32"):
         configlocation = path.join(getenv("APPDATA"), "mpvqc")
     else:
-        configlocation = path.join(path.expanduser("~"), ".config", "mpvqc")
+        configlocation = path.expanduser("~/.config/mpvqc")
     if not path.isdir(configlocation):
         configpath = Path(configlocation)
         configpath.mkdir(parents=True)
