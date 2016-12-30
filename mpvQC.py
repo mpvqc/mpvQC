@@ -1509,6 +1509,9 @@ def saveQcFileAs():
     if currentvideofile and not currentqcfile:
         basename = path.basename(currentvideofile)
         basename = "[QC]_{}_{}.txt".format(path.splitext(basename)[0], qcauthor)
+        if sys.platform.startswith("win32"):
+            trtable = str.maketrans('\\/:*?"<>|', "_________")
+            basename = basename.translate(trtable)
         dirname = path.dirname(currentvideofile)
         defpath = path.join(dirname, basename)
     elif currentqcfile:
