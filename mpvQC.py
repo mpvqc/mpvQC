@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from mpv import MPV  # https://github.com/jaseg/python-mpv
+import mpv  # https://github.com/jaseg/python-mpv
 from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint, QTranslator
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
@@ -169,14 +169,15 @@ class MainWindow(QMainWindow):
         helpmenu.addAction(aboutqtaction)
         helpmenu.addAction(aboutaction)
 
-        self.mpvwindow = MpvWindow(self)
-        self.mpvwindow.addAction(newaction)
-        self.mpvwindow.addAction(openaction)
-        self.mpvwindow.addAction(saveaction)
-        self.mpvwindow.addAction(saveasaction)
-        self.mpvwindow.addAction(closeaction)
-        self.mpvwindow.addAction(videoopenaction)
-        self.mpvwindow.addAction(videoresizeaction)
+        self.mpvwidget = MpvWidget(self)
+        self.mpvwidget.addAction(newaction)
+        self.mpvwidget.addAction(openaction)
+        self.mpvwidget.addAction(saveaction)
+        self.mpvwidget.addAction(saveasaction)
+        self.mpvwidget.addAction(closeaction)
+        self.mpvwidget.addAction(videoopenaction)
+        self.mpvwidget.addAction(streamopenaction)
+        self.mpvwidget.addAction(videoresizeaction)
 
         self.setAcceptDrops(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -205,30 +206,34 @@ class MainWindow(QMainWindow):
         filename = event.mimeData().urls()[0].toLocalFile()
         if not path.isfile(filename):
             return
-        if mainwindow.mpvwindow.geometry().contains(event.pos()):
+        if mpvwidget.geometry().contains(event.pos()):
             openVideoFile(filename)
         else:
             openQcFile(filename)
 
+    def showEvent(self, event):
+        # Resize mainwindow and mpv to make the video take exactly 66.6%
+        # of the available space on the screen (= 720p on a 1080p screen)
+        deskrect = QDesktopWidget().screenGeometry(
+                                QDesktopWidget().screenNumber(QCursor.pos())
+                                )
+        size_x = int(deskrect.width() * (2/3))
+        size_y = int(deskrect.width()/16*9 * (2/3))
+        # WHAT
+        QTimer.singleShot(80, partial(resizeVideo, size_x, size_y))
+        # THE
+        QTimer.singleShot(90, moveToCenter)
+        # FUCK?!
+        QTimer.singleShot(100, partial(resizeVideo, size_x, size_y))
+
     def contextMenu(self, pos=None):
-        setPause()
-        exitFullscreen()
-        contextmenu = QMenu()
-        for x in commenttypeoptions:
-            contextmenu.addAction(x).triggered.connect(partial(newComment, x))
-        m_pos = QCursor.pos()
-        # Fixes following: Qt puts the context menu in a place
-        # where double clicking would trigger the fist menu option
-        # instead of just calling the menu a second time
-        # or ignoring the second press
-        m_pos = QPoint(m_pos.x()+1, m_pos.y())
-        contextmenu.exec_(m_pos)
+        contextMenu(pos)
 
 
-class MpvWindow(QFrame):
+class MpvWidget(QFrame):
 
     def __init__(self, parent=None):
-        super(MpvWindow, self).__init__(parent)
+        super(MpvWidget, self).__init__(parent)
         # Make the frame black, so that the video frame
         # is distinguishable from the rest when no
         # video is loaded yet
@@ -241,18 +246,7 @@ class MpvWindow(QFrame):
         self.cursortimer.timeout.connect(hideCursor)
 
     def contextMenu(self, pos=None):
-        setPause()
-        exitFullscreen()
-        contextmenu = QMenu()
-        for x in commenttypeoptions:
-            contextmenu.addAction(x).triggered.connect(partial(newComment, x))
-        m_pos = QCursor.pos()
-        # Fixes following: Qt puts the context menu in a place
-        # where double clicking would trigger the fist menu option
-        # instead of just calling the menu a second time
-        # or ignoring the second press
-        m_pos = QPoint(m_pos.x()+1, m_pos.y())
-        contextmenu.exec_(m_pos)
+        contextMenu(pos)
 
 
 class MainWindowEventFilter(QObject):
@@ -355,7 +349,7 @@ class MainWindowEventFilter(QObject):
         return super(MainWindowEventFilter, self).eventFilter(receiver, event)
 
 
-class MpvWindowEventFilter(QObject):
+class MpvWidgetEventFilter(QObject):
 
     def eventFilter(self, receiver, event):
         if event.type() == QEvent.MouseMove:
@@ -426,7 +420,7 @@ class MpvWindowEventFilter(QObject):
                 else:
                     mp.command("keypress", "MOUSE_BTN4")
                 return True
-        return super(MpvWindowEventFilter, self).eventFilter(receiver, event)
+        return super(MpvWidgetEventFilter, self).eventFilter(receiver, event)
 
 
 class RegularTextEdit(QTextEdit):
@@ -446,37 +440,6 @@ class RegularTextEdit(QTextEdit):
             self.setTextCursor(newcursor)
             event.accept()
         super(RegularTextEdit, self).mousePressEvent(event)
-
-
-class OptionsDialog(QDialog):
-
-    def __init__(self, parent, labeltext, entrytext, buttontext, option):
-        super(OptionsDialog, self).__init__(parent)
-        self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.setWindowFlags(self.windowFlags()&~Qt.WindowContextHelpButtonHint)
-        self.option = option
-        self.layout = QVBoxLayout()
-        self.label = QLabel(labeltext)
-        self.entry = QLineEdit(entrytext)
-        self.entry.setAlignment(Qt.AlignCenter)
-        entrytextwidth = self.entry.fontMetrics().width(entrytext)
-        self.entry.setMinimumWidth(entrytextwidth+10)
-        self.button = QPushButton(buttontext)
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(self.entry)
-        self.layout.addWidget(self.button)
-        self.layout.setAlignment(self.label, Qt.AlignHCenter)
-        self.layout.setAlignment(self.entry, Qt.AlignHCenter)
-        self.layout.setAlignment(self.button, Qt.AlignHCenter)
-        self.button.clicked.connect(self.accept)
-        self.entry.returnPressed.connect(self.accept)
-        self.setLayout(self.layout)
-
-    def accept(self):
-        entrytext = self.entry.text().strip()
-        if entrytext:
-            setOption(self.option, entrytext)
-        self.done(1)
 
 
 class TextEditOptionDialog(QDialog):
@@ -1146,33 +1109,36 @@ def setOption(option, value):
 
 
 def openOptionsDialogNickname():
-    OptionsDialog(
-            mainwindow,
-            _("Set nickname"),
-            qcauthor,
-            _("OK"),
-            "nickname",
-            ).exec_()
+    value = QInputDialog.getText(
+                        mainwindow,
+                        _("Set nickname"),
+                        _("Set nickname"),
+                        text = qcauthor,
+                        )[0]
+    if value:
+        setOption("nickname", value)
 
 
 def openOptionsDialogCommentTypes():
-    OptionsDialog(
-            mainwindow,
-            _("Set comment types (comma separated list)"),
-            ",".join(commenttypeoptions),
-            _("OK"),
-            "commenttypes",
-            ).exec_()
+    value = QInputDialog.getText(
+                        mainwindow,
+                        _("Set comment types (comma separated list)"),
+                        _("Set comment types (comma separated list)"),
+                        text = ",".join(commenttypeoptions),
+                        )[0]
+    if value:
+        setOption("commenttypes", value)
 
 
 def openOptionsDialogAutosaveInterval():
-    OptionsDialog(
-            mainwindow,
-            _("Set autosave interval in minutes (0 to deactivate)"),
-            str(autosaveinterval),
-            _("OK"),
-            "autosaveinterval",
-            ).exec_()
+    value = QInputDialog.getText(
+                        mainwindow,
+                        _("Set autosave interval in minutes (0 to deactivate)"),
+                        _("Set autosave interval in minutes (0 to deactivate)"),
+                        text = str(autosaveinterval),
+                        )[0]
+    if value:
+        setOption("autosaveinterval", value)
 
 
 def openOptionsDialogFont():
@@ -1380,6 +1346,21 @@ def sortCommentListView(index=None):
                                 2,
                                 ).index()
                         )
+
+
+def contextMenu(pos=None):
+    setPause()
+    exitFullscreen()
+    contextmenu = QMenu()
+    for x in commenttypeoptions:
+        contextmenu.addAction(x).triggered.connect(partial(newComment, x))
+    m_pos = QCursor.pos()
+    # Fixes following: Qt puts the context menu in a place
+    # where double clicking would trigger the fist menu option
+    # instead of just calling the menu a second time
+    # or ignoring the second press
+    m_pos = QPoint(m_pos.x()+1, m_pos.y())
+    contextmenu.exec_(m_pos)
 
 
 def newQcFile():
@@ -1602,7 +1583,7 @@ def writeQcFile(filename=None, autosave=False):
 def cycleFullscreen():
     if not mainwindow.isFullScreen():
         commentlistview.scrollposition = commentlistview.verticalScrollBar().value()
-        mainlayout.addWidget(mainwindow.mpvwindow)
+        mainlayout.addWidget(mpvwidget)
         mainwindowsplitter.setVisible(False)
         mainwindow.menuBar().setVisible(False)
         mainwindow.showFullScreen()
@@ -1614,7 +1595,7 @@ def cycleFullscreen():
         showCursor()
     else:
         mainwindow.showNormal()
-        mainwindowsplitter.insertWidget(0, mainwindow.mpvwindow)
+        mainwindowsplitter.insertWidget(0, mpvwidget)
         mainwindowsplitter.setVisible(True)
         mainwindow.menuBar().setVisible(True)
         commentlistview.verticalScrollBar().setValue(commentlistview.scrollposition)
@@ -1638,7 +1619,7 @@ def setPause(value=True):
 def showCursor():
     while app.overrideCursor():
         app.restoreOverrideCursor()
-    mainwindow.mpvwindow.cursortimer.start(1000)
+    mpvwidget.cursortimer.start(1000)
 
 
 def hideCursor():
@@ -1655,7 +1636,7 @@ def afterResize():
         # TODO: Find a better way to do this
         mp.command("mouse", 0, randint(0, 20))
     except NameError:
-        # At the beginning the mpvwindow is resized
+        # At the beginning the mpvwidget is resized
         # before mpv is started
         pass
 
@@ -1670,10 +1651,24 @@ def resizeVideo(width=None, height=None):
         return
     additionalheight = (
                         mainwindow.geometry().height()
-                        -mainwindow.mpvwindow.geometry().height()
+                        -mpvwidget.geometry().height()
                         )
     mainwindow.resize(size_x, size_y+additionalheight)
     afterResize()
+
+
+def moveToCenter():
+    deskrect = QDesktopWidget().screenGeometry(
+                                QDesktopWidget().screenNumber(QCursor.pos())
+                                )
+    desk_x = deskrect.width()
+    desk_y = deskrect.height()
+    main_x = mainwindow.width()
+    main_y = mainwindow.height()
+    mainwindow.move(
+                desk_x / 2 - main_x / 2 + deskrect.left(),
+                desk_y / 2 - main_y / 2 + deskrect.top(),
+                )
 
 
 def autosave():
@@ -1797,6 +1792,7 @@ if font:
     app.setFont(font)
 
 mainwindow = MainWindow()
+mpvwidget = mainwindow.mpvwidget
 
 mainlayout = QVBoxLayout()
 mainlayout.setContentsMargins(0, 0, 0, 0)
@@ -1810,7 +1806,7 @@ commentlistview.setModel(commentmodel)
 
 mainwindowsplitter = QSplitter(mainwindow.centralWidget())
 mainwindowsplitter.setOrientation(Qt.Vertical)
-mainwindowsplitter.addWidget(mainwindow.mpvwindow)
+mainwindowsplitter.addWidget(mpvwidget)
 mainwindowsplitter.addWidget(commentlistview)
 mainwindowsplitter.setStretchFactor(0, 2)
 mainwindowsplitter.setStretchFactor(1, 0)
@@ -1821,40 +1817,16 @@ mainwindow.centralWidget().setLayout(mainlayout)
 mainwindow.show()
 
 
-# Resize mainwindow and mpv to make the video take exactly 66.6%
-# of the available space on the screen (= 720p on a 1080p screen)
-size_x = int(QDesktopWidget().screenGeometry(mainwindow).width() * (2/3))
-size_y = int(QDesktopWidget().screenGeometry(mainwindow).width()/16*9 * (2/3))
-# I have no idea why it has to be called
-# two times to work this time
-resizeVideo(size_x, size_y)
-resizeVideo(size_x, size_y)
-
-# Move mainwidow to center
-deskrect = QDesktopWidget().screenGeometry(
-                                QDesktopWidget().screenNumber(QCursor.pos())
-                                )
-desk_x = deskrect.width()
-desk_y = deskrect.height()
-main_x = mainwindow.width()
-main_y = mainwindow.height()
-mainwindow.move(
-            desk_x / 2 - main_x / 2 + deskrect.left(),
-            desk_y / 2 - main_y / 2 + deskrect.top(),
-            )
-mainwindowgeo = mainwindow.geometry()
-centralwidgetgeo = mainwindow.centralWidget().geometry()
-
 mainwindoweventfilter = MainWindowEventFilter()
 mainwindow.installEventFilter(mainwindoweventfilter)
-mpvwindoweventfilter = MpvWindowEventFilter()
-mainwindow.mpvwindow.installEventFilter(mpvwindoweventfilter)
+mpvwidgeteventfilter = MpvWidgetEventFilter()
+mpvwidget.installEventFilter(mpvwidgeteventfilter)
 
 # Create config files for mpv if they are not present
 checkMpvConf()
 
-mp = MPV(
-        wid=str(int(mainwindow.mpvwindow.winId())),
+mp = mpv.MPV(
+        wid=str(int(mpvwidget.winId())),
         keep_open="yes",
         idle="yes",
         osc="yes",
