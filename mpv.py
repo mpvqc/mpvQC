@@ -722,7 +722,7 @@ ALL_PROPERTIES = {
         'speed':                        (float,  'rw'),
         'filename':                     (bytes,  'r'),
         'file-size':                    (int,    'r'),
-        'path':                         (bytes,  'r'),
+        'path':                         (str,  'r'),
         'media-title':                  (bytes,  'r'),
         'stream-pos':                   (int,    'rw'),
         'stream-end':                   (int,    'r'),

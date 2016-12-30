@@ -202,12 +202,12 @@ msgid "Do you really want to open a new QC document without saving the old one?"
 msgstr "Möchten Sie wirklich ein neues QC-Dokument öffnen, ohne das alte zu speichern?"
 
 #: mpvQC.py:1330
-msgid "Open QC document"
+msgid "Open QC Document"
 msgstr "QC-Dokument öffnen"
 
 #: mpvQC.py:1332
-msgid "QC documents (*.txt *.qcr);;All files (*.*)"
-msgstr "QC-Dokumente (*.txt *.qcr);;Alle Dateien (*.*)"
+msgid "QC documents (*.txt);;All files (*.*)"
+msgstr "QC-Dokumente (*.txt);;Alle Dateien (*.*)"
 
 #: mpvQC.py:1358 mpvQC.py:1374
 msgid "Not a valid QC document!"
@@ -252,20 +252,12 @@ msgstr ""
 "Bitte korrigieren Sie das Dokument, bevor Sie erneut versuchen es zu öffnen."
 
 #: mpvQC.py:1399
-msgid "Open video file"
+msgid "Open Video File"
 msgstr "Videodatei öffnen"
 
 #: mpvQC.py:1401
 msgid "Video files (*.mkv *.mp4);;All files (*.*)"
 msgstr "Videodateien (*.mkv *.mp4);;Alle Dateien (*.*)"
-
-#: mpvQC.py:1424 mpvQC.py:1431 mpvQC.py:1439
-msgid "Save QC document"
-msgstr "QC-Dokument speichern"
-
-#: mpvQC.py:1426 mpvQC.py:1433 mpvQC.py:1441
-msgid "QC documents (*.txt *.qcr)"
-msgstr "QC-Dokumente (*.txt *.qcr)"
 
 msgid "There is a new version of {} available ({}).<br>Visit <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a> to download it."
 msgstr "Es gibt eine neue Version von {} ({}).<br> Gehen Sie auf <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a>, um sie herunterzuladen."
@@ -300,9 +292,24 @@ msgstr "Nichtproportionale Schriftart ..."
 msgid "Open Network Stream..."
 msgstr "Netzwerkstream öffnen ..."
 
-msgid "Open network stream"
+msgid "Open Network Stream"
 msgstr "Netzwerkstream öffnen"
 
 msgid "Enter URL"
 msgstr "URL eingeben"
+
+msgid "Nickname"
+msgstr "Nickname"
+
+msgid "Comment Types"
+msgstr "Kommentartypen"
+
+msgid "Autosave Interval"
+msgstr "Autosaveintervall"
+
+msgid "Timestamp"
+msgstr "Timestamp"
+
+msgid "Comment Type"
+msgstr "Kommentartyp"
 

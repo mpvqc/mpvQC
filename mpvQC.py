@@ -62,8 +62,8 @@ class MainWindow(QMainWindow):
         closeaction.setShortcut("Ctrl+Q")
         videoopenaction = QAction(_("Open Video File..."), self)
         videoopenaction.setShortcut("Ctrl+Shift+O")
-        streamopenaction = QAction(_("Open Network Stream..."), self)
-        streamopenaction.setShortcut("Ctrl+Shift+Alt+O")
+        networkopenaction = QAction(_("Open Network Stream..."), self)
+        networkopenaction.setShortcut("Ctrl+Shift+Alt+O")
         videoresizeaction = QAction(_("Resize Video to its Original Resolution"), self)
         videoresizeaction.setShortcut("Ctrl+R")
         nicknameaction = QAction(_("Nickname..."), self)
@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
         saveasaction.triggered.connect(saveQcFileAs)
         closeaction.triggered.connect(self.closeEvent)
         videoopenaction.triggered.connect(openVideoFile)
-        streamopenaction.triggered.connect(openVideoStream)
+        networkopenaction.triggered.connect(openNetworkStream)
         videoresizeaction.triggered.connect(resizeVideo)
         nicknameaction.triggered.connect(openOptionsDialogNickname)
         commenttypeaction.triggered.connect(openOptionsDialogCommentTypes)
@@ -139,7 +139,7 @@ class MainWindow(QMainWindow):
         filemenu.addAction(closeaction)
         videomenu = topmenubar.addMenu(_("Video"))
         videomenu.addAction(videoopenaction)
-        videomenu.addAction(streamopenaction)
+        videomenu.addAction(networkopenaction)
         videomenu.addSeparator()
         videomenu.addAction(videoresizeaction)
 
@@ -176,7 +176,7 @@ class MainWindow(QMainWindow):
         self.mpvwidget.addAction(saveasaction)
         self.mpvwidget.addAction(closeaction)
         self.mpvwidget.addAction(videoopenaction)
-        self.mpvwidget.addAction(streamopenaction)
+        self.mpvwidget.addAction(networkopenaction)
         self.mpvwidget.addAction(videoresizeaction)
 
         self.setAcceptDrops(True)
@@ -447,7 +447,8 @@ class TextEditOptionDialog(QDialog):
     def __init__(self, parent, relativeconfpath):
         super(TextEditOptionDialog, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.setWindowFlags(self.windowFlags()&~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(dialogwindowflags)
+        self.setWindowTitle(relativeconfpath)
         self.conf = path.join(configlocation, relativeconfpath)
         with open(self.conf, "r", encoding="utf-8") as configfile:
             config = configfile.read()
@@ -475,7 +476,8 @@ class AboutDialog(QDialog):
     def __init__(self, parent):
         super(AboutDialog, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.setWindowFlags(self.windowFlags()&~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(dialogwindowflags)
+        self.setWindowTitle(_("About"))
         self.resize(300, 300)
         self.layout = QVBoxLayout()
         self.tabwidget = QTabWidget()
@@ -576,7 +578,8 @@ class TimestampDialog(QDialog):
     def __init__(self, parent, index):
         super(TimestampDialog, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.setWindowFlags(self.windowFlags()&~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(dialogwindowflags)
+        self.setWindowTitle(_("Timestamp"))
         self.index = index
         self.timestampdialoglayout = QVBoxLayout()
         self.groupboxlayout = QHBoxLayout()
@@ -638,7 +641,8 @@ class CommentTypeDialog(QDialog):
     def __init__(self, parent, index):
         super(CommentTypeDialog, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose, True)
-        self.setWindowFlags(self.windowFlags()&~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(dialogwindowflags)
+        self.setWindowTitle(_("Comment Type"))
         self.index = index
         self.commenttypedialoglayout = QVBoxLayout()
         self.commenttypedialoglayout.setContentsMargins(0, 0, 0, 0)
@@ -867,7 +871,7 @@ def checkMpvConf():
 # Video #
 #########
 
-# HQ preset, uses Spline36 for scaling
+# HQ preset, uses Spline36 for upscaling and Mitchell-Netravali for downscaling
 # Debanding is disabled beacause we don't want to alter the video while doing quality control
 vo=opengl
 profile=opengl-hq
@@ -1111,9 +1115,10 @@ def setOption(option, value):
 def openOptionsDialogNickname():
     value = QInputDialog.getText(
                         mainwindow,
+                        _("Nickname"),
                         _("Set nickname"),
-                        _("Set nickname"),
-                        text = qcauthor,
+                        text=qcauthor,
+                        flags=Qt.WindowFlags(dialogwindowflags),
                         )[0]
     if value:
         setOption("nickname", value)
@@ -1122,9 +1127,10 @@ def openOptionsDialogNickname():
 def openOptionsDialogCommentTypes():
     value = QInputDialog.getText(
                         mainwindow,
+                        _("Comment Types"),
                         _("Set comment types (comma separated list)"),
-                        _("Set comment types (comma separated list)"),
-                        text = ",".join(commenttypeoptions),
+                        text=",".join(commenttypeoptions),
+                        flags=Qt.WindowFlags(dialogwindowflags),
                         )[0]
     if value:
         setOption("commenttypes", value)
@@ -1133,9 +1139,10 @@ def openOptionsDialogCommentTypes():
 def openOptionsDialogAutosaveInterval():
     value = QInputDialog.getText(
                         mainwindow,
+                        _("Autosave Interval"),
                         _("Set autosave interval in minutes (0 to deactivate)"),
-                        _("Set autosave interval in minutes (0 to deactivate)"),
-                        text = str(autosaveinterval),
+                        text=str(autosaveinterval),
+                        flags=Qt.WindowFlags(dialogwindowflags),
                         )[0]
     if value:
         setOption("autosaveinterval", value)
@@ -1144,6 +1151,7 @@ def openOptionsDialogAutosaveInterval():
 def openOptionsDialogFont():
     oldfont = app.font()
     newfont, changed = QFontDialog.getFont(oldfont, mainwindow)
+    print(newfont, changed)
     if changed:
         setOption("font", newfont)
 
@@ -1393,9 +1401,9 @@ def openQcFile(filename=None):
     if not filename:
         filename = QFileDialog.getOpenFileName(
                                     mainwindow,
-                                    _("Open QC document"),
+                                    _("Open QC Document"),
                                     "",
-                                    _("QC documents (*.txt *.qcr);;All files (*.*)"),
+                                    _("QC documents (*.txt);;All files (*.*)"),
                                     )[0]
     if not filename:
         return
@@ -1463,7 +1471,7 @@ def openVideoFile(filename=None):
     if not filename:
         filename = QFileDialog.getOpenFileName(
                             mainwindow,
-                            _("Open video file"),
+                            _("Open Video File"),
                             "",
                             _("Video files (*.mkv *.mp4);;All files (*.*)"),
                             )[0]
@@ -1474,13 +1482,14 @@ def openVideoFile(filename=None):
         setPause(False)
 
 
-def openVideoStream(url=None):
+def openNetworkStream(url=None):
     exitFullscreen()
     if not url:
         url = QInputDialog.getText(
                             mainwindow,
-                            _("Open network stream"),
+                            _("Open Network Stream"),
                             _("Enter URL"),
+                            flags=Qt.WindowFlags(dialogwindowflags),
                             )[0]
     if url:
         mp.command("loadfile", url, "replace")
@@ -1499,32 +1508,21 @@ def saveQcFileAs():
     currentvideofile = mp.path
     if currentvideofile and not currentqcfile:
         basename = path.basename(currentvideofile)
-        basename = "[QC]_{}_{}".format(path.splitext(basename)[0], qcauthor)
+        basename = "[QC]_{}_{}.txt".format(path.splitext(basename)[0], qcauthor)
         dirname = path.dirname(currentvideofile)
-        filename = QFileDialog.getSaveFileName(
-                                    mainwindow,
-                                    _("Save QC document"),
-                                    path.join(dirname, basename),
-                                    _("QC documents (*.txt *.qcr)"),
-                                    )[0]
+        defpath = path.join(dirname, basename)
     elif currentqcfile:
-        filename = QFileDialog.getSaveFileName(
-                                mainwindow,
-                                _("Save QC document"),
-                                currentqcfile,
-                                _("QC documents (*.txt *.qcr)"),
-                                )[0]
+        defpath = currentqcfile
     else:
-        basename = "[QC]_UNNAMED_{}".format(qcauthor)
-        filename = QFileDialog.getSaveFileName(
-                                mainwindow,
-                                _("Save QC document"),
-                                basename,
-                                _("QC documents (*.txt *.qcr)"),
-                                )[0]
-    if not filename:
-        return
-    writeQcFile(filename)
+        defpath = "[QC]_UNNAMED_{}.txt".format(qcauthor)
+    filename = QFileDialog.getSaveFileName(
+                            mainwindow,
+                            _("Save QC Document"),
+                            defpath,
+                            _("QC documents (*.txt);;All files (*.*)"),
+                            )[0]
+    if filename:
+        writeQcFile(filename)
 
 
 def writeQcFile(filename=None, autosave=False):
@@ -1790,6 +1788,9 @@ if theme.startswith("fusion") or (not sys.platform.startswith("linux") and not t
         theme = "fusion"
 if font:
     app.setFont(font)
+
+dialogwindowflags = (Qt.Dialog | Qt.CustomizeWindowHint
+                     | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
 mainwindow = MainWindow()
 mpvwidget = mainwindow.mpvwidget
