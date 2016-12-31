@@ -1588,11 +1588,6 @@ def cycleFullscreen():
         mainwindowsplitter.setVisible(False)
         mainwindow.menuBar().setVisible(False)
         mainwindow.showFullScreen()
-        # Needed because if the video is paused, mpv won't repaint
-        # the display until something else happens, like triggering
-        # the osd via mouse movement
-        # TODO: Find a better way to do this
-        mp.command("mouse", 0, 0)
         showCursor()
     else:
         mainwindow.showNormal()
@@ -1600,11 +1595,6 @@ def cycleFullscreen():
         mainwindowsplitter.setVisible(True)
         mainwindow.menuBar().setVisible(True)
         commentlistview.verticalScrollBar().setValue(commentlistview.scrollposition)
-        # Needed because if the video is paused, mpv won't repaint
-        # the display until something else happens, like triggering
-        # the osd via mouse movement
-        # TODO: Find a better way to do this
-        mp.command("mouse", 3, 3)
         showCursor()
 
 
@@ -1630,16 +1620,6 @@ def hideCursor():
 
 def afterResize():
     resizeCommentListViewToContents()
-    try:
-        # Needed because if the video is paused, mpv won't repaint
-        # the display until something else happens, like triggering
-        # the osd via mouse movement
-        # TODO: Find a better way to do this
-        mp.command("mouse", 0, randint(0, 20))
-    except NameError:
-        # At the beginning the mpvwidget is resized
-        # before mpv is started
-        pass
 
 
 def resizeVideo(width=None, height=None):
