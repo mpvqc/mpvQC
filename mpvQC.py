@@ -1151,7 +1151,6 @@ def openOptionsDialogAutosaveInterval():
 def openOptionsDialogFont():
     oldfont = app.font()
     newfont, changed = QFontDialog.getFont(oldfont, mainwindow)
-    print(newfont, changed)
     if changed:
         setOption("font", newfont)
 
@@ -1683,7 +1682,7 @@ def mpvLogHandler(loglevel, component, message):
     print("[{}] {}: {}".format(loglevel, component, message))
 
 
-v = "mpvQC 0.4.0"
+v = "mpvQC 0.5.0"
 
 app = QApplication(sys.argv)
 locale.setlocale(locale.LC_NUMERIC, "C")
