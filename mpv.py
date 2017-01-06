@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2016 jaseg
+# Copyright (C) 2014-2017 jaseg
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -37,7 +37,13 @@ else:
     # still better than segfaulting, we are setting LC_NUMERIC to "C".
     locale.setlocale(locale.LC_NUMERIC, 'C')
 
-    backend = CDLL(ctypes.util.find_library('mpv'))
+    sofile = ctypes.util.find_library('mpv')
+    if sofile is None:
+        raise OSError("Cannot find libmpv in the usual places. Depending on your distro, you may try installing an "
+                "mpv-devel or mpv-libs package. If you have libmpv around but this script can't find it, maybe consult "
+                "the documentation for ctypes.util.find_library which this script uses to look up the library "
+                "filename.")
+    backend = CDLL(sofile)
     fs_enc = sys.getfilesystemencoding()
 
 
@@ -722,7 +728,7 @@ ALL_PROPERTIES = {
         'speed':                        (float,  'rw'),
         'filename':                     (bytes,  'r'),
         'file-size':                    (int,    'r'),
-        'path':                         (str,  'r'),
+        'path':                         (str,    'r'),
         'media-title':                  (bytes,  'r'),
         'stream-pos':                   (int,    'rw'),
         'stream-end':                   (int,    'r'),
