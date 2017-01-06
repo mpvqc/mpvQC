@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2016 Frechdachs <frechdachs@rekt.cc>
+# Copyright (C) 2016-2017 Frechdachs <frechdachs@rekt.cc>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -487,7 +487,7 @@ class AboutDialog(QDialog):
         self.about = QTextBrowser()
         self.about.setOpenExternalLinks(True)
         self.about.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-        self.about.setHtml(_("<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Based on {} and ffmpeg {}</p><p>Copyright © 2016 Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>").format(v, platform.architecture()[0], v.split(" ")[0], mp.mpv_version, mp.ffmpeg_version))
+        self.about.setHtml(_("<h1 style='text-align:center;'>{} - {}</h1><p><b>{}</b> is a free, open source and <b>libmpv</b> based application for the quick and easy creation of quality control reports of video files.</p><p>Based on {} and ffmpeg {}</p><p>Copyright © {} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;</p><p><a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a></p>").format(v, platform.architecture()[0], v.split(" ")[0], mp.mpv_version, mp.ffmpeg_version, "2016-2017"))
 
         self.credits = QTextBrowser()
         self.credits.setTextInteractionFlags(Qt.NoTextInteraction)
@@ -1688,7 +1688,7 @@ def mpvLogHandler(loglevel, component, message):
     print("[{}] {}: {}".format(loglevel, component, message))
 
 
-v = "mpvQC 0.5.0"
+v = "mpvQC 0.5.1"
 
 app = QApplication(sys.argv)
 locale.setlocale(locale.LC_NUMERIC, "C")
