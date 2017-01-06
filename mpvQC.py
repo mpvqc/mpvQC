@@ -877,7 +877,8 @@ vo=opengl
 profile=opengl-hq
 deband=no
 
-# Potentially higher quality video output, might be too demanding for old or low end hardware
+# Potentially higher quality video output
+# Might be too demanding for old or low end hardware
 #scale=ewa_lanczossharp
 #cscale=ewa_lanczossoft
 #dscale=lanczos
@@ -889,6 +890,11 @@ deband=no
 #############
 # Subtitles #
 #############
+
+# This disables the removal of very small gaps between subtitle lines
+# This might be a nice feature, but it hides flaws in the script
+# We don't want that while doing quality control
+sub-fix-timing=no
 
 # This makes sure that the current subtitle line is loaded after seeking
 demuxer-mkv-subtitle-preroll=yes
