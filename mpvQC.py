@@ -206,10 +206,16 @@ class MainWindow(QMainWindow):
         filename = event.mimeData().urls()[0].toLocalFile()
         if not path.isfile(filename):
             return
-        if mpvwidget.geometry().contains(event.pos()):
-            openVideoFile(filename)
-        else:
+        if not mpvwidget.geometry().contains(event.pos()):
             openQcFile(filename)
+        elif path.splitext(filename)[1].lower() in [".ass", ".ssa", ".srt", ".sup",
+                                                    ".idx", ".utf", ".utf8", ".utf-8",
+                                                    ".smi", ".rt", ".aqt", ".jss",
+                                                    ".js", ".mks", ".vtt", ".sub",
+                                                    ".scc"]:
+            addSubFile(filename)
+        else:
+            openVideoFile(filename)
 
     def showEvent(self, event):
         # Resize mainwindow and mpv to make the video take exactly 66.6%
@@ -981,7 +987,7 @@ S screenshot window
 b vf toggle sub
 
 # This displays statistics of the currently played file
-i show_text "${osd-ass-cc/0}{\\\\fs11}{\\\\bord1}{\\\\3c&H262626&}{\\\\alpha&H11}\\\\N{\\\\b1}File:{\\\\b0}\\\\h\\\\h${osd-ass-cc/1}${filename}${osd-ass-cc/0}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}${?media-title:Title:\\\\h\\\\h}{\\\\b0}${osd-ass-cc/1}${?media-title:${media-title}}${osd-ass-cc/0}${?chapter:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}{\\\\b1}${?chapter:Chapter:\\\\h\\\\h}{\\\\b0}${osd-ass-cc/1}${?chapter:${chapter}}${osd-ass-cc/0}${?cache-used:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}{\\\\b1}${?cache-used:Cache:\\\\h\\\\h}{\\\\b0}${?cache-used:${cache-used}\\\\h\\\\h+${demuxer-cache-duration} sec}\\\\N\\\\N{\\\\b1}Video:{\\\\b0}\\\\h\\\\h${video-codec}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}A-V:{\\\\b0}\\\\h\\\\h${avsync}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Dropped:{\\\\b0}\\\\h\\\\h${drop-frame-count}\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}VO:{\\\\b0}\\\\h\\\\h${vo-drop-frame-count}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}FPS:{\\\\b0}\\\\h\\\\h${container-fps} (specified)\\\\h\\\\h${estimated-vf-fps} (estimated)\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Native Resolution:{\\\\b0}\\\\h\\\\h${video-params/w} x ${video-params/h}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Window Scale:{\\\\b0}\\\\h\\\\h${window-scale}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Aspect Ratio:{\\\\b0}\\\\h\\\\h${video-params/aspect}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Pixel format:{\\\\b0}\\\\h\\\\h${video-params/pixelformat}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Colormatrix:{\\\\b0}\\\\h\\\\h${video-params/colormatrix}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Primaries:{\\\\b0}\\\\h\\\\h${video-params/primaries}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Levels:{\\\\b0}\\\\h\\\\h${video-params/colorlevels}${?packet-video-bitrate:${!=packet-video-bitrate==0:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}}{\\\\b1}${?packet-video-bitrate:${!=packet-video-bitrate==0:Bitrate:\\\\h\\\\h}}{\\\\b0}${?packet-video-bitrate:${!=packet-video-bitrate==0:${packet-video-bitrate} kbps}}\\\\N\\\\N{\\\\b1}Audio:{\\\\b0}\\\\h\\\\h${audio-codec}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Sample Rate:{\\\\b0}\\\\h\\\\h${audio-params/samplerate}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Channels:{\\\\b0}\\\\h\\\\h${audio-params/channel-count}${?packet-audio-bitrate:${!=packet-audio-bitrate==0:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}}{\\\\b1}${?packet-audio-bitrate:${!=packet-audio-bitrate==0:Bitrate:\\\\h\\\\h}}{\\\\b0}${?packet-audio-bitrate:${!=packet-audio-bitrate==0:${packet-audio-bitrate} kbps}}" 3000
+i show_text "${osd-ass-cc/0}{\\\\fs11}{\\\\bord1}{\\\\3c&H262626&}{\\\\alpha&H11}\\\\N{\\\\b1}File:{\\\\b0}\\\\h\\\\h${osd-ass-cc/1}${filename}${osd-ass-cc/0}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}${?media-title:Title:\\\\h\\\\h}{\\\\b0}${osd-ass-cc/1}${?media-title:${media-title}}${osd-ass-cc/0}${?chapter:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}{\\\\b1}${?chapter:Chapter:\\\\h\\\\h}{\\\\b0}${osd-ass-cc/1}${?chapter:${chapter}}${osd-ass-cc/0}${?cache-used:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}{\\\\b1}${?cache-used:Cache:\\\\h\\\\h}{\\\\b0}${?cache-used:${cache-used}\\\\h\\\\h+${demuxer-cache-duration} sec}\\\\N\\\\N{\\\\b1}Video:{\\\\b0}\\\\h\\\\h${video-codec}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}A-V:{\\\\b0}\\\\h\\\\h${avsync}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Dropped:{\\\\b0}\\\\h\\\\h${decoder-frame-drop-count}\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}VO:{\\\\b0}\\\\h\\\\h${frame-drop-count}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}FPS:{\\\\b0}\\\\h\\\\h${container-fps} (specified)\\\\h\\\\h${estimated-vf-fps} (estimated)\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Native Resolution:{\\\\b0}\\\\h\\\\h${video-params/w} x ${video-params/h}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Window Scale:{\\\\b0}\\\\h\\\\h${window-scale}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Aspect Ratio:{\\\\b0}\\\\h\\\\h${video-params/aspect}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Pixel format:{\\\\b0}\\\\h\\\\h${video-params/pixelformat}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Colormatrix:{\\\\b0}\\\\h\\\\h${video-params/colormatrix}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Primaries:{\\\\b0}\\\\h\\\\h${video-params/primaries}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Levels:{\\\\b0}\\\\h\\\\h${video-params/colorlevels}${?packet-video-bitrate:${!=packet-video-bitrate==0:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}}{\\\\b1}${?packet-video-bitrate:${!=packet-video-bitrate==0:Bitrate:\\\\h\\\\h}}{\\\\b0}${?packet-video-bitrate:${!=packet-video-bitrate==0:${packet-video-bitrate} kbps}}\\\\N\\\\N{\\\\b1}Audio:{\\\\b0}\\\\h\\\\h${audio-codec}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Sample Rate:{\\\\b0}\\\\h\\\\h${audio-params/samplerate}\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h{\\\\b1}Channels:{\\\\b0}\\\\h\\\\h${audio-params/channel-count}${?packet-audio-bitrate:${!=packet-audio-bitrate==0:\\\\N\\\\h\\\\h\\\\h\\\\h\\\\h}}{\\\\b1}${?packet-audio-bitrate:${!=packet-audio-bitrate==0:Bitrate:\\\\h\\\\h}}{\\\\b0}${?packet-audio-bitrate:${!=packet-audio-bitrate==0:${packet-audio-bitrate} kbps}}" 3000
 """)
 
 
@@ -1499,6 +1505,11 @@ def openNetworkStream(url=None):
     if url:
         mp.command("loadfile", url, "replace")
         setPause(False)
+
+
+def addSubFile(filename):
+    if mp.path:
+        mp.command("sub-add", filename, "select")
 
 
 def saveQcFile():
