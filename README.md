@@ -13,7 +13,7 @@
 
 ## Dependencies
 
-- [libmpv](https://github.com/mpv-player/mpv) (0.21.0 or later)
+- [libmpv](https://github.com/mpv-player/mpv) (0.28.0 or later)
 - Python 3.4 or later
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - PyQt5
