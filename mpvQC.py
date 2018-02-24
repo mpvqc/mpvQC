@@ -68,6 +68,10 @@ class MainWindow(QMainWindow):
         nicknameaction = QAction(_("Nickname..."), self)
         commenttypeaction = QAction(_("Comment Types..."), self)
         autosaveintervalaction = QAction(_("Autosave Interval..."), self)
+        writevideopathaction = QAction(_("Write Video Path to QC Document"), self)
+        writevideopathaction.setCheckable(True)
+        if writevideopath:
+            writevideopathaction.setChecked(True)
         fontaction = QAction(_("Font..."), self)
         monospacefontaction = QAction(_("Monospace Font..."), self)
         inputconfaction = QAction(_("Edit input.conf..."), self)
@@ -115,6 +119,7 @@ class MainWindow(QMainWindow):
         nicknameaction.triggered.connect(openOptionsDialogNickname)
         commenttypeaction.triggered.connect(openOptionsDialogCommentTypes)
         autosaveintervalaction.triggered.connect(openOptionsDialogAutosaveInterval)
+        writevideopathaction.toggled.connect(partial(setOption, "writevideopath"))
         fontaction.triggered.connect(openOptionsDialogFont)
         monospacefontaction.triggered.connect(openOptionsDialogMonospaceFont)
         inputconfaction.triggered.connect(openInputConfOptionDialog)
@@ -146,6 +151,7 @@ class MainWindow(QMainWindow):
         optionsmenu.addAction(nicknameaction)
         optionsmenu.addAction(commenttypeaction)
         optionsmenu.addAction(autosaveintervalaction)
+        optionsmenu.addAction(writevideopathaction)
         optionsmenu.addSeparator()
         optionsmenu.addAction(fontaction)
         optionsmenu.addAction(monospacefontaction)
@@ -999,18 +1005,19 @@ def readOptionsFile():
     global font
     global monospacefont
     global theme
+    global writevideopath
     if path.isfile(optionsfile):
         with open(optionsfile, "r", encoding="utf-8") as of:
             optionsfilecontents = of.readlines()
             for line in optionsfilecontents:
                 if line.upper().startswith("AUTHOR"):
                     qcauthor = "=".join(line.split("=")[1:]).strip()
-                if line.upper().startswith("TYPES"):
+                elif line.upper().startswith("TYPES"):
                     commenttypeoptions = "".join(
                                                 line.strip()
                                                 .split("=")[1:]
                                                 ).strip(" ,").split(",")
-                if line.upper().startswith("AUTOSAVEINTERVAL"):
+                elif line.upper().startswith("AUTOSAVEINTERVAL"):
                     try:
                         autosaveinterval = float(
                                             "=".join(line.split("=")[1:])
@@ -1018,16 +1025,20 @@ def readOptionsFile():
                                             )
                     except ValueError:
                         pass
-                if line.upper().startswith("LANGUAGE"):
+                elif line.upper().startswith("LANGUAGE"):
                     language = "=".join(line.split("=")[1:]).strip()
-                if line.upper().startswith("FONT"):
+                elif line.upper().startswith("FONT"):
                     font = QFont()
                     font.fromString("=".join(line.split("=")[1:]).strip())
-                if line.upper().startswith("MONOSPACEFONT"):
+                elif line.upper().startswith("MONOSPACEFONT"):
                     monospacefont = QFont()
                     monospacefont.fromString("=".join(line.split("=")[1:]).strip())
-                if line.upper().startswith("THEME"):
+                elif line.upper().startswith("THEME"):
                     theme = "=".join(line.split("=")[1:]).strip()
+                elif line.upper().startswith("WRITEVIDEOPATH"):
+                    writevideopathstring = "=".join(line.split("=")[1:]).strip()
+                    writevideopath = writevideopathstring == "yes"
+
     else:
         with open(optionsfile, "w", encoding="utf-8") as of:
             of.write("")
@@ -1082,6 +1093,7 @@ def setOption(option, value):
     global optionsfile
     global font
     global monospacefont
+    global writevideopath
     if option == "nickname":
         writeOptionToFile("AUTHOR", value)
         qcauthor = value
@@ -1121,6 +1133,9 @@ def setOption(option, value):
                         _("Information"),
                         _("The changes will only take effect after restarting the program."),
                         ).exec_()
+    elif option == "writevideopath":
+        writeOptionToFile("WRITEVIDEOPATH", "yes" if value else "no")
+        writevideopath = value
 
 
 def openOptionsDialogNickname():
@@ -1434,9 +1449,9 @@ def openQcFile(filename=None):
                     commenttypedata = rawdata[1].strip("[ ")
                     commentdata = "]".join(rawdata[2:]).strip()
                     comments.append((timestampdata, commenttypedata, commentdata))
-                if line.startswith("[DATA]"):
+                elif line.startswith("[DATA]"):
                     datafound = True
-                if line.startswith("path: "):
+                elif line.startswith("path: "):
                     videofile = " ".join(line.strip().split(" ")[1:])
         if not datafound:
             WarningMessageBox(mainwindow, _("Warning"), _("Not a valid QC document!")).exec_()
@@ -1557,7 +1572,7 @@ def writeQcFile(filename=None, autosave=False):
                         "generator: {}\n".format(v),
                         ])
     currentvideofile = mp.path
-    if currentvideofile and "://" not in currentvideofile:
+    if writevideopath and currentvideofile and "://" not in currentvideofile:
         qcfilecontents.append("path: {}\n".format(currentvideofile))
     qcfilecontents.extend([
                         "\n",
@@ -1732,6 +1747,7 @@ language = None
 font = None
 monospacefont = None
 theme = ""
+writevideopath = True
 
 readOptionsFile()
 

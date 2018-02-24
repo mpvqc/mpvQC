@@ -313,3 +313,6 @@ msgstr "Timestamp"
 msgid "Comment Type"
 msgstr "Kommentartyp"
 
+msgid "Write Video Path to QC Document"
+msgstr "Videopfad in QC-Dokument schreiben"
+
