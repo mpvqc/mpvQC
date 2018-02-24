@@ -35,7 +35,6 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from operator import itemgetter
 from traceback import format_exception
 from functools import partial
-from random import randint
 from pathlib import Path
 import gettext
 import locale
@@ -1842,7 +1841,7 @@ mp = mpv.MPV(
 autosavetimer = QTimer()
 autosavetimer.timeout.connect(autosave)
 if autosaveinterval > 0:
-    autosavetimer.start(int(60000*autosaveinterval))
+    autosavetimer.start(int(60000 * autosaveinterval))
 
 
 mainwindow.setWindowTitle(v)
