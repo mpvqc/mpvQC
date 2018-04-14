@@ -59,12 +59,14 @@ class MainWindow(QMainWindow):
         saveasaction.setShortcut("Ctrl+Shift+S")
         closeaction = QAction(_("Exit"), self)
         closeaction.setShortcut("Ctrl+Q")
+
         videoopenaction = QAction(_("Open Video File..."), self)
         videoopenaction.setShortcut("Ctrl+Shift+O")
         networkopenaction = QAction(_("Open Network Stream..."), self)
         networkopenaction.setShortcut("Ctrl+Shift+Alt+O")
         videoresizeaction = QAction(_("Resize Video to its Original Resolution"), self)
         videoresizeaction.setShortcut("Ctrl+R")
+
         nicknameaction = QAction(_("Nickname..."), self)
         commenttypeaction = QAction(_("Comment Types..."), self)
         autosaveintervalaction = QAction(_("Autosave Interval..."), self)
@@ -104,6 +106,7 @@ class MainWindow(QMainWindow):
             germanaction.setChecked(True)
         else:
             englishaction.setChecked(True)
+
         updateaction = QAction(_("Check for Updates..."), self)
         aboutqtaction = QAction(_("About Qt"), self)
         aboutaction = QAction(_("About {}").format(v.split(" ")[0]), self)
@@ -1570,6 +1573,7 @@ def writeQcFile(filename=None, autosave=False):
                         "[FILE]\n",
                         "date: {} {}\n".format(datetoday, timetoday),
                         "generator: {}\n".format(v),
+                        "qc author: {}\n".format(qcauthor)
                         ])
     currentvideofile = mp.path
     if writevideopath and currentvideofile and "://" not in currentvideofile:
