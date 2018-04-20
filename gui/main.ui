@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QTableView" name="tableView"/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNew_QC_Document"/>
+    <addaction name="action_Open_QC_Document"/>
+    <addaction name="action_Save_QC_Document"/>
+    <addaction name="actionS_ave_QC_Document_As"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit_mpvQC"/>
+   </widget>
+   <widget class="QMenu" name="menu_Video">
+    <property name="title">
+     <string>Vi&amp;deo</string>
+    </property>
+    <addaction name="action_Open_Video_File"/>
+    <addaction name="actionOpen_Network_Stream"/>
+    <addaction name="separator"/>
+    <addaction name="action_Resize_Video_To_Its_Original_Resolutio"/>
+   </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>Optio&amp;ns</string>
+    </property>
+    <addaction name="action_Settings"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Abo&amp;ut</string>
+    </property>
+    <addaction name="action_Check_For_Updates"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout_Qt"/>
+    <addaction name="actionAbout_mpvqc"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Video"/>
+   <addaction name="menu_Settings"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNew_QC_Document">
+   <property name="text">
+    <string>&amp;New QC document</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_Open_QC_Document">
+   <property name="text">
+    <string>&amp;Open QC document ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_Save_QC_Document">
+   <property name="text">
+    <string>&amp;Save QC document</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionS_ave_QC_Document_As">
+   <property name="text">
+    <string>S&amp;ave QC document as ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="action_Exit_mpvQC">
+   <property name="text">
+    <string>&amp;Exit mpvQC</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_Open_Video_File">
+   <property name="text">
+    <string>Open &amp;video ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="actionOpen_Network_Stream">
+   <property name="text">
+    <string>Open &amp;network stream ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+O</string>
+   </property>
+  </action>
+  <action name="action_Resize_Video_To_Its_Original_Resolutio">
+   <property name="text">
+    <string>&amp;Resize video to original resolution</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="action_Check_For_Updates">
+   <property name="text">
+    <string>&amp;Check For Updates ...</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="actionAbout_mpvqc">
+   <property name="text">
+    <string>About &amp;mpvQC</string>
+   </property>
+  </action>
+  <action name="action_Settings">
+   <property name="text">
+    <string>&amp;Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
