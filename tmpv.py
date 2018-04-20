@@ -13,10 +13,8 @@ from src.mpvqc import MpvActionHandler
 # noinspection PyUnresolvedReferences,PyProtectedMember
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
 APPLICATION_VERSION = "0.0.1"
-APPLICATION_NAME = "mpvQC"
+APPLICATION_NAME = "mpv-qc"
 SYSTEM_LOCALE = locale.getdefaultlocale()[0]
-
-_ = lambda s: s
 
 
 class MpvWidget(QFrame):
@@ -61,8 +59,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
-    qtranslator = configuration.provide_translator()
-    app.installTranslator(qtranslator)
+    translator = configuration.get_translator()
+    app.installTranslator(translator)
     application = ApplicationWindow()
     application.show()
     print(QtCore.QCoreApplication.translate("Misc", "Translation"))

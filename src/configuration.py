@@ -1,9 +1,10 @@
 import io
 import json
 import sys
+from enum import Enum
 from os import path, getenv
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 from PyQt5.QtCore import QObject, QTranslator
 from appdirs import unicode
@@ -16,47 +17,46 @@ except NameError:
 from tmpv import DIRECTORY_PROGRAM, APPLICATION_NAME, APPLICATION_VERSION, SYSTEM_LOCALE
 
 
+class _Settings(Enum):
+    """Tuple: (json_key, default value)"""
+
+    VERSION = ("version", APPLICATION_VERSION)
+    AUTHOR = ("author", "author")
+    LANGUAGE = ("language", SYSTEM_LOCALE)
+    COMMENT_TYPES_ACTIVE = (
+        "comment_types_active", ["Spelling", "Punctuation", "Translation", "Phrasing", "Timing", "Typeset", "Note"])
+    COMMENT_TYPES_INACTIVE = ("comment_types_inactive", [])
+    AUTOSAVE_INTERVAL_SECONDS = ("autosave_interval_seconds", 90)
+    COMMENT_TABLE_ENTRY_FONT = ("comment_table_entry_font", "")
+    SOFTSUB_OVERWRITE_VIDEO_FONT_ENABLED = ("softsub_overwrite_video_font_enabled", False)
+    SOFTSUB_OVERWRITE_VIDEO_FONT_FONT = ("softsub_overwrite_video_font_font", "")
+
+
 class Configuration(QObject):
-    __jkey_mpvqc_version = "mpvQC_version"
-    __jkey_this_json_full_path = "this_json_full_path"
-    __jkey_author = "author"
-    __jkey_language = "language"
-    __jkey_comment_types_active = "comment_types_active"
-    __jkey_comment_types_inactive = "comment_types_inactive"
-    __jkey_autosave_interval_seconds = "autosave_interval_seconds"
-    __jkey_comment_table_entry_font = "comment_table_entry_font"
-    __jkey_softsub_overwrite_video_font_enabled = "softsub_overwrite_video_font_enabled"
-    __jkey_softsub_overwrite_video_font_font = "softsub_overwrite_video_font_font"
+    __CONFIG_PATH = None
 
-    __def_version = APPLICATION_VERSION
-    __def_author = "author"
-    __def_language = SYSTEM_LOCALE
-    __def_comment_types_active = ["Spelling", "Punctuation", "Translation", "Phrasing", "Timing", "Typeset", "Note"]
-    __def_comment_types_inactive = []
-    __def_autosave_interval_seconds = 90
-    __def_comment_table_entry_font = ""
-    __def_softsub_overwrite_video_font_enabled = False
-    __def_softsub_overwrite_video_font_font = ""
+    class Parser:
+        def __init__(self, dictionary: Dict):
+            self.dictionary = dictionary
 
-    def __init__(self, this_json_full_path: str, mpvqc_version: str, author: str, language: str,
-                 comment_types_active: List[str], comment_types_inactive: List[str], autosave_interval_seconds: int,
-                 comment_table_entry_font: str, softsub_overwrite_video_font_enabled: bool,
-                 softsub_overwrite_video_font_font: str):
-        #
+        def get(self, key: _Settings):
+            return self.dictionary.get(key.value[0], key.value[1])
+
+    def __init__(self):
         super().__init__()
-        self.mpvQC_version: str = mpvqc_version
-        self.this_json_full_path: str = this_json_full_path
-        self.author: str = author
-        self.language: str = language
-        self.comment_types_active = comment_types_active
-        self.comment_types_inactive = comment_types_inactive
-        self.autosave_interval_seconds = autosave_interval_seconds
-        self.comment_table_entry_font = comment_table_entry_font
-        self.softsub_overwrite_video_font_enabled = softsub_overwrite_video_font_enabled
-        self.softsub_overwrite_video_font_font = softsub_overwrite_video_font_font
+
+        self.version: str = None
+        self.author: str = None
+        self.language: str = None
+        self.comment_types_active: List[str] = None
+        self.comment_types_inactive: List[str] = None
+        self.autosave_interval_seconds: int = None
+        self.comment_table_entry_font: str = None
+        self.softsub_overwrite_video_font_enabled: bool = None
+        self.softsub_overwrite_video_font_font: str = None
 
     def save(self):
-        with io.open(self.this_json_full_path, 'w', encoding='utf8') as outfile:
+        with io.open(Configuration.__CONFIG_PATH, 'w', encoding='utf8') as outfile:
             str_ = json.dumps(self.__dict__, indent=4, separators=(',', ': '), ensure_ascii=False)
             outfile.write(to_unicode(str_))
 
@@ -71,27 +71,26 @@ class Configuration(QObject):
         Configuration.__map_dict_to_configuration({}, json_file).save()
 
     @staticmethod
-    def __map_dict_to_configuration(dict_map, json_file):
-        return Configuration(
-            this_json_full_path=dict_map.get(Configuration.__jkey_this_json_full_path, json_file),
-            mpvqc_version=dict_map.get(Configuration.__jkey_mpvqc_version, Configuration.__def_version),
-            author=dict_map.get(Configuration.__jkey_author, Configuration.__def_author),
-            language=dict_map.get(Configuration.__jkey_language, Configuration.__def_language),
-            comment_types_active=dict_map.get(Configuration.__jkey_comment_types_active,
-                                              Configuration.__def_comment_types_active),
-            comment_types_inactive=dict_map.get(Configuration.__jkey_comment_types_inactive,
-                                                Configuration.__def_comment_types_inactive),
-            autosave_interval_seconds=int(dict_map.get(Configuration.__jkey_autosave_interval_seconds,
-                                                       Configuration.__def_autosave_interval_seconds)),
-            comment_table_entry_font=dict_map.get(Configuration.__jkey_comment_table_entry_font,
-                                                  Configuration.__def_comment_table_entry_font),
-            softsub_overwrite_video_font_enabled=bool(
-                dict_map.get(Configuration.__jkey_softsub_overwrite_video_font_enabled,
-                             Configuration.__def_softsub_overwrite_video_font_enabled)),
-            softsub_overwrite_video_font_font=dict_map.get(
-                Configuration.__jkey_softsub_overwrite_video_font_font,
-                Configuration.__def_softsub_overwrite_video_font_font)
-        )
+    def __map_dict_to_configuration(dictionary, json_file):
+        Configuration.__CONFIG_PATH = json_file
+
+        c = Configuration()
+        d = Configuration.Parser(dictionary)
+        s = _Settings
+
+        c.version = d.get(s.VERSION)
+        c.author = d.get(s.AUTHOR)
+        c.language = d.get(s.LANGUAGE)
+
+        c.comment_types_active = d.get(s.COMMENT_TYPES_ACTIVE)
+        c.comment_types_inactive = d.get(s.COMMENT_TYPES_INACTIVE)
+
+        c.autosave_interval_seconds = int(d.get(s.AUTOSAVE_INTERVAL_SECONDS))
+        c.comment_table_entry_font = d.get(s.COMMENT_TABLE_ENTRY_FONT)
+
+        c.softsub_overwrite_video_font_enabled = bool(d.get(s.SOFTSUB_OVERWRITE_VIDEO_FONT_ENABLED))
+        c.softsub_overwrite_video_font_font = d.get(s.SOFTSUB_OVERWRITE_VIDEO_FONT_FONT)
+        return c
 
 
 class Paths:
@@ -105,8 +104,8 @@ class Paths:
         self.dir_program = DIRECTORY_PROGRAM
         self.dir_main_config = self.__find_dir_config()
 
-        self.__require_dir_base_plus(base=self.dir_main_config, plus=self.cfg)
-        self.__require_dir_base_plus(base=self.dir_main_config, plus=self.auto_save)
+        Paths.__require_dir_base_plus(base=self.dir_main_config, plus=self.cfg)
+        Paths.__require_dir_base_plus(base=self.dir_main_config, plus=self.auto_save)
         self.file_cfg = self.__find_file_options()
 
     def __find_dir_config(self):
@@ -131,12 +130,9 @@ class Paths:
             Configuration.create_default(json_file)
         return Configuration.load_from(json_file)
 
-    def __require_dir_base_plus(self, base, plus):
-        Paths.__create_dir_if_not_exists(path.join(base, plus))
-
     @staticmethod
-    def load() -> 'Paths':
-        return Paths()
+    def __require_dir_base_plus(base, plus):
+        Paths.__create_dir_if_not_exists(path.join(base, plus))
 
     @staticmethod
     def __create_dir_if_not_exists(p):
@@ -159,15 +155,14 @@ def get_config() -> Configuration:
 
 def get_paths() -> Paths:
     if __Holder.paths is None:
-        __Holder.paths = Paths.load()
+        __Holder.paths = Paths()
 
     return __Holder.paths
 
 
-_locale_structure = path.join(get_paths().dir_program, "locale", "{}", "LC_MESSAGES")
+def get_translator() -> QTranslator:
+    _locale_structure = path.join(get_paths().dir_program, "locale", "{}", "LC_MESSAGES")
 
-
-def provide_translator() -> QTranslator:
     q = QTranslator()
 
     trans_dir = _locale_structure.format(SYSTEM_LOCALE.upper())
