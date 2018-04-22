@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import mpv  # https://github.com/jaseg/python-mpv
+from src.mpv import mpv
 from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint, QTranslator
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
@@ -22,7 +22,7 @@ from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QAbstractItemView, QTableView, QStyledItemDelegate,
                             QVBoxLayout, QHBoxLayout, QDialog, QMessageBox,
-                            QLabel, QLineEdit, QTextEdit, QTextBrowser,
+                             QTextEdit, QTextBrowser,
                             QPushButton, QTabWidget, QGroupBox, QSpinBox,
                             QSplitter, QDesktopWidget, QFileDialog, QMenu,
                             QAction, QActionGroup, QStyleFactory, QFrame,
@@ -880,8 +880,7 @@ def checkMpvConf():
     inputconf = path.join(configlocation, "input.conf")
     if not path.isfile(mpvconf):
         with open(mpvconf, "w", encoding="utf-8") as configfile:
-            configfile.write(
-"""#########
+            configfile.write("""#########
 # Video #
 #########
 

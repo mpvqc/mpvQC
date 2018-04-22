@@ -6,8 +6,10 @@ from os import path, getenv
 from pathlib import Path
 from typing import List, Dict
 
-from PyQt5.QtCore import QObject, QTranslator
+from PyQt5.QtCore import QTranslator
 from appdirs import unicode
+
+from src import constants
 
 try:
     to_unicode = unicode
@@ -17,43 +19,52 @@ except NameError:
 from tmpv import DIRECTORY_PROGRAM, APPLICATION_NAME, APPLICATION_VERSION, SYSTEM_LOCALE
 
 
-class _Settings(Enum):
+class Settings(Enum):
     """Tuple: (json_key, default value)"""
 
     VERSION = ("version", APPLICATION_VERSION)
-    AUTHOR = ("author", "author")
+    NICKNAME = ("nickname", "nickname")
     LANGUAGE = ("language", SYSTEM_LOCALE)
-    COMMENT_TYPES_ACTIVE = (
-        "comment_types_active", ["Spelling", "Punctuation", "Translation", "Phrasing", "Timing", "Typeset", "Note"])
-    COMMENT_TYPES_INACTIVE = ("comment_types_inactive", [])
+    COMMENT_TYPES = (
+        "comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing", "Timing", "Typeset", "Note"])
     AUTOSAVE_INTERVAL_SECONDS = ("autosave_interval_seconds", 90)
     COMMENT_TABLE_ENTRY_FONT = ("comment_table_entry_font", "")
     SOFTSUB_OVERWRITE_VIDEO_FONT_ENABLED = ("softsub_overwrite_video_font_enabled", False)
     SOFTSUB_OVERWRITE_VIDEO_FONT_FONT = ("softsub_overwrite_video_font_font", "")
 
+    QC_DOC_WRITE_VIDEO_PATH_TO_FILE = ("qc_doc_write_video_path_to_file", True)
+    QC_DOC_WRITE_NICKNAME_TO_FILE = ("qc_doc_write_nick_name_to_file", True)
 
-class Configuration(QObject):
+    PLAYER_LAST_PLAYED_DIRECTORY = ("player_last_played_directory", "")
+
+
+class Configuration:
     __CONFIG_PATH = None
 
     class Parser:
         def __init__(self, dictionary: Dict):
             self.dictionary = dictionary
 
-        def get(self, key: _Settings):
+        def get(self, key: Settings):
             return self.dictionary.get(key.value[0], key.value[1])
 
     def __init__(self):
         super().__init__()
 
         self.version: str = None
-        self.author: str = None
+        self.nickname: str = None
         self.language: str = None
-        self.comment_types_active: List[str] = None
-        self.comment_types_inactive: List[str] = None
+        self.comment_types: List[str] = None
         self.autosave_interval_seconds: int = None
         self.comment_table_entry_font: str = None
         self.softsub_overwrite_video_font_enabled: bool = None
         self.softsub_overwrite_video_font_font: str = None
+        self.qc_doc_write_video_path_to_file: bool = None
+        self.qc_doc_write_nick_name_to_file: bool = None
+        self.player_last_played_directory: str = None
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
     def save(self):
         with io.open(Configuration.__CONFIG_PATH, 'w', encoding='utf8') as outfile:
@@ -76,25 +87,31 @@ class Configuration(QObject):
 
         c = Configuration()
         d = Configuration.Parser(dictionary)
-        s = _Settings
+        s = Settings
 
         c.version = d.get(s.VERSION)
-        c.author = d.get(s.AUTHOR)
+        c.nickname = d.get(s.NICKNAME)
         c.language = d.get(s.LANGUAGE)
 
-        c.comment_types_active = d.get(s.COMMENT_TYPES_ACTIVE)
-        c.comment_types_inactive = d.get(s.COMMENT_TYPES_INACTIVE)
+        c.comment_types = d.get(s.COMMENT_TYPES)
 
         c.autosave_interval_seconds = int(d.get(s.AUTOSAVE_INTERVAL_SECONDS))
         c.comment_table_entry_font = d.get(s.COMMENT_TABLE_ENTRY_FONT)
 
         c.softsub_overwrite_video_font_enabled = bool(d.get(s.SOFTSUB_OVERWRITE_VIDEO_FONT_ENABLED))
         c.softsub_overwrite_video_font_font = d.get(s.SOFTSUB_OVERWRITE_VIDEO_FONT_FONT)
+
+        c.qc_doc_write_video_path_to_file = bool(d.get(s.QC_DOC_WRITE_VIDEO_PATH_TO_FILE))
+        c.qc_doc_write_nick_name_to_file = bool(d.get(s.QC_DOC_WRITE_NICKNAME_TO_FILE))
+
+        c.player_last_played_directory = d.get(s.PLAYER_LAST_PLAYED_DIRECTORY)
         return c
 
 
 class Paths:
-    pass
+    FILE_SETTINGS = "settings.json"
+    FILE_INPUT_CONF = "input.conf"
+    FILE_MPV_CONF = "mpv.conf"
 
     def __init__(self):
         self.cfg = "cfg"
@@ -102,11 +119,19 @@ class Paths:
 
         self.application_name = APPLICATION_NAME
         self.dir_program = DIRECTORY_PROGRAM
+
+        # /home/user/.config
         self.dir_main_config = self.__find_dir_config()
+
+        # /home/user/.config/cfg
+        self.dir_main_cfg = path.join(self.dir_main_config, self.cfg)
 
         Paths.__require_dir_base_plus(base=self.dir_main_config, plus=self.cfg)
         Paths.__require_dir_base_plus(base=self.dir_main_config, plus=self.auto_save)
-        self.file_cfg = self.__find_file_options()
+
+        self.file_settings = self.__find_file_options()
+        self.input_conf = self.__create_input_conf_if_not_exists()
+        self.mpv_conf = self.__create_mpv_conf_if_not_exists()
 
     def __find_dir_config(self):
 
@@ -123,12 +148,27 @@ class Paths:
         return conf_location
 
     def __find_file_options(self) -> Configuration:
-        expected_options_file = "{}.json".format(self.application_name)
-        json_file = path.join(self.dir_main_config, self.cfg, expected_options_file)
+        json_file = path.join(self.dir_main_config, self.cfg, Paths.FILE_SETTINGS)
 
         if not path.isfile(json_file):
             Configuration.create_default(json_file)
         return Configuration.load_from(json_file)
+
+    def __create_input_conf_if_not_exists(self):
+        input_conf = path.join(self.dir_main_config, self.cfg, Paths.FILE_INPUT_CONF)
+        Paths.__write(constants.CFG_INPUT, input_conf)
+        return input_conf
+
+    def __create_mpv_conf_if_not_exists(self) -> path:
+        mpv_conf = path.join(self.dir_main_config, self.cfg, Paths.FILE_MPV_CONF)
+        Paths.__write(constants.CFG_MPV, mpv_conf)
+        return mpv_conf
+
+    @staticmethod
+    def __write(content, target_path):
+        if not path.isfile(target_path):
+            with open(target_path, "w", encoding="utf-8") as f:
+                f.write(content)
 
     @staticmethod
     def __require_dir_base_plus(base, plus):
@@ -148,7 +188,7 @@ class __Holder:
 
 def get_config() -> Configuration:
     if __Holder.config is None:
-        __Holder.config = get_paths().file_cfg
+        __Holder.config = get_paths().file_settings
 
     return __Holder.config
 
