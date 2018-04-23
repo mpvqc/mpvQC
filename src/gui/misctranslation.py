@@ -30,6 +30,7 @@ class __T:
 
         # Message Widget
         _translate("Misc", "Each comment type needs a valid name")
+        _translate("Misc", "At least one comment type is required")
         _translate("Misc", "Nick name must not be empty")
 
         # Alert & Dialog ############################################################################# Alert & Dialog #

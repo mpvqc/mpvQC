@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from src.mpv import mpv
+from src.player import bindings
 from PyQt5.QtCore import Qt, QObject, QTimer, QEvent, QPoint, QTranslator
 from PyQt5.QtGui import (QStandardItemModel, QStandardItem, QCursor, QIcon,
                         QFont, QColor, QPalette, QFontDatabase, QFontMetrics,
@@ -1843,7 +1843,7 @@ mpvwidget.installEventFilter(mpvwidgeteventfilter)
 # Create config files for mpv if they are not present
 checkMpvConf()
 
-mp = mpv.MPV(
+mp = bindings.MPV(
         wid=str(int(mpvwidget.winId())),
         keep_open="yes",
         idle="yes",

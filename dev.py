@@ -6,7 +6,9 @@ from os import path
 from typing import Tuple
 
 # The languages to translate into
-languages: Tuple[str] = ("DE_DE", "EN_US", "FR_FR")
+import polib
+
+languages: Tuple[str] = ("de", "en")
 
 _WORKFLOW = \
     """ Make sure the project has the following skeleton:
@@ -129,6 +131,16 @@ class Transformer:
         for lang_dir in self.directory.locale_dirs:
             new_file = os.path.join(lang_dir, "ui_trans")
             os.system("lrelease {}.ts -qm {}.qm".format(new_file, new_file))
+            os.system("ts2po {}.ts {}po.po".format(new_file, new_file))
+            po = polib.pofile('{}po.po'.format(new_file))
+            po.save_as_mofile('{}mo.mo'.format(new_file))
+
+            # import polib
+            #
+            # file = "string"
+            #
+            # po = polib.pofile('{}.po'.format(file))
+            # po.save_as_mofile('{}.mo'.format(file))
 
 
 def tools_available() -> bool:
