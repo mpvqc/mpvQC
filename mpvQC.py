@@ -314,26 +314,6 @@ class MainWindowEventFilter(QObject):
         if event.type() == QEvent.Resize:
                 afterResize()
                 return True
-        elif event.type() == QEvent.MouseButtonPress:
-            if event.button() == Qt.MiddleButton:
-                mp.command("keypress", "MOUSE_BTN1")
-                return True
-            elif event.button() == Qt.BackButton:
-                mp.command("keypress", "MOUSE_BTN5")
-                return True
-            elif event.button() == Qt.ForwardButton:
-                mp.command("keypress", "MOUSE_BTN6")
-                return True
-        elif event.type() == QEvent.MouseButtonDblClick:
-            if event.button() == Qt.MiddleButton:
-                mp.command("keypress", "MOUSE_BTN1")
-                return True
-            elif event.button() == Qt.BackButton:
-                mp.command("keypress", "MOUSE_BTN5")
-                return True
-            elif event.button() == Qt.ForwardButton:
-                mp.command("keypress", "MOUSE_BTN6")
-                return True
         elif event.type() == QEvent.KeyPress:
             pressedkey = event.key()
             keymodifiers = int(app.keyboardModifiers())
@@ -364,77 +344,7 @@ class MainWindowEventFilter(QObject):
 
 
 class MpvWidgetEventFilter(QObject):
-
-    def eventFilter(self, receiver, event):
-        if event.type() == QEvent.MouseMove:
-            mainwindowgeo = mainwindow.geometry()
-            centralwidgetgeo = (
-                                mainwindow
-                                .centralWidget()
-                                .geometry()
-                                )
-            if not mainwindow.isFullScreen():
-                pos_x = (
-                    -mainwindowgeo.x()
-                    -centralwidgetgeo.x()
-                    +QCursor.pos().x()
-                    )
-                pos_y = (
-                    -mainwindowgeo.y()
-                    -centralwidgetgeo.y()
-                    +QCursor.pos().y()
-                    )
-            else:
-                pos_x = event.pos().x()
-                pos_y = event.pos().y()
-            try:
-                mp.command("mouse", pos_x, pos_y)
-            except OSError:  # Stop the spamming of error messages while moving mouse if mpv (in slave mode) crashed
-                print("mpv probably crashed. Please restart the application.")
-            if mainwindow.isFullScreen():
-                showCursor()
-            return True
-        elif event.type() == QEvent.MouseButtonPress:
-            receiver.setFocus()  # If a comment line is currently being edited, then a click on the video area
-                                 # should close the editor, which is implicitly done by removing keyboard focus
-            commentlistview.setFocus()
-            if event.button() == Qt.LeftButton:
-                mp.command("keydown", "MOUSE_BTN0")
-            if event.button() == Qt.MiddleButton:
-                mp.command("keypress", "MOUSE_BTN1")
-            if event.button() == Qt.BackButton:
-                mp.command("keypress", "MOUSE_BTN5")
-            if event.button() == Qt.ForwardButton:
-                mp.command("keypress", "MOUSE_BTN6")
-            return True
-        elif event.type() == QEvent.MouseButtonRelease:
-            if event.button() == Qt.LeftButton:
-                mp.command("keyup", "MOUSE_BTN0")
-            return True
-        elif event.type() == QEvent.MouseButtonDblClick:
-            if event.button() == Qt.LeftButton:
-                cycleFullscreen()
-                mp.command("keypress", "MOUSE_BTN0")
-                return True
-            elif event.button() == Qt.MiddleButton:
-                mp.command("keypress", "MOUSE_BTN1")
-                return True
-            elif event.button() == Qt.BackButton:
-                mp.command("keypress", "MOUSE_BTN5")
-                return True
-            elif event.button() == Qt.ForwardButton:
-                mp.command("keypress", "MOUSE_BTN6")
-                return True
-        elif event.type() == QEvent.Wheel:
-            xdelta = event.angleDelta().x()
-            ydelta = event.angleDelta().y()
-            if xdelta == 0 and ydelta != 0:
-                if ydelta > 0:
-                    mp.command("keypress", "MOUSE_BTN3")
-                else:
-                    mp.command("keypress", "MOUSE_BTN4")
-                return True
-        return super(MpvWidgetEventFilter, self).eventFilter(receiver, event)
+    pass
 
 
 class RegularTextEdit(QTextEdit):

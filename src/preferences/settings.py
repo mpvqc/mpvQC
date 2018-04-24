@@ -2,17 +2,15 @@ import copy
 import io
 import json
 import locale
-import os
-from abc import ABC, abstractmethod
-from typing import Dict, List, Set
+from typing import Dict, List
 
-from PyKF5.KWidgetsAddons import KMessageWidget
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QListView, QAbstractItemView, QLineEdit, QDialogButtonBox, QMessageBox, QDialog, QComboBox
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QListView, QAbstractItemView, QCheckBox, QSpinBox
 from appdirs import unicode
 
-from src.gui.preferences import Ui_Dialog
 from src.preferences import configuration
+from src.preferences.preferencesabstract import AbstractNonUserEditableSetting, SettingsEntry, SettingsType, \
+    AbstractUserEditableSetting
 
 try:
     to_unicode = unicode
@@ -22,207 +20,117 @@ except NameError:
 _tr = _translate = QtCore.QCoreApplication.translate
 
 
-# noinspection PyAttributeOutsideInit
-
 # from PyKF5.KWidgetsAddons import KMessageWidget, KEditListWidget
 
 
-class JsonLoader:
-    JSON_SETTINGS = None
-    instance = None
+class SettingsVersion(AbstractNonUserEditableSetting):
 
-    def __init__(self):
-        if JsonLoader.JSON_SETTINGS is None:
-            settings_json = configuration.get_paths().settings_json
-            if not os.path.isfile(settings_json):
-                with io.open(settings_json, 'w', encoding='utf8') as outfile:
-                    str_ = json.dumps({}, indent=4, separators=(',', ': '), ensure_ascii=False)
-                    outfile.write(to_unicode(str_))
-            with open(settings_json) as df:
-                JsonLoader.JSON_SETTINGS = json.load(df)
-
-    @staticmethod
-    def get_value(key: str):
-        if JsonLoader.instance is None:
-            JsonLoader.instance = JsonLoader()
-
-        dictionary: Dict = JsonLoader.JSON_SETTINGS
-
-        return dictionary.get(key)
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="version",
+                             default_value="0.0.1",
+                             var_type=SettingsType.STRING)
 
 
-class AbstractSetting(ABC):
+class SettingsPlayerLastPlayedVideo(AbstractNonUserEditableSetting):
 
-    def __init__(self):
-        val = JsonLoader.get_value(self.name)
-        self._value = self.read_string_value_from_json(val, bool(val))
-
-    # def __str__(self):
-    #     return "{}: {}".format(self.name, self.value)
-
-    def read_string_value_from_json(self, string, is_not_none: bool):
-        if is_not_none:
-            return string
-        else:
-            return self.default_value
-
-    @property
-    def name(self):
-        raise NotImplementedError
-
-    @property
-    def default_value(self):
-        raise NotImplementedError
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        if value is None:
-            self._value = self.default_value
-        else:
-            self._value = value
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="player_last_played_directory",
+                             default_value="",
+                             var_type=SettingsType.STRING)
 
 
-class AbstractSettingEditable(AbstractSetting):
+class SettingsNickname(AbstractUserEditableSetting):
 
     def __init__(self):
         super().__init__()
-        self.ui = None
-        self.mw = None
+        self.nickname_LineEdit: QLineEdit
+        self._is_valid: bool = True
 
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        self.ui = ui
-        self.mw = message_widget
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="nickname",
+                             default_value="nickname",
+                             var_type=SettingsType.STRING)
 
-    def is_valid(self) -> bool:
-        return True
-
-    @abstractmethod
-    def provide(self, update_function):
-        raise NotImplementedError
-
-    @abstractmethod
-    def has_changed(self) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
-    def push_to_config(self):
-        raise NotImplementedError
-
-
-class SettingVersion(AbstractSetting):
-
-    @property
-    def name(self):
-        return "version"
-
-    @property
-    def default_value(self):
-        return "0.0.1"
-
-
-class SettingPlayerLastPlayed(AbstractSetting):
-
-    @property
-    def name(self):
-        return "player_last_played_directory"
-
-    @property
-    def default_value(self):
-        return ""
-
-
-class SettingNickname(AbstractSettingEditable):
-
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
+    def setup(self, update_function) -> None:
         self.nickname_LineEdit = self.ui.authorLineEdit
-
-    @property
-    def name(self):
-        return "nickname"
-
-    @property
-    def default_value(self):
-        return "nickname"
-
-    def provide(self, update_function):
         self.nickname_LineEdit.setPlaceholderText(_tr("Misc", "Type here to change the nick name"))
         self.nickname_LineEdit.setText(self.value)
         self.nickname_LineEdit.textChanged.connect(update_function)
 
     def is_valid(self) -> bool:
-        message = _tr("Misc", "Nick name must not be empty")
+        self._is_valid = bool(self.nickname_LineEdit.text())
+        return self._is_valid
 
-        if bool(self.nickname_LineEdit.text()):
-            self.mw.remove_message(message)
-            return True
-        else:
-            self.mw.add_message(message)
-            return False
+    def error_messages(self) -> List[str]:
+        return [_tr("Misc", "Nick name must not be empty")]
 
     def has_changed(self) -> bool:
-        text_ = self.value == self.nickname_LineEdit.text()
-        return not text_
+        return not self.value == self.nickname_LineEdit.text().strip().replace(" ", "_")
 
-    def push_to_config(self):
-        self.value = self.nickname_LineEdit.text()
+    def take_over(self):
+        self.value = self.nickname_LineEdit.text().strip().replace(" ", "_")
 
 
-class SettingLanguage(AbstractSettingEditable):
+class SettingsLanguage(AbstractUserEditableSetting):
 
-    @property
-    def name(self):
-        return "language"
+    def __init__(self):
+        super().__init__()
+        self.language_box: QComboBox = None
+        self.languages: Dict = None
 
-    @property
-    def default_value(self):
+    def provide_settings_declaration(self) -> SettingsEntry:
+
         default_locale = locale.getdefaultlocale()[0]
-        if default_locale.startswith("de"):
-            return _tr("Dialog", "German")
-        else:
-            return _tr("Dialog", "English")
 
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
-        self.language_box: QComboBox = ui.comboBox
+        if default_locale.startswith("de"):
+            def_value = _tr("Dialog", "German")
+        else:
+            def_value = _tr("Dialog", "English")
+
+        return SettingsEntry(name="language",
+                             default_value=def_value,
+                             var_type=SettingsType.STRING)
+
+    def setup(self, update_function) -> None:
+        self.language_box = self.ui.comboBox
         self.languages = {
             _tr("Dialog", "English"): "English",
             _tr("Dialog", "German"): "German"
         }
-
-    def provide(self, update_function):
         self.language_box.setCurrentIndex(max(self.language_box.findText(_tr("Dialog", self.value)), 0))
         self.language_box.currentIndexChanged.connect(update_function)
+
+    def is_valid(self) -> bool:
+        return True
 
     def has_changed(self) -> bool:
         return not self.value == self.languages.get(self.language_box.currentText())
 
-    def push_to_config(self):
+    def take_over(self):
         self.value = self.languages.get(self.language_box.currentText())
 
 
-class SettingCommentTypes(AbstractSettingEditable):
+class SettingsCommentTypes(AbstractUserEditableSetting):
 
-    @property
-    def name(self):
-        return "comment_types"
+    def __init__(self):
+        super().__init__()
+        self.comment_types_ui = None
+        self.comment_types_english: Dict = {}
 
-    @property
-    def default_value(self):
-        return ["Spelling", "Punctuation", "Translation", "Phrasing", "Timing", "Typeset", "Note"]
+        self.not_empty_comment_types: bool = False
+        self.no_item_empty_str: bool = True
 
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="comment_types",
+                             default_value=["Spelling", "Punctuation", "Translation", "Phrasing",
+                                            "Timing", "Typeset", "Note"],
+                             var_type=SettingsType.LIST_STRING)
+
+    def setup(self, update_function) -> None:
         self.comment_types_ui = self.ui.kCommentTypes
-        self.comment_type_english = {}
-        for ct in self.default_value:
-            self.comment_type_english.update({_tr("Misc", ct): ct})
+        for ct in self.settings_entry.default_value:
+            self.comment_types_english.update({_tr("Misc", ct): ct})
 
-    def provide(self, update_function):
         cts = self.comment_types_ui
         cts.setStyleSheet(" QPushButton { text-align:left; padding: 8px; } ")
 
@@ -245,34 +153,31 @@ class SettingCommentTypes(AbstractSettingEditable):
 
     def is_valid(self) -> bool:
         ct_items: List[str] = self.comment_types_ui.items()
+        self.not_empty_comment_types = bool(ct_items)
 
-        items_are_not_empty = bool(ct_items)
-        m = _tr("Misc", "At least one comment type is required")
-        if not items_are_not_empty:
-            self.mw.add_message(m)
-        else:
-            self.mw.remove_message(m)
-
-        no_item_empty_str = True
-        m = _tr("Misc", "Each comment type needs a valid name")
+        self.no_item_empty_str = True
         for ct_item in ct_items:
-            message = m
-            if not ct_item:
-                no_item_empty_str = False
-                self.mw.add_message(message)
-                break
-            else:
-                self.mw.remove_message(message)
-        else:
-            self.mw.remove_message(m)
+            if not ct_item.replace(" ", ""):
+                self.no_item_empty_str = False
 
-        return items_are_not_empty and no_item_empty_str
+        return self.not_empty_comment_types and self.no_item_empty_str
+
+    def error_messages(self) -> List[str]:
+        ret_list = []
+
+        if not self.not_empty_comment_types:
+            ret_list.append(_tr("Misc", "At least one comment type is required"))
+
+        if not self.no_item_empty_str:
+            ret_list.append(_tr("Misc", "Each comment type needs a valid name"))
+
+        return ret_list
 
     def has_changed(self) -> bool:
-        return not self.value == [self.comment_type_english.get(x, x) for x in self.comment_types_ui.items()]
+        return not self.value == [self.comment_types_english.get(x, x) for x in self.comment_types_ui.items()]
 
-    def push_to_config(self):
-        self.value = [self.comment_type_english.get(x, x).strip() for x in self.comment_types_ui.items()]
+    def take_over(self):
+        self.value = [self.comment_types_english.get(x, x).strip() for x in self.comment_types_ui.items()]
 
     def remove_focus(self):
         # Remove selection from comment type items
@@ -285,27 +190,19 @@ class SettingCommentTypes(AbstractSettingEditable):
             edit.setPlaceholderText(_tr("Misc", "Type here to add new comment types"))
 
 
-class SettingAutoSaveEnabled(AbstractSettingEditable):
+class SettingsAutoSaveEnabled(AbstractUserEditableSetting):
 
-    @property
-    def name(self):
-        return "autosave_enabled"
+    def __init__(self):
+        super().__init__()
+        self.chkBox: QCheckBox = None
 
-    @property
-    def default_value(self):
-        return True
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="autosave_enabled",
+                             default_value=True,
+                             var_type=SettingsType.BOOL)
 
-    def read_string_value_from_json(self, string, is_not_none: bool):
-        if is_not_none:
-            return bool(string)
-        else:
-            return self.default_value
-
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
-        self.chkBox = ui.autoSaveEnabledCheckBox_4
-
-    def provide(self, update_function):
+    def setup(self, update_function) -> None:
+        self.chkBox = self.ui.autoSaveEnabledCheckBox_4
         self.chkBox.setChecked(self.value)
         self.chkBox.stateChanged.connect(update_function)
 
@@ -315,31 +212,23 @@ class SettingAutoSaveEnabled(AbstractSettingEditable):
     def has_changed(self) -> bool:
         return not self.value == self.chkBox.isChecked()
 
-    def push_to_config(self):
+    def take_over(self):
         self.value = self.chkBox.isChecked()
 
 
-class SettingAutoSaveInterval(AbstractSettingEditable):
+class SettingsAutoSaveInterval(AbstractUserEditableSetting):
 
-    @property
-    def name(self):
-        return "autosave_interval_seconds"
+    def __init__(self):
+        super().__init__()
+        self.spinBox: QSpinBox = None
 
-    @property
-    def default_value(self):
-        return 90
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="autosave_interval_seconds",
+                             default_value=90,
+                             var_type=SettingsType.INT)
 
-    def read_string_value_from_json(self, string, is_not_none: bool):
-        if is_not_none:
-            return int(string)
-        else:
-            return self.default_value
-
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
-        self.spinBox = ui.autosaveSpinBox_4
-
-    def provide(self, update_function):
+    def setup(self, update_function) -> None:
+        self.spinBox = self.ui.autosaveSpinBox_4
         self.spinBox.setValue(int(self.value))
         self.spinBox.valueChanged.connect(update_function)
 
@@ -349,235 +238,90 @@ class SettingAutoSaveInterval(AbstractSettingEditable):
     def has_changed(self) -> bool:
         return not self.value == self.spinBox.value()
 
-    def push_to_config(self):
+    def take_over(self):
         self.value = self.spinBox.value()
 
 
-class SettingQcDocumentWriteVideoPathToFile(AbstractSettingEditable):
-
-    @property
-    def name(self):
-        return "qc_doc_write_video_path_to_file"
-
-    @property
-    def default_value(self):
-        return True
-
-    def read_string_value_from_json(self, string, is_not_none: bool):
-        if is_not_none:
-            return bool(string)
-        else:
-            return self.default_value
-
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
-        self.chkBox = ui.saveVideoPathCheckBox
-
-    def provide(self, update_function):
-        self.chkBox.setChecked(self.value)
-        self.chkBox.stateChanged.connect(update_function)
-
-    def is_valid(self) -> bool:
-        return True
-
-    def has_changed(self) -> bool:
-        return not self.value == self.chkBox.isChecked()
-
-    def push_to_config(self):
-        self.value = self.chkBox.isChecked()
-
-
-class SettingQcDocumentWriteNickNameToFile(AbstractSettingEditable):
-
-    @property
-    def name(self):
-        return "qc_doc_write_nick_name_to_file"
-
-    @property
-    def default_value(self):
-        return True
-
-    def read_string_value_from_json(self, string, is_not_none: bool):
-        if is_not_none:
-            return bool(string)
-        else:
-            return self.default_value
-
-    def bind_preference(self, ui: Ui_Dialog, message_widget):
-        super().bind_preference(ui, message_widget)
-        self.chkBox = ui.saveNickNameCheckBox
-
-    def provide(self, update_function):
-        self.chkBox.setChecked(self.value)
-        self.chkBox.stateChanged.connect(update_function)
-
-    def is_valid(self) -> bool:
-        return True
-
-    def has_changed(self) -> bool:
-        return not self.value == self.chkBox.isChecked()
-
-    def push_to_config(self):
-        self.value = self.chkBox.isChecked()
-
-
-class MessageWidget:
-    """ A small wrapper for the KDE KMessage Widget."""
-
-    def __init__(self, message_widget: KMessageWidget):
-        self.message_widget = message_widget
-        self.message_widget_messages: Set[str] = set()
-        self.__update_widget()
-
-    def add_message(self, message: str):
-        """Adds a new message. Displays the message immediately."""
-
-        self.message_widget_messages.add(message)
-        self.__update_widget()
-
-    def remove_message(self, message: str):
-        """Removes the passed message immediately."""
-
-        if message in self.message_widget_messages:
-            self.message_widget_messages.remove(message)
-            self.__update_widget()
-
-    def clear(self):
-        """Clears all messages immediately."""
-
-        self.message_widget_messages.clear()
-        self.__update_widget()
-
-    def __update_widget(self):
-        """Changes the text of the KMessageWidget."""
-
-        self.message_widget.setText("\n".join(set(self.message_widget_messages)))
-        if self.message_widget_messages:
-            self.message_widget.show()
-        else:
-            self.message_widget.hide()
-
-
-class PreferenceDialog(QDialog):
+class SettingsQcDocumentWriteVideoPathToFile(AbstractUserEditableSetting):
 
     def __init__(self):
         super().__init__()
+        self.chkBox: QCheckBox = None
 
-        self.settings: MpvQcSettings = get_settings()
-        self.ui: Ui_Dialog = Ui_Dialog()
-        self.ui.setupUi(self)
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="qc_doc_write_video_path_to_file",
+                             default_value=True,
+                             var_type=SettingsType.BOOL)
 
-        self.all_settings: List[AbstractSettingEditable] = self.settings.all_editable
+    def setup(self, update_function) -> None:
+        self.chkBox = self.ui.saveVideoPathCheckBox
+        self.chkBox.setChecked(self.value)
+        self.chkBox.stateChanged.connect(update_function)
 
-        self.__setup()
+    def is_valid(self) -> bool:
+        return True
 
-    def __setup(self):
-        """Set up all editable preference objects."""
+    def has_changed(self) -> bool:
+        return not self.value == self.chkBox.isChecked()
 
-        self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
+    def take_over(self):
+        self.value = self.chkBox.isChecked()
 
-        message_widget = MessageWidget(self.ui.kmessagewidget)
 
-        for setting in self.all_settings:
-            setting.bind_preference(self.ui, message_widget)
-            setting.provide(update_function=self.__update_accept_button_state)
+class SettingsQcDocumentWriteNickNameToFile(AbstractUserEditableSetting):
+    def __init__(self):
+        super().__init__()
+        self.chkBox: QCheckBox = None
 
-    def __is_data_valid(self) -> bool:
-        """
-        Checks whether the current data in all input widgets is valid.
+    def provide_settings_declaration(self) -> SettingsEntry:
+        return SettingsEntry(name="qc_doc_write_nick_name_to_file",
+                             default_value=True,
+                             var_type=SettingsType.BOOL)
 
-        Must call each *is_valid* method in case a warning message is necessary for a specific widget.
-        """
+    def setup(self, update_function) -> None:
+        self.chkBox = self.ui.saveNickNameCheckBox
+        self.chkBox.setChecked(self.value)
+        self.chkBox.stateChanged.connect(update_function)
 
-        valid: bool = True
-        for setting in self.all_settings:
-            if not setting.is_valid():
-                valid = False
-        return valid
+    def is_valid(self) -> bool:
+        return True
 
-    def __has_changed(self) -> bool:
-        """Calls each setting's *has_changed* method."""
+    def has_changed(self) -> bool:
+        return not self.value == self.chkBox.isChecked()
 
-        has_changed = False
-        for setting in self.all_settings:
-            if setting.has_changed():
-                has_changed = True
-                print()
-
-        return has_changed
-
-    def __update_accept_button_state(self):
-        """
-        Updates the accept button.
-
-        Button should be enabled if changed and valid, disable else.
-        """
-
-        self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.__has_changed() and self.__is_data_valid())
-
-    def mousePressEvent(self, mouse_ev: QtGui.QMouseEvent):
-        """
-        On mouse pressed event (pressed anywhere except the comment type widget)
-        the focus needs to be removed from the comment type widget.
-        """
-
-        self.settings.comment_types.remove_focus()
-        super().mousePressEvent(mouse_ev)
-
-    def accept(self):
-        """Action when accept button is pressed."""
-
-        for setting in self.all_settings:
-            setting.push_to_config()
-
-        self.settings.save()
-
-        super().accept()
-
-    def reject(self):
-        """Action when reject button is pressed."""
-
-        if self.__has_changed():
-            q = QMessageBox()
-            q.setText(_tr("Misc", "Your configuration has changed.") + " " + _tr("Misc", "Discard changes?"))
-            q.setIcon(QMessageBox.Warning)
-            q.setWindowTitle(_tr("Misc", "Discard changes?"))
-            q.addButton(_tr("Misc", "Yes"), QMessageBox.YesRole)
-            q.addButton(_tr("Misc", "No"), QMessageBox.NoRole)
-
-            if not q.exec_():
-                super().reject()
-        else:
-            super().reject()
+    def take_over(self):
+        self.value = self.chkBox.isChecked()
 
 
 class MpvQcSettings:
+    """A holder for all application relevant settings."""
 
     def __init__(self):
-        self.version: SettingVersion = SettingVersion()
-        self.nickname: SettingNickname = SettingNickname()
-        self.language: SettingLanguage = SettingLanguage()
-        self.comment_types: SettingCommentTypes = SettingCommentTypes()
-        self.autosave_enabled: SettingAutoSaveEnabled = SettingAutoSaveEnabled()
-        self.autosave_interval: SettingAutoSaveInterval = SettingAutoSaveInterval()
-        self.qc_doc_write_nick: SettingQcDocumentWriteNickNameToFile = SettingQcDocumentWriteNickNameToFile()
-        self.qc_doc_write_video: SettingQcDocumentWriteVideoPathToFile = SettingQcDocumentWriteVideoPathToFile()
-        self.player_last_played_dir: SettingPlayerLastPlayed = SettingPlayerLastPlayed()
+        self.version = SettingsVersion()
+        self.player_last_played = SettingsPlayerLastPlayedVideo()
 
-        self.all_editable: List[AbstractSetting] = [
-            self.nickname,
+        self.language = SettingsLanguage()
+        self.nickname = SettingsNickname()
+        self.comment_types = SettingsCommentTypes()
+        self.auto_save_enabled = SettingsAutoSaveEnabled()
+        self.auto_save_interval = SettingsAutoSaveInterval()
+        self.qc_doc_write_nick_name_to_file = SettingsQcDocumentWriteNickNameToFile()
+        self.qc_doc_write_video_path_to_file = SettingsQcDocumentWriteVideoPathToFile()
+
+        self.all_editable: List[AbstractUserEditableSetting] = [
             self.language,
+            self.nickname,
             self.comment_types,
-            self.autosave_enabled,
-            self.autosave_interval,
-            self.qc_doc_write_nick,
-            self.qc_doc_write_video,
+            self.auto_save_enabled,
+            self.auto_save_interval,
+            self.qc_doc_write_nick_name_to_file,
+            self.qc_doc_write_video_path_to_file
         ]
 
-        self.all_writable = copy.copy(self.all_editable)
+        self.all_writable: List[AbstractNonUserEditableSetting] = copy.copy(self.all_editable)
         self.all_writable.extend([
             self.version,
-            self.player_last_played_dir
+            self.player_last_played
         ])
 
     def save(self):
@@ -601,7 +345,3 @@ def get_settings():
     if __Holder.settings is None:
         __Holder.settings = MpvQcSettings()
     return __Holder.settings
-
-# COMMENT_TABLE_ENTRY_FONT = ("comment_table_entry_font", "")
-#     SOFTSUB_OVERWRITE_VIDEO_FONT_ENABLED = ("softsub_overwrite_video_font_enabled", False)
-#     SOFTSUB_OVERWRITE_VIDEO_FONT_FONT = ("softsub_overwrite_video_font_font", "")
