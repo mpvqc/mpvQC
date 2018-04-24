@@ -37,6 +37,10 @@ class MpvWidget(QFrame):
             # log_handler=mpvLogHandler,
         )
 
+        # @mpv_mpv.property_observer('time-pos')
+        # def time_observer(_name, value):
+        #     print("Time: ", value)
+
         self.mpv_player = MpvPlayer(mpv_mpv)
 
     def mouseMoveEvent(self, mev: QMouseEvent):

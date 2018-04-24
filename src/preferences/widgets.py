@@ -12,7 +12,9 @@ _tr = _translate = QtCore.QCoreApplication.translate
 
 
 class MessageWidget:
-    """A small wrapper for the KDE KMessage Widget."""
+    """
+    A small wrapper for the KDE KMessage Widget.
+    """
 
     def __init__(self, message_widget: KMessageWidget):
         self.message_widget = message_widget
@@ -20,7 +22,9 @@ class MessageWidget:
         self.__update_widget()
 
     def add_messages(self, messages: List[str]):
-        """Adds a new message. Displays the message immediately."""
+        """
+        Adds a new message. Displays the message immediately.
+        """
 
         for message in messages:
             if message:
@@ -28,20 +32,26 @@ class MessageWidget:
         self.__update_widget()
 
     def remove_message(self, message: str):
-        """Removes the passed message immediately."""
+        """
+        Removes the passed message immediately.
+        """
 
         if message in self.message_widget_messages:
             self.message_widget_messages.remove(message)
             self.__update_widget()
 
     def clear(self):
-        """Clears all messages immediately."""
+        """
+        Clears all messages immediately.
+        """
 
         self.message_widget_messages.clear()
         self.__update_widget()
 
     def __update_widget(self):
-        """Changes the text of the KMessageWidget."""
+        """
+        Changes the text of the KMessageWidget.
+        """
 
         self.message_widget.setText("\n".join(set(self.message_widget_messages)))
         if self.message_widget_messages:
@@ -51,7 +61,9 @@ class MessageWidget:
 
 
 class PreferenceDialog(QDialog):
-    """The dialog for the preferences."""
+    """
+    The dialog for the preferences.
+    """
 
     def __init__(self, parent):
         super().__init__(parent=parent)
@@ -66,7 +78,9 @@ class PreferenceDialog(QDialog):
         # self.installEventFilter(self)
 
     def __setup(self):
-        """Set up all editable preference objects."""
+        """
+        Set up all editable preference objects.
+        """
 
         self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 
@@ -92,7 +106,9 @@ class PreferenceDialog(QDialog):
         return valid
 
     def __has_changed(self) -> bool:
-        """Calls each setting's *has_changed* method."""
+        """
+        Calls each setting's *has_changed* method.
+        """
 
         has_changed = False
         for setting in self.all_settings:
@@ -120,7 +136,9 @@ class PreferenceDialog(QDialog):
         super().mousePressEvent(mouse_ev)
 
     def accept(self):
-        """Action when accept button is pressed."""
+        """
+        Action when accept button is pressed.
+        """
 
         for setting in self.all_settings:
             setting.take_over()
@@ -130,7 +148,9 @@ class PreferenceDialog(QDialog):
         super().accept()
 
     def reject(self):
-        """Action when reject button is pressed."""
+        """
+        Action when reject button is pressed.
+        """
 
         if self.__has_changed():
             q = QMessageBox()

@@ -114,7 +114,7 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
 
     def __init__(self):
         super().__init__()
-        self.comment_types_ui = None
+        self.cts = None
         self.comment_types_english: Dict = {}
 
         self.not_empty_comment_types: bool = False
@@ -127,32 +127,31 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
                              var_type=SettingsType.LIST_STRING)
 
     def setup(self, update_function) -> None:
-        self.comment_types_ui = self.ui.kCommentTypes
+        self.cts = self.ui.kCommentTypes
         for ct in self.settings_entry.default_value:
             self.comment_types_english.update({_tr("Misc", ct): ct})
 
-        cts = self.comment_types_ui
-        cts.setStyleSheet(" QPushButton { text-align:left; padding: 8px; } ")
+        self.cts.setStyleSheet(" QPushButton { text-align:left; padding: 8px; } ")
 
-        cts_lv: QListView = cts.listView()
+        cts_lv: QListView = self.cts.listView()
         cts_lv.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        cts_lv_le: QLineEdit = cts.lineEdit()
+        cts_lv_le: QLineEdit = self.cts.lineEdit()
         cts_lv_le.setPlaceholderText(_tr("Misc", "Type here to add new comment types"))
 
-        cts.addButton().setText(_tr("Misc", "Add"))
-        cts.removeButton().setText(_tr("Misc", "Remove"))
-        cts.upButton().setText(_tr("Misc", "Move Up"))
-        cts.downButton().setText(_tr("Misc", "Move Down"))
+        self.cts.addButton().setText(_tr("Misc", "Add"))
+        self.cts.removeButton().setText(_tr("Misc", "Remove"))
+        self.cts.upButton().setText(_tr("Misc", "Move Up"))
+        self.cts.downButton().setText(_tr("Misc", "Move Down"))
 
         for ct in self.value:
             item = _tr("Misc", ct)
-            self.comment_types_ui.insertItem(item)
+            self.cts.insertItem(item)
 
-        self.comment_types_ui.changed.connect(update_function)
+        self.cts.changed.connect(update_function)
 
     def is_valid(self) -> bool:
-        ct_items: List[str] = self.comment_types_ui.items()
+        ct_items: List[str] = self.cts.items()
         self.not_empty_comment_types = bool(ct_items)
 
         self.no_item_empty_str = True
@@ -174,20 +173,24 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
         return ret_list
 
     def has_changed(self) -> bool:
-        return not self.value == [self.comment_types_english.get(x, x) for x in self.comment_types_ui.items()]
+        return not self.value == [self.comment_types_english.get(x, x) for x in self.cts.items()]
 
     def take_over(self):
-        self.value = [self.comment_types_english.get(x, x).strip() for x in self.comment_types_ui.items()]
+        self.value = [self.comment_types_english.get(x, x).strip() for x in self.cts.items()]
 
     def remove_focus(self):
         # Remove selection from comment type items
-        ct_list_view: QListView = self.comment_types_ui.listView()
+        cts = self.cts
+        ct_list_view: QListView = cts.listView()
 
         if ct_list_view.selectionModel().selectedIndexes():
             ct_list_view.clearSelection()
-            edit = self.comment_types_ui.lineEdit()
+            edit = cts.lineEdit()
             edit.setReadOnly(False)
             edit.setPlaceholderText(_tr("Misc", "Type here to add new comment types"))
+
+            for btn in [cts.addButton(), cts.removeButton(), cts.upButton(), cts.downButton()]:
+                btn.setEnabled(False)
 
 
 class SettingsAutoSaveEnabled(AbstractUserEditableSetting):

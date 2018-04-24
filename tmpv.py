@@ -107,7 +107,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         print(inspect.stack()[0][3])
 
     def __resize_event(self, rev: QResizeEvent) -> bool:
-        print(inspect.stack()[0][3])
+        # print(inspect.stack()[0][3])
 
         return False
 
