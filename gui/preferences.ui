@@ -36,22 +36,6 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="KMessageWidget" name="kmessagewidget">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="wordWrap">
-      <bool>false</bool>
-     </property>
-     <property name="closeButtonVisible">
-      <bool>false</bool>
-     </property>
-     <property name="messageType">
-      <enum>KMessageWidget::Error</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="tabletTracking">
       <bool>false</bool>
@@ -66,7 +50,7 @@
       <enum>Qt::LeftToRight</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+         <number>2</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -130,42 +114,25 @@
               </sizepolicy>
              </property>
              <layout class="QFormLayout" name="formLayout">
-              <item row="2" column="0">
-               <widget class="QLabel" name="authorLabel">
+                 <item row="0" column="0">
+                     <widget class="QLabel" name="label_7">
                 <property name="text">
-                 <string>Nick name</string>
+                    <string>Language</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="authorLineEdit">
-                <property name="placeholderText">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Comment types</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="KEditListWidget" name="kCommentTypes">
-                <property name="toolTip">
-                 <string/>
-                </property>
-                <property name="checkAtEntering">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>Language</string>
-                </property>
+                 <item row="0" column="1">
+                     <widget class="QComboBox" name="comboBox">
+                         <item>
+                             <property name="text">
+                                 <string>English</string>
+                             </property>
+                         </item>
+                         <item>
+                             <property name="text">
+                                 <string>German</string>
+                             </property>
+                         </item>
                </widget>
               </item>
               <item row="1" column="0">
@@ -181,18 +148,35 @@
                 </property>
                </spacer>
               </item>
-              <item row="0" column="1">
-               <widget class="QComboBox" name="comboBox">
-                <item>
-                 <property name="text">
-                  <string>English</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>German</string>
-                 </property>
-                </item>
+                 <item row="2" column="0">
+                     <widget class="QLabel" name="authorLabel">
+                         <property name="text">
+                             <string>Nick name</string>
+                         </property>
+                     </widget>
+                 </item>
+                 <item row="2" column="1">
+                     <widget class="QLineEdit" name="authorLineEdit">
+                         <property name="placeholderText">
+                             <string/>
+                         </property>
+                     </widget>
+                 </item>
+                 <item row="3" column="0">
+                     <widget class="QLabel" name="label">
+                         <property name="text">
+                             <string>Comment types</string>
+                         </property>
+                     </widget>
+                 </item>
+                 <item row="3" column="1">
+                     <widget class="KEditListWidget" name="kCommentTypes">
+                         <property name="toolTip">
+                             <string/>
+                         </property>
+                         <property name="checkAtEntering">
+                             <bool>true</bool>
+                         </property>
                </widget>
               </item>
              </layout>
@@ -343,11 +327,48 @@
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Danger</string>
+          <string>mpv.conf</string>
       </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+                 <widget class="QPlainTextEdit" name="mpv_conf_plain_text_edit">
+                     <property name="font">
+                         <font>
+                             <family>Monospace</family>
+                         </font>
+                     </property>
+                 </widget>
+             </item>
+         </layout>
      </widget>
+        <widget class="QWidget" name="tab_2">
+            <attribute name="title">
+                <string>input.conf</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                    <widget class="QPlainTextEdit" name="input_conf_plain_text_edit"/>
+                </item>
+            </layout>
+        </widget>
     </widget>
    </item>
+      <item>
+          <widget class="KMessageWidget" name="kmessagewidget">
+              <property name="enabled">
+                  <bool>true</bool>
+              </property>
+              <property name="wordWrap">
+                  <bool>false</bool>
+              </property>
+              <property name="closeButtonVisible">
+                  <bool>false</bool>
+              </property>
+              <property name="messageType">
+                  <enum>KMessageWidget::Error</enum>
+              </property>
+          </widget>
+      </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">

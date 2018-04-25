@@ -7,8 +7,10 @@ from os import path
 from typing import List, Any, Dict
 
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QFont
 from appdirs import unicode
 
+from src import constants
 from src.gui.preferences import Ui_Dialog
 from src.preferences import configuration
 
@@ -317,36 +319,90 @@ class QcDocumentWriteNickNameToFileWrapper(PreferenceChangeWrapper):
         ui.saveNickNameCheckBox.stateChanged.disconnect(self._update_fun)
 
 
+class ConfInputWrapper(PreferenceChangeWrapper):
+
+    def bind_to(self, ui: Ui_Dialog, call_me_after_change) -> None:
+        text_input = ui.input_conf_plain_text_edit
+        text_input.setPlainText(self.setting.value)
+        text_input.setFont(QFont("monospace"))
+
+        self._valid = True, []
+
+        def on_update():
+            self._new_value = text_input.toPlainText()
+            self._changed = self.setting.value != self._new_value
+            call_me_after_change()
+
+        self._update_fun = on_update
+        text_input.textChanged.connect(self._update_fun)
+
+    def unbind_from(self, ui: Ui_Dialog) -> None:
+        ui.input_conf_plain_text_edit.textChanged.disconnect(self._update_fun)
+
+
+class ConfMpvWrapper(PreferenceChangeWrapper):
+
+    def unbind_from(self, ui: Ui_Dialog) -> None:
+        ui.mpv_conf_plain_text_edit.textChanged.disconnect(self._update_fun)
+
+    def bind_to(self, ui: Ui_Dialog, call_me_after_change) -> None:
+        text_input = ui.mpv_conf_plain_text_edit
+        text_input.setPlainText(self.setting.value)
+        text_input.setFont(QFont("monospace"))
+
+        self._valid = True, []
+
+        def on_update():
+            self._new_value = text_input.toPlainText()
+            self._changed = self.setting.value != self._new_value
+            call_me_after_change()
+
+        self._update_fun = on_update
+        text_input.textChanged.connect(self._update_fun)
+
+
 class SettingsManager:
 
     def __init__(self):
-        self.file: path = configuration.paths.settings_json
+        paths = configuration.paths
+        self.file: path = paths.settings_json
 
         self.settings_version = SettingsEntry("version", "0.0.1")
         self.player_last_played_directory = SettingsEntry("player_last_played_directory", "")
         self.nickname = SettingsEntry("nickname", "nick")
         self.language = SettingsManager.__find_language()
-        self.comment_types = SettingsEntry("comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing",
-                                                             "Timing", "Typeset", "Note"])
         self.auto_save_enabled = SettingsEntry("autosave_enabled", True)
         self.auto_save_interval = SettingsEntry("autosave_interval_seconds", 90)
         self.qc_doc_write_video_path_to_file = SettingsEntry("qc_doc_write_video_path_to_file", True)
         self.qc_doc_write_nick_to_file = SettingsEntry("qc_doc_write_nick_to_file", True)
 
+        self.comment_types = SettingsEntry("comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing",
+                                                             "Timing", "Typeset", "Note"])
+
         self.comment_types_wrapper = CommentTypesWrapper(self.comment_types)
 
-        self.writable_settings: List[SettingsEntry] = [
+        self.conf_input = SettingsEntry(name=paths.input_conf, default_value=constants.CFG_INPUT)
+        self.conf_mpv = SettingsEntry(name=paths.mpv_conf, default_value=constants.CFG_MPV)
+
+        self.__settings_json_lines: List[SettingsEntry] = [
             self.settings_version,
             self.player_last_played_directory,
             self.nickname,
             self.language,
+            self.comment_types,
             self.auto_save_enabled,
             self.auto_save_interval,
             self.qc_doc_write_video_path_to_file,
             self.qc_doc_write_nick_to_file
         ]
 
-        self.__read_values_from_config(self.writable_settings)
+        self.__conf_files: List[SettingsEntry] = [
+            self.conf_input,
+            self.conf_mpv
+        ]
+
+        self.__read_json_settings()
+        self.__read_conf_files()
 
     @property
     def changeable_settings(self) -> List[PreferenceChangeWrapper]:
@@ -360,25 +416,40 @@ class SettingsManager:
             QcDocumentWriteNickNameToFileWrapper(self.qc_doc_write_nick_to_file)
         ]
 
-    def __read(self):
-        if not os.path.isfile(self.file):
-            self.save()
-        with open(self.file) as df:
-            return json.load(df)
+    @property
+    def changeable_files(self) -> List[PreferenceChangeWrapper]:
+        return [
+            ConfInputWrapper(self.conf_input),
+            ConfMpvWrapper(self.conf_mpv)
+        ]
 
-    def __read_values_from_config(self, writeable_settings):
-        found_in_json: Dict = self.__read()
-        for setting in writeable_settings:
-            setting.value = found_in_json.get(setting.name, None)
-
-    def save(self):
+    def save_settings(self):
         wr_setting = {}
-        for s in self.writable_settings:
+        for s in self.__settings_json_lines:
             wr_setting.update({s.name: s.value})
 
         with io.open(self.file, 'w', encoding='utf8') as outfile:
             str_ = json.dumps(wr_setting, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
             outfile.write(to_unicode(str_))
+
+    def save_conf_files(self):
+        for conf_file in self.__conf_files:
+            with open(conf_file.name, "w", encoding="utf-8") as configfile:
+                configfile.write(conf_file.value)
+
+    def __read_json_settings(self):
+        if not os.path.isfile(self.file):
+            self.save_settings()
+        with open(self.file) as df:
+            found_in_json: Dict = json.load(df)
+
+        for setting in self.__settings_json_lines:
+            setting.value = found_in_json.get(setting.name, None)
+
+    def __read_conf_files(self):
+        for conf_file in self.__conf_files:
+            with open(conf_file.name, "r", encoding="utf-8") as configfile:
+                conf_file.value = configfile.read()
 
     @staticmethod
     def __find_language():

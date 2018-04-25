@@ -76,7 +76,7 @@ class PreferenceDialog(QDialog):
         self.ui.setupUi(self)
 
         self.settings: SettingsManager = settings.settings
-        self.all_settings = self.settings.changeable_settings
+        self.all_writable = tuple(self.settings.changeable_settings) + tuple(self.settings.changeable_files)
 
         self.message_widget = MessageWidget(self.ui.kmessagewidget)
 
@@ -119,7 +119,7 @@ class PreferenceDialog(QDialog):
         cts_lv_le.setPlaceholderText(_translate("Misc", "Type here to add new comment types"))
 
         # Settings
-        for setting in self.all_settings:
+        for setting in self.all_writable:
             setting.bind_to(self.ui, self.__update_apply_button_state)
 
     def __is_data_valid(self) -> bool:
@@ -132,7 +132,7 @@ class PreferenceDialog(QDialog):
         self.message_widget.clear()
 
         is_valid: bool = True
-        for setting in self.all_settings:
+        for setting in self.all_writable:
             valid, errors = setting.valid
             if not valid:
                 is_valid = False
@@ -145,7 +145,7 @@ class PreferenceDialog(QDialog):
         """
 
         has_changed = False
-        for setting in self.all_settings:
+        for setting in self.all_writable:
             if setting.changed:
                 has_changed = True
         return has_changed
@@ -199,10 +199,11 @@ class PreferenceDialog(QDialog):
         Action when apply button is pressed.
         """
 
-        for setting in self.all_settings:
+        for setting in self.all_writable:
             setting.save()
 
-        self.settings.save()
+        self.settings.save_settings()
+        self.settings.save_conf_files()
 
         super().accept()
 
@@ -213,10 +214,11 @@ class PreferenceDialog(QDialog):
 
         if not ConfigurationResetQMessageBox().exec_():
 
-            for setting in self.all_settings:
+            for setting in self.all_writable:
                 setting.unbind_from(self.ui)
                 setting.reset()
                 setting.bind_to(self.ui, self.__update_apply_button_state)
                 self.__update_apply_button_state()
 
-            self.settings.save()
+            self.settings.save_settings()
+            self.settings.save_conf_files()

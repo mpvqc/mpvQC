@@ -145,7 +145,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
         if path.isfile(file):
             setting.player_last_played_directory.value = path.dirname(file)
-            setting.save()
+            setting.save_settings()
             self.references.player.open_video(file, play=True)
 
     def __on_pressed_open_network_stream(self):

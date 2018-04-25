@@ -13,13 +13,6 @@ class CustomStatusBar(QStatusBar):
         self.references = references
 
 
-class CommentsWidget(QTableView):
-
-    def __init__(self, references: References):
-        super().__init__()
-        self.references = references
-
-
 class MpvWidget(QFrame):
 
     def __init__(self, references: References):
@@ -126,3 +119,10 @@ class MpvWidget(QFrame):
             print("Key-Press")
 
         return super().eventFilter(source, event)
+
+
+class CommentsWidget(QTableView):
+
+    def __init__(self, references: References):
+        super().__init__()
+        self.references = references
