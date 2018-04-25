@@ -17,7 +17,7 @@ try:
 except NameError:
     to_unicode = str
 
-_tr = _translate = QtCore.QCoreApplication.translate
+_translate = QtCore.QCoreApplication.translate
 
 
 # from PyKF5.KWidgetsAddons import KMessageWidget, KEditListWidget
@@ -53,7 +53,7 @@ class SettingsNickname(AbstractUserEditableSetting):
 
     def setup(self, update_function) -> None:
         self.nickname_LineEdit = self.ui.authorLineEdit
-        self.nickname_LineEdit.setPlaceholderText(_tr("Misc", "Type here to change the nick name"))
+        self.nickname_LineEdit.setPlaceholderText(_translate("Misc", "Type here to change the nick name"))
         self.nickname_LineEdit.setText(self.value)
         self.nickname_LineEdit.textChanged.connect(update_function)
 
@@ -62,7 +62,7 @@ class SettingsNickname(AbstractUserEditableSetting):
         return self._is_valid
 
     def error_messages(self) -> List[str]:
-        return [_tr("Misc", "Nick name must not be empty")]
+        return [_translate("Misc", "Nick name must not be empty")]
 
     def has_changed(self) -> bool:
         return not self.value == self.nickname_LineEdit.text().strip().replace(" ", "_")
@@ -83,9 +83,9 @@ class SettingsLanguage(AbstractUserEditableSetting):
         default_locale = locale.getdefaultlocale()[0]
 
         if default_locale.startswith("de"):
-            def_value = _tr("Dialog", "German")
+            def_value = _translate("Dialog", "German")
         else:
-            def_value = _tr("Dialog", "English")
+            def_value = _translate("Dialog", "English")
 
         return SettingsEntry(name="language",
                              default_value=def_value,
@@ -94,10 +94,10 @@ class SettingsLanguage(AbstractUserEditableSetting):
     def setup(self, update_function) -> None:
         self.language_box = self.ui.comboBox
         self.languages = {
-            _tr("Dialog", "English"): "English",
-            _tr("Dialog", "German"): "German"
+            _translate("Dialog", "English"): "English",
+            _translate("Dialog", "German"): "German"
         }
-        self.language_box.setCurrentIndex(max(self.language_box.findText(_tr("Dialog", self.value)), 0))
+        self.language_box.setCurrentIndex(max(self.language_box.findText(_translate("Dialog", self.value)), 0))
         self.language_box.currentIndexChanged.connect(update_function)
 
     def is_valid(self) -> bool:
@@ -121,6 +121,19 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
         self.no_item_empty_str: bool = True
 
     def provide_settings_declaration(self) -> SettingsEntry:
+
+        """ The following list exists only for easing the translation process."""
+        self.for_translation_only = [
+            _translate("Misc", "Translation"),
+            _translate("Misc", "Punctuation"),
+            _translate("Misc", "Spelling"),
+            _translate("Misc", "Phrasing"),
+            _translate("Misc", "Timing"),
+            _translate("Misc", "Typeset"),
+            _translate("Misc", "Note"),
+            _translate("Misc", "Type here to add new comment types")
+        ]
+
         return SettingsEntry(name="comment_types",
                              default_value=["Spelling", "Punctuation", "Translation", "Phrasing",
                                             "Timing", "Typeset", "Note"],
@@ -129,7 +142,7 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
     def setup(self, update_function) -> None:
         self.cts = self.ui.kCommentTypes
         for ct in self.settings_entry.default_value:
-            self.comment_types_english.update({_tr("Misc", ct): ct})
+            self.comment_types_english.update({_translate("Misc", ct): ct})
 
         self.cts.setStyleSheet(" QPushButton { text-align:left; padding: 8px; } ")
 
@@ -137,15 +150,15 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
         cts_lv.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         cts_lv_le: QLineEdit = self.cts.lineEdit()
-        cts_lv_le.setPlaceholderText(_tr("Misc", "Type here to add new comment types"))
+        cts_lv_le.setPlaceholderText(_translate("Misc", "Type here to add new comment types"))
 
-        self.cts.addButton().setText(_tr("Misc", "Add"))
-        self.cts.removeButton().setText(_tr("Misc", "Remove"))
-        self.cts.upButton().setText(_tr("Misc", "Move Up"))
-        self.cts.downButton().setText(_tr("Misc", "Move Down"))
+        self.cts.addButton().setText(_translate("Misc", "Add"))
+        self.cts.removeButton().setText(_translate("Misc", "Remove"))
+        self.cts.upButton().setText(_translate("Misc", "Move Up"))
+        self.cts.downButton().setText(_translate("Misc", "Move Down"))
 
         for ct in self.value:
-            item = _tr("Misc", ct)
+            item = _translate("Misc", ct)
             self.cts.insertItem(item)
 
         self.cts.changed.connect(update_function)
@@ -165,10 +178,10 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
         ret_list = []
 
         if not self.not_empty_comment_types:
-            ret_list.append(_tr("Misc", "At least one comment type is required"))
+            ret_list.append(_translate("Misc", "At least one comment type is required"))
 
         if not self.no_item_empty_str:
-            ret_list.append(_tr("Misc", "Each comment type needs a valid name"))
+            ret_list.append(_translate("Misc", "Each comment type needs a valid name"))
 
         return ret_list
 
@@ -187,7 +200,7 @@ class SettingsCommentTypes(AbstractUserEditableSetting):
             ct_list_view.clearSelection()
             edit = cts.lineEdit()
             edit.setReadOnly(False)
-            edit.setPlaceholderText(_tr("Misc", "Type here to add new comment types"))
+            edit.setPlaceholderText(_translate("Misc", "Type here to add new comment types"))
 
             for btn in [cts.addButton(), cts.removeButton(), cts.upButton(), cts.downButton()]:
                 btn.setEnabled(False)
@@ -335,9 +348,6 @@ class MpvQcSettings:
         with io.open(configuration.get_paths().settings_json, 'w', encoding='utf8') as outfile:
             str_ = json.dumps(wr_setting, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
             outfile.write(to_unicode(str_))
-
-    def reset(self):
-        pass
 
 
 class __Holder:

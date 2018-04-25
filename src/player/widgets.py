@@ -1,19 +1,31 @@
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer, Qt, QObject, QEvent
 from PyQt5.QtGui import QMouseEvent, QWheelEvent
-from PyQt5.QtWidgets import QFrame
+from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar
 
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
 from src.preferences import configuration
-from tmpv import ApplicationWindow
+from src.shared.references import References
+
+
+class CustomStatusBar(QStatusBar):
+    def __init__(self, references: References):
+        super().__init__()
+        self.references = references
+
+
+class CommentsWidget(QTableView):
+
+    def __init__(self, references: References):
+        super().__init__()
+        self.references = references
 
 
 class MpvWidget(QFrame):
 
-    def __init__(self, parent):
-        super(MpvWidget, self).__init__(parent)
-        self.main_window: ApplicationWindow = parent
-        self.comment_list = self.main_window.ui.tableView
+    def __init__(self, references: References):
+        super(MpvWidget, self).__init__(references.widget_main)
+        self.references = references
 
         self.setStyleSheet("background-color:black;")
         self.setMouseTracking(True)
@@ -21,9 +33,10 @@ class MpvWidget(QFrame):
 
         self.cursor_timer = QTimer(self)
         self.cursor_timer.setSingleShot(True)
-        self.cursor_timer.timeout.connect(self.main_window.hide_mouse_cursor)
+        self.cursor_timer.timeout.connect(
+            lambda arg=False, f=self.references.widget_main.display_mouse_cursor: f(arg))
 
-        mpv_mpv = bindings.MPV(
+        mpv = bindings.MPV(
             wid=str(int(self.winId())),
             keep_open="yes",
             idle="yes",
@@ -37,11 +50,11 @@ class MpvWidget(QFrame):
             # log_handler=mpvLogHandler,
         )
 
-        # @mpv_mpv.property_observer('time-pos')
+        # @mpv.property_observer('time-pos')
         # def time_observer(_name, value):
         #     print("Time: ", value)
 
-        self.mpv_player = MpvPlayer(mpv_mpv)
+        self.mpv_player = MpvPlayer(mpv)
 
     def mouseMoveEvent(self, mev: QMouseEvent):
 
@@ -52,11 +65,11 @@ class MpvWidget(QFrame):
                 # todo logger
                 pass
 
-        self.main_window.display_mouse_cursor()
+        self.references.widget_main.display_mouse_cursor(display=True)
 
     def mousePressEvent(self, mev: QMouseEvent):
         self.setFocus()
-        self.comment_list.setFocus()
+        # self.comment_list.setFocus()
 
         button = mev.button()
 
@@ -64,6 +77,8 @@ class MpvWidget(QFrame):
             self.mpv_player.mouse_action(0, ActionType.DOWN)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
+        elif button == Qt.RightButton:
+            print("Right button pressed!")
         elif button == Qt.BackButton:
             self.mpv_player.mouse_action(5, ActionType.PRESS)
         elif button == Qt.ForwardButton:
@@ -79,7 +94,7 @@ class MpvWidget(QFrame):
         button = mev.button()
 
         if button == Qt.LeftButton:
-            self.main_window.toggle_fullscreen()
+            self.references.widget_main.toggle_fullscreen()
             self.mpv_player.mouse_action(0, ActionType.PRESS)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
@@ -103,3 +118,10 @@ class MpvWidget(QFrame):
                 self.mpv_player.mouse_action(4, ActionType.PRESS)
         else:
             super().wheelEvent(whe)
+
+    def eventFilter(self, source: QObject, event: QEvent) -> bool:
+
+        if event.type() == QEvent.KeyPress:
+            print("Key-Press")
+
+        return super().eventFilter(source, event)

@@ -32,7 +32,6 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QTableView" name="tableView"/>
      </widget>
     </item>
    </layout>
@@ -43,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>30</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -86,7 +85,6 @@
    <addaction name="menu_Settings"/>
    <addaction name="menuAbout"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew_QC_Document">
    <property name="text">
     <string>&amp;New QC document</string>

@@ -59,7 +59,7 @@ class SettingsType(Enum):
 
 class SettingsEntry:
 
-    def __init__(self, name, default_value, var_type: SettingsType):
+    def __init__(self, name: str, default_value, var_type: SettingsType):
         """
         Holder for a settings entry's data.
 
@@ -89,7 +89,9 @@ class AbstractNonUserEditableSetting(ABC):
             var_type=self.settings_entry.var_type)
 
     def __parse_string_to_var_type(self, string: str, var_type: SettingsType) -> Any:
-        """Will parse/cast the string to a var_type object."""
+        """
+        Will parse/cast the string to a var_type object.
+        """
 
         if var_type == SettingsType.LIST_STRING:
             return string
@@ -104,38 +106,46 @@ class AbstractNonUserEditableSetting(ABC):
         else:
             return self.transform_to_custom_value(string)
 
-    # noinspection PyUnusedLocal
     def transform_to_custom_value(self, string: str) -> Any:
-        """Override this method in case some custom setting needs to be parsed from the JSON string."""
+        """
+        Override this method in case some custom setting needs to be parsed from the JSON string.
+        """
 
-        pass
         raise NotImplementedError(
             "For the setting '{}' a custom implementation for parsing from string '{}' to value is necessary!".format(
                 inspect.stack()[0][3], string))
+        pass
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self.settings_entry.name
 
     @property
-    def value(self):
+    def value(self) -> Any:
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value) -> None:
         self._value = value
 
     @abstractmethod
     def provide_settings_declaration(self) -> SettingsEntry:
-        """Returns a SettingsEntry object with data about the setting to store."""
+        """
+        Returns a SettingsEntry object with data about the setting.
+        """
 
-        raise NotImplementedError("The setting '{}' is not implemented!".format(inspect.stack()[0][3]))
+    def reset_value(self) -> None:
+        """
+        Resets this setting's value to the default value.
+        """
+
+        self.value = self.settings_entry.default_value
 
 
 class AbstractUserEditableSetting(AbstractNonUserEditableSetting):
     """
-        A class for all settings which are stored in the settings.json
-        **and** which **are** editable by the user via the preference dialog.
+    A class for all settings which are stored in the settings.json
+    **and** which **are** editable by the user via the preference dialog.
     """
 
     def __init__(self):
@@ -143,7 +153,9 @@ class AbstractUserEditableSetting(AbstractNonUserEditableSetting):
         self.ui: Ui_Dialog = None
 
     def error_messages(self) -> List[str]:
-        """Error messages in case the user needs to be hinted."""
+        """
+        Error messages in case the user needs to be hinted.
+        """
 
         return []
 
@@ -163,9 +175,9 @@ class AbstractUserEditableSetting(AbstractNonUserEditableSetting):
 
     @abstractmethod
     def setup(self, update_function) -> None:
-        """Inserts the current value in the the UI component."""
-
-        raise NotImplementedError("This method '{}' is not implemented!".format(inspect.stack()[0][3]))
+        """
+        Inserts the current value in the the UI component.
+        """
 
     @abstractmethod
     def is_valid(self) -> bool:
@@ -176,8 +188,6 @@ class AbstractUserEditableSetting(AbstractNonUserEditableSetting):
         :return: **False** else.
         """
 
-        raise NotImplementedError("This method '{}' is not implemented!".format(inspect.stack()[0][3]))
-
     @abstractmethod
     def has_changed(self) -> bool:
         """
@@ -187,10 +197,8 @@ class AbstractUserEditableSetting(AbstractNonUserEditableSetting):
         :return: **False** else.
         """
 
-        raise NotImplementedError("This method '{}' is not implemented!".format(inspect.stack()[0][3]))
-
     @abstractmethod
-    def take_over(self):
-        """Will assign the Ui components input as this setting's value."""
-
-        raise NotImplementedError("This method '{}' is not implemented!".format(inspect.stack()[0][3]))
+    def take_over(self) -> None:
+        """
+        Will assign the Ui components input as this setting's value.
+        """

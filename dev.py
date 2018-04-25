@@ -56,11 +56,15 @@ _TOOLS: Tuple[str] = (
     "pyuic5",  # Should be installed if qt designer is installed
     "pylupdate5",  # Should be installed if qt designer is installed
     "lrelease",  # Should be installed if qt designer is installed
+    "ts2po",  # Found it on github
 )
 
 
 def to_bash(message: str, lvl: int = 1):
-    """ Used for debuging and understanding the process. """
+    """
+    Used for debuging and understanding the process.
+    """
+
     if lvl == 0:
         pass
     elif lvl == 1:
@@ -73,7 +77,8 @@ class Directory:
         self.script_location = script_location
         to_bash("This script location is: " + script_location, lvl=0)
         self.structure: Tuple[str] = ("locale", "{}", "LC_MESSAGES")
-        self.src_gui = os.path.join(self.script_location, "src", "gui")
+        self.src = os.path.join(self.script_location, "src")
+        self.src_gui = os.path.join(self.src, "gui")
         to_bash("This src gui will be " + self.src_gui, lvl=0)
         self.locale_dirs = [os.path.join(self.script_location, *self.structure).format(l) for l in languages]
         to_bash("Locale directories will be ", lvl=0)
@@ -119,8 +124,8 @@ class Transformer:
             os.system("pyuic5 {} -o {}.py".format(ui_file, self.py_gui_target.format(f_name)))
 
     def py_to_ts(self):
-        py_files = [fn for fn in glob.glob(os.path.join(self.py_gui_target.format(""), "*.py"))
-                    if not fn.endswith("__.py")]
+        py_files = [fn for fn in glob.glob(os.path.join(self.directory.src, "*/*.py"))
+                    if (not fn.endswith("__.py"))]
         for py_file in py_files:
             to_bash("Found py file " + py_file, lvl=1)
 
@@ -134,13 +139,6 @@ class Transformer:
             os.system("ts2po {}.ts {}po.po".format(new_file, new_file))
             po = polib.pofile('{}po.po'.format(new_file))
             po.save_as_mofile('{}mo.mo'.format(new_file))
-
-            # import polib
-            #
-            # file = "string"
-            #
-            # po = polib.pofile('{}.po'.format(file))
-            # po.save_as_mofile('{}.mo'.format(file))
 
 
 def tools_available() -> bool:

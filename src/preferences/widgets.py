@@ -2,13 +2,15 @@ from typing import Set, List
 
 from PyKF5.KWidgetsAddons import KMessageWidget
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import QMessageBox, QDialogButtonBox, QDialog
+from PyQt5.QtWidgets import QDialogButtonBox, QDialog
 
+from src.gui.dialogs import ConfigurationHasChangedQMessageBox, ConfigurationResetQMessageBox
 from src.gui.preferences import Ui_Dialog
 from src.preferences.preferencesabstract import AbstractUserEditableSetting
 from src.preferences.settings import get_settings, MpvQcSettings
+from src.shared.references import References
 
-_tr = _translate = QtCore.QCoreApplication.translate
+_translate = QtCore.QCoreApplication.translate
 
 
 class MessageWidget:
@@ -65,30 +67,48 @@ class PreferenceDialog(QDialog):
     The dialog for the preferences.
     """
 
-    def __init__(self, parent):
-        super().__init__(parent=parent)
+    def __init__(self, references: References):
+        super().__init__(parent=references.widget_main)
 
-        self.settings: MpvQcSettings = get_settings()
+        self.references: References = references
+
         self.ui: Ui_Dialog = Ui_Dialog()
         self.ui.setupUi(self)
 
+        self.settings: MpvQcSettings = get_settings()
         self.all_settings: List[AbstractUserEditableSetting] = self.settings.all_editable
 
+        self.message_widget = MessageWidget(self.ui.kmessagewidget)
+
+        self.__is_any_setting_changed = False
+
         self.__setup()
-        # self.installEventFilter(self)
 
     def __setup(self):
         """
         Set up all editable preference objects.
         """
 
-        self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
+        # Buttons box
+        button_box = self.ui.buttonBox
 
-        self.message_widget = MessageWidget(self.ui.kmessagewidget)
+        btn_apply = button_box.button(QDialogButtonBox.Apply)
+        btn_apply.setEnabled(False)
+        btn_apply.clicked.connect(self.accept)
+        btn_apply.setText(_translate("Misc", "Apply"))
 
+        btn_discard = button_box.button(QDialogButtonBox.Discard)
+        btn_discard.clicked.connect(self.reject)
+        btn_discard.setText(_translate("Misc", "Discard"))
+
+        btn_restore_defaults = button_box.button(QDialogButtonBox.RestoreDefaults)
+        btn_restore_defaults.clicked.connect(self.__on_restore_default)
+        btn_restore_defaults.setText(_translate("Misc", "Defaults"))
+
+        # Settings
         for setting in self.all_settings:
             setting.bind_preference(self.ui)
-            setting.setup(update_function=self.__update_accept_button_state)
+            setting.setup(update_function=self.__update_apply_button_state)
 
     def __is_data_valid(self) -> bool:
         """
@@ -96,6 +116,7 @@ class PreferenceDialog(QDialog):
 
         Must call each *is_valid* method in case a warning message is necessary for a specific widget.
         """
+
         self.message_widget.clear()
 
         valid: bool = True
@@ -114,17 +135,20 @@ class PreferenceDialog(QDialog):
         for setting in self.all_settings:
             if setting.has_changed():
                 has_changed = True
-
         return has_changed
 
-    def __update_accept_button_state(self):
+    def __update_apply_button_state(self):
         """
         Updates the accept button.
 
         Button should be enabled if changed and valid, disable else.
         """
 
-        self.ui.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.__has_changed() and self.__is_data_valid())
+        changed = self.__has_changed()
+        valid = self.__is_data_valid()
+
+        btn_apply = self.ui.buttonBox.button(QDialogButtonBox.Apply)
+        btn_apply.setEnabled(changed and valid)
 
     def mousePressEvent(self, mouse_ev: QtGui.QMouseEvent):
         """
@@ -135,9 +159,20 @@ class PreferenceDialog(QDialog):
         self.settings.comment_types.remove_focus()
         super().mousePressEvent(mouse_ev)
 
+    def reject(self):
+        """
+        Action when reject button is pressed.
+        """
+
+        if self.__has_changed():
+            if ConfigurationHasChangedQMessageBox().exec_():
+                return
+
+        super().reject()
+
     def accept(self):
         """
-        Action when accept button is pressed.
+        Action when apply button is pressed.
         """
 
         for setting in self.all_settings:
@@ -147,23 +182,15 @@ class PreferenceDialog(QDialog):
 
         super().accept()
 
-    def reject(self):
+    def __on_restore_default(self):
         """
-        Action when reject button is pressed.
+        Action when restore default button is pressed.
         """
 
-        if self.__has_changed():
-            q = QMessageBox()
-            q.setText(_tr("Misc", "Your configuration has changed.") + " " + _tr("Misc", "Discard changes?"))
-            q.setIcon(QMessageBox.Warning)
-            q.setWindowTitle(_tr("Misc", "Discard changes?"))
-            q.addButton(_tr("Misc", "Yes"), QMessageBox.YesRole)
-            q.addButton(_tr("Misc", "No"), QMessageBox.NoRole)
+        if not ConfigurationResetQMessageBox().exec_():
 
-            if not q.exec_():
-                super().reject()
-        else:
-            super().reject()
+            for setting in self.all_settings:
+                setting.reset_value()
 
-    def keyPressEvent(self, a0: QtGui.QKeyEvent):
-        print("a")
+            self.settings.save()
+            super().accept()

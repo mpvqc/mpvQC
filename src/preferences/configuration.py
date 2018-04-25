@@ -5,7 +5,6 @@ from pathlib import Path
 from appdirs import unicode
 
 from src import constants
-from tmpv import APPLICATION_NAME, DIRECTORY_PROGRAM
 
 try:
     to_unicode = unicode
@@ -23,6 +22,7 @@ class Paths:
     DIR_AUTO_SAVE = "autosave"
 
     def __init__(self):
+        from tmpv import APPLICATION_NAME, DIRECTORY_PROGRAM
 
         self.application_name = APPLICATION_NAME
         self.dir_program = DIRECTORY_PROGRAM
