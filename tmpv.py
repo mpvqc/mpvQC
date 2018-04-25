@@ -11,7 +11,7 @@ from PyQt5.QtGui import QCursor, QShowEvent
 from src.gui.dialogs import OpenVideoFileDialog
 from src.gui.main import Ui_MainWindow
 from src.player.widgets import CommentsWidget, CustomStatusBar, MpvWidget
-from src.preferences.configuration import get_paths
+from src.preferences import settings
 from src.shared.references import References
 
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
@@ -95,11 +95,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         Reloads the user interface language.
         It uses the language stored in the current settings.json.
         """
+        from src.preferences.configuration import paths
 
         self.references.application.removeTranslator(self.translator)
 
-        _locale_structure = path.join(get_paths().dir_program, "locale", "{}", "LC_MESSAGES")
-        language: str = settings.get_settings().language.value
+        _locale_structure = path.join(paths.dir_program, "locale", "{}", "LC_MESSAGES")
+        language: str = settings.settings.language.value
 
         if language.startswith("German"):
             value = "de"
@@ -110,7 +111,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         trans_present = path.isdir(trans_dir)
 
         if trans_present:
-            directory = path.join(get_paths().dir_program, "locale")
+            directory = path.join(paths.dir_program, "locale")
             gettext.translation(domain="ui_transmo", localedir=directory, languages=['de', 'en']).install()
             self.translator.load("ui_trans", trans_dir)
         else:
@@ -135,14 +136,15 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         print(inspect.stack()[0][3])
 
     def __on_pressed_open_video(self):
-        """When user hits Video -> Open Video ..."""
+        """
+        When user hits Video -> Open Video ...
+        """
 
-        setting = settings.get_settings()
-
-        file = OpenVideoFileDialog.get_open_file_name(parent=self, directory=setting.player_last_played.value)
+        setting = settings.settings
+        file = OpenVideoFileDialog.get_open_file_name(parent=self, directory=setting.player_last_played_directory.value)
 
         if path.isfile(file):
-            setting.player_last_played.value = path.dirname(file)
+            setting.player_last_played_directory.value = path.dirname(file)
             setting.save()
             self.references.player.open_video(file, play=True)
 
@@ -219,8 +221,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
-    from src.preferences import settings
-
     app = QtWidgets.QApplication(sys.argv)
 
     locale.setlocale(locale.LC_NUMERIC, "C")

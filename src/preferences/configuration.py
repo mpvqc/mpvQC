@@ -39,9 +39,8 @@ class Paths:
         self.settings_json = self.__find_settings_json()
         self.input_conf = self.__create_input_conf_if_not_exists()
         self.mpv_conf = self.__create_mpv_conf_if_not_exists()
-        print(self.__dict__)
 
-    def __find_dir_config(self):
+    def __find_dir_config(self) -> path:
 
         if path.isfile(path.join(self.dir_program, "portable")):
             return self.dir_program
@@ -55,7 +54,7 @@ class Paths:
 
         return conf_location
 
-    def __find_settings_json(self):
+    def __find_settings_json(self) -> path:
         return path.join(self.dir_main_config, Paths.DIR_CFG, Paths.FILE_SETTINGS)
 
     def __create_input_conf_if_not_exists(self):
@@ -85,12 +84,4 @@ class Paths:
             c.mkdir(parents=True)
 
 
-class __Holder:
-    paths: Paths = None
-
-
-def get_paths() -> Paths:
-    if __Holder.paths is None:
-        __Holder.paths = Paths()
-
-    return __Holder.paths
+paths = Paths()

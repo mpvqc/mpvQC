@@ -44,5 +44,5 @@ class ConfigurationResetQMessageBox(QMessageBox):
         self.setText(_translate("Misc", "Do you really want to restore the default configuration?"))
         self.setIcon(QMessageBox.Critical)
         self.setWindowTitle(_translate("Misc", "Reset configuration"))
-        self.addButton(_translate("Misc", "Reset"), QMessageBox.DestructiveRole)
+        self.addButton(_translate("Misc", "Reset"), QMessageBox.ApplyRole)
         self.addButton(_translate("Misc", "Cancel"), QMessageBox.RejectRole)

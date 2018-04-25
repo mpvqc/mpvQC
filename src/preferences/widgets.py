@@ -2,12 +2,12 @@ from typing import Set, List
 
 from PyKF5.KWidgetsAddons import KMessageWidget
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import QDialogButtonBox, QDialog
+from PyQt5.QtWidgets import QDialogButtonBox, QDialog, QLineEdit, QAbstractItemView, QListView
 
 from src.gui.dialogs import ConfigurationHasChangedQMessageBox, ConfigurationResetQMessageBox
 from src.gui.preferences import Ui_Dialog
-from src.preferences.preferencesabstract import AbstractUserEditableSetting
-from src.preferences.settings import get_settings, MpvQcSettings
+from src.preferences import settings
+from src.preferences.settings import SettingsManager
 from src.shared.references import References
 
 _translate = QtCore.QCoreApplication.translate
@@ -75,12 +75,10 @@ class PreferenceDialog(QDialog):
         self.ui: Ui_Dialog = Ui_Dialog()
         self.ui.setupUi(self)
 
-        self.settings: MpvQcSettings = get_settings()
-        self.all_settings: List[AbstractUserEditableSetting] = self.settings.all_editable
+        self.settings: SettingsManager = settings.settings
+        self.all_settings = self.settings.changeable_settings
 
         self.message_widget = MessageWidget(self.ui.kmessagewidget)
-
-        self.__is_any_setting_changed = False
 
         self.__setup()
 
@@ -105,26 +103,41 @@ class PreferenceDialog(QDialog):
         btn_restore_defaults.clicked.connect(self.__on_restore_default)
         btn_restore_defaults.setText(_translate("Misc", "Defaults"))
 
+        # Comment Types
+        cts = self.ui.kCommentTypes
+        cts.setStyleSheet(" QPushButton { text-align:left; padding: 8px; } ")
+
+        cts.addButton().setText(_translate("Misc", "Add"))
+        cts.removeButton().setText(_translate("Misc", "Remove"))
+        cts.upButton().setText(_translate("Misc", "Move Up"))
+        cts.downButton().setText(_translate("Misc", "Move Down"))
+
+        cts_lv: QListView = cts.listView()
+        cts_lv.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+        cts_lv_le: QLineEdit = cts.lineEdit()
+        cts_lv_le.setPlaceholderText(_translate("Misc", "Type here to add new comment types"))
+
         # Settings
         for setting in self.all_settings:
-            setting.bind_preference(self.ui)
-            setting.setup(update_function=self.__update_apply_button_state)
+            setting.bind_to(self.ui, self.__update_apply_button_state)
 
     def __is_data_valid(self) -> bool:
         """
-        Checks whether the current data in all input widgets is valid.
+        Checks whether the current data in all input widgets is is_valid.
 
         Must call each *is_valid* method in case a warning message is necessary for a specific widget.
         """
 
         self.message_widget.clear()
 
-        valid: bool = True
+        is_valid: bool = True
         for setting in self.all_settings:
-            if not setting.is_valid():
-                valid = False
-                self.message_widget.add_messages(setting.error_messages())
-        return valid
+            valid, errors = setting.valid
+            if not valid:
+                is_valid = False
+                self.message_widget.add_messages(errors)
+        return is_valid
 
     def __has_changed(self) -> bool:
         """
@@ -133,7 +146,7 @@ class PreferenceDialog(QDialog):
 
         has_changed = False
         for setting in self.all_settings:
-            if setting.has_changed():
+            if setting.changed:
                 has_changed = True
         return has_changed
 
@@ -156,12 +169,23 @@ class PreferenceDialog(QDialog):
         the focus needs to be removed from the comment type widget.
         """
 
-        self.settings.comment_types.remove_focus()
+        cts = self.ui.kCommentTypes
+        ct_list_view: QListView = cts.listView()
+
+        if ct_list_view.selectionModel().selectedIndexes():
+            ct_list_view.clearSelection()
+            edit = cts.lineEdit()
+            edit.setReadOnly(False)
+            edit.setPlaceholderText(_translate("Misc", "Type here to add new comment types"))
+
+            for btn in [cts.addButton(), cts.removeButton(), cts.upButton(), cts.downButton()]:
+                btn.setEnabled(False)
+
         super().mousePressEvent(mouse_ev)
 
     def reject(self):
         """
-        Action when reject button is pressed.
+        Action when discard button is pressed.
         """
 
         if self.__has_changed():
@@ -176,7 +200,7 @@ class PreferenceDialog(QDialog):
         """
 
         for setting in self.all_settings:
-            setting.take_over()
+            setting.save()
 
         self.settings.save()
 
@@ -190,7 +214,9 @@ class PreferenceDialog(QDialog):
         if not ConfigurationResetQMessageBox().exec_():
 
             for setting in self.all_settings:
-                setting.reset_value()
+                setting.unbind_from(self.ui)
+                setting.reset()
+                setting.bind_to(self.ui, self.__update_apply_button_state)
+                self.__update_apply_button_state()
 
             self.settings.save()
-            super().accept()
