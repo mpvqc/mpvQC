@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyKF5.KWidgetsAddons import KMessageWidget, KEditListWidget
+from PyKF5.KWidgetsAddons import KEditListWidget
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -35,7 +35,7 @@ class Ui_Dialog(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 668, 464))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 668, 502))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -148,36 +148,44 @@ class Ui_Dialog(object):
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tab_4)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.mpv_conf_plain_text_edit = QtWidgets.QPlainTextEdit(self.tab_4)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.mpv_conf_plain_text_edit.setFont(font)
+        self.mpv_conf_plain_text_edit.setFrameShadow(QtWidgets.QFrame.Plain)
         self.mpv_conf_plain_text_edit.setObjectName("mpv_conf_plain_text_edit")
         self.horizontalLayout_2.addWidget(self.mpv_conf_plain_text_edit)
         self.tabWidget.addTab(self.tab_4, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.tab_2)
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.input_conf_plain_text_edit = QtWidgets.QPlainTextEdit(self.tab_2)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.input_conf_plain_text_edit.setFont(font)
+        self.input_conf_plain_text_edit.setFrameShadow(QtWidgets.QFrame.Plain)
         self.input_conf_plain_text_edit.setObjectName("input_conf_plain_text_edit")
         self.horizontalLayout_3.addWidget(self.input_conf_plain_text_edit)
         self.tabWidget.addTab(self.tab_2, "")
         self.verticalLayout.addWidget(self.tabWidget)
-        self.kmessagewidget = KMessageWidget(Dialog)
-        self.kmessagewidget.setEnabled(True)
-        self.kmessagewidget.setWordWrap(False)
-        self.kmessagewidget.setCloseButtonVisible(False)
-        self.kmessagewidget.setMessageType(KMessageWidget.Error)
-        self.kmessagewidget.setObjectName("kmessagewidget")
-        self.verticalLayout.addWidget(self.kmessagewidget)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
+        font = QtGui.QFont()
+        font.setKerning(True)
+        self.buttonBox.setFont(font)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Discard|QtWidgets.QDialogButtonBox.RestoreDefaults)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Apply | QtWidgets.QDialogButtonBox.Close | QtWidgets.QDialogButtonBox.RestoreDefaults)
         self.buttonBox.setCenterButtons(False)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(3)
         self.buttonBox.rejected.connect(Dialog.reject)
         self.autoSaveEnabledCheckBox_4.toggled['bool'].connect(self.widget_2.setEnabled)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -200,3 +208,4 @@ class Ui_Dialog(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "QC Document"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("Dialog", "mpv.conf"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "input.conf"))
+

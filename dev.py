@@ -39,6 +39,8 @@ _WORKFLOW = \
                 - LC_MESSAGES
                     - ui_trans.ts
                     - ui_trans.qm
+                    - ui_transmo.mo
+                    - ui_transpo.po
         -src
             - <abc>.py
     
@@ -52,7 +54,7 @@ _HELP_TEXT = \
 # The location of this python script
 _THIS_SCRIPT_LOCATION = os.path.dirname(os.path.realpath(sys.argv[0]))
 
-_TOOLS: Tuple[str] = (
+_TOOLS = (
     "pyuic5",  # Should be installed if qt designer is installed
     "pylupdate5",  # Should be installed if qt designer is installed
     "lrelease",  # Should be installed if qt designer is installed
@@ -62,7 +64,7 @@ _TOOLS: Tuple[str] = (
 
 def to_bash(message: str, lvl: int = 1):
     """
-    Used for debuging and understanding the process.
+    Used for debugging and understanding the process.
     """
 
     if lvl == 0:
@@ -115,7 +117,7 @@ class Transformer:
         self.py_gui_target = os.path.join(directory.src_gui, "{}")
 
     def ui_to_py(self):
-        ui_files = glob.glob(os.path.join(os.path.join(self.directory.script_location, "gui"), "*.ui"))
+        ui_files = glob.glob(os.path.join(self.directory.script_location, "gui", "*.ui"))
 
         for ui_file in ui_files:
             to_bash("Found ui file " + ui_file, lvl=1)
@@ -147,7 +149,7 @@ def tools_available() -> bool:
     for tool in _TOOLS:
         if shutil.which(tool) is None:
             passed = False
-            print("Tool \'{}\' is missing ...".format(tool))
+            print("Tool '{}' is missing ...".format(tool))
 
     return passed
 

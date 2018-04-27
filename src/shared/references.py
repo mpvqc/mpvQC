@@ -15,7 +15,7 @@ class References:
     def __init__(self):
         from src.player.widgets import MpvWidget
         from src.player.players import MpvPlayer
-        from tmpv import ApplicationWindow
+        from start import ApplicationWindow
 
         self.__application: QApplication
         self.__widget_main: ApplicationWindow

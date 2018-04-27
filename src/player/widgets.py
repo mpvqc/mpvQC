@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar
 
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
+from src.preferences.files import Files
 from src.shared.references import References
 
 
@@ -16,8 +17,6 @@ class CustomStatusBar(QStatusBar):
 class MpvWidget(QFrame):
 
     def __init__(self, references: References):
-        from src.preferences import configuration
-
         super(MpvWidget, self).__init__(references.widget_main)
         self.references = references
 
@@ -39,7 +38,7 @@ class MpvWidget(QFrame):
             input_cursor="no",
             input_default_bindings="no",
             config="yes",
-            config_dir=configuration.paths.dir_main_cfg,
+            config_dir=Files.DIRECTORY_CONFIGURATION,
             ytdl="yes",
             # log_handler=mpvLogHandler,
         )

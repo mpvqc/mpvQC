@@ -41,7 +41,8 @@ class ConfigurationResetQMessageBox(QMessageBox):
 
     def __init__(self):
         super().__init__()
-        self.setText(_translate("Misc", "Do you really want to restore the default configuration?"))
+        self.setText(
+            _translate("Misc", "Do you really want to restore the default configuration? This can not be undone."))
         self.setIcon(QMessageBox.Critical)
         self.setWindowTitle(_translate("Misc", "Reset configuration"))
         self.addButton(_translate("Misc", "Reset"), QMessageBox.ApplyRole)

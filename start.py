@@ -10,8 +10,7 @@ from PyQt5.QtGui import QCursor, QShowEvent
 
 from src.gui.dialogs import OpenVideoFileDialog
 from src.gui.main import Ui_MainWindow
-from src.player.widgets import CommentsWidget, CustomStatusBar, MpvWidget
-from src.preferences import settings
+
 from src.shared.references import References
 
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
@@ -29,6 +28,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def __init__(self, application: QtWidgets.QApplication):
         super(ApplicationWindow, self).__init__()
+        from src.player.widgets import CommentsWidget, CustomStatusBar, MpvWidget
 
         # References initialization
         self.references = References()
@@ -57,6 +57,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def toggle_fullscreen(self):
         """Will """
+
         if self.isFullScreen():
             self.hide_fullscreen()
         else:
@@ -95,12 +96,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         Reloads the user interface language.
         It uses the language stored in the current settings.json.
         """
-        from src.preferences.configuration import paths
 
         self.references.application.removeTranslator(self.translator)
 
-        _locale_structure = path.join(paths.dir_program, "locale", "{}", "LC_MESSAGES")
-        language: str = settings.settings.language.value
+        from src.preferences.files import Files
+        from src.preferences.settings import Settings
+
+        _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "locale", "{}", "LC_MESSAGES")
+        language: str = Settings.Holder.LANGUAGE.value
 
         if language.startswith("German"):
             value = "de"
@@ -111,7 +114,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         trans_present = path.isdir(trans_dir)
 
         if trans_present:
-            directory = path.join(paths.dir_program, "locale")
+            directory = path.join(Files.DIRECTORY_PROGRAM, "locale")
             gettext.translation(domain="ui_transmo", localedir=directory, languages=['de', 'en']).install()
             self.translator.load("ui_trans", trans_dir)
         else:
@@ -139,13 +142,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         """
         When user hits Video -> Open Video ...
         """
+        from src.preferences import settings
 
-        setting = settings.settings
-        file = OpenVideoFileDialog.get_open_file_name(parent=self, directory=setting.player_last_played_directory.value)
+        setting = settings.Settings
+        file = OpenVideoFileDialog.get_open_file_name(directory=setting.Holder.PLAYER_LAST_PLAYED_DIR.value)
 
         if path.isfile(file):
-            setting.player_last_played_directory.value = path.dirname(file)
-            setting.save_settings()
+            setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
+            setting.save()
             self.references.player.open_video(file, play=True)
 
     def __on_pressed_open_network_stream(self):
@@ -164,7 +168,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
         self.__handle_application_events(handle=False)
 
-        dialog = PreferenceDialog(self.references)
+        dialog = PreferenceDialog()
         dialog.exec()
 
         # Ugly way to execute code after preference dialog was closed
