@@ -1,22 +1,22 @@
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QIcon, QFont, QFontDatabase
-from PyQt5.QtWidgets import QDialogButtonBox, QDialog, QLineEdit, QAbstractItemView, QListView
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import QFontDatabase, QFont, QIcon
+from PyQt5.QtWidgets import QListView, QLineEdit, QAbstractItemView, QDialogButtonBox, QDialog
 
 from src.gui.dialogs import ConfigurationResetQMessageBox, ConfigurationHasChangedQMessageBox
-from src.gui.preferences import Ui_Dialog
-from src.preferences import settings
+from src.gui.uielements.preferences import Ui_Dialog
+from src import settings
 
 _translate = QtCore.QCoreApplication.translate
 
 
-class PreferenceDialog(QDialog):
+class PreferenceHandler(QDialog):
     """
     The dialog for the preferences.
     """
 
     class PreferenceBinder:
 
-        def __init__(self, user_interface: Ui_Dialog, pref_dialog: 'PreferenceDialog'):
+        def __init__(self, user_interface: Ui_Dialog, pref_dialog: 'PreferenceHandler'):
             self.connected_elements = []
             self.SETTINGS = settings.Settings
             self.outer = pref_dialog
@@ -195,7 +195,7 @@ class PreferenceDialog(QDialog):
         self.ui: Ui_Dialog = Ui_Dialog()
         self.ui.setupUi(self)
 
-        self.preference_binder = PreferenceDialog.PreferenceBinder(self.ui, self)
+        self.preference_binder = PreferenceHandler.PreferenceBinder(self.ui, self)
 
     def mousePressEvent(self, mouse_ev: QtGui.QMouseEvent):
         """

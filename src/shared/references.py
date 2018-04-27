@@ -13,12 +13,12 @@ class References:
     """
 
     def __init__(self):
-        from src.player.widgets import MpvWidget
+        from src.gui.widgets import MpvWidget
         from src.player.players import MpvPlayer
-        from start import ApplicationWindow
+        from start import MainHandler
 
         self.__application: QApplication
-        self.__widget_main: ApplicationWindow
+        self.__widget_main: MainHandler
         self.__widget_mpv: MpvWidget
         self.__widget_comments: QTableView
         self.__player: MpvPlayer

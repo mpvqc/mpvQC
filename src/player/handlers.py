@@ -1,12 +1,8 @@
 # noinspection PyMethodMayBeStatic
-import inspect
 
-from PyQt5 import QtCore
-
-_translate = QtCore.QCoreApplication.translate
+"""This file will be deleted soon! :)"""
 
 
-# noinspection PyMethodMayBeStatic
 class MenubarHandler:
     pass
     # """Class for handling the menu bar actions."""

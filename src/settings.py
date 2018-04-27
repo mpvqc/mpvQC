@@ -8,8 +8,8 @@ from typing import Dict
 from PyQt5.QtCore import QCoreApplication
 from appdirs import unicode
 
-from src.preferences import constants
-from src.preferences.files import Files
+from src import constants
+from src.files import Files
 
 try:
     to_unicode = unicode

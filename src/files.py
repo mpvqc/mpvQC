@@ -36,9 +36,11 @@ class Files:
 
         Files.__APPLICATION_NAME = APPLICATION_NAME
         Files.DIRECTORY_PROGRAM = DIRECTORY_PROGRAM
+
         Files.__DIRECTORY_ROOT_CONFIGURATION = Files.__find_directory_root_configuration()
         Files.__DIRECTORY_AUTOSAVE = Files.__find_directory_autosave()
         Files.DIRECTORY_CONFIGURATION = Files.__find_directory_configuration()
+
         Files.FILE_CONF_INPUT = path.join(Files.DIRECTORY_CONFIGURATION, Files.__NAME_FILE_CONF_INPUT)
         Files.FILE_CONF_MPV = path.join(Files.DIRECTORY_CONFIGURATION, Files.__NAME_FILE_CONF_MPV)
         Files.FILE_SETTINGS = path.join(Files.DIRECTORY_CONFIGURATION, Files.__NAME_FILE_SETTINGS)

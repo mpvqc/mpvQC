@@ -4,14 +4,8 @@ from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar
 
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
-from src.preferences.files import Files
+from src.files import Files
 from src.shared.references import References
-
-
-class CustomStatusBar(QStatusBar):
-    def __init__(self, references: References):
-        super().__init__()
-        self.references = references
 
 
 class MpvWidget(QFrame):
@@ -26,6 +20,7 @@ class MpvWidget(QFrame):
 
         self.cursor_timer = QTimer(self)
         self.cursor_timer.setSingleShot(True)
+        # noinspection PyUnresolvedReferences
         self.cursor_timer.timeout.connect(
             lambda arg=False, f=self.references.widget_main.display_mouse_cursor: f(arg))
 
@@ -118,6 +113,12 @@ class MpvWidget(QFrame):
             print("Key-Press")
 
         return super().eventFilter(source, event)
+
+
+class CustomStatusBar(QStatusBar):
+    def __init__(self, references: References):
+        super().__init__()
+        self.references = references
 
 
 class CommentsWidget(QTableView):

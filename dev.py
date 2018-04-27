@@ -80,7 +80,7 @@ class Directory:
         to_bash("This script location is: " + script_location, lvl=0)
         self.structure: Tuple[str] = ("locale", "{}", "LC_MESSAGES")
         self.src = os.path.join(self.script_location, "src")
-        self.src_gui = os.path.join(self.src, "gui")
+        self.src_gui = os.path.join(self.src, "gui", "uielements")
         to_bash("This src gui will be " + self.src_gui, lvl=0)
         self.locale_dirs = [os.path.join(self.script_location, *self.structure).format(l) for l in languages]
         to_bash("Locale directories will be ", lvl=0)
