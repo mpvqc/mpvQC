@@ -43,7 +43,6 @@ _WORKFLOW = \
                     - ui_transpo.po
         -src
             - <abc>.py
-    
     """
 
 _HELP_TEXT = \
@@ -126,7 +125,7 @@ class Transformer:
             os.system("pyuic5 {} -o {}.py".format(ui_file, self.py_gui_target.format(f_name)))
 
     def py_to_ts(self):
-        py_files = [fn for fn in glob.glob(os.path.join(self.directory.src, "*/*.py"))
+        py_files = [fn for fn in glob.iglob(os.path.join(self.directory.src, "**/*.py"), recursive=True)
                     if (not fn.endswith("__.py"))]
         for py_file in py_files:
             to_bash("Found py file " + py_file, lvl=1)

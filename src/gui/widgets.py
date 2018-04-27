@@ -2,17 +2,17 @@ from PyQt5.QtCore import QTimer, Qt, QObject, QEvent
 from PyQt5.QtGui import QMouseEvent, QWheelEvent
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar
 
+from src.files import Files
+from src.gui.uihandler.main import MainHandler
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
-from src.files import Files
-from src.shared.references import References
 
 
 class MpvWidget(QFrame):
 
-    def __init__(self, references: References):
-        super(MpvWidget, self).__init__(references.widget_main)
-        self.references = references
+    def __init__(self, widget_main: MainHandler):
+        super(MpvWidget, self).__init__(widget_main)
+        self.widget_main = widget_main
 
         self.setStyleSheet("background-color:black;")
         self.setMouseTracking(True)
@@ -22,7 +22,7 @@ class MpvWidget(QFrame):
         self.cursor_timer.setSingleShot(True)
         # noinspection PyUnresolvedReferences
         self.cursor_timer.timeout.connect(
-            lambda arg=False, f=self.references.widget_main.display_mouse_cursor: f(arg))
+            lambda arg=False, f=self.widget_main.display_mouse_cursor: f(arg))
 
         mpv = bindings.MPV(
             wid=str(int(self.winId())),
@@ -53,7 +53,7 @@ class MpvWidget(QFrame):
                 # todo logger
                 pass
 
-        self.references.widget_main.display_mouse_cursor(display=True)
+        self.widget_main.display_mouse_cursor(display=True)
 
     def mousePressEvent(self, mev: QMouseEvent):
         self.setFocus()
@@ -82,7 +82,7 @@ class MpvWidget(QFrame):
         button = mev.button()
 
         if button == Qt.LeftButton:
-            self.references.widget_main.toggle_fullscreen()
+            self.widget_main.toggle_fullscreen()
             self.mpv_player.mouse_action(0, ActionType.PRESS)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
@@ -116,13 +116,13 @@ class MpvWidget(QFrame):
 
 
 class CustomStatusBar(QStatusBar):
-    def __init__(self, references: References):
+    def __init__(self):
         super().__init__()
-        self.references = references
+        self.showMessage("ada", 4000)
 
 
 class CommentsWidget(QTableView):
 
-    def __init__(self, references: References):
+    def __init__(self):
         super().__init__()
-        self.references = references
+        pass

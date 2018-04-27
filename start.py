@@ -1,3 +1,5 @@
+#!/usr/sbin/env python3
+
 import locale
 import sys
 from os import path

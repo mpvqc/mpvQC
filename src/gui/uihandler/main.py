@@ -3,13 +3,12 @@ import gettext
 import inspect
 from os import path
 
-from PyQt5 import QtWidgets, Qt, QtCore
-from PyQt5.QtCore import QTranslator
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import QTranslator, Qt
 from PyQt5.QtGui import QShowEvent, QCursor
 
 from src.gui.dialogs import OpenVideoFileDialog
 from src.gui.uielements.main import Ui_MainWindow
-from src.shared.references import References
 
 _translate = QtCore.QCoreApplication.translate
 
@@ -20,23 +19,20 @@ class MainHandler(QtWidgets.QMainWindow):
         super(MainHandler, self).__init__()
         from src.gui.widgets import CommentsWidget, CustomStatusBar, MpvWidget
 
-        # References initialization
-        self.references = References()
-        self.references.widget_main = self
-        self.references.application = application
-        self.references.widget_mpv = MpvWidget(self.references)
-        self.references.widget_comments = CommentsWidget(self.references)
-        self.references.widget_status_bar = CustomStatusBar(self.references)
-        self.references.player = self.references.widget_mpv.mpv_player
+        self.application = application
+        self.widget_mpv = MpvWidget(self)
+        self.widget_comments = CommentsWidget()
+        self.widget_status_bar = CustomStatusBar()
+        self.player = self.widget_mpv.mpv_player
 
         # User interface setup
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.__setup_menu_bar()
 
-        self.setStatusBar(self.references.widget_status_bar)
-        self.ui.splitter.insertWidget(0, self.references.widget_comments)
-        self.ui.splitter.insertWidget(0, self.references.widget_mpv)
+        self.setStatusBar(self.widget_status_bar)
+        self.ui.splitter.insertWidget(0, self.widget_comments)
+        self.ui.splitter.insertWidget(0, self.widget_mpv)
 
         # Translator
         self.translator = QTranslator()
@@ -55,28 +51,28 @@ class MainHandler(QtWidgets.QMainWindow):
         self.display_mouse_cursor(display=True)
 
     def display_fullscreen(self):
-        self.references.widget_comments.hide()
-        self.references.widget_status_bar.hide()
+        self.widget_comments.hide()
+        self.widget_status_bar.hide()
         self.ui.menuBar.hide()
         self.showFullScreen()
 
     def hide_fullscreen(self):
         self.showNormal()
-        self.references.widget_comments.show()
-        self.references.widget_status_bar.show()
+        self.widget_comments.show()
+        self.widget_status_bar.show()
         self.ui.menuBar.show()
 
     def display_mouse_cursor(self, display: bool):
         if display:
-            this_app = self.references.application
+            this_app = self.application
 
             while this_app.overrideCursor():
                 this_app.restoreOverrideCursor()
 
-            self.references.widget_mpv.cursor_timer.start(1000)
+            self.widget_mpv.cursor_timer.start(1000)
         else:
             if self.isFullScreen():
-                self.references.application.setOverrideCursor(QCursor(Qt.BlankCursor))
+                self.application.setOverrideCursor(QCursor(Qt.BlankCursor))
 
     def showEvent(self, sev: QShowEvent):
         print(inspect.stack()[0][3])
@@ -87,7 +83,7 @@ class MainHandler(QtWidgets.QMainWindow):
         It uses the language stored in the current settings.json.
         """
 
-        self.references.application.removeTranslator(self.translator)
+        self.application.removeTranslator(self.translator)
 
         from src.files import Files
         from src.settings import Settings
@@ -110,7 +106,7 @@ class MainHandler(QtWidgets.QMainWindow):
         else:
             self.translator.load("ui_trans", _locale_structure.format("en"))
 
-        self.references.application.installTranslator(self.translator)
+        self.application.installTranslator(self.translator)
         self.ui.retranslateUi(self)
 
     def __on_pressed_new_qc_document(self):
@@ -140,7 +136,7 @@ class MainHandler(QtWidgets.QMainWindow):
         if path.isfile(file):
             setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
             setting.save()
-            self.references.player.open_video(file, play=True)
+            self.player.open_video(file, play=True)
 
     def __on_pressed_open_network_stream(self):
         print(inspect.stack()[0][3])
@@ -153,7 +149,7 @@ class MainHandler(QtWidgets.QMainWindow):
 
         from src.gui.uihandler.preferences import PreferenceHandler
 
-        player = self.references.player
+        player = self.player
         player.pause()
 
         self.__handle_application_events(handle=False)
@@ -206,9 +202,9 @@ class MainHandler(QtWidgets.QMainWindow):
         """
 
         if handle:
-            self.references.widget_comments.installEventFilter(self.references.widget_mpv)
-            self.references.widget_mpv.installEventFilter(self.references.widget_mpv)
+            self.widget_comments.installEventFilter(self.widget_mpv)
+            self.widget_mpv.installEventFilter(self.widget_mpv)
 
         else:
-            self.references.widget_mpv.removeEventFilter(self.references.widget_mpv)
-            self.references.widget_comments.removeEventFilter(self.references.widget_mpv)
+            self.widget_mpv.removeEventFilter(self.widget_mpv)
+            self.widget_comments.removeEventFilter(self.widget_mpv)
