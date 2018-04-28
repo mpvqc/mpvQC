@@ -1,3 +1,5 @@
+#!/usr/sbin/env python3
+
 import glob
 import os
 import shutil
@@ -46,8 +48,8 @@ _WORKFLOW = \
     """
 
 _HELP_TEXT = \
-    """Use -help for getting a detailed explanation of this script.""" + \
-    """Use -p flag for providing translation files.""" + \
+    """Use -help for getting a detailed explanation of this script.\n""" + \
+    """Use -p flag for providing translation files.\n""" + \
     """Use -f flag for generating binaries from provided translation files."""
 
 # The location of this python script

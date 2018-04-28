@@ -1,11 +1,15 @@
-from PyQt5.QtCore import QTimer, Qt, QObject, QEvent
-from PyQt5.QtGui import QMouseEvent, QWheelEvent
-from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar
+from PyQt5 import QtCore
+from PyQt5.QtCore import QTimer, Qt, QPoint
+from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor
+from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu
 
 from src.files import Files
 from src.gui.uihandler.main import MainHandler
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
+from src.settings import Settings
+
+_translate = QtCore.QCoreApplication.translate
 
 
 class MpvWidget(QFrame):
@@ -66,7 +70,7 @@ class MpvWidget(QFrame):
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
         elif button == Qt.RightButton:
-            print("Right button pressed!")
+            self.widget_main.widget_context_menu.exec_()
         elif button == Qt.BackButton:
             self.mpv_player.mouse_action(5, ActionType.PRESS)
         elif button == Qt.ForwardButton:
@@ -107,22 +111,76 @@ class MpvWidget(QFrame):
         else:
             super().wheelEvent(whe)
 
-    def eventFilter(self, source: QObject, event: QEvent) -> bool:
-
-        if event.type() == QEvent.KeyPress:
-            print("Key-Press")
-
-        return super().eventFilter(source, event)
+    def keyPressEvent(self, kev: QKeyEvent):
+        print(kev.text())
 
 
 class CustomStatusBar(QStatusBar):
-    def __init__(self):
+    def __init__(self, main_handler: MainHandler):
         super().__init__()
         self.showMessage("ada", 4000)
 
 
 class CommentsWidget(QTableView):
 
-    def __init__(self):
+    def __init__(self, main_handler: MainHandler):
         super().__init__()
-        pass
+        self.widget_mpv = main_handler.widget_mpv
+
+    def add_comment(self, comment_type, comment_text="", time=None):
+        print("Got new comment to add: {}".format(comment_type))
+
+    def keyPressEvent(self, e: QKeyEvent):
+        print("key press event from table")
+        self.widget_mpv.keyPressEvent(e)
+
+    def mousePressEvent(self, e: QMouseEvent):
+        print("mouse press event from table")
+        self.widget_mpv.mousePressEvent(e)
+
+
+class CustomContextMenu(QMenu):
+    def __init__(self, main_handler: MainHandler):
+        super().__init__()
+        self.main_handler = main_handler
+        self.widget_comments = main_handler.widget_comments
+        self.mpv_player = main_handler.widget_mpv.mpv_player
+        self.update_entries()
+
+    def update_entries(self):
+        """
+        Will update the entries of this context menu to match the comment types from the settings.
+        """
+        self.clear()
+
+        ct_list = Settings.Holder.COMMENT_TYPES.value
+        if not ct_list:
+            no_ct_action = _translate("CommentTypes",
+                                      "No comment types defined." + " " + "Define new comment types in the settings.")
+            ac = self.addAction(no_ct_action)
+            ac.setEnabled(False)
+        else:
+            cts_eng = {}
+            for ct in Settings.Holder.COMMENT_TYPES.default_value:
+                cts_eng.update({_translate("Misc", ct): ct})
+
+            for ct in ct_list:
+                act = self.addAction(_translate("CommentTypes", ct))
+                act.triggered.connect(lambda x, t=cts_eng.get(ct, ct), f=self.widget_comments.add_comment: f(t))
+
+    def exec_(self):
+        """
+        Will display the menu.
+        """
+
+        self.mpv_player.pause()
+
+        if self.main_handler.isFullScreen():
+            self.main_handler.hide_fullscreen()
+
+        m_pos = QCursor.pos()
+        # Fixes following: Qt puts the context menu in a place
+        # where double clicking would trigger the fist menu option
+        # instead of just calling the menu a second time
+        # or ignoring the second press
+        super().exec_(QPoint(m_pos.x() + 1, m_pos.y()))

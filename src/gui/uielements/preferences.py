@@ -208,4 +208,3 @@ class Ui_Dialog(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "QC Document"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("Dialog", "mpv.conf"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "input.conf"))
-

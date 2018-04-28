@@ -3,66 +3,114 @@ import gettext
 import inspect
 from os import path
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import QTranslator, Qt
+from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray
 from PyQt5.QtGui import QShowEvent, QCursor
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from src.gui.dialogs import OpenVideoFileDialog
 from src.gui.uielements.main import Ui_MainWindow
 
-_translate = QtCore.QCoreApplication.translate
+_translate = QCoreApplication.translate
 
 
-class MainHandler(QtWidgets.QMainWindow):
+class MainHandler(QMainWindow):
 
-    def __init__(self, application: QtWidgets.QApplication):
+    def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
-        from src.gui.widgets import CommentsWidget, CustomStatusBar, MpvWidget
-
+        self.action = MenuBarActionHandler(self)
         self.application = application
-        self.widget_mpv = MpvWidget(self)
-        self.widget_comments = CommentsWidget()
-        self.widget_status_bar = CustomStatusBar()
-        self.player = self.widget_mpv.mpv_player
 
         # User interface setup
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.__setup_menu_bar()
 
-        self.setStatusBar(self.widget_status_bar)
-        self.ui.splitter.insertWidget(0, self.widget_comments)
-        self.ui.splitter.insertWidget(0, self.widget_mpv)
-
         # Translator
         self.translator = QTranslator()
         self.reload_ui_language()
 
-        # Initialize event filter
-        self.__handle_application_events(handle=True)
+        # Widgets
+        from src.gui.widgets import CommentsWidget, CustomStatusBar, MpvWidget, CustomContextMenu
+
+        self.widget_mpv = MpvWidget(self)
+        self.widget_comments = CommentsWidget(self)
+        self.widget_status_bar = CustomStatusBar(self)
+        self.widget_context_menu = CustomContextMenu(self)
+        self.player = self.widget_mpv.mpv_player
+
+        self.setStatusBar(self.widget_status_bar)
+        self.ui.splitter.insertWidget(0, self.widget_comments)
+        self.ui.splitter.insertWidget(0, self.widget_mpv)
+
+        # Class variables
+        self.current_geometry: QByteArray = None
+
+    def __setup_menu_bar(self):
+        """Binds the menubar to the """
+
+        self.ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.action.on_pressed_new_qc_document: f())
+        self.ui.action_Open_QC_Document.triggered.connect(lambda c, f=self.action.on_pressed_open_qc_document: f())
+        self.ui.action_Save_QC_Document.triggered.connect(lambda c, f=self.action.on_pressed_save_qc_document: f())
+        self.ui.actionS_ave_QC_Document_As.triggered.connect(
+            lambda c, f=self.action.on_pressed_save_qc_document_as: f())
+        self.ui.action_Exit_mpvQC.triggered.connect(lambda c, f=self.action.on_pressed_exit: f())
+
+        self.ui.action_Open_Video_File.triggered.connect(lambda c, f=self.action.on_pressed_open_video: f())
+        self.ui.actionOpen_Network_Stream.triggered.connect(
+            lambda c, f=self.action.on_pressed_open_network_stream: f())
+        self.ui.action_Resize_Video_To_Its_Original_Resolutio.triggered.connect(
+            lambda c, f=self.action.on_pressed_resize_video: f())
+
+        self.ui.action_Settings.triggered.connect(lambda c, f=self.action.on_pressed_settings: f())
+        self.ui.action_Check_For_Updates.triggered.connect(
+            lambda c, f=self.action.on_pressed_check_for_update: f())
+        self.ui.actionAbout_Qt.triggered.connect(lambda c, f=self.action.on_pressed_about_qt: f())
+        self.ui.actionAbout_mpvqc.triggered.connect(lambda c, f=self.action.on_pressed_about_mpvqc: f())
 
     def toggle_fullscreen(self):
-        """Will """
+        """
+        Will toggle the fullscreen mode.
+        """
 
         if self.isFullScreen():
             self.hide_fullscreen()
         else:
             self.display_fullscreen()
-        self.display_mouse_cursor(display=True)
 
-    def display_fullscreen(self):
+    def display_fullscreen(self) -> None:
+        """
+        Will show the video in fullscreen.
+        """
+
+        self.current_geometry: QByteArray = self.saveGeometry()
+
         self.widget_comments.hide()
         self.widget_status_bar.hide()
         self.ui.menuBar.hide()
+        self.display_mouse_cursor(display=True)
+
         self.showFullScreen()
 
-    def hide_fullscreen(self):
+    def hide_fullscreen(self) -> None:
+        """
+        Will restore the default view.
+        """
+
         self.showNormal()
+
         self.widget_comments.show()
         self.widget_status_bar.show()
         self.ui.menuBar.show()
+        self.display_mouse_cursor(display=True)
 
-    def display_mouse_cursor(self, display: bool):
+        self.restoreGeometry(self.current_geometry)
+
+    def display_mouse_cursor(self, display: bool) -> None:
+        """
+        Will display the mouse cursor.
+        :param display: True if display mouse cursor, False if hide mouse cursor
+        """
+
         if display:
             this_app = self.application
 
@@ -74,10 +122,10 @@ class MainHandler(QtWidgets.QMainWindow):
             if self.isFullScreen():
                 self.application.setOverrideCursor(QCursor(Qt.BlankCursor))
 
-    def showEvent(self, sev: QShowEvent):
+    def showEvent(self, sev: QShowEvent) -> None:
         print(inspect.stack()[0][3])
 
-    def reload_ui_language(self):
+    def reload_ui_language(self) -> None:
         """
         Reloads the user interface language.
         It uses the language stored in the current settings.json.
@@ -109,25 +157,32 @@ class MainHandler(QtWidgets.QMainWindow):
         self.application.installTranslator(self.translator)
         self.ui.retranslateUi(self)
 
-    def __on_pressed_new_qc_document(self):
+
+class MenuBarActionHandler:
+
+    def __init__(self, main_handler: MainHandler):
+        self.widget = main_handler
+
+    def on_pressed_new_qc_document(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_open_qc_document(self):
+    def on_pressed_open_qc_document(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_save_qc_document(self):
+    def on_pressed_save_qc_document(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_save_qc_document_as(self):
+    def on_pressed_save_qc_document_as(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_exit(self):
+    def on_pressed_exit(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_open_video(self):
+    def on_pressed_open_video(self) -> None:
         """
         When user hits Video -> Open Video ...
         """
+
         from src import settings
 
         setting = settings.Settings
@@ -136,75 +191,38 @@ class MainHandler(QtWidgets.QMainWindow):
         if path.isfile(file):
             setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
             setting.save()
-            self.player.open_video(file, play=True)
+            self.widget.widget_mpv.mpv_player.open_video(file, play=True)
 
-    def __on_pressed_open_network_stream(self):
+    def on_pressed_open_network_stream(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_resize_video(self):
+    def on_pressed_resize_video(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_settings(self):
-        """When user hits Options -> Settings."""
+    def on_pressed_settings(self) -> None:
+        """
+        When user hits Options -> Settings.
+        """
 
         from src.gui.uihandler.preferences import PreferenceHandler
 
-        player = self.player
+        player = self.widget.widget_mpv.mpv_player
         player.pause()
 
-        self.__handle_application_events(handle=False)
-
         dialog = PreferenceHandler()
-        dialog.exec()
+        dialog.exec_()
 
-        # Ugly way to execute code after preference dialog was closed
-        if True or dialog.exec_():
-            if player.is_paused():
-                player.play()
-            self.reload_ui_language()
-            self.__handle_application_events(handle=True)
+        # After dialog closed
+        if player.is_paused():
+            player.play()
+        self.widget.reload_ui_language()
+        self.widget.widget_context_menu.update_entries()
 
-    def __on_pressed_check_for_update(self):
+    def on_pressed_check_for_update(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_about_qt(self):
+    def on_pressed_about_qt(self) -> None:
         print(inspect.stack()[0][3])
 
-    def __on_pressed_about_mpvqc(self):
+    def on_pressed_about_mpvqc(self) -> None:
         print(inspect.stack()[0][3])
-
-    def __setup_menu_bar(self):
-        """Binds the menubar to the """
-
-        self.ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.__on_pressed_new_qc_document: f())
-        self.ui.action_Open_QC_Document.triggered.connect(lambda c, f=self.__on_pressed_open_qc_document: f())
-        self.ui.action_Save_QC_Document.triggered.connect(lambda c, f=self.__on_pressed_save_qc_document: f())
-        self.ui.actionS_ave_QC_Document_As.triggered.connect(
-            lambda c, f=self.__on_pressed_save_qc_document_as: f())
-        self.ui.action_Exit_mpvQC.triggered.connect(lambda c, f=self.__on_pressed_exit: f())
-
-        self.ui.action_Open_Video_File.triggered.connect(lambda c, f=self.__on_pressed_open_video: f())
-        self.ui.actionOpen_Network_Stream.triggered.connect(
-            lambda c, f=self.__on_pressed_open_network_stream: f())
-        self.ui.action_Resize_Video_To_Its_Original_Resolutio.triggered.connect(
-            lambda c, f=self.__on_pressed_resize_video: f())
-
-        self.ui.action_Settings.triggered.connect(lambda c, f=self.__on_pressed_settings: f())
-        self.ui.action_Check_For_Updates.triggered.connect(
-            lambda c, f=self.__on_pressed_check_for_update: f())
-        self.ui.actionAbout_Qt.triggered.connect(lambda c, f=self.__on_pressed_about_qt: f())
-        self.ui.actionAbout_mpvqc.triggered.connect(lambda c, f=self.__on_pressed_about_mpvqc: f())
-
-    def __handle_application_events(self, handle: bool):
-        """
-        Will delegate all events from the
-        :param handle: True if delegate to mpv widget
-        """
-
-        if handle:
-            self.widget_comments.installEventFilter(self.widget_mpv)
-            self.widget_mpv.installEventFilter(self.widget_mpv)
-
-        else:
-            self.widget_mpv.removeEventFilter(self.widget_mpv)
-            self.widget_comments.removeEventFilter(self.widget_mpv)

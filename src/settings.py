@@ -20,14 +20,14 @@ _translate = QCoreApplication.translate
 
 # The following list exists only for easing the translation process
 __for_translation_only = [
-    _translate("Misc", "Translation"),
-    _translate("Misc", "Punctuation"),
-    _translate("Misc", "Spelling"),
-    _translate("Misc", "Phrasing"),
-    _translate("Misc", "Timing"),
-    _translate("Misc", "Typeset"),
-    _translate("Misc", "Note"),
-    _translate("Misc", "Type here to add new comment types")
+    _translate("CommentTypes", "Translation"),
+    _translate("CommentTypes", "Punctuation"),
+    _translate("CommentTypes", "Spelling"),
+    _translate("CommentTypes", "Phrasing"),
+    _translate("CommentTypes", "Timing"),
+    _translate("CommentTypes", "Typeset"),
+    _translate("CommentTypes", "Note"),
+    _translate("CommentTypes", "Type here to add new comment types")
 ]
 
 
@@ -79,7 +79,7 @@ class Settings:
 
             def reset(self) -> None:
                 """
-                Sets the value to the default value and the temporary value to None.
+                Sets the value to the default value and the temporary value to *None*.
                 """
 
                 self.value = self.default_value
@@ -159,9 +159,10 @@ class Settings:
     @staticmethod
     def __write_json():
         dictionary = {}
-        for json_setting in Settings.json:
+        for s in Settings.json:
             dictionary.update({
-                json_setting.identifier: json_setting.value if json_setting.value else json_setting.default_value})
+                s.identifier: s.value if s.value is not None else s.default_value
+            })
 
         with io.open(Settings.SETTINGS_JSON_FILE, 'w', encoding='utf8') as file:
             str_ = json.dumps(dictionary, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
@@ -189,7 +190,7 @@ class Settings:
     def read() -> None:
         """
         Reads all values from their files.
-        Will assign a value to the corresponding Entry if a value was found.
+        Will assign a value to the corresponding entry if a value was found.
         """
 
         Settings.__read_json()
@@ -198,7 +199,7 @@ class Settings:
     @staticmethod
     def save() -> None:
         """
-        Saves **and writes** all Entries to disc (their current value).
+        Saves **and writes** all entries to disc (their current value).
         """
 
         Settings.__write_json()
