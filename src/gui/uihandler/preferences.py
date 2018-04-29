@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QListView, QLineEdit, QAbstractItemView, QDialogButt
 
 from src.gui.dialogs import ConfigurationResetQMessageBox, ConfigurationHasChangedQMessageBox
 from src.gui.uielements.preferences import Ui_Dialog
+from src.gui.uihandler.main import MainHandler
 from src.settings import Settings
 
 _translate = QtCore.QCoreApplication.translate
@@ -57,15 +58,16 @@ class PreferenceHandler(QDialog):
             self.connected_elements.extend([btn_apply, btn_restore_defaults])
 
         def __setup_language(self):
-            languages = {
-                _translate("PreferenceDialog", "English"): "English",
-                _translate("PreferenceDialog", "German"): "German"
-            }
             language_box = self.ui.comboBox
             language_box.setCurrentIndex(
                 max(language_box.findText(_translate("Dialog", self.SETTINGS.Holder.LANGUAGE.value)), 0))
 
             def f(new_language):
+                languages = {
+                    _translate("PreferenceDialog", "English"): "English",
+                    _translate("PreferenceDialog", "German"): "German"
+                }
+
                 self.SETTINGS.Holder.LANGUAGE.temporary_value = languages[new_language]
 
             language_box.currentTextChanged.connect(lambda value, fun=f: fun(value))
@@ -197,13 +199,14 @@ class PreferenceHandler(QDialog):
             for setting in self.SETTINGS.json_and_conf:
                 setting.temporary_value = None
 
-    def __init__(self):
+    def __init__(self, application: MainHandler):
         super().__init__()
 
         self.ui: Ui_Dialog = Ui_Dialog()
         self.ui.setupUi(self)
 
         self.preference_binder = PreferenceHandler.PreferenceBinder(self.ui, self)
+        self.application = application
 
     def mousePressEvent(self, mouse_ev: QtGui.QMouseEvent):
         """
@@ -244,6 +247,9 @@ class PreferenceHandler(QDialog):
 
         self.preference_binder.save()
         self.preference_binder.SETTINGS.save()
+
+        self.application.reload_ui_language()
+        self.ui.retranslateUi(self)
 
     def on_restore_default(self):
         """
