@@ -4,9 +4,17 @@ from PyQt5.QtWidgets import QListView, QLineEdit, QAbstractItemView, QDialogButt
 
 from src.gui.dialogs import ConfigurationResetQMessageBox, ConfigurationHasChangedQMessageBox
 from src.gui.uielements.preferences import Ui_Dialog
-from src import settings
+from src.settings import Settings
 
 _translate = QtCore.QCoreApplication.translate
+
+
+def check_box_state_to_bool(state: int):
+    """
+    Transforms the tristate checkbox state to a bool value.
+    :return: True if state was checked, False else
+    """
+    return state != 0
 
 
 class PreferenceHandler(QDialog):
@@ -18,7 +26,7 @@ class PreferenceHandler(QDialog):
 
         def __init__(self, user_interface: Ui_Dialog, pref_dialog: 'PreferenceHandler'):
             self.connected_elements = []
-            self.SETTINGS = settings.Settings
+            self.SETTINGS = Settings
             self.outer = pref_dialog
             self.ui = user_interface
             self.__setup_button_box()
@@ -108,7 +116,7 @@ class PreferenceHandler(QDialog):
             chk_box.setChecked(self.SETTINGS.Holder.AUTOSAVE_ENABLED.value)
 
             def f(new_state):
-                self.SETTINGS.Holder.AUTOSAVE_ENABLED.temporary_value = new_state
+                self.SETTINGS.Holder.AUTOSAVE_ENABLED.temporary_value = check_box_state_to_bool(new_state)
 
             chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
             self.connected_elements.append(chk_box)
@@ -127,8 +135,8 @@ class PreferenceHandler(QDialog):
             chk_box = self.ui.saveVideoPathCheckBox
             chk_box.setChecked(self.SETTINGS.Holder.QC_DOC_WRITE_VIDEO_PATH_TO_FILE.value)
 
-            def f(new_state):
-                self.SETTINGS.Holder.QC_DOC_WRITE_VIDEO_PATH_TO_FILE.temporary_value = new_state
+            def f(n_state):
+                self.SETTINGS.Holder.QC_DOC_WRITE_VIDEO_PATH_TO_FILE.temporary_value = check_box_state_to_bool(n_state)
 
             chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
             self.connected_elements.append(chk_box)
@@ -138,7 +146,7 @@ class PreferenceHandler(QDialog):
             chk_box.setChecked(self.SETTINGS.Holder.QC_DOC_WRITE_NICK_TO_FILE.value)
 
             def f(new_state):
-                self.SETTINGS.Holder.QC_DOC_WRITE_NICK_TO_FILE.temporary_value = new_state
+                self.SETTINGS.Holder.QC_DOC_WRITE_NICK_TO_FILE.temporary_value = check_box_state_to_bool(new_state)
 
             chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
             self.connected_elements.append(chk_box)
