@@ -209,13 +209,13 @@ class MenuBarActionHandler:
         player = self.widget.widget_mpv.mpv_player
         player.pause()
 
-        dialog = PreferenceHandler(self.widget)
+        dialog = PreferenceHandler()
         dialog.exec_()
 
         # After dialog closed
         if player.is_paused():
             player.play()
-
+        self.widget.reload_ui_language()
         self.widget.widget_context_menu.update_entries()
 
     def on_pressed_check_for_update(self) -> None:
