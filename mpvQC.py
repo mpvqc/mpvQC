@@ -727,8 +727,7 @@ class CommentListView(QTableView):
 
     def keyPressEvent(self, event):
         pressedkey = event.key()
-        if ((pressedkey == Qt.Key_Up or pressedkey == Qt.Key_Down)
-                and int(app.keyboardModifiers()) == Qt.NoModifier):
+        if (pressedkey == Qt.Key_Up or pressedkey == Qt.Key_Down) and int(app.keyboardModifiers()) == Qt.NoModifier:
             super(CommentListView, self).keyPressEvent(event)
         elif pressedkey == Qt.Key_Delete:
             deleteSelection()

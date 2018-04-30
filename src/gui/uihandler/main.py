@@ -4,10 +4,10 @@ import inspect
 from os import path
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray
-from PyQt5.QtGui import QShowEvent, QCursor
+from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
-from src.gui.dialogs import OpenVideoFileDialog
+from src.gui.messageboxes import OpenVideoFileDialog, QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox
 from src.gui.uielements.main import Ui_MainWindow
 
 _translate = QCoreApplication.translate
@@ -17,7 +17,7 @@ class MainHandler(QMainWindow):
 
     def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
-        self.action = MenuBarActionHandler(self)
+        self.action = MenuBarActionDelegate(self)
         self.application = application
 
         # User interface setup
@@ -30,12 +30,12 @@ class MainHandler(QMainWindow):
         self.reload_ui_language()
 
         # Widgets
-        from src.gui.widgets import CommentsWidget, CustomStatusBar, MpvWidget, CustomContextMenu
+        from src.gui.widgets import CommentsWidget, StatusBar, MpvWidget, ContextMenu
 
         self.widget_mpv = MpvWidget(self)
         self.widget_comments = CommentsWidget(self)
-        self.widget_status_bar = CustomStatusBar(self)
-        self.widget_context_menu = CustomContextMenu(self)
+        self.widget_status_bar = StatusBar(self)
+        self.widget_context_menu = ContextMenu(self)
         self.player = self.widget_mpv.mpv_player
 
         self.setStatusBar(self.widget_status_bar)
@@ -43,7 +43,9 @@ class MainHandler(QMainWindow):
         self.ui.splitter.insertWidget(0, self.widget_mpv)
 
         # Class variables
+        from src.qcutils import QualityCheck
         self.current_geometry: QByteArray = None
+        self.qualityCheck = QualityCheck(self)
 
     def __setup_menu_bar(self):
         """
@@ -162,41 +164,87 @@ class MainHandler(QMainWindow):
         self.ui.retranslateUi(self)
         Settings.Holder.COMMENT_TYPES.update()
 
+    def action_new_qc_document(self):
 
-class MenuBarActionHandler:
+        def open_new_one():
+            from src.qcutils import QualityCheck
+            self.widget_comments.delete_all_comments()
+            self.qualityCheck = QualityCheck(self)
+
+        if self.qualityCheck.should_save():
+            if NewQCDocumentOldNotSavedQMessageBox().exec_():
+                open_new_one()
+        else:
+            open_new_one()
+
+    def action_open_qc_document(self):
+        pass
+
+    def action_save_qc_document(self):
+        if bool(self.qualityCheck.path_document):
+            self.qualityCheck.save()
+        else:
+            self.action_save_qc_document_as()
+
+    def action_save_qc_document_as(self):
+        pass
+
+    def action_open_video(self, file: path):
+        if path.isfile(file):
+            from src.settings import Settings
+            setting = Settings
+            setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
+            setting.save()
+            self.widget_mpv.mpv_player.open_video(file, play=True)
+
+    def action_close(self) -> None:
+        """
+        Emits a close event.
+        Continue to read with *closeEvent()*.
+        """
+
+        self.close()
+
+    def closeEvent(self, cev: QCloseEvent):
+
+        if self.qualityCheck.should_save():
+            self.widget_mpv.mpv_player.pause()
+            if QuitNotSavedQMessageBox().exec_():
+                self.close()
+            else:
+                cev.ignore()
+        else:
+            super().closeEvent(cev)
+
+
+class MenuBarActionDelegate:
 
     def __init__(self, main_handler: MainHandler):
         self.widget = main_handler
 
     def on_pressed_new_qc_document(self) -> None:
-        print(inspect.stack()[0][3])
+        self.widget.action_new_qc_document()
 
     def on_pressed_open_qc_document(self) -> None:
-        print(inspect.stack()[0][3])
+        self.widget.action_open_qc_document()
 
     def on_pressed_save_qc_document(self) -> None:
-        print(inspect.stack()[0][3])
+        self.widget.action_save_qc_document()
 
     def on_pressed_save_qc_document_as(self) -> None:
-        print(inspect.stack()[0][3])
+        self.widget.action_save_qc_document_as()
 
     def on_pressed_exit(self) -> None:
-        print(inspect.stack()[0][3])
+        self.widget.action_close()
 
     def on_pressed_open_video(self) -> None:
         """
         When user hits Video -> Open Video ...
         """
 
-        from src import settings
-
-        setting = settings.Settings
-        file = OpenVideoFileDialog.get_open_file_name(directory=setting.Holder.PLAYER_LAST_PLAYED_DIR.value)
-
-        if path.isfile(file):
-            setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
-            setting.save()
-            self.widget.widget_mpv.mpv_player.open_video(file, play=True)
+        from src.settings import Settings
+        file = OpenVideoFileDialog.get_open_file_name(directory=Settings.Holder.PLAYER_LAST_PLAYED_DIR.value)
+        self.widget.action_open_video(file)
 
     def on_pressed_open_network_stream(self) -> None:
         print(inspect.stack()[0][3])

@@ -23,14 +23,13 @@ class MpvPlayer:
         self.pause()
 
         self.time_format_string = CommentTypeParentDelegate.TIME_FORMAT
-        self.video_path = None
 
-    def position_current(self):
+    def position_current(self) -> str or None:
         """
-        Will return the current time as string representation.
+        Will return the current time as string representation or None if no video is currently loaded.
 
         **TIME_FORMAT = "hh:mm:ss"**
-        :return: the current time as string representation
+        :return: the current time as string representation or None
         """
 
         position = self.mpv.time_pos
@@ -40,7 +39,15 @@ class MpvPlayer:
 
         return QTime(0, 0, 0, 0).addSecs(int(position)).toString(self.time_format_string)
 
-    def position_jump(self, position: str):
+    def video_file_current(self) -> path or None:
+        """
+        Access to the current file.
+        :return: The current file of the player.
+        """
+
+        return self.mpv.path
+
+    def position_jump(self, position: str) -> None:
         """
         Will jump to the given time position.
 
@@ -48,10 +55,8 @@ class MpvPlayer:
 
         """
 
-        if self.video_path:
-            self.mpv.command("seek",
-                             QTime.fromString(position, self.time_format_string).toPyTime(),
-                             "absolute+exact")
+        if self.is_video_loaded():
+            self.mpv.command("seek", QTime.fromString(position, self.time_format_string).toPyTime(), "absolute+exact")
 
     def is_paused(self) -> bool:
         """
@@ -65,7 +70,7 @@ class MpvPlayer:
         Returns whether the player has a video to play.
         """
 
-        return bool(self.video_path)
+        return bool(self.video_file_current())
 
     def play(self) -> None:
         """
@@ -93,8 +98,6 @@ class MpvPlayer:
         Opens the given path and if selected starts playing.
         """
 
-        self.video_path = video
-
         self.mpv.command("loadfile", video, "replace")
         if play:
             self.play()
@@ -111,7 +114,6 @@ class MpvPlayer:
         Will invoke a the mouse action for the given arguments.
         :param btn_idx: The button index (e.g. 0 for *MOUSE_BTN0*)
         :param action_type: The type of press
-        :return:
         """
 
         if action_type == ActionType.PRESS:

@@ -47,3 +47,27 @@ class ConfigurationResetQMessageBox(QMessageBox):
         self.setWindowTitle(_translate("Misc", "Reset configuration"))
         self.addButton(_translate("Misc", "Reset"), QMessageBox.ApplyRole)
         self.addButton(_translate("Misc", "Cancel"), QMessageBox.RejectRole)
+
+
+class QuitNotSavedQMessageBox(QMessageBox):
+
+    def __init__(self):
+        super().__init__()
+        self.setText(
+            _translate("Dialog", "Do you really want to quit without saving your QC?"))
+        self.setIcon(QMessageBox.Warning)
+        self.setWindowTitle(_translate("Dialog", "Discard QC"))
+        self.addButton(_translate("Dialog", "No"), QMessageBox.NoRole)
+        self.addButton(_translate("Dialog", "Yes"), QMessageBox.YesRole)
+
+
+class NewQCDocumentOldNotSavedQMessageBox(QMessageBox):
+
+    def __init__(self):
+        super().__init__()
+        self.setText(
+            _translate("Dialog", "Do you really want to open a new QC Document without saving your QC?"))
+        self.setIcon(QMessageBox.Warning)
+        self.setWindowTitle(_translate("Dialog", "Create new QC document"))
+        self.addButton(_translate("Dialog", "No"), QMessageBox.NoRole)
+        self.addButton(_translate("Dialog", "Yes"), QMessageBox.YesRole)

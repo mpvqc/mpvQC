@@ -1,7 +1,9 @@
+from typing import List
+
 from PyQt5 import QtCore
-from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QSize
+from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QHeaderView
+from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView
 
 from src.files import Files
 from src.gui import delegates
@@ -9,6 +11,7 @@ from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate
 from src.gui.uihandler.main import MainHandler
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
+from src.qcutils import Comment
 from src.settings import Settings
 
 _translate = QtCore.QCoreApplication.translate
@@ -43,7 +46,6 @@ class MpvWidget(QFrame):
             ytdl="yes",
             # log_handler=mpvLogHandler,
         )
-
         # @mpv.property_observer('time-pos')
         # def time_observer(_name, value):
         #     print("Time: ", value)
@@ -117,7 +119,7 @@ class MpvWidget(QFrame):
         print(kev.text())
 
 
-class CustomContextMenu(QMenu):
+class ContextMenu(QMenu):
     def __init__(self, main_handler: MainHandler):
         super().__init__()
         self.main_handler = main_handler
@@ -161,23 +163,23 @@ class CustomContextMenu(QMenu):
         super().exec_(QPoint(m_pos.x() + 1, m_pos.y()))
 
 
-class CustomStatusBar(QStatusBar):
+class StatusBar(QStatusBar):
     def __init__(self, main_handler: MainHandler):
         super().__init__()
         self.showMessage("ada", 4000)
 
 
 class CommentsWidget(QTableView):
+    """
+    The comment table below the video.
+    """
 
     def __init__(self, main_handler: MainHandler):
         super().__init__()
+        self.main_handler = main_handler
+        self.application = main_handler.application
         self.widget_mpv = main_handler.widget_mpv
         self.mpv_player = self.widget_mpv.mpv_player
-        self.setEditTriggers(QAbstractItemView.DoubleClicked)
-        # self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-        self.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         # Headers
         self.horizontalHeader().setStretchLastSection(True)
@@ -195,13 +197,87 @@ class CommentsWidget(QTableView):
         self.setItemDelegateForColumn(1, self.comment_type_delegate)
 
         # Misc
+        self.setEditTriggers(QAbstractItemView.DoubleClicked)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+
         self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
         self.setWordWrap(True)
         self.setShowGrid(False)
-        self.scroll_position = 0
 
-    def add_comment(self, comment_type, comment_text="", time=None):
+        self.scroll_position = 0
+        self.comments_up_to_date = True
+
+    def delete_current_selected_comment(self) -> None:
+        """
+        Will delete the current selected comment row.
+        If selection is empty, no action will be invoked.
+        """
+
+        def delete(selected: List[QModelIndex]):
+            self.model.removeRows(selected[0].row(), 1)
+            self.comments_up_to_date = False
+
+        self.__do_with_selected_comment_row(delete)
+
+    def edit_current_selected_comment(self) -> None:
+        """
+        Will start edit mode on selected comment row.
+        If selection is empty, no action will be invoked.
+        """
+
+        def edit(selected: List[QModelIndex]):
+            row = selected[0].row()
+            idx = self.model.item(row, 2).index()
+            self.edit(idx)
+            self.comments_up_to_date = False
+
+        self.__do_with_selected_comment_row(edit)
+
+    def copy_current_selected_comment(self) -> None:
+        """
+        Will copy the complete row to clipboard.
+        If selection is empty, no action will be invoked.
+        """
+
+        def copy(selected: List[QModelIndex]):
+            row = selected[0].row()
+            time = self.model.item(row, 0).text()
+            coty = self.model.item(row, 1).text()
+            note = self.model.item(row, 2).text()
+            self.application.clipboard().setText("[{}][{}] {}".format(time, coty, note))
+
+        self.__do_with_selected_comment_row(copy)
+
+    def __do_with_selected_comment_row(self, consume_selected_function) -> None:
+        """
+        This function takes a **function** as argument.
+
+        *It will call the function with the given argument if the selection is not empty.*
+        :param consume_selected_function: The function to apply if selection is not empty
+        :return:
+        """
+
+        is_empty: bool = self.model.rowCount() == 0
+
+        if not is_empty:
+            selected = self.selectionModel().selectedRows()
+
+            if selected:
+                consume_selected_function(selected)
+
+    def add_comment(self, comment_type: str, comment_text: str = "", time: str = None,
+                    sort: bool = True, will_change_qc=True) -> None:
+        """
+        Will add a new comment type to the list view.
+
+        :param will_change_qc: True if qc is changed with the addition.
+        :param comment_type: The comment type to add
+        :param comment_text: The text to add
+        :param time: The time to add. If None the current video time will be used.
+        :param sort: If True, the complete table will be sorted after the insertion.
+        """
 
         if time is None:
             time: str = self.widget_mpv.mpv_player.position_current()
@@ -217,7 +293,8 @@ class CommentsWidget(QTableView):
         new_entry = [ti, ct, note]
         self.model.appendRow([ti, ct, note])
 
-        self.sortByColumn(0, Qt.AscendingOrder)
+        if sort:
+            self.sortByColumn(0, Qt.AscendingOrder)
         self.resizeColumnToContents(1)
 
         new_index = self.model.indexFromItem(new_entry[2])
@@ -225,47 +302,92 @@ class CommentsWidget(QTableView):
         self.setCurrentIndex(new_index)
         self.edit(new_index)
 
-    def remove_current_selected_comment(self):
+        if will_change_qc:
+            self.comments_up_to_date = False
 
-        is_empty: bool = self.model.rowCount() == 0
+    def get_all_comments(self) -> List[Comment]:
+        """
+        Returns all comments.
+        :return: all comments.
+        """
 
-        if not is_empty:
-            selected = self.selectionModel().selectedRows()
+        ret_list = []
+        model = self.model
 
-            if selected:
-                self.model.removeRows(selected[0].row(), 1)
+        for r in range(0, model.rowCount()):
+            time = model.item(r, 0).text()
+            coty = model.item(r, 1).text()
+            note = model.item(r, 2).text()
+            ret_list.append(Comment(time=time, coty=coty, note=note))
+        return ret_list
 
-    def on_before_fullscreen(self):
+    def delete_all_comments(self) -> None:
+        """
+        Will clear all comments.
+        """
+
+        self.model.clear()
+        self.comments_up_to_date = True
+
+    def on_before_fullscreen(self) -> None:
+        """
+        Action to invoke before switching to fullscreen.
+        """
+
         self.scroll_position = self.verticalScrollBar().value()
 
-    def on_after_fullscreen(self):
+    def on_after_fullscreen(self) -> None:
+        """
+        Action to invoke after switching back from fullscreen.
+        """
+
         self.verticalScrollBar().setValue(self.scroll_position)
 
-    def on_after_user_changed_time(self):
-        self.sortByColumn(0, Qt.AscendingOrder)
+    def on_after_user_changed_time(self) -> None:
+        """
+        Action to invoke after time was changed manually by the user.
+        """
 
-    def on_after_user_changed_comment_type(self):
+        self.sortByColumn(0, Qt.AscendingOrder)
+        self.comments_up_to_date = False
+
+    def on_after_user_changed_comment_type(self) -> None:
+        """
+        Action to invoke after comment type was changed manually by the user.
+        """
+
         self.resizeColumnToContents(1)
+        self.comments_up_to_date = False
 
     def keyPressEvent(self, e: QKeyEvent):
 
+        mod = int(self.application.keyboardModifiers())
         key = e.key()
-        print("key press event from table", key == Qt.Key_Return)
 
-        if key == Qt.Key_Return or key == Qt.Key_Delete:
-            self.remove_current_selected_comment()
-            return
+        if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
+            super().keyPressEvent(e)
+        elif key == Qt.Key_Delete:
+            self.delete_current_selected_comment()
+        elif key == Qt.Key_Return or key == Qt.Key_Backspace:  # Backspace or Enter
+            self.edit_current_selected_comment()
+        elif key == Qt.Key_C and mod == Qt.CTRL:
+            self.copy_current_selected_comment()
+        else:
+            e.ignore()
+        e.accept()
 
         self.widget_mpv.keyPressEvent(e)
 
     def mousePressEvent(self, e: QMouseEvent):
 
         if e.button() == Qt.LeftButton:
-            model_index: QModelIndex = self.indexAt(e.pos())
-            if model_index.column() == 0 and self.mpv_player.is_video_loaded():
-                position = self.model.item(model_index.row(), 0).text()
+            mdi: QModelIndex = self.indexAt(e.pos())
+            if mdi.column() == 0 and self.mpv_player.is_video_loaded():
+                position = self.model.item(mdi.row(), 0).text()
                 self.widget_mpv.mpv_player.position_jump(position=position)
-            elif model_index.column() == 1:
-                self.edit(model_index)
-
+            elif mdi.column() == 1:
+                self.edit(mdi)
+            else:
+                pass
+            e.accept()
         super().mousePressEvent(e)
