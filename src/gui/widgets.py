@@ -1,9 +1,11 @@
 from PyQt5 import QtCore
-from PyQt5.QtCore import QTimer, Qt, QPoint
-from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor
-from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu
+from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QSize
+from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QHeaderView
 
 from src.files import Files
+from src.gui import delegates
+from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate
 from src.gui.uihandler.main import MainHandler
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
@@ -69,7 +71,7 @@ class MpvWidget(QFrame):
             self.mpv_player.mouse_action(0, ActionType.DOWN)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
-        elif button == Qt.RightButton:
+        elif button == Qt.RightButton and self.mpv_player.is_video_loaded():
             self.widget_main.widget_context_menu.exec_()
         elif button == Qt.BackButton:
             self.mpv_player.mouse_action(5, ActionType.PRESS)
@@ -115,30 +117,6 @@ class MpvWidget(QFrame):
         print(kev.text())
 
 
-class CustomStatusBar(QStatusBar):
-    def __init__(self, main_handler: MainHandler):
-        super().__init__()
-        self.showMessage("ada", 4000)
-
-
-class CommentsWidget(QTableView):
-
-    def __init__(self, main_handler: MainHandler):
-        super().__init__()
-        self.widget_mpv = main_handler.widget_mpv
-
-    def add_comment(self, comment_type, comment_text="", time=None):
-        print("Got new comment to add: {}".format(comment_type))
-
-    def keyPressEvent(self, e: QKeyEvent):
-        print("key press event from table")
-        self.widget_mpv.keyPressEvent(e)
-
-    def mousePressEvent(self, e: QMouseEvent):
-        print("mouse press event from table")
-        self.widget_mpv.mousePressEvent(e)
-
-
 class CustomContextMenu(QMenu):
     def __init__(self, main_handler: MainHandler):
         super().__init__()
@@ -151,6 +129,7 @@ class CustomContextMenu(QMenu):
         """
         Will update the entries of this context menu to match the comment types from the settings.
         """
+
         self.clear()
 
         ct_list = Settings.Holder.COMMENT_TYPES.value
@@ -160,13 +139,9 @@ class CustomContextMenu(QMenu):
             ac = self.addAction(no_ct_action)
             ac.setEnabled(False)
         else:
-            cts_eng = {}
-            for ct in Settings.Holder.COMMENT_TYPES.default_value:
-                cts_eng.update({_translate("Misc", ct): ct})
-
             for ct in ct_list:
-                act = self.addAction(_translate("CommentTypes", ct))
-                act.triggered.connect(lambda x, t=cts_eng.get(ct, ct), f=self.widget_comments.add_comment: f(t))
+                act = self.addAction(ct)
+                act.triggered.connect(lambda x, t=ct, f=self.widget_comments.add_comment: f(t))
 
     def exec_(self):
         """
@@ -184,3 +159,113 @@ class CustomContextMenu(QMenu):
         # instead of just calling the menu a second time
         # or ignoring the second press
         super().exec_(QPoint(m_pos.x() + 1, m_pos.y()))
+
+
+class CustomStatusBar(QStatusBar):
+    def __init__(self, main_handler: MainHandler):
+        super().__init__()
+        self.showMessage("ada", 4000)
+
+
+class CommentsWidget(QTableView):
+
+    def __init__(self, main_handler: MainHandler):
+        super().__init__()
+        self.widget_mpv = main_handler.widget_mpv
+        self.mpv_player = self.widget_mpv.mpv_player
+        self.setEditTriggers(QAbstractItemView.DoubleClicked)
+        # self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        # Headers
+        self.horizontalHeader().setStretchLastSection(True)
+        self.horizontalHeader().hide()
+        self.verticalHeader().hide()
+
+        # Model
+        self.model = QStandardItemModel(self)
+        self.setModel(self.model)
+
+        # Delegates
+        self.comment_type_delegate = CommentTypeDelegate(self, self.on_after_user_changed_comment_type)
+        self.comment_time_delegate = CommentTimeDelegate(self, self.on_after_user_changed_time)
+        self.setItemDelegateForColumn(0, self.comment_time_delegate)
+        self.setItemDelegateForColumn(1, self.comment_type_delegate)
+
+        # Misc
+        self.setAlternatingRowColors(True)
+        self.setSortingEnabled(True)
+        self.setWordWrap(True)
+        self.setShowGrid(False)
+        self.scroll_position = 0
+
+    def add_comment(self, comment_type, comment_text="", time=None):
+
+        if time is None:
+            time: str = self.widget_mpv.mpv_player.position_current()
+
+        ti = QStandardItem(time)
+        ti.setFont(delegates.typewriter_font())
+
+        ct = QStandardItem(_translate("CommentTypes", comment_type))
+        ct.setFont(delegates.typewriter_font())
+
+        note = QStandardItem(comment_text)
+
+        new_entry = [ti, ct, note]
+        self.model.appendRow([ti, ct, note])
+
+        self.sortByColumn(0, Qt.AscendingOrder)
+        self.resizeColumnToContents(1)
+
+        new_index = self.model.indexFromItem(new_entry[2])
+        self.scrollTo(new_index)
+        self.setCurrentIndex(new_index)
+        self.edit(new_index)
+
+    def remove_current_selected_comment(self):
+
+        is_empty: bool = self.model.rowCount() == 0
+
+        if not is_empty:
+            selected = self.selectionModel().selectedRows()
+
+            if selected:
+                self.model.removeRows(selected[0].row(), 1)
+
+    def on_before_fullscreen(self):
+        self.scroll_position = self.verticalScrollBar().value()
+
+    def on_after_fullscreen(self):
+        self.verticalScrollBar().setValue(self.scroll_position)
+
+    def on_after_user_changed_time(self):
+        self.sortByColumn(0, Qt.AscendingOrder)
+
+    def on_after_user_changed_comment_type(self):
+        self.resizeColumnToContents(1)
+
+    def keyPressEvent(self, e: QKeyEvent):
+
+        key = e.key()
+        print("key press event from table", key == Qt.Key_Return)
+
+        if key == Qt.Key_Return or key == Qt.Key_Delete:
+            self.remove_current_selected_comment()
+            return
+
+        self.widget_mpv.keyPressEvent(e)
+
+    def mousePressEvent(self, e: QMouseEvent):
+
+        if e.button() == Qt.LeftButton:
+            model_index: QModelIndex = self.indexAt(e.pos())
+            if model_index.column() == 0 and self.mpv_player.is_video_loaded():
+                position = self.model.item(model_index.row(), 0).text()
+                self.widget_mpv.mpv_player.position_jump(position=position)
+            elif model_index.column() == 1:
+                self.edit(model_index)
+
+        super().mousePressEvent(e)

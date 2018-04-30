@@ -14,6 +14,7 @@ def check_box_state_to_bool(state: int):
     Transforms the tristate checkbox state to a bool value.
     :return: True if state was checked, False else
     """
+
     return state != 0
 
 
@@ -57,15 +58,15 @@ class PreferenceHandler(QDialog):
             self.connected_elements.extend([btn_apply, btn_restore_defaults])
 
         def __setup_language(self):
-            languages = {
-                _translate("PreferenceDialog", "English"): "English",
-                _translate("PreferenceDialog", "German"): "German"
-            }
             language_box = self.ui.comboBox
             language_box.setCurrentIndex(
                 max(language_box.findText(_translate("Dialog", self.SETTINGS.Holder.LANGUAGE.value)), 0))
 
             def f(new_language):
+                languages = {
+                    _translate("PreferenceDialog", "English"): "English",
+                    _translate("PreferenceDialog", "German"): "German"
+                }
                 self.SETTINGS.Holder.LANGUAGE.temporary_value = languages[new_language]
 
             language_box.currentTextChanged.connect(lambda value, fun=f: fun(value))
@@ -98,15 +99,11 @@ class PreferenceHandler(QDialog):
             cts_lv_le.setPlaceholderText(_translate("PreferenceDialog", "Type here to add new comment types"))
             cts.clear()
 
-            cts_eng = {}
-            for ct in self.SETTINGS.Holder.COMMENT_TYPES.default_value:
-                cts_eng.update({_translate("Misc", ct): ct})
-
             for ct in self.SETTINGS.Holder.COMMENT_TYPES.value:
-                cts.insertItem(_translate("Misc", ct))
+                cts.insertItem(ct)
 
             def f():
-                self.SETTINGS.Holder.COMMENT_TYPES.temporary_value = [cts_eng.get(x, x).strip() for x in cts.items()]
+                self.SETTINGS.Holder.COMMENT_TYPES.temporary_value = cts.items()
 
             cts.changed.connect(lambda fun=f: fun())
             self.connected_elements.append(cts)

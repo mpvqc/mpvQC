@@ -1,6 +1,9 @@
 from enum import Enum
 from os import path
 
+from PyQt5.QtCore import QTime
+
+from src.gui.delegates import CommentTypeParentDelegate
 from src.player.bindings import MPV
 
 
@@ -19,12 +22,50 @@ class MpvPlayer:
         self.mpv = mpv_player
         self.pause()
 
+        self.time_format_string = CommentTypeParentDelegate.TIME_FORMAT
+        self.video_path = None
+
+    def position_current(self):
+        """
+        Will return the current time as string representation.
+
+        **TIME_FORMAT = "hh:mm:ss"**
+        :return: the current time as string representation
+        """
+
+        position = self.mpv.time_pos
+
+        if position is None:
+            return None
+
+        return QTime(0, 0, 0, 0).addSecs(int(position)).toString(self.time_format_string)
+
+    def position_jump(self, position: str):
+        """
+        Will jump to the given time position.
+
+        :param position: The time in the following format: **"hh:mm:ss"**
+
+        """
+
+        if self.video_path:
+            self.mpv.command("seek",
+                             QTime.fromString(position, self.time_format_string).toPyTime(),
+                             "absolute+exact")
+
     def is_paused(self) -> bool:
         """
-        Returns whether the player is currently playing.
+        Returns whether the player is currently paused.
         """
 
         return self.mpv.pause
+
+    def is_video_loaded(self) -> bool:
+        """
+        Returns whether the player has a video to play.
+        """
+
+        return bool(self.video_path)
 
     def play(self) -> None:
         """
@@ -51,6 +92,8 @@ class MpvPlayer:
         """
         Opens the given path and if selected starts playing.
         """
+
+        self.video_path = video
 
         self.mpv.command("loadfile", video, "replace")
         if play:

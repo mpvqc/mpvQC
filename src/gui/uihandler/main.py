@@ -46,7 +46,9 @@ class MainHandler(QMainWindow):
         self.current_geometry: QByteArray = None
 
     def __setup_menu_bar(self):
-        """Binds the menubar to the """
+        """
+        Binds the menubar to the MenuBarActionHandler.
+        """
 
         self.ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.action.on_pressed_new_qc_document: f())
         self.ui.action_Open_QC_Document.triggered.connect(lambda c, f=self.action.on_pressed_open_qc_document: f())
@@ -83,6 +85,7 @@ class MainHandler(QMainWindow):
         """
 
         self.current_geometry: QByteArray = self.saveGeometry()
+        self.widget_comments.on_before_fullscreen()
 
         self.widget_comments.hide()
         self.widget_status_bar.hide()
@@ -104,6 +107,7 @@ class MainHandler(QMainWindow):
         self.display_mouse_cursor(display=True)
 
         self.restoreGeometry(self.current_geometry)
+        self.widget_comments.on_after_fullscreen()
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
@@ -156,6 +160,7 @@ class MainHandler(QMainWindow):
 
         self.application.installTranslator(self.translator)
         self.ui.retranslateUi(self)
+        Settings.Holder.COMMENT_TYPES.update()
 
 
 class MenuBarActionHandler:
@@ -207,14 +212,16 @@ class MenuBarActionHandler:
         from src.gui.uihandler.preferences import PreferenceHandler
 
         player = self.widget.widget_mpv.mpv_player
+        was_paused_by_user = player.is_paused()
         player.pause()
 
         dialog = PreferenceHandler()
         dialog.exec_()
 
         # After dialog closed
-        if player.is_paused():
+        if not was_paused_by_user:
             player.play()
+
         self.widget.reload_ui_language()
         self.widget.widget_context_menu.update_entries()
 

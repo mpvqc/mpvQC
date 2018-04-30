@@ -34,6 +34,7 @@ __for_translation_only = [
 class Settings:
     """
     Class for managing user settings which are read and written to disc.
+    todo replace with QSettings API
     """
 
     # Full path of the settings.json file (file name included)
@@ -65,7 +66,68 @@ class Settings:
                 self.default_value = default_value
 
                 self.temporary_value = None
-                self.value = None
+                self._value = None
+
+            @property
+            def value(self):
+                return self._value
+
+            @value.setter
+            def value(self, val):
+                self._value = val
+
+            def save(self) -> None:
+                """
+                Saves the current temporary value, but does **not** write to disc [use Setting.save()] to write to disc.
+                """
+
+                if self.temporary_value is not None:
+                    self.value = self.temporary_value
+
+                self.temporary_value = None
+
+            def reset(self) -> None:
+                """
+                Sets the value to the default value and the temporary value to *None*.
+                """
+
+                self.value = self.default_value
+                self.temporary_value = None
+
+            def changed(self) -> bool:
+                """
+                :return: whether the value and the temporary value are different.
+                """
+                return self.temporary_value is not None and self.value != self.temporary_value
+
+        class CommentTypesEntry(Entry):
+            def __init__(self, identifier: str or path, default_value):
+                super().__init__(identifier, default_value)
+                self.current_lang_to_english = {}
+
+            def update(self):
+                """
+                Will update the internal dictionary to map current language to English.
+                :return:
+                """
+                self.current_lang_to_english.clear()
+                for ct in self.default_value:
+                    self.current_lang_to_english.update({_translate("CommentTypes", ct): ct})
+
+            @property
+            def value(self):
+                retu = []
+                for ct in self._value if self._value is not None else self.default_value:
+                    retu.append(_translate("CommentTypes", ct))
+                return retu
+
+            @value.setter
+            def value(self, val):
+                eng = []
+                for ct in val:
+                    eng.append(self.current_lang_to_english.get(ct, ct))
+
+                self._value = eng
 
             def save(self) -> None:
                 """
@@ -116,8 +178,8 @@ class Settings:
             Entry("qc_doc_write_nick_to_file", True)
 
         COMMENT_TYPES = \
-            Entry("comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing",
-                                    "Timing", "Typeset", "Note"])
+            CommentTypesEntry("comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing",
+                                                "Timing", "Typeset", "Note"])
         CONF_INPUT = \
             Entry(Files.FILE_CONF_INPUT, constants.CFG_INPUT)
 
@@ -153,15 +215,16 @@ class Settings:
             json_values: Dict = json.load(df)
 
         for json_setting in Settings.json:
-            json_setting.value = json_values.get(json_setting.identifier, json_setting.default_value)
+            json_setting._value = json_values.get(json_setting.identifier, json_setting.default_value)
             # todo logger
 
     @staticmethod
     def __write_json():
         dictionary = {}
         for s in Settings.json:
+            # noinspection PyProtectedMember
             dictionary.update({
-                s.identifier: s.value if s.value is not None else s.default_value
+                s.identifier: s._value if s._value is not None else s.default_value
             })
 
         with io.open(Settings.SETTINGS_JSON_FILE, 'w', encoding='utf8') as file:
@@ -176,14 +239,14 @@ class Settings:
                 Settings.__write_confs(True)
                 # That may override the other config, but I think that this will never happen in "production"
             with open(conf.identifier, "r", encoding="utf-8") as file:
-                conf.value = file.read()
+                conf._value = file.read()
                 # todo logger
 
     @staticmethod
     def __write_confs(default_value=False):
         for conf in Settings.confs:
             with open(conf.identifier, "w", encoding="utf-8") as file:
-                file.write(conf.value if not default_value else conf.default_value)
+                file.write(conf._value if not default_value else conf.default_value)
             #  todo logger
 
     @staticmethod
