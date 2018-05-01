@@ -169,7 +169,7 @@ class StatusBar(QStatusBar):
         self.showMessage("ada", 4000)
 
 
-class CommentsWidget(QTableView):
+class CommentsTable(QTableView):
     """
     The comment table below the video.
     """
@@ -321,7 +321,7 @@ class CommentsWidget(QTableView):
             ret_list.append(Comment(time=time, coty=coty, note=note))
         return ret_list
 
-    def delete_all_comments(self) -> None:
+    def reset_comments_table(self) -> None:
         """
         Will clear all comments.
         """

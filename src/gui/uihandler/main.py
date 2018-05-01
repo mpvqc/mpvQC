@@ -7,7 +7,8 @@ from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
-from src.gui.messageboxes import OpenVideoFileDialog, QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox
+from src.gui.messageboxes import OpenVideoFileDialog, QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
+    SaveAsFileDialog
 from src.gui.uielements.main import Ui_MainWindow
 
 _translate = QCoreApplication.translate
@@ -30,10 +31,10 @@ class MainHandler(QMainWindow):
         self.reload_ui_language()
 
         # Widgets
-        from src.gui.widgets import CommentsWidget, StatusBar, MpvWidget, ContextMenu
+        from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
 
         self.widget_mpv = MpvWidget(self)
-        self.widget_comments = CommentsWidget(self)
+        self.widget_comments = CommentsTable(self)
         self.widget_status_bar = StatusBar(self)
         self.widget_context_menu = ContextMenu(self)
         self.player = self.widget_mpv.mpv_player
@@ -46,6 +47,7 @@ class MainHandler(QMainWindow):
         from src.qcutils import QualityCheck
         self.current_geometry: QByteArray = None
         self.qualityCheck = QualityCheck(self)
+        self.menubar_height = None
 
     def __setup_menu_bar(self):
         """
@@ -87,11 +89,13 @@ class MainHandler(QMainWindow):
         """
 
         self.current_geometry: QByteArray = self.saveGeometry()
+        self.menubar_height = self.menuBar().height()
         self.widget_comments.on_before_fullscreen()
 
         self.widget_comments.hide()
         self.widget_status_bar.hide()
-        self.ui.menuBar.hide()
+        # Needed because otherwise no shortcuts would work in fullscreen mode
+        self.ui.menuBar.setMaximumHeight(0)
         self.display_mouse_cursor(display=True)
 
         self.showFullScreen()
@@ -105,7 +109,7 @@ class MainHandler(QMainWindow):
 
         self.widget_comments.show()
         self.widget_status_bar.show()
-        self.ui.menuBar.show()
+        self.ui.menuBar.setMaximumHeight(self.menubar_height)
         self.display_mouse_cursor(display=True)
 
         self.restoreGeometry(self.current_geometry)
@@ -168,7 +172,7 @@ class MainHandler(QMainWindow):
 
         def open_new_one():
             from src.qcutils import QualityCheck
-            self.widget_comments.delete_all_comments()
+            self.widget_comments.reset_comments_table()
             self.qualityCheck = QualityCheck(self)
 
         if self.qualityCheck.should_save():
@@ -187,7 +191,21 @@ class MainHandler(QMainWindow):
             self.action_save_qc_document_as()
 
     def action_save_qc_document_as(self):
-        pass
+        from src.settings import Settings
+        qc = self.qualityCheck
+        current_path = qc.path_document
+
+        def save_with(file: path):
+            qc.path_document = file
+            qc.save()
+
+        if bool(current_path) and path.isfile(current_path):
+            save_with(current_path)
+        else:
+            new_path = SaveAsFileDialog.get_save_file_name(self.widget_mpv.mpv_player.video_file_current(),
+                                                           Settings.Holder.NICKNAME.value, self)
+            if new_path:
+                save_with(new_path)
 
     def action_open_video(self, file: path):
         if path.isfile(file):

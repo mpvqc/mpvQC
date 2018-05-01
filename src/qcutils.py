@@ -16,7 +16,6 @@ class Comment:
 
 
 class QualityCheck:
-    PATTERN_FILENAME = "[QC]_{}_{}.txt"
 
     def __init__(self, main_handler: MainHandler):
         self.main_handler = main_handler
@@ -39,7 +38,18 @@ class QualityCheck:
         return self.main_handler.widget_comments.comments_up_to_date
 
     def should_save(self) -> bool:
-        return bool(self.video_path) and bool(self.comments) and not self.is_up_to_date
+        """
+        Returns whether the QC should be saved in order to prevent data loss. In particular:
+
+            1. Comments are available (not 0)
+            2. Comment table changed
+
+        :return: whether saving would be valuable
+        """
+        return bool(self.comments) and not self.is_up_to_date
 
     def save(self):
+        self.main_handler.widget_comments.comments_up_to_date = True
+        print("Will save as ", self.path_document)
+
         pass
