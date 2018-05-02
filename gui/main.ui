@@ -95,7 +95,7 @@
   </action>
   <action name="action_Open_QC_Document">
    <property name="text">
-    <string>&amp;Open QC document ...</string>
+       <string>&amp;Open QC document(s) ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>

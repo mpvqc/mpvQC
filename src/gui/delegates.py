@@ -1,23 +1,20 @@
 from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QCoreApplication, QTime
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QLineEdit, QDateTimeEdit, \
+from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QDateTimeEdit, \
     QAbstractSpinBox, QTimeEdit
 
 from src.settings import Settings
 
 _translate = QCoreApplication.translate
-
-
-def typewriter_font():
-    q = QFont("monospace")
-    q.setStyleHint(QFont.TypeWriter)
-    return q
+TYPEWRITER_FONT = QFont("monospace")
+TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
 
 
 class CommentTypeParentDelegate(QItemDelegate):
     """
     The parent delegate class for providing common actions for all custom delegates.
     """
+
     TIME_FORMAT = "hh:mm:ss"
 
     def __init__(self, parent, after_edited=None):
@@ -46,7 +43,7 @@ class CommentTimeDelegate(CommentTypeParentDelegate):
         dte.setCalendarPopup(False)
         dte.setCurrentSectionIndex(0)
         dte.setDisplayFormat(CommentTimeDelegate.TIME_FORMAT)
-        dte.setFont(typewriter_font())
+        dte.setFont(TYPEWRITER_FONT)
         return dte
 
     def setEditorData(self, editor: QWidget, index: QModelIndex):
@@ -89,21 +86,8 @@ class CommentTypeDelegate(CommentTypeParentDelegate):
 class CommentNoteDelegate(CommentTypeParentDelegate):
     """
     Delegate for the comment note column.
-
-    **Currently not used** because the default text delegate is sufficient.
     """
 
-    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
-        return QLineEdit(parent)
-
-    def setEditorData(self, editor: QWidget, index: QModelIndex):
-        editor: QLineEdit
-        editor.setText(index.model().data(index, Qt.EditRole))
-
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        editor: QLineEdit
-        model.setData(index, editor.text(), Qt.EditRole)
+        super().setModelData(editor, model, index)
         self._after_edit_done()
-
-    def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
-        editor.setGeometry(option.rect)

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex
@@ -6,9 +6,10 @@ from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardI
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView
 
 from src.files import Files
-from src.gui import delegates
-from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate
+from src.gui import delegates, utils
+from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
 from src.gui.uihandler.main import MainHandler
+from src.gui.utils import KEY_MAPPINGS
 from src.player import bindings
 from src.player.players import MpvPlayer, ActionType
 from src.qcutils import Comment
@@ -21,7 +22,8 @@ class MpvWidget(QFrame):
 
     def __init__(self, widget_main: MainHandler):
         super(MpvWidget, self).__init__(widget_main)
-        self.widget_main = widget_main
+        self.main_handler = widget_main
+        self.application = widget_main.application
 
         self.setStyleSheet("background-color:black;")
         self.setMouseTracking(True)
@@ -31,7 +33,7 @@ class MpvWidget(QFrame):
         self.cursor_timer.setSingleShot(True)
         # noinspection PyUnresolvedReferences
         self.cursor_timer.timeout.connect(
-            lambda arg=False, f=self.widget_main.display_mouse_cursor: f(arg))
+            lambda arg=False, f=self.main_handler.display_mouse_cursor: f(arg))
 
         mpv = bindings.MPV(
             wid=str(int(self.winId())),
@@ -52,36 +54,34 @@ class MpvWidget(QFrame):
 
         self.mpv_player = MpvPlayer(mpv)
 
-    def mouseMoveEvent(self, mev: QMouseEvent):
+    def mouseMoveEvent(self, e: QMouseEvent):
 
-        if mev.type() == QMouseEvent.MouseMove:
+        if e.type() == QMouseEvent.MouseMove:
             try:
-                self.mpv_player.mouse_move(mev.pos().x(), mev.pos().y())
+                self.mpv_player.mouse_move(e.pos().x(), e.pos().y())
             except OSError:
                 # todo logger
                 pass
 
-        self.widget_main.display_mouse_cursor(display=True)
+        self.main_handler.display_mouse_cursor(display=True)
 
-    def mousePressEvent(self, mev: QMouseEvent):
+    def mousePressEvent(self, e: QMouseEvent):
+        button = e.button()
         self.setFocus()
-        # self.comment_list.setFocus()
-
-        button = mev.button()
 
         if button == Qt.LeftButton:
             self.mpv_player.mouse_action(0, ActionType.DOWN)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
         elif button == Qt.RightButton and self.mpv_player.is_video_loaded():
-            self.widget_main.widget_context_menu.exec_()
+            self.main_handler.widget_context_menu.exec_()
         elif button == Qt.BackButton:
             self.mpv_player.mouse_action(5, ActionType.PRESS)
         elif button == Qt.ForwardButton:
             self.mpv_player.mouse_action(6, ActionType.PRESS)
 
-    def mouseReleaseEvent(self, mev: QMouseEvent):
-        button = mev.button()
+    def mouseReleaseEvent(self, e: QMouseEvent):
+        button = e.button()
 
         if button == Qt.LeftButton:
             self.mpv_player.mouse_action(0, ActionType.UP)
@@ -90,7 +90,7 @@ class MpvWidget(QFrame):
         button = mev.button()
 
         if button == Qt.LeftButton:
-            self.widget_main.toggle_fullscreen()
+            self.main_handler.toggle_fullscreen()
             self.mpv_player.mouse_action(0, ActionType.PRESS)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
@@ -101,8 +101,8 @@ class MpvWidget(QFrame):
         else:
             return super().mouseDoubleClickEvent(mev)
 
-    def wheelEvent(self, whe: QWheelEvent):
-        delta = whe.angleDelta()
+    def wheelEvent(self, e: QWheelEvent):
+        delta = e.angleDelta()
 
         x_d = delta.x()
         y_d = delta.y()
@@ -113,13 +113,44 @@ class MpvWidget(QFrame):
             else:
                 self.mpv_player.mouse_action(4, ActionType.PRESS)
         else:
-            super().wheelEvent(whe)
+            super().wheelEvent(e)
 
-    def keyPressEvent(self, kev: QKeyEvent):
-        print(kev.text())
+    def keyPressEvent(self, e: QKeyEvent):
+        mod = int(self.application.keyboardModifiers())
+        key = e.key()
+        cmd = ""
+
+        if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
+            self.main_handler.widget_comments.delegate_key_to_super(e)
+        if key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
+            self.main_handler.toggle_fullscreen()
+        elif key == Qt.Key_E and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
+            self.main_handler.widget_context_menu.exec_()
+        elif key == Qt.Key_Escape and mod == Qt.NoModifier:
+            self.main_handler.display_normal()
+        elif key in KEY_MAPPINGS:
+            cmd = utils.command_generator(mod, *KEY_MAPPINGS[key])
+        elif key != 0:
+            try:
+                ks = chr(key)
+            except ValueError:
+                pass
+            else:
+                cmd = utils.command_generator(mod, ks, is_char=True)
+        else:
+            super(MpvWidget, self).keyPressEvent(e)
+
+        if cmd:
+            self.mpv_player.button_action(cmd, ActionType.PRESS)
+
+        e.accept()
 
 
 class ContextMenu(QMenu):
+    """
+    Pseudo context menu when user right clicks into the video or presses the 'e' button.
+    """
+
     def __init__(self, main_handler: MainHandler):
         super().__init__()
         self.main_handler = main_handler
@@ -151,9 +182,7 @@ class ContextMenu(QMenu):
         """
 
         self.mpv_player.pause()
-
-        if self.main_handler.isFullScreen():
-            self.main_handler.hide_fullscreen()
+        self.main_handler.display_normal()
 
         m_pos = QCursor.pos()
         # Fixes following: Qt puts the context menu in a place
@@ -161,12 +190,6 @@ class ContextMenu(QMenu):
         # instead of just calling the menu a second time
         # or ignoring the second press
         super().exec_(QPoint(m_pos.x() + 1, m_pos.y()))
-
-
-class StatusBar(QStatusBar):
-    def __init__(self, main_handler: MainHandler):
-        super().__init__()
-        self.showMessage("ada", 4000)
 
 
 class CommentsTable(QTableView):
@@ -191,10 +214,12 @@ class CommentsTable(QTableView):
         self.setModel(self.model)
 
         # Delegates
-        self.comment_type_delegate = CommentTypeDelegate(self, self.on_after_user_changed_comment_type)
         self.comment_time_delegate = CommentTimeDelegate(self, self.on_after_user_changed_time)
+        self.comment_type_delegate = CommentTypeDelegate(self, self.on_after_user_changed_comment_type)
+        self.comment_note_delegate = CommentNoteDelegate(self, self.on_after_user_changed_comment_note)
         self.setItemDelegateForColumn(0, self.comment_time_delegate)
         self.setItemDelegateForColumn(1, self.comment_type_delegate)
+        self.setItemDelegateForColumn(2, self.comment_note_delegate)
 
         # Misc
         self.setEditTriggers(QAbstractItemView.DoubleClicked)
@@ -254,9 +279,9 @@ class CommentsTable(QTableView):
         """
         This function takes a **function** as argument.
 
-        *It will call the function with the given argument if the selection is not empty.*
+        *It will call the function with the current selection as argument if selection is not empty.*
+
         :param consume_selected_function: The function to apply if selection is not empty
-        :return:
         """
 
         is_empty: bool = self.model.rowCount() == 0
@@ -268,44 +293,59 @@ class CommentsTable(QTableView):
                 consume_selected_function(selected)
 
     def add_comment(self, comment_type: str, comment_text: str = "", time: str = None,
-                    sort: bool = True, will_change_qc=True) -> None:
+                    sort: bool = True, will_change_qc=True, edit_mode_active=True) -> None:
         """
         Will add a new comment type to the list view.
 
-        :param will_change_qc: True if qc is changed with the addition.
         :param comment_type: The comment type to add
         :param comment_text: The text to add
         :param time: The time to add. If None the current video time will be used.
         :param sort: If True, the complete table will be sorted after the insertion.
+        :param edit_mode_active: True then edit mode will be started.
+        :param will_change_qc: True if qc is changed with the addition.
         """
 
         if time is None:
             time: str = self.widget_mpv.mpv_player.position_current()
 
         ti = QStandardItem(time)
-        ti.setFont(delegates.typewriter_font())
+        ti.setFont(delegates.TYPEWRITER_FONT)
 
         ct = QStandardItem(_translate("CommentTypes", comment_type))
-        ct.setFont(delegates.typewriter_font())
+        ct.setFont(delegates.TYPEWRITER_FONT)
 
         note = QStandardItem(comment_text)
 
         new_entry = [ti, ct, note]
         self.model.appendRow([ti, ct, note])
 
+        self.__after_comment_added(new_entry, sort, edit_mode_active, will_change_qc)
+
+    def __after_comment_added(self, new_entry: List[QStandardItem], sort: bool,
+                              edit_mode: bool, will_change_qc: bool) -> None:
+        """
+
+        :param new_entry: The newly added entry
+        :param sort: If True, the complete table will be sorted after the insertion.
+        :param edit_mode: True then edit mode will be started.
+        :param will_change_qc: True if qc is changed with the addition.
+        """
+
         if sort:
-            self.sortByColumn(0, Qt.AscendingOrder)
+            self.sort()
         self.resizeColumnToContents(1)
 
         new_index = self.model.indexFromItem(new_entry[2])
         self.scrollTo(new_index)
         self.setCurrentIndex(new_index)
-        self.edit(new_index)
+
+        if edit_mode:
+            self.edit(new_index)
 
         if will_change_qc:
             self.comments_up_to_date = False
 
-    def get_all_comments(self) -> List[Comment]:
+    def get_all_comments(self) -> Tuple[Comment]:
         """
         Returns all comments.
         :return: all comments.
@@ -319,7 +359,7 @@ class CommentsTable(QTableView):
             coty = model.item(r, 1).text()
             note = model.item(r, 2).text()
             ret_list.append(Comment(time=time, coty=coty, note=note))
-        return ret_list
+        return tuple(ret_list)
 
     def reset_comments_table(self) -> None:
         """
@@ -348,7 +388,7 @@ class CommentsTable(QTableView):
         Action to invoke after time was changed manually by the user.
         """
 
-        self.sortByColumn(0, Qt.AscendingOrder)
+        self.sort()
         self.comments_up_to_date = False
 
     def on_after_user_changed_comment_type(self) -> None:
@@ -359,22 +399,46 @@ class CommentsTable(QTableView):
         self.resizeColumnToContents(1)
         self.comments_up_to_date = False
 
+    def on_after_user_changed_comment_note(self) -> None:
+        """
+        Action to invoke after comment note was changed manually by the user.
+        """
+
+        self.comments_up_to_date = False
+
+    def sort(self) -> None:
+        """
+        Will sort the comments table by time column.
+        """
+
+        self.sortByColumn(0, Qt.AscendingOrder)
+
+    def delegate_key_to_super(self, e: QKeyEvent) -> None:
+        """
+        Will delegate the key event to the super class.
+        :param e: The mouse event to delegate
+        """
+
+        super().keyPressEvent(e)
+
     def keyPressEvent(self, e: QKeyEvent):
 
         mod = int(self.application.keyboardModifiers())
         key = e.key()
 
         if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
-            super().keyPressEvent(e)
+            self.delegate_key_to_super(e)
         elif key == Qt.Key_Delete:
             self.delete_current_selected_comment()
+            e.accept()
         elif key == Qt.Key_Return or key == Qt.Key_Backspace:  # Backspace or Enter
             self.edit_current_selected_comment()
+            e.accept()
         elif key == Qt.Key_C and mod == Qt.CTRL:
             self.copy_current_selected_comment()
+            e.accept()
         else:
             e.ignore()
-        e.accept()
 
         self.widget_mpv.keyPressEvent(e)
 
@@ -387,7 +451,11 @@ class CommentsTable(QTableView):
                 self.widget_mpv.mpv_player.position_jump(position=position)
             elif mdi.column() == 1:
                 self.edit(mdi)
-            else:
-                pass
             e.accept()
         super().mousePressEvent(e)
+
+
+class StatusBar(QStatusBar):
+    def __init__(self, main_handler: MainHandler):
+        super().__init__()
+        self.showMessage("ada", 4000)

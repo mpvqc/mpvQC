@@ -11,6 +11,7 @@ except NameError:
 
 
 class Files:
+    # todo rewrite and get rid of class since its not boilerplate java :)
     __NAME_FOLDER_CONFIGURATION = "configuration"
     __NAME_FOLDER_AUTOSAVE = "autosave"
 
@@ -31,7 +32,11 @@ class Files:
     __APPLICATION_NAME = None
 
     @staticmethod
-    def require_folder_structure():
+    def require_folder_structure() -> None:
+        """
+        Will setup all non existing folders and files.
+        """
+
         from start import APPLICATION_NAME, DIRECTORY_PROGRAM
 
         Files.__APPLICATION_NAME = APPLICATION_NAME

@@ -60,7 +60,7 @@ class PreferenceHandler(QDialog):
         def __setup_language(self):
             language_box = self.ui.comboBox
             language_box.setCurrentIndex(
-                max(language_box.findText(_translate("Dialog", self.SETTINGS.Holder.LANGUAGE.value)), 0))
+                max(language_box.findText(_translate("PreferenceDialog", self.SETTINGS.Holder.LANGUAGE.value)), 0))
 
             def f(new_language):
                 languages = {
@@ -74,7 +74,7 @@ class PreferenceHandler(QDialog):
 
         def __setup_nickname(self):
             nick = self.ui.authorLineEdit
-            nick.setPlaceholderText(_translate("Misc", "Type here to change the nick name"))
+            nick.setPlaceholderText(_translate("PreferenceDialog", "Type here to change the nick name"))
             nick.setText(self.SETTINGS.Holder.NICKNAME.value)
 
             def f(new_nickname):

@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
         self.menuAbout.setTitle(_translate("MainWindow", "Abo&ut"))
         self.actionNew_QC_Document.setText(_translate("MainWindow", "&New QC document"))
         self.actionNew_QC_Document.setShortcut(_translate("MainWindow", "Ctrl+N"))
-        self.action_Open_QC_Document.setText(_translate("MainWindow", "&Open QC document ..."))
+        self.action_Open_QC_Document.setText(_translate("MainWindow", "&Open QC document(s) ..."))
         self.action_Open_QC_Document.setShortcut(_translate("MainWindow", "Ctrl+O"))
         self.action_Save_QC_Document.setText(_translate("MainWindow", "&Save QC document"))
         self.action_Save_QC_Document.setShortcut(_translate("MainWindow", "Ctrl+S"))

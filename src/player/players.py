@@ -8,6 +8,10 @@ from src.player.bindings import MPV
 
 
 class ActionType(Enum):
+    """
+    Action types for the MpvPlayer.
+    """
+
     PRESS = "keypress"
     DOWN = "keydown"
     UP = "keyup"
@@ -52,7 +56,6 @@ class MpvPlayer:
         Will jump to the given time position.
 
         :param position: The time in the following format: **"hh:mm:ss"**
-
         """
 
         if self.is_video_loaded():
@@ -96,15 +99,21 @@ class MpvPlayer:
     def open_video(self, video: path, play: bool) -> None:
         """
         Opens the given path and if selected starts playing.
+        :param video: The video to open
+        :param play: If True, will start playing immediately
+        :return:
         """
 
         self.mpv.command("loadfile", video, "replace")
         if play:
             self.play()
 
-    def mouse_move(self, x, y):
+    def mouse_move(self, x, y) -> None:
         """
         Command for the mouse move.
+
+        :param x: Amount to move -> x
+        :param y: Amount to move -> y
         """
 
         self.mpv.command("mouse", x, y)
@@ -116,11 +125,13 @@ class MpvPlayer:
         :param action_type: The type of press
         """
 
-        if action_type == ActionType.PRESS:
-            ac_ty = "keypress"
-        elif action_type == ActionType.DOWN:
-            ac_ty = "keydown"
-        else:
-            ac_ty = "keyup"
+        self.mpv.command(action_type.value, "MOUSE_BTN" + str(btn_idx))
 
-        self.mpv.command(ac_ty, "MOUSE_BTN" + str(btn_idx))
+    def button_action(self, key_string, action_type: ActionType) -> None:
+        """
+        Will invoke the button action for the given arguments.
+        :param key_string: The command to pass to the player
+        :param action_type: The action type to invoke.
+        """
+
+        self.mpv.command(action_type.value, key_string)
