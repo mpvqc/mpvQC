@@ -108,6 +108,13 @@ class MpvPlayer:
         if play:
             self.play()
 
+    def terminate(self) -> None:
+        """
+        Will close the player.
+        """
+
+        self.mpv.terminate()
+
     def mouse_move(self, x, y) -> None:
         """
         Command for the mouse move.
@@ -121,6 +128,7 @@ class MpvPlayer:
     def mouse_action(self, btn_idx: int, action_type: ActionType) -> None:
         """
         Will invoke a the mouse action for the given arguments.
+
         :param btn_idx: The button index (e.g. 0 for *MOUSE_BTN0*)
         :param action_type: The type of press
         """
@@ -130,8 +138,18 @@ class MpvPlayer:
     def button_action(self, key_string, action_type: ActionType) -> None:
         """
         Will invoke the button action for the given arguments.
+
         :param key_string: The command to pass to the player
         :param action_type: The action type to invoke.
         """
 
         self.mpv.command(action_type.value, key_string)
+
+    def add_sub_files(self, sub_file: path):
+        """
+        Add sub file to current video.
+
+        :param sub_file: The sub file to add
+        """
+
+        self.mpv.command("sub-add", sub_file, "select")

@@ -5,7 +5,7 @@ from os import path
 from typing import List
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray
-from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent
+from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from src.gui.messageboxes import OpenVideoFileDialog, QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
@@ -14,6 +14,9 @@ from src.gui.messageboxes import OpenVideoFileDialog, QuitNotSavedQMessageBox, N
 from src.gui.uielements.main import Ui_MainWindow
 
 _translate = QCoreApplication.translate
+_DROPABLE_SUBS = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
+                  "mks", "vtt", "sub", "scc")
+_DROPABLE_VIDS = ("mp4", "mkv", "avi")
 
 
 class MainHandler(QMainWindow):
@@ -21,6 +24,7 @@ class MainHandler(QMainWindow):
     def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
         self.application = application
+        self.setAcceptDrops(True)
 
         # User interface setup
         self.ui = Ui_MainWindow()
@@ -189,7 +193,7 @@ class MainHandler(QMainWindow):
         else:
             self.__open_qc_txt_files(OpenQcFileDialog.get_open_file_names("", parent=self))
 
-    def __open_qc_txt_files(self, file_list: List) -> None:
+    def __open_qc_txt_files(self, file_list: List, ask_to_open_found_vid=True) -> None:
         """
         Plain action. Will try to open the txt_files.
         :param file_list: The txt files to open
@@ -217,7 +221,8 @@ class MainHandler(QMainWindow):
                 if amount == 1:
                     self.qc_manager.update_path_qc_document_to(txt)
 
-                    if video_path and path.isfile(video_path) and ValidVideoFileFoundQMessageBox().exec_():
+                    if video_path and path.isfile(video_path) \
+                            and ask_to_open_found_vid and ValidVideoFileFoundQMessageBox().exec_():
                         self.action_open_video(video_path)
 
         if amount >= 2:
@@ -236,6 +241,7 @@ class MainHandler(QMainWindow):
         Continue to read with *closeEvent()*.
         """
 
+        self.display_normal()
         self.close()
 
     def action_open_video(self, file: path = None) -> None:
@@ -288,14 +294,43 @@ class MainHandler(QMainWindow):
         print(inspect.stack()[0][3])
 
     def closeEvent(self, cev: QCloseEvent):
+
         if self.qc_manager.should_save():
             self.widget_mpv.mpv_player.pause()
             if QuitNotSavedQMessageBox().exec_():
+                self.widget_mpv.mpv_player.terminate()
                 self.close()
-            else:
-                cev.ignore()
+
         else:
             super().closeEvent(cev)
 
     def showEvent(self, sev: QShowEvent) -> None:
         print(inspect.stack()[0][3])
+
+    def dragEnterEvent(self, e: QDragEnterEvent):
+        e.acceptProposedAction()
+
+    def dropEvent(self, e: QDropEvent):
+        dropped_local_files = [x.toLocalFile() for x in e.mimeData().urls() if path.isfile(x.toLocalFile())]
+
+        txts, subs, vids = [], [], []
+
+        for file in dropped_local_files:
+            ext = file.rsplit('.', 1)[-1]
+
+            if ext == "txt":
+                txts.append(file)
+            if ext in _DROPABLE_SUBS:
+                subs.append(file)
+            if ext in _DROPABLE_VIDS:
+                vids.append(file)
+
+        player = self.widget_mpv.mpv_player
+        for s in subs:
+            player.add_sub_files(s)
+
+        video_found = bool(vids)
+        if video_found:
+            player.open_video(vids[0], play=True)
+
+        self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)

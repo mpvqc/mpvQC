@@ -89,7 +89,7 @@ class MpvWidget(QFrame):
     def mouseDoubleClickEvent(self, mev: QMouseEvent):
         button = mev.button()
 
-        if button == Qt.LeftButton:
+        if button == Qt.LeftButton and self.mpv_player.video_file_current():
             self.main_handler.toggle_fullscreen()
             self.mpv_player.mouse_action(0, ActionType.PRESS)
         elif button == Qt.MiddleButton:
