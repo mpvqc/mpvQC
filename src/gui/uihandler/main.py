@@ -38,15 +38,18 @@ class MainHandler(QMainWindow):
         # Widgets
         from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
 
+        self.widget_status_bar = StatusBar(self)
         self.widget_mpv = MpvWidget(self)
         self.widget_comments = CommentsTable(self)
-        self.widget_status_bar = StatusBar(self)
         self.widget_context_menu = ContextMenu(self)
         self.player = self.widget_mpv.mpv_player
 
         self.setStatusBar(self.widget_status_bar)
         self.ui.splitter.insertWidget(0, self.widget_comments)
         self.ui.splitter.insertWidget(0, self.widget_mpv)
+
+        # Settings for main window relevant observed properties
+        self.main_window_title_setting: int = 2  # 0 -> Nothing, 1 -> File only , 2 -> Full path todo document
 
         # Class variables
         from src.qcutils import QualityCheckManager
@@ -196,6 +199,7 @@ class MainHandler(QMainWindow):
     def __open_qc_txt_files(self, file_list: List, ask_to_open_found_vid=True) -> None:
         """
         Plain action. Will try to open the txt_files.
+
         :param file_list: The txt files to open
         """
 
@@ -256,7 +260,7 @@ class MainHandler(QMainWindow):
         if path.isfile(file):
             setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
             setting.save()
-            self.widget_mpv.mpv_player.open_video(file, play=True)
+            self.player.open_video(file, play=True)
 
     def action_open_network_stream(self) -> None:
         pass
@@ -271,7 +275,7 @@ class MainHandler(QMainWindow):
 
         from src.gui.uihandler.preferences import PreferenceHandler
 
-        player = self.widget_mpv.mpv_player
+        player = self.player
         was_paused_by_user = player.is_paused()
         player.pause()
 
@@ -293,12 +297,24 @@ class MainHandler(QMainWindow):
     def action_open_about_mpvqc(self) -> None:
         print(inspect.stack()[0][3])
 
+    def observed_player_property_video_file_name(self, video_file_name):
+        from src.settings import Settings
+
+        if Settings.Holder.CUSTOMIZATION_WINDOW_TITLE.value == 1:
+            self.setWindowTitle(video_file_name)
+
+    def observed_player_property_full_path(self, full_path):
+        from src.settings import Settings
+
+        if Settings.Holder.CUSTOMIZATION_WINDOW_TITLE.value == 2:
+            self.setWindowTitle(full_path)
+
     def closeEvent(self, cev: QCloseEvent):
 
         if self.qc_manager.should_save():
-            self.widget_mpv.mpv_player.pause()
+            self.player.pause()
             if QuitNotSavedQMessageBox().exec_():
-                self.widget_mpv.mpv_player.terminate()
+                self.player.terminate()
                 self.close()
 
         else:
@@ -325,12 +341,11 @@ class MainHandler(QMainWindow):
             if ext in _DROPABLE_VIDS:
                 vids.append(file)
 
-        player = self.widget_mpv.mpv_player
         for s in subs:
-            player.add_sub_files(s)
+            self.player.add_sub_files(s)
 
         video_found = bool(vids)
         if video_found:
-            player.open_video(vids[0], play=True)
+            self.player.open_video(vids[0], play=True)
 
         self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)

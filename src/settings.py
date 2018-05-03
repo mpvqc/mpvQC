@@ -186,6 +186,9 @@ class Settings:
         CONF_MPV = \
             Entry(Files.FILE_CONF_MPV, constants.CFG_MPV)
 
+        CUSTOMIZATION_WINDOW_TITLE = \
+            Entry("customization_window_title_nothing_name_full", 1)
+
     json = (
         Holder.VERSION,
         Holder.PLAYER_LAST_PLAYED_DIR,
@@ -195,7 +198,9 @@ class Settings:
         Holder.AUTOSAVE_INTERVAL,
         Holder.QC_DOC_WRITE_NICK_TO_FILE,
         Holder.QC_DOC_WRITE_VIDEO_PATH_TO_FILE,
-        Holder.COMMENT_TYPES
+        Holder.COMMENT_TYPES,
+
+        Holder.CUSTOMIZATION_WINDOW_TITLE
     )
 
     confs = (

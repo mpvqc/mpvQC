@@ -3,7 +3,7 @@ from typing import List, Tuple
 from PyQt5 import QtCore
 from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView
+from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel
 
 from src.files import Files
 from src.gui import delegates, utils
@@ -48,9 +48,33 @@ class MpvWidget(QFrame):
             ytdl="yes",
             # log_handler=mpvLogHandler,
         )
-        # @mpv.property_observer('time-pos')
-        # def time_observer(_name, value):
-        #     print("Time: ", value)
+
+        status_bar = widget_main.widget_status_bar
+
+        @mpv.property_observer('percent-pos')
+        def observe_percent_pos(_name, value):
+            if value:
+                status_bar.set_progress_percentage(value)
+
+        @mpv.property_observer('time-pos')
+        def observe_time_pos(_name, value):
+            if value:
+                status_bar.set_time_current(value)
+
+        @mpv.property_observer('time-remaining')
+        def observe_time_remaining(_name, value):
+            if value:
+                status_bar.set_time_remaining(value)
+
+        @mpv.property_observer('path')
+        def observe_full_path(_name, value):
+            if value:
+                widget_main.observed_player_property_full_path(value)
+
+        @mpv.property_observer('filename/no-ext')
+        def observe_filename(_name, value):
+            if value:
+                widget_main.observed_player_property_video_file_name(value)
 
         self.mpv_player = MpvPlayer(mpv)
 
@@ -120,9 +144,18 @@ class MpvWidget(QFrame):
         key = e.key()
         cmd = ""
 
+        # List view bindings
         if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
-            self.main_handler.widget_comments.delegate_key_to_super(e)
-        if key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
+            self.main_handler.widget_comments.keyPressEvent(e)
+        elif key == Qt.Key_Delete:
+            self.main_handler.widget_comments.delete_current_selected_comment()
+        elif key == Qt.Key_Return or key == Qt.Key_Backspace:  # Backspace or Enter
+            self.main_handler.widget_comments.edit_current_selected_comment()
+        elif key == Qt.Key_C and mod == Qt.CTRL:
+            self.main_handler.widget_comments.copy_current_selected_comment()
+
+        #
+        elif key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
             self.main_handler.toggle_fullscreen()
         elif key == Qt.Key_E and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
             self.main_handler.widget_context_menu.exec_()
@@ -142,8 +175,6 @@ class MpvWidget(QFrame):
 
         if cmd:
             self.mpv_player.button_action(cmd, ActionType.PRESS)
-
-        e.accept()
 
 
 class ContextMenu(QMenu):
@@ -368,6 +399,7 @@ class CommentsTable(QTableView):
 
         self.model.clear()
         self.comments_up_to_date = True
+        self.__delegate_row_count_to_status_bar()
 
     def on_before_fullscreen(self) -> None:
         """
@@ -413,34 +445,15 @@ class CommentsTable(QTableView):
 
         self.sortByColumn(0, Qt.AscendingOrder)
 
-    def delegate_key_to_super(self, e: QKeyEvent) -> None:
-        """
-        Will delegate the key event to the super class.
-        :param e: The mouse event to delegate
-        """
-
-        super().keyPressEvent(e)
-
     def keyPressEvent(self, e: QKeyEvent):
 
         mod = int(self.application.keyboardModifiers())
         key = e.key()
 
         if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
-            self.delegate_key_to_super(e)
-        elif key == Qt.Key_Delete:
-            self.delete_current_selected_comment()
-            e.accept()
-        elif key == Qt.Key_Return or key == Qt.Key_Backspace:  # Backspace or Enter
-            self.edit_current_selected_comment()
-            e.accept()
-        elif key == Qt.Key_C and mod == Qt.CTRL:
-            self.copy_current_selected_comment()
-            e.accept()
+            super().keyPressEvent(e)
         else:
-            e.ignore()
-
-        self.widget_mpv.keyPressEvent(e)
+            self.widget_mpv.keyPressEvent(e)
 
     def mousePressEvent(self, e: QMouseEvent):
 
@@ -454,8 +467,80 @@ class CommentsTable(QTableView):
             e.accept()
         super().mousePressEvent(e)
 
+    def rowsInserted(self, parent: QtCore.QModelIndex, start: int, end: int):
+        super(CommentsTable, self).rowsInserted(parent, start, end)
+        self.__delegate_row_count_to_status_bar()
+
+    def rowsAboutToBeRemoved(self, parent: QtCore.QModelIndex, start: int, end: int):
+        super(CommentsTable, self).rowsAboutToBeRemoved(parent, start, end)
+        self.__delegate_row_count_to_status_bar()
+
+    def __delegate_row_count_to_status_bar(self):
+        self.main_handler.widget_status_bar.set_comments_amount(self.model.rowCount())
+
 
 class StatusBar(QStatusBar):
+    class ClickableQLabel(QLabel):
+        def __init__(self):
+            super().__init__()
+            self.on_right_mouse_click = None
+            self.on_left_mouse_click = None
+
+        def mousePressEvent(self, e: QMouseEvent):
+            button = e.button()
+
+            if button == Qt.LeftButton and self.on_left_mouse_click:
+                self.on_left_mouse_click()
+            elif button == Qt.RightButton and self.on_right_mouse_click:
+                self.on_right_mouse_click()
+
     def __init__(self, main_handler: MainHandler):
         super().__init__()
-        self.showMessage("ada", 4000)
+
+        # Time and remaining time
+        self.__time_video = StatusBar.ClickableQLabel()
+        self.__time_video_toggle: bool = True  # If True -> current Time, If False -> Remaining Time
+
+        def toggle_show_current_video_time():
+            self.__time_video_toggle = not self.__time_video_toggle
+
+        self.__time_video.on_left_mouse_click = toggle_show_current_video_time
+
+        # Percentage
+        self.__label_percentage = QLabel()
+        self.__label_comments_count = QLabel()
+
+        # Widgets
+        self.addWidget(self.__time_video)
+        self.addWidget(self.__label_percentage)
+        self.addWidget(self.__label_comments_count)
+
+    @staticmethod
+    def __seconds_float_to_formatted_string_hours(seconds: float):
+        int_val = int(seconds)
+        m, s = divmod(int_val, 60)
+        h, m = divmod(m, 60)
+        h = "{:02d}:".format(h) if h != 0 else ""
+
+        return "{}{:02d}:{:02d}".format(h, m, s)
+
+    def set_progress_percentage(self, value: float):
+        prefix = _translate("StatusBar", "Progress")
+        self.__label_percentage.setText("{}: {} %".format(prefix, int(value)))
+
+    def set_time_current(self, value: float):
+        if not self.__time_video_toggle:
+            return
+
+        self.__time_video.setText("{}: {}".format(_translate("StatusBar", "Time"),
+                                                  StatusBar.__seconds_float_to_formatted_string_hours(value)))
+
+    def set_time_remaining(self, value: float):
+        if self.__time_video_toggle:
+            return
+
+        self.__time_video.setText("{}: {}".format(_translate("StatusBar", "Remaining"),
+                                                  StatusBar.__seconds_float_to_formatted_string_hours(value)))
+
+    def set_comments_amount(self, amount: int):
+        self.__label_comments_count.setText("{}: {}".format(_translate("StatusBar", "Comments"), amount))
