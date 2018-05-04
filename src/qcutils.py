@@ -3,9 +3,12 @@ from datetime import datetime
 from os import path, linesep
 from typing import List, Tuple
 
-from src.gui.messageboxes import SaveAsFileDialog
-from src.gui.uihandler.main import MainHandler
+from PyQt5.QtCore import QObject, QEvent
+
 from src import settings
+from src.gui.dialogs import get_save_file_name
+from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentPath, EventPlayerCurrentPath
+from src.gui.uihandler.main import MainHandler
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
 _REGEX_PATH = re.compile("^path:*\s*")
@@ -38,76 +41,51 @@ class Comment:
         return "[{}][{}] {}".format(self.time, self.coty, self.note)
 
 
-class WritableQualityCheckFile:
+class QualityCheckWriter:
 
     def __init__(self, video_path, comments: Tuple[Comment]):
         # [FILE]
-        self.date = str(datetime.now().replace(microsecond=0))
-        self.generator = "{} {}".format(APPLICATION_NAME, APPLICATION_VERSION)
-        self.nick_name = settings.Setting_Custom_General_NICKNAME.value \
+        self.__date = str(datetime.now().replace(microsecond=0))
+        self.__generator = "{} {}".format(APPLICATION_NAME, APPLICATION_VERSION)
+        self.__nick_name = settings.Setting_Custom_General_NICKNAME.value \
             if bool(settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.value) else ""
-        self.video_path = video_path if bool(settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value) else ""
+        self.__video_path = video_path if bool(
+            settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value) else ""
 
         # [DATA]
-        self.comments_joined = _LINE_BREAK.join(map(lambda c: str(c), comments))
-        self.comments_size = len(comments)
+        self.__comments_joined = _LINE_BREAK.join(map(lambda c: str(c), comments))
+        self.__comments_size = len(comments)
 
-        qc_author = "qc author: {}{}".format(self.nick_name, _LINE_BREAK) if bool(self.nick_name) else ""
-        video_path = "path: {}{}".format(self.video_path, _LINE_BREAK) if bool(self.video_path) else ""
+        qc_author = "qc author: {}{}".format(self.__nick_name, _LINE_BREAK) if bool(self.__nick_name) else ""
+        video_path = "path: {}{}".format(self.__video_path, _LINE_BREAK) if bool(self.__video_path) else ""
 
-        self.file_content = _QC_TEMPLATE.format(
-            self.date,
-            self.generator,
+        self.__file_content = _QC_TEMPLATE.format(
+            self.__date,
+            self.__generator,
             qc_author,
             video_path,
-            self.comments_joined,
-            self.comments_size
+            self.__comments_joined,
+            self.__comments_size
         )
 
     def write_to_disc(self, path_document):
         with open(path_document, "w", encoding="utf-8") as file:
-            file.write(self.file_content)
+            file.write(self.__file_content)
 
 
-class QualityCheckManager:
+class QualityCheckManager(QObject):
 
     def __init__(self, main_handler: MainHandler):
+        super().__init__()
 
         # Store references because they should never be changed
-        self.main_handler = main_handler
-        self.widget_comments = main_handler.widget_comments
-        self.widget_mpv = main_handler.widget_mpv
-        self.mpv_player = self.widget_mpv.mpv_player
-        self.path_document: path = None
+        self.__main_handler = main_handler
+        self.__widget_comments = main_handler.widget_comments
+        self.__mpv_player = main_handler.widget_mpv.mpv_player
 
-    @property
-    def comments(self) -> Tuple[Comment]:
-        """
-        A reference to the comments widget content cells.
-
-        :return: all comments currently
-        """
-        return self.widget_comments.get_all_comments()
-
-    @property
-    def video_path(self) -> path or str:
-        """
-        A reference to the player's current video file.
-
-        :return: the current video file of the player
-        """
-
-        return self.mpv_player.video_file_current()
-
-    @property
-    def is_up_to_date(self) -> bool:
-        """
-        Fetches the current status of the comments table.
-
-        :return: True if up to date, False else.
-        """
-
-        return self.widget_comments.comments_up_to_date
+        self.__path_document: path = None
+        self.__path_video: path = None
+        self.__comments_up_to_date: bool = True
 
     def should_save(self) -> bool:
         """
@@ -119,7 +97,7 @@ class QualityCheckManager:
         :return: whether saving would be valuable
         """
 
-        return not self.is_up_to_date
+        return not self.__comments_up_to_date
 
     def update_path_qc_document_to(self, new_path) -> None:
         """
@@ -128,21 +106,21 @@ class QualityCheckManager:
         :param new_path: The new path
         """
 
-        self.path_document = new_path
+        self.__path_document = new_path
 
     def reset_qc_document_path(self) -> None:
         """
         Will set the current document path to None.
         """
 
-        self.path_document = None
+        self.__path_document = None
 
     def save(self) -> None:
         """
         Will save the current qc with the current path.
         """
 
-        document = self.path_document
+        document = self.__path_document
 
         if bool(document):
             self.__save_with_path(document)
@@ -154,9 +132,9 @@ class QualityCheckManager:
         Will offer a new *Save as* file dialog.
         """
 
-        document = SaveAsFileDialog.get_save_file_name(
-            self.video_path, settings.Setting_Custom_General_NICKNAME.value,
-            qc_doc=self.path_document, parent=self.main_handler)
+        document = get_save_file_name(
+            self.__path_video, settings.Setting_Custom_General_NICKNAME.value,
+            qc_doc=self.__path_document, parent=self.__main_handler)
 
         if document:
             self.__save_with_path(document)
@@ -167,48 +145,47 @@ class QualityCheckManager:
 
         :param path_document: The path to write into
         """
-        self.update_path_qc_document_to(path_document)
+        self.__path_document = path_document
 
-        WritableQualityCheckFile(self.video_path, self.comments).write_to_disc(path_document)
+        QualityCheckWriter(self.__path_video, self.__widget_comments.get_all_comments()) \
+            .write_to_disc(path_document)
 
-        self.main_handler.widget_comments.comments_up_to_date = True
+        self.__main_handler.widget_comments.comments_up_to_date = True
+
+    def customEvent(self, ev: QEvent):
+
+        ev_type = ev.type()
+
+        if ev_type == CommentsUpToDate:
+            ev: EventCommentsUpToDate
+            self.__comments_up_to_date = ev.status
+        elif ev_type == PlayerCurrentPath:
+            ev: EventPlayerCurrentPath
+            self.__path_video = ev.current_path
 
 
-class QualityCheckParser:
+class QualityCheckReader:
 
     def __init__(self, qc_document_full_path):
-        self.file = qc_document_full_path
+        self.__file = qc_document_full_path
         self.__qc_lines = []
-        self.qc_comments: List[Comment] = []
 
         with open(qc_document_full_path, "r", encoding="utf-8") as file:
             self.__qc_lines = [x.strip() for x in file.readlines()]
 
-        self.video_path = ""
-        self.comments: List[Comment] = []
+        self.__video_path = ""
+        self.__comments: List[Comment] = []
 
         path_found = False
 
         for line in self.__qc_lines:
             if bool(line):
                 if not path_found:
-                    path_found, self.video_path = QualityCheckParser.__find_path(line)
+                    path_found, self.__video_path = QualityCheckReader.__find_path(line)
 
-                comment_found, comment = QualityCheckParser.__find_comment(line)
+                comment_found, comment = QualityCheckReader.__find_comment(line)
                 if comment_found:
-                    self.comments.append(comment)
-
-    def results(self) -> (str, Tuple[Comment]):
-        """
-        Returns the results found in the qc document.
-
-        :returns: a Tuple with
-
-            1. str: the path in the document or the empty string if not found
-            2. comments: the comments found in the document
-        """
-
-        return self.video_path, tuple(self.comments)
+                    self.__comments.append(comment)
 
     @staticmethod
     def __find_path(line: str) -> (bool, str):
@@ -232,3 +209,15 @@ class QualityCheckParser:
 
             return True, Comment(time, coty, line.strip())
         return False, None
+
+    def results(self) -> (str, Tuple[Comment]):
+        """
+        Returns the results found in the qc document.
+
+        :returns: a Tuple with
+
+            1. str: the path in the document or the empty string if not found
+            2. comments: the comments found in the document
+        """
+
+        return self.__video_path, tuple(self.__comments)

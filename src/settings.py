@@ -141,35 +141,35 @@ class CommentTypesEntry(Entry):
 ############################################################################################################## INTERNAL
 
 Setting_Internal_PLAYER_LAST_PLAYED_DIR = \
-    Entry("player_last_played_directory", "")
+    Entry("internal_player_last_played_dir", "")
 
 ############################################################################## PREFERENCES -> GENERAL ### CUSTOMIZATION
 
 Setting_Custom_General_NICKNAME = \
-    Entry("nickname", "nick")
+    Entry("custom_general_nickname", "nick")
 
 Setting_Custom_General_COMMENT_TYPES = \
-    CommentTypesEntry("comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing",
-                                        "Timing", "Typeset", "Note"])
+    CommentTypesEntry("custom_general_comment_types", ["Spelling", "Punctuation", "Translation", "Phrasing",
+                                                       "Timing", "Typeset", "Note"])
 
 ############################################################################# PREFERENCES -> LANGUAGE ### CUSTOMIZATION
 
 Setting_Custom_Language_LANGUAGE = \
-    Entry("language", "German" if locale.getdefaultlocale()[0].startswith("de") else "English")
+    Entry("custom_language_language", "German" if locale.getdefaultlocale()[0].startswith("de") else "English")
 
 ########################################################################## PREFERENCES -> QC DOCUMENT ### CUSTOMIZATION
 
 Setting_Custom_QcDocument_AUTOSAVE_ENABLED = \
-    Entry("autosave_enabled", True)
+    Entry("custom_qcdocument_autosave_enabled", True)
 
 Setting_Custom_QcDocument_AUTOSAVE_INTERVAL = \
-    Entry("autosave_interval_seconds", 90)
+    Entry("custom_qcdocument_autosave_interval", 90)
 
 Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE = \
-    Entry("qc_doc_write_video_path_to_file", True)
+    Entry("custom_qcdocument_write_video_path_to_file", True)
 
 Setting_Custom_QcDocument_WRITE_NICK_TO_FILE = \
-    Entry("qc_doc_write_nick_to_file", True)
+    Entry("custom_qcdocument_write_nick_to_file", True)
 
 ######################################################################## PREFERENCES -> CONFIGURATION ### CUSTOMIZATION
 
@@ -185,7 +185,7 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
     Entry("custom_appearance_general_window_title_nothing_name_full", 0)
 """0: Default Window Title; 1: Current File name only; 2: Full path"""
 
-Setting_Custom_Appearance_StatusBar_CurrentTime = \
+Setting_Custom_Appearance_StatusBar_TimeMode = \
     Entry("custom_appearance_statusbar_current_time", True)
 """True: Current Time; False: Remaining Time"""
 
@@ -205,7 +205,7 @@ SettingJson = (
     Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE,
 
     Setting_Custom_Appearance_General_WINDOW_TITLE,
-    Setting_Custom_Appearance_StatusBar_CurrentTime,
+    Setting_Custom_Appearance_StatusBar_TimeMode,
     Setting_Custom_Appearance_StatusBar_Percentage
 )
 
