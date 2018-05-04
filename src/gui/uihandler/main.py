@@ -4,14 +4,16 @@ import inspect
 from os import path
 from typing import List
 
-from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray
+from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
+from src import settings
 from src.gui.messageboxes import OpenVideoFileDialog, QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
     LoadQCDocumentOldNotSavedQMessageBox, OpenQcFileDialog, ValidVideoFileFoundQMessageBox, \
     WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument
 from src.gui.uielements.main import Ui_MainWindow
+from src.player.observedproperties import MpvPropertyObserver
 
 _translate = QCoreApplication.translate
 _DROPABLE_SUBS = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
@@ -31,25 +33,25 @@ class MainHandler(QMainWindow):
         self.ui.setupUi(self)
         self.__setup_menu_bar()
 
+        # Window title -> will be changed by MpvPropertyObserver if changed
+        self.update_window_title()
+
         # Translator
         self.translator = QTranslator()
-        self.reload_ui_language()
+        self.update_ui_language()
 
         # Widgets
         from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
 
-        self.widget_status_bar = StatusBar(self)
         self.widget_mpv = MpvWidget(self)
         self.widget_comments = CommentsTable(self)
+        self.widget_status_bar = StatusBar(self)
         self.widget_context_menu = ContextMenu(self)
         self.player = self.widget_mpv.mpv_player
 
         self.setStatusBar(self.widget_status_bar)
         self.ui.splitter.insertWidget(0, self.widget_comments)
         self.ui.splitter.insertWidget(0, self.widget_mpv)
-
-        # Settings for main window relevant observed properties
-        self.main_window_title_setting: int = 2  # 0 -> Nothing, 1 -> File only , 2 -> Full path todo document
 
         # Class variables
         from src.qcutils import QualityCheckManager
@@ -77,6 +79,22 @@ class MainHandler(QMainWindow):
         self.ui.action_Check_For_Updates.triggered.connect(lambda c, f=self.action_check_for_update: f())
         self.ui.actionAbout_Qt.triggered.connect(lambda c, f=self.action_open_about_qt: f())
         self.ui.actionAbout_mpvqc.triggered.connect(lambda c, f=self.action_open_about_mpvqc: f())
+
+    def update_window_title(self) -> None:
+        """
+        Will set the current window title according to the user setting.
+        """
+
+        value = settings.Setting_Custom_Appearance_General_WINDOW_TITLE.value
+
+        if value == 2:
+            txt = MpvPropertyObserver.VIDEO_PATH
+        elif value == 1:
+            txt = MpvPropertyObserver.VIDEO_FILE
+        else:
+            txt = _translate("MainWindow", "MainWindow")
+
+        self.setWindowTitle(txt)
 
     def toggle_fullscreen(self) -> None:
         """
@@ -143,7 +161,7 @@ class MainHandler(QMainWindow):
             if self.isFullScreen():
                 self.application.setOverrideCursor(QCursor(Qt.BlankCursor))
 
-    def reload_ui_language(self) -> None:
+    def update_ui_language(self) -> None:
         """
         Reloads the user interface language.
         It uses the language stored in the current settings.json.
@@ -152,10 +170,9 @@ class MainHandler(QMainWindow):
         self.application.removeTranslator(self.translator)
 
         from src.files import Files
-        from src.settings import Settings
 
         _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "locale", "{}", "LC_MESSAGES")
-        language: str = Settings.Holder.LANGUAGE.value
+        language: str = settings.Setting_Custom_Language_LANGUAGE.value
 
         if language.startswith("German"):
             value = "de"
@@ -174,7 +191,7 @@ class MainHandler(QMainWindow):
 
         self.application.installTranslator(self.translator)
         self.ui.retranslateUi(self)
-        Settings.Holder.COMMENT_TYPES.update()
+        settings.Setting_Custom_General_COMMENT_TYPES.update()
 
     def action_new_qc_document(self) -> None:
 
@@ -250,16 +267,14 @@ class MainHandler(QMainWindow):
 
     def action_open_video(self, file: path = None) -> None:
 
-        from src.settings import Settings
-        setting = Settings
-
         if file is None:
-            file = OpenVideoFileDialog.get_open_file_name(directory=setting.Holder.PLAYER_LAST_PLAYED_DIR.value,
-                                                          parent=self)
+            file = OpenVideoFileDialog.get_open_file_name(
+                directory=settings.Setting_Internal_PLAYER_LAST_PLAYED_DIR.value,
+                parent=self)
 
         if path.isfile(file):
-            setting.Holder.PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
-            setting.save()
+            settings.Setting_Internal_PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
+            settings.save()
             self.player.open_video(file, play=True)
 
     def action_open_network_stream(self) -> None:
@@ -285,8 +300,9 @@ class MainHandler(QMainWindow):
         if not was_paused_by_user:
             player.play()
 
-        self.reload_ui_language()
+        self.update_ui_language()
         self.widget_context_menu.update_entries()
+        self.update_window_title()
 
     def action_check_for_update(self) -> None:
         print(inspect.stack()[0][3])
@@ -297,18 +313,6 @@ class MainHandler(QMainWindow):
     def action_open_about_mpvqc(self) -> None:
         print(inspect.stack()[0][3])
 
-    def observed_player_property_video_file_name(self, video_file_name):
-        from src.settings import Settings
-
-        if Settings.Holder.CUSTOMIZATION_WINDOW_TITLE.value == 1:
-            self.setWindowTitle(video_file_name)
-
-    def observed_player_property_full_path(self, full_path):
-        from src.settings import Settings
-
-        if Settings.Holder.CUSTOMIZATION_WINDOW_TITLE.value == 2:
-            self.setWindowTitle(full_path)
-
     def closeEvent(self, cev: QCloseEvent):
 
         if self.qc_manager.should_save():
@@ -316,9 +320,10 @@ class MainHandler(QMainWindow):
             if QuitNotSavedQMessageBox().exec_():
                 self.player.terminate()
                 self.close()
-
+            else:
+                cev.ignore()
         else:
-            super().closeEvent(cev)
+            self.close()
 
     def showEvent(self, sev: QShowEvent) -> None:
         print(inspect.stack()[0][3])
@@ -349,3 +354,7 @@ class MainHandler(QMainWindow):
             self.player.open_video(vids[0], play=True)
 
         self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)
+
+    def close(self):
+        settings.save()
+        super().close()

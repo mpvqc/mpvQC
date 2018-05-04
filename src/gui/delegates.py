@@ -3,7 +3,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QDateTimeEdit, \
     QAbstractSpinBox, QTimeEdit
 
-from src.settings import Settings
+from src import settings
 
 _translate = QCoreApplication.translate
 TYPEWRITER_FONT = QFont("monospace")
@@ -66,7 +66,7 @@ class CommentTypeDelegate(CommentTypeParentDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         combo_box = QComboBox(parent)
-        for ct in Settings.Holder.COMMENT_TYPES.value:
+        for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
             combo_box.addItem(ct)
         return combo_box
 

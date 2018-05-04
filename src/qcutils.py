@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 from src.gui.messageboxes import SaveAsFileDialog
 from src.gui.uihandler.main import MainHandler
-from src.settings import Settings
+from src import settings
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
 _REGEX_PATH = re.compile("^path:*\s*")
@@ -44,8 +44,9 @@ class WritableQualityCheckFile:
         # [FILE]
         self.date = str(datetime.now().replace(microsecond=0))
         self.generator = "{} {}".format(APPLICATION_NAME, APPLICATION_VERSION)
-        self.nick_name = Settings.Holder.NICKNAME.value if bool(Settings.Holder.QC_DOC_WRITE_NICK_TO_FILE.value) else ""
-        self.video_path = video_path if bool(Settings.Holder.QC_DOC_WRITE_VIDEO_PATH_TO_FILE.value) else ""
+        self.nick_name = settings.Setting_Custom_General_NICKNAME.value \
+            if bool(settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.value) else ""
+        self.video_path = video_path if bool(settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value) else ""
 
         # [DATA]
         self.comments_joined = _LINE_BREAK.join(map(lambda c: str(c), comments))
@@ -154,7 +155,8 @@ class QualityCheckManager:
         """
 
         document = SaveAsFileDialog.get_save_file_name(
-            self.video_path, Settings.Holder.NICKNAME.value, qc_doc=self.path_document, parent=self.main_handler)
+            self.video_path, settings.Setting_Custom_General_NICKNAME.value,
+            qc_doc=self.path_document, parent=self.main_handler)
 
         if document:
             self.__save_with_path(document)

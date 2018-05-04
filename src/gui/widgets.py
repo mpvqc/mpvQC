@@ -5,25 +5,26 @@ from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel
 
+from src import settings
 from src.files import Files
 from src.gui import delegates, utils
-from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
+from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate, TYPEWRITER_FONT
 from src.gui.uihandler.main import MainHandler
 from src.gui.utils import KEY_MAPPINGS
 from src.player import bindings
+from src.player.observedproperties import MpvPropertyObserver
 from src.player.players import MpvPlayer, ActionType
 from src.qcutils import Comment
-from src.settings import Settings
 
 _translate = QtCore.QCoreApplication.translate
 
 
 class MpvWidget(QFrame):
 
-    def __init__(self, widget_main: MainHandler):
-        super(MpvWidget, self).__init__(widget_main)
-        self.main_handler = widget_main
-        self.application = widget_main.application
+    def __init__(self, main_handler: MainHandler):
+        super(MpvWidget, self).__init__(main_handler)
+        self.main_handler = main_handler
+        self.application = main_handler.application
 
         self.setStyleSheet("background-color:black;")
         self.setMouseTracking(True)
@@ -49,33 +50,7 @@ class MpvWidget(QFrame):
             # log_handler=mpvLogHandler,
         )
 
-        status_bar = widget_main.widget_status_bar
-
-        @mpv.property_observer('percent-pos')
-        def observe_percent_pos(_name, value):
-            if value:
-                status_bar.set_progress_percentage(value)
-
-        @mpv.property_observer('time-pos')
-        def observe_time_pos(_name, value):
-            if value:
-                status_bar.set_time_current(value)
-
-        @mpv.property_observer('time-remaining')
-        def observe_time_remaining(_name, value):
-            if value:
-                status_bar.set_time_remaining(value)
-
-        @mpv.property_observer('path')
-        def observe_full_path(_name, value):
-            if value:
-                widget_main.observed_player_property_full_path(value)
-
-        @mpv.property_observer('filename/no-ext')
-        def observe_filename(_name, value):
-            if value:
-                widget_main.observed_player_property_video_file_name(value)
-
+        MpvPropertyObserver(mpv)
         self.mpv_player = MpvPlayer(mpv)
 
     def mouseMoveEvent(self, e: QMouseEvent):
@@ -196,7 +171,7 @@ class ContextMenu(QMenu):
 
         self.clear()
 
-        ct_list = Settings.Holder.COMMENT_TYPES.value
+        ct_list = settings.Setting_Custom_General_COMMENT_TYPES.value
         if not ct_list:
             no_ct_action = _translate("CommentTypes",
                                       "No comment types defined." + " " + "Define new comment types in the settings.")
@@ -209,13 +184,14 @@ class ContextMenu(QMenu):
 
     def exec_(self):
         """
-        Will display the menu.
+        Will display the menu with comment types.
         """
 
         self.mpv_player.pause()
         self.main_handler.display_normal()
 
         m_pos = QCursor.pos()
+
         # Fixes following: Qt puts the context menu in a place
         # where double clicking would trigger the fist menu option
         # instead of just calling the menu a second time
@@ -263,6 +239,7 @@ class CommentsTable(QTableView):
         self.setShowGrid(False)
 
         self.scroll_position = 0
+        self.comments_amount = 0
         self.comments_up_to_date = True
 
     def delete_current_selected_comment(self) -> None:
@@ -274,6 +251,7 @@ class CommentsTable(QTableView):
         def delete(selected: List[QModelIndex]):
             self.model.removeRows(selected[0].row(), 1)
             self.comments_up_to_date = False
+            self.__update_row_count_in_status_bar()
 
         self.__do_with_selected_comment_row(delete)
 
@@ -362,6 +340,8 @@ class CommentsTable(QTableView):
         :param will_change_qc: True if qc is changed with the addition.
         """
 
+        self.__update_row_count_in_status_bar()
+
         if sort:
             self.sort()
         self.resizeColumnToContents(1)
@@ -379,6 +359,7 @@ class CommentsTable(QTableView):
     def get_all_comments(self) -> Tuple[Comment]:
         """
         Returns all comments.
+
         :return: all comments.
         """
 
@@ -399,7 +380,7 @@ class CommentsTable(QTableView):
 
         self.model.clear()
         self.comments_up_to_date = True
-        self.__delegate_row_count_to_status_bar()
+        self.__update_row_count_in_status_bar()
 
     def on_before_fullscreen(self) -> None:
         """
@@ -445,6 +426,13 @@ class CommentsTable(QTableView):
 
         self.sortByColumn(0, Qt.AscendingOrder)
 
+    def __update_row_count_in_status_bar(self) -> None:
+        """
+        Updates the row count variable.
+        """
+
+        self.comments_amount = self.model.rowCount()
+
     def keyPressEvent(self, e: QKeyEvent):
 
         mod = int(self.application.keyboardModifiers())
@@ -467,24 +455,18 @@ class CommentsTable(QTableView):
             e.accept()
         super().mousePressEvent(e)
 
-    def rowsInserted(self, parent: QtCore.QModelIndex, start: int, end: int):
-        super(CommentsTable, self).rowsInserted(parent, start, end)
-        self.__delegate_row_count_to_status_bar()
-
-    def rowsAboutToBeRemoved(self, parent: QtCore.QModelIndex, start: int, end: int):
-        super(CommentsTable, self).rowsAboutToBeRemoved(parent, start, end)
-        self.__delegate_row_count_to_status_bar()
-
-    def __delegate_row_count_to_status_bar(self):
-        self.main_handler.widget_status_bar.set_comments_amount(self.model.rowCount())
-
 
 class StatusBar(QStatusBar):
     class ClickableQLabel(QLabel):
+        """
+        A QLabel which listens to left and right click.
+        """
+
         def __init__(self):
             super().__init__()
             self.on_right_mouse_click = None
             self.on_left_mouse_click = None
+            self.setFont(TYPEWRITER_FONT)
 
         def mousePressEvent(self, e: QMouseEvent):
             button = e.button()
@@ -494,53 +476,40 @@ class StatusBar(QStatusBar):
             elif button == Qt.RightButton and self.on_right_mouse_click:
                 self.on_right_mouse_click()
 
-    def __init__(self, main_handler: MainHandler):
-        super().__init__()
+    def __init__(self, main_handler):
+        super().__init__(main_handler)
+        self.main_handler = main_handler
+        self.widget_comments = main_handler.widget_comments
 
-        # Time and remaining time
-        self.__time_video = StatusBar.ClickableQLabel()
-        self.__time_video_toggle: bool = True  # If True -> current Time, If False -> Remaining Time
+        self.time_format = settings.Setting_Custom_Appearance_StatusBar_CurrentTime
 
-        def toggle_show_current_video_time():
-            self.__time_video_toggle = not self.__time_video_toggle
+        # Label and Widget
+        def on_current_remaining_time_clicked():
+            self.time_format.value = not self.time_format.value
 
-        self.__time_video.on_left_mouse_click = toggle_show_current_video_time
+        self.label_information = StatusBar.ClickableQLabel()
+        self.label_information.on_left_mouse_click = on_current_remaining_time_clicked
+        self.label_information.setAlignment(Qt.AlignRight)
 
-        # Percentage
-        self.__label_percentage = QLabel()
-        self.__label_comments_count = QLabel()
+        self.addPermanentWidget(QLabel(), 1)
+        self.addPermanentWidget(self.label_information, 0)
 
-        # Widgets
-        self.addWidget(self.__time_video)
-        self.addWidget(self.__label_percentage)
-        self.addWidget(self.__label_comments_count)
+        # Timer updates status bar each 50 ms
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_status_bar_text)
+        self.timer.start(50)
 
-    @staticmethod
-    def __seconds_float_to_formatted_string_hours(seconds: float):
-        int_val = int(seconds)
-        m, s = divmod(int_val, 60)
-        h, m = divmod(m, 60)
-        h = "{:02d}:".format(h) if h != 0 else ""
+    def update_status_bar_text(self) -> None:
+        """
+        Will update the current status bar information about video time and comments
+        """
 
-        return "{}{:02d}:{:02d}".format(h, m, s)
+        comments = self.widget_comments.comments_amount
 
-    def set_progress_percentage(self, value: float):
-        prefix = _translate("StatusBar", "Progress")
-        self.__label_percentage.setText("{}: {} %".format(prefix, int(value)))
+        time = MpvPropertyObserver.VIDEO_TIME_CURRENT \
+            if self.time_format.value else MpvPropertyObserver.VIDEO_TIME_REMAINING
 
-    def set_time_current(self, value: float):
-        if not self.__time_video_toggle:
-            return
+        percent = MpvPropertyObserver.VIDEO_PERCENT \
+            if self.time_format.value else 100 - MpvPropertyObserver.VIDEO_PERCENT
 
-        self.__time_video.setText("{}: {}".format(_translate("StatusBar", "Time"),
-                                                  StatusBar.__seconds_float_to_formatted_string_hours(value)))
-
-    def set_time_remaining(self, value: float):
-        if self.__time_video_toggle:
-            return
-
-        self.__time_video.setText("{}: {}".format(_translate("StatusBar", "Remaining"),
-                                                  StatusBar.__seconds_float_to_formatted_string_hours(value)))
-
-    def set_comments_amount(self, amount: int):
-        self.__label_comments_count.setText("{}: {}".format(_translate("StatusBar", "Comments"), amount))
+        self.label_information.setText("#{}{:2}{:>8}{:2}{:3}%".format(comments, "", time, "", percent))
