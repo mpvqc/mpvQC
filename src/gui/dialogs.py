@@ -2,9 +2,12 @@ import sys
 from os import path
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
 _translate = QtCore.QCoreApplication.translate
+
+_flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
 
 def get_open_file_name(directory, parent=None) -> path or None:
@@ -18,9 +21,9 @@ def get_open_file_name(directory, parent=None) -> path or None:
 
     return QFileDialog.getOpenFileName(
         parent=parent,
-        caption=_translate("MessageBox", "Open Video File"),
+        caption=_translate("Dialogs", "Open Video File"),
         directory=directory,
-        filter=_translate("MessageBox", "Video files (*.mkv *.mp4);;All files (*.*)")
+        filter=_translate("Dialogs", "Video files (*.mkv *.mp4);;All files (*.*)")
     )[0]
 
 
@@ -35,9 +38,9 @@ def get_open_file_names(directory, parent=None) -> path or None:
 
     return QFileDialog.getOpenFileNames(
         parent,
-        _translate("MessageBox", "Open QC Document"),
+        _translate("Dialogs", "Open QC Document"),
         directory,
-        _translate("MessageBox", "QC documents (*.txt);;All files (*.*)"),
+        _translate("Dialogs", "QC documents (*.txt);;All files (*.*)"),
     )[0]
 
 
@@ -69,7 +72,23 @@ def get_save_file_name(video_file: path, nick: str, qc_doc=None, parent=None) ->
 
     return QFileDialog.getSaveFileName(
         parent,
-        _translate("MessageBox", "Save QC document as"),
+        _translate("Dialogs", "Save QC document as"),
         txt_proposal,
-        _translate("MessageBox", "QC documents (*.txt);;All files (*.*)"),
+        _translate("Dialogs", "QC documents (*.txt);;All files (*.*)"),
+    )[0]
+
+
+def get_open_network_stream(parent) -> path or None:
+    """
+    Will display a dialog with a single QLineEdit input field.
+
+    :param parent: The parent widget of this dialog
+    :return: The URL or None if nothing was given
+    """
+
+    return QInputDialog.getText(
+        parent,
+        _translate("Dialogs", "Open network stream"),
+        _translate("Dialogs", "Enter URL"),
+        flags=Qt.WindowFlags(_flags),
     )[0]

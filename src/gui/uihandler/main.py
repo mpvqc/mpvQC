@@ -8,7 +8,7 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from src import settings
-from src.gui.dialogs import get_open_file_name, get_open_file_names
+from src.gui.dialogs import get_open_file_name, get_open_file_names, get_open_network_stream
 from src.gui.events import EventPlayerCurrentFile, PlayerCurrentFile, PlayerCurrentPath, EventPlayerCurrentPath
 from src.gui.messageboxes import QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
     LoadQCDocumentOldNotSavedQMessageBox, ValidVideoFileFoundQMessageBox, \
@@ -294,7 +294,11 @@ class MainHandler(QMainWindow):
             self.__player.open_video(file, play=True)
 
     def __action_open_network_stream(self) -> None:
-        pass
+
+        url = get_open_network_stream(self)
+
+        if url:
+            self.__player.open_url(url, play=True)
 
     def __action_resize_video(self) -> None:
         pass

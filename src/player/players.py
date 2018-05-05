@@ -28,38 +28,24 @@ class MpvPlayer:
 
         self.time_format_string = CommentTypeParentDelegate.TIME_FORMAT
 
-    def position_current(self) -> str or None:
+    def add_sub_files(self, sub_file: path) -> None:
         """
-        Will return the current time as string representation or None if no video is currently loaded.
+        Add sub file to current video.
 
-        **TIME_FORMAT = "hh:mm:ss"**
-        :return: the current time as string representation or None
-        """
-
-        position = self.mpv.time_pos
-
-        if position is None:
-            return None
-
-        return QTime(0, 0, 0, 0).addSecs(int(position)).toString(self.time_format_string)
-
-    def video_file_current(self) -> path or None:
-        """
-        Access to the current file.
-        :return: The current file of the player.
+        :param sub_file: The sub file to add
         """
 
-        return self.mpv.path
+        self.mpv.command("sub-add", sub_file, "select")
 
-    def position_jump(self, position: str) -> None:
+    def button_action(self, key_string, action_type: ActionType) -> None:
         """
-        Will jump to the given time position.
+        Will invoke the button action for the given arguments.
 
-        :param position: The time in the following format: **"hh:mm:ss"**
+        :param key_string: The command to pass to the player
+        :param action_type: The action type to invoke.
         """
 
-        if self.is_video_loaded():
-            self.mpv.command("seek", QTime.fromString(position, self.time_format_string).toPyTime(), "absolute+exact")
+        self.mpv.command(action_type.value, key_string)
 
     def is_paused(self) -> bool:
         """
@@ -75,45 +61,15 @@ class MpvPlayer:
 
         return bool(self.video_file_current())
 
-    def play(self) -> None:
+    def mouse_action(self, btn_idx: int, action_type: ActionType) -> None:
         """
-        Will start playing the current file.
+        Will invoke a the mouse action for the given arguments.
+
+        :param btn_idx: The button index (e.g. 0 for *MOUSE_BTN0*)
+        :param action_type: The type of press
         """
 
-        self.mpv.pause = False
-
-    def pause(self) -> None:
-        """
-        Will pause the current file.
-        """
-
-        self.mpv.pause = True
-
-    def play_pause(self) -> None:
-        """
-        Will toggle play/pause the current file.
-        """
-
-        self.mpv.pause = not self.mpv.pause
-
-    def open_video(self, video: path, play: bool) -> None:
-        """
-        Opens the given path and if selected starts playing.
-        :param video: The video to open
-        :param play: If True, will start playing immediately
-        :return:
-        """
-
-        self.mpv.command("loadfile", video, "replace")
-        if play:
-            self.play()
-
-    def terminate(self) -> None:
-        """
-        Will close the player.
-        """
-
-        self.mpv.terminate()
+        self.mpv.command(action_type.value, "MOUSE_BTN" + str(btn_idx))
 
     def mouse_move(self, x, y) -> None:
         """
@@ -125,31 +81,89 @@ class MpvPlayer:
 
         self.mpv.command("mouse", x, y)
 
-    def mouse_action(self, btn_idx: int, action_type: ActionType) -> None:
+    def open_url(self, url, play: bool) -> None:
         """
-        Will invoke a the mouse action for the given arguments.
+        Opens the given url and if selected starts playing.
 
-        :param btn_idx: The button index (e.g. 0 for *MOUSE_BTN0*)
-        :param action_type: The type of press
-        """
-
-        self.mpv.command(action_type.value, "MOUSE_BTN" + str(btn_idx))
-
-    def button_action(self, key_string, action_type: ActionType) -> None:
-        """
-        Will invoke the button action for the given arguments.
-
-        :param key_string: The command to pass to the player
-        :param action_type: The action type to invoke.
+        :param url: The url to open
+        :param play: True if start playing immediately, False else.
         """
 
-        self.mpv.command(action_type.value, key_string)
+        self.mpv.command("loadfile", url, "replace")
 
-    def add_sub_files(self, sub_file: path) -> None:
+        if play:
+            self.play()
+
+    def open_video(self, video: path, play: bool) -> None:
         """
-        Add sub file to current video.
+        Opens the given path and if selected starts playing.
 
-        :param sub_file: The sub file to add
+        :param video: The video to open
+        :param play: If True, will start playing immediately
+        :return:
         """
 
-        self.mpv.command("sub-add", sub_file, "select")
+        self.mpv.command("loadfile", video, "replace")
+        if play:
+            self.play()
+
+    def pause(self) -> None:
+        """
+        Will pause the current file.
+        """
+
+        self.mpv.pause = True
+
+    def play(self) -> None:
+        """
+        Will start playing the current file.
+        """
+
+        self.mpv.pause = False
+
+    def play_pause(self) -> None:
+        """
+        Will toggle play/pause the current file.
+        """
+
+        self.mpv.pause = not self.mpv.pause
+
+    def position_current(self) -> str or None:
+        """
+        Will return the current time as string representation or None if no video is currently loaded.
+
+        **TIME_FORMAT = "hh:mm:ss"**
+        :return: the current time as string representation or None
+        """
+
+        position = self.mpv.time_pos
+
+        if position is None:
+            return None
+
+        return QTime(0, 0, 0, 0).addSecs(int(position)).toString(self.time_format_string)
+
+    def position_jump(self, position: str) -> None:
+        """
+        Will jump to the given time position.
+
+        :param position: The time in the following format: **"hh:mm:ss"**
+        """
+
+        if self.is_video_loaded():
+            self.mpv.command("seek", QTime.fromString(position, self.time_format_string).toPyTime(), "absolute+exact")
+
+    def terminate(self) -> None:
+        """
+        Will close the player.
+        """
+
+        self.mpv.terminate()
+
+    def video_file_current(self) -> path or None:
+        """
+        Access to the current file.
+        :return: The current file of the player.
+        """
+
+        return self.mpv.path
