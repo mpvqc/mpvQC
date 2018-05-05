@@ -343,10 +343,7 @@ class MainHandler(QMainWindow):
         __resize()
         self.__move_window_to_center()
 
-    def __action_open_settings(self) -> None:
-        """
-        When user hits Options -> Settings.
-        """
+    def __action_open_settings(self, display_about=False) -> None:
 
         from src.gui.uihandler.preferences import PreferenceHandler
 
@@ -354,10 +351,10 @@ class MainHandler(QMainWindow):
         was_paused_manually = player.is_paused()
         player.pause()
 
-        PreferenceHandler().exec_()
+        PreferenceHandler(display_about).exec_()
 
         # After dialog closed
-        if not was_paused_manually:
+        if not display_about and not was_paused_manually:
             player.play()
 
         self.__update_ui_language()
@@ -369,10 +366,10 @@ class MainHandler(QMainWindow):
         print(inspect.stack()[0][3])
 
     def __action_open_about_qt(self) -> None:
-        print(inspect.stack()[0][3])
+        QApplication.instance().aboutQt()
 
     def __action_open_about_mpvqc(self) -> None:
-        print(inspect.stack()[0][3])
+        self.__action_open_settings(display_about=True)
 
     def __move_window_to_center(self):
         """
@@ -387,7 +384,6 @@ class MainHandler(QMainWindow):
         if self.__qc_manager.should_save():
             self.__player.pause()
             if QuitNotSavedQMessageBox().exec_():
-                self.__player.terminate()
                 self.close()
             else:
                 cev.ignore()
@@ -425,6 +421,11 @@ class MainHandler(QMainWindow):
         self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)
 
     def close(self) -> None:
+        """
+        Will close the window and terminate the application.
+        """
+
+        self.__player.terminate()
         settings.save()
         super().close()
 

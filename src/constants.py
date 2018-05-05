@@ -112,3 +112,16 @@ b cycle blend-subtitles
 # This displays statistics of the currently played file
 i script-binding stats/display-stats-toggle
 """
+
+CREDITS = """<h1 style='text-align:center;'>{} - {}</h1>
+<p>
+    <b>{}</b> is a free, open source and <b>libmpv</b> based application for
+    the quick and easy creation of quality control reports of video files.
+</p>
+<p>Based on {} and ffmpeg {}</p>
+<p>
+    Copyright © {} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;
+</p>
+<p>
+    <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a>
+</p>"""

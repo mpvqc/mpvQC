@@ -1,10 +1,14 @@
+import platform
+
 from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont, QIcon
 from PyQt5.QtWidgets import QListView, QLineEdit, QAbstractItemView, QDialogButtonBox, QDialog
 
-from src import settings
+from src import settings, constants
 from src.gui.messageboxes import ConfigurationResetQMessageBox, ConfigurationHasChangedQMessageBox
 from src.gui.uielements.preferences import Ui_Dialog
+from start import APPLICATION_VERSION, APPLICATION_NAME
 
 _translate = QtCore.QCoreApplication.translate
 
@@ -23,6 +27,10 @@ class PreferenceHandler(QDialog):
     The dialog for the preferences.
     """
 
+    # Will be set from MpvWidget on start up
+    VERSION_MPV = ""
+    VERSION_FFMPEG = ""
+
     class PreferenceBinder:
 
         def __init__(self, user_interface: Ui_Dialog, pref_dialog: 'PreferenceHandler'):
@@ -40,6 +48,7 @@ class PreferenceHandler(QDialog):
             self.__setup_appearance_window_title()
             self.__setup_conf_input()
             self.__setup_conf_mpv()
+            self.__setup_about()
 
         def __setup_button_box(self):
             button_box = self.ui.buttonBox
@@ -86,7 +95,6 @@ class PreferenceHandler(QDialog):
 
         def __setup_comments(self):
             cts = self.ui.kCommentTypes
-            cts.setStyleSheet(" QPushButton { text-align:left; padding: 8px; } ")
 
             cts.addButton().setText(_translate("PreferenceDialog", "Add"))
             cts.removeButton().setText(_translate("PreferenceDialog", "Remove"))
@@ -184,6 +192,25 @@ class PreferenceHandler(QDialog):
             text_input.textChanged.connect(lambda fun=f: fun())
             self.connected_elements.append(text_input)
 
+        def __setup_about(self):
+
+            self.ui.aboutBrowser.setOpenExternalLinks(True)
+            self.ui.aboutBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+            self.ui.aboutBrowser.setHtml(constants.CREDITS.format(
+                APPLICATION_VERSION,
+                platform.architecture()[0],
+                APPLICATION_NAME,
+                PreferenceHandler.VERSION_MPV,
+                PreferenceHandler.VERSION_FFMPEG,
+                "2016-2017"))
+
+            self.ui.creditsBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
+            self.ui.licenceBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
+
+        def display_about_page(self):
+            self.ui.pageAbout.setFocus()
+            self.ui.navigationList.setCurrentRow(self.ui.navigationList.model().rowCount() - 1)
+
         def save(self):
             for setting in settings.SettingJsonSettingConfs:
                 setting.save()
@@ -208,13 +235,16 @@ class PreferenceHandler(QDialog):
             for setting in settings.SettingJsonSettingConfs:
                 setting.temporary_value = None
 
-    def __init__(self):
+    def __init__(self, display_about):
         super().__init__()
 
         self.ui: Ui_Dialog = Ui_Dialog()
         self.ui.setupUi(self)
 
         self.preference_binder = PreferenceHandler.PreferenceBinder(self.ui, self)
+
+        if display_about:
+            self.preference_binder.display_about_page()
 
     def mousePressEvent(self, mouse_ev: QtGui.QMouseEvent):
         """

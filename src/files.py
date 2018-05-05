@@ -11,7 +11,7 @@ except NameError:
 
 
 class Files:
-    # todo rewrite and get rid of class since its not boilerplate java :)
+    # todo rewrite and get rid of class since it's not boilerplate java :)
     __NAME_FOLDER_CONFIGURATION = "configuration"
     __NAME_FOLDER_AUTOSAVE = "autosave"
 

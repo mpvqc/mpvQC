@@ -13,6 +13,7 @@ from src.gui.events import PlayerTimeChanged, EventPlayerTimeChanged, PlayerRema
     EventPlayerTimeRemainingChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
     CommentsAmountChanged, EventCommentsUpToDate
 from src.gui.uihandler.main import MainHandler
+from src.gui.uihandler.preferences import PreferenceHandler
 from src.gui.utils import KEY_MAPPINGS
 from src.player import bindings
 from src.player.observed import MpvPropertyObserver
@@ -55,6 +56,9 @@ class MpvWidget(QFrame):
 
         self.mpv_player = MpvPlayer(__mpv)
         MpvPropertyObserver(__mpv)
+
+        PreferenceHandler.VERSION_MPV = self.mpv_player.version()
+        PreferenceHandler.VERSION_FFMPEG = self.mpv_player.ffmpeg_version()
 
     def mouseMoveEvent(self, e: QMouseEvent):
 

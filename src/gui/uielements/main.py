@@ -51,6 +51,7 @@ class Ui_MainWindow(object):
         self.action_Resize_Video_To_Its_Original_Resolutio = QtWidgets.QAction(MainWindow)
         self.action_Resize_Video_To_Its_Original_Resolutio.setObjectName("action_Resize_Video_To_Its_Original_Resolutio")
         self.action_Check_For_Updates = QtWidgets.QAction(MainWindow)
+        self.action_Check_For_Updates.setEnabled(False)
         self.action_Check_For_Updates.setObjectName("action_Check_For_Updates")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")

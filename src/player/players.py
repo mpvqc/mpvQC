@@ -100,7 +100,6 @@ class MpvPlayer:
 
         :param video: The video to open
         :param play: If True, will start playing immediately
-        :return:
         """
 
         self.__mpv.command("loadfile", video, "replace")
@@ -164,6 +163,7 @@ class MpvPlayer:
     def video_file_current(self) -> path or None:
         """
         Access to the current file.
+
         :return: The current file of the player.
         """
 
@@ -172,6 +172,7 @@ class MpvPlayer:
     def video_height(self) -> int:
         """
         Access the video size height.
+
         :return: The height of the video or 0 if no video is currently loaded.
         """
 
@@ -182,9 +183,28 @@ class MpvPlayer:
     def video_width(self) -> int:
         """
         Access the video size width.
+
         :return: The width of the video or 0 if no video is currently loaded.
         """
 
         if self.is_video_loaded():
             return int(self.__mpv.width)
         return 0
+
+    def version(self) -> str:
+        """
+        Returns the underlying version
+
+        :return: The mpv version
+        """
+
+        return self.__mpv.mpv_version
+
+    def ffmpeg_version(self) -> str:
+        """
+        Returns the used ffmpeg version.
+
+        :return: The ffmpeg version
+        """
+
+        return self.__mpv.ffmpeg_version

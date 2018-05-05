@@ -150,6 +150,9 @@
    </property>
   </action>
   <action name="action_Check_For_Updates">
+      <property name="enabled">
+          <bool>false</bool>
+      </property>
    <property name="text">
     <string>&amp;Check For Updates ...</string>
    </property>
