@@ -39,7 +39,7 @@ class MpvWidget(QFrame):
         self.setMouseTracking(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
 
-        mpv = bindings.MPV(
+        __mpv = bindings.MPV(
             wid=str(int(self.winId())),
             keep_open="yes",
             idle="yes",
@@ -53,8 +53,8 @@ class MpvWidget(QFrame):
             # log_handler=mpvLogHandler,
         )
 
-        self.mpv_player = MpvPlayer(mpv)
-        MpvPropertyObserver(mpv)
+        self.mpv_player = MpvPlayer(__mpv)
+        MpvPropertyObserver(__mpv)
 
     def mouseMoveEvent(self, e: QMouseEvent):
 

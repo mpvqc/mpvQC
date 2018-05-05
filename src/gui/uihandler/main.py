@@ -5,7 +5,7 @@ from typing import List
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QEvent, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle
 
 from src import settings
 from src.gui.dialogs import get_open_file_name, get_open_file_names, get_open_network_stream
@@ -78,6 +78,8 @@ class MainHandler(QMainWindow):
         # Timer for autosave
         self.__autosave_interval_timer: QTimer = None
         self.__reload_autosave_settings()
+
+        self.ui.splitter.setSizes([400, 20])
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
@@ -318,7 +320,28 @@ class MainHandler(QMainWindow):
             self.__player.open_url(url, play=True)
 
     def __action_resize_video(self) -> None:
-        pass
+
+        if self.isFullScreen() or self.isMaximized() or not self.__player.is_video_loaded():
+            return
+
+        def __resize():
+            # DA FUQ!
+            for i in range(0, 5):
+                try:
+                    width = self.__player.video_width()
+                    height = self.__player.video_height()
+
+                    if width and height:
+                        additional_mb = self.menuBar().height()
+                        additional_ct = self.widget_comments.height()
+                        additional_sb = self.statusBar().height()
+
+                        self.resize(width, height + additional_mb + additional_sb + additional_ct + 2)
+                except TypeError:
+                    return
+
+        __resize()
+        self.__move_window_to_center()
 
     def __action_open_settings(self) -> None:
         """
@@ -351,6 +374,14 @@ class MainHandler(QMainWindow):
     def __action_open_about_mpvqc(self) -> None:
         print(inspect.stack()[0][3])
 
+    def __move_window_to_center(self):
+        """
+        Moves window to screen center https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen
+        """
+
+        self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(),
+                                            self.application.desktop().availableGeometry()))
+
     def closeEvent(self, cev: QCloseEvent):
 
         if self.__qc_manager.should_save():
@@ -364,7 +395,7 @@ class MainHandler(QMainWindow):
             self.close()
 
     def showEvent(self, sev: QShowEvent) -> None:
-        print(inspect.stack()[0][3])
+        self.__move_window_to_center()
 
     def dragEnterEvent(self, e: QDragEnterEvent) -> None:
         e.acceptProposedAction()

@@ -23,10 +23,10 @@ class MpvPlayer:
     """
 
     def __init__(self, mpv_player: MPV):
-        self.mpv = mpv_player
+        self.__mpv = mpv_player
         self.pause()
 
-        self.time_format_string = CommentTypeParentDelegate.TIME_FORMAT
+        self.__time_format_string = CommentTypeParentDelegate.TIME_FORMAT
 
     def add_sub_files(self, sub_file: path) -> None:
         """
@@ -35,7 +35,7 @@ class MpvPlayer:
         :param sub_file: The sub file to add
         """
 
-        self.mpv.command("sub-add", sub_file, "select")
+        self.__mpv.command("sub-add", sub_file, "select")
 
     def button_action(self, key_string, action_type: ActionType) -> None:
         """
@@ -45,14 +45,14 @@ class MpvPlayer:
         :param action_type: The action type to invoke.
         """
 
-        self.mpv.command(action_type.value, key_string)
+        self.__mpv.command(action_type.value, key_string)
 
     def is_paused(self) -> bool:
         """
         Returns whether the player is currently paused.
         """
 
-        return self.mpv.pause
+        return self.__mpv.pause
 
     def is_video_loaded(self) -> bool:
         """
@@ -69,7 +69,7 @@ class MpvPlayer:
         :param action_type: The type of press
         """
 
-        self.mpv.command(action_type.value, "MOUSE_BTN" + str(btn_idx))
+        self.__mpv.command(action_type.value, "MOUSE_BTN" + str(btn_idx))
 
     def mouse_move(self, x, y) -> None:
         """
@@ -79,7 +79,7 @@ class MpvPlayer:
         :param y: Amount to move -> y
         """
 
-        self.mpv.command("mouse", x, y)
+        self.__mpv.command("mouse", x, y)
 
     def open_url(self, url, play: bool) -> None:
         """
@@ -89,7 +89,7 @@ class MpvPlayer:
         :param play: True if start playing immediately, False else.
         """
 
-        self.mpv.command("loadfile", url, "replace")
+        self.__mpv.command("loadfile", url, "replace")
 
         if play:
             self.play()
@@ -103,7 +103,7 @@ class MpvPlayer:
         :return:
         """
 
-        self.mpv.command("loadfile", video, "replace")
+        self.__mpv.command("loadfile", video, "replace")
         if play:
             self.play()
 
@@ -112,21 +112,21 @@ class MpvPlayer:
         Will pause the current file.
         """
 
-        self.mpv.pause = True
+        self.__mpv.pause = True
 
     def play(self) -> None:
         """
         Will start playing the current file.
         """
 
-        self.mpv.pause = False
+        self.__mpv.pause = False
 
     def play_pause(self) -> None:
         """
         Will toggle play/pause the current file.
         """
 
-        self.mpv.pause = not self.mpv.pause
+        self.__mpv.pause = not self.__mpv.pause
 
     def position_current(self) -> str or None:
         """
@@ -136,12 +136,12 @@ class MpvPlayer:
         :return: the current time as string representation or None
         """
 
-        position = self.mpv.time_pos
+        position = self.__mpv.time_pos
 
         if position is None:
             return None
 
-        return QTime(0, 0, 0, 0).addSecs(int(position)).toString(self.time_format_string)
+        return QTime(0, 0, 0, 0).addSecs(int(position)).toString(self.__time_format_string)
 
     def position_jump(self, position: str) -> None:
         """
@@ -151,14 +151,15 @@ class MpvPlayer:
         """
 
         if self.is_video_loaded():
-            self.mpv.command("seek", QTime.fromString(position, self.time_format_string).toPyTime(), "absolute+exact")
+            self.__mpv.command("seek", QTime.fromString(position, self.__time_format_string).toPyTime(),
+                               "absolute+exact")
 
     def terminate(self) -> None:
         """
         Will close the player.
         """
 
-        self.mpv.terminate()
+        self.__mpv.terminate()
 
     def video_file_current(self) -> path or None:
         """
@@ -166,4 +167,24 @@ class MpvPlayer:
         :return: The current file of the player.
         """
 
-        return self.mpv.path
+        return self.__mpv.path
+
+    def video_height(self) -> int:
+        """
+        Access the video size height.
+        :return: The height of the video or 0 if no video is currently loaded.
+        """
+
+        if self.is_video_loaded():
+            return int(self.__mpv.height)
+        return 0
+
+    def video_width(self) -> int:
+        """
+        Access the video size width.
+        :return: The width of the video or 0 if no video is currently loaded.
+        """
+
+        if self.is_video_loaded():
+            return int(self.__mpv.width)
+        return 0
