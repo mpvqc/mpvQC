@@ -71,9 +71,13 @@ class MainHandler(QMainWindow):
         self.__current_path = ""
 
         # Timer which binds 2 class variables
-        self.__timer = QTimer()
-        self.__timer.timeout.connect(self.__update_window_title)
-        self.__timer.start(1000)
+        self.__window_title_update_timer = QTimer()
+        self.__window_title_update_timer.timeout.connect(self.__update_window_title)
+        self.__window_title_update_timer.start(1000)
+
+        # Timer for autosave
+        self.__autosave_interval_timer: QTimer = None
+        self.__reload_autosave_settings()
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
@@ -119,6 +123,19 @@ class MainHandler(QMainWindow):
 
         self.restoreGeometry(self.__current_geometry)
         self.widget_comments.on_after_fullscreen()
+
+    def __reload_autosave_settings(self):
+
+        if settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value:
+
+            interval = settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL.value
+
+            if interval >= 15:
+                self.__autosave_interval_timer = QTimer()
+                self.__autosave_interval_timer.timeout.connect(self.__qc_manager.autosave)
+                self.__autosave_interval_timer.start(interval * 1000)
+        else:
+            self.__autosave_interval_timer.stop()
 
     def __display_fullscreen(self) -> None:
         """
@@ -323,6 +340,7 @@ class MainHandler(QMainWindow):
         self.__update_ui_language()
         self.widget_context_menu.update_entries()
         self.__update_window_title()
+        self.__reload_autosave_settings()
 
     def __action_check_for_update(self) -> None:
         print(inspect.stack()[0][3])

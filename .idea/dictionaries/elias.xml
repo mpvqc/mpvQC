@@ -1,13 +1,24 @@
 <component name="ProjectDictionaryState">
   <dictionary name="elias">
     <words>
+      <w>actn</w>
       <w>autosave</w>
       <w>checkable</w>
+      <w>clickable</w>
+      <w>confs</w>
+      <w>coty</w>
+      <w>fullscreen</w>
       <w>inputconf</w>
+      <w>jkey</w>
       <w>menubar</w>
       <w>mpvconf</w>
       <w>mpvqc</w>
+      <w>qcdocument</w>
       <w>qitem</w>
+      <w>softsub</w>
+      <w>tristate</w>
+      <w>txts</w>
+      <w>vids</w>
     </words>
   </dictionary>
 </component>

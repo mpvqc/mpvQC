@@ -23,7 +23,7 @@ class Files:
     DIRECTORY_PROGRAM: path = None
 
     DIRECTORY_CONFIGURATION = None
-    __DIRECTORY_AUTOSAVE = None
+    DIRECTORY_AUTOSAVE = None
 
     FILE_CONF_INPUT = None
     FILE_CONF_MPV = None
@@ -43,7 +43,7 @@ class Files:
         Files.DIRECTORY_PROGRAM = DIRECTORY_PROGRAM
 
         Files.__DIRECTORY_ROOT_CONFIGURATION = Files.__find_directory_root_configuration()
-        Files.__DIRECTORY_AUTOSAVE = Files.__find_directory_autosave()
+        Files.DIRECTORY_AUTOSAVE = Files.__find_directory_autosave()
         Files.DIRECTORY_CONFIGURATION = Files.__find_directory_configuration()
 
         Files.FILE_CONF_INPUT = path.join(Files.DIRECTORY_CONFIGURATION, Files.__NAME_FILE_CONF_INPUT)

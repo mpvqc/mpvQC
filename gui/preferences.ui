@@ -117,7 +117,7 @@
                                      <string>General</string>
                                  </property>
                                  <property name="icon">
-                                     <iconset theme="settings">
+                                     <iconset theme="systemsettings">
                                          <normaloff>.</normaloff>.
                                      </iconset>
                                  </property>
@@ -134,20 +134,20 @@
                              </item>
                              <item>
                                  <property name="text">
-                                     <string>QC Document</string>
+                                     <string>MPV Settings</string>
                                  </property>
                                  <property name="icon">
-                                     <iconset theme="text-editor">
+                                     <iconset theme="mpv">
                                          <normaloff>.</normaloff>.
                                      </iconset>
                                  </property>
                              </item>
                              <item>
                                  <property name="text">
-                                     <string>Configuration</string>
+                                     <string>QC Document</string>
                                  </property>
                                  <property name="icon">
-                                     <iconset theme="mpv">
+                                     <iconset theme="text-editor">
                                          <normaloff>.</normaloff>.
                                      </iconset>
                                  </property>
@@ -386,7 +386,7 @@
                                                            <item row="0" column="0">
                                                                <widget class="QLabel" name="label_10">
                                                                    <property name="text">
-                                                                       <string>Display in window title</string>
+                                                                       <string>Window Title</string>
                                                                    </property>
                                                                </widget>
                                                            </item>
@@ -394,17 +394,17 @@
                                                                <widget class="QComboBox" name="window_title_combo_box">
                                                                    <item>
                                                                        <property name="text">
-                                                                           <string>Default title</string>
+                                                                           <string>Display default title</string>
                                                                        </property>
                                                                    </item>
                                                                    <item>
                                                                        <property name="text">
-                                                                           <string>Video title</string>
+                                                                           <string>Display video title</string>
                                                                        </property>
                                                                    </item>
                                                                    <item>
                                                                        <property name="text">
-                                                                           <string>Video path</string>
+                                                                           <string>Display video path</string>
                                                                        </property>
                                                                    </item>
                                                                </widget>
@@ -421,11 +421,8 @@
                    </item>
                </layout>
            </widget>
-        <widget class="QWidget" name="pageQcDocument">
-         <layout class="QVBoxLayout" name="verticalLayout_6">
-          <property name="leftMargin">
-           <number>6</number>
-          </property>
+           <widget class="QWidget" name="pageConfiguration">
+               <layout class="QVBoxLayout" name="verticalLayout_8">
           <property name="topMargin">
            <number>0</number>
           </property>
@@ -436,14 +433,8 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_6" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
+              <widget class="QWidget" name="widget_9" native="true">
+                  <layout class="QVBoxLayout" name="verticalLayout_9">
              <property name="spacing">
               <number>0</number>
              </property>
@@ -460,14 +451,20 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_4">
+                 <widget class="QLabel" name="label_5">
+                     <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                         </sizepolicy>
+                     </property>
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
                 </font>
                </property>
                <property name="text">
-                <string>QC Document</string>
+                   <string>MPV Settings</string>
                </property>
               </widget>
              </item>
@@ -475,14 +472,21 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_7" native="true">
+              <widget class="QLabel" name="label_8">
+                  <property name="text">
+                      <string>Changes will be applied after restart.</string>
+                  </property>
+              </widget>
+          </item>
+                   <item>
+                       <widget class="QWidget" name="widget_10" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <layout class="QFormLayout" name="formLayout_3">
+                           <layout class="QVBoxLayout" name="verticalLayout_10">
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -495,115 +499,91 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="autoSaveEnabledCheckBox_4">
-               <property name="text">
-                <string>Auto save enabled</string>
+                               <item>
+                                   <widget class="QTabWidget" name="tabWidget">
+                                       <property name="tabletTracking">
+                                           <bool>false</bool>
                </property>
-               <property name="checked">
-                <bool>true</bool>
+                                       <property name="contextMenuPolicy">
+                                           <enum>Qt::DefaultContextMenu</enum>
                </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QWidget" name="widget_8" native="true">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+                                       <property name="acceptDrops">
+                                           <bool>false</bool>
+                                       </property>
+                                       <property name="layoutDirection">
+                                           <enum>Qt::LeftToRight</enum>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
-                <property name="spacing">
-                 <number>2</number>
-                </property>
-                <property name="sizeConstraint">
-                 <enum>QLayout::SetDefaultConstraint</enum>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_6">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>70</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>each</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="margin">
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="autosaveSpinBox_4">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximum">
-                   <number>1000</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="autosaveTimeUnit_4">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::CustomContextMenu</enum>
-                  </property>
-                  <property name="text">
-                   <string>seconds</string>
-                  </property>
-                  <property name="margin">
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QCheckBox" name="saveNickNameCheckBox">
-               <property name="text">
-                <string>Save nick name to QC document</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QCheckBox" name="saveVideoPathCheckBox">
-               <property name="text">
-                <string>Save video path to QC document</string>
-               </property>
+                                       <property name="currentIndex">
+                                           <number>0</number>
+                                       </property>
+                                       <property name="documentMode">
+                                           <bool>false</bool>
+                                       </property>
+                                       <widget class="QWidget" name="tab_4">
+                                           <attribute name="title">
+                                               <string>mpv.conf</string>
+                                           </attribute>
+                                           <layout class="QHBoxLayout" name="horizontalLayout_2">
+                                               <property name="leftMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="topMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="rightMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="bottomMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <item>
+                                                   <widget class="QPlainTextEdit" name="mpv_conf_plain_text_edit">
+                                                       <property name="font">
+                                                           <font>
+                                                               <family>Monospace</family>
+                                                           </font>
+                                                       </property>
+                                                       <property name="frameShadow">
+                                                           <enum>QFrame::Plain</enum>
+                                                       </property>
+                                                   </widget>
+                                               </item>
+                                           </layout>
+                                       </widget>
+                                       <widget class="QWidget" name="tab_2">
+                                           <attribute name="title">
+                                               <string>input.conf</string>
+                                           </attribute>
+                                           <layout class="QHBoxLayout" name="horizontalLayout_3">
+                                               <property name="spacing">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="leftMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="topMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="rightMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <property name="bottomMargin">
+                                                   <number>0</number>
+                                               </property>
+                                               <item>
+                                                   <widget class="QPlainTextEdit" name="input_conf_plain_text_edit">
+                                                       <property name="font">
+                                                           <font>
+                                                               <family>Monospace</family>
+                                                           </font>
+                                                       </property>
+                                                       <property name="frameShadow">
+                                                           <enum>QFrame::Plain</enum>
+                                                       </property>
+                                                   </widget>
+                                               </item>
+                                           </layout>
+                                       </widget>
               </widget>
              </item>
             </layout>
@@ -611,8 +591,11 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="pageConfiguration">
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+           <widget class="QWidget" name="pageQcDocument">
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                   <property name="leftMargin">
+                       <number>6</number>
+                   </property>
           <property name="topMargin">
            <number>0</number>
           </property>
@@ -623,8 +606,14 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_9" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_9">
+              <widget class="QWidget" name="widget_6" native="true">
+                  <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                      </sizepolicy>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_7">
              <property name="spacing">
               <number>0</number>
              </property>
@@ -641,42 +630,29 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_5">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+                 <widget class="QLabel" name="label_4">
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
                 </font>
                </property>
                <property name="text">
-                <string>Configuration</string>
+                   <string>QC Document</string>
                </property>
               </widget>
              </item>
             </layout>
            </widget>
           </item>
-             <item>
-                 <widget class="QLabel" name="label_8">
-                     <property name="text">
-                         <string>Changes will be applied after restart.</string>
-                     </property>
-                 </widget>
-             </item>
-          <item>
-           <widget class="QWidget" name="widget_10" native="true">
+                   <item>
+                       <widget class="QWidget" name="widget_7" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_10">
+                           <layout class="QFormLayout" name="formLayout_3">
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -689,91 +665,118 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <item>
-              <widget class="QTabWidget" name="tabWidget">
-               <property name="tabletTracking">
-                <bool>false</bool>
+                               <item row="0" column="1">
+                                   <widget class="QCheckBox" name="autoSaveEnabledCheckBox_4">
+                                       <property name="text">
+                                           <string>Auto save enabled</string>
                </property>
-               <property name="contextMenuPolicy">
-                <enum>Qt::DefaultContextMenu</enum>
+                                       <property name="checked">
+                                           <bool>true</bool>
                </property>
-               <property name="acceptDrops">
-                <bool>false</bool>
+                                   </widget>
+                               </item>
+                               <item row="1" column="1">
+                                   <widget class="QWidget" name="widget_8" native="true">
+                                       <property name="sizePolicy">
+                                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                               <horstretch>0</horstretch>
+                                               <verstretch>0</verstretch>
+                                           </sizepolicy>
                </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-                  <property name="documentMode">
-                      <bool>false</bool>
-                  </property>
-               <widget class="QWidget" name="tab_4">
-                <attribute name="title">
-                 <string>mpv.conf</string>
-                </attribute>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QPlainTextEdit" name="mpv_conf_plain_text_edit">
-                   <property name="font">
-                    <font>
-                     <family>Monospace</family>
-                    </font>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Plain</enum>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="tab_2">
-                <attribute name="title">
-                 <string>input.conf</string>
-                </attribute>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QPlainTextEdit" name="input_conf_plain_text_edit">
-                   <property name="font">
-                    <font>
-                     <family>Monospace</family>
-                    </font>
-                   </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Plain</enum>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
+                                       <layout class="QHBoxLayout" name="horizontalLayout_5">
+                                           <property name="spacing">
+                                               <number>2</number>
+                                           </property>
+                                           <property name="sizeConstraint">
+                                               <enum>QLayout::SetDefaultConstraint</enum>
+                                           </property>
+                                           <property name="leftMargin">
+                                               <number>0</number>
+                                           </property>
+                                           <property name="topMargin">
+                                               <number>0</number>
+                                           </property>
+                                           <property name="rightMargin">
+                                               <number>0</number>
+                                           </property>
+                                           <property name="bottomMargin">
+                                               <number>0</number>
+                                           </property>
+                                           <item>
+                                               <widget class="QLabel" name="label_6">
+                                                   <property name="sizePolicy">
+                                                       <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                                                           <horstretch>0</horstretch>
+                                                           <verstretch>0</verstretch>
+                                                       </sizepolicy>
+                                                   </property>
+                                                   <property name="minimumSize">
+                                                       <size>
+                                                           <width>70</width>
+                                                           <height>0</height>
+                                                       </size>
+                                                   </property>
+                                                   <property name="text">
+                                                       <string>each</string>
+                                                   </property>
+                                                   <property name="alignment">
+                                                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                                   </property>
+                                                   <property name="margin">
+                                                       <number>10</number>
+                                                   </property>
+                                               </widget>
+                                           </item>
+                                           <item>
+                                               <widget class="QSpinBox" name="autosaveSpinBox_4">
+                                                   <property name="sizePolicy">
+                                                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                                           <horstretch>0</horstretch>
+                                                           <verstretch>0</verstretch>
+                                                       </sizepolicy>
+                                                   </property>
+                                                   <property name="minimum">
+                                                       <number>15</number>
+                                                   </property>
+                                                   <property name="maximum">
+                                                       <number>1000</number>
+                                                   </property>
+                                               </widget>
+                                           </item>
+                                           <item>
+                                               <widget class="QLabel" name="autosaveTimeUnit_4">
+                                                   <property name="sizePolicy">
+                                                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                                                           <horstretch>0</horstretch>
+                                                           <verstretch>0</verstretch>
+                                                       </sizepolicy>
+                                                   </property>
+                                                   <property name="contextMenuPolicy">
+                                                       <enum>Qt::CustomContextMenu</enum>
+                                                   </property>
+                                                   <property name="text">
+                                                       <string>seconds</string>
+                                                   </property>
+                                                   <property name="margin">
+                                                       <number>10</number>
+                                                   </property>
+                                               </widget>
+                                           </item>
+                                       </layout>
+                                   </widget>
+                               </item>
+                               <item row="2" column="1">
+                                   <widget class="QCheckBox" name="saveNickNameCheckBox">
+                                       <property name="text">
+                                           <string>Save nick name to QC document</string>
+                                       </property>
+                                   </widget>
+                               </item>
+                               <item row="3" column="1">
+                                   <widget class="QCheckBox" name="saveVideoPathCheckBox">
+                                       <property name="text">
+                                           <string>Save video path to QC document</string>
+                                       </property>
               </widget>
              </item>
             </layout>

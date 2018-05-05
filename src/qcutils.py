@@ -2,12 +2,15 @@ import re
 from datetime import datetime
 from os import path, linesep
 from typing import List, Tuple
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from PyQt5.QtCore import QObject, QEvent
 
 from src import settings
+from src.files import Files
 from src.gui.dialogs import get_save_file_name
-from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentPath, EventPlayerCurrentPath
+from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentPath, EventPlayerCurrentPath, \
+    PlayerCurrentFile, EventPlayerCurrentFile
 from src.gui.uihandler.main import MainHandler
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
@@ -68,9 +71,23 @@ class QualityCheckWriter:
             self.__comments_size
         )
 
-    def write_to_disc(self, path_document):
+    def write_to_disc(self, path_document) -> None:
+        """
+        Writes the current Quality Check to disc.
+
+        :param path_document: the path to write
+        """
+
         with open(path_document, "w", encoding="utf-8") as file:
             file.write(self.__file_content)
+
+    def qc_file_content(self) -> str:
+        """
+        Returns the content of this QualityCheck which would be written into the file.
+
+        :return: the content of this QualityCheck as a string.
+        """
+        return self.__file_content
 
 
 class QualityCheckManager(QObject):
@@ -84,8 +101,32 @@ class QualityCheckManager(QObject):
         self.__mpv_player = main_handler.widget_mpv.mpv_player
 
         self.__path_document: path = None
-        self.__path_video: path = None
+        self.__current_path: path = None
+        self.__current_file: path = None
         self.__comments_up_to_date: bool = True
+
+    def autosave(self) -> None:
+        """
+        Will save a QC document into auto save zip file if a video was loaded.
+        """
+
+        if self.__mpv_player.is_video_loaded():
+            today = str(datetime.today())
+
+            as_zip_name = "{}.zip".format("-".join(today.split("-")[:2]))
+            as_path = path.join(Files.DIRECTORY_AUTOSAVE, as_zip_name)
+
+            as_zip = ZipFile(as_path, "a" if path.isfile(as_path) else "w", compression=ZIP_DEFLATED)
+
+            try:
+                file_name = "{}-{}".format(today.replace(":", "-").replace(" ", "_"), self.__current_file)
+
+                quality_check_writer = QualityCheckWriter(video_path=self.__current_path,
+                                                          comments=self.__widget_comments.get_all_comments())
+
+                as_zip.writestr(file_name, quality_check_writer.qc_file_content())
+            finally:
+                as_zip.close()
 
     def should_save(self) -> bool:
         """
@@ -132,7 +173,7 @@ class QualityCheckManager(QObject):
         """
 
         document = get_save_file_name(
-            self.__path_video, settings.Setting_Custom_General_NICKNAME.value,
+            self.__current_path, settings.Setting_Custom_General_NICKNAME.value,
             qc_doc=self.__path_document, parent=self.__main_handler)
 
         if document:
@@ -144,9 +185,10 @@ class QualityCheckManager(QObject):
 
         :param path_document: The path to write into
         """
+
         self.__path_document = path_document
 
-        QualityCheckWriter(self.__path_video, self.__widget_comments.get_all_comments()) \
+        QualityCheckWriter(self.__current_path, self.__widget_comments.get_all_comments()) \
             .write_to_disc(path_document)
 
         self.__comments_up_to_date = True
@@ -158,9 +200,14 @@ class QualityCheckManager(QObject):
         if ev_type == CommentsUpToDate:
             ev: EventCommentsUpToDate
             self.__comments_up_to_date = ev.status
+
         elif ev_type == PlayerCurrentPath:
             ev: EventPlayerCurrentPath
-            self.__path_video = ev.current_path
+            self.__current_path = ev.current_path
+
+        elif ev_type == PlayerCurrentFile:
+            ev: EventPlayerCurrentFile
+            self.__current_file = ev.current_file
 
 
 class QualityCheckReader:
