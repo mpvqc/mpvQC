@@ -145,7 +145,7 @@ class MpvPlayer:
 
         self.mpv.command(action_type.value, key_string)
 
-    def add_sub_files(self, sub_file: path):
+    def add_sub_files(self, sub_file: path) -> None:
         """
         Add sub file to current video.
 

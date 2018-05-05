@@ -91,8 +91,7 @@ class QualityCheckManager(QObject):
         """
         Returns whether the QC should be saved in order to prevent data loss. In particular:
 
-            1. Comments are available (not 0)
-            2. Comment table changed
+            * Comment table changed
 
         :return: whether saving would be valuable
         """
@@ -150,7 +149,7 @@ class QualityCheckManager(QObject):
         QualityCheckWriter(self.__path_video, self.__widget_comments.get_all_comments()) \
             .write_to_disc(path_document)
 
-        self.__main_handler.widget_comments.comments_up_to_date = True
+        self.__comments_up_to_date = True
 
     def customEvent(self, ev: QEvent):
 
@@ -168,7 +167,6 @@ class QualityCheckReader:
 
     def __init__(self, qc_document_full_path):
         self.__file = qc_document_full_path
-        self.__qc_lines = []
 
         with open(qc_document_full_path, "r", encoding="utf-8") as file:
             self.__qc_lines = [x.strip() for x in file.readlines()]

@@ -4,9 +4,9 @@ from src.gui.events import EventPlayerTimeChanged, EventPlayerTimeRemainingChang
     EventPlayerCurrentFile, EventPlayerCurrentPath
 from src.player.bindings import MPV
 
-_translate = QtCore.QCoreApplication.translate
+_TIME_TEMPLATE = "{}{:02d}:{:02d}"
 
-TIME_TEMPLATE = "{}{:02d}:{:02d}"
+_translate = QtCore.QCoreApplication.translate
 
 
 class MpvPropertyObserver:
@@ -47,6 +47,7 @@ class MpvPropertyObserver:
     def __seconds_float_to_formatted_string_hours(seconds: float) -> str:
         """
         Transforms the seconds into a string of the following format **hh:mm:ss**.
+
         :param seconds: The seconds to transform
         :return: string representing the time
         """
@@ -56,4 +57,4 @@ class MpvPropertyObserver:
         h, m = divmod(m, 60)
         h = "{:02d}:".format(h) if h != 0 else ""
 
-        return TIME_TEMPLATE.format(h, m, s)
+        return _TIME_TEMPLATE.format(h, m, s)

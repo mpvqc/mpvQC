@@ -366,7 +366,7 @@ class CommentsTable(QTableView):
 
         :param new_entry: The newly added entry
         :param sort: If True, the complete table will be sorted after the insertion.
-        :param edit_mode: True then edit mode will be started.
+        :param edit_mode: If True edit mode will be started.
         :param will_change_qc: True if qc is changed with the addition.
         """
 
@@ -429,6 +429,7 @@ class CommentsTable(QTableView):
         mod = int(self.__application.keyboardModifiers())
         key = e.key()
 
+        # Only key up and key down are handled here because they require to call super
         if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
             super().keyPressEvent(e)
         else:
@@ -479,10 +480,10 @@ class StatusBar(QStatusBar):
         self.__label_information.on_left_mouse_click = on_current_remaining_time_clicked
         self.__label_information.setAlignment(Qt.AlignRight)
 
-        # Timer updates status bar every 50 ms
+        # Timer updates status bar every 100 ms
         self.__timer = QTimer()
         self.__timer.timeout.connect(self.__update_status_bar_text)
-        self.__timer.start(50)
+        self.__timer.start(100)
 
         self.__time_current: str = "00:00"
         self.__time_remaining: str = "23:59:59"
@@ -498,10 +499,10 @@ class StatusBar(QStatusBar):
         """
 
         comments = self.__comments_amount
-        time = self.__time_current if self.__time_format.value else self.__time_remaining
+        time = self.__time_current if self.__time_format.value else "-{}".format(self.__time_remaining)
         percent = self.__percent if self.__time_format.value else 100 - self.__percent
 
-        self.__label_information.setText("#{}{:2}{:>8}{:2}{:3}%".format(comments, "", time, "", percent))
+        self.__label_information.setText("#{}{:2}{:>9}{:2}{:3}%".format(comments, "", time, "", percent))
 
     def customEvent(self, ev: QEvent):
 

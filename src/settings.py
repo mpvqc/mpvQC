@@ -115,7 +115,7 @@ class CommentTypesEntry(Entry):
 
     def save(self) -> None:
         """
-        Saves the current temporary value, but does **not** write to disc [use Setting.save()] to write to disc.
+        Saves the current temporary value, but does **not** write to disc [use setting.save()] to write to disc.
         """
 
         if self.temporary_value is not None:
@@ -189,10 +189,6 @@ Setting_Custom_Appearance_StatusBar_TimeMode = \
     Entry("custom_appearance_statusbar_current_time", True)
 """True: Current Time; False: Remaining Time"""
 
-Setting_Custom_Appearance_StatusBar_Percentage = \
-    Entry("custom_appearance_statusbar_percentage", True)
-"""False: No percentage; True: Percentage"""
-
 #######################################################################################################################
 SettingJson = (
     Setting_Internal_PLAYER_LAST_PLAYED_DIR,
@@ -205,8 +201,7 @@ SettingJson = (
     Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE,
 
     Setting_Custom_Appearance_General_WINDOW_TITLE,
-    Setting_Custom_Appearance_StatusBar_TimeMode,
-    Setting_Custom_Appearance_StatusBar_Percentage
+    Setting_Custom_Appearance_StatusBar_TimeMode
 )
 
 SettingConfs = (
