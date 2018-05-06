@@ -1,9 +1,24 @@
 #!/usr/sbin/env python3
 
+# Copyright (C) 2016-2017 Frechdachs <frechdachs@rekt.cc>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 import locale
 import sys
 from os import path
 
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
 
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
@@ -16,6 +31,7 @@ if __name__ == "__main__":
     from src.gui.uihandler.main import MainHandler
 
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon("icon.ico"))
 
     locale.setlocale(locale.LC_NUMERIC, "C")
 
