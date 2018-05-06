@@ -29,7 +29,8 @@ _WORKFLOW = \
                 - LC_MESSAGES
                     - ui_trans.ts
         -src
-            - <abc>.py
+            - generated
+                - <abc>.py
     
     After that the "-f" (finish) flag will create the binaries:
     
@@ -44,7 +45,8 @@ _WORKFLOW = \
                     - ui_transmo.mo
                     - ui_transpo.po
         -src
-            - <abc>.py
+            - generated
+                - <abc>.py
     """
 
 _HELP_TEXT = \
@@ -81,7 +83,7 @@ class Directory:
         to_bash("This script location is: " + script_location, lvl=0)
         self.structure: Tuple[str] = ("locale", "{}", "LC_MESSAGES")
         self.src = os.path.join(self.script_location, "src")
-        self.src_gui = os.path.join(self.src, "gui", "uielements")
+        self.src_gui = os.path.join(self.src, "gui", "generated")
         to_bash("This src gui will be " + self.src_gui, lvl=0)
         self.locale_dirs = [os.path.join(self.script_location, *self.structure).format(l) for l in languages]
         to_bash("Locale directories will be ", lvl=0)

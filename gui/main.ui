@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+    <class>MainPlayerView</class>
+    <widget class="QMainWindow" name="MainPlayerView">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -86,6 +86,9 @@
    <addaction name="menuAbout"/>
   </widget>
   <action name="actionNew_QC_Document">
+      <property name="icon">
+          <iconset theme="add"/>
+      </property>
    <property name="text">
     <string>&amp;New QC document</string>
    </property>
@@ -94,6 +97,9 @@
    </property>
   </action>
   <action name="action_Open_QC_Document">
+      <property name="icon">
+          <iconset theme="open-for-editing"/>
+      </property>
    <property name="text">
        <string>&amp;Open QC document(s) ...</string>
    </property>
@@ -102,6 +108,9 @@
    </property>
   </action>
   <action name="action_Save_QC_Document">
+      <property name="icon">
+          <iconset theme="filesave"/>
+      </property>
    <property name="text">
     <string>&amp;Save QC document</string>
    </property>
@@ -110,6 +119,9 @@
    </property>
   </action>
   <action name="actionS_ave_QC_Document_As">
+      <property name="icon">
+          <iconset theme="filesaveas"/>
+      </property>
    <property name="text">
     <string>S&amp;ave QC document as ...</string>
    </property>
@@ -118,6 +130,9 @@
    </property>
   </action>
   <action name="action_Exit_mpvQC">
+      <property name="icon">
+          <iconset theme="exit"/>
+      </property>
    <property name="text">
     <string>&amp;Exit mpvQC</string>
    </property>
@@ -126,6 +141,9 @@
    </property>
   </action>
   <action name="action_Open_Video_File">
+      <property name="icon">
+          <iconset theme="mpv"/>
+      </property>
    <property name="text">
     <string>Open &amp;video ...</string>
    </property>
@@ -134,6 +152,9 @@
    </property>
   </action>
   <action name="actionOpen_Network_Stream">
+      <property name="icon">
+          <iconset theme="network-server"/>
+      </property>
    <property name="text">
     <string>Open &amp;network stream ...</string>
    </property>
@@ -142,6 +163,9 @@
    </property>
   </action>
   <action name="action_Resize_Video_To_Its_Original_Resolutio">
+      <property name="icon">
+          <iconset theme="itmages-resize"/>
+      </property>
    <property name="text">
     <string>&amp;Resize video to original resolution</string>
    </property>
@@ -153,21 +177,33 @@
       <property name="enabled">
           <bool>false</bool>
       </property>
+      <property name="icon">
+          <iconset theme="arrow-down"/>
+      </property>
    <property name="text">
     <string>&amp;Check For Updates ...</string>
    </property>
   </action>
   <action name="actionAbout_Qt">
+      <property name="icon">
+          <iconset theme="help-about"/>
+      </property>
    <property name="text">
     <string>About &amp;Qt</string>
    </property>
   </action>
   <action name="actionAbout_mpvqc">
+      <property name="icon">
+          <iconset theme="help-about"/>
+      </property>
    <property name="text">
     <string>About &amp;mpvQC</string>
    </property>
   </action>
   <action name="action_Settings">
+      <property name="icon">
+          <iconset theme="systemsettings"/>
+      </property>
    <property name="text">
     <string>&amp;Settings</string>
    </property>

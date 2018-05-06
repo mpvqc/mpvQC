@@ -11,7 +11,10 @@ except NameError:
 
 
 class Files:
+
     # todo rewrite and get rid of class since it's not boilerplate java :)
+    # Maybe use QT's internal settings API to store user settings
+
     __NAME_FOLDER_CONFIGURATION = "configuration"
     __NAME_FOLDER_AUTOSAVE = "autosave"
 

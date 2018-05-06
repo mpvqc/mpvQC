@@ -10,16 +10,21 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle
 from src import settings
 from src.gui.dialogs import get_open_file_name, get_open_file_names, get_open_network_stream
 from src.gui.events import EventPlayerCurrentFile, PlayerCurrentFile, PlayerCurrentPath, EventPlayerCurrentPath
+from src.gui.generated.main import Ui_MainPlayerView
 from src.gui.messageboxes import QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
     LoadQCDocumentOldNotSavedQMessageBox, ValidVideoFileFoundQMessageBox, \
     WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument
-from src.gui.uielements.main import Ui_MainWindow
 
 _translate = QCoreApplication.translate
+
+# Extensions for subtitle files via drag and drop
 _DROPABLE_SUBS = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
                   "mks", "vtt", "sub", "scc")
+
+# Extension for video files via drag and drop
 _DROPABLE_VIDS = ("mp4", "mkv", "avi")
 
+# All custom event receivers will be added to this list
 CustomEventReceiver = []
 
 
@@ -32,7 +37,7 @@ class MainHandler(QMainWindow):
         self.setAcceptDrops(True)
 
         # User interface setup
-        self.ui = Ui_MainWindow()
+        self.ui = Ui_MainPlayerView()
         self.ui.setupUi(self)
         self.__setup_menu_bar()
 
@@ -84,6 +89,7 @@ class MainHandler(QMainWindow):
     def display_mouse_cursor(self, display: bool) -> None:
         """
         Will display the mouse cursor.
+
         :param display: True if display mouse cursor, False if hide mouse cursor
         """
 
@@ -126,7 +132,7 @@ class MainHandler(QMainWindow):
         self.restoreGeometry(self.__current_geometry)
         self.widget_comments.on_after_fullscreen()
 
-    def __reload_autosave_settings(self):
+    def __reload_autosave_settings(self) -> None:
 
         if settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value:
 
@@ -161,7 +167,7 @@ class MainHandler(QMainWindow):
 
     def __setup_menu_bar(self) -> None:
         """
-        Binds the menubar to the their actions.
+        Binds the menubar to the corresponding actions.
         """
 
         self.ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.__action_new_qc_document: f())
@@ -192,7 +198,7 @@ class MainHandler(QMainWindow):
         elif value == 1 and self.__current_file:
             txt = self.__current_file
         else:
-            txt = _translate("MainWindow", "MainWindow")
+            txt = _translate("MainPlayerView", "MainWindow")
 
         self.setWindowTitle(txt)
 
@@ -242,11 +248,17 @@ class MainHandler(QMainWindow):
 
     def __action_open_qc_document(self) -> None:
 
+        def get_qc_docs():
+            qc_docs = get_open_file_names("", parent=self)
+
+            if qc_docs:
+                self.__open_qc_txt_files(qc_docs)
+
         if self.__qc_manager.should_save():
             if LoadQCDocumentOldNotSavedQMessageBox().exec_():
-                self.__open_qc_txt_files(get_open_file_names("", parent=self))
+                get_qc_docs()
         else:
-            self.__open_qc_txt_files(get_open_file_names("", parent=self))
+            get_qc_docs()
 
     def __open_qc_txt_files(self, file_list: List, ask_to_open_found_vid=True) -> None:
         """
@@ -326,6 +338,7 @@ class MainHandler(QMainWindow):
 
         def __resize():
             # DA FUQ!
+            # Have not found a better way .. :/
             for i in range(0, 5):
                 try:
                     width = self.__player.video_width()
@@ -373,7 +386,8 @@ class MainHandler(QMainWindow):
 
     def __move_window_to_center(self):
         """
-        Moves window to screen center https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen
+        Moves window to center of the screen.
+        https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen
         """
 
         self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(),
@@ -411,12 +425,12 @@ class MainHandler(QMainWindow):
             elif ext in _DROPABLE_VIDS:
                 vids.append(file)
 
-        for s in subs:
-            self.__player.add_sub_files(s)
-
         video_found = bool(vids)
         if video_found:
             self.__player.open_video(vids[0], play=True)
+
+        for s in subs:
+            self.__player.add_sub_files(s)
 
         self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)
 
@@ -436,11 +450,18 @@ class MainHandler(QMainWindow):
         if ev_type == PlayerCurrentFile:
             ev: EventPlayerCurrentFile
             self.__current_file = ev.current_file
+
         elif ev_type == PlayerCurrentPath:
             ev: EventPlayerCurrentPath
             self.__current_path = ev.current_path
 
     @staticmethod
     def send_event(event: QEvent) -> None:
+        """
+        Will work as a custom event distributor.
+
+        :param event: The event to send to all other receivers
+        """
+
         for rec in CustomEventReceiver:
             QApplication.sendEvent(rec, event)

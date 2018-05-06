@@ -6,8 +6,8 @@ from PyQt5.QtGui import QFontDatabase, QFont, QIcon
 from PyQt5.QtWidgets import QListView, QLineEdit, QAbstractItemView, QDialogButtonBox, QDialog
 
 from src import settings, constants
+from src.gui.generated.preferences import Ui_PreferencesView
 from src.gui.messageboxes import ConfigurationResetQMessageBox, ConfigurationHasChangedQMessageBox
-from src.gui.uielements.preferences import Ui_Dialog
 from start import APPLICATION_VERSION, APPLICATION_NAME
 
 _translate = QtCore.QCoreApplication.translate
@@ -16,6 +16,7 @@ _translate = QtCore.QCoreApplication.translate
 def check_box_state_to_bool(state: int):
     """
     Transforms the tristate checkbox state to a bool value.
+
     :return: True if state was checked, False else
     """
 
@@ -33,7 +34,7 @@ class PreferenceHandler(QDialog):
 
     class PreferenceBinder:
 
-        def __init__(self, user_interface: Ui_Dialog, pref_dialog: 'PreferenceHandler'):
+        def __init__(self, user_interface: Ui_PreferencesView, pref_dialog: 'PreferenceHandler'):
             self.connected_elements = []
             self.outer = pref_dialog
             self.ui = user_interface
@@ -55,27 +56,27 @@ class PreferenceHandler(QDialog):
 
             btn_apply = button_box.button(QDialogButtonBox.Apply)
             btn_apply.clicked.connect(self.outer.accept)
-            btn_apply.setText(_translate("PreferenceDialog", "Apply"))
+            btn_apply.setText(_translate("PreferencesView", "Apply"))
 
             btn_close = button_box.button(QDialogButtonBox.Close)
             btn_close.setIcon(QIcon())
-            btn_close.setText(_translate("PreferenceDialog", "Close"))
+            btn_close.setText(_translate("PreferencesView", "Close"))
 
             btn_restore_defaults = button_box.button(QDialogButtonBox.RestoreDefaults)
             btn_restore_defaults.clicked.connect(self.outer.on_restore_default)
-            btn_restore_defaults.setText(_translate("PreferenceDialog", "Defaults"))
+            btn_restore_defaults.setText(_translate("PreferencesView", "Defaults"))
             self.connected_elements.extend([btn_apply, btn_restore_defaults])
 
         def __setup_language(self):
             language_box = self.ui.comboBox
             language_box.setCurrentIndex(
                 max(language_box.findText(
-                    _translate("PreferenceDialog", settings.Setting_Custom_Language_LANGUAGE.value)), 0))
+                    _translate("PreferencesView", settings.Setting_Custom_Language_LANGUAGE.value)), 0))
 
             def f(new_language):
                 languages = {
-                    _translate("PreferenceDialog", "English"): "English",
-                    _translate("PreferenceDialog", "German"): "German"
+                    _translate("PreferencesView", "English"): "English",
+                    _translate("PreferencesView", "German"): "German"
                 }
                 settings.Setting_Custom_Language_LANGUAGE.temporary_value = languages[new_language]
 
@@ -84,7 +85,7 @@ class PreferenceHandler(QDialog):
 
         def __setup_nickname(self):
             nick = self.ui.authorLineEdit
-            nick.setPlaceholderText(_translate("PreferenceDialog", "Type here to change the nick name"))
+            nick.setPlaceholderText(_translate("PreferencesView", "Type here to change the nick name"))
             nick.setText(settings.Setting_Custom_General_NICKNAME.value)
 
             def f(new_nickname):
@@ -96,16 +97,16 @@ class PreferenceHandler(QDialog):
         def __setup_comments(self):
             cts = self.ui.kCommentTypes
 
-            cts.addButton().setText(_translate("PreferenceDialog", "Add"))
-            cts.removeButton().setText(_translate("PreferenceDialog", "Remove"))
-            cts.upButton().setText(_translate("PreferenceDialog", "Move Up"))
-            cts.downButton().setText(_translate("PreferenceDialog", "Move Down"))
+            cts.addButton().setText(_translate("PreferencesView", "Add"))
+            cts.removeButton().setText(_translate("PreferencesView", "Remove"))
+            cts.upButton().setText(_translate("PreferencesView", "Move Up"))
+            cts.downButton().setText(_translate("PreferencesView", "Move Down"))
 
             cts_lv: QListView = cts.listView()
             cts_lv.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
             cts_lv_le: QLineEdit = cts.lineEdit()
-            cts_lv_le.setPlaceholderText(_translate("PreferenceDialog", "Type here to add new comment types"))
+            cts_lv_le.setPlaceholderText(_translate("PreferencesView", "Type here to add new comment types"))
             cts.clear()
 
             for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
@@ -194,6 +195,9 @@ class PreferenceHandler(QDialog):
 
         def __setup_about(self):
 
+            self.ui.creditsBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
+            self.ui.licenceBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
+
             self.ui.aboutBrowser.setOpenExternalLinks(True)
             self.ui.aboutBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
             self.ui.aboutBrowser.setHtml(constants.CREDITS.format(
@@ -202,13 +206,14 @@ class PreferenceHandler(QDialog):
                 APPLICATION_NAME,
                 PreferenceHandler.VERSION_MPV,
                 PreferenceHandler.VERSION_FFMPEG,
-                "2016-2017"))
+                "2016-2017")
+            )
 
-            self.ui.creditsBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
-            self.ui.licenceBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        def display_about_page(self) -> None:
+            """
+            Will display the about page.
+            """
 
-        def display_about_page(self):
-            self.ui.pageAbout.setFocus()
             self.ui.navigationList.setCurrentRow(self.ui.navigationList.model().rowCount() - 1)
 
         def save(self):
@@ -238,7 +243,7 @@ class PreferenceHandler(QDialog):
     def __init__(self, display_about):
         super().__init__()
 
-        self.ui: Ui_Dialog = Ui_Dialog()
+        self.ui: Ui_PreferencesView = Ui_PreferencesView()
         self.ui.setupUi(self)
 
         self.preference_binder = PreferenceHandler.PreferenceBinder(self.ui, self)
@@ -259,7 +264,7 @@ class PreferenceHandler(QDialog):
             ct_list_view.clearSelection()
             edit = cts.lineEdit()
             edit.setReadOnly(False)
-            edit.setPlaceholderText(_translate("PreferenceDialog", "Type here to add new comment types"))
+            edit.setPlaceholderText(_translate("PreferencesView", "Type here to add new comment types"))
 
             for btn in [cts.addButton(), cts.removeButton(), cts.upButton(), cts.downButton()]:
                 btn.setEnabled(False)

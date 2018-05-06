@@ -1,12 +1,8 @@
-from PyQt5 import QtCore
-
 from src.gui.events import EventPlayerTimeChanged, EventPlayerTimeRemainingChanged, EventPlayerPercentChanged, \
     EventPlayerCurrentFile, EventPlayerCurrentPath
 from src.player.bindings import MPV
 
 _TIME_TEMPLATE = "{}{:02d}:{:02d}"
-
-_translate = QtCore.QCoreApplication.translate
 
 
 class MpvPropertyObserver:

@@ -85,7 +85,7 @@ class QualityCheckWriter:
         """
         Returns the content of this QualityCheck which would be written into the file.
 
-        :return: the content of this QualityCheck as a string.
+        :return: the content of this QualityCheck as a string
         """
         return self.__file_content
 

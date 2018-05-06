@@ -2,7 +2,7 @@
 * QtDesigner
 * QtLinguist
 * PyCharm
-* A bunch of command line tools (install when error occurs)
+* A bunch of command line tools (just install when errors occur)
 
 # Development process
 
@@ -14,12 +14,12 @@
     
     **In case `preferences.ui` was changed**, 
     some manual interaction is needed 
-    because the KDE Plasma Widgets are not recognized by default.
+    because the KDE Plasma Widget is not recognized by default.
     
     Open `src/gui/preferences.py`, remove the wrong import statements at the end of the file
     and paste the following at the top: 
     
-    `from PyKF5.KWidgetsAddons import KMessageWidget, KEditListWidget`
+    `from PyKF5.KWidgetsAddons import KEditListWidget`
     
 * Now make your python changes
 * Change to `locale/.../LC_MESSAGES` and open the `.ts` files with QtLinguist and translate your strings
@@ -31,9 +31,9 @@
 ## Compile to binary
 
 * Install `pyinstaller` (current development version from github)
-* In the main directory run `pyinstaller --onefile tmpv.py`
+* In the main directory run `pyinstaller --onefile start.py`
 
-    This will generate a `tmpv.spec` file in the main directory as well as a `build` and `dist` directory.
+    This will generate a `start.spec` file in the main directory as well as a `build` and `dist` directory.
     
 * Add the following as the binary section:
 
@@ -45,5 +45,5 @@
     ```
 
 * Also make sure to change the name the application should have
-* In the main directory run `pyinstaller --onefile tmpv.spec` (this time not `.py`!)
+* In the main directory run `pyinstaller --onefile start.spec` (this time not `.py`!)
 * The binary will appear in the `dist` directory 

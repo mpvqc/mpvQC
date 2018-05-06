@@ -11,6 +11,8 @@ APPLICATION_VERSION = "0.0.1"
 APPLICATION_NAME = "mpv-qc"
 
 if __name__ == "__main__":
+    # todo validation if mpv dependencies are installed and display a message box if not
+
     from src.gui.uihandler.main import MainHandler
 
     app = QApplication(sys.argv)

@@ -18,6 +18,7 @@
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - PyQt5
 - [Requests](https://github.com/kennethreitz/requests)
+- [KDE Framework KEditListWidget](https://api.kde.org/frameworks/kwidgetsaddons/html/classKEditListWidget.html)
 
 ## Installation
 

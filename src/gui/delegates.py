@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QCombo
 
 from src import settings
 
-_translate = QCoreApplication.translate
 TYPEWRITER_FONT = QFont("monospace")
 TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
 

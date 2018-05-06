@@ -9,14 +9,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyKF5.KWidgetsAddons import KEditListWidget
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(700, 551)
-        Dialog.setMinimumSize(QtCore.QSize(700, 500))
-        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
+
+class Ui_PreferencesView(object):
+    def setupUi(self, PreferencesView):
+        PreferencesView.setObjectName("PreferencesView")
+        PreferencesView.resize(700, 551)
+        PreferencesView.setMinimumSize(QtCore.QSize(700, 500))
+        self.verticalLayout = QtWidgets.QVBoxLayout(PreferencesView)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.widget = QtWidgets.QWidget(Dialog)
+        self.widget = QtWidgets.QWidget(PreferencesView)
         self.widget.setObjectName("widget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -478,7 +479,7 @@ class Ui_Dialog(object):
         self.stackedWidget.addWidget(self.pageAbout)
         self.horizontalLayout.addWidget(self.stackedWidget)
         self.verticalLayout.addWidget(self.widget)
-        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(PreferencesView)
         font = QtGui.QFont()
         font.setKerning(True)
         self.buttonBox.setFont(font)
@@ -489,62 +490,62 @@ class Ui_Dialog(object):
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(PreferencesView)
         self.navigationList.setCurrentRow(0)
         self.stackedWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
-        self.buttonBox.rejected.connect(Dialog.reject)
-        self.buttonBox.accepted.connect(Dialog.accept)
+        self.buttonBox.rejected.connect(PreferencesView.reject)
+        self.buttonBox.accepted.connect(PreferencesView.accept)
         self.autoSaveEnabledCheckBox_4.toggled['bool'].connect(self.widget_8.setEnabled)
         self.navigationList.currentRowChanged['int'].connect(self.stackedWidget.setCurrentIndex)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(PreferencesView)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, PreferencesView):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        PreferencesView.setWindowTitle(_translate("PreferencesView", "Dialog"))
         __sortingEnabled = self.navigationList.isSortingEnabled()
         self.navigationList.setSortingEnabled(False)
         item = self.navigationList.item(0)
-        item.setText(_translate("Dialog", "General"))
+        item.setText(_translate("PreferencesView", "General"))
         item = self.navigationList.item(1)
-        item.setText(_translate("Dialog", "Appearance"))
+        item.setText(_translate("PreferencesView", "Appearance"))
         item = self.navigationList.item(2)
-        item.setText(_translate("Dialog", "MPV Settings"))
+        item.setText(_translate("PreferencesView", "MPV Settings"))
         item = self.navigationList.item(3)
-        item.setText(_translate("Dialog", "QC Document"))
+        item.setText(_translate("PreferencesView", "QC Document"))
         item = self.navigationList.item(4)
-        item.setText(_translate("Dialog", "Language"))
+        item.setText(_translate("PreferencesView", "Language"))
         item = self.navigationList.item(5)
-        item.setText(_translate("Dialog", "About"))
+        item.setText(_translate("PreferencesView", "About"))
         self.navigationList.setSortingEnabled(__sortingEnabled)
-        self.label_2.setText(_translate("Dialog", "General"))
-        self.authorLabel.setText(_translate("Dialog", "Nick name"))
-        self.label_3.setText(_translate("Dialog", "Comment types"))
-        self.label_9.setText(_translate("Dialog", "Appearance"))
-        self.label_10.setText(_translate("Dialog", "Window Title"))
-        self.window_title_combo_box.setItemText(0, _translate("Dialog", "Display default title"))
-        self.window_title_combo_box.setItemText(1, _translate("Dialog", "Display video title"))
-        self.window_title_combo_box.setItemText(2, _translate("Dialog", "Display video path"))
-        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tabGeneral), _translate("Dialog", "General"))
-        self.label_5.setText(_translate("Dialog", "MPV Settings"))
-        self.label_8.setText(_translate("Dialog", "Changes will be applied after restart."))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("Dialog", "mpv.conf"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "input.conf"))
-        self.label_4.setText(_translate("Dialog", "QC Document"))
-        self.autoSaveEnabledCheckBox_4.setText(_translate("Dialog", "Auto save enabled"))
-        self.label_6.setText(_translate("Dialog", "each"))
-        self.autosaveTimeUnit_4.setText(_translate("Dialog", "seconds"))
-        self.saveNickNameCheckBox.setText(_translate("Dialog", "Save nick name to QC document"))
-        self.saveVideoPathCheckBox.setText(_translate("Dialog", "Save video path to QC document"))
-        self.label.setText(_translate("Dialog", "Language"))
-        self.label_7.setText(_translate("Dialog", "Language"))
-        self.comboBox.setItemText(0, _translate("Dialog", "English"))
-        self.comboBox.setItemText(1, _translate("Dialog", "German"))
-        self.label_11.setText(_translate("Dialog", "About"))
-        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.sdasd), _translate("Dialog", "About"))
-        self.creditsBrowser.setHtml(_translate("Dialog",
+        self.label_2.setText(_translate("PreferencesView", "General"))
+        self.authorLabel.setText(_translate("PreferencesView", "Nick name"))
+        self.label_3.setText(_translate("PreferencesView", "Comment types"))
+        self.label_9.setText(_translate("PreferencesView", "Appearance"))
+        self.label_10.setText(_translate("PreferencesView", "Window Title"))
+        self.window_title_combo_box.setItemText(0, _translate("PreferencesView", "Display default title"))
+        self.window_title_combo_box.setItemText(1, _translate("PreferencesView", "Display video title"))
+        self.window_title_combo_box.setItemText(2, _translate("PreferencesView", "Display video path"))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tabGeneral), _translate("PreferencesView", "General"))
+        self.label_5.setText(_translate("PreferencesView", "MPV Settings"))
+        self.label_8.setText(_translate("PreferencesView", "Changes will be applied after restart."))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("PreferencesView", "mpv.conf"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("PreferencesView", "input.conf"))
+        self.label_4.setText(_translate("PreferencesView", "QC Document"))
+        self.autoSaveEnabledCheckBox_4.setText(_translate("PreferencesView", "Auto save enabled"))
+        self.label_6.setText(_translate("PreferencesView", "each"))
+        self.autosaveTimeUnit_4.setText(_translate("PreferencesView", "seconds"))
+        self.saveNickNameCheckBox.setText(_translate("PreferencesView", "Save nick name to QC document"))
+        self.saveVideoPathCheckBox.setText(_translate("PreferencesView", "Save video path to QC document"))
+        self.label.setText(_translate("PreferencesView", "Language"))
+        self.label_7.setText(_translate("PreferencesView", "Language"))
+        self.comboBox.setItemText(0, _translate("PreferencesView", "English"))
+        self.comboBox.setItemText(1, _translate("PreferencesView", "German"))
+        self.label_11.setText(_translate("PreferencesView", "About"))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.sdasd), _translate("PreferencesView", "About"))
+        self.creditsBrowser.setHtml(_translate("PreferencesView",
                                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                "p, li { white-space: pre-wrap; }\n"
@@ -555,9 +556,9 @@ class Ui_Dialog(object):
                                                "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">PyQt5<br />GPLv3 &lt;Riverbank Computing Limited&gt; </p>\n"
                                                "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Qt5<br />LGPLv3 &lt;The Qt Company Ltd and other contributors&gt; </p>\n"
                                                "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Requests<br />Apache Version 2 &lt;Kenneth Reitz&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">KDE Framework<br />LGPLv3&lt;Christoph Feck and other contributors&gt; </p></body></html>"))
-        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_3), _translate("Dialog", "Credits"))
-        self.licenceBrowser.setHtml(_translate("Dialog",
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">KDE Framework<br />LGPLv3&lt;KDE Community&gt; </p></body></html>"))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_3), _translate("PreferencesView", "Credits"))
+        self.licenceBrowser.setHtml(_translate("PreferencesView",
                                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                "p, li { white-space: pre-wrap; }\n"
@@ -684,4 +685,4 @@ class Ui_Dialog(object):
                                                "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The hypothetical commands `show w\' and `show c\' should show the appropriate parts of the General Public License. Of course, your program\'s commands might be different; for a GUI interface, you would use an &quot;about box&quot;. </p>\n"
                                                "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">You should also get your employer (if you work as a programmer) or school, if any, to sign a &quot;copyright disclaimer&quot; for the program, if necessary. For more information on this, and how to apply and follow the GNU GPL, see &lt;http://www.gnu.org/licenses/&gt;. </p>\n"
                                                "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The GNU General Public License does not permit incorporating your program into proprietary programs. If your program is a subroutine library, you may consider it more useful to permit linking proprietary applications with the library. If this is what you want to do, use the GNU Lesser General Public License instead of this License. But first, please read &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;. </p></body></html>"))
-        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_5), _translate("Dialog", "Licence"))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_5), _translate("PreferencesView", "Licence"))

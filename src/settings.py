@@ -163,7 +163,7 @@ Setting_Custom_QcDocument_AUTOSAVE_ENABLED = \
     Entry("custom_qcdocument_autosave_enabled", True)
 
 Setting_Custom_QcDocument_AUTOSAVE_INTERVAL = \
-    Entry("custom_qcdocument_autosave_interval", 90)
+    Entry("custom_qcdocument_autosave_interval", 150)  # in seconds
 
 Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE = \
     Entry("custom_qcdocument_write_video_path_to_file", True)

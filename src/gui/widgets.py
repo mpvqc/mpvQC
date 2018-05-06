@@ -5,7 +5,7 @@ from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel
 
-from src import settings
+from src import settings, logging
 from src.files import Files
 from src.gui import delegates, utils
 from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate, TYPEWRITER_FONT
@@ -51,7 +51,7 @@ class MpvWidget(QFrame):
             config="yes",
             config_dir=Files.DIRECTORY_CONFIGURATION,
             ytdl="yes",
-            # log_handler=mpvLogHandler,
+            log_handler=logging.mpv_log_handler,
         )
 
         self.mpv_player = MpvPlayer(__mpv)
@@ -161,7 +161,7 @@ class MpvWidget(QFrame):
 
 class ContextMenu(QMenu):
     """
-    Pseudo context menu when user right clicks into the video or presses the 'e' button.
+    Pseudo context menu when user right clicks into the video or presses the 'e' button and if video is loaded.
     """
 
     def __init__(self, main_handler: MainHandler):
@@ -288,7 +288,7 @@ class CommentsTable(QTableView):
     def add_comment(self, comment_type: str, comment_text: str = "", time: str = None,
                     sort: bool = True, will_change_qc=True, edit_mode_active=True) -> None:
         """
-        Will add a new comment type to the list view.
+        Will add a new comment to the list view.
 
         :param comment_type: The comment type to add
         :param comment_text: The text to add
@@ -310,7 +310,7 @@ class CommentsTable(QTableView):
         note = QStandardItem(comment_text)
 
         new_entry = [ti, ct, note]
-        self.__model.appendRow([ti, ct, note])
+        self.__model.appendRow(new_entry)
 
         self.__after_comment_added(new_entry, sort, edit_mode_active, will_change_qc)
 
@@ -367,6 +367,7 @@ class CommentsTable(QTableView):
     def __after_comment_added(self, new_entry: List[QStandardItem], sort: bool,
                               edit_mode: bool, will_change_qc: bool) -> None:
         """
+        This function must be called after a comment was added.
 
         :param new_entry: The newly added entry
         :param sort: If True, the complete table will be sorted after the insertion.
