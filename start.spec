@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['tmpv.py'],
+a = Analysis(['start.py'],
              pathex=['/home/elias/PycharmProjects/mpvQC'],
              binaries=[
                 ('/home/elias/PycharmProjects/mpvQC/locale/de/LC_MESSAGES/*.*', 'locale/de/LC_MESSAGES'),
@@ -24,7 +24,7 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='tmpv-executable',
+          name='start',
           debug=False,
           strip=False,
           upx=True,
