@@ -8,7 +8,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_MainPlayerView(object):
     def setupUi(self, MainPlayerView):
         MainPlayerView.setObjectName("MainPlayerView")
@@ -136,3 +135,4 @@ class Ui_MainPlayerView(object):
         self.actionAbout_mpvqc.setText(_translate("MainPlayerView", "About &mpvQC"))
         self.action_Settings.setText(_translate("MainPlayerView", "&Settings"))
         self.action_Settings.setShortcut(_translate("MainPlayerView", "Ctrl+Alt+S"))
+

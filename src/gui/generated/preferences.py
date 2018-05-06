@@ -550,13 +550,13 @@ class Ui_PreferencesView(object):
                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                                "p, li { white-space: pre-wrap; }\n"
                                                "</style></head><body style=\" font-family:\'Fira Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">mpv<br />GPLv2+ &lt;mpv.io&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">libmpv build<br />GPLv3 &lt;lachs0r&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">python-mpv<br />AGPLv3 &lt;jaseg&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">PyQt5<br />GPLv3 &lt;Riverbank Computing Limited&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Qt5<br />LGPLv3 &lt;The Qt Company Ltd and other contributors&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Requests<br />Apache Version 2 &lt;Kenneth Reitz&gt; </p>\n"
-                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">KDE Framework<br />LGPLv3&lt;KDE Community&gt; </p></body></html>"))
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">mpv<br />GPLv2+ &lt;mpv.io&gt;</p>\n"
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">libmpv build<br />GPLv3 &lt;lachs0r&gt;</p>\n"
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">python-mpv<br />AGPLv3 &lt;jaseg&gt;</p>\n"
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">PyQt5<br />GPLv3 &lt;Riverbank Computing Limited&gt;</p>\n"
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Qt5<br />LGPLv3 &lt;The Qt Company Ltd and other contributors&gt;</p>\n"
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Requests<br />Apache Version 2 &lt;Kenneth Reitz&gt;</p>\n"
+                                               "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">KDE Framework<br />LGPLv3&lt;KDE Community&gt;</p></body></html>"))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_3), _translate("PreferencesView", "Credits"))
         self.licenceBrowser.setHtml(_translate("PreferencesView",
                                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

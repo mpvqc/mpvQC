@@ -1052,32 +1052,31 @@
                                                                font-style:normal;&quot;&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
-                                                               text-indent:0px;&quot;&gt;mpv&lt;br /&gt;GPLv2+ &amp;lt;mpv.io&amp;gt;
-                                                               &lt;/p&gt;
+                                                               text-indent:0px;&quot;&gt;mpv&lt;br /&gt;GPLv2+ &amp;lt;mpv.io&amp;gt;&lt;/p&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
                                                                text-indent:0px;&quot;&gt;libmpv build&lt;br /&gt;GPLv3
-                                                               &amp;lt;lachs0r&amp;gt; &lt;/p&gt;
+                                                               &amp;lt;lachs0r&amp;gt;&lt;/p&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
                                                                text-indent:0px;&quot;&gt;python-mpv&lt;br /&gt;AGPLv3
-                                                               &amp;lt;jaseg&amp;gt; &lt;/p&gt;
+                                                               &amp;lt;jaseg&amp;gt;&lt;/p&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
                                                                text-indent:0px;&quot;&gt;PyQt5&lt;br /&gt;GPLv3 &amp;lt;Riverbank
-                                                               Computing Limited&amp;gt; &lt;/p&gt;
+                                                               Computing Limited&amp;gt;&lt;/p&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
                                                                text-indent:0px;&quot;&gt;Qt5&lt;br /&gt;LGPLv3 &amp;lt;The
-                                                               Qt Company Ltd and other contributors&amp;gt; &lt;/p&gt;
+                                                               Qt Company Ltd and other contributors&amp;gt;&lt;/p&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
                                                                text-indent:0px;&quot;&gt;Requests&lt;br /&gt;Apache
-                                                               Version 2 &amp;lt;Kenneth Reitz&amp;gt; &lt;/p&gt;
+                                                               Version 2 &amp;lt;Kenneth Reitz&amp;gt;&lt;/p&gt;
                                                                &lt;p style=&quot; margin-top:12px; margin-bottom:12px;
                                                                margin-left:0px; margin-right:0px; -qt-block-indent:0;
                                                                text-indent:0px;&quot;&gt;KDE Framework&lt;br /&gt;LGPLv3&amp;lt;KDE
-                                                               Community&amp;gt; &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+                                                               Community&amp;gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                                                            </string>
                                                        </property>
                                                    </widget>
