@@ -122,3 +122,17 @@ class WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument(QMessageBox):
         self.setWindowTitle(_translate("MessageBoxes", "How to proceed"))
         self.addButton(_translate("MessageBoxes", "Delete"), QMessageBox.YesRole)
         self.addButton(_translate("MessageBoxes", "Nothing"), QMessageBox.NoRole)
+
+
+class QCDocumentToImportNotValidQCDocument(QMessageBox):
+    """
+    The message box if the user wants to import a txt file which does not seem to be a valid qc document.
+    """
+
+    def __init__(self, not_valid_file):
+        super().__init__()
+        self.setText(str(not_valid_file) +
+                     _translate("MessageBoxes", " does not seem to be a QC document file."))
+        self.setIcon(QMessageBox.Information)
+        self.setWindowTitle(_translate("MessageBoxes", "Not a QC document"))
+        self.addButton(_translate("MessageBoxes", "Ok"), QMessageBox.AcceptRole)

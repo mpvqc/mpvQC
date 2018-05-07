@@ -210,11 +210,13 @@ class PreferenceHandler(QDialog):
         def __setup_about(self):
 
             self.ui.creditsBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
+            self.ui.creditsBrowser.setHtml(constants.CREDITS)
             self.ui.licenceBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
+            self.ui.licenceBrowser.setHtml(constants.LICENCE)
 
             self.ui.aboutBrowser.setOpenExternalLinks(True)
             self.ui.aboutBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-            self.ui.aboutBrowser.setHtml(constants.CREDITS.format(
+            self.ui.aboutBrowser.setHtml(constants.ABOUT.format(
                 APPLICATION_VERSION,
                 platform.architecture()[0],
                 APPLICATION_NAME,

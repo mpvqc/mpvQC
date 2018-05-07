@@ -27,7 +27,7 @@ from src.gui.events import EventPlayerCurrentFile, PlayerCurrentFile, PlayerCurr
 from src.gui.generated.main import Ui_MainPlayerView
 from src.gui.messageboxes import QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
     LoadQCDocumentOldNotSavedQMessageBox, ValidVideoFileFoundQMessageBox, \
-    WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument
+    WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument, QCDocumentToImportNotValidQCDocument
 
 _translate = QCoreApplication.translate
 
@@ -294,18 +294,23 @@ class MainHandler(QMainWindow):
             is_valid = qc_doc and path.isfile(qc_doc)
 
             if is_valid:
+
                 video_path, com_list = QualityCheckReader(qc_doc).results()
 
-                for com in com_list:
-                    wid_comments.add_comment(com.coty, com.note, com.time, sort=False,
-                                             will_change_qc=False, edit_mode_active=False)
+                if video_path is not None and com_list is not None:
+                    for com in com_list:
+                        wid_comments.add_comment(com.coty, com.note, com.time, sort=False,
+                                                 will_change_qc=False, edit_mode_active=False)
 
-                if amount == 1:
-                    self.__qc_manager.update_path_qc_document_to(qc_doc)
+                    if amount == 1:
+                        if len(self.widget_comments.get_all_comments()):
+                            self.__qc_manager.update_path_qc_document_to(qc_doc)
 
-                    if video_path and path.isfile(video_path) \
-                            and ask_to_open_found_vid and ValidVideoFileFoundQMessageBox().exec_():
-                        self.__action_open_video(video_path)
+                        if video_path and path.isfile(video_path) \
+                                and ask_to_open_found_vid and ValidVideoFileFoundQMessageBox().exec_():
+                            self.__action_open_video(video_path)
+                else:
+                    QCDocumentToImportNotValidQCDocument(qc_doc).exec_()
 
         if amount >= 2:
             self.__qc_manager.reset_qc_document_path()

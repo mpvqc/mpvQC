@@ -28,6 +28,8 @@ from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurren
 from src.gui.uihandler.main import MainHandler
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
+_REGEX_VALIDATOR_DOCUMENT = re.compile("^\[FILE\].*")
+
 _REGEX_PATH = re.compile("^path:*\s*")
 _REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[\w+.*\]\s*.*$")
 _REGEX_COLUMN = re.compile("\[([A-Za-z0-9\:_\s]+)\]")
@@ -237,14 +239,18 @@ class QualityCheckReader:
 
         path_found = False
 
-        for line in self.__qc_lines:
-            if bool(line):
-                if not path_found:
-                    path_found, self.__video_path = QualityCheckReader.__find_path(line)
+        if len(self.__qc_lines) > 0 and _REGEX_VALIDATOR_DOCUMENT.match(self.__qc_lines[0]):
+            for line in self.__qc_lines:
+                if bool(line):
+                    if not path_found:
+                        path_found, self.__video_path = QualityCheckReader.__find_path(line)
 
-                comment_found, comment = QualityCheckReader.__find_comment(line)
-                if comment_found:
-                    self.__comments.append(comment)
+                    comment_found, comment = QualityCheckReader.__find_comment(line)
+                    if comment_found:
+                        self.__comments.append(comment)
+        else:
+            self.__video_path = None
+            self.__comments = None
 
     @staticmethod
     def __find_path(line: str) -> (bool, str):
@@ -273,10 +279,12 @@ class QualityCheckReader:
         """
         Returns the results found in the qc document.
 
-        :returns: a Tuple with
+        :returns: **if valid qc document** a Tuple with
 
             1. str: the path in the document or the empty string if not found
             2. comments: the comments found in the document
+
+        :returns: a Tuple (None, None) if not a valid qc document
         """
 
-        return self.__video_path, tuple(self.__comments)
+        return self.__video_path, tuple(self.__comments) if self.__comments is not None else None
