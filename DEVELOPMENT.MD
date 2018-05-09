@@ -1,4 +1,4 @@
-#Developing tools needed:
+# Developing tools needed:
 * QtDesigner
 * QtLinguist
 * PyCharm
@@ -11,16 +11,7 @@
 * In the main directory of this folder run `python3 dev.py -p` (-p: prepare)
     
     This will transform `.ui` files into `py` files using several command line tools.
-    
-    **In case `preferences.ui` was changed**, 
-    some manual interaction is needed 
-    because the KDE Plasma Widget is not recognized by default.
-    
-    Open `src/gui/preferences.py`, remove the wrong import statements at the end of the file
-    and paste the following at the top: 
-    
-    `from PyKF5.KWidgetsAddons import KEditListWidget`
-    
+        
 * Now make your python changes
 * Change to `locale/.../LC_MESSAGES` and open the `.ts` files with QtLinguist and translate your strings
 
@@ -47,3 +38,8 @@
 * Also make sure to change the name the application should have
 * In the main directory run `pyinstaller --onefile start.spec` (this time not `.py`!)
 * The binary will appear in the `dist` directory 
+
+## TODO
+
+* Tests
+* Refactoring

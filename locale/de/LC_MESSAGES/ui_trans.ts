@@ -44,7 +44,7 @@
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="198"/>
+        <location filename="../../../src/gui/widgets.py" line="199"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
     </message>
@@ -356,157 +356,157 @@
         <translation>Standardeinstellungen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="543"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="612"/>
         <source>English</source>
         <translation>Englisch</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="544"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="613"/>
         <source>German</source>
         <translation>Deutsch</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="104"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="587"/>
         <source>Type here to change the nick name</source>
         <translation>Hier den Nicknamen eingeben</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="116"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="590"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="117"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="591"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="118"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="592"/>
         <source>Move Up</source>
         <translation>Nach oben</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="119"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="593"/>
         <source>Move Down</source>
         <translation>Nach unten</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="285"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="589"/>
         <source>Type here to add new comment types</source>
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="506"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="569"/>
         <source>Dialog</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="530"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="599"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="525"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="594"/>
         <source>Appearance</source>
         <translation>Erscheinungsbild</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="531"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="600"/>
         <source>MPV Settings</source>
         <translation>MPV Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="535"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="604"/>
         <source>QC Document</source>
         <translation>QC Dokument</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="542"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="611"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="546"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="615"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="523"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="586"/>
         <source>Nick name</source>
         <translation>Nickname</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="524"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="588"/>
         <source>Comment types</source>
         <translation>Anmerkungen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="526"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="595"/>
         <source>Window Title</source>
         <translation>Fenstertitel</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="527"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="596"/>
         <source>Display default title</source>
         <translation>Standardtitel anzeigen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="528"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="597"/>
         <source>Display video title</source>
         <translation>Videotitel anzeigen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="529"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="598"/>
         <source>Display video path</source>
         <translation>Videopfad anzeigen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="532"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="601"/>
         <source>Changes will be applied after restart.</source>
         <translation>Änderungen werden erst nach einem Neustart der Anwendung übernommen.</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="533"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="602"/>
         <source>mpv.conf</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="534"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="603"/>
         <source>input.conf</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="536"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="605"/>
         <source>Auto save enabled</source>
         <translation>Autospeichern aktiviert</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="537"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="606"/>
         <source>each</source>
         <translation>alle</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="538"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="607"/>
         <source>seconds</source>
         <translation>Sekunden</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="539"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="608"/>
         <source>Save nick name to QC document</source>
         <translation>Nicknamen in QC Dokument speichern</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="540"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="609"/>
         <source>Save video path to QC document</source>
         <translation>Videopfad in QC Dokument speichern</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="547"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="621"/>
         <source>Credits</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="548"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="627"/>
         <source>Licence</source>
         <translation>Lizenz</translation>
     </message>

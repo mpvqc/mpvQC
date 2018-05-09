@@ -264,6 +264,9 @@
              </sizepolicy>
             </property>
             <layout class="QFormLayout" name="formLayout_2">
+             <property name="horizontalSpacing">
+              <number>6</number>
+             </property>
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -286,7 +289,7 @@
              <item row="0" column="1">
               <widget class="QLineEdit" name="authorLineEdit">
                <property name="placeholderText">
-                <string/>
+                <string>Type here to change the nick name</string>
                </property>
               </widget>
              </item>
@@ -298,16 +301,160 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="KEditListWidget" name="kCommentTypes">
-               <property name="toolTip">
-                <string/>
+              <widget class="QLineEdit" name="kTypesLineEdit">
+               <property name="placeholderText">
+                <string>Type here to add new comment types</string>
                </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QWidget" name="kTypesParentWidget" native="true">
                <property name="styleSheet">
                 <string notr="true">QPushButton { text-align:left; padding: 8px; }</string>
                </property>
-               <property name="checkAtEntering">
-                <bool>true</bool>
-               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QListWidget" name="kTypesListWidget"/>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_19" native="true">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_16">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="widget_18" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_15">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QPushButton" name="kTypesAddButton">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::TabFocus</enum>
+                        </property>
+                        <property name="text">
+                         <string>Add</string>
+                        </property>
+                        <property name="icon">
+                         <iconset theme="add">
+                          <normaloff>.</normaloff>.</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="kTypesRemoveButton">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::TabFocus</enum>
+                        </property>
+                        <property name="text">
+                         <string>Remove</string>
+                        </property>
+                        <property name="icon">
+                         <iconset theme="remove">
+                          <normaloff>.</normaloff>.</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="kTypesMoveUpButton">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::TabFocus</enum>
+                        </property>
+                        <property name="text">
+                         <string>Move Up</string>
+                        </property>
+                        <property name="icon">
+                         <iconset theme="arrow-up">
+                          <normaloff>.</normaloff>.</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="kTypesMoveDownButton">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::TabFocus</enum>
+                        </property>
+                        <property name="text">
+                         <string>Move Down</string>
+                        </property>
+                        <property name="icon">
+                         <iconset theme="arrow-down">
+                          <normaloff>.</normaloff>.</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widget_20" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
@@ -1103,13 +1250,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KEditListWidget</class>
-   <extends>QWidget</extends>
-   <header>keditlistwidget.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

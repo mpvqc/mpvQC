@@ -127,8 +127,7 @@ class Ui_MainPlayerView(object):
         self.action_Open_Video_File.setShortcut(_translate("MainPlayerView", "Ctrl+Shift+O"))
         self.actionOpen_Network_Stream.setText(_translate("MainPlayerView", "Open &network stream ..."))
         self.actionOpen_Network_Stream.setShortcut(_translate("MainPlayerView", "Ctrl+Alt+Shift+O"))
-        self.action_Resize_Video_To_Its_Original_Resolutio.setText(
-            _translate("MainPlayerView", "&Resize video to original resolution"))
+        self.action_Resize_Video_To_Its_Original_Resolutio.setText(_translate("MainPlayerView", "&Resize video to original resolution"))
         self.action_Resize_Video_To_Its_Original_Resolutio.setShortcut(_translate("MainPlayerView", "Ctrl+R"))
         self.action_Check_For_Updates.setText(_translate("MainPlayerView", "&Check For Updates ..."))
         self.actionAbout_Qt.setText(_translate("MainPlayerView", "About &Qt"))

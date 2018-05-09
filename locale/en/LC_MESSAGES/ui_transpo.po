@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-07 16:33+0200\n"
+"POT-Creation-Date: 2018-05-09 19:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -318,98 +318,112 @@ msgid "Move Down"
 msgstr ""
 
 #: PreferencesView%2311
-msgctxt "PreferencesView#11"
-msgid "Type here to add new comment types"
-msgstr ""
-
-#: PreferencesView%2312
 msgid "Dialog"
 msgstr "Preferences"
 
-#: PreferencesView%2313
+#: PreferencesView%2312
 msgid "General"
 msgstr ""
 
-#: PreferencesView%2314
+#: PreferencesView%2313
 msgid "Appearance"
 msgstr ""
 
-#: PreferencesView%2315
+#: PreferencesView%2314
 msgid "MPV Settings"
 msgstr ""
 
-#: PreferencesView%2316
+#: PreferencesView%2315
 msgid "QC Document"
 msgstr ""
 
-#: PreferencesView%2317
+#: PreferencesView%2316
 msgid "Language"
 msgstr ""
 
-#: PreferencesView%2318
+#: PreferencesView%2317
 msgid "About"
 msgstr ""
 
-#: PreferencesView%2319
+#: PreferencesView%2318
 msgid "Nick name"
 msgstr ""
 
-#: PreferencesView%2320
+#: PreferencesView%2319
 msgid "Comment types"
 msgstr ""
 
-#: PreferencesView%2321
+#: PreferencesView%2320
 msgid "Window Title"
 msgstr ""
 
-#: PreferencesView%2322
+#: PreferencesView%2321
 msgid "Display default title"
 msgstr ""
 
-#: PreferencesView%2323
+#: PreferencesView%2322
 msgid "Display video title"
 msgstr ""
 
-#: PreferencesView%2324
+#: PreferencesView%2323
 msgid "Display video path"
 msgstr ""
 
-#: PreferencesView%2325
+#: PreferencesView%2324
 msgid "Changes will be applied after restart."
 msgstr ""
 
-#: PreferencesView%2326
+#: PreferencesView%2325
 msgid "mpv.conf"
 msgstr ""
 
-#: PreferencesView%2327
+#: PreferencesView%2326
 msgid "input.conf"
 msgstr ""
 
-#: PreferencesView%2328
+#: PreferencesView%2327
 msgid "Auto save enabled"
 msgstr ""
 
-#: PreferencesView%2329
+#: PreferencesView%2328
 msgid "each"
 msgstr "every"
 
-#: PreferencesView%2330
+#: PreferencesView%2329
 msgid "seconds"
 msgstr ""
 
-#: PreferencesView%2331
+#: PreferencesView%2330
 msgid "Save nick name to QC document"
 msgstr ""
 
-#: PreferencesView%2332
+#: PreferencesView%2331
 msgid "Save video path to QC document"
 msgstr ""
 
-#: PreferencesView%2333
+#: PreferencesView%2332
 msgid "Credits"
 msgstr ""
 
-#: PreferencesView%2334
+#: PreferencesView%2333
 msgid "Licence"
+msgstr ""
+
+#: PreferencesView%2334
+msgid ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/"
+"REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\""
+">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Fira Sans'; font-size:10pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
+"margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><"
+"br /></p></body></html>"
+msgstr ""
+
+#: PreferencesView%2335
+msgctxt "PreferencesView#35"
+msgid "Type here to add new comment types"
 msgstr ""

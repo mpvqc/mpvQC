@@ -14,11 +14,10 @@
 ## Dependencies
 
 - [libmpv](https://github.com/mpv-player/mpv) (0.28.0 or later)
-- Python 3.4 or later
+- Python 3.6 or later
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - PyQt5
 - [Requests](https://github.com/kennethreitz/requests)
-- [KDE Framework KEditListWidget](https://api.kde.org/frameworks/kwidgetsaddons/html/classKEditListWidget.html)
 
 ## Installation
 

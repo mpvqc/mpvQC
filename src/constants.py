@@ -160,9 +160,6 @@ CREDITS = """
     Requests<br>Apache Version 2 &lt;Kenneth Reitz&gt;
 </p>
 <p>
-<p>
-    KDE Framework<br/>LGPLv3&lt;KDE Community&gt;
-</p>
 """
 
 LICENCE = """<p style='text-align:center;'>

@@ -11,13 +11,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-
+from enum import Enum
 from typing import List, Tuple
 
 from PyQt5 import QtCore
-from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent
+from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection, QObject, pyqtSignal
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel
+from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel, QLineEdit, QListWidget, \
+    QPushButton, QListWidgetItem
 
 from src import settings, logging
 from src.files import Files
@@ -542,3 +543,144 @@ class StatusBar(QStatusBar):
         elif ev_type == CommentsAmountChanged:
             ev: EventCommentsAmountChanged
             self.__comments_amount = ev.new_amount
+
+
+class PreferenceCommentTypesWidget(QObject):
+    """
+    This class is used in the preference window to create the comment type list widget
+    which is controllable with four buttons and a line edit.
+
+    It combines a QLineEdit, a QListWidget and four QPushButtons to a list widget.
+
+    It is imitating the basic functionality of a KEditListWidget.
+    """
+
+    class __Mode(Enum):
+        ADD = 0
+        EDIT = 1
+
+    # Signal is called after the items of the list view have changed
+    changed = pyqtSignal()
+
+    def __init__(self, line_edit: QLineEdit, list_widget: QListWidget, button_add: QPushButton,
+                 button_remove: QPushButton, button_up: QPushButton, button_down: QPushButton):
+
+        """
+        The combined widgets are connected.
+
+        :param line_edit: The line edit to enter new comment types
+        :param list_widget: The list widget to move items up and down or delete items.
+        :param button_add: The button which allows to add an item
+        :param button_remove: The button which allows to remove an item
+        :param button_up: The button which allows to move up an item
+        :param button_down: The button which allows to move down an item
+        """
+
+        super().__init__()
+
+        self.mode: PreferenceCommentTypesWidget.__Mode = PreferenceCommentTypesWidget.__Mode.ADD
+
+        self.line_edit = line_edit
+        self.line_edit.textChanged.connect(lambda txt, fun=self.__on_text_changed_line_edit: fun(txt))
+
+        self.list_widget = list_widget
+        self.list_widget.selectionModel().selectionChanged.connect(
+            lambda selected, deselected, fun=self.__on_row_selection_changed: fun(selected, deselected))
+
+        self.button_add = button_add
+        self.button_add.clicked.connect(lambda _, fun=self.__on_pressed_button_add: fun())
+
+        self.button_remove = button_remove
+        self.button_remove.clicked.connect(lambda _, fun=self.__on_pressed_button_remove: fun())
+
+        self.button_up = button_up
+        self.button_up.clicked.connect(lambda _, fun=self.__on_pressed_button_up: fun())
+
+        self.button_down = button_down
+        self.button_down.clicked.connect(lambda _, fun=self.__on_pressed_button_down: fun())
+
+    def __on_text_changed_line_edit(self, text) -> None:
+        if self.mode == PreferenceCommentTypesWidget.__Mode.ADD:
+            self.button_add.setEnabled(bool(text))
+        else:
+            self.list_widget.item(self.__get_selected_row()).setText(self.line_edit.text())
+            self.changed.emit()
+
+    def __on_pressed_button_add(self) -> None:
+        self.__add_item(self.line_edit.text())
+        self.line_edit.clear()
+        self.list_widget.selectionModel().clearSelection()
+        self.line_edit.setFocus()
+        self.changed.emit()
+
+    def __on_pressed_button_remove(self) -> None:
+        self.list_widget.model().removeRows(self.__get_selected_row(), 1)
+        self.list_widget.selectionModel().clearSelection()
+        self.line_edit.clear()
+        self.changed.emit()
+
+    def __on_pressed_button_up(self) -> None:
+        idx: int = self.__get_selected_row()
+        itm = self.list_widget.takeItem(idx)
+        self.list_widget.insertItem(idx - 1, itm)
+        self.list_widget.setCurrentRow(idx - 1)
+
+        self.changed.emit()
+
+    def __on_pressed_button_down(self) -> None:
+        idx: int = self.__get_selected_row()
+        itm = self.list_widget.takeItem(idx)
+        self.list_widget.insertItem(idx + 1, itm)
+        self.list_widget.setCurrentRow(idx + 1)
+
+        self.changed.emit()
+
+    def __add_item(self, text) -> None:
+        item = QListWidgetItem(text)
+        item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+        self.list_widget.insertItem(0, item)
+
+    def __get_selected_row(self) -> int:
+        return self.list_widget.selectionModel().selectedRows()[0].row()
+
+    def __get_selected_item(self) -> QListWidgetItem:
+        return self.list_widget.item(self.__get_selected_row())
+
+    def __on_row_selection_changed(self, selected: QItemSelection, deselected: QItemSelection) -> None:
+        is_valid_selected = bool(selected)
+
+        if is_valid_selected:
+            self.mode = PreferenceCommentTypesWidget.__Mode.EDIT
+            self.line_edit.setText(self.__get_selected_item().text())
+            self.line_edit.setFocus()
+        else:
+            self.mode = PreferenceCommentTypesWidget.__Mode.ADD
+
+        self.button_remove.setEnabled(is_valid_selected)
+        self.button_up.setEnabled(is_valid_selected and selected.indexes()[0].row() != 0)
+        self.button_down.setEnabled(
+            is_valid_selected and selected.indexes()[0].row() != self.list_widget.model().rowCount() - 1)
+
+    def remove_focus(self) -> None:
+        """
+        Will remove the focus from the line edit.
+        """
+
+        if self.list_widget.selectionModel().selectedIndexes():
+            self.list_widget.clearSelection()
+            self.line_edit.clear()
+
+            for btn in [self.button_add, self.button_remove, self.button_up, self.button_down]:
+                btn.setEnabled(False)
+
+    def items(self) -> List[str]:
+        """
+        Returns the items of the list widget.
+        """
+
+        ret_list = []
+        for row in range(0, self.list_widget.count()):
+            content = self.list_widget.item(row).text()
+            ret_list.append(str(content))
+
+        return ret_list

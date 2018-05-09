@@ -17,7 +17,7 @@ import platform
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont, QIcon
-from PyQt5.QtWidgets import QListView, QLineEdit, QAbstractItemView, QDialogButtonBox, QDialog
+from PyQt5.QtWidgets import QDialogButtonBox, QDialog
 
 from src import settings, constants
 from src.gui.generated.preferences import Ui_PreferencesView
@@ -25,16 +25,6 @@ from src.gui.messageboxes import ConfigurationResetQMessageBox, ConfigurationHas
 from start import APPLICATION_VERSION, APPLICATION_NAME
 
 _translate = QtCore.QCoreApplication.translate
-
-
-def check_box_state_to_bool(state: int):
-    """
-    Transforms the tristate checkbox state to a bool value.
-
-    :return: True if state was checked, False else
-    """
-
-    return state != 0
 
 
 class PreferenceHandler(QDialog):
@@ -99,7 +89,6 @@ class PreferenceHandler(QDialog):
 
         def __setup_nickname(self):
             nick = self.ui.authorLineEdit
-            nick.setPlaceholderText(_translate("PreferencesView", "Type here to change the nick name"))
             nick.setText(settings.Setting_Custom_General_NICKNAME.value)
 
             def f(new_nickname):
@@ -109,35 +98,30 @@ class PreferenceHandler(QDialog):
             self.connected_elements.append(nick)
 
         def __setup_comments(self):
-            cts = self.ui.kCommentTypes
+            from src.gui.widgets import PreferenceCommentTypesWidget
 
-            cts.addButton().setText(_translate("PreferencesView", "Add"))
-            cts.removeButton().setText(_translate("PreferencesView", "Remove"))
-            cts.upButton().setText(_translate("PreferencesView", "Move Up"))
-            cts.downButton().setText(_translate("PreferencesView", "Move Down"))
-
-            cts_lv: QListView = cts.listView()
-            cts_lv.setEditTriggers(QAbstractItemView.NoEditTriggers)
-
-            cts_lv_le: QLineEdit = cts.lineEdit()
-            cts_lv_le.setPlaceholderText(_translate("PreferencesView", "Type here to add new comment types"))
-            cts.clear()
+            self.ctypes_widget = PreferenceCommentTypesWidget(self.ui.kTypesLineEdit,
+                                                              self.ui.kTypesListWidget,
+                                                              self.ui.kTypesAddButton,
+                                                              self.ui.kTypesRemoveButton,
+                                                              self.ui.kTypesMoveUpButton,
+                                                              self.ui.kTypesMoveDownButton)
 
             for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
-                cts.insertItem(ct)
+                self.ui.kTypesListWidget.addItem(ct)
 
             def f():
-                settings.Setting_Custom_General_COMMENT_TYPES.temporary_value = cts.items()
+                settings.Setting_Custom_General_COMMENT_TYPES.temporary_value = self.ctypes_widget.items()
 
-            cts.changed.connect(lambda fun=f: fun())
-            self.connected_elements.append(cts)
+            self.ctypes_widget.changed.connect(lambda fun=f: fun())
+            self.connected_elements.append(self.ctypes_widget)
 
         def __setup_autosave_checkbox(self):
             chk_box = self.ui.autoSaveEnabledCheckBox_4
             chk_box.setChecked(settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value)
 
             def f(new_state):
-                settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.temporary_value = check_box_state_to_bool(new_state)
+                settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.temporary_value = bool(new_state)
 
             chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
             self.connected_elements.append(chk_box)
@@ -157,8 +141,7 @@ class PreferenceHandler(QDialog):
             chk_box.setChecked(settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value)
 
             def f(n_state):
-                settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.temporary_value = check_box_state_to_bool(
-                    n_state)
+                settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.temporary_value = bool(n_state)
 
             chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
             self.connected_elements.append(chk_box)
@@ -168,8 +151,7 @@ class PreferenceHandler(QDialog):
             chk_box.setChecked(settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.value)
 
             def f(new_state):
-                settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.temporary_value = check_box_state_to_bool(
-                    new_state)
+                settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.temporary_value = bool(new_state)
 
             chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
             self.connected_elements.append(chk_box)
@@ -179,7 +161,6 @@ class PreferenceHandler(QDialog):
             win_box.setCurrentIndex(settings.Setting_Custom_Appearance_General_WINDOW_TITLE.value)
 
             def fun(new_index):
-                print("NEw", new_index)
                 settings.Setting_Custom_Appearance_General_WINDOW_TITLE.temporary_value = new_index
 
             win_box.currentIndexChanged.connect(lambda value, f=fun: f(value))
@@ -273,17 +254,7 @@ class PreferenceHandler(QDialog):
         the focus needs to be removed from the comment type widget.
         """
 
-        cts = self.ui.kCommentTypes
-        ct_list_view: QListView = cts.listView()
-
-        if ct_list_view.selectionModel().selectedIndexes():
-            ct_list_view.clearSelection()
-            edit = cts.lineEdit()
-            edit.setReadOnly(False)
-            edit.setPlaceholderText(_translate("PreferencesView", "Type here to add new comment types"))
-
-            for btn in [cts.addButton(), cts.removeButton(), cts.upButton(), cts.downButton()]:
-                btn.setEnabled(False)
+        self.preference_binder.ctypes_widget.remove_focus()
 
         super().mousePressEvent(mouse_ev)
 
