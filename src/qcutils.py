@@ -23,8 +23,8 @@ from PyQt5.QtCore import QObject, QEvent
 from src import settings
 from src.files import Files
 from src.gui.dialogs import get_save_file_name
-from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentPath, EventPlayerCurrentPath, \
-    PlayerCurrentFile, EventPlayerCurrentFile
+from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentVideoPath, EventPlayerCurrentVideoPath, \
+    PlayerCurrentVideoFile, EventPlayerCurrentVideoFile
 from src.gui.uihandler.main import MainHandler
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
@@ -71,12 +71,12 @@ class QualityCheckWriter:
         self.__video_path = video_path if bool(
             settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value) else ""
 
+        qc_author = "qc author: {}{}".format(self.__nick_name, _LINE_BREAK) if bool(self.__nick_name) else ""
+        video_path = "path: {}{}".format(self.__video_path, _LINE_BREAK) if bool(self.__video_path) else ""
+
         # [DATA]
         self.__comments_joined = _LINE_BREAK.join(map(lambda c: str(c), comments))
         self.__comments_size = len(comments)
-
-        qc_author = "qc author: {}{}".format(self.__nick_name, _LINE_BREAK) if bool(self.__nick_name) else ""
-        video_path = "path: {}{}".format(self.__video_path, _LINE_BREAK) if bool(self.__video_path) else ""
 
         self.__file_content = _QC_TEMPLATE.format(
             self.__date,
@@ -116,9 +116,9 @@ class QualityCheckManager(QObject):
         self.__widget_comments = main_handler.widget_comments
         self.__mpv_player = main_handler.widget_mpv.mpv_player
 
-        self.__path_document: path = None
-        self.__current_path: path = None
-        self.__current_file: path = None
+        self.__current_path_document: path = None
+        self.__current_video_path: path = None
+        self.__current_video_file: path = None
         self.__comments_up_to_date: bool = True
 
     def autosave(self) -> None:
@@ -135,9 +135,9 @@ class QualityCheckManager(QObject):
             as_zip = ZipFile(as_path, "a" if path.isfile(as_path) else "w", compression=ZIP_DEFLATED)
 
             try:
-                file_name = "{}-{}".format(today.replace(":", "-").replace(" ", "_"), self.__current_file)
+                file_name = "{}-{}".format(today.replace(":", "-").replace(" ", "_"), self.__current_video_file)
 
-                quality_check_writer = QualityCheckWriter(video_path=self.__current_path,
+                quality_check_writer = QualityCheckWriter(video_path=self.__current_video_path,
                                                           comments=self.__widget_comments.get_all_comments())
 
                 as_zip.writestr(file_name, quality_check_writer.qc_file_content())
@@ -162,21 +162,21 @@ class QualityCheckManager(QObject):
         :param new_path: The new path
         """
 
-        self.__path_document = new_path
+        self.__current_path_document = new_path
 
     def reset_qc_document_path(self) -> None:
         """
         Will set the current document path to None.
         """
 
-        self.__path_document = None
+        self.__current_path_document = None
 
     def save(self) -> None:
         """
         Will save the current qc with the current path.
         """
 
-        document = self.__path_document
+        document = self.__current_path_document
 
         if bool(document):
             self.__save_with_path(document)
@@ -189,8 +189,8 @@ class QualityCheckManager(QObject):
         """
 
         document = get_save_file_name(
-            self.__current_path, settings.Setting_Custom_General_NICKNAME.value,
-            qc_doc=self.__path_document, parent=self.__main_handler)
+            self.__current_video_path, settings.Setting_Custom_General_NICKNAME.value,
+            qc_doc=self.__current_path_document, parent=self.__main_handler)
 
         if document:
             self.__save_with_path(document)
@@ -202,9 +202,9 @@ class QualityCheckManager(QObject):
         :param path_document: The path to write into
         """
 
-        self.__path_document = path_document
+        self.__current_path_document = path_document
 
-        QualityCheckWriter(self.__current_path, self.__widget_comments.get_all_comments()) \
+        QualityCheckWriter(self.__current_video_path, self.__widget_comments.get_all_comments()) \
             .write_to_disc(path_document)
 
         self.__comments_up_to_date = True
@@ -217,13 +217,13 @@ class QualityCheckManager(QObject):
             ev: EventCommentsUpToDate
             self.__comments_up_to_date = ev.status
 
-        elif ev_type == PlayerCurrentPath:
-            ev: EventPlayerCurrentPath
-            self.__current_path = ev.current_path
+        elif ev_type == PlayerCurrentVideoPath:
+            ev: EventPlayerCurrentVideoPath
+            self.__current_video_path = ev.current_video_path
 
-        elif ev_type == PlayerCurrentFile:
-            ev: EventPlayerCurrentFile
-            self.__current_file = ev.current_file
+        elif ev_type == PlayerCurrentVideoFile:
+            ev: EventPlayerCurrentVideoFile
+            self.__current_video_file = ev.current_video_file
 
 
 class QualityCheckReader:

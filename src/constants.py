@@ -162,6 +162,7 @@ CREDITS = """
 <p>
 """
 
+# todo Maybe scan existing licence instead of hard code it
 LICENCE = """<p style='text-align:center;'>
     GNU GENERAL PUBLIC LICENSE<br>Version 3, 29 June 2007</p>
 <p>

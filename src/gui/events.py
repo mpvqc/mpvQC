@@ -16,19 +16,19 @@ from PyQt5.QtCore import QEvent
 
 ############################################################################ Player Event Types between 1001 - 1050 ###
 
-PlayerTimeChanged \
+PlayerVideoTimeChanged \
     = QEvent.Type(1001)
 
-PlayerRemainingChanged \
+PlayerRemainingVideoTimeChanged \
     = QEvent.Type(1002)
 
 PlayerPercentChanged \
     = QEvent.Type(1003)
 
-PlayerCurrentFile \
+PlayerCurrentVideoFile \
     = QEvent.Type(1004)
 
-PlayerCurrentPath \
+PlayerCurrentVideoPath \
     = QEvent.Type(1005)
 
 ##################################################################### Comment Table Event Types between 1051 - 1070 ###
@@ -43,10 +43,10 @@ CommentsUpToDate \
 #######################################################################################################################
 
 
-class EventPlayerTimeChanged(QEvent):
+class EventPlayerVideoTimeChanged(QEvent):
 
     def __init__(self, current_time: str):
-        super().__init__(PlayerTimeChanged)
+        super().__init__(PlayerVideoTimeChanged)
         self.__current_time: str = current_time
 
     @property
@@ -54,10 +54,10 @@ class EventPlayerTimeChanged(QEvent):
         return self.__current_time
 
 
-class EventPlayerTimeRemainingChanged(QEvent):
+class EventPlayerRemainingVideoTimeChanged(QEvent):
 
     def __init__(self, remaining_time: str):
-        super().__init__(PlayerRemainingChanged)
+        super().__init__(PlayerRemainingVideoTimeChanged)
         self.__remaining_time: str = remaining_time
 
     @property
@@ -76,25 +76,25 @@ class EventPlayerPercentChanged(QEvent):
         return self.__percent
 
 
-class EventPlayerCurrentFile(QEvent):
+class EventPlayerCurrentVideoFile(QEvent):
 
     def __init__(self, current_file):
-        super().__init__(PlayerCurrentFile)
+        super().__init__(PlayerCurrentVideoFile)
         self.__current_file = current_file
 
     @property
-    def current_file(self):
+    def current_video_file(self):
         return self.__current_file
 
 
-class EventPlayerCurrentPath(QEvent):
+class EventPlayerCurrentVideoPath(QEvent):
 
     def __init__(self, current_path):
-        super().__init__(PlayerCurrentPath)
+        super().__init__(PlayerCurrentVideoPath)
         self.__current_path = current_path
 
     @property
-    def current_path(self):
+    def current_video_path(self):
         return self.__current_path
 
 

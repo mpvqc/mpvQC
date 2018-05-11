@@ -22,11 +22,12 @@ from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItem
 
 from src import settings, logging
 from src.files import Files
-from src.gui import delegates, utils
-from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate, TYPEWRITER_FONT
-from src.gui.events import PlayerTimeChanged, EventPlayerTimeChanged, PlayerRemainingChanged, \
-    EventPlayerTimeRemainingChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
+from src.gui import utils
+from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
+from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
+    EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
     CommentsAmountChanged, EventCommentsUpToDate
+from src.gui.globals import TYPEWRITER_FONT
 from src.gui.uihandler.main import MainHandler
 from src.gui.uihandler.preferences import PreferenceHandler
 from src.gui.utils import KEY_MAPPINGS
@@ -72,7 +73,7 @@ class MpvWidget(QFrame):
         self.mpv_player = MpvPlayer(__mpv)
         MpvPropertyObserver(__mpv)
 
-        PreferenceHandler.VERSION_MPV = self.mpv_player.version()
+        PreferenceHandler.VERSION_MPV = self.mpv_player.version_mpv()
         PreferenceHandler.VERSION_FFMPEG = self.mpv_player.ffmpeg_version()
 
     def mouseMoveEvent(self, e: QMouseEvent):
@@ -232,8 +233,6 @@ class CommentsTable(QTableView):
         self.__widget_mpv = main_handler.widget_mpv
         self.__mpv_player = self.__widget_mpv.mpv_player
 
-        self.__scroll_position = 0
-
         # Model
         self.__model = QStandardItemModel(self)
         self.setModel(self.__model)
@@ -317,10 +316,10 @@ class CommentsTable(QTableView):
             time: str = self.__widget_mpv.mpv_player.position_current()
 
         ti = QStandardItem(time)
-        ti.setFont(delegates.TYPEWRITER_FONT)
+        ti.setFont(TYPEWRITER_FONT)
 
         ct = QStandardItem(_translate("CommentTypes", comment_type))
-        ct.setFont(delegates.TYPEWRITER_FONT)
+        ct.setFont(TYPEWRITER_FONT)
 
         note = QStandardItem(comment_text)
 
@@ -406,20 +405,6 @@ class CommentsTable(QTableView):
         if will_change_qc:
             MainHandler.send_event(EventCommentsUpToDate(False))
 
-    def on_before_fullscreen(self) -> None:
-        """
-        Action to invoke before switching to fullscreen.
-        """
-
-        self.__scroll_position = self.verticalScrollBar().value()
-
-    def on_after_fullscreen(self) -> None:
-        """
-        Action to invoke after switching back from fullscreen.
-        """
-
-        self.verticalScrollBar().setValue(self.__scroll_position)
-
     def __on_after_user_changed_time(self) -> None:
         """
         Action to invoke after time was changed manually by the user.
@@ -469,6 +454,7 @@ class CommentsTable(QTableView):
 
 
 class StatusBar(QStatusBar):
+
     class __ClickableQLabel(QLabel):
         """
         A QLabel which listens to left and right click.
@@ -490,7 +476,7 @@ class StatusBar(QStatusBar):
 
     def __init__(self):
         super().__init__()
-        self.__time_format = settings.Setting_Custom_Appearance_StatusBar_TimeMode
+        self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
         # Label and Widget
         def on_current_remaining_time_clicked():
@@ -528,12 +514,12 @@ class StatusBar(QStatusBar):
 
         ev_type = ev.type()
 
-        if ev_type == PlayerTimeChanged:
-            ev: EventPlayerTimeChanged
+        if ev_type == PlayerVideoTimeChanged:
+            ev: EventPlayerVideoTimeChanged
             self.__time_current = ev.time_current
 
-        elif ev_type == PlayerRemainingChanged:
-            ev: EventPlayerTimeRemainingChanged
+        elif ev_type == PlayerRemainingVideoTimeChanged:
+            ev: EventPlayerRemainingVideoTimeChanged
             self.__time_remaining = ev.time_remaining
 
         elif ev_type == PlayerPercentChanged:
@@ -578,99 +564,99 @@ class PreferenceCommentTypesWidget(QObject):
 
         super().__init__()
 
-        self.mode: PreferenceCommentTypesWidget.__Mode = PreferenceCommentTypesWidget.__Mode.ADD
+        self.__mode: PreferenceCommentTypesWidget.__Mode = PreferenceCommentTypesWidget.__Mode.ADD
 
-        self.line_edit = line_edit
-        self.line_edit.textChanged.connect(lambda txt, fun=self.__on_text_changed_line_edit: fun(txt))
+        self.__line_edit = line_edit
+        self.__line_edit.textChanged.connect(lambda txt, fun=self.__on_text_changed_line_edit: fun(txt))
 
-        self.list_widget = list_widget
-        self.list_widget.selectionModel().selectionChanged.connect(
+        self.__list_widget = list_widget
+        self.__list_widget.selectionModel().selectionChanged.connect(
             lambda selected, deselected, fun=self.__on_row_selection_changed: fun(selected, deselected))
 
-        self.button_add = button_add
-        self.button_add.clicked.connect(lambda _, fun=self.__on_pressed_button_add: fun())
+        self.__button_add = button_add
+        self.__button_add.clicked.connect(lambda _, fun=self.__on_pressed_button_add: fun())
 
-        self.button_remove = button_remove
-        self.button_remove.clicked.connect(lambda _, fun=self.__on_pressed_button_remove: fun())
+        self.__button_remove = button_remove
+        self.__button_remove.clicked.connect(lambda _, fun=self.__on_pressed_button_remove: fun())
 
-        self.button_up = button_up
-        self.button_up.clicked.connect(lambda _, fun=self.__on_pressed_button_up: fun())
+        self.__button_up = button_up
+        self.__button_up.clicked.connect(lambda _, fun=self.__on_pressed_button_up: fun())
 
-        self.button_down = button_down
-        self.button_down.clicked.connect(lambda _, fun=self.__on_pressed_button_down: fun())
+        self.__button_down = button_down
+        self.__button_down.clicked.connect(lambda _, fun=self.__on_pressed_button_down: fun())
 
     def __on_text_changed_line_edit(self, text) -> None:
-        if self.mode == PreferenceCommentTypesWidget.__Mode.ADD:
-            self.button_add.setEnabled(bool(text))
+        if self.__mode == PreferenceCommentTypesWidget.__Mode.ADD:
+            self.__button_add.setEnabled(bool(text))
         else:
-            self.list_widget.item(self.__get_selected_row()).setText(self.line_edit.text())
+            self.__list_widget.item(self.__get_selected_row()).setText(self.__line_edit.text())
             self.changed.emit()
 
     def __on_pressed_button_add(self) -> None:
-        self.__add_item(self.line_edit.text())
-        self.line_edit.clear()
-        self.list_widget.selectionModel().clearSelection()
-        self.line_edit.setFocus()
+        self.__add_item(self.__line_edit.text())
+        self.__line_edit.clear()
+        self.__list_widget.selectionModel().clearSelection()
+        self.__line_edit.setFocus()
         self.changed.emit()
 
     def __on_pressed_button_remove(self) -> None:
-        self.list_widget.model().removeRows(self.__get_selected_row(), 1)
-        self.list_widget.selectionModel().clearSelection()
-        self.line_edit.clear()
+        self.__list_widget.model().removeRows(self.__get_selected_row(), 1)
+        self.__list_widget.selectionModel().clearSelection()
+        self.__line_edit.clear()
         self.changed.emit()
 
     def __on_pressed_button_up(self) -> None:
         idx: int = self.__get_selected_row()
-        itm = self.list_widget.takeItem(idx)
-        self.list_widget.insertItem(idx - 1, itm)
-        self.list_widget.setCurrentRow(idx - 1)
+        itm = self.__list_widget.takeItem(idx)
+        self.__list_widget.insertItem(idx - 1, itm)
+        self.__list_widget.setCurrentRow(idx - 1)
 
         self.changed.emit()
 
     def __on_pressed_button_down(self) -> None:
         idx: int = self.__get_selected_row()
-        itm = self.list_widget.takeItem(idx)
-        self.list_widget.insertItem(idx + 1, itm)
-        self.list_widget.setCurrentRow(idx + 1)
+        itm = self.__list_widget.takeItem(idx)
+        self.__list_widget.insertItem(idx + 1, itm)
+        self.__list_widget.setCurrentRow(idx + 1)
 
         self.changed.emit()
 
     def __add_item(self, text) -> None:
         item = QListWidgetItem(text)
         item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-        self.list_widget.insertItem(0, item)
+        self.__list_widget.insertItem(0, item)
 
     def __get_selected_row(self) -> int:
-        return self.list_widget.selectionModel().selectedRows()[0].row()
+        return self.__list_widget.selectionModel().selectedRows()[0].row()
 
     def __get_selected_item(self) -> QListWidgetItem:
-        return self.list_widget.item(self.__get_selected_row())
+        return self.__list_widget.item(self.__get_selected_row())
 
     def __on_row_selection_changed(self, selected: QItemSelection, deselected: QItemSelection) -> None:
         is_valid_selected = bool(selected)
 
         if is_valid_selected:
-            self.mode = PreferenceCommentTypesWidget.__Mode.EDIT
-            self.line_edit.setText(self.__get_selected_item().text())
-            self.line_edit.setFocus()
+            self.__mode = PreferenceCommentTypesWidget.__Mode.EDIT
+            self.__line_edit.setText(self.__get_selected_item().text())
+            self.__line_edit.setFocus()
         else:
-            self.mode = PreferenceCommentTypesWidget.__Mode.ADD
+            self.__mode = PreferenceCommentTypesWidget.__Mode.ADD
 
-        self.button_remove.setEnabled(is_valid_selected)
-        self.button_up.setEnabled(is_valid_selected and selected.indexes()[0].row() != 0)
-        self.button_down.setEnabled(
-            is_valid_selected and selected.indexes()[0].row() != self.list_widget.model().rowCount() - 1)
+        self.__button_remove.setEnabled(is_valid_selected)
+        self.__button_up.setEnabled(is_valid_selected and selected.indexes()[0].row() != 0)
+        self.__button_down.setEnabled(
+            is_valid_selected and selected.indexes()[0].row() != self.__list_widget.model().rowCount() - 1)
 
     def remove_focus(self) -> None:
         """
         Will remove the focus from the line edit.
         """
 
-        if self.list_widget.selectionModel().selectedIndexes():
-            self.list_widget.clearSelection()
-            self.line_edit.clear()
+        if self.__list_widget.selectionModel().selectedIndexes():
+            self.__list_widget.clearSelection()
+            self.__line_edit.clear()
 
-            for btn in [self.button_add, self.button_remove, self.button_up, self.button_down]:
+            for btn in [self.__button_add, self.__button_remove, self.__button_up, self.__button_down]:
                 btn.setEnabled(False)
 
     def items(self) -> List[str]:
@@ -679,8 +665,8 @@ class PreferenceCommentTypesWidget(QObject):
         """
 
         ret_list = []
-        for row in range(0, self.list_widget.count()):
-            content = self.list_widget.item(row).text()
+        for row in range(0, self.__list_widget.count()):
+            content = self.__list_widget.item(row).text()
             ret_list.append(str(content))
 
         return ret_list

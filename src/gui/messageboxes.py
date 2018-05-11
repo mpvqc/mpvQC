@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import QMessageBox
 _translate = QtCore.QCoreApplication.translate
 
 
-class ConfigurationHasChangedQMessageBox(QMessageBox):
+class ConfigurationHasChangedMB(QMessageBox):
     """
     The message box when the user has changed the configuration but is about to discard the changes.
     """
@@ -33,7 +33,7 @@ class ConfigurationHasChangedQMessageBox(QMessageBox):
         self.addButton(_translate("MessageBoxes", "No"), QMessageBox.NoRole)
 
 
-class ConfigurationResetQMessageBox(QMessageBox):
+class ConfigurationResetMB(QMessageBox):
     """
     The message box when the user wants to reset the configuration changes.
     """
@@ -49,7 +49,7 @@ class ConfigurationResetQMessageBox(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Cancel"), QMessageBox.RejectRole)
 
 
-class QuitNotSavedQMessageBox(QMessageBox):
+class QuitNotSavedMB(QMessageBox):
     """
     The message box when the user wants to leave but not all changes were saved.
     """
@@ -64,7 +64,7 @@ class QuitNotSavedQMessageBox(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
 
 
-class NewQCDocumentOldNotSavedQMessageBox(QMessageBox):
+class NewQCDocumentOldNotSavedMB(QMessageBox):
     """
     The message box when the user wants to create a new QC document but the old one is not saved.
     """
@@ -79,7 +79,7 @@ class NewQCDocumentOldNotSavedQMessageBox(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
 
 
-class LoadQCDocumentOldNotSavedQMessageBox(QMessageBox):
+class LoadQCDocumentOldNotSavedMB(QMessageBox):
     """
     The message box when the user wants to open a new QC document but the old one is not saved.
     """
@@ -94,7 +94,7 @@ class LoadQCDocumentOldNotSavedQMessageBox(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
 
 
-class ValidVideoFileFoundQMessageBox(QMessageBox):
+class ValidVideoFileFoundMB(QMessageBox):
     """
     The message box when the user imports a QC document and a valid path was found.
     """
@@ -109,7 +109,7 @@ class ValidVideoFileFoundQMessageBox(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
 
 
-class WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument(QMessageBox):
+class WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB(QMessageBox):
     """
     he message box when the user imports QC documents to ask what to do with the existing comments.
     """
@@ -124,7 +124,7 @@ class WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Nothing"), QMessageBox.NoRole)
 
 
-class QCDocumentToImportNotValidQCDocument(QMessageBox):
+class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
     """
     The message box if the user wants to import a txt file which does not seem to be a valid qc document.
     """

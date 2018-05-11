@@ -12,17 +12,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# todo implement proper logging for the application itself
+from PyQt5.QtGui import QFont
 
+# We can share 1 Font instance across the application
+TYPEWRITER_FONT = QFont("monospace")
+TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
 
-def mpv_log_handler(log_lvl, component, message) -> None:
-    """
-    Defines the log handler for the mpv player.
-
-    :param log_lvl: The log level
-    :param component: The component
-    :param message: The message to log
-    :return:
-    """
-
-    print("[{}] {}: {}".format(log_lvl, component, message))
+# We can share the time format across the application
+TIME_FORMAT = "hh:mm:ss"

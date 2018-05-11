@@ -12,23 +12,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QCoreApplication, QTime
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime
 from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QDateTimeEdit, \
     QAbstractSpinBox, QTimeEdit
 
 from src import settings
-
-TYPEWRITER_FONT = QFont("monospace")
-TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
+from src.gui.globals import TYPEWRITER_FONT, TIME_FORMAT
 
 
 class CommentTypeParentDelegate(QItemDelegate):
     """
     The parent delegate class for providing common actions for all custom delegates.
     """
-
-    TIME_FORMAT = "hh:mm:ss"
 
     def __init__(self, parent, after_edited=None):
         super().__init__(parent)
@@ -55,13 +50,13 @@ class CommentTimeDelegate(CommentTypeParentDelegate):
         dte.setCurrentSection(QDateTimeEdit.HourSection)
         dte.setCalendarPopup(False)
         dte.setCurrentSectionIndex(0)
-        dte.setDisplayFormat(CommentTimeDelegate.TIME_FORMAT)
+        dte.setDisplayFormat(TIME_FORMAT)
         dte.setFont(TYPEWRITER_FONT)
         return dte
 
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         editor: QDateTimeEdit
-        editor.setTime(QTime.fromString(index.model().data(index, Qt.EditRole), CommentTimeDelegate.TIME_FORMAT))
+        editor.setTime(QTime.fromString(index.model().data(index, Qt.EditRole), TIME_FORMAT))
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         editor: QDateTimeEdit

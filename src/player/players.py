@@ -17,7 +17,7 @@ from os import path
 
 from PyQt5.QtCore import QTime
 
-from src.gui.delegates import CommentTypeParentDelegate
+from src.gui.globals import TIME_FORMAT
 from src.player.bindings import MPV
 
 
@@ -40,7 +40,7 @@ class MpvPlayer:
         self.__mpv = mpv_player
         self.pause()
 
-        self.__time_format_string = CommentTypeParentDelegate.TIME_FORMAT
+        self.__time_format_string = TIME_FORMAT
 
     def add_sub_files(self, sub_file: path) -> None:
         """
@@ -205,7 +205,7 @@ class MpvPlayer:
             return int(self.__mpv.width)
         return 0
 
-    def version(self) -> str:
+    def version_mpv(self) -> str:
         """
         Returns the underlying version
 

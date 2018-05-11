@@ -21,10 +21,10 @@ import sys
 from os import path
 from typing import Tuple
 
-# The languages to translate into
 import polib
 
-languages: Tuple[str] = ("de", "en")
+# The languages to translate into
+_LANGUAGES: Tuple[str] = ("de", "en")
 
 _WORKFLOW = \
     """ Make sure the project has the following skeleton:
@@ -72,10 +72,10 @@ _HELP_TEXT = \
 _THIS_SCRIPT_LOCATION = os.path.dirname(os.path.realpath(sys.argv[0]))
 
 _TOOLS = (
-    "pyuic5",  # Should be installed if qt designer is installed
-    "pylupdate5",  # Should be installed if qt designer is installed
-    "lrelease",  # Should be installed if qt designer is installed
-    "ts2po",  # Found it on github
+    ("pyuic5", "Should be installed if qt designer is installed."),
+    ("pylupdate5", "Should be installed if qt designer is installed."),
+    ("lrelease", "Should be installed if qt designer is installed."),
+    ("ts2po", "Github: https://github.com/translate/translate"),
 )
 
 
@@ -99,9 +99,9 @@ class Directory:
         self.src = os.path.join(self.script_location, "src")
         self.src_gui = os.path.join(self.src, "gui", "generated")
         to_bash("This src gui will be " + self.src_gui, lvl=0)
-        self.locale_dirs = [os.path.join(self.script_location, *self.structure).format(l) for l in languages]
+        self.locale_dirs = [os.path.join(self.script_location, *self.structure).format(l) for l in _LANGUAGES]
         to_bash("Locale directories will be ", lvl=0)
-        for l in languages:
+        for l in _LANGUAGES:
             to_bash("- " + l, lvl=1)
 
     def create_dirs(self):
@@ -164,9 +164,9 @@ def tools_available() -> bool:
     passed: bool = True
 
     for tool in _TOOLS:
-        if shutil.which(tool) is None:
+        if shutil.which(tool[0]) is None:
             passed = False
-            print("Tool '{}' is missing ...".format(tool))
+            print("Tool '{}' is missing ...\n\t{}".format(*tool))
 
     return passed
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
                 t.py_to_ts()
             elif job == "-f":
                 d = Directory(_THIS_SCRIPT_LOCATION)
-                # d.create_dirs()
+                d.create_dirs()
 
                 t = Transformer(d)
                 t.ts_to_qm()

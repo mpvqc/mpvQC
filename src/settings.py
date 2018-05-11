@@ -157,6 +157,10 @@ class CommentTypesEntry(Entry):
 Setting_Internal_PLAYER_LAST_PLAYED_DIR = \
     Entry("internal_player_last_played_dir", "")
 
+Setting_Internal_STATUS_BAR_TIME_MODE = \
+    Entry("internal_status_bar_current_time", True)
+"""True: Current Time; False: Remaining Time"""
+
 ############################################################################## PREFERENCES -> GENERAL ### CUSTOMIZATION
 
 Setting_Custom_General_NICKNAME = \
@@ -199,13 +203,11 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
     Entry("custom_appearance_general_window_title_nothing_name_full", 0)
 """0: Default Window Title; 1: Current File name only; 2: Full path"""
 
-Setting_Custom_Appearance_StatusBar_TimeMode = \
-    Entry("custom_appearance_statusbar_current_time", True)
-"""True: Current Time; False: Remaining Time"""
-
 #######################################################################################################################
 SettingJson = (
     Setting_Internal_PLAYER_LAST_PLAYED_DIR,
+    Setting_Internal_STATUS_BAR_TIME_MODE,
+
     Setting_Custom_General_NICKNAME,
     Setting_Custom_General_COMMENT_TYPES,
     Setting_Custom_Language_LANGUAGE,
@@ -213,9 +215,7 @@ SettingJson = (
     Setting_Custom_QcDocument_AUTOSAVE_INTERVAL,
     Setting_Custom_QcDocument_WRITE_NICK_TO_FILE,
     Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE,
-
-    Setting_Custom_Appearance_General_WINDOW_TITLE,
-    Setting_Custom_Appearance_StatusBar_TimeMode
+    Setting_Custom_Appearance_General_WINDOW_TITLE
 )
 
 SettingConfs = (

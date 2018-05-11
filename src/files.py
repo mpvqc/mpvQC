@@ -26,8 +26,8 @@ except NameError:
 
 class Files:
 
-    # todo rewrite and get rid of class since it's not boilerplate java :)
-    # Maybe use QT's internal settings API to store user settings
+    # todo rewrite and get rid of this class since it's not boilerplate java :)
+    # todo Maybe use QT's internal settings API to store user settings
 
     __NAME_FOLDER_CONFIGURATION = "configuration"
     __NAME_FOLDER_AUTOSAVE = "autosave"
@@ -51,7 +51,7 @@ class Files:
     @staticmethod
     def require_folder_structure() -> None:
         """
-        Will setup all non existing folders and files.
+        Will setup all non existing folders. Files will be created in the settings.py.
         """
 
         from start import APPLICATION_NAME, DIRECTORY_PROGRAM

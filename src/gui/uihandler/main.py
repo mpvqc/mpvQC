@@ -23,11 +23,11 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle
 
 from src import settings
 from src.gui.dialogs import get_open_file_name, get_open_file_names, get_open_network_stream
-from src.gui.events import EventPlayerCurrentFile, PlayerCurrentFile, PlayerCurrentPath, EventPlayerCurrentPath
+from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, EventPlayerCurrentVideoPath
 from src.gui.generated.main import Ui_MainPlayerView
-from src.gui.messageboxes import QuitNotSavedQMessageBox, NewQCDocumentOldNotSavedQMessageBox, \
-    LoadQCDocumentOldNotSavedQMessageBox, ValidVideoFileFoundQMessageBox, \
-    WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument, QCDocumentToImportNotValidQCDocument
+from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
+    LoadQCDocumentOldNotSavedMB, ValidVideoFileFoundMB, \
+    WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB, QCDocumentToImportNotValidQCDocumentMB
 
 _translate = QCoreApplication.translate
 
@@ -39,7 +39,7 @@ _DROPABLE_SUBS = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "sm
 _DROPABLE_VIDS = ("mp4", "mkv", "avi")
 
 # All custom event receivers will be added to this list
-CustomEventReceiver = []
+_CustomEventReceiver = []
 
 
 # noinspection PyMethodMayBeStatic
@@ -51,8 +51,8 @@ class MainHandler(QMainWindow):
         self.setAcceptDrops(True)
 
         # User interface setup
-        self.ui = Ui_MainPlayerView()
-        self.ui.setupUi(self)
+        self.__ui = Ui_MainPlayerView()
+        self.__ui.setupUi(self)
         self.__setup_menu_bar()
 
         # Translator
@@ -70,7 +70,7 @@ class MainHandler(QMainWindow):
         self.__player = self.widget_mpv.mpv_player
         self.__qc_manager = QualityCheckManager(self)
 
-        CustomEventReceiver.extend([
+        _CustomEventReceiver.extend([
             self,
             self.widget_mpv,
             self.widget_comments,
@@ -80,16 +80,17 @@ class MainHandler(QMainWindow):
         ])
 
         self.setStatusBar(self.__widget_status_bar)
-        self.ui.splitter.insertWidget(0, self.widget_comments)
-        self.ui.splitter.insertWidget(0, self.widget_mpv)
+        self.__ui.splitter.insertWidget(0, self.widget_comments)
+        self.__ui.splitter.insertWidget(0, self.widget_mpv)
 
         # Class variables
         self.__current_geometry: QByteArray = None
+        self.__current_video_file = ""
+        self.__current_video_path = ""
+        self.__comment_types_scroll_position = 0
         self.__menubar_height = None
-        self.__current_file = ""
-        self.__current_path = ""
 
-        # Timer which binds 2 class variables
+        # Timer updating the window title
         self.__window_title_update_timer = QTimer()
         self.__window_title_update_timer.timeout.connect(self.__update_window_title)
         self.__window_title_update_timer.start(1000)
@@ -98,13 +99,13 @@ class MainHandler(QMainWindow):
         self.__autosave_interval_timer: QTimer = None
         self.__reload_autosave_settings()
 
-        self.ui.splitter.setSizes([400, 20])
+        self.__ui.splitter.setSizes([400, 20])
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
         Will display the mouse cursor.
 
-        :param display: True if display mouse cursor, False if hide mouse cursor
+        :param display: True if display mouse cursor, False if hide mouse cursor.
         """
 
         if display:
@@ -140,11 +141,11 @@ class MainHandler(QMainWindow):
 
         self.widget_comments.show()
         self.__widget_status_bar.show()
-        self.ui.menuBar.setMaximumHeight(self.__menubar_height)
+        self.__ui.menuBar.setMaximumHeight(self.__menubar_height)
         self.display_mouse_cursor(display=True)
 
         self.restoreGeometry(self.__current_geometry)
-        self.widget_comments.on_after_fullscreen()
+        self.widget_comments.verticalScrollBar().setValue(self.__comment_types_scroll_position)
 
     def __reload_autosave_settings(self) -> None:
 
@@ -169,12 +170,13 @@ class MainHandler(QMainWindow):
 
         self.__current_geometry: QByteArray = self.saveGeometry()
         self.__menubar_height = self.menuBar().height()
-        self.widget_comments.on_before_fullscreen()
 
+        self.__comment_types_scroll_position = self.widget_comments.verticalScrollBar().value()
         self.widget_comments.hide()
         self.__widget_status_bar.hide()
+
         # Needed because otherwise no shortcuts would work in fullscreen mode
-        self.ui.menuBar.setMaximumHeight(0)
+        self.__ui.menuBar.setMaximumHeight(0)
         self.display_mouse_cursor(display=True)
 
         self.showFullScreen()
@@ -184,21 +186,21 @@ class MainHandler(QMainWindow):
         Binds the menubar to the corresponding actions.
         """
 
-        self.ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.__action_new_qc_document: f())
-        self.ui.action_Open_QC_Document.triggered.connect(lambda c, f=self.__action_open_qc_document: f())
-        self.ui.action_Save_QC_Document.triggered.connect(lambda c, f=self.__action_save_qc_document: f())
-        self.ui.actionS_ave_QC_Document_As.triggered.connect(lambda c, f=self.__action_save_qc_document_as: f())
-        self.ui.action_Exit_mpvQC.triggered.connect(lambda c, f=self.__action_close: f())
+        self.__ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.__action_new_qc_document: f())
+        self.__ui.action_Open_QC_Document.triggered.connect(lambda c, f=self.__action_open_qc_document: f())
+        self.__ui.action_Save_QC_Document.triggered.connect(lambda c, f=self.__action_save_qc_document: f())
+        self.__ui.actionS_ave_QC_Document_As.triggered.connect(lambda c, f=self.__action_save_qc_document_as: f())
+        self.__ui.action_Exit_mpvQC.triggered.connect(lambda c, f=self.__action_close: f())
 
-        self.ui.action_Open_Video_File.triggered.connect(lambda c, f=self.__action_open_video: f())
-        self.ui.actionOpen_Network_Stream.triggered.connect(lambda c, f=self.__action_open_network_stream: f())
-        self.ui.action_Resize_Video_To_Its_Original_Resolutio.triggered.connect(
+        self.__ui.action_Open_Video_File.triggered.connect(lambda c, f=self.__action_open_video: f())
+        self.__ui.actionOpen_Network_Stream.triggered.connect(lambda c, f=self.__action_open_network_stream: f())
+        self.__ui.action_Resize_Video_To_Its_Original_Resolutio.triggered.connect(
             lambda c, f=self.__action_resize_video: f())
 
-        self.ui.action_Settings.triggered.connect(lambda c, f=self.__action_open_settings: f())
-        self.ui.action_Check_For_Updates.triggered.connect(lambda c, f=self.__action_check_for_update: f())
-        self.ui.actionAbout_Qt.triggered.connect(lambda c, f=self.__action_open_about_qt: f())
-        self.ui.actionAbout_mpvqc.triggered.connect(lambda c, f=self.__action_open_about_mpvqc: f())
+        self.__ui.action_Settings.triggered.connect(lambda c, f=self.__action_open_settings: f())
+        self.__ui.action_Check_For_Updates.triggered.connect(lambda c, f=self.__action_check_for_update: f())
+        self.__ui.actionAbout_Qt.triggered.connect(lambda c, f=self.__action_open_about_qt: f())
+        self.__ui.actionAbout_mpvqc.triggered.connect(lambda c, f=self.__action_open_about_mpvqc: f())
 
     def __update_window_title(self) -> None:
         """
@@ -207,10 +209,10 @@ class MainHandler(QMainWindow):
 
         value = settings.Setting_Custom_Appearance_General_WINDOW_TITLE.value
 
-        if value == 2 and self.__current_path:
-            txt = self.__current_path
-        elif value == 1 and self.__current_file:
-            txt = self.__current_file
+        if value == 2 and self.__current_video_path:
+            txt = self.__current_video_path
+        elif value == 1 and self.__current_video_file:
+            txt = self.__current_video_file
         else:
             txt = _translate("MainPlayerView", "MainWindow")
 
@@ -245,7 +247,7 @@ class MainHandler(QMainWindow):
             self.__translator.load("ui_trans", _locale_structure.format("en"))
 
         self.application.installTranslator(self.__translator)
-        self.ui.retranslateUi(self)
+        self.__ui.retranslateUi(self)
         settings.Setting_Custom_General_COMMENT_TYPES.update()
 
     def __action_new_qc_document(self) -> None:
@@ -255,7 +257,7 @@ class MainHandler(QMainWindow):
             self.__qc_manager.reset_qc_document_path()
 
         if self.__qc_manager.should_save():
-            if NewQCDocumentOldNotSavedQMessageBox().exec_():
+            if NewQCDocumentOldNotSavedMB().exec_():
                 new_qc_document()
         else:
             new_qc_document()
@@ -269,7 +271,7 @@ class MainHandler(QMainWindow):
                 self.__open_qc_txt_files(qc_docs)
 
         if self.__qc_manager.should_save():
-            if LoadQCDocumentOldNotSavedQMessageBox().exec_():
+            if LoadQCDocumentOldNotSavedMB().exec_():
                 get_qc_docs()
         else:
             get_qc_docs()
@@ -287,7 +289,7 @@ class MainHandler(QMainWindow):
         wid_comments = self.widget_comments
 
         if wid_comments.get_all_comments():
-            if not WhatToDoWithExistingCommentsInTableWhenOpeningNewQCDocument().exec_():
+            if not WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB().exec_():
                 wid_comments.reset_comments_table()
 
         for qc_doc in file_list:
@@ -307,10 +309,10 @@ class MainHandler(QMainWindow):
                             self.__qc_manager.update_path_qc_document_to(qc_doc)
 
                         if video_path and path.isfile(video_path) \
-                                and ask_to_open_found_vid and ValidVideoFileFoundQMessageBox().exec_():
+                                and ask_to_open_found_vid and ValidVideoFileFoundMB().exec_():
                             self.__action_open_video(video_path)
                 else:
-                    QCDocumentToImportNotValidQCDocument(qc_doc).exec_()
+                    QCDocumentToImportNotValidQCDocumentMB(qc_doc).exec_()
 
         if amount >= 2:
             self.__qc_manager.reset_qc_document_path()
@@ -329,7 +331,7 @@ class MainHandler(QMainWindow):
         """
 
         self.display_normal()
-        self.close()
+        self.closeEvent(QCloseEvent())
 
     def __action_open_video(self, file: path = None) -> None:
 
@@ -355,24 +357,22 @@ class MainHandler(QMainWindow):
         if self.isFullScreen() or self.isMaximized() or not self.__player.is_video_loaded():
             return
 
-        def __resize():
-            # DA FUQ!
-            # Have not found a better way .. :/
-            for i in range(0, 5):
-                try:
-                    width = self.__player.video_width()
-                    height = self.__player.video_height()
+        # DA FUQ!
+        # Have not found a better way .. :/
+        for i in range(0, 5):
+            try:
+                width = self.__player.video_width()
+                height = self.__player.video_height()
 
-                    if width and height:
-                        additional_mb = self.menuBar().height()
-                        additional_ct = self.widget_comments.height()
-                        additional_sb = self.statusBar().height()
+                if width and height:
+                    additional_mb = self.menuBar().height()
+                    additional_ct = self.widget_comments.height()
+                    additional_sb = self.statusBar().height()
 
-                        self.resize(width, height + additional_mb + additional_sb + additional_ct + 2)
-                except TypeError:
-                    return
+                    self.resize(width, height + additional_mb + additional_sb + additional_ct + 1)
+            except TypeError:
+                return
 
-        __resize()
         self.__move_window_to_center()
 
     def __action_open_settings(self, display_about=False) -> None:
@@ -416,7 +416,7 @@ class MainHandler(QMainWindow):
 
         if self.__qc_manager.should_save():
             self.__player.pause()
-            if QuitNotSavedQMessageBox().exec_():
+            if QuitNotSavedMB().exec_():
                 self.close()
             else:
                 cev.ignore()
@@ -466,13 +466,13 @@ class MainHandler(QMainWindow):
 
         ev_type = ev.type()
 
-        if ev_type == PlayerCurrentFile:
-            ev: EventPlayerCurrentFile
-            self.__current_file = ev.current_file
+        if ev_type == PlayerCurrentVideoFile:
+            ev: EventPlayerCurrentVideoFile
+            self.__current_video_file = ev.current_video_file
 
-        elif ev_type == PlayerCurrentPath:
-            ev: EventPlayerCurrentPath
-            self.__current_path = ev.current_path
+        elif ev_type == PlayerCurrentVideoPath:
+            ev: EventPlayerCurrentVideoPath
+            self.__current_video_path = ev.current_video_path
 
     @staticmethod
     def send_event(event: QEvent) -> None:
@@ -482,5 +482,5 @@ class MainHandler(QMainWindow):
         :param event: The event to send to all other receivers
         """
 
-        for rec in CustomEventReceiver:
+        for rec in _CustomEventReceiver:
             QApplication.sendEvent(rec, event)

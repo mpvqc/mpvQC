@@ -12,8 +12,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from src.gui.events import EventPlayerTimeChanged, EventPlayerTimeRemainingChanged, EventPlayerPercentChanged, \
-    EventPlayerCurrentFile, EventPlayerCurrentPath
+from src.gui.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
+    EventPlayerCurrentVideoFile, EventPlayerCurrentVideoPath
 from src.player.bindings import MPV
 
 _TIME_TEMPLATE = "{}{:02d}:{:02d}"
@@ -34,24 +34,24 @@ class MpvPropertyObserver:
         def observe_time_pos(__, value):
             if value:
                 MainHandler.send_event(
-                    EventPlayerTimeChanged(MpvPropertyObserver.__seconds_float_to_formatted_string_hours(value)))
+                    EventPlayerVideoTimeChanged(MpvPropertyObserver.__seconds_float_to_formatted_string_hours(value)))
 
         @mpv.property_observer('time-remaining')
         def observe_time_remaining(__, value):
             if value:
                 MainHandler.send_event(
-                    EventPlayerTimeRemainingChanged(
+                    EventPlayerRemainingVideoTimeChanged(
                         MpvPropertyObserver.__seconds_float_to_formatted_string_hours(value)))
 
         @mpv.property_observer('filename/no-ext')
         def observe_filename(__, value):
             if value:
-                MainHandler.send_event(EventPlayerCurrentFile(value))
+                MainHandler.send_event(EventPlayerCurrentVideoFile(value))
 
         @mpv.property_observer('path')
         def observe_full_path(__, value):
             if value:
-                MainHandler.send_event(EventPlayerCurrentPath(value))
+                MainHandler.send_event(EventPlayerCurrentVideoPath(value))
 
     @staticmethod
     def __seconds_float_to_formatted_string_hours(seconds: float) -> str:
@@ -65,6 +65,6 @@ class MpvPropertyObserver:
         int_val = int(seconds)
         m, s = divmod(int_val, 60)
         h, m = divmod(m, 60)
-        h = "{:02d}:".format(h) if h != 0 else ""
+        h = "{:02d}:".format(h) if h else ""
 
         return _TIME_TEMPLATE.format(h, m, s)
