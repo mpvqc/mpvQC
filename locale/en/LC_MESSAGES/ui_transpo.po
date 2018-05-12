@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-11 12:38+0200\n"
+"POT-Creation-Date: 2018-05-12 20:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,27 +54,35 @@ msgid "Open Video File"
 msgstr ""
 
 #: Dialogs%232
-msgid "Video files (*.mkv *.mp4);;All files (*.*)"
-msgstr ""
-
-#: Dialogs%233
 msgid "Open QC Document"
 msgstr ""
 
-#: Dialogs%234
+#: Dialogs%233
 msgid "QC documents (*.txt);;All files (*.*)"
 msgstr ""
 
-#: Dialogs%235
+#: Dialogs%234
 msgid "Save QC document as"
 msgstr ""
 
-#: Dialogs%236
+#: Dialogs%235
 msgid "Open network stream"
 msgstr ""
 
-#: Dialogs%237
+#: Dialogs%236
 msgid "Enter URL"
+msgstr ""
+
+#: Dialogs%237
+msgid "Video files"
+msgstr ""
+
+#: Dialogs%238
+msgid "All files"
+msgstr ""
+
+#: Dialogs%239
+msgid "Subtitle files"
 msgstr ""
 
 #: MainPlayerView%231
@@ -181,6 +189,10 @@ msgstr ""
 msgid "Ctrl+Alt+S"
 msgstr ""
 
+#: MainPlayerView%2327
+msgid "Open subtitle ..."
+msgstr ""
+
 #: MessageBoxes%231
 msgid "Your configuration has changed."
 msgstr ""
@@ -275,6 +287,16 @@ msgstr ""
 
 #: MessageBoxes%2323
 msgid " does not seem to be a QC document file."
+msgstr ""
+
+#: MessageBoxes%2324
+msgid ""
+"There is no video loaded currently. Load a video before you add a subtitle "
+"file."
+msgstr ""
+
+#: MessageBoxes%2325
+msgid "No video loaded"
 msgstr ""
 
 #: PreferencesView%231

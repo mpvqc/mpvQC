@@ -20,3 +20,10 @@ TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
 
 # We can share the time format across the application
 TIME_FORMAT = "hh:mm:ss"
+
+# Extensions for subtitle files via drag and drop
+SUPPORTED_SUB_FILES = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
+                       "mks", "vtt", "sub", "scc")
+
+# Extension for video files via drag and drop
+SUPPORTED_VIDEO_FILES = ("mp4", "mkv", "avi")

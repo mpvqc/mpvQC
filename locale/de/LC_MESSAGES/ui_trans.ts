@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="de" sourcelanguage="en">
+<TS version="2.1" language="de" sourcelanguage="en">
 <context>
     <name>CommentTypes</name>
     <message>
@@ -44,7 +44,7 @@
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="199"/>
+        <location filename="../../../src/gui/widgets.py" line="200"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
     </message>
@@ -52,172 +52,192 @@
 <context>
     <name>Dialogs</name>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="36"/>
+        <location filename="../../../src/gui/dialogs.py" line="64"/>
         <source>Open Video File</source>
         <translation>Videodatei öffnen</translation>
     </message>
     <message>
         <location filename="../../../src/gui/dialogs.py" line="36"/>
         <source>Video files (*.mkv *.mp4);;All files (*.*)</source>
-        <translation>Videodateien (*.mkv *.mp4);;Alle Dateien (*.*)</translation>
+        <translation type="obsolete">Videodateien (*.mkv *.mp4);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="53"/>
+        <location filename="../../../src/gui/dialogs.py" line="81"/>
         <source>Open QC Document</source>
         <translation>QC Dokument öffnen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="87"/>
+        <location filename="../../../src/gui/dialogs.py" line="115"/>
         <source>QC documents (*.txt);;All files (*.*)</source>
         <translation>QC Dokumente (*.txt);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="87"/>
+        <location filename="../../../src/gui/dialogs.py" line="115"/>
         <source>Save QC document as</source>
         <translation>QC Dokument speichern als</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="103"/>
+        <location filename="../../../src/gui/dialogs.py" line="131"/>
         <source>Open network stream</source>
         <translation>Netzwerkstream öffnen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="103"/>
+        <location filename="../../../src/gui/dialogs.py" line="131"/>
         <source>Enter URL</source>
         <translation>URL eingeben</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/dialogs.py" line="41"/>
+        <source>Video files</source>
+        <translation>Videodateien</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/dialogs.py" line="62"/>
+        <source>All files</source>
+        <translation>Alle Dateien</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/dialogs.py" line="61"/>
+        <source>Subtitle files</source>
+        <translation>Untertiteldateien</translation>
     </message>
 </context>
 <context>
     <name>MainPlayerView</name>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="111"/>
+        <location filename="../../../src/gui/generated/main.py" line="117"/>
         <source>MainWindow</source>
         <translation>MPV QC</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="112"/>
+        <location filename="../../../src/gui/generated/main.py" line="118"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="113"/>
+        <location filename="../../../src/gui/generated/main.py" line="119"/>
         <source>Vi&amp;deo</source>
         <translation>&amp;Video</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="114"/>
+        <location filename="../../../src/gui/generated/main.py" line="120"/>
         <source>Optio&amp;ns</source>
         <translation>&amp;Optionen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="115"/>
+        <location filename="../../../src/gui/generated/main.py" line="121"/>
         <source>Abo&amp;ut</source>
         <translation>&amp;Über</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="116"/>
+        <location filename="../../../src/gui/generated/main.py" line="122"/>
         <source>&amp;New QC document</source>
         <translation>&amp;Neues QC Dokument</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="117"/>
+        <location filename="../../../src/gui/generated/main.py" line="123"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="118"/>
+        <location filename="../../../src/gui/generated/main.py" line="124"/>
         <source>&amp;Open QC document(s) ...</source>
         <translation>&amp;QC Dokument(e) öffnen ...</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="119"/>
+        <location filename="../../../src/gui/generated/main.py" line="125"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="120"/>
+        <location filename="../../../src/gui/generated/main.py" line="126"/>
         <source>&amp;Save QC document</source>
         <translation>QC Dokumente &amp;speichern</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="121"/>
+        <location filename="../../../src/gui/generated/main.py" line="127"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="122"/>
+        <location filename="../../../src/gui/generated/main.py" line="128"/>
         <source>S&amp;ave QC document as ...</source>
         <translation>QC Dokumente speichern &amp;als ...</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="123"/>
+        <location filename="../../../src/gui/generated/main.py" line="129"/>
         <source>Ctrl+Shift+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="124"/>
+        <location filename="../../../src/gui/generated/main.py" line="130"/>
         <source>&amp;Exit mpvQC</source>
         <translation>MPV QC b&amp;eenden</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="125"/>
+        <location filename="../../../src/gui/generated/main.py" line="131"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="126"/>
+        <location filename="../../../src/gui/generated/main.py" line="132"/>
         <source>Open &amp;video ...</source>
         <translation>&amp;Video öffnen ...</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="127"/>
+        <location filename="../../../src/gui/generated/main.py" line="133"/>
         <source>Ctrl+Shift+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="128"/>
+        <location filename="../../../src/gui/generated/main.py" line="134"/>
         <source>Open &amp;network stream ...</source>
         <translation>&amp;Netzwerkstream öffnen ...</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="129"/>
+        <location filename="../../../src/gui/generated/main.py" line="135"/>
         <source>Ctrl+Alt+Shift+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="130"/>
+        <location filename="../../../src/gui/generated/main.py" line="136"/>
         <source>&amp;Resize video to original resolution</source>
         <translation>Video auf Originalgröße &amp;skalieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="131"/>
+        <location filename="../../../src/gui/generated/main.py" line="137"/>
         <source>Ctrl+R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="132"/>
+        <location filename="../../../src/gui/generated/main.py" line="138"/>
         <source>&amp;Check For Updates ...</source>
         <translation>Auf &amp;Updates prüfen ...</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="133"/>
+        <location filename="../../../src/gui/generated/main.py" line="139"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="134"/>
+        <location filename="../../../src/gui/generated/main.py" line="140"/>
         <source>About &amp;mpvQC</source>
         <translation>Über &amp;MPV QC</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="135"/>
+        <location filename="../../../src/gui/generated/main.py" line="141"/>
         <source>&amp;Settings</source>
         <translation>&amp;Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="136"/>
+        <location filename="../../../src/gui/generated/main.py" line="142"/>
         <source>Ctrl+Alt+S</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/generated/main.py" line="143"/>
+        <source>Open subtitle ...</source>
+        <translation>Untertitel öffnen ...</translation>
     </message>
 </context>
 <context>
@@ -328,7 +348,7 @@
         <translation>Kein QC Dokument</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="138"/>
+        <location filename="../../../src/gui/messageboxes.py" line="148"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -336,6 +356,16 @@
         <location filename="../../../src/gui/messageboxes.py" line="134"/>
         <source> does not seem to be a QC document file.</source>
         <translation> scheint kein QC Dokument zu sein.</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/messageboxes.py" line="144"/>
+        <source>There is no video loaded currently. Load a video before you add a subtitle file.</source>
+        <translation>Es ist kein Video geladen. Öffnen Sie ein Video und laden Sie erst dann die Untertiteldatei.</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/messageboxes.py" line="147"/>
+        <source>No video loaded</source>
+        <translation>Kein Video geladen</translation>
     </message>
 </context>
 <context>

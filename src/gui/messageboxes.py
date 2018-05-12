@@ -136,3 +136,13 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
         self.setIcon(QMessageBox.Information)
         self.setWindowTitle(_translate("MessageBoxes", "Not a QC document"))
         self.addButton(_translate("MessageBoxes", "Ok"), QMessageBox.AcceptRole)
+
+
+class SubtitlesCanNotBeAddedToNoVideo(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setText(_translate("MessageBoxes",
+                                "There is no video loaded currently. Load a video before you add a subtitle file."))
+        self.setIcon(QMessageBox.Information)
+        self.setWindowTitle(_translate("MessageBoxes", "No video loaded"))
+        self.addButton(_translate("MessageBoxes", "Ok"), QMessageBox.AcceptRole)

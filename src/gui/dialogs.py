@@ -14,17 +14,22 @@
 
 import sys
 from os import path
+from typing import List
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
-_translate = QtCore.QCoreApplication.translate
+from src.gui.globals import SUPPORTED_VIDEO_FILES, SUPPORTED_SUB_FILES
 
+_translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
+_FILTER_VIDEO = " ".join(["*." + x for x in SUPPORTED_VIDEO_FILES])
+_FILTER_SUBS = " ".join(["*." + x for x in SUPPORTED_SUB_FILES])
 
-def get_open_file_name(directory, parent=None) -> path or None:
+
+def get_open_video(directory, parent=None) -> path or None:
     """
     Will open a dialog to select a video to open.
 
@@ -33,11 +38,34 @@ def get_open_file_name(directory, parent=None) -> path or None:
     :return: the selected file or None if abort
     """
 
+    file_filter = _translate("Dialogs", "Video files") + " ({});;".format(_FILTER_VIDEO) + \
+                  _translate("Dialogs", "All files") + " (*.*)"
+
     return QFileDialog.getOpenFileName(
         parent=parent,
         caption=_translate("Dialogs", "Open Video File"),
         directory=directory,
-        filter=_translate("Dialogs", "Video files (*.mkv *.mp4);;All files (*.*)")
+        filter=file_filter
+    )[0]
+
+
+def get_open_subs(directory, parent=None) -> List[str] or None:
+    """
+    Will open a dialog to select subtitles to open.
+
+    :param directory: The directory to open initially
+    :param parent: The parent window
+    :return: the selected file or None if abort
+    """
+
+    file_filter = _translate("Dialogs", "Subtitle files") + " ({});;".format(_FILTER_SUBS) + \
+                  _translate("Dialogs", "All files") + " (*.*)"
+
+    return QFileDialog.getOpenFileNames(
+        parent=parent,
+        caption=_translate("Dialogs", "Open Subtitle File"),
+        directory=directory,
+        filter=file_filter
     )[0]
 
 

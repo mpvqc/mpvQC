@@ -22,21 +22,17 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle
 
 from src import settings
-from src.gui.dialogs import get_open_file_name, get_open_file_names, get_open_network_stream
-from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, EventPlayerCurrentVideoPath
+from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
+from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
+    EventPlayerCurrentVideoPath
 from src.gui.generated.main import Ui_MainPlayerView
+from src.gui.globals import SUPPORTED_SUB_FILES, SUPPORTED_VIDEO_FILES
 from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
     LoadQCDocumentOldNotSavedMB, ValidVideoFileFoundMB, \
-    WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB, QCDocumentToImportNotValidQCDocumentMB
+    WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB, QCDocumentToImportNotValidQCDocumentMB, \
+    SubtitlesCanNotBeAddedToNoVideo
 
 _translate = QCoreApplication.translate
-
-# Extensions for subtitle files via drag and drop
-_DROPABLE_SUBS = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
-                  "mks", "vtt", "sub", "scc")
-
-# Extension for video files via drag and drop
-_DROPABLE_VIDS = ("mp4", "mkv", "avi")
 
 # All custom event receivers will be added to this list
 _CustomEventReceiver = []
@@ -193,6 +189,7 @@ class MainHandler(QMainWindow):
         self.__ui.action_Exit_mpvQC.triggered.connect(lambda c, f=self.__action_close: f())
 
         self.__ui.action_Open_Video_File.triggered.connect(lambda c, f=self.__action_open_video: f())
+        self.__ui.actionOpen_subtitle.triggered.connect(lambda c, f=self.__action_open_subtitles: f())
         self.__ui.actionOpen_Network_Stream.triggered.connect(lambda c, f=self.__action_open_network_stream: f())
         self.__ui.action_Resize_Video_To_Its_Original_Resolutio.triggered.connect(
             lambda c, f=self.__action_resize_video: f())
@@ -336,14 +333,25 @@ class MainHandler(QMainWindow):
     def __action_open_video(self, file: path = None) -> None:
 
         if file is None:
-            file = get_open_file_name(
-                directory=settings.Setting_Internal_PLAYER_LAST_PLAYED_DIR.value,
+            file = get_open_video(
+                directory=settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value,
                 parent=self)
 
         if path.isfile(file):
-            settings.Setting_Internal_PLAYER_LAST_PLAYED_DIR.value = path.dirname(file)
-            settings.save()
+            settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value = path.dirname(file)
             self.__player.open_video(file, play=True)
+
+    def __action_open_subtitles(self, sub_files: List[str] = None):
+
+        if not sub_files:
+            sub_files = get_open_subs(directory=settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value,
+                                      parent=self)
+
+        if sub_files:
+            for s in sub_files:
+                if path.isfile(s):
+                    settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value = path.dirname(s)
+                    self.__player.add_sub_files(s)
 
     def __action_open_network_stream(self) -> None:
 
@@ -439,19 +447,23 @@ class MainHandler(QMainWindow):
 
             if ext == "txt":
                 txts.append(file)
-            elif ext in _DROPABLE_SUBS:
+            elif ext in SUPPORTED_SUB_FILES:
                 subs.append(file)
-            elif ext in _DROPABLE_VIDS:
+            elif ext in SUPPORTED_VIDEO_FILES:
                 vids.append(file)
 
         video_found = bool(vids)
         if video_found:
             self.__player.open_video(vids[0], play=True)
 
-        for s in subs:
-            self.__player.add_sub_files(s)
+        if subs:
+            if self.__player.is_video_loaded():
+                self.__action_open_subtitles(subs)
+            else:
+                SubtitlesCanNotBeAddedToNoVideo().exec_()
 
-        self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)
+        if txts:
+            self.__open_qc_txt_files(txts, ask_to_open_found_vid=not video_found)
 
     def close(self) -> None:
         """
@@ -469,9 +481,10 @@ class MainHandler(QMainWindow):
         if ev_type == PlayerCurrentVideoFile:
             ev: EventPlayerCurrentVideoFile
             self.__current_video_file = ev.current_video_file
-
+            self.__ui.actionOpen_subtitle.setEnabled(True)
         elif ev_type == PlayerCurrentVideoPath:
             ev: EventPlayerCurrentVideoPath
+            self.__ui.actionOpen_subtitle.setEnabled(True)
             self.__current_video_path = ev.current_video_path
 
     @staticmethod
