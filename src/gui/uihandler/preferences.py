@@ -15,12 +15,13 @@
 import platform
 
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase, QFont, QIcon
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialogButtonBox, QDialog
 
 from src import settings, constants
 from src.gui.generated.preferences import Ui_PreferencesView
+from src.gui.globals import TYPEWRITER_FONT
 from src.gui.messageboxes import ConfigurationResetMB, ConfigurationHasChangedMB
 from start import APPLICATION_VERSION, APPLICATION_NAME
 
@@ -32,7 +33,7 @@ class PreferenceHandler(QDialog):
     The dialog for the preferences.
     """
 
-    # Will be set from MpvWidget on start up
+    # Will be set by MpvWidget on start up
     VERSION_MPV = ""
     VERSION_FFMPEG = ""
 
@@ -55,12 +56,26 @@ class PreferenceHandler(QDialog):
             self.__setup_conf_mpv()
             self.__setup_about()
 
+            # Timer for updating the apply button
+            self.btn_apply_update_timer = QTimer(self.__outer.parent())
+            self.__observe_changes()
+
+        def __observe_changes(self):
+            btn_apply = self.__ui.buttonBox.button(QDialogButtonBox.Apply)
+
+            def on_update():
+                btn_apply.setEnabled(self.changed())
+
+            self.btn_apply_update_timer.timeout.connect(on_update)
+            self.btn_apply_update_timer.start(100)
+
         def __setup_button_box(self):
             button_box = self.__ui.buttonBox
 
             btn_apply = button_box.button(QDialogButtonBox.Apply)
             btn_apply.clicked.connect(self.__outer.accept)
             btn_apply.setText(_translate("PreferencesView", "Apply"))
+            btn_apply.setEnabled(False)
 
             btn_close = button_box.button(QDialogButtonBox.Close)
             btn_close.setIcon(QIcon())
@@ -169,7 +184,7 @@ class PreferenceHandler(QDialog):
         def __setup_conf_input(self):
             text_input = self.__ui.input_conf_plain_text_edit
             text_input.setPlainText(settings.Setting_Custom_Configuration_INPUT.value)
-            text_input.setFont(QFont(QFontDatabase.systemFont(QFontDatabase.FixedFont)))
+            text_input.setFont(TYPEWRITER_FONT)
 
             def f():
                 settings.Setting_Custom_Configuration_INPUT.temporary_value = text_input.toPlainText()
@@ -180,7 +195,7 @@ class PreferenceHandler(QDialog):
         def __setup_conf_mpv(self):
             text_input = self.__ui.mpv_conf_plain_text_edit
             text_input.setPlainText(settings.Setting_Custom_Configuration_MPV.value)
-            text_input.setFont(QFont(QFontDatabase.systemFont(QFontDatabase.FixedFont)))
+            text_input.setFont(TYPEWRITER_FONT)
 
             def f():
                 settings.Setting_Custom_Configuration_MPV.temporary_value = text_input.toPlainText()
@@ -189,7 +204,6 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(text_input)
 
         def __setup_about(self):
-
             self.__ui.creditsBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
             self.__ui.creditsBrowser.setHtml(constants.CREDITS)
             self.__ui.licenceBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
@@ -234,16 +248,17 @@ class PreferenceHandler(QDialog):
             return False
 
         def clean_up(self):
+            self.btn_apply_update_timer.stop()
             for setting in settings.SettingJsonSettingConfs:
                 setting.temporary_value = None
 
     def __init__(self, display_about):
         super().__init__()
 
-        self.ui: Ui_PreferencesView = Ui_PreferencesView()
-        self.ui.setupUi(self)
+        ui: Ui_PreferencesView = Ui_PreferencesView()
+        ui.setupUi(self)
 
-        self.preference_binder = PreferenceHandler.PreferenceBinder(self.ui, self)
+        self.preference_binder = PreferenceHandler.PreferenceBinder(ui, self)
 
         if display_about:
             self.preference_binder.display_about_page()
@@ -285,5 +300,6 @@ class PreferenceHandler(QDialog):
 
         if not ConfigurationResetMB().exec_():
             self.preference_binder.reset()
+            self.preference_binder.clean_up()
             settings.save()
             super().reject()

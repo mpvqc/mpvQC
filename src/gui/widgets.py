@@ -14,8 +14,7 @@
 from enum import Enum
 from typing import List, Tuple
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection, QObject, pyqtSignal
+from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection, QObject, pyqtSignal, QCoreApplication
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel, QLineEdit, QListWidget, \
     QPushButton, QListWidgetItem
@@ -36,7 +35,7 @@ from src.player.observed import MpvPropertyObserver
 from src.player.players import MpvPlayer, ActionType
 from src.qcutils import Comment
 
-_translate = QtCore.QCoreApplication.translate
+_translate = QCoreApplication.translate
 
 
 class MpvWidget(QFrame):
@@ -53,6 +52,10 @@ class MpvWidget(QFrame):
             lambda arg=False, f=self.__main_handler.display_mouse_cursor: f(arg))
 
         self.setStyleSheet("background-color:black;")
+        # todo/discussion Add a little welcome text/tutorial instead of displaying a plain dark widget
+        # It should hint the user to learn about mpv and its keyboard shortcuts and the basic workflow
+        # This requires a user setting to disable the text on the widget too
+
         self.setMouseTracking(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
 
@@ -77,7 +80,6 @@ class MpvWidget(QFrame):
         PreferenceHandler.VERSION_FFMPEG = self.mpv_player.ffmpeg_version()
 
     def mouseMoveEvent(self, e: QMouseEvent):
-
         if e.type() == QMouseEvent.MouseMove:
             try:
                 self.mpv_player.mouse_move(e.pos().x(), e.pos().y())
@@ -142,7 +144,7 @@ class MpvWidget(QFrame):
         key = e.key()
         cmd = ""
 
-        # List view bindings
+        # Comment table bindings
         if (key == Qt.Key_Up or key == Qt.Key_Down) and mod == Qt.NoModifier:
             self.__main_handler.widget_comments.keyPressEvent(e)
         elif key == Qt.Key_Delete:
@@ -152,7 +154,7 @@ class MpvWidget(QFrame):
         elif key == Qt.Key_C and mod == Qt.CTRL:
             self.__main_handler.widget_comments.copy_current_selected_comment()
 
-        #
+        # Mpv Video widget bindings
         elif key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
             self.__main_handler.toggle_fullscreen()
         elif key == Qt.Key_E and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
@@ -308,7 +310,7 @@ class CommentsTable(QTableView):
         :param comment_text: The text to add
         :param time: The time to add. If None the current video time will be used.
         :param sort: If True, the complete table will be sorted after the insertion.
-        :param edit_mode_active: True then edit mode will be started.
+        :param edit_mode_active: If True, edit mode will be started.
         :param will_change_qc: True if qc is changed with the addition.
         """
 
@@ -552,7 +554,7 @@ class PreferenceCommentTypesWidget(QObject):
                  button_remove: QPushButton, button_up: QPushButton, button_down: QPushButton):
 
         """
-        The combined widgets are connected.
+        All of the given widgets will define the Comment Types Widget.
 
         :param line_edit: The line edit to enter new comment types
         :param list_widget: The list widget to move items up and down or delete items.

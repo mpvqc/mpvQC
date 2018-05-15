@@ -14,16 +14,16 @@
 
 from PyQt5.QtGui import QFont
 
-# We can share 1 Font instance across the application
+# 1 Font instance for the application
 TYPEWRITER_FONT = QFont("monospace")
 TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
 
-# We can share the time format across the application
+# Time format
 TIME_FORMAT = "hh:mm:ss"
 
-# Extensions for subtitle files via drag and drop
+# Supported subtitle file extensions for drag and drop and for opening via dialog
 SUPPORTED_SUB_FILES = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
                        "mks", "vtt", "sub", "scc")
 
-# Extension for video files via drag and drop
+# Supported video file extensions for drag and drop and for opening via dialog
 SUPPORTED_VIDEO_FILES = ("mp4", "mkv", "avi")

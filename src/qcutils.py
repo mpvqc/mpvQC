@@ -28,12 +28,14 @@ from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurren
 from src.gui.uihandler.main import MainHandler
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
+# If a file is a valid qc document is determined if line 1 starts with '[FILE]'.
 _REGEX_VALIDATOR_DOCUMENT = re.compile("^\[FILE\].*")
 
 _REGEX_PATH = re.compile("^path:*\s*")
 _REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[\w+.*\]\s*.*$")
 _REGEX_COLUMN = re.compile("\[([A-Za-z0-9\:_\s]+)\]")
 
+# Uses platform dependent line separator
 _LINE_BREAK = linesep
 
 _QC_TEMPLATE = """[FILE]
@@ -89,7 +91,7 @@ class QualityCheckWriter:
 
     def write_to_disc(self, path_document) -> None:
         """
-        Writes the current Quality Check to disc.
+        Writes the current QualityCheck to disc.
 
         :param path_document: the path to write
         """
@@ -227,6 +229,9 @@ class QualityCheckManager(QObject):
 
 
 class QualityCheckReader:
+    """
+    Class for reading qc document files.
+    """
 
     def __init__(self, qc_document_full_path):
         self.__file = qc_document_full_path

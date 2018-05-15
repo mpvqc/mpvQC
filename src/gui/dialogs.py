@@ -69,7 +69,7 @@ def get_open_subs(directory, parent=None) -> List[str] or None:
     )[0]
 
 
-def get_open_file_names(directory, parent=None) -> path or None:
+def get_open_file_names(directory, parent=None) -> List[str] or None:
     """
     Will open a dialog to select multiple qc documents.
 

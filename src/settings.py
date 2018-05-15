@@ -45,6 +45,8 @@ __for_translation_only = [
 ]
 
 
+# todo use python configparser module instead of json
+
 class Entry:
     """
     An entry represents a property which is saved to disc.
@@ -95,22 +97,23 @@ class Entry:
         """
         :return: whether the value and the temporary value are different.
         """
+
         return self.temporary_value is not None and self.value != self.temporary_value
 
 
 class CommentTypesEntry(Entry):
+    """
+    This entry is special.
+
+    It will always return the comment types in the current applied language
+    **but** it will always keep the English comment types internally for saving to file.
+
+    User comment types are handled normally (without translation).
+    """
+
     def __init__(self, identifier: str or path, default_value):
         super().__init__(identifier, default_value)
         self.current_lang_to_english = {}
-
-    def update(self):
-        """
-        Will update the internal dictionary to map current language to English.
-        :return:
-        """
-        self.current_lang_to_english.clear()
-        for ct in self.default_value:
-            self.current_lang_to_english.update({_translate("CommentTypes", ct): ct})
 
     @property
     def value(self):
@@ -127,29 +130,14 @@ class CommentTypesEntry(Entry):
 
         self._value = eng
 
-    def save(self) -> None:
+    def update(self) -> None:
         """
-        Saves the current temporary value, but does **not** write to disc [use setting.save()] to write to disc.
-        """
-
-        if self.temporary_value is not None:
-            self.value = self.temporary_value
-
-        self.temporary_value = None
-
-    def reset(self) -> None:
-        """
-        Sets the value to the default value and the temporary value to *None*.
+        Will update the internal dictionary to map current language to English.
         """
 
-        self.value = self.default_value
-        self.temporary_value = None
-
-    def changed(self) -> bool:
-        """
-        :return: whether the value and the temporary value are different.
-        """
-        return self.temporary_value is not None and self.value != self.temporary_value
+        self.current_lang_to_english.clear()
+        for ct in self.default_value:
+            self.current_lang_to_english.update({_translate("CommentTypes", ct): ct})
 
 
 ############################################################################################################## INTERNAL
@@ -207,6 +195,8 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
 """0: Default Window Title; 1: Current File name only; 2: Full path"""
 
 #######################################################################################################################
+
+
 SettingJson = (
     Setting_Internal_PLAYER_LAST_VIDEO_DIR,
     Setting_Internal_PLAYER_LAST_SUB_DIR,

@@ -12,10 +12,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QMessageBox
 
-_translate = QtCore.QCoreApplication.translate
+_translate = QCoreApplication.translate
 
 
 class ConfigurationHasChangedMB(QMessageBox):

@@ -137,8 +137,18 @@ ABOUT = """<h1 style='text-align:center;'>{} - {}</h1>
     Copyright © {} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;
 </p>
 <p>
+    <h3>Links</h3>
+    <br>
     <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a>
-</p>"""
+    <br>
+    <a href='https://github.com/Frechdachs/mpvQC'>Github</a>
+</p>
+<p>
+    <h3>Contributors</h3>
+    <br>Frechdachs
+    <br>trin
+</p>
+"""
 
 CREDITS = """
 <p>

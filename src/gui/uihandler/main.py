@@ -41,6 +41,9 @@ _CustomEventReceiver = []
 # noinspection PyMethodMayBeStatic
 class MainHandler(QMainWindow):
 
+    # todo currently main window handles qc document state (together with qc manager)
+    # -> should be outsourced to a separate file/module
+
     def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
         self.application = application
@@ -91,7 +94,7 @@ class MainHandler(QMainWindow):
         self.__window_title_update_timer.timeout.connect(self.__update_window_title)
         self.__window_title_update_timer.start(1000)
 
-        # Timer for autosave
+        # Timer invoking autosave action
         self.__autosave_interval_timer: QTimer = None
         self.__reload_autosave_settings()
 
@@ -482,6 +485,7 @@ class MainHandler(QMainWindow):
             ev: EventPlayerCurrentVideoFile
             self.__current_video_file = ev.current_video_file
             self.__ui.actionOpen_subtitle.setEnabled(True)
+
         elif ev_type == PlayerCurrentVideoPath:
             ev: EventPlayerCurrentVideoPath
             self.__ui.actionOpen_subtitle.setEnabled(True)
