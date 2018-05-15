@@ -20,7 +20,7 @@ from src import settings
 from src.gui.globals import TYPEWRITER_FONT, TIME_FORMAT
 
 
-class CommentTypeParentDelegate(QItemDelegate):
+class NotifiableItemDelegate(QItemDelegate):
     """
     The parent delegate class for providing common actions for all custom delegates.
     """
@@ -34,7 +34,7 @@ class CommentTypeParentDelegate(QItemDelegate):
             self.after_edit_done()
 
 
-class CommentTimeDelegate(CommentTypeParentDelegate):
+class CommentTimeDelegate(NotifiableItemDelegate):
     """
     Delegate for the time column.
     """
@@ -67,7 +67,7 @@ class CommentTimeDelegate(CommentTypeParentDelegate):
         editor.setGeometry(option.rect)
 
 
-class CommentTypeDelegate(CommentTypeParentDelegate):
+class CommentTypeDelegate(NotifiableItemDelegate):
     """
     Delegate for the comment type column.
     """
@@ -81,6 +81,7 @@ class CommentTypeDelegate(CommentTypeParentDelegate):
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         editor: QComboBox = editor
         editor.setCurrentIndex(max(0, editor.findText(index.model().data(index, Qt.EditRole))))
+        editor.setFont(TYPEWRITER_FONT)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         editor: QComboBox = editor
@@ -90,8 +91,12 @@ class CommentTypeDelegate(CommentTypeParentDelegate):
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)
 
+    # noinspection PyTypeChecker
+    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex):
+        return self.createEditor(None, option, index).sizeHint()
 
-class CommentNoteDelegate(CommentTypeParentDelegate):
+
+class CommentNoteDelegate(NotifiableItemDelegate):
     """
     Delegate for the comment note column.
     """
