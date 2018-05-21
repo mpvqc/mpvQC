@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="preferencesMainWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="leftMargin">
        <number>0</number>
@@ -36,7 +36,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QWidget" name="widget_13" native="true">
+       <widget class="QWidget" name="contentNavigationWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -57,7 +57,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QListWidget" name="navigationList">
+          <widget class="QListWidget" name="navigationListWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -107,7 +107,7 @@
             <enum>QListView::Static</enum>
            </property>
            <property name="resizeMode">
-            <enum>QListView::Fixed</enum>
+            <enum>QListView::Adjust</enum>
            </property>
            <property name="layoutMode">
             <enum>QListView::SinglePass</enum>
@@ -184,7 +184,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QStackedWidget" name="stackedWidget">
+       <widget class="QStackedWidget" name="contentStackedWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -209,7 +209,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_4" native="true">
+           <widget class="QWidget" name="pageGeneralTitleContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -233,7 +233,7 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="pageGeneralTitleLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -256,7 +256,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_5" native="true">
+           <widget class="QWidget" name="pageGeneralContentContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -280,35 +280,35 @@
               <number>0</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="authorLabel">
+              <widget class="QLabel" name="pageGeneralAuthorLabel">
                <property name="text">
                 <string>Nick name</string>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="authorLineEdit">
+              <widget class="QLineEdit" name="pageGeneralAuthorLineEdit">
                <property name="placeholderText">
                 <string>Type here to change the nick name</string>
                </property>
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="pageGeneralCommentTypesLabel">
                <property name="text">
                 <string>Comment types</string>
                </property>
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QLineEdit" name="kTypesLineEdit">
+              <widget class="QLineEdit" name="pageGeneralCommentTypesLineEdit">
                <property name="placeholderText">
                 <string>Type here to add new comment types</string>
                </property>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QWidget" name="kTypesParentWidget" native="true">
+              <widget class="QWidget" name="pageGeneralCommentTypesParentContainerWidget" native="true">
                <property name="styleSheet">
                 <string notr="true">QPushButton { text-align:left; padding: 8px; }</string>
                </property>
@@ -326,10 +326,10 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QListWidget" name="kTypesListWidget"/>
+                 <widget class="QListWidget" name="pageGeneralCommentTypesListWidget"/>
                 </item>
                 <item>
-                 <widget class="QWidget" name="widget_19" native="true">
+                 <widget class="QWidget" name="pageGeneralCommentTypesButtonContainerWidget" native="true">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -350,7 +350,7 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QWidget" name="widget_18" native="true">
+                    <widget class="QWidget" name="pageGeneralCommentTypesButtonTopContainerWidget" native="true">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -371,7 +371,7 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="kTypesAddButton">
+                       <widget class="QPushButton" name="pageGeneralCommentTypesAddButton">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -388,7 +388,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="kTypesRemoveButton">
+                       <widget class="QPushButton" name="pageGeneralCommentTypesRemoveButton">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -405,7 +405,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="kTypesMoveUpButton">
+                       <widget class="QPushButton" name="pageGeneralCommentTypesUpButton">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -422,7 +422,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="kTypesMoveDownButton">
+                       <widget class="QPushButton" name="pageGeneralCommentTypesDownButton">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -442,7 +442,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QWidget" name="widget_20" native="true">
+                    <widget class="QWidget" name="pageGeneralCommentTypesButtonBottomSpacerWidget" native="true">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                        <horstretch>0</horstretch>
@@ -474,7 +474,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_11" native="true">
+           <widget class="QWidget" name="pageAppearanceTitleContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -498,7 +498,7 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="pageAppearanceTitleLabel">
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
@@ -513,7 +513,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_12" native="true">
+           <widget class="QWidget" name="pageAppearanceContentContainerWidget" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <property name="leftMargin">
               <number>0</number>
@@ -528,7 +528,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QTabWidget" name="tabWidget_2">
+              <widget class="QTabWidget" name="pageAppearanceParentTabWidget">
                <property name="tabPosition">
                 <enum>QTabWidget::North</enum>
                </property>
@@ -541,23 +541,23 @@
                <property name="documentMode">
                 <bool>true</bool>
                </property>
-               <widget class="QWidget" name="tabGeneral">
+               <widget class="QWidget" name="pageAppearanceGeneralTabWidget">
                 <attribute name="title">
                  <string>General</string>
                 </attribute>
                 <layout class="QHBoxLayout" name="horizontalLayout_7">
                  <item>
-                  <widget class="QWidget" name="widget_14" native="true">
+                  <widget class="QWidget" name="pageAppearanceGeneralContainerWidget" native="true">
                    <layout class="QFormLayout" name="formLayout_4">
                     <item row="0" column="0">
-                     <widget class="QLabel" name="label_10">
+                     <widget class="QLabel" name="pageAppearanceGeneralWindowTitleLabel">
                       <property name="text">
                        <string>Window Title</string>
                       </property>
                      </widget>
                     </item>
                     <item row="0" column="1">
-                     <widget class="QComboBox" name="window_title_combo_box">
+                     <widget class="QComboBox" name="pageAppearanceGeneralWindowTitleComboBox">
                       <item>
                        <property name="text">
                         <string>Display default title</string>
@@ -599,7 +599,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_9" native="true">
+           <widget class="QWidget" name="pageMPVSettingsTitleContainerWidget" native="true">
             <layout class="QVBoxLayout" name="verticalLayout_9">
              <property name="spacing">
               <number>0</number>
@@ -617,7 +617,7 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="pageMPVSettingsTitleLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -638,14 +638,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="pageMPVSettingsSubtitleLabel">
             <property name="text">
              <string>Changes will be applied after restart.</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_10" native="true">
+           <widget class="QWidget" name="pageMPVSettingsContentContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -666,7 +666,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QTabWidget" name="tabWidget">
+              <widget class="QTabWidget" name="pageMPVSettingsParentTabWidget">
                <property name="tabletTracking">
                 <bool>false</bool>
                </property>
@@ -685,7 +685,7 @@
                <property name="documentMode">
                 <bool>false</bool>
                </property>
-               <widget class="QWidget" name="tab_4">
+               <widget class="QWidget" name="pageMPVSettingsMpvConfWidget">
                 <attribute name="title">
                  <string>mpv.conf</string>
                 </attribute>
@@ -703,7 +703,7 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPlainTextEdit" name="mpv_conf_plain_text_edit">
+                  <widget class="QPlainTextEdit" name="pageMPVSettingsMpvConfPlainTextEdit">
                    <property name="font">
                     <font>
                      <family>Monospace</family>
@@ -712,11 +712,14 @@
                    <property name="frameShadow">
                     <enum>QFrame::Plain</enum>
                    </property>
+                   <property name="lineWrapMode">
+                    <enum>QPlainTextEdit::NoWrap</enum>
+                   </property>
                   </widget>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_2">
+               <widget class="QWidget" name="pageMPVSettingsInputConfWidget">
                 <attribute name="title">
                  <string>input.conf</string>
                 </attribute>
@@ -737,7 +740,7 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPlainTextEdit" name="input_conf_plain_text_edit">
+                  <widget class="QPlainTextEdit" name="pageMPVSettingsInputConfPlainTextEdit">
                    <property name="font">
                     <font>
                      <family>Monospace</family>
@@ -745,6 +748,9 @@
                    </property>
                    <property name="frameShadow">
                     <enum>QFrame::Plain</enum>
+                   </property>
+                   <property name="lineWrapMode">
+                    <enum>QPlainTextEdit::NoWrap</enum>
                    </property>
                   </widget>
                  </item>
@@ -772,7 +778,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_6" native="true">
+           <widget class="QWidget" name="pageQcDocumentlTitleContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -796,7 +802,7 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="pageQcDocumentTitleLabel">
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
@@ -811,7 +817,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_7" native="true">
+           <widget class="QWidget" name="pageQcDocumentContentContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -832,7 +838,7 @@
               <number>0</number>
              </property>
              <item row="0" column="1">
-              <widget class="QCheckBox" name="autoSaveEnabledCheckBox_4">
+              <widget class="QCheckBox" name="pageQcDocumentAutoSaveEnabledCheckBox">
                <property name="text">
                 <string>Auto save enabled</string>
                </property>
@@ -842,7 +848,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QWidget" name="widget_8" native="true">
+              <widget class="QWidget" name="pageQcDocumentAutosaveIntervalContainerWidget" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -869,7 +875,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_6">
+                 <widget class="QLabel" name="pageQcDocumentAutoSaveLeftLabel">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
                     <horstretch>0</horstretch>
@@ -894,7 +900,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="autosaveSpinBox_4">
+                 <widget class="QSpinBox" name="pageQcDocumentAutoSaveIntervalSpinBox">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -910,7 +916,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="autosaveTimeUnit_4">
+                 <widget class="QLabel" name="pageQcDocumentAutoSaveRightLabel">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -932,14 +938,14 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QCheckBox" name="saveNickNameCheckBox">
+              <widget class="QCheckBox" name="pageQcDocumentSaveNickNameCheckBox">
                <property name="text">
                 <string>Save nick name to QC document</string>
                </property>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QCheckBox" name="saveVideoPathCheckBox">
+              <widget class="QCheckBox" name="pageQcDocumentSaveVideoPathCheckBox">
                <property name="text">
                 <string>Save video path to QC document</string>
                </property>
@@ -962,7 +968,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_2" native="true">
+           <widget class="QWidget" name="pageLanguageTitleContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -986,7 +992,7 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="pageLanguageTitleLabel">
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
@@ -1010,7 +1016,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_3" native="true">
+           <widget class="QWidget" name="pageLanguageContentContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1031,14 +1037,14 @@
               <number>0</number>
              </property>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="pageLanguageLanguageLabel">
                <property name="text">
                 <string>Language</string>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox">
+              <widget class="QComboBox" name="pageLanguageLanguageComboBox">
                <item>
                 <property name="text">
                  <string>English</string>
@@ -1068,7 +1074,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QWidget" name="widget_15" native="true">
+           <widget class="QWidget" name="pageAboutTitleContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -1092,7 +1098,7 @@
               <number>18</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_11">
+              <widget class="QLabel" name="pageAboutTitleLabel">
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
@@ -1107,7 +1113,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget_16" native="true">
+           <widget class="QWidget" name="pageAboutContentContainerWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1128,14 +1134,14 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QTabWidget" name="tabWidget_3">
+              <widget class="QTabWidget" name="pageAboutParentTabWidget">
                <property name="currentIndex">
                 <number>0</number>
                </property>
                <property name="documentMode">
                 <bool>true</bool>
                </property>
-               <widget class="QWidget" name="sdasd">
+               <widget class="QWidget" name="pageAboutAboutTabWidget">
                 <attribute name="title">
                  <string>About</string>
                 </attribute>
@@ -1156,11 +1162,11 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QTextBrowser" name="aboutBrowser"/>
+                  <widget class="QTextBrowser" name="aboutTextBrowser"/>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_3">
+               <widget class="QWidget" name="pageAboutCreditsTabWidget">
                 <attribute name="title">
                  <string>Credits</string>
                 </attribute>
@@ -1181,15 +1187,19 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QTextBrowser" name="creditsBrowser">
+                  <widget class="QTextBrowser" name="creditsTextBrowser">
                    <property name="html">
-                    <string></string>
+                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Fira Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </widget>
-               <widget class="QWidget" name="tab_5">
+               <widget class="QWidget" name="pageAboutLicenceTabWidget">
                 <attribute name="title">
                  <string>Licence</string>
                 </attribute>
@@ -1210,9 +1220,13 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QTextBrowser" name="licenceBrowser">
+                  <widget class="QTextBrowser" name="licenceTextBrowser">
                    <property name="html">
-                       <string></string>
+                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Fira Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                   </widget>
                  </item>
@@ -1231,7 +1245,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="preferencesButtonBox">
      <property name="font">
       <font>
        <kerning>true</kerning>
@@ -1253,7 +1267,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>preferencesButtonBox</sender>
    <signal>rejected()</signal>
    <receiver>PreferencesView</receiver>
    <slot>reject()</slot>
@@ -1269,7 +1283,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>preferencesButtonBox</sender>
    <signal>accepted()</signal>
    <receiver>PreferencesView</receiver>
    <slot>accept()</slot>
@@ -1285,9 +1299,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>autoSaveEnabledCheckBox_4</sender>
+   <sender>pageQcDocumentAutoSaveEnabledCheckBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>widget_8</receiver>
+   <receiver>pageQcDocumentAutosaveIntervalContainerWidget</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1301,9 +1315,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>navigationList</sender>
+   <sender>navigationListWidget</sender>
    <signal>currentRowChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
+   <receiver>contentStackedWidget</receiver>
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -79,8 +79,8 @@ class MainHandler(QMainWindow):
         ])
 
         self.setStatusBar(self.__widget_status_bar)
-        self.__ui.splitter.insertWidget(0, self.widget_comments)
-        self.__ui.splitter.insertWidget(0, self.widget_mpv)
+        self.__ui.mainWindowContentSplitter.insertWidget(0, self.widget_comments)
+        self.__ui.mainWindowContentSplitter.insertWidget(0, self.widget_mpv)
 
         # Class variables
         self.__current_geometry: QByteArray = None
@@ -98,7 +98,7 @@ class MainHandler(QMainWindow):
         self.__autosave_interval_timer: QTimer = None
         self.__reload_autosave_settings()
 
-        self.__ui.splitter.setSizes([400, 20])
+        self.__ui.mainWindowContentSplitter.setSizes([400, 20])
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
@@ -140,7 +140,7 @@ class MainHandler(QMainWindow):
 
         self.widget_comments.show()
         self.__widget_status_bar.show()
-        self.__ui.menuBar.setMaximumHeight(self.__menubar_height)
+        self.__ui.mainWindowMenuBar.setMaximumHeight(self.__menubar_height)
         self.display_mouse_cursor(display=True)
 
         self.restoreGeometry(self.__current_geometry)
@@ -157,7 +157,8 @@ class MainHandler(QMainWindow):
                 self.__autosave_interval_timer.timeout.connect(self.__qc_manager.autosave)
                 self.__autosave_interval_timer.start(interval * 1000)
         else:
-            self.__autosave_interval_timer.stop()
+            if self.__autosave_interval_timer:
+                self.__autosave_interval_timer.stop()
 
     def __display_fullscreen(self) -> None:
         """
@@ -175,7 +176,7 @@ class MainHandler(QMainWindow):
         self.__widget_status_bar.hide()
 
         # Needed because otherwise no shortcuts would work in fullscreen mode
-        self.__ui.menuBar.setMaximumHeight(0)
+        self.__ui.mainWindowMenuBar.setMaximumHeight(0)
         self.display_mouse_cursor(display=True)
 
         self.showFullScreen()
@@ -185,22 +186,21 @@ class MainHandler(QMainWindow):
         Binds the menubar to the corresponding actions.
         """
 
-        self.__ui.actionNew_QC_Document.triggered.connect(lambda c, f=self.__action_new_qc_document: f())
-        self.__ui.action_Open_QC_Document.triggered.connect(lambda c, f=self.__action_open_qc_document: f())
-        self.__ui.action_Save_QC_Document.triggered.connect(lambda c, f=self.__action_save_qc_document: f())
-        self.__ui.actionS_ave_QC_Document_As.triggered.connect(lambda c, f=self.__action_save_qc_document_as: f())
-        self.__ui.action_Exit_mpvQC.triggered.connect(lambda c, f=self.__action_close: f())
+        self.__ui.actionNewQcDocument.triggered.connect(lambda c, f=self.__action_new_qc_document: f())
+        self.__ui.actionOpenQcDocuments.triggered.connect(lambda c, f=self.__action_open_qc_document: f())
+        self.__ui.actionSaveQcDocument.triggered.connect(lambda c, f=self.__action_save_qc_document: f())
+        self.__ui.actionSaveQcDocumentAs.triggered.connect(lambda c, f=self.__action_save_qc_document_as: f())
+        self.__ui.actionExitMpvQc.triggered.connect(lambda c, f=self.__action_close: f())
 
-        self.__ui.action_Open_Video_File.triggered.connect(lambda c, f=self.__action_open_video: f())
-        self.__ui.actionOpen_subtitle.triggered.connect(lambda c, f=self.__action_open_subtitles: f())
-        self.__ui.actionOpen_Network_Stream.triggered.connect(lambda c, f=self.__action_open_network_stream: f())
-        self.__ui.action_Resize_Video_To_Its_Original_Resolutio.triggered.connect(
-            lambda c, f=self.__action_resize_video: f())
+        self.__ui.actionOpenVideoFile.triggered.connect(lambda c, f=self.__action_open_video: f())
+        self.__ui.actionOpenSubtitleFile.triggered.connect(lambda c, f=self.__action_open_subtitles: f())
+        self.__ui.actionOpenNetworkStream.triggered.connect(lambda c, f=self.__action_open_network_stream: f())
+        self.__ui.actionResizeVideoToOriginalResolution.triggered.connect(lambda c, f=self.__action_resize_video: f())
 
-        self.__ui.action_Settings.triggered.connect(lambda c, f=self.__action_open_settings: f())
-        self.__ui.action_Check_For_Updates.triggered.connect(lambda c, f=self.__action_check_for_update: f())
-        self.__ui.actionAbout_Qt.triggered.connect(lambda c, f=self.__action_open_about_qt: f())
-        self.__ui.actionAbout_mpvqc.triggered.connect(lambda c, f=self.__action_open_about_mpvqc: f())
+        self.__ui.actionSettings.triggered.connect(lambda c, f=self.__action_open_settings: f())
+        self.__ui.actionCheckForUpdates.triggered.connect(lambda c, f=self.__action_check_for_update: f())
+        self.__ui.actionAboutQt.triggered.connect(lambda c, f=self.__action_open_about_qt: f())
+        self.__ui.actionAboutMpvQc.triggered.connect(lambda c, f=self.__action_open_about_mpvqc: f())
 
     def __update_window_title(self) -> None:
         """
@@ -484,11 +484,11 @@ class MainHandler(QMainWindow):
         if ev_type == PlayerCurrentVideoFile:
             ev: EventPlayerCurrentVideoFile
             self.__current_video_file = ev.current_video_file
-            self.__ui.actionOpen_subtitle.setEnabled(True)
+            self.__ui.actionOpenSubtitleFile.setEnabled(True)
 
         elif ev_type == PlayerCurrentVideoPath:
             ev: EventPlayerCurrentVideoPath
-            self.__ui.actionOpen_subtitle.setEnabled(True)
+            self.__ui.actionOpenSubtitleFile.setEnabled(True)
             self.__current_video_path = ev.current_video_path
 
     @staticmethod

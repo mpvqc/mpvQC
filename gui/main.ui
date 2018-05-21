@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="mainWindowContentWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
      <number>0</number>
@@ -28,7 +28,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="mainWindowContentSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -36,7 +36,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QMenuBar" name="mainWindowMenuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -45,48 +45,48 @@
      <height>29</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_File">
+   <widget class="QMenu" name="mainWindowFileMenu">
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionNew_QC_Document"/>
-    <addaction name="action_Open_QC_Document"/>
-    <addaction name="action_Save_QC_Document"/>
-    <addaction name="actionS_ave_QC_Document_As"/>
+    <addaction name="actionNewQcDocument"/>
+    <addaction name="actionOpenQcDocuments"/>
+    <addaction name="actionSaveQcDocument"/>
+    <addaction name="actionSaveQcDocumentAs"/>
     <addaction name="separator"/>
-    <addaction name="action_Exit_mpvQC"/>
+    <addaction name="actionExitMpvQc"/>
    </widget>
-   <widget class="QMenu" name="menu_Video">
+   <widget class="QMenu" name="mainWindowVideoMenu">
     <property name="title">
      <string>Vi&amp;deo</string>
     </property>
-    <addaction name="action_Open_Video_File"/>
-    <addaction name="actionOpen_subtitle"/>
-    <addaction name="actionOpen_Network_Stream"/>
+    <addaction name="actionOpenVideoFile"/>
+    <addaction name="actionOpenSubtitleFile"/>
+    <addaction name="actionOpenNetworkStream"/>
     <addaction name="separator"/>
-    <addaction name="action_Resize_Video_To_Its_Original_Resolutio"/>
+    <addaction name="actionResizeVideoToOriginalResolution"/>
    </widget>
-   <widget class="QMenu" name="menu_Settings">
+   <widget class="QMenu" name="mainWindowSettingsMenu">
     <property name="title">
      <string>Optio&amp;ns</string>
     </property>
-    <addaction name="action_Settings"/>
+    <addaction name="actionSettings"/>
    </widget>
-   <widget class="QMenu" name="menuAbout">
+   <widget class="QMenu" name="mainWindowAboutMenu">
     <property name="title">
      <string>Abo&amp;ut</string>
     </property>
-    <addaction name="action_Check_For_Updates"/>
+    <addaction name="actionCheckForUpdates"/>
     <addaction name="separator"/>
-    <addaction name="actionAbout_Qt"/>
-    <addaction name="actionAbout_mpvqc"/>
+    <addaction name="actionAboutQt"/>
+    <addaction name="actionAboutMpvQc"/>
    </widget>
-   <addaction name="menu_File"/>
-   <addaction name="menu_Video"/>
-   <addaction name="menu_Settings"/>
-   <addaction name="menuAbout"/>
+   <addaction name="mainWindowFileMenu"/>
+   <addaction name="mainWindowVideoMenu"/>
+   <addaction name="mainWindowSettingsMenu"/>
+   <addaction name="mainWindowAboutMenu"/>
   </widget>
-  <action name="actionNew_QC_Document">
+  <action name="actionNewQcDocument">
    <property name="icon">
     <iconset theme="add">
      <normaloff>.</normaloff>.</iconset>
@@ -98,7 +98,7 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="action_Open_QC_Document">
+  <action name="actionOpenQcDocuments">
    <property name="icon">
     <iconset theme="open-for-editing">
      <normaloff>.</normaloff>.</iconset>
@@ -110,7 +110,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="action_Save_QC_Document">
+  <action name="actionSaveQcDocument">
    <property name="icon">
     <iconset theme="filesave">
      <normaloff>.</normaloff>.</iconset>
@@ -122,7 +122,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionS_ave_QC_Document_As">
+  <action name="actionSaveQcDocumentAs">
    <property name="icon">
     <iconset theme="filesaveas">
      <normaloff>.</normaloff>.</iconset>
@@ -134,7 +134,7 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="action_Exit_mpvQC">
+  <action name="actionExitMpvQc">
    <property name="icon">
     <iconset theme="exit">
      <normaloff>.</normaloff>.</iconset>
@@ -146,7 +146,7 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="action_Open_Video_File">
+  <action name="actionOpenVideoFile">
    <property name="icon">
     <iconset theme="mpv">
      <normaloff>.</normaloff>.</iconset>
@@ -158,7 +158,7 @@
     <string>Ctrl+Shift+O</string>
    </property>
   </action>
-  <action name="actionOpen_Network_Stream">
+  <action name="actionOpenNetworkStream">
    <property name="icon">
     <iconset theme="network-server">
      <normaloff>.</normaloff>.</iconset>
@@ -170,7 +170,7 @@
     <string>Ctrl+Alt+Shift+O</string>
    </property>
   </action>
-  <action name="action_Resize_Video_To_Its_Original_Resolutio">
+  <action name="actionResizeVideoToOriginalResolution">
    <property name="icon">
     <iconset theme="itmages-resize">
      <normaloff>.</normaloff>.</iconset>
@@ -182,7 +182,7 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="action_Check_For_Updates">
+  <action name="actionCheckForUpdates">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -194,7 +194,7 @@
     <string>&amp;Check For Updates ...</string>
    </property>
   </action>
-  <action name="actionAbout_Qt">
+  <action name="actionAboutQt">
    <property name="icon">
     <iconset theme="help-about">
      <normaloff>.</normaloff>.</iconset>
@@ -203,7 +203,7 @@
     <string>About &amp;Qt</string>
    </property>
   </action>
-  <action name="actionAbout_mpvqc">
+  <action name="actionAboutMpvQc">
    <property name="icon">
     <iconset theme="help-about">
      <normaloff>.</normaloff>.</iconset>
@@ -212,7 +212,7 @@
     <string>About &amp;mpvQC</string>
    </property>
   </action>
-  <action name="action_Settings">
+  <action name="actionSettings">
    <property name="icon">
     <iconset theme="systemsettings">
      <normaloff>.</normaloff>.</iconset>
@@ -224,15 +224,16 @@
     <string>Ctrl+Alt+S</string>
    </property>
   </action>
-  <action name="actionOpen_subtitle">
+  <action name="actionOpenSubtitleFile">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="gnome-subtitles"/>
+    <iconset theme="gnome-subtitles">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open subtitle ...</string>
+    <string>&amp;Open subtitle ...</string>
    </property>
   </action>
  </widget>

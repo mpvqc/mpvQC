@@ -44,7 +44,7 @@
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="200"/>
+        <location filename="../../../src/gui/widgets.py" line="202"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
     </message>
@@ -52,7 +52,7 @@
 <context>
     <name>Dialogs</name>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="64"/>
+        <location filename="../../../src/gui/dialogs.py" line="44"/>
         <source>Open Video File</source>
         <translation>Videodatei öffnen</translation>
     </message>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../../../src/gui/dialogs.py" line="81"/>
         <source>Open QC Document</source>
-        <translation>QC Dokument öffnen</translation>
+        <translation>QC Dokumente öffnen</translation>
     </message>
     <message>
         <location filename="../../../src/gui/dialogs.py" line="115"/>
@@ -100,6 +100,11 @@
         <location filename="../../../src/gui/dialogs.py" line="61"/>
         <source>Subtitle files</source>
         <translation>Untertiteldateien</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/dialogs.py" line="64"/>
+        <source>Open Subtitle File</source>
+        <translation>Untertitel öffnen</translation>
     </message>
 </context>
 <context>
@@ -237,7 +242,12 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="143"/>
         <source>Open subtitle ...</source>
-        <translation>Untertitel öffnen ...</translation>
+        <translation type="obsolete">Untertitel öffnen ...</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/generated/main.py" line="143"/>
+        <source>&amp;Open subtitle ...</source>
+        <translation>&amp;Untertitel öffnen ...</translation>
     </message>
 </context>
 <context>
@@ -371,17 +381,17 @@
 <context>
     <name>PreferencesView</name>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="65"/>
+        <location filename="../../../src/gui/uihandler/preferences.py" line="79"/>
         <source>Apply</source>
         <translation>Anwenden</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="69"/>
+        <location filename="../../../src/gui/uihandler/preferences.py" line="84"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="73"/>
+        <location filename="../../../src/gui/uihandler/preferences.py" line="88"/>
         <source>Defaults</source>
         <translation>Standardeinstellungen</translation>
     </message>
@@ -531,14 +541,23 @@
         <translation>Videopfad in QC Dokument speichern</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="618"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="623"/>
         <source>Credits</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="619"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="629"/>
         <source>Licence</source>
         <translation>Lizenz</translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/generated/preferences.py" line="624"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Fira Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

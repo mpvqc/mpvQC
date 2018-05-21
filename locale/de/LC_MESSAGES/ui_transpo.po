@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-21 14:49+0200\n"
+"POT-Creation-Date: 2018-05-21 20:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,7 +62,7 @@ msgstr "Videodateien (*.mkv *.mp4);;Alle Dateien (*.*)"
 
 #: Dialogs%233
 msgid "Open QC Document"
-msgstr "QC Dokument öffnen"
+msgstr "QC Dokumente öffnen"
 
 #: Dialogs%234
 msgid "QC documents (*.txt);;All files (*.*)"
@@ -91,6 +91,10 @@ msgstr "Alle Dateien"
 #: Dialogs%2310
 msgid "Subtitle files"
 msgstr "Untertiteldateien"
+
+#: Dialogs%2311
+msgid "Open Subtitle File"
+msgstr "Untertitel öffnen"
 
 #: MainPlayerView%231
 msgid "MainWindow"
@@ -196,9 +200,14 @@ msgstr "&Einstellungen"
 msgid "Ctrl+Alt+S"
 msgstr ""
 
+#. (obsolete)
 #: MainPlayerView%2327
 msgid "Open subtitle ..."
 msgstr "Untertitel öffnen ..."
+
+#: MainPlayerView%2328
+msgid "&Open subtitle ..."
+msgstr "&Untertitel öffnen ..."
 
 #: MessageBoxes%231
 msgid "Your configuration has changed."
@@ -451,3 +460,17 @@ msgstr ""
 #: PreferencesView%2334
 msgid "Licence"
 msgstr "Lizenz"
+
+#: PreferencesView%2335
+msgid ""
+"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/"
+"REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\""
+">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Fira Sans'; font-size:10pt; font-"
+"weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
+"margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><"
+"br /></p></body></html>"
+msgstr ""

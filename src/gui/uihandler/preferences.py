@@ -61,7 +61,7 @@ class PreferenceHandler(QDialog):
             self.__observe_changes()
 
         def __observe_changes(self):
-            btn_apply = self.__ui.buttonBox.button(QDialogButtonBox.Apply)
+            btn_apply = self.__ui.preferencesButtonBox.button(QDialogButtonBox.Apply)
 
             def on_update():
                 btn_apply.setEnabled(self.changed())
@@ -70,7 +70,7 @@ class PreferenceHandler(QDialog):
             self.btn_apply_update_timer.start(100)
 
         def __setup_button_box(self):
-            button_box = self.__ui.buttonBox
+            button_box = self.__ui.preferencesButtonBox
 
             btn_apply = button_box.button(QDialogButtonBox.Apply)
             btn_apply.clicked.connect(self.__outer.accept)
@@ -87,7 +87,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.extend([btn_apply, btn_restore_defaults])
 
         def __setup_language(self):
-            language_box = self.__ui.comboBox
+            language_box = self.__ui.pageLanguageLanguageComboBox
             language_box.setCurrentIndex(
                 max(language_box.findText(
                     _translate("PreferencesView", settings.Setting_Custom_Language_LANGUAGE.value)), 0))
@@ -103,7 +103,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(language_box)
 
         def __setup_nickname(self):
-            nick = self.__ui.authorLineEdit
+            nick = self.__ui.pageGeneralAuthorLineEdit
             nick.setText(settings.Setting_Custom_General_NICKNAME.value)
 
             def f(new_nickname):
@@ -115,15 +115,15 @@ class PreferenceHandler(QDialog):
         def __setup_comments(self):
             from src.gui.widgets import PreferenceCommentTypesWidget
 
-            self.ctypes_widget = PreferenceCommentTypesWidget(self.__ui.kTypesLineEdit,
-                                                              self.__ui.kTypesListWidget,
-                                                              self.__ui.kTypesAddButton,
-                                                              self.__ui.kTypesRemoveButton,
-                                                              self.__ui.kTypesMoveUpButton,
-                                                              self.__ui.kTypesMoveDownButton)
+            self.ctypes_widget = PreferenceCommentTypesWidget(self.__ui.pageGeneralCommentTypesLineEdit,
+                                                              self.__ui.pageGeneralCommentTypesListWidget,
+                                                              self.__ui.pageGeneralCommentTypesAddButton,
+                                                              self.__ui.pageGeneralCommentTypesRemoveButton,
+                                                              self.__ui.pageGeneralCommentTypesUpButton,
+                                                              self.__ui.pageGeneralCommentTypesDownButton)
 
             for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
-                self.__ui.kTypesListWidget.addItem(ct)
+                self.__ui.pageGeneralCommentTypesListWidget.addItem(ct)
 
             def f():
                 settings.Setting_Custom_General_COMMENT_TYPES.temporary_value = self.ctypes_widget.items()
@@ -132,7 +132,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(self.ctypes_widget)
 
         def __setup_autosave_checkbox(self):
-            chk_box = self.__ui.autoSaveEnabledCheckBox_4
+            chk_box = self.__ui.pageQcDocumentAutoSaveEnabledCheckBox
             chk_box.setChecked(settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value)
 
             def f(new_state):
@@ -142,7 +142,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(chk_box)
 
         def __setup_autosave_interval(self):
-            spin_box = self.__ui.autosaveSpinBox_4
+            spin_box = self.__ui.pageQcDocumentAutoSaveIntervalSpinBox
             spin_box.setValue(settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL.value)
 
             def f(new_value):
@@ -152,7 +152,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(spin_box)
 
         def __setup_qc_write_video_path_to_file(self):
-            chk_box = self.__ui.saveVideoPathCheckBox
+            chk_box = self.__ui.pageQcDocumentSaveVideoPathCheckBox
             chk_box.setChecked(settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value)
 
             def f(n_state):
@@ -162,7 +162,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(chk_box)
 
         def __setup_qc_write_nick_to_file(self):
-            chk_box = self.__ui.saveNickNameCheckBox
+            chk_box = self.__ui.pageQcDocumentSaveNickNameCheckBox
             chk_box.setChecked(settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.value)
 
             def f(new_state):
@@ -172,7 +172,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(chk_box)
 
         def __setup_appearance_window_title(self):
-            win_box = self.__ui.window_title_combo_box
+            win_box = self.__ui.pageAppearanceGeneralWindowTitleComboBox
             win_box.setCurrentIndex(settings.Setting_Custom_Appearance_General_WINDOW_TITLE.value)
 
             def fun(new_index):
@@ -182,7 +182,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(win_box)
 
         def __setup_conf_input(self):
-            text_input = self.__ui.input_conf_plain_text_edit
+            text_input = self.__ui.pageMPVSettingsInputConfPlainTextEdit
             text_input.setPlainText(settings.Setting_Custom_Configuration_INPUT.value)
             text_input.setFont(TYPEWRITER_FONT)
 
@@ -193,7 +193,7 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(text_input)
 
         def __setup_conf_mpv(self):
-            text_input = self.__ui.mpv_conf_plain_text_edit
+            text_input = self.__ui.pageMPVSettingsMpvConfPlainTextEdit
             text_input.setPlainText(settings.Setting_Custom_Configuration_MPV.value)
             text_input.setFont(TYPEWRITER_FONT)
 
@@ -204,14 +204,14 @@ class PreferenceHandler(QDialog):
             self.__connected_elements.append(text_input)
 
         def __setup_about(self):
-            self.__ui.creditsBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
-            self.__ui.creditsBrowser.setHtml(constants.CREDITS)
-            self.__ui.licenceBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
-            self.__ui.licenceBrowser.setHtml(constants.LICENCE)
+            self.__ui.creditsTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
+            self.__ui.creditsTextBrowser.setHtml(constants.CREDITS)
+            self.__ui.licenceTextBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
+            self.__ui.licenceTextBrowser.setHtml(constants.LICENCE)
 
-            self.__ui.aboutBrowser.setOpenExternalLinks(True)
-            self.__ui.aboutBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-            self.__ui.aboutBrowser.setHtml(constants.ABOUT.format(
+            self.__ui.aboutTextBrowser.setOpenExternalLinks(True)
+            self.__ui.aboutTextBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+            self.__ui.aboutTextBrowser.setHtml(constants.ABOUT.format(
                 APPLICATION_VERSION,
                 platform.architecture()[0],
                 APPLICATION_NAME,
@@ -225,7 +225,7 @@ class PreferenceHandler(QDialog):
             Will display the about page.
             """
 
-            self.__ui.navigationList.setCurrentRow(self.__ui.navigationList.model().rowCount() - 1)
+            self.__ui.navigationListWidget.setCurrentRow(self.__ui.navigationListWidget.model().rowCount() - 1)
 
         def save(self):
             for setting in settings.SettingJsonSettingConfs:

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en" sourcelanguage="en">
+<!DOCTYPE TS><TS version="2.0" language="en" sourcelanguage="en">
 <context>
     <name>CommentTypes</name>
     <message>
@@ -44,7 +43,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="200"/>
+        <location filename="../../../src/gui/widgets.py" line="202"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -52,7 +51,7 @@
 <context>
     <name>Dialogs</name>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="64"/>
+        <location filename="../../../src/gui/dialogs.py" line="44"/>
         <source>Open Video File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -94,6 +93,11 @@
     <message>
         <location filename="../../../src/gui/dialogs.py" line="61"/>
         <source>Subtitle files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/dialogs.py" line="64"/>
+        <source>Open Subtitle File</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -231,7 +235,7 @@
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="143"/>
-        <source>Open subtitle ...</source>
+        <source>&amp;Open subtitle ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -366,17 +370,17 @@
 <context>
     <name>PreferencesView</name>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="65"/>
+        <location filename="../../../src/gui/uihandler/preferences.py" line="79"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="69"/>
+        <location filename="../../../src/gui/uihandler/preferences.py" line="84"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="73"/>
+        <location filename="../../../src/gui/uihandler/preferences.py" line="88"/>
         <source>Defaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -521,18 +525,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="618"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="623"/>
         <source>Credits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/preferences.py" line="619"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="629"/>
         <source>Licence</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/preferences.py" line="591"/>
         <source>Type here to add new comment types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/generated/preferences.py" line="624"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Fira Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
