@@ -149,7 +149,7 @@ Setting_Internal_PLAYER_LAST_SUB_DIR = \
     Entry("internal_player_last_sub_dir", "")
 
 Setting_Internal_STATUS_BAR_TIME_MODE = \
-    Entry("internal_status_bar_current_time", True)
+    Entry("internal_status_bar_time_mode", True)
 """True: Current Time; False: Remaining Time"""
 
 ############################################################################## PREFERENCES -> GENERAL ### CUSTOMIZATION

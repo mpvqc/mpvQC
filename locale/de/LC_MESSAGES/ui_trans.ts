@@ -107,7 +107,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="117"/>
         <source>MainWindow</source>
-        <translation>MPV QC</translation>
+        <translation>mpvQC</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="118"/>
@@ -172,7 +172,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="130"/>
         <source>&amp;Exit mpvQC</source>
-        <translation>MPV QC b&amp;eenden</translation>
+        <translation>mpvQC b&amp;eenden</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="131"/>
@@ -222,7 +222,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="140"/>
         <source>About &amp;mpvQC</source>
-        <translation>Über &amp;MPV QC</translation>
+        <translation>Über &amp;mpvQC</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="141"/>

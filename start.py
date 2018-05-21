@@ -25,7 +25,7 @@ from src import gui
 
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
 APPLICATION_VERSION = "0.0.1"
-APPLICATION_NAME = "mpv-qc"
+APPLICATION_NAME = "mpvQC"
 
 if __name__ == "__main__":
     # todo validation if mpv dependencies are installed and display a message box if not

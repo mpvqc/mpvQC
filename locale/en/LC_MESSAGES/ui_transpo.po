@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-12 20:21+0200\n"
+"POT-Creation-Date: 2018-05-21 14:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,7 @@ msgstr ""
 
 #: MainPlayerView%231
 msgid "MainWindow"
-msgstr "MPV QC"
+msgstr "mpvQC"
 
 #: MainPlayerView%232
 msgid "&File"
@@ -139,7 +139,7 @@ msgstr ""
 
 #: MainPlayerView%2314
 msgid "&Exit mpvQC"
-msgstr "&Exit MPV QC"
+msgstr "&Exit mpvQC"
 
 #: MainPlayerView%2315
 msgid "Ctrl+Q"
@@ -179,7 +179,7 @@ msgstr ""
 
 #: MainPlayerView%2324
 msgid "About &mpvQC"
-msgstr "Über &MPV QC"
+msgstr "About &mpvQC"
 
 #: MainPlayerView%2325
 msgid "&Settings"
