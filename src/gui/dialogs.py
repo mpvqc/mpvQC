@@ -20,13 +20,12 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
-from src.gui import SUPPORTED_SUB_FILES, SUPPORTED_VIDEO_FILES
+from src.gui import SUPPORTED_SUB_FILES
 
 _translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
-_FILTER_VIDEO = " ".join(["*." + x for x in SUPPORTED_VIDEO_FILES])
-_FILTER_SUBS = " ".join(["*." + x for x in SUPPORTED_SUB_FILES])
+_FILTER_SUBS = " ".join(["*" + x for x in SUPPORTED_SUB_FILES])
 
 
 def get_open_video(directory, parent=None) -> path or None:
@@ -38,7 +37,7 @@ def get_open_video(directory, parent=None) -> path or None:
     :return: the selected file or None if abort
     """
 
-    file_filter = _translate("Dialogs", "Video files") + " ({});;".format(_FILTER_VIDEO) + \
+    file_filter = _translate("Dialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
                   _translate("Dialogs", "All files") + " (*.*)"
 
     return QFileDialog.getOpenFileName(

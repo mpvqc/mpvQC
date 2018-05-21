@@ -35,8 +35,5 @@ TYPEWRITER_FONT: QFont
 TIME_FORMAT = "hh:mm:ss"
 
 # Supported subtitle file extensions for drag and drop and for opening via dialog
-SUPPORTED_SUB_FILES = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
-                       "mks", "vtt", "sub", "scc")
-
-# Supported video file extensions for drag and drop and for opening via dialog
-SUPPORTED_VIDEO_FILES = ("mp4", "mkv", "avi")
+SUPPORTED_SUB_FILES = (".ass", ".ssa", ".srt", ".sup", ".idx", ".utf", ".utf8", ".utf-8", ".smi",
+                       ".rt", ".aqt", ".jss", ".js", ".mks", ".vtt", ".sub", ".scc")
