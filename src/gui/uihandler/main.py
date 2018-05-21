@@ -22,11 +22,11 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle
 
 from src import settings
+from src.gui import SUPPORTED_SUB_FILES, SUPPORTED_VIDEO_FILES
 from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
 from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
     EventPlayerCurrentVideoPath
 from src.gui.generated.main import Ui_MainPlayerView
-from src.gui.globals import SUPPORTED_SUB_FILES, SUPPORTED_VIDEO_FILES
 from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
     LoadQCDocumentOldNotSavedMB, ValidVideoFileFoundMB, \
     WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB, QCDocumentToImportNotValidQCDocumentMB, \

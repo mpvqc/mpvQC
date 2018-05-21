@@ -18,8 +18,10 @@ import locale
 import sys
 from os import path
 
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase
 from PyQt5.QtWidgets import QApplication
+
+from src import gui
 
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
 APPLICATION_VERSION = "0.0.1"
@@ -32,6 +34,9 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
+
+    gui.TYPEWRITER_FONT = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+    gui.TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
 
     locale.setlocale(locale.LC_NUMERIC, "C")
 

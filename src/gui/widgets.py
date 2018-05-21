@@ -21,12 +21,11 @@ from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItem
 
 from src import settings, logging
 from src.files import Files
-from src.gui import utils
+from src.gui import utils, TYPEWRITER_FONT
 from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
 from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
     EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
     CommentsAmountChanged, EventCommentsUpToDate
-from src.gui.globals import TYPEWRITER_FONT
 from src.gui.uihandler.main import MainHandler
 from src.gui.uihandler.preferences import PreferenceHandler
 from src.gui.utils import KEY_MAPPINGS
@@ -456,7 +455,6 @@ class CommentsTable(QTableView):
 
 
 class StatusBar(QStatusBar):
-
     class __ClickableQLabel(QLabel):
         """
         A QLabel which listens to left and right click.

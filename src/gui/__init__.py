@@ -15,3 +15,28 @@
 """
 The gui package contains everything that's directly connected to gui components.
 """
+
+from PyQt5.QtGui import QFont
+
+"""
+    1 Typewriter font instance for the application. Will use the default fixed font of the system.
+
+    Can not be set here, because this file is imported before QApplication is started.
+    It will be set before the first window is shown. Therefore using this variable should be safe.
+    
+    
+"""
+TYPEWRITER_FONT: QFont
+# todo/discussion I have mixed feelings about this. Constants should be immutable.
+# We could call QFontDatabase.systemFont(QFontDatabase.FixedFont) every time we use it,
+# but then we might rewrite everything once we're allowing changes for the monospace font.
+
+# Time format
+TIME_FORMAT = "hh:mm:ss"
+
+# Supported subtitle file extensions for drag and drop and for opening via dialog
+SUPPORTED_SUB_FILES = ("ass", "ssa", "srt", "sup", "idx", "utf", "utf8", "utf-8", "smi", "rt", "aqt", "jss", "js",
+                       "mks", "vtt", "sub", "scc")
+
+# Supported video file extensions for drag and drop and for opening via dialog
+SUPPORTED_VIDEO_FILES = ("mp4", "mkv", "avi")

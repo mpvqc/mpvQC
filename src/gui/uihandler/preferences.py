@@ -20,8 +20,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialogButtonBox, QDialog
 
 from src import settings, constants
+from src.gui import TYPEWRITER_FONT
 from src.gui.generated.preferences import Ui_PreferencesView
-from src.gui.globals import TYPEWRITER_FONT
 from src.gui.messageboxes import ConfigurationResetMB, ConfigurationHasChangedMB
 from start import APPLICATION_VERSION, APPLICATION_NAME
 

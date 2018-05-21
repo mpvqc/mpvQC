@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QCombo
     QAbstractSpinBox, QTimeEdit
 
 from src import settings
-from src.gui.globals import TYPEWRITER_FONT, TIME_FORMAT
+from src.gui import TIME_FORMAT, TYPEWRITER_FONT
 
 
 class NotifiableItemDelegate(QItemDelegate):
