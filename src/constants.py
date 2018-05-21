@@ -166,10 +166,6 @@ CREDITS = """
 <p>
     Qt5<br>LGPLv3 &lt;The Qt Company Ltd and other contributors&gt;
 </p>
-<p>
-    Requests<br>Apache Version 2 &lt;Kenneth Reitz&gt;
-</p>
-<p>
 """
 
 # todo Maybe scan existing licence instead of hard code it

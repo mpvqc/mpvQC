@@ -100,8 +100,6 @@ class Ui_MainPlayerView(object):
         self.mainWindowVideoMenu.addSeparator()
         self.mainWindowVideoMenu.addAction(self.actionResizeVideoToOriginalResolution)
         self.mainWindowSettingsMenu.addAction(self.actionSettings)
-        self.mainWindowAboutMenu.addAction(self.actionCheckForUpdates)
-        self.mainWindowAboutMenu.addSeparator()
         self.mainWindowAboutMenu.addAction(self.actionAboutQt)
         self.mainWindowAboutMenu.addAction(self.actionAboutMpvQc)
         self.mainWindowMenuBar.addAction(self.mainWindowFileMenu.menuAction())

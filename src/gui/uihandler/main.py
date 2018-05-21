@@ -13,7 +13,6 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import gettext
-import inspect
 from os import path
 from typing import List
 
@@ -198,7 +197,6 @@ class MainHandler(QMainWindow):
         self.__ui.actionResizeVideoToOriginalResolution.triggered.connect(lambda c, f=self.__action_resize_video: f())
 
         self.__ui.actionSettings.triggered.connect(lambda c, f=self.__action_open_settings: f())
-        self.__ui.actionCheckForUpdates.triggered.connect(lambda c, f=self.__action_check_for_update: f())
         self.__ui.actionAboutQt.triggered.connect(lambda c, f=self.__action_open_about_qt: f())
         self.__ui.actionAboutMpvQc.triggered.connect(lambda c, f=self.__action_open_about_mpvqc: f())
 
@@ -403,9 +401,6 @@ class MainHandler(QMainWindow):
         self.__update_window_title()
         self.__reload_autosave_settings()
 
-    def __action_check_for_update(self) -> None:
-        print(inspect.stack()[0][3])
-
     def __action_open_about_qt(self) -> None:
         QApplication.instance().aboutQt()
 
@@ -418,7 +413,9 @@ class MainHandler(QMainWindow):
         https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen
         """
 
-        screen_geometry = QDesktopWidget().screenGeometry(QDesktopWidget().screenNumber(QCursor.pos()))
+        desktop_widget = QDesktopWidget()
+        screen_geometry = desktop_widget.screenGeometry(desktop_widget.screenNumber(QCursor.pos()))
+
         self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(), screen_geometry))
 
     def closeEvent(self, cev: QCloseEvent):

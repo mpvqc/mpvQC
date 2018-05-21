@@ -51,52 +51,52 @@
 <context>
     <name>Dialogs</name>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="44"/>
+        <location filename="../../../src/gui/dialogs.py" line="43"/>
         <source>Open Video File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="81"/>
+        <location filename="../../../src/gui/dialogs.py" line="80"/>
         <source>Open QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="115"/>
+        <location filename="../../../src/gui/dialogs.py" line="114"/>
         <source>QC documents (*.txt);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="115"/>
+        <location filename="../../../src/gui/dialogs.py" line="114"/>
         <source>Save QC document as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="131"/>
+        <location filename="../../../src/gui/dialogs.py" line="130"/>
         <source>Open network stream</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="131"/>
+        <location filename="../../../src/gui/dialogs.py" line="130"/>
         <source>Enter URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="41"/>
+        <location filename="../../../src/gui/dialogs.py" line="40"/>
         <source>Video files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="62"/>
+        <location filename="../../../src/gui/dialogs.py" line="61"/>
         <source>All files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="61"/>
+        <location filename="../../../src/gui/dialogs.py" line="60"/>
         <source>Subtitle files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/dialogs.py" line="64"/>
+        <location filename="../../../src/gui/dialogs.py" line="63"/>
         <source>Open Subtitle File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -104,137 +104,137 @@
 <context>
     <name>MainPlayerView</name>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="117"/>
+        <location filename="../../../src/gui/generated/main.py" line="115"/>
         <source>MainWindow</source>
         <translation>mpvQC</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="118"/>
+        <location filename="../../../src/gui/generated/main.py" line="116"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="119"/>
+        <location filename="../../../src/gui/generated/main.py" line="117"/>
         <source>Vi&amp;deo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="120"/>
+        <location filename="../../../src/gui/generated/main.py" line="118"/>
         <source>Optio&amp;ns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="121"/>
+        <location filename="../../../src/gui/generated/main.py" line="119"/>
         <source>Abo&amp;ut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="122"/>
+        <location filename="../../../src/gui/generated/main.py" line="120"/>
         <source>&amp;New QC document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="123"/>
+        <location filename="../../../src/gui/generated/main.py" line="121"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="124"/>
+        <location filename="../../../src/gui/generated/main.py" line="122"/>
         <source>&amp;Open QC document(s) ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="125"/>
+        <location filename="../../../src/gui/generated/main.py" line="123"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="126"/>
+        <location filename="../../../src/gui/generated/main.py" line="124"/>
         <source>&amp;Save QC document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="127"/>
+        <location filename="../../../src/gui/generated/main.py" line="125"/>
         <source>Ctrl+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="128"/>
+        <location filename="../../../src/gui/generated/main.py" line="126"/>
         <source>S&amp;ave QC document as ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="129"/>
+        <location filename="../../../src/gui/generated/main.py" line="127"/>
         <source>Ctrl+Shift+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="130"/>
+        <location filename="../../../src/gui/generated/main.py" line="128"/>
         <source>&amp;Exit mpvQC</source>
         <translation>&amp;Exit mpvQC</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="131"/>
+        <location filename="../../../src/gui/generated/main.py" line="129"/>
         <source>Ctrl+Q</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="132"/>
+        <location filename="../../../src/gui/generated/main.py" line="130"/>
         <source>Open &amp;video ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="133"/>
+        <location filename="../../../src/gui/generated/main.py" line="131"/>
         <source>Ctrl+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="134"/>
+        <location filename="../../../src/gui/generated/main.py" line="132"/>
         <source>Open &amp;network stream ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="135"/>
+        <location filename="../../../src/gui/generated/main.py" line="133"/>
         <source>Ctrl+Alt+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="136"/>
+        <location filename="../../../src/gui/generated/main.py" line="134"/>
         <source>&amp;Resize video to original resolution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="137"/>
+        <location filename="../../../src/gui/generated/main.py" line="135"/>
         <source>Ctrl+R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="138"/>
+        <location filename="../../../src/gui/generated/main.py" line="136"/>
         <source>&amp;Check For Updates ...</source>
         <translation>Check for &amp;updates ...</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="139"/>
+        <location filename="../../../src/gui/generated/main.py" line="137"/>
         <source>About &amp;Qt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="140"/>
+        <location filename="../../../src/gui/generated/main.py" line="138"/>
         <source>About &amp;mpvQC</source>
         <translation>About &amp;mpvQC</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="141"/>
+        <location filename="../../../src/gui/generated/main.py" line="139"/>
         <source>&amp;Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="142"/>
+        <location filename="../../../src/gui/generated/main.py" line="140"/>
         <source>Ctrl+Alt+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/main.py" line="143"/>
+        <location filename="../../../src/gui/generated/main.py" line="141"/>
         <source>&amp;Open subtitle ...</source>
         <translation type="unfinished"></translation>
     </message>

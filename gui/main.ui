@@ -76,8 +76,6 @@
     <property name="title">
      <string>Abo&amp;ut</string>
     </property>
-    <addaction name="actionCheckForUpdates"/>
-    <addaction name="separator"/>
     <addaction name="actionAboutQt"/>
     <addaction name="actionAboutMpvQc"/>
    </widget>
