@@ -397,7 +397,7 @@ class MainHandler(QMainWindow):
         PreferenceHandler(display_about).exec_()
 
         # After dialog closed
-        if not display_about and not was_paused_manually:
+        if not was_paused_manually:
             player.play()
 
         self.__update_ui_language()
