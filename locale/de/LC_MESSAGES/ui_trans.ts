@@ -64,17 +64,17 @@
     <message>
         <location filename="../../../src/gui/dialogs.py" line="81"/>
         <source>Open QC Document</source>
-        <translation>QC Dokumente öffnen</translation>
+        <translation>QC-Dokumente öffnen</translation>
     </message>
     <message>
         <location filename="../../../src/gui/dialogs.py" line="115"/>
         <source>QC documents (*.txt);;All files (*.*)</source>
-        <translation>QC Dokumente (*.txt);;Alle Dateien (*.*)</translation>
+        <translation>QC-Dokumente (*.txt);;Alle Dateien (*.*)</translation>
     </message>
     <message>
         <location filename="../../../src/gui/dialogs.py" line="115"/>
         <source>Save QC document as</source>
-        <translation>QC Dokument speichern als</translation>
+        <translation>QC-Dokument speichern als</translation>
     </message>
     <message>
         <location filename="../../../src/gui/dialogs.py" line="131"/>
@@ -137,7 +137,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="122"/>
         <source>&amp;New QC document</source>
-        <translation>&amp;Neues QC Dokument</translation>
+        <translation>&amp;Neues QC-Dokument</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="123"/>
@@ -147,7 +147,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="124"/>
         <source>&amp;Open QC document(s) ...</source>
-        <translation>&amp;QC Dokument(e) öffnen ...</translation>
+        <translation>&amp;QC-Dokument(e) öffnen ...</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="125"/>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="126"/>
         <source>&amp;Save QC document</source>
-        <translation>QC Dokumente &amp;speichern</translation>
+        <translation>QC-Dokumente &amp;speichern</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="127"/>
@@ -167,7 +167,7 @@
     <message>
         <location filename="../../../src/gui/generated/main.py" line="128"/>
         <source>S&amp;ave QC document as ...</source>
-        <translation>QC Dokumente speichern &amp;als ...</translation>
+        <translation>QC-Dokumente speichern &amp;als ...</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/main.py" line="129"/>
@@ -295,7 +295,7 @@
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="59"/>
         <source>Do you really want to quit without saving your QC?</source>
-        <translation>Möchten Sie wirklich beenden? Nicht gespeicherte Änderungen Ihres aktuellen QC Dokuments gehen verloren.</translation>
+        <translation>Möchten Sie wirklich beenden? Nicht gespeicherte Änderungen Ihres aktuellen QC-Dokuments gehen verloren.</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="62"/>
@@ -305,22 +305,22 @@
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="74"/>
         <source>Do you really want to create a new QC Document without saving your QC?</source>
-        <translation>Möchten Sie wirklich ein neues QC Dokument erstellen? Nicht gespeicherte Änderungen Ihres aktuellen QC Dokuments gehen verloren.</translation>
+        <translation>Möchten Sie wirklich ein neues QC-Dokument erstellen? Nicht gespeicherte Änderungen Ihres aktuellen QC-Dokuments gehen verloren.</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="77"/>
         <source>Create new QC document</source>
-        <translation>Neues QC Dokument erstellen</translation>
+        <translation>Neues QC-Dokument erstellen</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="89"/>
         <source>Do you really want to open a QC Document without saving your current one?</source>
-        <translation>Möchten Sie wirklich ein anderes QC Dokument öffnen? Nicht gespeicherte Änderungen Ihres aktuellen QC Dokuments gehen verloren.</translation>
+        <translation>Möchten Sie wirklich ein anderes QC-Dokument öffnen? Nicht gespeicherte Änderungen Ihres aktuellen QC-Dokuments gehen verloren.</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="92"/>
         <source>Open QC document</source>
-        <translation>QC Dokument öffnen</translation>
+        <translation>QC-Dokument öffnen</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="104"/>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="137"/>
         <source>Not a QC document</source>
-        <translation>Kein QC Dokument</translation>
+        <translation>Kein QC-Dokument</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="148"/>
@@ -365,7 +365,7 @@
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="134"/>
         <source> does not seem to be a QC document file.</source>
-        <translation> scheint kein QC Dokument zu sein.</translation>
+        <translation> scheint kein QC-Dokument zu sein.</translation>
     </message>
     <message>
         <location filename="../../../src/gui/messageboxes.py" line="144"/>
@@ -458,7 +458,7 @@
     <message>
         <location filename="../../../src/gui/generated/preferences.py" line="606"/>
         <source>QC Document</source>
-        <translation>QC Dokument</translation>
+        <translation>QC-Dokument</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/preferences.py" line="613"/>
@@ -533,12 +533,12 @@
     <message>
         <location filename="../../../src/gui/generated/preferences.py" line="610"/>
         <source>Save nick name to QC document</source>
-        <translation>Nicknamen in QC Dokument speichern</translation>
+        <translation>Nicknamen in QC-Dokument speichern</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/preferences.py" line="611"/>
         <source>Save video path to QC document</source>
-        <translation>Videopfad in QC Dokument speichern</translation>
+        <translation>Videopfad in QC-Dokument speichern</translation>
     </message>
     <message>
         <location filename="../../../src/gui/generated/preferences.py" line="623"/>

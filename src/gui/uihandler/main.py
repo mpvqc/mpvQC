@@ -19,7 +19,7 @@ from typing import List
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QEvent, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget
 
 from src import settings
 from src.gui import SUPPORTED_SUB_FILES
@@ -376,11 +376,9 @@ class MainHandler(QMainWindow):
                 height = self.__player.video_height()
 
                 if width and height:
-                    additional_mb = self.menuBar().height()
-                    additional_ct = self.widget_comments.height()
-                    additional_sb = self.statusBar().height()
+                    additional_height = self.height() - self.widget_mpv.height()
+                    self.resize(width, height + additional_height)
 
-                    self.resize(width, height + additional_mb + additional_sb + additional_ct + 1)
             except TypeError:
                 return
 
@@ -420,8 +418,8 @@ class MainHandler(QMainWindow):
         https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen
         """
 
-        self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(),
-                                            self.application.desktop().availableGeometry()))
+        screen_geometry = QDesktopWidget().screenGeometry(QDesktopWidget().screenNumber(QCursor.pos()))
+        self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(), screen_geometry))
 
     def closeEvent(self, cev: QCloseEvent):
 

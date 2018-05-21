@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-21 20:39+0200\n"
+"POT-Creation-Date: 2018-05-21 20:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,15 +62,15 @@ msgstr "Videodateien (*.mkv *.mp4);;Alle Dateien (*.*)"
 
 #: Dialogs%233
 msgid "Open QC Document"
-msgstr "QC Dokumente öffnen"
+msgstr "QC-Dokumente öffnen"
 
 #: Dialogs%234
 msgid "QC documents (*.txt);;All files (*.*)"
-msgstr "QC Dokumente (*.txt);;Alle Dateien (*.*)"
+msgstr "QC-Dokumente (*.txt);;Alle Dateien (*.*)"
 
 #: Dialogs%235
 msgid "Save QC document as"
-msgstr "QC Dokument speichern als"
+msgstr "QC-Dokument speichern als"
 
 #: Dialogs%236
 msgid "Open network stream"
@@ -118,7 +118,7 @@ msgstr "&Über"
 
 #: MainPlayerView%236
 msgid "&New QC document"
-msgstr "&Neues QC Dokument"
+msgstr "&Neues QC-Dokument"
 
 #: MainPlayerView%237
 msgid "Ctrl+N"
@@ -126,7 +126,7 @@ msgstr ""
 
 #: MainPlayerView%238
 msgid "&Open QC document(s) ..."
-msgstr "&QC Dokument(e) öffnen ..."
+msgstr "&QC-Dokument(e) öffnen ..."
 
 #: MainPlayerView%239
 msgid "Ctrl+O"
@@ -134,7 +134,7 @@ msgstr ""
 
 #: MainPlayerView%2310
 msgid "&Save QC document"
-msgstr "QC Dokumente &speichern"
+msgstr "QC-Dokumente &speichern"
 
 #: MainPlayerView%2311
 msgid "Ctrl+S"
@@ -142,7 +142,7 @@ msgstr ""
 
 #: MainPlayerView%2312
 msgid "S&ave QC document as ..."
-msgstr "QC Dokumente speichern &als ..."
+msgstr "QC-Dokumente speichern &als ..."
 
 #: MainPlayerView%2313
 msgid "Ctrl+Shift+S"
@@ -249,7 +249,7 @@ msgstr "Abbrechen"
 msgid "Do you really want to quit without saving your QC?"
 msgstr ""
 "Möchten Sie wirklich beenden? Nicht gespeicherte Änderungen Ihres aktuellen "
-"QC Dokuments gehen verloren."
+"QC-Dokuments gehen verloren."
 
 #: MessageBoxes%2310
 msgid "Discard QC"
@@ -258,23 +258,23 @@ msgstr "Änderungen verwerfen"
 #: MessageBoxes%2311
 msgid "Do you really want to create a new QC Document without saving your QC?"
 msgstr ""
-"Möchten Sie wirklich ein neues QC Dokument erstellen? Nicht gespeicherte "
-"Änderungen Ihres aktuellen QC Dokuments gehen verloren."
+"Möchten Sie wirklich ein neues QC-Dokument erstellen? Nicht gespeicherte "
+"Änderungen Ihres aktuellen QC-Dokuments gehen verloren."
 
 #: MessageBoxes%2312
 msgid "Create new QC document"
-msgstr "Neues QC Dokument erstellen"
+msgstr "Neues QC-Dokument erstellen"
 
 #: MessageBoxes%2313
 msgid ""
 "Do you really want to open a QC Document without saving your current one?"
 msgstr ""
-"Möchten Sie wirklich ein anderes QC Dokument öffnen? Nicht gespeicherte "
-"Änderungen Ihres aktuellen QC Dokuments gehen verloren."
+"Möchten Sie wirklich ein anderes QC-Dokument öffnen? Nicht gespeicherte "
+"Änderungen Ihres aktuellen QC-Dokuments gehen verloren."
 
 #: MessageBoxes%2314
 msgid "Open QC document"
-msgstr "QC Dokument öffnen"
+msgstr "QC-Dokument öffnen"
 
 #: MessageBoxes%2315
 msgid "A valid video file was found. Do you want to open it?"
@@ -302,7 +302,7 @@ msgstr "Behalten"
 
 #: MessageBoxes%2321
 msgid "Not a QC document"
-msgstr "Kein QC Dokument"
+msgstr "Kein QC-Dokument"
 
 #: MessageBoxes%2322
 msgid "Ok"
@@ -310,7 +310,7 @@ msgstr "Ok"
 
 #: MessageBoxes%2323
 msgid " does not seem to be a QC document file."
-msgstr " scheint kein QC Dokument zu sein."
+msgstr " scheint kein QC-Dokument zu sein."
 
 #: MessageBoxes%2324
 msgid ""
@@ -387,7 +387,7 @@ msgstr "MPV Einstellungen"
 
 #: PreferencesView%2316
 msgid "QC Document"
-msgstr "QC Dokument"
+msgstr "QC-Dokument"
 
 #: PreferencesView%2317
 msgid "Language"
@@ -447,11 +447,11 @@ msgstr "Sekunden"
 
 #: PreferencesView%2331
 msgid "Save nick name to QC document"
-msgstr "Nicknamen in QC Dokument speichern"
+msgstr "Nicknamen in QC-Dokument speichern"
 
 #: PreferencesView%2332
 msgid "Save video path to QC document"
-msgstr "Videopfad in QC Dokument speichern"
+msgstr "Videopfad in QC-Dokument speichern"
 
 #: PreferencesView%2333
 msgid "Credits"
