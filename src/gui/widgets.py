@@ -149,7 +149,8 @@ class MpvWidget(QFrame):
         elif key == Qt.Key_Delete:
             self.__main_handler.widget_comments.delete_current_selected_comment()
         elif key == Qt.Key_Return or key == Qt.Key_Backspace:  # Backspace or Enter
-            self.__main_handler.widget_comments.edit_current_selected_comment()
+            if self.__main_handler.widget_comments.state() == QAbstractItemView.NoState:
+                self.__main_handler.widget_comments.edit_current_selected_comment()
         elif key == Qt.Key_C and mod == Qt.CTRL:
             self.__main_handler.widget_comments.copy_current_selected_comment()
 

@@ -217,7 +217,7 @@ class PreferenceHandler(QDialog):
                 APPLICATION_NAME,
                 PreferenceHandler.VERSION_MPV,
                 PreferenceHandler.VERSION_FFMPEG,
-                "2016-2017")
+                "2016-2018")
             )
 
         def display_about_page(self) -> None:
