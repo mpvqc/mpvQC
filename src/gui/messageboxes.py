@@ -111,7 +111,7 @@ class ValidVideoFileFoundMB(QMessageBox):
 
 class WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB(QMessageBox):
     """
-    he message box when the user imports QC documents to ask what to do with the existing comments.
+    The message box when the user imports QC documents to ask what to do with the existing comments.
     """
 
     def __init__(self):
@@ -139,6 +139,10 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
 
 
 class SubtitlesCanNotBeAddedToNoVideo(QMessageBox):
+    """
+    The message box if user wants to drop subtitles if no video is loaded.
+    """
+
     def __init__(self):
         super().__init__()
         self.setText(_translate("MessageBoxes",

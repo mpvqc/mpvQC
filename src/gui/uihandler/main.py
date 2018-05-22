@@ -342,7 +342,7 @@ class MainHandler(QMainWindow):
             settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value = path.dirname(file)
             self.__player.open_video(file, play=True)
 
-    def __action_open_subtitles(self, sub_files: List[str] = None):
+    def __action_open_subtitles(self, sub_files: List[str] = None) -> None:
 
         if not sub_files:
             sub_files = get_open_subs(directory=settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value,
@@ -407,7 +407,7 @@ class MainHandler(QMainWindow):
     def __action_open_about_mpvqc(self) -> None:
         self.__action_open_settings(display_about=True)
 
-    def __move_window_to_center(self):
+    def __move_window_to_center(self) -> None:
         """
         Moves window to center of the screen.
         https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen
@@ -418,7 +418,7 @@ class MainHandler(QMainWindow):
 
         self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(), screen_geometry))
 
-    def closeEvent(self, cev: QCloseEvent):
+    def closeEvent(self, cev: QCloseEvent) -> None:
 
         if self.__qc_manager.should_save():
             self.__player.pause()

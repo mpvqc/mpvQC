@@ -32,7 +32,7 @@ TYPEWRITER_FONT: QFont
 # but then we might rewrite everything once we're allowing changes for the monospace font.
 
 # Time format
-TIME_FORMAT = "hh:mm:ss"
+TIME_FORMAT = "HH:mm:ss"
 
 # Supported subtitle file extensions for drag and drop and for opening via dialog
 SUPPORTED_SUB_FILES = (".ass", ".ssa", ".srt", ".sup", ".idx", ".utf", ".utf8", ".utf-8", ".smi",

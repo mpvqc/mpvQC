@@ -456,6 +456,7 @@ class CommentsTable(QTableView):
 
 
 class StatusBar(QStatusBar):
+
     class __ClickableQLabel(QLabel):
         """
         A QLabel which listens to left and right click.
@@ -477,6 +478,11 @@ class StatusBar(QStatusBar):
 
     def __init__(self):
         super().__init__()
+        self.__time_current: str = "00:00"
+        self.__time_remaining: str = "23:59:59"
+        self.__percent: int = 0
+        self.__comments_amount: int = 0
+
         self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
         # Label and Widget
@@ -491,11 +497,6 @@ class StatusBar(QStatusBar):
         self.__timer = QTimer()
         self.__timer.timeout.connect(self.__update_status_bar_text)
         self.__timer.start(100)
-
-        self.__time_current: str = "00:00"
-        self.__time_remaining: str = "23:59:59"
-        self.__percent: int = 0
-        self.__comments_amount: int = 0
 
         self.addPermanentWidget(QLabel(), 1)
         self.addPermanentWidget(self.__label_information, 0)

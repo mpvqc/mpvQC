@@ -22,7 +22,7 @@ from typing import Dict
 from PyQt5.QtCore import QCoreApplication
 from appdirs import unicode
 
-from src import constants
+from src import CFG_MPV, CFG_INPUT
 from src.files import Files
 
 try:
@@ -183,10 +183,10 @@ Setting_Custom_QcDocument_WRITE_NICK_TO_FILE = \
 ######################################################################## PREFERENCES -> CONFIGURATION ### CUSTOMIZATION
 
 Setting_Custom_Configuration_INPUT = \
-    Entry(Files.FILE_CONF_INPUT, constants.CFG_INPUT)
+    Entry(Files.FILE_CONF_INPUT, CFG_INPUT)
 
 Setting_Custom_Configuration_MPV = \
-    Entry(Files.FILE_CONF_MPV, constants.CFG_MPV)
+    Entry(Files.FILE_CONF_MPV, CFG_MPV)
 
 ########################################################################### PREFERENCES -> APPEARANCE ### CUSTOMIZATION
 

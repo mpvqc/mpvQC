@@ -13,14 +13,14 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime
-from PyQt5.QtWidgets import QItemDelegate, QWidget, QStyleOptionViewItem, QComboBox, QDateTimeEdit, \
-    QAbstractSpinBox, QTimeEdit
+from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
+    QStyledItemDelegate
 
 from src import settings
 from src.gui import TIME_FORMAT, TYPEWRITER_FONT
 
 
-class NotifiableItemDelegate(QItemDelegate):
+class NotifiableItemDelegate(QStyledItemDelegate):
     """
     The parent delegate class for providing common actions for all custom delegates.
     """
@@ -40,26 +40,27 @@ class CommentTimeDelegate(NotifiableItemDelegate):
     """
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
-        dte = QTimeEdit(parent)
-        dte.setFrame(False)
-        dte.setAlignment(Qt.AlignLeft)
-        dte.setButtonSymbols(QAbstractSpinBox.NoButtons)
-        dte.setCorrectionMode(QAbstractSpinBox.CorrectToNearestValue)
-        dte.setKeyboardTracking(True)
-        dte.setProperty("showGroupSeparator", False)
-        dte.setCurrentSection(QDateTimeEdit.HourSection)
-        dte.setCalendarPopup(False)
-        dte.setCurrentSectionIndex(0)
-        dte.setDisplayFormat(TIME_FORMAT)
-        dte.setFont(TYPEWRITER_FONT)
-        return dte
+        editor = QTimeEdit(parent)
+        editor.setFont(TYPEWRITER_FONT)
+        editor.setDisplayFormat(TIME_FORMAT)
+        editor.setCurrentSection(QTimeEdit.SecondSection)
+        editor.setFrame(False)
+        editor.setAlignment(Qt.AlignLeft)
+        editor.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        editor.setCorrectionMode(QAbstractSpinBox.CorrectToNearestValue)
+        editor.setKeyboardTracking(True)
+        editor.setProperty("showGroupSeparator", False)
+        editor.setCalendarPopup(False)
+        return editor
 
     def setEditorData(self, editor: QWidget, index: QModelIndex):
-        editor: QDateTimeEdit
+        editor: QTimeEdit
         editor.setTime(QTime.fromString(index.model().data(index, Qt.EditRole), TIME_FORMAT))
+        editor.setSelectedSection(QTimeEdit.SecondSection)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        editor: QDateTimeEdit
+        editor: QTimeEdit
+        editor.interpretText()
         model.setData(index, editor.text(), Qt.EditRole)
         self._after_edit_done()
 
@@ -73,10 +74,10 @@ class CommentTypeDelegate(NotifiableItemDelegate):
     """
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
-        combo_box = QComboBox(parent)
+        editor = QComboBox(parent)
         for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
-            combo_box.addItem(ct)
-        return combo_box
+            editor.addItem(ct)
+        return editor
 
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         editor: QComboBox = editor

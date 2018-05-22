@@ -19,7 +19,7 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialogButtonBox, QDialog
 
-from src import settings, constants
+from src import settings, CREDITS, LICENCE, ABOUT
 from src.gui import TYPEWRITER_FONT
 from src.gui.generated.preferences import Ui_PreferencesView
 from src.gui.messageboxes import ConfigurationResetMB, ConfigurationHasChangedMB
@@ -205,13 +205,13 @@ class PreferenceHandler(QDialog):
 
         def __setup_about(self):
             self.__ui.creditsTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
-            self.__ui.creditsTextBrowser.setHtml(constants.CREDITS)
+            self.__ui.creditsTextBrowser.setHtml(CREDITS)
             self.__ui.licenceTextBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
-            self.__ui.licenceTextBrowser.setHtml(constants.LICENCE)
+            self.__ui.licenceTextBrowser.setHtml(LICENCE)
 
             self.__ui.aboutTextBrowser.setOpenExternalLinks(True)
             self.__ui.aboutTextBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-            self.__ui.aboutTextBrowser.setHtml(constants.ABOUT.format(
+            self.__ui.aboutTextBrowser.setHtml(ABOUT.format(
                 APPLICATION_VERSION,
                 platform.architecture()[0],
                 APPLICATION_NAME,
