@@ -49,7 +49,9 @@ __for_translation_only = [
 
 class Entry:
     """
-    An entry represents a property which is saved to disc.
+    An entry represents a property which is saved to disc or a separate file.
+
+    The *.conf files are *Entry* objects, too.
     """
 
     def __init__(self, identifier: str or path, default_value):

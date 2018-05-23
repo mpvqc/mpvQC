@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
     QStyledItemDelegate
 
@@ -25,13 +25,8 @@ class NotifiableItemDelegate(QStyledItemDelegate):
     The parent delegate class for providing common actions for all custom delegates.
     """
 
-    def __init__(self, parent, after_edited=None):
-        super().__init__(parent)
-        self.after_edit_done = after_edited
-
-    def _after_edit_done(self):
-        if self.after_edit_done is not None:
-            self.after_edit_done()
+    # Signal is called, after edit was done successfully (and not aborted!)
+    editing_done = pyqtSignal()
 
 
 class CommentTimeDelegate(NotifiableItemDelegate):
@@ -62,7 +57,7 @@ class CommentTimeDelegate(NotifiableItemDelegate):
         editor: QTimeEdit
         editor.interpretText()
         model.setData(index, editor.text(), Qt.EditRole)
-        self._after_edit_done()
+        self.editing_done.emit()
 
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)
@@ -87,7 +82,7 @@ class CommentTypeDelegate(NotifiableItemDelegate):
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         editor: QComboBox = editor
         model.setData(index, editor.currentText(), Qt.EditRole)
-        self._after_edit_done()
+        self.editing_done.emit()
 
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)
@@ -104,4 +99,4 @@ class CommentNoteDelegate(NotifiableItemDelegate):
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         super().setModelData(editor, model, index)
-        self._after_edit_done()
+        self.editing_done.emit()

@@ -245,9 +245,17 @@ class CommentsTable(QTableView):
         self.verticalHeader().hide()
 
         # Delegates
-        self.setItemDelegateForColumn(0, CommentTimeDelegate(self, self.__on_after_user_changed_time))
-        self.setItemDelegateForColumn(1, CommentTypeDelegate(self, self.__on_after_user_changed_comment_type))
-        self.setItemDelegateForColumn(2, CommentNoteDelegate(self, self.__on_after_user_changed_comment_note))
+        delegate_time = CommentTimeDelegate(self)
+        delegate_coty = CommentTypeDelegate(self)
+        delegate_note = CommentNoteDelegate(self)
+
+        delegate_time.editing_done.connect(self.__on_after_user_changed_time)
+        delegate_coty.editing_done.connect(self.__on_after_user_changed_comment_type)
+        delegate_note.editing_done.connect(self.__on_after_user_changed_comment_note)
+
+        self.setItemDelegateForColumn(0, delegate_time)
+        self.setItemDelegateForColumn(1, delegate_coty)
+        self.setItemDelegateForColumn(2, delegate_note)
 
         # Misc
         self.setEditTriggers(QAbstractItemView.DoubleClicked)
@@ -457,25 +465,6 @@ class CommentsTable(QTableView):
 
 class StatusBar(QStatusBar):
 
-    class __ClickableQLabel(QLabel):
-        """
-        A QLabel which listens to left and right click.
-        """
-
-        def __init__(self):
-            super().__init__()
-            self.on_right_mouse_click = None
-            self.on_left_mouse_click = None
-            self.setFont(TYPEWRITER_FONT)
-
-        def mousePressEvent(self, e: QMouseEvent):
-            button = e.button()
-
-            if button == Qt.LeftButton and self.on_left_mouse_click:
-                self.on_left_mouse_click()
-            elif button == Qt.RightButton and self.on_right_mouse_click:
-                self.on_right_mouse_click()
-
     def __init__(self):
         super().__init__()
         self.__time_current: str = "00:00"
@@ -485,13 +474,10 @@ class StatusBar(QStatusBar):
 
         self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
-        # Label and Widget
-        def on_current_remaining_time_clicked():
-            self.__time_format.value = not self.__time_format.value
-
-        self.__label_information = StatusBar.__ClickableQLabel()
-        self.__label_information.on_left_mouse_click = on_current_remaining_time_clicked
+        self.__label_information = QLabel()
+        self.__label_information.setFont(TYPEWRITER_FONT)
         self.__label_information.setAlignment(Qt.AlignRight)
+        self.__label_information.installEventFilter(self)
 
         # Timer updates status bar every 100 ms
         self.__timer = QTimer()
@@ -531,6 +517,16 @@ class StatusBar(QStatusBar):
         elif ev_type == CommentsAmountChanged:
             ev: EventCommentsAmountChanged
             self.__comments_amount = ev.new_amount
+
+    def eventFilter(self, source: QObject, event: QEvent):
+
+        if source == self.__label_information and event.type() == QEvent.MouseButtonPress:
+            event: QMouseEvent
+
+            if event.button() == Qt.LeftButton:
+                self.__time_format.value = not self.__time_format.value
+                return True
+        return super(StatusBar, self).eventFilter(source, event)
 
 
 class PreferenceCommentTypesWidget(QObject):
