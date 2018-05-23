@@ -33,7 +33,9 @@ _REGEX_VALIDATOR_DOCUMENT = re.compile("^\[FILE\].*")
 
 _REGEX_PATH = re.compile("^path:*\s*")
 _REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[\w+.*\]\s*.*$")
-_REGEX_COLUMN = re.compile("\[([A-Za-z0-9\:_\s]+)\]")
+
+# Used to find the first two columns todo allow more characters
+_REGEX_COLUMN = re.compile("\[([a-z0-9A-ZäöüÄÖÜß\:_\s]+)\]")
 
 # Uses platform dependent line separator
 _LINE_BREAK = linesep
