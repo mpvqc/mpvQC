@@ -14,8 +14,10 @@
 from enum import Enum
 from typing import List, Tuple
 
-from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection, QObject, pyqtSignal, QCoreApplication
-from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel
+from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection, QObject, pyqtSignal, QCoreApplication, \
+    QRegExp
+from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel, \
+    QRegExpValidator
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel, QLineEdit, QListWidget, \
     QPushButton, QListWidgetItem
 
@@ -566,6 +568,7 @@ class PreferenceCommentTypesWidget(QObject):
 
         self.__line_edit = line_edit
         self.__line_edit.textChanged.connect(lambda txt, fun=self.__on_text_changed_line_edit: fun(txt))
+        self.__line_edit.setValidator(QRegExpValidator(QRegExp("[^\[\]]*")))
 
         self.__list_widget = list_widget
         self.__list_widget.selectionModel().selectionChanged.connect(

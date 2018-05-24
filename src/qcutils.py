@@ -28,14 +28,14 @@ from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurren
 from src.gui.uihandler.main import MainHandler
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
-# If a file is a valid qc document is determined if line 1 starts with '[FILE]'.
-_REGEX_VALIDATOR_DOCUMENT = re.compile("^\[FILE\].*")
+# If a file is a valid qc document is determined if line (stripped) 1 starts with '[FILE]'.
+QC_DOCUMENT_START_VALIDATOR = "[FILE]"
 
 _REGEX_PATH = re.compile("^path:*\s*")
-_REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[\w+.*\]\s*.*$")
+_REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[[^\[\]]*\]\s*.*$")
 
-# Used to find the first two columns todo allow more characters
-_REGEX_COLUMN = re.compile("\[([a-z0-9A-ZäöüÄÖÜß\:_\s]+)\]")
+# Used to find the first two columns
+_REGEX_COLUMN = re.compile("\[[^\[\]]*\]")
 
 # Uses platform dependent line separator
 _LINE_BREAK = linesep
@@ -246,7 +246,7 @@ class QualityCheckReader:
 
         path_found = False
 
-        if len(self.__qc_lines) > 0 and _REGEX_VALIDATOR_DOCUMENT.match(self.__qc_lines[0]):
+        if len(self.__qc_lines) > 0 and self.__qc_lines[0].strip().startswith(QC_DOCUMENT_START_VALIDATOR):
             for line in self.__qc_lines:
                 if bool(line):
                     if not path_found:
