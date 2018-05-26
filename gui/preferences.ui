@@ -129,7 +129,7 @@
              <string>General</string>
             </property>
             <property name="icon">
-             <iconset theme="systemsettings">
+             <iconset theme="settings-configure">
               <normaloff>.</normaloff>.</iconset>
             </property>
            </item>
@@ -138,7 +138,7 @@
              <string>Appearance</string>
             </property>
             <property name="icon">
-             <iconset theme="photocollage">
+             <iconset theme="viewimage">
               <normaloff>.</normaloff>.</iconset>
             </property>
            </item>
@@ -165,7 +165,7 @@
              <string>Language</string>
             </property>
             <property name="icon">
-             <iconset theme="internet-archive">
+             <iconset theme="globe">
               <normaloff>.</normaloff>.</iconset>
             </property>
            </item>
@@ -174,7 +174,7 @@
              <string>About</string>
             </property>
             <property name="icon">
-             <iconset theme="help">
+             <iconset theme="help-about">
               <normaloff>.</normaloff>.</iconset>
             </property>
            </item>

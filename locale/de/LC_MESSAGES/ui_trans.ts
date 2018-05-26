@@ -43,7 +43,7 @@
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="202"/>
+        <location filename="../../../src/gui/widgets.py" line="204"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
     </message>
@@ -357,7 +357,7 @@
         <translation>Kein QC-Dokument</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="148"/>
+        <location filename="../../../src/gui/messageboxes.py" line="152"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
@@ -367,12 +367,12 @@
         <translation> scheint kein QC-Dokument zu sein.</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="144"/>
+        <location filename="../../../src/gui/messageboxes.py" line="148"/>
         <source>There is no video loaded currently. Load a video before you add a subtitle file.</source>
         <translation>Es ist kein Video geladen. Öffnen Sie ein Video und laden Sie erst dann die Untertiteldatei.</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="147"/>
+        <location filename="../../../src/gui/messageboxes.py" line="151"/>
         <source>No video loaded</source>
         <translation>Kein Video geladen</translation>
     </message>

@@ -43,7 +43,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="202"/>
+        <location filename="../../../src/gui/widgets.py" line="204"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -347,7 +347,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="148"/>
+        <location filename="../../../src/gui/messageboxes.py" line="152"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
@@ -357,12 +357,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="144"/>
+        <location filename="../../../src/gui/messageboxes.py" line="148"/>
         <source>There is no video loaded currently. Load a video before you add a subtitle file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../src/gui/messageboxes.py" line="147"/>
+        <location filename="../../../src/gui/messageboxes.py" line="151"/>
         <source>No video loaded</source>
         <translation type="unfinished"></translation>
     </message>
