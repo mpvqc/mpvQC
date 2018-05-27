@@ -299,8 +299,11 @@ class MainHandler(QMainWindow):
 
                 if video_path is not None and com_list is not None:
                     for com in com_list:
-                        wid_comments.add_comment(com.coty, com.note, com.time, sort=False,
-                                                 will_change_qc=False, edit_mode_active=False)
+                        wid_comments.add_comment(com.coty, com.note, com.time,
+                                                 sort=False,
+                                                 will_change_qc=False,
+                                                 edit_mode_active=False,
+                                                 resize_columns=False)
 
                     if amount == 1:
                         if len(self.widget_comments.get_all_comments()):
