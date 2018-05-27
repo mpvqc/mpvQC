@@ -312,10 +312,11 @@ class CommentsTable(QTableView):
         self.__do_with_selected_comment_row(copy)
 
     def add_comment(self, comment_type: str, comment_text: str = "", time: str = None,
-                    sort: bool = True, will_change_qc=True, edit_mode_active=True) -> None:
+                    sort: bool = True, will_change_qc=True, edit_mode_active=True, resize_columns=True) -> None:
         """
         Will add a new comment to the list view.
 
+        :param resize_columns: If True comment type column will be resized
         :param comment_type: The comment type to add
         :param comment_text: The text to add
         :param time: The time to add. If None the current video time will be used.
@@ -338,7 +339,7 @@ class CommentsTable(QTableView):
         new_entry = [ti, ct, note]
         self.__model.appendRow(new_entry)
 
-        self.__after_comment_added(new_entry, sort, edit_mode_active, will_change_qc)
+        self.__after_comment_added(new_entry, sort, edit_mode_active, will_change_qc, resize_columns)
 
     def get_all_comments(self) -> Tuple[Comment]:
         """
@@ -391,7 +392,7 @@ class CommentsTable(QTableView):
                 consume_selected_function(selected)
 
     def __after_comment_added(self, new_entry: List[QStandardItem], sort: bool,
-                              edit_mode: bool, will_change_qc: bool) -> None:
+                              edit_mode: bool, will_change_qc: bool, resize_columns: bool) -> None:
         """
         This function must be called after a comment was added.
 
@@ -399,19 +400,21 @@ class CommentsTable(QTableView):
         :param sort: If True, the complete table will be sorted after the insertion.
         :param edit_mode: If True edit mode will be started.
         :param will_change_qc: True if qc is changed with the addition.
+        :param resize_columns: If True, comment type column will be resized
         """
 
         MainHandler.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
 
+        if resize_columns:
+            self.resizeColumnToContents(1)
+
         if sort:
             self.sort()
-        self.resizeColumnToContents(1)
-
-        new_index = self.__model.indexFromItem(new_entry[2])
-        self.scrollTo(new_index)
-        self.setCurrentIndex(new_index)
 
         if edit_mode:
+            new_index = self.__model.indexFromItem(new_entry[2])
+            self.scrollTo(new_index)
+            self.setCurrentIndex(new_index)
             self.edit(new_index)
 
         if will_change_qc:
