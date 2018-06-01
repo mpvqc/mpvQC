@@ -238,7 +238,7 @@ class QualityCheckReader:
     def __init__(self, qc_document_full_path):
         self.__file = qc_document_full_path
 
-        with open(qc_document_full_path, "r", encoding="utf-8") as file:
+        with open(qc_document_full_path, "r", encoding="utf-8-sig") as file:
             self.__qc_lines = [x.strip() for x in file.readlines()]
 
         self.__video_path = ""
