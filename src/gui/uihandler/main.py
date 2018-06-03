@@ -315,10 +315,11 @@ class MainHandler(QMainWindow):
                 else:
                     QCDocumentToImportNotValidQCDocumentMB(qc_doc).exec_()
 
+        wid_comments.sort()
+        wid_comments.resizeColumnToContents(1)
+
         if amount >= 2:
             self.__qc_manager.reset_qc_document_path()
-            wid_comments.sort()
-        wid_comments.resizeColumnToContents(1)
 
     def __action_save_qc_document(self) -> None:
         self.__qc_manager.save()
