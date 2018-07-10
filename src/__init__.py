@@ -32,7 +32,7 @@ CFG_MPV = """#########
 
 # HQ preset, uses Spline36 for upscaling and Mitchell-Netravali for downscaling
 # Debanding is disabled beacause we don't want to alter the video while doing quality control
-vo=opengl-hq
+vo=gpu
 profile=gpu-hq
 deband=no
 
@@ -75,7 +75,7 @@ osd-bar-align-y=0
 
 screenshot-format=png
 screenshot-high-bit-depth=no
-screenshot-directory=~~/Screenshots/
+screenshot-directory=~~/../Screenshots/
 """
 
 CFG_INPUT = """############################################
