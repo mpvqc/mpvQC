@@ -139,7 +139,7 @@ class QualityCheckManager(QObject):
             as_zip = ZipFile(as_path, "a" if path.isfile(as_path) else "w", compression=ZIP_DEFLATED)
 
             try:
-                file_name = "{}-{}".format(today.replace(":", "-").replace(" ", "_"), self.__current_video_file)
+                file_name = "{}-{}.txt".format(today.replace(":", "-").replace(" ", "_"), self.__current_video_file)
 
                 quality_check_writer = QualityCheckWriter(video_path=self.__current_video_path,
                                                           comments=self.__widget_comments.get_all_comments())
