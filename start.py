@@ -1,4 +1,4 @@
-#!/usr/sbin/env python3
+#!/usr/bin/env python3
 
 # Copyright (C) 2016-2017 Frechdachs <frechdachs@rekt.cc>
 #
