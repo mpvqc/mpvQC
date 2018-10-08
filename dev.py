@@ -24,7 +24,7 @@ from typing import Tuple
 import polib
 
 # The languages to translate into
-_LANGUAGES: Tuple[str] = ("de", "en")
+_LANGUAGES: Tuple[str] = ("de", "en", "it")
 
 _WORKFLOW = \
     """ Make sure the project has the following skeleton:

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/elias/PycharmProjects/mpvQC/gui/preferences.ui'
-#
-# Created by: PyQt5 UI code generator 5.10.1
+
+
+# Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -470,6 +470,7 @@ class Ui_PreferencesView(object):
         self.pageLanguageLanguageComboBox.setObjectName("pageLanguageLanguageComboBox")
         self.pageLanguageLanguageComboBox.addItem("")
         self.pageLanguageLanguageComboBox.addItem("")
+        self.pageLanguageLanguageComboBox.addItem("")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.pageLanguageLanguageComboBox)
         self.verticalLayout_2.addWidget(self.pageLanguageContentContainerWidget)
         self.contentStackedWidget.addWidget(self.pageLanguage)
@@ -613,8 +614,19 @@ class Ui_PreferencesView(object):
         self.pageLanguageLanguageLabel.setText(_translate("PreferencesView", "Language"))
         self.pageLanguageLanguageComboBox.setItemText(0, _translate("PreferencesView", "English"))
         self.pageLanguageLanguageComboBox.setItemText(1, _translate("PreferencesView", "German"))
+        self.pageLanguageLanguageComboBox.setItemText(2, _translate("PreferencesView", "Italian"))
         self.pageAboutTitleLabel.setText(_translate("PreferencesView", "About"))
         self.pageAboutParentTabWidget.setTabText(self.pageAboutParentTabWidget.indexOf(self.pageAboutAboutTabWidget), _translate("PreferencesView", "About"))
+        self.creditsTextBrowser.setHtml(_translate("PreferencesView", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Terminus\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Fira Sans\'; font-size:10pt;\"><br /></p></body></html>"))
         self.pageAboutParentTabWidget.setTabText(self.pageAboutParentTabWidget.indexOf(self.pageAboutCreditsTabWidget), _translate("PreferencesView", "Credits"))
+        self.licenceTextBrowser.setHtml(_translate("PreferencesView", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Terminus\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Fira Sans\'; font-size:10pt;\"><br /></p></body></html>"))
         self.pageAboutParentTabWidget.setTabText(self.pageAboutParentTabWidget.indexOf(self.pageAboutLicenceTabWidget), _translate("PreferencesView", "Licence"))
 

@@ -166,7 +166,9 @@ Setting_Custom_General_COMMENT_TYPES = \
 ############################################################################# PREFERENCES -> LANGUAGE ### CUSTOMIZATION
 
 Setting_Custom_Language_LANGUAGE = \
-    Entry("custom_language_language", "German" if locale.getdefaultlocale()[0].startswith("de") else "English")
+    Entry("custom_language_language", "German" if locale.getdefaultlocale()[0].startswith("de") else
+                                      "Italian" if locale.getdefaultlocale()[0].startswith("it") else
+                                      "English")
 
 ########################################################################## PREFERENCES -> QC DOCUMENT ### CUSTOMIZATION
 

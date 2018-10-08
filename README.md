@@ -10,6 +10,7 @@
      - [Debian/Ubuntu](#debianubuntu)
 - [Keybindings](#keybindings)
   - [Default Bindings](#default-bindings)
+- [Special Thanks](#special-thanks)
 
 ## Dependencies
 
@@ -29,8 +30,8 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 #### Arch/Manjaro
 
 - Install dependencies: ```sudo pacman -S python-pyqt5 python-requests mpv```
-- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory, where this program would have write permissions
-- Mark `mpvQC.py` as executable and run it.
+- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
+- Mark `start.py` as executable and run it.
 
 #### Debian/Ubuntu
 
@@ -48,8 +49,8 @@ echo --enable-libmpv-shared > mpv_options
 sudo ./install
 ```
 - Install dependencies: ```sudo apt-get install python3-pyqt5 python3-requests```
-- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents in a directory, where this program would have write permissions
-- Mark `mpvQC.py` as executable and run it.
+- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
+- Mark `start.py` as executable and run it.
 
 ## Keybindings
 
@@ -75,3 +76,8 @@ Keybindings marked with \* cannot be changed.
 - `S`: Make a screenshot of the scaled video
 - `b`: Toggle between rendering the subtitles at window resolution and video resolution
 - `i`: Display statistics of the currently played video
+
+## Special Thanks
+
+- [trin94](https://github.com/trin94) for refactoring the project
+- [maddo](https://github.com/maddovr) for the Italian translation

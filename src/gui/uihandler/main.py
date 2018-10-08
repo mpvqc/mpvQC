@@ -231,6 +231,8 @@ class MainHandler(QMainWindow):
 
         if language.startswith("German"):
             value = "de"
+        elif language.startswith("Italian"):
+            value = "it"
         else:
             value = "en"
 
@@ -239,7 +241,7 @@ class MainHandler(QMainWindow):
 
         if trans_present:
             directory = path.join(Files.DIRECTORY_PROGRAM, "locale")
-            gettext.translation(domain="ui_transmo", localedir=directory, languages=['de', 'en']).install()
+            gettext.translation(domain="ui_transmo", localedir=directory, languages=["de", "en", "it"]).install()
             self.__translator.load("ui_trans", trans_dir)
         else:
             self.__translator.load("ui_trans", _locale_structure.format("en"))

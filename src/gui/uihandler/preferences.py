@@ -95,7 +95,8 @@ class PreferenceHandler(QDialog):
             def f(new_language):
                 languages = {
                     _translate("PreferencesView", "English"): "English",
-                    _translate("PreferencesView", "German"): "German"
+                    _translate("PreferencesView", "German"): "German",
+                    _translate("PreferencesView", "Italian"): "Italian",
                 }
                 settings.Setting_Custom_Language_LANGUAGE.temporary_value = languages[new_language]
 
