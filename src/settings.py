@@ -20,15 +20,10 @@ from os import path
 from typing import Dict
 
 from PyQt5.QtCore import QCoreApplication
-from appdirs import unicode
 
 from src import CFG_MPV, CFG_INPUT
 from src.files import Files
 
-try:
-    to_unicode = unicode
-except NameError:
-    to_unicode = str
 
 _translate = QCoreApplication.translate
 
@@ -249,7 +244,7 @@ def __write_json():
 
     with io.open(Files.FILE_SETTINGS, 'w', encoding='utf8') as file:
         str_ = json.dumps(dictionary, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
-        file.write(to_unicode(str_))
+        file.write(str(str_))
         #  todo logger
 
 

@@ -16,13 +16,6 @@ import sys
 from os import path, getenv
 from pathlib import Path
 
-from appdirs import unicode
-
-try:
-    to_unicode = unicode
-except NameError:
-    to_unicode = str
-
 
 class Files:
 
