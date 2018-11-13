@@ -15,7 +15,7 @@ from enum import Enum
 from typing import List, Tuple
 
 from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection, QObject, pyqtSignal, QCoreApplication, \
-    QRegExp
+    QRegExp, QItemSelectionModel
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel, \
     QRegExpValidator
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel, QLineEdit, QListWidget, \
@@ -28,6 +28,7 @@ from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentN
 from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
     EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
     CommentsAmountChanged, EventCommentsUpToDate
+from src.gui.searchutils import SearchResult
 from src.gui.uihandler.main import MainHandler
 from src.gui.uihandler.preferences import PreferenceHandler
 from src.gui.utils import KEY_MAPPINGS
@@ -155,6 +156,8 @@ class MpvWidget(QFrame):
                 self.__main_handler.widget_comments.edit_current_selected_comment()
         elif key == Qt.Key_C and mod == Qt.CTRL:
             self.__main_handler.widget_comments.copy_current_selected_comment()
+        elif key == Qt.Key_F and mod == Qt.CTRL:
+            self.__main_handler.search_bar.keyPressEvent(e)
 
         # Mpv Video widget bindings
         elif key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
@@ -263,6 +266,7 @@ class CommentsTable(QTableView):
         self.setEditTriggers(QAbstractItemView.DoubleClicked)
         self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.__selection_flags = QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows
 
         self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
@@ -466,6 +470,63 @@ class CommentsTable(QTableView):
                 self.edit(mdi)
             e.accept()
         super().mousePressEvent(e)
+
+    def ensure_selection(self) -> None:
+        """
+        If no row is highlighted the first row will be highlighted.
+        """
+
+        self.setFocus()
+        if self.__model.rowCount() != 0:
+            if not self.selectionModel().currentIndex().isValid():
+                self.__highlight_row(self.model().index(0, 2))
+
+    def perform_search(self, query: str, top_down=True, new_query=False) -> SearchResult:
+        """
+        Will perform the search for the given query and return a SearchResult.
+
+        :param query: search string (Qt.MatchContains)
+        :param top_down: If True the next, if False the previous occurrence will be returned
+        :param new_query: If True the search will be handled as a new one.
+        :return:
+        """
+
+        start_row = self.selectionModel().currentIndex().row()
+
+        if query == "":
+            return self.__generate_search_result(query)
+
+        start = self.__model.index(start_row, 2)
+        match: List[QModelIndex] = self.__model.match(start, Qt.DisplayRole, query, -1, Qt.MatchContains | Qt.MatchWrap)
+
+        if not match:
+            return self.__generate_search_result(query)
+
+        return self.__provide_search_result(query, match, top_down, new_query)
+
+    def __provide_search_result(self, query: str, match: List[QModelIndex], top_down: bool,
+                                new_query: bool) -> SearchResult:
+
+        if top_down and len(match) > 1:
+            if new_query or self.selectionModel().currentIndex() not in match:
+                model_index = match[0]
+            else:
+                model_index = match[1]
+        else:
+            model_index = match[-1]
+        current_hit = sorted(match, key=lambda k: k.row()).index(model_index)
+        return self.__generate_search_result(query, model_index, current_hit + 1, len(match))
+
+    def __generate_search_result(self, query, model_index=None, current_hit=0, total_hits=0) -> SearchResult:
+        result = SearchResult(query, model_index, current_hit, total_hits)
+        result.highlight.connect(lambda index: self.__highlight_row(index))
+        return result
+
+    def __highlight_row(self, model_index: QModelIndex):
+        if model_index:
+            self.selectionModel().setCurrentIndex(model_index, self.__selection_flags)
+            self.selectionModel().select(model_index, self.__selection_flags)
+            self.scrollTo(model_index, QAbstractItemView.PositionAtTop)
 
 
 class StatusBar(QStatusBar):
