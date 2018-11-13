@@ -70,3 +70,8 @@ def command_generator(modifiers, key_str, mod_required=False, is_char=False):
         shift = None
 
     return "+".join([x for x in [shift, ctrl, alt, key_str] if x])
+
+
+def replace_special_characters(string_to_replace) -> str:
+    return string_to_replace \
+        .replace(u'\xad', '')  # https://www.charbase.com/00ad-unicode-soft-hyphen

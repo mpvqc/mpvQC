@@ -26,6 +26,7 @@ from src.gui.dialogs import get_save_file_name
 from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentVideoPath, EventPlayerCurrentVideoPath, \
     PlayerCurrentVideoFile, EventPlayerCurrentVideoFile
 from src.gui.uihandler.main import MainHandler
+from src.gui.utils import replace_special_characters
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
 # If a file is a valid qc document is determined if line (stripped) 1 starts with '[FILE]'.
@@ -82,14 +83,14 @@ class QualityCheckWriter:
         self.__comments_joined = _LINE_BREAK.join(map(lambda c: str(c), comments))
         self.__comments_size = len(comments)
 
-        self.__file_content = _QC_TEMPLATE.format(
+        self.__file_content = replace_special_characters(_QC_TEMPLATE.format(
             self.__date,
             self.__generator,
             qc_author,
             video_path,
             self.__comments_joined,
             self.__comments_size
-        )
+        ))
 
     def write_to_disc(self, path_document) -> None:
         """
