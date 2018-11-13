@@ -1,50 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="it_IT" sourcelanguage="en">
+<!DOCTYPE TS><TS version="2.0" language="it_IT" sourcelanguage="en">
 <context>
     <name>CommentTypes</name>
     <message>
-        <location filename="../../../src/settings.py" line="37"/>
+        <location filename="../../../src/settings.py" line="32"/>
         <source>Translation</source>
         <translation>Traduzione</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="38"/>
+        <location filename="../../../src/settings.py" line="33"/>
         <source>Punctuation</source>
         <translation>Punteggiatura</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="39"/>
+        <location filename="../../../src/settings.py" line="34"/>
         <source>Spelling</source>
         <translation>Typo</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="40"/>
+        <location filename="../../../src/settings.py" line="35"/>
         <source>Phrasing</source>
         <translation>Adattamento</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="41"/>
+        <location filename="../../../src/settings.py" line="36"/>
         <source>Timing</source>
         <translation>Timing</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="42"/>
+        <location filename="../../../src/settings.py" line="37"/>
         <source>Typeset</source>
         <translation>Cartelli</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="43"/>
+        <location filename="../../../src/settings.py" line="38"/>
         <source>Note</source>
         <translation>Note</translation>
     </message>
     <message>
-        <location filename="../../../src/settings.py" line="44"/>
+        <location filename="../../../src/settings.py" line="39"/>
         <source>Type here to add new comment types</source>
         <translation>Definisci nuova classe commento</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="204"/>
+        <location filename="../../../src/gui/widgets.py" line="207"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Nessuna classe selezionata. Creane una nuova classe nelle impostazioni.</translation>
     </message>
@@ -105,7 +104,7 @@
 <context>
     <name>MainPlayerView</name>
     <message>
-        <location filename="../../../src/gui/uihandler/main.py" line="217"/>
+        <location filename="../../../src/gui/generated/main.py" line="115"/>
         <source>MainWindow</source>
         <translation>mpvQC</translation>
     </message>
@@ -386,12 +385,12 @@
         <translation>Defaults</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="99"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="615"/>
         <source>English</source>
         <translation>Inglese</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="100"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="616"/>
         <source>German</source>
         <translation>Tedesco</translation>
     </message>
@@ -554,7 +553,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/uihandler/preferences.py" line="101"/>
+        <location filename="../../../src/gui/generated/preferences.py" line="617"/>
         <source>Italian</source>
         <translation>Italiano</translation>
     </message>
@@ -565,6 +564,29 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Terminus&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Fira Sans&apos;; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SearchForm</name>
+    <message>
+        <location filename="../../../src/gui/searchutils.py" line="42"/>
+        <source>{0} comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/searchutils.py" line="44"/>
+        <source>{0} of {1} comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/searchutils.py" line="47"/>
+        <source>Phrase not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../src/gui/generated/search.py" line="69"/>
+        <source>Find in comments</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
