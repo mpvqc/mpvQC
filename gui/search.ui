@@ -60,7 +60,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="arrow-up">
+      <iconset theme="go-up">
        <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
      </property>
      <property name="flat">
@@ -77,7 +77,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="arrow-down">
+      <iconset theme="go-down">
        <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
      </property>
      <property name="flat">
@@ -110,7 +110,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="dialog-close">
+      <iconset theme="window-close">
        <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
      </property>
      <property name="flat">
