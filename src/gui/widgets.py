@@ -491,7 +491,8 @@ class CommentsTable(QTableView):
         :return:
         """
 
-        start_row = 0 if new_query else self.selectionModel().currentIndex().row()
+        current_index = self.selectionModel().currentIndex()
+        start_row = 0 if new_query or not current_index.isValid() else current_index.row()
 
         if query == "":
             return self.__generate_search_result(query)

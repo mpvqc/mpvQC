@@ -30,7 +30,7 @@ class SearchResult(QObject):
         self.__total_results = total_results
 
     def highlight_result(self) -> None:
-        if self.__match:
+        if self.__match and self.__match.isValid():
             self.highlight.emit(self.__match)
 
         self.highlight_changed()
