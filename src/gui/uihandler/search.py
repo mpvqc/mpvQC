@@ -99,7 +99,7 @@ class SearchHandler(QWidget):
         if e_type == QEvent.LanguageChange:
             self.__ui.retranslateUi(None)
             if self.__latest_result:
-                self.__latest_result.change_event(e)
+                self.__latest_result.highlight_changed()
 
 
 def disconnect_signal(signal):

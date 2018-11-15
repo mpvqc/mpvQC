@@ -33,9 +33,9 @@ class SearchResult(QObject):
         if self.__match:
             self.highlight.emit(self.__match)
 
-        self.__highlight_changed()
+        self.highlight_changed()
 
-    def __highlight_changed(self):
+    def highlight_changed(self):
         if self.__valid_query:
             if self.__match:
                 if self.__total_results == 1:
@@ -49,9 +49,3 @@ class SearchResult(QObject):
             new_text = ""
 
         self.highlight_change_request.emit(new_text)
-
-    def change_event(self, e: QEvent):
-        e_type = e.type()
-
-        if e_type == QEvent.LanguageChange:
-            self.__highlight_changed()
