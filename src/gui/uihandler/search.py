@@ -36,26 +36,23 @@ class SearchHandler(QWidget):
         self.__ui.setupUi(self)
 
         self.__ui.searchLineEdit.setValidator(SpecialCharacterValidator())
-        self.__ui.searchLineEdit.textChanged.connect(lambda query: self.invoke_search(query, top_down=True))
+        self.__ui.searchLineEdit.textChanged.connect(lambda query: self.invoke_search(query=query, top_down=True))
+
+        self.__ui.previousButton.clicked.connect(lambda b: self.invoke_search(top_down=False))
+        self.__ui.nextButton.clicked.connect(lambda b: self.invoke_search(top_down=True))
         self.__ui.searchCloseButton.clicked.connect(self.hide)
 
-    def invoke_search(self, query: str, top_down: bool):
+    def invoke_search(self, top_down: bool, query: str = None):
+        if query is None:
+            query = self.__ui.searchLineEdit.text()
+
         result: SearchResult = self.__widget_comments.perform_search(query, top_down, query != self.__latest_query)
-        self.__latest_query = query
-
-        # Disconnect buttons
-        disconnect_signal(self.__ui.previousButton.clicked)
-        disconnect_signal(self.__ui.nextButton.clicked)
-
-        # Connect buttons -> result
-        self.__ui.previousButton.clicked.connect(lambda b: self.invoke_search(query, top_down=False))
-        self.__ui.nextButton.clicked.connect(lambda b: self.invoke_search(query, top_down=True))
-
-        # Connect result <- buttons
-        result.highlight_change_request.connect(self.__update_result_label)
-        result.highlight_result()
 
         self.__latest_result = result
+        self.__latest_query = query
+
+        self.__latest_result.highlight_change_request.connect(self.__ui.searchResultLabel.setText)
+        self.__latest_result.highlight_result()
 
     def keyPressEvent(self, e: QKeyEvent):
         key = e.key()
@@ -67,15 +64,23 @@ class SearchHandler(QWidget):
             pass
         elif key == Qt.Key_Down and mod == Qt.NoModifier:
             pass
-        elif key == Qt.Key_Return:
+        elif key == Qt.Key_Return:  # Enter
             if mod == Qt.ShiftModifier:
-                self.invoke_search(self.__ui.searchLineEdit.text(), top_down=False)
+                self.invoke_search(top_down=False)
             elif mod == Qt.ControlModifier:
                 self.__widget_comments.keyPressEvent(e)
             else:
-                self.invoke_search(self.__ui.searchLineEdit.text(), top_down=True)
+                self.invoke_search(top_down=True)
         elif key == Qt.Key_Escape and mod == Qt.NoModifier:
             self.hide()
+
+    def changeEvent(self, e: QEvent):
+        e_type = e.type()
+
+        if e_type == QEvent.LanguageChange:
+            self.__ui.retranslateUi(None)
+            if self.__latest_result:
+                self.__latest_result.highlight_changed()
 
     def hide(self):
         if not self.isHidden():
@@ -89,21 +94,3 @@ class SearchHandler(QWidget):
         if not self.__ui.searchLineEdit.hasFocus():
             self.__ui.searchLineEdit.setFocus()
             self.__ui.searchLineEdit.selectAll()
-
-    def __update_result_label(self, new_text):
-        self.__ui.searchResultLabel.setText(new_text)
-
-    def changeEvent(self, e: QEvent):
-        e_type = e.type()
-
-        if e_type == QEvent.LanguageChange:
-            self.__ui.retranslateUi(None)
-            if self.__latest_result:
-                self.__latest_result.highlight_changed()
-
-
-def disconnect_signal(signal):
-    try:
-        signal.disconnect()
-    except TypeError:
-        pass

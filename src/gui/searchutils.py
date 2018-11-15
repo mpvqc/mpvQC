@@ -18,11 +18,18 @@ _translate = QCoreApplication.translate
 
 
 class SearchResult(QObject):
-    # Signal which is emitted after highlight_result() is called.
+
+    # Will be emitted when highlight_result() is called and the result can be highlighted.
     highlight = pyqtSignal(QModelIndex)
+
+    # Will be emitted after highlight_result() was called regardless whether current was highlighted.
     highlight_change_request = pyqtSignal(str)
 
     def __init__(self, query: str, match: QModelIndex or None, actual_result: int, total_results: int):
+        """
+        A search result object only holds the QModelIndex of the latest search action (if present).
+        """
+
         super().__init__()
         self.__valid_query = bool(query)
         self.__match = match

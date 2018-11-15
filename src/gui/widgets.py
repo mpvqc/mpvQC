@@ -481,7 +481,7 @@ class CommentsTable(QTableView):
             if not self.selectionModel().currentIndex().isValid():
                 self.__highlight_row(self.model().index(0, 2))
 
-    def perform_search(self, query: str, top_down=True, new_query=False) -> SearchResult:
+    def perform_search(self, query: str, top_down: bool, new_query: bool) -> SearchResult:
         """
         Will perform the search for the given query and return a SearchResult.
 
