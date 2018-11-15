@@ -491,7 +491,7 @@ class CommentsTable(QTableView):
         :return:
         """
 
-        start_row = self.selectionModel().currentIndex().row()
+        start_row = 0 if new_query else self.selectionModel().currentIndex().row()
 
         if query == "":
             return self.__generate_search_result(query)
@@ -526,7 +526,7 @@ class CommentsTable(QTableView):
         if model_index:
             self.selectionModel().setCurrentIndex(model_index, self.__selection_flags)
             self.selectionModel().select(model_index, self.__selection_flags)
-            self.scrollTo(model_index, QAbstractItemView.PositionAtTop)
+            self.scrollTo(model_index, QAbstractItemView.PositionAtCenter)
 
 
 class StatusBar(QStatusBar):
