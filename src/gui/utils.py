@@ -11,10 +11,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 import sys
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QValidator
 
 __ALPHANUMERICS = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÀÁÂÃÇÉÈÊËÍÌÎÏÑÓÒÔÕÚÙÛÝŸ"
 
@@ -75,3 +75,9 @@ def command_generator(modifiers, key_str, mod_required=False, is_char=False):
 def replace_special_characters(string_to_replace) -> str:
     return string_to_replace \
         .replace(u'\xad', '')  # https://www.charbase.com/00ad-unicode-soft-hyphen
+
+
+class SpecialCharacterValidator(QValidator):
+
+    def validate(self, user_input: str, position: int):
+        return QValidator.Acceptable, replace_special_characters(user_input), position

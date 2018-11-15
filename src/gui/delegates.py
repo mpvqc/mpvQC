@@ -14,11 +14,11 @@
 
 from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
-    QStyledItemDelegate, QLineEdit
+    QStyledItemDelegate
 
 from src import settings
 from src.gui import TIME_FORMAT, TYPEWRITER_FONT
-from src.gui.utils import replace_special_characters
+from src.gui.utils import SpecialCharacterValidator
 
 
 class NotifiableItemDelegate(QStyledItemDelegate):
@@ -98,6 +98,13 @@ class CommentNoteDelegate(NotifiableItemDelegate):
     Delegate for the comment note column.
     """
 
+    _VALIDATOR = SpecialCharacterValidator()
+
+    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+        editor = super(CommentNoteDelegate, self).createEditor(parent, option, index)
+        editor.setValidator(CommentNoteDelegate._VALIDATOR)
+        return editor
+
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        model.setData(index, replace_special_characters(editor.text()), Qt.EditRole)
+        super(CommentNoteDelegate, self).setModelData(editor, model, index)
         self.editing_done.emit()

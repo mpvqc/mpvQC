@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import QWidget
 
 from src.gui.generated.search import Ui_SearchForm
 from src.gui.searchutils import SearchResult
-from src.gui.utils import replace_special_characters
+from src.gui.utils import SpecialCharacterValidator
 
 
 class SearchHandler(QWidget):
@@ -35,11 +35,11 @@ class SearchHandler(QWidget):
         self.__ui = Ui_SearchForm()
         self.__ui.setupUi(self)
 
+        self.__ui.searchLineEdit.setValidator(SpecialCharacterValidator())
         self.__ui.searchLineEdit.textChanged.connect(lambda query: self.invoke_search(query, top_down=True))
         self.__ui.searchCloseButton.clicked.connect(self.hide)
 
     def invoke_search(self, query: str, top_down: bool):
-        query = replace_special_characters(query)
         result: SearchResult = self.__widget_comments.perform_search(query, top_down, query != self.__latest_query)
         self.__latest_query = query
 
