@@ -32,19 +32,19 @@ class SearchResult(QObject):
 
         super().__init__()
         self.__valid_query = bool(query)
-        self.__match = match
+        self.match = match
         self.__actual_result = actual_result
         self.__total_results = total_results
 
     def highlight_result(self) -> None:
-        if self.__match and self.__match.isValid():
-            self.highlight.emit(self.__match)
+        if self.match and self.match.isValid():
+            self.highlight.emit(self.match)
 
         self.highlight_changed()
 
     def highlight_changed(self):
         if self.__valid_query:
-            if self.__match:
+            if self.match:
                 if self.__total_results == 1:
                     new_text = _translate("SearchForm", "{0} comment").format(1)
                 else:

@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt, QEvent, QModelIndex
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
@@ -28,6 +28,7 @@ class SearchHandler(QWidget):
 
         self.__latest_query = ""
         self.__latest_result: SearchResult = None
+        self.__latest_match = QModelIndex()
 
         self.__main_handler = main_handler
         self.__widget_comments = main_handler.widget_comments
@@ -46,10 +47,14 @@ class SearchHandler(QWidget):
         if query is None:
             query = self.__ui.searchLineEdit.text()
 
-        result: SearchResult = self.__widget_comments.perform_search(query, top_down, query != self.__latest_query)
+        result: SearchResult = self.__widget_comments.perform_search(query=query,
+                                                                     top_down=top_down,
+                                                                     new_query=query != self.__latest_query,
+                                                                     last_result_index=self.__latest_match)
 
-        self.__latest_result = result
         self.__latest_query = query
+        self.__latest_result = result
+        self.__latest_match = result.match
 
         self.__latest_result.highlight_change_request.connect(self.__ui.searchResultLabel.setText)
         self.__latest_result.highlight_result()
