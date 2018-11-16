@@ -336,7 +336,6 @@ class CommentsTable(QTableView):
         ti.setFont(TYPEWRITER_FONT)
 
         ct = QStandardItem(_translate("CommentTypes", comment_type))
-        ct.setFont(TYPEWRITER_FONT)
 
         note = QStandardItem(comment_text)
 

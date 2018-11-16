@@ -78,7 +78,6 @@ class CommentTypeDelegate(NotifiableItemDelegate):
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         editor: QComboBox = editor
         editor.setCurrentIndex(max(0, editor.findText(index.model().data(index, Qt.EditRole))))
-        editor.setFont(TYPEWRITER_FONT)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         editor: QComboBox = editor
