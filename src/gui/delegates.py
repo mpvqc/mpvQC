@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal, QSize
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
     QStyledItemDelegate
 
@@ -90,7 +90,9 @@ class CommentTypeDelegate(NotifiableItemDelegate):
 
     # noinspection PyTypeChecker
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex):
-        return self.createEditor(None, option, index).sizeHint()
+        editor: QComboBox = self.createEditor(self.parent(), option, index)
+        size_hint = editor.sizeHint()
+        return QSize(size_hint.width() + editor.iconSize().width(), size_hint.height())
 
 
 class CommentNoteDelegate(NotifiableItemDelegate):
