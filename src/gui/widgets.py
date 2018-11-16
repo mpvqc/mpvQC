@@ -480,11 +480,11 @@ class CommentsTable(QTableView):
             if not self.selectionModel().currentIndex().isValid():
                 self.__highlight_row(self.model().index(0, 2))
 
-    def perform_search(self, query: str, top_down: bool, new_query: bool, last_result_index: QModelIndex) -> SearchResult:
+    def perform_search(self, query: str, top_down: bool, new_query: bool, last_index: QModelIndex) -> SearchResult:
         """
         Will perform the search for the given query and return a SearchResult.
 
-        :param last_result_index: The index of the latest search result or any invalid index.
+        :param last_index: The index of the latest search result or any invalid index.
         :param query: search string ignore case (Qt.MatchContains)
         :param top_down: If True the next, if False the previous occurrence will be returned
         :param new_query: If True the search will be handled as a new one.
@@ -495,9 +495,9 @@ class CommentsTable(QTableView):
 
         if new_query:
             start_row = 0
-        elif last_result_index.isValid():
-            start_row = last_result_index.row()
-        elif current_index.isValid():
+        elif last_index and last_index.isValid():
+            start_row = last_index.row()
+        elif current_index and current_index.isValid():
             start_row = current_index.row()
         else:
             start_row = 0

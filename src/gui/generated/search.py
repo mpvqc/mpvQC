@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/elias/PycharmProjects/mpvQC/gui/search.ui'
-#
+
+
 # Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,6 +29,7 @@ class Ui_SearchForm(object):
         self.horizontalLayout.addWidget(self.searchLineEdit)
         self.previousButton = QtWidgets.QPushButton(SearchForm)
         self.previousButton.setEnabled(True)
+        self.previousButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.previousButton.setText("")
         icon = QtGui.QIcon.fromTheme("go-up")
         self.previousButton.setIcon(icon)
@@ -37,6 +38,7 @@ class Ui_SearchForm(object):
         self.horizontalLayout.addWidget(self.previousButton)
         self.nextButton = QtWidgets.QPushButton(SearchForm)
         self.nextButton.setEnabled(True)
+        self.nextButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.nextButton.setText("")
         icon = QtGui.QIcon.fromTheme("go-down")
         self.nextButton.setIcon(icon)
@@ -54,6 +56,7 @@ class Ui_SearchForm(object):
         self.searchResultLabel.setObjectName("searchResultLabel")
         self.horizontalLayout.addWidget(self.searchResultLabel)
         self.searchCloseButton = QtWidgets.QPushButton(SearchForm)
+        self.searchCloseButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.searchCloseButton.setText("")
         icon = QtGui.QIcon.fromTheme("window-close")
         self.searchCloseButton.setIcon(icon)

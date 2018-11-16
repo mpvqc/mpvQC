@@ -50,7 +50,7 @@ class SearchHandler(QWidget):
         result: SearchResult = self.__widget_comments.perform_search(query=query,
                                                                      top_down=top_down,
                                                                      new_query=query != self.__latest_query,
-                                                                     last_result_index=self.__latest_match)
+                                                                     last_index=self.__latest_match)
 
         self.__latest_query = query
         self.__latest_result = result
