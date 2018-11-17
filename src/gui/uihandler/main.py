@@ -24,7 +24,7 @@ from src import settings
 from src.gui import SUPPORTED_SUB_FILES
 from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
 from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
-    EventPlayerCurrentVideoPath, EventDistributor
+    EventPlayerCurrentVideoPath, EventDistributor, EventReceiver
 from src.gui.generated.main import Ui_MainPlayerView
 from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
     LoadQCDocumentOldNotSavedMB, ValidVideoFileFoundMB, \
@@ -92,12 +92,12 @@ class MainHandler(QMainWindow):
         self.__ui.mainWindowContentSplitter.setSizes([400, 20])
         self.search_bar.hide()
 
-        EventDistributor.add_receiver(self,
-                                      self.widget_mpv,
-                                      self.widget_comments,
-                                      self.widget_context_menu,
-                                      self.__widget_status_bar,
-                                      self.__qc_manager)
+        EventDistributor.add_receiver((self, EventReceiver.MAIN_HANDLER),
+                                      (self.widget_mpv, EventReceiver.WIDGET_MPV),
+                                      (self.widget_comments, EventReceiver.WIDGET_COMMENTS),
+                                      (self.widget_context_menu, EventReceiver.WIDGET_CONTEXT_MENU),
+                                      (self.__widget_status_bar, EventReceiver.WIDGET_STATUS_BAR),
+                                      (self.__qc_manager, EventReceiver.QC_MANAGER))
 
         # Class variables
         self.__current_geometry: QByteArray = None
