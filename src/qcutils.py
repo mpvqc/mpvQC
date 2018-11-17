@@ -26,6 +26,7 @@ from src.gui.dialogs import get_save_file_name
 from src.gui.events import EventCommentsUpToDate, CommentsUpToDate, PlayerCurrentVideoPath, EventPlayerCurrentVideoPath, \
     PlayerCurrentVideoFile, EventPlayerCurrentVideoFile
 from src.gui.uihandler.main import MainHandler
+from src.gui.utils import replace_special_characters
 from start import APPLICATION_NAME, APPLICATION_VERSION
 
 # If a file is a valid qc document is determined if line (stripped) 1 starts with '[FILE]'.
@@ -279,7 +280,7 @@ class QualityCheckReader:
             line = line.replace(coty_braces, "", 1)
             coty = coty_braces[1:-1]
 
-            return True, Comment(time, coty, line.strip())
+            return True, Comment(time, coty, replace_special_characters(line.strip()))
         return False, None
 
     def results(self) -> (str, Tuple[Comment]):
