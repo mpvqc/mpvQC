@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="de" sourcelanguage="en">
+<!DOCTYPE TS>
+<TS version="2.1" language="de" sourcelanguage="en">
 <context>
     <name>CommentTypes</name>
     <message>
@@ -43,7 +44,7 @@
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/widgets.py" line="207"/>
+        <location filename="../../../src/gui/widgets.py" line="208"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
     </message>
@@ -559,32 +560,40 @@
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Terminus&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Fira Sans&apos;; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Fira Sans&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SearchForm</name>
     <message>
-        <location filename="../../../src/gui/searchutils.py" line="42"/>
+        <location filename="../../../src/gui/searchutils.py" line="49"/>
         <source>{0} comment</source>
         <translation>{0} Anmerkung</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/searchutils.py" line="44"/>
+        <location filename="../../../src/gui/searchutils.py" line="51"/>
         <source>{0} of {1} comments</source>
-        <translation type="unfinished">{0} von {1} Anmerkungen</translation>
+        <translation>{0} von {1} Anmerkungen</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/searchutils.py" line="47"/>
+        <location filename="../../../src/gui/searchutils.py" line="54"/>
         <source>Phrase not found</source>
         <translation>Ausdruck nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../../src/gui/generated/search.py" line="69"/>
+        <location filename="../../../src/gui/generated/search.py" line="72"/>
         <source>Find in comments</source>
         <translation>Anmerkungen durchsuchen</translation>
+    </message>
+</context>
+<context>
+    <name>StatusBar</name>
+    <message>
+        <location filename="../../../src/gui/widgets.py" line="602"/>
+        <source>Line</source>
+        <translation>Zeile</translation>
     </message>
 </context>
 </TS>
