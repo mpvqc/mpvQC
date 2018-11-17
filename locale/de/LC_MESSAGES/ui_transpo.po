@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-13 21:18+0200\n"
+"POT-Creation-Date: 2018-11-17 16:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -472,11 +472,11 @@ msgid ""
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\""
 ">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'Terminus'; font-size:9pt; font-"
+"</style></head><body style=\" font-family:'Noto Sans'; font-size:10pt; font-"
 "weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; "
 "margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-"
-"family:'Fira Sans'; font-size:10pt;\"><br /></p></body></html>"
+"family:'Fira Sans';\"><br /></p></body></html>"
 msgstr ""
 
 #: SearchForm%231
@@ -484,7 +484,6 @@ msgid "{0} comment"
 msgstr "{0} Anmerkung"
 
 #: SearchForm%232
-#, fuzzy
 msgid "{0} of {1} comments"
 msgstr "{0} von {1} Anmerkungen"
 
@@ -495,3 +494,7 @@ msgstr "Ausdruck nicht gefunden"
 #: SearchForm%234
 msgid "Find in comments"
 msgstr "Anmerkungen durchsuchen"
+
+#: StatusBar%231
+msgid "Line"
+msgstr "Zeile"
