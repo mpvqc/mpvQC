@@ -24,7 +24,7 @@ from src import settings
 from src.gui import SUPPORTED_SUB_FILES
 from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
 from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
-    EventPlayerCurrentVideoPath
+    EventPlayerCurrentVideoPath, EventDistributor
 from src.gui.generated.main import Ui_MainPlayerView
 from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
     LoadQCDocumentOldNotSavedMB, ValidVideoFileFoundMB, \
@@ -33,9 +33,6 @@ from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
 from src.gui.uihandler.search import SearchHandler
 
 _translate = QCoreApplication.translate
-
-# All custom event receivers will be added to this list
-_CustomEventReceiver = []
 
 
 # noinspection PyMethodMayBeStatic
@@ -95,14 +92,12 @@ class MainHandler(QMainWindow):
         self.__ui.mainWindowContentSplitter.setSizes([400, 20])
         self.search_bar.hide()
 
-        _CustomEventReceiver.extend([
-            self,
-            self.widget_mpv,
-            self.widget_comments,
-            self.widget_context_menu,
-            self.__widget_status_bar,
-            self.__qc_manager
-        ])
+        EventDistributor.add_receiver(self,
+                                      self.widget_mpv,
+                                      self.widget_comments,
+                                      self.widget_context_menu,
+                                      self.__widget_status_bar,
+                                      self.__qc_manager)
 
         # Class variables
         self.__current_geometry: QByteArray = None
@@ -514,14 +509,3 @@ class MainHandler(QMainWindow):
             ev: EventPlayerCurrentVideoPath
             self.__ui.actionOpenSubtitleFile.setEnabled(True)
             self.__current_video_path = ev.current_video_path
-
-    @staticmethod
-    def send_event(event: QEvent) -> None:
-        """
-        Will work as a custom event distributor.
-
-        :param event: The event to send to all other receivers
-        """
-
-        for rec in _CustomEventReceiver:
-            QApplication.sendEvent(rec, event)

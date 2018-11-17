@@ -13,6 +13,24 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt5.QtCore import QEvent
+from PyQt5.QtWidgets import QApplication, QWidget
+
+
+class EventDistributor:
+
+    __CustomEventReceiver = []
+
+    @staticmethod
+    def add_receiver(self, *receivers: QWidget):
+        for receiver in receivers:
+            if receiver not in EventDistributor.__CustomEventReceiver:
+                EventDistributor.__CustomEventReceiver.append(receiver)
+
+    @staticmethod
+    def send_event(event: QEvent) -> None:
+        for receiver in EventDistributor.__CustomEventReceiver:
+            QApplication.sendEvent(receiver, event)
+
 
 ############################################################################ Player Event Types between 1001 - 1050 ###
 

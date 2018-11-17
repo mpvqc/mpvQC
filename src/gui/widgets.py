@@ -27,7 +27,7 @@ from src.gui import utils, TYPEWRITER_FONT
 from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
 from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
     EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
-    CommentsAmountChanged, EventCommentsUpToDate
+    CommentsAmountChanged, EventCommentsUpToDate, EventDistributor
 from src.gui.searchutils import SearchResult
 from src.gui.uihandler.main import MainHandler
 from src.gui.uihandler.preferences import PreferenceHandler
@@ -281,8 +281,8 @@ class CommentsTable(QTableView):
 
         def delete(selected: List[QModelIndex]):
             self.__model.removeRows(selected[0].row(), 1)
-            MainHandler.send_event(EventCommentsUpToDate(False))
-            MainHandler.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
+            EventDistributor.send_event(EventCommentsUpToDate(False))
+            EventDistributor.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
 
         self.__do_with_selected_comment_row(delete)
 
@@ -296,7 +296,7 @@ class CommentsTable(QTableView):
             row = selected[0].row()
             idx = self.__model.item(row, 2).index()
             self.edit(idx)
-            MainHandler.send_event(EventCommentsUpToDate(False))
+            EventDistributor.send_event(EventCommentsUpToDate(False))
 
         self.__do_with_selected_comment_row(edit)
 
@@ -367,8 +367,8 @@ class CommentsTable(QTableView):
         """
 
         self.__model.clear()
-        MainHandler.send_event(EventCommentsUpToDate(True))
-        MainHandler.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
+        EventDistributor.send_event(EventCommentsUpToDate(True))
+        EventDistributor.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
 
     def sort(self) -> None:
         """
@@ -406,7 +406,7 @@ class CommentsTable(QTableView):
         :param resize_columns: If True, comment type column will be resized
         """
 
-        MainHandler.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
+        EventDistributor.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
 
         if resize_columns:
             self.resizeColumnToContents(1)
@@ -421,7 +421,7 @@ class CommentsTable(QTableView):
             self.edit(new_index)
 
         if will_change_qc:
-            MainHandler.send_event(EventCommentsUpToDate(False))
+            EventDistributor.send_event(EventCommentsUpToDate(False))
 
     def __on_after_user_changed_time(self) -> None:
         """
@@ -429,7 +429,7 @@ class CommentsTable(QTableView):
         """
 
         self.sort()
-        MainHandler.send_event(EventCommentsUpToDate(False))
+        EventDistributor.send_event(EventCommentsUpToDate(False))
 
     def __on_after_user_changed_comment_type(self) -> None:
         """
@@ -437,7 +437,7 @@ class CommentsTable(QTableView):
         """
 
         self.resizeColumnToContents(1)
-        MainHandler.send_event(EventCommentsUpToDate(False))
+        EventDistributor.send_event(EventCommentsUpToDate(False))
 
     # noinspection PyMethodMayBeStatic
     def __on_after_user_changed_comment_note(self) -> None:
@@ -445,7 +445,7 @@ class CommentsTable(QTableView):
         Action to invoke after comment note was changed manually by the user.
         """
 
-        MainHandler.send_event(EventCommentsUpToDate(False))
+        EventDistributor.send_event(EventCommentsUpToDate(False))
 
     def keyPressEvent(self, e: QKeyEvent):
 
