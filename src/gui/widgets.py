@@ -573,15 +573,15 @@ class StatusBar(QStatusBar):
         self.__label_information.setAlignment(Qt.AlignRight)
         self.__label_information.installEventFilter(self)
 
-        self.__label_comment_amount_slash_selection = QLabel()
-        self.__label_comment_amount_slash_selection.setFont(TYPEWRITER_FONT)
+        self.__label_comment_selection_slash_amount = QLabel()
+        self.__label_comment_selection_slash_amount.setFont(TYPEWRITER_FONT)
 
         # Timer updates status bar every 100 ms
         self.__timer = QTimer()
         self.__timer.timeout.connect(self.__update_status_bar_text)
         self.__timer.start(100)
 
-        self.addPermanentWidget(self.__label_comment_amount_slash_selection, 0)
+        self.addPermanentWidget(self.__label_comment_selection_slash_amount, 0)
         self.addPermanentWidget(QLabel(), 1)
         self.addPermanentWidget(self.__label_information, 0)
 
@@ -596,10 +596,12 @@ class StatusBar(QStatusBar):
         self.__label_information.setText("{:>9}{:2}{:3}%".format(time, "", percent))
 
     def __update_comment_amount_slash_selection(self):
-        current_selection = "-" if self.__comments_current_selection < 0 else self.__comments_current_selection + 1
-
-        self.__label_comment_amount_slash_selection.setText(
-            _translate("StatusBar", "Line") + ": {}/{}".format(current_selection, self.__comments_amount))
+        if self.__comments_current_selection >= 0:
+            self.__label_comment_selection_slash_amount.setText(
+                _translate("StatusBar", "Line") + ": {}/{}".format(self.__comments_current_selection + 1,
+                                                                   self.__comments_amount))
+        else:
+            self.__label_comment_selection_slash_amount.setText("")
 
     def customEvent(self, ev: QEvent):
 
