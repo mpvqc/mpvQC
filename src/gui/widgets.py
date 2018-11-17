@@ -26,8 +26,9 @@ from src.files import Files
 from src.gui import utils, TYPEWRITER_FONT
 from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
 from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
-    EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentsAmountChanged, \
-    CommentsAmountChanged, EventCommentsUpToDate, EventDistributor
+    EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentAmountChanged, \
+    CommentAmountChanged, EventCommentsUpToDate, EventDistributor, CommentCurrentSelectionChanged, \
+    EventCommentCurrentSelectionChanged, EventReceiver
 from src.gui.searchutils import SearchResult
 from src.gui.uihandler.main import MainHandler
 from src.gui.uihandler.preferences import PreferenceHandler
@@ -282,7 +283,7 @@ class CommentsTable(QTableView):
         def delete(selected: List[QModelIndex]):
             self.__model.removeRows(selected[0].row(), 1)
             EventDistributor.send_event(EventCommentsUpToDate(False))
-            EventDistributor.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
+            EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
 
         self.__do_with_selected_comment_row(delete)
 
@@ -545,7 +546,9 @@ class StatusBar(QStatusBar):
         self.__time_current: str = "00:00"
         self.__time_remaining: str = "23:59:59"
         self.__percent: int = 0
+
         self.__comments_amount: int = 0
+        self.__comments_current_selection: int = -1
 
         self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
@@ -589,9 +592,14 @@ class StatusBar(QStatusBar):
             ev: EventPlayerPercentChanged
             self.__percent = ev.percent
 
-        elif ev_type == CommentsAmountChanged:
-            ev: EventCommentsAmountChanged
+        elif ev_type == CommentAmountChanged:
+            ev: EventCommentAmountChanged
             self.__comments_amount = ev.new_amount
+
+        elif ev_type == CommentCurrentSelectionChanged:
+            ev: EventCommentCurrentSelectionChanged
+            self.__comments_current_selection = ev.current_selection
+            print(ev.current_selection)
 
     def eventFilter(self, source: QObject, event: QEvent):
 

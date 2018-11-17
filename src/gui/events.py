@@ -66,7 +66,7 @@ class EventDistributor:
         for receiver in receivers:
             target = EventDistributor.__CustomEventReceiver.get(receiver, None)
             if target is None:
-                print(str(EventReceiver(receiver[1]).name), "is currently not added yet!")
+                print(str(EventReceiver(receiver[1]).name), "is currently not added as receiver yet!")
             else:
                 QApplication.sendEvent(target, event)
         else:
@@ -93,11 +93,14 @@ PlayerCurrentVideoPath \
 
 ##################################################################### Comment Table Event Types between 1051 - 1070 ###
 
-CommentsAmountChanged \
+CommentAmountChanged \
     = QEvent.Type(1051)
 
-CommentsUpToDate \
+CommentCurrentSelectionChanged \
     = QEvent.Type(1052)
+
+CommentsUpToDate \
+    = QEvent.Type(1053)
 
 
 #######################################################################################################################
@@ -160,15 +163,26 @@ class EventPlayerCurrentVideoPath(QEvent):
 
 #######################################################################################################################
 
-class EventCommentsAmountChanged(QEvent):
+class EventCommentAmountChanged(QEvent):
 
     def __init__(self, new_amount: int):
-        super().__init__(CommentsAmountChanged)
+        super().__init__(CommentAmountChanged)
         self.__new_amount: int = new_amount
 
     @property
     def new_amount(self) -> int:
         return self.__new_amount
+
+
+class EventCommentCurrentSelectionChanged(QEvent):
+
+    def __init__(self, current_selection: int):
+        super().__init__(CommentCurrentSelectionChanged)
+        self.__current_selection = current_selection
+
+    @property
+    def current_selection(self) -> int:
+        return self.__current_selection
 
 
 class EventCommentsUpToDate(QEvent):
