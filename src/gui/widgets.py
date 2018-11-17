@@ -244,6 +244,7 @@ class CommentsTable(QTableView):
         # Model
         self.__model = QStandardItemModel(self)
         self.setModel(self.__model)
+        self.selectionModel().selectionChanged.connect(lambda sel, __: self.__on_row_selection_changed())
 
         # Headers
         self.horizontalHeader().setStretchLastSection(True)
@@ -369,7 +370,8 @@ class CommentsTable(QTableView):
 
         self.__model.clear()
         EventDistributor.send_event(EventCommentsUpToDate(True))
-        EventDistributor.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
+        EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
+        EventDistributor.send_event(EventCommentCurrentSelectionChanged(-1))
 
     def sort(self) -> None:
         """
@@ -407,7 +409,8 @@ class CommentsTable(QTableView):
         :param resize_columns: If True, comment type column will be resized
         """
 
-        EventDistributor.send_event(EventCommentsAmountChanged(self.__model.rowCount()))
+        EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
+        self.__on_row_selection_changed()
 
         if resize_columns:
             self.resizeColumnToContents(1)
@@ -447,6 +450,19 @@ class CommentsTable(QTableView):
         """
 
         EventDistributor.send_event(EventCommentsUpToDate(False))
+
+    # noinspection PyMethodMayBeStatic
+    def __on_row_selection_changed(self) -> None:
+
+        def after_model_updated():
+            current_index = self.selectionModel().currentIndex()
+            if current_index.isValid():
+                new_row = current_index.row()
+            else:
+                new_row = -1
+            EventDistributor.send_event(EventCommentCurrentSelectionChanged(new_row), EventReceiver.WIDGET_STATUS_BAR)
+
+        QTimer.singleShot(0, after_model_updated)
 
     def keyPressEvent(self, e: QKeyEvent):
 
