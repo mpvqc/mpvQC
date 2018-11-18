@@ -54,9 +54,9 @@ def command_generator(modifiers, key_str, mod_required=False, is_char=False):
     :return: The key-string to delegate to mpv if allowed. None else.
     """
 
-    shift = "shift" if modifiers & Qt.SHIFT else ""
-    ctrl = "ctrl" if modifiers & Qt.CTRL else ""
-    alt = "alt" if modifiers & Qt.ALT else ""
+    shift = "shift" if modifiers & Qt.ShiftModifier else ""
+    ctrl = "ctrl" if modifiers & Qt.ControlModifier else ""
+    alt = "alt" if modifiers & Qt.AltModifier else ""
 
     if mod_required and not (shift or ctrl or alt):
         return None

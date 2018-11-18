@@ -19,7 +19,7 @@ from PyQt5.QtCore import QTimer, Qt, QPoint, QModelIndex, QEvent, QItemSelection
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent, QCursor, QStandardItem, QStandardItemModel, \
     QRegExpValidator
 from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItemView, QLabel, QLineEdit, QListWidget, \
-    QPushButton, QListWidgetItem
+    QPushButton, QListWidgetItem, QApplication
 
 from src import settings, logging
 from src.files import Files
@@ -46,7 +46,6 @@ class MpvWidget(QFrame):
     def __init__(self, main_handler: MainHandler):
         super(MpvWidget, self).__init__(main_handler)
         self.__main_handler = main_handler
-        self.__application = main_handler.application
 
         self.cursor_timer = QTimer(self)
         self.cursor_timer.setSingleShot(True)
@@ -143,7 +142,7 @@ class MpvWidget(QFrame):
             super().wheelEvent(e)
 
     def keyPressEvent(self, e: QKeyEvent):
-        mod = int(self.__application.keyboardModifiers())
+        mod = e.modifiers()
         key = e.key()
         cmd = ""
 
@@ -155,9 +154,9 @@ class MpvWidget(QFrame):
         elif key == Qt.Key_Return or key == Qt.Key_Backspace:  # Backspace or Enter
             if self.__main_handler.widget_comments.state() == QAbstractItemView.NoState:
                 self.__main_handler.widget_comments.edit_current_selected_comment()
-        elif key == Qt.Key_C and mod == Qt.CTRL:
+        elif key == Qt.Key_C and mod == Qt.ControlModifier:
             self.__main_handler.widget_comments.copy_current_selected_comment()
-        elif key == Qt.Key_F and mod == Qt.CTRL:
+        elif key == Qt.Key_F and mod == Qt.ControlModifier:
             self.__main_handler.search_bar.keyPressEvent(e)
 
         # Mpv Video widget bindings
@@ -237,7 +236,6 @@ class CommentsTable(QTableView):
 
     def __init__(self, main_handler: MainHandler):
         super().__init__()
-        self.__application = main_handler.application
         self.__widget_mpv = main_handler.widget_mpv
         self.__mpv_player = self.__widget_mpv.mpv_player
 
@@ -313,7 +311,7 @@ class CommentsTable(QTableView):
             time = self.__model.item(row, 0).text()
             coty = self.__model.item(row, 1).text()
             note = self.__model.item(row, 2).text()
-            self.__application.clipboard().setText("[{}][{}] {}".format(time, coty, note))
+            QApplication.clipboard().setText("[{}][{}] {}".format(time, coty, note))
 
         self.__do_with_selected_comment_row(copy)
 
@@ -465,8 +463,7 @@ class CommentsTable(QTableView):
         QTimer.singleShot(0, after_model_updated)
 
     def keyPressEvent(self, e: QKeyEvent):
-
-        mod = int(self.__application.keyboardModifiers())
+        mod = e.modifiers()
         key = e.key()
 
         # Only key up and key down are handled here because they require to call super
