@@ -97,5 +97,6 @@ class SearchHandler(QWidget):
             super(SearchHandler, self).show()
 
         if not self.__ui.searchLineEdit.hasFocus():
+            self.__latest_query = ""
             self.__ui.searchLineEdit.setFocus()
             self.__ui.searchLineEdit.selectAll()
