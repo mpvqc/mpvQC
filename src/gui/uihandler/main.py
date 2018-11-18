@@ -12,7 +12,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import gettext
 from os import path
 from typing import List
 
@@ -256,8 +255,6 @@ class MainHandler(QMainWindow):
         trans_present = path.isdir(trans_dir)
 
         if trans_present:
-            directory = path.join(Files.DIRECTORY_PROGRAM, "locale")
-            gettext.translation(domain="ui_transmo", localedir=directory, languages=["de", "en", "it"]).install()
             self.__translator.load("ui_trans", trans_dir)
         else:
             self.__translator.load("ui_trans", _locale_structure.format("en"))

@@ -21,8 +21,6 @@ import sys
 from os import path
 from typing import Tuple
 
-import polib
-
 # The languages to translate into
 _LANGUAGES: Tuple[str] = ("de", "en", "it")
 
@@ -56,8 +54,6 @@ _WORKFLOW = \
                 - LC_MESSAGES
                     - ui_trans.ts
                     - ui_trans.qm
-                    - ui_transmo.mo
-                    - ui_transpo.po
         -src
             - generated
                 - <abc>.py
@@ -75,7 +71,6 @@ _TOOLS = (
     ("pyuic5", "Should be installed if qt designer is installed."),
     ("pylupdate5", "Should be installed if qt designer is installed."),
     ("lrelease", "Should be installed if qt designer is installed."),
-    ("ts2po", "Github: https://github.com/translate/translate"),
 )
 
 
@@ -155,9 +150,6 @@ class Transformer:
         for lang_dir in self.directory.locale_dirs:
             new_file = os.path.join(lang_dir, "ui_trans")
             os.system("lrelease {}.ts -qm {}.qm".format(new_file, new_file))
-            os.system("ts2po {}.ts {}po.po".format(new_file, new_file))
-            po = polib.pofile('{}po.po'.format(new_file))
-            po.save_as_mofile('{}mo.mo'.format(new_file))
 
 
 def tools_available() -> bool:
