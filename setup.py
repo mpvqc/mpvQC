@@ -13,12 +13,13 @@ build.sub_commands.insert(0, ('build_ui', None))
 setup(
     name='mpvQC',
     version='0.0.1',
-    description='Description',
-    long_description='Long Description',
-    author='Author',
-    # author_email = '',
-    # url = ,
-    # license = 'MIT',
+    description='libmpv based application for quality control of videos',
+    long_description='mpvQC is a libmpv based application for the quick and easy creation of quality control reports '
+                     'of video files, initially intended to be a less broken alternative to kSub.',
+    author='Frechdachs',
+    author_email='frechdachs@rekt.cc',
+    url='https://mpvqc.rekt.cc',
+    license='GNU General Public License 3',
     packages=find_packages(),
     cmdclass=cmdclass,
 )
