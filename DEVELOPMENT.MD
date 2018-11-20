@@ -1,7 +1,10 @@
-# Developing tools needed:
+# Developing tools:
 * QtDesigner
 * QtLinguist
 * PyCharm
+
+This project uses [distutils_ui](https://github.com/frispete/distutils_ui) to develop/build the application.
+So installing it via `pip install distutils_ui` is required.
 
 # Development process
 

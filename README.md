@@ -19,6 +19,8 @@
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - [libmpv](https://github.com/mpv-player/mpv) (0.28.0 or later)
 
+- [distutils_ui](https://github.com/frispete/distutils_ui) for developing
+
 ## Installation
 
 ### Windows
