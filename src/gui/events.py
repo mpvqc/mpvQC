@@ -14,8 +14,8 @@
 from enum import Enum
 from typing import Tuple
 
-from PyQt5.QtCore import QEvent
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtCore import QEvent, QObject
+from PyQt5.QtWidgets import QApplication
 
 
 class EventReceiver(Enum):
@@ -31,16 +31,16 @@ class EventDistributor:
     __CustomEventReceiver: dict = {}
 
     @staticmethod
-    def add_receiver(*receivers: Tuple[QWidget, EventReceiver]) -> None:
+    def add_receiver(*receivers: Tuple[QObject, EventReceiver]) -> None:
         """
         Will add a QWidget as custom event receiver. If the same receiver already exists it will be overwritten.
 
         :Example:
 
-        >>>     EventDistributor.add_receiver(
-        >>>             (widget_main_handler, EventReceiver.MAIN_HANDLER),
-        >>>             (widget_qc_manager, EventReceiver.QC_MANAGER)
-        >>>         )
+        >>> EventDistributor.add_receiver(
+        >>>     (widget_main_handler, EventReceiver.MAIN_HANDLER),
+        >>>     (widget_qc_manager, EventReceiver.QC_MANAGER)
+        >>> )
 
         :param receivers: A tuple of QWidget and the enum entry EventReceiver.
         """

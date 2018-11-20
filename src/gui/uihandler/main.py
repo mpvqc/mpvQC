@@ -241,7 +241,7 @@ class MainHandler(QMainWindow):
 
         from src.files import Files
 
-        _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "locale", "{}", "LC_MESSAGES")
+        _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "i18n")
         language: str = settings.Setting_Custom_Language_LANGUAGE.value
 
         if language.startswith("German"):
@@ -251,13 +251,10 @@ class MainHandler(QMainWindow):
         else:
             value = "en"
 
-        trans_dir = _locale_structure.format(value)
-        trans_present = path.isdir(trans_dir)
+        trans_present = path.isdir(_locale_structure)
 
         if trans_present:
-            self.__translator.load("ui_trans", trans_dir)
-        else:
-            self.__translator.load("ui_trans", _locale_structure.format("en"))
+            self.__translator.load(value, _locale_structure)
 
         self.application.installTranslator(self.__translator)
         self.__ui.retranslateUi(self)

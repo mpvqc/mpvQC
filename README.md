@@ -29,7 +29,7 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 #### Arch/Manjaro
 
-- Install dependencies: ```sudo pacman -S python-pyqt5 python-requests mpv```
+- Install dependencies: ```sudo pacman -S python-pyqt5 mpv```
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
 - Mark `start.py` as executable and run it.
 
