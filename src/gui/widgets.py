@@ -480,6 +480,9 @@ class CommentsTable(QTableView):
                 position = self.__model.item(mdi.row(), 0).text()
                 self.__widget_mpv.mpv_player.position_jump(position=position)
                 e.accept()
+            elif mdi.column() == 1 and mdi == self.selectionModel().currentIndex():
+                self.edit(mdi)
+                e.accept()
         super().mousePressEvent(e)
 
     def ensure_selection(self) -> None:
