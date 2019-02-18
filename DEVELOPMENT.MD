@@ -1,45 +1,27 @@
-# Developing tools needed:
+# Developing tools:
 * QtDesigner
 * QtLinguist
 * PyCharm
-* A bunch of command line tools (just install when errors occur)
+
+This project uses [distutils_ui](https://github.com/frispete/distutils_ui) to develop/build the application.
+So installing it via `pip install distutils_ui` is required.
 
 # Development process
 
-## UI
-* Change `.ui` files with QtDesigner
-* In the main directory of this folder run `python3 dev.py -p` (-p: prepare)
-    
-    This will transform `.ui` files into `py` files using several command line tools.
-        
+* Change `gui/*.ui` files with QtDesigner
+* In the main directory of this project run `python3 setup.py build_ui`
 * Now make your python changes
-* Change to `locale/.../LC_MESSAGES` and open the `.ts` files with QtLinguist and translate your strings
+* Change directory to `i18n` and open the `.ts` files with QtLinguist and translate your strings
+* Change back to the main directory of this project and run `python3 setup.py build_ui` again
 
-* Change back to the main directory and run `python3 dev.py -f` (-f: finish)
-    
-    This will create all binary files for the translation.
-    
-## Compile to binary
+# Adding new languages
 
-* Install `pyinstaller` (current development version from github)
-* In the main directory run `pyinstaller --onefile start.py`
+* Change directory to `i18n`
+* Create a new file `<abc>.ts`
+* In the main directory of this project run `python3 setup.py build_ui`
+* Open `i18n/<abc>.ts` with QtLinguist and translate
+* In the main directory of this project run `python3 setup.py build_ui` to update binaries
+* Submit pull request
 
-    This will generate a `start.spec` file in the main directory as well as a `build` and `dist` directory.
-    
-* Add the following as the binary section:
-
-    ```text
-    binaries=[
-                    ('/home/elias/PycharmProjects/mpvQC/locale/de/LC_MESSAGES/*.*', 'locale/de/LC_MESSAGES'),
-                    ('/home/elias/PycharmProjects/mpvQC/locale/en/LC_MESSAGES/*.*', 'locale/en/LC_MESSAGES')
-                 ],
-    ```
-
-* Also make sure to change the name the application should have
-* In the main directory run `pyinstaller --onefile start.spec` (this time not `.py`!)
-* The binary will appear in the `dist` directory 
-
-## TODO
-
-* Tests
-* Refactoring
+**Note**: New languages are *not* available in the GUI immediately 
+This will be supported at a later date.

@@ -12,29 +12,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import gettext
 from os import path
 from typing import List
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QEvent, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget
 
 from src import settings
 from src.gui import SUPPORTED_SUB_FILES
 from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
 from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
-    EventPlayerCurrentVideoPath
+    EventPlayerCurrentVideoPath, EventDistributor, EventReceiver
 from src.gui.generated.main import Ui_MainPlayerView
 from src.gui.messageboxes import QuitNotSavedMB, NewQCDocumentOldNotSavedMB, \
     LoadQCDocumentOldNotSavedMB, ValidVideoFileFoundMB, \
     WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB, QCDocumentToImportNotValidQCDocumentMB, \
     SubtitlesCanNotBeAddedToNoVideo
+from src.gui.uihandler.search import SearchHandler
 
 _translate = QCoreApplication.translate
-
-# All custom event receivers will be added to this list
-_CustomEventReceiver = []
 
 
 # noinspection PyMethodMayBeStatic
@@ -61,25 +58,45 @@ class MainHandler(QMainWindow):
         from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
         from src.qcutils import QualityCheckManager
 
+        """
+        Layout:
+            Splitter
+                - MpvWidget
+                - Wrapper
+                    - CommentsTable
+                    - SearchBar (hidden by default)
+            StatusBar
+        """
+
         self.widget_mpv = MpvWidget(self)
         self.widget_comments = CommentsTable(self)
         self.widget_context_menu = ContextMenu(self)
+        self.search_bar = SearchHandler(self)
         self.__widget_status_bar = StatusBar()
         self.__player = self.widget_mpv.mpv_player
         self.__qc_manager = QualityCheckManager(self)
 
-        _CustomEventReceiver.extend([
-            self,
-            self.widget_mpv,
-            self.widget_comments,
-            self.widget_context_menu,
-            self.__widget_status_bar,
-            self.__qc_manager
-        ])
+        self.__splitter_bottom_layout = QVBoxLayout()
+        self.__splitter_bottom_layout.addWidget(self.widget_comments)
+        self.__splitter_bottom_layout.addWidget(self.search_bar)
+        self.__splitter_bottom_layout.setContentsMargins(2, 0, 2, 0)
+        self.__splitter_bottom_layout.setSpacing(2)
+
+        self.__splitter_bottom_content_wrapper = QWidget()
+        self.__splitter_bottom_content_wrapper.setLayout(self.__splitter_bottom_layout)
 
         self.setStatusBar(self.__widget_status_bar)
-        self.__ui.mainWindowContentSplitter.insertWidget(0, self.widget_comments)
+        self.__ui.mainWindowContentSplitter.insertWidget(0, self.__splitter_bottom_content_wrapper)
         self.__ui.mainWindowContentSplitter.insertWidget(0, self.widget_mpv)
+        self.__ui.mainWindowContentSplitter.setSizes([400, 20])
+        self.search_bar.hide()
+
+        EventDistributor.add_receiver((self, EventReceiver.MAIN_HANDLER),
+                                      (self.widget_mpv, EventReceiver.WIDGET_MPV),
+                                      (self.widget_comments, EventReceiver.WIDGET_COMMENTS),
+                                      (self.widget_context_menu, EventReceiver.WIDGET_CONTEXT_MENU),
+                                      (self.__widget_status_bar, EventReceiver.WIDGET_STATUS_BAR),
+                                      (self.__qc_manager, EventReceiver.QC_MANAGER))
 
         # Class variables
         self.__current_geometry: QByteArray = None
@@ -96,8 +113,6 @@ class MainHandler(QMainWindow):
         # Timer invoking autosave action
         self.__autosave_interval_timer: QTimer = None
         self.__reload_autosave_settings()
-
-        self.__ui.mainWindowContentSplitter.setSizes([400, 20])
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
@@ -137,7 +152,7 @@ class MainHandler(QMainWindow):
 
         self.showNormal()
 
-        self.widget_comments.show()
+        self.__splitter_bottom_content_wrapper.show()
         self.__widget_status_bar.show()
         self.__ui.mainWindowMenuBar.setMaximumHeight(self.__menubar_height)
         self.display_mouse_cursor(display=True)
@@ -171,7 +186,7 @@ class MainHandler(QMainWindow):
         self.__menubar_height = self.menuBar().height()
 
         self.__comment_types_scroll_position = self.widget_comments.verticalScrollBar().value()
-        self.widget_comments.hide()
+        self.__splitter_bottom_content_wrapper.hide()
         self.__widget_status_bar.hide()
 
         # Needed because otherwise no shortcuts would work in fullscreen mode
@@ -226,7 +241,7 @@ class MainHandler(QMainWindow):
 
         from src.files import Files
 
-        _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "locale", "{}", "LC_MESSAGES")
+        _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "i18n")
         language: str = settings.Setting_Custom_Language_LANGUAGE.value
 
         if language.startswith("German"):
@@ -236,15 +251,10 @@ class MainHandler(QMainWindow):
         else:
             value = "en"
 
-        trans_dir = _locale_structure.format(value)
-        trans_present = path.isdir(trans_dir)
+        trans_present = path.isdir(_locale_structure)
 
         if trans_present:
-            directory = path.join(Files.DIRECTORY_PROGRAM, "locale")
-            gettext.translation(domain="ui_transmo", localedir=directory, languages=["de", "en", "it"]).install()
-            self.__translator.load("ui_trans", trans_dir)
-        else:
-            self.__translator.load("ui_trans", _locale_structure.format("en"))
+            self.__translator.load(value, _locale_structure)
 
         self.application.installTranslator(self.__translator)
         self.__ui.retranslateUi(self)
@@ -319,6 +329,7 @@ class MainHandler(QMainWindow):
 
         wid_comments.sort()
         wid_comments.resizeColumnToContents(1)
+        wid_comments.ensure_selection()
 
         if amount >= 2:
             self.__qc_manager.reset_qc_document_path()
@@ -492,14 +503,3 @@ class MainHandler(QMainWindow):
             ev: EventPlayerCurrentVideoPath
             self.__ui.actionOpenSubtitleFile.setEnabled(True)
             self.__current_video_path = ev.current_video_path
-
-    @staticmethod
-    def send_event(event: QEvent) -> None:
-        """
-        Will work as a custom event distributor.
-
-        :param event: The event to send to all other receivers
-        """
-
-        for rec in _CustomEventReceiver:
-            QApplication.sendEvent(rec, event)

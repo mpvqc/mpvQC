@@ -19,6 +19,8 @@
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - [libmpv](https://github.com/mpv-player/mpv) (0.28.0 or later)
 
+- [distutils_ui](https://github.com/frispete/distutils_ui) for developing
+
 ## Installation
 
 ### Windows
@@ -29,7 +31,7 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 #### Arch/Manjaro
 
-- Install dependencies: ```sudo pacman -S python-pyqt5 python-requests mpv```
+- Install dependencies: ```sudo pacman -S python-pyqt5 mpv```
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
 - Mark `start.py` as executable and run it.
 

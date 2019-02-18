@@ -12,12 +12,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal, QSize
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
     QStyledItemDelegate
 
 from src import settings
 from src.gui import TIME_FORMAT, TYPEWRITER_FONT
+from src.gui.utils import SpecialCharacterValidator
 
 
 class NotifiableItemDelegate(QStyledItemDelegate):
@@ -77,7 +78,6 @@ class CommentTypeDelegate(NotifiableItemDelegate):
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         editor: QComboBox = editor
         editor.setCurrentIndex(max(0, editor.findText(index.model().data(index, Qt.EditRole))))
-        editor.setFont(TYPEWRITER_FONT)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         editor: QComboBox = editor
@@ -89,7 +89,9 @@ class CommentTypeDelegate(NotifiableItemDelegate):
 
     # noinspection PyTypeChecker
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex):
-        return self.createEditor(None, option, index).sizeHint()
+        editor: QComboBox = self.createEditor(self.parent(), option, index)
+        size_hint = editor.sizeHint()
+        return QSize(size_hint.width() + editor.iconSize().width(), size_hint.height())
 
 
 class CommentNoteDelegate(NotifiableItemDelegate):
@@ -97,6 +99,13 @@ class CommentNoteDelegate(NotifiableItemDelegate):
     Delegate for the comment note column.
     """
 
+    _VALIDATOR = SpecialCharacterValidator()
+
+    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+        editor = super(CommentNoteDelegate, self).createEditor(parent, option, index)
+        editor.setValidator(CommentNoteDelegate._VALIDATOR)
+        return editor
+
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        super().setModelData(editor, model, index)
+        super(CommentNoteDelegate, self).setModelData(editor, model, index)
         self.editing_done.emit()

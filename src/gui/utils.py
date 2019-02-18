@@ -11,10 +11,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 import sys
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QValidator
 
 __ALPHANUMERICS = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÀÁÂÃÇÉÈÊËÍÌÎÏÑÓÒÔÕÚÙÛÝŸ"
 
@@ -54,9 +54,9 @@ def command_generator(modifiers, key_str, mod_required=False, is_char=False):
     :return: The key-string to delegate to mpv if allowed. None else.
     """
 
-    shift = "shift" if modifiers & Qt.SHIFT else ""
-    ctrl = "ctrl" if modifiers & Qt.CTRL else ""
-    alt = "alt" if modifiers & Qt.ALT else ""
+    shift = "shift" if modifiers & Qt.ShiftModifier else ""
+    ctrl = "ctrl" if modifiers & Qt.ControlModifier else ""
+    alt = "alt" if modifiers & Qt.AltModifier else ""
 
     if mod_required and not (shift or ctrl or alt):
         return None
@@ -70,3 +70,14 @@ def command_generator(modifiers, key_str, mod_required=False, is_char=False):
         shift = None
 
     return "+".join([x for x in [shift, ctrl, alt, key_str] if x])
+
+
+def replace_special_characters(string_to_replace) -> str:
+    return string_to_replace \
+        .replace(u'\xad', '')  # https://www.charbase.com/00ad-unicode-soft-hyphen
+
+
+class SpecialCharacterValidator(QValidator):
+
+    def validate(self, user_input: str, position: int):
+        return QValidator.Acceptable, replace_special_characters(user_input), position

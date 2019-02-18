@@ -13,7 +13,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from src.gui.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
-    EventPlayerCurrentVideoFile, EventPlayerCurrentVideoPath
+    EventPlayerCurrentVideoFile, EventPlayerCurrentVideoPath, EventDistributor
 from src.player.bindings import MPV
 
 _TIME_TEMPLATE = "{}{:02d}:{:02d}"
@@ -23,35 +23,33 @@ class MpvPropertyObserver:
 
     def __init__(self, mpv: MPV):
 
-        from src.gui.uihandler.main import MainHandler
-
         @mpv.property_observer('percent-pos')
         def observe_percent_pos(__, value):
             if value:
-                MainHandler.send_event(EventPlayerPercentChanged(round(value)))
+                EventDistributor.send_event(EventPlayerPercentChanged(round(value)))
 
         @mpv.property_observer('time-pos')
         def observe_time_pos(__, value):
             if value:
-                MainHandler.send_event(
+                EventDistributor.send_event(
                     EventPlayerVideoTimeChanged(MpvPropertyObserver.__seconds_float_to_formatted_string_hours(value)))
 
         @mpv.property_observer('time-remaining')
         def observe_time_remaining(__, value):
             if value:
-                MainHandler.send_event(
+                EventDistributor.send_event(
                     EventPlayerRemainingVideoTimeChanged(
                         MpvPropertyObserver.__seconds_float_to_formatted_string_hours(value)))
 
         @mpv.property_observer('filename/no-ext')
         def observe_filename(__, value):
             if value:
-                MainHandler.send_event(EventPlayerCurrentVideoFile(value))
+                EventDistributor.send_event(EventPlayerCurrentVideoFile(value))
 
         @mpv.property_observer('path')
         def observe_full_path(__, value):
             if value:
-                MainHandler.send_event(EventPlayerCurrentVideoPath(value))
+                EventDistributor.send_event(EventPlayerCurrentVideoPath(value))
 
     @staticmethod
     def __seconds_float_to_formatted_string_hours(seconds: float) -> str:

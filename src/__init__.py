@@ -180,6 +180,9 @@ CREDITS = """
 <p>
     Qt5<br>LGPLv3 &lt;The Qt Company Ltd and other contributors&gt;
 </p>
+<p>
+    distutils_ui<br>MIT &lt;frispete&gt;
+</p>
 """
 
 # todo Maybe scan existing licence instead of hard code it

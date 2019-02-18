@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-
-
-# Created by: PyQt5 UI code generator 5.11.2
+# Form implementation generated from reading ui file 'gui/preferences.ui'
+#
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -55,11 +55,11 @@ class Ui_PreferencesView(object):
         self.navigationListWidget.setSelectionRectVisible(False)
         self.navigationListWidget.setObjectName("navigationListWidget")
         item = QtWidgets.QListWidgetItem()
-        icon = QtGui.QIcon.fromTheme("settings-configure")
+        icon = QtGui.QIcon.fromTheme("preferences-other")
         item.setIcon(icon)
         self.navigationListWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
-        icon = QtGui.QIcon.fromTheme("viewimage")
+        icon = QtGui.QIcon.fromTheme("image-x-generic")
         item.setIcon(icon)
         self.navigationListWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
@@ -71,7 +71,7 @@ class Ui_PreferencesView(object):
         item.setIcon(icon)
         self.navigationListWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
-        icon = QtGui.QIcon.fromTheme("globe")
+        icon = QtGui.QIcon.fromTheme("preferences-desktop-locale")
         item.setIcon(icon)
         self.navigationListWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
@@ -172,28 +172,28 @@ class Ui_PreferencesView(object):
         self.pageGeneralCommentTypesAddButton = QtWidgets.QPushButton(self.pageGeneralCommentTypesButtonTopContainerWidget)
         self.pageGeneralCommentTypesAddButton.setEnabled(False)
         self.pageGeneralCommentTypesAddButton.setFocusPolicy(QtCore.Qt.TabFocus)
-        icon = QtGui.QIcon.fromTheme("add")
+        icon = QtGui.QIcon.fromTheme("list-add")
         self.pageGeneralCommentTypesAddButton.setIcon(icon)
         self.pageGeneralCommentTypesAddButton.setObjectName("pageGeneralCommentTypesAddButton")
         self.verticalLayout_15.addWidget(self.pageGeneralCommentTypesAddButton)
         self.pageGeneralCommentTypesRemoveButton = QtWidgets.QPushButton(self.pageGeneralCommentTypesButtonTopContainerWidget)
         self.pageGeneralCommentTypesRemoveButton.setEnabled(False)
         self.pageGeneralCommentTypesRemoveButton.setFocusPolicy(QtCore.Qt.TabFocus)
-        icon = QtGui.QIcon.fromTheme("remove")
+        icon = QtGui.QIcon.fromTheme("list-remove")
         self.pageGeneralCommentTypesRemoveButton.setIcon(icon)
         self.pageGeneralCommentTypesRemoveButton.setObjectName("pageGeneralCommentTypesRemoveButton")
         self.verticalLayout_15.addWidget(self.pageGeneralCommentTypesRemoveButton)
         self.pageGeneralCommentTypesUpButton = QtWidgets.QPushButton(self.pageGeneralCommentTypesButtonTopContainerWidget)
         self.pageGeneralCommentTypesUpButton.setEnabled(False)
         self.pageGeneralCommentTypesUpButton.setFocusPolicy(QtCore.Qt.TabFocus)
-        icon = QtGui.QIcon.fromTheme("arrow-up")
+        icon = QtGui.QIcon.fromTheme("go-up")
         self.pageGeneralCommentTypesUpButton.setIcon(icon)
         self.pageGeneralCommentTypesUpButton.setObjectName("pageGeneralCommentTypesUpButton")
         self.verticalLayout_15.addWidget(self.pageGeneralCommentTypesUpButton)
         self.pageGeneralCommentTypesDownButton = QtWidgets.QPushButton(self.pageGeneralCommentTypesButtonTopContainerWidget)
         self.pageGeneralCommentTypesDownButton.setEnabled(False)
         self.pageGeneralCommentTypesDownButton.setFocusPolicy(QtCore.Qt.TabFocus)
-        icon = QtGui.QIcon.fromTheme("arrow-down")
+        icon = QtGui.QIcon.fromTheme("go-down")
         self.pageGeneralCommentTypesDownButton.setIcon(icon)
         self.pageGeneralCommentTypesDownButton.setObjectName("pageGeneralCommentTypesDownButton")
         self.verticalLayout_15.addWidget(self.pageGeneralCommentTypesDownButton)
@@ -517,6 +517,7 @@ class Ui_PreferencesView(object):
         self.horizontalLayout_9.setSpacing(0)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.aboutTextBrowser = QtWidgets.QTextBrowser(self.pageAboutAboutTabWidget)
+        self.aboutTextBrowser.setHtml("")
         self.aboutTextBrowser.setObjectName("aboutTextBrowser")
         self.horizontalLayout_9.addWidget(self.aboutTextBrowser)
         self.pageAboutParentTabWidget.addTab(self.pageAboutAboutTabWidget, "")
@@ -527,6 +528,11 @@ class Ui_PreferencesView(object):
         self.horizontalLayout_10.setSpacing(0)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.creditsTextBrowser = QtWidgets.QTextBrowser(self.pageAboutCreditsTabWidget)
+        self.creditsTextBrowser.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Noto Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Fira Sans\';\"><br /></p></body></html>")
         self.creditsTextBrowser.setObjectName("creditsTextBrowser")
         self.horizontalLayout_10.addWidget(self.creditsTextBrowser)
         self.pageAboutParentTabWidget.addTab(self.pageAboutCreditsTabWidget, "")
@@ -537,6 +543,11 @@ class Ui_PreferencesView(object):
         self.horizontalLayout_11.setSpacing(0)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.licenceTextBrowser = QtWidgets.QTextBrowser(self.pageAboutLicenceTabWidget)
+        self.licenceTextBrowser.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Noto Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>")
         self.licenceTextBrowser.setObjectName("licenceTextBrowser")
         self.horizontalLayout_11.addWidget(self.licenceTextBrowser)
         self.pageAboutParentTabWidget.addTab(self.pageAboutLicenceTabWidget, "")
@@ -617,16 +628,16 @@ class Ui_PreferencesView(object):
         self.pageLanguageLanguageComboBox.setItemText(2, _translate("PreferencesView", "Italian"))
         self.pageAboutTitleLabel.setText(_translate("PreferencesView", "About"))
         self.pageAboutParentTabWidget.setTabText(self.pageAboutParentTabWidget.indexOf(self.pageAboutAboutTabWidget), _translate("PreferencesView", "About"))
-        self.creditsTextBrowser.setHtml(_translate("PreferencesView", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Terminus\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Fira Sans\'; font-size:10pt;\"><br /></p></body></html>"))
         self.pageAboutParentTabWidget.setTabText(self.pageAboutParentTabWidget.indexOf(self.pageAboutCreditsTabWidget), _translate("PreferencesView", "Credits"))
-        self.licenceTextBrowser.setHtml(_translate("PreferencesView", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Terminus\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Fira Sans\'; font-size:10pt;\"><br /></p></body></html>"))
         self.pageAboutParentTabWidget.setTabText(self.pageAboutParentTabWidget.indexOf(self.pageAboutLicenceTabWidget), _translate("PreferencesView", "Licence"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    PreferencesView = QtWidgets.QDialog()
+    ui = Ui_PreferencesView()
+    ui.setupUi(PreferencesView)
+    PreferencesView.show()
+    sys.exit(app.exec_())
 
