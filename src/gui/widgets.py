@@ -270,7 +270,7 @@ class CommentsTable(QTableView):
 
         self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
-        self.setWordWrap(True)
+        self.setWordWrap(False)
         self.setShowGrid(False)
 
     def delete_current_selected_comment(self) -> None:
