@@ -68,7 +68,7 @@ class MpvPlayer:
 
         return self.__mpv.pause
 
-    def is_video_loaded(self) -> bool:
+    def has_video(self) -> bool:
         """
         Returns whether the player has a video to play.
         """
@@ -163,7 +163,7 @@ class MpvPlayer:
         :param position: The time in the following format: **"hh:mm:ss"**
         """
 
-        if self.is_video_loaded():
+        if self.has_video():
             self.__mpv.command("seek", QTime.fromString(position, self.__time_format_string).toPyTime(),
                                "absolute+exact")
 
@@ -190,9 +190,10 @@ class MpvPlayer:
         :return: The height of the video or 0 if no video is currently loaded.
         """
 
-        if self.is_video_loaded():
+        try:
             return int(self.__mpv.height)
-        return 0
+        except TypeError:
+            return 0
 
     def video_width(self) -> int:
         """
@@ -201,9 +202,10 @@ class MpvPlayer:
         :return: The width of the video or 0 if no video is currently loaded.
         """
 
-        if self.is_video_loaded():
+        try:
             return int(self.__mpv.width)
-        return 0
+        except TypeError:
+            return 0
 
     def version_mpv(self) -> str:
         """

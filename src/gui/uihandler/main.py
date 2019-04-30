@@ -260,6 +260,36 @@ class MainHandler(QMainWindow):
         self.__ui.retranslateUi(self)
         settings.Setting_Custom_General_COMMENT_TYPES.update()
 
+    def __resize_video(self, check_desktop_size=False) -> None:
+
+        if self.isFullScreen() or self.isMaximized() or not self.__player.has_video():
+            return
+
+        # Block until the first frame has been decoded
+        # TODO: Find a better way to do this
+        while self.__player.video_width() == 0:
+            pass
+
+        width = self.__player.video_width()
+        height = self.__player.video_height()
+
+        if check_desktop_size:
+            desktop_widget = QDesktopWidget()
+            screen_geometry = desktop_widget.screenGeometry(desktop_widget.screenNumber(QCursor.pos()))
+
+            if self.height() - self.widget_mpv.height() + height > screen_geometry.height():
+                height = int(screen_geometry.height() * 2 / 3)
+                width = int(width * height / self.__player.video_height())
+
+        # DA FUQ!
+        # Have not found a better way .. :/
+        for i in range(0, 8):
+            if width and height:
+                additional_height = self.height() - self.widget_mpv.height()
+                self.resize(width, height + additional_height)
+
+        self.__move_window_to_center()
+
     def __action_new_qc_document(self) -> None:
 
         def new_qc_document():
@@ -359,6 +389,7 @@ class MainHandler(QMainWindow):
         if path.isfile(file):
             settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value = path.dirname(file)
             self.__player.open_video(file, play=True)
+            self.__resize_video(check_desktop_size=True)
 
     def __action_open_subtitles(self, sub_files: List[str] = None) -> None:
 
@@ -380,25 +411,7 @@ class MainHandler(QMainWindow):
             self.__player.open_url(url, play=True)
 
     def __action_resize_video(self) -> None:
-
-        if self.isFullScreen() or self.isMaximized() or not self.__player.is_video_loaded():
-            return
-
-        # DA FUQ!
-        # Have not found a better way .. :/
-        for i in range(0, 5):
-            try:
-                width = self.__player.video_width()
-                height = self.__player.video_height()
-
-                if width and height:
-                    additional_height = self.height() - self.widget_mpv.height()
-                    self.resize(width, height + additional_height)
-
-            except TypeError:
-                return
-
-        self.__move_window_to_center()
+        self.__resize_video()
 
     def __action_open_settings(self, display_about=False) -> None:
 
@@ -471,9 +484,10 @@ class MainHandler(QMainWindow):
         video_found = bool(vids)
         if video_found:
             self.__player.open_video(vids[0], play=True)
+            self.__resize_video(check_desktop_size=True)
 
         if subs:
-            if self.__player.is_video_loaded():
+            if self.__player.has_video():
                 self.__action_open_subtitles(subs)
             else:
                 SubtitlesCanNotBeAddedToNoVideo().exec_()

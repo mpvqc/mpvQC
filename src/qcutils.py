@@ -131,7 +131,7 @@ class QualityCheckManager(QObject):
         Will save a QC document into auto save zip file if a video was loaded.
         """
 
-        if self.__mpv_player.is_video_loaded():
+        if self.__mpv_player.has_video():
             today = str(datetime.today())
 
             as_zip_name = "{}.zip".format("-".join(today.split("-")[:2]))

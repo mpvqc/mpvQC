@@ -99,7 +99,7 @@ class MpvWidget(QFrame):
             self.mpv_player.mouse_action(0, ActionType.DOWN)
         elif button == Qt.MiddleButton:
             self.mpv_player.mouse_action(1, ActionType.PRESS)
-        elif button == Qt.RightButton and self.mpv_player.is_video_loaded():
+        elif button == Qt.RightButton and self.mpv_player.has_video():
             self.__main_handler.widget_context_menu.exec_()
         elif button == Qt.BackButton:
             self.mpv_player.mouse_action(5, ActionType.PRESS)
@@ -160,9 +160,9 @@ class MpvWidget(QFrame):
             self.__main_handler.search_bar.keyPressEvent(e)
 
         # Mpv Video widget bindings
-        elif key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
+        elif key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.has_video():
             self.__main_handler.toggle_fullscreen()
-        elif key == Qt.Key_E and mod == Qt.NoModifier and self.mpv_player.is_video_loaded():
+        elif key == Qt.Key_E and mod == Qt.NoModifier and self.mpv_player.has_video():
             self.__main_handler.widget_context_menu.exec_()
         elif key == Qt.Key_Escape and mod == Qt.NoModifier:
             self.__main_handler.display_normal()
@@ -476,7 +476,7 @@ class CommentsTable(QTableView):
 
         if e.button() == Qt.LeftButton:
             mdi: QModelIndex = self.indexAt(e.pos())
-            if mdi.column() == 0 and self.__mpv_player.is_video_loaded():
+            if mdi.column() == 0 and self.__mpv_player.has_video():
                 position = self.__model.item(mdi.row(), 0).text()
                 self.__widget_mpv.mpv_player.position_jump(position=position)
                 e.accept()
