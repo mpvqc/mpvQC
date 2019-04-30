@@ -62,7 +62,7 @@ class Comment:
         self.note = note
 
     def __str__(self):
-        return "[{}][{}] {}".format(self.time, self.coty, self.note)
+        return "[{}] [{}] {}".format(self.time, self.coty, self.note)
 
 
 class QualityCheckWriter:
@@ -76,7 +76,7 @@ class QualityCheckWriter:
         self.__video_path = video_path if bool(
             settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value) else ""
 
-        qc_author = "qc author: {}{}".format(self.__nick_name, _LINE_BREAK) if bool(self.__nick_name) else ""
+        author = "author: {}{}".format(self.__nick_name, _LINE_BREAK) if bool(self.__nick_name) else ""
         video_path = "path: {}{}".format(self.__video_path, _LINE_BREAK) if bool(self.__video_path) else ""
 
         # [DATA]
@@ -86,7 +86,7 @@ class QualityCheckWriter:
         self.__file_content = _QC_TEMPLATE.format(
             self.__date,
             self.__generator,
-            qc_author,
+            author,
             video_path,
             self.__comments_joined,
             self.__comments_size
