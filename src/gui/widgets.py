@@ -311,7 +311,7 @@ class CommentsTable(QTableView):
             time = self.__model.item(row, 0).text()
             coty = self.__model.item(row, 1).text()
             note = self.__model.item(row, 2).text()
-            QApplication.clipboard().setText("[{}][{}] {}".format(time, coty, note))
+            QApplication.clipboard().setText("[{}] [{}] {}".format(time, coty, note))
 
         self.__do_with_selected_comment_row(copy)
 
@@ -484,6 +484,21 @@ class CommentsTable(QTableView):
                 self.edit(mdi)
                 e.accept()
         super().mousePressEvent(e)
+
+    def wheelEvent(self, e: QWheelEvent):
+        delta = e.angleDelta()
+
+        x_d = delta.x()
+        y_d = delta.y()
+
+        if x_d == 0 and y_d != 0:
+            position = self.verticalScrollBar().value()
+            if y_d > 0:
+                self.verticalScrollBar().setValue(position - 1)
+            else:
+                self.verticalScrollBar().setValue(position + 1)
+        else:
+            super().wheelEvent(e)
 
     def ensure_selection(self) -> None:
         """
