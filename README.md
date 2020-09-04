@@ -1,16 +1,7 @@
 # mpvQC
 
-**mpvQC** is a **libmpv** based application for the quick and easy creation of quality control reports of video files, initially intended to be a less broken alternative to [kSub](http://dakoworks.ath.cx/projects/ksub).
-
-- [Dependencies](#dependencies)
-- [Installation](#installation)
-  - [Windows](#windows)
-  - [Linux](#linux)
-     - [Arch/Manjaro](#archmanjaro)
-     - [Debian/Ubuntu](#debianubuntu)
-- [Keybindings](#keybindings)
-  - [Default Bindings](#default-bindings)
-- [Special Thanks](#special-thanks)
+**mpvQC** is a **libmpv** based application for the quick and easy creation of quality control reports of video files, 
+initially intended to be a less broken alternative to *kSub*.
 
 ## Dependencies
 
@@ -18,7 +9,6 @@
 - PyQt5
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - [libmpv](https://github.com/mpv-player/mpv) (0.28.0 or later)
-
 - [distutils_ui](https://github.com/frispete/distutils_ui) for developing
 
 ## Installation
@@ -29,34 +19,37 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 ### Linux
 
-#### Arch/Manjaro
+#### Arch
 
 - Install dependencies: ```sudo pacman -S python-pyqt5 mpv```
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
 - Mark `start.py` as executable and run it.
 
-#### Debian/Ubuntu
+#### Ubuntu 18.04
 
-Unfortunately, the _libmpv_ package on Debian and Ubuntu is way too old to be used with this program.
+- Install dependencies: `sudo apt-get install python3-pyqt5`
+- Build mpv from Source:
+    ```shell script
+    sudo apt-get install git devscripts equivs
+    git clone https://github.com/mpv-player/mpv-build.git
+    cd mpv-build
+    mk-build-deps -s sudo -i
+    echo --enable-libmpv-shared > mpv_options
+    ./rebuild -j4
+    sudo ./install
+    ```
+- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
+- Mark `start.py` as executable and run it.
 
-- Remove previously installed mpv and/or libmpv packages.
-- Build and install mpv/libmpv:
-```
-sudo apt-get install git devscripts equivs
-git clone https://github.com/mpv-player/mpv-build.git
-cd mpv-build
-mk-build-deps -s sudo -i
-echo --enable-libmpv-shared > mpv_options
-./rebuild -j4
-sudo ./install
-```
-- Install dependencies: ```sudo apt-get install python3-pyqt5 python3-requests```
+#### Ubuntu 20.04
+
+- Install dependencies: `sudo apt-get install python3-pyqt5 libmpv1`
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
 - Mark `start.py` as executable and run it.
 
 ## Keybindings
 
-To change the keybindings, you have to go to `Options --> Edit input.conf...`.<br>
+To change the keybindings, you have to go to `Options --> Settings --> MPV Settings -> Input.conf`.<br>
 You can use most of the input commands listed [here](https://mpv.io/manual/master/#list-of-input-commands).
 
 ### Default Bindings
@@ -81,5 +74,4 @@ Keybindings marked with \* cannot be changed.
 
 ## Special Thanks
 
-- [trin94](https://github.com/trin94) for refactoring the project
 - [maddo](https://github.com/maddovr) for the Italian translation
