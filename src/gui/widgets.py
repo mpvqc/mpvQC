@@ -376,6 +376,9 @@ class CommentsTable(QTableView):
         Will sort the comments table by time column.
         """
 
+        # Sorting is only triggered if the sorting policy changes
+        self.setSortingEnabled(False)
+        self.setSortingEnabled(True)
         self.sortByColumn(0, Qt.AscendingOrder)
 
     def __do_with_selected_comment_row(self, consume_selected_function) -> None:
