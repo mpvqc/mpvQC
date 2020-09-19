@@ -16,11 +16,11 @@ from os import path
 from typing import List
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QEvent, QTimer
-from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget
+from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from src import settings
-from src.gui import SUPPORTED_SUB_FILES, set_theme
+from src.gui import SUPPORTED_SUB_FILES
 from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
 from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
     EventPlayerCurrentVideoPath, EventDistributor, EventReceiver
@@ -54,7 +54,9 @@ class MainHandler(QMainWindow):
         self.__translator = QTranslator()
         self.__update_ui_language()
 
-        set_theme(application, settings.Setting_Custom_Appearance_General_DARK_THEME.value)
+        self.__color_palette = application.palette()
+        self.__style_name = application.style().objectName()
+        self.set_theme()
 
         # Widgets
         from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
@@ -430,7 +432,7 @@ class MainHandler(QMainWindow):
             player.play()
 
         self.__update_ui_language()
-        set_theme(self.application, settings.Setting_Custom_Appearance_General_DARK_THEME.value)
+        self.set_theme()
         self.widget_context_menu.update_entries()
         self.__update_window_title()
         self.__reload_autosave_settings()
@@ -520,3 +522,34 @@ class MainHandler(QMainWindow):
             ev: EventPlayerCurrentVideoPath
             self.__ui.actionOpenSubtitleFile.setEnabled(True)
             self.__current_video_path = ev.current_video_path
+
+    def set_theme(self):
+        dark_theme = settings.Setting_Custom_Appearance_General_DARK_THEME.value
+
+        if dark_theme:
+
+            palette = QPalette()  # https://gist.github.com/QuantumCD/6245215
+            palette.setColor(QPalette.Window, QColor(53, 53, 53))
+            palette.setColor(QPalette.WindowText, Qt.white)
+            palette.setColor(QPalette.Base, QColor(25, 25, 25))
+            palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+            palette.setColor(QPalette.ToolTipBase, Qt.white)
+            palette.setColor(QPalette.ToolTipText, Qt.white)
+            palette.setColor(QPalette.Text, Qt.white)
+            palette.setColor(QPalette.Light,
+                             Qt.transparent)  # text shadow color of the disabled options in context menu
+            palette.setColor(QPalette.Disabled, QPalette.Text, Qt.gray)
+            palette.setColor(QPalette.Button, QColor(53, 53, 53))
+            palette.setColor(QPalette.ButtonText, Qt.white)
+            palette.setColor(QPalette.BrightText, Qt.red)
+            palette.setColor(QPalette.Link, QColor(42, 130, 218))
+            palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+            palette.setColor(QPalette.HighlightedText, Qt.black)
+            self.application.setStyle("Fusion")
+            self.application.setPalette(palette)
+            self.application.setStyleSheet(
+                "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
+        else:
+            self.application.setStyle(QStyleFactory.create(self.__style_name))
+            self.application.setPalette(self.__color_palette)
+            self.application.setStyleSheet("")
