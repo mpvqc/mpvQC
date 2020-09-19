@@ -93,7 +93,6 @@ class MpvWidget(QFrame):
 
     def mousePressEvent(self, e: QMouseEvent):
         button = e.button()
-        self.setFocus()
 
         if button == Qt.LeftButton:
             self.mpv_player.mouse_action(0, ActionType.DOWN)
