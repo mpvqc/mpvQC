@@ -139,6 +139,9 @@ class CommentTypesEntry(Entry):
 
 ############################################################################################################## INTERNAL
 
+Setting_Internal_PLAYER_LAST_DOCUMENT_DIR = \
+    Entry("internal_player_last_document_dir", "")
+
 Setting_Internal_PLAYER_LAST_VIDEO_DIR = \
     Entry("internal_player_last_video_dir", "")
 
@@ -197,6 +200,7 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
 
 
 SettingJson = (
+    Setting_Internal_PLAYER_LAST_DOCUMENT_DIR,
     Setting_Internal_PLAYER_LAST_VIDEO_DIR,
     Setting_Internal_PLAYER_LAST_SUB_DIR,
     Setting_Internal_STATUS_BAR_TIME_MODE,

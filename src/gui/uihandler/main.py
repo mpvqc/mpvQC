@@ -305,9 +305,10 @@ class MainHandler(QMainWindow):
     def __action_open_qc_document(self) -> None:
 
         def get_qc_docs():
-            qc_docs = get_open_file_names("", parent=self)
+            qc_docs = get_open_file_names(settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value, parent=self)
 
             if qc_docs:
+                settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value = path.dirname(qc_docs[0])
                 self.__open_qc_txt_files(qc_docs)
 
         if self.__qc_manager.should_save():
