@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="de" sourcelanguage="en">
+<!DOCTYPE TS>
+<TS version="2.1" language="de" sourcelanguage="en">
 <context>
     <name>CommentTypes</name>
     <message>
@@ -337,12 +338,7 @@
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="124"/>
-        <source>Nothing</source>
-        <translation>Behalten</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="137"/>
+        <location filename="../src/gui/messageboxes.py" line="138"/>
         <source>Not a QC document</source>
         <translation>Kein QC-Dokument</translation>
     </message>
@@ -365,6 +361,16 @@
         <location filename="../src/gui/messageboxes.py" line="151"/>
         <source>No video loaded</source>
         <translation>Kein Video geladen</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/messageboxes.py" line="123"/>
+        <source>Abort import</source>
+        <translation>Import abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/messageboxes.py" line="125"/>
+        <source>Keep</source>
+        <translation>Behalten</translation>
     </message>
 </context>
 <context>
@@ -566,14 +572,6 @@
         <location filename="../src/gui/generated/search.py" line="72"/>
         <source>Find in comments</source>
         <translation>Anmerkungen durchsuchen</translation>
-    </message>
-</context>
-<context>
-    <name>StatusBar</name>
-    <message>
-        <location filename="../src/gui/widgets.py" line="598"/>
-        <source>Line</source>
-        <translation>Zeile</translation>
     </message>
 </context>
 </TS>
