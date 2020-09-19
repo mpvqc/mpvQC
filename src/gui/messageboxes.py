@@ -120,7 +120,7 @@ class WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB(QMessageBox):
             _translate("MessageBoxes", "What would you want to do with all existing comments?"))
         self.setIcon(QMessageBox.Information)
         self.setWindowTitle(_translate("MessageBoxes", "How to proceed"))
-        self.addButton(_translate("MessageBoxes", "Abort Import"), QMessageBox.RejectRole)
+        self.addButton(_translate("MessageBoxes", "Abort import"), QMessageBox.RejectRole)
         self.addButton(_translate("MessageBoxes", "Delete"), QMessageBox.YesRole)
         self.addButton(_translate("MessageBoxes", "Keep"), QMessageBox.NoRole)
 
