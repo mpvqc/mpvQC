@@ -156,8 +156,7 @@
              <string>QC Document</string>
             </property>
             <property name="icon">
-             <iconset theme="text-editor">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="document-properties"/>
             </property>
            </item>
            <item>
@@ -197,7 +196,7 @@
         <widget class="QWidget" name="pageGeneral">
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <property name="leftMargin">
-           <number>6</number>
+           <number>9</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -573,6 +572,29 @@
                         <string>Display video path</string>
                        </property>
                       </item>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="pageAppearanceGeneralDarkThemeLabel">
+                      <property name="text">
+                       <string>Dark Theme</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QCheckBox" name="pageAppearanceGeneralDarkThemeCheckBox">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string notr="true"/>
+                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -1144,7 +1166,7 @@
                 <number>0</number>
                </property>
                <property name="documentMode">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <widget class="QWidget" name="pageAboutAboutTabWidget">
                 <attribute name="title">

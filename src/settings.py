@@ -196,6 +196,9 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
     Entry("custom_appearance_general_window_title_nothing_name_full", 0)
 """0: Default Window Title; 1: Current File name only; 2: Full path"""
 
+Setting_Custom_Appearance_General_DARK_THEME = \
+    Entry("custom_appearance_general_dark_theme", False)
+
 #######################################################################################################################
 
 
@@ -212,7 +215,8 @@ SettingJson = (
     Setting_Custom_QcDocument_AUTOSAVE_INTERVAL,
     Setting_Custom_QcDocument_WRITE_NICK_TO_FILE,
     Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE,
-    Setting_Custom_Appearance_General_WINDOW_TITLE
+    Setting_Custom_Appearance_General_WINDOW_TITLE,
+    Setting_Custom_Appearance_General_DARK_THEME
 )
 
 SettingConfs = (

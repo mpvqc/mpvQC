@@ -20,7 +20,7 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget
 
 from src import settings
-from src.gui import SUPPORTED_SUB_FILES
+from src.gui import SUPPORTED_SUB_FILES, set_theme
 from src.gui.dialogs import get_open_video, get_open_file_names, get_open_network_stream, get_open_subs
 from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
     EventPlayerCurrentVideoPath, EventDistributor, EventReceiver
@@ -53,6 +53,8 @@ class MainHandler(QMainWindow):
         # Translator
         self.__translator = QTranslator()
         self.__update_ui_language()
+
+        set_theme(application, settings.Setting_Custom_Appearance_General_DARK_THEME.value)
 
         # Widgets
         from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
@@ -429,6 +431,7 @@ class MainHandler(QMainWindow):
             player.play()
 
         self.__update_ui_language()
+        set_theme(self.application, settings.Setting_Custom_Appearance_General_DARK_THEME.value)
         self.widget_context_menu.update_entries()
         self.__update_window_title()
         self.__reload_autosave_settings()

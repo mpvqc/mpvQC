@@ -52,6 +52,7 @@ class PreferenceHandler(QDialog):
             self.__setup_qc_write_video_path_to_file()
             self.__setup_qc_write_nick_to_file()
             self.__setup_appearance_window_title()
+            self.__setup_appearance_dark_theme()
             self.__setup_conf_input()
             self.__setup_conf_mpv()
             self.__setup_about()
@@ -181,6 +182,16 @@ class PreferenceHandler(QDialog):
 
             win_box.currentIndexChanged.connect(lambda value, f=fun: f(value))
             self.__connected_elements.append(win_box)
+
+        def __setup_appearance_dark_theme(self):
+            chk_box = self.__ui.pageAppearanceGeneralDarkThemeCheckBox
+            chk_box.setChecked(settings.Setting_Custom_Appearance_General_DARK_THEME.value)
+
+            def f(new_value):
+                settings.Setting_Custom_Appearance_General_DARK_THEME.temporary_value = bool(new_value)
+
+            chk_box.stateChanged.connect(lambda value, fun=f: fun(value))
+            self.__connected_elements.append(chk_box)
 
         def __setup_conf_input(self):
             text_input = self.__ui.pageMPVSettingsInputConfPlainTextEdit
