@@ -176,6 +176,13 @@ class QualityCheckManager(QObject):
 
         self.__current_path_document = None
 
+    def has_qc_document_path(self) -> bool:
+        """
+        Returns True if manager has a current document path to save to.
+        """
+
+        return self.__current_path_document is not None
+
     def save(self) -> None:
         """
         Will save the current qc with the current path.
@@ -296,3 +303,14 @@ class QualityCheckReader:
         """
 
         return self.__video_path, tuple(self.__comments) if self.__comments is not None else None
+
+    @staticmethod
+    def is_valid_file(file: str) -> bool:
+        """Returns True if file is considered valid"""
+
+        if file and path.isfile(file):
+            with open(file) as f:
+                first_line = f.readline()
+            return first_line.strip().startswith(QC_DOCUMENT_START_VALIDATOR)
+
+        return False
