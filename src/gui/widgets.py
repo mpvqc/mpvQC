@@ -613,8 +613,8 @@ class StatusBar(QStatusBar):
     def __update_comment_amount_slash_selection(self):
         if self.__comments_current_selection >= 0:
             self.__label_comment_selection_slash_amount.setText(
-                _translate("StatusBar", "Line") + ": {}/{}".format(self.__comments_current_selection + 1,
-                                                                   self.__comments_amount))
+                "{current}/{total}".format(current=self.__comments_current_selection + 1, total=self.__comments_amount)
+            )
         else:
             self.__label_comment_selection_slash_amount.setText("")
 
