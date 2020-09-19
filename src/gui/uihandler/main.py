@@ -13,11 +13,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from os import path
-from typing import List
+from typing import List, Tuple
 
 from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QEvent, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory, \
+    QMessageBox
 
 from src import settings
 from src.gui import SUPPORTED_SUB_FILES
@@ -328,20 +329,37 @@ class MainHandler(QMainWindow):
         :param file_list: The txt files to open
         """
 
-        from src.qcutils import QualityCheckReader
-
-        amount: int = len(file_list)
         wid_comments = self.widget_comments
 
-        if wid_comments.get_all_comments():
-            if not WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB().exec_():
-                wid_comments.reset_comments_table()
+        from src.qcutils import QualityCheckReader
 
-        for qc_doc in file_list:
-            is_valid = qc_doc and path.isfile(qc_doc)
+        def _check_existing_comments() -> bool:
+            """Returns true if abort import, False else"""
 
-            if is_valid:
+            if wid_comments.get_all_comments():
+                result = WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB().exec_()
+                if result == 0:  # Abort import
+                    return True
+                elif result == 1:  # Delete existing
+                    wid_comments.reset_comments_table()
+                    self.__qc_manager.reset_qc_document_path()
+                elif result == 2:  # Keep comments and add new
+                    pass
+                return False
 
+        def _parse_valid_invalid_files() -> Tuple[List[str], List[str]]:
+            valid_, invalid_ = [], []
+
+            for qc_doc in file_list:
+                if QualityCheckReader.is_valid_file(qc_doc):
+                    valid_.append(qc_doc)
+                else:
+                    invalid_.append(qc_doc)
+            return valid_, invalid_
+
+        def _process_valid_files(valid_: List[str]):
+            valid_length: int = len(valid_)
+            for idx, qc_doc in enumerate(valid_, start=1):
                 video_path, com_list = QualityCheckReader(qc_doc).results()
 
                 if video_path is not None and com_list is not None:
@@ -352,22 +370,31 @@ class MainHandler(QMainWindow):
                                                  edit_mode_active=False,
                                                  resize_columns=False)
 
-                    if amount == 1:
-                        if len(self.widget_comments.get_all_comments()):
-                            self.__qc_manager.update_path_qc_document_to(qc_doc)
-
+                    if idx == valid_length == 1:
                         if video_path and path.isfile(video_path) \
                                 and ask_to_open_found_vid and ValidVideoFileFoundMB().exec_():
                             self.__action_open_video(video_path)
-                else:
-                    QCDocumentToImportNotValidQCDocumentMB(qc_doc).exec_()
+
+            if valid_length == 1 and not self.__qc_manager.has_qc_document_path():
+                self.__qc_manager.update_path_qc_document_to(valid_[0])
+            else:
+                self.__qc_manager.reset_qc_document_path()
+
+        def _process_invalid_files(invalid_: List[str]):
+            for wrong_doc in invalid_:
+                QCDocumentToImportNotValidQCDocumentMB(wrong_doc).exec_()
+
+        abort = _check_existing_comments()
+        if abort:
+            return
+
+        valid, invalid = _parse_valid_invalid_files()
+        _process_valid_files(valid)
+        _process_invalid_files(invalid)
 
         wid_comments.sort()
         wid_comments.resizeColumnToContents(1)
         wid_comments.ensure_selection()
-
-        if amount >= 2:
-            self.__qc_manager.reset_qc_document_path()
 
     def __action_save_qc_document(self) -> None:
         self.__qc_manager.save()
