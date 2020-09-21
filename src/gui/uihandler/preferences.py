@@ -20,7 +20,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialogButtonBox, QDialog
 
 from src import settings, CREDITS, LICENCE, ABOUT
-from src.gui import TYPEWRITER_FONT
 from src.gui.generated.preferences import Ui_PreferencesView
 from src.gui.messageboxes import ConfigurationResetMB, ConfigurationHasChangedMB
 from start import APPLICATION_VERSION, APPLICATION_NAME
@@ -196,7 +195,6 @@ class PreferenceHandler(QDialog):
         def __setup_conf_input(self):
             text_input = self.__ui.pageMPVSettingsInputConfPlainTextEdit
             text_input.setPlainText(settings.Setting_Custom_Configuration_INPUT.value)
-            text_input.setFont(TYPEWRITER_FONT)
 
             def f():
                 settings.Setting_Custom_Configuration_INPUT.temporary_value = text_input.toPlainText()
@@ -207,7 +205,6 @@ class PreferenceHandler(QDialog):
         def __setup_conf_mpv(self):
             text_input = self.__ui.pageMPVSettingsMpvConfPlainTextEdit
             text_input.setPlainText(settings.Setting_Custom_Configuration_MPV.value)
-            text_input.setFont(TYPEWRITER_FONT)
 
             def f():
                 settings.Setting_Custom_Configuration_MPV.temporary_value = text_input.toPlainText()

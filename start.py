@@ -39,9 +39,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
 
-    gui.TYPEWRITER_FONT = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-    gui.TYPEWRITER_FONT.setStyleHint(QFont.TypeWriter)
-
     locale.setlocale(locale.LC_NUMERIC, "C")
 
     container = MainHandler(app)

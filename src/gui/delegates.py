@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractS
     QStyledItemDelegate
 
 from src import settings
-from src.gui import TIME_FORMAT, TYPEWRITER_FONT
+from src.gui import TIME_FORMAT
 from src.gui.utils import SpecialCharacterValidator
 
 
@@ -37,7 +37,6 @@ class CommentTimeDelegate(NotifiableItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QTimeEdit(parent)
-        editor.setFont(TYPEWRITER_FONT)
         editor.setDisplayFormat(TIME_FORMAT)
         editor.setCurrentSection(QTimeEdit.SecondSection)
         editor.setFrame(False)

@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QFrame, QTableView, QStatusBar, QMenu, QAbstractItem
 
 from src import settings, logging
 from src.files import Files
-from src.gui import utils, TYPEWRITER_FONT
+from src.gui import utils
 from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
 from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
     EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentAmountChanged, \
@@ -332,7 +332,6 @@ class CommentsTable(QTableView):
             time: str = self.__widget_mpv.mpv_player.position_current()
 
         ti = QStandardItem(time)
-        ti.setFont(TYPEWRITER_FONT)
 
         ct = QStandardItem(_translate("CommentTypes", comment_type))
 
@@ -584,12 +583,10 @@ class StatusBar(QStatusBar):
         self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
         self.__label_information = QLabel()
-        self.__label_information.setFont(TYPEWRITER_FONT)
         self.__label_information.setAlignment(Qt.AlignRight)
         self.__label_information.installEventFilter(self)
 
         self.__label_comment_selection_slash_amount = QLabel()
-        self.__label_comment_selection_slash_amount.setFont(TYPEWRITER_FONT)
 
         # Timer updates status bar every 100 ms
         self.__timer = QTimer()

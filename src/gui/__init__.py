@@ -12,20 +12,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtGui import QFont
-
-"""
-    1 Typewriter font instance for the application. Will use the default fixed font of the system.
-
-    Can not be set here, because this file is imported before QApplication is started.
-    It will be set before the first window is shown. Therefore using this variable should be safe.
-    
-    
-"""
-TYPEWRITER_FONT: QFont
-# todo/discussion I have mixed feelings about this. Constants should be immutable.
-# We could call QFontDatabase.systemFont(QFontDatabase.FixedFont) every time we use it,
-# but then we might rewrite everything once we're allowing changes for the monospace font.
 
 # Time format
 TIME_FORMAT = "HH:mm:ss"
