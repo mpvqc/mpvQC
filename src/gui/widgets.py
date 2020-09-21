@@ -332,6 +332,7 @@ class CommentsTable(QTableView):
             time: str = self.__widget_mpv.mpv_player.position_current()
 
         ti = QStandardItem(time)
+        ti.setTextAlignment(Qt.AlignCenter)
 
         ct = QStandardItem(_translate("CommentTypes", comment_type))
 

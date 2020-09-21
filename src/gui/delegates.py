@@ -40,7 +40,7 @@ class CommentTimeDelegate(NotifiableItemDelegate):
         editor.setDisplayFormat(TIME_FORMAT)
         editor.setCurrentSection(QTimeEdit.SecondSection)
         editor.setFrame(False)
-        editor.setAlignment(Qt.AlignLeft)
+        editor.setAlignment(Qt.AlignCenter)
         editor.setButtonSymbols(QAbstractSpinBox.NoButtons)
         editor.setCorrectionMode(QAbstractSpinBox.CorrectToNearestValue)
         editor.setKeyboardTracking(True)
