@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="de" sourcelanguage="en">
+<!DOCTYPE TS><TS version="2.0" language="de" sourcelanguage="en">
 <context>
     <name>CommentTypes</name>
     <message>
@@ -44,7 +43,7 @@
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets.py" line="206"/>
+        <location filename="../src/gui/widgets.py" line="205"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
     </message>
@@ -105,7 +104,7 @@
 <context>
     <name>MainPlayerView</name>
     <message>
-        <location filename="../src/gui/uihandler/main.py" line="232"/>
+        <location filename="../src/gui/uihandler/main.py" line="235"/>
         <source>MainWindow</source>
         <translation>mpvQC</translation>
     </message>
@@ -333,7 +332,7 @@
         <translation>Existierende Anmerkungen</translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="123"/>
+        <location filename="../src/gui/messageboxes.py" line="124"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -343,22 +342,22 @@
         <translation>Kein QC-Dokument</translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="152"/>
+        <location filename="../src/gui/messageboxes.py" line="153"/>
         <source>Ok</source>
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="134"/>
+        <location filename="../src/gui/messageboxes.py" line="135"/>
         <source> does not seem to be a QC document file.</source>
         <translation> scheint kein QC-Dokument zu sein.</translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="148"/>
+        <location filename="../src/gui/messageboxes.py" line="149"/>
         <source>There is no video loaded currently. Load a video before you add a subtitle file.</source>
         <translation>Es ist kein Video geladen. Öffnen Sie ein Video und laden Sie erst dann die Untertiteldatei.</translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="151"/>
+        <location filename="../src/gui/messageboxes.py" line="152"/>
         <source>No video loaded</source>
         <translation>Kein Video geladen</translation>
     </message>

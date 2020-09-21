@@ -16,6 +16,8 @@
 
 import locale
 import sys
+import platform
+import os
 from os import path
 
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase
@@ -24,13 +26,15 @@ from PyQt5.QtWidgets import QApplication
 from src import gui
 
 DIRECTORY_PROGRAM = sys._MEIPASS if getattr(sys, "frozen", False) else path.dirname(path.realpath(__file__))
-APPLICATION_VERSION = "0.0.1"
+APPLICATION_VERSION = "0.7.0"
 APPLICATION_NAME = "mpvQC"
 
 if __name__ == "__main__":
-    # todo validation if mpv dependencies are installed and display a message box if not
 
     from src.gui.uihandler.main import MainHandler
+
+    if platform.system() == "Windows":
+        os.add_dll_directory(DIRECTORY_PROGRAM)
 
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
