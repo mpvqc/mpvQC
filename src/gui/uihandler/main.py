@@ -363,12 +363,7 @@ class MainHandler(QMainWindow):
                 video_path, com_list = QualityCheckReader(qc_doc).results()
 
                 if video_path is not None and com_list is not None:
-                    for com in com_list:
-                        wid_comments.add_comment(com.coty, com.note, com.time,
-                                                 sort=False,
-                                                 will_change_qc=False,
-                                                 edit_mode_active=False,
-                                                 resize_columns=False)
+                    wid_comments.add_comments(com_list)
 
                     if idx == valid_length == 1:
                         if video_path and path.isfile(video_path) \
