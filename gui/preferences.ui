@@ -726,11 +726,6 @@
                  </property>
                  <item>
                   <widget class="QPlainTextEdit" name="pageMPVSettingsMpvConfPlainTextEdit">
-                   <property name="font">
-                    <font>
-                     <family>Monospace</family>
-                    </font>
-                   </property>
                    <property name="frameShadow">
                     <enum>QFrame::Plain</enum>
                    </property>
@@ -763,11 +758,6 @@
                  </property>
                  <item>
                   <widget class="QPlainTextEdit" name="pageMPVSettingsInputConfPlainTextEdit">
-                   <property name="font">
-                    <font>
-                     <family>Monospace</family>
-                    </font>
-                   </property>
                    <property name="frameShadow">
                     <enum>QFrame::Plain</enum>
                    </property>

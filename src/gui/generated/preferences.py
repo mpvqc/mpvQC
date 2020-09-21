@@ -330,9 +330,6 @@ class Ui_PreferencesView(object):
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.pageMPVSettingsMpvConfPlainTextEdit = QtWidgets.QPlainTextEdit(self.pageMPVSettingsMpvConfWidget)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.pageMPVSettingsMpvConfPlainTextEdit.setFont(font)
         self.pageMPVSettingsMpvConfPlainTextEdit.setFrameShadow(QtWidgets.QFrame.Plain)
         self.pageMPVSettingsMpvConfPlainTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
         self.pageMPVSettingsMpvConfPlainTextEdit.setObjectName("pageMPVSettingsMpvConfPlainTextEdit")
@@ -345,9 +342,6 @@ class Ui_PreferencesView(object):
         self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.pageMPVSettingsInputConfPlainTextEdit = QtWidgets.QPlainTextEdit(self.pageMPVSettingsInputConfWidget)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.pageMPVSettingsInputConfPlainTextEdit.setFont(font)
         self.pageMPVSettingsInputConfPlainTextEdit.setFrameShadow(QtWidgets.QFrame.Plain)
         self.pageMPVSettingsInputConfPlainTextEdit.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
         self.pageMPVSettingsInputConfPlainTextEdit.setObjectName("pageMPVSettingsInputConfPlainTextEdit")
@@ -533,11 +527,7 @@ class Ui_PreferencesView(object):
         self.horizontalLayout_9.setSpacing(0)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.aboutTextBrowser = QtWidgets.QTextBrowser(self.pageAboutAboutTabWidget)
-        self.aboutTextBrowser.setHtml("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>")
+        self.aboutTextBrowser.setHtml("")
         self.aboutTextBrowser.setObjectName("aboutTextBrowser")
         self.horizontalLayout_9.addWidget(self.aboutTextBrowser)
         self.pageAboutParentTabWidget.addTab(self.pageAboutAboutTabWidget, "")
@@ -587,7 +577,7 @@ class Ui_PreferencesView(object):
         self.verticalLayout.addWidget(self.preferencesButtonBox)
 
         self.retranslateUi(PreferencesView)
-        self.navigationListWidget.setCurrentRow(-1)
+        self.navigationListWidget.setCurrentRow(0)
         self.contentStackedWidget.setCurrentIndex(0)
         self.pageAppearanceParentTabWidget.setCurrentIndex(0)
         self.pageMPVSettingsParentTabWidget.setCurrentIndex(0)
