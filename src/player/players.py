@@ -108,7 +108,7 @@ class MpvPlayer:
         if play:
             self.play()
 
-    def open_video(self, video: path, play: bool) -> None:
+    def open_video(self, video: path,) -> None:
         """
         Opens the given path and if selected starts playing.
 
@@ -117,8 +117,7 @@ class MpvPlayer:
         """
 
         self.__mpv.command("loadfile", video, "replace")
-        if play:
-            self.play()
+        self.play()
 
     def pause(self) -> None:
         """

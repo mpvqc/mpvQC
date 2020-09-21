@@ -27,7 +27,7 @@ from src.gui import utils
 from src.gui.delegates import CommentTypeDelegate, CommentTimeDelegate, CommentNoteDelegate
 from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
     EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, PlayerPercentChanged, EventCommentAmountChanged, \
-    CommentAmountChanged, EventCommentsUpToDate, EventDistributor, CommentCurrentSelectionChanged, \
+    CommentAmountChanged, EventDistributor, CommentCurrentSelectionChanged, \
     EventCommentCurrentSelectionChanged, EventReceiver
 from src.gui.searchutils import SearchResult
 from src.gui.uihandler.main import MainHandler
@@ -36,7 +36,7 @@ from src.gui.utils import KEY_MAPPINGS
 from src.player import bindings
 from src.player.observed import MpvPropertyObserver
 from src.player.players import MpvPlayer, ActionType
-from src.qcutils import Comment
+from src.qc import Comment
 
 _translate = QCoreApplication.translate
 
@@ -75,16 +75,16 @@ class MpvWidget(QFrame):
             log_handler=logging.mpv_log_handler,
         )
 
-        self.mpv_player = MpvPlayer(__mpv)
+        self.player = MpvPlayer(__mpv)
         MpvPropertyObserver(__mpv)
 
-        PreferenceHandler.VERSION_MPV = self.mpv_player.version_mpv()
-        PreferenceHandler.VERSION_FFMPEG = self.mpv_player.ffmpeg_version()
+        PreferenceHandler.VERSION_MPV = self.player.version_mpv()
+        PreferenceHandler.VERSION_FFMPEG = self.player.ffmpeg_version()
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if e.type() == QMouseEvent.MouseMove:
             try:
-                self.mpv_player.mouse_move(e.pos().x(), e.pos().y())
+                self.player.mouse_move(e.pos().x(), e.pos().y())
             except OSError:
                 # todo logger
                 pass
@@ -95,34 +95,34 @@ class MpvWidget(QFrame):
         button = e.button()
 
         if button == Qt.LeftButton:
-            self.mpv_player.mouse_action(0, ActionType.DOWN)
+            self.player.mouse_action(0, ActionType.DOWN)
         elif button == Qt.MiddleButton:
-            self.mpv_player.mouse_action(1, ActionType.PRESS)
-        elif button == Qt.RightButton and self.mpv_player.has_video():
+            self.player.mouse_action(1, ActionType.PRESS)
+        elif button == Qt.RightButton and self.player.has_video():
             self.__main_handler.widget_context_menu.exec_()
         elif button == Qt.BackButton:
-            self.mpv_player.mouse_action(5, ActionType.PRESS)
+            self.player.mouse_action(5, ActionType.PRESS)
         elif button == Qt.ForwardButton:
-            self.mpv_player.mouse_action(6, ActionType.PRESS)
+            self.player.mouse_action(6, ActionType.PRESS)
 
     def mouseReleaseEvent(self, e: QMouseEvent):
         button = e.button()
 
         if button == Qt.LeftButton:
-            self.mpv_player.mouse_action(0, ActionType.UP)
+            self.player.mouse_action(0, ActionType.UP)
 
     def mouseDoubleClickEvent(self, mev: QMouseEvent):
         button = mev.button()
 
-        if button == Qt.LeftButton and self.mpv_player.video_file_current():
+        if button == Qt.LeftButton and self.player.video_file_current():
             self.__main_handler.toggle_fullscreen()
-            self.mpv_player.mouse_action(0, ActionType.PRESS)
+            self.player.mouse_action(0, ActionType.PRESS)
         elif button == Qt.MiddleButton:
-            self.mpv_player.mouse_action(1, ActionType.PRESS)
+            self.player.mouse_action(1, ActionType.PRESS)
         elif button == Qt.BackButton:
-            self.mpv_player.mouse_action(5, ActionType.PRESS)
+            self.player.mouse_action(5, ActionType.PRESS)
         elif button == Qt.ForwardButton:
-            self.mpv_player.mouse_action(6, ActionType.PRESS)
+            self.player.mouse_action(6, ActionType.PRESS)
         else:
             return super().mouseDoubleClickEvent(mev)
 
@@ -134,9 +134,9 @@ class MpvWidget(QFrame):
 
         if x_d == 0 and y_d != 0:
             if y_d > 0:
-                self.mpv_player.mouse_action(3, ActionType.PRESS)
+                self.player.mouse_action(3, ActionType.PRESS)
             else:
-                self.mpv_player.mouse_action(4, ActionType.PRESS)
+                self.player.mouse_action(4, ActionType.PRESS)
         else:
             super().wheelEvent(e)
 
@@ -159,9 +159,9 @@ class MpvWidget(QFrame):
             self.__main_handler.search_bar.keyPressEvent(e)
 
         # Mpv Video widget bindings
-        elif key == Qt.Key_F and mod == Qt.NoModifier and self.mpv_player.has_video():
+        elif key == Qt.Key_F and mod == Qt.NoModifier and self.player.has_video():
             self.__main_handler.toggle_fullscreen()
-        elif key == Qt.Key_E and mod == Qt.NoModifier and self.mpv_player.has_video():
+        elif key == Qt.Key_E and mod == Qt.NoModifier and self.player.has_video():
             self.__main_handler.widget_context_menu.exec_()
         elif key == Qt.Key_Escape and mod == Qt.NoModifier:
             self.__main_handler.display_normal()
@@ -178,7 +178,7 @@ class MpvWidget(QFrame):
             super(MpvWidget, self).keyPressEvent(e)
 
         if cmd:
-            self.mpv_player.button_action(cmd, ActionType.PRESS)
+            self.player.button_action(cmd, ActionType.PRESS)
 
 
 class ContextMenu(QMenu):
@@ -190,7 +190,7 @@ class ContextMenu(QMenu):
         super().__init__()
         self.__main_handler = main_handler
         self.__widget_comments = main_handler.widget_comments
-        self.__mpv_player = main_handler.widget_mpv.mpv_player
+        self.__mpv_player = main_handler.widget_mpv.player
         self.update_entries()
 
     def update_entries(self):
@@ -233,10 +233,12 @@ class CommentsTable(QTableView):
     The comment table below the video.
     """
 
+    state_changed = pyqtSignal(bool)
+
     def __init__(self, main_handler: MainHandler):
         super().__init__()
         self.__widget_mpv = main_handler.widget_mpv
-        self.__mpv_player = self.__widget_mpv.mpv_player
+        self.__mpv_player = self.__widget_mpv.player
 
         # Model
         self.__model = QStandardItemModel(self)
@@ -280,7 +282,7 @@ class CommentsTable(QTableView):
 
         def delete(selected: List[QModelIndex]):
             self.__model.removeRows(selected[0].row(), 1)
-            EventDistributor.send_event(EventCommentsUpToDate(False))
+            self.state_changed.emit(False)
             EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
 
         self.__do_with_selected_comment_row(delete)
@@ -295,7 +297,7 @@ class CommentsTable(QTableView):
             row = selected[0].row()
             idx = self.__model.item(row, 2).index()
             self.edit(idx)
-            EventDistributor.send_event(EventCommentsUpToDate(False))
+            self.state_changed.emit(False)
 
         self.__do_with_selected_comment_row(edit)
 
@@ -322,10 +324,10 @@ class CommentsTable(QTableView):
         last_entry = None
 
         for comment in comments:
-            time = QStandardItem(comment.time)
+            time = QStandardItem(comment.comment_time)
             time.setTextAlignment(Qt.AlignCenter)
-            ct = QStandardItem(_translate("CommentTypes", comment.coty))
-            note = QStandardItem(comment.note)
+            ct = QStandardItem(_translate("CommentTypes", comment.comment_type))
+            note = QStandardItem(comment.comment_note)
             last_entry = [time, ct, note]
             model.appendRow(last_entry)
 
@@ -336,7 +338,7 @@ class CommentsTable(QTableView):
         self.__on_row_selection_changed()
 
         if changes_qc:
-            EventDistributor.send_event(EventCommentsUpToDate(False))
+            self.state_changed.emit(False)
 
         if edit:
             new_index = model.indexFromItem(last_entry[2])
@@ -346,9 +348,9 @@ class CommentsTable(QTableView):
 
     def add_comment(self, comment_type: str) -> None:
         comment = Comment(
-            time=self.__widget_mpv.mpv_player.position_current(),
-            coty=comment_type,
-            note=""
+            comment_time=self.__widget_mpv.player.position_current(),
+            comment_type=comment_type,
+            comment_note=""
         )
         self.add_comments((comment,), changes_qc=True, edit=True)
 
@@ -366,7 +368,8 @@ class CommentsTable(QTableView):
             time = model.item(r, 0).text()
             coty = model.item(r, 1).text()
             note = model.item(r, 2).text()
-            ret_list.append(Comment(time=time, coty=coty, note=note))
+            ret_list.append(Comment(comment_time=time, comment_type=coty, comment_note=note))
+        print(ret_list)
         return tuple(ret_list)
 
     def reset_comments_table(self) -> None:
@@ -375,7 +378,7 @@ class CommentsTable(QTableView):
         """
 
         self.__model.clear()
-        EventDistributor.send_event(EventCommentsUpToDate(True))
+        self.state_changed.emit(True)
         EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
         EventDistributor.send_event(EventCommentCurrentSelectionChanged(-1))
 
@@ -412,7 +415,7 @@ class CommentsTable(QTableView):
         """
 
         self.sort()
-        EventDistributor.send_event(EventCommentsUpToDate(False))
+        self.state_changed.emit(False)
 
     def __on_after_user_changed_comment_type(self) -> None:
         """
@@ -420,7 +423,7 @@ class CommentsTable(QTableView):
         """
 
         self.resizeColumnToContents(1)
-        EventDistributor.send_event(EventCommentsUpToDate(False))
+        self.state_changed.emit(False)
 
     # noinspection PyMethodMayBeStatic
     def __on_after_user_changed_comment_note(self) -> None:
@@ -428,7 +431,7 @@ class CommentsTable(QTableView):
         Action to invoke after comment note was changed manually by the user.
         """
 
-        EventDistributor.send_event(EventCommentsUpToDate(False))
+        self.state_changed.emit(False)
 
     # noinspection PyMethodMayBeStatic
     def __on_row_selection_changed(self) -> None:
@@ -459,7 +462,7 @@ class CommentsTable(QTableView):
             mdi: QModelIndex = self.indexAt(e.pos())
             if mdi.column() == 0 and self.__mpv_player.has_video():
                 position = self.__model.item(mdi.row(), 0).text()
-                self.__widget_mpv.mpv_player.position_jump(position=position)
+                self.__widget_mpv.player.position_jump(position=position)
                 e.accept()
             elif mdi.column() == 1 and mdi == self.selectionModel().currentIndex():
                 self.edit(mdi)

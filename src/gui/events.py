@@ -99,9 +99,6 @@ CommentAmountChanged \
 CommentCurrentSelectionChanged \
     = QEvent.Type(1052)
 
-CommentsUpToDate \
-    = QEvent.Type(1053)
-
 
 #######################################################################################################################
 
@@ -184,13 +181,3 @@ class EventCommentCurrentSelectionChanged(QEvent):
     def current_selection(self) -> int:
         return self.__current_selection
 
-
-class EventCommentsUpToDate(QEvent):
-
-    def __init__(self, status: bool):
-        super().__init__(CommentsUpToDate)
-        self.__status: bool = status
-
-    @property
-    def status(self) -> int:
-        return self.__status
