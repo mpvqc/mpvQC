@@ -19,6 +19,8 @@
 from abc import abstractmethod, ABC
 from typing import Optional, Tuple, List
 
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from src.gui import dialogs as d
 from src.gui import messageboxes as md
 from src.gui.uihandler.main import MainHandler as AppWindow
@@ -30,6 +32,17 @@ from src.qc import _handlesave as hs
 from src.qc._handleimport import HandleImportResultData as Data
 
 
+class _StaticSignals(QObject):
+
+    # Signal fired, when a video was imported
+    video_imported = pyqtSignal(str)
+
+
+# Connecting to the state class directly would not make sense
+# We need something that remains untouched
+Signals = _StaticSignals()
+
+
 class State(ABC):
 
     def __init__(
@@ -39,6 +52,7 @@ class State(ABC):
             vid: Optional[str] = None,
             comments: Optional[Tuple[Comment]] = None,
     ):
+        super().__init__()
         self.__has_changes = has_changes
         self._doc: Optional[str] = doc
         self._vid: Optional[str] = vid
@@ -232,6 +246,7 @@ class State(ABC):
 
         def __open_video(vid: str) -> None:
             m.player.open_video(vid)
+            Signals.video_imported.emit(vid)
 
         hir, data = hi.do_import(self._vid, docs, vids)
         vid_new = hir.vid_new

@@ -28,7 +28,11 @@ from src.gui.widgets import CommentsTable
 class QcManager(QObject):
     __gtype_name__ = "QcManager"
 
+    # Signal, that indicates a state change. p1='new state (saved/unsaved)'
     state_changed = pyqtSignal(bool)
+
+    # Signal, that indicates a new video import. p1='new video path'
+    video_imported = pyqtSignal(str)
 
     def __init__(self, window, video_widget, table_widget: CommentsTable):
         """
@@ -49,7 +53,9 @@ class QcManager(QObject):
         self.__t.state_changed.connect(lambda x, y=self.on_table_content_modified: y())
 
         # State
-        from src.qc._states import get_initial_state
+        from src.qc._states import get_initial_state, Signals
+        Signals.video_imported.connect(lambda video: self.video_imported.emit(video))
+
         self.__state = get_initial_state()
         self.__state_last_saved = self.__state
         self.__during_state_change = False

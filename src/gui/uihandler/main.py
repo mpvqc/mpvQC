@@ -79,6 +79,7 @@ class MainHandler(QMainWindow):
             self.__update_window_title()
 
         self.__qc_manager.state_changed.connect(__state_changed)
+        self.__qc_manager.video_imported.connect(lambda video, f=self.__action_resize_video: f())
 
         self.__splitter_bottom_layout = QVBoxLayout()
         self.__splitter_bottom_layout.addWidget(self.widget_comments)
