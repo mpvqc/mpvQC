@@ -16,7 +16,7 @@
 from typing import List, Tuple
 
 from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, QModelIndex, QCoreApplication, QTimer, Qt
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent, QMouseEvent, QWheelEvent
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent, QMouseEvent, QWheelEvent, QPalette
 from PyQt5.QtWidgets import QTableView, QAbstractItemView, QApplication
 
 from src.gui.delegates import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate
@@ -25,7 +25,6 @@ from src.gui.events import EventDistributor, EventCommentAmountChanged, EventCom
 from src.gui.searchutils import SearchResult
 from src.gui.uihandler.main import MainHandler
 from src.qc import Comment
-
 
 _translate = QCoreApplication.translate
 
@@ -41,6 +40,13 @@ class CommentsTable(QTableView):
         super().__init__()
         self.__widget_mpv = main_handler.widget_mpv
         self.__mpv_player = self.__widget_mpv.player
+
+        palette = self.palette()
+        palette.setColor(QPalette.Inactive, QPalette.Highlight,
+                         palette.color(QPalette.Active, QPalette.Highlight))
+        palette.setColor(QPalette.Inactive, QPalette.HighlightedText,
+                         palette.color(QPalette.Active, QPalette.HighlightedText))
+        self.setPalette(palette)
 
         # Model
         self.__model = QStandardItemModel(self)
