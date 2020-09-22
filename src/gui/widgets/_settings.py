@@ -102,5 +102,17 @@ class _Settings:
         if dialog.exec_():
             settings.save()
 
+    @staticmethod
+    def setup_document_backup(action: QAction, callback: Callable):
+        s = settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED
+
+        def toggle():
+            s.value = not s.value
+            callback()
+
+        action.setCheckable(True)
+        action.setChecked(s.value)
+        action.triggered.connect(toggle)
+
 
 UserSettings = _Settings()
