@@ -35,7 +35,7 @@ class _Settings:
         widget_context_menu.update_entries()
 
     @staticmethod
-    def edit_nickname(parent, ):
+    def edit_nickname(parent):
         s = settings.Setting_Custom_General_NICKNAME
 
         dialog = QInputDialog(parent)
@@ -113,6 +113,29 @@ class _Settings:
         action.setCheckable(True)
         action.setChecked(s.value)
         action.triggered.connect(toggle)
+
+    @staticmethod
+    def edit_document_backup_interval(parent, callback: Callable):
+        s = settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL
+
+        dialog = QInputDialog(parent)
+        dialog.setInputMode(QInputDialog.IntInput)
+        dialog.setWindowTitle(_translate("SettingsDialog", "Set backup interval"))
+        dialog.setLabelText(_translate("SettingsDialog", "Set backup interval in seconds:"))
+        dialog.setIntMinimum(15)
+        dialog.setIntMaximum(3600)
+        dialog.setIntValue(s.value)
+        dialog.resize(400, 0)
+
+        ok = dialog.exec_()
+        interval = dialog.intValue()
+
+        if ok:
+            if interval:
+                s.value = interval
+                callback()
+            else:
+                s.reset()
 
 
 UserSettings = _Settings()
