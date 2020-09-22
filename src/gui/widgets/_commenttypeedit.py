@@ -16,7 +16,7 @@
 from enum import Enum
 from typing import List
 
-from PyQt5.QtCore import QObject, pyqtSignal, QRegExp, Qt, QItemSelection
+from PyQt5.QtCore import QObject, QRegExp, Qt, QItemSelection
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QLineEdit, QListWidget, QPushButton, QListWidgetItem
 
@@ -34,9 +34,6 @@ class PreferenceCommentTypesWidget(QObject):
     class __Mode(Enum):
         ADD = 0
         EDIT = 1
-
-    # Signal is called after the items of the list view have changed
-    changed = pyqtSignal()
 
     def __init__(self, line_edit: QLineEdit, list_widget: QListWidget, button_add: QPushButton,
                  button_remove: QPushButton, button_up: QPushButton, button_down: QPushButton):
@@ -81,20 +78,17 @@ class PreferenceCommentTypesWidget(QObject):
             self.__button_add.setEnabled(bool(text))
         else:
             self.__list_widget.item(self.__get_selected_row()).setText(self.__line_edit.text())
-            self.changed.emit()
 
     def __on_pressed_button_add(self) -> None:
         self.__add_item(self.__line_edit.text())
         self.__line_edit.clear()
         self.__list_widget.selectionModel().clearSelection()
         self.__line_edit.setFocus()
-        self.changed.emit()
 
     def __on_pressed_button_remove(self) -> None:
         self.__list_widget.model().removeRows(self.__get_selected_row(), 1)
         self.__list_widget.selectionModel().clearSelection()
         self.__line_edit.clear()
-        self.changed.emit()
 
     def __on_pressed_button_up(self) -> None:
         idx: int = self.__get_selected_row()
@@ -102,15 +96,11 @@ class PreferenceCommentTypesWidget(QObject):
         self.__list_widget.insertItem(idx - 1, itm)
         self.__list_widget.setCurrentRow(idx - 1)
 
-        self.changed.emit()
-
     def __on_pressed_button_down(self) -> None:
         idx: int = self.__get_selected_row()
         itm = self.__list_widget.takeItem(idx)
         self.__list_widget.insertItem(idx + 1, itm)
         self.__list_widget.setCurrentRow(idx + 1)
-
-        self.changed.emit()
 
     def __add_item(self, text) -> None:
         item = QListWidgetItem(text)
