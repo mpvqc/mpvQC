@@ -23,8 +23,7 @@ from PyQt5.QtWidgets import QLineEdit, QListWidget, QPushButton, QListWidgetItem
 
 class PreferenceCommentTypesWidget(QObject):
     """
-    This class is used in the preference window to create the comment type list widgets
-    which is controllable with four buttons and a line edit.
+    This class is used in the preference popup to create the comment type list widget.
 
     It combines a QLineEdit, a QListWidget and four QPushButtons to a list widgets.
 

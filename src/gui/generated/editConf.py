@@ -15,6 +15,7 @@ class Ui_editConf(object):
     def setupUi(self, editConf):
         editConf.setObjectName("editConf")
         editConf.resize(1024, 768)
+        editConf.setWindowTitle("")
         self.verticalLayout = QtWidgets.QVBoxLayout(editConf)
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -55,7 +56,6 @@ class Ui_editConf(object):
 
     def retranslateUi(self, editConf):
         _translate = QtCore.QCoreApplication.translate
-        editConf.setWindowTitle(_translate("editConf", "Dialog"))
         self.subtitle.setText(_translate("editConf", "Changes will be applied after restart."))
 
 

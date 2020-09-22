@@ -101,7 +101,7 @@ class Ui_AboutDialog(object):
 
     def retranslateUi(self, AboutDialog):
         _translate = QtCore.QCoreApplication.translate
-        AboutDialog.setWindowTitle(_translate("AboutDialog", "Dialog"))
+        AboutDialog.setWindowTitle(_translate("AboutDialog", "About mpvQC"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.widget1), _translate("AboutDialog", "About"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.widget2), _translate("AboutDialog", "Credits"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.widget3), _translate("AboutDialog", "Licence"))

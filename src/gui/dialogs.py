@@ -120,8 +120,6 @@ def get_save_file_name(video_file: str, parent=None) -> path or None:
 
     directory = "{0}/{1}".format(settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT.value, txt_proposal)
 
-    print(directory)
-
     new_file_name = QFileDialog.getSaveFileName(parent=parent,
                                                 caption=_translate("Dialogs", "Save QC document as"),
                                                 directory=directory,

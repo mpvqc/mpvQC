@@ -17,4 +17,5 @@ from src.gui.widgets._commentstable import CommentsTable
 from src.gui.widgets._commenttypeedit import PreferenceCommentTypesWidget
 from src.gui.widgets._contextmenu import ContextMenu
 from src.gui.widgets._mpvframe import MpvWidget
+from src.gui.widgets._settings import UserSettings
 from src.gui.widgets._statusbar import StatusBar

@@ -15,7 +15,7 @@
 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton
 
 from src import settings
 from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
@@ -65,9 +65,6 @@ class EditCommentTypesDialog(QDialog):
         On mouse pressed event (pressed anywhere except the comment type widgets)
         the focus needs to be removed from the comment type widgets.
         """
-        
+
         super().mousePressEvent(mouse_ev)
         self.widget.remove_focus()
-
-
-

@@ -14,11 +14,9 @@
 
 
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QMouseEvent, QFontDatabase
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView
+from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton
 
-from src import settings
-from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
 from src.gui.generated.editConf import Ui_editConf
 
 _translate = QCoreApplication.translate

@@ -11,27 +11,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
 from typing import List
 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QMessageBox
 
 _translate = QCoreApplication.translate
-
-
-class ConfigurationHasChangedMB(QMessageBox):
-    """
-    The message box when the user has changed the configuration but is about to discard the changes.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.setText(_translate("MessageBoxes", "Your configuration has changed.")
-                     + " " + _translate("MessageBoxes", "Discard changes") + "?")
-        self.setIcon(QMessageBox.Warning)
-        self.setWindowTitle(_translate("MessageBoxes", "Discard changes"))
-        self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
-        self.addButton(_translate("MessageBoxes", "No"), QMessageBox.NoRole)
 
 
 class ConfigurationResetMB(QMessageBox):
@@ -76,21 +63,6 @@ class NewQCDocumentOldNotSavedMB(QMessageBox):
             _translate("MessageBoxes", "Do you really want to create a new QC Document without saving your QC?"))
         self.setIcon(QMessageBox.Warning)
         self.setWindowTitle(_translate("MessageBoxes", "Create new QC document"))
-        self.addButton(_translate("MessageBoxes", "No"), QMessageBox.NoRole)
-        self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
-
-
-class LoadQCDocumentOldNotSavedMB(QMessageBox):
-    """
-    The message box when the user wants to open a new QC document but the old one is not saved.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.setText(
-            _translate("MessageBoxes", "Do you really want to open a QC Document without saving your current one?"))
-        self.setIcon(QMessageBox.Warning)
-        self.setWindowTitle(_translate("MessageBoxes", "Open QC document"))
         self.addButton(_translate("MessageBoxes", "No"), QMessageBox.NoRole)
         self.addButton(_translate("MessageBoxes", "Yes"), QMessageBox.YesRole)
 

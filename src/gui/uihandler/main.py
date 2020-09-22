@@ -34,20 +34,15 @@ class MainHandler(QMainWindow):
 
     def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
+        from src.gui.widgets import UserSettings
+        self.user_settings = UserSettings
+
         self.application = application
         self.setAcceptDrops(True)
 
         # User interface setup
         self.__ui = Ui_MainPlayerView()
         self.__ui.setupUi(self)
-
-        # Translator
-        self.__translator = QTranslator()
-        self.__update_ui_language()
-
-        self.__color_palette = application.palette()
-        self.__style_name = application.style().objectName()
-        self.set_theme()
 
         # Widgets
         from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
@@ -95,8 +90,6 @@ class MainHandler(QMainWindow):
         self.__ui.mainWindowContentSplitter.setSizes([400, 20])
         self.search_bar.hide()
 
-        self.__setup_menu_bar()
-
         EventDistributor.add_receiver((self, EventReceiver.MAIN_HANDLER),
                                       (self.widget_mpv, EventReceiver.WIDGET_MPV),
                                       (self.widget_comments, EventReceiver.WIDGET_COMMENTS),
@@ -113,6 +106,16 @@ class MainHandler(QMainWindow):
         # Timer invoking autosave action
         self.__autosave_interval_timer: QTimer = None
         self.__qc_manager.reset_auto_save()
+
+        # Translator
+        self.__translator = QTranslator()
+        self.__update_ui_language()
+
+        self.__setup_menu_bar()
+
+        self.__color_palette = application.palette()
+        self.__style_name = application.style().objectName()
+        self.set_theme()
 
     def display_mouse_cursor(self, display: bool) -> None:
         """
@@ -182,25 +185,41 @@ class MainHandler(QMainWindow):
         self.showFullScreen()
 
     def __setup_menu_bar(self) -> None:
-        """
-        Binds the menubar to the corresponding actions.
-        """
 
-        self.__ui.actionNewQcDocument.triggered.connect(lambda c, f=self.__qc_manager.request_new_document: f())
-        self.__ui.actionOpenQcDocuments.triggered.connect(lambda c, f=self.__qc_manager.request_open_qc_documents: f())
-        self.__ui.actionSaveQcDocument.triggered.connect(lambda c, f=self.__qc_manager.request_save_qc_document: f())
-        self.__ui.actionSaveQcDocumentAs.triggered.connect(
-            lambda c, f=self.__qc_manager.request_save_qc_document_as: f())
-        self.__ui.actionExitMpvQc.triggered.connect(lambda c, f=self.__action_close: f())
+        self.__ui.actionNewQcDocument.triggered.connect(self.__qc_manager.request_new_document)
+        self.__ui.actionOpenQcDocuments.triggered.connect(self.__qc_manager.request_open_qc_documents)
+        self.__ui.actionSaveQcDocument.triggered.connect(self.__qc_manager.request_save_qc_document)
+        self.__ui.actionSaveQcDocumentAs.triggered.connect(self.__qc_manager.request_save_qc_document_as)
+        self.__ui.actionExitMpvQc.triggered.connect(self.__action_close)
 
-        self.__ui.actionOpenVideoFile.triggered.connect(lambda c, f=self.__qc_manager.request_open_video: f())
-        self.__ui.actionOpenSubtitleFile.triggered.connect(lambda c, f=self.__qc_manager.request_open_subtitles: f())
-        self.__ui.actionOpenNetworkStream.triggered.connect(lambda c, f=self.__action_open_network_stream: f())
-        self.__ui.actionResizeVideoToOriginalResolution.triggered.connect(lambda c, f=self.__action_resize_video: f())
+        self.__ui.actionOpenVideoFile.triggered.connect(self.__qc_manager.request_open_video)
+        self.__ui.actionOpenSubtitleFile.triggered.connect(self.__qc_manager.request_open_subtitles)
+        self.__ui.actionOpenNetworkStream.triggered.connect(self.__action_open_network_stream)
+        self.__ui.actionResizeVideoToOriginalResolution.triggered.connect(self.__action_resize_video)
 
-        self.__ui.actionSettings.triggered.connect(lambda c, f=self.__action_open_settings: f())
-        self.__ui.actionAboutQt.triggered.connect(lambda c, f=self.__action_open_about_qt: f())
-        self.__ui.actionAboutMpvQc.triggered.connect(lambda c, f=self.__action_open_about_mpvqc: f())
+        self.__ui.actionEditNickname.triggered.connect(lambda a, b=self, f=self.user_settings.edit_nickname: f(b))
+        self.__ui.actionEditCommentTypes.triggered.connect(
+            lambda a, b=self.widget_context_menu, f=self.user_settings.edit_comment_types: f(b))
+
+        self.user_settings.setup_menu_window_title(self.__ui.menuWindowTitle, self.__update_window_title)
+        self.user_settings.setup_dark_theme(self.__ui.actionDarkTheme, self.set_theme)
+
+        self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
+
+        self.__ui.actionEditMpvConf.triggered.connect(self.user_settings.edit_mpv_conf)
+        self.__ui.actionEditInputConf.triggered.connect(self.user_settings.edit_input_conf)
+
+        self.user_settings.setup_document(
+            self.__ui.actionSaveVideoPathToDocument, self.__ui.actionSaveNickNameToDocument)
+
+        self.user_settings.setup_document_backup(self.__ui.actionDocumentBackups, self.__qc_manager.reset_auto_save)
+
+        self.__ui.actionDocumentBackupInterval.triggered.connect(
+            lambda a, b=self, c=self.__qc_manager.reset_auto_save,
+                   f=self.user_settings.edit_document_backup_interval: f(b, c))
+
+        self.__ui.actionAboutQt.triggered.connect(QApplication.instance().aboutQt)
+        self.__ui.actionAboutMpvQc.triggered.connect(self.user_settings.display_about_dialog)
 
     def __update_window_title(self) -> None:
         """
@@ -220,33 +239,19 @@ class MainHandler(QMainWindow):
             txt + " " + (_translate("MainPlayerView", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
-        """
-        Reloads the user interface language.
-        It uses the language stored in the current settings.json.
-        """
-
-        self.application.removeTranslator(self.__translator)
-
         from src.files import Files
 
         _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "i18n")
-        language: str = settings.Setting_Custom_Language_LANGUAGE.value
-
-        if language.startswith("German"):
-            value = "de"
-        elif language.startswith("Italian"):
-            value = "it"
-        else:
-            value = "en"
-
         trans_present = path.isdir(_locale_structure)
 
         if trans_present:
-            self.__translator.load(value, _locale_structure)
-
-        self.application.installTranslator(self.__translator)
-        self.__ui.retranslateUi(self)
-        settings.Setting_Custom_General_COMMENT_TYPES.update()
+            self.application.removeTranslator(self.__translator)
+            self.__translator.load(settings.Setting_Custom_Language_LANGUAGE.value, _locale_structure)
+            self.application.installTranslator(self.__translator)
+            settings.Setting_Custom_General_COMMENT_TYPES.update()
+            self.widget_context_menu.update_entries()
+            self.__ui.retranslateUi(self)
+            self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
 
     def __resize_video(self, check_desktop_size=False) -> None:
 
@@ -291,32 +296,6 @@ class MainHandler(QMainWindow):
 
     def __action_resize_video(self) -> None:
         self.__resize_video()
-
-    def __action_open_settings(self, display_about=False) -> None:
-
-        from src.gui.uihandler.preferences import PreferenceHandler
-
-        player = self.__player
-        was_paused_manually = player.is_paused()
-        player.pause()
-
-        PreferenceHandler(display_about).exec_()
-
-        # After dialog closed
-        if not was_paused_manually:
-            player.play()
-
-        self.__update_ui_language()
-        self.set_theme()
-        self.widget_context_menu.update_entries()
-        self.__update_window_title()
-        self.__qc_manager.reset_auto_save()
-
-    def __action_open_about_qt(self) -> None:
-        QApplication.instance().aboutQt()
-
-    def __action_open_about_mpvqc(self) -> None:
-        self.__action_open_settings(display_about=True)
 
     def __on_new_video_imported(self, new_video: str):
         self.__ui.actionOpenSubtitleFile.setEnabled(True)

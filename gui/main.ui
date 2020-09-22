@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>mpvQC</string>
   </property>
   <widget class="QWidget" name="mainWindowContentWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -70,7 +70,41 @@
     <property name="title">
      <string>Optio&amp;ns</string>
     </property>
-    <addaction name="actionSettings"/>
+    <widget class="QMenu" name="menuWindowTitle">
+     <property name="title">
+      <string>Window title</string>
+     </property>
+     <addaction name="actionWindowTitleDefault"/>
+     <addaction name="actionWindowTitleFile"/>
+     <addaction name="actionWindowTitlePath"/>
+    </widget>
+    <widget class="QMenu" name="menuDocumentSettings">
+     <property name="title">
+      <string>Document settings</string>
+     </property>
+     <addaction name="actionSaveVideoPathToDocument"/>
+     <addaction name="actionSaveNickNameToDocument"/>
+    </widget>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <addaction name="action_3"/>
+    </widget>
+    <addaction name="actionEditNickname"/>
+    <addaction name="actionEditCommentTypes"/>
+    <addaction name="separator"/>
+    <addaction name="menuWindowTitle"/>
+    <addaction name="actionDarkTheme"/>
+    <addaction name="separator"/>
+    <addaction name="menuLanguage"/>
+    <addaction name="separator"/>
+    <addaction name="actionEditMpvConf"/>
+    <addaction name="actionEditInputConf"/>
+    <addaction name="separator"/>
+    <addaction name="menuDocumentSettings"/>
+    <addaction name="actionDocumentBackups"/>
+    <addaction name="actionDocumentBackupInterval"/>
    </widget>
    <widget class="QMenu" name="mainWindowAboutMenu">
     <property name="title">
@@ -232,6 +266,104 @@
    </property>
    <property name="text">
     <string>&amp;Open subtitle ...</string>
+   </property>
+  </action>
+  <action name="actionEditCommentTypes">
+   <property name="text">
+    <string>Edit comment types ...</string>
+   </property>
+  </action>
+  <action name="actionEditNickname">
+   <property name="text">
+    <string>Edit nickname ...</string>
+   </property>
+  </action>
+  <action name="actionWindowTitleDefault">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Default title</string>
+   </property>
+  </action>
+  <action name="actionWindowTitleFile">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Video file</string>
+   </property>
+  </action>
+  <action name="actionWindowTitlePath">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Video path</string>
+   </property>
+  </action>
+  <action name="actionDarkTheme">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dark theme</string>
+   </property>
+  </action>
+  <action name="actionEditMpvConf">
+   <property name="text">
+    <string>Edit mpv.conf ...</string>
+   </property>
+  </action>
+  <action name="actionEditInputConf">
+   <property name="text">
+    <string>Edit input.conf ...</string>
+   </property>
+  </action>
+  <action name="actionDocumentBackups">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Document backups</string>
+   </property>
+  </action>
+  <action name="actionDocumentBackupInterval">
+   <property name="text">
+    <string>Document backup interval ...</string>
+   </property>
+  </action>
+  <action name="actionSaveNickNameToDocument">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Save nick name</string>
+   </property>
+  </action>
+  <action name="actionSaveVideoPathToDocument">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Save video path</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>__</string>
    </property>
   </action>
  </widget>

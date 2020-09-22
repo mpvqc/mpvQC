@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from typing import Optional, List
-
 from PyQt5.QtCore import pyqtSignal, QObject, QTimer
 
 from src import settings
@@ -88,25 +86,23 @@ class QcManager(QObject):
         self.__state = self.__state.on_create_new_document(self.__a, self.__t, self.__m)
         self.__after_state_change()
 
-    def request_open_qc_documents(self, paths: Optional[List[str]] = None):
+    def request_open_qc_documents(self):
         """
         Called when the user presses the 'Open' button and then selects the documents to import
         """
 
-        if paths is None:
-            paths = dialogs.get_open_file_names(self.__a)
+        paths = dialogs.get_open_file_names(self.__a)
 
         self.__before_stage_change()
         self.__state = self.__state.on_import(docs=paths, vids=None, subs=None, a=self.__a, t=self.__t, m=self.__m)
         self.__after_state_change()
 
-    def request_open_video(self, vid=None):
+    def request_open_video(self):
         """
         Called when the user presses the 'Open' button and then selects the videos to import
         """
 
-        if vid is None:
-            vid = dialogs.get_open_video(self.__a)
+        vid = dialogs.get_open_video(self.__a)
         vids = [vid] if vid else None
 
         self.__before_stage_change()

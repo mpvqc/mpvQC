@@ -19,6 +19,9 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="windowTitle">
+   <string notr="true"/>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
    <property name="spacing">
     <number>0</number>

@@ -122,7 +122,7 @@ class Ui_editCommentTypeDialog(object):
 
     def retranslateUi(self, editCommentTypeDialog):
         _translate = QtCore.QCoreApplication.translate
-        editCommentTypeDialog.setWindowTitle(_translate("editCommentTypeDialog", "Dialog"))
+        editCommentTypeDialog.setWindowTitle(_translate("editCommentTypeDialog", "Edit comment types"))
         editCommentTypeDialog.setAccessibleName(_translate("editCommentTypeDialog", "Comment types"))
         self.title.setText(_translate("editCommentTypeDialog", "Manage comment types "))
         self.subtitle.setText(_translate("editCommentTypeDialog", "Add new comment types or rearange them"))

@@ -86,7 +86,7 @@ class HandleImportResultData:
     @property
     def is_cur_vid_is_imported_vid(self) -> bool:
         """
-        Returns True if the current video equals or the currently imported and opened video
+        Returns True if the current video equals the currently imported and actually opened video
         """
 
         return self.__vid_new and self.__vid_cur and self.__vid_new == self.__vid_cur
