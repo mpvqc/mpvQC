@@ -369,7 +369,6 @@ class CommentsTable(QTableView):
             coty = model.item(r, 1).text()
             note = model.item(r, 2).text()
             ret_list.append(Comment(comment_time=time, comment_type=coty, comment_note=note))
-        print(ret_list)
         return tuple(ret_list)
 
     def reset_comments_table(self) -> None:

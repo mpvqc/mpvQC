@@ -70,10 +70,10 @@ class QcManager(QObject):
         """
 
         if not self.__during_state_change:
-            print("On comments modified")
             # Filling the table during a state change causes this method (event) being fired
             # So we block it to avoid multiple state change events
             self.__before_stage_change()
+            self.__state = self.__state.on_comments_modified(self.__t)
             self.__after_state_change()
 
     def has_changes(self) -> bool:
