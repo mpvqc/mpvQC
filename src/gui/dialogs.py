@@ -65,7 +65,6 @@ def get_open_subs(parent=None) -> List[str] or None:
     """
     Will open a dialog to select subtitles to open.
 
-    :param directory: The directory to open initially
     :param parent: The parent window
     :return: the selected file or None if abort
     """
@@ -90,7 +89,6 @@ def get_open_file_names(parent=None) -> List[str] or None:
     """
     Will open a dialog to select multiple qc documents.
 
-    :param directory: The directory to open initially
     :param parent: The parent window
     :return: The selected files or None if abort
     """
@@ -113,21 +111,27 @@ def get_save_file_name(video_file: str, parent=None) -> path or None:
     """
     Will display a **Save as** dialog to the user.
 
-    :param qc_doc: Current qc document path (full)
     :param video_file: The video file to save
-    :param nick: The nickname to append
     :param parent: The parent window
     :return: the path to save or None if no video file was given
     """
 
     txt_proposal = generate_file_name_proposal(video_file)
 
-    return QFileDialog.getSaveFileName(
-        parent,
-        _translate("Dialogs", "Save QC document as"),
-        txt_proposal,
-        _translate("Dialogs", "QC documents (*.txt);;All files (*.*)"),
-    )[0]
+    directory = "{0}/{1}".format(settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT.value, txt_proposal)
+
+    print(directory)
+
+    new_file_name = QFileDialog.getSaveFileName(parent=parent,
+                                                caption=_translate("Dialogs", "Save QC document as"),
+                                                directory=directory,
+                                                filter=_translate("Dialogs", "QC documents (*.txt);;All files (*.*)"),
+                                                )[0]
+
+    if new_file_name:
+        settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT.value = str(Path(new_file_name).parent)
+
+    return new_file_name
 
 
 def get_open_network_stream(parent) -> path or None:
