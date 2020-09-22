@@ -108,8 +108,10 @@
    </widget>
    <widget class="QMenu" name="mainWindowAboutMenu">
     <property name="title">
-     <string>Abo&amp;ut</string>
+     <string>Help</string>
     </property>
+    <addaction name="actionCheckForUpdates_2"/>
+    <addaction name="separator"/>
     <addaction name="actionAboutQt"/>
     <addaction name="actionAboutMpvQc"/>
    </widget>
@@ -364,6 +366,15 @@
   <action name="action_3">
    <property name="text">
     <string>__</string>
+   </property>
+  </action>
+  <action name="actionCheckForUpdates_2">
+   <property name="icon">
+    <iconset theme="system-software-update">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Check for updates ...</string>
    </property>
   </action>
  </widget>

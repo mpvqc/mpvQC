@@ -218,6 +218,7 @@ class MainHandler(QMainWindow):
             lambda a, b=self, c=self.__qc_manager.reset_auto_save,
                    f=self.user_settings.edit_document_backup_interval: f(b, c))
 
+        self.__ui.actionCheckForUpdates_2.triggered.connect(self.__check_for_update)
         self.__ui.actionAboutQt.triggered.connect(QApplication.instance().aboutQt)
         self.__ui.actionAboutMpvQc.triggered.connect(self.user_settings.display_about_dialog)
 
@@ -385,3 +386,7 @@ class MainHandler(QMainWindow):
             self.application.setStyle(QStyleFactory.create(self.__style_name))
             self.application.setPalette(self.style().standardPalette())
             self.application.setStyleSheet("")
+
+    def __check_for_update(self):
+        from src.gui.messageboxes import CheckForUpdates
+        CheckForUpdates().exec_()

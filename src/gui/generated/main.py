@@ -134,6 +134,10 @@ class Ui_MainPlayerView(object):
         self.actionSaveVideoPathToDocument.setObjectName("actionSaveVideoPathToDocument")
         self.action_3 = QtWidgets.QAction(MainPlayerView)
         self.action_3.setObjectName("action_3")
+        self.actionCheckForUpdates_2 = QtWidgets.QAction(MainPlayerView)
+        icon = QtGui.QIcon.fromTheme("system-software-update")
+        self.actionCheckForUpdates_2.setIcon(icon)
+        self.actionCheckForUpdates_2.setObjectName("actionCheckForUpdates_2")
         self.mainWindowFileMenu.addAction(self.actionNewQcDocument)
         self.mainWindowFileMenu.addAction(self.actionOpenQcDocuments)
         self.mainWindowFileMenu.addAction(self.actionSaveQcDocument)
@@ -165,6 +169,8 @@ class Ui_MainPlayerView(object):
         self.mainWindowSettingsMenu.addAction(self.menuDocumentSettings.menuAction())
         self.mainWindowSettingsMenu.addAction(self.actionDocumentBackups)
         self.mainWindowSettingsMenu.addAction(self.actionDocumentBackupInterval)
+        self.mainWindowAboutMenu.addAction(self.actionCheckForUpdates_2)
+        self.mainWindowAboutMenu.addSeparator()
         self.mainWindowAboutMenu.addAction(self.actionAboutQt)
         self.mainWindowAboutMenu.addAction(self.actionAboutMpvQc)
         self.mainWindowMenuBar.addAction(self.mainWindowFileMenu.menuAction())
@@ -184,7 +190,7 @@ class Ui_MainPlayerView(object):
         self.menuWindowTitle.setTitle(_translate("MainPlayerView", "Window title"))
         self.menuDocumentSettings.setTitle(_translate("MainPlayerView", "Document settings"))
         self.menuLanguage.setTitle(_translate("MainPlayerView", "Language"))
-        self.mainWindowAboutMenu.setTitle(_translate("MainPlayerView", "Abo&ut"))
+        self.mainWindowAboutMenu.setTitle(_translate("MainPlayerView", "Help"))
         self.actionNewQcDocument.setText(_translate("MainPlayerView", "&New QC document"))
         self.actionNewQcDocument.setShortcut(_translate("MainPlayerView", "Ctrl+N"))
         self.actionOpenQcDocuments.setText(_translate("MainPlayerView", "&Open QC document(s) ..."))
@@ -220,6 +226,7 @@ class Ui_MainPlayerView(object):
         self.actionSaveNickNameToDocument.setText(_translate("MainPlayerView", "Save nick name"))
         self.actionSaveVideoPathToDocument.setText(_translate("MainPlayerView", "Save video path"))
         self.action_3.setText(_translate("MainPlayerView", "__"))
+        self.actionCheckForUpdates_2.setText(_translate("MainPlayerView", "Check for updates ..."))
 
 
 if __name__ == "__main__":

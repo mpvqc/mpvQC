@@ -21,13 +21,13 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 #### Arch
 
-- Install dependencies: ```sudo pacman -S python-pyqt5 mpv```
+- Install dependencies: ```sudo pacman -S python-pyqt5 python-requests mpv```
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
 - Mark `start.py` as executable and run it.
 
 #### Ubuntu 18.04
 
-- Install dependencies: `sudo apt-get install python3-pyqt5`
+- Install dependencies: `sudo apt-get install python3-pyqt5 python3-requests`
 - Build mpv from Source:
     ```shell script
     sudo apt-get install git devscripts equivs
@@ -43,7 +43,7 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 #### Ubuntu 20.04
 
-- Install dependencies: `sudo apt-get install python3-pyqt5 libmpv1`
+- Install dependencies: `sudo apt-get install python3-pyqt5 python3-requests libmpv1`
 - Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
 - Mark `start.py` as executable and run it.
 

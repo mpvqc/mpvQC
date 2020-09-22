@@ -112,15 +112,28 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
         self.addButton(_translate("MessageBoxes", "Ok"), QMessageBox.AcceptRole)
 
 
-class SubtitlesCanNotBeAddedToNoVideo(QMessageBox):
-    """
-    The message box if user wants to drop subtitles if no video is loaded.
-    """
+class CheckForUpdates(QMessageBox):
+
+    _UPDATER_URL = "https://mpvqc.rekt.cc/download/latest.txt"
 
     def __init__(self):
         super().__init__()
-        self.setText(_translate("MessageBoxes",
-                                "There is no video loaded currently. Load a video before you add a subtitle file."))
-        self.setIcon(QMessageBox.Information)
-        self.setWindowTitle(_translate("MessageBoxes", "No video loaded"))
-        self.addButton(_translate("MessageBoxes", "Ok"), QMessageBox.AcceptRole)
+        from start import APPLICATION_VERSION
+        import requests
+
+        try:
+            r = requests.get(self._UPDATER_URL, timeout=5)
+            version_new = r.text.strip()
+            if APPLICATION_VERSION != version_new:
+                self.setWindowTitle(_translate("VersionCheck", "New version available"))
+                self.setText(
+                    _translate("VersionCheck", "There is a new version of mpvQC available ({}).<br>"
+                                               "Visit <a href='https://mpvqc.rekt.cc/'>"
+                                               "https://mpvqc.rekt.cc/</a> to download it.").format(version_new))
+            else:
+                self.setWindowTitle("👌")
+                self.setText(_translate("VersionCheck", "You are already using the most recent version of mpvQC!"))
+        except requests.exceptions.ConnectionError:
+            self.setText(_translate("VersionCheck", "A connection to the server could not be established."))
+        except requests.exceptions.Timeout:
+            self.setText(_translate("VersionCheck", "The server did not respond quickly enough."))
