@@ -319,6 +319,7 @@ class MainHandler(QMainWindow):
         self.__action_open_settings(display_about=True)
 
     def __on_new_video_imported(self, new_video: str):
+        self.__ui.actionOpenSubtitleFile.setEnabled(True)
         self.__current_video_path = new_video
         self.__current_video_file = Path(new_video).stem
 
