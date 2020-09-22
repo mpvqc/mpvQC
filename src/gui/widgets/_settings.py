@@ -13,15 +13,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from typing import Callable, NamedTuple
+from typing import Callable
 
 from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView, QInputDialog, QMenu, \
-    QActionGroup, QAction
+from PyQt5.QtWidgets import QInputDialog, QMenu, QActionGroup, QAction
 
 from src import settings
-from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
 
 _translate = QCoreApplication.translate
 
@@ -104,12 +101,9 @@ class _Settings:
             action.triggered.connect(lambda a, loc=_tuple[0], f=on_language_change: f(loc))
 
         # If language is something other than 'en', 'de', 'it'
-        # if menu.actions() and all(not v.isChecked() for v in menu.actions()):
-        #     for action in menu.actions():
-        #         if action.text() == languages["English"][1]:
-        #             action.setChecked(True)
-        #             callback("en")
-        #             return
+        if menu.actions() and all(not v.isChecked() for v in menu.actions()):
+            s.value = "en"
+            callback()
 
     @staticmethod
     def edit_mpv_conf():
@@ -178,6 +172,11 @@ class _Settings:
                 callback()
             else:
                 s.reset()
+
+    @staticmethod
+    def display_about_dialog():
+        from src.gui.uihandler.about import AboutDialog
+        AboutDialog().exec_()
 
 
 UserSettings = _Settings()

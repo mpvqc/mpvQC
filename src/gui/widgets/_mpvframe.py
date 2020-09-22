@@ -21,7 +21,6 @@ from src import logging
 from src.files import Files
 from src.gui import utils
 from src.gui.uihandler.main import MainHandler
-from src.gui.uihandler.preferences import PreferenceHandler
 from src.gui.utils import KEY_MAPPINGS
 from src.player import bindings
 from src.player.observed import MpvPropertyObserver
@@ -61,8 +60,9 @@ class MpvWidget(QFrame):
         self.player = MpvPlayer(__mpv)
         MpvPropertyObserver(__mpv)
 
-        PreferenceHandler.VERSION_MPV = self.player.version_mpv()
-        PreferenceHandler.VERSION_FFMPEG = self.player.ffmpeg_version()
+        from src.gui.uihandler.about import AboutDialog
+        AboutDialog.VERSION_MPV = self.player.version_mpv()
+        AboutDialog.VERSION_FFMPEG = self.player.ffmpeg_version()
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if e.type() == QMouseEvent.MouseMove:

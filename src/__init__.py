@@ -141,21 +141,21 @@ b cycle blend-subtitles
 i script-binding stats/display-stats-toggle
 """
 
-ABOUT = """<h1 style='text-align:center;'>{} - {}</h1>
+ABOUT = """<h1 style='text-align:center;'>{version} - {platform}</h1>
 <p>
-    <b>{}</b> is a free, open source and <b>libmpv</b> based application for
+    <b>{app_name}</b> is a free, open source and <b>libmpv</b> based application for
     the quick and easy creation of quality control reports of video files.
 </p>
-<p>Based on {} and ffmpeg {}</p>
+<p>Based on {version_mpv} and ffmpeg {version_ffmpeg}</p>
 <p>
-    Copyright © {} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;
+    Copyright © {years} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;
 </p>
 <p>
     <h3>Links</h3>
     <br>
     <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a>
     <br>
-    <a href='https://github.com/Frechdachs/mpvQC'>Github</a>
+    <a href='https://github.com/mpvqc/mpvQC'>Github</a>
 </p>
 <p>
     <h3>Contributors</h3>
