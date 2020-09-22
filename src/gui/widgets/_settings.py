@@ -13,9 +13,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+from typing import Callable
+
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView, QInputDialog
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView, QInputDialog, QMenu, QActionGroup
 
 from src import settings
 from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
@@ -50,6 +52,22 @@ class _Settings:
                 s.value = txt
             else:
                 s.reset()
+
+    @staticmethod
+    def setup_menu_window_title(menu: QMenu, callback: Callable):
+        s = settings.Setting_Custom_Appearance_General_WINDOW_TITLE
+
+        def set_window_title(idx_):
+            s.value = idx_
+            callback()
+
+        group = QActionGroup(menu)
+        for idx, action in enumerate(menu.actions()):
+            action.setCheckable(True)
+            action.setChecked(idx == s.value)
+            action.triggered.connect(lambda x, a=idx, f=set_window_title: f(a))
+
+            group.addAction(action)
 
 
 UserSettings = _Settings()
