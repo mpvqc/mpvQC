@@ -11,6 +11,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+from typing import List
 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QMessageBox
@@ -130,12 +131,12 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
     The message box if the user wants to import a txt file which does not seem to be a valid qc document.
     """
 
-    def __init__(self, not_valid_file):
+    def __init__(self, not_valid_files: List[str]):
         super().__init__()
-        self.setText(str(not_valid_file) +
-                     _translate("MessageBoxes", " does not seem to be a QC document file."))
+        self.setText("\n".join(not_valid_files) +
+                     _translate("MessageBoxes", " does not seem to be valid."))
         self.setIcon(QMessageBox.Information)
-        self.setWindowTitle(_translate("MessageBoxes", "Not a QC document"))
+        self.setWindowTitle(_translate("MessageBoxes", "Not valid"))
         self.addButton(_translate("MessageBoxes", "Ok"), QMessageBox.AcceptRole)
 
 

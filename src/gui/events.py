@@ -85,12 +85,6 @@ PlayerRemainingVideoTimeChanged \
 PlayerPercentChanged \
     = QEvent.Type(1003)
 
-PlayerCurrentVideoFile \
-    = QEvent.Type(1004)
-
-PlayerCurrentVideoPath \
-    = QEvent.Type(1005)
-
 ##################################################################### Comment Table Event Types between 1051 - 1070 ###
 
 CommentAmountChanged \
@@ -98,10 +92,6 @@ CommentAmountChanged \
 
 CommentCurrentSelectionChanged \
     = QEvent.Type(1052)
-
-CommentsUpToDate \
-    = QEvent.Type(1053)
-
 
 #######################################################################################################################
 
@@ -139,28 +129,6 @@ class EventPlayerPercentChanged(QEvent):
         return self.__percent
 
 
-class EventPlayerCurrentVideoFile(QEvent):
-
-    def __init__(self, current_file):
-        super().__init__(PlayerCurrentVideoFile)
-        self.__current_file = current_file
-
-    @property
-    def current_video_file(self):
-        return self.__current_file
-
-
-class EventPlayerCurrentVideoPath(QEvent):
-
-    def __init__(self, current_path):
-        super().__init__(PlayerCurrentVideoPath)
-        self.__current_path = current_path
-
-    @property
-    def current_video_path(self):
-        return self.__current_path
-
-
 #######################################################################################################################
 
 class EventCommentAmountChanged(QEvent):
@@ -184,13 +152,3 @@ class EventCommentCurrentSelectionChanged(QEvent):
     def current_selection(self) -> int:
         return self.__current_selection
 
-
-class EventCommentsUpToDate(QEvent):
-
-    def __init__(self, status: bool):
-        super().__init__(CommentsUpToDate)
-        self.__status: bool = status
-
-    @property
-    def status(self) -> int:
-        return self.__status

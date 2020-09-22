@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import sys
+
 from os import path
 from typing import List
 
@@ -20,6 +20,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
+from src import settings
 from src.gui import SUPPORTED_SUB_FILES
 
 _translate = QtCore.QCoreApplication.translate
@@ -28,17 +29,24 @@ _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowClo
 _FILTER_SUBS = " ".join(["*" + x for x in SUPPORTED_SUB_FILES])
 
 
-def get_open_video(directory, parent=None) -> path or None:
+def generate_file_name_proposal(video_file):
+    nick = ("_" + settings.Setting_Custom_General_NICKNAME.value) or ""
+    video = path.splitext(path.basename(video_file))[0] if video_file else _translate("Dialogs", "untitled")
+    return "[QC]_{0}{1}.txt".format(video, nick)
+
+
+def get_open_video(parent=None) -> path or None:
     """
     Will open a dialog to select a video to open.
 
-    :param directory: The directory to open initially
     :param parent: The parent window
     :return: the selected file or None if abort
     """
 
     file_filter = _translate("Dialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
                   _translate("Dialogs", "All files") + " (*.*)"
+
+    directory = settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value
 
     return QFileDialog.getOpenFileName(
         parent=parent,
@@ -48,7 +56,7 @@ def get_open_video(directory, parent=None) -> path or None:
     )[0]
 
 
-def get_open_subs(directory, parent=None) -> List[str] or None:
+def get_open_subs(parent=None) -> List[str] or None:
     """
     Will open a dialog to select subtitles to open.
 
@@ -60,6 +68,8 @@ def get_open_subs(directory, parent=None) -> List[str] or None:
     file_filter = _translate("Dialogs", "Subtitle files") + " ({});;".format(_FILTER_SUBS) + \
                   _translate("Dialogs", "All files") + " (*.*)"
 
+    directory = settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value
+
     return QFileDialog.getOpenFileNames(
         parent=parent,
         caption=_translate("Dialogs", "Open Subtitle File"),
@@ -68,7 +78,7 @@ def get_open_subs(directory, parent=None) -> List[str] or None:
     )[0]
 
 
-def get_open_file_names(directory, parent=None) -> List[str] or None:
+def get_open_file_names(parent=None) -> List[str] or None:
     """
     Will open a dialog to select multiple qc documents.
 
@@ -76,6 +86,8 @@ def get_open_file_names(directory, parent=None) -> List[str] or None:
     :param parent: The parent window
     :return: The selected files or None if abort
     """
+
+    directory = settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value
 
     return QFileDialog.getOpenFileNames(
         parent,
@@ -85,7 +97,7 @@ def get_open_file_names(directory, parent=None) -> List[str] or None:
     )[0]
 
 
-def get_save_file_name(video_file: path, nick: str, qc_doc=None, parent=None) -> path or None:
+def get_save_file_name(video_file: str, parent=None) -> path or None:
     """
     Will display a **Save as** dialog to the user.
 
@@ -96,20 +108,7 @@ def get_save_file_name(video_file: path, nick: str, qc_doc=None, parent=None) ->
     :return: the path to save or None if no video file was given
     """
 
-    if qc_doc is not None and path.isfile(qc_doc):
-        txt_proposal = qc_doc
-    elif not bool(video_file):
-        txt_proposal = "[QC]_{}".format(nick)
-    else:
-        base = path.basename(video_file)
-
-        txt_file = "[QC]_{}_{}.txt".format(path.splitext(base)[0], nick)
-
-        if sys.platform.startswith("win32"):
-            trtable = str.maketrans('\\/:*?"<>|', "_________")
-            txt_file = txt_file.translate(trtable)
-
-        txt_proposal = path.join(path.dirname(video_file), txt_file.replace(" ", "_"))
+    txt_proposal = generate_file_name_proposal(video_file)
 
     return QFileDialog.getSaveFileName(
         parent,

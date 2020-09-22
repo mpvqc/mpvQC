@@ -12,6 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""
-This package contains all elements connected to the player.
-"""
+
+from src.gui.widgets._commentstable import CommentsTable
+from src.gui.widgets._commenttypeedit import PreferenceCommentTypesWidget
+from src.gui.widgets._contextmenu import ContextMenu
+from src.gui.widgets._mpvframe import MpvWidget
+from src.gui.widgets._statusbar import StatusBar
