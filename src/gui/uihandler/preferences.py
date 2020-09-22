@@ -278,8 +278,8 @@ class PreferenceHandler(QDialog):
 
     def mousePressEvent(self, mouse_ev: QtGui.QMouseEvent):
         """
-        On mouse pressed event (pressed anywhere except the comment type widget)
-        the focus needs to be removed from the comment type widget.
+        On mouse pressed event (pressed anywhere except the comment type widgets)
+        the focus needs to be removed from the comment type widgets.
         """
 
         self.preference_binder.ctypes_widget.remove_focus()
