@@ -19,7 +19,7 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -60,7 +60,7 @@
       <enum>Qt::NoFocus</enum>
      </property>
      <property name="text">
-      <string/>
+      <string extracomment="Label for the &quot;previous result&quot; button">Previous</string>
      </property>
      <property name="icon">
       <iconset theme="go-up">
@@ -80,7 +80,7 @@
       <enum>Qt::NoFocus</enum>
      </property>
      <property name="text">
-      <string/>
+      <string extracomment="Label for the &quot;next result&quot; button">Next</string>
      </property>
      <property name="icon">
       <iconset theme="go-down">
@@ -92,7 +92,26 @@
     </widget>
    </item>
    <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>30</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QLabel" name="searchResultLabel">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>1</horstretch>
@@ -116,7 +135,7 @@
       <enum>Qt::NoFocus</enum>
      </property>
      <property name="text">
-      <string/>
+      <string extracomment="Label for the &quot;close button&quot; for the search">Close</string>
      </property>
      <property name="icon">
       <iconset theme="window-close">
