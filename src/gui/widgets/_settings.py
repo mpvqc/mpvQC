@@ -17,7 +17,8 @@ from typing import Callable
 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView, QInputDialog, QMenu, QActionGroup
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractItemView, QInputDialog, QMenu, \
+    QActionGroup, QAction
 
 from src import settings
 from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
@@ -68,6 +69,18 @@ class _Settings:
             action.triggered.connect(lambda x, a=idx, f=set_window_title: f(a))
 
             group.addAction(action)
+
+    @staticmethod
+    def setup_dark_theme(action: QAction, callback: Callable):
+        s = settings.Setting_Custom_Appearance_General_DARK_THEME
+
+        def toggle():
+            s.value = not s.value
+            callback()
+
+        action.setCheckable(True)
+        action.setChecked(s.value)
+        action.triggered.connect(toggle)
 
 
 UserSettings = _Settings()
