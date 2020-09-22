@@ -13,7 +13,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from src.gui.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
-    EventPlayerCurrentVideoFile, EventPlayerCurrentVideoPath, EventDistributor
+    EventDistributor
 from src.player.bindings import MPV
 
 _TIME_TEMPLATE = "{}{:02d}:{:02d}"
@@ -40,16 +40,6 @@ class MpvPropertyObserver:
                 EventDistributor.send_event(
                     EventPlayerRemainingVideoTimeChanged(
                         MpvPropertyObserver.__seconds_float_to_formatted_string_hours(value)))
-
-        @mpv.property_observer('filename/no-ext')
-        def observe_filename(__, value):
-            if value:
-                EventDistributor.send_event(EventPlayerCurrentVideoFile(value))
-
-        @mpv.property_observer('path')
-        def observe_full_path(__, value):
-            if value:
-                EventDistributor.send_event(EventPlayerCurrentVideoPath(value))
 
     @staticmethod
     def __seconds_float_to_formatted_string_hours(seconds: float) -> str:

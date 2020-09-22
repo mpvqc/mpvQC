@@ -15,15 +15,14 @@
 from os import path
 from pathlib import Path
 
-from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QEvent, QTimer
+from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from src import settings
 from src.gui import SUPPORTED_SUB_FILES
 from src.gui.dialogs import get_open_network_stream
-from src.gui.events import EventPlayerCurrentVideoFile, PlayerCurrentVideoFile, PlayerCurrentVideoPath, \
-    EventPlayerCurrentVideoPath, EventDistributor, EventReceiver
+from src.gui.events import EventDistributor, EventReceiver
 from src.gui.generated.main import Ui_MainPlayerView
 from src.gui.uihandler.search import SearchHandler
 
@@ -79,7 +78,7 @@ class MainHandler(QMainWindow):
             self.__update_window_title()
 
         self.__qc_manager.state_changed.connect(__state_changed)
-        self.__qc_manager.video_imported.connect(lambda video, f=self.__action_resize_video: f())
+        self.__qc_manager.video_imported.connect(self.__on_new_video_imported)
 
         self.__splitter_bottom_layout = QVBoxLayout()
         self.__splitter_bottom_layout.addWidget(self.widget_comments)
@@ -319,6 +318,13 @@ class MainHandler(QMainWindow):
     def __action_open_about_mpvqc(self) -> None:
         self.__action_open_settings(display_about=True)
 
+    def __on_new_video_imported(self, new_video: str):
+        self.__current_video_path = new_video
+        self.__current_video_file = Path(new_video).stem
+
+        QTimer.singleShot(0, self.__update_window_title)
+        QTimer.singleShot(0, self.__resize_video)
+
     def __move_window_to_center(self) -> None:
         """
         Moves window to center of the screen.
@@ -368,21 +374,6 @@ class MainHandler(QMainWindow):
         self.__player.terminate()
         settings.save()
         super().close()
-
-    def customEvent(self, ev: QEvent) -> None:
-
-        ev_type = ev.type()
-
-        if ev_type == PlayerCurrentVideoFile:
-            ev: EventPlayerCurrentVideoFile
-            self.__current_video_file = ev.current_video_file
-            self.__ui.actionOpenSubtitleFile.setEnabled(True)
-            QTimer.singleShot(0, self.__update_window_title)
-
-        elif ev_type == PlayerCurrentVideoPath:
-            ev: EventPlayerCurrentVideoPath
-            self.__ui.actionOpenSubtitleFile.setEnabled(True)
-            self.__current_video_path = str(Path(ev.current_video_path))
 
     def set_theme(self):
         dark_theme = settings.Setting_Custom_Appearance_General_DARK_THEME.value
