@@ -30,7 +30,7 @@ class EditCommentTypesDialog(QDialog):
         self.__ui = Ui_editCommentTypeDialog()
         self.__ui.setupUi(self)
 
-        self.restore_default_button = QPushButton(_translate("EditCommentTypesDialog", "Reset"))
+        self.restore_default_button = QPushButton(_translate("EditConfigurationCustomDialog", "Reset"))
         self.restore_default_button.clicked.connect(self.reset)
 
         self.__ui.buttonBox.addButton(self.restore_default_button, QDialogButtonBox.ResetRole)

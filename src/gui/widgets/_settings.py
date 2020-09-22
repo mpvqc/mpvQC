@@ -82,5 +82,11 @@ class _Settings:
         action.setChecked(s.value)
         action.triggered.connect(toggle)
 
+    @staticmethod
+    def edit_mpv_conf():
+        from src.gui.uihandler.editMpvConf import EditMpvConfDialog
+        if EditMpvConfDialog().exec_():
+            settings.save()
+
 
 UserSettings = _Settings()
