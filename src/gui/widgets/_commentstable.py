@@ -147,6 +147,8 @@ class CommentsTable(QTableView):
             self.scrollTo(new_index)
             self.setCurrentIndex(new_index)
             self.edit(new_index)
+        else:
+            self.ensure_selection()
 
     def add_comment(self, comment_type: str) -> None:
         comment = Comment(
