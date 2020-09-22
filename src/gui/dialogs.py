@@ -14,6 +14,7 @@
 
 
 from os import path
+from pathlib import Path
 from typing import List
 
 from PyQt5 import QtCore
@@ -48,12 +49,16 @@ def get_open_video(parent=None) -> path or None:
 
     directory = settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value
 
-    return QFileDialog.getOpenFileName(
-        parent=parent,
-        caption=_translate("Dialogs", "Open Video File"),
-        directory=directory,
-        filter=file_filter
-    )[0]
+    new_video_path = QFileDialog.getOpenFileName(parent=parent,
+                                                 caption=_translate("Dialogs", "Open Video File"),
+                                                 directory=directory,
+                                                 filter=file_filter
+                                                 )[0]
+
+    if new_video_path:
+        settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value = str(Path(new_video_path).parent)
+
+    return new_video_path
 
 
 def get_open_subs(parent=None) -> List[str] or None:
@@ -70,12 +75,15 @@ def get_open_subs(parent=None) -> List[str] or None:
 
     directory = settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value
 
-    return QFileDialog.getOpenFileNames(
-        parent=parent,
-        caption=_translate("Dialogs", "Open Subtitle File"),
-        directory=directory,
-        filter=file_filter
-    )[0]
+    new_subtitle_paths = QFileDialog.getOpenFileNames(parent=parent,
+                                                      caption=_translate("Dialogs", "Open Subtitle File"),
+                                                      directory=directory,
+                                                      filter=file_filter)[0]
+
+    if new_subtitle_paths:
+        settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value = str(Path(new_subtitle_paths[0]).parent)
+
+    return new_subtitle_paths
 
 
 def get_open_file_names(parent=None) -> List[str] or None:
@@ -89,12 +97,16 @@ def get_open_file_names(parent=None) -> List[str] or None:
 
     directory = settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value
 
-    return QFileDialog.getOpenFileNames(
-        parent,
-        _translate("Dialogs", "Open QC Document"),
-        directory,
-        _translate("Dialogs", "QC documents (*.txt);;All files (*.*)"),
-    )[0]
+    new_document_paths = QFileDialog.getOpenFileNames(parent=parent,
+                                                      caption=_translate("Dialogs", "Open QC Document"),
+                                                      directory=directory,
+                                                      filter=_translate("Dialogs",
+                                                                        "QC documents (*.txt);;All files (*.*)"), )[0]
+
+    if new_document_paths:
+        settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value = str(Path(new_document_paths[0]).parent)
+
+    return new_document_paths
 
 
 def get_save_file_name(video_file: str, parent=None) -> path or None:
