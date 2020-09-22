@@ -404,5 +404,5 @@ class MainHandler(QMainWindow):
                 "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
         else:
             self.application.setStyle(QStyleFactory.create(self.__style_name))
-            self.application.setPalette(self.__color_palette)
+            self.application.setPalette(self.style().standardPalette())
             self.application.setStyleSheet("")
