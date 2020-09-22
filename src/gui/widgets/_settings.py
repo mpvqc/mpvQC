@@ -13,7 +13,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from typing import Callable
+from typing import Callable, NamedTuple
 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QMouseEvent
@@ -79,6 +79,37 @@ class _Settings:
 
         action.setChecked(s.value)
         action.triggered.connect(toggle)
+
+    @staticmethod
+    def setup_languages(menu: QMenu, callback: Callable):
+        s = settings.Setting_Custom_Language_LANGUAGE
+
+        languages = {
+            "English": ("en", _translate("SettingsDialog", "English")),
+            "German": ("de", _translate("SettingsDialog", "German")),
+            "Italian": ("it", _translate("SettingsDialog", "Italian"))
+        }
+
+        menu.clear()
+
+        def on_language_change(loc):
+            s.value = loc
+            callback()
+
+        for english, _tuple in languages.items():
+            action = menu.addAction(_translate("SettingsDialog", english))
+            action.setIconVisibleInMenu(True)
+            action.setCheckable(True)
+            action.setChecked(s.value == _tuple[0])
+            action.triggered.connect(lambda a, loc=_tuple[0], f=on_language_change: f(loc))
+
+        # If language is something other than 'en', 'de', 'it'
+        # if menu.actions() and all(not v.isChecked() for v in menu.actions()):
+        #     for action in menu.actions():
+        #         if action.text() == languages["English"][1]:
+        #             action.setChecked(True)
+        #             callback("en")
+        #             return
 
     @staticmethod
     def edit_mpv_conf():
