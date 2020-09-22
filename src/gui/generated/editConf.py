@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui/editMpvConf.ui'
+# Form implementation generated from reading ui file 'gui/editConf.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -11,14 +11,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_editMpvConf(object):
-    def setupUi(self, editMpvConf):
-        editMpvConf.setObjectName("editMpvConf")
-        editMpvConf.resize(1024, 768)
-        self.verticalLayout = QtWidgets.QVBoxLayout(editMpvConf)
+class Ui_editConf(object):
+    def setupUi(self, editConf):
+        editConf.setObjectName("editConf")
+        editConf.resize(1024, 768)
+        self.verticalLayout = QtWidgets.QVBoxLayout(editConf)
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.title = QtWidgets.QLabel(editMpvConf)
+        self.title = QtWidgets.QLabel(editConf)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -27,12 +27,13 @@ class Ui_editMpvConf(object):
         font = QtGui.QFont()
         font.setPointSize(14)
         self.title.setFont(font)
+        self.title.setText("Title")
         self.title.setObjectName("title")
         self.verticalLayout.addWidget(self.title)
-        self.subtitle = QtWidgets.QLabel(editMpvConf)
+        self.subtitle = QtWidgets.QLabel(editConf)
         self.subtitle.setObjectName("subtitle")
         self.verticalLayout.addWidget(self.subtitle)
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(editMpvConf)
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(editConf)
         self.plainTextEdit.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.plainTextEdit.setLineWidth(1)
         self.plainTextEdit.setDocumentTitle("")
@@ -41,29 +42,28 @@ class Ui_editMpvConf(object):
         self.plainTextEdit.setCenterOnScroll(False)
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout.addWidget(self.plainTextEdit)
-        self.buttonBox = QtWidgets.QDialogButtonBox(editMpvConf)
+        self.buttonBox = QtWidgets.QDialogButtonBox(editConf)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(editMpvConf)
-        self.buttonBox.accepted.connect(editMpvConf.accept)
-        self.buttonBox.rejected.connect(editMpvConf.reject)
-        QtCore.QMetaObject.connectSlotsByName(editMpvConf)
+        self.retranslateUi(editConf)
+        self.buttonBox.accepted.connect(editConf.accept)
+        self.buttonBox.rejected.connect(editConf.reject)
+        QtCore.QMetaObject.connectSlotsByName(editConf)
 
-    def retranslateUi(self, editMpvConf):
+    def retranslateUi(self, editConf):
         _translate = QtCore.QCoreApplication.translate
-        editMpvConf.setWindowTitle(_translate("editMpvConf", "Dialog"))
-        self.title.setText(_translate("editMpvConf", "mpv.conf Settings"))
-        self.subtitle.setText(_translate("editMpvConf", "Changes will be applied after restart."))
+        editConf.setWindowTitle(_translate("editConf", "Dialog"))
+        self.subtitle.setText(_translate("editConf", "Changes will be applied after restart."))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    editMpvConf = QtWidgets.QDialog()
-    ui = Ui_editMpvConf()
-    ui.setupUi(editMpvConf)
-    editMpvConf.show()
+    editConf = QtWidgets.QDialog()
+    ui = Ui_editConf()
+    ui.setupUi(editConf)
+    editConf.show()
     sys.exit(app.exec_())

@@ -84,8 +84,22 @@ class _Settings:
 
     @staticmethod
     def edit_mpv_conf():
-        from src.gui.uihandler.editMpvConf import EditMpvConfDialog
-        if EditMpvConfDialog().exec_():
+        from src.gui.uihandler.editConf import EditConfDialog
+
+        dialog = EditConfDialog(settings.Setting_Custom_Configuration_MPV, title="mpv.conf")
+        dialog.setWindowTitle(_translate("SettingsDialog", "Edit mpv.conf"))
+
+        if dialog.exec_():
+            settings.save()
+
+    @staticmethod
+    def edit_input_conf():
+        from src.gui.uihandler.editConf import EditConfDialog
+
+        dialog = EditConfDialog(settings.Setting_Custom_Configuration_INPUT, title="input.conf")
+        dialog.setWindowTitle(_translate("SettingsDialog", "Edit input.conf"))
+
+        if dialog.exec_():
             settings.save()
 
 

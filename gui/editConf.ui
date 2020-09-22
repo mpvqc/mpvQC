@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>editMpvConf</class>
- <widget class="QDialog" name="editMpvConf">
+ <class>editConf</class>
+ <widget class="QDialog" name="editConf">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,7 +31,7 @@
       </font>
      </property>
      <property name="text">
-      <string>mpv.conf Settings</string>
+      <string notr="true">Title</string>
      </property>
     </widget>
    </item>
@@ -81,7 +81,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>editMpvConf</receiver>
+   <receiver>editConf</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -97,7 +97,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>editMpvConf</receiver>
+   <receiver>editConf</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

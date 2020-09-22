@@ -19,18 +19,21 @@ from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton, QAbstractIte
 
 from src import settings
 from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
-from src.gui.generated.editMpvConf import Ui_editMpvConf
+from src.gui.generated.editConf import Ui_editConf
 
 _translate = QCoreApplication.translate
 
 
-class EditMpvConfDialog(QDialog):
+class EditConfDialog(QDialog):
 
-    def __init__(self):
+    def __init__(self, settings_object, title: str):
         super().__init__()
 
-        self.__ui = Ui_editMpvConf()
+        self.__ui = Ui_editConf()
         self.__ui.setupUi(self)
+        self.__ui.title.setText(title)
+
+        self.__settings_object = settings_object
 
         self.restore_default_button = QPushButton(_translate("EditConfigurationCustomDialog", "Reset"))
         self.restore_default_button.clicked.connect(self.reset)
@@ -38,16 +41,16 @@ class EditMpvConfDialog(QDialog):
         self.__ui.buttonBox.addButton(self.restore_default_button, QDialogButtonBox.ResetRole)
 
         self.__ui.plainTextEdit.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
-        self.__ui.plainTextEdit.setPlainText(settings.Setting_Custom_Configuration_MPV.value)
+        self.__ui.plainTextEdit.setPlainText(self.__settings_object.value)
 
     def accept(self):
         """
         Action when apply button is pressed.
         """
 
-        settings.Setting_Custom_Configuration_MPV.value = self.__ui.plainTextEdit.toPlainText()
-        super(EditMpvConfDialog, self).accept()
+        self.__settings_object.value = self.__ui.plainTextEdit.toPlainText()
+        super(EditConfDialog, self).accept()
 
     def reset(self):
-        settings.Setting_Custom_Configuration_MPV.reset()
-        self.__ui.plainTextEdit.setPlainText(settings.Setting_Custom_Configuration_MPV.value)
+        self.__settings_object.reset()
+        self.__ui.plainTextEdit.setPlainText(self.__settings_object.value)
