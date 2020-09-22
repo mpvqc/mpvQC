@@ -64,7 +64,6 @@ class _Settings:
 
         group = QActionGroup(menu)
         for idx, action in enumerate(menu.actions()):
-            action.setCheckable(True)
             action.setChecked(idx == s.value)
             action.triggered.connect(lambda x, a=idx, f=set_window_title: f(a))
 
@@ -78,7 +77,6 @@ class _Settings:
             s.value = not s.value
             callback()
 
-        action.setCheckable(True)
         action.setChecked(s.value)
         action.triggered.connect(toggle)
 
@@ -103,6 +101,20 @@ class _Settings:
             settings.save()
 
     @staticmethod
+    def setup_document(action_save_path: QAction, action_save_nickname: QAction):
+        s_save_path = settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE
+        s_save_nick = settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE
+
+        action_save_path.setChecked(s_save_path.value)
+        action_save_nickname.setChecked(s_save_nick.value)
+
+        def toggle(settings_obj):
+            settings_obj.value = not settings_obj.value
+
+        action_save_path.toggled.connect(lambda _, settings_obj=s_save_path, f=toggle: f(settings_obj))
+        action_save_nickname.toggled.connect(lambda _, settings_obj=s_save_nick, f=toggle: f(settings_obj))
+
+    @staticmethod
     def setup_document_backup(action: QAction, callback: Callable):
         s = settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED
 
@@ -110,7 +122,6 @@ class _Settings:
             s.value = not s.value
             callback()
 
-        action.setCheckable(True)
         action.setChecked(s.value)
         action.triggered.connect(toggle)
 
