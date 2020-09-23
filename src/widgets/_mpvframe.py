@@ -18,9 +18,9 @@ from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent
 from PyQt5.QtWidgets import QFrame, QAbstractItemView
 
 from src import logging
-from src.gui import utils
-from src.gui.uihandler.main_window import MainHandler
-from src.gui.utils import KEY_MAPPINGS
+from src.uiutil import utils
+from src.uihandler.main_window import MainHandler
+from src.uiutil.utils import KEY_MAPPINGS
 from src.player import bindings
 from src.player.observed import MpvPropertyObserver
 from src.player.players import MpvPlayer, ActionType
@@ -63,7 +63,7 @@ class MpvWidget(QFrame):
         self.player = MpvPlayer(__mpv)
         MpvPropertyObserver(__mpv)
 
-        from src.gui.uihandler.dialog_about import AboutDialog
+        from src.uihandler.dialog_about import AboutDialog
         AboutDialog.VERSION_MPV = self.player.version_mpv()
         AboutDialog.VERSION_FFMPEG = self.player.ffmpeg_version()
 

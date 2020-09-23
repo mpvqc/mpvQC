@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui/dialog_edit_comment_types.ui'
+# Form implementation ui from reading ui file 'uiutil/dialog_edit_comment_types.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #

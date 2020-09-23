@@ -22,7 +22,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
 from src import settings
-from src.gui import SUPPORTED_SUB_FILES
+from src.uiutil import SUPPORTED_SUB_FILES
 
 _translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)

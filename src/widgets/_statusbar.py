@@ -18,7 +18,7 @@ from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
 from src import settings
-from src.gui.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
+from src.uiutil.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
     EventPlayerRemainingVideoTimeChanged, PlayerPercentChanged, EventPlayerPercentChanged, CommentAmountChanged, \
     EventCommentAmountChanged, CommentCurrentSelectionChanged, EventCommentCurrentSelectionChanged
 

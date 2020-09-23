@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from src.gui.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
+from src.uiutil.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
     EventDistributor
 from src.player.bindings import MPV
 

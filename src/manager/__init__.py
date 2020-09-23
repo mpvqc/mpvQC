@@ -16,12 +16,32 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from PyQt5.QtCore import pyqtSignal, QObject, QTimer
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMessageBox
 
 from src import settings
-from src.gui import dialogs, messageboxes
-from src.gui.widgets import CommentsTable
+from src.uiutil import dialogs, messageboxes
+
+
+class Comment:
+    """
+    A representation of a comment line.
+    """
+
+    def __init__(self, comment_time, comment_type, comment_note):
+        self.comment_time = comment_time
+        self.comment_type = comment_type
+        self.comment_note = comment_note
+
+    def __str__(self):
+        return "[{}] [{}] {}".format(self.comment_time, self.comment_type, self.comment_note)
+
+    def __eq__(self, other):
+        if isinstance(other, Comment):
+            return self.comment_time == other.comment_time \
+                   and self.comment_type == other.comment_type \
+                   and self.comment_note == other.comment_note
+        return False
 
 
 class QcManager(QObject):
@@ -33,7 +53,7 @@ class QcManager(QObject):
     # Signal, that indicates a new video import. p1='new video path'
     video_imported = pyqtSignal(str)
 
-    def __init__(self, window, video_widget, table_widget: CommentsTable):
+    def __init__(self, window, video_widget, table_widget):
         """
         The qc manager will take care of the state of the current video and documents.
 
@@ -52,7 +72,7 @@ class QcManager(QObject):
         self.__t.state_changed.connect(lambda x, y=self.on_table_content_modified: y())
 
         # State
-        from src.qc._states import get_initial_state, Signals
+        from src.manager._states import get_initial_state, Signals
         Signals.video_imported.connect(lambda video: self.video_imported.emit(video))
 
         self.__state = get_initial_state()

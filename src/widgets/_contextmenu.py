@@ -18,7 +18,7 @@ from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QMenu
 
 from src import settings
-from src.gui.uihandler.main_window import MainHandler
+from src.uihandler.main_window import MainHandler
 
 _translate = QCoreApplication.translate
 

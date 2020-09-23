@@ -18,7 +18,7 @@
 
 from typing import Optional, NamedTuple, Tuple
 
-from src.qc import Comment, _exporter
+from src.manager import Comment, _exporter
 
 
 class HandleSaveResult(NamedTuple):

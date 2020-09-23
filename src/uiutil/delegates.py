@@ -17,8 +17,8 @@ from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractS
     QStyledItemDelegate
 
 from src import settings
-from src.gui import TIME_FORMAT
-from src.gui.utils import SpecialCharacterValidator
+from src.uiutil import TIME_FORMAT
+from src.uiutil.utils import SpecialCharacterValidator
 
 
 class NotifiableItemDelegate(QStyledItemDelegate):

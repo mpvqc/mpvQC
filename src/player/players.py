@@ -17,7 +17,7 @@ from os import path
 
 from PyQt5.QtCore import QTime
 
-from src.gui import TIME_FORMAT
+from src.uiutil import TIME_FORMAT
 from src.player.bindings import MPV
 
 

@@ -23,7 +23,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 from src import get_metadata, get_files
 from src import settings
-from src.qc import Comment
+from src.manager import Comment
 
 
 def __prepare_file_content(b_header: bool,

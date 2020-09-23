@@ -16,22 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Comment:
-    """
-    A representation of a comment line.
-    """
-
-    def __init__(self, comment_time, comment_type, comment_note):
-        self.comment_time = comment_time
-        self.comment_type = comment_type
-        self.comment_note = comment_note
-
-    def __str__(self):
-        return "[{}] [{}] {}".format(self.comment_time, self.comment_type, self.comment_note)
-
-    def __eq__(self, other):
-        if isinstance(other, Comment):
-            return self.comment_time == other.comment_time \
-                   and self.comment_type == other.comment_type \
-                   and self.comment_note == other.comment_note
-        return False
+from ._dialog_about import Ui_AboutDialog
+from ._dialog_edit_comment_types import Ui_CommentTypesDialog
+from ._dialog_edit_config import Ui_SettingsDialogEditConfig
+from ._main_window import Ui_MainWindow
+from ._search_form import Ui_SearchForm

@@ -20,11 +20,11 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from src import settings
-from src.gui import SUPPORTED_SUB_FILES
-from src.gui.dialogs import get_open_network_stream
-from src.gui.events import EventDistributor, EventReceiver
-from src.gui.generated.main_window import Ui_MainWindow
-from src.gui.uihandler.search_form import SearchHandler
+from src.uiutil import SUPPORTED_SUB_FILES
+from src.uiutil.dialogs import get_open_network_stream
+from src.uiutil.events import EventDistributor, EventReceiver
+from src.ui import Ui_MainWindow
+from src.uihandler.search_form import SearchHandler
 
 _translate = QCoreApplication.translate
 
@@ -34,7 +34,7 @@ class MainHandler(QMainWindow):
 
     def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
-        from src.gui.widgets import UserSettings
+        from src.widgets import UserSettings
         self.user_settings = UserSettings
 
         self.application = application
@@ -45,7 +45,7 @@ class MainHandler(QMainWindow):
         self.__ui.setupUi(self)
 
         # Widgets
-        from src.gui.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
+        from src.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
 
         """
         Layout:
@@ -64,7 +64,7 @@ class MainHandler(QMainWindow):
         self.__widget_status_bar = StatusBar()
         self.__player = self.widget_mpv.player
 
-        from src.qc.manager import QcManager
+        from src.manager import QcManager
         self.__qc_manager = QcManager(self, self.widget_mpv, self.widget_comments)
         self.__qc_manager_has_changes = False
 
@@ -376,5 +376,5 @@ class MainHandler(QMainWindow):
             self.application.setStyleSheet("")
 
     def __check_for_update(self):
-        from src.gui.messageboxes import CheckForUpdates
+        from src.uiutil.messageboxes import CheckForUpdates
         CheckForUpdates().exec_()

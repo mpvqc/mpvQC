@@ -22,15 +22,15 @@ from typing import Optional, Tuple, List
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
-from src.gui import dialogs as d
-from src.gui import messageboxes as md
-from src.gui.uihandler.main_window import MainHandler as AppWindow
-from src.gui.widgets import CommentsTable as Table
-from src.gui.widgets import MpvWidget
-from src.qc import Comment, _exporter
-from src.qc import _handleimport as hi
-from src.qc import _handlesave as hs
-from src.qc._handleimport import HandleImportResultData as Data
+from src.uiutil import dialogs as d
+from src.uiutil import messageboxes as md
+from src.uihandler.main_window import MainHandler as AppWindow
+from src.widgets import CommentsTable as Table
+from src.widgets import MpvWidget
+from src.manager import Comment, _exporter
+from src.manager import _handleimport as hi
+from src.manager import _handlesave as hs
+from src.manager._handleimport import HandleImportResultData as Data
 
 
 class _StaticSignals(QObject):

@@ -16,7 +16,7 @@
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtWidgets import QDialog
 
-from src.gui.generated.dialog_about import Ui_AboutDialog
+from src.ui import Ui_AboutDialog
 
 _translate = QCoreApplication.translate
 
