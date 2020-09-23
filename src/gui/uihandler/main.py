@@ -190,7 +190,7 @@ class MainHandler(QMainWindow):
         self.__ui.actionOpenQcDocuments.triggered.connect(self.__qc_manager.request_open_qc_documents)
         self.__ui.actionSaveQcDocument.triggered.connect(self.__qc_manager.request_save_qc_document)
         self.__ui.actionSaveQcDocumentAs.triggered.connect(self.__qc_manager.request_save_qc_document_as)
-        self.__ui.actionExitMpvQc.triggered.connect(self.__action_close)
+        self.__ui.actionExitMpvQc.triggered.connect(self.close)
 
         self.__ui.actionOpenVideoFile.triggered.connect(self.__qc_manager.request_open_video)
         self.__ui.actionOpenSubtitleFile.triggered.connect(self.__qc_manager.request_open_subtitles)
@@ -282,10 +282,6 @@ class MainHandler(QMainWindow):
 
         self.__move_window_to_center()
 
-    def __action_close(self) -> None:
-        self.display_normal()
-        self.closeEvent(QCloseEvent())
-
     def __action_open_network_stream(self) -> None:
 
         url = get_open_network_stream(self)
@@ -316,11 +312,14 @@ class MainHandler(QMainWindow):
         self.setGeometry(QStyle.alignedRect(Qt.LeftToRight, Qt.AlignCenter, self.window().size(), screen_geometry))
 
     def closeEvent(self, cev: QCloseEvent) -> None:
+        self.display_normal()
         saved = self.__qc_manager.request_quit_application()
         if saved:
-            self.close()
-            return
-        cev.ignore()
+            self.__player.terminate()
+            settings.save()
+            cev.accept()
+        else:
+            cev.ignore()
 
     def showEvent(self, sev: QShowEvent) -> None:
         self.__move_window_to_center()
@@ -344,15 +343,6 @@ class MainHandler(QMainWindow):
                 vids.append(file)
 
         self.__qc_manager.do_open_drag_and_drop_data(vids, txts, subs)
-
-    def close(self) -> None:
-        """
-        Will close the window and terminate the application.
-        """
-
-        self.__player.terminate()
-        settings.save()
-        super().close()
 
     def set_theme(self):
         dark_theme = settings.Setting_Custom_Appearance_General_DARK_THEME.value
