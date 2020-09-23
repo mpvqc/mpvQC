@@ -60,7 +60,6 @@ class Entry:
         self.identifier = identifier
         self.default_value = default_value
 
-        self.temporary_value = None
         self._value = None
 
     @property
@@ -71,30 +70,12 @@ class Entry:
     def value(self, val):
         self._value = val
 
-    def save(self) -> None:
-        """
-        Saves the current temporary value, but does **not** write to disc [use Setting.save()] to write to disc.
-        """
-
-        if self.temporary_value is not None:
-            self.value = self.temporary_value
-
-        self.temporary_value = None
-
     def reset(self) -> None:
         """
         Sets the value to the default value and the temporary value to *None*.
         """
 
         self.value = self.default_value
-        self.temporary_value = None
-
-    def changed(self) -> bool:
-        """
-        :return: whether the value and the temporary value are different.
-        """
-
-        return self.temporary_value is not None and self.value != self.temporary_value
 
 
 class CommentTypesEntry(Entry):
@@ -242,7 +223,6 @@ def __read_json():
 
     for json_setting in SettingJson:
         json_setting._value = json_values.get(json_setting.identifier, json_setting.default_value)
-        # todo logger
 
 
 def __write_json():
@@ -256,7 +236,6 @@ def __write_json():
     with io.open(Files.FILE_SETTINGS, 'w', encoding='utf8') as file:
         str_ = json.dumps(dictionary, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
         file.write(str(str_))
-        #  todo logger
 
 
 def __read_confs():
@@ -266,14 +245,12 @@ def __read_confs():
             # That may override the other config, but I think that this will never happen in "production"
         with open(conf.identifier, "r", encoding="utf-8") as file:
             conf._value = file.read()
-            # todo logger
 
 
 def __write_confs(default_value=False):
     for conf in SettingConfs:
         with open(conf.identifier, "w", encoding="utf-8") as file:
             file.write(conf._value if not default_value else conf.default_value)
-        #  todo logger
 
 
 def __read() -> None:
