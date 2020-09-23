@@ -17,10 +17,7 @@ from PyQt5.QtCore import Qt, QTimer, QEvent, QObject
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
-from src import settings
-from src.events import PlayerVideoTimeChanged, EventPlayerVideoTimeChanged, PlayerRemainingVideoTimeChanged, \
-    EventPlayerRemainingVideoTimeChanged, PlayerPercentChanged, EventPlayerPercentChanged, CommentAmountChanged, \
-    EventCommentAmountChanged, CommentCurrentSelectionChanged, EventCommentCurrentSelectionChanged
+from src import settings, events
 
 
 class StatusBar(QStatusBar):
@@ -73,25 +70,25 @@ class StatusBar(QStatusBar):
 
         ev_type = ev.type()
 
-        if ev_type == PlayerVideoTimeChanged:
-            ev: EventPlayerVideoTimeChanged
+        if ev_type == events.PlayerVideoTimeChanged:
+            ev: events.EventPlayerVideoTimeChanged
             self.__time_current = ev.time_current
 
-        elif ev_type == PlayerRemainingVideoTimeChanged:
-            ev: EventPlayerRemainingVideoTimeChanged
+        elif ev_type == events.PlayerRemainingVideoTimeChanged:
+            ev: events.EventPlayerRemainingVideoTimeChanged
             self.__time_remaining = ev.time_remaining
 
-        elif ev_type == PlayerPercentChanged:
-            ev: EventPlayerPercentChanged
+        elif ev_type == events.PlayerPercentChanged:
+            ev: events.EventPlayerPercentChanged
             self.__percent = ev.percent
 
-        elif ev_type == CommentAmountChanged:
-            ev: EventCommentAmountChanged
+        elif ev_type == events.CommentAmountChanged:
+            ev: events.EventCommentAmountChanged
             self.__comments_amount = ev.new_amount
             self.__update_comment_amount_slash_selection()
 
-        elif ev_type == CommentCurrentSelectionChanged:
-            ev: EventCommentCurrentSelectionChanged
+        elif ev_type == events.CommentCurrentSelectionChanged:
+            ev: events.EventCommentCurrentSelectionChanged
             self.__comments_current_selection = ev.current_selection
             self.__update_comment_amount_slash_selection()
 

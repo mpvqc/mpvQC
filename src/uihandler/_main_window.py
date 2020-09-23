@@ -20,11 +20,10 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from src import settings
+from src.events import EventDistributor, EventReceiver
 from src.ui import Ui_MainWindow
 from src.uihandler._search_form import SearchHandler
-from src.uiutil import SUPPORTED_SUB_FILES
-from src.uiutil import dialogs
-from src.events import EventDistributor, EventReceiver
+from src.uiutil import SUPPORTED_SUB_FILES, dialogs
 
 _translate = QCoreApplication.translate
 

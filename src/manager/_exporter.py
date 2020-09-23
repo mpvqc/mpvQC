@@ -21,8 +21,7 @@ from os import path
 from typing import Optional, Tuple
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from src import get_metadata, get_files
-from src import settings
+from src import get_metadata, get_files, settings
 from src.manager import Comment
 
 

@@ -12,13 +12,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 from PyQt5.QtCore import Qt, QEvent, QModelIndex
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
 from src.ui import Ui_SearchForm
-from src.uiutil import SearchResult
-from src.uiutil import SpecialCharacterValidator
+from src.uiutil import SearchResult, SpecialCharacterValidator
 
 
 class SearchHandler(QWidget):

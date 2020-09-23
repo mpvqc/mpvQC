@@ -20,8 +20,8 @@ import re
 from os import path
 from typing import Optional, List, Tuple
 
-from src.uiutil._utils import replace_special_characters
 from src.manager import Comment
+from src.uiutil import replace_special_characters
 
 _REGEX_PATH = re.compile("^path\s*:*\s*")
 _REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[[^\[\]]*\]\s*.*$")

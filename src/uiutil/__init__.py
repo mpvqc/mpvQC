@@ -17,4 +17,4 @@ import src.uiutil._dialogs as dialogs
 from ._delegates import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, TIME_FORMAT
 from ._dialogs import _SUPPORTED_SUB_FILES as SUPPORTED_SUB_FILES
 from ._searchutils import SearchResult
-from ._utils import SpecialCharacterValidator, KEY_MAPPINGS, command_generator
+from ._utils import SpecialCharacterValidator, KEY_MAPPINGS, command_generator, replace_special_characters

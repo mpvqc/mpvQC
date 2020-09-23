@@ -21,4 +21,3 @@ from ._dialog_edit_comment_types import EditCommentTypesDialog
 from ._dialog_edit_config import EditConfDialog
 from ._main_window import MainHandler
 from ._search_form import SearchHandler
-
