@@ -13,9 +13,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-# Time format
-TIME_FORMAT = "HH:mm:ss"
-
-# Supported subtitle file extensions for drag and drop and for opening via dialog
-SUPPORTED_SUB_FILES = (".ass", ".ssa", ".srt", ".sup", ".idx", ".utf", ".utf8", ".utf-8", ".smi",
-                       ".rt", ".aqt", ".jss", ".js", ".mks", ".vtt", ".sub", ".scc")
+import src.uiutil._dialogs as dialogs
+from ._delegates import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, TIME_FORMAT
+from ._dialogs import _SUPPORTED_SUB_FILES as SUPPORTED_SUB_FILES
+from ._searchutils import SearchResult
+from ._utils import SpecialCharacterValidator, KEY_MAPPINGS, command_generator

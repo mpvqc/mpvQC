@@ -20,7 +20,7 @@ import re
 from os import path
 from typing import Optional, List, Tuple
 
-from src.uiutil.utils import replace_special_characters
+from src.uiutil._utils import replace_special_characters
 from src.manager import Comment
 
 _REGEX_PATH = re.compile("^path\s*:*\s*")

@@ -28,7 +28,7 @@ def run(dir_program: str, app_version: str, app_name: str):
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
 
-    from src.uihandler.main_window import MainHandler
+    from src.uihandler import MainHandler
 
     container = MainHandler(app)
     container.show()

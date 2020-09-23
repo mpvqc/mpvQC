@@ -20,16 +20,15 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from src import settings
-from src.uiutil import SUPPORTED_SUB_FILES
-from src.uiutil.dialogs import get_open_network_stream
-from src.uiutil.events import EventDistributor, EventReceiver
 from src.ui import Ui_MainWindow
-from src.uihandler.search_form import SearchHandler
+from src.uihandler._search_form import SearchHandler
+from src.uiutil import SUPPORTED_SUB_FILES
+from src.uiutil import dialogs
+from src.events import EventDistributor, EventReceiver
 
 _translate = QCoreApplication.translate
 
 
-# noinspection PyMethodMayBeStatic
 class MainHandler(QMainWindow):
 
     def __init__(self, application: QApplication):
@@ -284,7 +283,7 @@ class MainHandler(QMainWindow):
 
     def __action_open_network_stream(self) -> None:
 
-        url = get_open_network_stream(self)
+        url = dialogs.get_open_network_stream(self)
 
         if url:
             self.__player.open_url(url, play=True)
@@ -376,5 +375,5 @@ class MainHandler(QMainWindow):
             self.application.setStyleSheet("")
 
     def __check_for_update(self):
-        from src.uiutil.messageboxes import CheckForUpdates
+        from src.messageboxes import CheckForUpdates
         CheckForUpdates().exec_()

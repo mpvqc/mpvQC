@@ -19,8 +19,8 @@
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMessageBox
 
-from src import settings
-from src.uiutil import dialogs, messageboxes
+from src import settings, messageboxes
+from src.uiutil import dialogs
 
 
 class Comment:

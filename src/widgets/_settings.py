@@ -27,7 +27,7 @@ class _Settings:
 
     @staticmethod
     def edit_comment_types(widget_context_menu):
-        from src.uihandler.dialog_edit_comment_types import EditCommentTypesDialog
+        from src.uihandler import EditCommentTypesDialog
         EditCommentTypesDialog().exec_()
         widget_context_menu.update_entries()
 
@@ -107,7 +107,7 @@ class _Settings:
 
     @staticmethod
     def edit_mpv_conf():
-        from src.uihandler.dialog_edit_config import EditConfDialog
+        from src.uihandler import EditConfDialog
 
         dialog = EditConfDialog(settings.Setting_Custom_Configuration_MPV, title="mpv.conf")
         dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit mpv.conf"))
@@ -117,7 +117,7 @@ class _Settings:
 
     @staticmethod
     def edit_input_conf():
-        from src.uihandler.dialog_edit_config import EditConfDialog
+        from src.uihandler import EditConfDialog
 
         dialog = EditConfDialog(settings.Setting_Custom_Configuration_INPUT, title="input.conf")
         dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit input.conf"))
@@ -175,7 +175,7 @@ class _Settings:
 
     @staticmethod
     def display_about_dialog():
-        from src.uihandler.dialog_about import AboutDialog
+        from src.uihandler import AboutDialog
         AboutDialog().exec_()
 
 

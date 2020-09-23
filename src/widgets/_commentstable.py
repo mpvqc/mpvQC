@@ -19,12 +19,12 @@ from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, QModelIndex, QCoreAppl
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent, QMouseEvent, QWheelEvent, QPalette
 from PyQt5.QtWidgets import QTableView, QAbstractItemView, QApplication
 
-from src.uiutil.delegates import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate
-from src.uiutil.events import EventDistributor, EventCommentAmountChanged, EventCommentCurrentSelectionChanged, \
+from src.events import EventDistributor, EventCommentAmountChanged, EventCommentCurrentSelectionChanged, \
     EventReceiver
-from src.uiutil.searchutils import SearchResult
-from src.uihandler.main_window import MainHandler
 from src.manager import Comment
+from src.uihandler import MainHandler
+from src.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate
+from src.uiutil import SearchResult
 
 _translate = QCoreApplication.translate
 

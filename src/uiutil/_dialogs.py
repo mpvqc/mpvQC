@@ -22,12 +22,15 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
 from src import settings
-from src.uiutil import SUPPORTED_SUB_FILES
 
 _translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
-_FILTER_SUBS = " ".join(["*" + x for x in SUPPORTED_SUB_FILES])
+# Supported subtitle file extensions for drag and drop and for opening via dialog
+_SUPPORTED_SUB_FILES = (".ass", ".ssa", ".srt", ".sup", ".idx", ".utf", ".utf8", ".utf-8", ".smi",
+                       ".rt", ".aqt", ".jss", ".js", ".mks", ".vtt", ".sub", ".scc")
+
+_FILTER_SUBS = " ".join(["*" + x for x in _SUPPORTED_SUB_FILES])
 
 
 def generate_file_name_proposal(video_file):

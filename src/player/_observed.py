@@ -12,9 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from src.uiutil.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
+from src.events import EventPlayerVideoTimeChanged, EventPlayerRemainingVideoTimeChanged, EventPlayerPercentChanged, \
     EventDistributor
-from src.player.bindings import MPV
+from src.player._bindings import MPV
 
 _TIME_TEMPLATE = "{}{:02d}:{:02d}"
 

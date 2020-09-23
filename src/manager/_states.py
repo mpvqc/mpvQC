@@ -23,8 +23,8 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
 from src.uiutil import dialogs as d
-from src.uiutil import messageboxes as md
-from src.uihandler.main_window import MainHandler as AppWindow
+from src import messageboxes as md
+from src.uihandler import MainHandler as AppWindow
 from src.widgets import CommentsTable as Table
 from src.widgets import MpvWidget
 from src.manager import Comment, _exporter

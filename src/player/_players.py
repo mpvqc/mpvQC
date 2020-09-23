@@ -18,7 +18,7 @@ from os import path
 from PyQt5.QtCore import QTime
 
 from src.uiutil import TIME_FORMAT
-from src.player.bindings import MPV
+from src.player._bindings import MPV
 
 
 class ActionType(Enum):

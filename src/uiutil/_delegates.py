@@ -12,13 +12,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal, QSize
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
     QStyledItemDelegate
 
 from src import settings
-from src.uiutil import TIME_FORMAT
-from src.uiutil.utils import SpecialCharacterValidator
+from src.uiutil._utils import SpecialCharacterValidator
+
+# Time format
+TIME_FORMAT = "HH:mm:ss"
 
 
 class NotifiableItemDelegate(QStyledItemDelegate):

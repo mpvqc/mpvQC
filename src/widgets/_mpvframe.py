@@ -18,12 +18,9 @@ from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent
 from PyQt5.QtWidgets import QFrame, QAbstractItemView
 
 from src import logging
-from src.uiutil import utils
-from src.uihandler.main_window import MainHandler
-from src.uiutil.utils import KEY_MAPPINGS
-from src.player import bindings
-from src.player.observed import MpvPropertyObserver
-from src.player.players import MpvPlayer, ActionType
+from src.player import MPV, MpvPropertyObserver, ActionType, MpvPlayer
+from src.uihandler import MainHandler
+from src.uiutil import KEY_MAPPINGS, command_generator
 
 
 class MpvWidget(QFrame):
@@ -45,7 +42,7 @@ class MpvWidget(QFrame):
         from src import get_files
         files = get_files()
 
-        __mpv = bindings.MPV(
+        __mpv = MPV(
             wid=str(int(self.winId())),
             keep_open="yes",
             idle="yes",
@@ -63,7 +60,7 @@ class MpvWidget(QFrame):
         self.player = MpvPlayer(__mpv)
         MpvPropertyObserver(__mpv)
 
-        from src.uihandler.dialog_about import AboutDialog
+        from src.uihandler import AboutDialog
         AboutDialog.VERSION_MPV = self.player.version_mpv()
         AboutDialog.VERSION_FFMPEG = self.player.ffmpeg_version()
 
@@ -152,14 +149,14 @@ class MpvWidget(QFrame):
         elif key == Qt.Key_Escape and mod == Qt.NoModifier:
             self.__main_handler.display_normal()
         elif key in KEY_MAPPINGS:
-            cmd = utils.command_generator(mod, *KEY_MAPPINGS[key])
+            cmd = command_generator(mod, *KEY_MAPPINGS[key])
         elif key != 0:
             try:
                 ks = chr(key)
             except ValueError:
                 pass
             else:
-                cmd = utils.command_generator(mod, ks, is_char=True)
+                cmd = command_generator(mod, ks, is_char=True)
         else:
             super(MpvWidget, self).keyPressEvent(e)
 
