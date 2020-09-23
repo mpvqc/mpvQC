@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui/search.ui'
+# Form implementation generated from reading ui file 'gui/search_form.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -15,8 +15,8 @@ class Ui_SearchForm(object):
     def setupUi(self, SearchForm):
         SearchForm.setObjectName("SearchForm")
         SearchForm.setWindowModality(QtCore.Qt.NonModal)
-        SearchForm.resize(601, 32)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        SearchForm.resize(890, 34)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(SearchForm.sizePolicy().hasHeightForWidth())
@@ -25,9 +25,14 @@ class Ui_SearchForm(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(SearchForm)
         self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setSpacing(5)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.searchLineEdit = QtWidgets.QLineEdit(SearchForm)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.searchLineEdit.sizePolicy().hasHeightForWidth())
+        self.searchLineEdit.setSizePolicy(sizePolicy)
         self.searchLineEdit.setMinimumSize(QtCore.QSize(250, 0))
         self.searchLineEdit.setObjectName("searchLineEdit")
         self.horizontalLayout.addWidget(self.searchLineEdit)
@@ -36,7 +41,7 @@ class Ui_SearchForm(object):
         self.previousButton.setFocusPolicy(QtCore.Qt.NoFocus)
         icon = QtGui.QIcon.fromTheme("go-up")
         self.previousButton.setIcon(icon)
-        self.previousButton.setFlat(True)
+        self.previousButton.setFlat(False)
         self.previousButton.setObjectName("previousButton")
         self.horizontalLayout.addWidget(self.previousButton)
         self.nextButton = QtWidgets.QPushButton(SearchForm)
@@ -44,7 +49,7 @@ class Ui_SearchForm(object):
         self.nextButton.setFocusPolicy(QtCore.Qt.NoFocus)
         icon = QtGui.QIcon.fromTheme("go-down")
         self.nextButton.setIcon(icon)
-        self.nextButton.setFlat(True)
+        self.nextButton.setFlat(False)
         self.nextButton.setObjectName("nextButton")
         self.horizontalLayout.addWidget(self.nextButton)
         spacerItem = QtWidgets.QSpacerItem(30, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
@@ -64,7 +69,7 @@ class Ui_SearchForm(object):
         self.searchCloseButton.setFocusPolicy(QtCore.Qt.NoFocus)
         icon = QtGui.QIcon.fromTheme("window-close")
         self.searchCloseButton.setIcon(icon)
-        self.searchCloseButton.setFlat(True)
+        self.searchCloseButton.setFlat(False)
         self.searchCloseButton.setObjectName("searchCloseButton")
         self.horizontalLayout.addWidget(self.searchCloseButton)
 

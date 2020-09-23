@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui/editConf.ui'
+# Form implementation generated from reading ui file 'gui/dialog_edit_config.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -11,15 +11,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_editConf(object):
-    def setupUi(self, editConf):
-        editConf.setObjectName("editConf")
-        editConf.resize(1024, 768)
-        editConf.setWindowTitle("")
-        self.verticalLayout = QtWidgets.QVBoxLayout(editConf)
+class Ui_SettingsDialogEditConfig(object):
+    def setupUi(self, SettingsDialogEditConfig):
+        SettingsDialogEditConfig.setObjectName("SettingsDialogEditConfig")
+        SettingsDialogEditConfig.resize(1024, 768)
+        SettingsDialogEditConfig.setWindowTitle("")
+        self.verticalLayout = QtWidgets.QVBoxLayout(SettingsDialogEditConfig)
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.title = QtWidgets.QLabel(editConf)
+        self.title = QtWidgets.QLabel(SettingsDialogEditConfig)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -31,10 +31,10 @@ class Ui_editConf(object):
         self.title.setText("Title")
         self.title.setObjectName("title")
         self.verticalLayout.addWidget(self.title)
-        self.subtitle = QtWidgets.QLabel(editConf)
+        self.subtitle = QtWidgets.QLabel(SettingsDialogEditConfig)
         self.subtitle.setObjectName("subtitle")
         self.verticalLayout.addWidget(self.subtitle)
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(editConf)
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(SettingsDialogEditConfig)
         self.plainTextEdit.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.plainTextEdit.setLineWidth(1)
         self.plainTextEdit.setDocumentTitle("")
@@ -43,27 +43,27 @@ class Ui_editConf(object):
         self.plainTextEdit.setCenterOnScroll(False)
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout.addWidget(self.plainTextEdit)
-        self.buttonBox = QtWidgets.QDialogButtonBox(editConf)
+        self.buttonBox = QtWidgets.QDialogButtonBox(SettingsDialogEditConfig)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(editConf)
-        self.buttonBox.accepted.connect(editConf.accept)
-        self.buttonBox.rejected.connect(editConf.reject)
-        QtCore.QMetaObject.connectSlotsByName(editConf)
+        self.retranslateUi(SettingsDialogEditConfig)
+        self.buttonBox.accepted.connect(SettingsDialogEditConfig.accept)
+        self.buttonBox.rejected.connect(SettingsDialogEditConfig.reject)
+        QtCore.QMetaObject.connectSlotsByName(SettingsDialogEditConfig)
 
-    def retranslateUi(self, editConf):
+    def retranslateUi(self, SettingsDialogEditConfig):
         _translate = QtCore.QCoreApplication.translate
-        self.subtitle.setText(_translate("editConf", "Changes will be applied after restart."))
+        self.subtitle.setText(_translate("SettingsDialogEditConfig", "Changes will be applied after restart."))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    editConf = QtWidgets.QDialog()
-    ui = Ui_editConf()
-    ui.setupUi(editConf)
-    editConf.show()
+    SettingsDialogEditConfig = QtWidgets.QDialog()
+    ui = Ui_SettingsDialogEditConfig()
+    ui.setupUi(SettingsDialogEditConfig)
+    SettingsDialogEditConfig.show()
     sys.exit(app.exec_())

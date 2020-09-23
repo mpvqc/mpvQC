@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui/editCommentTypes.ui'
+# Form implementation generated from reading ui file 'gui/dialog_edit_comment_types.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -11,17 +11,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_editCommentTypeDialog(object):
-    def setupUi(self, editCommentTypeDialog):
-        editCommentTypeDialog.setObjectName("editCommentTypeDialog")
-        editCommentTypeDialog.resize(400, 400)
-        editCommentTypeDialog.setMinimumSize(QtCore.QSize(400, 400))
-        self.gridLayout = QtWidgets.QGridLayout(editCommentTypeDialog)
+class Ui_CommentTypesDialog(object):
+    def setupUi(self, CommentTypesDialog):
+        CommentTypesDialog.setObjectName("CommentTypesDialog")
+        CommentTypesDialog.resize(400, 400)
+        CommentTypesDialog.setMinimumSize(QtCore.QSize(400, 400))
+        self.gridLayout = QtWidgets.QGridLayout(CommentTypesDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.title = QtWidgets.QLabel(editCommentTypeDialog)
+        self.title = QtWidgets.QLabel(CommentTypesDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -36,16 +36,16 @@ class Ui_editCommentTypeDialog(object):
         self.title.setFont(font)
         self.title.setObjectName("title")
         self.verticalLayout.addWidget(self.title)
-        self.subtitle = QtWidgets.QLabel(editCommentTypeDialog)
+        self.subtitle = QtWidgets.QLabel(CommentTypesDialog)
         self.subtitle.setObjectName("subtitle")
         self.verticalLayout.addWidget(self.subtitle)
         self.formLayout = QtWidgets.QFormLayout()
         self.formLayout.setSpacing(0)
         self.formLayout.setObjectName("formLayout")
-        self.lineEdit = QtWidgets.QLineEdit(editCommentTypeDialog)
+        self.lineEdit = QtWidgets.QLineEdit(CommentTypesDialog)
         self.lineEdit.setObjectName("lineEdit")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.lineEdit)
-        self.widget = QtWidgets.QWidget(editCommentTypeDialog)
+        self.widget = QtWidgets.QWidget(CommentTypesDialog)
         self.widget.setStyleSheet("QPushButton { text-align:left; padding: 8px; }")
         self.widget.setObjectName("widget")
         self.horizontalLayout_15 = QtWidgets.QHBoxLayout(self.widget)
@@ -109,35 +109,35 @@ class Ui_editCommentTypeDialog(object):
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.widget)
         self.verticalLayout.addLayout(self.formLayout)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
-        self.buttonBox = QtWidgets.QDialogButtonBox(editCommentTypeDialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(CommentTypesDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 1, 0, 1, 1)
 
-        self.retranslateUi(editCommentTypeDialog)
-        self.buttonBox.accepted.connect(editCommentTypeDialog.accept)
-        self.buttonBox.rejected.connect(editCommentTypeDialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(editCommentTypeDialog)
+        self.retranslateUi(CommentTypesDialog)
+        self.buttonBox.accepted.connect(CommentTypesDialog.accept)
+        self.buttonBox.rejected.connect(CommentTypesDialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(CommentTypesDialog)
 
-    def retranslateUi(self, editCommentTypeDialog):
+    def retranslateUi(self, CommentTypesDialog):
         _translate = QtCore.QCoreApplication.translate
-        editCommentTypeDialog.setWindowTitle(_translate("editCommentTypeDialog", "Edit comment types"))
-        editCommentTypeDialog.setAccessibleName(_translate("editCommentTypeDialog", "Comment types"))
-        self.title.setText(_translate("editCommentTypeDialog", "Manage comment types "))
-        self.subtitle.setText(_translate("editCommentTypeDialog", "Add new comment types or rearange them"))
-        self.lineEdit.setPlaceholderText(_translate("editCommentTypeDialog", "Type here to add new comment types"))
-        self.buttonAdd.setText(_translate("editCommentTypeDialog", "Add"))
-        self.buttonRemove.setText(_translate("editCommentTypeDialog", "Remove"))
-        self.buttonUp.setText(_translate("editCommentTypeDialog", "Move Up"))
-        self.buttonDown.setText(_translate("editCommentTypeDialog", "Move Down"))
+        CommentTypesDialog.setWindowTitle(_translate("CommentTypesDialog", "Edit comment types"))
+        CommentTypesDialog.setAccessibleName(_translate("CommentTypesDialog", "Comment types"))
+        self.title.setText(_translate("CommentTypesDialog", "Manage comment types "))
+        self.subtitle.setText(_translate("CommentTypesDialog", "Add new comment types or rearange them"))
+        self.lineEdit.setPlaceholderText(_translate("CommentTypesDialog", "Type here to add new comment types"))
+        self.buttonAdd.setText(_translate("CommentTypesDialog", "Add"))
+        self.buttonRemove.setText(_translate("CommentTypesDialog", "Remove"))
+        self.buttonUp.setText(_translate("CommentTypesDialog", "Move Up"))
+        self.buttonDown.setText(_translate("CommentTypesDialog", "Move Down"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    editCommentTypeDialog = QtWidgets.QDialog()
-    ui = Ui_editCommentTypeDialog()
-    ui.setupUi(editCommentTypeDialog)
-    editCommentTypeDialog.show()
+    CommentTypesDialog = QtWidgets.QDialog()
+    ui = Ui_CommentTypesDialog()
+    ui.setupUi(CommentTypesDialog)
+    CommentTypesDialog.show()
     sys.exit(app.exec_())

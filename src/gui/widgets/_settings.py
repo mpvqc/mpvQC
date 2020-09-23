@@ -27,7 +27,7 @@ class _Settings:
 
     @staticmethod
     def edit_comment_types(widget_context_menu):
-        from src.gui.uihandler.editCommentTypes import EditCommentTypesDialog
+        from src.gui.uihandler.dialog_edit_comment_types import EditCommentTypesDialog
         EditCommentTypesDialog().exec_()
         widget_context_menu.update_entries()
 
@@ -37,8 +37,8 @@ class _Settings:
 
         dialog = QInputDialog(parent)
         dialog.setInputMode(QInputDialog.TextInput)
-        dialog.setWindowTitle(_translate("SettingsDialog", "Edit username"))
-        dialog.setLabelText(_translate("SettingsDialog", "New username:"))
+        dialog.setWindowTitle(_translate("SettingsDialogNickname", "Edit nickname"))
+        dialog.setLabelText(_translate("SettingsDialogNickname", "New nickname:"))
         dialog.resize(400, 0)
         dialog.setTextValue(s.value)
 
@@ -82,9 +82,9 @@ class _Settings:
         s = settings.Setting_Custom_Language_LANGUAGE
 
         languages = {
-            "English": ("en", _translate("SettingsDialog", "English")),
-            "German": ("de", _translate("SettingsDialog", "German")),
-            "Italian": ("it", _translate("SettingsDialog", "Italian"))
+            "English": ("en", _translate("LanguageSelection", "English")),
+            "German": ("de", _translate("LanguageSelection", "German")),
+            "Italian": ("it", _translate("LanguageSelection", "Italian"))
         }
 
         menu.clear()
@@ -94,7 +94,7 @@ class _Settings:
             callback()
 
         for english, _tuple in languages.items():
-            action = menu.addAction(_translate("SettingsDialog", english))
+            action = menu.addAction(_translate("LanguageSelection", english))
             action.setIconVisibleInMenu(True)
             action.setCheckable(True)
             action.setChecked(s.value == _tuple[0])
@@ -107,20 +107,20 @@ class _Settings:
 
     @staticmethod
     def edit_mpv_conf():
-        from src.gui.uihandler.editConf import EditConfDialog
+        from src.gui.uihandler.dialog_edit_config import EditConfDialog
 
         dialog = EditConfDialog(settings.Setting_Custom_Configuration_MPV, title="mpv.conf")
-        dialog.setWindowTitle(_translate("SettingsDialog", "Edit mpv.conf"))
+        dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit mpv.conf"))
 
         if dialog.exec_():
             settings.save()
 
     @staticmethod
     def edit_input_conf():
-        from src.gui.uihandler.editConf import EditConfDialog
+        from src.gui.uihandler.dialog_edit_config import EditConfDialog
 
         dialog = EditConfDialog(settings.Setting_Custom_Configuration_INPUT, title="input.conf")
-        dialog.setWindowTitle(_translate("SettingsDialog", "Edit input.conf"))
+        dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit input.conf"))
 
         if dialog.exec_():
             settings.save()
@@ -156,8 +156,8 @@ class _Settings:
 
         dialog = QInputDialog(parent)
         dialog.setInputMode(QInputDialog.IntInput)
-        dialog.setWindowTitle(_translate("SettingsDialog", "Set backup interval"))
-        dialog.setLabelText(_translate("SettingsDialog", "Set backup interval in seconds:"))
+        dialog.setWindowTitle(_translate("SettingsDialogBackupInterval", "Set backup interval"))
+        dialog.setLabelText(_translate("SettingsDialogBackupInterval", "Set backup interval in seconds:"))
         dialog.setIntMinimum(15)
         dialog.setIntMaximum(3600)
         dialog.setIntValue(s.value)
@@ -175,7 +175,7 @@ class _Settings:
 
     @staticmethod
     def display_about_dialog():
-        from src.gui.uihandler.about import AboutDialog
+        from src.gui.uihandler.dialog_about import AboutDialog
         AboutDialog().exec_()
 
 

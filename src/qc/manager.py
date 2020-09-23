@@ -17,6 +17,7 @@
 
 
 from PyQt5.QtCore import pyqtSignal, QObject, QTimer
+from PyQt5.QtWidgets import QMessageBox
 
 from src import settings
 from src.gui import dialogs, messageboxes
@@ -150,8 +151,8 @@ class QcManager(QObject):
 
         self.__m.player.pause()
 
-        leave = messageboxes.QuitNotSavedMB().exec_()
-        if leave:  # Still leave
+        do_quit = messageboxes.QuitNotSavedMB().exec_()
+        if do_quit == QMessageBox.Yes:  # Still leave
             return True
         return False
 

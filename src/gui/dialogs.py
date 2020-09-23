@@ -32,7 +32,11 @@ _FILTER_SUBS = " ".join(["*" + x for x in SUPPORTED_SUB_FILES])
 
 def generate_file_name_proposal(video_file):
     nick = ("_" + settings.Setting_Custom_General_NICKNAME.value) or ""
-    video = path.splitext(path.basename(video_file))[0] if video_file else _translate("Dialogs", "untitled")
+
+    # For translator: The file name proposal if video file is unknown
+    untitled = _translate("FileInteractionDialogs", "untitled")
+
+    video = path.splitext(path.basename(video_file))[0] if video_file else untitled
     return "[QC]_{0}{1}.txt".format(video, nick)
 
 
@@ -44,13 +48,13 @@ def get_open_video(parent=None) -> path or None:
     :return: the selected file or None if abort
     """
 
-    file_filter = _translate("Dialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
-                  _translate("Dialogs", "All files") + " (*.*)"
+    file_filter = _translate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
+                  _translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     directory = settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value
 
     new_video_path = QFileDialog.getOpenFileName(parent=parent,
-                                                 caption=_translate("Dialogs", "Open Video File"),
+                                                 caption=_translate("FileInteractionDialogs", "Open Video File"),
                                                  directory=directory,
                                                  filter=file_filter
                                                  )[0]
@@ -69,13 +73,13 @@ def get_open_subs(parent=None) -> List[str] or None:
     :return: the selected file or None if abort
     """
 
-    file_filter = _translate("Dialogs", "Subtitle files") + " ({});;".format(_FILTER_SUBS) + \
-                  _translate("Dialogs", "All files") + " (*.*)"
+    file_filter = _translate("FileInteractionDialogs", "Subtitle files") + " ({});;".format(_FILTER_SUBS) + \
+                  _translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     directory = settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value
 
     new_subtitle_paths = QFileDialog.getOpenFileNames(parent=parent,
-                                                      caption=_translate("Dialogs", "Open Subtitle File"),
+                                                      caption=_translate("FileInteractionDialogs", "Open Subtitle File"),
                                                       directory=directory,
                                                       filter=file_filter)[0]
 
@@ -96,9 +100,9 @@ def get_open_file_names(parent=None) -> List[str] or None:
     directory = settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value
 
     new_document_paths = QFileDialog.getOpenFileNames(parent=parent,
-                                                      caption=_translate("Dialogs", "Open QC Document"),
+                                                      caption=_translate("FileInteractionDialogs", "Open QC Document"),
                                                       directory=directory,
-                                                      filter=_translate("Dialogs",
+                                                      filter=_translate("FileInteractionDialogs",
                                                                         "QC documents (*.txt);;All files (*.*)"), )[0]
 
     if new_document_paths:
@@ -121,9 +125,9 @@ def get_save_file_name(video_file: str, parent=None) -> path or None:
     directory = "{0}/{1}".format(settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT.value, txt_proposal)
 
     new_file_name = QFileDialog.getSaveFileName(parent=parent,
-                                                caption=_translate("Dialogs", "Save QC document as"),
+                                                caption=_translate("FileInteractionDialogs", "Save QC document as"),
                                                 directory=directory,
-                                                filter=_translate("Dialogs", "QC documents (*.txt);;All files (*.*)"),
+                                                filter=_translate("FileInteractionDialogs", "QC documents (*.txt);;All files (*.*)"),
                                                 )[0]
 
     if new_file_name:
@@ -142,7 +146,7 @@ def get_open_network_stream(parent) -> path or None:
 
     return QInputDialog.getText(
         parent,
-        _translate("Dialogs", "Open network stream"),
-        _translate("Dialogs", "Enter URL"),
+        _translate("FileInteractionDialogs", "Open network stream"),
+        _translate("FileInteractionDialogs", "Enter URL"),
         flags=Qt.WindowFlags(_flags),
     )[0]

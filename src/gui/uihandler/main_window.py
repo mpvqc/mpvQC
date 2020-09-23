@@ -23,8 +23,8 @@ from src import settings
 from src.gui import SUPPORTED_SUB_FILES
 from src.gui.dialogs import get_open_network_stream
 from src.gui.events import EventDistributor, EventReceiver
-from src.gui.generated.main import Ui_MainPlayerView
-from src.gui.uihandler.search import SearchHandler
+from src.gui.generated.main_window import Ui_MainWindow
+from src.gui.uihandler.search_form import SearchHandler
 
 _translate = QCoreApplication.translate
 
@@ -41,7 +41,7 @@ class MainHandler(QMainWindow):
         self.setAcceptDrops(True)
 
         # User interface setup
-        self.__ui = Ui_MainPlayerView()
+        self.__ui = Ui_MainWindow()
         self.__ui.setupUi(self)
 
         # Widgets
@@ -234,10 +234,10 @@ class MainHandler(QMainWindow):
         elif value == 1 and self.__current_video_file:
             txt = self.__current_video_file
         else:
-            txt = _translate("MainPlayerView", "MainWindow")
+            txt = _translate("MainWindow", "MainWindow")
 
         self.setWindowTitle(
-            txt + " " + (_translate("MainPlayerView", "(unsaved)") if self.__qc_manager_has_changes else ""))
+            txt + " " + (_translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
         from src import get_files

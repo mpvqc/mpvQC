@@ -20,10 +20,11 @@ from abc import abstractmethod, ABC
 from typing import Optional, Tuple, List
 
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QMessageBox
 
 from src.gui import dialogs as d
 from src.gui import messageboxes as md
-from src.gui.uihandler.main import MainHandler as AppWindow
+from src.gui.uihandler.main_window import MainHandler as AppWindow
 from src.gui.widgets import CommentsTable as Table
 from src.gui.widgets import MpvWidget
 from src.qc import Comment, _exporter
@@ -144,8 +145,8 @@ class State(ABC):
         """
 
         if self.__has_changes:
-            create_new = md.NewQCDocumentOldNotSavedMB().exec_()
-            if create_new:  # Clear comments
+            do_create_new = md.NewQCDocumentOldNotSavedMB().exec_()
+            if do_create_new == QMessageBox.Yes:  # Clear comments
                 pass
             else:  # Abort
                 return self.copy()
@@ -223,11 +224,11 @@ class State(ABC):
 
             if t.get_all_comments():
                 result = md.WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB().exec_()
-                if result == 0:  # Abort import
+                if result == QMessageBox.Abort:  # Abort import
                     return True
-                elif result == 1:  # Delete existing
+                elif result == 0:  # Delete existing
                     t.reset_comments_table()
-                elif result == 2:  # Keep comments and add new
+                elif result == 1:  # Keep comments and add new
                     pass
 
             t.add_comments(comments)
@@ -239,7 +240,7 @@ class State(ABC):
             """
 
             do_open = md.ValidVideoFileFoundMB().exec_()
-            if do_open:
+            if do_open == QMessageBox.Yes:
                 __open_video(vid)
                 return True
             return False

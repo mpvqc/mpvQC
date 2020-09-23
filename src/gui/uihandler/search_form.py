@@ -16,7 +16,7 @@ from PyQt5.QtCore import Qt, QEvent, QModelIndex
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QWidget
 
-from src.gui.generated.search import Ui_SearchForm
+from src.gui.generated.search_form import Ui_SearchForm
 from src.gui.searchutils import SearchResult
 from src.gui.utils import SpecialCharacterValidator
 

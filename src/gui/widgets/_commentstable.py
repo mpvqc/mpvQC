@@ -23,7 +23,7 @@ from src.gui.delegates import CommentTimeDelegate, CommentTypeDelegate, CommentN
 from src.gui.events import EventDistributor, EventCommentAmountChanged, EventCommentCurrentSelectionChanged, \
     EventReceiver
 from src.gui.searchutils import SearchResult
-from src.gui.uihandler.main import MainHandler
+from src.gui.uihandler.main_window import MainHandler
 from src.qc import Comment
 
 _translate = QCoreApplication.translate

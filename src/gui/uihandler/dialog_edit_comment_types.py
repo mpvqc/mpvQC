@@ -15,10 +15,10 @@
 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QPushButton
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
 from src import settings
-from src.gui.generated.editCommentTypes import Ui_editCommentTypeDialog
+from src.gui.generated.dialog_edit_comment_types import Ui_CommentTypesDialog
 
 _translate = QCoreApplication.translate
 
@@ -27,13 +27,11 @@ class EditCommentTypesDialog(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.__ui = Ui_editCommentTypeDialog()
+        self.__ui = Ui_CommentTypesDialog()
         self.__ui.setupUi(self)
 
-        self.restore_default_button = QPushButton(_translate("EditConfigurationCustomDialog", "Reset"))
-        self.restore_default_button.clicked.connect(self.reset)
-
-        self.__ui.buttonBox.addButton(self.restore_default_button, QDialogButtonBox.ResetRole)
+        self.reset_button = self.__ui.buttonBox.addButton(QDialogButtonBox.Reset)
+        self.reset_button.clicked.connect(self.reset)
 
         from src.gui.widgets import PreferenceCommentTypesWidget
 
