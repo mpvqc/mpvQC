@@ -40,14 +40,15 @@ class AboutDialog(QDialog):
         self.__ui.aboutTextBrowser.setOpenExternalLinks(True)
         self.__ui.aboutTextBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
 
-        from start import APPLICATION_VERSION
         import platform
-        from start import APPLICATION_NAME
+
+        from src import get_metadata
+        md = get_metadata()
 
         self.__ui.aboutTextBrowser.setHtml(ABOUT.format(
-            version=APPLICATION_VERSION,
+            version=md.app_version,
             platform=platform.architecture()[0],
-            app_name=APPLICATION_NAME,
+            app_name=md.app_name,
             version_mpv=self.VERSION_MPV,
             version_ffmpeg=self.VERSION_FFMPEG,
             years="2016-2018")

@@ -13,6 +13,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+from src._metadata import Metadata, get_metadata
+
 CFG_MPV = """#########
 # Video #
 #########

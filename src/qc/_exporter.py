@@ -24,7 +24,6 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from src import settings
 from src.files import Files
 from src.qc import Comment
-from start import APPLICATION_NAME, APPLICATION_VERSION
 
 
 def __prepare_file_content(b_header: bool,
@@ -77,13 +76,16 @@ def get_file_content(video_path: Optional[str], comments: Tuple[Comment]):
     :return: the file content of the qc document as a string
     """
 
+    from src import get_metadata
+    md = get_metadata()
+
     b_header = True
 
     b_date = True
     v_date = str(datetime.now().replace(microsecond=0))
 
     b_generator = True
-    v_generator = "{} {}".format(APPLICATION_NAME, APPLICATION_VERSION)
+    v_generator = "{} {}".format(md.app_name, md.app_version)
 
     b_nick = settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.value
     v_nick = settings.Setting_Custom_General_NICKNAME.value

@@ -18,7 +18,6 @@ from pathlib import Path
 
 
 class Files:
-
     # todo rewrite and get rid of this class since it's not boilerplate java :)
     # todo/discussion Maybe use QT's internal settings API to store user settings
 
@@ -47,10 +46,11 @@ class Files:
         Will setup all non existing folders. Files will be created in the settings.py.
         """
 
-        from start import APPLICATION_NAME, DIRECTORY_PROGRAM
+        from src import get_metadata
+        md = get_metadata()
 
-        Files.__APPLICATION_NAME = APPLICATION_NAME
-        Files.DIRECTORY_PROGRAM = DIRECTORY_PROGRAM
+        Files.__APPLICATION_NAME = md.app_name
+        Files.DIRECTORY_PROGRAM = md.dir_program
 
         Files.__DIRECTORY_ROOT_CONFIGURATION = Files.__find_directory_root_configuration()
         Files.DIRECTORY_AUTOSAVE = Files.__find_directory_autosave()

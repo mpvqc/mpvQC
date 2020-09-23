@@ -113,18 +113,20 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
 
 
 class CheckForUpdates(QMessageBox):
-
     _UPDATER_URL = "https://mpvqc.rekt.cc/download/latest.txt"
 
     def __init__(self):
         super().__init__()
-        from start import APPLICATION_VERSION
+
         import requests
+
+        from src import get_metadata
+        md = get_metadata()
 
         try:
             r = requests.get(self._UPDATER_URL, timeout=5)
             version_new = r.text.strip()
-            if APPLICATION_VERSION != version_new:
+            if md.app_version != version_new:
                 self.setWindowTitle(_translate("VersionCheck", "New version available"))
                 self.setText(
                     _translate("VersionCheck", "There is a new version of mpvQC available ({}).<br>"
