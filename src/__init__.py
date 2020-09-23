@@ -13,6 +13,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+from src._files import Files, get_files
 from src._metadata import Metadata, get_metadata
 
 CFG_MPV = """#########
@@ -62,9 +63,15 @@ osd-bar-align-y=0
 # Screenshots #
 ###############
 
+# Screenshot directory on portable version:
+#  => In the directory from where you run the app there is a folder called 'appdata' and then 'screenshots'. 
+# Screenshot directory on non portable version:
+#  => In your user's pictures directory there is a folder called 'mpvQC'
+# You can still override the directory here
+# screenshot-directory=~~/../Screenshots/
+
 screenshot-format=png
 screenshot-high-bit-depth=no
-screenshot-directory=~~/../Screenshots/
 """
 
 CFG_INPUT = """############################################

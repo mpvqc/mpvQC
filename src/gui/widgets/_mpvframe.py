@@ -18,7 +18,6 @@ from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent
 from PyQt5.QtWidgets import QFrame, QAbstractItemView
 
 from src import logging
-from src.files import Files
 from src.gui import utils
 from src.gui.uihandler.main import MainHandler
 from src.gui.utils import KEY_MAPPINGS
@@ -43,6 +42,9 @@ class MpvWidget(QFrame):
         self.setMouseTracking(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
 
+        from src import get_files
+        files = get_files()
+
         __mpv = bindings.MPV(
             wid=str(int(self.winId())),
             keep_open="yes",
@@ -52,7 +54,8 @@ class MpvWidget(QFrame):
             input_cursor="no",
             input_default_bindings="no",
             config="yes",
-            config_dir=Files.DIRECTORY_CONFIGURATION,
+            config_dir=files.dir_config,
+            screenshot_directory=files.dir_screenshots,
             ytdl="yes",
             log_handler=logging.mpv_log_handler,
         )

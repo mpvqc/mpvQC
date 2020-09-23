@@ -21,8 +21,8 @@ from os import path
 from typing import Optional, Tuple
 from zipfile import ZipFile, ZIP_DEFLATED
 
+from src import get_metadata, get_files
 from src import settings
-from src.files import Files
 from src.qc import Comment
 
 
@@ -76,7 +76,6 @@ def get_file_content(video_path: Optional[str], comments: Tuple[Comment]):
     :return: the file content of the qc document as a string
     """
 
-    from src import get_metadata
     md = get_metadata()
 
     b_header = True
@@ -124,7 +123,7 @@ def write_auto_save(video_path, file_content):
     today = str(datetime.today())
 
     zip_name = "{}.zip".format("-".join(today.split("-")[:2]))
-    zip_path = path.join(Files.DIRECTORY_AUTOSAVE, zip_name)
+    zip_path = path.join(get_files().dir_backup, zip_name)
     zip_file = ZipFile(zip_path, "a" if path.isfile(zip_path) else "w", compression=ZIP_DEFLATED)
 
     file_name = "{}-{}.txt".format(today.replace(":", "-").replace(" ", "_"),

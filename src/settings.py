@@ -12,6 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 import io
 import json
 import locale
@@ -21,8 +22,7 @@ from typing import Dict
 
 from PyQt5.QtCore import QCoreApplication
 
-from src import CFG_MPV, CFG_INPUT
-from src.files import Files
+from src import CFG_MPV, CFG_INPUT, get_files
 
 _translate = QCoreApplication.translate
 
@@ -39,7 +39,7 @@ __for_translation_only = [
 ]
 
 
-# todo use python configparser module instead of json
+# todo use qt settings modules
 
 class Entry:
     """
@@ -148,8 +148,8 @@ Setting_Custom_General_COMMENT_TYPES = \
 
 Setting_Custom_Language_LANGUAGE = \
     Entry("custom_language_language", "de" if locale.getdefaultlocale()[0].startswith("de") else
-                                      "it" if locale.getdefaultlocale()[0].startswith("it") else
-                                      "en")
+    "it" if locale.getdefaultlocale()[0].startswith("it") else
+    "en")
 
 ########################################################################## PREFERENCES -> QC DOCUMENT ### CUSTOMIZATION
 
@@ -168,10 +168,10 @@ Setting_Custom_QcDocument_WRITE_NICK_TO_FILE = \
 ######################################################################## PREFERENCES -> CONFIGURATION ### CUSTOMIZATION
 
 Setting_Custom_Configuration_INPUT = \
-    Entry(Files.FILE_CONF_INPUT, CFG_INPUT)
+    Entry(get_files().file_input_conf, CFG_INPUT)
 
 Setting_Custom_Configuration_MPV = \
-    Entry(Files.FILE_CONF_MPV, CFG_MPV)
+    Entry(get_files().file_mpv_conf, CFG_MPV)
 
 ########################################################################### PREFERENCES -> APPEARANCE ### CUSTOMIZATION
 
@@ -214,11 +214,11 @@ SettingJsonSettingConfs = SettingJson + SettingConfs
 #######################################################################################################################
 
 def __read_json():
-    file = Files.FILE_SETTINGS
-    if not os.path.isfile(file):
+    file_settings = get_files().file_settings
+    if not os.path.isfile(file_settings):
         __write_json()
 
-    with open(Files.FILE_SETTINGS) as df:
+    with open(file_settings) as df:
         json_values: Dict = json.load(df)
 
     for json_setting in SettingJson:
@@ -233,7 +233,7 @@ def __write_json():
             s.identifier: s._value if s._value is not None else s.default_value
         })
 
-    with io.open(Files.FILE_SETTINGS, 'w', encoding='utf8') as file:
+    with io.open(get_files().file_settings, 'w', encoding='utf8') as file:
         str_ = json.dumps(dictionary, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
         file.write(str(str_))
 

@@ -15,8 +15,10 @@
 
 def run(dir_program: str, app_version: str, app_name: str):
     from src._metadata import set_metadata
+    from src._files import set_files
 
     set_metadata(dir_program, app_version, app_name)
+    set_files()
 
     import sys
 

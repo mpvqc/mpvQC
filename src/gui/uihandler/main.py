@@ -240,14 +240,12 @@ class MainHandler(QMainWindow):
             txt + " " + (_translate("MainPlayerView", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
-        from src.files import Files
+        from src import get_files
 
-        _locale_structure = path.join(Files.DIRECTORY_PROGRAM, "i18n")
-        trans_present = path.isdir(_locale_structure)
-
-        if trans_present:
+        i18n = get_files().dir_i18n
+        if i18n.is_dir():
             self.application.removeTranslator(self.__translator)
-            self.__translator.load(settings.Setting_Custom_Language_LANGUAGE.value, _locale_structure)
+            self.__translator.load(settings.Setting_Custom_Language_LANGUAGE.value, str(i18n))
             self.application.installTranslator(self.__translator)
             settings.Setting_Custom_General_COMMENT_TYPES.update()
             self.widget_context_menu.update_entries()
