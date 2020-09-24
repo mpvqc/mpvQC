@@ -56,7 +56,7 @@
       </size>
      </property>
      <property name="placeholderText">
-      <string>Find in comments</string>
+      <string>Search...</string>
      </property>
     </widget>
    </item>

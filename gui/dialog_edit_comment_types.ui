@@ -17,10 +17,10 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Edit comment types</string>
+   <string>Edit Comment Types</string>
   </property>
   <property name="accessibleName">
-   <string>Comment types</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -46,14 +46,14 @@
         </font>
        </property>
        <property name="text">
-        <string>Manage comment types </string>
+        <string>Comment Types </string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="subtitle">
        <property name="text">
-        <string>Add new comment types or rearange them</string>
+        <string>Add new comment types or rearange them.</string>
        </property>
       </widget>
      </item>

@@ -44,7 +44,7 @@ class Files:
             documents = Path(QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation))
             pictures = Path(QStandardPaths.writableLocation(QStandardPaths.PicturesLocation))
 
-            self.__dir_backup = documents / app_name / "backup"
+            self.__dir_backup = documents / app_name / "backups"
             self.__dir_config = config / app_name
             self.__dir_screenshots = pictures / app_name
 

@@ -78,7 +78,7 @@ class Ui_SearchForm(object):
 
     def retranslateUi(self, SearchForm):
         _translate = QtCore.QCoreApplication.translate
-        self.searchLineEdit.setPlaceholderText(_translate("SearchForm", "Find in comments"))
+        self.searchLineEdit.setPlaceholderText(_translate("SearchForm", "Search..."))
         self.previousButton.setText(_translate("SearchForm", "Previous"))
         self.nextButton.setText(_translate("SearchForm", "Next"))
         self.searchCloseButton.setText(_translate("SearchForm", "Close"))

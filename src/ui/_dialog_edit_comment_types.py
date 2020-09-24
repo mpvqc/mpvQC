@@ -16,6 +16,7 @@ class Ui_CommentTypesDialog(object):
         CommentTypesDialog.setObjectName("CommentTypesDialog")
         CommentTypesDialog.resize(400, 400)
         CommentTypesDialog.setMinimumSize(QtCore.QSize(400, 400))
+        CommentTypesDialog.setAccessibleName("")
         self.gridLayout = QtWidgets.QGridLayout(CommentTypesDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
@@ -122,10 +123,9 @@ class Ui_CommentTypesDialog(object):
 
     def retranslateUi(self, CommentTypesDialog):
         _translate = QtCore.QCoreApplication.translate
-        CommentTypesDialog.setWindowTitle(_translate("CommentTypesDialog", "Edit comment types"))
-        CommentTypesDialog.setAccessibleName(_translate("CommentTypesDialog", "Comment types"))
-        self.title.setText(_translate("CommentTypesDialog", "Manage comment types "))
-        self.subtitle.setText(_translate("CommentTypesDialog", "Add new comment types or rearange them"))
+        CommentTypesDialog.setWindowTitle(_translate("CommentTypesDialog", "Edit Comment Types"))
+        self.title.setText(_translate("CommentTypesDialog", "Comment Types "))
+        self.subtitle.setText(_translate("CommentTypesDialog", "Add new comment types or rearange them."))
         self.lineEdit.setPlaceholderText(_translate("CommentTypesDialog", "Type here to add new comment types"))
         self.buttonAdd.setText(_translate("CommentTypesDialog", "Add"))
         self.buttonRemove.setText(_translate("CommentTypesDialog", "Remove"))

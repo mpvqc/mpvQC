@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>mpvQC</string>
+   <string notr="true">mpvQC</string>
   </property>
   <widget class="QWidget" name="mainWindowContentWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -72,7 +72,7 @@
     </property>
     <widget class="QMenu" name="menuWindowTitle">
      <property name="title">
-      <string>Window title</string>
+      <string>Window Title</string>
      </property>
      <addaction name="actionWindowTitleDefault"/>
      <addaction name="actionWindowTitleFile"/>
@@ -80,7 +80,7 @@
     </widget>
     <widget class="QMenu" name="menuDocumentSettings">
      <property name="title">
-      <string>Document settings</string>
+      <string>QC Document Export</string>
      </property>
      <addaction name="actionSaveVideoPathToDocument"/>
      <addaction name="actionSaveNickNameToDocument"/>
@@ -126,7 +126,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;New QC document</string>
+    <string>&amp;New QC Document</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -138,7 +138,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open QC document(s) ...</string>
+    <string>&amp;Open QC Documents...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -150,7 +150,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Save QC document</string>
+    <string>&amp;Save QC Document</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -162,7 +162,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>S&amp;ave QC document as ...</string>
+    <string>S&amp;ave QC Document As...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -186,7 +186,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open &amp;video ...</string>
+    <string>Open &amp;Video...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
@@ -198,7 +198,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open &amp;network stream ...</string>
+    <string>Open &amp;Network Stream...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+Shift+O</string>
@@ -210,7 +210,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Resize video to original resolution</string>
+    <string>&amp;Resize Video to Original Resolution</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -267,17 +267,17 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open subtitle ...</string>
+    <string>&amp;Open Subtitles...</string>
    </property>
   </action>
   <action name="actionEditCommentTypes">
    <property name="text">
-    <string>Edit comment types ...</string>
+    <string>Edit Comment Types...</string>
    </property>
   </action>
   <action name="actionEditNickname">
    <property name="text">
-    <string>Edit nickname ...</string>
+    <string>Edit Nickname...</string>
    </property>
   </action>
   <action name="actionWindowTitleDefault">
@@ -288,7 +288,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Default title</string>
+    <string>Default Title</string>
    </property>
   </action>
   <action name="actionWindowTitleFile">
@@ -299,7 +299,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Video file</string>
+    <string>Video File</string>
    </property>
   </action>
   <action name="actionWindowTitlePath">
@@ -310,7 +310,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Video path</string>
+    <string>Video Path</string>
    </property>
   </action>
   <action name="actionDarkTheme">
@@ -318,17 +318,17 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Dark theme</string>
+    <string>Enable Dark Theme</string>
    </property>
   </action>
   <action name="actionEditMpvConf">
    <property name="text">
-    <string>Edit mpv.conf ...</string>
+    <string>Edit mpv.conf...</string>
    </property>
   </action>
   <action name="actionEditInputConf">
    <property name="text">
-    <string>Edit input.conf ...</string>
+    <string>Edit input.conf...</string>
    </property>
   </action>
   <action name="actionDocumentBackups">
@@ -336,12 +336,12 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Document backups</string>
+    <string>Enable Backups</string>
    </property>
   </action>
   <action name="actionDocumentBackupInterval">
    <property name="text">
-    <string>Document backup interval ...</string>
+    <string>Set Backup Interval...</string>
    </property>
   </action>
   <action name="actionSaveNickNameToDocument">
@@ -352,7 +352,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Save nickname</string>
+    <string>Save Nickname</string>
    </property>
   </action>
   <action name="actionSaveVideoPathToDocument">
@@ -360,12 +360,12 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Save video path</string>
+    <string>Save Video Path</string>
    </property>
   </action>
   <action name="action_3">
    <property name="text">
-    <string notr="true">__</string>
+    <string notr="true">placeholder</string>
    </property>
   </action>
   <action name="actionCheckForUpdates_2">
@@ -374,7 +374,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Check for updates ...</string>
+    <string>Check For Updates...</string>
    </property>
   </action>
  </widget>

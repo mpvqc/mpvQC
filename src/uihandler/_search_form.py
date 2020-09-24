@@ -68,9 +68,7 @@ class SearchHandler(QWidget):
                 self.show()
             else:
                 self.hide()
-        elif key == Qt.Key_Up and mod == Qt.NoModifier:
-            pass
-        elif key == Qt.Key_Down and mod == Qt.NoModifier:
+        elif mod == Qt.NoModifier and (key == Qt.Key_Up or key == Qt.Key_Down):
             pass
         elif key == Qt.Key_Return:  # Enter
             if mod == Qt.ShiftModifier:

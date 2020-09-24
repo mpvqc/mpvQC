@@ -232,7 +232,7 @@ class MainHandler(QMainWindow):
         elif value == 1 and self.__current_video_file:
             txt = self.__current_video_file
         else:
-            txt = _translate("MainWindow", "MainWindow")
+            txt = "mpvQC"
 
         self.setWindowTitle(
             txt + " " + (_translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))

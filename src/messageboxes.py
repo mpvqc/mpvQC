@@ -45,9 +45,9 @@ class QuitNotSavedMB(QMessageBox):
 
     def __init__(self):
         super().__init__()
-        self.setIcon(QMessageBox.Warning)
+        self.setWindowTitle(_translate("MessageBoxes", "Unsaved Changes"))
         self.setText(_translate("MessageBoxes", "Do you really want to quit without saving your QC?"))
-        self.setWindowTitle(_translate("MessageBoxes", "Discard QC"))
+        self.setIcon(QMessageBox.Critical)
         self.addButton(QMessageBox.Yes)
         self.addButton(QMessageBox.No)
 
@@ -59,10 +59,10 @@ class NewQCDocumentOldNotSavedMB(QMessageBox):
 
     def __init__(self):
         super().__init__()
-        self.setIcon(QMessageBox.Warning)
-        self.setText(
-            _translate("MessageBoxes", "Do you really want to create a new QC Document without saving your QC?"))
-        self.setWindowTitle(_translate("MessageBoxes", "Create new QC document"))
+        self.setWindowTitle(_translate("MessageBoxes", "Unsaved Changes"))
+        self.setText(_translate("MessageBoxes",
+                                "Do you really want to create a new QC document without saving your QC?"))
+        self.setIcon(QMessageBox.Critical)
         self.addButton(QMessageBox.Yes)
         self.addButton(QMessageBox.No)
 
@@ -74,9 +74,9 @@ class ValidVideoFileFoundMB(QMessageBox):
 
     def __init__(self):
         super().__init__()
+        self.setWindowTitle(_translate("MessageBoxes", "Video Found"))
+        self.setText(_translate("MessageBoxes", "A video was found. Do you want to open it?"))
         self.setIcon(QMessageBox.Question)
-        self.setText(_translate("MessageBoxes", "A valid video file was found. Do you want to open it?"))
-        self.setWindowTitle(_translate("MessageBoxes", "Open corresponding video file"))
         self.addButton(QMessageBox.Yes)
         self.addButton(QMessageBox.No)
 
@@ -89,8 +89,9 @@ class WhatToDoWithExistingCommentsWhenOpeningNewQCDocumentMB(QMessageBox):
     def __init__(self):
         super().__init__()
         self.setIcon(QMessageBox.Question)
-        self.setText(_translate("MessageBoxes", "What would you want to do with all existing comments?"))
-        self.setWindowTitle(_translate("MessageBoxes", "How to proceed"))
+        self.setWindowTitle(_translate("MessageBoxes", "Existing Comments"))
+        self.setText(_translate("MessageBoxes", "What do you want to do with the existing comments?"))
+        self.setIcon(QMessageBox.Question)
         self.addButton(QMessageBox.Abort)
         self.addButton(_translate("MessageBoxes", "Delete"), QMessageBox.YesRole)
         self.addButton(_translate("MessageBoxes", "Keep"), QMessageBox.NoRole)
@@ -104,9 +105,9 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
     def __init__(self, not_valid_files: List[str]):
         super().__init__()
 
-        self.setWindowTitle(_translate("MessageBoxes", "Wrong files"))
+        self.setWindowTitle(_translate("MessageBoxes", "Imported Document Not Compatible"))
         self.setText(_translate(
-            "MessageBoxes", "The following file(s) are not considered valid:", "", len(not_valid_files)))
+            "MessageBoxes", "The following file(s) are not compatible:", "", len(not_valid_files)))
         self.setInformativeText("- " + "\n\n".join(not_valid_files))
         self.setIcon(QMessageBox.Information)
         self.addButton(QMessageBox.Ok)
@@ -127,16 +128,22 @@ class CheckForUpdates(QMessageBox):
             r = requests.get(self._UPDATER_URL, timeout=5)
             version_new = r.text.strip()
             if md.app_version != version_new:
-                self.setWindowTitle(_translate("VersionCheckDialog", "New version available"))
+                self.setWindowTitle(_translate("VersionCheckDialog", "New Version Available"))
                 self.setText(
                     _translate("VersionCheckDialog", "There is a new version of mpvQC available ({}).<br>"
                                                      "Visit <a href='https://mpvqc.rekt.cc/'>"
                                                      "https://mpvqc.rekt.cc/</a> to download it.").format(version_new))
+                self.setIcon(QMessageBox.Information)
             else:
                 self.setWindowTitle("👌")
                 self.setText(
                     _translate("VersionCheckDialog", "You are already using the most recent version of mpvQC!"))
+                self.setIcon(QMessageBox.Information)
         except requests.exceptions.ConnectionError:
+            self.setWindowTitle(_translate("VersionCheckDialog", "Server Not Reachable"))
             self.setText(_translate("VersionCheckDialog", "A connection to the server could not be established."))
+            self.setIcon(QMessageBox.Warning)
         except requests.exceptions.Timeout:
+            self.setWindowTitle(_translate("VersionCheckDialog", "Server Not Reachable"))
             self.setText(_translate("VersionCheckDialog", "The server did not respond quickly enough."))
+            self.setIcon(QMessageBox.Warning)

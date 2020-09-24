@@ -37,7 +37,7 @@ class _Settings:
 
         dialog = QInputDialog(parent)
         dialog.setInputMode(QInputDialog.TextInput)
-        dialog.setWindowTitle(_translate("SettingsDialogNickname", "Edit nickname"))
+        dialog.setWindowTitle(_translate("SettingsDialogNickname", "Edit Nickname"))
         dialog.setLabelText(_translate("SettingsDialogNickname", "New nickname:"))
         dialog.resize(400, 0)
         dialog.setTextValue(s.value)
@@ -156,7 +156,7 @@ class _Settings:
 
         dialog = QInputDialog(parent)
         dialog.setInputMode(QInputDialog.IntInput)
-        dialog.setWindowTitle(_translate("SettingsDialogBackupInterval", "Set backup interval"))
+        dialog.setWindowTitle(_translate("SettingsDialogBackupInterval", "Set Backup Interval"))
         dialog.setLabelText(_translate("SettingsDialogBackupInterval", "Set backup interval in seconds:"))
         dialog.setIntMinimum(15)
         dialog.setIntMaximum(3600)
