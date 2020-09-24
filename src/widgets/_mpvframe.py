@@ -38,6 +38,7 @@ class MpvWidget(QFrame):
         self.setStyleSheet("background-color:black;")
         self.setMouseTracking(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setFocusPolicy(Qt.ClickFocus)
 
         from src import get_files
         files = get_files()

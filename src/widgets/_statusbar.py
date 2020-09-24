@@ -13,50 +13,76 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from PyQt5.QtCore import Qt, QTimer, QEvent, QObject
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
 from src import settings, events
 
 
-class StatusBar(QStatusBar):
+class _TimeLabel(QLabel):
 
     def __init__(self):
         super().__init__()
-        self.__time_current: str = "00:00"
-        self.__time_remaining: str = "23:59:59"
-        self.__percent: int = 0
-
-        self.__comments_amount: int = 0
-        self.__comments_current_selection: int = -1
+        self.setAlignment(Qt.AlignRight)
 
         self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
-        self.__label_information = QLabel()
-        self.__label_information.setAlignment(Qt.AlignRight)
-        self.__label_information.installEventFilter(self)
+        self._percent = 0
+        self.current_time = "00:00"
+        self.remaining_time = "00:00"
+        self.__update()
 
-        self.__label_comment_selection_slash_amount = QLabel()
-
-        # Timer updates status bar every 100 ms
-        self.__timer = QTimer()
-        self.__timer.timeout.connect(self.__update_status_bar_text)
-        self.__timer.start(100)
-
-        self.addPermanentWidget(self.__label_comment_selection_slash_amount, 0)
-        self.addPermanentWidget(QLabel(), 1)
-        self.addPermanentWidget(self.__label_information, 0)
-
-    def __update_status_bar_text(self) -> None:
+    def __update(self) -> None:
         """
         Will update the current status bar information about video time and comments
         """
 
-        time = self.__time_current if self.__time_format.value else "-{}".format(self.__time_remaining)
-        percent = self.__percent if self.__time_format.value else 100 - self.__percent
+        time = self.current_time if self.__time_format.value else "-{}".format(self.remaining_time)
+        percent = self._percent
+        self.setText("{percent:3}%{time:>{padding}}".format(percent=percent, padding=15, time=time))
 
-        self.__label_information.setText("{:>9}{:2}{:3}%".format(time, "", percent))
+    def customEvent(self, event: QEvent) -> None:
+        ev_type = event.type()
+
+        if ev_type == events.PlayerVideoTimeChanged:
+            event: events.EventPlayerVideoTimeChanged
+            current_time = event.time_current
+            if self.current_time != current_time:
+                self.current_time = current_time
+                self.__update()
+
+        elif ev_type == events.PlayerRemainingVideoTimeChanged:
+            event: events.EventPlayerRemainingVideoTimeChanged
+            self.remaining_time = event.time_remaining
+
+        elif ev_type == events.PlayerPercentChanged:
+            event: events.EventPlayerPercentChanged
+            percent = event.percent
+            if self._percent != percent:
+                self._percent = percent
+                self.__update()
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.LeftButton:
+            self.__time_format.value = not self.__time_format.value
+            self.__update()
+            event.accept()
+
+
+class StatusBar(QStatusBar):
+
+    def __init__(self):
+        super().__init__()
+        self.__comments_amount: int = 0
+        self.__comments_current_selection: int = -1
+
+        self.__label_information = _TimeLabel()
+        self.__label_comment_selection_slash_amount = QLabel()
+
+        self.addPermanentWidget(self.__label_comment_selection_slash_amount, 0)
+        self.addPermanentWidget(QLabel(), 1)
+        self.addPermanentWidget(self.__label_information, 0)
 
     def __update_comment_amount_slash_selection(self):
         if self.__comments_current_selection >= 0:
@@ -67,22 +93,11 @@ class StatusBar(QStatusBar):
             self.__label_comment_selection_slash_amount.setText("")
 
     def customEvent(self, ev: QEvent):
+        self.__label_information.customEvent(ev)
 
         ev_type = ev.type()
 
-        if ev_type == events.PlayerVideoTimeChanged:
-            ev: events.EventPlayerVideoTimeChanged
-            self.__time_current = ev.time_current
-
-        elif ev_type == events.PlayerRemainingVideoTimeChanged:
-            ev: events.EventPlayerRemainingVideoTimeChanged
-            self.__time_remaining = ev.time_remaining
-
-        elif ev_type == events.PlayerPercentChanged:
-            ev: events.EventPlayerPercentChanged
-            self.__percent = ev.percent
-
-        elif ev_type == events.CommentAmountChanged:
+        if ev_type == events.CommentAmountChanged:
             ev: events.EventCommentAmountChanged
             self.__comments_amount = ev.new_amount
             self.__update_comment_amount_slash_selection()
@@ -98,12 +113,7 @@ class StatusBar(QStatusBar):
         if ev_type == QEvent.LanguageChange:
             self.__update_comment_amount_slash_selection()
 
-    def eventFilter(self, source: QObject, event: QEvent):
-
-        if source == self.__label_information and event.type() == QEvent.MouseButtonPress:
-            event: QMouseEvent
-
-            if event.button() == Qt.LeftButton:
-                self.__time_format.value = not self.__time_format.value
-                return True
-        return super(StatusBar, self).eventFilter(source, event)
+    def mousePressEvent(self, a0: QMouseEvent) -> None:
+        previous_widget = self.previousInFocusChain()
+        self.setFocus()
+        previous_widget.setFocus()

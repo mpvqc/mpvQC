@@ -14,7 +14,7 @@
 
 
 from PyQt5.QtCore import Qt, QEvent, QModelIndex
-from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtWidgets import QWidget
 
 from src.ui import Ui_SearchForm
@@ -44,6 +44,8 @@ class SearchHandler(QWidget):
         self.__ui.searchCloseButton.clicked.connect(self.hide)
 
     def invoke_search(self, top_down: bool, query: str = None):
+        self.__ui.searchLineEdit.setFocus()
+
         if query is None:
             query = self.__ui.searchLineEdit.text()
 
@@ -58,6 +60,12 @@ class SearchHandler(QWidget):
 
         self.__latest_result.highlight_change_request.connect(self.__ui.searchResultLabel.setText)
         self.__latest_result.highlight_result()
+
+    def mousePressEvent(self, a0: QMouseEvent) -> None:
+        if not self.__ui.searchLineEdit.hasFocus():
+            previous_widget = self.previousInFocusChain()
+            self.setFocus()
+            previous_widget.setFocus()
 
     def keyPressEvent(self, e: QKeyEvent):
         key = e.key()
