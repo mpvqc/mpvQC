@@ -140,38 +140,9 @@ class _Settings:
         action_save_nickname.toggled.connect(lambda _, settings_obj=s_save_nick, f=toggle: f(settings_obj))
 
     @staticmethod
-    def setup_document_backup(action: QAction, callback: Callable):
-        s = settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED
-
-        def toggle():
-            s.value = not s.value
-            callback()
-
-        action.setChecked(s.value)
-        action.triggered.connect(toggle)
-
-    @staticmethod
-    def edit_document_backup_interval(parent, callback: Callable):
-        s = settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL
-
-        dialog = QInputDialog(parent)
-        dialog.setInputMode(QInputDialog.IntInput)
-        dialog.setWindowTitle(_translate("SettingsDialogBackupInterval", "Set Backup Interval"))
-        dialog.setLabelText(_translate("SettingsDialogBackupInterval", "Set backup interval in seconds:"))
-        dialog.setIntMinimum(15)
-        dialog.setIntMaximum(3600)
-        dialog.setIntValue(s.value)
-        dialog.resize(400, 0)
-
-        ok = dialog.exec_()
-        interval = dialog.intValue()
-
-        if ok:
-            if interval:
-                s.value = interval
-                callback()
-            else:
-                s.reset()
+    def edit_backup_preferences(parent, qc_manager):
+        from src.uihandler import DialogBackup
+        DialogBackup(parent, qc_manager).exec_()
 
     @staticmethod
     def display_about_dialog():

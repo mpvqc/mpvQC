@@ -93,6 +93,8 @@
     </widget>
     <addaction name="actionEditNickname"/>
     <addaction name="actionEditCommentTypes"/>
+    <addaction name="actionOpenBackupPreferences"/>
+    <addaction name="menuDocumentSettings"/>
     <addaction name="separator"/>
     <addaction name="menuWindowTitle"/>
     <addaction name="actionDarkTheme"/>
@@ -102,9 +104,6 @@
     <addaction name="actionEditMpvConf"/>
     <addaction name="actionEditInputConf"/>
     <addaction name="separator"/>
-    <addaction name="menuDocumentSettings"/>
-    <addaction name="actionDocumentBackups"/>
-    <addaction name="actionDocumentBackupInterval"/>
    </widget>
    <widget class="QMenu" name="mainWindowAboutMenu">
     <property name="title">
@@ -339,9 +338,9 @@
     <string>Enable Backups</string>
    </property>
   </action>
-  <action name="actionDocumentBackupInterval">
+  <action name="actionOpenBackupPreferences">
    <property name="text">
-    <string>Set Backup Interval...</string>
+    <string>Open Backup Preferences...</string>
    </property>
   </action>
   <action name="actionSaveNickNameToDocument">

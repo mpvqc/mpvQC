@@ -18,6 +18,7 @@
 # The package contains generated .py files.
 
 from ._dialog_about import Ui_AboutDialog
+from ._dialog_backup import Ui_BackupDialog
 from ._dialog_edit_comment_types import Ui_CommentTypesDialog
 from ._dialog_edit_config import Ui_SettingsDialogEditConfig
 from ._main_window import Ui_MainWindow

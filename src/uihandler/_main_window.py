@@ -210,11 +210,9 @@ class MainHandler(QMainWindow):
         self.user_settings.setup_document(
             self.__ui.actionSaveVideoPathToDocument, self.__ui.actionSaveNickNameToDocument)
 
-        self.user_settings.setup_document_backup(self.__ui.actionDocumentBackups, self.__qc_manager.reset_auto_save)
-
-        self.__ui.actionDocumentBackupInterval.triggered.connect(
-            lambda a, b=self, c=self.__qc_manager.reset_auto_save,
-                   f=self.user_settings.edit_document_backup_interval: f(b, c))
+        self.__ui.actionOpenBackupPreferences.triggered.connect(
+            lambda a, parent=self, qc_manager=self.__qc_manager,
+                   f=self.user_settings.edit_backup_preferences: f(parent, qc_manager))
 
         self.__ui.actionCheckForUpdates_2.triggered.connect(self.__check_for_update)
         self.__ui.actionAboutQt.triggered.connect(QApplication.instance().aboutQt)
