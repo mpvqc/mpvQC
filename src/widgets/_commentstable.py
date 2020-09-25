@@ -139,7 +139,7 @@ class CommentsTable(QTableView):
             model.appendRow(last_entry)
 
         if resize_ct_column:
-            self.resizeColumnToContents(1)
+            self.resize_column_type_column()
 
         self.sort()
 
@@ -232,7 +232,6 @@ class CommentsTable(QTableView):
         Action to invoke after comment type was changed manually by the user.
         """
 
-        self.resizeColumnToContents(1)
         self.state_changed.emit(False)
 
     # noinspection PyMethodMayBeStatic
@@ -360,3 +359,6 @@ class CommentsTable(QTableView):
             self.selectionModel().setCurrentIndex(model_index, self.__selection_flags)
             self.selectionModel().select(model_index, self.__selection_flags)
             self.scrollTo(model_index, QAbstractItemView.PositionAtCenter)
+
+    def resize_column_type_column(self):
+        self.resizeColumnToContents(1)

@@ -197,7 +197,7 @@ class MainHandler(QMainWindow):
 
         self.__ui.actionEditNickname.triggered.connect(lambda a, b=self, f=self.user_settings.edit_nickname: f(b))
         self.__ui.actionEditCommentTypes.triggered.connect(
-            lambda a, b=self.widget_context_menu, f=self.user_settings.edit_comment_types: f(b))
+            lambda a, callback=self.__after_edited_comment_types, f=self.user_settings.edit_comment_types: f(callback))
 
         self.user_settings.setup_menu_window_title(self.__ui.menuWindowTitle, self.__update_window_title)
         self.user_settings.setup_dark_theme(self.__ui.actionDarkTheme, self.set_theme)
@@ -217,6 +217,10 @@ class MainHandler(QMainWindow):
         self.__ui.actionCheckForUpdates_2.triggered.connect(self.__check_for_update)
         self.__ui.actionAboutQt.triggered.connect(QApplication.instance().aboutQt)
         self.__ui.actionAboutMpvQc.triggered.connect(self.user_settings.display_about_dialog)
+
+    def __after_edited_comment_types(self):
+        self.widget_context_menu.update_entries()
+        self.widget_comments.resize_column_type_column()
 
     def __update_window_title(self) -> None:
         """
@@ -247,6 +251,7 @@ class MainHandler(QMainWindow):
             self.widget_context_menu.update_entries()
             self.__ui.retranslateUi(self)
             self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
+            self.widget_comments.resize_column_type_column()
 
     def __resize_video(self, check_desktop_size=False) -> None:
 

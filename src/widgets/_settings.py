@@ -26,10 +26,10 @@ _translate = QCoreApplication.translate
 class _Settings:
 
     @staticmethod
-    def edit_comment_types(widget_context_menu):
+    def edit_comment_types(callback: Callable):
         from src.uihandler import EditCommentTypesDialog
         EditCommentTypesDialog().exec_()
-        widget_context_menu.update_entries()
+        callback()
 
     @staticmethod
     def edit_nickname(parent):
