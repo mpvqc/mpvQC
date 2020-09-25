@@ -107,7 +107,7 @@ def write_qc_document(file_path, file_content):
     :param file_content: the content to write
     """
 
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(file_content)
 
 
