@@ -123,7 +123,7 @@ class CommentsTable(QTableView):
 
         self.__do_with_selected_comment_row(copy)
 
-    def add_comments(self, comments: Tuple[Comment], changes_qc=False, edit=False):
+    def add_comments(self, comments: Tuple[Comment], changes_qc=False, edit=False, resize_ct_column=True):
         if not comments:
             return
 
@@ -138,7 +138,9 @@ class CommentsTable(QTableView):
             last_entry = [time, ct, note]
             model.appendRow(last_entry)
 
-        self.resizeColumnToContents(1)
+        if resize_ct_column:
+            self.resizeColumnToContents(1)
+
         self.sort()
 
         EventDistributor.send_event(EventCommentAmountChanged(model.rowCount()))
@@ -161,7 +163,7 @@ class CommentsTable(QTableView):
             comment_type=comment_type,
             comment_note=""
         )
-        self.add_comments((comment,), changes_qc=True, edit=True)
+        self.add_comments((comment,), changes_qc=True, edit=True, resize_ct_column=False)
 
     def get_all_comments(self) -> Tuple[Comment]:
         """
