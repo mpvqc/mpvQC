@@ -224,7 +224,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Check For Updates ...</string>
+    <string>&amp;Check for Updates...</string>
    </property>
   </action>
   <action name="actionAboutQt">
@@ -373,7 +373,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Check For Updates...</string>
+    <string>Check for Updates...</string>
    </property>
   </action>
  </widget>
