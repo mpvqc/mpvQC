@@ -122,7 +122,7 @@ class CouldNotSaveQCDocumentError(QMessageBox):
         super().__init__()
         self.setWindowTitle(_translate("MessageBoxes", "Saving the QC Document Failed"))
         self.setText(_translate(
-            "MessageBoxes", "Are you sure you have permission to write in the selected directory?"))
+            "MessageBoxes", "Saving the QC document failed.\nAre you sure you have permission to write in the selected directory?"))
         self.setIcon(QMessageBox.Critical)
         self.addButton(QMessageBox.Ok)
 

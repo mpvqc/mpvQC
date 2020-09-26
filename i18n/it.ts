@@ -160,7 +160,7 @@
         <translation type="unfinished">File Video</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="126"/>
+        <location filename="../src/uiutil/_dialogs.py" line="127"/>
         <source>All files</source>
         <translation type="unfinished">Tutti i file</translation>
     </message>
@@ -180,22 +180,22 @@
         <translation type="unfinished">Apri Documento QC</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="125"/>
+        <location filename="../src/uiutil/_dialogs.py" line="126"/>
         <source>QC documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="123"/>
+        <location filename="../src/uiutil/_dialogs.py" line="124"/>
         <source>Save QC Document As</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="147"/>
+        <location filename="../src/uiutil/_dialogs.py" line="145"/>
         <source>Open Network Stream</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="148"/>
+        <location filename="../src/uiutil/_dialogs.py" line="146"/>
         <source>Enter URL:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -496,6 +496,17 @@
             <numerusform></numerusform>
         </translation>
     </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="123"/>
+        <source>Saving the QC Document Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="124"/>
+        <source>Saving the QC document failed.
+Are you sure you have permission to write in the selected directory?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchForm</name>
@@ -569,32 +580,32 @@
 <context>
     <name>VersionCheckDialog</name>
     <message>
-        <location filename="../src/messageboxes.py" line="131"/>
+        <location filename="../src/messageboxes.py" line="145"/>
         <source>New Version Available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="132"/>
+        <location filename="../src/messageboxes.py" line="146"/>
         <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="139"/>
+        <location filename="../src/messageboxes.py" line="153"/>
         <source>You are already using the most recent version of mpvQC!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="147"/>
+        <location filename="../src/messageboxes.py" line="161"/>
         <source>Server Not Reachable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="144"/>
+        <location filename="../src/messageboxes.py" line="158"/>
         <source>A connection to the server could not be established.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="148"/>
+        <location filename="../src/messageboxes.py" line="162"/>
         <source>The server did not respond quickly enough.</source>
         <translation type="unfinished"></translation>
     </message>

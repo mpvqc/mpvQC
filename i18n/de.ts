@@ -160,7 +160,7 @@
         <translation>Videodateien</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="126"/>
+        <location filename="../src/uiutil/_dialogs.py" line="127"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
@@ -180,22 +180,22 @@
         <translation>QC-Dokument(e) öffnen</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="125"/>
+        <location filename="../src/uiutil/_dialogs.py" line="126"/>
         <source>QC documents</source>
         <translation>QC-Dokumente</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="123"/>
+        <location filename="../src/uiutil/_dialogs.py" line="124"/>
         <source>Save QC Document As</source>
         <translation>QC-Dokument speichern als</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="147"/>
+        <location filename="../src/uiutil/_dialogs.py" line="145"/>
         <source>Open Network Stream</source>
         <translation>Netzwerkstream öffnen</translation>
     </message>
     <message>
-        <location filename="../src/uiutil/_dialogs.py" line="148"/>
+        <location filename="../src/uiutil/_dialogs.py" line="146"/>
         <source>Enter URL:</source>
         <translation>URL eingeben:</translation>
     </message>
@@ -496,6 +496,18 @@
             <numerusform>Die folgenden Dateien sind keine gültigen QC-Dokumente:</numerusform>
         </translation>
     </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="123"/>
+        <source>Saving the QC Document Failed</source>
+        <translation>Speichern des QC-Dokuments fehlgeschlagen</translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="124"/>
+        <source>Saving the QC document failed.
+Are you sure you have permission to write in the selected directory?</source>
+        <translation>Speichern des QC-Dokuments ist fehlgeschlagen
+Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</translation>
+    </message>
 </context>
 <context>
     <name>SearchForm</name>
@@ -569,32 +581,32 @@
 <context>
     <name>VersionCheckDialog</name>
     <message>
-        <location filename="../src/messageboxes.py" line="131"/>
+        <location filename="../src/messageboxes.py" line="145"/>
         <source>New Version Available</source>
         <translation>Neue Version verfügbar</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="132"/>
+        <location filename="../src/messageboxes.py" line="146"/>
         <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
         <translation>Es ist eine neue Version von mpvQC verfügbar ({}).&lt;br&gt;Besuche &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt;, um sie herunterzuladen.</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="139"/>
+        <location filename="../src/messageboxes.py" line="153"/>
         <source>You are already using the most recent version of mpvQC!</source>
         <translation>Ihre Version von mpvQC ist bereits auf dem aktuellsten Stand!</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="147"/>
+        <location filename="../src/messageboxes.py" line="161"/>
         <source>Server Not Reachable</source>
         <translation>Server nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="144"/>
+        <location filename="../src/messageboxes.py" line="158"/>
         <source>A connection to the server could not be established.</source>
         <translation>Eine Verbindung zum Server konnte nicht hergestellt werden.</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="148"/>
+        <location filename="../src/messageboxes.py" line="162"/>
         <source>The server did not respond quickly enough.</source>
         <translation>Der Server antwortete nicht schnell genug.</translation>
     </message>
