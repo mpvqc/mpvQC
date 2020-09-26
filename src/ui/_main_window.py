@@ -193,7 +193,7 @@ class Ui_MainWindow(object):
         self.mainWindowAboutMenu.setTitle(_translate("MainWindow", "Help"))
         self.actionNewQcDocument.setText(_translate("MainWindow", "&New QC Document"))
         self.actionNewQcDocument.setShortcut(_translate("MainWindow", "Ctrl+N"))
-        self.actionOpenQcDocuments.setText(_translate("MainWindow", "&Open QC Documents..."))
+        self.actionOpenQcDocuments.setText(_translate("MainWindow", "&Open QC Document(s)..."))
         self.actionOpenQcDocuments.setShortcut(_translate("MainWindow", "Ctrl+O"))
         self.actionSaveQcDocument.setText(_translate("MainWindow", "&Save QC Document"))
         self.actionSaveQcDocument.setShortcut(_translate("MainWindow", "Ctrl+S"))

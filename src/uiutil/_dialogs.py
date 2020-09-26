@@ -95,7 +95,7 @@ def get_open_file_names(parent=None) -> List[str] or None:
     :return: The selected files or None if abort
     """
 
-    caption = _translate("FileInteractionDialogs", "Open QC Document")
+    caption = _translate("FileInteractionDialogs", "Open QC Document(s)")
     directory = settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value
     file_filter = _translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
                   _translate("FileInteractionDialogs", "All files") + " (*.*)"

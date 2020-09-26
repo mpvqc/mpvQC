@@ -54,42 +54,42 @@
 <context>
     <name>CommentTypes</name>
     <message>
-        <location filename="../src/settings.py" line="31"/>
+        <location filename="../src/settings.py" line="32"/>
         <source>Translation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="32"/>
+        <location filename="../src/settings.py" line="33"/>
         <source>Punctuation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="33"/>
+        <location filename="../src/settings.py" line="34"/>
         <source>Spelling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="34"/>
+        <location filename="../src/settings.py" line="35"/>
         <source>Phrasing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="35"/>
+        <location filename="../src/settings.py" line="36"/>
         <source>Timing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="36"/>
+        <location filename="../src/settings.py" line="37"/>
         <source>Typeset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="37"/>
+        <location filename="../src/settings.py" line="38"/>
         <source>Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="38"/>
+        <location filename="../src/settings.py" line="39"/>
         <source>Type here to add new comment types</source>
         <translation type="unfinished"></translation>
     </message>
@@ -176,7 +176,7 @@
     </message>
     <message>
         <location filename="../src/uiutil/_dialogs.py" line="98"/>
-        <source>Open QC Document</source>
+        <source>Open QC Document(s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -267,7 +267,7 @@
     </message>
     <message>
         <location filename="../src/ui/_main_window.py" line="196"/>
-        <source>&amp;Open QC Documents...</source>
+        <source>&amp;Open QC Document(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

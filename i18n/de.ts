@@ -54,42 +54,42 @@
 <context>
     <name>CommentTypes</name>
     <message>
-        <location filename="../src/settings.py" line="31"/>
+        <location filename="../src/settings.py" line="32"/>
         <source>Translation</source>
         <translation>Übersetzung</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="32"/>
+        <location filename="../src/settings.py" line="33"/>
         <source>Punctuation</source>
         <translation>Interpunktion</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="33"/>
+        <location filename="../src/settings.py" line="34"/>
         <source>Spelling</source>
         <translation>Rechtschreibung</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="34"/>
+        <location filename="../src/settings.py" line="35"/>
         <source>Phrasing</source>
         <translation>Ausdruck</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="35"/>
+        <location filename="../src/settings.py" line="36"/>
         <source>Timing</source>
         <translation>Timing</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="36"/>
+        <location filename="../src/settings.py" line="37"/>
         <source>Typeset</source>
         <translation>Typeset</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="37"/>
+        <location filename="../src/settings.py" line="38"/>
         <source>Note</source>
         <translation>Hinweis</translation>
     </message>
     <message>
-        <location filename="../src/settings.py" line="38"/>
+        <location filename="../src/settings.py" line="39"/>
         <source>Type here to add new comment types</source>
         <translation>Hier neue Anmerkungen definieren</translation>
     </message>
@@ -176,8 +176,8 @@
     </message>
     <message>
         <location filename="../src/uiutil/_dialogs.py" line="98"/>
-        <source>Open QC Document</source>
-        <translation>QC-Dokument öffnen</translation>
+        <source>Open QC Document(s)</source>
+        <translation>QC-Dokument(e) öffnen</translation>
     </message>
     <message>
         <location filename="../src/uiutil/_dialogs.py" line="125"/>
@@ -267,8 +267,8 @@
     </message>
     <message>
         <location filename="../src/ui/_main_window.py" line="196"/>
-        <source>&amp;Open QC Documents...</source>
-        <translation>QC-Dokument &amp;öffnen ...</translation>
+        <source>&amp;Open QC Document(s)...</source>
+        <translation>QC-Dokument(e) &amp;öffnen ...</translation>
     </message>
     <message>
         <location filename="../src/ui/_main_window.py" line="197"/>

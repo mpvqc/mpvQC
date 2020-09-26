@@ -137,7 +137,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open QC Documents...</string>
+    <string>&amp;Open QC Document(s)...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
