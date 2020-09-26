@@ -164,6 +164,11 @@ class State(ABC):
 
         comments = t.get_all_comments()
         r = hs.do_save(self._doc, self._vid, comments)
+
+        if r.save_error:
+            md.CouldNotSaveQCDocumentError().exec_()
+            return self.copy()
+
         return self._state_saved(doc=r.doc_new,
                                  vid=r.vid_new,
                                  comments=comments)
@@ -180,6 +185,9 @@ class State(ABC):
         r = hs.do_save(doc, self._vid, comments)
 
         if r.abort:
+            return self.copy()
+        elif r.save_error:
+            md.CouldNotSaveQCDocumentError().exec_()
             return self.copy()
 
         return self._state_saved(doc=r.doc_new,

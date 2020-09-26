@@ -113,6 +113,20 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
         self.addButton(QMessageBox.Ok)
 
 
+class CouldNotSaveQCDocumentError(QMessageBox):
+    """
+    The message box if saving the document failed.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle(_translate("MessageBoxes", "Saving the QC Document Failed"))
+        self.setText(_translate(
+            "MessageBoxes", "Are you sure you have permission to write in the selected directory?"))
+        self.setIcon(QMessageBox.Critical)
+        self.addButton(QMessageBox.Ok)
+
+
 class CheckForUpdates(QMessageBox):
     _UPDATER_URL = "https://mpvqc.rekt.cc/download/latest.txt"
 

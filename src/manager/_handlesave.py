@@ -25,6 +25,9 @@ class HandleSaveResult(NamedTuple):
     # True if abort save
     abort: bool = False
 
+    # True if exporting failed
+    save_error: bool = False
+
     # The new document path
     doc_new: Optional[str] = None
 
@@ -41,6 +44,11 @@ def do_save(
         return HandleSaveResult(abort=True)
 
     content = _exporter.get_file_content(vid, comments)
-    _exporter.write_qc_document(doc, content)
+
+    # noinspection PyBroadException
+    try:
+        _exporter.write_qc_document(doc, content)
+    except Exception:
+        return HandleSaveResult(save_error=True)
 
     return HandleSaveResult(doc_new=doc, vid_new=vid)
