@@ -130,6 +130,9 @@ class CommentsTable(QTableView):
         model = self.__model
         last_entry = None
 
+        # Always resize on the first comment imported
+        resize_ct_column = resize_ct_column or not model.hasChildren()
+
         for comment in comments:
             time = QStandardItem(comment.comment_time)
             time.setTextAlignment(Qt.AlignCenter)
