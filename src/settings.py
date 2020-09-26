@@ -120,9 +120,6 @@ class CommentTypesEntry(Entry):
 
 ############################################################################################################## INTERNAL
 
-Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT = \
-    Entry("internal_player_last_document_dir_export", "")
-
 Setting_Internal_PLAYER_LAST_DOCUMENT_DIR = \
     Entry("internal_player_last_document_dir", "")
 
@@ -187,7 +184,6 @@ Setting_Custom_Appearance_General_DARK_THEME = \
 
 
 SettingJson = (
-    Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT,
     Setting_Internal_PLAYER_LAST_DOCUMENT_DIR,
     Setting_Internal_PLAYER_LAST_VIDEO_DIR,
     Setting_Internal_PLAYER_LAST_SUB_DIR,

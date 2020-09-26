@@ -118,18 +118,16 @@ def get_save_file_name(video_file: str, parent=None) -> path or None:
     :return: the path to save or None if no video file was given
     """
 
+    directory = path.dirname(video_file) if video_file else str(Path.home())
     txt_proposal = generate_file_name_proposal(video_file)
 
     caption = _translate("FileInteractionDialogs", "Save QC Document As")
-    directory = "{0}/{1}".format(settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT.value, txt_proposal)
+    directory = "{0}/{1}".format(directory, txt_proposal)
     file_filter = _translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
                   _translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     new_file_name = QFileDialog.getSaveFileName(parent=parent, caption=caption,
                                                 directory=directory, filter=file_filter)[0]
-
-    if new_file_name:
-        settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR_EXPORT.value = str(Path(new_file_name).parent)
 
     return new_file_name
 
