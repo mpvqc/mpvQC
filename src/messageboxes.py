@@ -141,7 +141,7 @@ class CheckForUpdates(QMessageBox):
 
         try:
             r = urllib.request.urlopen(self._UPDATER_URL, timeout=5)
-            version_new = r.read().decode("utf-8")
+            version_new = r.read().decode("utf-8").strip()
             if md.app_version != version_new:
                 self.setWindowTitle(_translate("VersionCheckDialog", "New Version Available"))
                 self.setText(
