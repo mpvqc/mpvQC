@@ -17,6 +17,7 @@ import io
 import json
 import locale
 import os
+import platform
 from os import path
 from typing import Dict
 
@@ -180,7 +181,7 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
 """0: Default Window Title; 1: Current File name only; 2: Full path"""
 
 Setting_Custom_Appearance_General_DARK_THEME = \
-    Entry("custom_appearance_general_dark_theme", False)
+    Entry("custom_appearance_general_dark_theme", True if platform.system() == "Windows" else False)
 
 #######################################################################################################################
 
