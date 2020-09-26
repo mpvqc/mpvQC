@@ -133,14 +133,15 @@ class CheckForUpdates(QMessageBox):
     def __init__(self):
         super().__init__()
 
-        import requests
+        import urllib.request
+        import urllib.error
 
         from src import get_metadata
         md = get_metadata()
 
         try:
-            r = requests.get(self._UPDATER_URL, timeout=5)
-            version_new = r.text.strip()
+            r = urllib.request.urlopen(self._UPDATER_URL, timeout=5)
+            version_new = r.read().decode("utf-8")
             if md.app_version != version_new:
                 self.setWindowTitle(_translate("VersionCheckDialog", "New Version Available"))
                 self.setText(
@@ -153,11 +154,11 @@ class CheckForUpdates(QMessageBox):
                 self.setText(
                     _translate("VersionCheckDialog", "You are already using the most recent version of mpvQC!"))
                 self.setIcon(QMessageBox.Information)
-        except requests.exceptions.ConnectionError:
+        except urllib.error.HTTPError as e:
+            self.setWindowTitle(_translate("VersionCheckDialog", "Server Error"))
+            self.setText(_translate("VersionCheckDialog", "The server returned error code {}.").format(e.code))
+            self.setIcon(QMessageBox.Warning)
+        except urllib.error.URLError:
             self.setWindowTitle(_translate("VersionCheckDialog", "Server Not Reachable"))
             self.setText(_translate("VersionCheckDialog", "A connection to the server could not be established."))
-            self.setIcon(QMessageBox.Warning)
-        except requests.exceptions.Timeout:
-            self.setWindowTitle(_translate("VersionCheckDialog", "Server Not Reachable"))
-            self.setText(_translate("VersionCheckDialog", "The server did not respond quickly enough."))
             self.setIcon(QMessageBox.Warning)

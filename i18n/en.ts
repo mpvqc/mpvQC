@@ -580,33 +580,38 @@ Are you sure you have permission to write in the selected directory?</source>
 <context>
     <name>VersionCheckDialog</name>
     <message>
-        <location filename="../src/messageboxes.py" line="145"/>
+        <location filename="../src/messageboxes.py" line="146"/>
         <source>New Version Available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="146"/>
+        <location filename="../src/messageboxes.py" line="147"/>
         <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="153"/>
+        <location filename="../src/messageboxes.py" line="154"/>
         <source>You are already using the most recent version of mpvQC!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="161"/>
+        <location filename="../src/messageboxes.py" line="162"/>
         <source>Server Not Reachable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="158"/>
+        <location filename="../src/messageboxes.py" line="163"/>
         <source>A connection to the server could not be established.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="162"/>
-        <source>The server did not respond quickly enough.</source>
+        <location filename="../src/messageboxes.py" line="158"/>
+        <source>Server Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="159"/>
+        <source>The server returned error code {}.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

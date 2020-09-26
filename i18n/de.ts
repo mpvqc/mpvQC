@@ -581,34 +581,39 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
 <context>
     <name>VersionCheckDialog</name>
     <message>
-        <location filename="../src/messageboxes.py" line="145"/>
+        <location filename="../src/messageboxes.py" line="146"/>
         <source>New Version Available</source>
         <translation>Neue Version verfügbar</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="146"/>
+        <location filename="../src/messageboxes.py" line="147"/>
         <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
         <translation>Es ist eine neue Version von mpvQC verfügbar ({}).&lt;br&gt;Besuche &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt;, um sie herunterzuladen.</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="153"/>
+        <location filename="../src/messageboxes.py" line="154"/>
         <source>You are already using the most recent version of mpvQC!</source>
         <translation>Ihre Version von mpvQC ist bereits auf dem aktuellsten Stand!</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="161"/>
+        <location filename="../src/messageboxes.py" line="162"/>
         <source>Server Not Reachable</source>
         <translation>Server nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="158"/>
+        <location filename="../src/messageboxes.py" line="163"/>
         <source>A connection to the server could not be established.</source>
         <translation>Eine Verbindung zum Server konnte nicht hergestellt werden.</translation>
     </message>
     <message>
-        <location filename="../src/messageboxes.py" line="162"/>
-        <source>The server did not respond quickly enough.</source>
-        <translation>Der Server antwortete nicht schnell genug.</translation>
+        <location filename="../src/messageboxes.py" line="158"/>
+        <source>Server Error</source>
+        <translation>Serverfehler</translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="159"/>
+        <source>The server returned error code {}.</source>
+        <translation>Der Server antwortete mit Fehlercode {}.</translation>
     </message>
 </context>
 </TS>
