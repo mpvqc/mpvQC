@@ -505,7 +505,7 @@
         <location filename="../src/messageboxes.py" line="124"/>
         <source>Saving the QC document failed.
 Are you sure you have permission to write in the selected directory?</source>
-        <translation>Speichern des QC-Dokuments ist fehlgeschlagen
+        <translation>Speichern des QC-Dokuments ist fehlgeschlagen.
 Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</translation>
     </message>
 </context>
