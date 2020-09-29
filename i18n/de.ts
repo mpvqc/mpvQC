@@ -433,7 +433,7 @@
     <message>
         <location filename="../src/uihandler/_main_window.py" line="239"/>
         <source>(unsaved)</source>
-        <translation></translation>
+        <translation>(Nicht gespeichert)</translation>
     </message>
 </context>
 <context>
