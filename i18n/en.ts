@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="2.0" language="en" sourcelanguage="en">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../src/ui/_dialog_about.py" line="104"/>
+        <source>About mpvQC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_about.py" line="105"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_about.py" line="106"/>
+        <source>Credits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_about.py" line="107"/>
+        <source>Licence</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BackupDialog</name>
+    <message>
+        <location filename="../src/ui/_dialog_backup.py" line="136"/>
+        <source>Backup Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_backup.py" line="137"/>
+        <source>Enable Backups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_backup.py" line="138"/>
+        <source>Every</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_backup.py" line="139"/>
+        <source>seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_dialog_backup.py" line="140"/>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CommentTypes</name>
     <message>
         <location filename="../src/settings.py" line="32"/>
@@ -43,538 +94,524 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/widgets.py" line="205"/>
+        <location filename="../src/widgets/_contextmenu.py" line="47"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>Dialogs</name>
+    <name>CommentTypesDialog</name>
     <message>
-        <location filename="../src/gui/dialogs.py" line="43"/>
-        <source>Open Video File</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="126"/>
+        <source>Edit Comment Types</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="80"/>
-        <source>Open QC Document</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="127"/>
+        <source>Comment Types </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="114"/>
-        <source>QC documents (*.txt);;All files (*.*)</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="128"/>
+        <source>Add new comment types or rearange them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="114"/>
-        <source>Save QC document as</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="129"/>
+        <source>Type here to add new comment types</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="130"/>
-        <source>Open network stream</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="130"/>
+        <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="130"/>
-        <source>Enter URL</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="131"/>
+        <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="40"/>
-        <source>Video files</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="132"/>
+        <source>Move Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs.py" line="61"/>
-        <source>All files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialogs.py" line="60"/>
-        <source>Subtitle files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/dialogs.py" line="63"/>
-        <source>Open Subtitle File</source>
+        <location filename="../src/ui/_dialog_edit_comment_types.py" line="133"/>
+        <source>Move Down</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>MainPlayerView</name>
+    <name>FileInteractionDialogs</name>
     <message>
-        <location filename="../src/gui/uihandler/main.py" line="235"/>
-        <source>MainWindow</source>
-        <translation>mpvQC</translation>
+        <location filename="../src/uiutil/_dialogs.py" line="40"/>
+        <source>untitled</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="116"/>
+        <location filename="../src/uiutil/_dialogs.py" line="54"/>
+        <source>Open Video File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="56"/>
+        <source>Video files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="127"/>
+        <source>All files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="76"/>
+        <source>Open Subtitle File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="78"/>
+        <source>Subtitle files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="98"/>
+        <source>Open QC Document(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="126"/>
+        <source>QC documents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="124"/>
+        <source>Save QC Document As</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="145"/>
+        <source>Open Network Stream</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uiutil/_dialogs.py" line="146"/>
+        <source>Enter URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LanguageSelection</name>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="85"/>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="86"/>
+        <source>German</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="87"/>
+        <source>Italian</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="187"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="117"/>
+        <location filename="../src/ui/_main_window.py" line="188"/>
         <source>Vi&amp;deo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="118"/>
+        <location filename="../src/ui/_main_window.py" line="189"/>
         <source>Optio&amp;ns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="119"/>
-        <source>Abo&amp;ut</source>
+        <location filename="../src/ui/_main_window.py" line="190"/>
+        <source>Window Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="120"/>
-        <source>&amp;New QC document</source>
+        <location filename="../src/ui/_main_window.py" line="191"/>
+        <source>QC Document Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="121"/>
+        <location filename="../src/ui/_main_window.py" line="192"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="193"/>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="194"/>
+        <source>&amp;New QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="195"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="122"/>
-        <source>&amp;Open QC document(s) ...</source>
+        <location filename="../src/ui/_main_window.py" line="196"/>
+        <source>&amp;Open QC Document(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="123"/>
+        <location filename="../src/ui/_main_window.py" line="197"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="124"/>
-        <source>&amp;Save QC document</source>
+        <location filename="../src/ui/_main_window.py" line="198"/>
+        <source>&amp;Save QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="125"/>
+        <location filename="../src/ui/_main_window.py" line="199"/>
         <source>Ctrl+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="126"/>
-        <source>S&amp;ave QC document as ...</source>
+        <location filename="../src/ui/_main_window.py" line="200"/>
+        <source>S&amp;ave QC Document As...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="127"/>
+        <location filename="../src/ui/_main_window.py" line="201"/>
         <source>Ctrl+Shift+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="128"/>
+        <location filename="../src/ui/_main_window.py" line="202"/>
         <source>&amp;Exit mpvQC</source>
-        <translation>&amp;Exit mpvQC</translation>
+        <translation type="unfinished">&amp;Exit mpvQC</translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="129"/>
+        <location filename="../src/ui/_main_window.py" line="203"/>
         <source>Ctrl+Q</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="130"/>
-        <source>Open &amp;video ...</source>
+        <location filename="../src/ui/_main_window.py" line="204"/>
+        <source>Open &amp;Video...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="131"/>
+        <location filename="../src/ui/_main_window.py" line="205"/>
         <source>Ctrl+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="132"/>
-        <source>Open &amp;network stream ...</source>
+        <location filename="../src/ui/_main_window.py" line="206"/>
+        <source>Open &amp;Network Stream...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="133"/>
+        <location filename="../src/ui/_main_window.py" line="207"/>
         <source>Ctrl+Alt+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="134"/>
-        <source>&amp;Resize video to original resolution</source>
+        <location filename="../src/ui/_main_window.py" line="208"/>
+        <source>&amp;Resize Video to Original Resolution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="135"/>
+        <location filename="../src/ui/_main_window.py" line="209"/>
         <source>Ctrl+R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="136"/>
-        <source>&amp;Check For Updates ...</source>
-        <translation>Check for &amp;updates ...</translation>
+        <location filename="../src/ui/_main_window.py" line="210"/>
+        <source>&amp;Check for Updates...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="137"/>
+        <location filename="../src/ui/_main_window.py" line="211"/>
         <source>About &amp;Qt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="138"/>
+        <location filename="../src/ui/_main_window.py" line="212"/>
         <source>About &amp;mpvQC</source>
-        <translation>About &amp;mpvQC</translation>
+        <translation type="unfinished">About &amp;mpvQC</translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="139"/>
+        <location filename="../src/ui/_main_window.py" line="213"/>
         <source>&amp;Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="140"/>
+        <location filename="../src/ui/_main_window.py" line="214"/>
         <source>Ctrl+Alt+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/main.py" line="141"/>
-        <source>&amp;Open subtitle ...</source>
+        <location filename="../src/ui/_main_window.py" line="215"/>
+        <source>&amp;Open Subtitles...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="216"/>
+        <source>Edit Comment Types...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="217"/>
+        <source>Edit Nickname...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="218"/>
+        <source>Default Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="219"/>
+        <source>Video File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="220"/>
+        <source>Video Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="221"/>
+        <source>Enable Dark Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="222"/>
+        <source>Edit mpv.conf...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="223"/>
+        <source>Edit input.conf...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="224"/>
+        <source>Enable Backups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="225"/>
+        <source>Open Backup Preferences...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="226"/>
+        <source>Save Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="227"/>
+        <source>Save Video Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_main_window.py" line="228"/>
+        <source>Check for Updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/uihandler/_main_window.py" line="239"/>
+        <source>(unsaved)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MessageBoxes</name>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="28"/>
-        <source>Your configuration has changed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="31"/>
-        <source>Discard changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="109"/>
-        <source>Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="108"/>
-        <source>No</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="43"/>
-        <source>Do you really want to restore the default configuration? This can not be undone.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="47"/>
-        <source>Reset configuration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="48"/>
-        <source>Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="49"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="59"/>
+        <location filename="../src/messageboxes.py" line="49"/>
         <source>Do you really want to quit without saving your QC?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="62"/>
-        <source>Discard QC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="74"/>
-        <source>Do you really want to create a new QC Document without saving your QC?</source>
-        <translation>Do you really want to create a new QC document without saving your QC?</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="77"/>
-        <source>Create new QC document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="89"/>
-        <source>Do you really want to open a QC Document without saving your current one?</source>
-        <translation>Do you really want to open a QC document without saving your current one?</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="92"/>
-        <source>Open QC document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="104"/>
-        <source>A valid video file was found. Do you want to open it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="107"/>
-        <source>Open corresponding video file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="119"/>
-        <source>What would you want to do with all existing comments?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="122"/>
-        <source>How to proceed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="124"/>
+        <location filename="../src/messageboxes.py" line="96"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/messageboxes.py" line="138"/>
-        <source>Not a QC document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="153"/>
-        <source>Ok</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="135"/>
-        <source> does not seem to be a QC document file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="149"/>
-        <source>There is no video loaded currently. Load a video before you add a subtitle file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="152"/>
-        <source>No video loaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="123"/>
-        <source>Abort import</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/messageboxes.py" line="125"/>
+        <location filename="../src/messageboxes.py" line="97"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>PreferencesView</name>
     <message>
-        <location filename="../src/gui/uihandler/preferences.py" line="78"/>
-        <source>Apply</source>
+        <location filename="../src/messageboxes.py" line="62"/>
+        <source>Unsaved Changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/uihandler/preferences.py" line="83"/>
-        <source>Close</source>
+        <location filename="../src/messageboxes.py" line="63"/>
+        <source>Do you really want to create a new QC document without saving your QC?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/uihandler/preferences.py" line="87"/>
-        <source>Defaults</source>
+        <location filename="../src/messageboxes.py" line="77"/>
+        <source>Video Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/uihandler/preferences.py" line="98"/>
-        <source>English</source>
+        <location filename="../src/messageboxes.py" line="78"/>
+        <source>A video was found. Do you want to open it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/uihandler/preferences.py" line="99"/>
-        <source>German</source>
+        <location filename="../src/messageboxes.py" line="92"/>
+        <source>Existing Comments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/preferences.py" line="621"/>
-        <source>Type here to change the nick name</source>
+        <location filename="../src/messageboxes.py" line="93"/>
+        <source>What do you want to do with the existing comments?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/preferences.py" line="624"/>
-        <source>Add</source>
+        <location filename="../src/messageboxes.py" line="108"/>
+        <source>Imported Document Not Compatible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/messageboxes.py" line="109"/>
+        <source>The following file(s) are not compatible:</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="123"/>
+        <source>Saving the QC Document Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/preferences.py" line="625"/>
-        <source>Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="626"/>
-        <source>Move Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="627"/>
-        <source>Move Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="603"/>
-        <source>Dialog</source>
-        <translation>Preferences</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="634"/>
-        <source>General</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="628"/>
-        <source>Appearance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="635"/>
-        <source>MPV Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="639"/>
-        <source>QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="646"/>
-        <source>Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="651"/>
-        <source>About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="620"/>
-        <source>Nick name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="622"/>
-        <source>Comment types</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="629"/>
-        <source>Window Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="630"/>
-        <source>Display default title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="631"/>
-        <source>Display video title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="632"/>
-        <source>Display video path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="636"/>
-        <source>Changes will be applied after restart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="637"/>
-        <source>mpv.conf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="638"/>
-        <source>input.conf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="640"/>
-        <source>Auto save enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="641"/>
-        <source>each</source>
-        <translation>every</translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="642"/>
-        <source>seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="643"/>
-        <source>Save nick name to QC document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="644"/>
-        <source>Save video path to QC document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="652"/>
-        <source>Credits</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="653"/>
-        <source>Licence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="623"/>
-        <source>Type here to add new comment types</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/uihandler/preferences.py" line="100"/>
-        <source>Italian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/generated/preferences.py" line="633"/>
-        <source>Dark Theme</source>
+        <location filename="../src/messageboxes.py" line="124"/>
+        <source>Saving the QC document failed.
+Are you sure you have permission to write in the selected directory?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SearchForm</name>
     <message>
-        <location filename="../src/gui/searchutils.py" line="49"/>
+        <location filename="../src/uiutil/_searchutils.py" line="49"/>
         <source>{0} comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/searchutils.py" line="51"/>
+        <location filename="../src/uiutil/_searchutils.py" line="51"/>
         <source>{0} of {1} comments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/searchutils.py" line="54"/>
+        <location filename="../src/uiutil/_searchutils.py" line="54"/>
         <source>Phrase not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/generated/search.py" line="72"/>
-        <source>Find in comments</source>
+        <location filename="../src/ui/_search_form.py" line="81"/>
+        <source>Search...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_search_form.py" line="82"/>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_search_form.py" line="83"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/_search_form.py" line="84"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialogEditConfig</name>
+    <message>
+        <location filename="../src/ui/_dialog_edit_config.py" line="59"/>
+        <source>Changes will be applied after restart.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="113"/>
+        <source>Edit mpv.conf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="123"/>
+        <source>Edit input.conf</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialogNickname</name>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="40"/>
+        <source>Edit Nickname</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/_settings.py" line="41"/>
+        <source>New nickname:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VersionCheckDialog</name>
+    <message>
+        <location filename="../src/messageboxes.py" line="146"/>
+        <source>New Version Available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="147"/>
+        <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="154"/>
+        <source>You are already using the most recent version of mpvQC!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="162"/>
+        <source>Server Not Reachable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="163"/>
+        <source>A connection to the server could not be established.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="158"/>
+        <source>Server Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/messageboxes.py" line="159"/>
+        <source>The server returned error code {}.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

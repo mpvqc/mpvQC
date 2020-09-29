@@ -12,19 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# Copyright (C) 2016-2017 Frechdachs <frechdachs@rekt.cc>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, version 3.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+from src._files import Files, get_files
+from src._metadata import Metadata, get_metadata
 
 CFG_MPV = """#########
 # Video #
@@ -73,9 +63,15 @@ osd-bar-align-y=0
 # Screenshots #
 ###############
 
+# Screenshot directory on portable version:
+#  => In the directory from where you run the app there is a folder called 'appdata' and then 'screenshots'. 
+# Screenshot directory on non portable version:
+#  => In your user's pictures directory there is a folder called 'mpvQC'
+# You can still override the directory here
+# screenshot-directory=~~/../Screenshots/
+
 screenshot-format=png
 screenshot-high-bit-depth=no
-screenshot-directory=~~/../Screenshots/
 """
 
 CFG_INPUT = """############################################
@@ -141,21 +137,21 @@ b cycle blend-subtitles
 i script-binding stats/display-stats-toggle
 """
 
-ABOUT = """<h1 style='text-align:center;'>{} - {}</h1>
+ABOUT = """<h1 style='text-align:center;'>{version} - {platform}</h1>
 <p>
-    <b>{}</b> is a free, open source and <b>libmpv</b> based application for
+    <b>{app_name}</b> is a free, open source and <b>libmpv</b> based application for
     the quick and easy creation of quality control reports of video files.
 </p>
-<p>Based on {} and ffmpeg {}</p>
+<p>Based on {version_mpv} and ffmpeg {version_ffmpeg}</p>
 <p>
-    Copyright © {} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;
+    Copyright © {years} Frechdachs<br>&lt;frechdachs@rekt.cc&gt;
 </p>
 <p>
     <h3>Links</h3>
     <br>
     <a href='https://mpvqc.rekt.cc/'>https://mpvqc.rekt.cc/</a>
     <br>
-    <a href='https://github.com/Frechdachs/mpvQC'>Github</a>
+    <a href='https://github.com/mpvqc/mpvQC'>Github</a>
 </p>
 <p>
     <h3>Contributors</h3>

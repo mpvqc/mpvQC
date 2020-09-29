@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright (C) 2016-2017 Frechdachs <frechdachs@rekt.cc>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,25 +13,26 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-if __name__ == "__main__":
-    import locale
-    import os
-    import platform
-    import sys
+from typing import NamedTuple
 
-    dir_program = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.dirname(os.path.realpath(__file__))
-    app_version = "0.7.0"
-    app_name = "mpvQC"
 
-    if platform.system() == "Windows":
-        os.add_dll_directory(dir_program)
+class Metadata(NamedTuple):
+    dir_program: str
+    app_name: str
+    app_version: str
 
-    locale.setlocale(locale.LC_NUMERIC, "C")
 
-    from src import main
+class _Holder:
+    md: Metadata
 
-    main.run(
+
+def get_metadata() -> Metadata:
+    return _Holder.md
+
+
+def set_metadata(dir_program: str, app_version: str, app_name: str):
+    _Holder.md = Metadata(
         dir_program=dir_program,
-        app_version=app_version,
-        app_name=app_name
+        app_name=app_name,
+        app_version=app_version
     )

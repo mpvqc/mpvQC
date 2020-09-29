@@ -12,18 +12,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 import io
 import json
 import locale
 import os
+import platform
 from os import path
 from typing import Dict
 
 from PyQt5.QtCore import QCoreApplication
 
-from src import CFG_MPV, CFG_INPUT
-from src.files import Files
-
+from src import CFG_MPV, CFG_INPUT, get_files
 
 _translate = QCoreApplication.translate
 
@@ -40,7 +40,7 @@ __for_translation_only = [
 ]
 
 
-# todo use python configparser module instead of json
+# todo use qt settings modules
 
 class Entry:
     """
@@ -61,7 +61,6 @@ class Entry:
         self.identifier = identifier
         self.default_value = default_value
 
-        self.temporary_value = None
         self._value = None
 
     @property
@@ -72,30 +71,12 @@ class Entry:
     def value(self, val):
         self._value = val
 
-    def save(self) -> None:
-        """
-        Saves the current temporary value, but does **not** write to disc [use Setting.save()] to write to disc.
-        """
-
-        if self.temporary_value is not None:
-            self.value = self.temporary_value
-
-        self.temporary_value = None
-
     def reset(self) -> None:
         """
         Sets the value to the default value and the temporary value to *None*.
         """
 
         self.value = self.default_value
-        self.temporary_value = None
-
-    def changed(self) -> bool:
-        """
-        :return: whether the value and the temporary value are different.
-        """
-
-        return self.temporary_value is not None and self.value != self.temporary_value
 
 
 class CommentTypesEntry(Entry):
@@ -164,9 +145,9 @@ Setting_Custom_General_COMMENT_TYPES = \
 ############################################################################# PREFERENCES -> LANGUAGE ### CUSTOMIZATION
 
 Setting_Custom_Language_LANGUAGE = \
-    Entry("custom_language_language", "German" if locale.getdefaultlocale()[0].startswith("de") else
-                                      "Italian" if locale.getdefaultlocale()[0].startswith("it") else
-                                      "English")
+    Entry("custom_language_language", "de" if locale.getdefaultlocale()[0].startswith("de") else
+    "it" if locale.getdefaultlocale()[0].startswith("it") else
+    "en")
 
 ########################################################################## PREFERENCES -> QC DOCUMENT ### CUSTOMIZATION
 
@@ -185,10 +166,10 @@ Setting_Custom_QcDocument_WRITE_NICK_TO_FILE = \
 ######################################################################## PREFERENCES -> CONFIGURATION ### CUSTOMIZATION
 
 Setting_Custom_Configuration_INPUT = \
-    Entry(Files.FILE_CONF_INPUT, CFG_INPUT)
+    Entry(get_files().file_input_conf, CFG_INPUT)
 
 Setting_Custom_Configuration_MPV = \
-    Entry(Files.FILE_CONF_MPV, CFG_MPV)
+    Entry(get_files().file_mpv_conf, CFG_MPV)
 
 ########################################################################### PREFERENCES -> APPEARANCE ### CUSTOMIZATION
 
@@ -197,7 +178,7 @@ Setting_Custom_Appearance_General_WINDOW_TITLE = \
 """0: Default Window Title; 1: Current File name only; 2: Full path"""
 
 Setting_Custom_Appearance_General_DARK_THEME = \
-    Entry("custom_appearance_general_dark_theme", False)
+    Entry("custom_appearance_general_dark_theme", True if platform.system() == "Windows" else False)
 
 #######################################################################################################################
 
@@ -230,16 +211,15 @@ SettingJsonSettingConfs = SettingJson + SettingConfs
 #######################################################################################################################
 
 def __read_json():
-    file = Files.FILE_SETTINGS
-    if not os.path.isfile(file):
+    file_settings = get_files().file_settings
+    if not os.path.isfile(file_settings):
         __write_json()
 
-    with open(Files.FILE_SETTINGS) as df:
+    with open(file_settings) as df:
         json_values: Dict = json.load(df)
 
     for json_setting in SettingJson:
         json_setting._value = json_values.get(json_setting.identifier, json_setting.default_value)
-        # todo logger
 
 
 def __write_json():
@@ -250,10 +230,9 @@ def __write_json():
             s.identifier: s._value if s._value is not None else s.default_value
         })
 
-    with io.open(Files.FILE_SETTINGS, 'w', encoding='utf8') as file:
+    with io.open(get_files().file_settings, 'w', encoding='utf8') as file:
         str_ = json.dumps(dictionary, indent=4, separators=(',', ': '), sort_keys=True, ensure_ascii=False)
         file.write(str(str_))
-        #  todo logger
 
 
 def __read_confs():
@@ -263,14 +242,12 @@ def __read_confs():
             # That may override the other config, but I think that this will never happen in "production"
         with open(conf.identifier, "r", encoding="utf-8") as file:
             conf._value = file.read()
-            # todo logger
 
 
 def __write_confs(default_value=False):
     for conf in SettingConfs:
         with open(conf.identifier, "w", encoding="utf-8") as file:
             file.write(conf._value if not default_value else conf.default_value)
-        #  todo logger
 
 
 def __read() -> None:
