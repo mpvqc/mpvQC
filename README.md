@@ -49,7 +49,7 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 ## Keybindings
 
-To change the keybindings, you have to go to `Options --> Settings --> MPV Settings -> Input.conf`.<br>
+To change the keybindings, you have to go to `Options --> Edit input.conf...`.<br>
 You can use most of the input commands listed [here](https://mpv.io/manual/master/#list-of-input-commands).
 
 ### Default Bindings
