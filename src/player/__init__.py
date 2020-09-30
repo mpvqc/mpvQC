@@ -19,22 +19,7 @@
 from typing import Dict
 
 from ._bindings import MPV
-from ._observed import MpvPropertyObserver
-
-
-def _seconds_float_to_formatted_string_hours(seconds: float, short=True) -> str:
-    """
-    Transforms the seconds into a string of the following format **hh:mm:ss**.
-    :param short: If True "mm:ss" will be returned, else "HH:mm:ss"
-    :param seconds: The seconds to transform
-    :return: string representing the time
-    """
-
-    m, s = divmod(int(seconds), 60)
-    h, m = divmod(m, 60)
-    h = "{:02d}:".format(h) if h else ("" if short else "00:")
-
-    return "{}{:02d}:{:02d}".format(h, m, s)
+from ._formatting import seconds_float_to_formatted_string_hours
 
 
 class _Observer:
@@ -167,7 +152,7 @@ class MpvPlayer(_Observer):
 
         seconds = self._mpv.duration
 
-        return seconds, _seconds_float_to_formatted_string_hours(seconds)
+        return seconds, seconds_float_to_formatted_string_hours(seconds)
 
     def is_paused(self):
         """
@@ -273,7 +258,7 @@ class MpvPlayer(_Observer):
         if position is None:
             return None, None
 
-        return position, _seconds_float_to_formatted_string_hours(position, short=False)
+        return position, seconds_float_to_formatted_string_hours(position, short=False)
 
     def position_jump(self, position):
         """

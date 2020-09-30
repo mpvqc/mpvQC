@@ -75,18 +75,6 @@ class EventDistributor:
             for identifier, receiver in EventDistributor.__CustomEventReceiver.items():
                 QApplication.sendEvent(receiver, event)
 
-
-############################################################################ Player Event Types between 1001 - 1050 ###
-
-PlayerVideoTimeChanged \
-    = QEvent.Type(1001)
-
-PlayerRemainingVideoTimeChanged \
-    = QEvent.Type(1002)
-
-PlayerPercentChanged \
-    = QEvent.Type(1003)
-
 ##################################################################### Comment Table Event Types between 1051 - 1070 ###
 
 CommentAmountChanged \
@@ -94,42 +82,6 @@ CommentAmountChanged \
 
 CommentCurrentSelectionChanged \
     = QEvent.Type(1052)
-
-#######################################################################################################################
-
-
-class EventPlayerVideoTimeChanged(QEvent):
-
-    def __init__(self, current_time: str):
-        super().__init__(PlayerVideoTimeChanged)
-        self.__current_time: str = current_time
-
-    @property
-    def time_current(self) -> str:
-        return self.__current_time
-
-
-class EventPlayerRemainingVideoTimeChanged(QEvent):
-
-    def __init__(self, remaining_time: str):
-        super().__init__(PlayerRemainingVideoTimeChanged)
-        self.__remaining_time: str = remaining_time
-
-    @property
-    def time_remaining(self) -> str:
-        return self.__remaining_time
-
-
-class EventPlayerPercentChanged(QEvent):
-
-    def __init__(self, percent: int):
-        super().__init__(PlayerPercentChanged)
-        self.__percent: int = percent
-
-    @property
-    def percent(self) -> int:
-        return self.__percent
-
 
 #######################################################################################################################
 

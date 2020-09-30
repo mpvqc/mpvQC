@@ -88,6 +88,10 @@ class MainHandler(QMainWindow):
         self.__ui.mainWindowContentSplitter.setSizes([400, 20])
         self.search_bar.hide()
 
+        self.widget_mpv.player.connect('percent-pos', self.__widget_status_bar.on_value_percent_pos_changed)
+        self.widget_mpv.player.connect('time-pos', self.__widget_status_bar.on_value_time_pos_changed)
+        self.widget_mpv.player.connect('time-remaining', self.__widget_status_bar.on_value_time_remaining_changed)
+
         EventDistributor.add_receiver((self, EventReceiver.MAIN_HANDLER),
                                       (self.widget_mpv, EventReceiver.WIDGET_MPV),
                                       (self.widget_comments, EventReceiver.WIDGET_COMMENTS),

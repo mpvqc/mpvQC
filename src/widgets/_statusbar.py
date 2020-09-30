@@ -18,6 +18,7 @@ from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
 from src import settings, events
+from src.player import seconds_float_to_formatted_string_hours
 
 
 class _TimeLabel(QLabel):
@@ -28,9 +29,9 @@ class _TimeLabel(QLabel):
 
         self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
 
-        self._percent = 0
-        self.current_time = "00:00"
-        self.remaining_time = "00:00"
+        self.__percent = 0
+        self.__current_time = "00:00"
+        self.__remaining_time = "00:00"
         self.__update()
 
     def __update(self) -> None:
@@ -38,30 +39,24 @@ class _TimeLabel(QLabel):
         Will update the current status bar information about video time and comments
         """
 
-        time = self.current_time if self.__time_format.value else "-{}".format(self.remaining_time)
-        percent = self._percent
+        time = self.__current_time if self.__time_format.value else "-{}".format(self.__remaining_time)
+        percent = self.__percent
         self.setText("{percent:3}%{time:>{padding}}".format(percent=percent, padding=15, time=time))
 
-    def customEvent(self, event: QEvent) -> None:
-        ev_type = event.type()
+    def on_value_percent_pos_changed(self, _, value: float):
+        percent = int(value)
+        if self.__percent != percent:
+            self.__percent = percent
+            self.__update()
 
-        if ev_type == events.PlayerVideoTimeChanged:
-            event: events.EventPlayerVideoTimeChanged
-            current_time = event.time_current
-            if self.current_time != current_time:
-                self.current_time = current_time
-                self.__update()
+    def on_value_time_pos_changed(self, _, value: float):
+        current_time = seconds_float_to_formatted_string_hours(value)
+        if self.__current_time != current_time:
+            self.__current_time = current_time
+            self.__update()
 
-        elif ev_type == events.PlayerRemainingVideoTimeChanged:
-            event: events.EventPlayerRemainingVideoTimeChanged
-            self.remaining_time = event.time_remaining
-
-        elif ev_type == events.PlayerPercentChanged:
-            event: events.EventPlayerPercentChanged
-            percent = event.percent
-            if self._percent != percent:
-                self._percent = percent
-                self.__update()
+    def on_value_time_remaining_changed(self, _, value: float):
+        self.__remaining_time = seconds_float_to_formatted_string_hours(value)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton:
@@ -92,9 +87,16 @@ class StatusBar(QStatusBar):
         else:
             self.__label_comment_selection_slash_amount.setText("")
 
-    def customEvent(self, ev: QEvent):
-        self.__label_information.customEvent(ev)
+    def on_value_percent_pos_changed(self, _, value: float):
+        self.__label_information.on_value_percent_pos_changed(_, value)
 
+    def on_value_time_pos_changed(self, _, value: float):
+        self.__label_information.on_value_time_pos_changed(_, value)
+
+    def on_value_time_remaining_changed(self, _, value: float):
+        self.__label_information.on_value_time_remaining_changed(_, value)
+
+    def customEvent(self, ev: QEvent):
         ev_type = ev.type()
 
         if ev_type == events.CommentAmountChanged:
