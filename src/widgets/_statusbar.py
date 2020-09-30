@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
-from src import settings, events
+from src import settings
 from src.player import seconds_float_to_formatted_string_hours
 
 
@@ -96,18 +96,13 @@ class StatusBar(QStatusBar):
     def on_value_time_remaining_changed(self, _, value: float):
         self.__label_information.on_value_time_remaining_changed(_, value)
 
-    def customEvent(self, ev: QEvent):
-        ev_type = ev.type()
+    def on_comment_selection_changed(self, new_selection: int):
+        self.__comments_current_selection = new_selection
+        self.__update_comment_amount_slash_selection()
 
-        if ev_type == events.CommentAmountChanged:
-            ev: events.EventCommentAmountChanged
-            self.__comments_amount = ev.new_amount
-            self.__update_comment_amount_slash_selection()
-
-        elif ev_type == events.CommentCurrentSelectionChanged:
-            ev: events.EventCommentCurrentSelectionChanged
-            self.__comments_current_selection = ev.current_selection
-            self.__update_comment_amount_slash_selection()
+    def on_comment_amount_changed(self, total_amount):
+        self.__comments_amount = total_amount
+        self.__update_comment_amount_slash_selection()
 
     def changeEvent(self, ev: QEvent):
         ev_type = ev.type()

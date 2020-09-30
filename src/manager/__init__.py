@@ -45,7 +45,6 @@ class Comment:
 
 
 class QcManager(QObject):
-    __gtype_name__ = "QcManager"
 
     # Signal, that indicates a state change. p1='new state (saved/unsaved)'
     state_changed = pyqtSignal(bool)
@@ -69,7 +68,7 @@ class QcManager(QObject):
         self.__t = table_widget
         self.__m = video_widget
 
-        self.__t.state_changed.connect(lambda x, y=self.on_table_content_modified: y())
+        self.__t.comments_changed.connect(lambda x, y=self.on_table_content_modified: y())
 
         # State
         from src.manager._states import get_initial_state, Signals

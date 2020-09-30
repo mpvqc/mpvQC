@@ -20,7 +20,6 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from src import settings
-from src.events import EventDistributor, EventReceiver
 from src.ui import Ui_MainWindow
 from src.uihandler._search_form import SearchHandler
 from src.uiutil import SUPPORTED_SUB_FILES, dialogs
@@ -72,6 +71,11 @@ class MainHandler(QMainWindow):
 
         self.__qc_manager.state_changed.connect(__state_changed)
         self.__qc_manager.video_imported.connect(self.__on_new_video_imported)
+        self.widget_mpv.player.connect('percent-pos', self.__widget_status_bar.on_value_percent_pos_changed)
+        self.widget_mpv.player.connect('time-pos', self.__widget_status_bar.on_value_time_pos_changed)
+        self.widget_mpv.player.connect('time-remaining', self.__widget_status_bar.on_value_time_remaining_changed)
+        self.widget_comments.comment_amount_changed.connect(self.__widget_status_bar.on_comment_amount_changed)
+        self.widget_comments.comment_selection_changed.connect(self.__widget_status_bar.on_comment_selection_changed)
 
         self.__splitter_bottom_layout = QVBoxLayout()
         self.__splitter_bottom_layout.addWidget(self.widget_comments)
@@ -87,16 +91,6 @@ class MainHandler(QMainWindow):
         self.__ui.mainWindowContentSplitter.insertWidget(0, self.widget_mpv)
         self.__ui.mainWindowContentSplitter.setSizes([400, 20])
         self.search_bar.hide()
-
-        self.widget_mpv.player.connect('percent-pos', self.__widget_status_bar.on_value_percent_pos_changed)
-        self.widget_mpv.player.connect('time-pos', self.__widget_status_bar.on_value_time_pos_changed)
-        self.widget_mpv.player.connect('time-remaining', self.__widget_status_bar.on_value_time_remaining_changed)
-
-        EventDistributor.add_receiver((self, EventReceiver.MAIN_HANDLER),
-                                      (self.widget_mpv, EventReceiver.WIDGET_MPV),
-                                      (self.widget_comments, EventReceiver.WIDGET_COMMENTS),
-                                      (self.widget_context_menu, EventReceiver.WIDGET_CONTEXT_MENU),
-                                      (self.__widget_status_bar, EventReceiver.WIDGET_STATUS_BAR))
 
         # Class variables
         self.__current_geometry: QByteArray = None

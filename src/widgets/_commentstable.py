@@ -19,8 +19,6 @@ from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, QModelIndex, QCoreAppl
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent, QMouseEvent, QWheelEvent, QPalette
 from PyQt5.QtWidgets import QTableView, QAbstractItemView, QApplication
 
-from src.events import EventDistributor, EventCommentAmountChanged, EventCommentCurrentSelectionChanged, \
-    EventReceiver
 from src.manager import Comment
 from src.uihandler import MainHandler
 from src.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, SearchResult
@@ -33,7 +31,14 @@ class CommentsTable(QTableView):
     The comment table below the video.
     """
 
-    state_changed = pyqtSignal(bool)
+    # Invoked, whenever the comments change
+    comments_changed = pyqtSignal(bool)
+
+    # Invoked, whenever the current selected comment has changed, p1='new selected comment'
+    comment_selection_changed = pyqtSignal(int)
+
+    # Invoked, whenever the comment amount changed,  p1='new total amount'
+    comment_amount_changed = pyqtSignal(int)
 
     def __init__(self, main_handler: MainHandler):
         super().__init__()
@@ -89,8 +94,8 @@ class CommentsTable(QTableView):
 
         def delete(selected: List[QModelIndex]):
             self.__model.removeRows(selected[0].row(), 1)
-            self.state_changed.emit(False)
-            EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
+            self.comments_changed.emit(False)
+            self.comment_amount_changed.emit(self.__model.rowCount())
 
         self.__do_with_selected_comment_row(delete)
 
@@ -104,7 +109,7 @@ class CommentsTable(QTableView):
             row = selected[0].row()
             idx = self.__model.item(row, 2).index()
             self.edit(idx)
-            self.state_changed.emit(False)
+            self.comments_changed.emit(False)
 
         self.__do_with_selected_comment_row(edit)
 
@@ -146,11 +151,11 @@ class CommentsTable(QTableView):
 
         self.sort()
 
-        EventDistributor.send_event(EventCommentAmountChanged(model.rowCount()))
+        self.comment_amount_changed.emit(model.rowCount())
         self.__on_row_selection_changed()
 
         if changes_qc:
-            self.state_changed.emit(False)
+            self.comments_changed.emit(False)
 
         if edit:
             new_index = model.indexFromItem(last_entry[2])
@@ -192,9 +197,9 @@ class CommentsTable(QTableView):
         """
 
         self.__model.clear()
-        self.state_changed.emit(True)
-        EventDistributor.send_event(EventCommentAmountChanged(self.__model.rowCount()))
-        EventDistributor.send_event(EventCommentCurrentSelectionChanged(-1))
+        self.comments_changed.emit(True)
+        self.comment_amount_changed.emit(self.__model.rowCount())
+        self.comment_selection_changed.emit(-1)
 
     def sort(self) -> None:
         """
@@ -229,14 +234,14 @@ class CommentsTable(QTableView):
         """
 
         self.sort()
-        self.state_changed.emit(False)
+        self.comments_changed.emit(False)
 
     def __on_after_user_changed_comment_type(self) -> None:
         """
         Action to invoke after comment type was changed manually by the user.
         """
 
-        self.state_changed.emit(False)
+        self.comments_changed.emit(False)
 
     # noinspection PyMethodMayBeStatic
     def __on_after_user_changed_comment_note(self) -> None:
@@ -244,7 +249,7 @@ class CommentsTable(QTableView):
         Action to invoke after comment note was changed manually by the user.
         """
 
-        self.state_changed.emit(False)
+        self.comments_changed.emit(False)
 
     # noinspection PyMethodMayBeStatic
     def __on_row_selection_changed(self) -> None:
@@ -255,7 +260,7 @@ class CommentsTable(QTableView):
                 new_row = current_index.row()
             else:
                 new_row = -1
-            EventDistributor.send_event(EventCommentCurrentSelectionChanged(new_row), EventReceiver.WIDGET_STATUS_BAR)
+            self.comment_selection_changed.emit(new_row)
 
         QTimer.singleShot(0, after_model_updated)
 
