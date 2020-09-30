@@ -12,23 +12,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from enum import Enum
 from os import path
 
 from PyQt5.QtCore import QTime
 
-from src.uiutil import TIME_FORMAT
 from src.player._bindings import MPV
-
-
-class ActionType(Enum):
-    """
-    Action types for the MpvPlayer.
-    """
-
-    PRESS = "keypress"
-    DOWN = "keydown"
-    UP = "keyup"
+from src.uiutil import TIME_FORMAT, ActionType
 
 
 class MpvPlayer:
@@ -108,7 +97,7 @@ class MpvPlayer:
         if play:
             self.play()
 
-    def open_video(self, video: path,) -> None:
+    def open_video(self, video: path, ) -> None:
         """
         Opens the given path and if selected starts playing.
 
