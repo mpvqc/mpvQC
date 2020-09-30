@@ -14,6 +14,7 @@
 
 
 import src.uiutil._dialogs as dialogs
+import src.uiutil._messageboxes as messageboxes
 from ._delegates import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, TIME_FORMAT
 from ._dialogs import _SUPPORTED_SUB_FILES as SUPPORTED_SUB_FILES
 from ._searchutils import SearchResult

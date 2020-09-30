@@ -22,13 +22,12 @@ from typing import Optional, Tuple, List
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
-from src import messageboxes as md
 from src.manager import Comment, _exporter
 from src.manager import _handleimport as hi
 from src.manager import _handlesave as hs
 from src.manager._handleimport import HandleImportResultData as Data
 from src.uihandler import MainHandler as AppWindow
-from src.uiutil import dialogs as d
+from src.uiutil import dialogs as d, messageboxes as md
 from src.widgets import CommentsTable as Table
 from src.widgets import MpvWidget
 

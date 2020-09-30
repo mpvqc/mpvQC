@@ -377,5 +377,5 @@ class MainHandler(QMainWindow):
             self.application.setStyleSheet("")
 
     def __check_for_update(self):
-        from src.messageboxes import CheckForUpdates
-        CheckForUpdates().exec_()
+        from src.uiutil import messageboxes
+        messageboxes.CheckForUpdates().exec_()
