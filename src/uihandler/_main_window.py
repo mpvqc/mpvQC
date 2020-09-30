@@ -250,6 +250,7 @@ class MainHandler(QMainWindow):
             self.__ui.retranslateUi(self)
             self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
             self.widget_comments.resize_column_type_column()
+            self.__update_window_title()
 
     def __resize_video(self, check_desktop_size=False) -> None:
 
