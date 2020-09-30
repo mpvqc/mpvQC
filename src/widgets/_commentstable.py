@@ -161,8 +161,9 @@ class CommentsTable(QTableView):
             self.ensure_selection()
 
     def add_comment(self, comment_type: str) -> None:
+        _, position_str = self.__widget_mpv.player.position_current()
         comment = Comment(
-            comment_time=self.__widget_mpv.player.position_current(),
+            comment_time=position_str,
             comment_type=comment_type,
             comment_note=""
         )

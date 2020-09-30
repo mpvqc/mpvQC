@@ -58,12 +58,13 @@ class MpvWidget(QFrame):
             log_handler=logging.mpv_log_handler,
         )
 
-        self.player = MpvPlayer(__mpv)
+        self.player = MpvPlayer()
+        self.player.initialize(__mpv)
         MpvPropertyObserver(__mpv)
 
         from src.uihandler import AboutDialog
         AboutDialog.VERSION_MPV = self.player.version_mpv()
-        AboutDialog.VERSION_FFMPEG = self.player.ffmpeg_version()
+        AboutDialog.VERSION_FFMPEG = self.player.version_ffmpeg()
 
     def mouseMoveEvent(self, e: QMouseEvent):
         if e.type() == QMouseEvent.MouseMove:
@@ -98,7 +99,7 @@ class MpvWidget(QFrame):
     def mouseDoubleClickEvent(self, mev: QMouseEvent):
         button = mev.button()
 
-        if button == Qt.LeftButton and self.player.video_file_current():
+        if button == Qt.LeftButton and self.player.has_video():
             self.__main_handler.toggle_fullscreen()
             self.player.mouse_action(0, ActionType.PRESS)
         elif button == Qt.MiddleButton:
