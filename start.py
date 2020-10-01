@@ -30,9 +30,9 @@ if __name__ == "__main__":
 
     locale.setlocale(locale.LC_NUMERIC, "C")
 
-    from src import main
+    from src import run
 
-    main.run(
+    run(
         dir_program=dir_program,
         app_version=app_version,
         app_name=app_name
