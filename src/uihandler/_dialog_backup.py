@@ -20,7 +20,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 
-from src import settings, get_files
+from src import get_settings, get_files
 from src.manager import QcManager
 from src.ui import Ui_BackupDialog
 
@@ -36,8 +36,9 @@ class DialogBackup(QDialog):
         self.__ui = Ui_BackupDialog()
         self.__ui.setupUi(self)
 
-        self.__ui.checkBox.setEnabled(settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value)
-        self.__ui.spinBox.setValue(settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL.value)
+        s = get_settings()
+        self.__ui.checkBox.setChecked(s.backup_enabled)
+        self.__ui.spinBox.setValue(s.backup_interval)
 
         self.__ui.backupPathLabel.setText(self.__backup_directory)
         self.__ui.openButton.pressed.connect(self.__open_backup_directory)
@@ -46,7 +47,8 @@ class DialogBackup(QDialog):
         QDesktopServices.openUrl(QUrl.fromLocalFile(self.__backup_directory))
 
     def accept(self) -> None:
-        settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value = self.__ui.checkBox.isEnabled()
-        settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL.value = self.__ui.spinBox.value()
+        s = get_settings()
+        s.backup_enabled = self.__ui.checkBox.isChecked()
+        s.backup_interval = self.__ui.spinBox.value()
         self.__qc_manager.reset_auto_save()
         super(DialogBackup, self).accept()

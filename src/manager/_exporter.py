@@ -21,7 +21,7 @@ from os import path
 from typing import Optional, Tuple
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from src import get_metadata, get_files, settings
+from src import get_metadata, get_files, get_settings
 from src.manager import Comment
 
 
@@ -75,6 +75,7 @@ def get_file_content(video_path: Optional[str], comments: Tuple[Comment]):
     :return: the file content of the qc document as a string
     """
 
+    s = get_settings()
     md = get_metadata()
 
     b_header = True
@@ -85,10 +86,10 @@ def get_file_content(video_path: Optional[str], comments: Tuple[Comment]):
     b_generator = True
     v_generator = "{} {}".format(md.app_name, md.app_version)
 
-    b_nick = settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE.value
-    v_nick = settings.Setting_Custom_General_NICKNAME.value
+    b_nick = s.export_write_nickname
+    v_nick = s.export_nickname
 
-    b_path = settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE.value
+    b_path = s.export_write_video_path
     v_path = video_path if video_path else ""
 
     return __prepare_file_content(b_header,

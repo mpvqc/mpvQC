@@ -21,7 +21,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
-from src import settings
+from src import get_settings
 
 _translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
@@ -34,7 +34,7 @@ _FILTER_SUBS = " ".join(["*" + x for x in _SUPPORTED_SUB_FILES])
 
 
 def generate_file_name_proposal(video_file: str):
-    nick = ("_" + settings.Setting_Custom_General_NICKNAME.value) or ""
+    nick = "_" + get_settings().export_nickname
 
     # For translator: The file name proposal if video file is unknown
     untitled = _translate("FileInteractionDialogs", "untitled")
@@ -51,8 +51,10 @@ def get_open_video(parent=None) -> path or None:
     :return: the selected file or None if abort
     """
 
+    s = get_settings()
+
     caption = _translate("FileInteractionDialogs", "Open Video File")
-    directory = settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value
+    directory = s.import_last_dir_video
     file_filter = _translate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
                   _translate("FileInteractionDialogs", "All files") + " (*.*)"
 
@@ -60,7 +62,7 @@ def get_open_video(parent=None) -> path or None:
                                                  directory=directory, filter=file_filter)[0]
 
     if new_video_path:
-        settings.Setting_Internal_PLAYER_LAST_VIDEO_DIR.value = str(Path(new_video_path).parent)
+        s.import_last_dir_video = str(Path(new_video_path).parent)
 
     return new_video_path
 
@@ -73,8 +75,10 @@ def get_open_subs(parent=None) -> List[str] or None:
     :return: the selected file or None if abort
     """
 
+    s = get_settings()
+
     caption = _translate("FileInteractionDialogs", "Open Subtitle File")
-    directory = settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value
+    directory = s.import_last_dir_subtitles
     file_filter = _translate("FileInteractionDialogs", "Subtitle files") + " ({});;".format(_FILTER_SUBS) + \
                   _translate("FileInteractionDialogs", "All files") + " (*.*)"
 
@@ -82,7 +86,7 @@ def get_open_subs(parent=None) -> List[str] or None:
                                                       directory=directory, filter=file_filter)[0]
 
     if new_subtitle_paths:
-        settings.Setting_Internal_PLAYER_LAST_SUB_DIR.value = str(Path(new_subtitle_paths[0]).parent)
+        s.import_last_dir_subtitles = str(Path(new_subtitle_paths[0]).parent)
 
     return new_subtitle_paths
 
@@ -95,8 +99,10 @@ def get_open_file_names(parent=None) -> List[str] or None:
     :return: The selected files or None if abort
     """
 
+    s = get_settings()
+
     caption = _translate("FileInteractionDialogs", "Open QC Document(s)")
-    directory = settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value
+    directory = s.import_last_dir_document
     file_filter = _translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
                   _translate("FileInteractionDialogs", "All files") + " (*.*)"
 
@@ -104,7 +110,7 @@ def get_open_file_names(parent=None) -> List[str] or None:
                                                       directory=directory, filter=file_filter)[0]
 
     if new_document_paths:
-        settings.Setting_Internal_PLAYER_LAST_DOCUMENT_DIR.value = str(Path(new_document_paths[0]).parent)
+        s.import_last_dir_document = str(Path(new_document_paths[0]).parent)
 
     return new_document_paths
 

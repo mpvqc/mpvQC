@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
-from src import settings
+from src import get_settings
 from src.player import seconds_float_to_formatted_string_hours
 
 
@@ -27,7 +27,7 @@ class _TimeLabel(QLabel):
         super().__init__()
         self.setAlignment(Qt.AlignRight)
 
-        self.__time_format = settings.Setting_Internal_STATUS_BAR_TIME_MODE
+        self.__time_format = get_settings().statusbar_time_mode
 
         self.__percent = 0
         self.__current_time = "00:00"
@@ -39,7 +39,7 @@ class _TimeLabel(QLabel):
         Will update the current status bar information about video time and comments
         """
 
-        time = self.__current_time if self.__time_format.value else "-{}".format(self.__remaining_time)
+        time = self.__current_time if self.__time_format else "-{}".format(self.__remaining_time)
         percent = self.__percent
         self.setText("{percent:3}%{time:>{padding}}".format(percent=percent, padding=15, time=time))
 
@@ -60,7 +60,8 @@ class _TimeLabel(QLabel):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton:
-            self.__time_format.value = not self.__time_format.value
+            self.__time_format = (self.__time_format + 1) % 2
+            get_settings().statusbar_time_mode = self.__time_format
             self.__update()
             event.accept()
 

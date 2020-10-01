@@ -19,7 +19,7 @@
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMessageBox
 
-from src import settings
+from src import get_settings
 from src.uiutil import dialogs, messageboxes
 
 
@@ -205,10 +205,10 @@ class QcManager(QObject):
         if self.__auto_save_timer is not None:
             self.__auto_save_timer.stop()
 
-        autosave_enabled = settings.Setting_Custom_QcDocument_AUTOSAVE_ENABLED.value
-        interval = settings.Setting_Custom_QcDocument_AUTOSAVE_INTERVAL.value
+        s = get_settings()
+        interval = s.backup_interval
 
-        if autosave_enabled and interval >= 15:
+        if s.backup_enabled and interval >= 15:
             self.__auto_save_timer = QTimer()
             self.__auto_save_timer.timeout.connect(__do_auto_save)
             self.__auto_save_timer.start(interval * 1000)

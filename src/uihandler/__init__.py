@@ -19,6 +19,6 @@
 from ._dialog_about import AboutDialog
 from ._dialog_backup import DialogBackup
 from ._dialog_edit_comment_types import EditCommentTypesDialog
-from ._dialog_edit_config import EditConfDialog
+from ._dialog_edit_config import EditConfDialogInputConf, EditConfDialogMpvConf
 from ._main_window import MainHandler
 from ._search_form import SearchHandler

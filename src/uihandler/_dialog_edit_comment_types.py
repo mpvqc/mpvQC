@@ -13,14 +13,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
-from src import settings
+from src import get_settings
 from src.ui import Ui_CommentTypesDialog
-
-_translate = QCoreApplication.translate
 
 
 class EditCommentTypesDialog(QDialog):
@@ -42,7 +39,7 @@ class EditCommentTypesDialog(QDialog):
                                                    self.__ui.buttonUp,
                                                    self.__ui.buttonDown)
 
-        for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
+        for ct in get_settings().comment_types:
             self.__ui.listWidget.addItem(ct)
 
     def accept(self):
@@ -50,13 +47,17 @@ class EditCommentTypesDialog(QDialog):
         Action when apply button is pressed.
         """
 
-        settings.Setting_Custom_General_COMMENT_TYPES.value = self.widget.items()
+        get_settings().comment_types = self.widget.items()
         super(EditCommentTypesDialog, self).accept()
 
     def reset(self):
         self.__ui.listWidget.clear()
-        for ct in settings.Setting_Custom_General_COMMENT_TYPES.default_value:
-            self.__ui.listWidget.addItem(_translate("CommentTypes", ct))
+
+        s = get_settings()
+        s.comment_types_reset()
+
+        for ct in s.comment_types:
+            self.__ui.listWidget.addItem(ct)
 
     def mousePressEvent(self, mouse_ev: QMouseEvent):
         """

@@ -18,7 +18,7 @@ from typing import Callable
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QInputDialog, QMenu, QActionGroup, QAction
 
-from src import settings
+from src import get_settings
 
 _translate = QCoreApplication.translate
 
@@ -33,53 +33,53 @@ class _Settings:
 
     @staticmethod
     def edit_nickname(parent):
-        s = settings.Setting_Custom_General_NICKNAME
+        s = get_settings()
 
         dialog = QInputDialog(parent)
         dialog.setInputMode(QInputDialog.TextInput)
         dialog.setWindowTitle(_translate("SettingsDialogNickname", "Edit Nickname"))
         dialog.setLabelText(_translate("SettingsDialogNickname", "New nickname:"))
         dialog.resize(400, 0)
-        dialog.setTextValue(s.value)
+        dialog.setTextValue(s.export_nickname)
 
         ok = dialog.exec_()
-        txt = dialog.textValue()
+        txt = dialog.textValue().strip()
 
         if ok:
             if txt:
-                s.value = txt
+                s.export_nickname = txt
             else:
-                s.reset()
+                s.export_nickname_reset()
 
     @staticmethod
     def setup_menu_window_title(menu: QMenu, callback: Callable):
-        s = settings.Setting_Custom_Appearance_General_WINDOW_TITLE
+        s = get_settings()
 
         def set_window_title(idx_):
-            s.value = idx_
+            s.window_title_info = idx_
             callback()
 
         group = QActionGroup(menu)
         for idx, action in enumerate(menu.actions()):
-            action.setChecked(idx == s.value)
+            action.setChecked(idx == s.window_title_info)
             action.triggered.connect(lambda x, a=idx, f=set_window_title: f(a))
 
             group.addAction(action)
 
     @staticmethod
     def setup_dark_theme(action: QAction, callback: Callable):
-        s = settings.Setting_Custom_Appearance_General_DARK_THEME
+        s = get_settings()
 
         def toggle():
-            s.value = not s.value
+            s.dark_theme = not s.dark_theme
             callback()
 
-        action.setChecked(s.value)
+        action.setChecked(s.dark_theme)
         action.triggered.connect(toggle)
 
     @staticmethod
     def setup_languages(menu: QMenu, callback: Callable):
-        s = settings.Setting_Custom_Language_LANGUAGE
+        s = get_settings()
 
         languages = {
             "English": ("en", _translate("LanguageSelection", "English")),
@@ -90,54 +90,52 @@ class _Settings:
         menu.clear()
 
         def on_language_change(loc):
-            s.value = loc
+            s.language = loc
             callback()
 
         for english, _tuple in languages.items():
             action = menu.addAction(_translate("LanguageSelection", english))
             action.setIconVisibleInMenu(True)
             action.setCheckable(True)
-            action.setChecked(s.value == _tuple[0])
+            action.setChecked(s.language == _tuple[0])
             action.triggered.connect(lambda a, loc=_tuple[0], f=on_language_change: f(loc))
 
         # If language is something other than 'en', 'de', 'it'
         if menu.actions() and all(not v.isChecked() for v in menu.actions()):
-            s.value = "en"
+            s.language = "en"
             callback()
 
     @staticmethod
     def edit_mpv_conf():
-        from src.uihandler import EditConfDialog
+        from src.uihandler import EditConfDialogMpvConf
 
-        dialog = EditConfDialog(settings.Setting_Custom_Configuration_MPV, title="mpv.conf")
+        dialog = EditConfDialogMpvConf("mpv.conf")
         dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit mpv.conf"))
-
-        if dialog.exec_():
-            settings.save()
+        dialog.exec_()
 
     @staticmethod
     def edit_input_conf():
-        from src.uihandler import EditConfDialog
+        from src.uihandler import EditConfDialogInputConf
 
-        dialog = EditConfDialog(settings.Setting_Custom_Configuration_INPUT, title="input.conf")
+        dialog = EditConfDialogInputConf("input.conf")
         dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit input.conf"))
-
-        if dialog.exec_():
-            settings.save()
+        dialog.exec_()
 
     @staticmethod
     def setup_document(action_save_path: QAction, action_save_nickname: QAction):
-        s_save_path = settings.Setting_Custom_QcDocument_WRITE_VIDEO_PATH_TO_FILE
-        s_save_nick = settings.Setting_Custom_QcDocument_WRITE_NICK_TO_FILE
+        s = get_settings()
 
-        action_save_path.setChecked(s_save_path.value)
-        action_save_nickname.setChecked(s_save_nick.value)
+        action_save_path.setChecked(s.export_write_video_path)
+        action_save_nickname.setChecked(s.export_write_nickname)
 
-        def toggle(settings_obj):
-            settings_obj.value = not settings_obj.value
+        def toggle_save_path():
+            s.export_write_video_path = not s.export_write_video_path
 
-        action_save_path.toggled.connect(lambda _, settings_obj=s_save_path, f=toggle: f(settings_obj))
-        action_save_nickname.toggled.connect(lambda _, settings_obj=s_save_nick, f=toggle: f(settings_obj))
+        def toggle_save_nickname():
+            s.export_write_nickname = not s.export_write_nickname
+
+        action_save_path.toggled.connect(lambda _, f=toggle_save_path: f())
+        action_save_nickname.toggled.connect(lambda _, f=toggle_save_nickname: f())
 
     @staticmethod
     def edit_backup_preferences(parent, qc_manager):

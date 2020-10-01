@@ -13,40 +13,74 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+from abc import abstractmethod
+
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
+from src import get_settings
 from src.ui import Ui_SettingsDialogEditConfig
 
 _translate = QCoreApplication.translate
 
 
-class EditConfDialog(QDialog):
+class _EditConfDialog(QDialog):
 
-    def __init__(self, settings_object, title: str):
+    def __init__(self, title: str):
         super().__init__()
 
-        self.__ui = Ui_SettingsDialogEditConfig()
-        self.__ui.setupUi(self)
-        self.__ui.title.setText(title)
+        self._ui = Ui_SettingsDialogEditConfig()
+        self._ui.setupUi(self)
+        self._ui.title.setText(title)
 
-        self.__settings_object = settings_object
+        self._reset_button = self._ui.buttonBox.addButton(QDialogButtonBox.Reset)
+        self._reset_button.clicked.connect(self.on_reset)
 
-        self.reset_button = self.__ui.buttonBox.addButton(QDialogButtonBox.Reset)
-        self.reset_button.clicked.connect(self.reset)
-
-        self.__ui.plainTextEdit.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
-        self.__ui.plainTextEdit.setPlainText(self.__settings_object.value)
+        self._ui.plainTextEdit.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
 
     def accept(self):
-        """
-        Action when apply button is pressed.
-        """
+        self.on_accept()
+        super(_EditConfDialog, self).accept()
 
-        self.__settings_object.value = self.__ui.plainTextEdit.toPlainText()
-        super(EditConfDialog, self).accept()
+    @abstractmethod
+    def on_accept(self):
+        pass
 
-    def reset(self):
-        self.__settings_object.reset()
-        self.__ui.plainTextEdit.setPlainText(self.__settings_object.value)
+    @abstractmethod
+    def on_reset(self):
+        pass
+
+
+class EditConfDialogInputConf(_EditConfDialog):
+
+    def __init__(self, title: str):
+        super().__init__(title)
+
+        s = get_settings()
+        self._ui.plainTextEdit.setPlainText(s.config_file_input)
+
+    def on_accept(self):
+        get_settings().config_file_input = self._ui.plainTextEdit.toPlainText()
+
+    def on_reset(self):
+        s = get_settings()
+        s.config_file_input_reset()
+        self._ui.plainTextEdit.setPlainText(s.config_file_input)
+
+
+class EditConfDialogMpvConf(_EditConfDialog):
+
+    def __init__(self, title: str):
+        super().__init__(title)
+
+        s = get_settings()
+        self._ui.plainTextEdit.setPlainText(s.config_file_mpv)
+
+    def on_accept(self):
+        get_settings().config_file_mpv = self._ui.plainTextEdit.toPlainText()
+
+    def on_reset(self):
+        s = get_settings()
+        s.config_file_mpv_reset()
+        self._ui.plainTextEdit.setPlainText(s.config_file_mpv)

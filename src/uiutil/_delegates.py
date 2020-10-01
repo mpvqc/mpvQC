@@ -17,7 +17,7 @@ from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal,
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
     QStyledItemDelegate
 
-from src import settings
+from src import get_settings
 from src.uiutil._utils import SpecialCharacterValidator
 
 # Time format
@@ -73,7 +73,7 @@ class CommentTypeDelegate(NotifiableItemDelegate):
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)
-        for ct in settings.Setting_Custom_General_COMMENT_TYPES.value:
+        for ct in get_settings().comment_types:
             editor.addItem(ct)
         return editor
 

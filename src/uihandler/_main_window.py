@@ -19,7 +19,7 @@ from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
-from src import settings
+from src import get_settings
 from src.ui import Ui_MainWindow
 from src.uihandler._search_form import SearchHandler
 from src.uiutil import SUPPORTED_SUB_FILES, dialogs
@@ -225,7 +225,7 @@ class MainHandler(QMainWindow):
         Will set the current window title according to the user setting.
         """
 
-        value = settings.Setting_Custom_Appearance_General_WINDOW_TITLE.value
+        value = get_settings().window_title_info
 
         if value == 2 and self.__current_video_path:
             txt = self.__current_video_path
@@ -242,10 +242,11 @@ class MainHandler(QMainWindow):
 
         i18n = get_files().dir_i18n
         if i18n.is_dir():
+            s = get_settings()
             self.application.removeTranslator(self.__translator)
-            self.__translator.load(settings.Setting_Custom_Language_LANGUAGE.value, str(i18n))
+            self.__translator.load(s.language, str(i18n))
             self.application.installTranslator(self.__translator)
-            settings.Setting_Custom_General_COMMENT_TYPES.update()
+            s.comment_types_update_current_language()
             self.widget_context_menu.update_entries()
             self.__ui.retranslateUi(self)
             self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
@@ -315,7 +316,7 @@ class MainHandler(QMainWindow):
         saved = self.__qc_manager.request_quit_application()
         if saved:
             self.__player.terminate()
-            settings.save()
+            get_settings().write_to_disk()
             cev.accept()
         else:
             cev.ignore()
@@ -344,10 +345,9 @@ class MainHandler(QMainWindow):
         self.__qc_manager.do_open_drag_and_drop_data(vids, txts, subs)
 
     def set_theme(self):
-        dark_theme = settings.Setting_Custom_Appearance_General_DARK_THEME.value
+        dark_theme = get_settings().dark_theme
 
         if dark_theme:
-
             palette = QPalette()  # https://gist.github.com/QuantumCD/6245215
             palette.setColor(QPalette.Window, QColor(53, 53, 53))
             palette.setColor(QPalette.WindowText, Qt.white)

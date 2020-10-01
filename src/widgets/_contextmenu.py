@@ -17,7 +17,7 @@ from PyQt5.QtCore import QPoint, QCoreApplication
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QMenu
 
-from src import settings
+from src import get_settings
 from src.uihandler import MainHandler
 
 _translate = QCoreApplication.translate
@@ -42,7 +42,7 @@ class ContextMenu(QMenu):
 
         self.clear()
 
-        ct_list = settings.Setting_Custom_General_COMMENT_TYPES.value
+        ct_list = get_settings().comment_types
         if not ct_list:
             no_ct_action = _translate("CommentTypes",
                                       "No comment types defined." + " " + "Define new comment types in the settings.")
