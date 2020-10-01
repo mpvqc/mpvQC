@@ -144,9 +144,9 @@ class _DarkTheme(_Bool):
 
 class _ConfigFile:
 
-    def __init__(self, target_path: str):
-        self.__path_target = Path(target_path)
-        self.__path_source = get_files().dir_config_default / self.__path_target.name
+    def __init__(self, target_path: Path):
+        self.__path_target = target_path
+        self.__path_source = get_files().dir_data_config / self.__path_target.name
 
         if not self.__path_target.is_file():
             self.__copy(self.__path_source, self.__path_target)
@@ -176,7 +176,7 @@ class Settings:
 
     def __init__(self):
         f = get_files()
-        qs = QSettings(f.file_qsettings, QSettings.IniFormat)
+        qs = QSettings(f.file_settings, QSettings.IniFormat)
         self.__qs = qs
 
         self.__s_import_last_dir_document = _Str("import-last-dir-documents", qs, default_value="")

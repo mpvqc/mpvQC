@@ -26,6 +26,10 @@ class Files:
         md = get_metadata()
 
         dir_program = Path(md.dir_program)
+
+        self.__dir_i18n = dir_program / "i18n"
+        self.__dir_data_config = dir_program / "data" / "config"
+
         is_portable = (dir_program / "portable").is_file()
 
         if is_portable:
@@ -52,14 +56,9 @@ class Files:
         self.__dir_config.mkdir(exist_ok=True, parents=True)
         self.__dir_screenshots.mkdir(exist_ok=True, parents=True)
 
-        self.__dir_i18n = dir_program / "i18n"
-        self.__dir_config_default = dir_program / "data" / "config"
-
         self.__file_input_conf = self.__dir_config / "input.conf"
         self.__file_mpv_conf = self.__dir_config / "mpv.conf"
-        self.__file_settings = self.__dir_config / "settings.json"
-
-        self.__file_qsettings = self.__dir_config / "settings.ini"
+        self.__file_settings = self.__dir_config / "settings.ini"
 
     @property
     def dir_backup(self) -> str:
@@ -78,24 +77,20 @@ class Files:
         return self.__dir_i18n
 
     @property
-    def dir_config_default(self) -> Path:
-        return self.__dir_config_default
+    def dir_data_config(self) -> Path:
+        return self.__dir_data_config
 
     @property
-    def file_input_conf(self) -> str:
-        return str(self.__file_input_conf)
+    def file_input_conf(self) -> Path:
+        return self.__file_input_conf
 
     @property
-    def file_mpv_conf(self) -> str:
-        return str(self.__file_mpv_conf)
+    def file_mpv_conf(self) -> Path:
+        return self.__file_mpv_conf
 
     @property
     def file_settings(self) -> str:
         return str(self.__file_settings)
-
-    @property
-    def file_qsettings(self) -> str:
-        return str(self.__file_qsettings)
 
 
 class _Holder:
