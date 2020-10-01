@@ -36,11 +36,14 @@ class _Storable:
         self._qs = qs
         self._default_value = default_value if default_value is not None else self._calculate_default()
 
+    def get(self):
+        return self._qs.value(self._key, self._default_value)
+
     def set(self, value: any) -> None:
         self._qs.setValue(self._key, value)
 
-    def get(self):
-        return self._qs.value(self._key, self._default_value)
+    def get_default(self):
+        return self._default_value
 
     def reset(self):
         self._qs.setValue(self._key, self._default_value)
@@ -71,11 +74,11 @@ class _Bool(_Storable):
 
 class _StrList(_Storable):
 
-    def set(self, value: List[str]) -> None:
-        self._qs.setValue(self._key, value)
-
     def get(self):
         return self._qs.value(self._key, self._default_value, 'QStringList')
+
+    def set(self, value: List[str]) -> None:
+        self._qs.setValue(self._key, value)
 
 
 class _CommentTypes(_StrList):
@@ -92,11 +95,15 @@ class _CommentTypes(_StrList):
             _translate("CommentTypes", "Note"): "Note"
         }
 
+    def get(self) -> List[str]:
+        return [_translate("CommentTypes", x) for x in super(_CommentTypes, self).get()]
+
     def set(self, value: List[str] or Tuple[str]) -> None:
         self._qs.setValue(self._key, [self.__current_lang_to_id.get(x, x) for x in value])
 
-    def get(self) -> List[str]:
-        return [_translate("CommentTypes", x) for x in super(_CommentTypes, self).get()]
+    def get_default(self) -> List[str]:
+        # noinspection PyTypeChecker
+        return [_translate("CommentTypes", x) for x in super(_CommentTypes, self).get_default()]
 
     def _calculate_default(self) -> List[str]:
         return ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"]
@@ -144,14 +151,14 @@ class _ConfigFile:
         if not self.__path_target.is_file():
             self.__copy(self.__path_source, self.__path_target)
 
-    def set(self, value: str) -> None:
-        self.__write(self.__path_target, value)
-
     def get(self) -> str:
         return self.__read(self.__path_target)
 
-    def reset(self):
-        self.__copy(self.__path_source, self.__path_target)
+    def set(self, value: str) -> None:
+        self.__write(self.__path_target, value)
+
+    def get_default(self) -> str:
+        return self.__read(self.__path_source)
 
     def __copy(self, source: Path, target: Path):
         self.__write(target, content=self.__read(source))
@@ -263,8 +270,8 @@ class Settings:
     def comment_types_longest(self):
         return self.__s_comment_types.longest()
 
-    def comment_types_reset(self):
-        self.__s_comment_types.reset()
+    def comment_types_default(self):
+        return self.__s_comment_types.get_default()
 
     def comment_types_update_current_language(self):
         self.__s_comment_types.update_current_language()
@@ -380,8 +387,8 @@ class Settings:
     def config_file_input(self, value):
         self.__s_conf_input.set(value)
 
-    def config_file_input_reset(self):
-        self.__s_conf_input.reset()
+    def config_file_input_get_default(self):
+        return self.__s_conf_input.get_default()
 
     #
     # Config file: mpv.conf
@@ -395,8 +402,8 @@ class Settings:
     def config_file_mpv(self, value):
         self.__s_conf_mpv.set(value)
 
-    def config_file_mpv_reset(self):
-        self.__s_conf_mpv.reset()
+    def config_file_mpv_get_default(self):
+        return self.__s_conf_mpv.get_default()
 
 
 class _Holder:

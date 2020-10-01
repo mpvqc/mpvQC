@@ -64,9 +64,7 @@ class EditConfDialogInputConf(_EditConfDialog):
         get_settings().config_file_input = self._ui.plainTextEdit.toPlainText()
 
     def on_reset(self):
-        s = get_settings()
-        s.config_file_input_reset()
-        self._ui.plainTextEdit.setPlainText(s.config_file_input)
+        self._ui.plainTextEdit.setPlainText(get_settings().config_file_input_get_default())
 
 
 class EditConfDialogMpvConf(_EditConfDialog):
@@ -81,6 +79,4 @@ class EditConfDialogMpvConf(_EditConfDialog):
         get_settings().config_file_mpv = self._ui.plainTextEdit.toPlainText()
 
     def on_reset(self):
-        s = get_settings()
-        s.config_file_mpv_reset()
-        self._ui.plainTextEdit.setPlainText(s.config_file_mpv)
+        self._ui.plainTextEdit.setPlainText(get_settings().config_file_mpv_get_default())

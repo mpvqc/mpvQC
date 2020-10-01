@@ -53,10 +53,7 @@ class EditCommentTypesDialog(QDialog):
     def reset(self):
         self.__ui.listWidget.clear()
 
-        s = get_settings()
-        s.comment_types_reset()
-
-        for ct in s.comment_types:
+        for ct in get_settings().comment_types_default():
             self.__ui.listWidget.addItem(ct)
 
     def mousePressEvent(self, mouse_ev: QMouseEvent):
