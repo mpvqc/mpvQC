@@ -20,6 +20,8 @@ if __name__ == "__main__":
     import os
     import platform
     import sys
+    # noinspection PyUnresolvedReferences
+    import resources_rc
 
     dir_program = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.dirname(os.path.realpath(__file__))
     app_version = "0.7.0"

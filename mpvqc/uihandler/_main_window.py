@@ -19,7 +19,7 @@ from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
-from mpvqc import get_settings
+from mpvqc import get_settings, get_resources
 from mpvqc.ui import Ui_MainWindow
 from mpvqc.uihandler._search_form import SearchHandler
 from mpvqc.uiutil import SUPPORTED_SUB_FILES, dialogs
@@ -244,7 +244,7 @@ class MainHandler(QMainWindow):
         if i18n.is_dir():
             s = get_settings()
             self.application.removeTranslator(self.__translator)
-            self.__translator.load(s.language, str(i18n))
+            self.__translator.load(get_resources().get_path_translation(s.language))
             self.application.installTranslator(self.__translator)
             s.comment_types_update_current_language()
             self.widget_context_menu.update_entries()

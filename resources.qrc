@@ -1,0 +1,10 @@
+<RCC>
+ <qresource>
+  <file>i18n/de.qm</file>
+  <file>i18n/it.qm</file>
+  <file>i18n/en.qm</file>
+  <file>data/config/input.conf</file>
+  <file>data/config/mpv.conf</file>
+  <file>data/icon.ico</file>
+ </qresource>
+</RCC>

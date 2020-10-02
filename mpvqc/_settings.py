@@ -24,7 +24,7 @@ from typing import Optional, List, Tuple
 
 from PyQt5.QtCore import QSettings, QCoreApplication
 
-from mpvqc import get_files
+from mpvqc import get_files, get_resources
 
 _translate = QCoreApplication.translate
 
@@ -146,10 +146,10 @@ class _ConfigFile:
 
     def __init__(self, target_path: Path):
         self.__path_target = target_path
-        self.__path_source = get_files().dir_data_config / self.__path_target.name
+        self.__default_value = get_resources().get_content_config_file(self.__path_target.name)
 
         if not self.__path_target.is_file():
-            self.__copy(self.__path_source, self.__path_target)
+            self.__write(target_path, content=self.__default_value)
 
     def get(self) -> str:
         return self.__read(self.__path_target)
@@ -158,10 +158,7 @@ class _ConfigFile:
         self.__write(self.__path_target, value)
 
     def get_default(self) -> str:
-        return self.__read(self.__path_source)
-
-    def __copy(self, source: Path, target: Path):
-        self.__write(target, content=self.__read(source))
+        return self.__default_value
 
     @staticmethod
     def __read(path: Path) -> str:

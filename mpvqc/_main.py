@@ -17,9 +17,11 @@ def run(dir_program: str, app_version: str, app_name: str):
     from mpvqc._metadata import set_metadata
     from mpvqc._files import set_files
     from mpvqc._settings import set_settings
+    from mpvqc._resources import set_resources, get_resources
 
     set_metadata(dir_program, app_version, app_name)
     set_files()
+    set_resources()
     set_settings()
 
     import sys
@@ -28,7 +30,7 @@ def run(dir_program: str, app_version: str, app_name: str):
     from PyQt5.QtGui import QIcon
 
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("icon.ico"))
+    app.setWindowIcon(QIcon(get_resources().get_path_app_icon()))
 
     from mpvqc.uihandler import MainHandler
 
