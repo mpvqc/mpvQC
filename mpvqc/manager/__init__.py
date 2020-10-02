@@ -19,8 +19,8 @@
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QMessageBox
 
-from src import get_settings
-from src.uiutil import dialogs, messageboxes
+from mpvqc import get_settings
+from mpvqc.uiutil import dialogs, messageboxes
 
 
 class Comment:
@@ -71,7 +71,7 @@ class QcManager(QObject):
         self.__t.comments_changed.connect(lambda x, y=self.on_table_content_modified: y())
 
         # State
-        from src.manager._states import get_initial_state, Signals
+        from mpvqc.manager._states import get_initial_state, Signals
         Signals.video_imported.connect(lambda video: self.video_imported.emit(video))
 
         self.__state = get_initial_state()

@@ -21,8 +21,8 @@ from os import path
 from typing import Optional, Tuple
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from src import get_metadata, get_files, get_settings
-from src.manager import Comment
+from mpvqc import get_metadata, get_files, get_settings
+from mpvqc.manager import Comment
 
 
 def __prepare_file_content(b_header: bool,

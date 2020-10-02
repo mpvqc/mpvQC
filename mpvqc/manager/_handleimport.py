@@ -18,7 +18,7 @@
 
 from typing import NamedTuple, Optional, List, Tuple
 
-from src.manager import Comment, _importer
+from mpvqc.manager import Comment, _importer
 
 
 class HandleImportResult(NamedTuple):

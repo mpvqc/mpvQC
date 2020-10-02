@@ -20,9 +20,9 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 
-from src import get_settings, get_files
-from src.manager import QcManager
-from src.ui import Ui_BackupDialog
+from mpvqc import get_settings, get_files
+from mpvqc.manager import QcManager
+from mpvqc.ui import Ui_BackupDialog
 
 
 class DialogBackup(QDialog):

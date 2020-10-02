@@ -18,7 +18,7 @@ from typing import Callable
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QInputDialog, QMenu, QActionGroup, QAction
 
-from src import get_settings
+from mpvqc import get_settings
 
 _translate = QCoreApplication.translate
 
@@ -27,7 +27,7 @@ class _Settings:
 
     @staticmethod
     def edit_comment_types(callback: Callable):
-        from src.uihandler import EditCommentTypesDialog
+        from mpvqc.uihandler import EditCommentTypesDialog
         EditCommentTypesDialog().exec_()
         callback()
 
@@ -107,7 +107,7 @@ class _Settings:
 
     @staticmethod
     def edit_mpv_conf():
-        from src.uihandler import EditConfDialogMpvConf
+        from mpvqc.uihandler import EditConfDialogMpvConf
 
         dialog = EditConfDialogMpvConf("mpv.conf")
         dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit mpv.conf"))
@@ -115,7 +115,7 @@ class _Settings:
 
     @staticmethod
     def edit_input_conf():
-        from src.uihandler import EditConfDialogInputConf
+        from mpvqc.uihandler import EditConfDialogInputConf
 
         dialog = EditConfDialogInputConf("input.conf")
         dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit input.conf"))
@@ -139,12 +139,12 @@ class _Settings:
 
     @staticmethod
     def edit_backup_preferences(parent, qc_manager):
-        from src.uihandler import DialogBackup
+        from mpvqc.uihandler import DialogBackup
         DialogBackup(parent, qc_manager).exec_()
 
     @staticmethod
     def display_about_dialog():
-        from src.uihandler import AboutDialog
+        from mpvqc.uihandler import AboutDialog
         AboutDialog().exec_()
 
 

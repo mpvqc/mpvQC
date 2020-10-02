@@ -17,8 +17,8 @@ from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
-from src import get_settings
-from src.player import seconds_float_to_formatted_string_hours
+from mpvqc import get_settings
+from mpvqc.player import seconds_float_to_formatted_string_hours
 
 
 class _TimeLabel(QLabel):

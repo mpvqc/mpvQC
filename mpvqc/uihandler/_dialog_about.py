@@ -16,7 +16,7 @@
 from PyQt5.QtCore import QCoreApplication, Qt
 from PyQt5.QtWidgets import QDialog
 
-from src.ui import Ui_AboutDialog
+from mpvqc.ui import Ui_AboutDialog
 
 _translate = QCoreApplication.translate
 
@@ -30,7 +30,7 @@ class AboutDialog(QDialog):
         self.__ui = Ui_AboutDialog()
         self.__ui.setupUi(self)
 
-        from src import CREDITS, LICENCE, ABOUT
+        from mpvqc import CREDITS, LICENCE, ABOUT
 
         self.__ui.creditsTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
         self.__ui.creditsTextBrowser.setHtml(CREDITS)
@@ -42,7 +42,7 @@ class AboutDialog(QDialog):
 
         import platform
 
-        from src import get_metadata
+        from mpvqc import get_metadata
         md = get_metadata()
 
         self.__ui.aboutTextBrowser.setHtml(ABOUT.format(

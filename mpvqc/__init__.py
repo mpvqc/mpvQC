@@ -13,11 +13,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-import src._logging as logging
-from src._files import Files, get_files
-from src._main import run
-from src._metadata import Metadata, get_metadata
-from src._settings import get_settings
+import mpvqc._logging as logging
+from mpvqc._files import Files, get_files
+from mpvqc._main import run
+from mpvqc._metadata import Metadata, get_metadata
+from mpvqc._settings import get_settings
 
 
 ABOUT = """<h1 style='text-align:center;'>{version} - {platform}</h1>

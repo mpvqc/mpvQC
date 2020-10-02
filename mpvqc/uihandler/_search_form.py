@@ -17,8 +17,8 @@ from PyQt5.QtCore import Qt, QEvent, QModelIndex
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtWidgets import QWidget
 
-from src.ui import Ui_SearchForm
-from src.uiutil import SearchResult, SpecialCharacterValidator
+from mpvqc.ui import Ui_SearchForm
+from mpvqc.uiutil import SearchResult, SpecialCharacterValidator
 
 
 class SearchHandler(QWidget):

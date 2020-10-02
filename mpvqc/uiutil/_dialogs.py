@@ -21,7 +21,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
-from src import get_settings
+from mpvqc import get_settings
 
 _translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)

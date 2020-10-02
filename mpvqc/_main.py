@@ -14,9 +14,9 @@
 
 
 def run(dir_program: str, app_version: str, app_name: str):
-    from src._metadata import set_metadata
-    from src._files import set_files
-    from src._settings import set_settings
+    from mpvqc._metadata import set_metadata
+    from mpvqc._files import set_files
+    from mpvqc._settings import set_settings
 
     set_metadata(dir_program, app_version, app_name)
     set_files()
@@ -30,7 +30,7 @@ def run(dir_program: str, app_version: str, app_name: str):
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
 
-    from src.uihandler import MainHandler
+    from mpvqc.uihandler import MainHandler
 
     container = MainHandler(app)
     container.show()

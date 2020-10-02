@@ -22,7 +22,7 @@ from pathlib import Path
 class Files:
 
     def __init__(self):
-        from src import get_metadata
+        from mpvqc import get_metadata
         md = get_metadata()
 
         dir_program = Path(md.dir_program)

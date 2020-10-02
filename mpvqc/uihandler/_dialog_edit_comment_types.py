@@ -16,8 +16,8 @@
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
-from src import get_settings
-from src.ui import Ui_CommentTypesDialog
+from mpvqc import get_settings
+from mpvqc.ui import Ui_CommentTypesDialog
 
 
 class EditCommentTypesDialog(QDialog):
@@ -30,7 +30,7 @@ class EditCommentTypesDialog(QDialog):
         self.reset_button = self.__ui.buttonBox.addButton(QDialogButtonBox.Reset)
         self.reset_button.clicked.connect(self.reset)
 
-        from src.widgets import PreferenceCommentTypesWidget
+        from mpvqc.widgets import PreferenceCommentTypesWidget
 
         self.widget = PreferenceCommentTypesWidget(self.__ui.lineEdit,
                                                    self.__ui.listWidget,

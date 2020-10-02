@@ -136,7 +136,7 @@ class CheckForUpdates(QMessageBox):
         import urllib.request
         import urllib.error
 
-        from src import get_metadata
+        from mpvqc import get_metadata
         md = get_metadata()
 
         try:

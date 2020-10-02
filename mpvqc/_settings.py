@@ -24,7 +24,7 @@ from typing import Optional, List, Tuple
 
 from PyQt5.QtCore import QSettings, QCoreApplication
 
-from src import get_files
+from mpvqc import get_files
 
 _translate = QCoreApplication.translate
 

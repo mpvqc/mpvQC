@@ -17,10 +17,10 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QMouseEvent, QWheelEvent, QKeyEvent
 from PyQt5.QtWidgets import QFrame, QAbstractItemView
 
-from src import logging
-from src.player import MPV, MpvPlayer
-from src.uihandler import MainHandler
-from src.uiutil import KEY_MAPPINGS, command_generator, ActionType
+from mpvqc import logging
+from mpvqc.player import MPV, MpvPlayer
+from mpvqc.uihandler import MainHandler
+from mpvqc.uiutil import KEY_MAPPINGS, command_generator, ActionType
 
 
 class MpvWidget(QFrame):
@@ -40,7 +40,7 @@ class MpvWidget(QFrame):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.setFocusPolicy(Qt.ClickFocus)
 
-        from src import get_files
+        from mpvqc import get_files
         files = get_files()
 
         __mpv = MPV(
@@ -61,7 +61,7 @@ class MpvWidget(QFrame):
         self.player = MpvPlayer()
         self.player.initialize(__mpv)
 
-        from src.uihandler import AboutDialog
+        from mpvqc.uihandler import AboutDialog
         AboutDialog.VERSION_MPV = self.player.version_mpv()
         AboutDialog.VERSION_FFMPEG = self.player.version_ffmpeg()
 

@@ -19,10 +19,10 @@ from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
-from src import get_settings
-from src.ui import Ui_MainWindow
-from src.uihandler._search_form import SearchHandler
-from src.uiutil import SUPPORTED_SUB_FILES, dialogs
+from mpvqc import get_settings
+from mpvqc.ui import Ui_MainWindow
+from mpvqc.uihandler._search_form import SearchHandler
+from mpvqc.uiutil import SUPPORTED_SUB_FILES, dialogs
 
 _translate = QCoreApplication.translate
 
@@ -31,7 +31,7 @@ class MainHandler(QMainWindow):
 
     def __init__(self, application: QApplication):
         super(MainHandler, self).__init__()
-        from src.widgets import UserSettings
+        from mpvqc.widgets import UserSettings
         self.user_settings = UserSettings
 
         self.application = application
@@ -42,7 +42,7 @@ class MainHandler(QMainWindow):
         self.__ui.setupUi(self)
 
         # Widgets
-        from src.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
+        from mpvqc.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
 
         """
         Layout:
@@ -61,7 +61,7 @@ class MainHandler(QMainWindow):
         self.__widget_status_bar = StatusBar()
         self.__player = self.widget_mpv.player
 
-        from src.manager import QcManager
+        from mpvqc.manager import QcManager
         self.__qc_manager = QcManager(self, self.widget_mpv, self.widget_comments)
         self.__qc_manager_has_changes = False
 
@@ -238,7 +238,7 @@ class MainHandler(QMainWindow):
             txt + " " + (_translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
-        from src import get_files
+        from mpvqc import get_files
 
         i18n = get_files().dir_i18n
         if i18n.is_dir():
@@ -375,5 +375,5 @@ class MainHandler(QMainWindow):
             self.application.setStyleSheet("")
 
     def __check_for_update(self):
-        from src.uiutil import messageboxes
+        from mpvqc.uiutil import messageboxes
         messageboxes.CheckForUpdates().exec_()

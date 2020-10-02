@@ -13,10 +13,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-import src.uiutil._dialogs as dialogs
-import src.uiutil._messageboxes as messageboxes
-from ._delegates import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, TIME_FORMAT
-from ._dialogs import _SUPPORTED_SUB_FILES as SUPPORTED_SUB_FILES
-from ._input import ActionType
-from ._searchutils import SearchResult
-from ._utils import SpecialCharacterValidator, KEY_MAPPINGS, command_generator, replace_special_characters
+from mpvqc.widgets._commentstable import CommentsTable
+from mpvqc.widgets._commenttypeedit import PreferenceCommentTypesWidget
+from mpvqc.widgets._contextmenu import ContextMenu
+from mpvqc.widgets._mpvframe import MpvWidget
+from mpvqc.widgets._settings import UserSettings
+from mpvqc.widgets._statusbar import StatusBar

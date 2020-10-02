@@ -19,8 +19,8 @@ from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
-from src import get_settings
-from src.ui import Ui_SettingsDialogEditConfig
+from mpvqc import get_settings
+from mpvqc.ui import Ui_SettingsDialogEditConfig
 
 _translate = QCoreApplication.translate
 

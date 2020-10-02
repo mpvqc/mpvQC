@@ -17,8 +17,8 @@ from PyQt5.QtCore import QPoint, QCoreApplication
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QMenu
 
-from src import get_settings
-from src.uihandler import MainHandler
+from mpvqc import get_settings
+from mpvqc.uihandler import MainHandler
 
 _translate = QCoreApplication.translate
 

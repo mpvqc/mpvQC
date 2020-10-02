@@ -19,9 +19,9 @@ from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, QModelIndex, QCoreAppl
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent, QMouseEvent, QWheelEvent, QPalette
 from PyQt5.QtWidgets import QTableView, QAbstractItemView, QApplication
 
-from src.manager import Comment
-from src.uihandler import MainHandler
-from src.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, SearchResult
+from mpvqc.manager import Comment
+from mpvqc.uihandler import MainHandler
+from mpvqc.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, SearchResult
 
 _translate = QCoreApplication.translate
 

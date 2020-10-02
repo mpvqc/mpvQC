@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     locale.setlocale(locale.LC_NUMERIC, "C")
 
-    from src import run
+    from mpvqc import run
 
     run(
         dir_program=dir_program,

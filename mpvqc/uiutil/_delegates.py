@@ -17,8 +17,8 @@ from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, QTime, pyqtSignal,
 from PyQt5.QtWidgets import QWidget, QStyleOptionViewItem, QComboBox, QAbstractSpinBox, QTimeEdit, \
     QStyledItemDelegate
 
-from src import get_settings
-from src.uiutil._utils import SpecialCharacterValidator
+from mpvqc import get_settings
+from mpvqc.uiutil._utils import SpecialCharacterValidator
 
 # Time format
 TIME_FORMAT = "HH:mm:ss"

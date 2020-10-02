@@ -22,14 +22,14 @@ from typing import Optional, Tuple, List
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 
-from src.manager import Comment, _exporter
-from src.manager import _handleimport as hi
-from src.manager import _handlesave as hs
-from src.manager._handleimport import HandleImportResultData as Data
-from src.uihandler import MainHandler as AppWindow
-from src.uiutil import dialogs as d, messageboxes as md
-from src.widgets import CommentsTable as Table
-from src.widgets import MpvWidget
+from mpvqc.manager import Comment, _exporter
+from mpvqc.manager import _handleimport as hi
+from mpvqc.manager import _handlesave as hs
+from mpvqc.manager._handleimport import HandleImportResultData as Data
+from mpvqc.uihandler import MainHandler as AppWindow
+from mpvqc.uiutil import dialogs as d, messageboxes as md
+from mpvqc.widgets import CommentsTable as Table
+from mpvqc.widgets import MpvWidget
 
 
 class _StaticSignals(QObject):
