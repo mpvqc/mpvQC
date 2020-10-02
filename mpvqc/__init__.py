@@ -15,7 +15,7 @@
 
 import mpvqc._logging as logging
 from mpvqc._files import Files, get_files
-from mpvqc._main import run
+from mpvqc._main import main
 from mpvqc._metadata import Metadata, get_metadata
 from mpvqc._resources import get_resources
 from mpvqc._settings import get_settings

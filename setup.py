@@ -24,4 +24,9 @@ setup(
     license='GNU General Public License 3',
     packages=find_packages(),
     cmdclass=cmdclass,
+    entry_points={
+        'console_scripts': [
+            'mpvqc=mpvqc:main',
+        ],
+    },
 )

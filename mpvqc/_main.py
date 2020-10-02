@@ -38,3 +38,32 @@ def run(dir_program: str, app_version: str, app_name: str):
     container.show()
 
     sys.exit(app.exec_())
+
+
+def main():
+    import locale
+    import os
+    import platform
+    import sys
+    # noinspection PyUnresolvedReferences
+    import mpvqc._resources_rc
+
+    dir_program = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.dirname(os.path.realpath(__file__))
+    dir_program = os.path.dirname(dir_program)
+    app_version = "0.7.0"
+    app_name = "mpvQC"
+
+    if platform.system() == "Windows":
+        os.add_dll_directory(dir_program)
+
+    locale.setlocale(locale.LC_NUMERIC, "C")
+
+    run(
+        dir_program=dir_program,
+        app_version=app_version,
+        app_name=app_name
+    )
+
+
+if __name__ == '__main__':
+    main()

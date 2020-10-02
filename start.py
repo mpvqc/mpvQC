@@ -16,26 +16,6 @@
 
 
 if __name__ == "__main__":
-    import locale
-    import os
-    import platform
-    import sys
-    # noinspection PyUnresolvedReferences
-    import resources_rc
+    from mpvqc import main
 
-    dir_program = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.dirname(os.path.realpath(__file__))
-    app_version = "0.7.0"
-    app_name = "mpvQC"
-
-    if platform.system() == "Windows":
-        os.add_dll_directory(dir_program)
-
-    locale.setlocale(locale.LC_NUMERIC, "C")
-
-    from mpvqc import run
-
-    run(
-        dir_program=dir_program,
-        app_version=app_version,
-        app_name=app_name
-    )
+    main()
