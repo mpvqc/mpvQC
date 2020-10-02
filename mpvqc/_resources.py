@@ -52,7 +52,13 @@ class Resources:
         return ":/i18n/{}.qm".format(language)
 
     def get_content_config_file(self, file_name: str):
-        return self.__get_file_content(":/data/config/{}".format(file_name))
+        return self.__get_file_content(":/data/config/" + file_name)
+
+    def get_content_html_file(self, file_name):
+        return self.__get_file_content(":/data/html/" + file_name)
+
+    def get_license(self):
+        return self.__get_file_content(":/LICENSE")
 
 
 class _Holder:

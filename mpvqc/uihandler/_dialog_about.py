@@ -13,9 +13,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
+import platform
+
 from PyQt5.QtCore import QCoreApplication, Qt
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog
 
+from mpvqc import get_resources, get_metadata
 from mpvqc.ui import Ui_AboutDialog
 
 _translate = QCoreApplication.translate
@@ -30,22 +34,19 @@ class AboutDialog(QDialog):
         self.__ui = Ui_AboutDialog()
         self.__ui.setupUi(self)
 
-        from mpvqc import CREDITS, LICENCE, ABOUT
-
-        self.__ui.creditsTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
-        self.__ui.creditsTextBrowser.setHtml(CREDITS)
-        self.__ui.licenceTextBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
-        self.__ui.licenceTextBrowser.setHtml(LICENCE)
-
-        self.__ui.aboutTextBrowser.setOpenExternalLinks(True)
-        self.__ui.aboutTextBrowser.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-
-        import platform
-
-        from mpvqc import get_metadata
+        r = get_resources()
         md = get_metadata()
 
-        self.__ui.aboutTextBrowser.setHtml(ABOUT.format(
+        self.__ui.creditsTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.__ui.creditsTextBrowser.setHtml(r.get_content_html_file("credits.html"))
+
+        self.__ui.licenceTextBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        self.__ui.licenceTextBrowser.setText(r.get_license())
+        self.__ui.licenceTextBrowser.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
+
+        self.__ui.aboutTextBrowser.setOpenExternalLinks(True)
+        self.__ui.aboutTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.__ui.aboutTextBrowser.setHtml(r.get_content_html_file("about.html").format(
             version=md.app_version,
             platform=platform.architecture()[0],
             app_name=md.app_name,

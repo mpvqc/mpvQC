@@ -6,5 +6,8 @@
   <file>data/config/input.conf</file>
   <file>data/config/mpv.conf</file>
   <file>data/icon.ico</file>
+  <file>data/html/credits.html</file>
+  <file>data/html/about.html</file>
+  <file>LICENSE</file>
  </qresource>
 </RCC>
