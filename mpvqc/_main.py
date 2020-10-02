@@ -48,8 +48,11 @@ def main():
     # noinspection PyUnresolvedReferences
     import mpvqc._resources_rc
 
-    dir_program = sys._MEIPASS if getattr(sys, "frozen", False) else os.path.dirname(os.path.realpath(__file__))
-    dir_program = os.path.dirname(dir_program)
+    if getattr(sys, "frozen", False):
+        dir_program = sys._MEIPASS
+    else:
+        dir_program = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
     app_version = "0.7.0"
     app_name = "mpvQC"
 
