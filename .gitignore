@@ -248,3 +248,4 @@ compile_commands.json
 
 appdata
 mpvqc/_resources_rc.py
+resources.qrc
