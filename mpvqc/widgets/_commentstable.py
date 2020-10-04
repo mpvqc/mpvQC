@@ -13,15 +13,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
-from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, QModelIndex, QCoreApplication, QTimer, Qt
+from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, QModelIndex, QCoreApplication, QTimer, Qt, pyqtSlot
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QKeyEvent, QMouseEvent, QWheelEvent, QPalette
 from PyQt5.QtWidgets import QTableView, QAbstractItemView, QApplication
 
 from mpvqc.manager import Comment
 from mpvqc.uihandler import MainHandler
-from mpvqc.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, SearchResult
+from mpvqc.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, CommentsTableSearcher
 
 _translate = QCoreApplication.translate
 
@@ -37,8 +37,11 @@ class CommentsTable(QTableView):
     # Invoked, whenever the current selected comment has changed, p1='new selected comment'
     comment_selection_changed = pyqtSignal(int)
 
-    # Invoked, whenever the comment amount changed,  p1='new total amount'
+    # Invoked, whenever the comment amount changed, p1='new total amount'
     comment_amount_changed = pyqtSignal(int)
+
+    # Invoked, whenever the search highlight should be changed,  p1='current hit' p2='total hits'
+    search_highlight_changed = pyqtSignal(int, int)
 
     def __init__(self, main_handler: MainHandler):
         super().__init__()
@@ -85,6 +88,12 @@ class CommentsTable(QTableView):
         self.setSortingEnabled(True)
         self.setWordWrap(False)
         self.setShowGrid(False)
+
+        self.__search_helper = CommentsTableSearcher(parent=self, model=self.__model, model_sel=self.selectionModel())
+        self.__search_helper.highlight.connect(self.__on_search_highlight_change)
+
+        self.comments_changed.connect(self.__search_helper.on_comments_changed)
+        self.comment_amount_changed.connect(self.__search_helper.on_comments_changed)
 
     def delete_current_selected_comment(self) -> None:
         """
@@ -309,65 +318,44 @@ class CommentsTable(QTableView):
 
         self.setFocus()
         if self.__model.rowCount() != 0:
-            if not self.selectionModel().currentIndex().isValid():
+            if not self.selectionModel().hasSelection():
                 self.__highlight_row(self.model().index(0, 2))
 
-    def perform_search(self, query: str, top_down: bool, new_query: bool, last_index: QModelIndex) -> SearchResult:
-        """
-        Will perform the search for the given query and return a SearchResult.
-
-        :param last_index: The index of the latest search result or any invalid index.
-        :param query: search string ignore case (Qt.MatchContains)
-        :param top_down: If True the next, if False the previous occurrence will be returned
-        :param new_query: If True the search will be handled as a new one.
-        :return:
-        """
-
-        current_index = self.selectionModel().currentIndex()
-
-        if new_query:
-            start_row = 0
-        elif last_index and last_index.isValid():
-            start_row = last_index.row()
-        elif current_index and current_index.isValid():
-            start_row = current_index.row()
-        else:
-            start_row = 0
-
-        if query == "":
-            return self.__generate_search_result(query)
-
-        start = self.__model.index(start_row, 2)
-        match: List[QModelIndex] = self.__model.match(start, Qt.DisplayRole, query, -1, Qt.MatchContains | Qt.MatchWrap)
-
-        if not match:
-            return self.__generate_search_result(query)
-
-        return self.__provide_search_result(query, match, top_down, new_query)
-
-    def __provide_search_result(self, query: str, match: List[QModelIndex], top_down: bool,
-                                new_query: bool) -> SearchResult:
-
-        if top_down and len(match) > 1:
-            if new_query or self.selectionModel().currentIndex() not in match:
-                model_index = match[0]
-            else:
-                model_index = match[1]
-        else:
-            model_index = match[-1]
-        current_hit = sorted(match, key=lambda k: k.row()).index(model_index)
-        return self.__generate_search_result(query, model_index, current_hit + 1, len(match))
-
-    def __generate_search_result(self, query, model_index=None, current_hit=0, total_hits=0) -> SearchResult:
-        result = SearchResult(query, model_index, current_hit, total_hits)
-        result.highlight.connect(lambda index: self.__highlight_row(index))
-        return result
-
-    def __highlight_row(self, model_index: QModelIndex):
-        if model_index:
-            self.selectionModel().setCurrentIndex(model_index, self.__selection_flags)
-            self.selectionModel().select(model_index, self.__selection_flags)
-            self.scrollTo(model_index, QAbstractItemView.PositionAtCenter)
+    def __highlight_row(self, m_idx: QModelIndex):
+        if m_idx:
+            self.selectionModel().setCurrentIndex(m_idx, self.__selection_flags)
+            self.selectionModel().select(m_idx, self.__selection_flags)
+            self.scrollTo(m_idx, QAbstractItemView.EnsureVisible)
 
     def resize_column_type_column(self):
         self.resizeColumnToContents(1)
+
+    @pyqtSlot()
+    def on_search_shown(self):
+        self.__search_helper.on_search_shown()
+
+    @pyqtSlot()
+    def on_search_hidden(self):
+        self.setFocus()
+        self.__search_helper.on_search_hidden()
+
+    @pyqtSlot(str)
+    def on_search_query_changed(self, query: str):
+        self.__search_helper.on_search_query_changed(query=query)
+
+    @pyqtSlot()
+    def on_search_next_result(self):
+        self.__search_helper.on_search_next_result()
+
+    @pyqtSlot()
+    def on_search_previous_result(self):
+        self.__search_helper.on_search_previous_result()
+
+    @pyqtSlot()
+    def on_search_edit_comment(self):
+        self.edit_current_selected_comment()
+
+    @pyqtSlot(object, int, int)
+    def __on_search_highlight_change(self, m_idx: Optional[QModelIndex], current: int, total: int):
+        self.search_highlight_changed.emit(current, total)
+        self.__highlight_row(m_idx)

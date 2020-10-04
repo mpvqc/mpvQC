@@ -148,7 +148,10 @@ class MpvWidget(QFrame):
         elif key == Qt.Key_E and mod == Qt.NoModifier and self.player.has_video():
             self.__main_handler.widget_context_menu.exec_()
         elif key == Qt.Key_Escape and mod == Qt.NoModifier:
-            self.__main_handler.display_normal()
+            if self.__main_handler.isFullScreen():
+                self.__main_handler.display_normal()
+            else:
+                self.__main_handler.search_bar.keyPressEvent(e)
         elif key in KEY_MAPPINGS:
             cmd = command_generator(mod, *KEY_MAPPINGS[key])
         elif key != 0:

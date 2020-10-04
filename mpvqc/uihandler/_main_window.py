@@ -69,6 +69,14 @@ class MainHandler(QMainWindow):
             self.__qc_manager_has_changes = has_changes
             self.__update_window_title()
 
+        self.search_bar.sig_shown.connect(self.widget_comments.on_search_shown)
+        self.search_bar.sig_hidden.connect(self.widget_comments.on_search_hidden)
+        self.search_bar.sig_query_changed.connect(self.widget_comments.on_search_query_changed)
+        self.search_bar.sig_result_previous.connect(self.widget_comments.on_search_previous_result)
+        self.search_bar.sig_result_next.connect(self.widget_comments.on_search_next_result)
+        self.search_bar.sig_edit_comment.connect(self.widget_comments.on_search_edit_comment)
+        self.widget_comments.search_highlight_changed.connect(self.search_bar.on_search_highlight_changed)
+
         self.__qc_manager.state_changed.connect(__state_changed)
         self.__qc_manager.video_imported.connect(self.__on_new_video_imported)
         self.widget_mpv.player.connect('percent-pos', self.__widget_status_bar.on_value_percent_pos_changed)
