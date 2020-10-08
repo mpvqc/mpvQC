@@ -18,7 +18,6 @@ from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QStatusBar, QLabel
 
 from mpvqc import get_settings
-from mpvqc.player import seconds_float_to_formatted_string_hours
 
 
 class _TimeLabel(QLabel):
@@ -43,20 +42,16 @@ class _TimeLabel(QLabel):
         percent = self.__percent
         self.setText("{percent:3}%{time:>{padding}}".format(percent=percent, padding=15, time=time))
 
-    def on_value_percent_pos_changed(self, _, value: float):
-        percent = int(value)
-        if self.__percent != percent:
-            self.__percent = percent
-            self.__update()
+    def on_value_percent_pos_changed(self, percent: int):
+        self.__percent = percent
+        self.__update()
 
-    def on_value_time_pos_changed(self, _, value: float):
-        current_time = seconds_float_to_formatted_string_hours(value)
-        if self.__current_time != current_time:
-            self.__current_time = current_time
-            self.__update()
+    def on_value_time_pos_changed(self, time_pos: str):
+        self.__current_time = time_pos
+        self.__update()
 
-    def on_value_time_remaining_changed(self, _, value: float):
-        self.__remaining_time = seconds_float_to_formatted_string_hours(value)
+    def on_value_time_remaining_changed(self, time_remaining: str):
+        self.__remaining_time = time_remaining
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.LeftButton:
@@ -88,14 +83,14 @@ class StatusBar(QStatusBar):
         else:
             self.__label_comment_selection_slash_amount.setText("")
 
-    def on_value_percent_pos_changed(self, _, value: float):
-        self.__label_information.on_value_percent_pos_changed(_, value)
+    def on_value_percent_pos_changed(self, percent: int):
+        self.__label_information.on_value_percent_pos_changed(percent)
 
-    def on_value_time_pos_changed(self, _, value: float):
-        self.__label_information.on_value_time_pos_changed(_, value)
+    def on_value_time_pos_changed(self, time_pos: str):
+        self.__label_information.on_value_time_pos_changed(time_pos)
 
-    def on_value_time_remaining_changed(self, _, value: float):
-        self.__label_information.on_value_time_remaining_changed(_, value)
+    def on_value_time_remaining_changed(self, time_remaining: str):
+        self.__label_information.on_value_time_remaining_changed(time_remaining)
 
     def on_comment_selection_changed(self, new_selection: int):
         self.__comments_current_selection = new_selection

@@ -79,9 +79,9 @@ class MainHandler(QMainWindow):
 
         self.__qc_manager.state_changed.connect(__state_changed)
         self.__qc_manager.video_imported.connect(self.__on_new_video_imported)
-        self.widget_mpv.player.connect('percent-pos', self.__widget_status_bar.on_value_percent_pos_changed)
-        self.widget_mpv.player.connect('time-pos', self.__widget_status_bar.on_value_time_pos_changed)
-        self.widget_mpv.player.connect('time-remaining', self.__widget_status_bar.on_value_time_remaining_changed)
+        self.widget_mpv.player.sig_mpv_percent_pos.connect(self.__widget_status_bar.on_value_percent_pos_changed)
+        self.widget_mpv.player.sig_mpv_time_pos.connect(self.__widget_status_bar.on_value_time_pos_changed)
+        self.widget_mpv.player.sig_mpv_time_remaining.connect(self.__widget_status_bar.on_value_time_remaining_changed)
         self.widget_comments.comment_amount_changed.connect(self.__widget_status_bar.on_comment_amount_changed)
         self.widget_comments.comment_selection_changed.connect(self.__widget_status_bar.on_comment_selection_changed)
 

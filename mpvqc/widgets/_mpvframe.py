@@ -58,8 +58,7 @@ class MpvWidget(QFrame):
             log_handler=logging.mpv_log_handler,
         )
 
-        self.player = MpvPlayer()
-        self.player.initialize(__mpv)
+        self.player = MpvPlayer(__mpv)
 
         from mpvqc.uihandler import AboutDialog
         AboutDialog.VERSION_MPV = self.player.version_mpv()
