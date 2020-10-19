@@ -246,20 +246,17 @@ class MainHandler(QMainWindow):
             txt + " " + (_translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
-        from mpvqc import get_files
-
-        i18n = get_files().dir_i18n
-        if i18n.is_dir():
-            s = get_settings()
-            self.application.removeTranslator(self.__translator)
-            self.__translator.load(get_resources().get_path_translation(s.language))
-            self.application.installTranslator(self.__translator)
-            s.comment_types_update_current_language()
-            self.widget_context_menu.update_entries()
-            self.__ui.retranslateUi(self)
-            self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
-            self.widget_comments.resize_column_type_column()
-            self.__update_window_title()
+        r = get_resources()
+        s = get_settings()
+        self.application.removeTranslator(self.__translator)
+        self.__translator.load(r.get_path_translation(s.language))
+        self.application.installTranslator(self.__translator)
+        s.comment_types_update_current_language()
+        self.widget_context_menu.update_entries()
+        self.__ui.retranslateUi(self)
+        self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
+        self.widget_comments.resize_column_type_column()
+        self.__update_window_title()
 
     def __resize_video(self, check_desktop_size=False) -> None:
 

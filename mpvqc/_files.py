@@ -27,9 +27,6 @@ class Files:
 
         dir_program = Path(md.dir_program)
 
-        self.__dir_i18n = dir_program / "i18n"
-        self.__dir_data_config = dir_program / "data" / "config"
-
         is_portable = (dir_program / "portable").is_file()
 
         if is_portable:
@@ -71,14 +68,6 @@ class Files:
     @property
     def dir_screenshots(self) -> str:
         return str(self.__dir_screenshots)
-
-    @property
-    def dir_i18n(self) -> Path:
-        return self.__dir_i18n
-
-    @property
-    def dir_data_config(self) -> Path:
-        return self.__dir_data_config
 
     @property
     def file_input_conf(self) -> Path:
