@@ -45,8 +45,13 @@ def main():
     import os
     import platform
     import sys
-    # noinspection PyUnresolvedReferences
-    import mpvqc._resources_rc
+
+    try:
+        import mpvqc._resources_rc
+    except ImportError:
+        print("Can not find resource module 'mpvqc._resources_rc'. "
+              "Please recompile resources by running './setup.py build_ui' in the root directory.", file=sys.stderr)
+        sys.exit(1)
 
     if getattr(sys, "frozen", False):
         dir_program = sys._MEIPASS
