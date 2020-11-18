@@ -1,4 +1,4 @@
-![Tests](https://github.com/mpvqc/mpvQC/workflows/tests/badge.svg?branch=dev)
+![Tests](https://github.com/mpvqc/mpvQC/workflows/Tests/badge.svg)
 
 # mpvQC
 
