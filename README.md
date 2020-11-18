@@ -1,3 +1,5 @@
+![Tests](https://github.com/mpvqc/mpvQC/workflows/tests/badge.svg?branch=dev)
+
 # mpvQC
 
 **mpvQC** is a **libmpv** based application for the quick and easy creation of quality control reports of video files, 
@@ -49,11 +51,6 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 ## Keybindings
 
-To change the keybindings, you have to go to `Options --> Edit input.conf...`.<br>
-You can use most of the input commands listed [here](https://mpv.io/manual/master/#list-of-input-commands).
-
-### Default Bindings
-
 Keybindings marked with \* cannot be changed.
 
 - `Right click`\*, `e`\*: Open context menu
@@ -72,6 +69,5 @@ Keybindings marked with \* cannot be changed.
 - `b`: Toggle between rendering the subtitles at window resolution and video resolution
 - `i`: Display statistics of the currently played video
 
-## Special Thanks
-
-- [maddo](https://github.com/maddovr) for the Italian translation
+To change the keybindings, you have to go to `Options --> Edit input.conf...`  
+You can use most of the input commands listed [here](https://mpv.io/manual/master/#list-of-input-commands).
