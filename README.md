@@ -1,16 +1,19 @@
-![Tests](https://github.com/mpvqc/mpvQC/workflows/Tests/badge.svg)
-
-# mpvQC
-
-**mpvQC** is a **libmpv** based application for the quick and easy creation of quality control reports of video files, 
-initially intended to be a less broken alternative to *kSub*.
+<div align="center">
+  <h1 >mpvQC</h1>
+  <img alt="Logo" src="https://avatars3.githubusercontent.com/u/47739558?s=200&v=4" width="128" height="128"/>
+  <br/>
+  <br/>
+  <img alt="Tests" src="https://github.com/mpvqc/mpvQC/workflows/Tests/badge.svg"/>
+  <h5>libmpv based application for the quick and easy creation of quality control reports of video files</h5>
+</div>
+---
 
 ## Dependencies
 
 - Python 3.6 or later
 - PyQt5
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
-- [libmpv](https://github.com/mpv-player/mpv) (0.28.0 or later)
+- [libmpv](https://github.com/mpv-player/mpv) (0.29.0 or later)
 - [distutils_ui](https://github.com/frispete/distutils_ui) for developing
 
 ## Installation
@@ -21,33 +24,9 @@ For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/
 
 ### Linux
 
-#### Arch
-
-- Install dependencies: `sudo pacman -S python-pyqt5 mpv`
-- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
-- Mark `start.py` as executable and run it.
-
-#### Ubuntu 20.04
-
-- Install dependencies: `sudo apt-get install python3-pyqt5 libmpv1`
-- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
-- Mark `start.py` as executable and run it.
-
-#### Ubuntu 18.04
-
-- Install dependencies: `sudo apt-get install python3-pyqt5`
-- Build mpv from Source:
-    ```shell script
-    sudo apt-get install git devscripts equivs
-    git clone https://github.com/mpv-player/mpv-build.git
-    cd mpv-build
-    mk-build-deps -s sudo -i
-    echo --enable-libmpv-shared > mpv_options
-    ./rebuild -j4
-    sudo ./install
-    ```
-- Download [master](https://github.com/Frechdachs/mpvQC/archive/master.zip) and extract its contents
-- Mark `start.py` as executable and run it.
+For Linux there is a little work required to get the application up and running.  
+For Ubuntu 20.04 we have listed all steps [here](docs/dev-environment-setup.md).  
+Other distributions behave similarly, but package names vary.
 
 ## Keybindings
 
