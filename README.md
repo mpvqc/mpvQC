@@ -4,7 +4,8 @@
   <br/>
   <br/>
   <img alt="Tests" src="https://github.com/mpvqc/mpvQC/workflows/Tests/badge.svg"/>
-  <h5>libmpv based application for the quick and easy creation of quality control reports of video files</h5>
+  <br>
+  <b>libmpv based application for the quick and easy creation of quality control reports of video files</b>
 </div>
 
 ---
