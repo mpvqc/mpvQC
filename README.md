@@ -1,11 +1,12 @@
 <div align="center">
-  <h1 >mpvQC</h1>
+  <h1>mpvQC</h1>
   <img alt="Logo" src="https://avatars3.githubusercontent.com/u/47739558?s=200&v=4" width="128" height="128"/>
   <br/>
   <br/>
   <img alt="Tests" src="https://github.com/mpvqc/mpvQC/workflows/Tests/badge.svg"/>
   <h5>libmpv based application for the quick and easy creation of quality control reports of video files</h5>
 </div>
+
 ---
 
 ## Dependencies
