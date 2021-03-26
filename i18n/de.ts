@@ -208,9 +208,14 @@
         <translation>Deutsch</translation>
     </message>
     <message>
-        <location filename="../mpvqc/widgets/_settings.py" line="87"/>
+        <location filename="../mpvqc/widgets/_settings.py" line="88"/>
         <source>Italian</source>
         <translation>Italienisch</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/widgets/_settings.py" line="87"/>
+        <source>Hebrew</source>
+        <translation>Hebräisch</translation>
     </message>
 </context>
 <context>
@@ -535,12 +540,12 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
         <translation>Änderungen werden erst nach einem Neustart der Anwendung übernommen.</translation>
     </message>
     <message>
-        <location filename="../mpvqc/widgets/_settings.py" line="113"/>
+        <location filename="../mpvqc/widgets/_settings.py" line="114"/>
         <source>Edit mpv.conf</source>
         <translation>mpv.conf editieren</translation>
     </message>
     <message>
-        <location filename="../mpvqc/widgets/_settings.py" line="121"/>
+        <location filename="../mpvqc/widgets/_settings.py" line="122"/>
         <source>Edit input.conf</source>
         <translation>input.conf editieren</translation>
     </message>

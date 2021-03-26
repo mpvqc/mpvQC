@@ -208,9 +208,14 @@
         <translation type="unfinished">Tedesco</translation>
     </message>
     <message>
-        <location filename="../mpvqc/widgets/_settings.py" line="87"/>
+        <location filename="../mpvqc/widgets/_settings.py" line="88"/>
         <source>Italian</source>
         <translation type="unfinished">Italiano</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/widgets/_settings.py" line="87"/>
+        <source>Hebrew</source>
+        <translation>Ebraico</translation>
     </message>
 </context>
 <context>
@@ -534,12 +539,12 @@ Are you sure you have permission to write in the selected directory?</source>
         <translation type="unfinished">Devi riavviare l&apos;applicazione per applicare le impostazioni.</translation>
     </message>
     <message>
-        <location filename="../mpvqc/widgets/_settings.py" line="113"/>
+        <location filename="../mpvqc/widgets/_settings.py" line="114"/>
         <source>Edit mpv.conf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mpvqc/widgets/_settings.py" line="121"/>
+        <location filename="../mpvqc/widgets/_settings.py" line="122"/>
         <source>Edit input.conf</source>
         <translation type="unfinished"></translation>
     </message>
