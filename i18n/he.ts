@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="de" sourcelanguage="en">
+<!DOCTYPE TS><TS version="2.0" language="he" sourcelanguage="en">
 <context>
     <name>AboutDialog</name>
     <message>
         <location filename="../mpvqc/ui/_dialog_about.py" line="104"/>
         <source>About mpvQC</source>
-        <translation>Über mpvQC</translation>
+        <translation>אודות mpvQC</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_about.py" line="105"/>
         <source>About</source>
-        <translation>Über</translation>
+        <translation>אודות</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_about.py" line="106"/>
         <source>Credits</source>
-        <translation>Credits</translation>
+        <translation>קרדיטים</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_about.py" line="107"/>
         <source>Licence</source>
-        <translation>Lizenz</translation>
+        <translation>רישיון</translation>
     </message>
 </context>
 <context>
@@ -28,27 +28,27 @@
     <message>
         <location filename="../mpvqc/ui/_dialog_backup.py" line="136"/>
         <source>Backup Preferences</source>
-        <translation>Backupeinstellungen</translation>
+        <translation>הגדרות גיבוי אוטומטי</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_backup.py" line="137"/>
         <source>Enable Backups</source>
-        <translation>Backups aktivieren</translation>
+        <translation>הפעל גיבוי אוטומטי</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_backup.py" line="138"/>
         <source>Every</source>
-        <translation>Alle</translation>
+        <translation>כל</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_backup.py" line="139"/>
         <source>seconds</source>
-        <translation>Sekunden</translation>
+        <translation>שניות</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_backup.py" line="140"/>
         <source>Open</source>
-        <translation>Öffnen</translation>
+        <translation>פתח</translation>
     </message>
 </context>
 <context>
@@ -56,42 +56,42 @@
     <message>
         <location filename="../mpvqc/_settings.py" line="89"/>
         <source>Translation</source>
-        <translation>Übersetzung</translation>
-    </message>
-    <message>
-        <location filename="../mpvqc/_settings.py" line="91"/>
-        <source>Punctuation</source>
-        <translation>Interpunktion</translation>
+        <translation>תרגום</translation>
     </message>
     <message>
         <location filename="../mpvqc/_settings.py" line="90"/>
         <source>Spelling</source>
-        <translation>Rechtschreibung</translation>
+        <translation>איות</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/_settings.py" line="91"/>
+        <source>Punctuation</source>
+        <translation>פיסוק</translation>
     </message>
     <message>
         <location filename="../mpvqc/_settings.py" line="92"/>
         <source>Phrasing</source>
-        <translation>Ausdruck</translation>
+        <translation>ניסוח</translation>
     </message>
     <message>
         <location filename="../mpvqc/_settings.py" line="93"/>
         <source>Timing</source>
-        <translation>Timing</translation>
+        <translation>תזמון</translation>
     </message>
     <message>
         <location filename="../mpvqc/_settings.py" line="94"/>
         <source>Typeset</source>
-        <translation>Typeset</translation>
+        <translation>עיצוב דפוס</translation>
     </message>
     <message>
         <location filename="../mpvqc/_settings.py" line="95"/>
         <source>Note</source>
-        <translation>Hinweis</translation>
+        <translation>הערה</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_contextmenu.py" line="47"/>
         <source>No comment types defined. Define new comment types in the settings.</source>
-        <translation>Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
+        <translation>לא הוגדרו סוגי הערות. הגדר סוגי הערות חדשים בהגדרות.</translation>
     </message>
 </context>
 <context>
@@ -99,42 +99,42 @@
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="126"/>
         <source>Edit Comment Types</source>
-        <translation>Kommentartypen editieren</translation>
+        <translation>עריכת סוגי הערות</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="127"/>
         <source>Comment Types </source>
-        <translation>Kommentartypen</translation>
+        <translation>סוגי הערות </translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="128"/>
         <source>Add new comment types or rearange them.</source>
-        <translation>Füge neue Kommentartypen hinzu oder ändere ihre Reihenfolge.</translation>
+        <translation>הוסף סוגי הערות חדשים או שנה את הסדר שלהם.</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="129"/>
         <source>Type here to add new comment types</source>
-        <translation>Hier neue Anmerkungen definieren</translation>
+        <translation>לחץ כאן כדי להוסיף סוגי הערות חדשים</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="130"/>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>הוסף</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="131"/>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>מחק</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="132"/>
         <source>Move Up</source>
-        <translation>Nach oben</translation>
+        <translation>העבר למעלה</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_comment_types.py" line="133"/>
         <source>Move Down</source>
-        <translation>Nach unten</translation>
+        <translation>העבר למטה</translation>
     </message>
 </context>
 <context>
@@ -142,57 +142,57 @@
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="40"/>
         <source>untitled</source>
-        <translation></translation>
+        <translation>ללא_כותרת</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="56"/>
         <source>Open Video File</source>
-        <translation>Videodatei öffnen</translation>
+        <translation>פתיחת קובץ וידאו</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="58"/>
         <source>Video files</source>
-        <translation>Videodateien</translation>
+        <translation>קבצי וידאו</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="133"/>
         <source>All files</source>
-        <translation>Alle Dateien</translation>
+        <translation>כל הקבצים</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="80"/>
         <source>Open Subtitle File</source>
-        <translation>Untertitel öffnen</translation>
+        <translation>פתיחת קבצי כתוביות</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="82"/>
         <source>Subtitle files</source>
-        <translation>Untertiteldateien</translation>
+        <translation>קבצי כתוביות</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="104"/>
         <source>Open QC Document(s)</source>
-        <translation>QC-Dokument(e) öffnen</translation>
+        <translation>פתח מסמכ(י) QC</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="132"/>
         <source>QC documents</source>
-        <translation>QC-Dokumente</translation>
+        <translation>מסמכי QC</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="130"/>
         <source>Save QC Document As</source>
-        <translation>QC-Dokument speichern als</translation>
+        <translation>שמירת מסמך QC בשם</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="151"/>
         <source>Open Network Stream</source>
-        <translation>Netzwerkstream öffnen</translation>
+        <translation>פתיחת סטרים מהרשת</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_dialogs.py" line="152"/>
         <source>Enter URL:</source>
-        <translation>URL eingeben:</translation>
+        <translation>הכנס כתובת:</translation>
     </message>
 </context>
 <context>
@@ -200,22 +200,22 @@
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="85"/>
         <source>English</source>
-        <translation>Englisch</translation>
+        <translation>אנגלית</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="86"/>
         <source>German</source>
-        <translation>Deutsch</translation>
+        <translation>גרמנית</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="88"/>
         <source>Italian</source>
-        <translation>Italienisch</translation>
+        <translation>איטלקית</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="87"/>
         <source>Hebrew</source>
-        <translation>Hebräisch</translation>
+        <translation>עברית</translation>
     </message>
 </context>
 <context>
@@ -223,42 +223,42 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="187"/>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;קובץ</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="188"/>
         <source>Vi&amp;deo</source>
-        <translation>&amp;Video</translation>
+        <translation>&amp;וידאו</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="189"/>
         <source>Optio&amp;ns</source>
-        <translation>&amp;Optionen</translation>
+        <translation>&amp;אפשרויות</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="190"/>
         <source>Window Title</source>
-        <translation>Fenstertitel</translation>
+        <translation>כותרת החלון</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="191"/>
         <source>QC Document Export</source>
-        <translation>Exporteinstellungen</translation>
+        <translation>יצוא מסמך QC</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="192"/>
         <source>Language</source>
-        <translation>Sprache</translation>
+        <translation>שפה</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="193"/>
         <source>Help</source>
-        <translation>Hilfe</translation>
+        <translation>עזרה</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="194"/>
         <source>&amp;New QC Document</source>
-        <translation>&amp;Neues QC-Dokument</translation>
+        <translation>&amp;צור מסמך QC חדש</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="195"/>
@@ -268,7 +268,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="196"/>
         <source>&amp;Open QC Document(s)...</source>
-        <translation>QC-Dokument(e) &amp;öffnen ...</translation>
+        <translation>&amp;פתח מסמך QC...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="197"/>
@@ -278,7 +278,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="198"/>
         <source>&amp;Save QC Document</source>
-        <translation>QC-Dokument &amp;speichern</translation>
+        <translation>&amp;שמור מסמך QC</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="199"/>
@@ -288,7 +288,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="200"/>
         <source>S&amp;ave QC Document As...</source>
-        <translation>QC-Dokument speichern &amp;als ...</translation>
+        <translation>&amp;שמור מסמך QC בשם...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="201"/>
@@ -298,7 +298,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="202"/>
         <source>&amp;Exit mpvQC</source>
-        <translation>mpvQC b&amp;eenden</translation>
+        <translation>&amp;צא מ-mpvQC</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="203"/>
@@ -308,7 +308,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="204"/>
         <source>Open &amp;Video...</source>
-        <translation>&amp;Videodatei öffnen ...</translation>
+        <translation>פתח קובץ &amp;וידאו...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="205"/>
@@ -318,7 +318,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="206"/>
         <source>Open &amp;Network Stream...</source>
-        <translation>&amp;Netzwerkstream öffnen ...</translation>
+        <translation>פתח &amp;סטרים מהרשת...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="207"/>
@@ -328,7 +328,7 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="208"/>
         <source>&amp;Resize Video to Original Resolution</source>
-        <translation>Video auf Originalgröße skalie&amp;ren</translation>
+        <translation>&amp;שנה גודל וידאו לרזולוציה המקורית</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="209"/>
@@ -338,22 +338,22 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="210"/>
         <source>&amp;Check for Updates...</source>
-        <translation>Auf &amp;Updates prüfen ...</translation>
+        <translation>&amp;בדוק עדכונים...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="211"/>
         <source>About &amp;Qt</source>
-        <translation>Über &amp;Qt</translation>
+        <translation>אודות &amp;Qt</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="212"/>
         <source>About &amp;mpvQC</source>
-        <translation>Über &amp;mpvQC</translation>
+        <translation>אודות &amp;mpvQC</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="213"/>
         <source>&amp;Settings</source>
-        <translation>&amp;Einstellungen</translation>
+        <translation>&amp;הגדרות</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="214"/>
@@ -363,150 +363,151 @@
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="215"/>
         <source>&amp;Open Subtitles...</source>
-        <translation>&amp;Untertiteldatei öffnen ...</translation>
+        <translation>&amp;פתח כתוביות...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="216"/>
         <source>Edit Comment Types...</source>
-        <translation>Kommentartypen verwalten ...</translation>
+        <translation>ערוך סוגי הערות...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="217"/>
         <source>Edit Nickname...</source>
-        <translation>Nickname setzen ...</translation>
+        <translation>ערוך כינוי...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="218"/>
         <source>Default Title</source>
-        <translation>Standardtitel</translation>
+        <translation>כותרת ברירה מחדל</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="219"/>
         <source>Video File</source>
-        <translation>Videodatei</translation>
+        <translation>קובץ וידאו</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="220"/>
         <source>Video Path</source>
-        <translation>Videopfad</translation>
+        <translation>נתיב לוידאו</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="221"/>
         <source>Enable Dark Theme</source>
-        <translation>Dunkles Thema verwenden</translation>
+        <translation>הפעל ערכת עיצוב כהה</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="222"/>
         <source>Edit mpv.conf...</source>
-        <translation>mpv.conf editieren ...</translation>
+        <translation>ערוך את mpv.conf...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="223"/>
         <source>Edit input.conf...</source>
-        <translation>input.conf editieren ...</translation>
+        <translation>ערוך את input.conf...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="224"/>
         <source>Enable Backups</source>
-        <translation>Backups aktivieren</translation>
+        <translation>אפשר גיבויים</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="225"/>
         <source>Open Backup Preferences...</source>
-        <translation>Backupeinstellungen ...</translation>
+        <translation>פתח הגדרות גיבויים...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="226"/>
         <source>Save Nickname</source>
-        <translation>Nickname speichern</translation>
+        <translation>שמור כינוי</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="227"/>
         <source>Save Video Path</source>
-        <translation>Videopfad speichern</translation>
+        <translation>שמור נתיב לוידאו</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_main_window.py" line="228"/>
         <source>Check for Updates...</source>
-        <translation>Auf Updates prüfen ...</translation>
+        <translation>בדוק עדכונים...</translation>
     </message>
     <message>
         <location filename="../mpvqc/uihandler/_main_window.py" line="245"/>
         <source>(unsaved)</source>
-        <translation>(Nicht gespeichert)</translation>
+        <translation>(לא נשמר)</translation>
     </message>
 </context>
 <context>
     <name>MessageBoxes</name>
     <message>
-        <location filename="../mpvqc/uiutil/_messageboxes.py" line="49"/>
-        <source>Do you really want to quit without saving your QC?</source>
-        <translation>Möchten Sie wirklich beenden? Nicht gespeicherte Änderungen Ihres aktuellen QC-Dokuments gehen verloren.</translation>
-    </message>
-    <message>
-        <location filename="../mpvqc/uiutil/_messageboxes.py" line="96"/>
-        <source>Delete</source>
-        <translation>Löschen</translation>
-    </message>
-    <message>
-        <location filename="../mpvqc/uiutil/_messageboxes.py" line="97"/>
-        <source>Keep</source>
-        <translation>Behalten</translation>
-    </message>
-    <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="62"/>
         <source>Unsaved Changes</source>
-        <translation>Nicht gespeicherte Änderungen</translation>
+        <translation>שינויים שלא נשמרו</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/uiutil/_messageboxes.py" line="49"/>
+        <source>Do you really want to quit without saving your QC?</source>
+        <translation>האם אתה באמת רוצה לצאת מבלי לשמור את מסמך בקרת האיכות שלך?</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="63"/>
         <source>Do you really want to create a new QC document without saving your QC?</source>
-        <translation>Möchten Sie wirklich ein neues QC-Dokument erstellen? Nicht gespeicherte Änderungen Ihres aktuellen QC-Dokuments gehen verloren.</translation>
+        <translation type="unfinished">האם ברצונך ליצור מסמך QC חדש מבלי לשמור את מסמך ה-QC הנוכחי?
+שינויים שלא שמרת לקובץ ה-QC יאבדו.</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="77"/>
         <source>Video Found</source>
-        <translation>Video gefunden</translation>
+        <translation>וידאו נמצא</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="78"/>
         <source>A video was found. Do you want to open it?</source>
-        <translation>Ein Video wurde gefunden. Möchten Sie es öffnen?</translation>
+        <translation>קובץ וידאו נמצא. האם ברצונך לפתוח אותו?</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="92"/>
         <source>Existing Comments</source>
-        <translation>Existierende Kommentare</translation>
+        <translation>הערות קיימות</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="93"/>
         <source>What do you want to do with the existing comments?</source>
-        <translation>Was möchten Sie mit den existierenden Kommentaren tun?</translation>
+        <translation>מה ברצונך לעשות עם ההערות הקיימות?</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/uiutil/_messageboxes.py" line="96"/>
+        <source>Delete</source>
+        <translation>מחק</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/uiutil/_messageboxes.py" line="97"/>
+        <source>Keep</source>
+        <translation>שמור</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="108"/>
         <source>Imported Document Not Compatible</source>
-        <translation>Importiertes QC-Dokument ungültig</translation>
+        <translation>המסמכים המיובאים אינם תואמים</translation>
     </message>
     <message numerus="yes">
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="109"/>
         <source>The following file(s) are not compatible:</source>
         <translation>
-            <numerusform>Die folgende Datei ist kein gültiges QC-Dokument:</numerusform>
-            <numerusform>Die folgenden Dateien sind keine gültigen QC-Dokumente:</numerusform>
+            <numerusform>הקובץ הבא אינו תואם:</numerusform>
+            <numerusform>הקבצים הבאים אינם תואמים:</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="123"/>
         <source>Saving the QC Document Failed</source>
-        <translation>Speichern des QC-Dokuments fehlgeschlagen</translation>
+        <translation>שמירת מסמך בקרת האיכות נכשלה</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="124"/>
         <source>Saving the QC document failed.
 Are you sure you have permission to write in the selected directory?</source>
-        <translation>Speichern des QC-Dokuments ist fehlgeschlagen.
-Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</translation>
+        <translation>שמירת מסמך בקרת האיכות נכשלה.
+האם אתה בטוח שיש ברשותך הרשאות כתיבה לתיקייה שנבחרה?</translation>
     </message>
 </context>
 <context>
@@ -514,22 +515,22 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
     <message>
         <location filename="../mpvqc/ui/_search_form.py" line="81"/>
         <source>Search...</source>
-        <translation>Suche ...</translation>
+        <translation>חיפוש...</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_search_form.py" line="82"/>
         <source>Previous</source>
-        <translation>Voriges</translation>
+        <translation>הקודם</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_search_form.py" line="83"/>
         <source>Next</source>
-        <translation>Nächstes</translation>
+        <translation>הבא</translation>
     </message>
     <message>
         <location filename="../mpvqc/ui/_search_form.py" line="84"/>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>סגור</translation>
     </message>
 </context>
 <context>
@@ -537,17 +538,17 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
     <message>
         <location filename="../mpvqc/ui/_dialog_edit_config.py" line="59"/>
         <source>Changes will be applied after restart.</source>
-        <translation>Änderungen werden erst nach einem Neustart der Anwendung übernommen.</translation>
+        <translation>השינויים יחלו לאחר הפעלה מחדש של התוכנה.</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="114"/>
         <source>Edit mpv.conf</source>
-        <translation>mpv.conf editieren</translation>
+        <translation>עריכת קובץ mpv.conf</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="122"/>
         <source>Edit input.conf</source>
-        <translation>input.conf editieren</translation>
+        <translation>עריכת קובץ input.conf</translation>
     </message>
 </context>
 <context>
@@ -555,12 +556,12 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="40"/>
         <source>Edit Nickname</source>
-        <translation>Nickname editieren</translation>
+        <translation>עריכת כינוי</translation>
     </message>
     <message>
         <location filename="../mpvqc/widgets/_settings.py" line="41"/>
         <source>New nickname:</source>
-        <translation>Neuer Nickname:</translation>
+        <translation>כינוי חדש:</translation>
     </message>
 </context>
 <context>
@@ -568,37 +569,37 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="146"/>
         <source>New Version Available</source>
-        <translation>Neue Version verfügbar</translation>
+        <translation>גרסה חדשה זמינה</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="147"/>
         <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
-        <translation>Es ist eine neue Version von mpvQC verfügbar ({}).&lt;br&gt;Besuche &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt;, um sie herunterzuladen.</translation>
+        <translation>גרסה חדשה של mpvQC זמינה להורדה ({}). כדי להוריד אותה, בקר ב-&lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt;.</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="154"/>
         <source>You are already using the most recent version of mpvQC!</source>
-        <translation>Ihre Version von mpvQC ist bereits auf dem aktuellsten Stand!</translation>
-    </message>
-    <message>
-        <location filename="../mpvqc/uiutil/_messageboxes.py" line="162"/>
-        <source>Server Not Reachable</source>
-        <translation>Server nicht erreichbar</translation>
-    </message>
-    <message>
-        <location filename="../mpvqc/uiutil/_messageboxes.py" line="163"/>
-        <source>A connection to the server could not be established.</source>
-        <translation>Eine Verbindung zum Server konnte nicht hergestellt werden.</translation>
+        <translation>אתה משתמש בגרסה העדכנית ביותר של mpvQC!</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="158"/>
         <source>Server Error</source>
-        <translation>Serverfehler</translation>
+        <translation>שגיאת שרת</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="159"/>
         <source>The server returned error code {}.</source>
-        <translation>Der Server antwortete mit Fehlercode {}.</translation>
+        <translation>השרת החזיר קוד שגיאה {}.</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/uiutil/_messageboxes.py" line="162"/>
+        <source>Server Not Reachable</source>
+        <translation>אין גישה לשרת</translation>
+    </message>
+    <message>
+        <location filename="../mpvqc/uiutil/_messageboxes.py" line="163"/>
+        <source>A connection to the server could not be established.</source>
+        <translation>לא ניתן היה ליצור חיבור לשרת.</translation>
     </message>
 </context>
 </TS>

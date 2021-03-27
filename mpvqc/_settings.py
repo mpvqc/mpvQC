@@ -126,6 +126,8 @@ class _Language(_Str):
             return "de"
         elif loc_default.startswith("it"):
             return "it"
+        elif loc_default.startswith("he"):
+            return "he"
         else:
             return "en"
 

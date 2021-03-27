@@ -257,6 +257,13 @@ class MainHandler(QMainWindow):
         self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
         self.widget_comments.resize_column_type_column()
         self.__update_window_title()
+        self.__set_rtl_ltr(s.language)
+    
+    def __set_rtl_ltr(self, language) -> None:
+        if language == "he":
+            self.application.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        else:
+            self.application.setLayoutDirection(Qt.LayoutDirection.LayoutDirectionAuto)
 
     def __resize_video(self, check_desktop_size=False) -> None:
 
