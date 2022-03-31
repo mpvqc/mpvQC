@@ -85,7 +85,8 @@ class _Settings:
             "English": ("en", _translate("LanguageSelection", "English")),
             "German": ("de", _translate("LanguageSelection", "German")),
             "Hebrew": ("he", _translate("LanguageSelection", "Hebrew")),
-            "Italian": ("it", _translate("LanguageSelection", "Italian"))
+            "Italian": ("it", _translate("LanguageSelection", "Italian")),
+            "Spanish": ("es", _translate("LanguageSelection", "Spanish")),
         }
 
         menu.clear()
@@ -101,7 +102,7 @@ class _Settings:
             action.setChecked(s.language == _tuple[0])
             action.triggered.connect(lambda a, loc=_tuple[0], f=on_language_change: f(loc))
 
-        # If language is something other than 'en', 'de', 'he', 'it'
+        # If language is not found -> return English
         if menu.actions() and all(not v.isChecked() for v in menu.actions()):
             s.language = "en"
             callback()
