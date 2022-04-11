@@ -14,3 +14,23 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import inject
+from PySide6.QtCore import QUrl, Slot, QObject
+from PySide6.QtQml import QmlElement, QmlSingleton
+
+from mpvqc.services import QcManagerService
+
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
+
+
+@QmlElement
+@QmlSingleton
+class QcManagerPyObject(QObject):
+    _manager = inject.attr(QcManagerService)
+
+    @Slot(QUrl)
+    def open_video(self, video: QUrl):
+        self._manager.open(video=video)

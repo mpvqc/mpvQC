@@ -14,3 +14,20 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import unittest
+from pathlib import Path
+from unittest.mock import patch, Mock
+
+from mpvqc.impl.file_reader import FileReader
+
+
+class TestFileReader(unittest.TestCase):
+    MODULE = 'mpvqc.impl.file_reader'
+
+    @patch(f'{MODULE}.Path.read_text')
+    def test_read(self, mocked_func: Mock):
+        reader = FileReader()
+        reader.read(Path())
+        mocked_func.assert_called()

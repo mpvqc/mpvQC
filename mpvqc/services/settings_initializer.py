@@ -14,3 +14,19 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from functools import cached_property
+
+import inject
+from PySide6.QtCore import QSettings
+
+from mpvqc.services.file import FileService
+
+
+class SettingsInitializerService:
+    _files = inject.attr(FileService)
+
+    @cached_property
+    def backing_object(self) -> QSettings:
+        return QSettings(str(self._files.file_settings), QSettings.IniFormat)

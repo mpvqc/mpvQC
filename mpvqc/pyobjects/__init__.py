@@ -14,3 +14,11 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from .comments_model import CommentModelPyObject
+from .dialog_about import DialogAboutPyObject
+from .player import MpvPlayerPyObject
+from .qc_manager import QcManagerPyObject
+from .settings import SettingsPyObject
+from .translation import TranslationPyObject

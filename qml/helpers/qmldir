@@ -1,0 +1,2 @@
+module helpers
+singleton CommentTypeWidthCalculator CommentTypeWidthCalculator.qml

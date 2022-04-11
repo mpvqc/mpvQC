@@ -14,3 +14,21 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from pathlib import Path
+
+
+class PortableFileServiceImpl:
+
+    def __init__(self, dir_program: Path):
+        self._dir_program = dir_program
+
+    def dir_backup(self) -> Path:
+        return self._dir_program / 'appdata' / 'backups'
+
+    def dir_config(self) -> Path:
+        return self._dir_program / 'appdata'
+
+    def dir_screenshots(self) -> Path:
+        return self._dir_program / 'appdata' / 'screenshots'

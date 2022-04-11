@@ -14,3 +14,47 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from enum import IntEnum
+
+
+class AccentColor(IntEnum):
+    # Found no way to access the QML enum in Python
+    RED = 0
+    PINK = 1
+    PURPLE = 2
+    DEEP_PURPLE = 3
+    INDIGO = 4
+    BLUE = 5
+    LIGHT_BLUE = 6
+    CYAN = 7
+    TEAL = 8
+    GREEN = 9
+    LIGHT_GREEN = 10
+    LIME = 11
+    YELLOW = 12
+    AMBER = 13
+    ORANGE = 14
+    DEEP_ORANGE = 15
+    BROWN = 16
+    GREY = 17
+    BLUE_GREY = 18
+
+
+class Theme(IntEnum):
+    LIGHT = 0
+    DARK = 1
+
+
+class TimeFormat(IntEnum):
+    EMPTY = 1
+    CURRENT_TIME = 2
+    REMAINING_TIME = 3
+    CURRENT_TOTAL_TIME = 4
+
+
+class TitleFormat(IntEnum):
+    EMPTY = 1
+    FILE_NAME = 2
+    FILE_PATH = 3

@@ -14,3 +14,13 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from pathlib import Path
+
+
+class FileReader:
+
+    @staticmethod
+    def read(file: Path) -> str:
+        return file.read_text(encoding='utf-8')

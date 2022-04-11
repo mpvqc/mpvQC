@@ -1,0 +1,7 @@
+module models
+AccentColorModel AccentColorModel.qml
+ArtworkModel ArtworkModel.qml
+DeveloperModel DeveloperModel.qml
+DependencyModel DependencyModel.qml
+LanguageModel LanguageModel.qml
+ThemeModel ThemeModel.qml

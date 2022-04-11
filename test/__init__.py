@@ -14,3 +14,13 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+def import_resources():
+    try:
+        import test.generated_resources
+    except ImportError:
+        import sys
+        print('Can not find resource module \'test.generated_resources\'', file=sys.stderr)
+        print('To execute individual tests, please run \'make test\' once before', file=sys.stderr)
+        sys.exit(1)

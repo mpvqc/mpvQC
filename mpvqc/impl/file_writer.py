@@ -14,3 +14,21 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from pathlib import Path
+
+
+class FileWriter:
+
+    def __init__(self, file: Path):
+        self._file = file
+
+    def file_doesnt_exist(self):
+        return not self.file_exists()
+
+    def file_exists(self) -> bool:
+        return self._file.exists()
+
+    def write(self, content: str):
+        self._file.write_text(content, encoding='utf-8')

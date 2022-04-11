@@ -14,3 +14,22 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from typing import Optional
+
+import inject
+from PySide6.QtCore import QUrl
+
+from mpvqc.services.player import PlayerService
+
+
+class QcManagerService:
+    _player = inject.attr(PlayerService)
+
+    def open(
+            self,
+            video: Optional[QUrl] = None,
+    ):
+        if video:
+            self._player.open(url=video.toString())

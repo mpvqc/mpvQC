@@ -14,3 +14,28 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import sys
+from functools import cached_property
+from pathlib import Path
+
+
+class AppEnvironmentService:
+
+    @cached_property
+    def executing_directory(self) -> Path:
+        if self._build_by_pyinstaller:
+            # noinspection PyUnresolvedReferences,PyProtectedMember
+            return Path(sys._MEIPASS)
+        else:
+            # Return root directory of repository
+            return Path(__file__).parent.parent.parent
+
+    @cached_property
+    def is_portable(self) -> bool:
+        return (self.executing_directory / 'portable').is_file()
+
+    @property
+    def _build_by_pyinstaller(self) -> bool:
+        return getattr(sys, 'frozen', False)

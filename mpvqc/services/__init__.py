@@ -14,3 +14,18 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from .app_environment import AppEnvironmentService
+from .build_info import BuildInfoService
+from .file import FileService
+from .file_startup import FileStartupService
+from .os import OsService, SupportedSystems
+from .player import PlayerService
+from .qc_manager import QcManagerService
+from .resource import ResourceService
+from .settings import SettingsService
+from .settings_initializer import SettingsInitializerService
+from .time_formatter import TimeFormatterService
+from .translation import TranslationService
+from .window_icon import WindowIconService

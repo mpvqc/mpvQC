@@ -14,3 +14,24 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from os import environ
+from pathlib import Path
+
+from PySide6.QtCore import QStandardPaths
+
+
+class NonPortableFileServiceImpl:
+    app_name = 'mpvQC'
+
+    def dir_backup(self) -> Path:
+        return Path(QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)) / self.app_name / "backups"
+
+    def dir_config(self) -> Path:
+        config = environ.get('APPDATA') or environ.get('XDG_CONFIG_HOME')
+        config = Path(config) if config else Path.home() / ".config"
+        return config / self.app_name
+
+    def dir_screenshots(self) -> Path:
+        return Path(QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)) / self.app_name

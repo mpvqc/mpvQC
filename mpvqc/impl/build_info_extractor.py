@@ -14,3 +14,28 @@
 #
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import configparser
+import io
+
+
+class BuildInfoExtractor:
+    SECTION = 'build_info'
+    TAG = 'tag'
+    COMMIT_ID = 'commit'
+
+    def __init__(self):
+        self._parser = configparser.ConfigParser()
+
+    @property
+    def tag(self):
+        return self._parser.get(section=self.SECTION, option=self.TAG)
+
+    @property
+    def commit_id(self):
+        return self._parser.get(section=self.SECTION, option=self.COMMIT_ID)
+
+    def extract_from(self, configuration_file_content: str) -> None:
+        buffer = io.StringIO(configuration_file_content)
+        self._parser.read_file(buffer)
