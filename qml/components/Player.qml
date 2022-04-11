@@ -87,5 +87,6 @@ MpvPlayerPyObject {
 
     Component.onCompleted: {
         eventRegistry.register(eventRegistry.EventRequestNewComment, () => mpv.pause())
+        eventRegistry.register(eventRegistry.EventJumpToVideoPosition, (seconds) => mpv.jump_to(seconds))
     }
 }

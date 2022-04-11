@@ -76,3 +76,9 @@ const EventRequestNewComment = 'mpvqc-request-new-comment'
  * - commentType: string    untranslated new comment type to add
  */
 const EventAddNewComment = 'mpvqc-add-new-comment'
+
+/**
+ * Called with following args:
+ * - time: int      the seconds since the beginning to jump to
+ */
+const EventJumpToVideoPosition = 'mpvqc-jump-to-video-position'

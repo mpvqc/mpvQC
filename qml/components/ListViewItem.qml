@@ -43,7 +43,12 @@ Item {
         spacing: 0
 
         ButtonPlay {
-            time: current.timeInt
+            id: playButton
+            property int time: current.timeInt
+
+            onClicked: {
+                eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, playButton.time)
+            }
         }
 
         LabelTime {

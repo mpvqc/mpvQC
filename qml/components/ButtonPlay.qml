@@ -23,16 +23,8 @@ import QtQuick.Controls
 
 ToolButton {
 
-    id: button
-
-    property int time
-
     icon.source: "qrc:/data/icons/play_arrow_black_24dp.svg"
     icon.width: 18
     icon.height: 18
-
-    onClicked: {
-        console.log("Play button clicked: " + button.time)
-    }
 
 }

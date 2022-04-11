@@ -62,6 +62,9 @@ class PlayerService:
     def pause(self):
         self._mpv.pause = True
 
+    def jump_to(self, seconds: int):
+        self._mpv.command_async("seek", seconds, "absolute+exact")
+
     def press_mouse_left(self):
         self._mpv.command_async("keydown", "MOUSE_BTN0")
 

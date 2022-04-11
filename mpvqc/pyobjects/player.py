@@ -54,6 +54,10 @@ class MpvPlayerPyObject(QQuickFramebufferObject):
     def pause(self):
         self._player.pause()
 
+    @Slot(int)
+    def jump_to(self, seconds: int):
+        self._player.jump_to(seconds)
+
     @Slot(int, int)
     def move_mouse(self, x, y):
         self._player.move_mouse(x, y)
