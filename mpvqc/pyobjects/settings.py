@@ -22,7 +22,7 @@ import inject
 from PySide6.QtCore import Signal, Property, QUrl, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
 
-from mpvqc.enums import AccentColor, Theme, TimeFormat, TitleFormat
+from mpvqc.enums import TimeFormat, TitleFormat
 from mpvqc.services import SettingsService, SettingsInitializerService, TranslationService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -132,36 +132,6 @@ class SettingsPyObject(QObject):
 
     language_changed = Signal(str)
     language = Property(str, get_language, set_language, notify=language_changed)
-
-    #
-    # Theme
-    #
-
-    def get_theme(self) -> Theme:
-        return self._settings.theme
-
-    def set_theme(self, value: Theme) -> None:
-        value_old = self.get_theme()
-        self._settings.theme = value
-        self._fire_on_change(value_old, value, signal=self.theme_changed)
-
-    theme_changed = Signal(int)
-    theme = Property(int, get_theme, set_theme, notify=theme_changed)
-
-    #
-    # Accent color
-    #
-
-    def get_theme_accent(self) -> AccentColor:
-        return self._settings.theme_accent
-
-    def set_theme_accent(self, value: AccentColor) -> None:
-        value_old = self.get_theme_accent()
-        self._settings.theme_accent = value
-        self._fire_on_change(value_old, value, signal=self.theme_accent_changed)
-
-    theme_accent_changed = Signal(int)
-    theme_accent = Property(int, get_theme_accent, set_theme_accent, notify=theme_accent_changed)
 
     #
     # Comment types

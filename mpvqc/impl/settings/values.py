@@ -20,9 +20,9 @@ from pathlib import Path
 
 import inject
 
-from mpvqc.enums import AccentColor, Theme, TimeFormat, TitleFormat
+from mpvqc.enums import TimeFormat, TitleFormat
 from mpvqc.impl.settings.converters import BoolConverter, IntConverter, PathConverter, StrConverter, \
-    ListConverter, TimeFormatConverter, ThemeConverter, AccentColorConverter, TitleFormatConverter
+    ListConverter, TimeFormatConverter, TitleFormatConverter
 from mpvqc.impl.settings.defaults import DefaultValue, DefaultLanguage, DefaultNickname
 from mpvqc.impl.settings.templates import MpvqcSetting, MpvqcSettingsFile
 from mpvqc.services import FileService, ResourceService
@@ -107,22 +107,6 @@ class MpvqcNickname(MpvqcSetting[str]):
     def __init__(self, key: str):
         converter = StrConverter()
         default = DefaultNickname()
-        super().__init__(key, converter, default)
-
-
-class MpvqcAccentColor(MpvqcSetting[AccentColor]):
-
-    def __init__(self, key: str):
-        converter = AccentColorConverter()
-        default = DefaultValue(AccentColor.ORANGE)
-        super().__init__(key, converter, default)
-
-
-class MpvqcTheme(MpvqcSetting[Theme]):
-
-    def __init__(self, key: str):
-        converter = ThemeConverter()
-        default = DefaultValue(Theme.DARK)
         super().__init__(key, converter, default)
 
 

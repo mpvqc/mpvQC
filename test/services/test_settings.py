@@ -23,7 +23,7 @@ from unittest.mock import MagicMock, patch
 import inject
 from PySide6.QtCore import QSettings
 
-from mpvqc.enums import AccentColor, Theme, TimeFormat, TitleFormat
+from mpvqc.enums import TimeFormat, TitleFormat
 from mpvqc.impl import FileReader
 from mpvqc.services import SettingsInitializerService, SettingsService, FileService, ResourceService
 
@@ -109,28 +109,6 @@ class TestSettingsService(unittest.TestCase):
     def test_language_set_get(self, *_):
         different = 'he'
         self.execute_set_get('language', then_set=different, then_expect=different)
-
-    #
-    # Theme
-    #
-
-    def test_theme_get(self):
-        self.execute_get('theme', expect=Theme.DARK)
-
-    def test_theme_set_get(self):
-        different = Theme.LIGHT
-        self.execute_set_get('theme', then_set=different, then_expect=different)
-
-    #
-    # Accent Color
-    #
-
-    def test_theme_accent_get(self):
-        self.execute_get('theme_accent', expect=AccentColor.ORANGE)
-
-    def test_theme_accent_set_get(self):
-        different = AccentColor.TEAL
-        self.execute_set_get('theme_accent', then_set=different, then_expect=different)
 
     #
     # Comment types

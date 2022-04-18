@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import helpers
 import models
-import pyobjects
 
 
 GridView {
@@ -56,13 +56,13 @@ GridView {
                 width: parent.width - gridViewAccent.itemBorder
                 height: width
                 anchors.centerIn: parent
-                color:  Material.accent
+                color: Material.accent
 
-                Material.accent: colorFill
+                Material.accent: appWindow.displayableAccentColorFor(colorFill)
 
                 onClicked: {
                     appWindow.appThemeColorAccent = colorFill
-                    SettingsPyObject.theme_accent = colorFill
+                    MpvqcSettings.accent = colorFill
                 }
 
             }

@@ -23,23 +23,61 @@ import QtQuick.Controls.Material
 
 
 ListModel {
-    ListElement { accentColor: 0   /* Material.Red */ }
-    ListElement { accentColor: 1   /* Material.Pink */ }
-    ListElement { accentColor: 2   /* Material.Purple */ }
-    ListElement { accentColor: 3   /* Material.DeepPurple */ }
-    ListElement { accentColor: 4   /* Material.Indigo */ }
-    ListElement { accentColor: 5   /* Material.Blue */ }
-    ListElement { accentColor: 6   /* Material.LightBlue */ }
-    ListElement { accentColor: 7   /* Material.Cyan */ }
-    ListElement { accentColor: 8   /* Material.Teal */ }
-    ListElement { accentColor: 9   /* Material.Green */ }
-    ListElement { accentColor: 10  /* Material.LightGreen */ }
-    ListElement { accentColor: 11  /* Material.Lime */ }
-    ListElement { accentColor: 12  /* Material.Yellow */ }
-    ListElement { accentColor: 13  /* Material.Amber */ }
-    ListElement { accentColor: 14  /* Material.Orange */ }
-    ListElement { accentColor: 15  /* Material.DeepOrange */ }
-    ListElement { accentColor: 16  /* Material.Brown */ }
-    ListElement { accentColor: 17  /* Material.Grey */ }
-    ListElement { accentColor: 18  /* Material.BlueGrey */ }
+    ListElement {
+        accentColor: Material.Red
+    }
+    ListElement {
+        accentColor: Material.Pink
+    }
+    ListElement {
+        accentColor: Material.Purple
+    }
+    ListElement {
+        accentColor: Material.DeepPurple
+    }
+    ListElement {
+        accentColor: Material.Indigo
+    }
+    ListElement {
+        accentColor: Material.Blue
+    }
+    ListElement {
+        accentColor: Material.LightBlue
+    }
+    ListElement {
+        accentColor: Material.Cyan
+    }
+    ListElement {
+        accentColor: Material.Teal
+    }
+    ListElement {
+        accentColor: Material.Green
+    }
+    ListElement {
+        accentColor: Material.LightGreen
+    }
+    ListElement {
+        accentColor: Material.Lime
+    }
+    ListElement {
+        accentColor: Material.Yellow
+    }
+    ListElement {
+        accentColor: Material.Amber
+    }
+    ListElement {
+        accentColor: Material.Orange
+    }
+    ListElement {
+        accentColor: Material.DeepOrange
+    }
+    ListElement {
+        accentColor: Material.Brown
+    }
+    ListElement {
+        accentColor: Material.Grey
+    }
+    ListElement {
+        accentColor: Material.BlueGrey
+    }
 }

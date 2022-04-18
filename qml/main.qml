@@ -22,19 +22,20 @@ import QtQuick
 import QtQuick.Controls
 import components
 import handlers
+import helpers
 import pyobjects
 import "event-registry.js" as EventRegistry
-import "window-operations.js" as WindowOperations
+import "utils.js" as Utils
 
 
 ApplicationWindow {
     id: window
 
     property ApplicationWindow appWindow: window
-    property var windowOperations: WindowOperations
+    property var utils: Utils
     property var eventRegistry: EventRegistry
-    property var appTheme: SettingsPyObject.theme
-    property var appThemeColorAccent: SettingsPyObject.theme_accent
+    property int appTheme: MpvqcSettings.theme
+    property int appThemeColorAccent: MpvqcSettings.accent
     property int windowBorder: 5
 
     visible: true
@@ -43,29 +44,31 @@ ApplicationWindow {
     flags: Qt.FramelessWindowHint
 
     Material.theme: appTheme
-    Material.accent: appThemeColorAccent
+    Material.accent: displayableAccentColorFor(appThemeColorAccent)
 
     LayoutMirroring.enabled: TranslationPyObject.rtl_enabled
     LayoutMirroring.childrenInherit: true
 
     WindowBorderMouseCurser {
-
         borderWidth: windowBorder
         anchors.fill: parent
-
     }
 
     WindowResizeHandler {
-
         borderWidth: windowBorder
-
     }
 
     PageMain {
-
         anchors.fill: parent
         anchors.margins: appWindow.visibility === Window.Windowed ? windowBorder : 0
+    }
 
+    function displayableAccentColorFor(color) {
+        if (appTheme === Material.Light) {
+            return color
+        } else {
+            return Qt.darker(Material.color(color), 1.10) // or Material.color(color, Material.Shade600)
+        }
     }
 
 }

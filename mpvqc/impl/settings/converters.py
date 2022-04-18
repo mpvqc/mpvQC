@@ -20,7 +20,7 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import TypeVar, Generic
 
-from mpvqc.enums import AccentColor, Theme, TimeFormat, TitleFormat
+from mpvqc.enums import TimeFormat, TitleFormat
 
 Type = TypeVar('Type')
 
@@ -89,55 +89,6 @@ class ListConverter(Converter[list[Type]], Generic[Type]):
 
     def unmarshall(self, value: str) -> list[Type]:
         return [self._single_value_converter.unmarshall(v.strip()) for v in value.split(self._delimiter_read)]
-
-
-class AccentColorConverter(Converter[AccentColor]):
-    """"""
-
-    MAPPING = {
-        'red': AccentColor.RED,
-        'pink': AccentColor.PINK,
-        'purple': AccentColor.PURPLE,
-        'deep-purple': AccentColor.DEEP_PURPLE,
-        'indigo': AccentColor.INDIGO,
-        'blue': AccentColor.BLUE,
-        'light-blue': AccentColor.LIGHT_BLUE,
-        'cyan': AccentColor.CYAN,
-        'teal': AccentColor.TEAL,
-        'green': AccentColor.GREEN,
-        'light-green': AccentColor.LIGHT_GREEN,
-        'lime': AccentColor.LIME,
-        'yellow': AccentColor.YELLOW,
-        'amber': AccentColor.AMBER,
-        'orange': AccentColor.ORANGE,
-        'deep-orange': AccentColor.DEEP_ORANGE,
-        'brown': AccentColor.BROWN,
-        'grey': AccentColor.GREY,
-        'blue-grey': AccentColor.BLUE_GREY,
-    }
-
-    MAPPING_REVERSE = {v: k for k, v in MAPPING.items()}
-
-    def marshall(self, value: AccentColor) -> str:
-        return self.MAPPING_REVERSE.get(value)
-
-    def unmarshall(self, value: str) -> AccentColor:
-        return self.MAPPING.get(value)
-
-
-class ThemeConverter(Converter[Theme]):
-    MAPPING = {
-        'dark': Theme.DARK,
-        'light': Theme.LIGHT
-    }
-
-    MAPPING_REVERSE = {v: k for k, v in MAPPING.items()}
-
-    def marshall(self, value: Theme) -> str:
-        return self.MAPPING_REVERSE.get(value)
-
-    def unmarshall(self, value: str) -> Theme:
-        return self.MAPPING.get(value)
 
 
 class TitleFormatConverter(Converter[TitleFormat]):

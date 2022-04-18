@@ -24,8 +24,6 @@ from .values import \
     MpvqcStrList, \
     MpvqcCommentTypes, \
     MpvqcTitleFormat, \
-    MpvqcTheme, \
-    MpvqcAccentColor, \
     MpvqcTimeFormat, \
     MpvqcLanguage, \
     MpvqcNickname, \

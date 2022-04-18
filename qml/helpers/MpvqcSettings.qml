@@ -18,27 +18,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+pragma Singleton
 import QtQuick
+import QtQuick.Controls
+import Qt.labs.settings
+import pyobjects
 
 
 Item {
+    id: current
 
-    width: parent.width
-    height: headerBar.height
+    Settings {
+        id: settingsTheme
+        fileName: SettingsPyObject.backing_object_file_name
+        category: "Theme"
 
-    TapHandler {
-        onTapped: if (tapCount === 2) utils.toggleMaximized()
-        gesturePolicy: TapHandler.DragThreshold
+        property int theme: Material.Dark
+        property int accent: Material.DeepOrange
     }
 
-    DragHandler {
-        target: null
-        grabPermissions: TapHandler.CanTakeOverFromAnything
-        onActiveChanged: if (active) { window.startSystemMove() }
-    }
+    property int theme: settingsTheme.theme
+    property int accent: settingsTheme.accent
 
-    HeaderBarContent {
-        id: headerBar
+    Component.onDestruction: {
+        settingsTheme.theme = current.theme
+        settingsTheme.accent = current.accent
     }
 
 }

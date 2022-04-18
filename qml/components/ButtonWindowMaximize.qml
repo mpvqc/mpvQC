@@ -33,6 +33,6 @@ ToolButton {
     icon.height: 18
     focusPolicy: Qt.NoFocus
 
-    onClicked: windowOperations.toggleMaximized()
+    onClicked: utils.toggleMaximized()
 
 }

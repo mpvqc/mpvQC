@@ -18,7 +18,7 @@
 
 from pathlib import Path
 
-from mpvqc.enums import AccentColor, Theme, TimeFormat, TitleFormat
+from mpvqc.enums import TimeFormat, TitleFormat
 
 
 class SettingsService:
@@ -55,11 +55,6 @@ class SettingsService:
             settings.MpvqcLanguage(key='Common/Language')
         self._comment_types = \
             settings.MpvqcCommentTypes(key='Common/Comment-types')
-
-        self._theme = \
-            settings.MpvqcTheme(key='Theme/Theme')
-        self._theme_accent = \
-            settings.MpvqcAccentColor(key='Theme/Accent')
 
         self._title_bar_format = \
             settings.MpvqcTitleFormat(key='TitleBar/Title-format')
@@ -137,30 +132,6 @@ class SettingsService:
     @language.setter
     def language(self, value: str) -> None:
         self._language.set(value)
-
-    #
-    # Theme
-    #
-
-    @property
-    def theme(self) -> Theme:
-        return self._theme.get()
-
-    @theme.setter
-    def theme(self, value: Theme) -> None:
-        self._theme.set(value)
-
-    #
-    # Accent color
-    #
-
-    @property
-    def theme_accent(self) -> AccentColor:
-        return self._theme_accent.get()
-
-    @theme_accent.setter
-    def theme_accent(self, value: AccentColor) -> None:
-        self._theme_accent.set(value)
 
     #
     # Comment types
