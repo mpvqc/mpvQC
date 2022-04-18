@@ -30,5 +30,6 @@ Label {
 
     text: label.time
     horizontalAlignment: Text.AlignHCenter
+    verticalAlignment: Text.AlignVCenter
 
 }

@@ -31,6 +31,7 @@ Label {
 
     text: label.type
     horizontalAlignment: Text.AlignLeft
+    verticalAlignment: Text.AlignVCenter
     elide: TranslationPyObject.rtl_enabled ? Text.ElideLeft: Text.ElideRight
 
 }

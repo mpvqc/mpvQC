@@ -49,7 +49,7 @@ QtObject {
     }
 
     function calculateMaxWidthOf(elements) {
-        const metric = Qt.createQmlObject('import QtQuick; TextMetrics {}', object)
+        const metric = Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', object)
         let width = 0
         for (let element of elements) {
             metric.text = qsTranslate("CommentTypes", element)

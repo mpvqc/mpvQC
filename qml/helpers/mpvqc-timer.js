@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 /*
 mpvQC
 
@@ -18,16 +20,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import QtQuick.Controls
+function Timer() {
+    return Qt.createQmlObject("import QtQuick; Timer {}", appWindow);
+}
 
 
-ToolButton {
+/**
+ * Runs an action in the next loop execution
+ * @param action {function}
+ */
+function scheduleOnce(action) {
+    return scheduleOnceAfter(0, action)
+}
 
-    icon.source: "qrc:/data/icons/close_black_24dp.svg"
-    icon.width: 18
-    icon.height: 18
-    focusPolicy: Qt.NoFocus
 
-    onClicked: window.close()
-
+/**
+ * Runs an action after the specified delay
+ * @param delay {number}
+ * @param action {function}
+ */
+function scheduleOnceAfter(delay, action) {
+    const timer = new Timer();
+    timer.interval = delay;
+    timer.repeat = false;
+    timer.triggered.connect(action);
+    timer.triggered.connect(timer.destroy);
+    timer.start();
 }

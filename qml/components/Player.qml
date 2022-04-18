@@ -36,11 +36,11 @@ MpvPlayerPyObject {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
         hoverEnabled: true
 
-        onPositionChanged: event => {
+        onPositionChanged: (event) => {
             mpv.move_mouse(event.x, event.y)
         }
 
-        onWheel: event => {
+        onWheel: (event) => {
             const delta = event.angleDelta
             if (delta.y === 0 || delta.x !== 0) {
                 return
@@ -52,7 +52,7 @@ MpvPlayerPyObject {
             }
         }
 
-        onPressed: event => {
+        onPressed: (event) => {
             const button = event.button
             if (button === Qt.LeftButton) {
                 mpv.press_mouse_left()
@@ -63,14 +63,14 @@ MpvPlayerPyObject {
             }
         }
 
-        onReleased: event => {
+        onReleased: (event) => {
             const button = event.button
             if (button === Qt.LeftButton) {
                 mpv.release_mouse_left()
             }
         }
 
-        onDoubleClicked: event => {
+        onDoubleClicked: (event) => {
             const button = event.button
             if (button === Qt.LeftButton) {
                 console.log("todo: full screen on double clicked left button")
@@ -82,11 +82,11 @@ MpvPlayerPyObject {
     }
 
     function onRightMouseButtonClicked() {
-        eventRegistry.produce(eventRegistry.EventRequestNewComment)
+        eventRegistry.produce(eventRegistry.EventRequestNewRow)
     }
 
     Component.onCompleted: {
-        eventRegistry.register(eventRegistry.EventRequestNewComment, () => mpv.pause())
+        eventRegistry.register(eventRegistry.EventRequestNewRow, () => mpv.pause())
         eventRegistry.register(eventRegistry.EventJumpToVideoPosition, (seconds) => mpv.jump_to(seconds))
     }
 }

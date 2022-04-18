@@ -31,6 +31,7 @@ Dialog {
     height: 540
 
     modal: true
+    focus: true
     anchors.centerIn: parent
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape

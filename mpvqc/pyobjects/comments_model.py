@@ -17,7 +17,7 @@
 
 
 import inject
-from PySide6.QtCore import Slot, QByteArray
+from PySide6.QtCore import Signal, Slot, QByteArray
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtQml import QmlElement
 
@@ -31,6 +31,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 class CommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
+    row_added = Signal(int)  # param: row_index
+
     def __init__(self):
         super().__init__()
         self.setItemRoleNames(Role.MAPPING)
@@ -40,12 +42,8 @@ class CommentModelPyObject(QStandardItemModel):
     # match = self.match(self.index(0, 0), Role.COMMENT, "comment", 1000)
     # print(len(match))
 
-    @Slot(int)
-    def removeRow(self, row: int) -> bool:
-        return super(CommentModelPyObject, self).removeRow(row)
-
     @Slot(str)
-    def add_comment(self, comment_type: str):
+    def add_row(self, comment_type: str):
         seconds, seconds_formatted = self._player.current_time
         item = QStandardItem()
         item.setData(seconds, Role.TIME_INT)
@@ -54,6 +52,18 @@ class CommentModelPyObject(QStandardItemModel):
         item.setData("", Role.COMMENT)
         self.appendRow(item)
         self.sort(0)
+
+        index = self.indexFromItem(item)
+        index_row = index.row()
+        self.row_added.emit(index_row)
+
+    @Slot(int)
+    def remove_row(self, row: int):
+        self.removeRow(row)
+
+    @Slot(int, str)
+    def update_comment(self, index: int, comment: str):
+        self.setData(self.index(index, 0), comment, Role.COMMENT)
 
 
 class Role:

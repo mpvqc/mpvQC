@@ -48,7 +48,7 @@ class EventRegistry {
 const registry = new EventRegistry()
 
 /**
- * Adds a callableFunction for the eventKey.
+ * Adds a callableFunction for the eventKey
  * @param eventKey {string}
  * @param callableFunction {function}
  */
@@ -57,7 +57,7 @@ function register(eventKey, callableFunction) {
 }
 
 /**
- * Calls all functions that have been registered for the given eventKey.
+ * Calls all functions that have been registered for the given eventKey
  * @param eventKey {string}
  * @param args
  */
@@ -69,13 +69,13 @@ function produce(eventKey, args) {
 /**
  * Called with no arguments
  */
-const EventRequestNewComment = 'mpvqc-request-new-comment'
+const EventRequestNewRow = 'mpvqc-request-new-row'
 
 /**
  * Called with following args:
  * - commentType: string    untranslated new comment type to add
  */
-const EventAddNewComment = 'mpvqc-add-new-comment'
+const EventAddNewRow = 'mpvqc-add-new-row'
 
 /**
  * Called with following args:

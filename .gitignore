@@ -524,4 +524,5 @@ $RECYCLE.BIN/
 
 mpvqc/generated_resources.py
 test/generated_resources.py
-/appdata
+appdata
+portable

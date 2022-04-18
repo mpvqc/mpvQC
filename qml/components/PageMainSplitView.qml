@@ -52,15 +52,15 @@ SplitView {
     }
 
     Component.onCompleted: {
-        eventRegistry.register(eventRegistry.EventRequestNewComment, splitView.onRequestNewCommentEvent)
+        eventRegistry.register(eventRegistry.EventRequestNewRow, splitView.onRequestNewRowEvent)
     }
 
-    function onRequestNewCommentEvent() {
+    function onRequestNewRowEvent() {
         const component = Qt.createComponent("MenuAddComment.qml")
         const menu = component.createObject(appWindow)
         menu.closed.connect(() => menu.destroy())
         menu.itemClicked.connect(commentType => {
-            eventRegistry.produce(eventRegistry.EventAddNewComment, commentType)
+            eventRegistry.produce(eventRegistry.EventAddNewRow, commentType)
         })
         menu.popup()
     }

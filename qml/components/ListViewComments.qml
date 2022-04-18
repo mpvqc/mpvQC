@@ -24,48 +24,48 @@ import pyobjects
 
 
 ListView {
-
     id: listView
 
     clip: true
     reuseItems: true
     boundsBehavior: Flickable.StopAtBounds
+    highlightMoveDuration: 0
+    highlightMoveVelocity: -1
     model: CommentModelPyObject {}
     ScrollBar.vertical: ScrollBar {}
-    delegate: Component {
 
-        Rectangle {
+    delegate: ListViewCommentsItem {
+        modelItem: model
+        color: ListView.isCurrentItem ? Material.accent : "transparent"
 
-            width: listView.width
-            height: content.height
-            color: "transparent"
-//            color: ListView.isCurrentItem ? Material.accent : "transparent"
-
-            ListViewItem {
-
-                id: content
-
-                index: model.index
-
-                timeInt: model.timeInt
-                timeStr: model.timeStr
-                type: model.type
-                comment: model.comment
-
-            }
-
+        onClicked: {
+            listView.currentIndex = model.index
         }
 
+        onDeleteClicked: {
+            listView.model.remove_row(model.index)
+        }
+
+        onCommentEdited: (comment) => {
+            listView.model.update_comment(model.index, comment)
+        }
     }
 
     Component.onCompleted: {
+        listView.model.row_added.connect(listView.onAfterNewRowAdded)
+
         eventRegistry.register(
-            eventRegistry.EventAddNewComment, commentType => listView.onAddNewCommentEvent(commentType)
+            eventRegistry.EventAddNewRow, (commentType) => listView.onAddNewRowEvent(commentType)
         )
     }
 
-    function onAddNewCommentEvent(commentType) {
-        listView.model.add_comment(commentType)
+    function onAddNewRowEvent(commentType) {
+        listView.model.add_row(commentType)
+    }
+
+    function onAfterNewRowAdded(rowIndex) {
+        listView.currentIndex = rowIndex
+        listView.itemAtIndex(rowIndex).startEditing()
     }
 
 }
