@@ -27,9 +27,32 @@ Label {
     id: label
 
     property string time
+    property bool rowSelected
+
+    signal clicked()
 
     text: label.time
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
+
+    MouseArea {
+        anchors.fill: parent
+
+        onClicked: {
+            if (rowSelected) {
+                openTimeEditPopup()
+            } else {
+                triggerClicked()
+            }
+        }
+    }
+
+    function openTimeEditPopup() {
+        console.log("Trigger editing")
+    }
+
+    function triggerClicked() {
+        label.clicked()
+    }
 
 }

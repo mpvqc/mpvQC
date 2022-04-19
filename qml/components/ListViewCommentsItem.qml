@@ -28,9 +28,11 @@ Rectangle {
     id: row
 
     property var modelItem
+    property bool selected
 
     signal clicked()
     signal deleteClicked()
+    signal typeEdited(string type)
     signal commentEdited(string comment)
 
     width: parent ? parent.width : 0
@@ -43,7 +45,7 @@ Rectangle {
             id: playButton
 
             onClicked: {
-                row.triggerClickSignal()
+                row.triggerClicked()
                 eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, modelItem.timeInt)
             }
         }
@@ -51,20 +53,29 @@ Rectangle {
         LabelTime {
             id: timeLabel
             time: modelItem.timeStr
+            rowSelected: row.selected
             width: 100
             height: row.height
+
+            onClicked: { row.triggerClicked() }
         }
 
         LabelType {
             id: typeLabel
-            text: qsTranslate("CommentTypes", modelItem.type)
+            type: modelItem.type
             width: CommentTypeWidthCalculator.width
             height: row.height
+            rowSelected: row.selected
+
+            onClicked: { row.triggerClicked() }
+
+            onEdited: (type) => { row.triggerCommentTypeEdited(type) }
         }
 
         LabelComment {
             id: commentLabel
             comment: modelItem.comment
+            rowSelected: row.selected
             height: row.height
             width: row.width
                     - playButton.width
@@ -73,17 +84,17 @@ Rectangle {
                     - moreButton.width
                     - spacerScrollBar.width
 
-            onEdited: (comment) => {
-                row.triggerCommentEditedSignal(comment)
-            }
+            onClicked: { row.triggerClicked() }
+
+            onEdited: (comment) => { row.triggerCommentEdited(comment) }
         }
 
         ButtonMore {
             id: moreButton
 
             onClicked: {
-                row.triggerClickSignal()
-                row.triggerDeleteSignal()
+                row.triggerClicked()
+                row.triggerDeleteClicked()
             }
         }
 
@@ -95,27 +106,24 @@ Rectangle {
 
     }
 
-    MouseArea {
-        anchors.fill: parent
-        z: -1 // let the other items handle events first
-
-        onClicked: (event) => { row.triggerClickSignal() }
-    }
-
     function startEditing() {
         commentLabel.startEditing()
     }
 
-    function triggerClickSignal() {
-        row.clicked()
+    function triggerClicked() {
+        if (!row.selected) { row.clicked() }
     }
 
-    function triggerDeleteSignal() {
+    function triggerDeleteClicked() {
         row.deleteClicked()
     }
 
-    function triggerCommentEditedSignal(comment) {
+    function triggerCommentEdited(comment) {
         row.commentEdited(comment)
+    }
+
+    function triggerCommentTypeEdited(type) {
+        row.typeEdited(type)
     }
 
 }

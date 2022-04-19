@@ -28,9 +28,12 @@ Loader {
     id: loader
 
     property string comment
+    property bool rowSelected
+
     property bool editing: false
     property int customPadding: 4
 
+    signal clicked()
     signal edited(string comment)
 
     sourceComponent: editing ? textFieldComponent : labelComponent
@@ -49,8 +52,16 @@ Loader {
             rightPadding: loader.customPadding
             anchors.fill: loader
 
-            TapHandler {
-                onDoubleTapped: startEditing()
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: {
+                    if (rowSelected) {
+                        startEditing()
+                    } else {
+                        triggerClicked()
+                    }
+                }
             }
         }
     }
@@ -114,6 +125,10 @@ Loader {
                 loader.edited(textInput.text)
             }
         }
+    }
+
+    function triggerClicked() {
+        loader.clicked()
     }
 
     function startEditing() {

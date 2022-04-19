@@ -36,6 +36,7 @@ ListView {
 
     delegate: ListViewCommentsItem {
         modelItem: model
+        selected: listView.currentIndex == model.index
         color: ListView.isCurrentItem ? Material.accent : "transparent"
 
         onClicked: {
@@ -44,6 +45,10 @@ ListView {
 
         onDeleteClicked: {
             listView.model.remove_row(model.index)
+        }
+
+        onTypeEdited: (type) => {
+            listView.model.update_comment_type(model.index, type)
         }
 
         onCommentEdited: (comment) => {

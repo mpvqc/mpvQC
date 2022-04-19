@@ -27,18 +27,41 @@ MenuAutoWidth {
 
     id: menu
 
-    modal: true
-    dim: false
+    property string currentCommentType
+    property bool currentCommentTypeKnown: Qt.binding(function() {
+        return
+    })
 
     signal itemClicked(string type)
+
+    modal: true
+    dim: false
 
     Repeater {
         model: menu.createModel()
 
         MenuItem {
             text: qsTranslate("CommentTypes", model.item)
-            onTriggered: menu.itemClicked(model.item)
+            autoExclusive: true
+            checkable: true
+            checked: model.item === currentCommentType
+            onTriggered: triggerClicked(model.item)
         }
+    }
+
+    MenuSeparator {
+        id: separator
+        height: isCurrentCommentTypeKnown() ? 0 : implicitHeight
+    }
+
+    MenuItem {
+        height: isCurrentCommentTypeKnown() ? 0 : implicitHeight
+        visible: !isCurrentCommentTypeKnown()
+        text: qsTranslate("CommentTypes", currentCommentType)
+        autoExclusive: true
+        checkable: true
+        checked: true
+        onTriggered: triggerClicked(currentCommentType)
     }
 
     function createModel() {
@@ -47,6 +70,14 @@ MenuAutoWidth {
             model.append({ item: commentType })
         }
         return model
+    }
+
+    function isCurrentCommentTypeKnown() {
+        return SettingsPyObject.comment_types.includes(currentCommentType)
+    }
+
+    function triggerClicked(item) {
+        menu.itemClicked(item)
     }
 
 }

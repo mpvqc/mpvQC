@@ -62,6 +62,10 @@ class CommentModelPyObject(QStandardItemModel):
         self.removeRow(row)
 
     @Slot(int, str)
+    def update_comment_type(self, index: int, comment_type: str):
+        self.setData(self.index(index, 0), comment_type, Role.TYPE)
+
+    @Slot(int, str)
     def update_comment(self, index: int, comment: str):
         self.setData(self.index(index, 0), comment, Role.COMMENT)
 

@@ -28,10 +28,45 @@ Label {
     id: label
 
     property string type
+    property bool rowSelected
 
-    text: label.type
+    signal clicked()
+    signal edited(string type)
+
+    text: qsTranslate("CommentTypes", type)
     horizontalAlignment: Text.AlignLeft
     verticalAlignment: Text.AlignVCenter
     elide: TranslationPyObject.rtl_enabled ? Text.ElideLeft: Text.ElideRight
+
+    MouseArea {
+        anchors.fill: parent
+
+        onClicked: {
+            if (rowSelected) {
+                openCommentTypeEditMenu()
+            } else {
+                triggerClicked()
+            }
+        }
+    }
+
+    function openCommentTypeEditMenu() {
+        const component = Qt.createComponent("MenuEditCommentType.qml")
+        const menu = component.createObject(appWindow)
+        menu.currentCommentType = label.type
+        menu.closed.connect(() => menu.destroy())
+        menu.itemClicked.connect((commentType) => {
+            triggerEdited(commentType)
+        })
+        menu.popup()
+    }
+
+    function triggerClicked() {
+        label.clicked()
+    }
+
+    function triggerEdited(commentType) {
+        label.edited(commentType)
+    }
 
 }
