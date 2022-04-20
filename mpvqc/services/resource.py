@@ -24,13 +24,7 @@ from mpvqc.impl import ResourceFileReader
 
 
 class ResourceService:
-    """Access point for all resources in the '/data' directory"""
-
     _resource_reader = inject.attr(ResourceFileReader)
-
-    @property
-    def window_icon_path(self) -> str:
-        return ':/data/icon.svg'
 
     @property
     def build_info_conf_content(self) -> str:

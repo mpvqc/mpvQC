@@ -86,6 +86,6 @@ class Role:
     MAPPING = {
         TIME_INT: QByteArray(b'timeInt'),
         TIME_STR: QByteArray(b'timeStr'),
-        TYPE: QByteArray(b'type'),
+        TYPE: QByteArray(b'commentType'),
         COMMENT: QByteArray(b'comment'),
     }

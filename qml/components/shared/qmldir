@@ -1,0 +1,5 @@
+module components.shared
+MpvqcAutoWidthMenu MpvqcAutoWidthMenu.qml
+MpvqcCircle MpvqcCircle.qml
+MpvqcDebugRectangle MpvqcDebugRectangle.qml
+MpvqcDemiBoldLabel MpvqcDemiBoldLabel.qml

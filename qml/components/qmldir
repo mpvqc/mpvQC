@@ -1,2 +1,2 @@
 module components
-PageMain PageMain.qml
+MpvqcMainPage MpvqcMainPage.qml

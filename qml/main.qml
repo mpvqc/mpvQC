@@ -24,12 +24,18 @@ import components
 import handlers
 import helpers
 import pyobjects
-import "event-registry.js" as EventRegistry
-import "utils.js" as Utils
 
 
 ApplicationWindow {
     id: window
+    visible: true
+    width: 1290
+    height: 970
+    flags: Qt.FramelessWindowHint
+    Material.theme: appTheme
+    Material.accent: displayableAccentColorFor(appThemeColorAccent)
+    LayoutMirroring.enabled: TranslationPyObject.rtl_enabled
+    LayoutMirroring.childrenInherit: true
 
     property ApplicationWindow appWindow: window
     property var utils: Utils
@@ -38,27 +44,16 @@ ApplicationWindow {
     property int appThemeColorAccent: MpvqcSettings.accent
     property int windowBorder: 5
 
-    visible: true
-    width: 1290
-    height: 970
-    flags: Qt.FramelessWindowHint
-
-    Material.theme: appTheme
-    Material.accent: displayableAccentColorFor(appThemeColorAccent)
-
-    LayoutMirroring.enabled: TranslationPyObject.rtl_enabled
-    LayoutMirroring.childrenInherit: true
-
-    WindowBorderMouseCurser {
+    MpvqcWindowBorderMouseCurser {
         borderWidth: windowBorder
         anchors.fill: parent
     }
 
-    WindowResizeHandler {
+    MpvqcWindowResizeHandler {
         borderWidth: windowBorder
     }
 
-    PageMain {
+    MpvqcMainPage {
         anchors.fill: parent
         anchors.margins: appWindow.visibility === Window.Windowed ? windowBorder : 0
     }

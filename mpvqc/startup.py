@@ -78,7 +78,9 @@ class StartUp:
         from mpvqc.application import MpvqcApplication
         app = MpvqcApplication(sys.argv)
 
-        app.restore_services()
+        app.set_window_icon()
+        app.restore_language()
+        app.create_directories()
         app.set_up_signals()
         app.set_up_imports()
         app.start_engine()

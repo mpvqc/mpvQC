@@ -19,7 +19,6 @@
 import unittest
 
 import inject
-from PySide6.QtCore import QResource
 
 from mpvqc.impl import ResourceFileReader
 from mpvqc.services import ResourceService
@@ -38,12 +37,6 @@ class TestResourceService(unittest.TestCase):
 
     def tearDown(self):
         inject.clear()
-
-    def test_window_icon_path_exists(self):
-        icon_path = ResourceService().window_icon_path
-        icon = QResource(icon_path)
-
-        self.assertTrue(icon.isValid())
 
     def test_version_conf_content_contains_tag(self):
         text = ResourceService().build_info_conf_content

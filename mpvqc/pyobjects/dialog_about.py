@@ -33,12 +33,6 @@ class DialogAboutPyObject(QObject):
     _build_info = inject.attr(BuildInfoService)
     _player = inject.attr(PlayerService)
 
-    def get_icon_resource(self) -> str:
-        return self._resources.window_icon_path
-
-    icon_resource_changed = Signal(str)
-    icon_resource = Property(str, get_icon_resource, notify=icon_resource_changed)
-
     def get_tag(self) -> str:
         return self._build_info.tag
 

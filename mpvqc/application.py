@@ -20,27 +20,29 @@ import sys
 
 import inject
 from PySide6.QtCore import QUrl
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import WindowIconService, FileStartupService, TranslationService
+from mpvqc.services import FileStartupService, TranslationService
 
 
 class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
-    _window_icon = inject.attr(WindowIconService)
     _translator = inject.attr(TranslationService)
 
     def __init__(self, args):
         super().__init__(args)
         self._engine = QQmlApplicationEngine()
 
-    def restore_services(self):
-        self._window_icon.restore(self)
+    def set_window_icon(self):
+        icon = QIcon(':/data/icon.svg')
+        self.setWindowIcon(icon)
 
+    def restore_language(self):
         self._translator.initialize_with(application=self, engine=self._engine)
         self._translator.restore_language()
 
+    def create_directories(self):
         self._start_up.create_missing_directories()
         self._start_up.create_missing_files()
 

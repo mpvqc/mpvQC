@@ -19,7 +19,7 @@
 import inject
 
 from mpvqc.impl import BuildInfoExtractor, ResourceFileReader, FileReader
-from mpvqc.services import OsService, ResourceService, WindowIconService, BuildInfoService, AppEnvironmentService, \
+from mpvqc.services import ResourceService, BuildInfoService, AppEnvironmentService, \
     FileService, FileStartupService, SettingsService, SettingsInitializerService, TranslationService, PlayerService, \
     QcManagerService, TimeFormatterService
 
@@ -31,7 +31,6 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(BuildInfoService, lambda: BuildInfoService())
     binder.bind_to_constructor(FileService, lambda: FileService())
     binder.bind_to_constructor(FileStartupService, lambda: FileStartupService())
-    binder.bind_to_constructor(OsService, lambda: OsService())
     binder.bind_to_constructor(PlayerService, lambda: PlayerService())
     binder.bind_to_constructor(QcManagerService, lambda: QcManagerService())
     binder.bind_to_constructor(ResourceService, lambda: ResourceService())
@@ -39,7 +38,6 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(SettingsInitializerService, lambda: SettingsInitializerService())
     binder.bind_to_constructor(TimeFormatterService, lambda: TimeFormatterService())
     binder.bind_to_constructor(TranslationService, lambda: TranslationService())
-    binder.bind_to_constructor(WindowIconService, lambda: WindowIconService())
 
     # Tasks
     binder.bind_to_constructor(BuildInfoExtractor, lambda: BuildInfoExtractor())
