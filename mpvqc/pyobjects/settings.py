@@ -47,57 +47,6 @@ class SettingsPyObject(QObject):
             signal.emit(value_new)
 
     #
-    # Import: last dir document
-    #
-
-    def get_import_last_dir_documents(self) -> QUrl:
-        return QUrl.fromLocalFile(str(self._settings.import_last_dir_documents))
-
-    def set_import_last_dir_documents(self, value: QUrl) -> None:
-        path_new = value.toLocalFile()
-        path_old = self.get_import_last_dir_documents().toLocalFile()
-        self._settings.import_last_dir_documents = Path(path_new)
-        self._fire_on_change(path_old, path_new, signal=self.import_last_dir_document_changed)
-
-    import_last_dir_document_changed = Signal(QUrl)
-    import_last_dir_documents = Property(QUrl, get_import_last_dir_documents, set_import_last_dir_documents,
-                                         notify=import_last_dir_document_changed)
-
-    #
-    # Import: last dir video
-    #
-
-    def get_import_last_dir_video(self) -> QUrl:
-        return QUrl.fromLocalFile(str(self._settings.import_last_dir_video))
-
-    def set_import_last_dir_video(self, value: QUrl) -> None:
-        path_new = value.toLocalFile()
-        path_old = self.get_import_last_dir_video().toLocalFile()
-        self._settings.import_last_dir_video = Path(path_new)
-        self._fire_on_change(path_old, path_new, signal=self.import_last_dir_video_changed)
-
-    import_last_dir_video_changed = Signal(QUrl)
-    import_last_dir_video = Property(QUrl, get_import_last_dir_video, set_import_last_dir_video,
-                                     notify=import_last_dir_video_changed)
-
-    #
-    # Import: last dir subtitles
-    #
-
-    def get_import_last_dir_subtitles(self) -> QUrl:
-        return QUrl.fromLocalFile(str(self._settings.import_last_dir_subtitles))
-
-    def set_import_last_dir_subtitles(self, value: QUrl) -> None:
-        path_new = value.toLocalFile()
-        path_old = self.get_import_last_dir_subtitles().toLocalFile()
-        self._settings.import_last_dir_subtitles = Path(path_new)
-        self._fire_on_change(path_old, path_new, signal=self.import_last_dir_subtitles_changed)
-
-    import_last_dir_subtitles_changed = Signal(QUrl)
-    import_last_dir_subtitles = Property(QUrl, get_import_last_dir_subtitles, set_import_last_dir_subtitles,
-                                         notify=import_last_dir_subtitles_changed)
-
-    #
     # Title bar format
     #
 

@@ -20,18 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick.Dialogs
 import pyobjects
+import helpers
 
 
 FileDialog {
     title: qsTranslate("FileInteractionDialogs", "Open Video")
-    currentFolder: SettingsPyObject.import_last_dir_video
+    currentFolder: MpvqcSettings.lastDirectoryVideo
     nameFilters: [
         qsTranslate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi)",
         qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
     ]
 
     onAccepted: {
-        SettingsPyObject.import_last_dir_video = currentFolder.toString()
+        MpvqcSettings.lastDirectoryVideo = currentFolder
         QcManagerPyObject.open_video(currentFile)
     }
 

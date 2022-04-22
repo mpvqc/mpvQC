@@ -19,7 +19,6 @@
 from .values import \
     MpvqcInt, \
     MpvqcBool, \
-    MpvqcPath, \
     MpvqcStr, \
     MpvqcStrList, \
     MpvqcCommentTypes, \

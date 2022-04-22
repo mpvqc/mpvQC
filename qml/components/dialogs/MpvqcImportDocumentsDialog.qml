@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick.Dialogs
-import pyobjects
+import helpers
 
 
 FileDialog {
     title: qsTranslate("FileInteractionDialogs", "Open QC Document(s)")
-    currentFolder: SettingsPyObject.import_last_dir_documents
+    currentFolder: MpvqcSettings.lastDirectoryDocuments
     fileMode: FileDialog.OpenFiles
     nameFilters: [
         qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)",
@@ -32,7 +32,7 @@ FileDialog {
     ]
 
     onAccepted: {
-        SettingsPyObject.import_last_dir_documents = currentFolder.toString()
+        MpvqcSettings.lastDirectoryDocuments = currentFolder
         for (let file of selectedFiles) {
             console.log("Open: " + file)
         }

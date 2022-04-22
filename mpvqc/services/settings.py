@@ -16,8 +16,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pathlib import Path
-
 from mpvqc.enums import TimeFormat, TitleFormat
 
 
@@ -27,12 +25,6 @@ class SettingsService:
     def __init__(self):
         import mpvqc.impl.settings as settings
 
-        self._import_last_dir_documents = \
-            settings.MpvqcPath(key='Import/Last-directory-documents')
-        self._import_last_dir_video = \
-            settings.MpvqcPath(key='Import/Last-directory-video')
-        self._import_last_dir_subtitles = \
-            settings.MpvqcPath(key='Import/Last-directory-subtitles')
         self._import_video_from_document_automatically = \
             settings.MpvqcBool(key='Import/Load-video-from-document-automatically', default_value=False)
 
@@ -70,42 +62,6 @@ class SettingsService:
             settings.MpvqcInputConf()
         self._config_mpv = \
             settings.MpvqcMpvConf()
-
-    #
-    # Import: last dir document
-    #
-
-    @property
-    def import_last_dir_documents(self) -> Path:
-        return self._import_last_dir_documents.get()
-
-    @import_last_dir_documents.setter
-    def import_last_dir_documents(self, value: Path) -> None:
-        self._import_last_dir_documents.set(value)
-
-    #
-    # Import: last dir video
-    #
-
-    @property
-    def import_last_dir_video(self) -> Path:
-        return self._import_last_dir_video.get()
-
-    @import_last_dir_video.setter
-    def import_last_dir_video(self, value: Path) -> None:
-        self._import_last_dir_video.set(value)
-
-    #
-    # Import: last dir subtitles
-    #
-
-    @property
-    def import_last_dir_subtitles(self) -> Path:
-        return self._import_last_dir_subtitles.get()
-
-    @import_last_dir_subtitles.setter
-    def import_last_dir_subtitles(self, value: Path) -> None:
-        self._import_last_dir_subtitles.set(value)
 
     #
     # Title bar format

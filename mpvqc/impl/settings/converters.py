@@ -17,7 +17,6 @@
 
 
 from abc import abstractmethod
-from pathlib import Path
 from typing import TypeVar, Generic
 
 from mpvqc.enums import TimeFormat, TitleFormat
@@ -61,15 +60,6 @@ class StrConverter(Converter[str]):
 
     def unmarshall(self, value: str) -> str:
         return value
-
-
-class PathConverter(Converter[Path]):
-
-    def marshall(self, value: Path) -> str:
-        return str(value)
-
-    def unmarshall(self, value: str) -> Path:
-        return Path(value)
 
 
 class ListConverter(Converter[list[Type]], Generic[Type]):

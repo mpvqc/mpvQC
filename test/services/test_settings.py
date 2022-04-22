@@ -52,39 +52,6 @@ class TestSettingsService(unittest.TestCase):
         inject.clear()
 
     #
-    # Import: last dir document
-    #
-
-    def test_import_last_dir_document_get(self):
-        self.execute_get('import_last_dir_documents', expect=Path.home())
-
-    def test_import_last_dir_document_set_get(self):
-        different = Path().home().parent
-        self.execute_set_get('import_last_dir_documents', then_set=different, then_expect=different)
-
-    #
-    # Import: last dir video
-    #
-
-    def test_import_last_dir_video_get(self):
-        self.execute_get('import_last_dir_video', expect=Path.home())
-
-    def test_import_last_dir_video_set_get(self):
-        different = Path().home().parent
-        self.execute_set_get('import_last_dir_video', then_set=different, then_expect=different)
-
-    #
-    # Import: last dir subtitles
-    #
-
-    def test_import_last_dir_subtitles_get(self):
-        self.execute_get('import_last_dir_subtitles', expect=Path.home())
-
-    def test_import_last_dir_subtitles_set_get(self):
-        different = Path().home().parent
-        self.execute_set_get('import_last_dir_subtitles', then_set=different, then_expect=different)
-
-    #
     # Title bar format
     #
 

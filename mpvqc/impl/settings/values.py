@@ -16,12 +16,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pathlib import Path
-
 import inject
 
 from mpvqc.enums import TimeFormat, TitleFormat
-from mpvqc.impl.settings.converters import BoolConverter, IntConverter, PathConverter, StrConverter, \
+from mpvqc.impl.settings.converters import BoolConverter, IntConverter, StrConverter, \
     ListConverter, TimeFormatConverter, TitleFormatConverter
 from mpvqc.impl.settings.defaults import DefaultValue, DefaultNickname
 from mpvqc.impl.settings.templates import MpvqcSetting, MpvqcSettingsFile
@@ -50,20 +48,6 @@ class MpvqcStr(MpvqcSetting[str]):
         converter = StrConverter()
         default = DefaultValue(default_value)
         super().__init__(key, converter, default)
-
-
-class MpvqcPath(MpvqcSetting[Path]):
-
-    def __init__(self, key: str):
-        converter = PathConverter()
-        self.default = DefaultValue(value=Path.home())
-        super().__init__(key, converter, self.default)
-
-    def get(self) -> Path:
-        path: Path = super(MpvqcPath, self).get()
-        if not path.exists():
-            path = self.default.get()
-        return path.absolute()
 
 
 class MpvqcStrList(MpvqcSetting[list[str]]):

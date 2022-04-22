@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick.Dialogs
-import pyobjects
+import helpers
 
 
 FileDialog {
     title: qsTranslate("FileInteractionDialogs", "Open Subtitle(s)")
-    currentFolder: SettingsPyObject.import_last_dir_subtitles
+    currentFolder: MpvqcSettings.lastDirectorySubtitles
     fileMode: FileDialog.OpenFiles
     nameFilters: [
         qsTranslate("FileInteractionDialogs", "Subtitle files") + " (*.ass *.ssa *.srt *.sup *.idx *.utf *.utf8 *.utf-8 *.smi *.rt *.aqt *.jss *.js *.mks *.vtt *.sub *.scc)",
@@ -32,7 +32,7 @@ FileDialog {
     ]
 
     onAccepted: {
-        SettingsPyObject.import_last_dir_subtitles = currentFolder.toString()
+        MpvqcSettings.lastDirectorySubtitles = currentFolder
         for (let file of selectedFiles) {
             console.log("Open: " + file)
         }
