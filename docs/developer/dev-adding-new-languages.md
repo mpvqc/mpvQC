@@ -1,7 +1,5 @@
 # Adding a new language
 
-## Translator
-
 * Checkout repository
 * Make sure application builds correctly - open an issue if something does not work
 * Create a new translation file by running
@@ -23,13 +21,6 @@
   * Edit the `settings.ini` and change `language` to the new `<locale>`
   * If the language option is not present in the `settings.ini`, add a new line `language=<locale>`
 * Open a new pull request
+* Add a new entry in the `MpvqcLanguageModel.qml` file
 
-## Developer
-
-A few adjustments need to be made in order for the language to become selectable:
-
-* If language requires a *rtl* layout direction, 
-  add the `<locale>` to the set of rtl languages in file `service_translation.py`
-* Add the language to the model in file `ModelLanguages.qml`
-* Add an unused property with the translation to the file `ModelLanguages.qml` so that lupdate can pick up the new language for translation
-* Add the translator to the model in file `ModelTranslation.qml`
+**Thank you very much!** 💚
