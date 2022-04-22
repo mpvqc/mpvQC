@@ -33,13 +33,13 @@ MpvqcAutoWidthMenu {
         title: qsTranslate("MainWindow", "&Language")
 
         Repeater {
-            model: LanguageModel {}
+            model: MpvqcLanguageModel {}
 
             MenuItem {
                 text: qsTranslate("Languages", model.language)
                 autoExclusive: true
                 checkable: true
-                checked: model.abbrev === SettingsPyObject.language
+                checked: model.abbrev === MpvqcSettings.language
 
                 onTriggered: {
                     MpvqcTimer.scheduleOnceAfter(125, loadLanguage)
@@ -47,6 +47,7 @@ MpvqcAutoWidthMenu {
 
                 function loadLanguage() {
                     TranslationPyObject.load_translation(model.abbrev)
+                    MpvqcSettings.language=model.abbrev
                 }
             }
         }

@@ -22,13 +22,12 @@ from unittest.mock import MagicMock
 import inject
 from PySide6.QtCore import QResource
 
-from mpvqc.services import TranslationService, SettingsService
+from mpvqc.services import TranslationService
 
 
 class TestTranslationService(unittest.TestCase):
     mocked_application: MagicMock
     mocked_engine: MagicMock
-    mocked_settings: MagicMock
     translation_service: TranslationService
 
     @classmethod
@@ -37,11 +36,6 @@ class TestTranslationService(unittest.TestCase):
         import_resources()
 
     def setUp(self):
-        self.mocked_settings = MagicMock()
-
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(SettingsService, self.mocked_settings))
-
         self.mocked_application = MagicMock()
         self.mocked_engine = MagicMock()
 
@@ -51,46 +45,15 @@ class TestTranslationService(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
-    def test_restore_language(self):
-        # noinspection PyBroadException
-        try:
-            self.mocked_settings.language = 'en'
-
-            service = self.translation_service
-            service.restore_language()
-        except Exception as e:
-            self.fail(f"'service.restore_language()' raised {type(e)}")
-
     def test_set_language_load_translation(self):
         service = self.translation_service
-        service.set_language('de')
+        service.load('de')
 
         self.assertTrue(self.mocked_application.installTranslator.called)
 
-    def test_set_language_layout_has_changed(self):
-        service = self.translation_service
-        service.set_language('he')
-
-        self.assertTrue(service.rtl_enabled)
-
-    def test_set_language_layout_has_not_changed(self):
-        service = self.translation_service
-        service.set_language('it')
-
-        self.assertFalse(service.rtl_enabled)
-
-    def test_set_language_update_language_settings(self):
-        before, after = 'en', 'he'
-        self.mocked_settings.language = before
-
-        service = self.translation_service
-        service.set_language(after)
-
-        self.assertEqual(after, self.mocked_settings.language)
-
     def test_set_language_retranslate(self):
         service = self.translation_service
-        service.set_language('it')
+        service.load('it')
 
         self.assertTrue(self.mocked_engine.retranslate.called)
 
@@ -98,12 +61,12 @@ class TestTranslationService(unittest.TestCase):
         service = self.translation_service
         locale = 'non-existent'
 
-        path = service.translation_path_for(locale)
+        path = service._translation_path_for(locale)
         self.assertFalse(QResource(path).isValid())
 
     def test_translation_language_de_exists(self):
         service = self.translation_service
         locale = 'de'
 
-        path = service.translation_path_for(locale)
+        path = service._translation_path_for(locale)
         self.assertTrue(QResource(path).isValid())

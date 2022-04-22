@@ -1,6 +1,7 @@
 module helpers
 singleton MpvqcCommentTypeWidthCalculator MpvqcCommentTypeWidthCalculator.qml
+MpvqcDebug 1.0 MpvqcDebug.js
+EventRegistry 1.0 MpvqcEventRegistry.js
 singleton MpvqcSettings MpvqcSettings.qml
 MpvqcTimer 1.0 MpvqcTimer.js
-EventRegistry 1.0 MpvqcEventRegistry.js
 Utils 1.0 MpvqcUtils.js

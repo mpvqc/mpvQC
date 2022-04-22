@@ -80,7 +80,7 @@ ScrollView {
         }
 
         Repeater {
-            model: LanguageModel {}
+            model: MpvqcLanguageModel {}
             width: parent.width
 
             Label {

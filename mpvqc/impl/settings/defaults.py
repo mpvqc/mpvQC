@@ -16,7 +16,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import locale
 from abc import abstractmethod
 from os import environ
 from typing import TypeVar, Generic
@@ -38,21 +37,6 @@ class DefaultValue(Default):
 
     def get(self):
         return self._value
-
-
-class DefaultLanguage(Default):
-
-    def get(self) -> str:
-        loc_default = locale.getdefaultlocale()[0]
-        if loc_default.startswith("de"):
-            return "de"
-        if loc_default.startswith("es"):
-            return "es"
-        if loc_default.startswith("he"):
-            return "he"
-        if loc_default.startswith("it"):
-            return "it"
-        return "en"
 
 
 class DefaultNickname(Default):

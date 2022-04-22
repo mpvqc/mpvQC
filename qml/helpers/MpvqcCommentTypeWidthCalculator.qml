@@ -20,21 +20,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 pragma Singleton
 import QtQuick
+import helpers
 import pyobjects
 
 
 QtObject {
     id: object
 
-    readonly property var language: SettingsPyObject.language
     readonly property var commentTypesDefined: SettingsPyObject.comment_types
     readonly property var commentTypesImported: ["Hallo", "helloHello"]
     property int widthCommentTypesDefined: 0
     property int widthCommentTypesImported: 0
     property int width: Math.max(widthCommentTypesDefined, widthCommentTypesImported)
 
-    onLanguageChanged: {
-        object.widthCommentTypesDefined = calculateMaxWidthOf(commentTypesDefined)
+    Component.onCompleted: {
+        MpvqcSettings.onLanguageChanged.connect(() => {
+            object.widthCommentTypesDefined = calculateMaxWidthOf(commentTypesDefined)
+        })
     }
 
     onCommentTypesDefinedChanged: {

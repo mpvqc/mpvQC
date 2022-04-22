@@ -23,6 +23,7 @@ import QtQuick
 import QtQuick.Controls
 import Qt.labs.settings
 import pyobjects
+import "mpvqc-settings-default-language.js" as MpvqcLanguage
 
 
 Item {
@@ -34,15 +35,27 @@ Item {
         category: "Theme"
 
         property int theme: Material.Dark
-        property int accent: Material.DeepOrange
+        property int accent: Material.Orange
     }
 
     property int theme: settingsTheme.theme
     property int accent: settingsTheme.accent
 
+    Settings {
+        id: settingsCommon
+        fileName: SettingsPyObject.backing_object_file_name
+        category: "Common"
+
+        property string language: MpvqcLanguage.getDefault(current)
+    }
+
+    property string language: settingsCommon.language
+
     Component.onDestruction: {
         settingsTheme.theme = current.theme
         settingsTheme.accent = current.accent
+
+        settingsCommon.language = current.language
     }
 
 }

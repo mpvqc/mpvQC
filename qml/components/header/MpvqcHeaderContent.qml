@@ -50,7 +50,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             width: headerBarContent.width - menuBar.width * 2
             height: menuBar.height
-            elide: TranslationPyObject.rtl_enabled ? Text.ElideLeft: Text.ElideRight
+            elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
         }
 
         Item {

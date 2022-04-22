@@ -51,8 +51,6 @@ class SettingsService:
         self._export_write_header_video_path = \
             settings.MpvqcBool(key='Export/Write-header-video-path', default_value=True)
 
-        self._language = \
-            settings.MpvqcLanguage(key='Common/Language')
         self._comment_types = \
             settings.MpvqcCommentTypes(key='Common/Comment-types')
 
@@ -120,18 +118,6 @@ class SettingsService:
     @title_bar_format.setter
     def title_bar_format(self, value: TitleFormat) -> None:
         self._title_bar_format.set(value)
-
-    #
-    # Language
-    #
-
-    @property
-    def language(self) -> str:
-        return self._language.get()
-
-    @language.setter
-    def language(self, value: str) -> None:
-        self._language.set(value)
 
     #
     # Comment types

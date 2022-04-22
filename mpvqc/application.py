@@ -38,9 +38,8 @@ class MpvqcApplication(QGuiApplication):
         icon = QIcon(':/data/icon.svg')
         self.setWindowIcon(icon)
 
-    def restore_language(self):
+    def initialize_translator(self):
         self._translator.initialize_with(application=self, engine=self._engine)
-        self._translator.restore_language()
 
     def create_directories(self):
         self._start_up.create_missing_directories()

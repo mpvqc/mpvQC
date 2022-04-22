@@ -96,21 +96,6 @@ class TestSettingsService(unittest.TestCase):
         self.execute_set_get('title_bar_format', then_set=different, then_expect=different)
 
     #
-    # Language
-    #
-
-    MODULE_LANGUAGE = 'mpvqc.impl.settings.defaults'
-
-    @patch(f'{MODULE_LANGUAGE}.locale.getdefaultlocale', return_value=('it',))
-    def test_language_get(self, *_):
-        self.execute_get('language', expect='it')
-
-    @patch(f'{MODULE_LANGUAGE}.locale.getdefaultlocale', return_value=('it',))
-    def test_language_set_get(self, *_):
-        different = 'he'
-        self.execute_set_get('language', then_set=different, then_expect=different)
-
-    #
     # Comment types
     #
 

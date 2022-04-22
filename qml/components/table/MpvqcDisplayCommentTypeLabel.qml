@@ -28,7 +28,7 @@ Label {
     text: qsTranslate("CommentTypes", commentType)
     horizontalAlignment: Text.AlignLeft
     verticalAlignment: Text.AlignVCenter
-    elide: TranslationPyObject.rtl_enabled ? Text.ElideLeft: Text.ElideRight
+    elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
 
     property string commentType
     property bool itemSelected

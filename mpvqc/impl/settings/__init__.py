@@ -25,7 +25,6 @@ from .values import \
     MpvqcCommentTypes, \
     MpvqcTitleFormat, \
     MpvqcTimeFormat, \
-    MpvqcLanguage, \
     MpvqcNickname, \
     MpvqcInputConf, \
     MpvqcMpvConf

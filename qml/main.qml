@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import components
 import handlers
 import helpers
 import pyobjects
@@ -34,7 +33,7 @@ ApplicationWindow {
     flags: Qt.FramelessWindowHint
     Material.theme: appTheme
     Material.accent: displayableAccentColorFor(appThemeColorAccent)
-    LayoutMirroring.enabled: TranslationPyObject.rtl_enabled
+    LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
     property ApplicationWindow appWindow: window
@@ -53,9 +52,18 @@ ApplicationWindow {
         borderWidth: windowBorder
     }
 
-    MpvqcMainPage {
+    Loader {
+        id: loader
+        source: "qrc:/qml/components/MpvqcMainPage.qml"
+        visible: status == Loader.Ready
+        active: false
         anchors.fill: parent
         anchors.margins: appWindow.visibility === Window.Windowed ? windowBorder : 0
+    }
+
+    Component.onCompleted: {
+        TranslationPyObject.load_translation(MpvqcSettings.language)
+        loader.active = true
     }
 
     function displayableAccentColorFor(color) {

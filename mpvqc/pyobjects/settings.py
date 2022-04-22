@@ -23,7 +23,7 @@ from PySide6.QtCore import Signal, Property, QUrl, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
 
 from mpvqc.enums import TimeFormat, TitleFormat
-from mpvqc.services import SettingsService, SettingsInitializerService, TranslationService
+from mpvqc.services import SettingsService, SettingsInitializerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -34,11 +34,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 class SettingsPyObject(QObject):
     _settings = inject.attr(SettingsService)
     _settings_backend = inject.attr(SettingsInitializerService)
-    _translations = inject.attr(TranslationService)
-
-    def __init__(self):
-        super().__init__()
-        self._translations.language_changed.connect(self.language_changed)
 
     def get_backing_object_file_name(self):
         return self._settings_backend.backing_object.fileName()
@@ -117,21 +112,6 @@ class SettingsPyObject(QObject):
     title_bar_format_changed = Signal(int)
     title_bar_format = Property(int, get_title_bar_format, set_title_bar_format,
                                 notify=title_bar_format_changed)
-
-    #
-    # Language
-    #
-
-    def get_language(self) -> str:
-        return self._settings.language
-
-    def set_language(self, value: str):
-        value_old = self.get_language()
-        self._settings.language = value
-        self._fire_on_change(value_old, value, signal=self.language_changed)
-
-    language_changed = Signal(str)
-    language = Property(str, get_language, set_language, notify=language_changed)
 
     #
     # Comment types

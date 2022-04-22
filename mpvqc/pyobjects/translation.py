@@ -17,7 +17,7 @@
 
 
 import inject
-from PySide6.QtCore import Property, Signal, Slot, QObject
+from PySide6.QtCore import Slot, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
 
 from mpvqc.services import TranslationService
@@ -31,17 +31,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 class TranslationPyObject(QObject):
     _translator = inject.attr(TranslationService)
 
-    def get_rtl_enabled(self) -> bool:
-        return self._translator.rtl_enabled
-
-    rtl_enabled_changed = Signal(bool)
-    rtl_enabled = Property(bool, get_rtl_enabled, notify=rtl_enabled_changed)
-
     @Slot(str)
-    def load_translation(self, language: str):
-        rtl_enable_before = self.get_rtl_enabled()
-        self._translator.set_language(language)
-        rtl_enabled_after = self.get_rtl_enabled()
-
-        if rtl_enable_before != rtl_enabled_after:
-            self.rtl_enabled_changed.emit(rtl_enabled_after)
+    def load_translation(self, abbrev: str):
+        self._translator.load(abbrev)

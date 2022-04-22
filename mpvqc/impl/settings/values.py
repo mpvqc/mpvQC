@@ -23,7 +23,7 @@ import inject
 from mpvqc.enums import TimeFormat, TitleFormat
 from mpvqc.impl.settings.converters import BoolConverter, IntConverter, PathConverter, StrConverter, \
     ListConverter, TimeFormatConverter, TitleFormatConverter
-from mpvqc.impl.settings.defaults import DefaultValue, DefaultLanguage, DefaultNickname
+from mpvqc.impl.settings.defaults import DefaultValue, DefaultNickname
 from mpvqc.impl.settings.templates import MpvqcSetting, MpvqcSettingsFile
 from mpvqc.services import FileService, ResourceService
 
@@ -92,14 +92,6 @@ class MpvqcCommentTypes(MpvqcStrList):
         QCoreApplication.translate("CommentTypes", "Timing")
         QCoreApplication.translate("CommentTypes", "Typeset")
         QCoreApplication.translate("CommentTypes", "Note")
-
-
-class MpvqcLanguage(MpvqcSetting[str]):
-
-    def __init__(self, key: str):
-        converter = StrConverter()
-        default = DefaultLanguage()
-        super().__init__(key, converter, default)
 
 
 class MpvqcNickname(MpvqcSetting[str]):

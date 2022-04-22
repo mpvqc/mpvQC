@@ -3,5 +3,5 @@ AccentColorModel AccentColorModel.qml
 ArtworkModel ArtworkModel.qml
 DeveloperModel DeveloperModel.qml
 DependencyModel DependencyModel.qml
-LanguageModel LanguageModel.qml
+MpvqcLanguageModel MpvqcLanguageModel.qml
 ThemeModel ThemeModel.qml

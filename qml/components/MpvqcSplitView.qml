@@ -48,6 +48,7 @@ SplitView {
         Component.onCompleted: {
             splitView.restoreState(settings.value("dimensions"))
         }
+
         Component.onDestruction: {
             settings.setValue("dimensions", splitView.saveState())
         }

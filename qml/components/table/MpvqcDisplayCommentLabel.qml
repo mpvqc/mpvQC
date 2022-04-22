@@ -43,7 +43,7 @@ Loader {
             text: control.comment
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
-            elide: TranslationPyObject.rtl_enabled ? Text.ElideLeft: Text.ElideRight
+            elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
             leftPadding: control.borderPadding
             rightPadding: control.borderPadding
             anchors.fill: control
