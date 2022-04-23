@@ -18,52 +18,9 @@
 
 import inject
 
-from mpvqc.enums import TimeFormat, TitleFormat
-from mpvqc.impl.settings.converters import BoolConverter, IntConverter, StrConverter, TimeFormatConverter, \
-    TitleFormatConverter
-from mpvqc.impl.settings.defaults import DefaultValue, DefaultNickname
-from mpvqc.impl.settings.templates import MpvqcSetting, MpvqcSettingsFile
+from mpvqc.impl.settings.defaults import DefaultValue
+from mpvqc.impl.settings.templates import MpvqcSettingsFile
 from mpvqc.services import FileService, ResourceService
-
-
-class MpvqcBool(MpvqcSetting[bool]):
-
-    def __init__(self, key: str, default_value: bool):
-        converter = BoolConverter()
-        default = DefaultValue(default_value)
-        super(MpvqcBool, self).__init__(key, converter, default)
-
-
-class MpvqcInt(MpvqcSetting[int]):
-
-    def __init__(self, key: str, default_value: int):
-        converter = IntConverter()
-        default = DefaultValue(default_value)
-        super().__init__(key, converter, default)
-
-
-class MpvqcNickname(MpvqcSetting[str]):
-
-    def __init__(self, key: str):
-        converter = StrConverter()
-        default = DefaultNickname()
-        super().__init__(key, converter, default)
-
-
-class MpvqcTimeFormat(MpvqcSetting[TimeFormat]):
-
-    def __init__(self, key: str):
-        converter = TimeFormatConverter()
-        default = DefaultValue(TimeFormat.CURRENT_TOTAL_TIME)
-        super().__init__(key, converter, default)
-
-
-class MpvqcTitleFormat(MpvqcSetting[TitleFormat]):
-
-    def __init__(self, key: str):
-        converter = TitleFormatConverter()
-        default = DefaultValue(TitleFormat.FILE_NAME)
-        super().__init__(key, converter, default)
 
 
 class MpvqcInputConf(MpvqcSettingsFile):

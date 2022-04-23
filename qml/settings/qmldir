@@ -1,2 +1,5 @@
 module settings
 singleton MpvqcSettings MpvqcAllSettings.qml
+singleton MpvqcDefaultNickname MpvqcDefaultNickname.qml
+singleton MpvqcTimeFormat MpvqcTimeFormat.qml
+singleton MpvqcTitleFormat MpvqcTitleFormat.qml

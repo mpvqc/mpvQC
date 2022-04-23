@@ -17,7 +17,6 @@
 
 
 from abc import abstractmethod
-from os import environ
 from typing import TypeVar, Generic
 
 Type = TypeVar('Type')
@@ -37,9 +36,3 @@ class DefaultValue(Default):
 
     def get(self):
         return self._value
-
-
-class DefaultNickname(Default):
-
-    def get(self) -> str:
-        return environ.get("USERNAME") or environ.get('USER') or "nick"

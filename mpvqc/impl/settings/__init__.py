@@ -17,10 +17,5 @@
 
 
 from .values import \
-    MpvqcInt, \
-    MpvqcBool, \
-    MpvqcTitleFormat, \
-    MpvqcTimeFormat, \
-    MpvqcNickname, \
     MpvqcInputConf, \
     MpvqcMpvConf

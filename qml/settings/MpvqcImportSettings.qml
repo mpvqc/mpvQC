@@ -29,6 +29,7 @@ Item {
     property var lastDirectoryVideo: settings.lastDirectoryVideo
     property var lastDirectoryDocuments: settings.lastDirectoryDocuments
     property var lastDirectorySubtitles: settings.lastDirectorySubtitles
+    property bool loadVideoFromDocumentAutomatically: settings.loadVideoFromDocumentAutomatically
 
     Settings {
         id: settings
@@ -37,12 +38,14 @@ Item {
         property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
         property var lastDirectorySubtitles: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+        property bool loadVideoFromDocumentAutomatically: false
     }
 
     function store() {
         settings.lastDirectoryVideo = current.lastDirectoryVideo
         settings.lastDirectoryDocuments = current.lastDirectoryDocuments
         settings.lastDirectorySubtitles = current.lastDirectorySubtitles
+        settings.loadVideoFromDocumentAutomatically = current.loadVideoFromDocumentAutomatically
     }
 
 }

@@ -17,63 +17,14 @@
 
 
 from pathlib import Path
-from typing import TypeVar, Generic
+from typing import TypeVar
 
 import inject
 
 from mpvqc.impl import FileReader, FileWriter
-from mpvqc.impl.settings.converters import Converter
 from mpvqc.impl.settings.defaults import Default
-from mpvqc.services import SettingsInitializerService
 
 Type = TypeVar('Type')
-
-
-class MpvqcSetting(Generic[Type]):
-    _settings = inject.attr(SettingsInitializerService)
-
-    def __init__(
-            self,
-            key: str,
-            converter: Converter[Type],
-            default: Default[Type],
-    ):
-        self._key = key
-        self._converter = converter
-        self._default_value = default.get()
-
-    def get(self) -> Type:
-        """Gets a user setting"""
-        if self._dont_have_key():
-            return self._default_value
-        value = self._retrieve()
-        if value is None:
-            return self._default_value
-        value = self._converter.unmarshall(value)
-        if value is None:
-            return self._default_value
-        return value
-
-    def _dont_have_key(self) -> bool:
-        return not self._have_key()
-
-    def _have_key(self) -> bool:
-        return self._settings.backing_object.contains(self._key)
-
-    def _retrieve(self) -> Type:
-        return self._settings.backing_object.value(self._key)
-
-    def set(self, value: Type) -> None:
-        """Sets a user setting"""
-        value = self._converter.marshall(value)
-        self._store(value)
-
-    def _store(self, value: Type):
-        self._settings.backing_object.setValue(self._key, value)
-
-    def reset(self) -> None:
-        """Resets a user setting"""
-        self._store(self._default_value)
 
 
 class MpvqcSettingsFile:

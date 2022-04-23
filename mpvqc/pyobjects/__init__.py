@@ -16,6 +16,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from .environment import EnvironmentPyObject
 from .comments_model import CommentModelPyObject
 from .dialog_about import DialogAboutPyObject
 from .player import MpvPlayerPyObject

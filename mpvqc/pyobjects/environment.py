@@ -16,17 +16,19 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from enum import IntEnum
+from os import environ
+
+from PySide6.QtCore import QObject, Slot
+from PySide6.QtQml import QmlElement, QmlSingleton
+
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
 
 
-class TimeFormat(IntEnum):
-    EMPTY = 1
-    CURRENT_TIME = 2
-    REMAINING_TIME = 3
-    CURRENT_TOTAL_TIME = 4
+@QmlElement
+@QmlSingleton
+class EnvironmentPyObject(QObject):
 
-
-class TitleFormat(IntEnum):
-    EMPTY = 1
-    FILE_NAME = 2
-    FILE_PATH = 3
+    @Slot(str, result=str or None)
+    def variable(self, key: str):
+        return environ.get(key) or None
