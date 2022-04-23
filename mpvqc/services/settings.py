@@ -43,9 +43,6 @@ class SettingsService:
         self._export_write_header_video_path = \
             settings.MpvqcBool(key='Export/Write-header-video-path', default_value=True)
 
-        self._comment_types = \
-            settings.MpvqcCommentTypes(key='Common/Comment-types')
-
         self._title_bar_format = \
             settings.MpvqcTitleFormat(key='TitleBar/Title-format')
         self._status_bar_time_format = \
@@ -74,18 +71,6 @@ class SettingsService:
     @title_bar_format.setter
     def title_bar_format(self, value: TitleFormat) -> None:
         self._title_bar_format.set(value)
-
-    #
-    # Comment types
-    #
-
-    @property
-    def comment_types(self) -> list[str]:
-        return self._comment_types.get()
-
-    @comment_types.setter
-    def comment_types(self, value: list[str]) -> None:
-        self._comment_types.set(value)
 
     #
     # Backup enabled

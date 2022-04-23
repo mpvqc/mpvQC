@@ -62,25 +62,6 @@ class StrConverter(Converter[str]):
         return value
 
 
-class ListConverter(Converter[list[Type]], Generic[Type]):
-
-    def __init__(
-            self,
-            single_value_converter: Converter[Type],
-            delimiter_read: str = ",",
-            delimiter_write: str = ", "
-    ):
-        self._single_value_converter = single_value_converter
-        self._delimiter_read = delimiter_read
-        self._delimiter_write = delimiter_write
-
-    def marshall(self, value: list[Type]) -> str:
-        return self._delimiter_write.join([self._single_value_converter.marshall(v) for v in value])
-
-    def unmarshall(self, value: str) -> list[Type]:
-        return [self._single_value_converter.unmarshall(v.strip()) for v in value.split(self._delimiter_read)]
-
-
 class TitleFormatConverter(Converter[TitleFormat]):
     """"""
 

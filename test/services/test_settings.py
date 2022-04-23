@@ -63,18 +63,6 @@ class TestSettingsService(unittest.TestCase):
         self.execute_set_get('title_bar_format', then_set=different, then_expect=different)
 
     #
-    # Comment types
-    #
-
-    def test_comment_types_get(self):
-        default = ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note']
-        self.execute_get('comment_types', expect=default)
-
-    def test_comment_types_set_get(self):
-        different = ['Other Comment Type']
-        self.execute_set_get('comment_types', then_set=different, then_expect=different)
-
-    #
     # Backup enabled
     #
 

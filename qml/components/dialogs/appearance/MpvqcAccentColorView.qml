@@ -22,13 +22,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import components.shared
-import helpers
 import models
+import settings
 
 
 GridView {
     id: gridViewAccent
-    model: AccentColorModel {}
+    model: MpvqcAccentColorModel {}
     focus: true
     clip: true
     width: 352

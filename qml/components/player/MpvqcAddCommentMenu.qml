@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import components.shared
-import pyobjects
+import settings
 
 
 MpvqcAutoWidthMenu {
@@ -32,20 +32,12 @@ MpvqcAutoWidthMenu {
     signal itemClicked(string type)
 
     Repeater {
-        model: menu.createModel()
+        model: MpvqcSettings.commentTypes
 
         MenuItem {
-            text: qsTranslate("CommentTypes", model.item)
-            onTriggered: menu.itemClicked(model.item)
+            text: qsTranslate("CommentTypes", model.type)
+            onTriggered: menu.itemClicked(model.type)
         }
-    }
-
-    function createModel() {
-        const model = Qt.createQmlObject('import QtQuick; ListModel {}', menu)
-        for (let commentType of SettingsPyObject.comment_types) {
-            model.append({ item: commentType })
-        }
-        return model
     }
 
 }

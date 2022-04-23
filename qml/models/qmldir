@@ -1,7 +1,8 @@
 module models
-AccentColorModel AccentColorModel.qml
-ArtworkModel ArtworkModel.qml
-DeveloperModel DeveloperModel.qml
-DependencyModel DependencyModel.qml
+MpvqcAccentColorModel MpvqcAccentColorModel.qml
+MpvqcArtworkModel MpvqcArtworkModel.qml
+MpvqcCommentTypes MpvqcCommentTypes.qml
+MpvqcDependencyModel MpvqcDependencyModel.qml
+MpvqcDeveloperModel MpvqcDeveloperModel.qml
 MpvqcLanguageModel MpvqcLanguageModel.qml
-ThemeModel ThemeModel.qml
+MpvqcThemeModel MpvqcThemeModel.qml

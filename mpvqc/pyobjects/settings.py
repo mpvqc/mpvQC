@@ -16,10 +16,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pathlib import Path
-
 import inject
-from PySide6.QtCore import Signal, Property, QUrl, QObject
+from PySide6.QtCore import Signal, Property, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
 
 from mpvqc.enums import TimeFormat, TitleFormat
@@ -61,21 +59,6 @@ class SettingsPyObject(QObject):
     title_bar_format_changed = Signal(int)
     title_bar_format = Property(int, get_title_bar_format, set_title_bar_format,
                                 notify=title_bar_format_changed)
-
-    #
-    # Comment types
-    #
-
-    def get_comment_types(self) -> list[str]:
-        return self._settings.comment_types
-
-    def set_comment_types(self, value: list[str]) -> None:
-        value_old = self.get_comment_types()
-        self._settings.comment_types = value
-        self._fire_on_change(value_old, value, signal=self.comment_types_changed)
-
-    comment_types_changed = Signal(list)
-    comment_types = Property(list, get_comment_types, set_comment_types, notify=comment_types_changed)
 
     #
     # Backup enabled

@@ -23,6 +23,7 @@ import QtQuick.Controls
 import handlers
 import helpers
 import pyobjects
+import settings
 
 
 ApplicationWindow {
@@ -37,8 +38,8 @@ ApplicationWindow {
     LayoutMirroring.childrenInherit: true
 
     property ApplicationWindow appWindow: window
-    property var utils: Utils
-    property var eventRegistry: EventRegistry
+    property var utils: MpvqcUtils
+    property var eventRegistry: MpvqcEventRegistry
     property int appTheme: MpvqcSettings.theme
     property int appThemeColorAccent: MpvqcSettings.accent
     property int windowBorder: 5

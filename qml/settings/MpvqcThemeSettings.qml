@@ -18,24 +18,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import QtQuick.Dialogs
-import settings
+import QtQuick
+import QtQuick.Controls
+import Qt.labs.settings
 
 
-FileDialog {
-    title: qsTranslate("FileInteractionDialogs", "Open QC Document(s)")
-    currentFolder: MpvqcSettings.lastDirectoryDocuments
-    fileMode: FileDialog.OpenFiles
-    nameFilters: [
-        qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)",
-        qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
-    ]
+Item {
+    id: current
+    required property var settingsFile
+    property int theme: settings.theme
+    property int accent: settings.accent
 
-    onAccepted: {
-        MpvqcSettings.lastDirectoryDocuments = currentFolder
-        for (let file of selectedFiles) {
-            console.log("Open: " + file)
-        }
+    Settings {
+        id: settings
+        fileName: current.settingsFile
+        category: "Theme"
+        property int theme: Material.Dark
+        property int accent: Material.Orange
+    }
+
+    function store() {
+        settings.theme = current.theme
+        settings.accent = current.accent
     }
 
 }

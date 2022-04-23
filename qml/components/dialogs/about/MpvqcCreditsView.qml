@@ -42,7 +42,7 @@ ScrollView {
         }
 
         Repeater {
-            model: DeveloperModel {}
+            model: MpvqcDeveloperModel {}
             width: parent.width
 
             Label {
@@ -61,7 +61,7 @@ ScrollView {
         }
 
         Repeater {
-            model: ArtworkModel {}
+            model: MpvqcArtworkModel {}
             width: parent.width
 
             Label {
@@ -100,7 +100,7 @@ ScrollView {
         }
 
         Repeater {
-            model: DependencyModel {}
+            model: MpvqcDependencyModel {}
             width: parent.width
 
             Label {

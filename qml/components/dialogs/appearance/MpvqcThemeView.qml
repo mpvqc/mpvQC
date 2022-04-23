@@ -22,13 +22,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import components.shared
-import helpers
 import models
+import settings
 
 
 ListView {
     id: listViewTheme
-    model: ThemeModel {}
+    model: MpvqcThemeModel {}
     clip: true
     spacing: 8
     height: 52

@@ -22,36 +22,36 @@ import QtQuick
 
 
 ListModel {
-    readonly property var languagesForTranslationTool: [
-        qsTranslate("Languages", "English"),
-        qsTranslate("Languages", "German"),
-        qsTranslate("Languages", "Hebrew"),
-        qsTranslate("Languages", "Italian"),
-        qsTranslate("Languages", "Spanish"),
+    readonly property var forTranslationTool: [
+        qsTranslate("CommentTypes", "Translation"),
+        qsTranslate("CommentTypes", "Spelling"),
+        qsTranslate("CommentTypes", "Punctuation"),
+        qsTranslate("CommentTypes", "Phrasing"),
+        qsTranslate("CommentTypes", "Timing"),
+        qsTranslate("CommentTypes", "Typeset"),
+        qsTranslate("CommentTypes", "Note"),
     ]
 
     ListElement {
-        language: "English"
-        abbrev: "en"
+        type: "Translation"
     }
     ListElement {
-        language: "German"
-        abbrev: "de"
-        translator: "Frechdachs"
+        type: "Spelling"
     }
     ListElement {
-        language: "Hebrew"
-        abbrev: "he"
-        translator: "cN3rd"
+        type: "Punctuation"
     }
     ListElement {
-        language: "Italian"
-        abbrev: "it"
-        translator: "maddo"
+        type: "Phrasing"
     }
     ListElement {
-        language: "Spanish"
-        abbrev: "es"
-        translator: "RcUchiha"
+        type: "Timing"
     }
+    ListElement {
+        type: "Typeset"
+    }
+    ListElement {
+        type: "Note"
+    }
+
 }

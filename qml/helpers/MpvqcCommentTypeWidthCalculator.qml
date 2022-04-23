@@ -21,41 +21,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 pragma Singleton
 import QtQuick
 import helpers
-import pyobjects
+import settings
 
 
 QtObject {
     id: object
 
-    readonly property var commentTypesDefined: SettingsPyObject.comment_types
-    readonly property var commentTypesImported: ["Hallo", "helloHello"]
-    property int widthCommentTypesDefined: 0
-    property int widthCommentTypesImported: 0
-    property int width: Math.max(widthCommentTypesDefined, widthCommentTypesImported)
+    readonly property var commentTypes: MpvqcSettings.commentTypes
+    property int width: 0
 
     Component.onCompleted: {
-        MpvqcSettings.onLanguageChanged.connect(() => {
-            object.widthCommentTypesDefined = calculateMaxWidthOf(commentTypesDefined)
-        })
+        MpvqcSettings.onLanguageChanged.connect(calculateMaxWidth)
     }
 
-    onCommentTypesDefinedChanged: {
-        object.widthCommentTypesDefined = calculateMaxWidthOf(commentTypesDefined)
+    onCommentTypesChanged: {
+        calculateMaxWidth()
     }
 
-    onCommentTypesImportedChanged: {
-        object.widthCommentTypesImported = calculateMaxWidthOf(commentTypesImported)
-    }
-
-    function calculateMaxWidthOf(elements) {
+    function calculateMaxWidth() {
+        const model = MpvqcSettings.commentTypes
         const metric = Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', object)
         let width = 0
-        for (let element of elements) {
-            metric.text = qsTranslate("CommentTypes", element)
+        for (let i = 0, count = model.count; i < count; i++) {
+            metric.text = qsTranslate("CommentTypes", model.get(i).type)
             width = Math.max(width, metric.tightBoundingRect.width)
         }
         metric.destroy()
-        return width + 6
+        object.width = width + 6
     }
 
 }

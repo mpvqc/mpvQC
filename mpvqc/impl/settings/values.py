@@ -19,8 +19,8 @@
 import inject
 
 from mpvqc.enums import TimeFormat, TitleFormat
-from mpvqc.impl.settings.converters import BoolConverter, IntConverter, StrConverter, \
-    ListConverter, TimeFormatConverter, TitleFormatConverter
+from mpvqc.impl.settings.converters import BoolConverter, IntConverter, StrConverter, TimeFormatConverter, \
+    TitleFormatConverter
 from mpvqc.impl.settings.defaults import DefaultValue, DefaultNickname
 from mpvqc.impl.settings.templates import MpvqcSetting, MpvqcSettingsFile
 from mpvqc.services import FileService, ResourceService
@@ -40,42 +40,6 @@ class MpvqcInt(MpvqcSetting[int]):
         converter = IntConverter()
         default = DefaultValue(default_value)
         super().__init__(key, converter, default)
-
-
-class MpvqcStr(MpvqcSetting[str]):
-
-    def __init__(self, key: str, default_value: str):
-        converter = StrConverter()
-        default = DefaultValue(default_value)
-        super().__init__(key, converter, default)
-
-
-class MpvqcStrList(MpvqcSetting[list[str]]):
-
-    def __init__(self, key: str, default_value: list[str]):
-        single = StrConverter()
-        converter = ListConverter(single)
-        default = DefaultValue(default_value)
-        super().__init__(key, converter, default)
-
-
-class MpvqcCommentTypes(MpvqcStrList):
-
-    def __init__(self, key: str):
-        default_value = ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"]
-        super().__init__(key, default_value)
-
-    # noinspection PyTypeChecker
-    @staticmethod
-    def _list_for_import_tool():
-        from PySide6.QtCore import QCoreApplication
-        QCoreApplication.translate("CommentTypes", "Translation")
-        QCoreApplication.translate("CommentTypes", "Spelling")
-        QCoreApplication.translate("CommentTypes", "Punctuation")
-        QCoreApplication.translate("CommentTypes", "Phrasing")
-        QCoreApplication.translate("CommentTypes", "Timing")
-        QCoreApplication.translate("CommentTypes", "Typeset")
-        QCoreApplication.translate("CommentTypes", "Note")
 
 
 class MpvqcNickname(MpvqcSetting[str]):

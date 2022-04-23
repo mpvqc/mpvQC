@@ -19,9 +19,6 @@
 from .values import \
     MpvqcInt, \
     MpvqcBool, \
-    MpvqcStr, \
-    MpvqcStrList, \
-    MpvqcCommentTypes, \
     MpvqcTitleFormat, \
     MpvqcTimeFormat, \
     MpvqcNickname, \
