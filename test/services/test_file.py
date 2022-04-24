@@ -23,7 +23,7 @@ from unittest.mock import MagicMock, patch
 import inject
 from PySide6.QtCore import QStandardPaths
 
-from mpvqc.services import AppEnvironmentService, FileService
+from mpvqc.services import AppEnvironmentService, FilePathService
 
 
 class TestPortableFileService(unittest.TestCase):
@@ -40,37 +40,37 @@ class TestPortableFileService(unittest.TestCase):
         inject.clear()
 
     def test_directory_backup(self):
-        service = FileService()
+        service = FilePathService()
         expected = self.executing_dir / 'appdata' / 'backups'
         actual = service.dir_backup
         self.assertEqual(expected, actual)
 
     def test_directory_config(self):
-        service = FileService()
+        service = FilePathService()
         expected = self.executing_dir / 'appdata'
         actual = service.dir_config
         self.assertEqual(expected, actual)
 
     def test_directory_screenshots(self):
-        service = FileService()
+        service = FilePathService()
         expected = self.executing_dir / 'appdata' / 'screenshots'
         actual = service.dir_screenshots
         self.assertEqual(expected, actual)
 
     def test_file_input_conf(self):
-        service = FileService()
+        service = FilePathService()
         expected = self.executing_dir / 'appdata' / 'input.conf'
         actual = service.file_input_conf
         self.assertEqual(expected, actual)
 
     def test_file_mpv_conf(self):
-        service = FileService()
+        service = FilePathService()
         expected = self.executing_dir / 'appdata' / 'mpv.conf'
         actual = service.file_mpv_conf
         self.assertEqual(expected, actual)
 
     def test_file_settings(self):
-        service = FileService()
+        service = FilePathService()
         expected = self.executing_dir / 'appdata' / 'settings.ini'
         actual = service.file_settings
         self.assertEqual(expected, actual)
@@ -91,42 +91,42 @@ class TestNonPortableFileService(unittest.TestCase):
 
     @patch(f'{MODULE}.Path', return_value=Path(QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)))
     def test_directory_backup(self, *_):
-        service = FileService()
+        service = FilePathService()
         expected = Path(QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)) / 'mpvQC' / 'backups'
         actual = service.dir_backup
         self.assertEqual(expected, actual)
 
     @patch(f'{MODULE}.environ.get', return_value=None)
     def test_directory_config(self, *_):
-        service = FileService()
+        service = FilePathService()
         expected = Path.home() / '.config' / 'mpvQC'
         actual = service.dir_config
         self.assertEqual(expected, actual)
 
     @patch(f'{MODULE}.Path', return_value=Path(QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)))
     def test_directory_screenshots(self, *_):
-        service = FileService()
+        service = FilePathService()
         expected = Path(QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)) / 'mpvQC'
         actual = service.dir_screenshots
         self.assertEqual(expected, actual)
 
     @patch(f'{MODULE}.environ.get', return_value=None)
     def test_file_input_conf(self, *_):
-        service = FileService()
+        service = FilePathService()
         expected = Path.home() / '.config' / 'mpvQC' / 'input.conf'
         actual = service.file_input_conf
         self.assertEqual(expected, actual)
 
     @patch(f'{MODULE}.environ.get', return_value=None)
     def test_file_mpv_conf(self, *_):
-        service = FileService()
+        service = FilePathService()
         expected = Path.home() / '.config' / 'mpvQC' / 'mpv.conf'
         actual = service.file_mpv_conf
         self.assertEqual(expected, actual)
 
     @patch(f'{MODULE}.environ.get', return_value=None)
     def test_file_settings(self, *_):
-        service = FileService()
+        service = FilePathService()
         expected = Path.home() / '.config' / 'mpvQC' / 'settings.ini'
         actual = service.file_settings
         self.assertEqual(expected, actual)

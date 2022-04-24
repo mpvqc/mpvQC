@@ -19,34 +19,34 @@
 import inject
 
 from mpvqc.impl import FileWriter
-from mpvqc.services.file import FileService
+from mpvqc.services.file_paths import FilePathService
 from mpvqc.services.resource import ResourceService
 
 
 class FileStartupService:
-    _files = inject.attr(FileService)
+    _paths = inject.attr(FilePathService)
     _resources = inject.attr(ResourceService)
 
     def create_missing_directories(self):
-        self._files.dir_config.mkdir(exist_ok=True, parents=True)
-        self._files.dir_backup.mkdir(exist_ok=True, parents=True)
-        self._files.dir_screenshots.mkdir(exist_ok=True, parents=True)
+        self._paths.dir_config.mkdir(exist_ok=True, parents=True)
+        self._paths.dir_backup.mkdir(exist_ok=True, parents=True)
+        self._paths.dir_screenshots.mkdir(exist_ok=True, parents=True)
 
     def create_missing_files(self):
         self._create_missing_input_conf()
         self._create_missing_mpv_conf()
 
     def _create_missing_input_conf(self):
-        file = self._files.file_input_conf
-        file_writer = FileWriter(file)
+        path = self._paths.file_input_conf
+        file_writer = FileWriter(path)
 
         if file_writer.file_doesnt_exist():
             default_text = self._resources.input_conf_content
             file_writer.write(default_text)
 
     def _create_missing_mpv_conf(self):
-        file = self._files.file_mpv_conf
-        file_writer = FileWriter(file)
+        path = self._paths.file_mpv_conf
+        file_writer = FileWriter(path)
 
         if file_writer.file_doesnt_exist():
             default_text = self._resources.mpv_conf_content

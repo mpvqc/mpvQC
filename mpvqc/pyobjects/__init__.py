@@ -16,9 +16,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from .environment import EnvironmentPyObject
 from .comments_model import CommentModelPyObject
 from .dialog_about import DialogAboutPyObject
+from .environment import EnvironmentPyObject
+from .file_interface import MpvqcFileInterfacePyObject
+from .file_paths import MpvqcFilePathsPyObject
 from .player import MpvPlayerPyObject
 from .qc_manager import QcManagerPyObject
 from .settings import SettingsPyObject

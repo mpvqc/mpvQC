@@ -25,7 +25,7 @@ from mpvqc.impl import PortableFileServiceImpl, NonPortableFileServiceImpl
 from mpvqc.services.app_environment import AppEnvironmentService
 
 
-class FileService:
+class FilePathService:
     _app_environment = inject.attr(AppEnvironmentService)
 
     def __init__(self):

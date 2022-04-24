@@ -23,7 +23,7 @@ from unittest.mock import MagicMock
 import inject
 from PySide6.QtCore import QSettings
 
-from mpvqc.services import FileService, SettingsInitializerService
+from mpvqc.services import FilePathService, SettingsService
 
 
 class TestSettingsServiceInitializer(unittest.TestCase):
@@ -32,10 +32,10 @@ class TestSettingsServiceInitializer(unittest.TestCase):
         file_service = MagicMock()
         file_service.file_settings = str(Path.home())
         inject.clear_and_configure(lambda binder: binder
-                                   .bind(FileService, file_service))
+                                   .bind(FilePathService, file_service))
 
         try:
-            service = SettingsInitializerService()
+            service = SettingsService()
             settings = service.backing_object
             self.assertIsInstance(settings, QSettings)
         finally:

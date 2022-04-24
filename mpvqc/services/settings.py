@@ -16,37 +16,17 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from functools import cached_property
+
+import inject
+from PySide6.QtCore import QSettings
+
+from mpvqc.services.file_paths import FilePathService
+
+
 class SettingsService:
-    """Access to all settings"""
+    _paths = inject.attr(FilePathService)
 
-    def __init__(self):
-        import mpvqc.impl.settings as settings
-
-        self._config_input = \
-            settings.MpvqcInputConf()
-        self._config_mpv = \
-            settings.MpvqcMpvConf()
-
-    #
-    # Config input
-    #
-
-    @property
-    def config_input(self) -> str:
-        return self._config_input.get()
-
-    @config_input.setter
-    def config_input(self, value: str) -> None:
-        self._config_input.set(value)
-
-    #
-    # Config mpv
-    #
-
-    @property
-    def config_mpv(self) -> str:
-        return self._config_mpv.get()
-
-    @config_mpv.setter
-    def config_mpv(self, value: str) -> None:
-        self._config_mpv.set(value)
+    @cached_property
+    def backing_object(self) -> QSettings:
+        return QSettings(str(self._paths.file_settings), QSettings.IniFormat)

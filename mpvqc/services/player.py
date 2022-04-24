@@ -19,12 +19,12 @@
 import inject
 
 from mpvqc.impl import MPV
-from mpvqc.services.file import FileService
+from mpvqc.services.file_paths import FilePathService
 from mpvqc.services.time_formatter import TimeFormatterService
 
 
 class PlayerService:
-    _files = inject.attr(FileService)
+    _paths = inject.attr(FilePathService)
     _formatter = inject.attr(TimeFormatterService)
 
     def __init__(self, **properties):
@@ -39,8 +39,8 @@ class PlayerService:
             input_cursor="no",
             input_default_bindings="no",
             config="yes",
-            config_dir=str(self._files.dir_config),
-            screenshot_directory=str(self._files.dir_screenshots),
+            config_dir=str(self._paths.dir_config),
+            screenshot_directory=str(self._paths.dir_screenshots),
             ytdl="yes",
             # log_handler=logging.mpv_log_handler,
         )

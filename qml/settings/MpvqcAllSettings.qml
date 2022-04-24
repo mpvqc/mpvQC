@@ -42,6 +42,12 @@ Item {
     property alias language: commonSettings.language
     property alias commentTypes: commonSettings.commentTypes
 
+    MpvqcConfigFileSettings {
+        id: configFileSettings
+    }
+    property alias configInput: configFileSettings.configInput
+    property alias configMpv: configFileSettings.configMpv
+
     MpvqcExportSettings {
         id: exportSettings
         settingsFile: current.settingsFile

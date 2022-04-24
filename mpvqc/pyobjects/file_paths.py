@@ -16,30 +16,29 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pathlib import Path
-from typing import TypeVar
-
 import inject
+from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtQml import QmlElement, QmlSingleton
 
-from mpvqc.impl import FileReader, FileWriter
-from mpvqc.impl.settings.defaults import Default
+from mpvqc.services import FilePathService
 
-Type = TypeVar('Type')
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
 
 
-class MpvqcSettingsFile:
-    _file_reader = inject.attr(FileReader)
+@QmlElement
+@QmlSingleton
+class MpvqcFilePathsPyObject(QObject):
+    _paths = inject.attr(FilePathService)
 
-    def __init__(self, file: Path, default: Default[str]):
-        self._file = file
-        self._default_value = default.get()
+    def get_config_input(self) -> str:
+        return str(self._paths.file_input_conf)
 
-    def get(self) -> str:
-        return self._file_reader.read(self._file)
+    input_conf_changed = Signal(str)
+    input_conf = Property(str, get_config_input, notify=input_conf_changed)
 
-    def set(self, value: str) -> None:
-        writer = FileWriter(self._file)
-        writer.write(value)
+    def get_config_mpv(self) -> str:
+        return str(self._paths.file_mpv_conf)
 
-    def reset(self) -> None:
-        self.set(self._default_value)
+    mpv_conf_changed = Signal(str)
+    mpv_conf = Property(str, get_config_mpv, notify=mpv_conf_changed)
