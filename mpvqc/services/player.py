@@ -17,8 +17,8 @@
 
 
 import inject
+from mpv import MPV
 
-from mpvqc.impl import MPV
 from mpvqc.services.file_paths import FilePathService
 from mpvqc.services.time_formatter import TimeFormatterService
 

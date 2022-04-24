@@ -1,4 +1,5 @@
 inject>=4.3.1
-PySide6>=6.1.0
-pytest>=6.2.3
+PySide6==6.2.4
+pytest>=7.1.2
 PyOpenGl>=3.1.6
+python-mpv>=1.0.1

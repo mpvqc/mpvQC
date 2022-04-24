@@ -20,9 +20,9 @@ import inject
 from PySide6.QtCore import QSize
 from PySide6.QtOpenGL import QOpenGLFramebufferObject
 from PySide6.QtQuick import QQuickFramebufferObject
+from mpv import MpvRenderContext, MpvGlGetProcAddressFn
 
 from .address_proc_getter import GetProcAddressGetter
-from .mpv import OpenGlCbGetProcAddrFn, MpvRenderContext
 
 
 class PlayerRenderer(QQuickFramebufferObject.Renderer):
@@ -31,7 +31,7 @@ class PlayerRenderer(QQuickFramebufferObject.Renderer):
     def __init__(self, parent):
         super(PlayerRenderer, self).__init__()
         self._parent = parent
-        self._get_proc_address_resolver = OpenGlCbGetProcAddrFn(GetProcAddressGetter().wrap)
+        self._get_proc_address_resolver = MpvGlGetProcAddressFn(GetProcAddressGetter().wrap)
         self._ctx = None
 
         from mpvqc.services.player import PlayerService
