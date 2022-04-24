@@ -35,6 +35,7 @@ Rectangle {
     signal clicked()
     signal playClicked()
     signal deleteClicked()
+    signal timeEdited(int time)
     signal commentTypeEdited(string commentType)
     signal commentEdited(string comment)
 
@@ -52,13 +53,17 @@ Rectangle {
 
         MpvqcDisplayTimeLabel {
             id: timeLabel
-            time: modelItem.timeStr
+            time: modelItem.time
             itemSelected: item.selected
             width: 100
             height: item.height
 
             onClicked: {
                 item.triggerClicked()
+            }
+
+            onEdited: (time) => {
+                item.triggerTimeEdited(time)
             }
         }
 
@@ -132,6 +137,10 @@ Rectangle {
 
     function triggerDeleteClicked() {
         item.deleteClicked()
+    }
+
+    function triggerTimeEdited(time) {
+        item.timeEdited(time)
     }
 
     function triggerCommentEdited(comment) {

@@ -50,8 +50,8 @@ class PlayerService:
         return self._mpv
 
     @property
-    def current_time(self) -> tuple[int, str]:
-        return self._formatter.format(self._mpv.time_pos)
+    def current_time(self) -> int:
+        return self._mpv.time_pos or 0
 
     def move_mouse(self, x: int, y: int):
         self._mpv.command_async("mouse", x, y)

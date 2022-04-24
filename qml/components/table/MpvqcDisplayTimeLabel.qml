@@ -20,33 +20,68 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import helpers
 
 
 Label {
     id: control
-    text: control.time
+    text: MpvqcTimeFormatUtils.formatTimeToString(control.time)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
 
-    property string time
+    property int time
     property bool itemSelected
 
     signal clicked()
+    signal edited(int time)
 
     MouseArea {
         anchors.fill: parent
 
         onClicked: {
             if (itemSelected) {
-                openTimeEditPopup()
+                startEditing()
             } else {
                 triggerClicked()
             }
         }
     }
 
-    function openTimeEditPopup() {
-        console.log("Trigger editing")
+    function startEditing() {
+        requestVideoPause()
+        jumpToVideoPosition(control.time)
+        openTimeEditPopup()
+    }
+
+    function requestVideoPause() {
+        eventRegistry.produce(eventRegistry.EventRequestVideoPause)
+    }
+
+    function jumpToVideoPosition(time) {
+        eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, time)
+    }
+
+    function openTimeEditPopup(event) {
+        const component = Qt.createComponent("MpvqcEditTimePopup.qml")
+        const popup = component.createObject(control)
+        popup.currentTime = control.time
+        popup.edited.connect(control.triggerTimeEdited)
+        popup.editingAborted.connect(control.resetVideoPosition)
+        popup.valueChanged.connect(control.jumpToVideoPosition)
+        popup.closed.connect(popup.destroy)
+        if (LayoutMirroring.enabled) {
+            // fixme? workaround popup opening to the right
+            popup.x = -(control.width / 2)
+        }
+        popup.open()
+    }
+
+    function resetVideoPosition() {
+        control.jumpToVideoPosition(control.time)
+    }
+
+    function triggerTimeEdited(time) {
+        control.edited(time)
     }
 
     function triggerClicked() {

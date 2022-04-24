@@ -43,7 +43,11 @@ ListView {
         }
 
         onPlayClicked: {
-            requestPlay(model.timeInt)
+            requestPlay(model.time)
+        }
+
+        onTimeEdited: (time) => {
+            updateTime(model.index, time)
         }
 
         onCommentTypeEdited: (commentType) => {
@@ -61,6 +65,7 @@ ListView {
 
     Component.onCompleted: {
         listView.model.row_added.connect(listView.onAfterNewRowAdded)
+        listView.model.time_updated.connect(listView.onAfterTimeUpdated)
         eventRegistry.subscribe(
             eventRegistry.EventAddNewRow, (commentType) => listView.onAddNewRowEvent(commentType)
         )
@@ -75,12 +80,20 @@ ListView {
         listView.itemAtIndex(rowIndex).startEditing()
     }
 
+    function onAfterTimeUpdated(rowIndex) {
+        listView.currentIndex = rowIndex
+    }
+
     function selectRow(index) {
         listView.currentIndex = index
     }
 
     function requestPlay(time) {
         eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, time)
+    }
+
+    function updateTime(index, time) {
+        listView.model.update_time(index, time)
     }
 
     function updateCommentType(index, commentType) {

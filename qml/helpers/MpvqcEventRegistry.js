@@ -65,6 +65,10 @@ function produce(eventKey, args) {
     registry.produce(eventKey, args)
 }
 
+/**
+ * Called with no arguments
+ */
+const EventRequestVideoPause = 'mpvqc-request-video-pause'
 
 /**
  * Called with no arguments

@@ -50,11 +50,15 @@ Label {
 
     function openCommentTypeEditMenu() {
         const component = Qt.createComponent("MpvqcEditCommentTypeMenu.qml")
-        const menu = component.createObject(appWindow)
+        const menu = component.createObject(control)
         menu.currentCommentType = control.commentType
         menu.closed.connect(menu.destroy)
         menu.itemClicked.connect((commentType) => triggerEdited(commentType))
-        menu.popup()
+        if (LayoutMirroring.enabled) {
+            // fixme? workaround popup opening to the right
+            menu.x = -(control.width / 2)
+        }
+        menu.open()
     }
 
     function triggerClicked() {

@@ -17,12 +17,4 @@
 
 
 class TimeFormatterService:
-
-    @staticmethod
-    def format(seconds: float or None) -> tuple[int, str]:
-        if seconds is None:
-            return 0, '00:00:00'
-        total = round(seconds)
-        m, s = divmod(total, 60)
-        h, m = divmod(m, 60)
-        return total, "{:02d}:{:02d}:{:02d}".format(h, m, s)
+    pass
