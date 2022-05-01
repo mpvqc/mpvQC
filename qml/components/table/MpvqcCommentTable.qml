@@ -20,92 +20,140 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import pyobjects
 
+FocusScope {
+    id: container
 
-ListView {
-    id: listView
-    clip: true
-    reuseItems: true
-    boundsBehavior: Flickable.StopAtBounds
-    highlightMoveDuration: 0
-    highlightMoveVelocity: -1
-    model: CommentModelPyObject {}
-    ScrollBar.vertical: ScrollBar {}
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
 
-    delegate: MpvqcCommentItem {
-        modelItem: model
-        selected: listView.currentIndex === model.index
-        color: ListView.isCurrentItem ? Material.accent : "transparent"
+        ListView {
+            id: listView
+            clip: true
+            focus: true
+            reuseItems: true
+            boundsBehavior: Flickable.StopAtBounds
+            highlightMoveDuration: 0
+            highlightMoveVelocity: -1
+            model: CommentModelPyObject {}
+            ScrollBar.vertical: ScrollBar {}
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+            Layout.preferredHeight: {
+                if (listView.count === 0) return 0
+                const itemHeight = listView.itemAt(0, 0).height
+                return Math.min(container.height, listView.count * itemHeight)
+            }
 
-        onClicked: {
-            selectRow(model.index)
+            property bool currentlyBeingEdited
+
+            delegate: MpvqcCommentRow {
+                modelItem: model
+                currentlySelected: listView.currentIndex === model.index
+                listViewCurrentlyBeingEdited: listView.currentlyBeingEdited
+                color: ListView.isCurrentItem ? Material.accent : "transparent"
+
+                onClicked: {
+                    listView.selectRow(model.index)
+                }
+
+                onPlayClicked: {
+                    listView.requestPlay(model.time)
+                }
+
+                onEditingStarted: {
+                    listView.currentlyBeingEdited = true
+                }
+
+                onEditingStopped: {
+                    listView.currentlyBeingEdited = false
+                }
+
+                onTimeEdited: (time) => {
+                    listView.updateTime(model.index, time)
+                }
+
+                onCommentTypeEdited: (commentType) => {
+                    listView.updateCommentType(model.index, commentType)
+                }
+
+                onCommentEdited: (comment) => {
+                    listView.updateComment(model.index, comment)
+                }
+
+                onDeleteClicked: {
+                    listView.removeRow(model.index)
+                }
+            }
+
+            Component.onCompleted: {
+                listView.model.row_added.connect(listView.selectRow)
+                listView.model.row_added.connect(listView.startEditing)
+                listView.model.time_updated.connect(listView.selectRow)
+                listView.forceActiveFocus()
+            }
+
+            function addRow(commentType) {
+                listView.model.add_row(commentType)
+            }
+
+            function selectRow(index) {
+                listView.currentIndex = index
+            }
+
+            function startEditing() {
+                listView.itemAtIndex(listView.currentIndex).startEditing()
+            }
+
+            function requestPlay(time) {
+                eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, time)
+            }
+
+            function updateTime(index, time) {
+                listView.model.update_time(index, time)
+            }
+
+            function updateCommentType(index, commentType) {
+                listView.model.update_comment_type(index, commentType)
+            }
+
+            function updateComment(index, comment) {
+                listView.model.update_comment(index, comment)
+            }
+
+            function removeRow(index) {
+                listView.model.remove_row(model.index)
+            }
         }
 
-        onPlayClicked: {
-            requestPlay(model.time)
-        }
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-        onTimeEdited: (time) => {
-            updateTime(model.index, time)
-        }
-
-        onCommentTypeEdited: (commentType) => {
-            updateCommentType(model.index, commentType)
-        }
-
-        onCommentEdited: (comment) => {
-            updateComment(model.index, comment)
-        }
-
-        onDeleteClicked: {
-            removeRow(model.index)
+            TapHandler {
+                onTapped: {
+                    focusListView()
+                }
+            }
         }
     }
 
     Component.onCompleted: {
-        listView.model.row_added.connect(listView.onAfterNewRowAdded)
-        listView.model.time_updated.connect(listView.onAfterTimeUpdated)
-        eventRegistry.subscribe(
-            eventRegistry.EventAddNewRow, (commentType) => listView.onAddNewRowEvent(commentType)
-        )
+        eventRegistry.subscribe(eventRegistry.EventAddNewRow, listView.addRow)
+        eventRegistry.subscribe(eventRegistry.EventFocusTable, focusListView)
     }
 
-    function onAddNewRowEvent(commentType) {
-        listView.model.add_row(commentType)
+    Keys.onPressed: (event) => {
+        console.log(event);
+        event.accepted = false
     }
 
-    function onAfterNewRowAdded(rowIndex) {
-        listView.currentIndex = rowIndex
-        listView.itemAtIndex(rowIndex).startEditing()
+    function focusListView() {
+        utils.clearActiveFocus()
+        listView.forceActiveFocus()
     }
 
-    function onAfterTimeUpdated(rowIndex) {
-        listView.currentIndex = rowIndex
-    }
-
-    function selectRow(index) {
-        listView.currentIndex = index
-    }
-
-    function requestPlay(time) {
-        eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, time)
-    }
-
-    function updateTime(index, time) {
-        listView.model.update_time(index, time)
-    }
-
-    function updateCommentType(index, commentType) {
-        listView.model.update_comment_type(index, commentType)
-    }
-
-    function updateComment(index, comment) {
-        listView.model.update_comment(index, comment)
-    }
-
-    function removeRow(index) {
-        listView.model.remove_row(model.index)
-    }
 }
-

@@ -86,3 +86,8 @@ const EventAddNewRow = 'mpvqc-add-new-row'
  * - time: int      the seconds since the beginning to jump to
  */
 const EventJumpToVideoPosition = 'mpvqc-jump-to-video-position'
+
+/**
+ * Called with no arguments
+ */
+const EventFocusTable = 'mpvqc-focus-table'

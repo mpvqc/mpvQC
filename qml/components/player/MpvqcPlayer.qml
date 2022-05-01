@@ -54,6 +54,7 @@ MpvPlayerPyObject {
             const button = event.button
             if (button === Qt.LeftButton) {
                 mpv.press_mouse_left()
+                requestFocusShiftToTable()
             } else if (button === Qt.MiddleButton) {
                 mpv.press_mouse_middle()
             } else if (button === Qt.RightButton) {
@@ -79,28 +80,42 @@ MpvPlayerPyObject {
     }
 
     Component.onCompleted: {
-        eventRegistry.subscribe(eventRegistry.EventJumpToVideoPosition, (seconds) => mpv.jump_to(seconds))
+        eventRegistry.subscribe(eventRegistry.EventJumpToVideoPosition, jumpToPostition)
         eventRegistry.subscribe(eventRegistry.EventRequestVideoPause, pauseVideo)
-        eventRegistry.subscribe(eventRegistry.EventRequestNewRow, () => {
-            pauseVideo()
-            showAddCommentMenu()
-        })
+        eventRegistry.subscribe(eventRegistry.EventRequestNewRow, handleNewRowRequest)
     }
 
     function requestAddCommentMenu() {
         eventRegistry.produce(eventRegistry.EventRequestNewRow)
     }
 
+    function jumpToPostition(position) {
+        mpv.jump_to(position)
+    }
+
     function pauseVideo() {
         mpv.pause()
+    }
+
+    function handleNewRowRequest() {
+        pauseVideo()
+        showAddCommentMenu()
     }
 
     function showAddCommentMenu() {
         const component = Qt.createComponent("MpvqcAddCommentMenu.qml")
         const menu = component.createObject(appWindow)
         menu.closed.connect(menu.destroy)
-        menu.itemClicked.connect(commentType => eventRegistry.produce(eventRegistry.EventAddNewRow, commentType))
+        menu.itemClicked.connect(mpv.requestNewRow)
         menu.popup()
+    }
+
+    function requestNewRow(commentType) {
+        eventRegistry.produce(eventRegistry.EventAddNewRow, commentType)
+    }
+
+    function requestFocusShiftToTable() {
+        eventRegistry.produce(eventRegistry.EventFocusTable)
     }
 
 }

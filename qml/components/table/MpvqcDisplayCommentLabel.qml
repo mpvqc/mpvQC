@@ -28,12 +28,13 @@ Loader {
     sourceComponent: editing ? editComponent : displayComponent
 
     property string comment
-    property bool itemSelected
     property bool editing: false
     property int borderPadding: 4
 
     signal clicked()
     signal edited(string comment)
+    signal editingStarted()
+    signal editingStopped()
 
     Component {
         id: displayComponent
@@ -50,13 +51,7 @@ Loader {
             MouseArea {
                 anchors.fill: parent
 
-                onClicked: {
-                    if (itemSelected) {
-                        startEditing()
-                    } else {
-                        triggerClicked()
-                    }
-                }
+                onClicked: control.clicked()
             }
         }
     }
@@ -80,11 +75,17 @@ Loader {
     }
 
     function startEditing() {
+        triggerEditingStarted()
         control.editing = true
     }
 
     function stopEditing() {
         control.editing = false
+        triggerEditingStopped()
+    }
+
+    function grabFocus() {
+        control.focus = true
     }
 
     function triggerClicked() {
@@ -93,5 +94,13 @@ Loader {
 
     function triggerCommentEdited(comment) {
         control.edited(comment)
+    }
+
+    function triggerEditingStarted() {
+        control.editingStarted()
+    }
+
+    function triggerEditingStopped() {
+        control.editingStopped()
     }
 }

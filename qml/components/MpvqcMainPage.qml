@@ -23,15 +23,21 @@ import QtQuick.Controls
 import components.header
 
 
-Page {
-    header: MpvqcHeader {}
-    footer: TabBar {}
+FocusScope {
 
-    Item {
+    Page {
+        id: page
         anchors.fill: parent
+        header: MpvqcHeader {}
+        footer: TabBar {}
 
-        MpvqcSplitView {
+        Item {
             anchors.fill: parent
+
+            MpvqcSplitView {
+                focus: true
+                anchors.fill: parent
+            }
         }
     }
 

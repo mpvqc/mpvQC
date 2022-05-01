@@ -26,36 +26,42 @@ import components.table
 import pyobjects
 
 
-SplitView {
-    id: splitView
-    orientation: Qt.Vertical
+FocusScope {
 
-    Settings {
-        id: settings
-        fileName: SettingsPyObject.backing_object_file_name
-        category: "SplitView"
-    }
+    SplitView {
+        id: splitView
+        anchors.fill: parent
+        orientation: Qt.Vertical
 
-    Item {
-        SplitView.fillHeight: true
-
-        MpvqcPlayer {}
-    }
-
-    Item {
-        SplitView.preferredHeight: appWindow.height / 5
-
-        Component.onCompleted: {
-            splitView.restoreState(settings.value("dimensions"))
+        Settings {
+            id: settings
+            fileName: SettingsPyObject.backing_object_file_name
+            category: "SplitView"
         }
 
-        Component.onDestruction: {
-            settings.setValue("dimensions", splitView.saveState())
+        Item {
+            SplitView.fillHeight: true
+
+            MpvqcPlayer {}
         }
 
-        MpvqcCommentTable {
-            anchors.fill: parent
+        Item {
+            SplitView.preferredHeight: appWindow.height / 5
+
+            Component.onCompleted: {
+                splitView.restoreState(settings.value("dimensions"))
+            }
+
+            Component.onDestruction: {
+                settings.setValue("dimensions", splitView.saveState())
+            }
+
+            MpvqcCommentTable {
+                focus: true
+                anchors.fill: parent
+            }
         }
+
     }
 
 }

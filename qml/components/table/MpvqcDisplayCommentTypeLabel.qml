@@ -31,34 +31,39 @@ Label {
     elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
 
     property string commentType
-    property bool itemSelected
 
     signal clicked()
     signal edited(string commentType)
+    signal editingStarted()
+    signal editingStopped()
 
     MouseArea {
         anchors.fill: parent
 
-        onClicked: {
-            if (itemSelected) {
-                openCommentTypeEditMenu()
-            } else {
-                triggerClicked()
-            }
-        }
+        onClicked: control.clicked()
+    }
+
+    function startEditing() {
+        triggerEditingStarted()
+        openCommentTypeEditMenu()
     }
 
     function openCommentTypeEditMenu() {
         const component = Qt.createComponent("MpvqcEditCommentTypeMenu.qml")
         const menu = component.createObject(control)
         menu.currentCommentType = control.commentType
+        menu.closed.connect(control.triggerEditingStopped)
         menu.closed.connect(menu.destroy)
-        menu.itemClicked.connect((commentType) => triggerEdited(commentType))
+        menu.itemClicked.connect(control.triggerEdited)
         if (LayoutMirroring.enabled) {
             // fixme? workaround popup opening to the right
             menu.x = -(control.width / 2)
         }
         menu.open()
+    }
+
+    function grabFocus() {
+        control.focus = true
     }
 
     function triggerClicked() {
@@ -67,6 +72,14 @@ Label {
 
     function triggerEdited(commentType) {
         control.edited(commentType)
+    }
+
+    function triggerEditingStarted() {
+        control.editingStarted()
+    }
+
+    function triggerEditingStopped() {
+        control.editingStopped()
     }
 
 }

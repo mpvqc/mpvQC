@@ -27,3 +27,11 @@ function toggleMaximized() {
         appWindow.showMaximized()
     }
 }
+
+
+function clearActiveFocus() {
+    const currentFocusItem = appWindow.activeFocusItem
+    if (currentFocusItem) {
+        currentFocusItem.focus = false
+    }
+}

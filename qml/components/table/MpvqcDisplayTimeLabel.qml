@@ -30,24 +30,22 @@ Label {
     verticalAlignment: Text.AlignVCenter
 
     property int time
-    property bool itemSelected
 
     signal clicked()
     signal edited(int time)
+    signal editingStarted()
+    signal editingStopped()
 
     MouseArea {
         anchors.fill: parent
 
         onClicked: {
-            if (itemSelected) {
-                startEditing()
-            } else {
-                triggerClicked()
-            }
+            control.clicked()
         }
     }
 
     function startEditing() {
+        triggerEditingStarted()
         requestVideoPause()
         jumpToVideoPosition(control.time)
         openTimeEditPopup()
@@ -65,13 +63,14 @@ Label {
         const component = Qt.createComponent("MpvqcEditTimePopup.qml")
         const popup = component.createObject(control)
         popup.currentTime = control.time
+        popup.closed.connect(control.triggerEditingStopped)
+        popup.closed.connect(popup.destroy)
         popup.edited.connect(control.triggerTimeEdited)
         popup.editingAborted.connect(control.resetVideoPosition)
         popup.valueChanged.connect(control.jumpToVideoPosition)
-        popup.closed.connect(popup.destroy)
         if (LayoutMirroring.enabled) {
             // fixme? workaround popup opening to the right
-            popup.x = -(control.width / 2)
+            popup.x = -control.width
         }
         popup.open()
     }
@@ -80,12 +79,24 @@ Label {
         control.jumpToVideoPosition(control.time)
     }
 
+    function grabFocus() {
+        control.focus = true
+    }
+
     function triggerTimeEdited(time) {
         control.edited(time)
     }
 
     function triggerClicked() {
         control.clicked()
+    }
+
+    function triggerEditingStarted() {
+        control.editingStarted()
+    }
+
+    function triggerEditingStopped() {
+        control.editingStopped()
     }
 
 }

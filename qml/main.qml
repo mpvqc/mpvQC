@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import components
 import handlers
 import helpers
 import pyobjects
@@ -53,18 +54,13 @@ ApplicationWindow {
         borderWidth: windowBorder
     }
 
-    Loader {
-        id: loader
-        source: "qrc:/qml/components/MpvqcMainPage.qml"
-        visible: status == Loader.Ready
-        active: false
+    MpvqcMainPage {
         anchors.fill: parent
         anchors.margins: appWindow.visibility === Window.Windowed ? windowBorder : 0
     }
 
     Component.onCompleted: {
         TranslationPyObject.load_translation(MpvqcSettings.language)
-        loader.active = true
     }
 
     function displayableAccentColorFor(color) {
