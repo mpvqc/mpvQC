@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import handlers
 import pyobjects
 
 FocusScope {
@@ -105,7 +106,10 @@ FocusScope {
             }
 
             function startEditing() {
-                listView.itemAtIndex(listView.currentIndex).startEditing()
+                const item = listView.itemAtIndex(listView.currentIndex)
+                if (item) {
+                    item.startEditing()
+                }
             }
 
             function requestPlay(time) {
@@ -144,16 +148,15 @@ FocusScope {
     Component.onCompleted: {
         eventRegistry.subscribe(eventRegistry.EventAddNewRow, listView.addRow)
         eventRegistry.subscribe(eventRegistry.EventFocusTable, focusListView)
-    }
-
-    Keys.onPressed: (event) => {
-        console.log(event);
-        event.accepted = false
+        eventRegistry.subscribe(eventRegistry.EventEditCurrentlySelectedComment, listView.startEditing)
     }
 
     function focusListView() {
         utils.clearActiveFocus()
         listView.forceActiveFocus()
     }
+
+    MpvqcKeyEventHandler { id: handler }
+    Keys.onPressed: (event) => handler.handle(event)
 
 }

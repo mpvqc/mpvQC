@@ -60,11 +60,14 @@ class PlayerService:
         self._mpv.command_async("loadfile", url, "replace")
         self.play()
 
+    def play(self):
+        self._mpv.pause = False
+
     def pause(self):
         self._mpv.pause = True
 
-    def play(self):
-        self._mpv.pause = False
+    def execute(self, command):
+        self._mpv.command_async("keypress", command)
 
     def jump_to(self, seconds: int):
         self._mpv.command_async("seek", seconds, "absolute+exact")

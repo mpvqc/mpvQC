@@ -91,3 +91,14 @@ const EventJumpToVideoPosition = 'mpvqc-jump-to-video-position'
  * Called with no arguments
  */
 const EventFocusTable = 'mpvqc-focus-table'
+
+/**
+ * Called with following args:
+ * - time: string      the custom command
+ */
+const EventCustomPlayerCommand = 'mpvqc-custom-player-command'
+
+/**
+ * Called with no arguments
+ */
+const EventEditCurrentlySelectedComment = 'mpvqc-edit-currently-selected-comment'

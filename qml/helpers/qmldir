@@ -1,4 +1,5 @@
 module helpers
+MpvqcCommandGenerator 1.0 MpvqcCommandGenerator.js
 singleton MpvqcCommentTypeWidthCalculator MpvqcCommentTypeWidthCalculator.qml
 MpvqcDebug 1.0 MpvqcDebug.js
 MpvqcEventRegistry 1.0 MpvqcEventRegistry.js
