@@ -30,11 +30,6 @@ class TestTranslationService(unittest.TestCase):
     mocked_engine: MagicMock
     translation_service: TranslationService
 
-    @classmethod
-    def setUpClass(cls):
-        from test import import_resources
-        import_resources()
-
     def setUp(self):
         self.mocked_application = MagicMock()
         self.mocked_engine = MagicMock()

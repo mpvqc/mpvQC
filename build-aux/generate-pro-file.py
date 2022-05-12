@@ -17,17 +17,17 @@ class ArgumentValidator:
         path = Path(directory).absolute()
         if not path.exists():
             self.errors = True
-            error(f'Root directory \'{directory}\' does not exist')
+            error(f"Root directory '{directory}' does not exist")
         elif not path.is_dir():
             self.errors = True
-            error(f'Root directory \'{directory}\' is not a directory')
+            error(f"Root directory '{directory}' is not a directory")
 
     def validate_included_paths(self, paths: List[str]):
         for file in paths:
             path = Path(file).absolute()
             if not path.exists():
                 self.errors = True
-                error(f'Path to include \'{file}\' does not exist')
+                error(f"Path to include '{file}' does not exist")
 
 
 class ProFileGenerator:
@@ -54,8 +54,10 @@ class ProFileGenerator:
                 content.append(f'SOURCES += {file}')
             elif '.ts' == extension:
                 content.append(f'TRANSLATIONS += {file}')
+            elif '.pyc' == extension:
+                pass
             else:
-                print(f'Can not include file \'{file}\' into project file')
+                print(f"Can not include file '{file}' into project file")
 
         content = '\n'.join(sorted(content))
         template.write_text(content, encoding='utf-8')

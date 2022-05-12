@@ -9,10 +9,11 @@ PYTHON:=$(shell type -p python3 || echo python)
 PIP:=$(shell type -p pip3 || echo pip)
 
 TOOL_LUPDATE=pyside6-lupdate
-TOOL_LRELEASE=lrelease
+TOOL_LRELEASE=pyside6-lrelease
 TOOL_RCC=pyside6-rcc
+TOOL_TEST_QML_RUNNER=qmltestrunner-qt6
 
-EXECUTABLES=${PYTHON} ${PIP} ${TOOL_LUPDATE} ${TOOL_LRELEASE} ${TOOL_RCC}
+EXECUTABLES=${PYTHON} ${PIP} ${TOOL_LUPDATE} ${TOOL_LRELEASE} ${TOOL_RCC} ${TOOL_TEST_QML_RUNNER}
 K := $(foreach exec,$(EXECUTABLES),\
 		$(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH")))
 
@@ -27,7 +28,8 @@ DIR_DOCS=${DIR_ROOT}/docs
 DIR_I18N=${DIR_ROOT}/i18n
 DIR_PY=${DIR_ROOT}/mpvqc
 DIR_QML=${DIR_ROOT}/qml
-DIR_TESTS=${DIR_ROOT}/test
+DIR_TESTS_PY=${DIR_ROOT}/test
+DIR_TESTS_QML=${DIR_ROOT}/qml
 
 
 #######################################
@@ -52,7 +54,7 @@ FILE_QRC_I18N=${DIR_BUILD_QRC_I18N}/i18n.qrc
 FILE_TRANSLATIONS=${DIR_BUILD_TRANSLATIONS}/mpvQC.pro
 FILE_RESOURCES=${DIR_BUILD_RESOURCES}/generated_resources.py
 FILE_RESOURCES_DEVELOP=${DIR_PY}/generated_resources.py
-FILE_RESOURCES_TEST=${DIR_TESTS}/generated_resources.py
+FILE_RESOURCES_TEST=${DIR_TESTS_PY}/generated_resources.py
 
 
 #######################################
@@ -91,6 +93,7 @@ test: \
 	@cp ${FILE_RESOURCES} ${FILE_RESOURCES_TEST}
 
 	@${PYTHON} -m pytest test
+	@${TOOL_TEST_QML_RUNNER} -input ${DIR_TESTS_QML}
 
 
 test-clean:
@@ -221,6 +224,3 @@ xtask-prepare-translation-extractions: \
 		--out-file ${FILE_TRANSLATIONS}
 	@echo "" >> ${FILE_TRANSLATIONS}
 	@echo "RESOURCES += qml.qrc" >> ${FILE_TRANSLATIONS}
-
-
-FORCE: ;  @## This only exists to make the test target run all the time ;)

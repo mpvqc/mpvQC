@@ -26,11 +26,6 @@ from mpvqc.services import ResourceService
 
 class TestResourceService(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        from test import import_resources
-        import_resources()
-
     def setUp(self):
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ResourceFileReader, ResourceFileReader()))

@@ -90,20 +90,13 @@ class KeyPress {
     generateNormalCommand() {
         if (this._isInvalidKey())
             return null
-        if (this._isOnlyShift())
-            return null
         if (this._isOnlyModifiers())
-            return this._composeCommand(this.modifiers, null)
+            return null
         return this._generate();
     }
 
     _isInvalidKey() {
         return this.key === 0
-    }
-
-    _isOnlyShift() {
-        const [shift, ctrl, alt] = this.modifiers
-        return shift && !ctrl && !alt && this._isOnlyModifiers()
     }
 
     _isOnlyModifiers() {
