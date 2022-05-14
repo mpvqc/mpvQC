@@ -6,14 +6,13 @@ SHELL:=/bin/bash
 # Tools
 #######################################
 PYTHON:=$(shell type -p python3 || echo python)
-PIP:=$(shell type -p pip3 || echo pip)
 
 TOOL_LUPDATE=pyside6-lupdate
 TOOL_LRELEASE=pyside6-lrelease
 TOOL_RCC=pyside6-rcc
-TOOL_TEST_QML_RUNNER=qmltestrunner-qt6
+# TOOL_TEST_QML_RUNNER=qmltestrunner-qt6
 
-EXECUTABLES=${PYTHON} ${PIP} ${TOOL_LUPDATE} ${TOOL_LRELEASE} ${TOOL_RCC} ${TOOL_TEST_QML_RUNNER}
+EXECUTABLES=${PYTHON} ${TOOL_LUPDATE} ${TOOL_LRELEASE} ${TOOL_RCC} ${TOOL_TEST_QML_RUNNER}
 K := $(foreach exec,$(EXECUTABLES),\
 		$(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH")))
 
@@ -51,7 +50,8 @@ FILE_APP_ENTRY=main.py
 FILE_QRC_QML=${DIR_BUILD_QRC_QML}/qml.qrc
 FILE_QRC_DATA=${DIR_BUILD_QRC_DATA}/data.qrc
 FILE_QRC_I18N=${DIR_BUILD_QRC_I18N}/i18n.qrc
-FILE_TRANSLATIONS=${DIR_BUILD_TRANSLATIONS}/mpvQC.pro
+FILE_QRC_I18N_JSON=${DIR_BUILD_QRC_I18N}/mpvQC.json
+FILE_TRANSLATIONS=${DIR_BUILD_TRANSLATIONS}/mpvQC.json
 FILE_RESOURCES=${DIR_BUILD_RESOURCES}/generated_resources.py
 FILE_RESOURCES_DEVELOP=${DIR_PY}/generated_resources.py
 FILE_RESOURCES_TEST=${DIR_TESTS_PY}/generated_resources.py
@@ -74,7 +74,7 @@ build: \
 	@cp ${FILE_RESOURCES} ${DIR_BUILD_PYTHON}
 	@cp ${FILE_APP_ENTRY} ${DIR_BUILD}
 
-	@rm -rf ${DIR_BUILD_QRC_DATA} ${DIR_BUILD_QRC_I18N} ${DIR_BUILD_QRC_QML} ${DIR_BUILD_RESOURCES}
+	@rm -rf ${DIR_BUILD_QRC_DATA} ${DIR_BUILD_QRC_I18N} ${DIR_BUILD_QRC_QML} ${DIR_BUILD_RESOURCES} ${DIR_BUILD_TRANSLATIONS}
 	@echo ''; echo 'Please find the finished project in ${DIR_BUILD_PYTHON}'
 
 
@@ -126,10 +126,9 @@ update-translations: \
 	@# Requires translations in .qml:  qsTranslate("context", "string")
 
 	@cd ${DIR_BUILD_TRANSLATIONS}; ${TOOL_LUPDATE} \
-		-extensions py \
 		-locations none \
-		-verbose ${FILE_TRANSLATIONS}
-	@cp -r ${DIR_BUILD_TRANSLATIONS}/i18n/. ${DIR_I18N}
+		-project ${FILE_TRANSLATIONS}
+	@cp -r ${DIR_BUILD_TRANSLATIONS}/i18n/*.ts ${DIR_I18N}
 
 
 create-new-translation: \
@@ -192,13 +191,15 @@ xtask-generate-qrc-data:
 
 xtask-generate-qrc-i18n:
 	@rm -rf ${DIR_BUILD_QRC_I18N}
-	@mkdir -p ${DIR_BUILD_QRC_I18N}/qm
+	@mkdir -p ${DIR_BUILD_QRC_I18N}
 	@cp -r i18n ${DIR_BUILD_QRC_I18N}
-	@${DIR_BUILD_SCRIPTS}/compile-translations.sh \
-		${DIR_BUILD_QRC_I18N}/i18n \
-		${DIR_BUILD_QRC_I18N}/qm \
-		${TOOL_LRELEASE}
-	@cd ${DIR_BUILD_QRC_I18N}/qm; ${TOOL_RCC} --project | sed 's,<file>./,<file>qm/,' > ${FILE_QRC_I18N}
+	@${DIR_BUILD_SCRIPTS}/generate-lupdate-project-file.py \
+		--relative-to ${DIR_BUILD_QRC_I18N} \
+		--out-file ${FILE_QRC_I18N_JSON}
+	@cd ${DIR_BUILD_QRC_I18N}; ${TOOL_LRELEASE} \
+		 -project ${FILE_QRC_I18N_JSON}
+	@cd ${DIR_BUILD_QRC_I18N}/i18n; rm ${FILE_QRC_I18N_JSON} *.ts
+	@cd ${DIR_BUILD_QRC_I18N}/i18n; ${TOOL_RCC} --project | sed 's,<file>./,<file>i18n/,' > ${FILE_QRC_I18N}
 
 xtask-generate-qrc-qml:
 	@rm -rf ${DIR_BUILD_QRC_QML}
@@ -206,21 +207,14 @@ xtask-generate-qrc-qml:
 	@cp -r qml ${DIR_BUILD_QRC_QML}
 	@cd ${DIR_BUILD_QRC_QML}/qml; ${TOOL_RCC} --project | sed 's,<file>./,<file>qml/,' > ${FILE_QRC_QML}
 
-xtask-prepare-translation-extractions: \
-	xtask-generate-qrc-qml
-
+xtask-prepare-translation-extractions:
 	@rm -rf ${DIR_BUILD_TRANSLATIONS}
 	@mkdir -p ${DIR_BUILD_TRANSLATIONS}
 	@cp -r \
 		i18n \
 		mpvqc \
 		qml \
-		${FILE_QRC_QML} \
 		${DIR_BUILD_TRANSLATIONS}
-	@${DIR_BUILD_SCRIPTS}/generate-pro-file.py \
-		--root-dir ${DIR_BUILD_TRANSLATIONS} \
-		--include ${DIR_BUILD_TRANSLATIONS}/i18n \
-		--include ${DIR_BUILD_TRANSLATIONS}/mpvqc \
+	@${DIR_BUILD_SCRIPTS}/generate-lupdate-project-file.py \
+		--relative-to ${DIR_BUILD_TRANSLATIONS} \
 		--out-file ${FILE_TRANSLATIONS}
-	@echo "" >> ${FILE_TRANSLATIONS}
-	@echo "RESOURCES += qml.qrc" >> ${FILE_TRANSLATIONS}

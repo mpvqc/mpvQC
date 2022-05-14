@@ -44,11 +44,7 @@ class MpvPlayerPyObject(QQuickFramebufferObject):
         self.update()
 
     def createRenderer(self) -> QQuickFramebufferObject.Renderer:
-        # todo: Workaround https://bugreports.qt.io/browse/PYSIDE-1868
-        # Need to hold a reference in the Python object for now
-        # Once the fix is rolled out, this should be inlined
-        self._renderer = PlayerRenderer(self)
-        return self._renderer
+        return PlayerRenderer(self)
 
     @Slot()
     def pause(self):

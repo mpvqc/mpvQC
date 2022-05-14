@@ -32,7 +32,7 @@ ApplicationWindow {
     visible: true
     width: 1290
     height: 970
-    flags: Qt.FramelessWindowHint
+    flags: Qt.FramelessWindowHint | Qt.Window
     Material.theme: appTheme
     Material.accent: displayableAccentColorFor(appThemeColorAccent)
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft

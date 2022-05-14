@@ -54,4 +54,4 @@ class TranslationService(QObject):
 
     @staticmethod
     def _translation_path_for(locale: str):
-        return f':/qm/{locale}.qm'
+        return f':/i18n/{locale}.qm'
