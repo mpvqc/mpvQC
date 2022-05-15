@@ -43,7 +43,7 @@ class ArgumentValidator:
         if errors := self._errors:
             for error in errors:
                 print(error, file=sys.stderr)
-            sys.exit(-1)
+            sys.exit(1)
 
 
 class ProjectFileGenerator:
