@@ -1,13 +1,13 @@
-name: 'Test mpvQC'
+name: 'Test'
 
 on:
   push:
     branches: [ '**' ]
 
 jobs:
-  test:
+  test-python:
     runs-on: ubuntu-22.04
-    name: 'Run Python & Qml Tests'
+    name: 'Python'
     steps:
       - uses: actions/checkout@v2
       - name: 'Install Python 3.10'
@@ -17,29 +17,28 @@ jobs:
       - name: 'Install pip'
         run: |
           python -m pip install --upgrade pip
-      - name: 'Install Qt 6.3.0'
-        uses: jurplel/install-qt-action@v2
-        with:
-          version: '6.3.0'
-      - name: 'Update packages'
+      - name: 'Update Packages'
         run: |
           sudo apt update -y && sudo apt upgrade -y
-      - name: 'Install dependencies'
+      - name: 'Install Dependencies'
         run: |
           sudo apt install -y make libmpv1 patchelf libopengl0
-      - name: 'Create virtual environment'
+      - name: 'Create Virtual Environment'
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install wheel
+          python -m pip install wheel pytest-tap
           python -m pip install -r requirements.txt
-          python -m pip install pytest-tap
-      - name: 'Test'
+      - name: 'Run Python Tests'
         run: |
-          export QT_QPA_PLATFORM=offscreen
           source venv/bin/activate
-
+          
+          # Remove qmltestrunner from Makefile
+          sed -ie 's/^TOOL_CLI_QML_TESTRUNNER.*//' Makefile
+          sed -ie 's/${TOOL_CLI_QML_TESTRUNNER}//' Makefile
+          
           make prepare-test
+          
           echo "# Python Test Results" > $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
@@ -47,14 +46,26 @@ jobs:
             | grep -E '^(ok|not ok|#)' \
             | sed -e 's/^ok/- ✅/' -e 's/^not ok\(.*\)/- ❌\1\n/' -e 's/#/     /' \
             | tee -a $GITHUB_STEP_SUMMARY
-          
-          make clean
-          echo "# Qml Test Results" >> $GITHUB_STEP_SUMMARY
+  test-qml:
+    runs-on: ubuntu-22.04
+    name: 'Qml'
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Install Qt 6.3.0'
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '6.3.0'
+      - name: 'Run Qml Tests'
+        run: |
+          export QT_QPA_PLATFORM=offscreen
+
+          echo "# Qml Test Results" > $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           qmltestrunner -tap \
             | grep -E '^(ok|not ok|  )' \
             | sed -e 's/^ok/- ✅/' -e 's/^not ok\(.*\)/- ❌\1\n/' -e 's/  /       /' \
-            | grep -Ev '  (---)'\
-            | grep -Ev '  (\.\.\.)'\
+            | grep -Ev '  (---)' \
+            | grep -Ev '  (\.\.\.)' \
             | tee -a $GITHUB_STEP_SUMMARY
+
