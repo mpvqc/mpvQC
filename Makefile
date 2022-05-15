@@ -10,7 +10,7 @@ PYTHON:=$(shell type -p python3 || echo python)
 TOOL_LUPDATE=pyside6-lupdate
 TOOL_LRELEASE=pyside6-lrelease
 TOOL_RCC=pyside6-rcc
-# TOOL_TEST_QML_RUNNER=qmltestrunner-qt6
+TOOL_TEST_QML_RUNNER=qmltestrunner
 
 EXECUTABLES=${PYTHON} ${TOOL_LUPDATE} ${TOOL_LRELEASE} ${TOOL_RCC} ${TOOL_TEST_QML_RUNNER}
 K := $(foreach exec,$(EXECUTABLES),\
