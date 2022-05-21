@@ -29,10 +29,6 @@ TOOL_CLI_LRELEASE=pyside6-lrelease
 TOOL_CLI_RCC=pyside6-rcc
 TOOL_CLI_QML_TESTRUNNER=qmltestrunner
 
-EXECUTABLES=${PYTHON} ${TOOL_CLI_LUPDATE} ${TOOL_CLI_LRELEASE} ${TOOL_CLI_RCC} ${TOOL_CLI_QML_TESTRUNNER}
-K := $(foreach requiredTool,$(EXECUTABLES),\
-	$(if $(shell which $(requiredTool)),some string,$(error "Cannot find '$(requiredTool)' in PATH")))
-
 
 #####                      #####
 ##### Existing Directories #####
@@ -84,6 +80,7 @@ FILE_PY_TEST_RESOURCES=${DIRECTORY_PY_TESTS}/${NAME_FILE_GENERATED_RESOURCES}
 ##### Build commands  #####
 #####                 #####
 build: \
+	check-pyside-setup \
 	build-clean \
 	develop-clean \
 	compile-resources \
@@ -115,12 +112,21 @@ build-clean:
 
 
 test: \
-	prepare-test \
+	test-python \
+	test-qml
 
-	@# Runs all tests
+
+test-python: \
+	check-pyside-setup \
+	prepare-test
 
 	@${PYTHON} -m \
 		pytest test
+
+
+test-qml: \
+	check-qml-setup
+
 	@${TOOL_CLI_QML_TESTRUNNER} \
 		-input ${DIRECTORY_QML_TESTS}
 
@@ -133,6 +139,7 @@ test-clean:
 
 
 develop-build: \
+	check-pyside-setup \
 	develop-clean \
 	compile-resources
 
@@ -151,6 +158,7 @@ develop-clean:
 
 
 update-translations: \
+	check-pyside-setup \
 	xtask-prepare-translation-extractions
 
 	@# Traverses *.qml and *.py files to update translation files
@@ -167,6 +175,7 @@ update-translations: \
 
 
 create-new-translation: \
+	check-pyside-setup \
 	xtask-prepare-translation-extractions
 
 	@# Allows to add translations to the project: make create-new-translation lang=<locale>
@@ -195,6 +204,21 @@ clean: \
 #####                       #####
 ##### Build helper commands #####
 #####                       #####
+check-pyside-setup:
+
+	@which ${PYTHON}
+	@which ${TOOL_CLI_LUPDATE}
+	@which ${TOOL_CLI_LRELEASE}
+	@which ${TOOL_CLI_RCC}
+	@echo ''
+
+
+check-qml-setup:
+
+	@which ${TOOL_CLI_QML_TESTRUNNER}
+	@echo ''
+
+
 prepare-test: \
 	test-clean \
 	compile-resources

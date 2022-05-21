@@ -20,12 +20,10 @@ import inject
 from mpv import MPV
 
 from mpvqc.services.file_paths import FilePathService
-from mpvqc.services.time_formatter import TimeFormatterService
 
 
 class PlayerService:
     _paths = inject.attr(FilePathService)
-    _formatter = inject.attr(TimeFormatterService)
 
     def __init__(self, **properties):
         super().__init__(**properties)

@@ -51,7 +51,7 @@ MpvqcAutoWidthMenu {
         shortcut: "CTRL+S"
 
         onTriggered: {
-            console.log("Save QC Document")
+            qcManager.requestSave()
         }
     }
 
@@ -60,7 +60,7 @@ MpvqcAutoWidthMenu {
         shortcut: "CTRL+Shift+S"
 
         onTriggered: {
-            console.log("Save QC Document As...")
+            qcManager.requestSaveAs()
         }
     }
 

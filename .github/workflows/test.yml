@@ -32,20 +32,7 @@ jobs:
       - name: 'Run Python Tests'
         run: |
           source venv/bin/activate
-          
-          # Remove qmltestrunner from Makefile
-          sed -ie 's/^TOOL_CLI_QML_TESTRUNNER.*//' Makefile
-          sed -ie 's/${TOOL_CLI_QML_TESTRUNNER}//' Makefile
-          
-          make prepare-test
-          
-          echo "# Python Test Results" > $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          pytest --tap-stream \
-            | grep -E '^(ok|not ok|#)' \
-            | sed -e 's/^ok/- ✅/' -e 's/^not ok\(.*\)/- ❌\1\n/' -e 's/#/     /' \
-            | tee -a $GITHUB_STEP_SUMMARY
+          make test-python
   test-qml:
     runs-on: ubuntu-22.04
     name: 'Qml'
@@ -58,14 +45,5 @@ jobs:
       - name: 'Run Qml Tests'
         run: |
           export QT_QPA_PLATFORM=offscreen
-
-          echo "# Qml Test Results" > $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          qmltestrunner -tap \
-            | grep -E '^(ok|not ok|  )' \
-            | sed -e 's/^ok/- ✅/' -e 's/^not ok\(.*\)/- ❌\1\n/' -e 's/  /       /' \
-            | grep -Ev '  (---)' \
-            | grep -Ev '  (\.\.\.)' \
-            | tee -a $GITHUB_STEP_SUMMARY
+          make test-qml
 

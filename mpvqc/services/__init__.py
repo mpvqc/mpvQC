@@ -21,8 +21,6 @@ from .build_info import BuildInfoService
 from .file_paths import FilePathService
 from .file_startup import FileStartupService
 from .player import PlayerService
-from .qc_manager import QcManagerService
 from .resource import ResourceService
 from .settings import SettingsService
-from .time_formatter import TimeFormatterService
 from .translation import TranslationService

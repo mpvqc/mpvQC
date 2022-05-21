@@ -23,6 +23,7 @@ import QtQuick.Controls
 import components
 import handlers
 import helpers
+import manager
 import pyobjects
 import settings
 
@@ -39,6 +40,7 @@ ApplicationWindow {
     LayoutMirroring.childrenInherit: true
 
     property ApplicationWindow appWindow: window
+    property MpvqcManager qcManager: MpvqcManager {}
     property var utils: MpvqcUtils
     property var eventRegistry: MpvqcEventRegistry
     property int appTheme: MpvqcSettings.theme

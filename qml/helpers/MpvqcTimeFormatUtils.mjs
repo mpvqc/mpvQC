@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-const regexHoursMinutesSeconds = /^([\d:]{8})$/
+export const regexHoursMinutesSeconds = /^([\d:]{8})$/
 
 
 /**
@@ -28,7 +28,7 @@ const regexHoursMinutesSeconds = /^([\d:]{8})$/
  * @param secs
  * @returns {string}
  */
-function formatTimeToString(secs) {
+export function formatTimeToString(secs) {
     const sec_num = parseInt(secs, 10)
     let hours = Math.floor(sec_num / 3600)
     let minutes = Math.floor((sec_num - (hours * 3600)) / 60)
@@ -45,7 +45,7 @@ function formatTimeToString(secs) {
  * @param timeString
  * @returns {number}
  */
-function extractSecondsFrom(timeString) {
+export function extractSecondsFrom(timeString) {
     const [hours, minutes, seconds] = timeString.split(':');
     return (+hours) * 60 * 60 + (+minutes) * 60 + (+seconds);
 }

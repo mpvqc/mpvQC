@@ -79,6 +79,24 @@ class CommentModelPyObject(QStandardItemModel):
     def update_comment(self, index: int, comment: str):
         self.setData(self.index(index, 0), comment, Role.COMMENT)
 
+    # noinspection PyTypeChecker
+    @Slot(result=list)
+    def comments(self) -> list:
+        comments = []
+        for row in range(0, self.rowCount()):
+            item = self.item(row, column=0)
+            comment = self._create_comment_from(item)
+            comments.append(comment)
+        return comments
+
+    @staticmethod
+    def _create_comment_from(item):
+        return {
+            'time': item.data(Role.TIME),
+            'commentType': item.data(Role.TYPE),
+            'comment': item.data(Role.COMMENT)
+        }
+
 
 class Role:
     """

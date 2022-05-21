@@ -17,7 +17,7 @@
 
 
 import inject
-from PySide6.QtCore import Slot, Signal
+from PySide6.QtCore import Slot, Signal, QUrl
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 
@@ -45,6 +45,10 @@ class MpvPlayerPyObject(QQuickFramebufferObject):
 
     def createRenderer(self) -> QQuickFramebufferObject.Renderer:
         return PlayerRenderer(self)
+
+    @Slot(QUrl)
+    def open(self, video: QUrl):
+        self._player.open(url=video.toString())
 
     @Slot()
     def pause(self):

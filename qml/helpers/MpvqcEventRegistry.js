@@ -102,3 +102,9 @@ const EventCustomPlayerCommand = 'mpvqc-custom-player-command'
  * Called with no arguments
  */
 const EventEditCurrentlySelectedComment = 'mpvqc-edit-currently-selected-comment'
+
+/**
+ * Called with following args:
+ * - url: QUrl      the url of the video
+ */
+const EventRequestOpenVideo = 'mpvqc-request-open-video'

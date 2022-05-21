@@ -18,23 +18,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import QtQuick.Dialogs
-import pyobjects
-import settings
-import helpers
+export class MpvqcComment {
+    time
+    commentType
+    comment
+}
 
+export class MpvqcExportSettings {
+    writeHeader
+    writeHeaderDate
+    writeHeaderGenerator
+    writeHeaderNickname
+    writeHeaderVideoPath
+}
 
-FileDialog {
-    title: qsTranslate("FileInteractionDialogs", "Open Video")
-    currentFolder: MpvqcSettings.lastDirectoryVideo
-    nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi)",
-        qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
-    ]
-
-    onAccepted: {
-        MpvqcSettings.lastDirectoryVideo = currentFolder
-        qcManager.openVideo(currentFile)
-    }
-
+export class MpvqcExportData {
+    date
+    generator
+    nickname
+    videoPath
+    comments
 }

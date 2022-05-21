@@ -44,11 +44,14 @@ FocusScope {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
             Layout.preferredHeight: {
-                if (listView.count === 0) return 0
-                const itemHeight = listView.itemAt(0, 0).height
+                if (listView.count === 0)
+                    return 0
+                if (itemHeight === 0)
+                    itemHeight = listView.itemAt(0, 0).height
                 return Math.min(container.height, listView.count * itemHeight)
             }
 
+            property int itemHeight: 0
             property bool currentlyBeingEdited
 
             delegate: MpvqcCommentRow {
@@ -149,6 +152,7 @@ FocusScope {
         eventRegistry.subscribe(eventRegistry.EventAddNewRow, listView.addRow)
         eventRegistry.subscribe(eventRegistry.EventFocusTable, focusListView)
         eventRegistry.subscribe(eventRegistry.EventEditCurrentlySelectedComment, listView.startEditing)
+        qcManager.commentModel = listView.model
     }
 
     function focusListView() {

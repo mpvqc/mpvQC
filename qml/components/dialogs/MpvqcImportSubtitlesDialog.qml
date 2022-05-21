@@ -33,9 +33,7 @@ FileDialog {
 
     onAccepted: {
         MpvqcSettings.lastDirectorySubtitles = currentFolder
-        for (let file of selectedFiles) {
-            console.log("Open: " + file)
-        }
+        qcManager.openSubtitles(selectedFiles)
     }
 
 }

@@ -29,6 +29,11 @@ class PreStartUp:
         QCoreApplication.setOrganizationName('mpvQC')
 
     @staticmethod
+    def set_qt_application_version():
+        from PySide6.QtCore import QCoreApplication
+        QCoreApplication.setApplicationVersion('0.8.0')
+
+    @staticmethod
     def set_qt_settings_format():
         from PySide6.QtCore import QSettings
         QSettings.setDefaultFormat(QSettings.IniFormat)
@@ -92,6 +97,7 @@ class StartUp:
 def perform_startup():
     we = PreStartUp()
     we.set_qt_application_name()
+    we.set_qt_application_version()
     we.set_qt_settings_format()
     we.prepare_dependency_injection()
     we.set_render_backend()

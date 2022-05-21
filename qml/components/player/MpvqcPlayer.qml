@@ -84,6 +84,7 @@ MpvPlayerPyObject {
         eventRegistry.subscribe(eventRegistry.EventRequestVideoPause, pauseVideo)
         eventRegistry.subscribe(eventRegistry.EventRequestNewRow, handleNewRowRequest)
         eventRegistry.subscribe(eventRegistry.EventCustomPlayerCommand, executeCustomCommand)
+        eventRegistry.subscribe(eventRegistry.EventRequestOpenVideo, handleOpenVideoRequest)
     }
 
     function requestAddCommentMenu() {
@@ -105,6 +106,10 @@ MpvPlayerPyObject {
 
     function executeCustomCommand(command) {
         mpv.execute(command)
+    }
+
+    function handleOpenVideoRequest(url) {
+        mpv.open(url)
     }
 
     function showAddCommentMenu() {

@@ -33,9 +33,7 @@ FileDialog {
 
     onAccepted: {
         MpvqcSettings.lastDirectoryDocuments = currentFolder
-        for (let file of selectedFiles) {
-            console.log("Open: " + file)
-        }
+        qcManager.openDocuments(selectedFiles)
     }
 
 }
