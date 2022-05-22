@@ -62,7 +62,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        TranslationPyObject.load_translation(MpvqcSettings.language)
+        Qt.uiLanguage = MpvqcSettings.language
     }
 
     function displayableAccentColorFor(color) {

@@ -33,5 +33,5 @@ function getDefault(parent) {
         }
     }
     model.destroy()
-    return "en"
+    return "en_US"
 }

@@ -24,4 +24,3 @@ from .file_io import FileIoPyObject
 from .file_paths import MpvqcFilePathsPyObject
 from .player import MpvPlayerPyObject
 from .settings import SettingsPyObject
-from .translation import TranslationPyObject

@@ -24,7 +24,6 @@ import components.shared
 import helpers
 import settings
 import models
-import pyobjects
 
 
 MpvqcAutoWidthMenu {
@@ -47,7 +46,7 @@ MpvqcAutoWidthMenu {
                 }
 
                 function loadLanguage() {
-                    TranslationPyObject.load_translation(model.abbrev)
+                    Qt.uiLanguage = model.abbrev
                     MpvqcSettings.language=model.abbrev
                 }
             }

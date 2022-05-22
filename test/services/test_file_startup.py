@@ -17,7 +17,7 @@
 
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import inject
 
@@ -51,31 +51,3 @@ class TestFileStartupService(unittest.TestCase):
         service = FileStartupService()
         service.create_missing_directories()
         self.mocked_file_service.dir_screenshots.mkdir.assert_called()
-
-    @patch(f'{MODULE}.FileWriter.file_doesnt_exist', return_value=True)
-    @patch(f'{MODULE}.FileWriter.write')
-    def test_file_input_conf_missing(self, write: MagicMock, *_):
-        service = FileStartupService()
-        service._create_missing_input_conf()
-        write.assert_called()
-
-    @patch(f'{MODULE}.FileWriter.file_doesnt_exist', return_value=False)
-    @patch(f'{MODULE}.FileWriter.write')
-    def test_file_input_conf_exists(self, write: MagicMock, *_):
-        service = FileStartupService()
-        service._create_missing_input_conf()
-        write.assert_not_called()
-
-    @patch(f'{MODULE}.FileWriter.file_doesnt_exist', return_value=True)
-    @patch(f'{MODULE}.FileWriter.write')
-    def test_file_mpv_conf_missing(self, write: MagicMock, *_):
-        service = FileStartupService()
-        service._create_missing_mpv_conf()
-        write.assert_called()
-
-    @patch(f'{MODULE}.FileWriter.file_doesnt_exist', return_value=False)
-    @patch(f'{MODULE}.FileWriter.write')
-    def test_file_mpv_conf_exists(self, write: MagicMock, *_):
-        service = FileStartupService()
-        service._create_missing_mpv_conf()
-        write.assert_not_called()

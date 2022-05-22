@@ -16,9 +16,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from pathlib import Path
+
 import inject
 
-from mpvqc.impl import FileWriter
 from mpvqc.services.file_paths import FilePathService
 from mpvqc.services.resource import ResourceService
 
@@ -37,17 +38,13 @@ class FileStartupService:
         self._create_missing_mpv_conf()
 
     def _create_missing_input_conf(self):
-        path = self._paths.file_input_conf
-        file_writer = FileWriter(path)
-
-        if file_writer.file_doesnt_exist():
-            default_text = self._resources.input_conf_content
-            file_writer.write(default_text)
+        file: Path = self._paths.file_input_conf
+        if not file.exists():
+            content = self._resources.input_conf_content
+            file.write_text(content, encoding='utf-8')
 
     def _create_missing_mpv_conf(self):
-        path = self._paths.file_mpv_conf
-        file_writer = FileWriter(path)
-
-        if file_writer.file_doesnt_exist():
-            default_text = self._resources.mpv_conf_content
-            file_writer.write(default_text)
+        file: Path = self._paths.file_mpv_conf
+        if not file.exists():
+            content = self._resources.mpv_conf_content
+            file.write_text(content, encoding='utf-8')
