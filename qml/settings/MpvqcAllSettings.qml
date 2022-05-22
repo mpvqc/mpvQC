@@ -52,6 +52,7 @@ Item {
         id: exportSettings
         settingsFile: current.settingsFile
     }
+    property alias exportSettings: exportSettings
     property alias nickname: exportSettings.nickname
     property alias appendNickname: exportSettings.appendNickname
     property alias writeHeader: exportSettings.writeHeader

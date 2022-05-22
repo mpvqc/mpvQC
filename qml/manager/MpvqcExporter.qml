@@ -25,9 +25,10 @@ import settings
 import "MpvqcDocumentExporter.mjs" as MpvqcDocumentExporter
 
 
-QtObject {
-    required property url currentVideo
+Item {
+    id: exporter
 
+    required property url currentVideo
     property url currentDocument: ''
     property var commentModel: undefined
 
@@ -40,27 +41,25 @@ QtObject {
     }
 
     function _save(url) {
-        const payload = _generateDocumentPayload(url)
-        FileIoPyObject.write(url, payload)
+        const content = _generateExportFileContent()
+        FileIoPyObject.write(url, content)
         currentDocument = url
     }
 
-    function _generateDocumentPayload(documentUrl) {
-        const data = {
+    function _generateExportFileContent() {
+        const data = _generateData()
+        const settings = MpvqcSettings.exportSettings
+        return MpvqcDocumentExporter.generateDocumentFrom(data, settings)
+    }
+
+    function _generateData() {
+        return {
             date: new Date().toLocaleString(Qt.locale(MpvqcSettings.language)),
             generator: `${Qt.application.name} ${Qt.application.version}`,
             nickname: MpvqcSettings.nickname,
             videoPath: currentVideo ? FileIoPyObject.abs_path_of(currentVideo) : '',
             comments: commentModel.comments(),
         }
-        const settings = {
-            writeHeader: MpvqcSettings.writeHeader,
-            writeHeaderDate: MpvqcSettings.writeHeaderDate,
-            writeHeaderGenerator: MpvqcSettings.writeHeaderGenerator,
-            writeHeaderNickname: MpvqcSettings.writeHeaderNickname,
-            writeHeaderVideoPath: MpvqcSettings.writeHeaderVideoPath,
-        }
-        return MpvqcDocumentExporter.generateDocumentFrom(data, settings)
     }
 
     function requestSaveAs() {
@@ -83,6 +82,36 @@ QtObject {
             ? `[QC]_${videoName}_${MpvqcSettings.nickname}.txt`
             : `[QC]_${videoName}.txt`
         return `${directory}/${fileProposal}`
+    }
+
+    Timer {
+        interval: Math.max(15, MpvqcSettings.backupInterval) * 1000
+        running: MpvqcSettings.backupEnabled
+        repeat: true
+
+        onTriggered: {
+            exporter.writeBackup()
+        }
+    }
+
+    function writeBackup() {
+        const video = currentVideo != ''
+            ? FileIoPyObject.stem_of(currentVideo)
+            : qsTranslate("FileInteractionDialogs", "untitled")
+        const content = _generateBackupFileContent()
+        FileIoPyObject.write_backup(video, content)
+    }
+
+    function _generateBackupFileContent() {
+        const data = _generateData()
+        const settings = {
+            writeHeader: true,
+            writeHeaderDate: true,
+            writeHeaderGenerator: true,
+            writeHeaderNickname: true,
+            writeHeaderVideoPath: true,
+        }
+        return MpvqcDocumentExporter.generateDocumentFrom(data, settings)
     }
 
 }

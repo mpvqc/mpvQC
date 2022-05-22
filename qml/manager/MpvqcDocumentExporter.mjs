@@ -26,23 +26,23 @@ import { DocumentBuilder } from "./MpvqcDocumentBuilder.mjs";
  * @return {string}
  */
 export function generateDocumentFrom(data, settings) {
-    const documentBuilder = new DocumentBuilder()
-    documentBuilder.withFileTag()
+    const builder = new DocumentBuilder()
+    builder.addFileTag()
     if (settings.writeHeader) {
         if (settings.writeHeaderDate)
-            documentBuilder.withDate(data.date)
+            builder.addDate(data.date)
         if (settings.writeHeaderGenerator)
-            documentBuilder.withGenerator(data.generator)
+            builder.addGenerator(data.generator)
         if (settings.writeHeaderNickname)
-            documentBuilder.withNickname(data.nickname)
+            builder.addNickname(data.nickname)
         if (settings.writeHeaderVideoPath)
-            documentBuilder.withFilePath(data.videoPath)
+            builder.addFilePath(data.videoPath)
     }
-    return documentBuilder
-        .withBlankLine()
-        .withDataTag()
-        .withComments(data.comments)
-        .withCommentSummary()
-        .withBlankLine()
+    return builder
+        .addBlankLine()
+        .addDataTag()
+        .addComments(data.comments)
+        .addCommentSummary()
+        .addBlankLine()
         .build()
 }

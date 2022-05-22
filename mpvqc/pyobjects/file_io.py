@@ -16,10 +16,15 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from datetime import datetime
 from pathlib import Path
+from zipfile import ZipFile, ZIP_DEFLATED
 
+import inject
 from PySide6.QtCore import QUrl, Slot, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
+
+from mpvqc.services import FilePathService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -28,6 +33,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 @QmlSingleton
 class FileIoPyObject(QObject):
+    _paths = inject.attr(FilePathService)
 
     # noinspection PyTypeChecker
     @Slot(QUrl, result=str)
@@ -51,3 +57,17 @@ class FileIoPyObject(QObject):
     def write(self, url: QUrl, content: str):
         path = Path(url.toLocalFile())
         path.write_text(content, encoding='utf-8')
+
+    @Slot(str, str)
+    def write_backup(self, video_name: str, content: str):
+        now = datetime.now()
+
+        zip_name = f'{now:%Y-%m}.zip'
+        zip_path = self._paths.dir_backup / zip_name
+        zip_mode = "a" if zip_path.exists() else "w"
+
+        file_name = f'{now:%Y-%m_%H-%M-%S}_{video_name}.txt'
+
+        # noinspection PyTypeChecker
+        with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as zip:
+            zip.writestr(file_name, content)

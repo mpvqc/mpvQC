@@ -31,48 +31,48 @@ TestCase {
         compare(builder.build(), '')
     }
 
-    function test_buildWithFileTag() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withFileTag()
+    function test_buildAddFileTag() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addFileTag()
         compare(builder.build(), '[FILE]')
     }
 
-    function test_buildWithDate() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withDate('mpvqcDate')
+    function test_buildAddDate() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addDate('mpvqcDate')
         compare(builder.build(), 'date      : mpvqcDate')
     }
 
-    function test_buildWithGenerator() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withGenerator('mpvqcGenerator')
+    function test_buildAddGenerator() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addGenerator('mpvqcGenerator')
         compare(builder.build(), 'generator : mpvqcGenerator')
     }
 
 
-    function test_buildWithNickname() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withNickname('mpvqcNickname')
+    function test_buildAddNickname() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addNickname('mpvqcNickname')
         compare(builder.build(), 'nick      : mpvqcNickname')
     }
 
 
-    function test_buildWithFilePath() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withFilePath('mpvqcFilePath')
+    function test_buildAddFilePath() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addFilePath('mpvqcFilePath')
         compare(builder.build(), 'path      : mpvqcFilePath')
     }
 
 
-    function test_buildWithBlankLines() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withBlankLine().withBlankLine()
+    function test_buildAddBlankLines() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addBlankLine().addBlankLine()
         compare(builder.build(), '\n')
     }
 
-    function test_buildWithDataTag() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withDataTag()
+    function test_buildAddDataTag() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addDataTag()
         compare(builder.build(), '[DATA]')
     }
 
 
-    function test_buildWithComments() {
+    function test_buildAddComments() {
         const builder = new MpvqcDocumentBuilder.DocumentBuilder()
-            .withComments([
+            .addComments([
                 { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
                 { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
             ])
@@ -80,25 +80,25 @@ TestCase {
     }
 
 
-    function test_buildWithCommentSummary0() {
-        const builder = new MpvqcDocumentBuilder.DocumentBuilder().withCommentSummary()
+    function test_buildAddCommentSummary0() {
+        const builder = new MpvqcDocumentBuilder.DocumentBuilder().addCommentSummary()
         compare(builder.build(), '# total lines: 0')
     }
 
-    function test_buildWithCommentSummary1() {
+    function test_buildAddCommentSummary1() {
         const builder = new MpvqcDocumentBuilder.DocumentBuilder()
-            .withComments([{ time: '68', commentType: 'CommentType', comment: 'Comment 1' }])
-            .withCommentSummary()
+            .addComments([{ time: '68', commentType: 'CommentType', comment: 'Comment 1' }])
+            .addCommentSummary()
         compare(builder.build(), '[00:01:08] [CommentType] Comment 1\n# total lines: 1')
     }
 
-    function test_buildWithCommentSummary2() {
+    function test_buildAddCommentSummary2() {
         const builder = new MpvqcDocumentBuilder.DocumentBuilder()
-            .withComments([
+            .addComments([
                 { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
                 { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
             ])
-            .withCommentSummary()
+            .addCommentSummary()
 
         compare(
             builder.build(),
@@ -106,21 +106,21 @@ TestCase {
         )
     }
 
-    function test_completeDocument() {
+    function test_buildCompleteDocument() {
         const builder = new MpvqcDocumentBuilder.DocumentBuilder()
-            .withFileTag()
-            .withDate('mpvqcDate')
-            .withGenerator('mpvqcGenerator')
-            .withNickname('mpvqcNickname')
-            .withFilePath('mpvqcFilePath')
-            .withBlankLine()
-            .withDataTag()
-            .withComments([
+            .addFileTag()
+            .addDate('mpvqcDate')
+            .addGenerator('mpvqcGenerator')
+            .addNickname('mpvqcNickname')
+            .addFilePath('mpvqcFilePath')
+            .addBlankLine()
+            .addDataTag()
+            .addComments([
                 { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
                 { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
             ])
-            .withCommentSummary()
-            .withBlankLine()
+            .addCommentSummary()
+            .addBlankLine()
 
         compare(
             builder.build(),

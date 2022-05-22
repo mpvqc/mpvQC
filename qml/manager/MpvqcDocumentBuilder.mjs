@@ -28,7 +28,7 @@ export class DocumentBuilder {
         this.comments = 0
     }
 
-    withFileTag() {
+    addFileTag() {
         this.lines.push('[FILE]')
         return this
     }
@@ -36,7 +36,7 @@ export class DocumentBuilder {
     /**
      * @param date {string}
      */
-    withDate(date) {
+    addDate(date) {
         this.lines.push(`date      : ${date}`)
         return this
     }
@@ -44,35 +44,35 @@ export class DocumentBuilder {
     /**
      * @param generator {string}
      */
-    withGenerator(generator) {
+    addGenerator(generator) {
         this.lines.push(`generator : ${generator}`)
         return this
     }
 
     /** @param nickname {string} */
-    withNickname(nickname) {
+    addNickname(nickname) {
         this.lines.push(`nick      : ${nickname}`)
         return this
     }
 
     /** @param filePath {string} */
-    withFilePath(filePath) {
+    addFilePath(filePath) {
         this.lines.push(`path      : ${filePath}`)
         return this
     }
 
-    withBlankLine() {
+    addBlankLine() {
         this.lines.push('')
         return this
     }
 
-    withDataTag() {
+    addDataTag() {
         this.lines.push('[DATA]')
         return this
     }
 
     /** @param comments {Array<MpvqcComment>} */
-    withComments(comments) {
+    addComments(comments) {
         this.comments += comments.length
         for (const comment of comments) {
             const time = formatTimeToString(comment.time)
@@ -83,7 +83,7 @@ export class DocumentBuilder {
         return this
     }
 
-    withCommentSummary() {
+    addCommentSummary() {
         this.lines.push(`# total lines: ${this.comments}`)
         return this
     }
