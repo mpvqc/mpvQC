@@ -18,35 +18,59 @@
 
 from functools import cached_property
 from pathlib import Path
+from typing import NamedTuple
 
 import inject
+from PySide6.QtCore import QCoreApplication, QStandardPaths
 
-from mpvqc.impl import PortableFileServiceImpl, NonPortableFileServiceImpl
 from mpvqc.services.app_environment import AppEnvironmentService
 
 
 class FilePathService:
     _app_environment = inject.attr(AppEnvironmentService)
 
-    def __init__(self):
-        self._impl = self._get_impl()
+    class Impl(NamedTuple):
+        dir_backup: Path
+        dir_config: Path
+        dir_screenshots: Path
 
-    def _get_impl(self):
+    @cached_property
+    def _impl(self):
         if self._app_environment.is_portable:
-            return PortableFileServiceImpl(self._app_environment.executing_directory)
-        return NonPortableFileServiceImpl()
+            return self._get_portable()
+        return self._get_non_portable()
+
+    def _get_portable(self):
+        dir_app = self._app_environment.executing_directory
+        return FilePathService.Impl(
+            dir_backup=dir_app / 'appdata' / 'backups',
+            dir_config=dir_app / 'appdata',
+            dir_screenshots=dir_app / 'appdata' / 'screenshots'
+        )
+
+    @staticmethod
+    def _get_non_portable():
+        appname = QCoreApplication.applicationName()
+        config = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation)
+        documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
+        pictures = QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
+        return FilePathService.Impl(
+            dir_backup=Path(documents) / appname / 'backups',
+            dir_config=Path(config),
+            dir_screenshots=Path(pictures) / appname
+        )
 
     @cached_property
     def dir_backup(self) -> Path:
-        return self._impl.dir_backup()
+        return self._impl.dir_backup
 
     @cached_property
     def dir_config(self) -> Path:
-        return self._impl.dir_config()
+        return self._impl.dir_config
 
     @cached_property
     def dir_screenshots(self) -> Path:
-        return self._impl.dir_screenshots()
+        return self._impl.dir_screenshots
 
     @cached_property
     def file_input_conf(self) -> Path:
