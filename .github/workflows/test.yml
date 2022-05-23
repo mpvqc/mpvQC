@@ -10,6 +10,21 @@ jobs:
     name: 'Python'
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: 'Set Build Version Information'
+        run: |
+          PLACEHOLDER_TAG=">>>tag<<<"
+          PLACEHOLDER_COMMIT=">>>commit-id<<<"
+
+          CURRENT_TAG="$(git describe --tags --abbrev=0)"
+          CURRENT_COMMIT="$(git rev-parse HEAD)"
+          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
+
+          grep -rli "$PLACEHOLDER_TAG" * | xargs -i@ sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" @
+          grep -rli "$PLACEHOLDER_COMMIT" * | xargs -i@ sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" @
+
+          grep -rli "$CURRENT_COMMIT" * | xargs -i@ cat @
       - name: 'Install Python 3.10'
         uses: actions/setup-python@v2
         with:

@@ -27,10 +27,6 @@ class ResourceService:
     _resource_reader = inject.attr(ResourceFileReader)
 
     @property
-    def build_info_conf_content(self) -> str:
-        return self._read_from_resource(path=':/data/build-info.conf')
-
-    @property
     def input_conf_content(self) -> str:
         return self._read_from_resource(path=':/data/config/input.conf')
 

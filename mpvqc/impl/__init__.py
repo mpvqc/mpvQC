@@ -17,7 +17,6 @@
 
 
 from .address_proc_getter import GetProcAddressGetter
-from .build_info_extractor import BuildInfoExtractor
 from .file_reader_resources import ResourceFileReader
 from .file_service_non_portable import NonPortableFileServiceImpl
 from .file_service_portable import PortableFileServiceImpl

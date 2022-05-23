@@ -20,7 +20,7 @@ import inject
 from PySide6.QtCore import Property, Signal, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
 
-from mpvqc.services import ResourceService, BuildInfoService, PlayerService
+from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -29,21 +29,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 @QmlSingleton
 class DialogAboutPyObject(QObject):
-    _resources = inject.attr(ResourceService)
-    _build_info = inject.attr(BuildInfoService)
     _player = inject.attr(PlayerService)
-
-    def get_tag(self) -> str:
-        return self._build_info.tag
-
-    tag_changed = Signal(str)
-    tag = Property(str, get_tag, notify=tag_changed)
-
-    def get_commit_id(self) -> str:
-        return self._build_info.commit
-
-    commit_id_changed = Signal(str)
-    commit_id = Property(str, get_commit_id, notify=commit_id_changed)
 
     def get_mpv_version(self) -> str:
         return self._player.version_mpv()

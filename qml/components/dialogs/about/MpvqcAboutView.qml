@@ -51,7 +51,7 @@ Column {
 
         Label {
             id: version
-            text: DialogAboutPyObject.tag
+            text: '>>>tag<<<'
             font.bold: true
         }
 
@@ -63,7 +63,7 @@ Column {
 
         Label {
             id: commitId
-            text: DialogAboutPyObject.commit_id
+            text: '>>>commit-id<<<'
             font.bold: true
         }
     }

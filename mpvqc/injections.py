@@ -18,7 +18,7 @@
 
 import inject
 
-from mpvqc.impl import BuildInfoExtractor, ResourceFileReader
+from mpvqc.impl import ResourceFileReader
 from mpvqc.services import ResourceService, BuildInfoService, AppEnvironmentService, \
     FilePathService, FileStartupService, SettingsService, PlayerService
 
@@ -35,7 +35,6 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(SettingsService, lambda: SettingsService())
 
     # Tasks
-    binder.bind_to_constructor(BuildInfoExtractor, lambda: BuildInfoExtractor())
     binder.bind_to_constructor(ResourceFileReader, lambda: ResourceFileReader())
 
 

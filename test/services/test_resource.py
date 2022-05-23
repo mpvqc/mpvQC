@@ -33,14 +33,6 @@ class TestResourceService(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
-    def test_version_conf_content_contains_tag(self):
-        text = ResourceService().build_info_conf_content
-        self.assertIn('tag=', text)
-
-    def test_version_conf_content_contains_commit(self):
-        text = ResourceService().build_info_conf_content
-        self.assertIn('commit=', text)
-
     def test_input_conf_exists(self):
         text = ResourceService().input_conf_content
         self.assertTrue(text)
