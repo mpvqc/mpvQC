@@ -40,7 +40,7 @@ Column {
 
     Label {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "mpvQC"
+        text: Qt.application.name
         font.bold: true
         font.pixelSize: Qt.application.font.pixelSize * 1.25
     }
@@ -129,7 +129,7 @@ Column {
 
         Label {
             Layout.fillWidth: true
-            text: DialogAboutPyObject.mpv_version
+            text: MpvPlayerPropertiesPyObject.mpv_version
         }
     }
 
@@ -144,7 +144,7 @@ Column {
 
         Label {
             Layout.fillWidth: true
-            text: DialogAboutPyObject.ffmpeg_version
+            text: MpvPlayerPropertiesPyObject.ffmpeg_version
         }
     }
 

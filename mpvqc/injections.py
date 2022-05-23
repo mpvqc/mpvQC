@@ -19,21 +19,16 @@
 import inject
 
 from mpvqc.impl import ResourceFileReader
-from mpvqc.services import ResourceService, AppEnvironmentService, \
-    FilePathService, FileStartupService, SettingsService, PlayerService
+from mpvqc.services import ResourceService, AppEnvironmentService, FilePathService, FileStartupService, PlayerService
 
 
-# noinspection DuplicatedCode
 def bindings(binder: inject.Binder):
-    # Services
     binder.bind_to_constructor(AppEnvironmentService, lambda: AppEnvironmentService())
     binder.bind_to_constructor(FilePathService, lambda: FilePathService())
     binder.bind_to_constructor(FileStartupService, lambda: FileStartupService())
     binder.bind_to_constructor(PlayerService, lambda: PlayerService())
     binder.bind_to_constructor(ResourceService, lambda: ResourceService())
-    binder.bind_to_constructor(SettingsService, lambda: SettingsService())
 
-    # Tasks
     binder.bind_to_constructor(ResourceFileReader, lambda: ResourceFileReader())
 
 

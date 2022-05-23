@@ -51,12 +51,12 @@ class FilePathService:
     @staticmethod
     def _get_non_portable():
         appname = QCoreApplication.applicationName()
-        config = QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation)
+        config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
         pictures = QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
         return FilePathService.Impl(
             dir_backup=Path(documents) / appname / 'backups',
-            dir_config=Path(config),
+            dir_config=Path(config) / appname,
             dir_screenshots=Path(pictures) / appname
         )
 

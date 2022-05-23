@@ -42,3 +42,9 @@ class MpvqcFilePathsPyObject(QObject):
 
     mpv_conf_changed = Signal(str)
     mpv_conf = Property(str, get_config_mpv, notify=mpv_conf_changed)
+
+    def get_settings(self) -> str:
+        return str(self._paths.file_settings)
+
+    settings_changed = Signal(str)
+    settings = Property(str, get_settings, notify=settings_changed)

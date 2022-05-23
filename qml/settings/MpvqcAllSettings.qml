@@ -26,7 +26,7 @@ import pyobjects
 
 Item {
     id: current
-    readonly property var settingsFile: SettingsPyObject.backing_object_file_name
+    readonly property var settingsFile: MpvqcFilePathsPyObject.settings
 
     MpvqcBackupSettings {
         id: backupSettings

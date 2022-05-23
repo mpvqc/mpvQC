@@ -16,52 +16,33 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
+
+import pytest
 
 from mpvqc.impl import ResourceFileReader
 
 
-class TestResourceFileReader(unittest.TestCase):
-    MODULE = 'mpvqc.impl.file_reader_resources'
+@pytest.mark.parametrize("file_path", [
+    ":/data/icon.svg",
+    "/data/icon.svg",
+    "data/icon.svg",
+])
+def test_read_from(file_path):
+    reader = ResourceFileReader()
+    content = reader.read_from(file_path)
+    assert content.startswith('<svg ')
 
-    def test_make_resource_path_simple(self):
+
+def test_file_not_found():
+    with pytest.raises(FileNotFoundError):
         reader = ResourceFileReader()
+        reader.read_from('>>')
 
-        expected, data = ':/data', 'data'
-        actual = reader._make_resource_path_from(data)
 
-        self.assertEqual(expected, actual)
-
-    def test_make_resource_path_slash(self):
+@patch('mpvqc.impl.file_reader_resources.QFile.exists', return_value=True)
+@patch('mpvqc.impl.file_reader_resources.QFile.open', return_value=False)
+def test_some_other_method(*_):
+    with pytest.raises(Exception):
         reader = ResourceFileReader()
-
-        expected, data = ':/data', '/data'
-        actual = reader._make_resource_path_from(data)
-
-        self.assertEqual(expected, actual)
-
-    def test_make_resource_path_complete(self):
-        reader = ResourceFileReader()
-
-        expected, data = ':/data', ':/data'
-        actual = reader._make_resource_path_from(data)
-
-        self.assertEqual(expected, actual)
-
-    @patch(f'{MODULE}.QFile.open', return_value=True)
-    @patch(f'{MODULE}.QFile.readAll')
-    def test_read(self, read_all_function: Mock, *_):
-        expected = 'This is a sample text'
-
-        read_all_function.return_value.data().decode.return_value = expected
-        reader = ResourceFileReader()
-        actual = reader._read_from('')
-
-        self.assertEqual(expected, actual)
-
-    @patch(f'{MODULE}.QFile.open', return_value=False)
-    def test_read_file_not_found(self, *_):
-        with self.assertRaises(FileNotFoundError):
-            reader = ResourceFileReader()
-            reader._read_from('')
+        reader.read_from('')

@@ -21,4 +21,3 @@ from .file_paths import FilePathService
 from .file_startup import FileStartupService
 from .player import PlayerService
 from .resource import ResourceService
-from .settings import SettingsService

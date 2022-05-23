@@ -20,7 +20,7 @@ import inject
 from PySide6.QtCore import Property, Signal, QObject
 from PySide6.QtQml import QmlElement, QmlSingleton
 
-from mpvqc.services import PlayerService
+from mpvqc.services.player import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -28,7 +28,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 @QmlSingleton
-class DialogAboutPyObject(QObject):
+class MpvPlayerPropertiesPyObject(QObject):
     _player = inject.attr(PlayerService)
 
     def get_mpv_version(self) -> str:

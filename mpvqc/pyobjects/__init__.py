@@ -17,10 +17,9 @@
 
 
 from .comments_model import CommentModelPyObject
-from .dialog_about import DialogAboutPyObject
 from .environment import EnvironmentPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .file_io import FileIoPyObject
 from .file_paths import MpvqcFilePathsPyObject
 from .player import MpvPlayerPyObject
-from .settings import SettingsPyObject
+from .player_properties import MpvPlayerPropertiesPyObject

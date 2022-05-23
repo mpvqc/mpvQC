@@ -35,7 +35,7 @@ FocusScope {
 
         Settings {
             id: settings
-            fileName: SettingsPyObject.backing_object_file_name
+            fileName: MpvqcFilePathsPyObject.settings
             category: "SplitView"
         }
 

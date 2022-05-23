@@ -36,21 +36,12 @@ class ResourceFileReader:
     @staticmethod
     def _read_from(resource_path: str) -> str:
         file = QFile(resource_path)
-
-        # noinspection PyBroadException
+        if not file.exists():
+            raise FileNotFoundError()
         try:
-            opened = file.open(QIODevice.ReadOnly)
-            if not opened:
-                raise FileNotFoundError()
+            if not file.open(QIODevice.ReadOnly):
+                raise Exception(f"Can not open file to read: {resource_path}")
             return file.readAll().data().decode('utf-8')
-        except FileNotFoundError:
-            # todo logger
-            print(f"Can not find resource file '{resource_path}'")
-            raise
-        except Exception:
-            # todo logger
-            print(f"Can not read resource file '{resource_path}'")
-            raise
         finally:
-            if file:
+            if file.isOpen():
                 file.close()

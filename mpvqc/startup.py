@@ -31,7 +31,7 @@ class PreStartUp:
     @staticmethod
     def set_qt_application_version():
         from PySide6.QtCore import QCoreApplication
-        QCoreApplication.setApplicationVersion('0.8.0')
+        QCoreApplication.setApplicationVersion('>>>tag<<<')
 
     @staticmethod
     def set_qt_settings_format():

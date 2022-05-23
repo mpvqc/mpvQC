@@ -45,7 +45,7 @@ Item {
         }
 
         Label {
-            text: "mpvQC"
+            text: Qt.application.name
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             width: headerBarContent.width - menuBar.width * 2

@@ -25,6 +25,7 @@ jobs:
           grep -rli "$PLACEHOLDER_COMMIT" * | xargs -i@ sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" @
 
           grep -rli "$CURRENT_COMMIT" * | xargs -i@ cat @
+          cat mpvqc/startup.py
       - name: 'Install Python 3.10'
         uses: actions/setup-python@v2
         with:
