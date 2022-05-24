@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import pyobjects
+import components.player
 
 
 Column {
@@ -129,7 +129,7 @@ Column {
 
         Label {
             Layout.fillWidth: true
-            text: MpvPlayerPropertiesPyObject.mpv_version
+            text: MpvqcPlayerProperties.mpv_version
         }
     }
 
@@ -144,7 +144,7 @@ Column {
 
         Label {
             Layout.fillWidth: true
-            text: MpvPlayerPropertiesPyObject.ffmpeg_version
+            text: MpvqcPlayerProperties.ffmpeg_version
         }
     }
 

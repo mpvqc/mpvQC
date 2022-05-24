@@ -84,9 +84,3 @@ class PlayerService:
 
     def scroll_down(self):
         self._mpv.command_async("keypress", f"MOUSE_BTN4")
-
-    def version_mpv(self):
-        return self._mpv.mpv_version
-
-    def version_ffmpeg(self):
-        return self._mpv.ffmpeg_version

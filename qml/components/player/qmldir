@@ -1,2 +1,3 @@
 module components.player
 MpvqcPlayer MpvqcPlayer.qml
+singleton MpvqcPlayerProperties MpvqcPlayerProperties.qml

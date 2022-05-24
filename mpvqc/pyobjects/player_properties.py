@@ -17,8 +17,8 @@
 
 
 import inject
-from PySide6.QtCore import Property, Signal, QObject
-from PySide6.QtQml import QmlElement, QmlSingleton
+from PySide6.QtCore import QObject, Slot
+from PySide6.QtQml import QmlElement
 
 from mpvqc.services.player import PlayerService
 
@@ -27,18 +27,22 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-@QmlSingleton
 class MpvPlayerPropertiesPyObject(QObject):
     _player = inject.attr(PlayerService)
 
-    def get_mpv_version(self) -> str:
-        return self._player.version_mpv()
+    @Slot(list)
+    def subscribe(self, properties: list[str]):
+        for mpv_property in properties:
+            if hasattr(self._player.mpv, mpv_property):
+                self._observe(mpv_property)
 
-    mpv_version_changed = Signal(str)
-    mpv_version = Property(str, get_mpv_version, notify=mpv_version_changed)
+    def _observe(self, mpv_property: str):
+        player = self._player.mpv
 
-    def get_ffmpeg_version(self) -> str:
-        return self._player.version_ffmpeg()
+        def set_property(_, value):
+            self.setProperty(mpv_property, value)
 
-    ffmpeg_version_changed = Signal(str)
-    ffmpeg_version = Property(str, get_ffmpeg_version, notify=ffmpeg_version_changed)
+        player.observe_property(name=mpv_property.replace('_', '-'), handler=set_property)
+
+        current_value = getattr(player, mpv_property)
+        set_property(mpv_property, current_value)
