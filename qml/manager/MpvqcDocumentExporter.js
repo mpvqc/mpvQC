@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import { formatTimeToString } from "../helpers/MpvqcTimeFormatUtils.mjs";
+.import helpers as Helpers
 
 
-export class DocumentBuilder {
+class DocumentBuilder {
 
     constructor() {
         this.lines = []
@@ -33,17 +33,13 @@ export class DocumentBuilder {
         return this
     }
 
-    /**
-     * @param date {string}
-     */
+    /** @param date {string} */
     addDate(date) {
         this.lines.push(`date      : ${date}`)
         return this
     }
 
-    /**
-     * @param generator {string}
-     */
+    /** @param generator {string} */
     addGenerator(generator) {
         this.lines.push(`generator : ${generator}`)
         return this
@@ -71,12 +67,11 @@ export class DocumentBuilder {
         return this
     }
 
-    /** @param comments {Array<MpvqcComment>} */
+    /** @param comments {Array<{time: number, commentType: string, comment: string}>} */
     addComments(comments) {
         this.comments += comments.length
         for (const comment of comments) {
-            const time = formatTimeToString(comment.time)
-            // noinspection JSUnresolvedFunction
+            const time = Helpers.MpvqcTimeFormatUtils.formatTimeToString(comment.time)
             const commentType = qsTranslate("CommentTypes", comment.commentType)
             this.lines.push(`[${time}] [${commentType}] ${comment.comment}`)
         }
@@ -95,3 +90,41 @@ export class DocumentBuilder {
 }
 
 
+/**
+ * @param settings {{
+ *      writeHeader: string,
+ *      writeHeaderDate: string,
+ *      writeHeaderGenerator: string,
+ *      writeHeaderNickname: string,
+ *      writeHeaderVideoPath: string
+ * }}
+ * @param data {{
+ *     date: string,
+ *     generator: string,
+ *     nickname: string,
+ *     videoPath: string,
+ *     comments: Array<{time: number, commentType: string, comment: string}>,
+ * }}
+ * @return {string}
+ */
+function generateDocumentFrom(data, settings) {
+    const builder = new DocumentBuilder()
+    builder.addFileTag()
+    if (settings.writeHeader) {
+        if (settings.writeHeaderDate)
+            builder.addDate(data.date)
+        if (settings.writeHeaderGenerator)
+            builder.addGenerator(data.generator)
+        if (settings.writeHeaderNickname)
+            builder.addNickname(data.nickname)
+        if (settings.writeHeaderVideoPath)
+            builder.addFilePath(data.videoPath)
+    }
+    return builder
+        .addBlankLine()
+        .addDataTag()
+        .addComments(data.comments)
+        .addCommentSummary()
+        .addBlankLine()
+        .build()
+}

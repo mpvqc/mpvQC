@@ -1,3 +1,4 @@
 module handlers
+singleton MpvqcPlayerProperties MpvqcPlayerProperties.qml
 MpvqcWindowBorderMouseCurser MpvqcWindowBorderMouseCurser.qml
 MpvqcWindowResizeHandler MpvqcWindowResizeHandler.qml

@@ -18,43 +18,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-// Based on: https://raymii.org/s/snippets/Log_all_Item_properties_and_functions_in_Qml.html
+class Element {
 
+    constructor(item) {
+        this.properties = {}
+        this.functions = {}
+        this._investigate(item)
+    }
 
-/**
- * Extracts all properties from item
- */
-function obtainPropertiesOf(item) {
-    const properties = []
-    for (const p in item)
-        if (typeof item[p] != "function")
-            properties.push(`${p}: ${item[p]}`)
-    return properties
+    _investigate(item) {
+        // Based on: https://raymii.org/s/snippets/Log_all_Item_properties_and_functions_in_Qml.html
+        for (const element in item) {
+            if (typeof item[element] == "function") {
+                this.functions[element] = item[element]
+            } else {
+                this.properties[element] = item[element]
+            }
+        }
+    }
 }
 
 
-/**
- * Extracts all functions from item
- */
-function obtainFunctionsOf(item) {
-    const functions = [];
-    for (const f in item)
-        if (typeof item[f] == "function")
-            functions.push(`${f}: ${item[f]}`)
-    return functions
-}
+const replacer = null
+const spaces = 2
 
 
-/**
- * Logs all properties and functions from an item to the console
- */
-function log(item) {
-    console.log("Properties:")
-    for (const prop of obtainPropertiesOf(item)) {
-        console.log(" * ", prop)
-    }
-    console.log("Functions:")
-    for (const func of obtainFunctionsOf(item)) {
-        console.log(" - ", func)
-    }
+function investigate(item) {
+    return JSON.stringify(new Element(item), replacer, spaces)
 }

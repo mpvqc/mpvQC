@@ -22,7 +22,7 @@ import QtQuick
 import Qt.labs.platform
 import pyobjects
 import settings
-import "MpvqcDocumentExporter.mjs" as MpvqcDocumentExporter
+import "MpvqcDocumentExporter.js" as MpvqcDocumentExporter
 
 
 Item {
@@ -57,7 +57,7 @@ Item {
             date: new Date().toLocaleString(Qt.locale(MpvqcSettings.language)),
             generator: `${Qt.application.name} ${Qt.application.version}`,
             nickname: MpvqcSettings.nickname,
-            videoPath: currentVideo ? FileIoPyObject.abs_path_of(currentVideo) : '',
+            videoPath: currentVideo != '' ? FileIoPyObject.abs_path_of(currentVideo) : '',
             comments: commentModel.comments(),
         }
     }

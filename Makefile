@@ -128,7 +128,7 @@ test-qml: \
 	check-qml-setup
 
 	@${TOOL_CLI_QML_TESTRUNNER} \
-		-input ${DIRECTORY_QML_TESTS}
+		-input ${DIRECTORY_QML_TESTS} -import ${DIRECTORY_QML_TESTS}
 
 
 test-clean:

@@ -125,7 +125,6 @@ class KeyPress {
 }
 
 
-// noinspection JSUnusedGlobalSymbols
 function generateFrom(event) {
     const keyPress = new KeyPress(event)
     if (keyPress.isSpecialKey())

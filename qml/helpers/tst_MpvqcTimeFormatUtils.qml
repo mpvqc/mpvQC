@@ -20,17 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick 2.0
 import QtTest
-import "MpvqcTimeFormatUtils.mjs" as Run
+import "MpvqcTimeFormatUtils.js" as TestObject
 
 TestCase {
-    name: "tst_RunTest"
+    name: "formatTimeToString"
 
     function test_formatTimeToString_data() {
         return [
-            { expected: '00:00:00', actual: Run.formatTimeToString(0), tag: '0 -> 00:00:00' },
-            { expected: '00:01:08', actual: Run.formatTimeToString(68), tag: '68 -> 00:01:08' },
-            { expected: '00:16:39', actual: Run.formatTimeToString(999), tag: '999 -> 00:16:39' },
-            { expected: '02:46:40', actual: Run.formatTimeToString(10000), tag: '10000 -> 02:46:40' },
+            { expected: '00:00:00', actual: TestObject.formatTimeToString(0), tag: '0 -> 00:00:00' },
+            { expected: '00:01:08', actual: TestObject.formatTimeToString(68), tag: '68 -> 00:01:08' },
+            { expected: '00:16:39', actual: TestObject.formatTimeToString(999), tag: '999 -> 00:16:39' },
+            { expected: '02:46:40', actual: TestObject.formatTimeToString(10000), tag: '10000 -> 02:46:40' },
         ]
     }
 
@@ -39,15 +39,15 @@ TestCase {
     }
 
     function benchmark_formatTimeToString() {
-        Run.formatTimeToString(10000)
+        TestObject.formatTimeToString(10000)
     }
 
     function test_extractSecondsFrom_data() {
         return [
-            { expected: 0, actual: Run.extractSecondsFrom('00:00:00'), tag: '00:00:00 -> 0' },
-            { expected: 68, actual: Run.extractSecondsFrom('00:01:08'), tag: '00:01:08 -> 68' },
-            { expected: 999, actual: Run.extractSecondsFrom('00:16:39'), tag: '00:16:39 -> 999' },
-            { expected: 10000, actual: Run.extractSecondsFrom('02:46:40'), tag: '02:46:40 -> 10000' },
+            { expected: 0, actual: TestObject.extractSecondsFrom('00:00:00'), tag: '00:00:00 -> 0' },
+            { expected: 68, actual: TestObject.extractSecondsFrom('00:01:08'), tag: '00:01:08 -> 68' },
+            { expected: 999, actual: TestObject.extractSecondsFrom('00:16:39'), tag: '00:16:39 -> 999' },
+            { expected: 10000, actual: TestObject.extractSecondsFrom('02:46:40'), tag: '02:46:40 -> 10000' },
         ]
     }
         
@@ -56,7 +56,7 @@ TestCase {
     }
 
     function benchmark_extractSecondsFrom() {
-        Run.extractSecondsFrom('02:46:40')
+        TestObject.extractSecondsFrom('02:46:40')
     }
 
     

@@ -3,7 +3,6 @@ MpvqcCommandGenerator 1.0 MpvqcCommandGenerator.js
 singleton MpvqcCommentTypeWidthCalculator MpvqcCommentTypeWidthCalculator.qml
 MpvqcDebug 1.0 MpvqcDebug.js
 MpvqcEventRegistry 1.0 MpvqcEventRegistry.js
-MpvqcSerializer 1.0 MpvqcSerializer.js
-MpvqcTimeFormatUtils 1.0 MpvqcTimeFormatUtils.mjs
+MpvqcTimeFormatUtils 1.0 MpvqcTimeFormatUtils.js
 MpvqcTimer 1.0 MpvqcTimer.js
 MpvqcUtils 1.0 MpvqcUtils.js

@@ -20,17 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick 2.0
 import QtTest
-import "MpvqcCommandGenerator.js" as MpvqcCommandGenerator
+import "MpvqcCommandGenerator.js" as TestObject
 
 TestCase {
-    name: "MpvqcCommandGeneratorTest"
+    name: "MpvqcCommandGenerator"
 
     function exec(expected, key_, modifiers_) {
         const tag = expected === null ? ` null ` : ` > ${expected} < `
         const key = key_ === null ? 'null' : key_
         const modifiers = modifiers_ === null ? 'null' : modifiers_
         const event = { key, modifiers, text: key_ === null ? '' : key.text }
-        const actual = MpvqcCommandGenerator.generateFrom(event)
+        const actual = TestObject.generateFrom(event)
         return { expected, actual, tag }
     }
 
@@ -75,4 +75,25 @@ TestCase {
         // data comes from test_generate_command_data
         compare(data.actual, data.expected)
     }
+
+    function benchmark_generate_commandSpecialCommand() {
+        const event = { key: 'PGUP', modifiers: null, text: 'PGUP' }
+        const actual = TestObject.generateFrom(event)
+    }
+
+    function benchmark_generate_commandSpecialCommandWithModifier() {
+        const event = { key: 'PGUP', modifiers: Qt.AltModifier | Qt.ControlModifier , text: 'PGUP' }
+        const actual = TestObject.generateFrom(event)
+    }
+
+    function benchmark_generate_commandInvalidKeys() {
+        const event = { key: null, modifiers: Qt.AltModifier | Qt.ControlModifier , text: null }
+        const actual = TestObject.generateFrom(event)
+    }
+
+    function benchmark_generate_commandNormalSequences() {
+        const event = { key: Qt.Key_U, modifiers: Qt.AltModifier | Qt.ControlModifier , text: 'u' }
+        const actual = TestObject.generateFrom(event)
+    }
+
 }
