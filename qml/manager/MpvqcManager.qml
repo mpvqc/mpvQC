@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import helpers
+import "MpvqcDocumentImporter.js" as MpvqcDocumentImporter
 
 
 Item {
@@ -30,9 +31,10 @@ Item {
     property url currentVideo: ''
 
     function openDocuments(documents) {
-        for (let file of documents) {
-            console.log("Open doc: " + file)
-        }
+        const report = MpvqcDocumentImporter.importFrom(documents)
+        const commentsListOfComments = report.imports.map(value => value.comments)
+        const commentsFlat = [].concat.apply([], commentsListOfComments)
+        eventRegistry.produce(eventRegistry.EventImportComments, commentsFlat)
     }
 
     function openSubtitles(subtitles) {

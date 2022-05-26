@@ -1,8 +1,10 @@
 module helpers
 MpvqcCommandGenerator 1.0 MpvqcCommandGenerator.js
+singleton MpvqcCommentTypeReverseTranslator MpvqcCommentTypeReverseTranslator.qml
 singleton MpvqcCommentTypeWidthCalculator MpvqcCommentTypeWidthCalculator.qml
 MpvqcDebug 1.0 MpvqcDebug.js
 MpvqcEventRegistry 1.0 MpvqcEventRegistry.js
+MpvqcFileReader 1.0 MpvqcFileReader.js
 MpvqcTimeFormatUtils 1.0 MpvqcTimeFormatUtils.js
 MpvqcTimer 1.0 MpvqcTimer.js
 MpvqcUtils 1.0 MpvqcUtils.js

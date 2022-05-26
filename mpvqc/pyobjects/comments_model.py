@@ -33,6 +33,7 @@ class CommentModelPyObject(QStandardItemModel):
 
     row_added = Signal(int)  # param: row_index
     time_updated = Signal(int)  # param: row_index
+    request_highlight = Signal(int)  # param: row_index
 
     def __init__(self):
         super().__init__()
@@ -56,6 +57,25 @@ class CommentModelPyObject(QStandardItemModel):
         index = self.indexFromItem(item)
         index_row = index.row()
         self.row_added.emit(index_row)
+
+    @Slot(list)
+    def import_comments(self, comments: list):
+        if not comments:
+            return
+
+        item = None
+        for comment in comments:
+            item = QStandardItem()
+            item.setData(comment['time'], Role.TIME)
+            item.setData(comment['commentType'], Role.TYPE)
+            item.setData(comment['comment'], Role.COMMENT)
+            self.appendRow(item)
+
+        self.sort(0)
+
+        index = self.indexFromItem(item)
+        index_row = index.row()
+        self.request_highlight.emit(index_row)
 
     @Slot(int)
     def remove_row(self, row: int):

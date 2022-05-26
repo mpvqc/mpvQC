@@ -20,33 +20,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 pragma Singleton
 import QtQuick
+import models
 import settings
 
 
 QtObject {
-    id: object
-
-    readonly property var commentTypes: MpvqcSettings.commentTypes
-    property int width: 0
 
     Component.onCompleted: {
-        MpvqcSettings.onLanguageChanged.connect(calculateMaxWidth)
+        updateMapping()
+        MpvqcSettings.onLanguageChanged.connect(updateMapping)
     }
 
-    onCommentTypesChanged: {
-        calculateMaxWidth()
-    }
+    readonly property var commentTypeModel: MpvqcCommentTypes {}
+    property var translations
 
-    function calculateMaxWidth() {
-        const model = MpvqcSettings.commentTypes
-        const metric = Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', object)
-        let width = 0
-        for (let i = 0, count = model.count; i < count; i++) {
-            metric.text = qsTranslate("CommentTypes", model.get(i).type)
-            width = Math.max(width, metric.tightBoundingRect.width)
+    function updateMapping() {
+        const mapping = new Map()
+        for (let i = 0, count = commentTypeModel.count; i < count; i++) {
+            const commentType = commentTypeModel.get(i)
+            const english = commentType.type
+            const currentLanguage = qsTranslate("CommentTypes", english)
+            mapping[currentLanguage] = english
         }
-        metric.destroy()
-        object.width = width + 6
+        translations = mapping
+    }
+
+    function lookup(commentTypeCurrentLanguage) {
+        return translations[commentTypeCurrentLanguage] || commentTypeCurrentLanguage
     }
 
 }

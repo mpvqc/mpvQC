@@ -106,3 +106,10 @@ const EventEditCurrentlySelectedComment = 'mpvqc-edit-currently-selected-comment
  * - url: QUrl      the url of the video
  */
 const EventRequestOpenVideo = 'mpvqc-request-open-video'
+
+
+/**
+ * Called with following args:
+ * - comments: Array<{time: number, commentType: string, comment: string}>
+ */
+const EventImportComments = 'mpvqc-import-comments'

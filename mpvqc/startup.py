@@ -55,6 +55,9 @@ class PreStartUp:
         # So we need to override the path here
         os.environ['QT_QUICK_CONTROLS_CONF'] = ':/data/qtquickcontrols2.conf'
 
+        # Allow 'reading' files in QML using http requests
+        os.environ['QML_XHR_ALLOW_FILE_READ'] = "1"
+
         # Requirement for mpv
         os.environ['LC_NUMERIC'] = 'C'
 

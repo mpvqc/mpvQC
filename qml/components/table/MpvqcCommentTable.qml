@@ -97,6 +97,7 @@ FocusScope {
                 listView.model.row_added.connect(listView.selectRow)
                 listView.model.row_added.connect(listView.startEditing)
                 listView.model.time_updated.connect(listView.selectRow)
+                listView.model.request_highlight.connect(listView.selectRow)
                 listView.forceActiveFocus()
             }
 
@@ -132,7 +133,7 @@ FocusScope {
             }
 
             function removeRow(index) {
-                listView.model.remove_row(model.index)
+                listView.model.remove_row(index)
             }
         }
 
@@ -152,12 +153,17 @@ FocusScope {
         eventRegistry.subscribe(eventRegistry.EventAddNewRow, listView.addRow)
         eventRegistry.subscribe(eventRegistry.EventFocusTable, focusListView)
         eventRegistry.subscribe(eventRegistry.EventEditCurrentlySelectedComment, listView.startEditing)
+        eventRegistry.subscribe(eventRegistry.EventImportComments, importComments)
         qcManager.commentModel = listView.model
     }
 
     function focusListView() {
         utils.clearActiveFocus()
         listView.forceActiveFocus()
+    }
+
+    function importComments(comments) {
+        listView.model.import_comments(comments)
     }
 
     MpvqcKeyEventHandler { id: handler }
