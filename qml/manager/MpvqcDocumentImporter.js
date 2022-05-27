@@ -26,81 +26,74 @@ const videoRegex = /^path\s*:\s*(.*?)\s*$/
 const commentRegex = /^\[(\d{2}:\d{2}:\d{2})]\s*\[([^\[\]]+)]\s*(.*?)$/
 
 
-class Extractor {
+/** @param content {string} */
+function Extractor(content) {
+    return {
+        comments: [],
+        video: '',
 
-    /** @param content {string} */
-    constructor(content) {
-        this.content = content.trim()
-        this.comments = []
-        this.video = ''
-    }
-
-    extract() {
-        let videoFound = false
-        this.content.split(lineBreakRegex)
-            .filter(line => line)
-            .forEach(line => {
-                if (!videoFound) {
+        extract() {
+            const lines = content.trim().split(lineBreakRegex).filter(line => line)
+            for (const line of lines) {
+                if (!this.video) {
                     this._extractVideo(line)
                 }
                 this._extractComment(line)
-            })
-    }
+            }
+        },
 
-    /**
-     * @param line {string}
-     * @private
-     */
-    _extractVideo(line) {
-        const match = videoRegex.exec(line)
-        if (match) {
-            this.video = match[1].trim()
-        }
-    }
+        /** @param line {string} */
+        _extractVideo(line) {
+            const match = videoRegex.exec(line)
+            if (match) {
+                this.video = match[1].trim()
+            }
+        },
 
-    /**
-     * @param line {string}
-     * @private
-     */
-    _extractComment(line) {
-        const match = commentRegex.exec(line)
-        if (match) {
-            const time = Helpers.MpvqcTimeFormatUtils.extractSecondsFrom(match[1])
-            const commentType = Helpers.MpvqcCommentTypeReverseTranslator.lookup(match[2])
-            const comment = match[3].trim()
-            this.comments.push({ time, commentType, comment })
+        /** @param line {string} */
+        _extractComment(line) {
+            const match = commentRegex.exec(line)
+            if (match) {
+                const time = Helpers.MpvqcTimeFormatUtils.extractSecondsFrom(match[1])
+                const commentType = Helpers.MpvqcCommentTypeReverseTranslator.lookup(match[2])
+                const comment = match[3].trim()
+                this.comments.push({ time, commentType, comment })
+            }
         }
     }
 }
 
 
-class Document {
+/**
+ * @param url {string}
+ * @param textContent {string|undefined}
+ */
+function Document(url, textContent) {
+    return {
+        textContent,
 
-    constructor(url) {
-        this.url = url
-        this.textContent = null
+        isNotTextFile() {
+            return !this.isTextFile()
+        },
+
+        isTextFile() {
+            return url.toString().endsWith('.txt')
+        },
+
+        read() {
+            if (!this.textContent) {
+                this.textContent = Helpers.MpvqcFileReader.read(url)
+            }
+        },
+
+        startsNotWithFileTag() {
+            return !this.startsWithFileTag()
+        },
+
+        startsWithFileTag() {
+            return this.textContent.trim().startsWith('[FILE]')
+        }
     }
-
-    isNotTextFile() {
-        return !this.isTextFile()
-    }
-
-    isTextFile() {
-        return this.url.toString().endsWith('.txt')
-    }
-
-    read() {
-        this.textContent = Helpers.MpvqcFileReader.read(this.url)
-    }
-
-    startsNotWithFileTag() {
-        return !this.startsWithFileTag()
-    }
-
-    startsWithFileTag() {
-        return this.textContent.trim().startsWith('[FILE]')
-    }
-
 }
 
 

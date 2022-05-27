@@ -22,11 +22,12 @@ import QtQuick 2.0
 import QtTest
 import "MpvqcCommandGenerator.js" as TestObject
 
+
 TestCase {
-    name: "MpvqcCommandGenerator"
+    name: "MpvqcCommandGenerator::generateFrom"
 
     function exec(expected, key_, modifiers_) {
-        const tag = expected === null ? ` null ` : ` > ${expected} < `
+        const tag = expected === null ? `null` : `${expected}`
         const key = key_ === null ? 'null' : key_
         const modifiers = modifiers_ === null ? 'null' : modifiers_
         const event = { key, modifiers, text: key_ === null ? '' : key.text }
@@ -34,7 +35,7 @@ TestCase {
         return { expected, actual, tag }
     }
 
-    function test_generate_command_data() {
+    function test_generateCommand_data() {
         return [
             // Special keys
             exec('PGUP', Qt.Key_PageUp),
@@ -71,27 +72,27 @@ TestCase {
         ]
     }
 
-    function test_generate_command(data) {
+    function test_generateCommand(data) {
         // data comes from test_generate_command_data
         compare(data.actual, data.expected)
     }
 
-    function benchmark_generate_commandSpecialCommand() {
+    function benchmark_generateCommandSpecialCommand() {
         const event = { key: 'PGUP', modifiers: null, text: 'PGUP' }
         const actual = TestObject.generateFrom(event)
     }
 
-    function benchmark_generate_commandSpecialCommandWithModifier() {
+    function benchmark_generateCommandSpecialCommandWithModifier() {
         const event = { key: 'PGUP', modifiers: Qt.AltModifier | Qt.ControlModifier , text: 'PGUP' }
         const actual = TestObject.generateFrom(event)
     }
 
-    function benchmark_generate_commandInvalidKeys() {
+    function benchmark_generateCommandInvalidKeys() {
         const event = { key: null, modifiers: Qt.AltModifier | Qt.ControlModifier , text: null }
         const actual = TestObject.generateFrom(event)
     }
 
-    function benchmark_generate_commandNormalSequences() {
+    function benchmark_generateCommandNormalSequences() {
         const event = { key: Qt.Key_U, modifiers: Qt.AltModifier | Qt.ControlModifier , text: 'u' }
         const actual = TestObject.generateFrom(event)
     }

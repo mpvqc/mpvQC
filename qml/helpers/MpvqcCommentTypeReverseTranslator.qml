@@ -21,20 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 pragma Singleton
 import QtQuick
 import models
-import settings
 
 
 QtObject {
-
-    Component.onCompleted: {
-        updateMapping()
-        MpvqcSettings.onLanguageChanged.connect(updateMapping)
-    }
-
+    readonly property string language: Qt.uiLanguage
     readonly property var commentTypeModel: MpvqcCommentTypes {}
-    property var translations
+    property var translations: ({})
 
-    function updateMapping() {
+    onLanguageChanged: {
         const mapping = new Map()
         for (let i = 0, count = commentTypeModel.count; i < count; i++) {
             const commentType = commentTypeModel.get(i)

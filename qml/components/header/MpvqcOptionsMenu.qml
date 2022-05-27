@@ -39,7 +39,7 @@ MpvqcAutoWidthMenu {
                 text: qsTranslate("Languages", model.language)
                 autoExclusive: true
                 checkable: true
-                checked: model.abbrev === MpvqcSettings.language
+                checked: model.abbrev === Qt.uiLanguage
 
                 onTriggered: {
                     MpvqcTimer.scheduleOnceAfter(125, loadLanguage)

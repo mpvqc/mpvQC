@@ -22,8 +22,9 @@ import QtQuick 2.0
 import QtTest
 import "MpvqcTimeFormatUtils.js" as TestObject
 
+
 TestCase {
-    name: "formatTimeToString"
+    name: "MpvqcTimeFormatUtils::formatTimeToString"
 
     function test_formatTimeToString_data() {
         return [
@@ -58,6 +59,5 @@ TestCase {
     function benchmark_extractSecondsFrom() {
         TestObject.extractSecondsFrom('02:46:40')
     }
-
     
 }

@@ -127,7 +127,7 @@ test-python: \
 test-qml: \
 	check-qml-setup
 
-	@${TOOL_CLI_QML_TESTRUNNER} \
+	@QML_XHR_ALLOW_FILE_READ=1 ${TOOL_CLI_QML_TESTRUNNER} \
 		-input ${DIRECTORY_QML_TESTS} -import ${DIRECTORY_QML_TESTS}
 
 

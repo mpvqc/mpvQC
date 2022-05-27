@@ -26,7 +26,7 @@ import "MpvqcDocumentExporter.js" as TestObject
 Item {
 
     TestCase {
-        name: "generateDocumentFrom"
+        name: "MpvqcDocumentExporter::generateDocumentFrom"
 
         function test_documentStartsWithHeader() {
             const settings = provideTruthySettings()
@@ -173,107 +173,106 @@ Item {
     }
 
     TestCase {
-        name: "DocumentBuilder"
+        name: "DocumentBuilder::build"
 
-        function test_buildEmptyDocument(data) {
-            const builder = new TestObject.DocumentBuilder()
-            compare(builder.build(), '')
+        function test_build_data() {
+            return [
+                {
+                    expected: '',
+                    actual: new TestObject.DocumentBuilder(),
+                    tag: ' '
+                },
+                {
+                    expected: '[FILE]',
+                    actual: new TestObject.DocumentBuilder().addFileTag(),
+                    tag: '[FILE]'
+                },
+                {
+                    expected: 'date      : mpvqcDate',
+                    actual: new TestObject.DocumentBuilder().addDate('mpvqcDate'),
+                    tag: 'date'
+                },
+                {
+                    expected: 'generator : mpvqcGenerator',
+                    actual: new TestObject.DocumentBuilder().addGenerator('mpvqcGenerator'),
+                    tag: 'generator'
+                },
+                {
+                    expected: 'nick      : mpvqcNickname',
+                    actual: new TestObject.DocumentBuilder().addNickname('mpvqcNickname'),
+                    tag: 'nick'
+                },
+                {
+                    expected: 'path      : mpvqcFilePath',
+                    actual: new TestObject.DocumentBuilder().addFilePath('mpvqcFilePath'),
+                    tag: 'path'
+                },
+                {
+                    expected: '\n',
+                    actual: new TestObject.DocumentBuilder().addBlankLine().addBlankLine(),
+                    tag: '\\n'
+                },
+                {
+                    expected: '[DATA]',
+                    actual: new TestObject.DocumentBuilder().addDataTag(),
+                    tag: '[DATA]'
+                },
+                {
+                    expected: '[00:01:08] [CommentType] Comment 1\n[00:01:10] [CommentType] Comment 2',
+                    actual: new TestObject.DocumentBuilder().addComments([
+                            { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
+                            { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
+                        ]),
+                    tag: 'comments'
+                },
+                {
+                    expected: '# total lines: 0',
+                    actual: new TestObject.DocumentBuilder().addCommentSummary(),
+                    tag: '# total lines: 0'
+                },
+                {
+                    expected: '[00:01:08] [CommentType] Comment 1\n# total lines: 1',
+                    actual: new TestObject.DocumentBuilder().addComments([
+                            { time: '68', commentType: 'CommentType', comment: 'Comment 1' }
+                        ]).addCommentSummary(),
+                    tag: '# total lines: 1'
+                },
+                {
+                    expected: '[00:01:08] [CommentType] Comment 1\n[00:01:10] [CommentType] Comment 2\n# total lines: 2',
+                    actual: new TestObject.DocumentBuilder().addComments([
+                            { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
+                            { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
+                        ]).addCommentSummary(),
+                    tag: '# total lines: 2'
+                },
+                {
+                    expected: _complete(),
+                    actual: new TestObject.DocumentBuilder()
+                        .addFileTag()
+                        .addDate('mpvqcDate')
+                        .addGenerator('mpvqcGenerator')
+                        .addNickname('mpvqcNickname')
+                        .addFilePath('mpvqcFilePath')
+                        .addBlankLine()
+                        .addDataTag()
+                        .addComments([
+                            { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
+                            { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
+                        ])
+                        .addCommentSummary()
+                        .addBlankLine(),
+                    tag: 'complete'
+                },
+
+            ]
         }
 
-        function test_buildAddFileTag() {
-            const builder = new TestObject.DocumentBuilder().addFileTag()
-            compare(builder.build(), '[FILE]')
+        function test_build(data) {
+            compare(data.actual.build(), data.expected)
         }
 
-        function test_buildAddDate() {
-            const builder = new TestObject.DocumentBuilder().addDate('mpvqcDate')
-            compare(builder.build(), 'date      : mpvqcDate')
-        }
-
-        function test_buildAddGenerator() {
-            const builder = new TestObject.DocumentBuilder().addGenerator('mpvqcGenerator')
-            compare(builder.build(), 'generator : mpvqcGenerator')
-        }
-
-
-        function test_buildAddNickname() {
-            const builder = new TestObject.DocumentBuilder().addNickname('mpvqcNickname')
-            compare(builder.build(), 'nick      : mpvqcNickname')
-        }
-
-
-        function test_buildAddFilePath() {
-            const builder = new TestObject.DocumentBuilder().addFilePath('mpvqcFilePath')
-            compare(builder.build(), 'path      : mpvqcFilePath')
-        }
-
-
-        function test_buildAddBlankLines() {
-            const builder = new TestObject.DocumentBuilder().addBlankLine().addBlankLine()
-            compare(builder.build(), '\n')
-        }
-
-        function test_buildAddDataTag() {
-            const builder = new TestObject.DocumentBuilder().addDataTag()
-            compare(builder.build(), '[DATA]')
-        }
-
-
-        function test_buildAddComments() {
-            const builder = new TestObject.DocumentBuilder()
-                .addComments([
-                    { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
-                    { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
-                ])
-            compare(builder.build(), '[00:01:08] [CommentType] Comment 1\n[00:01:10] [CommentType] Comment 2')
-        }
-
-
-        function test_buildAddCommentSummary0() {
-            const builder = new TestObject.DocumentBuilder().addCommentSummary()
-            compare(builder.build(), '# total lines: 0')
-        }
-
-        function test_buildAddCommentSummary1() {
-            const builder = new TestObject.DocumentBuilder()
-                .addComments([{ time: '68', commentType: 'CommentType', comment: 'Comment 1' }])
-                .addCommentSummary()
-            compare(builder.build(), '[00:01:08] [CommentType] Comment 1\n# total lines: 1')
-        }
-
-        function test_buildAddCommentSummary2() {
-            const builder = new TestObject.DocumentBuilder()
-                .addComments([
-                    { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
-                    { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
-                ])
-                .addCommentSummary()
-
-            compare(
-                builder.build(),
-                '[00:01:08] [CommentType] Comment 1\n[00:01:10] [CommentType] Comment 2\n# total lines: 2'
-            )
-        }
-
-        function test_buildCompleteDocument() {
-            const builder = new TestObject.DocumentBuilder()
-                .addFileTag()
-                .addDate('mpvqcDate')
-                .addGenerator('mpvqcGenerator')
-                .addNickname('mpvqcNickname')
-                .addFilePath('mpvqcFilePath')
-                .addBlankLine()
-                .addDataTag()
-                .addComments([
-                    { time: '68', commentType: 'CommentType', comment: 'Comment 1' },
-                    { time: 70, commentType: 'CommentType', comment: 'Comment 2' },
-                ])
-                .addCommentSummary()
-                .addBlankLine()
-
-        compare(
-            builder.build(),
-'[FILE]
+        function _complete() {
+         return '[FILE]
 date      : mpvqcDate
 generator : mpvqcGenerator
 nick      : mpvqcNickname
@@ -283,7 +282,7 @@ path      : mpvqcFilePath
 [00:01:08] [CommentType] Comment 1
 [00:01:10] [CommentType] Comment 2
 # total lines: 2
-')
+'
         }
     }
 

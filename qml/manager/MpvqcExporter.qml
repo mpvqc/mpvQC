@@ -54,7 +54,7 @@ Item {
 
     function _generateData() {
         return {
-            date: new Date().toLocaleString(Qt.locale(MpvqcSettings.language)),
+            date: new Date().toLocaleString(Qt.locale(Qt.uiLanguage)),
             generator: `${Qt.application.name} ${Qt.application.version}`,
             nickname: MpvqcSettings.nickname,
             videoPath: currentVideo != '' ? FileIoPyObject.abs_path_of(currentVideo) : '',
