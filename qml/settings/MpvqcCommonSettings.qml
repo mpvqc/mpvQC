@@ -27,7 +27,7 @@ import "MpvqcDefaultLanguage.js" as MpvqcLanguage
 Item {
     id: current
     required property var settingsFile
-    property string language: settings.language
+    property alias language: settings.language
     property var commentTypes: MpvqcCommentTypes {}
 
     Settings {
@@ -37,12 +37,7 @@ Item {
         property string language: MpvqcLanguage.getDefault(current)
     }
 
-    function store() {
-        settings.language = current.language
-        _storeCommentTypesInSettings()
-    }
-
-    function _storeCommentTypesInSettings() {
+    function save() {
         const model = current.commentTypes
         const marshalled = []
         for (let i = 0, count = model.count; i < count; i++) {
@@ -52,10 +47,6 @@ Item {
     }
 
     function restore() {
-        _loadCommentTypesFromSettings()
-    }
-
-    function _loadCommentTypesFromSettings() {
         const fromSettings = settings.value("commentTypes")
         if (fromSettings) {
             _replaceDefaultCommentTypesWithThose(JSON.parse(fromSettings))

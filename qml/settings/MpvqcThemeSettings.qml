@@ -26,8 +26,8 @@ import Qt.labs.settings
 Item {
     id: current
     required property var settingsFile
-    property int theme: settings.theme
-    property int accent: settings.accent
+    property alias theme: settings.theme
+    property alias accent: settings.accent
 
     Settings {
         id: settings
@@ -35,11 +35,6 @@ Item {
         category: "Theme"
         property int theme: Material.Dark
         property int accent: Material.Orange
-    }
-
-    function store() {
-        settings.theme = current.theme
-        settings.accent = current.accent
     }
 
 }

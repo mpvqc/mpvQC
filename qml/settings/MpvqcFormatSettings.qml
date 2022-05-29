@@ -25,9 +25,9 @@ import Qt.labs.settings
 Item {
     id: current
     required property var settingsFile
-    property bool statusbarPercentage: settings.statusbarPercentage
-    property var timeFormat: settings.timeFormat
-    property var titleFormat: settings.titleFormat
+    property alias statusbarPercentage: settings.statusbarPercentage
+    property alias timeFormat: settings.timeFormat
+    property alias titleFormat: settings.titleFormat
 
     Settings {
         id: settings
@@ -36,12 +36,6 @@ Item {
         property bool statusbarPercentage: true
         property var timeFormat: MpvqcTimeFormat.currentTotalTime
         property var titleFormat: MpvqcTitleFormat.fileName
-    }
-
-    function store() {
-        settings.statusbarPercentage = current.statusbarPercentage
-        settings.timeFormat = current.timeFormat
-        settings.titleFormat = current.titleFormat
     }
 
 }

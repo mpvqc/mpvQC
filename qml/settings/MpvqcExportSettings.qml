@@ -25,11 +25,11 @@ import Qt.labs.settings
 Item {
     id: current
     required property var settingsFile
-    property string nickname: settings.nickname
-    property bool writeHeaderDate: settings.writeHeaderDate
-    property bool writeHeaderGenerator: settings.writeHeaderGenerator
-    property bool writeHeaderNickname: settings.writeHeaderNickname
-    property bool writeHeaderVideoPath: settings.writeHeaderVideoPath
+    property alias nickname: settings.nickname
+    property alias writeHeaderDate: settings.writeHeaderDate
+    property alias writeHeaderGenerator: settings.writeHeaderGenerator
+    property alias writeHeaderNickname: settings.writeHeaderNickname
+    property alias writeHeaderVideoPath: settings.writeHeaderVideoPath
 
     Settings {
         id: settings
@@ -40,14 +40,6 @@ Item {
         property bool writeHeaderGenerator: true
         property bool writeHeaderNickname: false
         property bool writeHeaderVideoPath: true
-    }
-
-    function store() {
-        settings.nickname = current.nickname
-        settings.writeHeaderDate = current.writeHeaderDate
-        settings.writeHeaderGenerator = current.writeHeaderGenerator
-        settings.writeHeaderNickname = current.writeHeaderNickname
-        settings.writeHeaderVideoPath = current.writeHeaderVideoPath
     }
 
 }

@@ -25,8 +25,8 @@ import Qt.labs.settings
 Item {
     id: current
     required property var settingsFile
-    property bool enabled: settings.enabled
-    property int interval: settings.interval
+    property alias enabled: settings.enabled
+    property alias interval: settings.interval
 
     Settings {
         id: settings
@@ -34,11 +34,6 @@ Item {
         category: "Backup"
         property bool enabled: true
         property int interval: 90
-    }
-
-    function store() {
-        settings.enabled = current.enabled
-        settings.interval = current.interval
     }
 
 }

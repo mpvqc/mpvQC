@@ -26,10 +26,10 @@ import Qt.labs.settings
 Item {
     id: current
     required property var settingsFile
-    property var lastDirectoryVideo: settings.lastDirectoryVideo
-    property var lastDirectoryDocuments: settings.lastDirectoryDocuments
-    property var lastDirectorySubtitles: settings.lastDirectorySubtitles
-    property bool loadVideoFromDocumentAutomatically: settings.loadVideoFromDocumentAutomatically
+    property alias lastDirectoryVideo: settings.lastDirectoryVideo
+    property alias lastDirectoryDocuments: settings.lastDirectoryDocuments
+    property alias lastDirectorySubtitles: settings.lastDirectorySubtitles
+    property alias loadVideoFromDocumentAutomatically: settings.loadVideoFromDocumentAutomatically
 
     Settings {
         id: settings
@@ -39,13 +39,6 @@ Item {
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
         property var lastDirectorySubtitles: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
         property bool loadVideoFromDocumentAutomatically: false
-    }
-
-    function store() {
-        settings.lastDirectoryVideo = current.lastDirectoryVideo
-        settings.lastDirectoryDocuments = current.lastDirectoryDocuments
-        settings.lastDirectorySubtitles = current.lastDirectorySubtitles
-        settings.loadVideoFromDocumentAutomatically = current.loadVideoFromDocumentAutomatically
     }
 
 }

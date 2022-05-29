@@ -88,12 +88,7 @@ Item {
     }
 
     Component.onDestruction: {
-        backupSettings.store()
-        commonSettings.store()
-        exportSettings.store()
-        formatSettings.store()
-        importSettings.store()
-        themeSettings.store()
+        commonSettings.save()
     }
 
 }
