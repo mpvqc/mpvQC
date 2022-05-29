@@ -32,7 +32,7 @@ Dialog {
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
         width: parent.width
 
         TabBar {
@@ -40,21 +40,24 @@ Dialog {
             contentWidth: parent.width
 
             TabButton {
-                text: qsTranslate("AboutDialog", "About")
-            }
-
-            TabButton {
-                text: qsTranslate("AboutDialog", "Credits")
+                text: qsTranslate("ExportSettings", "Export Settings")
             }
         }
 
         StackLayout {
             currentIndex: bar.currentIndex
             Layout.leftMargin: 10
+            Layout.topMargin: 20
             Layout.rightMargin: 10
 
-            MpvqcAboutView {}
-            MpvqcCreditsView {}
+            MpvqcExportSettingsView {
+                id: settings
+            }
         }
     }
+
+    onAccepted: {
+         settings.save()
+    }
+
 }

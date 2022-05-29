@@ -26,8 +26,6 @@ Item {
     id: current
     required property var settingsFile
     property string nickname: settings.nickname
-    property bool appendNickname: settings.appendNickname
-    property bool writeHeader: settings.writeHeader
     property bool writeHeaderDate: settings.writeHeaderDate
     property bool writeHeaderGenerator: settings.writeHeaderGenerator
     property bool writeHeaderNickname: settings.writeHeaderNickname
@@ -38,8 +36,6 @@ Item {
         fileName: current.settingsFile
         category: "Export"
         property string nickname: MpvqcDefaultNickname.defaultNickname
-        property bool appendNickname: true
-        property bool writeHeader: true
         property bool writeHeaderDate: true
         property bool writeHeaderGenerator: true
         property bool writeHeaderNickname: false
@@ -48,8 +44,6 @@ Item {
 
     function store() {
         settings.nickname = current.nickname
-        settings.appendNickname = current.appendNickname
-        settings.writeHeader = current.writeHeader
         settings.writeHeaderDate = current.writeHeaderDate
         settings.writeHeaderGenerator = current.writeHeaderGenerator
         settings.writeHeaderNickname = current.writeHeaderNickname

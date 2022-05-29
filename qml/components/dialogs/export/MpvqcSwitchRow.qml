@@ -18,23 +18,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-const asynchronous = false
+import QtQuick.Controls
+import QtQuick.Layouts
 
 
-/**
- * @param qmlFileUrl {string} actually Qml url
- * @return {string}
- */
-function read(qmlFileUrl) {
-    let content = ''
-    const request = new XMLHttpRequest()
-    request.open("GET", qmlFileUrl, asynchronous)
-    request.onreadystatechange = () => {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            content = request.responseText
-        }
+RowLayout {
+    required property string labelText
+    required property var parentWidth
+    required property bool switchChecked
+
+    signal saveTriggered(bool switchChecked)
+
+    MpvqcFormLabel {
+        text: labelText
+        Layout.preferredWidth: parentWidth / 2
     }
-    request.onerror = () => console.log(`Error reading from url: ${qmlFileUrl}`)
-    request.send()
-    return content
+
+    Switch {
+        id: control
+        checked: switchChecked
+    }
+
+    function save() { saveTriggered(control.checked) }
+
 }

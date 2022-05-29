@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import helpers
 import models
 
 
@@ -36,9 +37,9 @@ ScrollView {
 
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Development"
+            text: qsTranslate("AboutDialog", "Development")
             font.bold: true
-            font.pixelSize: Qt.application.font.pixelSize * 1.10
+            font.pixelSize: MpvqcConstants.fontSizeSmall
         }
 
         Repeater {
@@ -55,9 +56,9 @@ ScrollView {
 
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Artwork"
+            text: qsTranslate("AboutDialog", "Artwork")
             font.bold: true
-            font.pixelSize: Qt.application.font.pixelSize * 1.10
+            font.pixelSize: MpvqcConstants.fontSizeSmall
         }
 
         Repeater {
@@ -74,9 +75,9 @@ ScrollView {
 
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Translation"
+            text: qsTranslate("AboutDialog", "Translation")
             font.bold: true
-            font.pixelSize: Qt.application.font.pixelSize * 1.10
+            font.pixelSize: MpvqcConstants.fontSizeSmall
         }
 
         Repeater {
@@ -86,7 +87,7 @@ ScrollView {
             Label {
                 visible: translator
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: translator + " (" + qsTranslate("LanguageSelection", language) + ")"
+                text: translator + " (" + qsTranslate("Languages", language) + ")"
             }
         }
 
@@ -94,9 +95,9 @@ ScrollView {
 
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Dependencies"
+            text: qsTranslate("AboutDialog", "Dependencies")
             font.bold: true
-            font.pixelSize: Qt.application.font.pixelSize * 1.10
+            font.pixelSize: MpvqcConstants.fontSizeSmall
         }
 
         Repeater {

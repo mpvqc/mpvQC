@@ -92,7 +92,6 @@ class DocumentBuilder {
 
 /**
  * @param settings {{
- *      writeHeader: string,
  *      writeHeaderDate: string,
  *      writeHeaderGenerator: string,
  *      writeHeaderNickname: string,
@@ -110,16 +109,14 @@ class DocumentBuilder {
 function generateDocumentFrom(data, settings) {
     const builder = new DocumentBuilder()
     builder.addFileTag()
-    if (settings.writeHeader) {
-        if (settings.writeHeaderDate)
-            builder.addDate(data.date)
-        if (settings.writeHeaderGenerator)
-            builder.addGenerator(data.generator)
-        if (settings.writeHeaderNickname)
-            builder.addNickname(data.nickname)
-        if (settings.writeHeaderVideoPath)
-            builder.addFilePath(data.videoPath)
-    }
+    if (settings.writeHeaderDate)
+        builder.addDate(data.date)
+    if (settings.writeHeaderGenerator)
+        builder.addGenerator(data.generator)
+    if (settings.writeHeaderNickname)
+        builder.addNickname(data.nickname)
+    if (settings.writeHeaderVideoPath)
+        builder.addFilePath(data.videoPath)
     return builder
         .addBlankLine()
         .addDataTag()

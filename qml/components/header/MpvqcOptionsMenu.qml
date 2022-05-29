@@ -29,6 +29,32 @@ import models
 MpvqcAutoWidthMenu {
     title: qsTranslate("MainWindow", "&Options")
 
+        Action {
+        text: qsTranslate("MainWindow", "&Appearance...")
+
+        onTriggered: {
+            const url = "qrc:/qml/components/dialogs/appearance/MpvqcAppearanceDialog.qml"
+            const component = Qt.createComponent(url)
+            const dialog = component.createObject(appWindow)
+            dialog.open()
+        }
+    }
+
+    MenuSeparator { }
+
+    Action {
+        text: qsTranslate("MainWindow", "&Export Settings...")
+
+        onTriggered: {
+            const url = "qrc:/qml/components/dialogs/export/MpvqcExportSettingsDialog.qml"
+            const component = Qt.createComponent(url)
+            const dialog = component.createObject(appWindow)
+            dialog.open()
+        }
+    }
+
+    MenuSeparator { }
+
     MpvqcAutoWidthMenu {
         title: qsTranslate("MainWindow", "&Language")
 
@@ -50,17 +76,6 @@ MpvqcAutoWidthMenu {
                     MpvqcSettings.language=model.abbrev
                 }
             }
-        }
-    }
-
-    Action {
-        text: qsTranslate("MainWindow", "&Appearance...")
-
-        onTriggered: {
-            const url = "qrc:/qml/components/dialogs/appearance/MpvqcAppearanceDialog.qml"
-            const component = Qt.createComponent(url)
-            const dialog = component.createObject(appWindow)
-            dialog.open()
         }
     }
 

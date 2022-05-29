@@ -18,23 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-const asynchronous = false
+import QtQuick
+import QtQuick.Controls
+import helpers
 
 
-/**
- * @param qmlFileUrl {string} actually Qml url
- * @return {string}
- */
-function read(qmlFileUrl) {
-    let content = ''
-    const request = new XMLHttpRequest()
-    request.open("GET", qmlFileUrl, asynchronous)
-    request.onreadystatechange = () => {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            content = request.responseText
-        }
-    }
-    request.onerror = () => console.log(`Error reading from url: ${qmlFileUrl}`)
-    request.send()
-    return content
+Label {
+    horizontalAlignment: Text.AlignRight
+    wrapMode: Text.Wrap
+    font.pixelSize: MpvqcConstants.fontSizeSmall
 }

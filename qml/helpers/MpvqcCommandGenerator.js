@@ -92,7 +92,7 @@ class KeyPress {
             return null
         if (this._isOnlyModifiers())
             return null
-        return this._generate();
+        return this._generate()
     }
 
     _isInvalidKey() {

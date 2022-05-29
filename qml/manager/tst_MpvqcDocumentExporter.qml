@@ -42,28 +42,6 @@ Item {
             verify(document.includes('\n\n[DATA]'))
         }
 
-        function test_exportHeader() {
-            const settings = provideTruthySettings()
-            const data = provideData()
-            const document = TestObject.generateDocumentFrom(data, settings)
-            verify(document.includes(data.date))
-            verify(document.includes(data.generator))
-            verify(document.includes(data.nickname))
-            verify(document.includes(data.videoPath))
-        }
-
-        function test_exportHeaderNot() {
-            const settings = provideTruthySettings()
-            settings.writeHeader = false
-            const data = provideData()
-            const document = TestObject.generateDocumentFrom(data, settings)
-            verify(!document.includes(data.date))
-            verify(!document.includes(data.generator))
-            verify(!document.includes(data.nickname))
-            verify(!document.includes(data.videoPath))
-
-        }
-
         function test_exportDate() {
             const settings = provideTruthySettings()
             const data = provideData()
@@ -163,7 +141,6 @@ Item {
 
         function provideTruthySettings() {
             return {
-                writeHeader: true,
                 writeHeaderDate: true,
                 writeHeaderGenerator: true,
                 writeHeaderNickname: true,

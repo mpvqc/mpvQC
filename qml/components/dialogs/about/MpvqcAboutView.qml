@@ -72,7 +72,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         property url url: "https://github.com/mpvqc/mpvQC"
 
-        text: "<html><style type=\'text/css\'></style><a href=\'" + url + "\'>" + url + "</a></html>"
+        text: `<html><style type="text/css"></style><a href="${url}">${url}</a></html>`
         onLinkActivated: Qt.openUrlExternally(url)
 
         MouseArea {
@@ -83,10 +83,8 @@ Column {
     }
 
     Label {
-        anchors.horizontalCenter: parent.horizontalCenter
-
         text: "Copyright © mpvQC Developers"
-        font.pixelSize: Qt.application.font.pixelSize * 0.75
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 
     Label {
@@ -98,20 +96,17 @@ Column {
         property url licenceUrl: "https://www.gnu.org/licenses/agpl-3.0.html"
         onLinkActivated: Qt.openUrlExternally(licenceUrl)
 
-        text: "<html><style type=\'text/css\'></style>
-        This program comes with absolutely no warranty.
-        <br>
-        See the
-        <a href=\'" + licenceUrl + "\'>
-            GNU Affero General Public License, version 3 or later
-        </a>
-        for details.
-        </html>"
-        font.pixelSize: Qt.application.font.pixelSize * 0.75
+        text: `
+        <html>
+            <style type="text/css"></style>
+            This program comes with absolutely no warranty.<br>
+            See the <a href="${licenceUrl}"> GNU Affero General Public License, version 3 or later</a> for details.
+        </html>
+        `
 
         MouseArea {
             anchors.fill: parent
-            acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
+            acceptedButtons: Qt.NoButton
             cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
         }
     }
@@ -120,31 +115,35 @@ Column {
 
     RowLayout {
         width: parent.width
+        spacing: 24
 
         Label {
-            Layout.preferredWidth: parent.width / 2
+            text: qsTranslate("AboutDialog", "mpv version")
             horizontalAlignment: Text.AlignRight
-            text: "mpv version:"
+            Layout.preferredWidth: parent.width / 2
         }
 
         Label {
             Layout.fillWidth: true
             text: MpvqcPlayerProperties.mpv_version
+            horizontalAlignment: Text.AlignLeft
         }
     }
 
     RowLayout {
         width: parent.width
+        spacing: 24
 
         Label {
-            Layout.preferredWidth: parent.width / 2
+            text: qsTranslate("AboutDialog", "mpv version")
             horizontalAlignment: Text.AlignRight
-            text: "ffmpeg version:"
+            Layout.preferredWidth: parent.width / 2
         }
 
         Label {
             Layout.fillWidth: true
             text: MpvqcPlayerProperties.ffmpeg_version
+            horizontalAlignment: Text.AlignLeft
         }
     }
 

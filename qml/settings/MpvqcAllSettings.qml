@@ -54,8 +54,6 @@ Item {
     }
     property alias exportSettings: exportSettings
     property alias nickname: exportSettings.nickname
-    property alias appendNickname: exportSettings.appendNickname
-    property alias writeHeader: exportSettings.writeHeader
     property alias writeHeaderDate: exportSettings.writeHeaderDate
     property alias writeHeaderGenerator: exportSettings.writeHeaderGenerator
     property alias writeHeaderNickname: exportSettings.writeHeaderNickname

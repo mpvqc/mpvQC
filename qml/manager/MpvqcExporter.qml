@@ -78,7 +78,7 @@ Item {
         const videoName = currentVideo != ''
             ? FileIoPyObject.stem_of(currentVideo)
             : qsTranslate("FileInteractionDialogs", "untitled")
-        const fileProposal = MpvqcSettings.appendNickname
+        const fileProposal = MpvqcSettings.nickname
             ? `[QC]_${videoName}_${MpvqcSettings.nickname}.txt`
             : `[QC]_${videoName}.txt`
         return `${directory}/${fileProposal}`
@@ -105,7 +105,6 @@ Item {
     function _generateBackupFileContent() {
         const data = _generateData()
         const settings = {
-            writeHeader: true,
             writeHeaderDate: true,
             writeHeaderGenerator: true,
             writeHeaderNickname: true,

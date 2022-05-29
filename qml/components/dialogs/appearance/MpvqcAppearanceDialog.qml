@@ -22,21 +22,19 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import components.shared
+import helpers
 import models
 import pyobjects
 
 
 Dialog {
-
-    width: 420
-    height: 540
-
+    width: MpvqcConstants.dialogWidth
+    height: MpvqcConstants.dialogHeight
     modal: true
     focus: true
     anchors.centerIn: parent
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
-
 
     contentItem: ColumnLayout {
 
@@ -50,21 +48,17 @@ Dialog {
         }
 
         StackLayout {
-
             currentIndex: bar.currentIndex
             Layout.leftMargin: 10
-            Layout.topMargin: 20
             Layout.rightMargin: 10
 
             ScrollView {
 
                 ColumnLayout {
-
                     width: parent.width
 
                     MpvqcDemiBoldLabel {
-                        text: "Theme"
-
+                        text: qsTranslate("AppearanceDialog", "Theme")
                         Layout.topMargin: 8
                         Layout.bottomMargin: 8
                         Layout.fillWidth: true
@@ -75,21 +69,16 @@ Dialog {
                     }
 
                     MpvqcDemiBoldLabel {
-                        text: "Color"
-
+                        text: qsTranslate("AppearanceDialog", "Color")
                         Layout.topMargin: 8
                         Layout.bottomMargin: 8
                         Layout.fillWidth: true
                     }
 
                     MpvqcAccentColorView {}
-
                 }
-
             }
-
         }
-
     }
 
 }

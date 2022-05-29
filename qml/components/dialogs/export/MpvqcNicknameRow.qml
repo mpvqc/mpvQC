@@ -18,23 +18,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-const asynchronous = false
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import helpers
+import settings
 
 
-/**
- * @param qmlFileUrl {string} actually Qml url
- * @return {string}
- */
-function read(qmlFileUrl) {
-    let content = ''
-    const request = new XMLHttpRequest()
-    request.open("GET", qmlFileUrl, asynchronous)
-    request.onreadystatechange = () => {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            content = request.responseText
-        }
+RowLayout {
+    required property var parentWidth
+
+    MpvqcFormLabel {
+        text: qsTranslate("ExportSettings", "Nickname")
+        Layout.preferredWidth: parentWidth / 2
     }
-    request.onerror = () => console.log(`Error reading from url: ${qmlFileUrl}`)
-    request.send()
-    return content
+
+    TextField {
+        id: input
+        text: MpvqcSettings.nickname
+        focus: true
+        selectByMouse: true
+        bottomPadding: topPadding
+        horizontalAlignment: Text.AlignLeft
+        font.bold: true
+        font.pixelSize: MpvqcConstants.fontSizeSmall
+        Layout.fillWidth: true
+    }
+
+    function save() {
+        MpvqcSettings.nickname = input.text
+    }
+
 }

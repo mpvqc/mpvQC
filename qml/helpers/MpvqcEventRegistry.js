@@ -25,7 +25,7 @@ class MpvqcEventRegistry {
     }
 
     subscribe(eventKey, callableFunction) {
-        const listeners = this.listeners.get(eventKey);
+        const listeners = this.listeners.get(eventKey)
         if (listeners) {
             listeners.push(callableFunction)
         } else {

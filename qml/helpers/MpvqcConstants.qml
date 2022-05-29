@@ -18,23 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-const asynchronous = false
+pragma Singleton
+import QtQuick
 
 
-/**
- * @param qmlFileUrl {string} actually Qml url
- * @return {string}
- */
-function read(qmlFileUrl) {
-    let content = ''
-    const request = new XMLHttpRequest()
-    request.open("GET", qmlFileUrl, asynchronous)
-    request.onreadystatechange = () => {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            content = request.responseText
-        }
-    }
-    request.onerror = () => console.log(`Error reading from url: ${qmlFileUrl}`)
-    request.send()
-    return content
+QtObject {
+
+    property int dialogHeight: 540
+    property int dialogWidth: 420
+
+    property real fontSizeSmall: Qt.application.font.pixelSize * 1.15
+
 }

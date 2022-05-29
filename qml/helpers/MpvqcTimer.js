@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 function Timer() {
-    return Qt.createQmlObject("import QtQuick; Timer {}", appWindow);
+    return Qt.createQmlObject("import QtQuick; Timer {}", appWindow)
 }
 
 
@@ -38,10 +38,10 @@ function scheduleOnce(action) {
  * @param action {function}
  */
 function scheduleOnceAfter(delay, action) {
-    const timer = new Timer();
-    timer.interval = delay;
-    timer.repeat = false;
-    timer.triggered.connect(action);
-    timer.triggered.connect(timer.destroy);
-    timer.start();
+    const timer = new Timer()
+    timer.interval = delay
+    timer.repeat = false
+    timer.triggered.connect(action)
+    timer.triggered.connect(timer.destroy)
+    timer.start()
 }
