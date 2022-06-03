@@ -18,13 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import components.shared
 import helpers
-import models
-import pyobjects
 
 
 Dialog {
@@ -36,49 +32,32 @@ Dialog {
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
+        width: parent.width
 
         TabBar {
             id: bar
             contentWidth: parent.width
 
             TabButton {
-                text: qsTranslate("AppearanceDialog", "Appearance")
+                text: qsTranslate("BackupSettings", "Backup Settings")
             }
         }
 
         StackLayout {
             currentIndex: bar.currentIndex
             Layout.leftMargin: 10
+            Layout.topMargin: 20
             Layout.rightMargin: 10
 
-            ScrollView {
-
-                ColumnLayout {
-                    width: parent.width
-
-                    MpvqcDemiBoldLabel {
-                        text: qsTranslate("AppearanceDialog", "Theme")
-                        Layout.topMargin: 16
-                        Layout.bottomMargin: 8
-                        Layout.fillWidth: true
-                    }
-
-                    MpvqcThemeView {
-                        Layout.fillWidth: true
-                    }
-
-                    MpvqcDemiBoldLabel {
-                        text: qsTranslate("AppearanceDialog", "Color")
-                        Layout.topMargin: 16
-                        Layout.bottomMargin: 8
-                        Layout.fillWidth: true
-                    }
-
-                    MpvqcAccentColorView {}
-                }
+            MpvqcBackupSettingsView {
+                id: settings
             }
         }
+    }
+
+    onAccepted: {
+         settings.save()
     }
 
 }

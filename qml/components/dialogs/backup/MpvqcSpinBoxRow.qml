@@ -22,31 +22,36 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import helpers
-import settings
 
 
 RowLayout {
-    required property var parentWidth
+    spacing: 16
+    property real parentWidth: parent.width
+    property alias label: label.text
+    property alias value: input.value
 
-    MpvqcFormLabel {
-        text: qsTranslate("ExportSettings", "Nickname")
+    Label {
+        id: label
+        horizontalAlignment: Text.AlignRight
+        wrapMode: Text.Wrap
         Layout.preferredWidth: parentWidth / 2
     }
 
-    TextField {
-        id: input
-        text: MpvqcSettings.nickname
-        focus: true
-        selectByMouse: true
-        bottomPadding: topPadding
-        horizontalAlignment: Text.AlignLeft
-        font.bold: true
-        font.pixelSize: MpvqcConstants.fontSizeSmall
+    ColumnLayout {
         Layout.fillWidth: true
-    }
 
-    function save() {
-        MpvqcSettings.nickname = input.text
-    }
+        SpinBox {
+            id: input
+            editable: true
+            from: 15
+            to: 5 * 60
+            Layout.fillWidth: true
+        }
 
+        Label {
+            text: qsTranslate("BackupSettings", "Seconds")
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
+        }
+    }
 }

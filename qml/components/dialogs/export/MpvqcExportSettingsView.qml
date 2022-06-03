@@ -22,18 +22,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import components.shared
-import helpers
 import settings
 
 
-ColumnLayout{
-    id: column
+ColumnLayout {
     spacing: 2
 
-    MpvqcNicknameRow {
+    MpvqcTextFieldRow {
         id: nickname
-        spacing: 16
-        parentWidth: column.width
+        label: qsTranslate("ExportSettings", "Nickname")
+        input: MpvqcSettings.nickname
     }
 
     MpvqcDemiBoldLabel {
@@ -45,53 +43,34 @@ ColumnLayout{
 
     MpvqcSwitchRow {
         id: dateHeader
-        labelText: qsTranslate("ExportSettings", "Write Date")
-        parentWidth: column.width
-        switchChecked: MpvqcSettings.writeHeaderDate
-
-        onSaveTriggered: (checked) => {
-            MpvqcSettings.writeHeaderDate = checked
-        }
+        label: qsTranslate("ExportSettings", "Write Date")
+        state: MpvqcSettings.writeHeaderDate
     }
 
     MpvqcSwitchRow {
         id: generatorHeader
-        labelText: qsTranslate("ExportSettings", "Write '%1'").arg(Qt.application.name)
-        parentWidth: column.width
-        switchChecked: MpvqcSettings.writeHeaderGenerator
-
-        onSaveTriggered: (checked) => {
-            MpvqcSettings.writeHeaderGenerator = checked
-        }
+        label: qsTranslate("ExportSettings", "Write '%1'").arg(Qt.application.name)
+        state: MpvqcSettings.writeHeaderGenerator
     }
 
     MpvqcSwitchRow {
         id: nicknameHeader
-        labelText: qsTranslate("ExportSettings", "Write Nickname")
-        parentWidth: column.width
-        switchChecked: MpvqcSettings.writeHeaderNickname
-
-        onSaveTriggered: (checked) => {
-            MpvqcSettings.writeHeaderNickname = checked
-        }
+        label: qsTranslate("ExportSettings", "Write Nickname")
+        state: MpvqcSettings.writeHeaderNickname
     }
 
     MpvqcSwitchRow {
         id: pathHeader
-        labelText: qsTranslate("ExportSettings", "Write Video Path")
-        parentWidth: column.width
-        switchChecked: MpvqcSettings.writeHeaderVideoPath
-
-        onSaveTriggered: (checked) => {
-            MpvqcSettings.writeHeaderVideoPath = checked
-        }
+        label: qsTranslate("ExportSettings", "Write Video Path")
+        state: MpvqcSettings.writeHeaderVideoPath
     }
 
     function save() {
-        const settings = [nickname, dateHeader, generatorHeader, nicknameHeader, pathHeader]
-        for (const setting of settings) {
-            setting.save()
-        }
+        MpvqcSettings.nickname = nickname.input
+        MpvqcSettings.writeHeaderDate = dateHeader.state
+        MpvqcSettings.writeHeaderGenerator = generatorHeader.state
+        MpvqcSettings.writeHeaderNickname = nicknameHeader.state
+        MpvqcSettings.writeHeaderVideoPath = pathHeader.state
     }
 
 }

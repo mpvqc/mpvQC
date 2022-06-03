@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import components.shared
 import helpers
 import models
 
@@ -35,11 +36,9 @@ ScrollView {
         width: parent.width
         topPadding: 15
 
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
+        MpvqcDemiBoldLabel {
             text: qsTranslate("AboutDialog", "Development")
-            font.bold: true
-            font.pixelSize: MpvqcConstants.fontSizeSmall
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Repeater {
@@ -47,18 +46,16 @@ ScrollView {
             width: parent.width
 
             Label {
-                anchors.horizontalCenter: parent.horizontalCenter
                 text: name
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
 
         Rectangle { color: "transparent"; height: 15; width: 10 }
 
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
+        MpvqcDemiBoldLabel {
             text: qsTranslate("AboutDialog", "Artwork")
-            font.bold: true
-            font.pixelSize: MpvqcConstants.fontSizeSmall
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Repeater {
@@ -73,11 +70,9 @@ ScrollView {
 
         Rectangle { color: "transparent"; height: 15; width: 10 }
 
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
+        MpvqcDemiBoldLabel {
             text: qsTranslate("AboutDialog", "Translation")
-            font.bold: true
-            font.pixelSize: MpvqcConstants.fontSizeSmall
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Repeater {
@@ -93,11 +88,9 @@ ScrollView {
 
         Rectangle { color: "transparent"; height: 15; width: 10 }
 
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
+        MpvqcDemiBoldLabel {
             text: qsTranslate("AboutDialog", "Dependencies")
-            font.bold: true
-            font.pixelSize: MpvqcConstants.fontSizeSmall
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Repeater {

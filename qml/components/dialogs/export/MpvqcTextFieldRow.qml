@@ -20,11 +20,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import helpers
 
 
-Label {
-    horizontalAlignment: Text.AlignRight
-    wrapMode: Text.Wrap
-    font.pixelSize: MpvqcConstants.fontSizeSmall
+RowLayout {
+    spacing: 16
+    property real parentWidth: parent.width
+    property alias label: label.text
+    property alias input: input.text
+
+    Label {
+        id: label
+        horizontalAlignment: Text.AlignRight
+        wrapMode: Text.Wrap
+        Layout.preferredWidth: parentWidth / 2
+    }
+
+    TextField {
+        id: input
+        focus: true
+        selectByMouse: true
+        bottomPadding: topPadding
+        horizontalAlignment: Text.AlignLeft
+        font.bold: true
+        font.pixelSize: MpvqcConstants.fontSizeSmall
+        Layout.fillWidth: true
+    }
+
 }

@@ -18,27 +18,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
 
 RowLayout {
-    required property string labelText
-    required property var parentWidth
-    required property bool switchChecked
+    property real rowWidth: parent.width
+    property alias label: label.text
+    property alias state: control.checked
 
-    signal saveTriggered(bool switchChecked)
-
-    MpvqcFormLabel {
-        text: labelText
-        Layout.preferredWidth: parentWidth / 2
+    Label {
+        id: label
+        horizontalAlignment: Text.AlignRight
+        wrapMode: Text.Wrap
+        Layout.preferredWidth: rowWidth / 2
     }
 
     Switch {
         id: control
-        checked: switchChecked
     }
-
-    function save() { saveTriggered(control.checked) }
 
 }

@@ -17,7 +17,7 @@
 
 
 import inject
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import QObject, Signal, Property, QUrl
 from PySide6.QtQml import QmlElement, QmlSingleton
 
 from mpvqc.services import FilePathService
@@ -42,6 +42,12 @@ class MpvqcFilePathsPyObject(QObject):
 
     mpv_conf_changed = Signal(str)
     mpv_conf = Property(str, get_config_mpv, notify=mpv_conf_changed)
+
+    def get_dir_backup(self) -> QUrl:
+        return QUrl.fromLocalFile(self._paths.dir_backup.absolute())
+
+    dir_backup_changed = Signal(QUrl)
+    dir_backup = Property(QUrl, get_dir_backup, notify=dir_backup_changed)
 
     def get_settings(self) -> str:
         return str(self._paths.file_settings)

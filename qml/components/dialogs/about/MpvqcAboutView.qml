@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import components.shared
 import handlers
 
 
@@ -38,11 +39,9 @@ Column {
         asynchronous: true
     }
 
-    Label {
-        anchors.horizontalCenter: parent.horizontalCenter
+    MpvqcDemiBoldLabel {
         text: Qt.application.name
-        font.bold: true
-        font.pixelSize: Qt.application.font.pixelSize * 1.25
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 
     Row {

@@ -27,6 +27,6 @@ Label {
     font.weight: Font.DemiBold
     font.pointSize: 14
     font.bold: true
-    horizontalAlignment: Text.AlignLeft
+    horizontalAlignment: Text.AlignHCenter
 
 }

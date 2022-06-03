@@ -53,6 +53,17 @@ MpvqcAutoWidthMenu {
         }
     }
 
+    Action {
+        text: qsTranslate("MainWindow", "&Backup Settings...")
+
+        onTriggered: {
+            const url = "qrc:/qml/components/dialogs/backup/MpvqcBackupSettingsDialog.qml"
+            const component = Qt.createComponent(url)
+            const dialog = component.createObject(appWindow)
+            dialog.open()
+        }
+    }
+
     MenuSeparator { }
 
     MpvqcAutoWidthMenu {
