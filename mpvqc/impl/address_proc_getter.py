@@ -17,6 +17,7 @@
 
 
 import ctypes
+import platform
 
 
 class GetProcAddressGetter:
@@ -26,11 +27,14 @@ class GetProcAddressGetter:
         self._func = self._find_platform_wrapper()
 
     def _find_platform_wrapper(self):
-        try:
-            from OpenGL import WGL
-            return self._wgl_impl
-        except AttributeError:
-            pass
+        os = platform.system()
+        if os == 'Linux':
+            return self._init_linux()
+        elif os == 'Windows':
+            return self._init_windows()
+        raise f'Platform {os} not supported'
+
+    def _init_linux(self):
         try:
             from OpenGL import GLX
             return self._glx_impl
@@ -41,21 +45,29 @@ class GetProcAddressGetter:
             return self._egl_impl
         except AttributeError:
             pass
-        try:
-            from OpenGL import GLUT
-            return self._glut_impl
-        except AttributeError:
-            pass
-        raise NotImplementedError("Platform not supported. Supported platforms are: WGL, GLX, EGL, and GLUT")
+        raise 'Cannot initialize OpenGL'
+
+    def _init_windows(self):
+        from PySide6.QtGui import QOpenGLContext
+        import glfw
+
+        from PySide6.QtGui import QOffscreenSurface
+        self.surface = QOffscreenSurface()
+        self.surface.create()
+
+        if not glfw.init():
+            raise 'Cannot initialize OpenGL'
+
+        glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
+        window = glfw.create_window(1, 1, "mpvQC-OpenGL", None, None)
+
+        glfw.make_context_current(window)
+        QOpenGLContext.currentContext().makeCurrent(self.surface)
+        return self._windows_impl
 
     def wrap(self, _, name: bytes):
         address = self._func(name)
         return ctypes.cast(address, ctypes.c_void_p).value
-
-    @staticmethod
-    def _wgl_impl(name: bytes):
-        from OpenGL import WGL
-        return WGL.wglGetProcAddress(name)
 
     @staticmethod
     def _glx_impl(name: bytes):
@@ -68,6 +80,6 @@ class GetProcAddressGetter:
         return EGL.eglGetProcAddress(name.decode("utf-8"))
 
     @staticmethod
-    def _glut_impl(name: bytes):
-        from OpenGL import GLUT
-        return GLUT.glutGetProcAddress(name.decode("utf-8"))
+    def _windows_impl(name: bytes):
+        import glfw
+        return glfw.get_proc_address(name.decode('utf8'))
