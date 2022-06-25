@@ -1,7 +1,7 @@
 module models
 MpvqcAccentColorModel MpvqcAccentColorModel.qml
 MpvqcArtworkModel MpvqcArtworkModel.qml
-MpvqcCommentTypes MpvqcCommentTypes.qml
+MpvqcCommentTypesModel MpvqcCommentTypesModel.qml
 MpvqcDependencyModel MpvqcDependencyModel.qml
 MpvqcDeveloperModel MpvqcDeveloperModel.qml
 MpvqcLanguageModel MpvqcLanguageModel.qml

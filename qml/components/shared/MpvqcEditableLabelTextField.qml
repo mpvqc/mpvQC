@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import helpers
-import pyobjects
 
 
 TextField {
@@ -42,10 +41,10 @@ TextField {
     property bool cancelling: false
     property int minimalEditingTime: 250
     property bool minimalEditingTimeExpired: false
-    
+
     signal done()
     signal edited(string comment)
-    
+
     Component.onCompleted: {
         focusTextField()
         MpvqcTimer.scheduleOnceAfter(minimalEditingTime, expireMinimalEditingTime)
@@ -75,11 +74,11 @@ TextField {
     function expireMinimalEditingTime() {
         minimalEditingTimeExpired = true
     }
-    
+
     function triggerEdited(comment) {
         control.edited(comment)
     }
-    
+
     function triggerDone() {
         control.done()
     }

@@ -3,4 +3,6 @@ MpvqcAutoWidthMenu MpvqcAutoWidthMenu.qml
 MpvqcCircle MpvqcCircle.qml
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDemiBoldLabel MpvqcDemiBoldLabel.qml
+MpvqcEditableLabel MpvqcEditableLabel.qml
+MpvqcInputDialog MpvqcInputDialog.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml

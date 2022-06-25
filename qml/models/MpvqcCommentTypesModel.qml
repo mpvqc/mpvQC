@@ -54,4 +54,51 @@ ListModel {
         type: "Note"
     }
 
+    function add(commentType) {
+        this.append({ type: commentType })
+    }
+
+    function edit(index, commentType) {
+        this.setProperty(index, 'type', commentType)
+    }
+
+    function asString() {
+        return items().join(', ')
+    }
+
+    function items() {
+        const marshalled = []
+        for (let i = 0, count = this.count; i < count; i++) {
+            marshalled.push(this.get(i).type)
+        }
+        return marshalled
+    }
+
+    function replaceWith(commaSeparatedStringList) {
+        this.clear()
+        commaSeparatedStringList
+            .split(',')
+            .map((value) => value.trim())
+            .filter((value) => value)
+            .forEach((value) => this.append({ type: value }))
+    }
+
+    function copy(qmlParent) {
+        const copy = Qt.createQmlObject('import models; MpvqcCommentTypesModel {}', qmlParent)
+        copy.clear()
+        for (let i = 0, count = this.count; i < count; i++) {
+            copy.append(this.get(i))
+        }
+        return copy
+    }
+
+    function reset(qmlParent) {
+        const copy = Qt.createQmlObject('import models; MpvqcCommentTypesModel {}', qmlParent)
+        this.clear()
+        for (let i = 0, count = copy.count; i < count; i++) {
+            this.append(copy.get(i))
+        }
+        copy.destroy()
+    }
+
 }

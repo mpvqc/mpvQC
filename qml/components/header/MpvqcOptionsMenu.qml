@@ -29,11 +29,22 @@ import models
 MpvqcAutoWidthMenu {
     title: qsTranslate("MainWindow", "&Options")
 
-        Action {
+    Action {
         text: qsTranslate("MainWindow", "&Appearance...")
 
         onTriggered: {
             const url = "qrc:/qml/components/dialogs/appearance/MpvqcAppearanceDialog.qml"
+            const component = Qt.createComponent(url)
+            const dialog = component.createObject(appWindow)
+            dialog.open()
+        }
+    }
+
+    Action {
+        text: qsTranslate("MainWindow", "&Comment Type Settings...")
+
+        onTriggered: {
+            const url = "qrc:/qml/components/dialogs/commentType/MpvqcCommentTypeSettingsDialog.qml"
             const component = Qt.createComponent(url)
             const dialog = component.createObject(appWindow)
             dialog.open()

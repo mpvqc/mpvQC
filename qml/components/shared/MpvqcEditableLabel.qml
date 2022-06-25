@@ -27,12 +27,12 @@ Loader {
     id: control
     sourceComponent: editing ? editComponent : displayComponent
 
-    property string comment
+    property string text
     property bool editing: false
     property int borderPadding: 4
 
     signal clicked()
-    signal edited(string comment)
+    signal edited(string text)
     signal editingStarted()
     signal editingStopped()
 
@@ -40,7 +40,7 @@ Loader {
         id: displayComponent
 
         Label {
-            text: control.comment
+            text: control.text
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
@@ -59,13 +59,13 @@ Loader {
     Component {
         id: editComponent
 
-        MpvqcEditCommentTextField {
-            text: control.comment
+        MpvqcEditableLabelTextField {
+            text: control.text
             anchors.fill: control
             borderPadding: control.borderPadding
 
-            onEdited: (comment) => {
-                triggerCommentEdited(comment)
+            onEdited: (text) => {
+                triggerTextEdited(text)
             }
 
             onDone: {
@@ -92,8 +92,8 @@ Loader {
         control.clicked()
     }
 
-    function triggerCommentEdited(comment) {
-        control.edited(comment)
+    function triggerTextEdited(text) {
+        control.edited(text)
     }
 
     function triggerEditingStarted() {
@@ -103,4 +103,5 @@ Loader {
     function triggerEditingStopped() {
         control.editingStopped()
     }
+
 }

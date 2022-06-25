@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import components.shared
 import helpers
 import pyobjects
 
@@ -112,7 +113,7 @@ Rectangle {
             }
         }
 
-        MpvqcDisplayCommentLabel {
+        MpvqcEditableLabel {
             id: commentLabel
             width: row.width
                     - playButton.width
@@ -121,7 +122,7 @@ Rectangle {
                     - (moreButton.visible ? moreButton.width : 0)
                     - spacerScrollBar.width
             height: row.height
-            comment: modelItem.comment
+            text: modelItem.comment
 
             onClicked: {
                 if (row.currentlySelected && listViewCurrentlyBeingEdited) {

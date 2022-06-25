@@ -28,7 +28,7 @@ Item {
     id: current
     required property var settingsFile
     property alias language: settings.language
-    property var commentTypes: MpvqcCommentTypes {}
+    property var commentTypes: MpvqcCommentTypesModel {}
 
     Settings {
         id: settings
@@ -38,25 +38,13 @@ Item {
     }
 
     function save() {
-        const model = current.commentTypes
-        const marshalled = []
-        for (let i = 0, count = model.count; i < count; i++) {
-            marshalled.push(model.get(i))
-        }
-        settings.setValue("commentTypes", JSON.stringify(marshalled))
+        settings.setValue("commentTypes", current.commentTypes.asString())
     }
 
     function restore() {
-        const fromSettings = settings.value("commentTypes")
-        if (fromSettings) {
-            _replaceDefaultCommentTypesWithThose(JSON.parse(fromSettings))
-        }
-    }
-
-    function _replaceDefaultCommentTypesWithThose(fromSettings) {
-        commentTypes.clear()
-        for (const commentType of fromSettings) {
-            commentTypes.append(commentType)
+        const value = settings.value("commentTypes")
+        if (value) {
+            current.commentTypes.replaceWith(value)
         }
     }
 

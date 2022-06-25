@@ -29,7 +29,22 @@ import settings
 ColumnLayout {
     spacing: 2
 
-    Item { height: 1; Layout.fillWidth: true }
+    ToolButton {
+        text: qsTranslate("BackupSettings", "Backup Location")
+        icon.source: "qrc:/data/icons/launch_black_24dp.svg"
+        hoverEnabled: true
+        ToolTip.visible: hovered
+        ToolTip.text: FileIoPyObject.abs_path_of(backupDirectory)
+        Layout.alignment: Qt.AlignHCenter
+        Layout.bottomMargin: 36
+        Layout.fillWidth: true
+
+        property url backupDirectory: MpvqcFilePathsPyObject.dir_backup
+
+        onClicked: {
+            Qt.openUrlExternally(backupDirectory)
+        }
+    }
 
     MpvqcSwitchRow {
         id: backupEnable
@@ -42,27 +57,6 @@ ColumnLayout {
         label: qsTranslate("BackupSettings", "Backup Interval")
         value: MpvqcSettings.backupInterval
         Layout.topMargin: 16
-    }
-
-    MpvqcDemiBoldLabel {
-        text: qsTranslate("BackupSettings", "Backup Location")
-        Layout.topMargin: 36
-        Layout.bottomMargin: 18
-        Layout.fillWidth: true
-    }
-
-    Button {
-        text: qsTranslate("BackupSettings", "Open")
-        hoverEnabled: true
-        Layout.alignment: Qt.AlignHCenter
-        ToolTip.visible: hovered
-        ToolTip.text: FileIoPyObject.abs_path_of(backupDirectory)
-
-        property url backupDirectory: MpvqcFilePathsPyObject.dir_backup
-
-        onClicked: {
-            Qt.openUrlExternally(backupDirectory)
-        }
     }
 
     function save() {

@@ -25,7 +25,7 @@ import models
 
 QtObject {
     readonly property string language: Qt.uiLanguage
-    readonly property var commentTypeModel: MpvqcCommentTypes {}
+    readonly property var commentTypeModel: MpvqcCommentTypesModel {}
     property var translations: ({})
 
     onLanguageChanged: {
