@@ -1,0 +1,56 @@
+build-linux:
+  runs-on: ubuntu-latest
+  if: github.ref == 'refs/heads/main'
+  needs:
+    - build-project
+
+  steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: build
+        path: build
+
+    - name: Create virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+
+    - name: Download AppImageTool
+      run: |
+        wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" -O "appimagetool"
+        chmod +x appimagetool
+
+    - name: Install appimage-builder
+      run: |
+        source venv/bin/activate
+        python3 -m pip install appimage-builder wheel
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.mpvqc_env_file }}
+
+    - name: Read build versioning information
+      run: |
+        source ${{ env.mpvqc_env_file }}
+        echo "mpvqc_version=$mpvqc_version" >> $GITHUB_ENV
+
+    - name: Adjust app image version
+      run: |
+        sed -i "s/@@MPVQC_VERSION@@/${{ env.mpvqc_version }}/" build-aux/linux/AppImageBuilder.yml
+
+    - name: Build AppImage
+      run: |
+        source venv/bin/activate
+        export PATH="$(pwd):$PATH"
+        python3 -m appimagebuilder --recipe build-aux/linux/AppImageBuilder.yml
+    - uses: actions/upload-artifact@v2
+      with:
+        name: "mpvQC-${{ env.mpvqc_version }}-linux"
+        path: './*.AppImage*'

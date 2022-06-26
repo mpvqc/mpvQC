@@ -1,0 +1,15 @@
+#
+#
+#
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Update Packages And Dependencies'
+      shell: bash
+      run: |
+        function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+        execute sudo apt update -y 
+        execute sudo apt upgrade -y
+        execute sudo apt install -y make libmpv1 patchelf libopengl0

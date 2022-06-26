@@ -1,0 +1,29 @@
+#
+#
+#
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Update Project Build Information'
+      shell: bash
+      run: |
+        function debug() { echo -e "\033[0;35m$*\033[0m"; }
+        function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+        
+        PLACEHOLDER_TAG=">>>tag<<<"
+        PLACEHOLDER_COMMIT=">>>commit-id<<<"
+        
+        CURRENT_TAG="$(git describe --tags --abbrev=0)"
+        debug "git tag: $CURRENT_TAG"
+        
+        CURRENT_COMMIT="$(git rev-parse HEAD)"
+        CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
+        debug "git commit: $CURRENT_COMMIT"
+        
+        FILES_UPDATABLE="$(grep -rli -e "$PLACEHOLDER_TAG" -e "$PLACEHOLDER_COMMIT" mpvqc qml)"
+        echo "$FILES_UPDATABLE" | while read -r FILE; do
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "$FILE"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "$FILE"
+          execute cat "$FILE"
+        done

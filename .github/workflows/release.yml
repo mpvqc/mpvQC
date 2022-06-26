@@ -1,0 +1,135 @@
+name: 'Release - Pipeline'
+
+on:
+  push:
+    branches: [ '**' ]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-python:
+    runs-on: ubuntu-22.04
+    name: 'Test Python & Build mpvQC'
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Update Packages And Dependencies'
+        uses: ./.github/workflows/templates/update-ubuntu
+      - name: 'Update Project Build Information'
+        uses: ./.github/workflows/templates/set-version
+      - name: 'Setup Python project'
+        uses: ./.github/workflows/templates/setup-python-project
+      - name: 'Run Python Build'
+        uses: ./.github/workflows/templates/run-python-build
+      - name: 'Upload Build Artifact'
+        uses: actions/upload-artifact@v3
+        if: github.ref == 'refs/heads/dev-qt6'
+        with:
+          path: build/release
+          name: release-build-artifact
+
+  test-qml:
+    runs-on: ubuntu-22.04
+    name: 'Test Qml'
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - name: 'Install Qt 6.3.1'
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: '6.3.1'
+      - name: 'Run Qml Tests'
+        uses: ./.github/workflows/templates/run-qml-tests
+
+  build-project:
+    runs-on: windows-latest
+    name: 'Build Windows'
+    if: github.ref == 'refs/heads/dev-qt6'
+    needs:
+      - build-python
+      - test-qml
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Download Build Artifact'
+        uses: actions/download-artifact@v3
+        with:
+          path: build/release
+          name: release-build-artifact
+      - name: 'Install Python 3.10'
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: 'Setup Build Environment'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+  
+          execute python -m venv venv
+          execute source venv/Scripts/activate
+          execute python -m pip install --upgrade pip
+          execute python -m pip install wheel
+          execute python -m pip install -r requirements.txt
+          execute python -m pip install pyinstaller
+      - name: 'Build Bundle'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          execute source venv/Scripts/activate
+          execute pyinstaller \
+            --name mpvQC \
+            --workpath build-windows \
+            --icon=build-aux/windows/icon.ico \
+            --collect-binaries PySide6 \
+            --collect-binaries glfw \
+            --add-data "LICENSE;." \
+            --noconsole \
+            build/release/main.py
+      - name: 'Remove Redundant Binaries'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          execute find dist/mpvQC -type f -name 'Qt6WebEngineCore.dll' -delete
+          execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
+      - name: 'Make Archive Portable'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          execute touch dist/mpvQC/portable
+      - name: 'Package libmpv'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          ARTIFACT="mpv-dev-x86_64-20220619-git-c1a46ec.7z"
+          URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
+          
+          execute curl -L -O "$URL"
+          execute 7z x "$ARTIFACT"
+          execute mv mpv-2.dll dist/mpvQC
+      - name: "Create Artifact Name"
+        id: artifact_name
+        run: |
+          function debug() { echo -e "\033[0;35m$*\033[0m"; }
+                  
+          CURRENT_TAG="$(git describe --tags --abbrev=0)"
+          debug "git tag: $CURRENT_TAG"
+          
+          CURRENT_COMMIT="$(git rev-parse HEAD)"
+          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
+          debug "git commit: $CURRENT_COMMIT"
+          
+          ARTIFACT_NAME="mpvQC-v$CURRENT_TAG-$CURRENT_COMMIT"
+          debug "artifact name: $ARTIFACT_NAME"
+          
+          echo "::set-output name=artifact_name::$ARTIFACT_NAME"
+      - name: 'Compress Artifact'
+        shell: pwsh
+        run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "${{ steps.artifact_name.outputs.artifact_name }}.zip"
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: "${{ steps.artifact_name.outputs.artifact_name }}"
+          path: "${{ steps.artifact_name.outputs.artifact_name }}.zip"
