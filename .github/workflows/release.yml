@@ -9,9 +9,11 @@ defaults:
     shell: bash
 
 jobs:
-  build-python:
+  build_python:
     runs-on: ubuntu-22.04
     name: 'Test Python & Build mpvQC'
+    outputs:
+      version: ${{ steps.step_version.outputs.version }}
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v3
@@ -25,6 +27,22 @@ jobs:
         uses: ./.github/workflows/templates/setup-python-project
       - name: 'Run Python Build'
         uses: ./.github/workflows/templates/run-python-build
+      - name: "Parse Version"
+        id: step_version
+        run: |
+          function debug() { echo -e "\033[0;35m$*\033[0m"; }
+
+          CURRENT_TAG="$(git describe --tags --abbrev=0)"
+          debug "git tag: $CURRENT_TAG"
+
+          CURRENT_COMMIT="$(git rev-parse HEAD)"
+          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
+          debug "git commit: $CURRENT_COMMIT"
+
+          ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
+          debug "artifact name: $ARTIFACT_NAME"
+
+          echo "::set-output name=version::$ARTIFACT_NAME"
       - name: 'Upload Build Artifact'
         uses: actions/upload-artifact@v3
         if: github.ref == 'refs/heads/dev-qt6'
@@ -32,7 +50,7 @@ jobs:
           path: build/release
           name: release-build-artifact
 
-  test-qml:
+  test_qml:
     runs-on: ubuntu-22.04
     name: 'Test Qml'
     steps:
@@ -45,18 +63,16 @@ jobs:
       - name: 'Run Qml Tests'
         uses: ./.github/workflows/templates/run-qml-tests
 
-  build-project:
+  build_windows:
     runs-on: windows-latest
     name: 'Build Windows'
     if: github.ref == 'refs/heads/dev-qt6'
     needs:
-      - build-python
-      - test-qml
+      - build_python
+      - test_qml
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: 'Download Build Artifact'
         uses: actions/download-artifact@v3
         with:
@@ -109,27 +125,43 @@ jobs:
           execute curl -L -O "$URL"
           execute 7z x "$ARTIFACT"
           execute mv mpv-2.dll dist/mpvQC
-      - name: "Create Artifact Name"
-        id: artifact_name
-        run: |
-          function debug() { echo -e "\033[0;35m$*\033[0m"; }
-                  
-          CURRENT_TAG="$(git describe --tags --abbrev=0)"
-          debug "git tag: $CURRENT_TAG"
-          
-          CURRENT_COMMIT="$(git rev-parse HEAD)"
-          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
-          debug "git commit: $CURRENT_COMMIT"
-          
-          ARTIFACT_NAME="mpvQC-v$CURRENT_TAG-$CURRENT_COMMIT"
-          debug "artifact name: $ARTIFACT_NAME"
-          
-          echo "::set-output name=artifact_name::$ARTIFACT_NAME"
       - name: 'Compress Artifact'
         shell: pwsh
-        run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "${{ steps.artifact_name.outputs.artifact_name }}.zip"
+        run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "${{ needs.build_python.outputs.version }}.zip"
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: "${{ steps.artifact_name.outputs.artifact_name }}"
-          path: "${{ steps.artifact_name.outputs.artifact_name }}.zip"
+          name: "${{ needs.build_python.outputs.version }}-win-x86_64"
+          path: "${{ needs.build_python.outputs.version }}.zip"
+
+  build_linux:
+    runs-on: ubuntu-22.04
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-21.08
+      options: --privileged
+    name: 'Build Linux'
+    if: github.ref == 'refs/heads/dev-qt6'
+    needs:
+      - build_python
+      - test_qml
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - name: 'Download Build Artifact'
+        uses: actions/download-artifact@v3
+        with:
+          path: build/release
+          name: release-build-artifact
+      - name: 'Prepare Flatpak Build'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          execute mv build-aux/linux/com.github.mpvqc.mpvQC.yml com.github.mpvqc.mpvQC.yml
+      - name: 'Build Flatpak'
+        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
+        with:
+          manifest-path: com.github.mpvqc.mpvQC.yml
+          bundle: ${{ needs.build_python.outputs.version }}-linux.flatpak
+          branch: main
+          cache: false
+          cache-key: flatpak-builder-${{ github.sha }}

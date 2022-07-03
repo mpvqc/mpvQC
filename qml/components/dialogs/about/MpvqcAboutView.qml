@@ -118,6 +118,7 @@ Column {
 
         Label {
             text: qsTranslate("AboutDialog", "mpv version")
+            elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: parent.width / 2
         }
@@ -134,7 +135,8 @@ Column {
         spacing: 24
 
         Label {
-            text: qsTranslate("AboutDialog", "mpv version")
+            text: qsTranslate("AboutDialog", "ffmpeg version")
+            elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
             horizontalAlignment: Text.AlignRight
             Layout.preferredWidth: parent.width / 2
         }

@@ -1,0 +1,253 @@
+# Supposed to be called at repository root level - copied during CI build to root level
+#
+
+app-id: com.github.mpvqc.mpvQC
+runtime: org.freedesktop.Platform
+runtime-version: '21.08'
+sdk: org.freedesktop.Sdk
+command: mpvQC
+
+finish-args:
+  - --device=dri
+  - --filesystem=home
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --env=LC_ALL=C  # todo: should work but doesn't: --env=LC_NUMERIC=C
+
+build-options:
+  cflags: -O2 -g
+  cxxflags: -O2 -g
+  env:
+    V: '1'
+
+cleanup:
+  - /include
+  - /lib/debug
+  - /lib/pkgconfig
+  - /lib/python3.10/site-packages/PySide6/examples
+  - /lib/python3.10/site-packages/PySide6/lupdate
+  - /lib/python3.10/site-packages/PySide6/assistant
+  - /lib/python3.10/site-packages/PySide6/qmllint
+  - /lib/python3.10/site-packages/PySide6/linguist
+  - /lib/python3.10/site-packages/PySide6/Qt/lib/libQt6WebEngineCore.so.6
+  - /lib/python3.10/site-packages/PySide6/Qt/translations/qtwebengine_locales
+  - /lib/python3.10/site-packages/PySide6/Qt/resources
+  - /man
+  - /share/doc
+  - /share/gtk-doc
+  - /share/man
+  - '*.la'
+  - '*.a'
+
+modules:
+  - name: luajit
+    no-autogen: true
+    cleanup:
+      - /bin
+      - /lib/*.a
+      - /include
+      - /lib/pkgconfig
+      - /share/man
+    sources:
+      - type: archive
+        url: http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
+        sha256: 1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3
+      - commands:
+          - sed -i 's|/usr/local|/app|' ./Makefile
+        type: shell
+
+  - name: libv4l2
+    cleanup:
+      - /sbin
+      - /bin
+      - /include
+      - /lib/*.la
+      - /lib/*/*.la
+      - /lib*/*/*/*.la
+      - /lib/pkgconfig
+      - /share/man
+    config-opts:
+      - --disable-static
+      - --disable-bpf
+      - --with-udevdir=/app/lib/udev
+    sources:
+      - type: archive
+        url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.20.0.tar.bz2
+        sha256: 956118713f7ccb405c55c7088a6a2490c32d54300dd9a30d8d5008c28d3726f7
+
+  - name: nv-codec-headers
+    cleanup:
+      - '*'
+    make-install-args:
+      - PREFIX=/app
+    no-autogen: true
+    sources:
+      - type: git
+        url: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+        commit: cf8b0b2bb70b59068b06f1d5610627c8aa6d5652
+
+  - name: ffmpeg
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - /share/ffmpeg/examples
+    config-opts:
+      - --enable-shared
+      - --disable-static
+      - --enable-gnutls
+      - --disable-doc
+      - --disable-programs
+      - --disable-encoders
+      - --disable-muxers
+      - --enable-encoder=png
+      - --enable-libv4l2
+      - --enable-libdav1d
+    sources:
+      - type: archive
+        url: https://fossies.org/linux/misc/ffmpeg-5.0.1.tar.xz
+        sha256: ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b
+
+  - name: libass
+    cleanup:
+      - /include
+      - /lib/*.la
+      - /lib/pkgconfig
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://github.com/libass/libass/releases/download/0.14.0/libass-0.14.0.tar.xz
+        sha256: 881f2382af48aead75b7a0e02e65d88c5ebd369fe46bc77d9270a94aa8fd38a2
+
+  - name: uchardet
+    buildsystem: cmake-ninja
+    cleanup:
+      - /bin
+      - /include
+      - /lib/pkgconfig
+      - /share/man
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_STATIC=0
+    sources:
+      - type: archive
+        url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.6.tar.xz
+        sha256: 8351328cdfbcb2432e63938721dd781eb8c11ebc56e3a89d0f84576b96002c61
+
+  - name: libmpv
+    build-commands:
+      - python3 waf configure --prefix=/app --enable-libmpv-shared --disable-cplayer --disable-build-date
+        --disable-alsa
+      - python3 waf build
+      - python3 waf install
+    buildsystem: simple
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - /share/man
+    sources:
+      - type: archive
+        url: https://github.com/mpv-player/mpv/archive/v0.34.1.tar.gz
+        sha256: 32ded8c13b6398310fa27767378193dc1db6d78b006b70dbcbd3123a1445e746
+      - type: file
+        url: https://waf.io/waf-2.0.24
+        sha256: 93909bca823a675f9f40af7c65b24887c3a3c0efdf411ff1978ba827194bdeb0
+        dest-filename: waf
+
+  - name: python
+    sources:
+      - type: archive
+        url: https://www.python.org/ftp/python/3.10.5/Python-3.10.5.tar.xz
+        sha256: 8437efd5b106ef0a75aabfbf23d880625120a73a86a22ade4d2e2e68d7b74486
+
+  # https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.2/krb5
+  - name: krb5
+    subdir: src
+    cleanup:
+      - /bin
+      - /share/et
+      - /share/examples
+      - /share/man
+    config-opts:
+      - --localstatedir=/var/lib
+      - --sbindir=${FLATPAK_DEST}/bin
+      - --disable-rpath
+      - --disable-static
+    post-install:
+      - install -Dm644 ../krb5.conf -t ${FLATPAK_DEST}/etc/
+    sources:
+      - type: file
+        path: build-aux/linux/krb5.conf
+      - type: archive
+        url: https://kerberos.org/dist/krb5/1.20/krb5-1.20.tar.gz
+        sha256: 7e022bdd3c851830173f9faaa006a230a0e0fdad4c953e85bff4bf0da036e12f
+        x-checker-data:
+          type: html
+          url: https://kerberos.org/dist/
+          url-template: https://kerberos.org/dist/krb5/$version0.$version1/krb5-$version.tar.gz
+          version-pattern: Kerberos V5 Release ([\d\.-]*) - current release
+
+  - name: python3-inject
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} "inject>=4.3.1" --no-build-isolation
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/23/e2/04673185baadf9f4e175de51212fd2966eed2fca3236fdcfb7e732e4d09e/Inject-4.3.1.tar.gz
+        sha256: 7f996f2c9ed2082af776ddf6b528d97036898ac63040385feb1d12286a73c3cc
+  - name: python3-PySide6
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} "PySide6>=6.3.1" --no-build-isolation
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/2c/2a/8e1b163571ecf093193a5cd97e0b1420eaff1ba13935c3e60da4bf71cd58/PySide6-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: bc749968d641af1c516b6b0e00264bffea9cfc2d56dc04766f36e1a313e93a3a
+      - type: file
+        url: https://files.pythonhosted.org/packages/10/5b/f7b2b492bfeaf9cefce98a1e31b75af0cf316b7988f634ef824bd58d7d00/shiboken6-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: aad9aa8e7ecd3c889cc789e41abf3990101126b5b02edfcf87f1ef331c9dc45a
+      - type: file
+        url: https://files.pythonhosted.org/packages/4c/a1/0562e98d39347530af4b03327bf66dde4a51f2420b64b8e6bfde005d6e70/PySide6_Essentials-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: e27962beb2cc45fe13a1a1c24a454c3c3c3c3082c4a84bc5dcf6b306979ba013
+      - type: file
+        url: https://files.pythonhosted.org/packages/bb/6b/009c0077e5442a86ab067199fd92a96065900d955b0e7a73548128ae97a3/PySide6_Addons-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: 14f4171b15dbdd7d120dc125c84f2eca53bc197182295bfdfdb3bb95b58a46c7
+  - name: python3-PyOpenGl
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} "PyOpenGl>=3.1.6" --no-build-isolation
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/80/07/003fe74d2af04be917035b42c53c7ea9e3abe1e353753cebccfe792b4e52/PyOpenGL-3.1.6-py3-none-any.whl
+        sha256: a7139bc3e15d656feae1f7e3ef68c799941ed43fadc78177a23db7e946c20738
+  - name: python3-python-mpv
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} "python-mpv>=1.0.1" --no-build-isolation
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/34/d4/3504f3a873a8f0f32a112cc2e7528a12b617de566dc83bcb57f0b9d1f617/python-mpv-1.0.1.tar.gz
+        sha256: 4c5cc55df484232827ebfa9e498e8370698c6bf7283ba6b1e0329cc42f3aeb8e
+
+  - name: mpvQC
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/app-directory
+      - cp -r mpvqc /app/app-directory
+      - install -D main.py /app/app-directory
+      - install -Dm644 com.github.mpvqc.mpvQC.svg /app/share/icons/hicolor/scalable/apps/com.github.mpvqc.mpvQC.svg
+      - install -Dm644 com.github.mpvqc.mpvQC.desktop /app/share/applications/com.github.mpvqc.mpvQC.desktop
+      - install -Dm644 com.github.mpvqc.mpvQC.metainfo.xml -t /app/share/metainfo
+      - sed -i 's|/usr/bin/env python|/app/bin/python3|' /app/app-directory/main.py
+      - ln -s /app/app-directory/main.py /app/bin/mpvQC
+    sources:
+      - type: dir
+        path: build/release
+      - type: dir
+        path: build-aux/linux
