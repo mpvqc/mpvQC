@@ -1,4 +1,4 @@
-name: 'Release - Pipeline'
+name: 'Pipeline'
 
 on:
   push:
@@ -19,30 +19,56 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: 'Update Packages And Dependencies'
-        uses: ./.github/workflows/templates/update-ubuntu
       - name: 'Update Project Build Information'
-        uses: ./.github/workflows/templates/set-version
-      - name: 'Setup Python project'
-        uses: ./.github/workflows/templates/setup-python-project
-      - name: 'Run Python Build'
-        uses: ./.github/workflows/templates/run-python-build
-      - name: "Parse Version"
         id: step_version
         run: |
           function debug() { echo -e "\033[0;35m$*\033[0m"; }
-
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          PLACEHOLDER_TAG=">>>tag<<<"
+          PLACEHOLDER_COMMIT=">>>commit-id<<<"
+          
           CURRENT_TAG="$(git describe --tags --abbrev=0)"
           debug "git tag: $CURRENT_TAG"
-
+          
           CURRENT_COMMIT="$(git rev-parse HEAD)"
           CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
           debug "git commit: $CURRENT_COMMIT"
 
           ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
           debug "artifact name: $ARTIFACT_NAME"
-
           echo "::set-output name=version::$ARTIFACT_NAME"
+          
+          FILES_UPDATABLE="$(grep -rli -e "$PLACEHOLDER_TAG" -e "$PLACEHOLDER_COMMIT" mpvqc qml)"
+          echo "$FILES_UPDATABLE" | while read -r FILE; do
+            execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "$FILE"
+            execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "$FILE"
+            execute cat "$FILE"
+          done
+      - name: 'Update Packages And Dependencies'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute sudo apt update -y 
+          execute sudo apt upgrade -y
+          execute sudo apt install -y make libmpv1 patchelf libopengl0
+      - name: 'Setup Virtual Environment'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute python -m venv venv
+          execute source venv/bin/activate
+          execute python -m pip install --upgrade pip
+          execute python -m pip install wheel
+          execute python -m pip install -r requirements.txt
+      - name: 'Run Python Build'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute source venv/bin/activate
+          execute make test-python
+          execute make clean
+          execute make build
       - name: 'Upload Build Artifact'
         uses: actions/upload-artifact@v3
         if: github.ref == 'refs/heads/dev-qt6'
@@ -60,8 +86,12 @@ jobs:
         uses: jurplel/install-qt-action@v2
         with:
           version: '6.3.1'
-      - name: 'Run Qml Tests'
-        uses: ./.github/workflows/templates/run-qml-tests
+      - name: 'Execute Qml Tests'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute export QT_QPA_PLATFORM=offscreen
+          execute make test-qml
 
   build_windows:
     runs-on: windows-latest
@@ -85,7 +115,7 @@ jobs:
       - name: 'Setup Build Environment'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-  
+
           execute python -m venv venv
           execute source venv/Scripts/activate
           execute python -m pip install --upgrade pip
@@ -95,7 +125,7 @@ jobs:
       - name: 'Build Bundle'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
+
           execute source venv/Scripts/activate
           execute pyinstaller \
             --name mpvQC \
@@ -109,11 +139,13 @@ jobs:
       - name: 'Remove Redundant Binaries'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
           execute find dist/mpvQC -type f -name 'Qt6WebEngineCore.dll' -delete
           execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
       - name: 'Make Archive Portable'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
           execute touch dist/mpvQC/portable
       - name: 'Package libmpv'
         run: |
@@ -155,7 +187,7 @@ jobs:
       - name: 'Prepare Flatpak Build'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
+
           execute mv build-aux/linux/com.github.mpvqc.mpvQC.yml com.github.mpvqc.mpvQC.yml
       - name: 'Build Flatpak'
         uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
