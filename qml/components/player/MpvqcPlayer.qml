@@ -28,14 +28,30 @@ MpvPlayerPyObject {
     id: mpv
     anchors.fill: parent
 
+    Timer {
+        id: hideMouseCursorTimer
+        running: appWindow.displayVideoFullScreen && mouseArea.containsMouse
+        repeat: true
+        interval: 2000
+
+        onTriggered: {
+            mouseArea.hideCursor = true
+        }
+    }
+
     MouseArea {
         id: mouseArea
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        cursorShape: hideCursor && appWindow.displayVideoFullScreen ? Qt.BlankCursor : Qt.ArrowCursor
         hoverEnabled: true
 
+        property bool hideCursor: false
+
         onPositionChanged: (event) => {
+            hideCursor = false
             mpv.move_mouse(event.x, event.y)
+            hideMouseCursorTimer.restart()
         }
 
         onWheel: (event) => {

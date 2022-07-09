@@ -52,8 +52,9 @@ MpvqcKeyEventConsumer {
         eventRegistry.produce(eventRegistry.EventRequestNewRow)
     }
 
-    onFKey: {
-        console.log("f pressed")
+    onFKey: (event) => {
+        if (event.isAutoRepeat) { return }
+        utils.toggleFullScreen()
     }
 
     onEscapeKey: {

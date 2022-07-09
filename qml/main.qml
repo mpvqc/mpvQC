@@ -46,6 +46,7 @@ ApplicationWindow {
     property int appTheme: MpvqcSettings.theme
     property int appThemeColorAccent: MpvqcSettings.accent
     property int windowBorder: 5
+    property bool displayVideoFullScreen: false
 
     MpvqcWindowBorderMouseCurser {
         borderWidth: windowBorder

@@ -23,20 +23,20 @@ import QtQuick
 QtObject {
     property var shouldIgnore
 
-    signal controlPlusCKeys()
-    signal controlPlusFKeys()
+    signal controlPlusCKeys(var event)
+    signal controlPlusFKeys(var event)
 
-    signal deleteKey()
-    signal returnKey()
-    signal backspaceKey()
-    signal eKey()
-    signal fKey()
-    signal escapeKey()
+    signal deleteKey(var event)
+    signal returnKey(var event)
+    signal backspaceKey(var event)
+    signal eKey(var event)
+    signal fKey(var event)
+    signal escapeKey(var event)
 
     signal allOtherKeys(var event)
 
     function handle(event) {
-        const accept = function(callable, arg) { event.accepted = true; callable() }
+        const accept = function(callable) { event.accepted = true; callable(event) }
         const ignore = function(whatever) { event.accepted = false }
 
         const key = event.key

@@ -71,7 +71,7 @@ Item {
                 id: maximizeButton
                 height: buttonWrapper.height
                 anchors.right: closeButton.left
-                maximized: appWindow.visibility === Window.Maximized
+                maximized: utils.isMaximized()
 
                 onClicked: {
                     utils.toggleMaximized()

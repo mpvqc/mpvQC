@@ -23,6 +23,7 @@ import QtQuick
 
 Item {
     height: headerBar.height
+    visible: !appWindow.displayVideoFullScreen
 
     TapHandler {
         gesturePolicy: TapHandler.DragThreshold

@@ -19,10 +19,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 function toggleMaximized() {
-    if (appWindow.visibility === Window.Maximized) {
-        appWindow.showNormal()
+    if (isMaximized()) {
+        showNormal()
     } else {
-        appWindow.showMaximized()
+        showMaximized()
+    }
+}
+
+
+function isMaximized() {
+    return appWindow.visibility === Window.Maximized
+}
+
+
+function showNormal() {
+    appWindow.showNormal()
+}
+
+
+function showMaximized() {
+    appWindow.showMaximized()
+}
+
+
+function toggleFullScreen() {
+    if (isFullScreen()) {
+        exitFullScreen()
+    } else {
+        showFullScreen()
+    }
+}
+
+
+function isFullScreen() {
+    return appWindow.visibility === Window.FullScreen
+}
+
+
+function exitFullScreen() {
+    if (isFullScreen()) {
+        appWindow.displayVideoFullScreen = false
+        showNormal()
+    }
+}
+
+
+function showFullScreen() {
+    if (!isFullScreen()) {
+        appWindow.showFullScreen()
+        appWindow.displayVideoFullScreen = true
     }
 }
 

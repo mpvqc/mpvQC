@@ -21,12 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import helpers
 
 
 Item {
     height: footer.height
+    visible: !appWindow.displayVideoFullScreen
 
-    readonly property bool isMaximized: appWindow.visibility === Window.Maximized
+    readonly property bool isMaximized: utils.isMaximized()
     readonly property int marginTop: windowBorder
     readonly property int marginMaximzedBottom: windowBorder
     readonly property int marginMaximzedSides: windowBorder

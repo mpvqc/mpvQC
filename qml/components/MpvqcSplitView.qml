@@ -27,6 +27,20 @@ import pyobjects
 
 
 FocusScope {
+    id: focusScope
+
+    Connections {
+        target: appWindow
+
+        function onDisplayVideoFullScreenChanged() {
+            state = appWindow.displayVideoFullScreen ? "fullscreen" : "normal"
+        }
+    }
+
+    states: [
+        State { name: "fullscreen"; ParentChange { target: player; parent: focusScope } },
+        State { name: "normal"; ParentChange { target: player; parent: playerContainer } }
+    ]
 
     SplitView {
         id: splitView
@@ -40,13 +54,15 @@ FocusScope {
         }
 
         Item {
+            id: playerContainer
             SplitView.fillHeight: true
 
-            MpvqcPlayer {}
+            MpvqcPlayer {
+                id: player
+            }
         }
 
         Item {
-            SplitView.preferredHeight: appWindow.height / 5
 
             Component.onCompleted: {
                 splitView.restoreState(settings.value("dimensions"))
@@ -62,6 +78,14 @@ FocusScope {
             }
         }
 
+    }
+
+    Component.onCompleted: {
+        eventRegistry.subscribe(eventRegistry.EventAddNewRow, disableFullScreen)
+    }
+
+    function disableFullScreen() {
+        utils.exitFullScreen()
     }
 
 }
