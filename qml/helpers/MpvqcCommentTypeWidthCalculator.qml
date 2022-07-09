@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 pragma Singleton
 import QtQuick
 import settings
+import "MpvqcLabelWidthCalculator.js" as Calculator
 
 
 QtObject {
@@ -38,15 +39,9 @@ QtObject {
     }
 
     function calculateMaxWidth() {
-        const model = MpvqcSettings.commentTypes
-        const metric = Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', object)
-        let width = 0
-        for (let i = 0, count = model.count; i < count; i++) {
-            metric.text = qsTranslate("CommentTypes", model.get(i).type)
-            width = Math.max(width, metric.tightBoundingRect.width)
-        }
-        metric.destroy()
-        object.width = width + 6
+        const texts = MpvqcSettings.commentTypes.items().map(english => qsTranslate("CommentTypes", english))
+        const width = Calculator.calculateWidthFor(texts, object)
+        object.width = width + 8
     }
 
 }

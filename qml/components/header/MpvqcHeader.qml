@@ -22,7 +22,6 @@ import QtQuick
 
 
 Item {
-    width: parent.width
     height: headerBar.height
 
     TapHandler {

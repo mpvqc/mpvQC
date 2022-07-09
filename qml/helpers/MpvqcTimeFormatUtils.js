@@ -40,6 +40,17 @@ function formatTimeToString(secs) {
 }
 
 
+function formatTimeToStringShort(secs) {
+    if (secs >= 3600) throw `Seconds '${secs}' is greater than or equals 3600`
+    const sec_num = parseInt(secs, 10)
+    let minutes = Math.floor(sec_num / 60)
+    let seconds = sec_num - (minutes * 60)
+    if (minutes < 10) minutes = `0${minutes}`
+    if (seconds < 10) seconds = `0${seconds}`
+    return `${minutes}:${seconds}`
+}
+
+
 /**
  * https://thewebdev.info/2021/05/23/how-to-convert-hhmmss-time-string-to-seconds-only-in-javascript/
  * @param timeString

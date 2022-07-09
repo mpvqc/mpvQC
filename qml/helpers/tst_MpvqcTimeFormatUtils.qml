@@ -43,6 +43,22 @@ TestCase {
         TestObject.formatTimeToString(10000)
     }
 
+    function test_formatTimeToStringShort_data() {
+        return [
+            { expected: '00:00', actual: TestObject.formatTimeToStringShort(0), tag: '0 -> 00:00' },
+            { expected: '01:08', actual: TestObject.formatTimeToStringShort(68), tag: '68 -> 01:08' },
+            { expected: '16:39', actual: TestObject.formatTimeToStringShort(999), tag: '999 -> 16:39' },
+        ]
+    }
+
+    function test_formatTimeToStringShort(data) {
+        compare(data.actual, data.expected)
+    }
+
+    function benchmark_formatTimeToStringShort() {
+        TestObject.formatTimeToString(999)
+    }
+
     function test_extractSecondsFrom_data() {
         return [
             { expected: 0, actual: TestObject.extractSecondsFrom('00:00:00'), tag: '00:00:00 -> 0' },

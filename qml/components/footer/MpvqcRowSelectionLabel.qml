@@ -19,23 +19,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
-import Qt.labs.settings
+import QtQuick.Controls
 
 
-Item {
-    id: current
-    required property var settingsFile
-    property alias statusbarPercentage: settings.statusbarPercentage
-    property alias timeFormat: settings.timeFormat
-    property alias titleFormat: settings.titleFormat
+Label {
+    id: label
+    text: (currentIndex + 1) + '/' + total
+    visible: total
 
-    Settings {
-        id: settings
-        fileName: current.settingsFile
-        category: "Format"
-        property bool statusbarPercentage: true
-        property int timeFormat: MpvqcTimeFormat.currentTotalTime
-        property int titleFormat: MpvqcTitleFormat.fileName
+    property int currentIndex: 0
+    property int total: 0
+
+    Component.onCompleted: {
+        eventRegistry.subscribe(eventRegistry.EventCommentsSelectedIndexChanged, updateSelectedIndex)
+        eventRegistry.subscribe(eventRegistry.EventCommentsCountChanged, updateCount)
+    }
+
+    function updateSelectedIndex(index) {
+        label.currentIndex = index
+    }
+
+    function updateCount(count) {
+        label.total = count
     }
 
 }

@@ -19,23 +19,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
-import Qt.labs.settings
+import QtQuick.Controls
+import handlers
+import settings
 
 
-Item {
-    id: current
-    required property var settingsFile
-    property alias statusbarPercentage: settings.statusbarPercentage
-    property alias timeFormat: settings.timeFormat
-    property alias titleFormat: settings.titleFormat
+Label {
+    id: label
+    visible: MpvqcSettings.statusbarPercentage && MpvqcPlayerProperties.path
 
-    Settings {
-        id: settings
-        fileName: current.settingsFile
-        category: "Format"
-        property bool statusbarPercentage: true
-        property int timeFormat: MpvqcTimeFormat.currentTotalTime
-        property int titleFormat: MpvqcTitleFormat.fileName
+    property real percent: MpvqcPlayerProperties.percent_pos
+
+    onVisibleChanged: {
+        if (visible) {
+            updateText()
+        }
+    }
+
+    onPercentChanged: {
+        updateText()
+    }
+
+    function updateText() {
+        text = percent.toFixed(0) + '%'
     }
 
 }

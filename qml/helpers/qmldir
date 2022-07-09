@@ -6,6 +6,7 @@ singleton MpvqcConstants MpvqcConstants.qml
 MpvqcDebug 1.0 MpvqcDebug.js
 MpvqcEventRegistry 1.0 MpvqcEventRegistry.js
 MpvqcFileReader 1.0 MpvqcFileReader.js
+MpvqcLabelWidthCalculator 1.0 MpvqcLabelWidthCalculator.js
 MpvqcTimeFormatUtils 1.0 MpvqcTimeFormatUtils.js
 MpvqcTimer 1.0 MpvqcTimer.js
 MpvqcUtils 1.0 MpvqcUtils.js

@@ -39,9 +39,12 @@ MpvPlayerPropertiesPyObject {
         return properties
     }
 
+    property bool path
+
     property string mpv_version
     property string ffmpeg_version
 
+    property real duration
     property real percent_pos
     property real time_pos
     property real time_remaining

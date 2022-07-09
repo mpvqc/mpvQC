@@ -18,24 +18,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import QtQuick
-import Qt.labs.settings
-
-
-Item {
-    id: current
-    required property var settingsFile
-    property alias statusbarPercentage: settings.statusbarPercentage
-    property alias timeFormat: settings.timeFormat
-    property alias titleFormat: settings.titleFormat
-
-    Settings {
-        id: settings
-        fileName: current.settingsFile
-        category: "Format"
-        property bool statusbarPercentage: true
-        property int timeFormat: MpvqcTimeFormat.currentTotalTime
-        property int titleFormat: MpvqcTitleFormat.fileName
+/**
+ * @param texts {Array<string>}
+ * @param parent
+ */
+function calculateWidthFor(texts, parent) {
+    const textMetric = Qt.platform.os === 'windows'
+        ? Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', parent)
+        : Qt.createQmlObject('import QtQuick; TextMetrics { }', parent)
+    let width = 0
+    for (const text of texts) {
+        textMetric.text = text
+        width = Math.max(width, textMetric.tightBoundingRect.width)
     }
-
+    textMetric.destroy()
+    return width
 }

@@ -43,7 +43,9 @@ class MpvqcEventRegistry {
     }
 }
 
+
 const registry = new MpvqcEventRegistry()
+
 
 /**
  * Adds a callableFunction for the eventKey
@@ -54,6 +56,7 @@ function subscribe(eventKey, callableFunction) {
     registry.subscribe(eventKey, callableFunction)
 }
 
+
 /**
  * Calls all functions that have been registered for the given eventKey
  * @param eventKey {string}
@@ -63,15 +66,18 @@ function produce(eventKey, args) {
     registry.produce(eventKey, args)
 }
 
+
 /**
  * Called with no arguments
  */
 const EventRequestVideoPause = 'mpvqc-request-video-pause'
 
+
 /**
  * Called with no arguments
  */
 const EventRequestNewRow = 'mpvqc-request-new-row'
+
 
 /**
  * Called with following args:
@@ -79,16 +85,19 @@ const EventRequestNewRow = 'mpvqc-request-new-row'
  */
 const EventAddNewRow = 'mpvqc-add-new-row'
 
+
 /**
  * Called with following args:
  * - time: int      the seconds since the beginning to jump to
  */
 const EventJumpToVideoPosition = 'mpvqc-jump-to-video-position'
 
+
 /**
  * Called with no arguments
  */
 const EventFocusTable = 'mpvqc-focus-table'
+
 
 /**
  * Called with following args:
@@ -96,10 +105,12 @@ const EventFocusTable = 'mpvqc-focus-table'
  */
 const EventCustomPlayerCommand = 'mpvqc-custom-player-command'
 
+
 /**
  * Called with no arguments
  */
 const EventEditCurrentlySelectedComment = 'mpvqc-edit-currently-selected-comment'
+
 
 /**
  * Called with following args:
@@ -113,3 +124,17 @@ const EventRequestOpenVideo = 'mpvqc-request-open-video'
  * - comments: Array<{time: number, commentType: string, comment: string}>
  */
 const EventImportComments = 'mpvqc-import-comments'
+
+
+/**
+ * Called with following args:
+ * - selected index (0 based)
+ */
+const EventCommentsSelectedIndexChanged = 'mpvqc-comments-selected-index-changed'
+
+
+/**
+ * Called with following args:
+ * - count: total number of comments
+ */
+const EventCommentsCountChanged = 'mpvqc-comments-count-changed'

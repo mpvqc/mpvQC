@@ -93,6 +93,14 @@ FocusScope {
                 }
             }
 
+            onCurrentIndexChanged: {
+                listView.notifySelectedIndexChanged()
+            }
+
+            onCountChanged: {
+                listView.notifyCountChanged()
+            }
+
             Component.onCompleted: {
                 listView.model.row_added.connect(listView.selectRow)
                 listView.model.row_added.connect(listView.startEditing)
@@ -135,6 +143,15 @@ FocusScope {
             function removeRow(index) {
                 listView.model.remove_row(index)
             }
+
+            function notifySelectedIndexChanged() {
+                eventRegistry.produce(eventRegistry.EventCommentsSelectedIndexChanged, listView.currentIndex)
+            }
+
+            function notifyCountChanged() {
+                eventRegistry.produce(eventRegistry.EventCommentsCountChanged, listView.count)
+            }
+
         }
 
         Item {
