@@ -24,6 +24,7 @@ import QtQuick.Layouts
 import handlers
 import pyobjects
 
+
 FocusScope {
     id: container
 
@@ -118,8 +119,10 @@ FocusScope {
             }
 
             function startEditing() {
-                const item = listView.itemAtIndex(listView.currentIndex)
+                const index = listView.currentIndex
+                const item = listView.itemAtIndex(index)
                 if (item) {
+                    listView.positionViewAtIndex(index, ListView.Visible)
                     item.startEditing()
                 }
             }

@@ -1,6 +1,6 @@
 glfw>=2.5.3
 inject>=4.3.1
-PySide6>=6.3.0
+PySide6>=6.3.1
 pytest>=7.1.2
 PyOpenGl>=3.1.6
 python-mpv>=1.0.1

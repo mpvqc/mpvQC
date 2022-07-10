@@ -63,7 +63,6 @@ QtObject {
         if (modifier === Qt.NoModifier && key === Qt.Key_Escape)
             return accept(escapeKey)
 
-        event.accepted = true
-        allOtherKeys(event)
+        return accept(allOtherKeys)
     }
 }
