@@ -29,62 +29,65 @@ Item {
     visible: !appWindow.displayVideoFullScreen
 
     readonly property bool isMaximized: utils.isMaximized()
-    readonly property int marginTop: windowBorder
-    readonly property int marginMaximzedBottom: windowBorder
-    readonly property int marginMaximzedSides: windowBorder
-    readonly property int marginDefaultBottom: 0
-    readonly property int marginDefaultSides: 0
+    readonly property int marginTop: 4
+    readonly property int marginOther: isMaximized ? 6 : 0
 
-    RowLayout {
+    Column {
         id: footer
         width: parent.width
+        spacing: 0
 
-        MpvqcRowSelectionLabel {
-            Layout.topMargin: marginTop
-            Layout.bottomMargin: isMaximized ? marginMaximzedBottom : marginDefaultBottom
-            Layout.leftMargin: isMaximized ? marginMaximzedSides : marginDefaultSides
+        MenuSeparator {
+            topPadding: 1
+            bottomPadding: 1
+            width: parent.width
         }
 
-        Item { Layout.fillWidth: true }
+        RowLayout {
+            width: parent.width
 
-        MpvqcVideoPercentLabel {
-            horizontalAlignment: Text.AlignRight
-            Layout.topMargin: marginTop
-            Layout.bottomMargin: isMaximized ? marginMaximzedBottom : marginDefaultBottom
-        }
+            MpvqcRowSelectionLabel {
+                Layout.bottomMargin: marginOther
+                Layout.leftMargin: marginOther
+            }
 
-        MpvqcVideoTimeLabel {
-            horizontalAlignment: Text.AlignRight
-            Layout.preferredWidth: preferredLabelWidth
-            Layout.topMargin: marginTop
-            Layout.bottomMargin: isMaximized ? marginMaximzedBottom : marginDefaultBottom
-        }
+            Item { Layout.fillWidth: true }
 
-        Item {
-            height: 25
-            width: 25
-            Layout.topMargin: marginTop
-            Layout.bottomMargin: isMaximized ? marginMaximzedBottom : marginDefaultBottom
-            Layout.rightMargin: isMaximized ? marginMaximzedSides : marginDefaultSides
+            MpvqcVideoPercentLabel {
+                horizontalAlignment: Text.AlignRight
+                Layout.bottomMargin: marginOther
+            }
 
-            ToolButton {
-                icon.source: "qrc:/data/icons/expand_more_black_24dp.svg"
-                focusPolicy: Qt.NoFocus
-                height: parent.height
-                width: parent.width + 1
-                padding: 3
+            MpvqcVideoTimeLabel {
+                horizontalAlignment: Text.AlignRight
+                Layout.preferredWidth: preferredLabelWidth
+                Layout.bottomMargin: marginOther
+            }
 
-                onClicked: {
-                    menu.open()
-                }
+            Item {
+                height: 25
+                width: 25
+                Layout.bottomMargin: marginOther
+                Layout.rightMargin: marginOther
 
-                MpvqcFooterSettingsMenu {
-                    id: menu
+                ToolButton {
+                    icon.source: "qrc:/data/icons/expand_more_black_24dp.svg"
+                    focusPolicy: Qt.NoFocus
+                    height: parent.height
+                    width: parent.width + 1
+                    padding: 3
+
+                    onClicked: {
+                        menu.open()
+                    }
+
+                    MpvqcFooterSettingsMenu {
+                        id: menu
+                    }
                 }
             }
 
         }
-
     }
 
 }

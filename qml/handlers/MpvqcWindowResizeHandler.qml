@@ -30,16 +30,16 @@ DragHandler {
     onActiveChanged: {
         if (active) {
             const p = centroid.position
-            const b = borderWidth + 15
+            const b = borderWidth + 10
             let e = 0
             if (p.x < b)
                 e |= Qt.LeftEdge
             if (p.x >= width - b)
-                e |= Qt.RightEdge 
+                e |= Qt.RightEdge
             if (p.y < b)
-                e |= Qt.TopEdge 
+                e |= Qt.TopEdge
             if (p.y >= height - b)
-                e |= Qt.BottomEdge 
+                e |= Qt.BottomEdge
             appWindow.startSystemResize(e)
         }
     }

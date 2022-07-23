@@ -38,6 +38,7 @@ ApplicationWindow {
     Material.accent: displayableAccentColorFor(appThemeColorAccent)
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
+    color: 'transparent'
 
     property ApplicationWindow appWindow: window
     property MpvqcManager qcManager: MpvqcManager {}
@@ -45,21 +46,27 @@ ApplicationWindow {
     property var eventRegistry: MpvqcEventRegistry
     property int appTheme: MpvqcSettings.theme
     property int appThemeColorAccent: MpvqcSettings.accent
-    property int windowBorder: 5
+    property int windowBorder: utils.isMaximized() || utils.isFullScreen() ? 0 : 6
+    property int windowRadius: utils.isMaximized() || utils.isFullScreen() ? 0 : 12
     property bool displayVideoFullScreen: false
 
-    MpvqcWindowBorderMouseCurser {
-        borderWidth: windowBorder
-        anchors.fill: parent
-    }
+    background: Rectangle {
+        radius: windowRadius
+        color: Material.background
 
-    MpvqcWindowResizeHandler {
-        borderWidth: windowBorder
-    }
+        MpvqcWindowBorderMouseCurser {
+            borderWidth: windowBorder
+            anchors.fill: parent
+        }
 
-    MpvqcMainPage {
-        anchors.fill: parent
-        anchors.margins: appWindow.visibility === Window.Windowed ? windowBorder : 0
+        MpvqcWindowResizeHandler {
+            borderWidth: windowBorder
+        }
+
+        MpvqcMainPage {
+            anchors.fill: parent
+            anchors.margins: windowBorder
+        }
     }
 
     Component.onCompleted: {

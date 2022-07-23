@@ -29,18 +29,18 @@ MouseArea {
 
     cursorShape: {
         const p = Qt.point(mouseX, mouseY)
-        const b = borderWidth + 15
-        if (p.x < b && p.y < b) 
+        const b = borderWidth + 10
+        if (p.x < b && p.y < b)
             return Qt.SizeFDiagCursor
-        if (p.x >= width - b && p.y >= height - b) 
+        if (p.x >= width - b && p.y >= height - b)
             return Qt.SizeFDiagCursor
-        if (p.x >= width - b && p.y < b) 
+        if (p.x >= width - b && p.y < b)
             return Qt.SizeBDiagCursor
-        if (p.x < b && p.y >= height - b) 
+        if (p.x < b && p.y >= height - b)
             return Qt.SizeBDiagCursor
-        if (p.x < b || p.x >= width - b) 
+        if (p.x < b || p.x >= width - b)
             return Qt.SizeHorCursor
-        if (p.y < b || p.y >= height - b) 
+        if (p.y < b || p.y >= height - b)
             return Qt.SizeVerCursor
     }
 
