@@ -39,10 +39,6 @@ TestCase {
         compare(data.actual, data.expected)
     }
 
-    function benchmark_formatTimeToString() {
-        TestObject.formatTimeToString(10000)
-    }
-
     function test_formatTimeToStringShort_data() {
         return [
             { expected: '00:00', actual: TestObject.formatTimeToStringShort(0), tag: '0 -> 00:00' },
@@ -55,10 +51,6 @@ TestCase {
         compare(data.actual, data.expected)
     }
 
-    function benchmark_formatTimeToStringShort() {
-        TestObject.formatTimeToString(999)
-    }
-
     function test_extractSecondsFrom_data() {
         return [
             { expected: 0, actual: TestObject.extractSecondsFrom('00:00:00'), tag: '00:00:00 -> 0' },
@@ -67,13 +59,9 @@ TestCase {
             { expected: 10000, actual: TestObject.extractSecondsFrom('02:46:40'), tag: '02:46:40 -> 10000' },
         ]
     }
-        
+
     function test_extractSecondsFrom(data) {
         compare(data.actual, data.expected)
     }
 
-    function benchmark_extractSecondsFrom() {
-        TestObject.extractSecondsFrom('02:46:40')
-    }
-    
 }

@@ -77,24 +77,4 @@ TestCase {
         compare(data.actual, data.expected)
     }
 
-    function benchmark_generateCommandSpecialCommand() {
-        const event = { key: 'PGUP', modifiers: null, text: 'PGUP' }
-        const actual = TestObject.generateFrom(event)
-    }
-
-    function benchmark_generateCommandSpecialCommandWithModifier() {
-        const event = { key: 'PGUP', modifiers: Qt.AltModifier | Qt.ControlModifier , text: 'PGUP' }
-        const actual = TestObject.generateFrom(event)
-    }
-
-    function benchmark_generateCommandInvalidKeys() {
-        const event = { key: null, modifiers: Qt.AltModifier | Qt.ControlModifier , text: null }
-        const actual = TestObject.generateFrom(event)
-    }
-
-    function benchmark_generateCommandNormalSequences() {
-        const event = { key: Qt.Key_U, modifiers: Qt.AltModifier | Qt.ControlModifier , text: 'u' }
-        const actual = TestObject.generateFrom(event)
-    }
-
 }
