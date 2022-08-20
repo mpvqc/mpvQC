@@ -26,7 +26,6 @@ import pyobjects
 
 MpvPlayerPyObject {
     id: mpv
-    anchors.fill: parent
 
     Timer {
         id: hideMouseCursorTimer
@@ -95,12 +94,19 @@ MpvPlayerPyObject {
         }
     }
 
+    Connections {
+        target: qcManager
+
+        function onVideoImported(video) {
+            mpv.open(video)
+        }
+    }
+
     Component.onCompleted: {
         eventRegistry.subscribe(eventRegistry.EventJumpToVideoPosition, jumpToPostition)
         eventRegistry.subscribe(eventRegistry.EventRequestVideoPause, pauseVideo)
         eventRegistry.subscribe(eventRegistry.EventRequestNewRow, handleNewRowRequest)
         eventRegistry.subscribe(eventRegistry.EventCustomPlayerCommand, executeCustomCommand)
-        eventRegistry.subscribe(eventRegistry.EventRequestOpenVideo, handleOpenVideoRequest)
     }
 
     function requestAddCommentMenu() {
@@ -122,10 +128,6 @@ MpvPlayerPyObject {
 
     function executeCustomCommand(command) {
         mpv.execute(command)
-    }
-
-    function handleOpenVideoRequest(url) {
-        mpv.open(url)
     }
 
     function showAddCommentMenu() {

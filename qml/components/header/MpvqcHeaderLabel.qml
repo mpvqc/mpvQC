@@ -20,28 +20,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import handlers
-import settings
 
 
 Label {
-    id: label
-    visible: MpvqcSettings.statusbarPercentage && playerProperties.video_loaded
+    text: Qt.application.name
+    elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
+    horizontalAlignment: Text.AlignHCenter
+    verticalAlignment: Text.AlignVCenter
 
-    property real percent: playerProperties.percent_pos
-
-    onVisibleChanged: {
-        if (visible) {
-            updateText()
+    function reEvaluateTitle() {
+        let title = getTitle()
+        if (qcManager.saved) {
+            text = title
+        } else {
+            //: Window title in unsaved state
+            text = qsTranslate("MainWindow", "%1 (unsaved)").arg(title)
         }
     }
 
-    onPercentChanged: {
-        updateText()
+    function getTitle() {
+        return Qt.application.name
     }
 
-    function updateText() {
-        text = percent.toFixed(0) + '%'
-    }
+    Connections {
+        target: qcManager
 
+        function onSavedChanged() {
+            reEvaluateTitle()
+        }
+    }
 }

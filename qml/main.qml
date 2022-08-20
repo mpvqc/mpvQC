@@ -42,6 +42,7 @@ ApplicationWindow {
 
     property ApplicationWindow appWindow: window
     property MpvqcManager qcManager: MpvqcManager {}
+    property MpvPlayerPropertiesPyObject playerProperties: MpvPlayerPropertiesPyObject {}
     property var utils: MpvqcUtils
     property var eventRegistry: MpvqcEventRegistry
     property int appTheme: MpvqcSettings.theme

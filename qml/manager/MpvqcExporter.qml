@@ -20,17 +20,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import Qt.labs.platform
+import helpers
 import pyobjects
 import settings
-import "MpvqcDocumentExporter.js" as MpvqcDocumentExporter
+import "MpvqcDocumentFileExporter.js" as FileExporter
 
 
 Item {
     id: exporter
 
-    required property url currentVideo
+    property var commentGetterFunc: undefined // set from outside this class
+    property var commentGetterFuncWrapper: function() { return commentGetterFunc() }
+    property var absPathGetterFunc: function(filePath) { return FileIoPyObject.abs_path_of(filePath) }
+    property var nicknameGetterFunc: function() { return MpvqcSettings.nickname }
+    property var settingsGetterFunc: function() { return MpvqcSettings }
+    property var timeFormatFunc: MpvqcTimeFormatUtils.formatTimeToString
+    property var exportGenerator: new FileExporter.ExportContentGenerator(
+        absPathGetterFunc, nicknameGetterFunc, commentGetterFuncWrapper, settingsGetterFunc, timeFormatFunc
+    )
+
+    property url currentVideo: ''
     property url currentDocument: ''
-    property var commentModel: undefined
+
+    signal saved(url currentDocument)
 
     function requestSave() {
         if (currentDocument != '') {
@@ -41,25 +53,10 @@ Item {
     }
 
     function _save(url) {
-        const content = _generateExportFileContent()
+        const content = exportGenerator.createExportContent(currentVideo)
         FileIoPyObject.write(url, content)
         currentDocument = url
-    }
-
-    function _generateExportFileContent() {
-        const data = _generateData()
-        const settings = MpvqcSettings.exportSettings
-        return MpvqcDocumentExporter.generateDocumentFrom(data, settings)
-    }
-
-    function _generateData() {
-        return {
-            date: new Date().toLocaleString(Qt.locale(Qt.uiLanguage)),
-            generator: `${Qt.application.name} ${Qt.application.version}`,
-            nickname: MpvqcSettings.nickname,
-            videoPath: currentVideo != '' ? FileIoPyObject.abs_path_of(currentVideo) : '',
-            comments: commentModel.comments(),
-        }
+        saved(currentDocument)
     }
 
     function requestSaveAs() {
@@ -90,27 +87,16 @@ Item {
         repeat: true
 
         onTriggered: {
-            exporter.writeBackup()
+            exporter._writeBackup()
         }
     }
 
-    function writeBackup() {
+    function _writeBackup() {
         const video = currentVideo != ''
             ? FileIoPyObject.stem_of(currentVideo)
             : qsTranslate("FileInteractionDialogs", "untitled")
-        const content = _generateBackupFileContent()
+        const content = exportGenerator.createBackupContent(video)
         FileIoPyObject.write_backup(video, content)
-    }
-
-    function _generateBackupFileContent() {
-        const data = _generateData()
-        const settings = {
-            writeHeaderDate: true,
-            writeHeaderGenerator: true,
-            writeHeaderNickname: true,
-            writeHeaderVideoPath: true,
-        }
-        return MpvqcDocumentExporter.generateDocumentFrom(data, settings)
     }
 
 }

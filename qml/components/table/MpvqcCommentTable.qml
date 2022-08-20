@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import handlers
 import pyobjects
 
 
@@ -40,7 +39,6 @@ FocusScope {
             boundsBehavior: Flickable.StopAtBounds
             highlightMoveDuration: 0
             highlightMoveVelocity: -1
-            model: CommentModelPyObject {}
             ScrollBar.vertical: ScrollBar {}
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
@@ -54,6 +52,31 @@ FocusScope {
 
             property int itemHeight: 0
             property bool currentlyBeingEdited
+
+            model: CommentModelPyObject {
+
+                onNewItemAdded: (index) => {
+                    listView.selectRow(index)
+                    listView.startEditing()
+                }
+
+                onTimeUpdated: (index) => {
+                    listView.selectRow(index)
+                }
+
+                onRequestHighlight: (index) => {
+                    listView.selectRow(index)
+                }
+
+                onModelChanged: {
+                    fireEventModelChanged()
+                }
+
+                function fireEventModelChanged() {
+                    eventRegistry.produce(eventRegistry.EventCommentModelChanged)
+                }
+
+            }
 
             delegate: MpvqcCommentRow {
                 modelItem: model
@@ -103,10 +126,6 @@ FocusScope {
             }
 
             Component.onCompleted: {
-                listView.model.row_added.connect(listView.selectRow)
-                listView.model.row_added.connect(listView.startEditing)
-                listView.model.time_updated.connect(listView.selectRow)
-                listView.model.request_highlight.connect(listView.selectRow)
                 listView.forceActiveFocus()
             }
 
@@ -173,17 +192,20 @@ FocusScope {
         eventRegistry.subscribe(eventRegistry.EventAddNewRow, listView.addRow)
         eventRegistry.subscribe(eventRegistry.EventFocusTable, focusListView)
         eventRegistry.subscribe(eventRegistry.EventEditCurrentlySelectedComment, listView.startEditing)
-        eventRegistry.subscribe(eventRegistry.EventImportComments, importComments)
-        qcManager.commentModel = listView.model
+        qcManager.commentGetterFunc = function() { return listView.model.comments() }
+    }
+
+    Connections {
+        target: qcManager
+
+        function onCommentsImported(comments) {
+            listView.model.import_comments(comments)
+        }
     }
 
     function focusListView() {
         utils.clearActiveFocus()
         listView.forceActiveFocus()
-    }
-
-    function importComments(comments) {
-        listView.model.import_comments(comments)
     }
 
     MpvqcKeyEventHandler { id: handler }

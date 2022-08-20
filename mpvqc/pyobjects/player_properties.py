@@ -39,6 +39,9 @@ class MpvPlayerPropertiesPyObject(QObject):
     video_loaded_changed = Signal(bool)
     video_loaded = Property(bool, lambda self: bool(self.mpv.path), notify=video_loaded_changed)
 
+    path_changed = Signal(str)
+    path = Property(str, lambda self: str(self.mpv.path), notify=path_changed)
+
     def get_duration(self):
         return self._duration
 
@@ -74,8 +77,13 @@ class MpvPlayerPropertiesPyObject(QObject):
         self._subscribe_to_time_remaining()
 
     def _subscribe_to_path(self):
+        self._path = ''
+
         @self.mpv.property_observer('path')
         def observer(_, value: str):
+            if value and value != self._path:
+                self._path = value
+                self.path_changed.emit(value)
             self.video_loaded_changed.emit(bool(value))
 
     def _subscribe_to_duration(self):

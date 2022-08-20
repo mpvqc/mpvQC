@@ -59,6 +59,7 @@ FocusScope {
 
             MpvqcPlayer {
                 id: player
+                anchors.fill: parent
             }
         }
 

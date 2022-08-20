@@ -31,14 +31,18 @@ QML_IMPORT_MAJOR_VERSION = 1
 class CommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
-    row_added = Signal(int)  # param: row_index
-    time_updated = Signal(int)  # param: row_index
-    request_highlight = Signal(int)  # param: row_index
+    newItemAdded = Signal(int)  # param: row_index
+    timeUpdated = Signal(int)  # param: row_index
+    requestHighlight = Signal(int)  # param: row_index
+    modelChanged = Signal()
 
     def __init__(self):
         super().__init__()
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
+        self.rowsInserted.connect(self.modelChanged)
+        self.dataChanged.connect(self.modelChanged)
+        self.rowsRemoved.connect(self.modelChanged)
 
     # Searching
     # match = self.match(self.index(0, 0), Role.COMMENT, "comment", 1000)
@@ -56,7 +60,7 @@ class CommentModelPyObject(QStandardItemModel):
 
         index = self.indexFromItem(item)
         index_row = index.row()
-        self.row_added.emit(index_row)
+        self.newItemAdded.emit(index_row)
 
     @Slot(list)
     def import_comments(self, comments: list):
@@ -75,7 +79,7 @@ class CommentModelPyObject(QStandardItemModel):
 
         index = self.indexFromItem(item)
         index_row = index.row()
-        self.request_highlight.emit(index_row)
+        self.requestHighlight.emit(index_row)
 
     @Slot(int)
     def remove_row(self, row: int):
@@ -89,7 +93,7 @@ class CommentModelPyObject(QStandardItemModel):
         self.setData(index, time, Role.TIME)
         self.sort(0)
 
-        self.time_updated.emit(item.row())
+        self.timeUpdated.emit(item.row())
 
     @Slot(int, str)
     def update_comment_type(self, index: int, comment_type: str):

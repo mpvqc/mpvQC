@@ -44,13 +44,9 @@ Item {
             MpvqcHelpMenu {}
         }
 
-        Label {
-            text: Qt.application.name
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+        MpvqcHeaderLabel {
             width: headerBarContent.width - menuBar.width * 2
             height: menuBar.height
-            elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
         }
 
         Item {

@@ -24,11 +24,16 @@ import models
 
 
 QtObject {
+    id: object
     readonly property string language: Qt.uiLanguage
     readonly property var commentTypeModel: MpvqcCommentTypesModel {}
     property var translations: ({})
 
     onLanguageChanged: {
+        scheduleOnceAfter(500, recreateLookupTable)
+    }
+
+    function recreateLookupTable() {
         const mapping = new Map()
         for (let i = 0, count = commentTypeModel.count; i < count; i++) {
             const commentType = commentTypeModel.get(i)
@@ -41,6 +46,15 @@ QtObject {
 
     function lookup(commentTypeCurrentLanguage) {
         return translations[commentTypeCurrentLanguage] || commentTypeCurrentLanguage
+    }
+
+    function scheduleOnceAfter(delay, action) {
+        const timer = Qt.createQmlObject("import QtQuick; Timer {}", object)
+        timer.interval = delay
+        timer.repeat = false
+        timer.triggered.connect(action)
+        timer.triggered.connect(timer.destroy)
+        timer.start()
     }
 
 }

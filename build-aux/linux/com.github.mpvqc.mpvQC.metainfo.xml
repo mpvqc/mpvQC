@@ -3,7 +3,7 @@
 <component type="desktop">
     <id>com.github.mpvqc.mpvQC.desktop</id>
     <metadata_license>CC0-1.0</metadata_license>
-    <project_license>AGPL-3.0-or-later</project_license>
+    <project_license>GPL-3.0-or-later</project_license>
     <name>mpvQC</name>
     <summary>A libmpv based application for the creation of quality control reports of video files.</summary>
     <description>

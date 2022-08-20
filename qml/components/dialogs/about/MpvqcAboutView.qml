@@ -125,7 +125,7 @@ Column {
 
         Label {
             Layout.fillWidth: true
-            text: MpvqcPlayerProperties.mpv_version
+            text: playerProperties.mpv_version
             horizontalAlignment: Text.AlignLeft
         }
     }
@@ -143,7 +143,7 @@ Column {
 
         Label {
             Layout.fillWidth: true
-            text: MpvqcPlayerProperties.ffmpeg_version
+            text: playerProperties.ffmpeg_version
             horizontalAlignment: Text.AlignLeft
         }
     }

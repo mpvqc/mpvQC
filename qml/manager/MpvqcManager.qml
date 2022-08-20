@@ -20,37 +20,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import helpers
-import "MpvqcDocumentImporter.js" as MpvqcDocumentImporter
+import pyobjects
 
 
 Item {
-    id: state
-
-    property alias commentModel: exporter.commentModel
+    id: manager
+    property alias commentGetterFunc: exporter.commentGetterFunc
     property alias currentDocument: exporter.currentDocument
-    property url currentVideo: ''
+    property alias currentVideo:  exporter.currentVideo
+    property alias saved: state.saved
 
-    function openDocuments(documents) {
-        const report = MpvqcDocumentImporter.importFrom(documents)
-        const commentsListOfComments = report.imports.map(value => value.comments)
-        const commentsFlat = [].concat.apply([], commentsListOfComments)
-        eventRegistry.produce(eventRegistry.EventImportComments, commentsFlat)
+    signal commentsImported(var comments)
+    signal videoImported(url video)
+    signal subtitlesImported(var subtitles)
+
+    MpvqcState {
+        id: state
     }
 
-    function openSubtitles(subtitles) {
-        for (let file of subtitles) {
-            console.log("Open sub: " + file)
+    MpvqcImporter {
+        id: documentImporter
+
+        onCommentsImported: (comments) => {
+            manager.commentsImported(comments)
         }
-    }
 
-    function openVideo(url) {
-        eventRegistry.produce(eventRegistry.EventRequestOpenVideo, url)
-        state.currentVideo = url // todo use mpv property to get current video
+        onVideosImported: (videos) => {
+            _openFirstExistingVideoOf(videos)
+        }
+
+        onDocumentsRejected: (errors) => {
+            console.log('Import errors:', JSON.stringify(errors))
+        }
     }
 
     MpvqcExporter {
         id: exporter
-        currentVideo: state.currentVideo
+
+        onSaved: {
+            state.transitionToSaved()
+        }
+    }
+
+    function openDocuments(documents) {
+        documentImporter.importIncludingVideoFrom(documents)
+    }
+
+    function openSubtitles(subtitles) {
+        subtitlesImported(subtitles)
+    }
+
+    function openVideo(url) {
+        manager.videoImported(url)
     }
 
     function requestSave() {
@@ -59,6 +80,24 @@ Item {
 
     function requestSaveAs() {
         exporter.requestSaveAs()
+    }
+
+    function _openFirstExistingVideoOf(videoUrls) {
+        for (const video of videoUrls) {
+            if (FileIoPyObject.is_existing_file(video)) {
+                manager.openVideo(video)
+                break
+            }
+        }
+    }
+
+    Connections {
+        target: playerProperties
+
+        function onPathChanged(path) {
+            currentVideo = FileIoPyObject.url_from_file(path)
+            state.transitionToUnsaved()
+        }
     }
 
 }

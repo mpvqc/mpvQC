@@ -18,8 +18,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-pragma Singleton
-import pyobjects
+import QtQuick
 
 
-MpvPlayerPropertiesPyObject {}
+QtObject {
+    id: state
+    property var exporter
+    property bool saved: true
+
+
+    function transitionToSaved() {
+        state.saved = true
+    }
+
+    function transitionToUnsaved() {
+        state.saved = false
+    }
+
+    Component.onCompleted: {
+        eventRegistry.subscribe(eventRegistry.EventCommentModelChanged, transitionToUnsaved)
+    }
+
+}

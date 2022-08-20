@@ -53,6 +53,17 @@ class FileIoPyObject(QObject):
         path = Path(url.toLocalFile()).absolute()
         return QUrl.fromLocalFile(path.parent)
 
+    # noinspection PyTypeChecker
+    @Slot(str, result=QUrl)
+    def url_from_file(self, file: str):
+        return QUrl.fromLocalFile(file)
+
+    # noinspection PyTypeChecker
+    @Slot(QUrl, result=bool)
+    def is_existing_file(self, url: QUrl):
+        path = Path(url.toLocalFile()).absolute()
+        return path.is_file()
+
     @Slot(QUrl, str)
     def write(self, url: QUrl, content: str):
         path = Path(url.toLocalFile())

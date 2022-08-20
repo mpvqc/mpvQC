@@ -114,20 +114,6 @@ const EventEditCurrentlySelectedComment = 'mpvqc-edit-currently-selected-comment
 
 /**
  * Called with following args:
- * - url: QUrl      the url of the video
- */
-const EventRequestOpenVideo = 'mpvqc-request-open-video'
-
-
-/**
- * Called with following args:
- * - comments: Array<{time: number, commentType: string, comment: string}>
- */
-const EventImportComments = 'mpvqc-import-comments'
-
-
-/**
- * Called with following args:
  * - selected index (0 based)
  */
 const EventCommentsSelectedIndexChanged = 'mpvqc-comments-selected-index-changed'
@@ -138,3 +124,9 @@ const EventCommentsSelectedIndexChanged = 'mpvqc-comments-selected-index-changed
  * - count: total number of comments
  */
 const EventCommentsCountChanged = 'mpvqc-comments-count-changed'
+
+
+/**
+ * Called with no arguments
+ */
+const EventCommentModelChanged = 'mpvqc-comment-model-changed'

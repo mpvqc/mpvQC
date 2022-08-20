@@ -27,12 +27,12 @@ import settings
 
 Label {
     id: label
-    visible: MpvqcPlayerProperties.video_loaded
+    visible: playerProperties.video_loaded
 
     readonly property int secondsPerHour: 60 * 60
-    readonly property int duration: MpvqcPlayerProperties.duration
-    readonly property int timePos: MpvqcPlayerProperties.time_pos
-    readonly property real timeRemaining: MpvqcPlayerProperties.time_remaining
+    readonly property int duration: playerProperties.duration
+    readonly property int timePos: playerProperties.time_pos
+    readonly property real timeRemaining: playerProperties.time_remaining
     readonly property int timeFormat: MpvqcSettings.timeFormat
 
     property int preferredLabelWidth: 0
