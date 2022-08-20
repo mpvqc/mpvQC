@@ -19,34 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 pragma Singleton
-import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import pyobjects
 
 
-MpvPlayerPropertiesPyObject {
-
-    Component.onCompleted: {
-        subscribe(properties())
-    }
-
-    function properties() {
-        const properties = []
-        for (const p in this)
-            if (typeof this[p] != "function")
-                properties.push(p)
-        return properties
-    }
-
-    property bool path
-
-    property string mpv_version
-    property string ffmpeg_version
-
-    property real duration
-    property real percent_pos
-    property real time_pos
-    property real time_remaining
-
-}
+MpvPlayerPropertiesPyObject {}

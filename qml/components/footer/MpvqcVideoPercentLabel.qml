@@ -26,7 +26,7 @@ import settings
 
 Label {
     id: label
-    visible: MpvqcSettings.statusbarPercentage && MpvqcPlayerProperties.path
+    visible: MpvqcSettings.statusbarPercentage && MpvqcPlayerProperties.video_loaded
 
     property real percent: MpvqcPlayerProperties.percent_pos
 
