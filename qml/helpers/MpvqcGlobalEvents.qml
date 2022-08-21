@@ -23,27 +23,20 @@ import QtQuick
 
 QtObject {
 
-    signal commentCountChanged(int count)
+    property int commentCount: 0
+    property int selectedCommentIndex: 0
+
     signal commentModelChanged()
     signal customPlayerCommandRequested(string command)
     signal focusShiftToTableRequested()
     signal editSelectedCommentRequested()
     signal newCommentRequested(string commentType)
     signal newCommentMenuRequested()
-    signal selectedCommentListIndexChanged(int index)
     signal videoPauseRequested()
     signal videoPositionRequested(int seconds)
 
-    function notifyCommentCountChanged(count) {
-        commentCountChanged(count)
-    }
-
     function notifyCommentModelChanged() {
         commentModelChanged()
-    }
-
-    function notifySelectedCommentListIndexChanged(index) {
-        selectedCommentListIndexChanged(index)
     }
 
     function requestCustomPlayerCommand(command) {

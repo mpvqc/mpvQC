@@ -27,19 +27,7 @@ Label {
     text: (currentIndex + 1) + '/' + total
     visible: total
 
-    property int currentIndex: 0
-    property int total: 0
-
-    Connections {
-        target: globalEvents
-
-        function onCommentCountChanged(count) {
-            label.total = count
-        }
-
-        function onSelectedCommentListIndexChanged(index) {
-            label.currentIndex = index
-        }
-    }
+    property int currentIndex: globalEvents.selectedCommentIndex
+    property int total: globalEvents.commentCount
 
 }

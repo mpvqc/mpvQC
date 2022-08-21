@@ -167,11 +167,11 @@ FocusScope {
             }
 
             function notifySelectedIndexChanged() {
-                globalEvents.notifySelectedCommentListIndexChanged(listView.currentIndex)
+                globalEvents.selectedCommentIndex = listView.currentIndex
             }
 
             function notifyCountChanged() {
-                globalEvents.notifyCommentCountChanged(listView.count)
+                globalEvents.commentCount = listView.count
             }
 
         }
