@@ -73,7 +73,7 @@ FocusScope {
                 }
 
                 function fireEventModelChanged() {
-                    eventRegistry.produce(eventRegistry.EventCommentModelChanged)
+                    globalEvents.notifyCommentModelChanged()
                 }
 
             }
@@ -147,7 +147,7 @@ FocusScope {
             }
 
             function requestPlay(time) {
-                eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, time)
+                globalEvents.requestVideoPosition(time)
             }
 
             function updateTime(index, time) {
@@ -167,11 +167,11 @@ FocusScope {
             }
 
             function notifySelectedIndexChanged() {
-                eventRegistry.produce(eventRegistry.EventCommentsSelectedIndexChanged, listView.currentIndex)
+                globalEvents.notifySelectedCommentListIndexChanged(listView.currentIndex)
             }
 
             function notifyCountChanged() {
-                eventRegistry.produce(eventRegistry.EventCommentsCountChanged, listView.count)
+                globalEvents.notifyCommentCountChanged(listView.count)
             }
 
         }
@@ -189,9 +189,6 @@ FocusScope {
     }
 
     Component.onCompleted: {
-        eventRegistry.subscribe(eventRegistry.EventAddNewRow, listView.addRow)
-        eventRegistry.subscribe(eventRegistry.EventFocusTable, focusListView)
-        eventRegistry.subscribe(eventRegistry.EventEditCurrentlySelectedComment, listView.startEditing)
         qcManager.commentGetterFunc = function() { return listView.model.comments() }
     }
 
@@ -200,6 +197,22 @@ FocusScope {
 
         function onCommentsImported(comments) {
             listView.model.import_comments(comments)
+        }
+    }
+
+    Connections {
+        target: globalEvents
+
+        function onEditSelectedCommentRequested() {
+            listView.startEditing()
+        }
+
+        function onFocusShiftToTableRequested() {
+            focusListView()
+        }
+
+        function onNewCommentRequested(commentType) {
+            listView.addRow(commentType)
         }
     }
 

@@ -30,17 +30,16 @@ Label {
     property int currentIndex: 0
     property int total: 0
 
-    Component.onCompleted: {
-        eventRegistry.subscribe(eventRegistry.EventCommentsSelectedIndexChanged, updateSelectedIndex)
-        eventRegistry.subscribe(eventRegistry.EventCommentsCountChanged, updateCount)
-    }
+    Connections {
+        target: globalEvents
 
-    function updateSelectedIndex(index) {
-        label.currentIndex = index
-    }
+        function onCommentCountChanged(count) {
+            label.total = count
+        }
 
-    function updateCount(count) {
-        label.total = count
+        function onSelectedCommentListIndexChanged(index) {
+            label.currentIndex = index
+        }
     }
 
 }

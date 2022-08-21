@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 
 
-QtObject {
+Item {
     id: state
     property var exporter
     property bool saved: true
@@ -35,8 +35,12 @@ QtObject {
         state.saved = false
     }
 
-    Component.onCompleted: {
-        eventRegistry.subscribe(eventRegistry.EventCommentModelChanged, transitionToUnsaved)
+    Connections {
+        target: globalEvents
+
+        function onCommentModelChanged() {
+            transitionToUnsaved()
+        }
     }
 
 }

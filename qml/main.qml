@@ -43,8 +43,8 @@ ApplicationWindow {
     property ApplicationWindow appWindow: window
     property MpvqcManager qcManager: MpvqcManager {}
     property MpvPlayerPropertiesPyObject playerProperties: MpvPlayerPropertiesPyObject {}
+    property MpvqcGlobalEvents globalEvents: MpvqcGlobalEvents {}
     property var utils: MpvqcUtils
-    property var eventRegistry: MpvqcEventRegistry
     property int appTheme: MpvqcSettings.theme
     property int appThemeColorAccent: MpvqcSettings.accent
     property int windowBorder: utils.isMaximized() || utils.isFullScreen() ? 0 : 6

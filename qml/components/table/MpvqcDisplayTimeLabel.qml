@@ -52,11 +52,11 @@ Label {
     }
 
     function requestVideoPause() {
-        eventRegistry.produce(eventRegistry.EventRequestVideoPause)
+        globalEvents.requestVideoPause()
     }
 
     function jumpToVideoPosition(time) {
-        eventRegistry.produce(eventRegistry.EventJumpToVideoPosition, time)
+        globalEvents.requestVideoPosition(time)
     }
 
     function openTimeEditPopup(event) {

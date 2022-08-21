@@ -81,8 +81,12 @@ FocusScope {
 
     }
 
-    Component.onCompleted: {
-        eventRegistry.subscribe(eventRegistry.EventAddNewRow, disableFullScreen)
+    Connections {
+        target: globalEvents
+
+        function onNewCommentRequested() {
+            disableFullScreen()
+        }
     }
 
     function disableFullScreen() {

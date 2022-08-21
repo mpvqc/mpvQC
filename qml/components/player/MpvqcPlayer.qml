@@ -102,15 +102,30 @@ MpvPlayerPyObject {
         }
     }
 
-    Component.onCompleted: {
-        eventRegistry.subscribe(eventRegistry.EventJumpToVideoPosition, jumpToPostition)
-        eventRegistry.subscribe(eventRegistry.EventRequestVideoPause, pauseVideo)
-        eventRegistry.subscribe(eventRegistry.EventRequestNewRow, handleNewRowRequest)
-        eventRegistry.subscribe(eventRegistry.EventCustomPlayerCommand, executeCustomCommand)
+    Connections {
+        target: globalEvents
+
+        function onCustomPlayerCommandRequested(command) {
+            executeCustomCommand(command)
+        }
+
+        function onNewCommentMenuRequested() {
+            pauseVideo()
+            showAddCommentMenu()
+        }
+
+        function onVideoPauseRequested() {
+            pauseVideo()
+        }
+
+        function onVideoPositionRequested(seconds) {
+            jumpToPostition(seconds)
+        }
+
     }
 
     function requestAddCommentMenu() {
-        eventRegistry.produce(eventRegistry.EventRequestNewRow)
+        globalEvents.requestNewCommentMenu()
     }
 
     function jumpToPostition(position) {
@@ -121,11 +136,6 @@ MpvPlayerPyObject {
         mpv.pause()
     }
 
-    function handleNewRowRequest() {
-        pauseVideo()
-        showAddCommentMenu()
-    }
-
     function executeCustomCommand(command) {
         mpv.execute(command)
     }
@@ -134,16 +144,16 @@ MpvPlayerPyObject {
         const component = Qt.createComponent("MpvqcAddCommentMenu.qml")
         const menu = component.createObject(appWindow)
         menu.closed.connect(menu.destroy)
-        menu.itemClicked.connect(mpv.requestNewRow)
+        menu.itemClicked.connect(mpv.requestNewComment)
         menu.popup()
     }
 
-    function requestNewRow(commentType) {
-        eventRegistry.produce(eventRegistry.EventAddNewRow, commentType)
+    function requestNewComment(commentType) {
+        globalEvents.requestNewComment(commentType)
     }
 
     function requestFocusShiftToTable() {
-        eventRegistry.produce(eventRegistry.EventFocusTable)
+        globalEvents.requestFocusShiftToTable()
     }
 
 }

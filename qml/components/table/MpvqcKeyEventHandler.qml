@@ -40,16 +40,18 @@ MpvqcKeyEventConsumer {
         console.log("Delete pressed")
     }
 
-    onReturnKey: {
-        eventRegistry.produce(eventRegistry.EventEditCurrentlySelectedComment)
+    onReturnKey: (event) => {
+        if (event.isAutoRepeat) { return }
+        globalEvents.requestEditSelectedComment()
     }
 
-    onBackspaceKey: {
+    onBackspaceKey: (event) => {
+        if (event.isAutoRepeat) { return }
         console.log("Backspace pressed")
     }
 
     onEKey: {
-        eventRegistry.produce(eventRegistry.EventRequestNewRow)
+        globalEvents.requestNewCommentMenu()
     }
 
     onFKey: (event) => {
@@ -64,7 +66,7 @@ MpvqcKeyEventConsumer {
     onAllOtherKeys: (event) => {
         const command = MpvqcCommandGenerator.generateFrom(event)
         if (command) {
-            eventRegistry.produce(eventRegistry.EventCustomPlayerCommand, command)
+            globalEvents.requestCustomPlayerCommand(command)
         }
     }
 }
