@@ -103,6 +103,10 @@ class CommentModelPyObject(QStandardItemModel):
     def update_comment(self, index: int, comment: str):
         self.setData(self.index(index, 0), comment, Role.COMMENT)
 
+    @Slot()
+    def clear_comments(self):
+        self.clear()
+
     # noinspection PyTypeChecker
     @Slot(result=list)
     def comments(self) -> list:

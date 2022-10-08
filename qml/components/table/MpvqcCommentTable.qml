@@ -214,6 +214,10 @@ FocusScope {
         function onNewCommentRequested(commentType) {
             listView.addRow(commentType)
         }
+
+        function onCommentsResetRequested() {
+            listView.model.clear_comments()
+        }
     }
 
     function focusListView() {

@@ -32,16 +32,16 @@ Item {
     signal videoImported(url video)
     signal subtitlesImported(var subtitles)
 
+    MpvqcState {
+        id: state
+    }
+
     Connections {
         target: globalEvents
 
         function onCommentsChanged() {
             state.handleChange()
         }
-    }
-
-    MpvqcState {
-        id: state
     }
 
     MpvqcImporter {
@@ -61,16 +61,6 @@ Item {
 
         onStateChange: (change) => {
             state.handleImport(change)
-        }
-    }
-
-    MpvqcExporter {
-        id: exporter
-        video: state.video
-        document: state.document
-
-        onSaved: (document) => {
-            state.handleSave(document)
         }
     }
 
@@ -103,12 +93,36 @@ Item {
         importer.importFrom(documents, video, subtitles)
     }
 
+    MpvqcExporter {
+        id: exporter
+        video: state.video
+        document: state.document
+
+        onSaved: (document) => {
+            state.handleSave(document)
+        }
+    }
+
     function requestSave() {
         exporter.requestSave()
     }
 
     function requestSaveAs() {
         exporter.requestSaveAs()
+    }
+
+    MpvqcReseter {
+        id: reseter
+        saved: state.saved
+
+        onReset: {
+            globalEvents.requestCommentsReset()
+            state.handleReset()
+        }
+    }
+
+    function requestReset() {
+        reseter.requestReset()
     }
 
 }

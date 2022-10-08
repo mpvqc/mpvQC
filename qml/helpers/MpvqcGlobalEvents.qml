@@ -27,6 +27,7 @@ QtObject {
     property int selectedCommentIndex: 0
 
     signal commentsChanged()
+    signal commentsResetRequested()
     signal customPlayerCommandRequested(string command)
     signal focusShiftToTableRequested()
     signal editSelectedCommentRequested()
@@ -37,6 +38,10 @@ QtObject {
 
     function notifyCommentsChanged() {
         commentsChanged()
+    }
+
+    function requestCommentsReset() {
+        commentsResetRequested()
     }
 
     function requestCustomPlayerCommand(command) {

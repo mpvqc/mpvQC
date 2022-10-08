@@ -54,7 +54,6 @@ Item {
     function _save(url) {
         const content = exportGenerator.createExportContent(video)
         FileIoPyObject.write(url, content)
-        document = url
         saved(document)
     }
 

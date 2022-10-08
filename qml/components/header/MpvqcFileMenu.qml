@@ -30,7 +30,7 @@ MpvqcAutoWidthMenu {
         shortcut: "CTRL+N"
 
         onTriggered: {
-            console.log("New QC Document")
+            qcManager.requestReset()
         }
     }
 
