@@ -74,8 +74,8 @@ modules:
       - --with-udevdir=/app/lib/udev
     sources:
       - type: archive
-        url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.20.0.tar.bz2
-        sha256: 956118713f7ccb405c55c7088a6a2490c32d54300dd9a30d8d5008c28d3726f7
+        url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.22.1.tar.bz2
+        sha256: 65c6fbe830a44ca105c443b027182c1b2c9053a91d1e72ad849dfab388b94e31
 
   - name: nv-codec-headers
     cleanup:
@@ -106,8 +106,8 @@ modules:
       - --enable-libdav1d
     sources:
       - type: archive
-        url: https://fossies.org/linux/misc/ffmpeg-5.0.1.tar.xz
-        sha256: ef2efae259ce80a240de48ec85ecb062cecca26e4352ffb3fda562c21a93007b
+        url: https://fossies.org/linux/misc/ffmpeg-5.1.2.tar.xz
+        sha256: 619e706d662c8420859832ddc259cd4d4096a48a2ce1eefd052db9e440eef3dc
 
   - name: libass
     cleanup:
@@ -118,8 +118,8 @@ modules:
       - --disable-static
     sources:
       - type: archive
-        url: https://github.com/libass/libass/releases/download/0.14.0/libass-0.14.0.tar.xz
-        sha256: 881f2382af48aead75b7a0e02e65d88c5ebd369fe46bc77d9270a94aa8fd38a2
+        url: https://github.com/libass/libass/releases/download/0.16.0/libass-0.16.0.tar.xz
+        sha256: 5dbde9e22339119cf8eed59eea6c623a0746ef5a90b689e68a090109078e3c08
 
   - name: uchardet
     buildsystem: cmake-ninja
@@ -133,8 +133,8 @@ modules:
       - -DBUILD_STATIC=0
     sources:
       - type: archive
-        url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.6.tar.xz
-        sha256: 8351328cdfbcb2432e63938721dd781eb8c11ebc56e3a89d0f84576b96002c61
+        url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.7.tar.xz
+        sha256: 3fc79408ae1d84b406922fa9319ce005631c95ca0f34b205fad867e8b30e45b1
 
   - name: libmpv
     build-commands:
@@ -159,8 +159,8 @@ modules:
   - name: python
     sources:
       - type: archive
-        url: https://www.python.org/ftp/python/3.10.5/Python-3.10.5.tar.xz
-        sha256: 8437efd5b106ef0a75aabfbf23d880625120a73a86a22ade4d2e2e68d7b74486
+        url: https://www.python.org/ftp/python/3.10.7/Python-3.10.7.tar.xz
+        sha256: 6eed8415b7516fb2f260906db5d48dd4c06acc0cb24a7d6cc15296a604dcdc48
 
   # https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.2/krb5
   - name: krb5
