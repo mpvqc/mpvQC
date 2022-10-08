@@ -71,7 +71,7 @@ MpvqcAutoWidthMenu {
         shortcut: "CTRL+Q"
 
         onTriggered: {
-            console.log("Exit mpvQC")
+            appWindow.close()
         }
     }
 

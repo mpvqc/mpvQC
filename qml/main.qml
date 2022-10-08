@@ -74,6 +74,16 @@ ApplicationWindow {
         Qt.uiLanguage = MpvqcSettings.language
     }
 
+    MpvqcCloseAppHandler {
+        id: closeHandler
+        canClose: qcManager.saved
+    }
+
+    onClosing: (event) => {
+        closeHandler.requestClose()
+        event.accepted = closeHandler.userConfirmedClose
+    }
+
     function displayableAccentColorFor(color) {
         if (appTheme === Material.Light) {
             return color

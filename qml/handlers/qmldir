@@ -1,3 +1,4 @@
 module handlers
+MpvqcCloseAppHandler MpvqcCloseAppHandler.qml
 MpvqcWindowBorderMouseCurser MpvqcWindowBorderMouseCurser.qml
 MpvqcWindowResizeHandler MpvqcWindowResizeHandler.qml

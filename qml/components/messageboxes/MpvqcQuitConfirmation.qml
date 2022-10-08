@@ -19,12 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick.Dialogs
-import helpers
 
 
 MessageDialog {
     title: qsTranslate("MessageBoxes", "Unsaved Changes")
-    text: qsTranslate("MessageBoxes", "Do you really want to create a new QC document without saving your QC?")
-    buttons: MessageDialog.Yes | MessageDialog.No
+    text: qsTranslate("MessageBoxes", "Do you really want to quit without saving your QC?")
+    buttons: MessageDialog.Yes | MessageDialog.Cancel
 
 }

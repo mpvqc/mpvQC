@@ -19,29 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
-import helpers
-import pyobjects
 
 
 QtObject {
-    required property bool saved
+    required property bool canClose
+    property bool userConfirmedClose: false
 
-    signal reset()
-
-    function requestReset() {
-        if (saved) {
-            reset()
+    function requestClose() {
+        if (canClose || userConfirmedClose) {
+            _userConfirmedClose()
         } else {
-            _askUserToReallyReset()
+            _askUserToQuitWithoutSaving()
         }
     }
 
-    function _askUserToReallyReset() {
-        const url = "qrc:/qml/components/messageboxes/MpvqcNewDocumentConfirmation.qml"
+    function _askUserToQuitWithoutSaving() {
+        const url = "qrc:/qml/components/messageboxes/MpvqcQuitConfirmation.qml"
         const component = Qt.createComponent(url)
         const dialog = component.createObject(appWindow)
-        dialog.accepted.connect(reset)
+        dialog.accepted.connect(_userConfirmedClose)
         dialog.open()
+    }
+
+    function _userConfirmedClose() {
+        userConfirmedClose = true
+        appWindow.close()
     }
 
 }
