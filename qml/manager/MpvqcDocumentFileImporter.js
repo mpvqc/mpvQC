@@ -25,16 +25,13 @@ class Importer {
      * @param secondsExtractorFunc {mpvqcSecondsExtractorFunc}
      * @param reverseTranslatorLookupFunc {mpvqcCommentTypeTranslatorReverseLookupFunc}
      * @param fileReaderFunc {mpvqcFileReaderFunc}
-     * @param pathToUrlFunc {mpvqcPathToUrlFunc}
      */
     constructor(
         secondsExtractorFunc,
         reverseTranslatorLookupFunc,
         fileReaderFunc,
-        pathToUrlFunc
     ) {
         this.fileImporter = new DocumentFileImporter(secondsExtractorFunc, reverseTranslatorLookupFunc, fileReaderFunc)
-        this.pathToUrlFunc = pathToUrlFunc
     }
 
     /**
@@ -44,9 +41,9 @@ class Importer {
     importFrom(urls) {
         const report = this.fileImporter.importFrom(urls)
         const comments = this._combineComments(report)
-        const videos = this._extractVideos(report)
+        const successful = report.imports
         const errors = report.errors
-        return { comments, videos, errors }
+        return { comments, successful, errors }
     }
 
     /**
@@ -59,22 +56,6 @@ class Importer {
             comments.push(...document.comments)
         }
         return comments
-    }
-
-    /**
-     * @param report {MpvqcImportReport}
-     * @return {Array<string>}
-     */
-    _extractVideos(report) {
-        const videos = []
-        for (const document of report.imports) {
-            const video = document.video
-            if (video) {
-                const url = this.pathToUrlFunc(video)
-                videos.push(url)
-            }
-        }
-        return videos
     }
 
 }
@@ -102,7 +83,7 @@ class DocumentFileImporter {
         for (const url of urls) {
             const readReport = this._read(url)
             if (readReport.error) {
-                errors.push({ url, message: readReport.error })
+                errors.push({ url })
             } else {
                 const { comments, video } = this._extractFrom(readReport.textContent)
                 imports.push({ url, video, comments })
@@ -147,11 +128,7 @@ class DocumentReader {
      */
     read(url) {
         const textContent = this._read(url)
-        if (this._startsNotWithFileTag(textContent)) {
-            const error = qsTranslate('DocumentImport', "Document is not a valid quality check report")
-            return { error }
-        }
-        return { textContent }
+        return this._startsWithFileTag(textContent) ? { textContent } : { error: 'error' };
     }
 
     /**
@@ -160,14 +137,6 @@ class DocumentReader {
      */
     _read(url) {
         return this.fileReaderFunc(url)
-    }
-
-    /**
-     * @param textContent {string}
-     * @return {boolean}
-     */
-    _startsNotWithFileTag(textContent) {
-        return !this._startsWithFileTag(textContent)
     }
 
     /**

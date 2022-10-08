@@ -23,41 +23,89 @@ import helpers
 import pyobjects
 import "MpvqcDocumentFileImporter.js" as FileImporter
 import "MpvqcFileReader.js" as FileReader
+import "MpvqcStateChanges.js" as MpvqcStateChanges
 
 
-QtObject {
-    property var timeFormatFunc: MpvqcTimeFormatUtils.extractSecondsFrom
-    property var reverseLookupFunc: MpvqcCommentTypeReverseTranslator.lookup
-    property var fileReaderFunc: FileReader.read
-    property var pathToUrlFunc: FileIoPyObject.url_from_file
-    property var importer: new FileImporter.Importer(timeFormatFunc, reverseLookupFunc, fileReaderFunc, pathToUrlFunc)
+Item {
 
     signal commentsImported(var comments)
-    signal videosImported(var videos)
-    signal documentsRejected(var errors)
+    signal videoImported(url video)
+    signal subtitlesImported(var subtitles)
+    signal stateChange(var change)
+    signal erroneousDocumentsImported(var documents)
 
-    function importIncludingVideoFrom(documents) {
-        const report = importer.importFrom(documents)
-        _handleComments(report.comments)
-        _handleVideos(report.videos)
-        _handleErrors(report.errors)
+    QtObject {
+        id: fileImporter
+        property var timeFormatFunc: MpvqcTimeFormatUtils.extractSecondsFrom
+        property var reverseLookupFunc: MpvqcCommentTypeReverseTranslator.lookup
+        property var fileReaderFunc: FileReader.read
+        property var importer: new FileImporter.Importer(timeFormatFunc, reverseLookupFunc, fileReaderFunc)
+
+        function importFrom(documents) {
+            return importer.importFrom(documents)
+        }
     }
 
-    function _handleComments(comments) {
+    function importFrom(documents, standaloneVideo, subtitles) {
+        const importReport = fileImporter.importFrom(documents)
+        const linkedVideo = _findFirstExistingVideoFrom(importReport.successful)
+        const validDocuments = _extractUrlsFrom(importReport.successful)
+        const erroneousDocuments = _extractUrlsFrom(importReport.errors)
+        const newVideo = standaloneVideo || linkedVideo
+        const change = new MpvqcStateChanges.ImportChanges(validDocuments, newVideo)
+        _fireCommentsImported(importReport.comments)
+        _fireVideoImported(newVideo)
+        _fireSubtitlesImported(subtitles)
+        _fireStateChange(change)
+        _fireErroneousDocumentsImported(erroneousDocuments)
+    }
+
+    function _findFirstExistingVideoFrom(documents) {
+        for (const document of documents) {
+            const video = document.video
+            const url = FileIoPyObject.url_from_file(video)
+            if (FileIoPyObject.is_existing_file(url)) {
+                return url
+            }
+        }
+        return ''
+    }
+
+    function _extractUrlsFrom(documents) {
+        const urls = []
+        for (const document of documents) {
+            urls.push(document.url)
+        }
+        return urls
+    }
+
+    function _fireCommentsImported(comments) {
         if (comments.length > 0) {
             commentsImported(comments)
         }
     }
 
-    function _handleVideos(videos) {
-        if (videos.length > 0) {
-            videosImported(videos)
+    function _fireVideoImported(video) {
+        if (video) {
+            videoImported(video)
         }
     }
 
-    function _handleErrors(errors) {
-        if (errors.length > 0) {
-            documentsRejected(errors)
+    function _fireSubtitlesImported(subtitles) {
+        if (subtitles.length > 0) {
+            subtitlesImported(subtitles)
+        }
+    }
+
+    function _fireErroneousDocumentsImported(documents) {
+        if (documents.length > 0) {
+            erroneousDocumentsImported(documents)
+        }
+    }
+
+    function _fireStateChange(change) {
+        if (change.documents.length > 0 || change.video) {
+            stateChange(change)
         }
     }
 

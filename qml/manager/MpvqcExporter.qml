@@ -28,6 +28,8 @@ import "MpvqcDocumentFileExporter.js" as FileExporter
 
 Item {
     id: exporter
+    required property url video
+    required property url document
 
     property var commentGetterFunc: undefined // set from outside this class
     property var commentGetterFuncWrapper: function() { return commentGetterFunc() }
@@ -39,24 +41,21 @@ Item {
         absPathGetterFunc, nicknameGetterFunc, commentGetterFuncWrapper, settingsGetterFunc, timeFormatFunc
     )
 
-    property url currentVideo: ''
-    property url currentDocument: ''
-
-    signal saved(url currentDocument)
+    signal saved(url newDocument)
 
     function requestSave() {
-        if (currentDocument != '') {
-            _save(currentDocument)
+        if (document != '') {
+            _save(document)
         } else {
             requestSaveAs()
         }
     }
 
     function _save(url) {
-        const content = exportGenerator.createExportContent(currentVideo)
+        const content = exportGenerator.createExportContent(video)
         FileIoPyObject.write(url, content)
-        currentDocument = url
-        saved(currentDocument)
+        document = url
+        saved(document)
     }
 
     function requestSaveAs() {
@@ -69,11 +68,11 @@ Item {
     }
 
     function _generateFilePathProposal() {
-        const directory = currentVideo != ''
-            ? FileIoPyObject.parent_of(currentVideo)
+        const directory = video != ''
+            ? FileIoPyObject.parent_of(video)
             : StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
-        const videoName = currentVideo != ''
-            ? FileIoPyObject.stem_of(currentVideo)
+        const videoName = video != ''
+            ? FileIoPyObject.stem_of(video)
             : qsTranslate("FileInteractionDialogs", "untitled")
         const fileProposal = MpvqcSettings.nickname
             ? `[QC]_${videoName}_${MpvqcSettings.nickname}.txt`
@@ -92,10 +91,10 @@ Item {
     }
 
     function _writeBackup() {
-        const video = currentVideo != ''
-            ? FileIoPyObject.stem_of(currentVideo)
+        const video = exporter.video != ''
+            ? FileIoPyObject.stem_of(exporter.video)
             : qsTranslate("FileInteractionDialogs", "untitled")
-        const content = exportGenerator.createBackupContent(video)
+        const content = exportGenerator.createBackupContent(exporter.video)
         FileIoPyObject.write_backup(video, content)
     }
 

@@ -29,7 +29,7 @@ TestCase {
 
     property var content: 'file-content\n'
 
-    function test_read(data) {
+    function test_read() {
         compare(TestObject.read(file), content)
     }
 

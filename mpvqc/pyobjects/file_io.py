@@ -77,7 +77,7 @@ class FileIoPyObject(QObject):
         zip_path = self._paths.dir_backup / zip_name
         zip_mode = "a" if zip_path.exists() else "w"
 
-        file_name = f'{now:%Y-%m_%H-%M-%S}_{video_name}.txt'
+        file_name = f'{now:%Y-%m-%d_%H-%M-%S}_{video_name}.txt'
 
         # noinspection PyTypeChecker
         with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as zip:

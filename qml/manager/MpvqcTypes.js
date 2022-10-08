@@ -72,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  @typedef MpvqcImportError
  @type {Object}
  @property {QUrl} url
- @property {string} message
  */
 
 /**

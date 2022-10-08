@@ -19,28 +19,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
+import "MpvqcStateChanges.js" as MpvqcStateChanges
 
 
 Item {
-    id: state
-    property var exporter
+    id: appState
+
+    property url document: ''
+    property url video: ''
     property bool saved: true
+    property var state: new MpvqcStateChanges.InitialState()
 
-
-    function transitionToSaved() {
-        state.saved = true
+    onStateChanged: {
+        appState.document = state.document
+        appState.video = state.video
+        appState.saved = state.saved
     }
 
-    function transitionToUnsaved() {
-        state.saved = false
+    function handleChange() {
+        state = state.handleChange()
     }
 
-    Connections {
-        target: globalEvents
+    function handleImport(change) {
+        state = state.handleImport(change)
+    }
 
-        function onCommentModelChanged() {
-            transitionToUnsaved()
-        }
+    function handleReset() {
+        state = state.handleReset()
+    }
+
+    function handleSave(document) {
+        state = state.handleSave(document)
     }
 
 }

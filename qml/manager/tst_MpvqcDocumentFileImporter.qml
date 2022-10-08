@@ -57,11 +57,24 @@ Item {
                             { time: 1, commentType: "CommentType", comment: "Comment 1" },
                             { time: 1, commentType: "CommentType", comment: "Comment 2" }
                         ],
-                        videos: [ "url::myExampleVideo2.mkv","url::mpvqcFilePath42" ],
-                        errors: [
-                            { url: "file1.txt", message: "Document is not a valid quality check report" },
-                            { url: "file5.yml", message: "Document is not a valid quality check report" },
+                        successful: [
+                            { url: "file2.txt", video: "myExampleVideo2.mkv", comments: [] },
+                            {
+                              url: "file3.txt", video: "",
+                              comments: [
+                                { time: 1, commentType: "Translation", comment: "remark" },
+                                { time: 1, commentType: "Punctuation", comment: "remark 2" }
+                              ]
+                            },
+                            {
+                              url: "file4.txt", video: "mpvqcFilePath42",
+                              comments: [
+                                { time: 1, commentType: "CommentType", comment: "Comment 1" },
+                                { time: 1, commentType: "CommentType", comment: "Comment 2" }
+                              ]
+                            }
                         ],
+                        errors: [ { url: "file1.txt" }, { url: "file5.yml" }, ],
                     }
                 }
             ]
@@ -98,10 +111,7 @@ Item {
                         { url: 'file.yml', fileContent: '' },
                     ],
                     expected: {
-                        errors: [
-                            { url: "file.txt", message: "Document is not a valid quality check report" },
-                            { url: "file.yml", message: "Document is not a valid quality check report" },
-                         ],
+                        errors: [ { url: "file.txt" }, { url: "file.yml" }, ],
                         imports: []
                     },
                     tag: 'invalid docs'
@@ -149,10 +159,7 @@ Item {
                         { url: 'file5.yml', fileContent: '', },
                     ],
                     expected: {
-                        errors: [
-                            { url: "file1.txt", message: "Document is not a valid quality check report" },
-                            { url: "file5.yml", message: "Document is not a valid quality check report" },
-                        ],
+                        errors: [ { url: "file1.txt" }, { url: "file5.yml" }, ],
                         imports: [
                             { url: "file2.txt", video: "myExampleVideo2.mkv", comments: [] },
                             {
@@ -199,18 +206,9 @@ Item {
 
         function test_read_data() {
             return [
-                {
-                    url: 'file.yml', fileContent: '', tag: 'invalid type',
-                    expected: { error: 'Document is not a valid quality check report' },
-                },
-                {
-                    url: 'file.txt', fileContent: '', tag: 'invalid header',
-                    expected: { error: 'Document is not a valid quality check report' },
-                },
-                {
-                    url: 'file.txt', fileContent: '[FILE]', tag: 'valid',
-                    expected: { textContent: '[FILE]' },
-                },
+                { url: 'file.yml', fileContent: '', tag: 'invalid type', expected: { error: 'error' }, },
+                { url: 'file.txt', fileContent: '', tag: 'invalid header', expected: { error: 'error' }, },
+                { url: 'file.txt', fileContent: '[FILE]', tag: 'valid', expected: { textContent: '[FILE]' }, },
             ]
         }
 

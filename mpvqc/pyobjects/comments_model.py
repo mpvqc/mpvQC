@@ -34,15 +34,13 @@ class CommentModelPyObject(QStandardItemModel):
     newItemAdded = Signal(int)  # param: row_index
     timeUpdated = Signal(int)  # param: row_index
     requestHighlight = Signal(int)  # param: row_index
-    modelChanged = Signal()
+    commentsChanged = Signal()
 
     def __init__(self):
         super().__init__()
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
-        self.rowsInserted.connect(self.modelChanged)
-        self.dataChanged.connect(self.modelChanged)
-        self.rowsRemoved.connect(self.modelChanged)
+        self.dataChanged.connect(self.commentsChanged)
 
     # Searching
     # match = self.match(self.index(0, 0), Role.COMMENT, "comment", 1000)
@@ -61,6 +59,7 @@ class CommentModelPyObject(QStandardItemModel):
         index = self.indexFromItem(item)
         index_row = index.row()
         self.newItemAdded.emit(index_row)
+        self.commentsChanged.emit()
 
     @Slot(list)
     def import_comments(self, comments: list):
@@ -84,6 +83,7 @@ class CommentModelPyObject(QStandardItemModel):
     @Slot(int)
     def remove_row(self, row: int):
         self.removeRow(row)
+        self.commentsChanged.emit()
 
     @Slot(int, int)
     def update_time(self, row: int, time: int):

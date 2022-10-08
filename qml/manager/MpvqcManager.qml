@@ -26,52 +26,81 @@ import pyobjects
 Item {
     id: manager
     property alias commentGetterFunc: exporter.commentGetterFunc
-    property alias currentDocument: exporter.currentDocument
-    property alias currentVideo:  exporter.currentVideo
     property alias saved: state.saved
 
     signal commentsImported(var comments)
     signal videoImported(url video)
     signal subtitlesImported(var subtitles)
 
+    Connections {
+        target: globalEvents
+
+        function onCommentsChanged() {
+            state.handleChange()
+        }
+    }
+
     MpvqcState {
         id: state
     }
 
     MpvqcImporter {
-        id: documentImporter
+        id: importer
 
         onCommentsImported: (comments) => {
             manager.commentsImported(comments)
         }
 
-        onVideosImported: (videos) => {
-            _openFirstExistingVideoOf(videos)
+        onVideoImported: (video) => {
+            manager.videoImported(video)
         }
 
-        onDocumentsRejected: (errors) => {
-            console.log('Import errors:', JSON.stringify(errors))
+        onSubtitlesImported: (subtitles) => {
+            console.log(subtitles)
+        }
+
+        onStateChange: (change) => {
+            state.handleImport(change)
         }
     }
 
     MpvqcExporter {
         id: exporter
+        video: state.video
+        document: state.document
 
-        onSaved: {
-            state.transitionToSaved()
+        onSaved: (document) => {
+            state.handleSave(document)
         }
     }
 
     function openDocuments(documents) {
-        documentImporter.importIncludingVideoFrom(documents)
+        const video = ''
+        const subtitles = []
+        _open(documents, video, subtitles)
+    }
+
+    function openVideo(video) {
+        const documents = []
+        const subtitles = []
+        _open(documents, video, subtitles)
     }
 
     function openSubtitles(subtitles) {
-        subtitlesImported(subtitles)
+        const documents = []
+        const video = ''
+        _open(documents, video, subtitles)
     }
 
-    function openVideo(url) {
-        manager.videoImported(url)
+    function open(documents, video, subtitles) {
+        const docs = documents && documents.length > 0 ? documents : []
+        const vid = video && video != '' ? video : ''
+        const subs = subtitles && subtitles.length > 0 ? subtitles : []
+        _open(docs, vid, subs)
+    }
+
+    function _open(documents, video, subtitles) {
+        importer.importFrom(documents, video, subtitles)
     }
 
     function requestSave() {
@@ -80,24 +109,6 @@ Item {
 
     function requestSaveAs() {
         exporter.requestSaveAs()
-    }
-
-    function _openFirstExistingVideoOf(videoUrls) {
-        for (const video of videoUrls) {
-            if (FileIoPyObject.is_existing_file(video)) {
-                manager.openVideo(video)
-                break
-            }
-        }
-    }
-
-    Connections {
-        target: playerProperties
-
-        function onPathChanged(path) {
-            currentVideo = FileIoPyObject.url_from_file(path)
-            state.transitionToUnsaved()
-        }
     }
 
 }

@@ -68,12 +68,12 @@ FocusScope {
                     listView.selectRow(index)
                 }
 
-                onModelChanged: {
-                    fireEventModelChanged()
+                onCommentsChanged: {
+                    fireEventCommentsChanged()
                 }
 
-                function fireEventModelChanged() {
-                    globalEvents.notifyCommentModelChanged()
+                function fireEventCommentsChanged() {
+                    globalEvents.notifyCommentsChanged()
                 }
 
             }

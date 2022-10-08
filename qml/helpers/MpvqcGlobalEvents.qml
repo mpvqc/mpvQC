@@ -26,7 +26,7 @@ QtObject {
     property int commentCount: 0
     property int selectedCommentIndex: 0
 
-    signal commentModelChanged()
+    signal commentsChanged()
     signal customPlayerCommandRequested(string command)
     signal focusShiftToTableRequested()
     signal editSelectedCommentRequested()
@@ -35,8 +35,8 @@ QtObject {
     signal videoPauseRequested()
     signal videoPositionRequested(int seconds)
 
-    function notifyCommentModelChanged() {
-        commentModelChanged()
+    function notifyCommentsChanged() {
+        commentsChanged()
     }
 
     function requestCustomPlayerCommand(command) {
