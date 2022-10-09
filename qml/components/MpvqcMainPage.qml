@@ -22,6 +22,7 @@ import QtQuick
 import QtQuick.Controls
 import components.footer
 import components.header
+import handlers
 
 
 FocusScope {
@@ -39,6 +40,14 @@ FocusScope {
 
         Item {
             anchors.fill: parent
+
+            MpvqcDropFilesHandler {
+                anchors.fill: parent
+
+                onFilesDropped: (docs, vid, subs) => {
+                    qcManager.open(docs, vid, subs)
+                }
+            }
 
             MpvqcSplitView {
                 focus: true

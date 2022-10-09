@@ -98,7 +98,11 @@ MpvPlayerPyObject {
         target: qcManager
 
         function onVideoImported(video) {
-            mpv.open(video)
+            mpv.open_video(video)
+        }
+
+        function onSubtitlesImported(subtitles) {
+            mpv.open_subtitles(subtitles)
         }
     }
 

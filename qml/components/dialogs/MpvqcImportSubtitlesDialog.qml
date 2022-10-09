@@ -27,13 +27,19 @@ FileDialog {
     currentFolder: MpvqcSettings.lastDirectorySubtitles
     fileMode: FileDialog.OpenFiles
     nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Subtitle files") + " (*.ass *.ssa *.srt *.sup *.idx *.utf *.utf8 *.utf-8 *.smi *.rt *.aqt *.jss *.js *.mks *.vtt *.sub *.scc)",
+        qsTranslate("FileInteractionDialogs", "Subtitle files") + _subtitleFormatString(),
         qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
     ]
 
     onAccepted: {
         MpvqcSettings.lastDirectorySubtitles = currentFolder
         qcManager.openSubtitles(selectedFiles)
+    }
+
+    function _subtitleFormatString() {
+        const fileEndings = utils.getSupportedSubtitleFileEndings()
+        const formats = fileEndings.map(ending => `*.${ending}`).join(' ')
+        return ` (${formats})`
     }
 
 }

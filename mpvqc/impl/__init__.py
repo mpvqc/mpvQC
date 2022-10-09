@@ -18,3 +18,4 @@
 
 from .address_proc_getter import GetProcAddressGetter
 from .file_reader_resources import ResourceFileReader
+from .subtitle_cacher import SubtitleCacher

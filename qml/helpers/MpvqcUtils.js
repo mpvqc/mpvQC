@@ -78,3 +78,38 @@ function clearActiveFocus() {
         currentFocusItem.focus = false
     }
 }
+
+
+function getSupportedSubtitleFileEndings() {
+    return ['aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi', 'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt']
+}
+
+/**
+ * @param urls {Array<QUrl>}
+ * @returns {{subtitles: Array<QUrl>, documents: Array<QUrl>, videos: Array<QUrl>}}
+ */
+function splitByFileExtension(urls) {
+    const subtitleExtensions = _getSubtitleExtensions()
+    const documents = []; const videos = []; const subtitles = []
+    for (const url of urls) {
+        const urlString = url.toString()
+        if (urlString.endsWith('.txt')) {
+            documents.push(url)
+        } else if (_endsWithAny(subtitleExtensions, urlString)) {
+            subtitles.push(url)
+        } else {
+            videos.push(url)
+        }
+    }
+    return { documents, videos, subtitles }
+}
+
+
+function _getSubtitleExtensions() {
+    return getSupportedSubtitleFileEndings().map(ending => `.${ending}`)
+}
+
+
+function _endsWithAny(extensions, url) {
+    return extensions.some(extension => url.endsWith(extension));
+}

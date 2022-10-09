@@ -47,8 +47,15 @@ class MpvPlayerPyObject(QQuickFramebufferObject):
         return PlayerRenderer(self)
 
     @Slot(QUrl)
-    def open(self, video: QUrl):
-        self._player.open(url=video.toString())
+    def open_video(self, video: QUrl):
+        self._player.open_video(video.toString())
+        self._player.play()
+
+    @Slot(list)
+    def open_subtitles(self, subtitles: list[str]):
+        subtitles = map(lambda url_str: QUrl(url_str).toLocalFile(), subtitles)
+        # noinspection PyTypeChecker
+        self._player.open_subtitles(tuple(subtitles))
 
     @Slot()
     def pause(self):

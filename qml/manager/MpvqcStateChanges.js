@@ -119,10 +119,19 @@ class InitialState extends ApplicationState {
 class OtherState extends ApplicationState {
 
     handleImport(change) {
-        if (change.isOnlyVideoImported && this.video === change.video)
+        if (change.isOnlyVideoImported && this._urlsEqual(this.video, change.video))
             return new OtherState(this.video, this.document, SAVED)
         const video = this.findVideo(change)
         return new OtherState(video, NO_DOCUMENT, UNSAVED)
+    }
+
+    /**
+     * @param url1 {QUrl}
+     * @param url2 {QUrl}
+     * @returns boolean
+     */
+    _urlsEqual(url1, url2) {
+        return url1.toString() === url2.toString()
     }
 
 }

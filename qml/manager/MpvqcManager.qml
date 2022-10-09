@@ -55,7 +55,7 @@ Item {
         }
 
         onSubtitlesImported: (subtitles) => {
-            console.log(subtitles)
+            manager.subtitlesImported(subtitles)
         }
 
         onStateChange: (change) => {
