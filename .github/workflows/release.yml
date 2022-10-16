@@ -71,7 +71,7 @@ jobs:
           execute make build
       - name: 'Upload Build Artifact'
         uses: actions/upload-artifact@v3
-        if: github.ref == 'refs/heads/dev-qt6'
+        if: github.ref_name == 'dev-qt6'
         with:
           path: build/release
           name: release-build-artifact
@@ -82,10 +82,10 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v3
-      - name: 'Install Qt 6.3.1'
-        uses: jurplel/install-qt-action@v2
+      - name: 'Install Qt 6.4.*'
+        uses: jurplel/install-qt-action@v3
         with:
-          version: '6.3.1'
+          version: '6.4.*'
       - name: 'Execute Qml Tests'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -96,7 +96,7 @@ jobs:
   build_windows:
     runs-on: windows-latest
     name: 'Build Windows'
-    if: github.ref == 'refs/heads/dev-qt6'
+    if: github.ref_name == 'dev-qt6'
     needs:
       - build_python
       - test_qml
@@ -169,10 +169,10 @@ jobs:
   build_linux:
     runs-on: ubuntu-22.04
     container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-21.08
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-22.08
       options: --privileged
     name: 'Build Linux'
-    if: github.ref == 'refs/heads/dev-qt6'
+    if: github.ref_name == 'dev-qt6'
     needs:
       - build_python
       - test_qml

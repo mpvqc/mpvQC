@@ -3,7 +3,7 @@
 
 app-id: com.github.mpvqc.mpvQC
 runtime: org.freedesktop.Platform
-runtime-version: '21.08'
+runtime-version: '22.08'
 sdk: org.freedesktop.Sdk
 command: mpvQC
 
@@ -205,17 +205,17 @@ modules:
         --prefix=${FLATPAK_DEST} "PySide6>=6.3.1" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/2c/2a/8e1b163571ecf093193a5cd97e0b1420eaff1ba13935c3e60da4bf71cd58/PySide6-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: bc749968d641af1c516b6b0e00264bffea9cfc2d56dc04766f36e1a313e93a3a
+        url: https://files.pythonhosted.org/packages/df/75/244ad17b5cebb8851e6a28473b3d79298d220ea91d546080070829b31bdd/PySide6-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: d7824b1f0c346e8db03870fa8dc5e13b18bc746a9dfabbc69c85529e85903408
       - type: file
-        url: https://files.pythonhosted.org/packages/10/5b/f7b2b492bfeaf9cefce98a1e31b75af0cf316b7988f634ef824bd58d7d00/shiboken6-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: aad9aa8e7ecd3c889cc789e41abf3990101126b5b02edfcf87f1ef331c9dc45a
+        url: https://files.pythonhosted.org/packages/bd/e1/c0acd4fa3a9cb2b908dd3b1551887b7a6e4608d13f48d5273023ce8a90f0/shiboken6-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: 67b4731c55f5d74a72bede9a84691d64664cf7e1e76b606f58b39c8a61ea563d
       - type: file
-        url: https://files.pythonhosted.org/packages/4c/a1/0562e98d39347530af4b03327bf66dde4a51f2420b64b8e6bfde005d6e70/PySide6_Essentials-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: e27962beb2cc45fe13a1a1c24a454c3c3c3c3082c4a84bc5dcf6b306979ba013
+        url: https://files.pythonhosted.org/packages/9f/14/063d8ce95381bada749bc5bb749e126e77453c582ef6a52eb6c447cbed2e/PySide6_Essentials-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: 526434fb2ca94e54d07a7605716e4fb2e1b642440bce32c80a39e847e1710e65
       - type: file
-        url: https://files.pythonhosted.org/packages/bb/6b/009c0077e5442a86ab067199fd92a96065900d955b0e7a73548128ae97a3/PySide6_Addons-6.3.1-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: 14f4171b15dbdd7d120dc125c84f2eca53bc197182295bfdfdb3bb95b58a46c7
+        url: https://files.pythonhosted.org/packages/cb/90/65c68f723c2f8a4bd594d7bd0d5101644a28aa1190808ccc2401304bbc76/PySide6_Addons-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
+        sha256: 236b0dbaefc03114fc1deeee0041808d64a76650b643cf9ee9d8587e3ba9059a
   - name: python3-PyOpenGl
     buildsystem: simple
     build-commands:
