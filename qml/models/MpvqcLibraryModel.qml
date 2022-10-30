@@ -23,33 +23,39 @@ import QtQuick
 
 ListModel {
     ListElement {
-        name: "mpv"
-        url: "https://mpv.io/"
-        licence: "GPL-2.0+"
+        name: "glfw"
+        url: "https://github.com/glfw/glfw"
+        licence: "Zlib"
+        version: '@@pypi-glfw@@'
     }
     ListElement {
-        name: "libmpv"
-        url: "https://mpv.io/installation/"
-        licence: "GPL-3.0"
+        name: "Inject"
+        url: "https://github.com/ivankorobkov/python-inject"
+        licence: "Apache-2.0"
+        version: '@@pypi-Inject@@'
     }
     ListElement {
-        name: "python-mpv"
-        url: "https://github.com/jaseg/python-mpv"
-        licence: "AGPL-3.0"
+        name: "PyOpenGL"
+        url: "https://github.com/mcfletch/pyopengl"
+        licence: "PyOpenGL License"
+        version: '@@pypi-PyOpenGL@@'
     }
     ListElement {
         name: "PySide6"
         url: "https://wiki.qt.io/Qt_for_Python"
         licence: "LGPL-3.0"
+        version: '@@pypi-PySide6@@'
     }
     ListElement {
-        name: "python-inject"
-        url: "https://github.com/ivankorobkov/python-inject"
-        licence: "Apache-2.0"
+        name: "pytest"
+        url: "https://github.com/pytest-dev/pytest"
+        licence: "MIT"
+        version: '@@pypi-pytest@@'
     }
     ListElement {
-        name: "material-design-icons"
-        url: "https://github.com/google/material-design-icons"
-        licence: "Apache-2.0"
+        name: "python-mpv"
+        url: "https://github.com/jaseg/python-mpv"
+        licence: "AGPL-3.0"
+        version: '@@pypi-python-mpv@@'
     }
 }

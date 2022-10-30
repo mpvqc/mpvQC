@@ -46,6 +46,10 @@ Dialog {
             TabButton {
                 text: qsTranslate("AboutDialog", "Credits")
             }
+
+            TabButton {
+                text: qsTranslate("AboutDialog", "Dependencies")
+            }
         }
 
         StackLayout {
@@ -55,6 +59,7 @@ Dialog {
 
             MpvqcAboutView {}
             MpvqcCreditsView {}
+            MpvqcDependenciesView {}
         }
     }
 }

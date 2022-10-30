@@ -20,13 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import components
-import helpers
 import models
 
 
 ScrollView {
+
     id: creditsTab
     width: parent.width
 
@@ -36,62 +35,52 @@ ScrollView {
         width: parent.width
 
         MpvqcDemiBoldLabel {
-            text: qsTranslate("AboutDialog", "Development")
+            text: 'mpv'
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        MpvqcDependency {
+            dependency: 'libmpv'
+            version: playerProperties.mpv_version.replace('mpv ', '')
+            url: "https://mpv.io/"
+            licence: "GPL-2.0+"
+        }
+
+        MpvqcDependency {
+            dependency: 'ffmpeg'
+            version: playerProperties.ffmpeg_version.replace('ffmpeg ', '')
+            url: "https://ffmpeg.org/"
+            licence: "GPL-2.0+"
+        }
+
+        MpvqcDemiBoldLabel {
+            text: qsTranslate("AboutDialog", "Libraries")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Repeater {
-            model: MpvqcDeveloperModel {}
+            model: MpvqcLibraryModel {}
             width: parent.width
 
-            Label {
-                text: name
+            MpvqcDependency {
                 anchors.horizontalCenter: parent.horizontalCenter
+                dependency: model.name
+                version: model.version
+                licence: model.licence
+                url: model.url
             }
         }
 
         MpvqcDemiBoldLabel {
-            text: qsTranslate("AboutDialog", "Artwork")
+            text: 'Other'
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Repeater {
-            model: MpvqcArtworkModel {}
-            width: parent.width
-
-            Label {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: name
-            }
+        MpvqcDependency {
+            dependency: 'material-design-icons'
+            url: "https://github.com/google/material-design-icons"
+            licence: "Apache-2.0"
         }
-
-        MpvqcDemiBoldLabel {
-            text: qsTranslate("AboutDialog", "Translation")
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        Repeater {
-            model: MpvqcLanguageModel {}
-            width: parent.width
-
-            RowLayout {
-                id: layout
-                visible: translator
-
-                Label {
-                    text: translator
-                    horizontalAlignment: Text.AlignRight
-                    Layout.preferredWidth: creditsTab.width / 2
-                }
-
-                Label {
-                    text: " (" + qsTranslate("Languages", language) + ")"
-                    horizontalAlignment: Text.AlignLeft
-                    Layout.preferredWidth: creditsTab.width / 2
-                }
-            }
-        }
-
     }
 
 }

@@ -1,2 +1,25 @@
-qmldir components
+module components
+
+# footer
+MpvqcFooter             footer/MpvqcFooter.qml
+
+# header
+MpvqcHeader             header/MpvqcHeader.qml
+
+# player
+MpvqcPlayer             player/MpvqcPlayer.qml
+
+# shared
+MpvqcAutoWidthMenu      shared/MpvqcAutoWidthMenu.qml
+MpvqcCircle             shared/MpvqcCircle.qml
+MpvqcDebugRectangle     shared/MpvqcDebugRectangle.qml
+MpvqcDemiBoldLabel      shared/MpvqcDemiBoldLabel.qml
+MpvqcEditableLabel      shared/MpvqcEditableLabel.qml
+MpvqcInputDialog        shared/MpvqcInputDialog.qml
+MpvqcSwitchRow          shared/MpvqcSwitchRow.qml
+
+# table
+MpvqcCommentTable       table/MpvqcCommentTable.qml
+
+#
 MpvqcMainPage MpvqcMainPage.qml

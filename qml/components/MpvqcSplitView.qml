@@ -21,8 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import Qt.labs.settings
-import components.player
-import components.table
+import components
 import pyobjects
 
 

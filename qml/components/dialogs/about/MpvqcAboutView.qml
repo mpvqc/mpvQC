@@ -20,8 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
-import components.shared
+import components
 import handlers
 
 
@@ -29,13 +28,13 @@ Column {
     id: aboutTab
     spacing: 8
     width: parent.width
-    topPadding: 15
+    topPadding: 20
 
     Image {
         anchors.horizontalCenter: parent.horizontalCenter
         source: "qrc:/data/icon.svg"
-        sourceSize.width: 150
-        sourceSize.height: 150
+        sourceSize.width: 200
+        sourceSize.height: 200
         asynchronous: true
     }
 
@@ -50,7 +49,7 @@ Column {
 
         Label {
             id: version
-            text: '>>>tag<<<'
+            text: Qt.application.version
             font.bold: true
         }
 
@@ -107,44 +106,6 @@ Column {
             anchors.fill: parent
             acceptedButtons: Qt.NoButton
             cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-        }
-    }
-
-    Rectangle { color: "transparent"; height: 15; width: 10 }
-
-    RowLayout {
-        width: parent.width
-        spacing: 24
-
-        Label {
-            text: qsTranslate("AboutDialog", "mpv version")
-            elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
-            horizontalAlignment: Text.AlignRight
-            Layout.preferredWidth: parent.width / 2
-        }
-
-        Label {
-            Layout.fillWidth: true
-            text: playerProperties.mpv_version
-            horizontalAlignment: Text.AlignLeft
-        }
-    }
-
-    RowLayout {
-        width: parent.width
-        spacing: 24
-
-        Label {
-            text: qsTranslate("AboutDialog", "ffmpeg version")
-            elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
-            horizontalAlignment: Text.AlignRight
-            Layout.preferredWidth: parent.width / 2
-        }
-
-        Label {
-            Layout.fillWidth: true
-            text: playerProperties.ffmpeg_version
-            horizontalAlignment: Text.AlignLeft
         }
     }
 

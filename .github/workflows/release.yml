@@ -61,6 +61,40 @@ jobs:
           execute python -m pip install --upgrade pip
           execute python -m pip install wheel
           execute python -m pip install -r requirements.txt
+      - name: 'Set Dependency Versions'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          function error() { echo -e "\033[0;31m$*\033[0m"; }
+          
+          execute source venv/bin/activate
+          
+          DEPENDENCY_MODEL_FILE='MpvqcLibraryModel.qml'
+          DEPENDENCY_MODEL_PATH=$(find qml -type f -name "$DEPENDENCY_MODEL_FILE")
+          
+          if [ -z "$DEPENDENCY_MODEL_PATH" ]; then
+            error "Could not find dependency model $DEPENDENCY_MODEL_FILE"
+            exit 1
+          fi
+          
+          DEPENDENCIES=$(python -m pip list | tail -n +3)
+          BACKUP_IFS=$IFS
+          IFS=$'\n'
+          DEPENDENCIES=( $DEPENDENCIES )
+          IFS=$BACKUP_IFS
+          
+          for (( i=0; i<${#DEPENDENCIES[@]}; i++ )) do
+              LINE="${DEPENDENCIES[$i]}"
+              DEPENDENCY=$(echo "$LINE" | awk '{ print $1 }')
+              VERSION=$(echo "$LINE" | awk '{ print $2 }')
+              sed -i "s/@@pypi-$DEPENDENCY@@/$VERSION/g" "$DEPENDENCY_MODEL_PATH"
+          done
+          
+          if grep '@@' "$DEPENDENCY_MODEL_PATH"; then
+            error 'Could not find all dependency versions'
+            exit 1
+          else
+            execute cat "$DEPENDENCY_MODEL_PATH"
+          fi
       - name: 'Run Python Build'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import components.shared
+import components
 import helpers
 import models
 import pyobjects
@@ -59,8 +59,6 @@ Dialog {
 
                     MpvqcDemiBoldLabel {
                         text: qsTranslate("AppearanceDialog", "Theme")
-                        Layout.topMargin: 16
-                        Layout.bottomMargin: 8
                         Layout.fillWidth: true
                     }
 
@@ -70,8 +68,6 @@ Dialog {
 
                     MpvqcDemiBoldLabel {
                         text: qsTranslate("AppearanceDialog", "Color")
-                        Layout.topMargin: 16
-                        Layout.bottomMargin: 8
                         Layout.fillWidth: true
                     }
 
