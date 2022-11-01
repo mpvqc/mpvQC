@@ -60,7 +60,9 @@ MpvqcKeyEventConsumer {
     }
 
     onEscapeKey: {
-        console.log("Escape pressed")
+        if (utils.isFullScreen()) {
+            utils.exitFullScreen()
+        }
     }
 
     onAllOtherKeys: (event) => {

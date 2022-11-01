@@ -86,9 +86,7 @@ MpvPlayerPyObject {
         onDoubleClicked: (event) => {
             const button = event.button
             if (button === Qt.LeftButton) {
-                console.log("todo: full screen on double clicked left button")
-            }  else if (button === Qt.MiddleButton) {
-                mpv.press_mouse_middle()
+                utils.toggleFullScreen()
             }
         }
     }
