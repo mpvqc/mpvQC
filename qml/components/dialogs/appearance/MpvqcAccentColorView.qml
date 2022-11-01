@@ -29,7 +29,6 @@ import settings
 GridView {
     id: gridViewAccent
     model: MpvqcAccentColorModel {}
-    focus: true
     clip: true
     width: 352
     height: (itemSize + itemPadding) * 4

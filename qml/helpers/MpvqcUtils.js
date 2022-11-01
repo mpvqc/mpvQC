@@ -72,14 +72,6 @@ function showFullScreen() {
 }
 
 
-function clearActiveFocus() {
-    const currentFocusItem = appWindow.activeFocusItem
-    if (currentFocusItem) {
-        currentFocusItem.focus = false
-    }
-}
-
-
 function getSupportedSubtitleFileEndings() {
     return ['aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi', 'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt']
 }

@@ -69,7 +69,6 @@ MpvPlayerPyObject {
             const button = event.button
             if (button === Qt.LeftButton) {
                 mpv.press_mouse_left()
-                requestFocusShiftToTable()
             } else if (button === Qt.MiddleButton) {
                 mpv.press_mouse_middle()
             } else if (button === Qt.RightButton) {
@@ -154,10 +153,6 @@ MpvPlayerPyObject {
 
     function requestNewComment(commentType) {
         globalEvents.requestNewComment(commentType)
-    }
-
-    function requestFocusShiftToTable() {
-        globalEvents.requestFocusShiftToTable()
     }
 
 }

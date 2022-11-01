@@ -29,7 +29,6 @@ QtObject {
     signal commentsChanged()
     signal commentsResetRequested()
     signal customPlayerCommandRequested(string command)
-    signal focusShiftToTableRequested()
     signal editSelectedCommentRequested()
     signal newCommentRequested(string commentType)
     signal newCommentMenuRequested()
@@ -50,10 +49,6 @@ QtObject {
 
     function requestEditSelectedComment() {
         editSelectedCommentRequested()
-    }
-
-    function requestFocusShiftToTable() {
-        focusShiftToTableRequested()
     }
 
     function requestNewComment(commentType) {

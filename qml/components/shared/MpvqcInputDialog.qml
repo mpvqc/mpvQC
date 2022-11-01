@@ -28,7 +28,6 @@ Dialog {
     id: inputDialog
     width: MpvqcConstants.dialogWidth * 0.80
     modal: true
-    focus: true
     anchors.centerIn: parent
     closePolicy: Popup.CloseOnEscape
     footer: DialogButtonBox {

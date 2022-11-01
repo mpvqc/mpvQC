@@ -176,16 +176,6 @@ FocusScope {
 
         }
 
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            TapHandler {
-                onTapped: {
-                    focusListView()
-                }
-            }
-        }
     }
 
     Component.onCompleted: {
@@ -207,10 +197,6 @@ FocusScope {
             listView.startEditing()
         }
 
-        function onFocusShiftToTableRequested() {
-            focusListView()
-        }
-
         function onNewCommentRequested(commentType) {
             listView.addRow(commentType)
         }
@@ -218,11 +204,6 @@ FocusScope {
         function onCommentsResetRequested() {
             listView.model.clear_comments()
         }
-    }
-
-    function focusListView() {
-        utils.clearActiveFocus()
-        listView.forceActiveFocus()
     }
 
     MpvqcKeyEventHandler { id: handler }

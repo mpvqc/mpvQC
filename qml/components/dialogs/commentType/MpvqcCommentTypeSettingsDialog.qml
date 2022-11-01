@@ -27,7 +27,6 @@ Dialog {
     width: MpvqcConstants.dialogWidth
     height: MpvqcConstants.dialogHeight
     modal: true
-    focus: true
     anchors.centerIn: parent
     standardButtons: Dialog.Ok | Dialog.Reset
     closePolicy: Popup.CloseOnEscape

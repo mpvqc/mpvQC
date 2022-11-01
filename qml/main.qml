@@ -65,6 +65,8 @@ ApplicationWindow {
         }
 
         MpvqcMainPage {
+            id: mainPage
+            focus: true
             anchors.fill: parent
             anchors.margins: windowBorder
         }
@@ -89,6 +91,12 @@ ApplicationWindow {
             return color
         } else {
             return Qt.darker(Material.color(color), 1.10) // or Material.color(color, Material.Shade600)
+        }
+    }
+
+    onActiveFocusItemChanged: {
+        if (activeFocusItem === contentItem) {
+            mainPage.focus = true
         }
     }
 
