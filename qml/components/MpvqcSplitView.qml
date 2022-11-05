@@ -20,9 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import Qt.labs.settings
-import components
-import pyobjects
+import settings
 
 
 FocusScope {
@@ -46,12 +44,6 @@ FocusScope {
         anchors.fill: parent
         orientation: Qt.Vertical
 
-        Settings {
-            id: settings
-            fileName: MpvqcFilePathsPyObject.settings
-            category: "SplitView"
-        }
-
         Item {
             id: playerContainer
             SplitView.fillHeight: true
@@ -65,11 +57,11 @@ FocusScope {
         Item {
 
             Component.onCompleted: {
-                splitView.restoreState(settings.value("dimensions"))
+                splitView.restoreState(MpvqcSettings.dimensions)
             }
 
             Component.onDestruction: {
-                settings.setValue("dimensions", splitView.saveState())
+                MpvqcSettings.dimensions = splitView.saveState()
             }
 
             MpvqcCommentTable {

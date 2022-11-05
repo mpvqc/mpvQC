@@ -24,7 +24,6 @@ import QtQuick.Layouts
 import components
 import helpers
 import models
-import pyobjects
 
 
 Dialog {

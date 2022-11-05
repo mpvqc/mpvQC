@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+import QtCore
 import QtQuick
-import Qt.labs.platform
 import helpers
 import pyobjects
 import settings

@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import Qt.labs.settings
 import models
-import "MpvqcDefaultLanguage.js" as MpvqcLanguage
 
 
 Item {
@@ -33,16 +32,30 @@ Item {
     Settings {
         id: settings
         fileName: current.settingsFile
-        category: "Common"
-        property string language: MpvqcLanguage.getDefault(current)
+        category: 'Common'
+        property string language: _getDefaultLanguage()
+    }
+
+    function _getDefaultLanguage() {
+        const defaultLanguages = Qt.locale().uiLanguages
+        const model = Qt.createQmlObject('import models; MpvqcLanguageModel {}', parent)
+        for (let i = 0, count = model.count; i < count; i++) {
+            const abbrev = model.get(i).abbrev
+            if (defaultLanguages.includes(abbrev)) {
+                model.destroy()
+                return abbrev
+            }
+        }
+        model.destroy()
+        return 'en_US'
     }
 
     function save() {
-        settings.setValue("commentTypes", current.commentTypes.asString())
+        settings.setValue('commentTypes', current.commentTypes.asString())
     }
 
     function restore() {
-        const value = settings.value("commentTypes")
+        const value = settings.value('commentTypes')
         if (value) {
             current.commentTypes.replaceWith(value)
         }

@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 pragma Singleton
+import QtCore
 import QtQuick
+import QtQuick.Controls
 import Qt.labs.settings
 import pyobjects
 
@@ -28,9 +30,12 @@ Item {
     id: current
     readonly property var settingsFile: MpvqcFilePathsPyObject.settings
 
-    MpvqcBackupSettings {
+    Settings {
         id: backupSettings
-        settingsFile: current.settingsFile
+        fileName: current.settingsFile
+        category: 'Backup'
+        property bool enabled: true
+        property int interval: 90
     }
     property alias backupEnabled: backupSettings.enabled
     property alias backupInterval: backupSettings.interval
@@ -42,15 +47,21 @@ Item {
     property alias language: commonSettings.language
     property alias commentTypes: commonSettings.commentTypes
 
-    MpvqcConfigFileSettings {
-        id: configFileSettings
-    }
-    property alias configInput: configFileSettings.configInput
-    property alias configMpv: configFileSettings.configMpv
+    MpvqcFileInterfacePyObject { id: _configInput; file_path: MpvqcFilePathsPyObject.input_conf }
+    property alias configInput: _configInput
 
-    MpvqcExportSettings {
+    MpvqcFileInterfacePyObject { id: _configMpv; file_path: MpvqcFilePathsPyObject.mpv_conf }
+    property alias configMpv: _configMpv
+
+    Settings {
         id: exportSettings
-        settingsFile: current.settingsFile
+        fileName: current.settingsFile
+        category: 'Export'
+        property string nickname: EnvironmentPyObject.variable('USERNAME') || EnvironmentPyObject.variable('USER') || 'nick'
+        property bool writeHeaderDate: true
+        property bool writeHeaderGenerator: true
+        property bool writeHeaderNickname: false
+        property bool writeHeaderVideoPath: true
     }
     property alias exportSettings: exportSettings
     property alias nickname: exportSettings.nickname
@@ -59,29 +70,47 @@ Item {
     property alias writeHeaderNickname: exportSettings.writeHeaderNickname
     property alias writeHeaderVideoPath: exportSettings.writeHeaderVideoPath
 
-    MpvqcFormatSettings {
+    Settings {
         id: formatSettings
-        settingsFile: current.settingsFile
+        fileName: current.settingsFile
+        category: 'Format'
+        property bool statusbarPercentage: true
+        property int timeFormat: MpvqcAllSettings.TimeFormat.CURRENT_TOTAL_TIME
     }
     property alias statusbarPercentage: formatSettings.statusbarPercentage
     property alias timeFormat: formatSettings.timeFormat
-    property alias titleFormat: formatSettings.titleFormat
 
-    MpvqcImportSettings {
+    Settings {
         id: importSettings
-        settingsFile: current.settingsFile
+        fileName: current.settingsFile
+        category: 'Import'
+        property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
+        property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+        property var lastDirectorySubtitles: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
     }
     property alias lastDirectoryVideo: importSettings.lastDirectoryVideo
     property alias lastDirectoryDocuments: importSettings.lastDirectoryDocuments
     property alias lastDirectorySubtitles: importSettings.lastDirectorySubtitles
-    property alias loadVideoFromDocumentAutomatically: importSettings.loadVideoFromDocumentAutomatically
 
-    MpvqcThemeSettings {
+    Settings {
+        id: splitViewSettings
+        fileName: current.settingsFile
+        category: 'SplitView'
+        property var dimensions: ''
+    }
+    property alias dimensions: splitViewSettings.dimensions
+
+    Settings {
         id: themeSettings
-        settingsFile: current.settingsFile
+        fileName: current.settingsFile
+        category: 'Theme'
+        property int theme: Material.Dark
+        property int accent: Material.Orange
     }
     property alias theme: themeSettings.theme
     property alias accent: themeSettings.accent
+
+    enum TimeFormat { EMPTY, CURRENT_TIME, REMAINING_TIME, CURRENT_TOTAL_TIME }
 
     Component.onCompleted: {
         commonSettings.restore()

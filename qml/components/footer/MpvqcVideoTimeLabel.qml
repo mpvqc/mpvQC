@@ -63,9 +63,9 @@ Label {
 
     function formatText() {
         switch (timeFormat) {
-            case MpvqcTimeFormat.currentTime: return formatCurrentTime()
-            case MpvqcTimeFormat.remainingTime: return formatRemainingTime()
-            case MpvqcTimeFormat.currentTotalTime: return formatCurrentTotalTime()
+            case MpvqcSettings.TimeFormat.CURRENT_TIME: return formatCurrentTime()
+            case MpvqcSettings.TimeFormat.REMAINING_TIME: return formatRemainingTime()
+            case MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME: return formatCurrentTotalTime()
             default: return ''
         }
     }

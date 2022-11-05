@@ -31,46 +31,46 @@ MpvqcAutoWidthMenu {
 
     MenuItem {
         text: qsTranslate("MainWindow", "Default format")
-        checked: MpvqcSettings.timeFormat === MpvqcTimeFormat.currentTotalTime
+        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
         autoExclusive: true
         checkable: true
 
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcTimeFormat.currentTotalTime
+            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
         }
     }
 
     MenuItem {
         text: qsTranslate("MainWindow", "Current time")
-        checked: MpvqcSettings.timeFormat === MpvqcTimeFormat.currentTime
+        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TIME
         autoExclusive: true
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcTimeFormat.currentTime
+            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME
         }
     }
 
     MenuItem {
         text: qsTranslate("MainWindow", "Remaining time")
-        checked: MpvqcSettings.timeFormat === MpvqcTimeFormat.remainingTime
+        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.REMAINING_TIME
         autoExclusive: true
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcTimeFormat.remainingTime
+            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.REMAINING_TIME
         }
     }
 
     MenuItem {
         text: qsTranslate("MainWindow", "Hide time")
-        checked: MpvqcSettings.timeFormat === MpvqcTimeFormat.empty
+        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.EMPTY
         autoExclusive: true
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcTimeFormat.empty
+            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY
         }
     }
 
