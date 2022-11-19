@@ -24,41 +24,27 @@ import models
 
 
 Item {
-    id: current
-    required property var settingsFile
+    id: root
+
+    readonly property var languages: MpvqcLanguageModel {}
+    property var uiLanguages: Qt.locale().uiLanguages
     property alias language: settings.language
-    property var commentTypes: MpvqcCommentTypesModel {}
 
     Settings {
         id: settings
-        fileName: current.settingsFile
+        // fileName: current.settingsFile
         category: 'Common'
-        property string language: _getDefaultLanguage()
+        property string language: root.defaultLanguage()
     }
 
-    function _getDefaultLanguage() {
-        const defaultLanguages = Qt.locale().uiLanguages
-        const model = Qt.createQmlObject('import models; MpvqcLanguageModel {}', parent)
-        for (let i = 0, count = model.count; i < count; i++) {
-            const abbrev = model.get(i).abbrev
-            if (defaultLanguages.includes(abbrev)) {
-                model.destroy()
-                return abbrev
+    function defaultLanguage() {
+        for (let idx = 0, count = languages.count; idx < count; idx++) {
+            const language = languages.get(idx).identifier
+            if (uiLanguages.includes(language)) {
+                return language
             }
         }
-        model.destroy()
-        return 'en_US'
-    }
-
-    function save() {
-        settings.setValue('commentTypes', current.commentTypes.asString())
-    }
-
-    function restore() {
-        const value = settings.value('commentTypes')
-        if (value) {
-            current.commentTypes.replaceWith(value)
-        }
+        return 'en-US'
     }
 
 }

@@ -1,0 +1,2 @@
+module settings
+singleton MpvqcSettings MpvqcAllSettings.qml

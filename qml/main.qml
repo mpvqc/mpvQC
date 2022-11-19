@@ -19,85 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
-import QtQuick.Controls
-import components
-import handlers
-import helpers
-import manager
-import pyobjects
-import settings
+import app
 
 
-ApplicationWindow {
-    id: window
+MpvqcApplication {
     visible: true
-    width: 1290
-    height: 970
-    flags: Qt.FramelessWindowHint | Qt.Window
-    Material.theme: appTheme
-    Material.accent: displayableAccentColorFor(appThemeColorAccent)
-    LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
-    LayoutMirroring.childrenInherit: true
     color: 'transparent'
+    width: 1280
+    height: 720
+    flags: Qt.FramelessWindowHint | Qt.Window
 
-    property ApplicationWindow appWindow: window
-    property MpvqcManager qcManager: MpvqcManager {}
-    property MpvPlayerPropertiesPyObject playerProperties: MpvPlayerPropertiesPyObject {}
-    property MpvqcGlobalEvents globalEvents: MpvqcGlobalEvents {}
-    property var utils: MpvqcUtils
-    property int appTheme: MpvqcSettings.theme
-    property int appThemeColorAccent: MpvqcSettings.accent
-    property int windowBorder: utils.isMaximized() || utils.isFullScreen() ? 0 : 6
-    property int windowRadius: utils.isMaximized() || utils.isFullScreen() ? 0 : 12
-    property bool displayVideoFullScreen: false
-
-    background: Rectangle {
-        radius: windowRadius
-        color: Material.background
-
-        MpvqcWindowBorderMouseCurser {
-            borderWidth: windowBorder
-            anchors.fill: parent
-        }
-
-        MpvqcWindowResizeHandler {
-            borderWidth: windowBorder
-        }
-
-        MpvqcMainPage {
-            id: mainPage
-            focus: true
-            anchors.fill: parent
-            anchors.margins: windowBorder
-        }
-    }
-
-    Component.onCompleted: {
-        Qt.uiLanguage = MpvqcSettings.language
-    }
-
-    MpvqcCloseAppHandler {
-        id: closeHandler
-        canClose: qcManager.saved
-    }
-
-    onClosing: (event) => {
-        closeHandler.requestClose()
-        event.accepted = closeHandler.userConfirmedClose
-    }
-
-    function displayableAccentColorFor(color) {
-        if (appTheme === Material.Light) {
-            return color
-        } else {
-            return Qt.darker(Material.color(color), 1.10) // or Material.color(color, Material.Shade600)
-        }
-    }
-
-    onActiveFocusItemChanged: {
-        if (activeFocusItem === contentItem) {
-            mainPage.focus = true
-        }
-    }
-
+    LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
+    LayoutMirroring.childrenInherit: true
 }

@@ -19,109 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
-import helpers
 
 
 Item {
-    id: manager
-    property alias commentGetterFunc: exporter.commentGetterFunc
-    property alias saved: state.saved
+    id: root
+    property bool saved: true
 
     signal commentsImported(var comments)
     signal videoImported(url video)
     signal subtitlesImported(var subtitles)
 
-    MpvqcState {
-        id: state
-    }
-
-    Connections {
-        target: globalEvents
-
-        function onCommentsChanged() {
-            state.handleChange()
-        }
-    }
-
-    MpvqcImporter {
-        id: importer
-
-        onCommentsImported: (comments) => {
-            manager.commentsImported(comments)
-        }
-
-        onVideoImported: (video) => {
-            manager.videoImported(video)
-        }
-
-        onSubtitlesImported: (subtitles) => {
-            manager.subtitlesImported(subtitles)
-        }
-
-        onStateChange: (change) => {
-            state.handleImport(change)
-        }
-    }
-
-    function openDocuments(documents) {
-        const video = ''
-        const subtitles = []
-        _open(documents, video, subtitles)
-    }
-
-    function openVideo(video) {
-        const documents = []
-        const subtitles = []
-        _open(documents, video, subtitles)
-    }
-
-    function openSubtitles(subtitles) {
-        const documents = []
-        const video = ''
-        _open(documents, video, subtitles)
-    }
-
-    function open(documents, video, subtitles) {
-        const docs = documents && documents.length > 0 ? documents : []
-        const vid = video && video != '' ? video : ''
-        const subs = subtitles && subtitles.length > 0 ? subtitles : []
-        _open(docs, vid, subs)
-    }
-
-    function _open(documents, video, subtitles) {
-        importer.importFrom(documents, video, subtitles)
-    }
-
-    MpvqcExporter {
-        id: exporter
-        video: state.video
-        document: state.document
-
-        onSaved: (document) => {
-            state.handleSave(document)
-        }
-    }
-
-    function requestSave() {
-        exporter.requestSave()
-    }
-
-    function requestSaveAs() {
-        exporter.requestSaveAs()
-    }
-
-    MpvqcReseter {
-        id: reseter
-        saved: state.saved
-
-        onReset: {
-            globalEvents.requestCommentsReset()
-            state.handleReset()
-        }
-    }
-
-    function requestReset() {
-        reseter.requestReset()
-    }
-
+    function reset() {}
+    function openDocuments(documents) { console.log('MpvqcManager', 'openDocuments', documents) }
+    function openVideo(video) { console.log('MpvqcManager', 'openVideo', video) }
+    function openSubtitles(subtitles) { console.log('MpvqcManager', 'openSubtitles', subtitles) }
+    function save() {}
+    function saveAs() {}
 }

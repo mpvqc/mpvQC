@@ -19,37 +19,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.Material
 import models
 import shared
 
 
-GridView {
+ListView {
     id: root
 
     required property var mpvqcApplication
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property int itemSize: 52
-    property int itemPadding: 8
     property int borderSize: 12
 
     boundsBehavior: Flickable.StopAtBounds
-    model: MpvqcAccentColorModel {}
+    model: MpvqcThemeModel {}
     clip: true
-    height: (itemSize + itemPadding) * 4
-    cellWidth: itemSize + itemPadding
-    cellHeight: itemSize + itemPadding
+    spacing: 8
+    height: itemSize
+    orientation: ListView.Horizontal
 
     delegate: MpvqcCircle {
-        required property int accent
-        property bool selected: accent === root.mpvqcSettings.accent
+        required property int theme
+        property bool selected: theme === root.mpvqcSettings.theme
 
         width: root.itemSize
         color: selected ? Material.foreground : 'transparent'
 
         function onItemClicked() {
-            root.mpvqcSettings.accent = accent
+            root.mpvqcSettings.theme = theme
         }
 
         onClicked: {
@@ -58,8 +56,8 @@ GridView {
 
         MpvqcCircle {
             width: parent.width - root.borderSize
-            color: Material.accent
-            Material.accent: parent.accent
+            color: Material.background
+            Material.theme: parent.theme
             anchors.centerIn: parent
 
             onClicked: {

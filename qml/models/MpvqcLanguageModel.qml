@@ -32,26 +32,26 @@ ListModel {
 
     ListElement {
         language: "English"
-        abbrev: "en_US"
+        identifier: "en-US"
     }
     ListElement {
         language: "German"
-        abbrev: "de_DE"
+        identifier: "de-DE"
         translator: "Frechdachs"
     }
     ListElement {
         language: "Hebrew"
-        abbrev: "he_IL"
+        identifier: "he-IL"
         translator: "cN3rd"
     }
     ListElement {
         language: "Italian"
-        abbrev: "it_IT"
+        identifier: "it-IT"
         translator: "maddo"
     }
     ListElement {
         language: "Spanish"
-        abbrev: "es_ES"
+        identifier: "es-ES"
         translator: "RcUchiha"
     }
 }
