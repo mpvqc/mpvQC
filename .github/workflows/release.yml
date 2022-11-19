@@ -116,10 +116,22 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v3
-      - name: 'Install Qt 6.4.*'
+      - name: 'Install Qt 6.4.0'
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.4.*'
+          version: '6.4.0'
+      - name: 'Lint Qml Files'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          execute make lint-qml
+        continue-on-error: true
+      - name: 'Disable Flaky Tests'
+        # todo update qml2 to qml once refactoring is done
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          execute find qml2 -type f -name 'tst_*.qml' -exec sed -i 's,//\s*skip(,skip(,g' {} +
       - name: 'Execute Qml Tests'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }

@@ -58,10 +58,10 @@ class MpvqcApplication(QGuiApplication):
         self.setLayoutDirection(locale.textDirection())
 
     def set_up_imports(self):
-        self._engine.addImportPath(':/qml')
+        self._engine.addImportPath(':/qml2')
 
     def start_engine(self):
-        self._engine.load(QUrl.fromLocalFile(':/qml/main.qml'))
+        self._engine.load(QUrl.fromLocalFile(':/qml2/main.qml'))
 
     def verify(self):
         if not self._engine.rootObjects():

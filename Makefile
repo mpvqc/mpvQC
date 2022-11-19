@@ -14,8 +14,8 @@ NAME_DIRECTORY_DATA=data
 NAME_DIRECTORY_I18N=i18n
 NAME_DIRECTORY_PY_SOURCES=mpvqc
 NAME_DIRECTORY_PY_TESTS=test
-NAME_DIRECTORY_QML_SOURCES=qml
-NAME_DIRECTORY_QML_TESTS=qml
+NAME_DIRECTORY_QML_SOURCES=qml2
+NAME_DIRECTORY_QML_TESTS=qml2
 
 NAME_FILE_MAIN_ENTRY=main.py
 NAME_FILE_GENERATED_RESOURCES=generated_resources.py
@@ -28,6 +28,7 @@ TOOL_CLI_LUPDATE=pyside6-lupdate
 TOOL_CLI_LRELEASE=pyside6-lrelease
 TOOL_CLI_RCC=pyside6-rcc
 TOOL_CLI_QML_TESTRUNNER=qmltestrunner
+TOOL_CLI_QML_LINTER=qmllint
 
 
 #####                      #####
@@ -129,6 +130,11 @@ test-qml: \
 
 	@QML_XHR_ALLOW_FILE_READ=1 ${TOOL_CLI_QML_TESTRUNNER} \
 		-input ${DIRECTORY_QML_TESTS} -import ${DIRECTORY_QML_TESTS}
+
+lint-qml: \
+	check-qml-setup
+
+	@find ${DIRECTORY_QML_TESTS} -type f -name '*.qml' -exec ${TOOL_CLI_QML_LINTER} -I ${DIRECTORY_QML_TESTS} {} \;
 
 
 test-clean:
