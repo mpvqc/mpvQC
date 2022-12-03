@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+import QtQuick
 import QtQuick.Controls
 import dialogs
 import shared
-
 
 MpvqcMenu {
     id: root
@@ -52,16 +51,19 @@ MpvqcMenu {
     Action {
         id: _commentTypesAction
 
-        property var dialog: MpvqcDialogCommentTypes {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogCommentTypes {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "&Comment Type Settings...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
-
     }
 
     MenuSeparator { }

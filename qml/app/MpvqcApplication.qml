@@ -30,6 +30,7 @@ ApplicationWindow {
 
     readonly property MpvqcManager mpvqcManager: MpvqcManager {}
     readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {}
+    readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
 
     readonly property bool maximized: root.visibility === Window.Maximized
     readonly property bool fullscreen: root.visibility === Window.FullScreen

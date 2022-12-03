@@ -25,6 +25,25 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
+    standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
     closePolicy: Popup.CloseOnEscape
+
+    MpvqcCommentTypesView {
+        id: _view
+
+        property string title: qsTranslate("CommentTypesDialog", "Comment Types")
+
+        mpvqcApplication: root.mpvqcApplication
+        width: parent.width
+    }
+
+    onAccepted: {
+        _view.visible = false
+        _view.acceptTemporaryState()
+    }
+
+    onReset: {
+        _view.resetTemporaryEdits()
+    }
+
 }

@@ -53,7 +53,7 @@ MpvqcQuitHandler {
             verify(objectUnderTest.closeFuncCalled)
         }
 
-        function test_quit_closeRejected() {    // skip('- flaky in CI')
+        function test_quit_closeRejected() {    skip('- flaky since Qt 6.4.1')
             objectUnderTest.requestClose()
             verify(!objectUnderTest.closeFuncCalled)
             verify(!objectUnderTest.userConfirmedClose)
@@ -62,7 +62,7 @@ MpvqcQuitHandler {
             verify(!objectUnderTest.closeFuncCalled)
         }
 
-        function test_quit_closeAccepted() {    // skip('- flaky in CI')
+        function test_quit_closeAccepted() {    skip('- flaky since Qt 6.4.1')
             objectUnderTest.requestClose()
             verify(!objectUnderTest.closeFuncCalled)
             verify(!objectUnderTest.userConfirmedClose)

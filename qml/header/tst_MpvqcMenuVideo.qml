@@ -33,8 +33,8 @@ Item {
         mpvqcApplication: QtObject {
             property var mpvqcManager: QtObject {}
             property var mpvqcSettings: QtObject {
-                property var lastDirectoryVideo: 'initial directory'
-                property var lastDirectorySubtitles: 'initial directory'
+                property string lastDirectoryVideo: 'initial directory'
+                property string lastDirectorySubtitles: 'initial directory'
             }
             property var supportedSubtitleFileExtensions: [ 'ass' ]
         }

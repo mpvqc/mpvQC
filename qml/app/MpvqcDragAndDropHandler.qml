@@ -24,7 +24,7 @@ import QtQuick
 DropArea {
     required property var supportedSubtitleFileExtensions
 
-    readonly property var acceptedFormat: 'text/uri-list'
+    readonly property string acceptedFormat: 'text/uri-list'
 
     signal filesDropped(var documents, url video, var subtitles)
 

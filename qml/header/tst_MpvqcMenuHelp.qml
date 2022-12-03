@@ -32,7 +32,9 @@ Item {
     MpvqcMenuHelp {
         id: objectUnderTest
 
-        mpvqcApplication: QtObject {}
+        mpvqcApplication: QtObject {
+            property int windowRadius: 12
+        }
     }
 
     TestCase {

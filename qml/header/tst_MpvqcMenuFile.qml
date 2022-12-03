@@ -36,13 +36,14 @@ Item {
         id: objectUnderTest
 
         mpvqcApplication: QtObject {
+            property int windowRadius: 12
             property var mpvqcManager: QtObject {
                 function reset() { testHelper.resetCalled = true }
                 function save() { testHelper.saveCalled = true }
                 function saveAs() { testHelper.saveAsCalled = true }
             }
             property var mpvqcSettings: QtObject {
-                property var lastDirectoryDocuments: 'initial directory'
+                property string lastDirectoryDocuments: 'initial directory'
             }
             function close() { closeCalled = true }
         }

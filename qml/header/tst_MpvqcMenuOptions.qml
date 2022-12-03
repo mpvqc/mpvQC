@@ -32,6 +32,7 @@ Item {
         id: objectUnderTest
 
         mpvqcApplication: QtObject {
+            property int windowRadius: 12
             property var mpvqcSettings: QtObject {
                 property int theme: Material.Dark
                 property int accent: Material.Teal
@@ -45,12 +46,20 @@ Item {
         when: windowShown
 
         QtObject {
+            id: _factoryMock
+            property bool createObjectCalled: false
+            function createObject() { createObjectCalled = true; return _dialogMock }
+        }
+
+        QtObject {
             id: _dialogMock
             property bool openCalled: false
+            signal closed()
             function open() { openCalled = true }
         }
 
         function cleanup() {
+            _factoryMock.createObjectCalled = false
             _dialogMock.openCalled = false
         }
 
@@ -61,8 +70,9 @@ Item {
         }
 
         function test_commentTypes() {
-            objectUnderTest.commentTypesAction.dialog = _dialogMock
+            objectUnderTest.commentTypesAction.factory = _factoryMock
             objectUnderTest.commentTypesAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 

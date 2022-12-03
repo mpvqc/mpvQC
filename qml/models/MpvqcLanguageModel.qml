@@ -23,35 +23,44 @@ import QtQuick
 
 ListModel {
     readonly property var languagesForTranslationTool: [
-        qsTranslate("Languages", "English"),
-        qsTranslate("Languages", "German"),
-        qsTranslate("Languages", "Hebrew"),
-        qsTranslate("Languages", "Italian"),
-        qsTranslate("Languages", "Spanish"),
+        qsTranslate('Languages', 'English'),
+        qsTranslate('Languages', 'German'),
+        qsTranslate('Languages', 'Hebrew'),
+        qsTranslate('Languages', 'Italian'),
+        qsTranslate('Languages', 'Spanish'),
     ]
 
     ListElement {
-        language: "English"
-        identifier: "en-US"
+        language: 'English'
+        identifier: 'en-US'
     }
     ListElement {
-        language: "German"
-        identifier: "de-DE"
-        translator: "Frechdachs"
+        language: 'German'
+        identifier: 'de-DE'
+        translator: 'Frechdachs'
     }
     ListElement {
-        language: "Hebrew"
-        identifier: "he-IL"
-        translator: "cN3rd"
+        language: 'Hebrew'
+        identifier: 'he-IL'
+        translator: 'cN3rd'
     }
     ListElement {
-        language: "Italian"
-        identifier: "it-IT"
-        translator: "maddo"
+        language: 'Italian'
+        identifier: 'it-IT'
+        translator: 'maddo'
     }
     ListElement {
-        language: "Spanish"
-        identifier: "es-ES"
-        translator: "RcUchiha"
+        language: 'Spanish'
+        identifier: 'es-ES'
+        translator: 'RcUchiha'
     }
+
+    function identifiers(): Array<string> {
+        const marshalled = []
+        for (let i = 0; i < count; i++) {
+            marshalled.push(this.get(i).identifier)
+        }
+        return marshalled
+    }
+
 }

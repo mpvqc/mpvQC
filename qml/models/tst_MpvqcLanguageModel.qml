@@ -20,28 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtTest
 
+TestCase {
+    name: 'MpvqcLanguageModel'
 
-MpvqcCommonSettings {
-    id: objectUnderTest
+    readonly property MpvqcLanguageModel model: MpvqcLanguageModel {}
 
-    width: 400
-    height: 400
+    function test_identifier_data(): Array {
+        return [ { tag: 'it-IT' }, { tag: 'es-ES' } ]
+    }
 
-    TestCase {
-        name: "MpvqcCommonSettings"
-
-        function test_defaultLanguage_data() {
-            return [
-                { tag: 'en-US', expected: 'en-US', uiLanguages: ['something'] },
-                { tag: 'es-ES', expected: 'es-ES', uiLanguages: ['es-ES', 'es'] },
-            ]
-        }
-
-        function test_defaultLanguage(data) {
-            objectUnderTest.uiLanguages = data.uiLanguages
-            const actual = objectUnderTest._defaultLanguage()
-            compare(actual, data.expected)
-        }
+    function test_identifier(data): void {
+        const identifiers = model.identifiers()
+        verify(identifiers.includes(data.tag))
     }
 
 }

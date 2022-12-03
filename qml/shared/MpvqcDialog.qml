@@ -58,4 +58,15 @@ Dialog {
             currentIndex: _bar.currentIndex
         }
     }
+
+    Component.onCompleted: {
+        background.radius = mpvqcApplication.windowRadius
+        footer.background.radius = mpvqcApplication.windowRadius
+    }
+
+    Overlay.modal: Rectangle {
+        radius: root.mpvqcApplication.windowRadius
+        color: Color.transparent(root.palette.shadow, 0.5)
+        Behavior on opacity { NumberAnimation { duration: 150 } }
+    }
 }

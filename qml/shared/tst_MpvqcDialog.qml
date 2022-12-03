@@ -26,7 +26,9 @@ import QtTest
 Item {
     id: testHelper
 
-    property var mpvqcApplication: ApplicationWindow {}
+    property var mpvqcApplication: ApplicationWindow {
+        property int windowRadius: 12
+    }
 
     MpvqcDialog {
         id: objectUnderTest1

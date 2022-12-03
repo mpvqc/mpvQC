@@ -17,34 +17,48 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import Qt.labs.settings
 import models
 
-
 Item {
     id: root
 
-    readonly property var languages: MpvqcLanguageModel {}
-    property var uiLanguages: Qt.locale().uiLanguages
-    property alias language: settings.language
+    readonly property MpvqcLanguageModel _languageModel: MpvqcLanguageModel {}
+    readonly property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
 
-    Settings {
-        id: settings
-        // fileName: current.settingsFile
-        category: 'Common'
-        property string language: root.defaultLanguage()
+    property alias language: _settings.language
+    property var uiLanguages: Qt.locale().uiLanguages
+
+    function _defaultLanguage(): string {
+        return _languageModel.identifiers()
+            .find(language => uiLanguages.includes(language)) ?? 'en-US'
     }
 
-    function defaultLanguage() {
-        for (let idx = 0, count = languages.count; idx < count; idx++) {
-            const language = languages.get(idx).identifier
-            if (uiLanguages.includes(language)) {
-                return language
-            }
+    function restore(): void {
+        const value = _settings.value('commentTypes')
+        if (value) {
+            const items = _split(value)
+            root.commentTypes.replaceWith(items)
         }
-        return 'en-US'
+    }
+
+    function _split(items: string): Array<string> {
+        return items.split(',')
+            .map((value) => value.trim())
+            .filter((value) => value)
+    }
+
+    function save(): void {
+        const commaSeparated = commentTypes.items().join(', ')
+        _settings.setValue('commentTypes', commaSeparated)
+    }
+
+    Settings {
+        id: _settings
+//        fileName: '~/PycharmProjects/mpvQC-dev/appdata/settings.ini'
+        category: 'Common'
+        property string language: root._defaultLanguage()
     }
 
 }
