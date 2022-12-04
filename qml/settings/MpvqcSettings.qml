@@ -29,7 +29,7 @@ Item {
 
 //    Settings {
 //        id: _backupSettings
-//        fileName: root.settingsFile
+//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
 //        category: 'Backup'
 //        property bool enabled: true
 //        property int interval: 90
@@ -39,7 +39,7 @@ Item {
 
     MpvqcCommonSettings {
         id: _commonSettings
-        // todo fileName: root.settingsFile
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
     }
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
@@ -50,25 +50,25 @@ Item {
 //    MpvqcFileInterfacePyObject { id: _configMpv; file_path: MpvqcFilePathsPyObject.mpv_conf }
 //    property alias configMpv: _configMpv
 
-//    Settings {
-//        id: _exportSettings
-//        fileName: root.settingsFile
-//        category: 'Export'
-//        property string nickname: EnvironmentPyObject.variable('USERNAME') || EnvironmentPyObject.variable('USER') || 'nick'
-//        property bool writeHeaderDate: true
-//        property bool writeHeaderGenerator: true
-//        property bool writeHeaderNickname: false
-//        property bool writeHeaderVideoPath: true
-//    }
-//    property alias nickname: _exportSettings.nickname
-//    property alias writeHeaderDate: _exportSettings.writeHeaderDate
-//    property alias writeHeaderGenerator: _exportSettings.writeHeaderGenerator
-//    property alias writeHeaderNickname: _exportSettings.writeHeaderNickname
-//    property alias writeHeaderVideoPath: _exportSettings.writeHeaderVideoPath
+    Settings {
+        id: _exportSettings
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        category: 'Export'
+        property string nickname: 'nickname' // EnvironmentPyObject.variable('USERNAME') || EnvironmentPyObject.variable('USER') || 'nick'
+        property bool writeHeaderDate: true
+        property bool writeHeaderGenerator: true
+        property bool writeHeaderNickname: false
+        property bool writeHeaderVideoPath: true
+    }
+    property alias nickname: _exportSettings.nickname
+    property alias writeHeaderDate: _exportSettings.writeHeaderDate
+    property alias writeHeaderGenerator: _exportSettings.writeHeaderGenerator
+    property alias writeHeaderNickname: _exportSettings.writeHeaderNickname
+    property alias writeHeaderVideoPath: _exportSettings.writeHeaderVideoPath
 
 //    Settings {
 //        id: _formatSettings
-//        fileName: root.settingsFile
+//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
 //        category: 'Format'
 //        property bool statusbarPercentage: true
 //        property int timeFormat: MpvqcAllSettings.TimeFormat.CURRENT_TOTAL_TIME
@@ -78,7 +78,7 @@ Item {
 
     Settings {
         id: _importSettings
-        // todo fileName: root.settingsFile
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
         category: 'Import'
         property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
@@ -90,7 +90,7 @@ Item {
 
 //    Settings {
 //        id: _splitViewSettings
-//        fileName: root.settingsFile
+//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
 //        category: 'SplitView'
 //        property var dimensions: ''
 //    }
@@ -98,7 +98,7 @@ Item {
 
     Settings {
         id: _themeSettings
-//        fileName: root.settingsFile
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
         category: 'Theme'
         property int theme: Material.Dark
         property int accent: Material.Orange

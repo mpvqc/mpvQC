@@ -17,22 +17,41 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+import QtQuick
 import QtQuick.Controls
-import shared
+import QtQuick.Layouts
 
-
-MpvqcDialog {
+RowLayout {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
+    required property int prefWidth
 
-    MpvqcExportView {
-        property string title: qsTranslate("ExportSettings", "Export Settings")
+    property alias label: _label.text
+    property alias input: _textField.text
+    property alias bold: _textField.font.bold
 
-        width: root.width
-        mpvqcApplication: root.mpvqcApplication
+    signal textChanged(string text)
+
+    Label {
+        id: _label
+
+        horizontalAlignment: Text.AlignRight
+        wrapMode: Text.Wrap
+        Layout.preferredWidth: root.prefWidth / 2
+    }
+
+    TextField {
+        id: _textField
+
+        focus: true
+        selectByMouse: true
+        bottomPadding: topPadding
+        horizontalAlignment: Text.AlignLeft
+        Layout.fillWidth: true
+
+        onTextChanged: {
+            root.textChanged(text)
+        }
     }
 
 }

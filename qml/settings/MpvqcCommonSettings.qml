@@ -28,6 +28,7 @@ Item {
     readonly property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
 
     property alias language: _settings.language
+    property alias fileName: _settings.fileName
     property var uiLanguages: Qt.locale().uiLanguages
 
     function _defaultLanguage(): string {
@@ -56,7 +57,6 @@ Item {
 
     Settings {
         id: _settings
-//        fileName: '~/PycharmProjects/mpvQC-dev/appdata/settings.ini'
         category: 'Common'
         property string language: root._defaultLanguage()
     }

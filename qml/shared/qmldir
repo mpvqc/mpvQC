@@ -5,3 +5,5 @@ MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcMenu MpvqcMenu.qml
+MpvqcSwitchRow MpvqcSwitchRow.qml
+MpvqcTextFieldRow MpvqcTextFieldRow.qml

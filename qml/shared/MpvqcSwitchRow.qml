@@ -17,22 +17,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+import QtQuick
 import QtQuick.Controls
-import shared
+import QtQuick.Layouts
 
-
-MpvqcDialog {
+RowLayout {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
+    required property int prefWidth
 
-    MpvqcExportView {
-        property string title: qsTranslate("ExportSettings", "Export Settings")
+    property alias toggle: _switch
+    property alias checked: _switch.checked
+    property alias label: _label.text
 
-        width: root.width
-        mpvqcApplication: root.mpvqcApplication
+    signal toggled(bool checked)
+
+    Label {
+        id: _label
+
+        horizontalAlignment: Text.AlignRight
+        wrapMode: Text.Wrap
+        Layout.preferredWidth: root.prefWidth / 2
+    }
+
+    Switch {
+        id: _switch
+
+        onCheckedChanged: {
+            root.toggled(checked)
+        }
     }
 
 }
