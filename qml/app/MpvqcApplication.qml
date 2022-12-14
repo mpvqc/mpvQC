@@ -33,7 +33,7 @@ ApplicationWindow {
     readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {}
     readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
 
-    readonly property MpvqcFilePathsPyObject mpvqcFilePathsPyObject: MpvqcFilePathsPyObject {}
+    readonly property MpvqcApplicationPathsPyObject mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
 
     readonly property bool maximized: root.visibility === Window.Maximized

@@ -21,17 +21,17 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from mpvqc.services import AppEnvironmentService
+from mpvqc.services import ApplicationEnvironmentService
 
 
-class TestAppEnvironmentService(unittest.TestCase):
-    MODULE = 'mpvqc.services.app_environment'
+class TestApplicationEnvironmentService(unittest.TestCase):
+    MODULE = 'mpvqc.services.application_environment'
 
     def test_executing_directory_as_distributable(self):
         try:
             setattr(sys, 'frozen', True)
             setattr(sys, '_MEIPASS', Path(__file__))
-            service = AppEnvironmentService()
+            service = ApplicationEnvironmentService()
             self.assertTrue(service.executing_directory.exists())
         finally:
             delattr(sys, 'frozen')
@@ -40,17 +40,17 @@ class TestAppEnvironmentService(unittest.TestCase):
     def test_executing_directory_non_distributable(self, *_):
         try:
             setattr(sys, 'frozen', False)
-            service = AppEnvironmentService()
+            service = ApplicationEnvironmentService()
             self.assertTrue(service.executing_directory.exists())
         finally:
             delattr(sys, 'frozen')
 
     @patch(f'{MODULE}.Path.is_file', return_value=True)
     def test_portable(self, *_):
-        service = AppEnvironmentService()
+        service = ApplicationEnvironmentService()
         self.assertTrue(service.is_portable)
 
     @patch(f'{MODULE}.Path.is_file', return_value=False)
     def test_non_portable(self, *_):
-        service = AppEnvironmentService()
+        service = ApplicationEnvironmentService()
         self.assertFalse(service.is_portable)

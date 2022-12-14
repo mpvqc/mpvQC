@@ -15,17 +15,16 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from pathlib import Path
 
 import inject
 
-from mpvqc.services.file_paths import FilePathService
-from mpvqc.services.resource import ResourceService
+from .application_paths import ApplicationPathsService
+from .resource import ResourceService
 
 
 class FileStartupService:
-    _paths = inject.attr(FilePathService)
+    _paths = inject.attr(ApplicationPathsService)
     _resources = inject.attr(ResourceService)
 
     def create_missing_directories(self):

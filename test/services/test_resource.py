@@ -20,15 +20,14 @@ import unittest
 
 import inject
 
-from mpvqc.impl import ResourceFileReader
-from mpvqc.services import ResourceService
+from mpvqc.services import ResourceService, ResourceReaderService
 
 
 class TestResourceService(unittest.TestCase):
 
     def setUp(self):
         inject.clear_and_configure(lambda binder: binder
-                                   .bind(ResourceFileReader, ResourceFileReader()))
+                                   .bind(ResourceReaderService, ResourceReaderService()))
 
     def tearDown(self):
         inject.clear()

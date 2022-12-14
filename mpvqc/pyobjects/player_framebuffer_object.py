@@ -15,9 +15,72 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import ctypes
 import platform
+
+import inject
+from PySide6.QtCore import QSize
+from PySide6.QtCore import Slot, Signal
+from PySide6.QtOpenGL import QOpenGLFramebufferObject
+from PySide6.QtQml import QmlElement
+from PySide6.QtQuick import QQuickFramebufferObject
+from mpv import MpvRenderContext, MpvGlGetProcAddressFn
+
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
+
+
+@QmlElement
+class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
+    """ Adapted from https://gitlab.com/robozman/python-mpv-qml-example """
+
+    sig_on_update = Signal()
+
+    def __init__(self):
+        super().__init__()
+        self.sig_on_update.connect(self.do_update)
+
+    @Slot()
+    def do_update(self):
+        self.update()
+
+    def createRenderer(self) -> QQuickFramebufferObject.Renderer:
+        return Renderer(self)
+
+
+class Renderer(QQuickFramebufferObject.Renderer):
+    """"""
+
+    def __init__(self, parent):
+        super(Renderer, self).__init__()
+        self._parent = parent
+        self._get_proc_address_resolver = MpvGlGetProcAddressFn(GetProcAddressGetter().wrap)
+        self._ctx = None
+
+        from mpvqc.services.player import PlayerService
+        self._player_service = inject.instance(PlayerService)
+
+    def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
+        if self._ctx is None:
+            self._ctx = MpvRenderContext(
+                self._player_service.mpv,
+                api_type='opengl',
+                opengl_init_params={'get_proc_address': self._get_proc_address_resolver}
+            )
+            self._ctx.update_cb = self._parent.sig_on_update.emit
+
+        return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
+
+    def render(self):
+        if self._ctx:
+            factor = self._parent.scale()
+            rect = self._parent.size()
+
+            width = int(rect.width() * factor)
+            height = int(rect.height() * factor)
+            fbo = int(self.framebufferObject().handle())
+
+            self._ctx.render(flip_y=False, opengl_fbo={'w': width, 'h': height, 'fbo': fbo})
 
 
 class GetProcAddressGetter:

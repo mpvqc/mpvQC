@@ -15,21 +15,19 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import inject
 
-from mpvqc.impl import ResourceFileReader
-from mpvqc.services import ResourceService, AppEnvironmentService, FilePathService, FileStartupService, PlayerService
+from mpvqc.services import ResourceService, ApplicationEnvironmentService, ApplicationPathsService, FileStartupService, \
+    PlayerService, ResourceReaderService
 
 
 def bindings(binder: inject.Binder):
-    binder.bind_to_constructor(AppEnvironmentService, lambda: AppEnvironmentService())
-    binder.bind_to_constructor(FilePathService, lambda: FilePathService())
+    binder.bind_to_constructor(ApplicationEnvironmentService, lambda: ApplicationEnvironmentService())
+    binder.bind_to_constructor(ApplicationPathsService, lambda: ApplicationPathsService())
     binder.bind_to_constructor(FileStartupService, lambda: FileStartupService())
     binder.bind_to_constructor(PlayerService, lambda: PlayerService())
     binder.bind_to_constructor(ResourceService, lambda: ResourceService())
-
-    binder.bind_to_constructor(ResourceFileReader, lambda: ResourceFileReader())
+    binder.bind_to_constructor(ResourceReaderService, lambda: ResourceReaderService())
 
 
 def configure_injections():

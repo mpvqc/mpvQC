@@ -15,19 +15,17 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from os import environ
 
 from PySide6.QtCore import QObject, Slot
-from PySide6.QtQml import QmlElement, QmlSingleton
+from PySide6.QtQml import QmlElement
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-@QmlSingleton
-class EnvironmentPyObject(QObject):
+class MpvqcEnvironmentPyObject(QObject):
 
     @Slot(str, result=str or None)
     def variable(self, key: str):

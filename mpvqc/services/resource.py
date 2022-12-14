@@ -15,16 +15,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from functools import cache
 
 import inject
 
-from mpvqc.impl import ResourceFileReader
+from .resource_reader import ResourceReaderService
 
 
 class ResourceService:
-    _resource_reader = inject.attr(ResourceFileReader)
+    _resource_reader = inject.attr(ResourceReaderService)
 
     @property
     def input_conf_content(self) -> str:

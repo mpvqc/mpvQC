@@ -15,14 +15,13 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from pathlib import Path
 
 import inject
 from PySide6.QtCore import QUrl, Slot, QObject
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import FilePathService
+from mpvqc.services import ApplicationPathsService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -30,7 +29,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcFileSystemHelperPyObject(QObject):
-    _paths = inject.attr(FilePathService)
+    _paths = inject.attr(ApplicationPathsService)
 
     # noinspection PyTypeChecker
     @Slot(QUrl, result=str)

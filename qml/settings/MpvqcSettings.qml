@@ -25,7 +25,7 @@ import Qt.labs.settings
 Item {
     id: root
 
-//    readonly property var settingsFile: MpvqcFilePathsPyObject.settings
+//    readonly property var settingsFile: MpvqcApplicationPathsPyObject.settings
 
     Settings {
         id: _backupSettings
@@ -44,10 +44,10 @@ Item {
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
 
-//    MpvqcFileInterfacePyObject { id: _configInput; file_path: MpvqcFilePathsPyObject.input_conf }
+//    MpvqcFileInterfacePyObject { id: _configInput; file_path: MpvqcApplicationPathsPyObject.input_conf }
 //    property alias configInput: _configInput
 //
-//    MpvqcFileInterfacePyObject { id: _configMpv; file_path: MpvqcFilePathsPyObject.mpv_conf }
+//    MpvqcFileInterfacePyObject { id: _configMpv; file_path: MpvqcApplicationPathsPyObject.mpv_conf }
 //    property alias configMpv: _configMpv
 
     Settings {

@@ -15,11 +15,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from .comments_model import CommentModelPyObject
-from .environment import EnvironmentPyObject
+from .application_paths import MpvqcApplicationPathsPyObject
+from .comments_model import MpvqcCommentModelPyObject
+from .environment import MpvqcEnvironmentPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .file_system_helper import MpvqcFileSystemHelperPyObject
-from .file_paths import MpvqcFilePathsPyObject
-from .player import MpvPlayerPyObject
-from .player_properties import MpvPlayerPropertiesPyObject
+from .player import MpvqcMpvPlayerPyObject
+from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
+from .player_properties import MpvqcMpvPlayerPropertiesPyObject

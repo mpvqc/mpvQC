@@ -45,7 +45,7 @@ Item {
                 property bool writeHeaderVideoPath: false
             }
             property var contentItem: Item {}
-            property var mpvqcFilePathsPyObject: QtObject {
+            property var mpvqcApplicationPathsPyObject: QtObject {
                 property url dir_backup: 'file:///hello.txt'
             }
             property var mpvqcFileSystemHelperPyObject: QtObject {

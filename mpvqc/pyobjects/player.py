@@ -15,36 +15,19 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import inject
-from PySide6.QtCore import Slot, Signal, QUrl
+from PySide6.QtCore import Slot, QUrl, QObject
 from PySide6.QtQml import QmlElement
-from PySide6.QtQuick import QQuickFramebufferObject
 
-from mpvqc.impl.player_renderer import PlayerRenderer
+from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvPlayerPyObject(QQuickFramebufferObject):
-    """ Adapted from https://gitlab.com/robozman/python-mpv-qml-example """
-
-    sig_on_update = Signal()
-
-    def __init__(self):
-        super().__init__()
-        from mpvqc.services.player import PlayerService
-        self._player = inject.instance(PlayerService)
-        self.sig_on_update.connect(self.do_update)
-
-    @Slot()
-    def do_update(self):
-        self.update()
-
-    def createRenderer(self) -> QQuickFramebufferObject.Renderer:
-        return PlayerRenderer(self)
+class MpvqcMpvPlayerPyObject(QObject):
+    _player = inject.attr(PlayerService)
 
     @Slot(QUrl)
     def open_video(self, video: QUrl):

@@ -15,7 +15,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from functools import cached_property
 from pathlib import Path
 from typing import NamedTuple
@@ -23,11 +22,11 @@ from typing import NamedTuple
 import inject
 from PySide6.QtCore import QCoreApplication, QStandardPaths
 
-from mpvqc.services.app_environment import AppEnvironmentService
+from .application_environment import ApplicationEnvironmentService
 
 
-class FilePathService:
-    _app_environment = inject.attr(AppEnvironmentService)
+class ApplicationPathsService:
+    _app_environment = inject.attr(ApplicationEnvironmentService)
 
     class Impl(NamedTuple):
         dir_backup: Path
@@ -42,7 +41,7 @@ class FilePathService:
 
     def _get_portable(self):
         dir_app = self._app_environment.executing_directory
-        return FilePathService.Impl(
+        return ApplicationPathsService.Impl(
             dir_backup=dir_app / 'appdata' / 'backups',
             dir_config=dir_app / 'appdata',
             dir_screenshots=dir_app / 'appdata' / 'screenshots'
@@ -54,7 +53,7 @@ class FilePathService:
         config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
         pictures = QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
-        return FilePathService.Impl(
+        return ApplicationPathsService.Impl(
             dir_backup=Path(documents) / appname / 'backups',
             dir_config=Path(config) / appname,
             dir_screenshots=Path(pictures) / appname

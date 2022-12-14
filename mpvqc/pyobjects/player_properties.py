@@ -15,9 +15,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import inject
-from PySide6.QtCore import QObject, Slot, Signal, Property
+from PySide6.QtCore import QObject, Signal, Property
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services.player import PlayerService
@@ -27,7 +26,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvPlayerPropertiesPyObject(QObject):
+class MpvqcMpvPlayerPropertiesPyObject(QObject):
     #
 
     mpv_version_changed = Signal(str)

@@ -15,7 +15,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import inject
 from PySide6.QtCore import Signal, Slot, QByteArray
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -28,7 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class CommentModelPyObject(QStandardItemModel):
+class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
     newItemAdded = Signal(int)  # param: row_index

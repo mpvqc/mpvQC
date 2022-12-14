@@ -15,11 +15,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from PySide6.QtCore import QFile, QIODevice
 
 
-class ResourceFileReader:
+class ResourceReaderService:
 
     def read_from(self, file_path: str):
         resource_path = self._make_resource_path_from(file_path)
@@ -37,7 +36,7 @@ class ResourceFileReader:
     def _read_from(resource_path: str) -> str:
         file = QFile(resource_path)
         if not file.exists():
-            raise FileNotFoundError()
+            raise FileNotFoundError(resource_path)
         try:
             if not file.open(QIODevice.ReadOnly):
                 raise Exception(f"Can not open file to read: {resource_path}")

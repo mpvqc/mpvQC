@@ -20,7 +20,7 @@ from unittest.mock import patch
 
 import pytest
 
-from mpvqc.impl import ResourceFileReader
+from mpvqc.services import ResourceReaderService
 
 
 @pytest.mark.parametrize("file_path", [
@@ -29,20 +29,20 @@ from mpvqc.impl import ResourceFileReader
     "data/icon.svg",
 ])
 def test_read_from(file_path):
-    reader = ResourceFileReader()
+    reader = ResourceReaderService()
     content = reader.read_from(file_path)
     assert content.startswith('<svg ')
 
 
 def test_file_not_found():
     with pytest.raises(FileNotFoundError):
-        reader = ResourceFileReader()
+        reader = ResourceReaderService()
         reader.read_from('>>')
 
 
-@patch('mpvqc.impl.file_reader_resources.QFile.exists', return_value=True)
-@patch('mpvqc.impl.file_reader_resources.QFile.open', return_value=False)
+@patch('mpvqc.services.resource_reader.QFile.exists', return_value=True)
+@patch('mpvqc.services.resource_reader.QFile.open', return_value=False)
 def test_some_other_method(*_):
     with pytest.raises(Exception):
-        reader = ResourceFileReader()
+        reader = ResourceReaderService()
         reader.read_from('')

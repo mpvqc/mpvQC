@@ -15,20 +15,19 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import inject
 from PySide6.QtCore import QObject, Signal, Property, QUrl
-from PySide6.QtQml import QmlElement, QmlSingleton
+from PySide6.QtQml import QmlElement
 
-from mpvqc.services import FilePathService
+from mpvqc.services import ApplicationPathsService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcFilePathsPyObject(QObject):
-    _paths = inject.attr(FilePathService)
+class MpvqcApplicationPathsPyObject(QObject):
+    _paths = inject.attr(ApplicationPathsService)
 
     #
 

@@ -27,7 +27,7 @@ ColumnLayout {
 
     required property var mpvqcApplication
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpvqcFilePathsPyObject: mpvqcApplication.mpvqcFilePathsPyObject
+    property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
     property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
 
     property alias backupEnabledSwitch: _backupEnable
@@ -67,7 +67,7 @@ ColumnLayout {
     ToolButton {
         id: _backupLocationOpenButton
 
-        property url backupDirectory: root.mpvqcFilePathsPyObject.dir_backup
+        property url backupDirectory: root.mpvqcApplicationPathsPyObject.dir_backup
 
         text: qsTranslate("BackupSettings", "Backup Location")
         icon.source: "qrc:/data/icons/launch_black_24dp.svg"

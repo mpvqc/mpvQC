@@ -19,7 +19,7 @@
 import unittest
 from unittest.mock import Mock
 
-from mpvqc.impl import SubtitleCacher
+from mpvqc.services import SubtitleCacher
 
 
 class TestSubtitleCacher(unittest.TestCase):

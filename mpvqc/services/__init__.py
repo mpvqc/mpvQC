@@ -15,9 +15,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from .app_environment import AppEnvironmentService
-from .file_paths import FilePathService
+from .application_environment import ApplicationEnvironmentService
+from .application_paths import ApplicationPathsService
 from .file_startup import FileStartupService
-from .player import PlayerService
+from .player import PlayerService, SubtitleCacher
 from .resource import ResourceService
+from .resource_reader import ResourceReaderService

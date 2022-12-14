@@ -21,7 +21,7 @@ from unittest.mock import MagicMock
 
 import inject
 
-from mpvqc.services import FilePathService, FileStartupService, ResourceService
+from mpvqc.services import ApplicationPathsService, FileStartupService, ResourceService
 
 
 class TestFileStartupService(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestFileStartupService(unittest.TestCase):
 
     def setUp(self):
         inject.clear_and_configure(lambda binder: binder
-                                   .bind(FilePathService, self.mocked_file_service)
+                                   .bind(ApplicationPathsService, self.mocked_file_service)
                                    .bind(ResourceService, MagicMock()))
 
     def tearDown(self):
