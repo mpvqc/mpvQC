@@ -27,21 +27,26 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-@QmlSingleton
 class MpvqcFilePathsPyObject(QObject):
     _paths = inject.attr(FilePathService)
 
+    #
+
     def get_config_input(self) -> str:
-        return str(self._paths.file_input_conf)
+        return str(self._paths.file_input_conf.absolute())
 
     input_conf_changed = Signal(str)
     input_conf = Property(str, get_config_input, notify=input_conf_changed)
 
+    #
+
     def get_config_mpv(self) -> str:
-        return str(self._paths.file_mpv_conf)
+        return str(self._paths.file_mpv_conf.absolute())
 
     mpv_conf_changed = Signal(str)
     mpv_conf = Property(str, get_config_mpv, notify=mpv_conf_changed)
+
+    #
 
     def get_dir_backup(self) -> QUrl:
         return QUrl.fromLocalFile(self._paths.dir_backup.absolute())
@@ -49,8 +54,10 @@ class MpvqcFilePathsPyObject(QObject):
     dir_backup_changed = Signal(QUrl)
     dir_backup = Property(QUrl, get_dir_backup, notify=dir_backup_changed)
 
+    #
+
     def get_settings(self) -> str:
-        return str(self._paths.file_settings)
+        return str(self._paths.file_settings.absolute())
 
     settings_changed = Signal(str)
     settings = Property(str, get_settings, notify=settings_changed)

@@ -22,6 +22,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import manager
+import pyobjects
 import settings
 
 
@@ -31,6 +32,9 @@ ApplicationWindow {
     readonly property MpvqcManager mpvqcManager: MpvqcManager {}
     readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {}
     readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
+
+    readonly property MpvqcFilePathsPyObject mpvqcFilePathsPyObject: MpvqcFilePathsPyObject {}
+    readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
 
     readonly property bool maximized: root.visibility === Window.Maximized
     readonly property bool fullscreen: root.visibility === Window.FullScreen

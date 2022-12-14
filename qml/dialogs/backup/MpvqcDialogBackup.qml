@@ -27,4 +27,11 @@ MpvqcDialog {
 
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
+
+    MpvqcBackupView {
+        property string title: qsTranslate("BackupSettings", "Backup Settings")
+
+        width: root.width
+        mpvqcApplication: root.mpvqcApplication
+    }
 }

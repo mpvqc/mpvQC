@@ -27,19 +27,19 @@ Item {
 
 //    readonly property var settingsFile: MpvqcFilePathsPyObject.settings
 
-//    Settings {
-//        id: _backupSettings
-//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
-//        category: 'Backup'
-//        property bool enabled: true
-//        property int interval: 90
-//    }
-//    property alias backupEnabled: _backupSettings.enabled
-//    property alias backupInterval: _backupSettings.interval
+    Settings {
+        id: _backupSettings
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        category: 'Backup'
+        property bool enabled: true
+        property int interval: 90
+    }
+    property alias backupEnabled: _backupSettings.enabled
+    property alias backupInterval: _backupSettings.interval
 
     MpvqcCommonSettings {
         id: _commonSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
     }
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
@@ -52,7 +52,7 @@ Item {
 
     Settings {
         id: _exportSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
         category: 'Export'
         property string nickname: 'nickname' // EnvironmentPyObject.variable('USERNAME') || EnvironmentPyObject.variable('USER') || 'nick'
         property bool writeHeaderDate: true
@@ -68,7 +68,7 @@ Item {
 
 //    Settings {
 //        id: _formatSettings
-//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
 //        category: 'Format'
 //        property bool statusbarPercentage: true
 //        property int timeFormat: MpvqcAllSettings.TimeFormat.CURRENT_TOTAL_TIME
@@ -78,7 +78,7 @@ Item {
 
     Settings {
         id: _importSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
         category: 'Import'
         property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
@@ -90,7 +90,7 @@ Item {
 
 //    Settings {
 //        id: _splitViewSettings
-//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
 //        category: 'SplitView'
 //        property var dimensions: ''
 //    }
@@ -98,7 +98,7 @@ Item {
 
     Settings {
         id: _themeSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change'/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
         category: 'Theme'
         property int theme: Material.Dark
         property int accent: Material.Orange

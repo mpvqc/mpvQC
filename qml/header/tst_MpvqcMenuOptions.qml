@@ -34,10 +34,23 @@ Item {
         mpvqcApplication: QtObject {
             property int windowRadius: 12
             property var mpvqcSettings: QtObject {
+                property bool backupEnabled: false
+                property int backupInterval: 90
                 property int theme: Material.Dark
                 property int accent: Material.Teal
+                property string nickname: 'nickname'
+                property bool writeHeaderDate: false
+                property bool writeHeaderGenerator: false
+                property bool writeHeaderNickname: false
+                property bool writeHeaderVideoPath: false
             }
             property var contentItem: Item {}
+            property var mpvqcFilePathsPyObject: QtObject {
+                property url dir_backup: 'file:///hello.txt'
+            }
+            property var mpvqcFileSystemHelperPyObject: QtObject {
+                function url_to_absolute_path(url) { return `${url}-as-abs-path` }
+            }
         }
     }
 

@@ -75,11 +75,8 @@ class StartUp:
 
     @staticmethod
     def import_mpvqc_bindings():
-        try:
-            import mpvqc.pyobjects
-        except ImportError as e:
-            print(f"Can not import python qml elements: {e}", file=sys.stderr)
-            sys.exit(1)
+        # noinspection PyUnresolvedReferences
+        import mpvqc.pyobjects
 
     @staticmethod
     def start_application():

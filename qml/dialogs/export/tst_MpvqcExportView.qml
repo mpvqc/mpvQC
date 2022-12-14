@@ -43,7 +43,7 @@ MpvqcExportView {
         name: "MpvqcExportView"
         when: windowShown
 
-        function cleanup() {
+        function init() {
             objectUnderTest.mpvqcApplication.mpvqcSettings.nickname = 'nickname'
             objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderDate = false
             objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderGenerator = false
@@ -82,7 +82,8 @@ MpvqcExportView {
         }
 
         function test_export(data) {
-            data.exec(); data.verify()
+            data.exec()
+            data.verify()
         }
     }
 

@@ -33,14 +33,22 @@ class MpvPlayerPropertiesPyObject(QObject):
     mpv_version_changed = Signal(str)
     mpv_version = Property(str, lambda self: self.mpv.mpv_version, notify=mpv_version_changed)
 
+    #
+
     ffmpeg_version_changed = Signal(str)
     ffmpeg_version = Property(str, lambda self: self.mpv.ffmpeg_version, notify=ffmpeg_version_changed)
+
+    #
 
     video_loaded_changed = Signal(bool)
     video_loaded = Property(bool, lambda self: bool(self.mpv.path), notify=video_loaded_changed)
 
+    #
+
     path_changed = Signal(str)
     path = Property(str, lambda self: str(self.mpv.path), notify=path_changed)
+
+    #
 
     def get_duration(self):
         return self._duration
@@ -48,11 +56,15 @@ class MpvPlayerPropertiesPyObject(QObject):
     duration_changed = Signal(float)
     duration = Property(float, get_duration, notify=duration_changed)
 
+    #
+
     def get_percent_pos(self):
         return self._percent_pos
 
     percent_pos_changed = Signal(int)
     percent_pos = Property(int, get_percent_pos, notify=percent_pos_changed)
+
+    #
 
     def get_time_pos(self):
         return self._time_pos
@@ -60,11 +72,15 @@ class MpvPlayerPropertiesPyObject(QObject):
     time_pos_changed = Signal(int)
     time_pos = Property(int, get_time_pos, notify=time_pos_changed)
 
+    #
+
     def get_time_remaining(self):
         return self._time_remaining
 
     time_remaining_changed = Signal(int)
     time_remaining = Property(int, get_time_remaining, notify=time_remaining_changed)
+
+    #
 
     def __init__(self):
         super().__init__()
