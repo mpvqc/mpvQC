@@ -81,9 +81,10 @@ ColumnLayout {
         }
 
         ToolTip {
+            y: - _backupLocationOpenButton.height + 10
+            delay: 500
             visible: _backupLocationOpenButton.hovered
             text: root.mpvqcFileSystemHelperPyObject.url_to_absolute_path(_backupLocationOpenButton.backupDirectory)
-            y: - (_backupLocationOpenButton.height - 10)
         }
 
     }

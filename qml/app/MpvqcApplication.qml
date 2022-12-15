@@ -33,6 +33,7 @@ ApplicationWindow {
     readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {}
     readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
 
+    readonly property MpvqcMpvPlayerPropertiesPyObject mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property MpvqcApplicationPathsPyObject mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
 

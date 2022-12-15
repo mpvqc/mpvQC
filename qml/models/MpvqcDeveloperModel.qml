@@ -17,32 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick.Controls
-import shared
+
+import QtQuick
 
 
-MpvqcDialog {
-    id: root
-
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
-    MpvqcAboutView {
-        property string title: qsTranslate("AboutDialog", "About")
-
-        width: root.width
+ListModel {
+    ListElement {
+        name: "Elias Müller"
     }
-
-    MpvqcCreditsView {
-        property string title: qsTranslate("AboutDialog", "Credits")
-
-        width: root.width
-    }
-
-    MpvqcDependenciesView {
-        property string title: qsTranslate("AboutDialog", "Dependencies")
-
-        width: root.width
-        mpvqcApplication: root.mpvqcApplication
+    ListElement {
+        name: "Frechdachs"
     }
 }
