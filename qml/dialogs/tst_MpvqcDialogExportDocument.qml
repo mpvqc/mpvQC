@@ -19,29 +19,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import QtQuick
+import QtTest
 
 
-MouseArea {
-    hoverEnabled: true
-    acceptedButtons: Qt.NoButton
+Item {
+    id: testHelper
 
-    property int borderWidth
+    property url currentFile: 'file:///hello.txt'
+    property var savedUrl: ''
 
-    cursorShape: {
-        const p = Qt.point(mouseX, mouseY)
-        const b = borderWidth + 10
-        if (p.x < b && p.y < b)
-            return Qt.SizeFDiagCursor
-        if (p.x >= width - b && p.y >= height - b)
-            return Qt.SizeFDiagCursor
-        if (p.x >= width - b && p.y < b)
-            return Qt.SizeBDiagCursor
-        if (p.x < b && p.y >= height - b)
-            return Qt.SizeBDiagCursor
-        if (p.x < b || p.x >= width - b)
-            return Qt.SizeHorCursor
-        if (p.y < b || p.y >= height - b)
-            return Qt.SizeVerCursor
+    width: 400
+    height: 400
+
+    MpvqcDialogExportDocument {
+        id: objectUnderTest
+
+        onSavePressed: (fileUrl) => {
+            testHelper.savedUrl = fileUrl
+        }
+    }
+
+    TestCase {
+        name: "MpvqcDialogExportDocument"
+        when: windowShown
+
+        function init() {
+            testHelper.savedUrl = ''
+        }
+
+        function test_save() {
+            objectUnderTest.currentFile = testHelper.currentFile
+            objectUnderTest.accepted()
+            compare(testHelper.savedUrl, testHelper.currentFile)
+        }
     }
 
 }

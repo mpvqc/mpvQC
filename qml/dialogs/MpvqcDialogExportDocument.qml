@@ -17,23 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick.Dialogs
-import settings
-import helpers
 
 
 FileDialog {
-    title: qsTranslate("FileInteractionDialogs", "Open Video")
-    currentFolder: MpvqcSettings.lastDirectoryVideo
+    title: qsTranslate("FileInteractionDialogs", "Save QC Document As")
+    fileMode: FileDialog.SaveFile
+    defaultSuffix: 'txt'
     nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi)",
+        qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)",
         qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
     ]
 
+    signal savePressed(url fileUrl)
+
     onAccepted: {
-        MpvqcSettings.lastDirectoryVideo = currentFolder
-        qcManager.openVideo(currentFile)
+        savePressed(currentFile)
     }
 
 }

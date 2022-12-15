@@ -1,5 +1,0 @@
-module handlers
-MpvqcCloseAppHandler MpvqcCloseAppHandler.qml
-MpvqcDropFilesHandler MpvqcDropFilesHandler.qml
-MpvqcWindowBorderMouseCurser MpvqcWindowBorderMouseCurser.qml
-MpvqcWindowResizeHandler MpvqcWindowResizeHandler.qml
