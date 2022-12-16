@@ -66,15 +66,16 @@ Item {
     property alias writeHeaderNickname: _exportSettings.writeHeaderNickname
     property alias writeHeaderVideoPath: _exportSettings.writeHeaderVideoPath
 
-//    Settings {
-//        id: _formatSettings
-//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
-//        category: 'Format'
-//        property bool statusbarPercentage: true
-//        property int timeFormat: MpvqcAllSettings.TimeFormat.CURRENT_TOTAL_TIME
-//    }
-//    property alias statusbarPercentage: _formatSettings.statusbarPercentage
-//    property alias timeFormat: _formatSettings.timeFormat
+    enum TimeFormat { EMPTY, CURRENT_TIME, REMAINING_TIME, CURRENT_TOTAL_TIME }
+    Settings {
+        id: _formatSettings
+        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        category: 'Format'
+        property bool statusbarPercentage: true
+        property int timeFormat: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+    }
+    property alias statusbarPercentage: _formatSettings.statusbarPercentage
+    property alias timeFormat: _formatSettings.timeFormat
 
     Settings {
         id: _importSettings
@@ -105,9 +106,6 @@ Item {
     }
     property alias theme: _themeSettings.theme
     property alias accent: _themeSettings.accent
-
-//    enum TimeFormat { EMPTY, CURRENT_TIME, REMAINING_TIME, CURRENT_TOTAL_TIME }
-
 
     Component.onCompleted: {
         _commonSettings.restore()

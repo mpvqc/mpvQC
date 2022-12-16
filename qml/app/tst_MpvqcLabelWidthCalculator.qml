@@ -17,31 +17,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtQuick.Controls
-import handlers
-import settings
+import QtTest
+import "MpvqcLabelWidthCalculator.js" as TestObject
 
 
 Label {
-    id: label
-    visible: MpvqcSettings.statusbarPercentage && playerProperties.video_loaded
+    id: testHelper
 
-    property real percent: playerProperties.percent_pos
+    width: 400
+    height: 400
 
-    onVisibleChanged: {
-        if (visible) {
-            updateText()
+    TestCase {
+        name: "MpvqcLabelWidthCalculator"
+
+        property var itemsShort: ['a', 'bb']
+        property var itemsLong: ['ccc', 'dddd']
+
+        function test_calculation() {
+            const smallWidth = TestObject.calculateWidthFor(itemsShort, testHelper)
+            const bigWidth = TestObject.calculateWidthFor(itemsLong, testHelper)
+            verify(smallWidth < bigWidth)
         }
     }
-
-    onPercentChanged: {
-        updateText()
-    }
-
-    function updateText() {
-        text = percent.toFixed(0) + '%'
-    }
-
 }

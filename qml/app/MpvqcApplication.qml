@@ -25,17 +25,26 @@ import manager
 import pyobjects
 import settings
 
+import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
+import "MpvqcLabelWidthCalculator.js" as MpvqcLabelWidthCalculator
+
 
 ApplicationWindow {
     id: root
 
+    // Qml objects
     readonly property MpvqcManager mpvqcManager: MpvqcManager {}
     readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {}
     readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
 
+    // Python objects
     readonly property MpvqcMpvPlayerPropertiesPyObject mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property MpvqcApplicationPathsPyObject mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
+
+    // JavaScript helpers
+    readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
+    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
 
     readonly property bool maximized: root.visibility === Window.Maximized
     readonly property bool fullscreen: root.visibility === Window.FullScreen

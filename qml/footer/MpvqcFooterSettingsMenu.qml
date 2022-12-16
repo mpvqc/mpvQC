@@ -17,72 +17,91 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick.Controls
-import components
+import shared
 import settings
 
 
-MpvqcAutoWidthMenu {
+MpvqcMenu {
+    id: root
+
+    required property var mpvqcApplication
+    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+
+    property alias defaultFormat: _defaultFormat
+    property alias currentTimeFormat: _currentTimeFormat
+    property alias remainingTimeFormat: _remainingTimeFormat
+    property alias hideTimeFormat: _hideTimeFormat
+    property alias percentage: _percentage
+
     modal: true
     dim: false
     y: -height
     transformOrigin: mirrored ? Popup.BottomLeft : Popup.BottomRight
 
     MenuItem {
+        id: _defaultFormat
+
         text: qsTranslate("MainWindow", "Default format")
-        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+        checked: root.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
         autoExclusive: true
         checkable: true
 
-
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
         }
     }
 
     MenuItem {
+        id: _currentTimeFormat
+
         text: qsTranslate("MainWindow", "Current time")
-        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TIME
+        checked: root.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TIME
         autoExclusive: true
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME
         }
     }
 
     MenuItem {
+        id: _remainingTimeFormat
+
         text: qsTranslate("MainWindow", "Remaining time")
-        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.REMAINING_TIME
+        checked: root.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.REMAINING_TIME
         autoExclusive: true
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.REMAINING_TIME
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.REMAINING_TIME
         }
     }
 
     MenuItem {
+        id: _hideTimeFormat
+
         text: qsTranslate("MainWindow", "Hide time")
-        checked: MpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.EMPTY
+        checked: root.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.EMPTY
         autoExclusive: true
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY
         }
     }
 
     MenuSeparator { }
 
     Action {
+        id: _percentage
+
         text: qsTranslate("MainWindow", "Progress in percent")
-        checked: MpvqcSettings.statusbarPercentage
+        checked: root.mpvqcSettings.statusbarPercentage
         checkable: true
 
         onTriggered: {
-            MpvqcSettings.statusbarPercentage = checked
+            root.mpvqcSettings.statusbarPercentage = checked
         }
     }
 

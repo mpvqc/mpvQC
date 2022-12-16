@@ -24,7 +24,7 @@ import "MpvqcTimeFormatUtils.js" as TestObject
 
 
 TestCase {
-    name: "MpvqcTimeFormatUtils::formatTimeToString"
+    name: "MpvqcTimeFormatUtils"
 
     function test_formatTimeToString_data() {
         return [

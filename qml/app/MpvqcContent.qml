@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import footer
 import header
 
 
@@ -37,9 +38,10 @@ FocusScope {
             width: parent.width
         }
 
-//        footer: MpvqcFooter {
-//            width: parent.width
-//        }
+        footer: MpvqcFooter {
+            mpvqcApplication: root.mpvqcApplication
+            width: parent.width
+        }
 //
 //        Item {
 //            anchors.fill: parent

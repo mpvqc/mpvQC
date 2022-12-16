@@ -18,30 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-pragma Singleton
-import QtQuick
-import settings
-import "MpvqcLabelWidthCalculator.js" as Calculator
-
-
-QtObject {
-    id: object
-
-    readonly property var commentTypes: MpvqcSettings.commentTypes
-    property int width: 0
-
-    Component.onCompleted: {
-        MpvqcSettings.onLanguageChanged.connect(calculateMaxWidth)
+/**
+ * @param texts {Array<string>}
+ * @param parent {QtObject}
+ * @param parent
+ */
+function calculateWidthFor(texts, parent) {
+    const textMetric = Application.os === 'windows'
+        ? Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', parent)
+        : Qt.createQmlObject('import QtQuick; TextMetrics { }', parent)
+    let width = 0
+    for (const text of texts) {
+        textMetric.text = text
+        width = Math.max(width, textMetric.tightBoundingRect.width)
     }
-
-    onCommentTypesChanged: {
-        calculateMaxWidth()
-    }
-
-    function calculateMaxWidth() {
-        const texts = MpvqcSettings.commentTypes.items().map(english => qsTranslate("CommentTypes", english))
-        const width = Calculator.calculateWidthFor(texts, object)
-        object.width = width + 8
-    }
-
+    textMetric.destroy()
+    return width
 }

@@ -17,20 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtQuick
+import QtQuick.Controls
 
-/**
- * @param texts {Array<string>}
- * @param parent
- */
-function calculateWidthFor(texts, parent) {
-    const textMetric = Qt.platform.os === 'windows'
-        ? Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', parent)
-        : Qt.createQmlObject('import QtQuick; TextMetrics { }', parent)
-    let width = 0
-    for (const text of texts) {
-        textMetric.text = text
-        width = Math.max(width, textMetric.tightBoundingRect.width)
-    }
-    textMetric.destroy()
-    return width
+
+Label {
+    id: root
+
+    required property var mpvqcApplication
+    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+
+    property real percent: mpvqcMpvPlayerPropertiesPyObject.percent_pos
+
+    visible: mpvqcSettings.statusbarPercentage && mpvqcMpvPlayerPropertiesPyObject.video_loaded
+    text: `${percent.toFixed(0)}%`
+
 }

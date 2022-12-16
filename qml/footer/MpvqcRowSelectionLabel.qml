@@ -17,17 +17,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtQuick.Controls
 
 
 Label {
     id: label
+
+    required property var mpvqcApplication
+
+    property int currentIndex: -1 // todo
+    property int total: 0 // todo
+
     text: (currentIndex + 1) + '/' + total
     visible: total
 
-    property int currentIndex: globalEvents.selectedCommentIndex
-    property int total: globalEvents.commentCount
+
 
 }

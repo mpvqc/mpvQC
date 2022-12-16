@@ -29,7 +29,7 @@ const regexHoursMinutesSeconds = /^([\d:]{8})$/
  * @returns {string}
  */
 function formatTimeToString(secs) {
-    const sec_num = parseInt(secs, 10)
+    const sec_num = Math.max(0, parseInt(secs, 10))
     let hours = Math.floor(sec_num / 3600)
     let minutes = Math.floor((sec_num - (hours * 3600)) / 60)
     let seconds = sec_num - (hours * 3600) - (minutes * 60)
@@ -42,7 +42,7 @@ function formatTimeToString(secs) {
 
 function formatTimeToStringShort(secs) {
     if (secs >= 3600) throw `Seconds '${secs}' is greater than or equals 3600`
-    const sec_num = parseInt(secs, 10)
+    const sec_num = Math.max(0, parseInt(secs, 10))
     let minutes = Math.floor(sec_num / 60)
     let seconds = sec_num - (minutes * 60)
     if (minutes < 10) minutes = `0${minutes}`
