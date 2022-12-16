@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtQuick.Controls
 import footer
@@ -28,9 +27,12 @@ FocusScope {
     id: root
 
     required property var mpvqcApplication
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
 
     Page {
-        id: page
+        id: _page
+
         anchors.fill: parent
 
         header: MpvqcHeader {
@@ -42,23 +44,22 @@ FocusScope {
             mpvqcApplication: root.mpvqcApplication
             width: parent.width
         }
-//
-//        Item {
-//            anchors.fill: parent
-//
-//            MpvqcDropFilesHandler {
-//                anchors.fill: parent
-//
-//                onFilesDropped: (docs, vid, subs) => {
-//                    qcManager.open(docs, vid, subs)
-//                }
-//            }
-//
-//            MpvqcSplitView {
-//                focus: true
-//                anchors.fill: parent
-//            }
-//        }
+
+        MpvqcContentSplitView {
+            mpvqcApplication: root.mpvqcApplication
+            focus: true
+            anchors.fill: _page.contentItem
+
+            MpvqcDragAndDropHandler {
+                anchors.fill: parent
+                supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
+
+                onFilesDropped: (docs, vid, subs) => {
+                    root.mpvqcManager.open(docs, vid, subs)
+                }
+            }
+        }
+
     }
 
 }

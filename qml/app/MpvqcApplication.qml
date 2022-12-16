@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
@@ -32,17 +31,17 @@ import "MpvqcLabelWidthCalculator.js" as MpvqcLabelWidthCalculator
 ApplicationWindow {
     id: root
 
-    // Qml objects
     readonly property MpvqcManager mpvqcManager: MpvqcManager {}
-    readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {}
+    readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {
+        mpvqcApplication: root
+    }
     readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
 
-    // Python objects
-    readonly property MpvqcMpvPlayerPropertiesPyObject mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property MpvqcApplicationPathsPyObject mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
+    readonly property MpvqcMpvPlayerPyObject mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
+    readonly property MpvqcMpvPlayerPropertiesPyObject mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
 
-    // JavaScript helpers
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
 
@@ -89,9 +88,9 @@ ApplicationWindow {
 
     function toggleFullScreen() {
         if (root.fullscreen) {
-            root.enableFullScreen()
-        } else {
             root.disableFullScreen()
+        } else {
+            root.enableFullScreen()
         }
     }
 
@@ -107,11 +106,9 @@ ApplicationWindow {
         }
     }
 
-    Material.theme: mpvqcSettings.theme
-    Material.accent: mpvqcSettings.accent
-
-    Component.onCompleted: {
-        Qt.uiLanguage = mpvqcSettings.language
+    onClosing: (event) => {
+        closeHandler.requestClose()
+        event.accepted = closeHandler.userConfirmedClose
     }
 
     MpvqcQuitHandler {
@@ -120,9 +117,11 @@ ApplicationWindow {
         canClose: true
     }
 
-    onClosing: (event) => {
-        closeHandler.requestClose()
-        event.accepted = closeHandler.userConfirmedClose
+    Component.onCompleted: {
+        Qt.uiLanguage = mpvqcSettings.language
     }
+
+    Material.theme: mpvqcSettings.theme
+    Material.accent: mpvqcSettings.accent
 
 }

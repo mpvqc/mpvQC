@@ -51,7 +51,7 @@ Popup {
         textFromValue: (value) => MpvqcTimeFormatUtils.formatTimeToString(value)
         valueFromText: (text) => MpvqcTimeFormatUtils.extractSecondsFrom(text)
         validator: RegularExpressionValidator {
-            regularExpression: MpvqcTimeFormatUtils.regexHoursMinutesSeconds
+            regularExpression: /^([\d:]{8})$/
         }
         up.indicator: MpvqcIncrementButton {
             x: spinBox.mirrored ? 0 : parent.width - width

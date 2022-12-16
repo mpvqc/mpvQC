@@ -25,11 +25,13 @@ import Qt.labs.settings
 Item {
     id: root
 
-//    readonly property var settingsFile: MpvqcApplicationPathsPyObject.settings
+    required property var mpvqcApplication
+    readonly property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
+    readonly property var settingsFile: mpvqcApplicationPathsPyObject.settings
 
     Settings {
         id: _backupSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        fileName: root.settingsFile
         category: 'Backup'
         property bool enabled: true
         property int interval: 90
@@ -39,7 +41,7 @@ Item {
 
     MpvqcCommonSettings {
         id: _commonSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        fileName: root.settingsFile
     }
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
@@ -52,7 +54,7 @@ Item {
 
     Settings {
         id: _exportSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        fileName: root.settingsFile
         category: 'Export'
         property string nickname: 'nickname' // EnvironmentPyObject.variable('USERNAME') || EnvironmentPyObject.variable('USER') || 'nick'
         property bool writeHeaderDate: true
@@ -68,18 +70,18 @@ Item {
 
     enum TimeFormat { EMPTY, CURRENT_TIME, REMAINING_TIME, CURRENT_TOTAL_TIME }
     Settings {
-        id: _formatSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
-        category: 'Format'
+        id: _statusBarSettings
+        fileName: root.settingsFile
+        category: 'StatusBar'
         property bool statusbarPercentage: true
         property int timeFormat: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
     }
-    property alias statusbarPercentage: _formatSettings.statusbarPercentage
-    property alias timeFormat: _formatSettings.timeFormat
+    property alias statusbarPercentage: _statusBarSettings.statusbarPercentage
+    property alias timeFormat: _statusBarSettings.timeFormat
 
     Settings {
         id: _importSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        fileName: root.settingsFile
         category: 'Import'
         property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
@@ -89,17 +91,17 @@ Item {
     property alias lastDirectoryDocuments: _importSettings.lastDirectoryDocuments
     property alias lastDirectorySubtitles: _importSettings.lastDirectorySubtitles
 
-//    Settings {
-//        id: _splitViewSettings
-//        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
-//        category: 'SplitView'
-//        property var dimensions: ''
-//    }
-//    property alias dimensions: _splitViewSettings.dimensions
+    Settings {
+        id: _splitViewSettings
+        fileName: root.settingsFile
+        category: 'SplitView'
+        property var dimensions: ''
+    }
+    property alias dimensions: _splitViewSettings.dimensions
 
     Settings {
         id: _themeSettings
-        // fileName: '/home/elias/PycharmProjects/mpvQC-dev/appdata/settings.ini' // todo change
+        fileName: root.settingsFile
         category: 'Theme'
         property int theme: Material.Dark
         property int accent: Material.Orange

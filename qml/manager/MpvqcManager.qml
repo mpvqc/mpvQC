@@ -17,22 +17,43 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 
 
 Item {
     id: root
+
     property bool saved: true
 
     signal commentsImported(var comments)
     signal videoImported(url video)
     signal subtitlesImported(var subtitles)
 
-    function reset() {}
-    function openDocuments(documents) { console.log('MpvqcManager', 'openDocuments', documents) }
-    function openVideo(video) { console.log('MpvqcManager', 'openVideo', video) }
-    function openSubtitles(subtitles) { console.log('MpvqcManager', 'openSubtitles', subtitles) }
-    function save() {}
-    function saveAs() {}
+    function reset() {
+
+    }
+
+    function openDocuments(documents) {
+        console.log('MpvqcManager', 'openDocuments', documents)
+    }
+
+    function openVideo(video) {
+        console.log('MpvqcManager', 'openVideo', video)
+    }
+
+    function openSubtitles(subtitles) {
+        console.log('MpvqcManager', 'openSubtitles', subtitles)
+    }
+
+    function open(documents, video, subtitles) {
+        console.log('MpvqcManager', 'open', documents, video, subtitles)
+    }
+
+    function save() {
+
+    }
+
+    function saveAs() {
+
+    }
 }

@@ -20,40 +20,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-const regexHoursMinutesSeconds = /^([\d:]{8})$/
-
-
 /**
  * https://stackoverflow.com/a/6313008/8596346
- * @param secs
- * @returns {string}
+ * @param secs {number}
+ * @return {string}
  */
 function formatTimeToString(secs) {
     const sec_num = Math.max(0, parseInt(secs, 10))
     let hours = Math.floor(sec_num / 3600)
     let minutes = Math.floor((sec_num - (hours * 3600)) / 60)
     let seconds = sec_num - (hours * 3600) - (minutes * 60)
-    if (hours < 10) hours = `0${hours}`
-    if (minutes < 10) minutes = `0${minutes}`
-    if (seconds < 10) seconds = `0${seconds}`
-    return `${hours}:${minutes}:${seconds}`
+    if (hours < 10) hours = `0${ hours }`
+    if (minutes < 10) minutes = `0${ minutes }`
+    if (seconds < 10) seconds = `0${ seconds }`
+    return `${ hours }:${ minutes }:${ seconds }`
 }
 
 
+/**
+ *
+ * @param secs
+ * @return {string}
+ */
 function formatTimeToStringShort(secs) {
-    if (secs >= 3600) throw `Seconds '${secs}' is greater than or equals 3600`
+    if (secs >= 3600) throw `Seconds '${ secs }' is greater than or equals 3600`
     const sec_num = Math.max(0, parseInt(secs, 10))
     let minutes = Math.floor(sec_num / 60)
     let seconds = sec_num - (minutes * 60)
-    if (minutes < 10) minutes = `0${minutes}`
-    if (seconds < 10) seconds = `0${seconds}`
-    return `${minutes}:${seconds}`
+    if (minutes < 10) minutes = `0${ minutes }`
+    if (seconds < 10) seconds = `0${ seconds }`
+    return `${ minutes }:${ seconds }`
 }
 
 
 /**
  * https://thewebdev.info/2021/05/23/how-to-convert-hhmmss-time-string-to-seconds-only-in-javascript/
- * @param timeString
+ * @param timeString {string}
  * @returns {number}
  */
 function extractSecondsFrom(timeString) {

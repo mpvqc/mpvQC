@@ -17,39 +17,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtQuick.Controls
-import handlers
 
 
-FocusScope {
+MpvqcMenu {
+    id: root
 
-    Page {
-        id: page
-        anchors.fill: parent
-        header: MpvqcHeader {
-            width: parent.width
-        }
+    required property var mpvqcApplication
+    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
-        footer: MpvqcFooter {
-            width: parent.width
-        }
+    modal: true
+    dim: false
 
-        Item {
-            anchors.fill: parent
+    function popupMenu(): void {
+        mpv.pause()
+        mpvqcApplication.disableFullScreen()
+        popup()
+    }
 
-            MpvqcDropFilesHandler {
-                anchors.fill: parent
+    Repeater {
+        model: mpvqcSettings.commentTypes
 
-                onFilesDropped: (docs, vid, subs) => {
-                    qcManager.open(docs, vid, subs)
-                }
-            }
+        MenuItem {
+            text: qsTranslate("CommentTypes", model.type)
 
-            MpvqcSplitView {
-                focus: true
-                anchors.fill: parent
+            onTriggered: {
+                console.log('[INFO]', 'model.type', model.type)
             }
         }
     }
