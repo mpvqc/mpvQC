@@ -58,6 +58,10 @@ Dialog {
         }
     }
 
+    onClosed: {
+        root.bar.currentIndex = 0
+    }
+
     Component.onCompleted: {
         const radius = mpvqcApplication.windowRadius
         background.radius = radius

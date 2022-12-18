@@ -78,11 +78,29 @@ RowLayout {
     }
 
     Label {
+        id: _versionLabel
+
         text: root.version
         visible: text
         elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
         horizontalAlignment: Text.AlignLeft
         Layout.preferredWidth: columnTwoWidth
+
+        MouseArea {
+            id: _mouseArea
+
+            enabled: _versionLabel.truncated
+            hoverEnabled: true
+            acceptedButtons: Qt.NoButton
+            anchors.fill: _versionLabel
+        }
+
+        ToolTip {
+            y: - _versionLabel.height - 15
+            delay: 500
+            visible: _mouseArea.containsMouse
+            text: root.version
+        }
     }
 
     Label {
