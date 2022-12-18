@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @param parent
  */
 function calculateWidthFor(texts, parent) {
-    const textMetric = Application.os === 'windows'
+    const textMetric = Qt.platform.os === 'windows'
         ? Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', parent)
         : Qt.createQmlObject('import QtQuick; TextMetrics { }', parent)
     let width = 0
