@@ -315,7 +315,6 @@ xtask-prepare-translation-extractions:
 		${DIRECTORY_BUILD_TRANSLATIONS}
 	@cp -r \
 		${DIRECTORY_I18N} \
-		${DIRECTORY_PY_SOURCES} \
 		${DIRECTORY_QML_SOURCES} \
 		${DIRECTORY_BUILD_TRANSLATIONS}
 	@${DIRECTORY_BUILD_HELPERS}/generate-lupdate-project-file.py \
