@@ -28,7 +28,6 @@ Dialog {
     default property alias content: _stack.children
     property alias bar: _bar
     property alias stack: _stack
-    readonly property int margin: 10
     required property var mpvqcApplication
 
     anchors.centerIn: parent

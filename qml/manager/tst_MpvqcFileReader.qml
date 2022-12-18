@@ -17,24 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtTest
 
-const asynchronous = false
+import "MpvqcFileReader.js" as TestObject
 
 
-/**
- * @param qmlFileUrl {string} actually Qml url
- * @return {string}
- */
-function read(qmlFileUrl) {
-    let content = ''
-    const request = new XMLHttpRequest()
-    request.open("GET", qmlFileUrl, asynchronous)
-    request.onreadystatechange = () => {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            content = request.responseText
-        }
+TestCase {
+    name: "MpvqcFileReader"
+
+    property string file: 'tst_MpvqcFileReader-input-01.txt'
+    property string expected: 'file-content\n'
+
+    function test_read() {
+        compare(TestObject.read(file), expected)
     }
-    request.onerror = () => console.log(`Error reading from url: ${qmlFileUrl}`)
-    request.send()
-    return content
+
 }

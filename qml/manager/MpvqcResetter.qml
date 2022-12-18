@@ -17,39 +17,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
-import "MpvqcStateChanges.js" as MpvqcStateChanges
+
+import dialogs
 
 
-Item {
-    id: appState
+QtObject {
+    id: root
 
-    property url document: ''
-    property url video: ''
-    property bool saved: true
-    property var state: new MpvqcStateChanges.InitialState()
+    required property bool saved
 
-    onStateChanged: {
-        appState.document = state.document
-        appState.video = state.video
-        appState.saved = state.saved
+    property MpvqcMessageDialogNewDocumentConfirmation confirmationDialog: MpvqcMessageDialogNewDocumentConfirmation {
+
+        onAccepted: {
+            accept()
+        }
+
+        function accept(): void {
+            root.reset()
+        }
     }
 
-    function handleChange() {
-        state = state.handleChange()
-    }
+    signal reset()
 
-    function handleImport(change) {
-        state = state.handleImport(change)
-    }
-
-    function handleReset() {
-        state = state.handleReset()
-    }
-
-    function handleSave(document) {
-        state = state.handleSave(document)
+    function requestReset(): void {
+        if (saved) {
+            reset()
+        } else {
+            confirmationDialog.open()
+        }
     }
 
 }

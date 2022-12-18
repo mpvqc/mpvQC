@@ -19,41 +19,124 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
+import dialogs
+
 
 Item {
     id: root
 
-    property bool saved: true
+    required property var mpvqcApplication
+    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
+
+    property alias saved: state.saved
 
     signal commentsImported(var comments)
-    signal videoImported(url video)
-    signal subtitlesImported(var subtitles)
 
-    function reset() {
+    function reset(): void {
+        resetter.requestReset()
+    }
+
+    function openDocuments(documents: Array<url>): void {
+        const video = ''
+        const subtitles = []
+        _open(documents, video, subtitles)
+    }
+
+    function openVideo(video: url): void {
+        const documents = []
+        const subtitles = []
+        _open(documents, video, subtitles)
+    }
+
+    function openSubtitles(subtitles: Array<url>): void {
+        const documents = []
+        const video = ''
+        _open(documents, video, subtitles)
+    }
+
+    function open(documents: Array<url>, video: url, subtitles: Array<url>): void {
+        const docs = documents && documents.length > 0 ? documents : []
+        const vid = video && video != '' ? video : ''
+        const subs = subtitles && subtitles.length > 0 ? subtitles : []
+        _open(docs, vid, subs)
+    }
+
+    function _open(documents: Array<url>, video: url, subtitles: Array<url>): void {
+        importer.importFrom(documents, video, subtitles)
+    }
+
+    function save(): void {
+        exporter.requestSave()
+    }
+
+    function saveAs(): void {
+        exporter.requestSaveAs()
+    }
+
+    MpvqcBackupper {
+        id: backupper
+
+        video: state.video
+        mpvqcApplication: root.mpvqcApplication
+    }
+
+    MpvqcExporter {
+        id: exporter
+
+        video: state.video
+        document: state.document
+        mpvqcApplication: root.mpvqcApplication
+
+        onSaved: (newDocumentUrl) => {
+            state.handleSave(newDocumentUrl)
+        }
+    }
+
+    MpvqcImporter {
+        id: importer
+
+        property var erroneousDocumentsDialog: MpvqcMessageDialogDocumentNotCompatible {
+            mpvqcApplication: root.mpvqcApplication
+        }
+
+        mpvqcApplication: root.mpvqcApplication
+
+        onCommentsImported: (comments) => {
+            // manager.commentsImported(comments)
+        }
+
+        onVideoImported: (video) => {
+            root.mpv.open_video(video)
+        }
+
+        onSubtitlesImported: (subtitles) => {
+            root.mpv.open_subtitles(subtitles)
+        }
+
+        onStateChanged: (change) => {
+            state.handleImport(change)
+        }
+
+        onErroneousDocumentsImported: (documents) => {
+            erroneousDocumentsDialog.renderErroneous(documents)
+            erroneousDocumentsDialog.open()
+        }
 
     }
 
-    function openDocuments(documents) {
-        console.log('MpvqcManager', 'openDocuments', documents)
+    MpvqcResetter {
+        id: resetter
+
+        saved: state.saved
+
+        onReset: {
+            state.handleReset()
+            // globalEvents.requestCommentsReset()
+        }
     }
 
-    function openVideo(video) {
-        console.log('MpvqcManager', 'openVideo', video)
+    MpvqcState {
+        id: state
     }
 
-    function openSubtitles(subtitles) {
-        console.log('MpvqcManager', 'openSubtitles', subtitles)
-    }
-
-    function open(documents, video, subtitles) {
-        console.log('MpvqcManager', 'open', documents, video, subtitles)
-    }
-
-    function save() {
-
-    }
-
-    function saveAs() {
-
-    }
 }

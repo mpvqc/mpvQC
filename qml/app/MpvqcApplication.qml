@@ -31,13 +31,16 @@ import "MpvqcLabelWidthCalculator.js" as MpvqcLabelWidthCalculator
 ApplicationWindow {
     id: root
 
-    readonly property MpvqcManager mpvqcManager: MpvqcManager {}
+    readonly property MpvqcManager mpvqcManager: MpvqcManager {
+        mpvqcApplication: root
+    }
     readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {
         mpvqcApplication: root
     }
     readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
 
     readonly property MpvqcApplicationPathsPyObject mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
+    readonly property MpvqcBackupPyObject mpvqcBackupPyObject: MpvqcBackupPyObject {}
     readonly property MpvqcMpvPlayerPyObject mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property MpvqcMpvPlayerPropertiesPyObject mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
@@ -114,7 +117,7 @@ ApplicationWindow {
     MpvqcQuitHandler {
         id: closeHandler
         mpvqcApplication: root
-        canClose: true
+        canClose: mpvqcManager.saved
     }
 
     Component.onCompleted: {

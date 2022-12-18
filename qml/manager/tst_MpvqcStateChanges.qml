@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-import QtQuick 2.0
+import QtQuick
 import QtTest
+
 import "MpvqcStateChanges.js" as TestObject
+
 
 Item {
 
@@ -61,11 +62,11 @@ Item {
 
         function test_thatImportedDocument() {
             const changes1 = new TestObject.ImportChanges(noDocuments, videoPresent)
-            compare(changes1.thatImportedDocument, undefined)
+            compare(changes1.importedDocument, undefined)
             const changes2 = new TestObject.ImportChanges(['one'], videoPresent)
-            compare(changes2.thatImportedDocument, 'one')
+            compare(changes2.importedDocument, 'one')
             const changes3 = new TestObject.ImportChanges(['one', 'two'], videoPresent)
-            compare(changes3.thatImportedDocument, 'one')
+            compare(changes3.importedDocument, 'one')
         }
     }
 

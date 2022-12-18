@@ -16,6 +16,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .application_paths import MpvqcApplicationPathsPyObject
+from .backup import MpvqcBackupPyObject
 from .comments_model import MpvqcCommentModelPyObject
 from .environment import MpvqcEnvironmentPyObject
 from .file_interface import MpvqcFileInterfacePyObject

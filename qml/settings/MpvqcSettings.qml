@@ -79,6 +79,7 @@ Item {
     property alias statusbarPercentage: _statusBarSettings.statusbarPercentage
     property alias timeFormat: _statusBarSettings.timeFormat
 
+    enum ImportWhenVideoLinkedInDocument { ASK_EVERY_TIME, NEVER, ALWAYS }
     Settings {
         id: _importSettings
         fileName: root.settingsFile
@@ -86,7 +87,9 @@ Item {
         property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
         property var lastDirectorySubtitles: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+        property var importWhenVideoLinkedInDocument: MpvqcSettings.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME
     }
+    property alias importWhenVideoLinkedInDocument: _importSettings.importWhenVideoLinkedInDocument
     property alias lastDirectoryVideo: _importSettings.lastDirectoryVideo
     property alias lastDirectoryDocuments: _importSettings.lastDirectoryDocuments
     property alias lastDirectorySubtitles: _importSettings.lastDirectorySubtitles

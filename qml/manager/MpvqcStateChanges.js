@@ -45,7 +45,7 @@ class ImportChanges {
         return this.documents.length === 1
     }
 
-    get thatImportedDocument() {
+    get importedDocument() {
         return this.documents[0]
     }
 }
@@ -109,7 +109,7 @@ class InitialState extends ApplicationState {
             return new InitialState(change.video, NO_DOCUMENT, SAVED)
         const video = this.findVideo(change)
         if (change.isExactlyOneDocumentImported)
-            return new OtherState(video, change.thatImportedDocument, SAVED)
+            return new OtherState(video, change.importedDocument, SAVED)
         return new OtherState(video, NO_DOCUMENT, UNSAVED)
     }
 

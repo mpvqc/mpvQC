@@ -15,10 +15,27 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .application_environment import ApplicationEnvironmentService
+
+from datetime import datetime
+from zipfile import ZipFile, ZIP_DEFLATED
+
+import inject
+
 from .application_paths import ApplicationPathsService
-from .backup import BackupService
-from .file_startup import FileStartupService
-from .player import PlayerService, SubtitleCacher
-from .resource import ResourceService
-from .resource_reader import ResourceReaderService
+
+
+class BackupService:
+    _paths = inject.attr(ApplicationPathsService)
+
+    def backup(self, video_name: str, content: str):
+        now = datetime.now()
+
+        zip_name = f'{now:%Y-%m}.zip'
+        zip_path = self._paths.dir_backup / zip_name
+        zip_mode = 'a' if zip_path.exists() else 'w'
+
+        file_name = f'{now:%Y-%m-%d_%H-%M-%S}_{video_name}.txt'
+
+        # noinspection PyTypeChecker
+        with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as file:
+            file.writestr(file_name, content)

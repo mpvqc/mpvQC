@@ -42,18 +42,6 @@ MpvqcMpvFrameBufferObjectPyObject {
     }
 
 //    Connections {
-//        target: qcManager
-//
-//        function onVideoImported(video) {
-//            root.open_video(video)
-//        }
-//
-//        function onSubtitlesImported(subtitles) {
-//            root.open_subtitles(subtitles)
-//        }
-//    }
-//
-//    Connections {
 //        target: globalEvents
 //
 //        function onCustomPlayerCommandRequested(command) {

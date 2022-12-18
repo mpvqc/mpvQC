@@ -17,20 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-import QtQuick 2.0
-import QtTest
-import "MpvqcFileReader.js" as TestObject
+import QtQuick.Dialogs
 
 
-TestCase {
-    name: "MpvqcFileReader::read"
-    property var file: 'tst_resource_text-file.txt'
-
-    property var content: 'file-content\n'
-
-    function test_read() {
-        compare(TestObject.read(file), content)
-    }
+MessageDialog {
+    title: qsTranslate("MessageBoxes", "Video Found")
+    text: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
+    buttons: MessageDialog.Yes | MessageDialog.No
 
 }

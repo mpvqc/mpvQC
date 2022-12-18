@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-import QtQuick 2.0
+import QtQuick
 import QtTest
+
 import "MpvqcDocumentFileExporter.js" as TestObject
 
 
@@ -166,7 +166,7 @@ Item {
 
 
     TestCase {
-        name: "MpvqcDocumentFileExporter::DocumentFileCombiner::generateDocumentFrom"
+        name: "MpvqcDocumentFileExporter::DocumentFileCombiner"
 
         property var timeFormatFunc: function(sec) { return 'transformed' }
         property var funcUnderTest: new TestObject.DocumentFileCombiner(timeFormatFunc).generateDocumentFrom

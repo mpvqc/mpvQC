@@ -15,10 +15,20 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .application_environment import ApplicationEnvironmentService
-from .application_paths import ApplicationPathsService
-from .backup import BackupService
-from .file_startup import FileStartupService
-from .player import PlayerService, SubtitleCacher
-from .resource import ResourceService
-from .resource_reader import ResourceReaderService
+import inject
+from PySide6.QtCore import Slot, QObject
+from PySide6.QtQml import QmlElement
+
+from mpvqc.services import BackupService
+
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
+
+
+@QmlElement
+class MpvqcBackupPyObject(QObject):
+    _backup = inject.attr(BackupService)
+
+    @Slot(str, str)
+    def write_backup(self, video_name: str, content: str):
+        self._backup.backup(video_name, content)

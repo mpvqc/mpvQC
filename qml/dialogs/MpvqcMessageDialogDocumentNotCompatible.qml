@@ -17,30 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-import QtQuick
-import helpers
+import QtQuick.Dialogs
 
 
-QtObject {
-    required property bool saved
+MessageDialog {
+    required property var mpvqcApplication
+    readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
 
-    signal reset()
+    title: qsTranslate("MessageBoxes", "Imported Documents Not Compatible")
+    buttons: MessageDialog.Ok
 
-    function requestReset() {
-        if (saved) {
-            reset()
-        } else {
-            _askUserToReallyReset()
-        }
-    }
-
-    function _askUserToReallyReset() {
-        const url = "qrc:/qml/components/messageboxes/MpvqcNewDocumentConfirmation.qml"
-        const component = Qt.createComponent(url)
-        const dialog = component.createObject(appWindow)
-        dialog.accepted.connect(reset)
-        dialog.open()
+    function renderErroneous(documents: Array<url>): string {
+        text = documents
+            .map(documentUrl => mpvqcFileSystemHelperPyObject.url_to_absolute_path(documentUrl))
+            .join('\n\n')
     }
 
 }
