@@ -29,6 +29,7 @@ Item {
         id: objectUnderTest
 
         mpvqcApplication: QtObject {
+            property real windowRadius: 12
             property var mpvqcTimeFormatUtils: QtObject {
                 function extractSecondsFrom(string) { return 42 }
             }

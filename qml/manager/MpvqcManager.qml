@@ -95,7 +95,7 @@ Item {
     MpvqcImporter {
         id: importer
 
-        property var erroneousDocumentsDialog: MpvqcMessageDialogDocumentNotCompatible {
+        property var erroneousDocumentsDialog: MpvqcMessageBoxDocumentNotCompatible {
             mpvqcApplication: root.mpvqcApplication
         }
 
@@ -127,6 +127,7 @@ Item {
     MpvqcResetter {
         id: resetter
 
+        mpvqcApplication: root.mpvqcApplication
         saved: state.saved
 
         onReset: {

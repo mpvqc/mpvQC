@@ -30,8 +30,10 @@ QtObject {
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
 
-    property var messageDialog: MpvqcMessageDialogImportFoundVideoConfirmation {
+    property var messageDialog: MpvqcMessageBoxVideoFound {
         property url linkedVideo: ''
+
+        mpvqcApplication: root.mpvqcApplication
 
         onAccepted: {
             positive()

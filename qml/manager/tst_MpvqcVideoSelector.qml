@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 import QtTest
 
 import settings
@@ -28,7 +29,8 @@ Item {
     MpvqcVideoSelector {
         id: objectUnderTest
 
-        mpvqcApplication: QtObject {
+        mpvqcApplication: ApplicationWindow {
+            property real windowRadius: 12
             property var mpvqcSettings: QtObject {
                 property var importWhenVideoLinkedInDocument: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER
             }

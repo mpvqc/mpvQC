@@ -17,20 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick.Dialogs
+import QtQuick.Controls
+
+import shared
 
 
-MessageDialog {
-    required property var mpvqcApplication
-    readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
-
-    title: qsTranslate("MessageBoxes", "Imported Documents Not Compatible")
-    buttons: MessageDialog.Ok
-
-    function renderErroneous(documents: Array<url>): string {
-        text = documents
-            .map(documentUrl => mpvqcFileSystemHelperPyObject.url_to_absolute_path(documentUrl))
-            .join('\n\n')
-    }
+MpvqcMessageBox {
+    customTitle: qsTranslate("MessageBoxes", "Unsaved Changes")
+    customText: qsTranslate("MessageBoxes", "Do you really want to create a new QC document without saving your QC?")
+    standardButtons: Dialog.Yes | Dialog.No
 
 }

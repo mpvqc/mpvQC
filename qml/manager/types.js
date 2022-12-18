@@ -93,6 +93,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
+ @typedef QtObject
+ @type {Class}
+ */
+
+/**
  * @name mpvqcTimeFormatFunc
  * @type function
  * @param {number} seconds

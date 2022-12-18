@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtQuick.Controls
 
-import QtQuick.Dialogs
+import shared
 
 
-MessageDialog {
-    title: qsTranslate("MessageBoxes", "Unsaved Changes")
-    text: qsTranslate("MessageBoxes", "Do you really want to create a new QC document without saving your QC?")
-    buttons: MessageDialog.Yes | MessageDialog.No
+MpvqcMessageBox {
+    customTitle: qsTranslate("MessageBoxes", "Unsaved Changes")
+    customText: qsTranslate("MessageBoxes", "Do you really want to quit without saving your QC?")
+    standardButtons: Dialog.Yes | Dialog.Cancel
 
 }

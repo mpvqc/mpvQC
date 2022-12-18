@@ -17,12 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick.Dialogs
+import QtQuick.Controls
+
+import shared
 
 
-MessageDialog {
-    title: qsTranslate("MessageBoxes", "Video Found")
-    text: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
-    buttons: MessageDialog.Yes | MessageDialog.No
+MpvqcMessageBox {
+    customTitle: qsTranslate("MessageBoxes", "Video Found")
+    customText: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
+    standardButtons: Dialog.Yes | Dialog.No
 
 }

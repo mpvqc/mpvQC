@@ -30,7 +30,8 @@ Item {
 
     property bool userConfirmedClose: false
 
-    property var quitDialog: MpvqcMessageDialogQuitConfirmation {
+    property var quitDialog: MpvqcMessageBoxQuit {
+        mpvqcApplication: root.mpvqcApplication
 
         onAccepted: {
             root._close()

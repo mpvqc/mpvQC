@@ -18,35 +18,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 
-import dialogs
 
-
-QtObject {
+Dialog {
     id: root
 
     required property var mpvqcApplication
-    required property bool saved
+    property alias customTitle: _header.text
+    property alias customText: _content.text
 
-    property var confirmationDialog: MpvqcMessageBoxNewDocument {
-        mpvqcApplication: root.mpvqcApplication
+    implicitWidth: _content.implicitWidth + 60
+    parent: mpvqcApplication.contentItem
+    modal: true
+    dim: false
+    standardButtons: Dialog.Ok
+    closePolicy: Popup.CloseOnEscape
+    anchors.centerIn: parent
 
-        onAccepted: {
-            accept()
-        }
-
-        function accept(): void {
-            root.reset()
-        }
+    header: MpvqcHeader {
+        id: _header
     }
 
-    signal reset()
+    contentItem: Label {
+        id: _content
 
-    function requestReset(): void {
-        if (saved) {
-            reset()
-        } else {
-            confirmationDialog.open()
+        horizontalAlignment: Text.AlignLeft
+        elide: Text.ElideLeft
+    }
+
+    Component.onCompleted: {
+        const radius = mpvqcApplication.windowRadius
+        background.radius = radius
+        footer.background.radius = radius
+        if (header.background) {
+            header.background.radius = radius
         }
     }
 

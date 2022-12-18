@@ -5,6 +5,7 @@ MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcMenu MpvqcMenu.qml
+MpvqcMessageBox MpvqcMessageBox.qml
 MpvqcNewCommentMenu MpvqcNewCommentMenu.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml

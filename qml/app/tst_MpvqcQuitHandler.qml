@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick.Controls
 import QtTest
 
@@ -31,6 +30,7 @@ MpvqcQuitHandler {
 
     canClose: false
     mpvqcApplication: ApplicationWindow {
+        property real windowRadius: 12
         function close() {
             objectUnderTest.closeFuncCalled = true
         }
@@ -73,4 +73,4 @@ MpvqcQuitHandler {
 
     }
 
- }
+}
