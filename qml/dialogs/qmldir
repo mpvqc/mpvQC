@@ -8,6 +8,8 @@ MpvqcDialogBackup backup/MpvqcDialogBackup.qml
 
 MpvqcDialogCommentTypes commenttypes/MpvqcDialogCommentTypes.qml
 
+MpvqcDialogImport import/MpvqcDialogImport.qml
+
 MpvqcDialogExport export/MpvqcDialogExport.qml
 
 MpvqcDialogShortcuts shortcuts/MpvqcDialogShortcuts.qml

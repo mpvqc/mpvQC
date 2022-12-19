@@ -79,7 +79,7 @@ Item {
     property alias statusbarPercentage: _statusBarSettings.statusbarPercentage
     property alias timeFormat: _statusBarSettings.timeFormat
 
-    enum ImportWhenVideoLinkedInDocument { ASK_EVERY_TIME, NEVER, ALWAYS }
+    enum ImportWhenVideoLinkedInDocument { ALWAYS, ASK_EVERY_TIME, NEVER }
     Settings {
         id: _importSettings
         fileName: root.settingsFile

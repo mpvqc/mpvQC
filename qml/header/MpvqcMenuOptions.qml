@@ -30,6 +30,7 @@ MpvqcMenu {
     property alias appearanceAction: _appearanceAction
     property alias commentTypesAction: _commentTypesAction
     property alias exportAction: _exportAction
+    property alias importAction: _importAction
     property alias backupAction: _backupAction
 
     title: qsTranslate("MainWindow", "&Options")
@@ -69,6 +70,20 @@ MpvqcMenu {
     MenuSeparator { }
 
     Action {
+        id: _backupAction
+
+        property var dialog: MpvqcDialogBackup {
+            mpvqcApplication: root.mpvqcApplication
+        }
+
+        text: qsTranslate("MainWindow", "&Backup Settings...")
+
+        onTriggered: {
+            dialog.open()
+        }
+    }
+
+    Action {
         id: _exportAction
 
         property var dialog: MpvqcDialogExport {
@@ -83,13 +98,13 @@ MpvqcMenu {
     }
 
     Action {
-        id: _backupAction
+        id: _importAction
 
-        property var dialog: MpvqcDialogBackup {
+        property var dialog: MpvqcDialogImport {
             mpvqcApplication: root.mpvqcApplication
         }
 
-        text: qsTranslate("MainWindow", "&Backup Settings...")
+        text: qsTranslate("MainWindow", "&Import Settings...")
 
         onTriggered: {
             dialog.open()

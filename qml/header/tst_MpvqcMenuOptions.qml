@@ -71,9 +71,15 @@ Item {
             function open() { openCalled = true }
         }
 
-        function cleanup() {
+        function init() {
             _factoryMock.createObjectCalled = false
             _dialogMock.openCalled = false
+
+            objectUnderTest.appearanceAction.dialog = undefined
+            objectUnderTest.commentTypesAction.factory = undefined
+            objectUnderTest.exportAction.dialog = undefined
+            objectUnderTest.importAction.dialog = undefined
+            objectUnderTest.backupAction.dialog = undefined
         }
 
         function test_appearance() {
@@ -92,6 +98,12 @@ Item {
         function test_export() {
             objectUnderTest.exportAction.dialog = _dialogMock
             objectUnderTest.exportAction.trigger()
+            verify(_dialogMock.openCalled)
+        }
+
+        function test_import() {
+            objectUnderTest.importAction.dialog = _dialogMock
+            objectUnderTest.importAction.trigger()
             verify(_dialogMock.openCalled)
         }
 
