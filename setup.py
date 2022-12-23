@@ -20,7 +20,7 @@ setup(
                      'of video files, initially intended to be a less broken alternative to kSub.',
     author='Frechdachs',
     author_email='frechdachs@rekt.cc',
-    url='https://mpvqc.rekt.cc',
+    url='https://mpvqc.github.io/',
     license='GNU General Public License 3',
     packages=find_packages(),
     cmdclass=cmdclass,

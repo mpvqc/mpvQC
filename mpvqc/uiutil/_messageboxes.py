@@ -149,8 +149,8 @@ class CheckForUpdates(QMessageBox):
                 self.setWindowTitle(_translate("VersionCheckDialog", "New Version Available"))
                 self.setText(
                     _translate("VersionCheckDialog", "There is a new version of mpvQC available ({}).<br>"
-                                                     "Visit <a href='https://mpvqc.rekt.cc/'>"
-                                                     "https://mpvqc.rekt.cc/</a> to download it.").format(latest))
+                                                     "Visit <a href='https://mpvqc.github.io/'>"
+                                                     "https://mpvqc.github.io/</a> to download it.").format(latest))
                 self.setIcon(QMessageBox.Information)
             else:
                 self.setWindowTitle("👌")
