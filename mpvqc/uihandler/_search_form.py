@@ -24,7 +24,6 @@ _translate = QCoreApplication.translate
 
 
 class SearchHandler(QWidget):
-    """"""
 
     sig_shown = pyqtSignal()
     sig_hidden = pyqtSignal()

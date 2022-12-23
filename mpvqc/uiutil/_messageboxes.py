@@ -128,11 +128,12 @@ class CouldNotSaveQCDocumentError(QMessageBox):
 
 
 class CheckForUpdates(QMessageBox):
-    _UPDATER_URL = "https://mpvqc.rekt.cc/download/latest.txt"
+    _UPDATER_URL = "https://mpvqc.github.io/api/v1/public/version"
 
     def __init__(self):
         super().__init__()
 
+        import json
         import urllib.request
         import urllib.error
 
@@ -140,14 +141,16 @@ class CheckForUpdates(QMessageBox):
         md = get_metadata()
 
         try:
-            r = urllib.request.urlopen(self._UPDATER_URL, timeout=5)
-            version_new = r.read().decode("utf-8").strip()
-            if md.app_version != version_new:
+            with urllib.request.urlopen(self._UPDATER_URL, timeout=5) as connection:
+                text = connection.read().decode("utf-8").strip()
+                latest = json.loads(text)['latest']
+
+            if md.app_version != latest:
                 self.setWindowTitle(_translate("VersionCheckDialog", "New Version Available"))
                 self.setText(
                     _translate("VersionCheckDialog", "There is a new version of mpvQC available ({}).<br>"
-                                                     "Visit <a href='https://mpvqc.rekt.cc/'>"
-                                                     "https://mpvqc.rekt.cc/</a> to download it.").format(version_new))
+                                                     "Visit <a href='https://mpvqc.github.io/'>"
+                                                     "https://mpvqc.github.io/</a> to download it.").format(latest))
                 self.setIcon(QMessageBox.Information)
             else:
                 self.setWindowTitle("👌")

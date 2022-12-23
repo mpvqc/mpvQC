@@ -572,8 +572,8 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="147"/>
-        <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt; to download it.</source>
-        <translation>Es ist eine neue Version von mpvQC verfügbar ({}).&lt;br&gt;Besuche &lt;a href=&apos;https://mpvqc.rekt.cc/&apos;&gt;https://mpvqc.rekt.cc/&lt;/a&gt;, um sie herunterzuladen.</translation>
+        <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.github.io/&apos;&gt;https://mpvqc.github.io/&lt;/a&gt; to download it.</source>
+        <translation>Es ist eine neue Version von mpvQC verfügbar ({}).&lt;br&gt;Besuche &lt;a href=&apos;https://mpvqc.github.io/&apos;&gt;https://mpvqc.github.io/&lt;/a&gt;, um sie herunterzuladen.</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="154"/>

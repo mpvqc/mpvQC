@@ -51,7 +51,6 @@ class _Result(NamedTuple):
 
 
 class CommentsTableSearcher(QObject):
-    """"""
 
     @staticmethod
     def search(query: str, model: QAbstractItemModel) -> _Result:
