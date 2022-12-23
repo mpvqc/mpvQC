@@ -15,7 +15,7 @@
 from os import path
 from pathlib import Path
 
-from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer
+from PyQt5.QtCore import QTranslator, Qt, QCoreApplication, QByteArray, QTimer, QLocale, QLibraryInfo
 from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDropEvent, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
@@ -112,7 +112,8 @@ class MainHandler(QMainWindow):
         self.__qc_manager.reset_auto_save()
 
         # Translator
-        self.__translator = QTranslator()
+        self._mpvqc_translator = QTranslator()
+        self._qt_translator = QTranslator()
         self.__update_ui_language()
 
         self.__setup_menu_bar()
@@ -248,22 +249,27 @@ class MainHandler(QMainWindow):
     def __update_ui_language(self) -> None:
         r = get_resources()
         s = get_settings()
-        self.application.removeTranslator(self.__translator)
-        self.__translator.load(r.get_path_translation(s.language))
-        self.application.installTranslator(self.__translator)
+
+        language = s.language
+        q_locale = QLocale(language)
+
+        self.application.removeTranslator(self._qt_translator)
+        self.application.removeTranslator(self._mpvqc_translator)
+
+        self._qt_translator.load(q_locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+        self._mpvqc_translator.load(r.get_path_translation(language))
+
+        self.application.installTranslator(self._qt_translator)
+        self.application.installTranslator(self._mpvqc_translator)
+
         s.comment_types_update_current_language()
         self.widget_context_menu.update_entries()
         self.__ui.retranslateUi(self)
         self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
         self.widget_comments.resize_column_type_column()
         self.__update_window_title()
-        self.__set_rtl_ltr(s.language)
-    
-    def __set_rtl_ltr(self, language) -> None:
-        if language == "he":
-            self.application.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        else:
-            self.application.setLayoutDirection(Qt.LayoutDirection.LayoutDirectionAuto)
+
+        self.application.setLayoutDirection(q_locale.textDirection())
 
     def __resize_video(self, check_desktop_size=False) -> None:
 
