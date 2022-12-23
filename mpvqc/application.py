@@ -18,7 +18,7 @@
 import sys
 
 import inject
-from PySide6.QtCore import QUrl, QTranslator, QLocale
+from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -31,14 +31,12 @@ class MpvqcApplication(QGuiApplication):
     def __init__(self, args):
         super().__init__(args)
         self._engine = QQmlApplicationEngine()
-        self._translator = QTranslator()
+        self._translator_mpvqc = QTranslator()
+        self._translator_qt = QTranslator()
 
     def set_window_icon(self):
         icon = QIcon(':/data/icon.svg')
         self.setWindowIcon(icon)
-
-    def set_up_internationalization(self):
-        self.installTranslator(self._translator)
 
     def create_directories(self):
         self._start_up.create_missing_directories()
@@ -53,7 +51,16 @@ class MpvqcApplication(QGuiApplication):
 
     def _retranslate(self):
         locale = QLocale(self._engine.uiLanguage())
-        self._translator.load(f':/i18n/{locale.name()}.qm')
+
+        self.removeTranslator(self._translator_qt)
+        self.removeTranslator(self._translator_mpvqc)
+
+        self._translator_qt.load(locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+        self._translator_mpvqc.load(f':/i18n/{locale.name()}.qm')
+
+        self.installTranslator(self._translator_qt)
+        self.installTranslator(self._translator_mpvqc)
+
         self.setLayoutDirection(locale.textDirection())
 
     def set_up_imports(self):

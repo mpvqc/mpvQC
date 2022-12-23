@@ -75,16 +75,17 @@ Item {
             _factoryMock.createObjectCalled = false
             _dialogMock.openCalled = false
 
-            objectUnderTest.appearanceAction.dialog = undefined
+            objectUnderTest.appearanceAction.factory = undefined
             objectUnderTest.commentTypesAction.factory = undefined
-            objectUnderTest.exportAction.dialog = undefined
-            objectUnderTest.importAction.dialog = undefined
-            objectUnderTest.backupAction.dialog = undefined
+            objectUnderTest.exportAction.factory = undefined
+            objectUnderTest.importAction.factory = undefined
+            objectUnderTest.backupAction.factory = undefined
         }
 
         function test_appearance() {
-            objectUnderTest.appearanceAction.dialog = _dialogMock
+            objectUnderTest.appearanceAction.factory = _factoryMock
             objectUnderTest.appearanceAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 
@@ -96,20 +97,23 @@ Item {
         }
 
         function test_export() {
-            objectUnderTest.exportAction.dialog = _dialogMock
+            objectUnderTest.exportAction.factory = _factoryMock
             objectUnderTest.exportAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 
         function test_import() {
-            objectUnderTest.importAction.dialog = _dialogMock
+            objectUnderTest.importAction.factory = _factoryMock
             objectUnderTest.importAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 
         function test_backup() {
-            objectUnderTest.backupAction.dialog = _dialogMock
+            objectUnderTest.backupAction.factory = _factoryMock
             objectUnderTest.backupAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 

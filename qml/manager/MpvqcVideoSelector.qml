@@ -30,27 +30,31 @@ QtObject {
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
 
-    property var messageDialog: MpvqcMessageBoxVideoFound {
-        property url linkedVideo: ''
+    property var factory: Component {
+        MpvqcMessageBoxVideoFound {
+            property url linkedVideo: ''
 
-        mpvqcApplication: root.mpvqcApplication
+            mpvqcApplication: root.mpvqcApplication
 
-        onAccepted: {
-            positive()
-        }
+            onAccepted: {
+                positive()
+            }
 
-        function positive(): void {
-            root.pick(linkedVideo)
-        }
+            function positive(): void {
+                root.pick(linkedVideo)
+            }
 
-        onRejected: {
-            negative()
-        }
+            onRejected: {
+                negative()
+            }
 
-        function negative(): void {
-            root.pickNothing()
+            function negative(): void {
+                root.pickNothing()
+            }
         }
     }
+
+    property var messageDialog: null
 
     signal videoSelected(url video)
 
@@ -108,7 +112,9 @@ QtObject {
     }
 
     function consultUserToPossiblyPick(linkedVideo: url): void {
+        messageDialog = factory.createObject(parent)
         messageDialog.linkedVideo = linkedVideo
+        messageDialog.closed.connect(messageDialog.destroy)
         messageDialog.open()
     }
 

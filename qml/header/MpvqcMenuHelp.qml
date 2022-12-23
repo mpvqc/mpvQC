@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+import QtQuick
 import QtQuick.Controls
 import dialogs
 import shared
@@ -36,13 +36,17 @@ MpvqcMenu {
     Action {
         id: _updateAction
 
-        property var dialog: MpvqcDialogUpdate {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogUpdate {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "&Check for Updates...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }
@@ -50,13 +54,17 @@ MpvqcMenu {
     Action {
         id: _shortcutAction
 
-        property var dialog: MpvqcDialogShortcuts {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogShortcuts {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }
@@ -66,13 +74,17 @@ MpvqcMenu {
     Action {
         id: _aboutAction
 
-        property var dialog: MpvqcDialogAbout {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogAbout {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "About &mpvQC...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }

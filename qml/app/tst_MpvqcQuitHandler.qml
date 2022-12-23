@@ -44,6 +44,7 @@ MpvqcQuitHandler {
             objectUnderTest.canClose = false
             objectUnderTest.closeFuncCalled = false
             objectUnderTest.userConfirmedClose = false
+            objectUnderTest.quitDialog = null
         }
 
         function test_quit() {

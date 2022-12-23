@@ -84,7 +84,6 @@ class StartUp:
         app = MpvqcApplication(sys.argv)
 
         app.set_window_icon()
-        app.set_up_internationalization()
         app.create_directories()
         app.set_up_signals()
         app.set_up_imports()

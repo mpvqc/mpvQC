@@ -40,6 +40,7 @@ Item {
 
             function init() {
                 objectUnderTest.saved = true
+                objectUnderTest.confirmationDialog = null
                 resettedSpy.clear()
             }
 

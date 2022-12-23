@@ -30,19 +30,25 @@ Item {
 
     property bool userConfirmedClose: false
 
-    property var quitDialog: MpvqcMessageBoxQuit {
-        mpvqcApplication: root.mpvqcApplication
+    property var factory: Component {
+        MpvqcMessageBoxQuit {
+            mpvqcApplication: root.mpvqcApplication
 
-        onAccepted: {
-            root._close()
+            onAccepted: {
+                root._close()
+            }
+
         }
-
     }
+
+    property var quitDialog: null
 
     function requestClose() {
         if (canClose || userConfirmedClose) {
             _close()
         } else {
+            quitDialog = factory.createObject(parent)
+            quitDialog.closed.connect(quitDialog.destroy)
             quitDialog.open()
         }
     }

@@ -47,7 +47,6 @@ RowLayout {
         selectByMouse: true
         bottomPadding: topPadding
         horizontalAlignment: Text.AlignLeft
-        Layout.fillWidth: true
 
         onTextChanged: {
             root.textChanged(text)

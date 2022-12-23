@@ -28,17 +28,21 @@ QtObject {
     required property var mpvqcApplication
     required property bool saved
 
-    property var confirmationDialog: MpvqcMessageBoxNewDocument {
-        mpvqcApplication: root.mpvqcApplication
+    property var factory: Component {
+        MpvqcMessageBoxNewDocument {
+            mpvqcApplication: root.mpvqcApplication
 
-        onAccepted: {
-            accept()
-        }
+            onAccepted: {
+                accept()
+            }
 
-        function accept(): void {
-            root.reset()
+            function accept(): void {
+                root.reset()
+            }
         }
     }
+
+    property var confirmationDialog: null
 
     signal reset()
 
@@ -46,6 +50,8 @@ QtObject {
         if (saved) {
             reset()
         } else {
+            confirmationDialog = factory.createObject(parent)
+            confirmationDialog.closed.connect(confirmationDialog.destroy)
             confirmationDialog.open()
         }
     }

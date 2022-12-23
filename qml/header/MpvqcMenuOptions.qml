@@ -38,13 +38,17 @@ MpvqcMenu {
     Action {
         id: _appearanceAction
 
-        property var dialog: MpvqcDialogAppearance {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogAppearance {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "&Appearance...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }
@@ -72,13 +76,17 @@ MpvqcMenu {
     Action {
         id: _backupAction
 
-        property var dialog: MpvqcDialogBackup {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogBackup {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "&Backup Settings...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }
@@ -86,13 +94,17 @@ MpvqcMenu {
     Action {
         id: _exportAction
 
-        property var dialog: MpvqcDialogExport {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogExport {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "&Export Settings...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }
@@ -100,13 +112,17 @@ MpvqcMenu {
     Action {
         id: _importAction
 
-        property var dialog: MpvqcDialogImport {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcDialogImport {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         text: qsTranslate("MainWindow", "&Import Settings...")
 
         onTriggered: {
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
     }

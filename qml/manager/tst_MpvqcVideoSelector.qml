@@ -48,6 +48,7 @@ Item {
 
             function init() {
                 videoSelectedSpy.clear()
+                objectUnderTest.messageDialog = null
             }
 
             function test_chooseBetween_data() {

@@ -46,30 +46,45 @@ Item {
         when: windowShown
 
         function cleanup() {
+            _factoryMock.createObjectCalled = false
             _dialogMock.openCalled = false
+
+            objectUnderTest.updateAction.factory = undefined
+            objectUnderTest.shortcutAction.factory = undefined
+            objectUnderTest.aboutAction.factory = undefined
+        }
+
+        QtObject {
+            id: _factoryMock
+            property bool createObjectCalled: false
+            function createObject() { createObjectCalled = true; return _dialogMock }
         }
 
         QtObject {
             id: _dialogMock
             property bool openCalled: false
+            signal closed()
             function open() { openCalled = true }
         }
 
         function test_update() {
-            objectUnderTest.updateAction.dialog = _dialogMock
+            objectUnderTest.updateAction.factory = _factoryMock
             objectUnderTest.updateAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 
         function test_shortcuts() {
-            objectUnderTest.shortcutAction.dialog = _dialogMock
+            objectUnderTest.shortcutAction.factory = _factoryMock
             objectUnderTest.shortcutAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 
         function test_about() {
-            objectUnderTest.aboutAction.dialog = _dialogMock
+            objectUnderTest.aboutAction.factory = _factoryMock
             objectUnderTest.aboutAction.trigger()
+            verify(_factoryMock.createObjectCalled)
             verify(_dialogMock.openCalled)
         }
 

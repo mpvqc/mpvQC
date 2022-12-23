@@ -95,8 +95,10 @@ Item {
     MpvqcImporter {
         id: importer
 
-        property var erroneousDocumentsDialog: MpvqcMessageBoxDocumentNotCompatible {
-            mpvqcApplication: root.mpvqcApplication
+        property var factory: Component {
+            MpvqcMessageBoxDocumentNotCompatible {
+                mpvqcApplication: root.mpvqcApplication
+            }
         }
 
         mpvqcApplication: root.mpvqcApplication
@@ -118,8 +120,10 @@ Item {
         }
 
         onErroneousDocumentsImported: (documents) => {
-            erroneousDocumentsDialog.renderErroneous(documents)
-            erroneousDocumentsDialog.open()
+            const dialog = factory.createObject(parent)
+            dialog.closed.connect(dialog.destroy)
+            dialog.renderErroneous(documents)
+            dialog.open()
         }
 
     }
