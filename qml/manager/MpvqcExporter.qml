@@ -33,12 +33,13 @@ QtObject {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcFileSystemHelperPyObject: root.mpvqcApplication.mpvqcFileSystemHelperPyObject
-    readonly property var mpvqcTimeFormatUtils: root.mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
+    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
-    readonly property var absPathGetterFunc: root.mpvqcFileSystemHelperPyObject.url_to_absolute_path
+    readonly property var absPathGetterFunc: mpvqcFileSystemHelperPyObject.url_to_absolute_path
     readonly property var nicknameGetterFunc: function() { return root.mpvqcSettings.nickname }
-    readonly property var commentGetterFunc: function() { return [] } // todo
+    readonly property var commentGetterFunc: mpvqcCommentTable.getAllComments
     readonly property var settingsGetterFunc: function() { return root.mpvqcSettings }
     readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToString
     property var generator: new MpvqcDocumentFileExporter.ExportContentGenerator(

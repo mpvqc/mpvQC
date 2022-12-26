@@ -41,6 +41,9 @@ Item {
                 property int backupInterval: 90
                 property bool backupEnabled: true
             }
+            property var mpvqcCommentTable: QtObject {
+                function getAllComments() { return [] }
+            }
             property var mpvqcFileSystemHelperPyObject: QtObject {
                 function url_to_absolute_path(url) { return url }
                 function url_to_filename_without_suffix(url) { return url }

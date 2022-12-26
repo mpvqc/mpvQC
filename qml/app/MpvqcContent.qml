@@ -29,6 +29,7 @@ FocusScope {
     required property var mpvqcApplication
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
     readonly property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
+    readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
 
     Page {
         id: _page
@@ -46,6 +47,8 @@ FocusScope {
         }
 
         MpvqcContentSplitView {
+            id: _contentSplitView
+
             mpvqcApplication: root.mpvqcApplication
             focus: true
             anchors.fill: _page.contentItem

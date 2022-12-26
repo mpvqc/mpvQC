@@ -40,6 +40,9 @@ Item {
             property var mpvqcSettings: QtObject {
                 property string nickname: 'nickname'
             }
+            property var mpvqcCommentTable: QtObject {
+                function getAllComments() { return [] }
+            }
             property var mpvqcFileSystemHelperPyObject: QtObject {
                 function url_to_absolute_path(url) { return 'absolute::' +url }
                 function url_to_parent_file_url(url) { return 'parent::' + url }

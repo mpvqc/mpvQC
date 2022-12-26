@@ -33,6 +33,10 @@ MpvqcFooter {
             property int timeFormat: -1
             property bool statusbarPercentage: false
         }
+        property var mpvqcCommentTable: QtObject {
+            property int currentIndex: -1
+            property int count: 0
+        }
         property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
             property bool video_loaded: false
             property real percent_pos: 10.0
@@ -40,7 +44,7 @@ MpvqcFooter {
             property real time_pos: 10.0
             property real time_remaining: 10.0
         }
-        property var mpvqcLabelWidthCalculator: QtObject {
+        property var mpvqcWidthCalculatorLabel: QtObject {
             function calculateWidthFor(items, parent) {}
         }
         property var mpvqcTimeFormatUtils: QtObject {

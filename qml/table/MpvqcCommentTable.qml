@@ -18,39 +18,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+
+import pyobjects
 
 
-MpvqcMenu {
+FocusScope {
     id: root
 
     required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
-    property alias repeater: _repeater
+    readonly property alias mpvqcCommentTable: _mpvqcCommentTable
+    property bool haveComments: _mpvqcCommentTable.count > 0
 
-    modal: true
-    dim: false
+    Column {
+        width: root.width
 
-    function popupMenu(): void {
-        mpv.pause()
-        mpvqcApplication.disableFullScreen()
-        popup()
-    }
-
-    Repeater {
-        id: _repeater
-
-        model: mpvqcSettings.commentTypes
-
-        MenuItem {
-            text: qsTranslate("CommentTypes", model.type)
-
-            onTriggered: {
-                root.mpvqcCommentTable.addNewComment(model.type)
-            }
+        MpvqcPlaceholder {
+            width: root.width
+            height: haveComments ? 0 : root.height
         }
-    }
 
+        MpvqcTable {
+            id: _mpvqcCommentTable
+
+            width: root.width
+            height: haveComments ? root.height : 0
+            focus: true
+            model: MpvqcCommentModelPyObject {}
+            mpvqcApplication: root.mpvqcApplication
+        }
+
+    }
 }

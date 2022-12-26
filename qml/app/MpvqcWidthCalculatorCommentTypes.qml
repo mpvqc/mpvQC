@@ -18,42 +18,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 
 
-Dialog {
+Item {
     id: root
 
     required property var mpvqcApplication
-    property alias customTitle: _header.text
-    property alias customText: _content.text
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
+    readonly property int defaultPadding: 8
 
-    implicitWidth: Math.max(_content.implicitWidth, _header.implicitWidth) + 60
-    parent: mpvqcApplication.contentItem
-    modal: true
-    dim: false
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-    anchors.centerIn: parent
+    property int maxWidth
 
-    header: MpvqcHeader {
-        id: _header
+    function recalculateMaxWidth(): void {
+        const commentTypes = mpvqcSettings.commentTypes.items().map(english => qsTranslate("CommentTypes", english))
+        const width = mpvqcWidthCalculatorLabel.calculateWidthFor(commentTypes, root)
+        maxWidth = width + root.defaultPadding
     }
 
-    contentItem: Label {
-        id: _content
+    Connections {
+        target: root.mpvqcSettings
 
-        horizontalAlignment: Text.AlignLeft
-        elide: Text.ElideLeft
+        function onCommentTypesChanged() { root.recalculateMaxWidth() }
+        function onLanguageChanged() { root.recalculateMaxWidth() }
     }
 
     Component.onCompleted: {
-        const radius = mpvqcApplication.windowRadius
-        background.radius = radius
-        footer.background.radius = radius
-        if (header.background) {
-            header.background.radius = radius
-        }
+        recalculateMaxWidth()
     }
 
 }

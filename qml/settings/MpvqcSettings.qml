@@ -27,6 +27,7 @@ Item {
 
     required property var mpvqcApplication
     readonly property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
+    readonly property var mpvqcEnvironmentPyObject: mpvqcApplication.mpvqcEnvironmentPyObject
     readonly property var settingsFile: mpvqcApplicationPathsPyObject.settings
 
     Settings {
@@ -56,7 +57,7 @@ Item {
         id: _exportSettings
         fileName: root.settingsFile
         category: 'Export'
-        property string nickname: 'nickname' // EnvironmentPyObject.variable('USERNAME') || EnvironmentPyObject.variable('USER') || 'nick'
+        property string nickname: root.mpvqcEnvironmentPyObject.variable('USERNAME') || root.mpvqcEnvironmentPyObject.variable('USER') || 'nickname'
         property bool writeHeaderDate: true
         property bool writeHeaderGenerator: true
         property bool writeHeaderNickname: false

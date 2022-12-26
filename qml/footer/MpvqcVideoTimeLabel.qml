@@ -31,7 +31,7 @@ Label {
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
+    property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
 
     property int timeFormat: mpvqcSettings.timeFormat
     readonly property int duration: mpvqcMpvPlayerPropertiesPyObject.duration
@@ -78,7 +78,7 @@ Label {
 
     function _recalculateWidth(): real {
         const items = [root.text]
-        width = root.mpvqcLabelWidthCalculator.calculateWidthFor(items, root)
+        width = root.mpvqcWidthCalculatorLabel.calculateWidthFor(items, root)
     }
 
     Connections {

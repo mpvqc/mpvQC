@@ -89,7 +89,7 @@ QtObject {
     }
 
     function userNeverWantsToImportLinkedVideo(): bool {
-        return mpvqcSettings.importWhenVideoLinkedInDocument === MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER
+        return mpvqcSettings.importWhenVideoLinkedInDocument == MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER
     }
 
     function pickNothing(): void {
@@ -108,7 +108,7 @@ QtObject {
     }
 
     function userAlwaysWantsToImportLinkedVideo(): bool {
-        return mpvqcSettings.importWhenVideoLinkedInDocument === MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS
+        return mpvqcSettings.importWhenVideoLinkedInDocument == MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS
     }
 
     function consultUserToPossiblyPick(linkedVideo: url): void {

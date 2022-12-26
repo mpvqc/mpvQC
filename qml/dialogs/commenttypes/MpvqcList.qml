@@ -29,6 +29,8 @@ ListView {
     spacing: 0
     highlightMoveDuration: 0
     highlightMoveVelocity: -1
+    highlightResizeDuration: 0
+    highlightResizeVelocity: -1
     clip: true
     reuseItems: true
     boundsBehavior: Flickable.StopAtBounds

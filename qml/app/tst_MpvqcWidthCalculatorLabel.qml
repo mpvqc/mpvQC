@@ -19,38 +19,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import QtTest
+import "MpvqcWidthCalculatorLabel.js" as TestObject
 
 
-MpvqcMenu {
-    id: root
+Label {
+    id: testHelper
 
-    required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
-    property alias repeater: _repeater
+    width: 400
+    height: 400
 
-    modal: true
-    dim: false
+    TestCase {
+        name: "MpvqcWidthCalculatorLabel"
 
-    function popupMenu(): void {
-        mpv.pause()
-        mpvqcApplication.disableFullScreen()
-        popup()
-    }
+        property var itemsShort: ['a', 'bb']
+        property var itemsLong: ['ccc', 'dddd']
 
-    Repeater {
-        id: _repeater
-
-        model: mpvqcSettings.commentTypes
-
-        MenuItem {
-            text: qsTranslate("CommentTypes", model.type)
-
-            onTriggered: {
-                root.mpvqcCommentTable.addNewComment(model.type)
-            }
+        function test_calculation() {
+            const smallWidth = TestObject.calculateWidthFor(itemsShort, testHelper)
+            const bigWidth = TestObject.calculateWidthFor(itemsLong, testHelper)
+            verify(smallWidth < bigWidth)
         }
     }
-
 }

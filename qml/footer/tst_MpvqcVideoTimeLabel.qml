@@ -38,7 +38,7 @@ MpvqcVideoTimeLabel {
             property real time_pos: 10.0
             property real time_remaining: 10.0
         }
-        property var mpvqcLabelWidthCalculator: QtObject {
+        property var mpvqcWidthCalculatorLabel: QtObject {
             function calculateWidthFor(items, parent) { return 42 }
         }
         property var mpvqcTimeFormatUtils: QtObject {

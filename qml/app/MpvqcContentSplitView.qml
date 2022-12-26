@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import player
+import table
 
 
 FocusScope {
@@ -27,6 +28,7 @@ FocusScope {
 
     required property var mpvqcApplication
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
 
     Connections {
         target: mpvqcApplication
@@ -61,15 +63,13 @@ FocusScope {
         }
 
         Item {
-            Label {
-                text: 'table'
-            }
+            MpvqcCommentTable {
+                id: _commentTable
 
-//            MpvqcCommentTable {
-//                mpvqcApplication: root.mpvqcApplication
-//                focus: true
-//                anchors.fill: parent
-//            }
+                mpvqcApplication: root.mpvqcApplication
+                focus: true
+                anchors.fill: parent
+            }
         }
 
     }

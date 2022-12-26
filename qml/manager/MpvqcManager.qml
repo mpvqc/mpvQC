@@ -27,10 +27,8 @@ Item {
 
     required property var mpvqcApplication
     property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-
+    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
     property alias saved: state.saved
-
-    signal commentsImported(var comments)
 
     function reset(): void {
         resetter.requestReset()
@@ -104,7 +102,7 @@ Item {
         mpvqcApplication: root.mpvqcApplication
 
         onCommentsImported: (comments) => {
-            // manager.commentsImported(comments)
+            root.mpvqcCommentTable.importComments(comments)
         }
 
         onVideoImported: (video) => {
@@ -135,13 +133,21 @@ Item {
         saved: state.saved
 
         onReset: {
+            root.mpvqcCommentTable.clearComments()
             state.handleReset()
-            // globalEvents.requestCommentsReset()
         }
     }
 
     MpvqcState {
         id: state
+    }
+
+    Connections {
+        target: root.mpvqcCommentTable
+
+        function onCommentsChanged() {
+            state.handleChange()
+        }
     }
 
 }

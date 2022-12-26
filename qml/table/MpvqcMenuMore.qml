@@ -19,38 +19,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import shared
 
 
 MpvqcMenu {
     id: root
 
-    required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
-    property alias repeater: _repeater
+    property alias copyItem: _copyItem
+    property alias deleteItem: _deleteItem
+
+    signal copyCommentClicked()
+    signal deleteCommentClicked()
 
     modal: true
     dim: false
 
-    function popupMenu(): void {
-        mpv.pause()
-        mpvqcApplication.disableFullScreen()
-        popup()
+    MenuItem {
+        id: _copyItem
+
+        text: qsTranslate("CommentTable", "Copy Comment")
+        // icon.source: "qrc:/data/icons/content_copy_black_24dp.svg"
+
+        onTriggered: root.copyCommentClicked()
     }
 
-    Repeater {
-        id: _repeater
+    MenuItem {
+        id: _deleteItem
 
-        model: mpvqcSettings.commentTypes
+        text: qsTranslate("CommentTable", "Delete Comment")
+        // icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 
-        MenuItem {
-            text: qsTranslate("CommentTypes", model.type)
-
-            onTriggered: {
-                root.mpvqcCommentTable.addNewComment(model.type)
-            }
-        }
+        onTriggered: root.deleteCommentClicked()
     }
 
 }

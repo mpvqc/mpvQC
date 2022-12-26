@@ -32,7 +32,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     newItemAdded = Signal(int)  # param: row_index
     timeUpdated = Signal(int)  # param: row_index
-    requestHighlight = Signal(int)  # param: row_index
+    highlightRequested = Signal(int)  # param: row_index
     commentsChanged = Signal()
 
     def __init__(self):
@@ -77,7 +77,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
         index = self.indexFromItem(item)
         index_row = index.row()
-        self.requestHighlight.emit(index_row)
+        self.highlightRequested.emit(index_row)
 
     @Slot(int)
     def remove_row(self, row: int):

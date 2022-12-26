@@ -24,29 +24,31 @@ import manager
 import pyobjects
 import settings
 
+import "MpvqcKeyCommandGenerator.js" as MpvqcKeyCommandGenerator
 import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
-import "MpvqcLabelWidthCalculator.js" as MpvqcLabelWidthCalculator
+import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 
 
 ApplicationWindow {
     id: root
 
-    readonly property MpvqcManager mpvqcManager: MpvqcManager {
-        mpvqcApplication: root
-    }
-    readonly property MpvqcSettings mpvqcSettings: MpvqcSettings {
-        mpvqcApplication: root
-    }
-    readonly property MpvqcReverseTranslator mpvqcReverseTranslator: MpvqcReverseTranslator {}
+    readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
+    readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
+    readonly property var mpvqcReverseTranslator: MpvqcReverseTranslator {}
+    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
+    readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
-    readonly property MpvqcApplicationPathsPyObject mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
-    readonly property MpvqcBackupPyObject mpvqcBackupPyObject: MpvqcBackupPyObject {}
-    readonly property MpvqcMpvPlayerPyObject mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
-    readonly property MpvqcMpvPlayerPropertiesPyObject mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
-    readonly property MpvqcFileSystemHelperPyObject mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
+    readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
+    readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
+    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
+    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
+    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
+    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
 
+    readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
-    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
+    readonly property var mpvqcWidthCalculatorLabel: MpvqcWidthCalculatorLabel
 
     readonly property bool maximized: root.visibility === Window.Maximized
     readonly property bool fullscreen: root.visibility === Window.FullScreen
@@ -74,6 +76,8 @@ ApplicationWindow {
         }
 
         MpvqcContent {
+            id: _content
+
             mpvqcApplication: root
             focus: true
             anchors.fill: parent
@@ -112,6 +116,20 @@ ApplicationWindow {
     onClosing: (event) => {
         closeHandler.requestClose()
         event.accepted = closeHandler.userConfirmedClose
+    }
+
+    onActiveFocusItemChanged: {
+        if (!activeFocusItem) {
+            return
+        }
+        if (activeFocusItem === contentItem) {
+            mpvqcCommentTable.forceActiveFocus()
+            return
+        }
+        const asString = activeFocusItem.toString()
+        if (asString.includes('QQuickRootItem')) {
+            mpvqcCommentTable.forceActiveFocus()
+        }
     }
 
     MpvqcQuitHandler {

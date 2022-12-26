@@ -17,39 +17,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick
 import QtQuick.Controls
 
 
-MpvqcMenu {
+ToolButton {
     id: root
 
-    required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
-    property alias repeater: _repeater
+    required property bool tableInEditMode
 
-    modal: true
-    dim: false
+    signal buttonClicked()
+    signal playClicked()
 
-    function popupMenu(): void {
-        mpv.pause()
-        mpvqcApplication.disableFullScreen()
-        popup()
-    }
+    icon.source: "qrc:/data/icons/play_arrow_black_24dp.svg"
+    icon.width: 18
+    icon.height: 18
 
-    Repeater {
-        id: _repeater
+    onClicked: {
+        root.buttonClicked()
 
-        model: mpvqcSettings.commentTypes
-
-        MenuItem {
-            text: qsTranslate("CommentTypes", model.type)
-
-            onTriggered: {
-                root.mpvqcCommentTable.addNewComment(model.type)
-            }
+        if (!root.tableInEditMode) {
+            root.playClicked()
         }
     }
 

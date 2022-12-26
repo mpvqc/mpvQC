@@ -25,9 +25,15 @@ import models
 Item {
     id: testHelper
 
+    width: 400
+    height: 400
+
     property bool disableFullScreenCalled: false
     property bool pauseCalled: false
     property bool popupCalled: false
+
+    property bool addNewCommentCalled: false
+    property string addNewCommentCommentType: ''
 
     MpvqcNewCommentMenu {
         id: objectUnderTest
@@ -39,6 +45,9 @@ Item {
             property var mpvqcMpvPlayerPyObject: QtObject {
                 function pause() { pauseCalled = true }
             }
+            property var mpvqcCommentTable: QtObject {
+                function addNewComment(commentType) { addNewCommentCalled = true; addNewCommentCommentType = commentType }
+            }
             function disableFullScreen() { testHelper.disableFullScreenCalled = true }
         }
 
@@ -47,11 +56,14 @@ Item {
 
     TestCase {
         name: "MpvqcNewCommentMenu"
+        when: windowShown
 
         function init() {
             testHelper.disableFullScreenCalled = false
             testHelper.pauseCalled = false
             testHelper.popupCalled = false
+            testHelper.addNewCommentCalled = false
+            testHelper.addNewCommentCommentType = ''
         }
 
         function test_popupMenu() {
@@ -60,6 +72,17 @@ Item {
             verify(pauseCalled)
             verify(popupCalled)
         }
+
+        function test_click() {
+            const item = objectUnderTest.repeater.itemAt(0)
+            item.triggered()
+            verify(testHelper.addNewCommentCalled)
+
+            const actual = testHelper.addNewCommentCommentType
+            const expected = objectUnderTest.mpvqcApplication.mpvqcSettings.commentTypes.get(0).type
+            compare(actual, expected)
+        }
+
     }
 
 }

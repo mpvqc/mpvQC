@@ -50,11 +50,7 @@ MouseArea {
     }
 
     onWheel: (event) => {
-        const delta = event.angleDelta
-        if (delta.y === 0 || delta.x !== 0) {
-            return
-        }
-        if (delta.y > 0) {
+        if (event.angleDelta.y > 0) {
             mpv.scroll_up()
         } else {
             mpv.scroll_down()

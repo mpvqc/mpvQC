@@ -21,6 +21,7 @@ import QtQuick
 import QtQuick.Layouts
 import models
 
+
 Column {
     id: root
 
@@ -30,6 +31,7 @@ Column {
 
     function acceptTemporaryState(): void {
         _controller.acceptModelCopy()
+        mpvqcSettings.commentTypesChanged()
     }
 
     function resetTemporaryEdits(): void {
