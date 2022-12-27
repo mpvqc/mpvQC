@@ -25,17 +25,19 @@ MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
+    property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
+
     property alias repeater: _repeater
 
     modal: true
     dim: false
+    parent: Overlay.overlay
 
     function popupMenu(): void {
-        mpv.pause()
-        mpvqcApplication.disableFullScreen()
+        mpvqcMpvPlayerPyObject.pause()
         popup()
     }
 
@@ -48,6 +50,7 @@ MpvqcMenu {
             text: qsTranslate("CommentTypes", model.type)
 
             onTriggered: {
+                mpvqcApplication.disableFullScreen()
                 root.mpvqcCommentTable.addNewComment(model.type)
             }
         }

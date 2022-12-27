@@ -19,70 +19,83 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtTest
+
 import models
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
 
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: 'MpvqcNewCommentMenu'
 
-    property bool disableFullScreenCalled: false
-    property bool pauseCalled: false
-    property bool popupCalled: false
+    Component { id: signalSpy; SignalSpy {} }
 
-    property bool addNewCommentCalled: false
-    property string addNewCommentCommentType: ''
-
-    MpvqcNewCommentMenu {
+    Component {
         id: objectUnderTest
 
-        mpvqcApplication: QtObject {
-            property var mpvqcSettings: QtObject {
-                property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
-            }
-            property var mpvqcMpvPlayerPyObject: QtObject {
-                function pause() { pauseCalled = true }
-            }
-            property var mpvqcCommentTable: QtObject {
-                function addNewComment(commentType) { addNewCommentCalled = true; addNewCommentCommentType = commentType }
-            }
-            function disableFullScreen() { testHelper.disableFullScreenCalled = true }
-        }
+        MpvqcNewCommentMenu {
+            id: objectUnderTest
 
-        function popup() { popupCalled = true }
+            property bool disableFullScreenCalled: false
+            property bool pauseCalled: false
+            property bool popupCalled: false
+
+            property bool addNewCommentCalled: false
+            property string addNewCommentCommentType: ''
+
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject {
+                    property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
+                }
+                property var mpvqcMpvPlayerPyObject: QtObject {
+                    function pause() { pauseCalled = true }
+                }
+                property var mpvqcCommentTable: QtObject {
+                    function addNewComment(commentType) {
+                        addNewCommentCalled = true
+                        addNewCommentCommentType = commentType
+                    }
+                }
+                function disableFullScreen() { disableFullScreenCalled = true }
+            }
+
+            function popup() { popupCalled = true }
+        }
     }
 
-    TestCase {
-        name: "MpvqcNewCommentMenu"
-        when: windowShown
+    function test_popup() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function init() {
-            testHelper.disableFullScreenCalled = false
-            testHelper.pauseCalled = false
-            testHelper.popupCalled = false
-            testHelper.addNewCommentCalled = false
-            testHelper.addNewCommentCommentType = ''
-        }
+        verify(!control.pauseCalled)
+        verify(!control.popupCalled)
 
-        function test_popupMenu() {
-            objectUnderTest.popupMenu()
-            verify(disableFullScreenCalled)
-            verify(pauseCalled)
-            verify(popupCalled)
-        }
+        control.popupMenu()
 
-        function test_click() {
-            const item = objectUnderTest.repeater.itemAt(0)
-            item.triggered()
-            verify(testHelper.addNewCommentCalled)
+        verify(control.pauseCalled)
+        verify(control.popupCalled)
+    }
 
-            const actual = testHelper.addNewCommentCommentType
-            const expected = objectUnderTest.mpvqcApplication.mpvqcSettings.commentTypes.get(0).type
-            compare(actual, expected)
-        }
+    function test_click() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
+        verify(!control.disableFullScreenCalled)
+        verify(!control.addNewCommentCalled)
+
+        const item = control.repeater.itemAt(0)
+        item.triggered()
+
+        verify(control.disableFullScreenCalled)
+        verify(control.addNewCommentCalled)
+
+        const actual = control.addNewCommentCommentType
+        const expected = control.mpvqcApplication.mpvqcSettings.commentTypes.get(0).type
+        compare(actual, expected)
     }
 
 }
