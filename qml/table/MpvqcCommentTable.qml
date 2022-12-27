@@ -26,6 +26,7 @@ FocusScope {
     id: root
 
     required property var mpvqcApplication
+
     readonly property alias mpvqcCommentTable: _mpvqcCommentTable
     property bool haveComments: _mpvqcCommentTable.count > 0
 

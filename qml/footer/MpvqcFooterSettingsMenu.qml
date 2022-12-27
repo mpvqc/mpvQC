@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick.Controls
+
 import shared
 import settings
 
@@ -26,6 +27,7 @@ MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
     property alias defaultFormat: _defaultFormat

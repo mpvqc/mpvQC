@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Controls.Material
 import QtTest
 
 import models

@@ -93,4 +93,24 @@ TestCase {
         compare(control.value, 9)
     }
 
+    function test_changeProgrammatically() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        const spy = signalSpy.createObject(control, {target: control, signalName: 'valueModified'})
+        verify(spy)
+
+        spy.clear()
+        control.value = 10
+        control.incrementValue()
+        compare(control.value, 11)
+        compare(spy.count, 1)
+
+        spy.clear()
+        control.value = 10
+        control.decrementValue()
+        compare(control.value, 9)
+        compare(spy.count, 1)
+    }
+
 }

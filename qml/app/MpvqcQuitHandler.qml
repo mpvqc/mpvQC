@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
+
 import dialogs
 
 
@@ -30,7 +30,8 @@ Item {
 
     property bool userConfirmedClose: false
 
-    property var factory: Component {
+    property var quitDialog: null
+    property var quitDialogFactory: Component {
         MpvqcMessageBoxQuit {
             mpvqcApplication: root.mpvqcApplication
 
@@ -41,13 +42,11 @@ Item {
         }
     }
 
-    property var quitDialog: null
-
     function requestClose() {
         if (canClose || userConfirmedClose) {
             _close()
         } else {
-            quitDialog = factory.createObject(parent)
+            quitDialog = quitDialogFactory.createObject(root)
             quitDialog.closed.connect(quitDialog.destroy)
             quitDialog.open()
         }

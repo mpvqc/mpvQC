@@ -22,10 +22,13 @@ import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+
 Column {
     id: root
 
     readonly property alias textFieldHasFocus: _textField.activeFocus
+
+    property int iconSize: 18
 
     property alias textField: _textField
     property alias acceptButton: _acceptButton
@@ -35,8 +38,6 @@ Column {
     property alias validateInput: _textField.validate
     property alias placeholderText: _textField.placeholderText
     property alias text: _textField.text
-
-    property int iconSize: 18
 
     signal accepted(string input)
     signal done()

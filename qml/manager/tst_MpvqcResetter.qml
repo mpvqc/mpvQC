@@ -40,7 +40,7 @@ Item {
 
             function init() {
                 objectUnderTest.saved = true
-                objectUnderTest.confirmationDialog = null
+                objectUnderTest.dialog = null
                 resettedSpy.clear()
             }
 
@@ -68,7 +68,7 @@ Item {
                         expectedResetCalled: true,
                         exec: () => {
                             objectUnderTest.requestReset()
-                            objectUnderTest.confirmationDialog.accept()
+                            objectUnderTest.dialog.accept()
                         },
                     }
                 ]

@@ -21,10 +21,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+
 RowLayout {
     id: root
 
     required property int prefWidth
+
+    property int spinBoxWidth: 175
 
     property alias spinBox: _input
     property alias label: _label.text
@@ -32,7 +35,6 @@ RowLayout {
     property alias value: _input.value
     property alias valueFrom: _input.from
     property alias valueTo: _input.to
-    property int spinBoxWidth: 175
 
     signal valueModified(int value)
 

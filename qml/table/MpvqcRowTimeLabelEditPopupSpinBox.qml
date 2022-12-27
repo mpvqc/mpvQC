@@ -19,14 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
-import shared
 
 
 SpinBox {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
     readonly property var duration: mpvqcMpvPlayerPropertiesPyObject.duration

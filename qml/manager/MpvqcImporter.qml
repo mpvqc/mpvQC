@@ -28,6 +28,7 @@ QtObject {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
     readonly property var mpvqcReverseTranslator: mpvqcApplication.mpvqcReverseTranslator
 

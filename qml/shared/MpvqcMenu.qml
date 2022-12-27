@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick.Controls
 
 
@@ -42,7 +41,7 @@ Menu {
         return result + padding * 2
     }
 
-    function isMenuSeparator(item) {
+    function isMenuSeparator(item: Item): bool {
         return item instanceof MenuSeparator
     }
 

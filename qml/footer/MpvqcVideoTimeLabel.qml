@@ -19,24 +19,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+
 import settings
 
 
 Label {
     id: root
 
+    required property var mpvqcApplication
+
     readonly property int secondsPerHour: 60 * 60
 
-    required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
 
-    property int timeFormat: mpvqcSettings.timeFormat
     readonly property int duration: mpvqcMpvPlayerPropertiesPyObject.duration
     readonly property int timePos: mpvqcMpvPlayerPropertiesPyObject.time_pos
     readonly property real timeRemaining: mpvqcMpvPlayerPropertiesPyObject.time_remaining
+
+    property int timeFormat: mpvqcSettings.timeFormat
+
 
     visible: mpvqcMpvPlayerPropertiesPyObject.video_loaded && timeFormat !== MpvqcSettings.TimeFormat.EMPTY
 

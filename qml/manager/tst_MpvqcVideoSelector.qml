@@ -48,7 +48,7 @@ Item {
 
             function init() {
                 videoSelectedSpy.clear()
-                objectUnderTest.messageDialog = null
+                objectUnderTest.dialog = null
             }
 
             function test_chooseBetween_data() {
@@ -115,7 +115,7 @@ Item {
             function test_chooseBetween(data) {
                 objectUnderTest.mpvqcApplication.mpvqcSettings.importWhenVideoLinkedInDocument = data.setting
                 objectUnderTest.chooseBetween(data.videoStandalone, data.possiblyLinkedDocuments)
-                data.handleDialog(objectUnderTest.messageDialog)
+                data.handleDialog(objectUnderTest.dialog)
 
                 compare(videoSelectedSpy.count, 1)
                 const actual = videoSelectedSpy.signalArguments[0][0]

@@ -32,7 +32,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
-    """ Adapted from https://gitlab.com/robozman/python-mpv-qml-example """
 
     sig_on_update = Signal()
 
@@ -49,7 +48,6 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
 
 
 class Renderer(QQuickFramebufferObject.Renderer):
-    """"""
 
     def __init__(self, parent):
         super(Renderer, self).__init__()

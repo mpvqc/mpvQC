@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
+
 import models
 
 
@@ -27,6 +27,7 @@ QtObject {
 
     readonly property string language: Qt.uiLanguage
     readonly property var commentTypes: MpvqcCommentTypesModel {}
+
     property var translations: ({})
 
     property var timer: Timer {

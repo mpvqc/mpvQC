@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick.Controls
+
 import dialogs
 import shared
 
@@ -27,6 +27,7 @@ MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcManager: mpvqcApplication.mpvqcManager
 
     property alias resetAction: _resetAction

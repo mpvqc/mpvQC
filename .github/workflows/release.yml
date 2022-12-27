@@ -95,6 +95,11 @@ jobs:
           else
             execute cat "$DEPENDENCY_MODEL_PATH"
           fi
+      - name: 'Remove Qml Test Files'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          execute find . -type f -name 'tst_*.qml' -delete
       - name: 'Run Python Build'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -126,11 +131,6 @@ jobs:
           
           execute make lint-qml
         continue-on-error: true
-      - name: 'Disable Flaky Tests'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
-          execute find qml -type f -name 'tst_*.qml' -exec sed -i 's,//\s*skip(,skip(,g' {} +
       - name: 'Execute Qml Tests'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }

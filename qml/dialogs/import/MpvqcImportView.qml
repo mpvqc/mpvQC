@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import shared
 import settings
 
 
@@ -29,6 +28,7 @@ ColumnLayout {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
     property alias selectionAlways: _selectionAlways

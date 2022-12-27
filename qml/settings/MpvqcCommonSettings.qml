@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import Qt.labs.settings
+
 import models
+
 
 Item {
     id: root
@@ -27,9 +29,10 @@ Item {
     readonly property MpvqcLanguageModel _languageModel: MpvqcLanguageModel {}
     readonly property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
 
+    property var uiLanguages: Qt.locale().uiLanguages
+
     property alias language: _settings.language
     property alias fileName: _settings.fileName
-    property var uiLanguages: Qt.locale().uiLanguages
 
     function _defaultLanguage(): string {
         return _languageModel.identifiers()

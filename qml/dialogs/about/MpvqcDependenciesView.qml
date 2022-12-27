@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+
 import models
 import shared
 
@@ -27,6 +28,7 @@ ScrollView {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
 
     width: parent.width

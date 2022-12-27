@@ -17,46 +17,47 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
+
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: 'MpvqcDialogImportDocuments'
 
-    property bool openDocumentsCalled: false
+    Component { id: signalSpy; SignalSpy {} }
 
-    MpvqcDialogImportDocuments {
+    Component {
         id: objectUnderTest
 
-        mpvqcApplication: QtObject {
-            property var mpvqcManager: QtObject {
-                function openDocuments(files) { testHelper.openDocumentsCalled = true }
-            }
-            property var mpvqcSettings: QtObject {
-                property string lastDirectoryDocuments: 'initial directory'
+        MpvqcDialogImportDocuments {
+            property bool openDocumentsCalled: false
+
+            mpvqcApplication: QtObject {
+                property var mpvqcManager: QtObject {
+                    function openDocuments(files) { openDocumentsCalled = true }
+                }
+                property var mpvqcSettings: QtObject {
+                    property string lastDirectoryDocuments: 'initial directory'
+                }
             }
         }
     }
 
-    TestCase {
-        name: "MpvqcDialogImportDocuments"
-        when: windowShown
+    function test_import() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function test_import() { skip('- flaky since Qt 6.4.1')
-            imitateHuman()
+        control.currentFolder = 'some directory'
+        control.accepted()
 
-            verify(testHelper.openDocumentsCalled)
-            verify(!objectUnderTest.mpvqcSettings.lastDirectoryDocuments.toString().includes('initial directory'))
-        }
-
-        function imitateHuman() {
-            objectUnderTest.currentFolder = 'some directory'
-            objectUnderTest.accept()
-        }
+        verify(control.openDocumentsCalled)
+        verify(!control.mpvqcSettings.lastDirectoryDocuments.toString().includes('initial directory'))
     }
 
 }

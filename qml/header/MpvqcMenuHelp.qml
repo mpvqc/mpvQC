@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+
 import dialogs
 import shared
 
@@ -27,6 +28,7 @@ MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
+
     property alias updateAction: _updateAction
     property alias shortcutAction: _shortcutAction
     property alias aboutAction: _aboutAction
@@ -45,7 +47,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "&Check for Updates...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
@@ -63,7 +65,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
@@ -83,7 +85,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "About &mpvQC...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }

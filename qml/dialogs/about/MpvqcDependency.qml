@@ -34,7 +34,6 @@ RowLayout {
     property string version: ''
     property string licence: ''
     property string url: ''
-
     property var openUrlExternally: Qt.openUrlExternally
 
     property alias urlLabel: _urlLabel

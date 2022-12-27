@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick.Dialogs
 
 
@@ -25,10 +24,11 @@ FileDialog {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcManager: mpvqcApplication.mpvqcManager
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
-//
+
     title: qsTranslate("FileInteractionDialogs", "Open Subtitle(s)")
     currentFolder: mpvqcSettings.lastDirectorySubtitles
     fileMode: FileDialog.OpenFiles

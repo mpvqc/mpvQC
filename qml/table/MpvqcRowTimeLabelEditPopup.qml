@@ -26,6 +26,7 @@ Popup {
 
     required property var mpvqcApplication
     required property int time
+
     property bool acceptValue: true
 
     property alias spinBox: _spinBox

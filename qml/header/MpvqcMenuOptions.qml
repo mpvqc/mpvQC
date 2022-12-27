@@ -19,8 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+
 import dialogs
 import shared
+
 
 MpvqcMenu {
     id: root
@@ -47,7 +49,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "&Appearance...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
@@ -65,7 +67,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "&Comment Type Settings...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
@@ -85,7 +87,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "&Backup Settings...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
@@ -103,7 +105,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "&Export Settings...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }
@@ -121,7 +123,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "&Import Settings...")
 
         onTriggered: {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.open()
         }

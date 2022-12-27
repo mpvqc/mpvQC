@@ -29,8 +29,9 @@ Label {
     required property bool rowSelected
     required property bool tableInEditMode
 
-    property alias loader: _loader
     property int paddingAround: 4
+
+    property alias loader: _loader
 
     property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: editingStopped() }
 

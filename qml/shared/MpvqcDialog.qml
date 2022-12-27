@@ -25,10 +25,12 @@ import QtQuick.Layouts
 Dialog {
     id: root
 
-    default property alias content: _stack.children
+    required property var mpvqcApplication
+
     property alias bar: _bar
     property alias stack: _stack
-    required property var mpvqcApplication
+
+    default property alias content: _stack.children
 
     anchors.centerIn: parent
     parent: mpvqcApplication.contentItem

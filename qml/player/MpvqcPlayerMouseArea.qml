@@ -24,12 +24,13 @@ MouseArea {
     id: root
 
     required property var mpvqcApplication
+
     property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
     property bool showCursor: true
 
     property var cursorTimer: Timer {
-        running: root.showCursor && mpvqcApplication.fullscreen && root.containsMouse
+        running: root.showCursor && root.mpvqcApplication.fullscreen && root.containsMouse
         repeat: true
         interval: 2000
 

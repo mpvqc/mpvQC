@@ -28,6 +28,7 @@ ListView {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
     readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator

@@ -20,22 +20,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick.Controls
 import QtQuick.Layouts
 
+
 ColumnLayout {
     id: root
 
     readonly property alias upButton: _upButton
-    property alias upEnabled: _upButton.enabled
-
     readonly property alias downButton: _downButton
-    property alias downEnabled: _downButton.enabled
-
     readonly property alias editButton: _editButton
-    property alias editEnabled: _editButton.enabled
-
     readonly property alias deleteButton: _deleteButton
-    property alias deleteEnabled: _deleteButton.enabled
-
     readonly property alias buttonHeight: _deleteButton.height
+
+    property alias upEnabled: _upButton.enabled
+    property alias downEnabled: _downButton.enabled
+    property alias editEnabled: _editButton.enabled
+    property alias deleteEnabled: _deleteButton.enabled
 
     signal upClicked()
     signal downClicked()

@@ -26,8 +26,10 @@ Item {
     id: root
 
     required property var mpvqcApplication
+
     property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
+
     property alias saved: state.saved
 
     function reset(): void {
@@ -118,7 +120,7 @@ Item {
         }
 
         onErroneousDocumentsImported: (documents) => {
-            const dialog = factory.createObject(parent)
+            const dialog = factory.createObject(root)
             dialog.closed.connect(dialog.destroy)
             dialog.renderErroneous(documents)
             dialog.open()

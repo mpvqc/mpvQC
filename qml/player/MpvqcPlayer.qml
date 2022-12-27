@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+
 import pyobjects
 import shared
 
@@ -28,7 +28,7 @@ MpvqcMpvFrameBufferObjectPyObject {
 
     required property var mpvqcApplication
 
-    property MpvqcNewCommentMenu newCommentMenu: MpvqcNewCommentMenu {
+    property var menu: MpvqcNewCommentMenu {
         mpvqcApplication: root.mpvqcApplication
     }
 
@@ -37,58 +37,8 @@ MpvqcMpvFrameBufferObjectPyObject {
         anchors.fill: root
 
         onRightMouseButtonPressed: {
-            newCommentMenu.popupMenu()
+            root.menu.popupMenu()
         }
     }
-
-//    Connections {
-//        target: globalEvents
-//
-//        function onCustomPlayerCommandRequested(command) {
-//            executeCustomCommand(command)
-//        }
-//
-//        function onNewCommentMenuRequested() {
-//            pauseVideo()
-//            showAddCommentMenu()
-//        }
-//
-//        function onVideoPauseRequested() {
-//            pauseVideo()
-//        }
-//
-//        function onVideoPositionRequested(seconds) {
-//            jumpToPostition(seconds)
-//        }
-//
-//    }
-//
-//    function requestAddCommentMenu() {
-//        globalEvents.requestNewCommentMenu()
-//    }
-//
-//    function jumpToPostition(position) {
-//        root.jump_to(position)
-//    }
-//
-//    function pauseVideo() {
-//        root.pause()
-//    }
-//
-//    function executeCustomCommand(command) {
-//        root.execute(command)
-//    }
-//
-//    function showAddCommentMenu() {
-//        const component = Qt.createComponent("MpvqcNewCommentMenu.qml")
-//        const menu = component.createObject(appWindow)
-//        menu.closed.connect(menu.destroy)
-//        menu.itemClicked.connect(root.requestNewComment)
-//        menu.popup()
-//    }
-//
-//    function requestNewComment(commentType) {
-//        globalEvents.requestNewComment(commentType)
-//    }
 
 }

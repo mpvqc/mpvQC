@@ -28,7 +28,8 @@ QtObject {
     required property var mpvqcApplication
     required property bool saved
 
-    property var factory: Component {
+    property var dialog: null
+    property var dialogFactory: Component {
         MpvqcMessageBoxNewDocument {
             mpvqcApplication: root.mpvqcApplication
 
@@ -42,17 +43,15 @@ QtObject {
         }
     }
 
-    property var confirmationDialog: null
-
     signal reset()
 
     function requestReset(): void {
         if (saved) {
             reset()
         } else {
-            confirmationDialog = factory.createObject(parent)
-            confirmationDialog.closed.connect(confirmationDialog.destroy)
-            confirmationDialog.open()
+            dialog = dialogFactory.createObject(root)
+            dialog.closed.connect(dialog.destroy)
+            dialog.open()
         }
     }
 

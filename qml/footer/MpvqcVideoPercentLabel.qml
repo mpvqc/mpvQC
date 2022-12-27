@@ -25,6 +25,7 @@ Label {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
 

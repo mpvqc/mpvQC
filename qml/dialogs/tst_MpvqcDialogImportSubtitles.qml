@@ -17,47 +17,48 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
+
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: 'MpvqcDialogImportSubtitles'
 
-    property bool openSubtitlesCalled: false
+    Component { id: signalSpy; SignalSpy {} }
 
-    MpvqcDialogImportSubtitles {
+    Component {
         id: objectUnderTest
 
-        mpvqcApplication: QtObject {
-            property var mpvqcManager: QtObject {
-                function openSubtitles(files) { testHelper.openSubtitlesCalled = true }
+        MpvqcDialogImportSubtitles {
+            property bool openSubtitlesCalled: false
+
+            mpvqcApplication: QtObject {
+                property var mpvqcManager: QtObject {
+                    function openSubtitles(files) { openSubtitlesCalled = true }
+                }
+                property var mpvqcSettings: QtObject {
+                    property string lastDirectorySubtitles: 'initial directory'
+                }
+                property var supportedSubtitleFileExtensions: [ 'ass' ]
             }
-            property var mpvqcSettings: QtObject {
-                property string lastDirectorySubtitles: 'initial directory'
-            }
-            property var supportedSubtitleFileExtensions: [ 'ass' ]
         }
     }
 
-    TestCase {
-        name: "MpvqcDialogImportSubtitles"
-        when: windowShown
+    function test_import() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function test_import() { skip('- flaky since Qt 6.4.1')
-            imitateHuman()
+        control.currentFolder = 'some directory'
+        control.accepted()
 
-            verify(testHelper.openSubtitlesCalled)
-            verify(!objectUnderTest.mpvqcSettings.lastDirectorySubtitles.toString().includes('initial directory'))
-        }
-
-        function imitateHuman() {
-            objectUnderTest.currentFolder = 'some directory'
-            objectUnderTest.accept()
-        }
+        verify(control.openSubtitlesCalled)
+        verify(!control.mpvqcSettings.lastDirectorySubtitles.toString().includes('initial directory'))
     }
 
 }

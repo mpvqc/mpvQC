@@ -21,6 +21,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+
 RowLayout {
     id: root
 

@@ -17,61 +17,70 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtQuick
 import QtQuick.Controls
 import QtTest
 
 
-MpvqcQuitHandler {
-    id: objectUnderTest
+TestCase {
+    id: testCase
+
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: 'MpvqcQuitHandler'
 
-    property bool closeFuncCalled: false
+    Component { id: signalSpy; SignalSpy {} }
 
-    canClose: false
-    mpvqcApplication: ApplicationWindow {
-        property real windowRadius: 12
-        function close() {
-            objectUnderTest.closeFuncCalled = true
+    Component {
+        id: objectUnderTest
+
+        MpvqcQuitHandler {
+            property bool closeFuncCalled: false
+
+            canClose: false
+            mpvqcApplication: ApplicationWindow {
+                property real windowRadius: 12
+                function close() { closeFuncCalled = true }
+            }
         }
     }
 
-    TestCase {
-        name: "MpvqcQuitHandler"
-        when: windowShown
+    function test_quit() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function cleanup() {
-            objectUnderTest.canClose = false
-            objectUnderTest.closeFuncCalled = false
-            objectUnderTest.userConfirmedClose = false
-            objectUnderTest.quitDialog = null
-        }
+        control.canClose = true
+        control.requestClose()
+        verify(control.userConfirmedClose)
+        verify(control.closeFuncCalled)
+    }
 
-        function test_quit() {
-            objectUnderTest.canClose = true
-            objectUnderTest.requestClose()
-            verify(objectUnderTest.userConfirmedClose)
-            verify(objectUnderTest.closeFuncCalled)
-        }
+    function test_quitRejected() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function test_quit_closeRejected() {    skip('- flaky since Qt 6.4.1')
-            objectUnderTest.requestClose()
-            verify(!objectUnderTest.closeFuncCalled)
-            verify(!objectUnderTest.userConfirmedClose)
-            objectUnderTest.quitDialog.reject()
-            verify(!objectUnderTest.userConfirmedClose)
-            verify(!objectUnderTest.closeFuncCalled)
-        }
+        control.requestClose()
+        verify(!control.closeFuncCalled)
+        verify(!control.userConfirmedClose)
 
-        function test_quit_closeAccepted() {    skip('- flaky since Qt 6.4.1')
-            objectUnderTest.requestClose()
-            verify(!objectUnderTest.closeFuncCalled)
-            verify(!objectUnderTest.userConfirmedClose)
-            objectUnderTest.quitDialog.accept()
-            verify(objectUnderTest.closeFuncCalled)
-            verify(objectUnderTest.userConfirmedClose)
-        }
+        control.quitDialog.reject()
+        verify(!control.closeFuncCalled)
+        verify(!control.userConfirmedClose)
+    }
 
+    function test_quitAccepted() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        control.requestClose()
+        verify(!control.closeFuncCalled)
+        verify(!control.userConfirmedClose)
+
+        control.quitDialog.accept()
+        verify(control.closeFuncCalled)
+        verify(control.userConfirmedClose)
     }
 
 }

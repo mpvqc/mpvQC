@@ -20,21 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+
 import shared
+
 
 ColumnLayout {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
     property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
+    property var openBackupLocationFunc: Qt.openUrlExternally
 
     property alias backupEnabledSwitch: _backupEnable
     property alias backupIntervalSpinBox: _backupInterval.spinBox
     property alias backupLocationOpenButton: _backupLocationOpenButton
 
-    property var openBackupLocationFunc: Qt.openUrlExternally
 
     MpvqcSwitchRow {
         id: _backupEnable

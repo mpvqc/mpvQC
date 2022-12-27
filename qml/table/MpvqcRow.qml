@@ -18,9 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.Material
-import shared
 
 
 Rectangle {
@@ -29,7 +27,6 @@ Rectangle {
     required property var mpvqcApplication
     required property bool rowSelected
     required property bool tableInEditMode
-
     required property int index             // from model
     required property int time              // from model
     required property string commentType    // from model

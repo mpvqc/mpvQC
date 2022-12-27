@@ -25,12 +25,12 @@ Label {
     id: root
 
     required property var mpvqcApplication
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-
     required property int time
     required property bool rowSelected
     required property bool tableInEditMode
+
+    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
     property alias loader: _loader
 

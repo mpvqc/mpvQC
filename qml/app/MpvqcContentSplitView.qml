@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+
 import player
 import table
 
@@ -27,7 +28,9 @@ FocusScope {
     id: root
 
     required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+
     readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
 
     Connections {

@@ -22,10 +22,12 @@ import QtQuick
 import QtQuick.Controls.Material
 import Qt.labs.settings
 
+
 Item {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
     readonly property var mpvqcEnvironmentPyObject: mpvqcApplication.mpvqcEnvironmentPyObject
     readonly property var settingsFile: mpvqcApplicationPathsPyObject.settings
@@ -40,6 +42,7 @@ Item {
     property alias backupEnabled: _backupSettings.enabled
     property alias backupInterval: _backupSettings.interval
 
+
     MpvqcCommonSettings {
         id: _commonSettings
         fileName: root.settingsFile
@@ -52,6 +55,7 @@ Item {
 //
 //    MpvqcFileInterfacePyObject { id: _configMpv; file_path: MpvqcApplicationPathsPyObject.mpv_conf }
 //    property alias configMpv: _configMpv
+
 
     Settings {
         id: _exportSettings
@@ -69,6 +73,7 @@ Item {
     property alias writeHeaderNickname: _exportSettings.writeHeaderNickname
     property alias writeHeaderVideoPath: _exportSettings.writeHeaderVideoPath
 
+
     enum TimeFormat { EMPTY, CURRENT_TIME, REMAINING_TIME, CURRENT_TOTAL_TIME }
     Settings {
         id: _statusBarSettings
@@ -79,6 +84,7 @@ Item {
     }
     property alias statusbarPercentage: _statusBarSettings.statusbarPercentage
     property alias timeFormat: _statusBarSettings.timeFormat
+
 
     enum ImportWhenVideoLinkedInDocument { ALWAYS, ASK_EVERY_TIME, NEVER }
     Settings {
@@ -95,6 +101,7 @@ Item {
     property alias lastDirectoryDocuments: _importSettings.lastDirectoryDocuments
     property alias lastDirectorySubtitles: _importSettings.lastDirectorySubtitles
 
+
     Settings {
         id: _splitViewSettings
         fileName: root.settingsFile
@@ -102,6 +109,7 @@ Item {
         property var dimensions: ''
     }
     property alias dimensions: _splitViewSettings.dimensions
+
 
     Settings {
         id: _themeSettings
@@ -112,6 +120,7 @@ Item {
     }
     property alias theme: _themeSettings.theme
     property alias accent: _themeSettings.accent
+
 
     Component.onCompleted: {
         _commonSettings.restore()

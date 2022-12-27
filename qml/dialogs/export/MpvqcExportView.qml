@@ -18,14 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import shared
+
 
 ColumnLayout {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
     property alias nicknameInput: _nicknameInput

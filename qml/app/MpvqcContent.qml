@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+
 import footer
 import header
 
@@ -27,8 +28,10 @@ FocusScope {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
     readonly property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
+
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
 
     Page {

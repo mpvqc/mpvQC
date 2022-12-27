@@ -25,6 +25,7 @@ Dialog {
     id: root
 
     required property var mpvqcApplication
+
     property alias customTitle: _header.text
     property alias customText: _content.text
 

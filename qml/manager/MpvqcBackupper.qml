@@ -27,6 +27,7 @@ QtObject {
 
     required property url video
     required property var mpvqcApplication
+
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
@@ -38,6 +39,7 @@ QtObject {
     readonly property var commentGetterFunc: mpvqcCommentTable.getAllComments
     readonly property var settingsGetterFunc: function() { return root.mpvqcSettings }
     readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToString
+
     property var generator: new MpvqcDocumentFileExporter.ExportContentGenerator(
         absPathGetterFunc, nicknameGetterFunc, commentGetterFunc, settingsGetterFunc, timeFormatFunc
     )

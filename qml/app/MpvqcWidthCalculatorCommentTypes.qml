@@ -24,10 +24,11 @@ Item {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
-    readonly property int defaultPadding: 8
 
+    readonly property int defaultPadding: 8
     property int maxWidth
 
     function recalculateMaxWidth(): void {

@@ -25,6 +25,7 @@ Label {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
     property int currentIndex: -1

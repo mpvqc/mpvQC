@@ -444,17 +444,16 @@ Item {
         }
 
         function _complete() {
-         return '[FILE]
-date      : mpvqcDate
-generator : mpvqcGenerator
-nick      : mpvqcNickname
-path      : mpvqcFilePath
-
-[DATA]
-[transformed] [CommentType] Comment 1
-[transformed] [CommentType] Comment 2
-# total lines: 2
-'
+            return '[FILE]\n'
+                 + 'date      : mpvqcDate\n'
+                 + 'generator : mpvqcGenerator\n'
+                 + 'nick      : mpvqcNickname\n'
+                 + 'path      : mpvqcFilePath\n'
+                 + '\n'
+                 + '[DATA]\n'
+                 + '[transformed] [CommentType] Comment 1\n'
+                 + '[transformed] [CommentType] Comment 2\n'
+                 + '# total lines: 2\n'
         }
     }
 

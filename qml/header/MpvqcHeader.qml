@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 import QtQuick
 import QtQuick.Controls
 
@@ -26,6 +25,7 @@ Item {
     id: root
 
     required property var mpvqcApplication
+
     property var mpvqcManager: mpvqcApplication.mpvqcManager
 
     height: menuBar.height
