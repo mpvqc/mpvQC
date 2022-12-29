@@ -68,7 +68,7 @@ Item {
         }
 
         MpvqcWindowTitle {
-            saved: root.mpvqcManager.saved
+            mpvqcApplication: root.mpvqcApplication
             width: root.width - menuBar.width * 2
             height: menuBar.height
         }

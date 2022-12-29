@@ -49,6 +49,11 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
 
     #
 
+    filename_changed = Signal(str)
+    filename = Property(str, lambda self: str(self.mpv.filename), notify=filename_changed)
+
+    #
+
     def get_duration(self):
         return self._duration
 
@@ -86,6 +91,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self.mpv = inject.instance(PlayerService).mpv
 
         self._subscribe_to_path()
+        self._subscribe_to_filename()
         self._subscribe_to_duration()
         self._subscribe_to_percent_pos()
         self._subscribe_to_time_pos()
@@ -100,6 +106,15 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
                 self._path = value
                 self.path_changed.emit(value)
             self.video_loaded_changed.emit(bool(value))
+
+    def _subscribe_to_filename(self):
+        self._filename = ''
+
+        @self.mpv.property_observer('filename')
+        def observer(_, value: str):
+            if value and value != self._filename:
+                self._filename = value
+                self.filename_changed.emit(value)
 
     def _subscribe_to_duration(self):
         self._duration = None

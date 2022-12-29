@@ -122,6 +122,16 @@ Item {
     property alias accent: _themeSettings.accent
 
 
+    enum WindowTitleFormat { DEFAULT, FILE_NAME, FILE_PATH }
+    Settings {
+        id: _windowSettings
+        fileName: root.settingsFile
+        category: 'Window'
+        property int titleFormat: MpvqcSettings.WindowTitleFormat.DEFAULT
+    }
+    property alias windowTitleFormat: _windowSettings.titleFormat
+
+
     Component.onCompleted: {
         _commonSettings.restore()
     }

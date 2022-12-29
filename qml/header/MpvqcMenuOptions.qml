@@ -73,6 +73,10 @@ MpvqcMenu {
         }
     }
 
+    MpvqcSubMenuWindowTitle {
+        mpvqcApplication: root.mpvqcApplication
+    }
+
     MenuSeparator { }
 
     Action {

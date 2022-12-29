@@ -17,36 +17,83 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtQuick
 import QtTest
 
+import settings
 
-MpvqcWindowTitle {
-    id: objectUnderTest
+
+TestCase {
+    id: testCase
 
     width: 400
     height: 400
-    saved: true
+    visible: true
+    when: windowShown
+    name: 'MpvqcWindowTitle'
 
-    TestCase {
-        name: "MpvqcWindowTitle"
-        when: windowShown
+    Component { id: signalSpy; SignalSpy {} }
 
-        function test_label_data() {
-            return [
-                { tag: 'saved', saved: true },
-                { tag: 'unsaved', saved: false },
-            ]
-        }
+    Component {
+        id: objectUnderTest
 
-        function test_label(data) {
-            objectUnderTest.saved = data.saved
-
-            if (data.saved) {
-                verify(!objectUnderTest.text.endsWith('(unsaved)'))
-            } else {
-                verify(objectUnderTest.text.endsWith('(unsaved)'))
+        MpvqcWindowTitle {
+            mpvqcApplication: QtObject {
+                property var mpvqcManager: QtObject {
+                    property bool saved: true
+                }
+                property var mpvqcSettings: QtObject {
+                    property var windowTitleFormat: MpvqcSettings.WindowTitleFormat.DEFAULT
+                }
+                property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
+                    property bool video_loaded: false
+                    property string filename: 'video-name'
+                    property string path: 'video-path'
+                }
             }
         }
+    }
+
+    function test_title() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        Application.name = 'mpvQC'
+
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.DEFAULT
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
+        compare(control.text, 'mpvQC')
+
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_NAME
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
+        compare(control.text, 'mpvQC')
+
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_PATH
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
+        compare(control.text, 'mpvQC')
+
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.DEFAULT
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
+        compare(control.text, 'mpvQC')
+
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_NAME
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
+        compare(control.text, 'video-name')
+
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_PATH
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
+        compare(control.text, 'video-path')
+    }
+
+    function test_titleSuffix() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        control.mpvqcApplication.mpvqcManager.saved = true
+        verify(!control.text.endsWith('(unsaved)'))
+
+        control.mpvqcApplication.mpvqcManager.saved = false
+        verify(control.text.endsWith('(unsaved)'))
     }
 
 }

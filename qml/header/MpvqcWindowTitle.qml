@@ -20,15 +20,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import settings
+
 
 Label {
     id: root
 
-    required property bool saved
+    required property var mpvqcApplication
 
-    elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+
+    readonly property bool saved: mpvqcManager.saved
+    readonly property bool videoLoaded: mpvqcMpvPlayerPropertiesPyObject.video_loaded
+    readonly property string videoPath: mpvqcMpvPlayerPropertiesPyObject.path
+    readonly property string videoName: mpvqcMpvPlayerPropertiesPyObject.filename
+
+    elide: LayoutMirroring.enabled ? Text.ElideRight: Text.ElideLeft
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
+    leftPadding: 25
+    rightPadding: 25
 
     text: {
         const title = getTitle()
@@ -40,7 +53,17 @@ Label {
     }
 
     function getTitle() {
-        return Application.name
+        const selection = root.mpvqcSettings.windowTitleFormat
+
+        if (!videoLoaded || selection === MpvqcSettings.WindowTitleFormat.DEFAULT) {
+            return Application.name
+        }
+
+        if (selection === MpvqcSettings.WindowTitleFormat.FILE_NAME) {
+            return videoName
+        } else {
+            return videoPath
+        }
     }
 
 }
