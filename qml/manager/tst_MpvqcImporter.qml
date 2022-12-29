@@ -33,7 +33,7 @@ Item {
             property var mpvqcTimeFormatUtils: QtObject {
                 function extractSecondsFrom(string) { return 42 }
             }
-            property var mpvqcReverseTranslator: QtObject {
+            property var mpvqcReverseTranslatorPyObject: QtObject {
                 function lookup(somehing) { return something }
             }
             property var mpvqcSettings: QtObject {

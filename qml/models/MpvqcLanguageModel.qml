@@ -29,14 +29,22 @@ ListModel {
         qsTranslate('Languages', 'Spanish'),
     ]
 
+    // Must be kept in sync with available languages in mpvqc/services/reverse_translator.py
+    // Make sure to sort elements by 'identifier'
+
+    ListElement {
+        language: 'German'
+        identifier: 'de-DE'
+        translator: 'Frechdachs'
+    }
     ListElement {
         language: 'English'
         identifier: 'en-US'
     }
     ListElement {
-        language: 'German'
-        identifier: 'de-DE'
-        translator: 'Frechdachs'
+        language: 'Spanish'
+        identifier: 'es-ES'
+        translator: 'RcUchiha'
     }
     ListElement {
         language: 'Hebrew'
@@ -47,11 +55,6 @@ ListModel {
         language: 'Italian'
         identifier: 'it-IT'
         translator: 'maddo'
-    }
-    ListElement {
-        language: 'Spanish'
-        identifier: 'es-ES'
-        translator: 'RcUchiha'
     }
 
     function identifiers(): Array<string> {

@@ -31,34 +31,29 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcFileSystemHelperPyObject(QObject):
     _paths = inject.attr(ApplicationPathsService)
 
-    # noinspection PyTypeChecker
-    @Slot(QUrl, result=str)
+    @Slot(QUrl, result=str or None)
     def url_to_absolute_path(self, url: QUrl) -> str:
         path = Path(url.toLocalFile())
         return str(path.absolute())
 
-    # noinspection PyTypeChecker
-    @Slot(str, result=QUrl)
+    @Slot(str, result=QUrl or None)
     def absolute_path_to_url(self, file: str) -> QUrl:
         return QUrl.fromLocalFile(file)
 
-    # noinspection PyTypeChecker
-    @Slot(QUrl, result=bool)
+    @Slot(QUrl, result=bool or None)
     def url_is_file(self, url: QUrl) -> bool:
         return Path(url.toLocalFile()).absolute().is_file()
 
-    # noinspection PyTypeChecker
-    @Slot(QUrl, result=str)
+    @Slot(QUrl, result=str or None)
     def url_to_filename_without_suffix(self, url: QUrl) -> str:
         return Path(url.toLocalFile()).stem
 
-    # noinspection PyTypeChecker
-    @Slot(QUrl, result=QUrl)
+    @Slot(QUrl, result=QUrl or None)
     def url_to_parent_file_url(self, url: QUrl) -> QUrl:
         path = Path(url.toLocalFile()).absolute()
         return QUrl.fromLocalFile(path.parent)
 
     @Slot(QUrl, str)
-    def write(self, url: QUrl, content: str):
+    def write(self, url: QUrl, content: str) -> None:
         path = Path(url.toLocalFile())
         path.write_text(content, encoding='utf-8')

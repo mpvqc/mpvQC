@@ -85,6 +85,7 @@ class StartUp:
 
         app.set_window_icon()
         app.create_directories()
+        app.set_up_reverse_translator()
         app.set_up_signals()
         app.set_up_imports()
         app.start_engine()

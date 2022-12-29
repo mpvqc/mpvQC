@@ -32,9 +32,10 @@ Item {
     MpvqcCommentTypesValidator {
         id: objectUnderTest
 
+        language: 'en-US'
         model: MpvqcCommentTypesModel {}
         reverseTranslator: QtObject {
-            function lookup(commentType) {
+            function lookup_specific_language(language, commentType) {
                 if (commentType.startsWith('i am matching a reverse translation')) {
                     return 'Translation'
                 }

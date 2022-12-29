@@ -47,57 +47,57 @@ class PlayerService:
             load_subtitles_func=self._load_subtitles
         )
 
-    def _is_video_loaded(self):
+    def _is_video_loaded(self) -> bool:
         return bool(self._mpv.path)
 
-    def _load_subtitles(self, subtitles):
+    def _load_subtitles(self, subtitles) -> None:
         for subtitle in subtitles:
             self._mpv.command("sub-add", subtitle, "select")
 
     @property
-    def mpv(self):
+    def mpv(self) -> MPV:
         return self._mpv
 
     @property
     def current_time(self) -> int:
         return self._mpv.time_pos or 0
 
-    def move_mouse(self, x: int, y: int):
+    def move_mouse(self, x: int, y: int) -> None:
         self._mpv.command_async("mouse", x, y)
 
-    def open_video(self, video: str):
+    def open_video(self, video: str) -> None:
         self._mpv.command("loadfile", video, "replace")
         self._subtitle_cacher.load_cached_subtitles()
         self.play()
 
-    def open_subtitles(self, subtitles: tuple[str]):
+    def open_subtitles(self, subtitles: tuple[str]) -> None:
         self._subtitle_cacher.open(subtitles)
 
-    def play(self):
+    def play(self) -> None:
         self._mpv.pause = False
 
-    def pause(self):
+    def pause(self) -> None:
         self._mpv.pause = True
 
-    def execute(self, command):
+    def execute(self, command) -> None:
         self._mpv.command_async("keypress", command)
 
-    def jump_to(self, seconds: int):
+    def jump_to(self, seconds: int) -> None:
         self._mpv.command_async("seek", seconds, "absolute+exact")
 
-    def press_mouse_left(self):
+    def press_mouse_left(self) -> None:
         self._mpv.command_async("keydown", "MOUSE_BTN0")
 
-    def press_mouse_middle(self):
+    def press_mouse_middle(self) -> None:
         self._mpv.command_async("keypress", "MOUSE_BTN1")
 
-    def release_mouse_left(self):
+    def release_mouse_left(self) -> None:
         self._mpv.command_async("keyup", "MOUSE_BTN0")
 
-    def scroll_up(self):
+    def scroll_up(self) -> None:
         self._mpv.command_async("keypress", f"MOUSE_BTN3")
 
-    def scroll_down(self):
+    def scroll_down(self) -> None:
         self._mpv.command_async("keypress", f"MOUSE_BTN4")
 
 
@@ -112,21 +112,21 @@ class SubtitleCacher:
         self._load_subtitles_func = load_subtitles_func
         self._cache = set()
 
-    def open(self, subtitles: tuple[str]):
+    def open(self, subtitles: tuple[str]) -> None:
         if self._have_video():
             self._load_subtitles(subtitles)
         else:
             self._cache_subtitles(subtitles)
 
-    def _have_video(self):
+    def _have_video(self) -> bool:
         return self._is_video_loaded_func()
 
-    def _load_subtitles(self, subtitles: Iterable[str]):
+    def _load_subtitles(self, subtitles: Iterable[str]) -> None:
         self._load_subtitles_func(subtitles)
 
-    def _cache_subtitles(self, subtitles):
+    def _cache_subtitles(self, subtitles) -> None:
         self._cache = self._cache | set(subtitles)
 
-    def load_cached_subtitles(self):
+    def load_cached_subtitles(self) -> None:
         self._load_subtitles(self._cache)
         self._cache.clear()

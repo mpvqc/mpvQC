@@ -22,3 +22,4 @@ from .file_startup import FileStartupService
 from .player import PlayerService, SubtitleCacher
 from .resource import ResourceService
 from .resource_reader import ResourceReaderService
+from .reverse_translator import ReverseTranslatorService

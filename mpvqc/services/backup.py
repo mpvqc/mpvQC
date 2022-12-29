@@ -26,7 +26,7 @@ from .application_paths import ApplicationPathsService
 class BackupService:
     _paths = inject.attr(ApplicationPathsService)
 
-    def backup(self, video_name: str, content: str):
+    def backup(self, video_name: str, content: str) -> None:
         now = datetime.now()
 
         zip_name = f'{now:%Y-%m}.zip'

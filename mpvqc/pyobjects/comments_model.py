@@ -46,7 +46,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     # print(len(match))
 
     @Slot(str)
-    def add_row(self, comment_type: str):
+    def add_row(self, comment_type: str) -> None:
         seconds = self._player.current_time
         item = QStandardItem()
         item.setData(seconds, Role.TIME)
@@ -61,7 +61,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.commentsChanged.emit()
 
     @Slot(list)
-    def import_comments(self, comments: list):
+    def import_comments(self, comments: list) -> None:
         if not comments:
             return
 
@@ -80,12 +80,12 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.highlightRequested.emit(index_row)
 
     @Slot(int)
-    def remove_row(self, row: int):
+    def remove_row(self, row: int) -> None:
         self.removeRow(row)
         self.commentsChanged.emit()
 
     @Slot(int, int)
-    def update_time(self, row: int, time: int):
+    def update_time(self, row: int, time: int) -> None:
         index = self.index(row, 0)
         item = self.itemFromIndex(index)
 
@@ -95,19 +95,18 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.timeUpdated.emit(item.row())
 
     @Slot(int, str)
-    def update_comment_type(self, index: int, comment_type: str):
+    def update_comment_type(self, index: int, comment_type: str) -> None:
         self.setData(self.index(index, 0), comment_type, Role.TYPE)
 
     @Slot(int, str)
-    def update_comment(self, index: int, comment: str):
+    def update_comment(self, index: int, comment: str) -> None:
         self.setData(self.index(index, 0), comment, Role.COMMENT)
 
     @Slot()
-    def clear_comments(self):
+    def clear_comments(self) -> None:
         self.clear()
 
-    # noinspection PyTypeChecker
-    @Slot(result=list)
+    @Slot(result=list or None)
     def comments(self) -> list:
         comments = []
         for row in range(0, self.rowCount()):
@@ -117,7 +116,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         return comments
 
     @staticmethod
-    def _create_comment_from(item):
+    def _create_comment_from(item) -> dict[str, str]:
         return {
             'time': item.data(Role.TIME),
             'commentType': item.data(Role.TYPE),

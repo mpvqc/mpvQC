@@ -34,12 +34,12 @@ class ApplicationPathsService:
         dir_screenshots: Path
 
     @cached_property
-    def _impl(self):
+    def _impl(self) -> 'ApplicationPathsService.Impl':
         if self._app_environment.is_portable:
             return self._get_portable()
         return self._get_non_portable()
 
-    def _get_portable(self):
+    def _get_portable(self) -> 'ApplicationPathsService.Impl':
         dir_app = self._app_environment.executing_directory
         return ApplicationPathsService.Impl(
             dir_backup=dir_app / 'appdata' / 'backups',
@@ -48,7 +48,7 @@ class ApplicationPathsService:
         )
 
     @staticmethod
-    def _get_non_portable():
+    def _get_non_portable() -> 'ApplicationPathsService.Impl':
         appname = QCoreApplication.applicationName()
         config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)

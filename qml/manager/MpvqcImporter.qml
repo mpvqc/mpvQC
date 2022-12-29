@@ -30,11 +30,11 @@ QtObject {
     required property var mpvqcApplication
 
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    readonly property var mpvqcReverseTranslator: mpvqcApplication.mpvqcReverseTranslator
+    readonly property var mpvqcReverseTranslatorPyObject: mpvqcApplication.mpvqcReverseTranslatorPyObject
 
     property var fileImporter: QtObject {
         property var timeFormatFunc: root.mpvqcTimeFormatUtils.extractSecondsFrom
-        property var reverseLookupFunc: root.mpvqcReverseTranslator.lookup
+        property var reverseLookupFunc: root.mpvqcReverseTranslatorPyObject.lookup
         property var fileReaderFunc: MpvqcFileReader.read
         property var importer: new MpvqcDocumentFileImporter.Importer(timeFormatFunc, reverseLookupFunc, fileReaderFunc)
 

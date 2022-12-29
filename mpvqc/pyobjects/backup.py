@@ -30,5 +30,5 @@ class MpvqcBackupPyObject(QObject):
     _backup = inject.attr(BackupService)
 
     @Slot(str, str)
-    def write_backup(self, video_name: str, content: str):
+    def write_backup(self, video_name: str, content: str) -> None:
         self._backup.backup(video_name, content)

@@ -27,7 +27,7 @@ Column {
     required property var mpvqcApplication
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpvqcReverseTranslator: mpvqcApplication.mpvqcReverseTranslator
+    property var mpvqcReverseTranslatorPyObject: mpvqcApplication.mpvqcReverseTranslatorPyObject
 
     function acceptTemporaryState(): void {
         _controller.acceptModelCopy()
@@ -55,7 +55,8 @@ Column {
         id: _validator
 
         model: _listView.model
-        reverseTranslator: root.mpvqcReverseTranslator
+        language: root.mpvqcSettings.language
+        reverseTranslator: root.mpvqcReverseTranslatorPyObject
     }
 
     MpvqcInputComponent {
@@ -71,7 +72,7 @@ Column {
         }
 
         onEdited: (commentType) => {
-            const english = root.mpvqcReverseTranslator.lookup(commentType)
+            const english = root.mpvqcReverseTranslatorPyObject.lookup_specific_language(root.mpvqcSettings.language, commentType)
             _controller.replaceWith(english)
         }
     }

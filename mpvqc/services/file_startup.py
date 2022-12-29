@@ -27,22 +27,22 @@ class FileStartupService:
     _paths = inject.attr(ApplicationPathsService)
     _resources = inject.attr(ResourceService)
 
-    def create_missing_directories(self):
+    def create_missing_directories(self) -> None:
         self._paths.dir_config.mkdir(exist_ok=True, parents=True)
         self._paths.dir_backup.mkdir(exist_ok=True, parents=True)
         self._paths.dir_screenshots.mkdir(exist_ok=True, parents=True)
 
-    def create_missing_files(self):
+    def create_missing_files(self) -> None:
         self._create_missing_input_conf()
         self._create_missing_mpv_conf()
 
-    def _create_missing_input_conf(self):
+    def _create_missing_input_conf(self) -> None:
         file: Path = self._paths.file_input_conf
         if not file.exists():
             content = self._resources.input_conf_content
             file.write_text(content, encoding='utf-8')
 
-    def _create_missing_mpv_conf(self):
+    def _create_missing_mpv_conf(self) -> None:
         file: Path = self._paths.file_mpv_conf
         if not file.exists():
             content = self._resources.mpv_conf_content

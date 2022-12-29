@@ -28,5 +28,5 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcEnvironmentPyObject(QObject):
 
     @Slot(str, result=str or None)
-    def variable(self, key: str):
+    def variable(self, key: str) -> str or None:
         return environ.get(key) or None

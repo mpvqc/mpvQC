@@ -30,48 +30,48 @@ class MpvqcMpvPlayerPyObject(QObject):
     _player = inject.attr(PlayerService)
 
     @Slot(QUrl)
-    def open_video(self, video: QUrl):
+    def open_video(self, video: QUrl) -> None:
         self._player.open_video(video.toString())
         self._player.play()
 
     @Slot(list)
-    def open_subtitles(self, subtitles: list[str]):
+    def open_subtitles(self, subtitles: list[str]) -> None:
         subtitles = map(lambda url_str: QUrl(url_str).toLocalFile(), subtitles)
         # noinspection PyTypeChecker
         self._player.open_subtitles(tuple(subtitles))
 
     @Slot()
-    def pause(self):
+    def pause(self) -> None:
         self._player.pause()
 
     @Slot(str)
-    def execute(self, command):
+    def execute(self, command) -> None:
         self._player.execute(command)
 
     @Slot(int)
-    def jump_to(self, seconds: int):
+    def jump_to(self, seconds: int) -> None:
         self._player.jump_to(seconds)
 
     @Slot(int, int)
-    def move_mouse(self, x, y):
+    def move_mouse(self, x, y) -> None:
         self._player.move_mouse(x, y)
 
     @Slot()
-    def scroll_up(self):
+    def scroll_up(self) -> None:
         self._player.scroll_up()
 
     @Slot()
-    def scroll_down(self):
+    def scroll_down(self) -> None:
         self._player.scroll_down()
 
     @Slot()
-    def press_mouse_left(self):
+    def press_mouse_left(self) -> None:
         self._player.press_mouse_left()
 
     @Slot()
-    def press_mouse_middle(self):
+    def press_mouse_middle(self) -> None:
         self._player.press_mouse_middle()
 
     @Slot()
-    def release_mouse_left(self):
+    def release_mouse_left(self) -> None:
         self._player.release_mouse_left()

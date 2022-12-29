@@ -23,6 +23,7 @@ import models
 
 
 QtObject {
+    required property string language
     required property var reverseTranslator
     required property MpvqcCommentTypesModel model
 
@@ -56,7 +57,7 @@ QtObject {
 
     function _alreadyExistsIn(englishCommentTypes: Array<string>, newCommentType: string): bool {
         return englishCommentTypes.includes(newCommentType)
-            || englishCommentTypes.includes(reverseTranslator.lookup(newCommentType))
+            || englishCommentTypes.includes(reverseTranslator.lookup_specific_language(language, newCommentType))
     }
 
     function validateEditingOf(commentTypeToEdit: string, commentType: string): string {
@@ -74,7 +75,7 @@ QtObject {
     }
 
     function _getAllItemsExcept(item: string): Array<string> {
-        const lookup = reverseTranslator.lookup(item)
+        const lookup = reverseTranslator.lookup_specific_language(language, item)
         const items = _getAllItems()
         _remove(lookup, items)
         return items
