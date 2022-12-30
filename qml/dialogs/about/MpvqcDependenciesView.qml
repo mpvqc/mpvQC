@@ -80,6 +80,12 @@ ScrollView {
         }
 
         MpvqcDependency {
+            dependency: 'Noto Sans Mono'
+            url: "https://fonts.google.com/noto/specimen/Noto+Sans+Mono"
+            licence: "OFL"
+        }
+
+        MpvqcDependency {
             dependency: 'material-design-icons'
             url: "https://github.com/google/material-design-icons"
             licence: "Apache-2.0"

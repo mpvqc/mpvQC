@@ -15,15 +15,24 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .application_paths import MpvqcApplicationPathsPyObject
-from .backup import MpvqcBackupPyObject
-from .clipboard import MpvqcClipboardPyObject
-from .comments_model import MpvqcCommentModelPyObject
-from .environment import MpvqcEnvironmentPyObject
-from .file_interface import MpvqcFileInterfacePyObject
-from .file_system_helper import MpvqcFileSystemHelperPyObject
-from .player import MpvqcMpvPlayerPyObject
-from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
-from .player_properties import MpvqcMpvPlayerPropertiesPyObject
-from .resource import MpvqcResourcePyObject
-from .reverse_translator import MpvqcReverseTranslatorPyObject
+import inject
+from PySide6.QtCore import QObject, Slot
+from PySide6.QtQml import QmlElement
+
+from mpvqc.services import ResourceService
+
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
+
+
+@QmlElement
+class MpvqcResourcePyObject(QObject):
+    _resources = inject.attr(ResourceService)
+
+    @Slot(result=str or None)
+    def get_input_conf_content(self) -> str:
+        return self._resources.input_conf_content
+
+    @Slot(result=str or None)
+    def get_mpv_conf_content(self) -> str:
+        return self._resources.mpv_conf_content

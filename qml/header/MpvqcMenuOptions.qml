@@ -34,6 +34,8 @@ MpvqcMenu {
     property alias exportAction: _exportAction
     property alias importAction: _importAction
     property alias backupAction: _backupAction
+    property alias editMpvAction: _editMpvAction
+    property alias editInputAction: _editInputAction
 
     title: qsTranslate("MainWindow", "&Options")
 
@@ -125,6 +127,44 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Import Settings...")
+
+        onTriggered: {
+            const dialog = factory.createObject(root)
+            dialog.closed.connect(dialog.destroy)
+            dialog.open()
+        }
+    }
+
+    MenuSeparator { }
+
+    Action {
+        id: _editMpvAction
+
+        property var factory: Component {
+            MpvqcDialogEditMpv {
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
+
+        text: qsTranslate("MainWindow", "&Edit mpv.conf...")
+
+        onTriggered: {
+            const dialog = factory.createObject(root)
+            dialog.closed.connect(dialog.destroy)
+            dialog.open()
+        }
+    }
+
+    Action {
+        id: _editInputAction
+
+        property var factory: Component {
+            MpvqcDialogEditInput {
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
+
+        text: qsTranslate("MainWindow", "&Edit input.conf...")
 
         onTriggered: {
             const dialog = factory.createObject(root)

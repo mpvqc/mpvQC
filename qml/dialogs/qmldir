@@ -10,6 +10,9 @@ MpvqcDialogCommentTypes commenttypes/MpvqcDialogCommentTypes.qml
 
 MpvqcDialogImport import/MpvqcDialogImport.qml
 
+MpvqcDialogEditInput editinput/MpvqcDialogEditInput.qml
+MpvqcDialogEditMpv editmpv/MpvqcDialogEditMpv.qml
+
 MpvqcDialogExport export/MpvqcDialogExport.qml
 
 MpvqcDialogShortcuts shortcuts/MpvqcDialogShortcuts.qml

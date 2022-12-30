@@ -32,25 +32,29 @@ class MpvqcFileInterfacePyObject(QObject):
         self._file_path: Path or None = None
         self._file_content = ""
 
+    #
+
     def get_file_path(self) -> str:
         return self._file_path
 
     def set_file_path(self, value: str) -> None:
         self._file_path = Path(value)
-        self.file_path_changed.emit(value)
+        self.filePathChanged.emit(value)
         content = self._file_path.read_text(encoding='utf-8')
         self.set_file_content(content)
 
-    file_path_changed = Signal(str)
-    file_path = Property(str, get_file_path, set_file_path, notify=file_path_changed)
+    #
+
+    filePathChanged = Signal(str)
+    filePath = Property(str, get_file_path, set_file_path, notify=filePathChanged)
 
     def get_file_content(self) -> str:
         return self._file_content
 
     def set_file_content(self, value: str):
         self._file_content = value
-        self.file_content_changed.emit(value)
+        self.fileContentChanged.emit(value)
         self._file_path.write_text(self._file_content, encoding='utf-8')
 
-    file_content_changed = Signal(str)
-    file_content = Property(str, get_file_content, set_file_content, notify=file_content_changed)
+    fileContentChanged = Signal(str)
+    fileContent = Property(str, get_file_content, set_file_content, notify=fileContentChanged)

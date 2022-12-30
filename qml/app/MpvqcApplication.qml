@@ -37,6 +37,7 @@ ApplicationWindow {
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
+    readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
@@ -46,6 +47,7 @@ ApplicationWindow {
     readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
     readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
     readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
+    readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils

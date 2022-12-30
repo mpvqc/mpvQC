@@ -22,100 +22,137 @@ import QtQuick.Controls.Material
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
+
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: 'MpvqcMenuOptions'
 
-    MpvqcMenuOptions {
-        id: objectUnderTest
+    Component { id: signalSpy; SignalSpy {} }
 
-        mpvqcApplication: QtObject {
-            property int windowRadius: 12
-            property var mpvqcSettings: QtObject {
-                property bool backupEnabled: false
-                property int backupInterval: 90
-                property int theme: Material.Dark
-                property int accent: Material.Teal
-                property string nickname: 'nickname'
-                property bool writeHeaderDate: false
-                property bool writeHeaderGenerator: false
-                property bool writeHeaderNickname: false
-                property bool writeHeaderVideoPath: false
-            }
-            property var contentItem: Item {}
-            property var mpvqcApplicationPathsPyObject: QtObject {
-                property url dir_backup: 'file:///hello.txt'
-            }
-            property var mpvqcFileSystemHelperPyObject: QtObject {
-                function url_to_absolute_path(url) { return `${url}-as-abs-path` }
-            }
-        }
-    }
-
-    TestCase {
-        name: "MpvqcMenuOptions"
-        when: windowShown
+    Component {
+        id: dialogMock
 
         QtObject {
-            id: _factoryMock
-            property bool createObjectCalled: false
-            function createObject() { createObjectCalled = true; return _dialogMock }
-        }
-
-        QtObject {
-            id: _dialogMock
             property bool openCalled: false
             signal closed()
             function open() { openCalled = true }
         }
+    }
 
-        function init() {
-            _factoryMock.createObjectCalled = false
-            _dialogMock.openCalled = false
+    Component {
+        id: factoryMock
 
-            objectUnderTest.appearanceAction.factory = undefined
-            objectUnderTest.commentTypesAction.factory = undefined
-            objectUnderTest.exportAction.factory = undefined
-            objectUnderTest.importAction.factory = undefined
-            objectUnderTest.backupAction.factory = undefined
+        QtObject {
+            property bool createObjectCalled: false
+            property var dialog
+            function createObject() {
+                createObjectCalled = true
+                dialog = createTemporaryObject(dialogMock, testCase)
+                verify(dialog)
+                return dialog
+            }
         }
+    }
 
-        function test_appearance() {
-            objectUnderTest.appearanceAction.factory = _factoryMock
-            objectUnderTest.appearanceAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
+    Component {
+        id: objectUnderTest
+
+        MpvqcMenuOptions {
+            mpvqcApplication: QtObject {
+                property int windowRadius: 12
+                property var mpvqcSettings: QtObject {
+                    property bool backupEnabled: false
+                    property int backupInterval: 90
+                    property int theme: Material.Dark
+                    property int accent: Material.Teal
+                    property string nickname: 'nickname'
+                    property bool writeHeaderDate: false
+                    property bool writeHeaderGenerator: false
+                    property bool writeHeaderNickname: false
+                    property bool writeHeaderVideoPath: false
+                }
+                property var contentItem: Item {}
+                property var mpvqcApplicationPathsPyObject: QtObject {
+                    property url dir_backup: 'file:///hello.txt'
+                }
+                property var mpvqcFileSystemHelperPyObject: QtObject {
+                    function url_to_absolute_path(url) { return `${url}-as-abs-path` }
+                }
+            }
         }
+    }
 
-        function test_commentTypes() {
-            objectUnderTest.commentTypesAction.factory = _factoryMock
-            objectUnderTest.commentTypesAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
+    function test_clicks() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function test_export() {
-            objectUnderTest.exportAction.factory = _factoryMock
-            objectUnderTest.exportAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
+        let factory
 
-        function test_import() {
-            objectUnderTest.importAction.factory = _factoryMock
-            objectUnderTest.importAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
 
-        function test_backup() {
-            objectUnderTest.backupAction.factory = _factoryMock
-            objectUnderTest.backupAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
+        control.appearanceAction.factory = factory
+        control.appearanceAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
 
+
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
+
+        control.commentTypesAction.factory = factory
+        control.commentTypesAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
+
+
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
+
+        control.backupAction.factory = factory
+        control.backupAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
+
+
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
+
+        control.exportAction.factory = factory
+        control.exportAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
+
+
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
+
+        control.importAction.factory = factory
+        control.importAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
+
+
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
+
+        control.editMpvAction.factory = factory
+        control.editMpvAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
+
+
+        factory = createTemporaryObject(factoryMock, testCase)
+        verify(factory)
+
+        control.editInputAction.factory = factory
+        control.editInputAction.trigger()
+        verify(factory.createObjectCalled)
+        verify(factory.dialog.openCalled)
     }
 
 }

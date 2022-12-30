@@ -50,12 +50,6 @@ Item {
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
 
-//    MpvqcFileInterfacePyObject { id: _configInput; file_path: MpvqcApplicationPathsPyObject.input_conf }
-//    property alias configInput: _configInput
-//
-//    MpvqcFileInterfacePyObject { id: _configMpv; file_path: MpvqcApplicationPathsPyObject.mpv_conf }
-//    property alias configMpv: _configMpv
-
 
     Settings {
         id: _exportSettings
