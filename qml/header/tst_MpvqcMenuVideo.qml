@@ -21,50 +21,75 @@ import QtQuick
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
+
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: 'MpvqcMenuVideo'
 
-    MpvqcMenuVideo {
-        id: objectUnderTest
+    Component { id: signalSpy; SignalSpy {} }
 
-        mpvqcApplication: QtObject {
-            property var mpvqcManager: QtObject {}
-            property var mpvqcSettings: QtObject {
-                property string lastDirectoryVideo: 'initial directory'
-                property string lastDirectorySubtitles: 'initial directory'
-            }
-            property var supportedSubtitleFileExtensions: [ 'ass' ]
+    Component {
+        id: dialogMock
+
+        QtObject {
+            property bool openCalled: false
+            signal closed()
+            function open() { openCalled = true }
         }
     }
 
-    TestCase {
-        name: "MpvqcMenuVideo"
-        when: windowShown
+    Component {
+        id: objectUnderTest
 
-        QtObject {
-            id: _dialogMock
-            property bool openCalled: false
-            function open() { openCalled = true }
+        MpvqcMenuVideo {
+            mpvqcApplication: QtObject {
+                property var mpvqcManager: QtObject {}
+                property var mpvqcSettings: QtObject {
+                    property string lastDirectoryVideo: 'initial directory'
+                    property string lastDirectorySubtitles: 'initial directory'
+                }
+                property var supportedSubtitleFileExtensions: [ 'ass' ]
+            }
         }
+    }
 
-        function cleanup() {
-            _dialogMock.openCalled = false
-        }
+    function test_importVideo() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function test_import_video() {
-            objectUnderTest.openVideoAction.dialog = _dialogMock
-            objectUnderTest.openVideoAction.trigger()
-            verify(_dialogMock.openCalled)
-        }
+        const mock = createTemporaryObject(dialogMock, testCase)
+        verify(mock)
 
-        function test_import_subtitles() {
-            objectUnderTest.openSubtitlesAction.dialog = _dialogMock
-            objectUnderTest.openSubtitlesAction.trigger()
-            verify(_dialogMock.openCalled)
-        }
+        control.openVideoAction.dialog = mock
+        control.openVideoAction.trigger()
+        verify(mock.openCalled)
+    }
 
+    function test_importSubtitles() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        const mock = createTemporaryObject(dialogMock, testCase)
+        verify(mock)
+
+        control.openSubtitlesAction.dialog = mock
+        control.openSubtitlesAction.trigger()
+        verify(mock.openCalled)
+    }
+
+    function test_resizeVideoToOriginalResolution() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        const spy = signalSpy.createObject(null, {target: control, signalName: 'resizeVideoTriggered'})
+        verify(spy)
+
+        control.resizeToOriginalResolutionAction.trigger()
+        compare(spy.count, 1)
     }
 
 }

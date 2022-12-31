@@ -86,6 +86,20 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
 
     #
 
+    def get_height(self):
+        return self._height
+
+    heightChanged = Signal(int)
+    height = Property(int, get_height, notify=heightChanged)
+
+    #
+
+    def get_width(self):
+        return self._width
+
+    widthChanged = Signal(int)
+    width = Property(int, get_width, notify=widthChanged)
+
     def __init__(self):
         super().__init__()
         self.mpv = inject.instance(PlayerService).mpv
@@ -96,6 +110,8 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self._subscribe_to_percent_pos()
         self._subscribe_to_time_pos()
         self._subscribe_to_time_remaining()
+        self._subscribe_to_height()
+        self._subscribe_to_width()
 
     def _subscribe_to_path(self):
         self._path = ''
@@ -157,3 +173,25 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
                 if value != self._time_remaining:
                     self._time_remaining = value
                     self.time_remaining_changed.emit(value)
+
+    def _subscribe_to_height(self):
+        self._height = None
+
+        @self.mpv.property_observer('height')
+        def observer(_, value: float):
+            if value:
+                value = round(value)
+                if value != self._height:
+                    self._height = value
+                    self.heightChanged.emit(value)
+
+    def _subscribe_to_width(self):
+        self._width = None
+
+        @self.mpv.property_observer('width')
+        def observer(_, value: float):
+            if value:
+                value = round(value)
+                if value != self._width:
+                    self._width = value
+                    self.widthChanged.emit(value)

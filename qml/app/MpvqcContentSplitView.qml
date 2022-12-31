@@ -32,6 +32,9 @@ FocusScope {
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
     readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
+    readonly property alias playerContainer: _playerContainer
+    readonly property alias splitView: _splitView
+    readonly property alias tableContainer: _tableContainer
 
     Connections {
         target: mpvqcApplication
@@ -57,6 +60,11 @@ FocusScope {
 
             SplitView.fillHeight: true
 
+            function setPreferredSizes(width: int, height: int): void {
+                SplitView.preferredWidth = width
+                SplitView.preferredHeight = height
+            }
+
             MpvqcPlayer {
                 id: _player
 
@@ -66,6 +74,13 @@ FocusScope {
         }
 
         Item {
+            id: _tableContainer
+
+            function setPreferredSizes(width: int, height: int): void {
+                SplitView.preferredWidth = width
+                SplitView.preferredHeight = height
+            }
+
             MpvqcCommentTable {
                 id: _commentTable
 

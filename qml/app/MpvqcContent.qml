@@ -34,6 +34,15 @@ FocusScope {
 
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
 
+    MpvqcResizeToOriginalResolutionHandler {
+        id: _videoResizer
+
+        mpvqcApplication: root.mpvqcApplication
+        header: _page.header
+        footer: _page.footer
+        splitView: _contentSplitView
+    }
+
     Page {
         id: _page
 
@@ -42,6 +51,8 @@ FocusScope {
         header: MpvqcHeader {
             mpvqcApplication: root.mpvqcApplication
             width: parent.width
+
+            onResizeVideoTriggered: _videoResizer.resizeVideo()
         }
 
         footer: MpvqcFooter {

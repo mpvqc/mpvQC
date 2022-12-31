@@ -30,6 +30,9 @@ MpvqcMenu {
 
     property alias openVideoAction: _openVideoAction
     property alias openSubtitlesAction: _openSubtitlesAction
+    property alias resizeToOriginalResolutionAction: _resizeToOriginalResolutionAction
+
+    signal resizeVideoTriggered()
 
     title: qsTranslate("MainWindow", "&Video")
 
@@ -62,15 +65,15 @@ MpvqcMenu {
         }
     }
 
-//    MenuSeparator { }
-//
-//    Action {
-//        text: qsTranslate("MainWindow", "&Resize Video to Original Resolution")
-//        shortcut: "CTRL+R"
-//
-//        onTriggered: {
-//            console.log("Resize Video to Original Resolution")
-//        }
-//    }
+    MenuSeparator { }
+
+    Action {
+        id: _resizeToOriginalResolutionAction
+
+        text: qsTranslate("MainWindow", "&Resize Video to Original Resolution")
+        shortcut: "CTRL+R"
+
+        onTriggered: root.resizeVideoTriggered()
+    }
 
 }

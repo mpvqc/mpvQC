@@ -28,6 +28,8 @@ Item {
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
 
+    signal resizeVideoTriggered()
+
     height: menuBar.height
     visible: !mpvqcApplication.fullscreen
 
@@ -56,6 +58,8 @@ Item {
 
             MpvqcMenuVideo {
                 mpvqcApplication: root.mpvqcApplication
+
+                onResizeVideoTriggered: root.resizeVideoTriggered()
             }
 
             MpvqcMenuOptions {
