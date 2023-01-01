@@ -61,18 +61,11 @@ TestCase {
             }
             splitView: QtObject {
                 property int height: 640
-                property var playerContainer: QtObject {
-                    property int height: 0
-                    property int setWidth: 0
-                    property int setHeight: 0
-                    function setPreferredSizes(width, height) { setWidth = width; setHeight = height }
-                }
-                property var tableContainer: QtObject {
-                    property int height: 0
-                    property int setWidth: 0
-                    property int setHeight: 0
-                    function setPreferredSizes(width, height) { setWidth = width; setHeight = height }
-                }
+                property int tableContainerHeight: 0
+                property int draggerHeight: 0
+                property int setWidth: 0
+                property int setHeight: 0
+                function setPreferredTableSize(width, height) { setWidth = width; setHeight = height }
             }
         }
     }
@@ -148,15 +141,13 @@ TestCase {
         control.mpvqcApplication.height = 720
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
-        control.splitView.playerContainer.height = 434
-        control.splitView.tableContainer.height = 200
+        control.splitView.draggerHeight = 6
+        control.splitView.tableContainerHeight = 200
         control.resizeVideoInVerticalSplitView()
         compare(control.mpvqcApplication.width, 866)
         compare(control.mpvqcApplication.height, 766)
-        compare(control.splitView.playerContainer.setWidth, 854)
-        compare(control.splitView.playerContainer.setHeight, 480)
-        compare(control.splitView.tableContainer.setWidth, 854)
-        compare(control.splitView.tableContainer.setHeight, 200)
+        compare(control.splitView.setWidth, 854)
+        compare(control.splitView.setHeight, 200)
 
 
         control = createTemporaryObject(objectUnderTest, testCase)
@@ -168,16 +159,13 @@ TestCase {
         control.mpvqcApplication.height = 1200
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
-        control.splitView.height = 1000
-        control.splitView.playerContainer.height = 94
-        control.splitView.tableContainer.height = 900
+        control.splitView.draggerHeight = 6
+        control.splitView.tableContainerHeight = 900
         control.resizeVideoInVerticalSplitView()
         compare(control.mpvqcApplication.width, 866)
         compare(control.mpvqcApplication.height, 1366)
-        compare(control.splitView.playerContainer.setWidth, 854)
-        compare(control.splitView.playerContainer.setHeight, 480)
-        compare(control.splitView.tableContainer.setWidth, 854)
-        compare(control.splitView.tableContainer.setHeight, 800)
+        compare(control.splitView.setWidth, 854)
+        compare(control.splitView.setHeight, 800)
     }
 
 }

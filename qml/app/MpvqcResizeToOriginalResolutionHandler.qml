@@ -32,16 +32,9 @@ Item {
     required property var splitView
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var playerContainer: splitView.playerContainer
-    readonly property var tableContainer: splitView.tableContainer
-
-    readonly property int windowBorder: mpvqcApplication.windowBorder
     readonly property int videoHeight: mpvqcMpvPlayerPropertiesPyObject.height
     readonly property int videoWidth: mpvqcMpvPlayerPropertiesPyObject.width
-
-    readonly property int splitViewHandleHeight: splitView.height
-            - playerContainer.height
-            - tableContainer.height
+    readonly property int windowBorder: mpvqcApplication.windowBorder
 
     property int availableScreenHeight: Screen.height * 0.95
     property int availableScreenWidth: Screen.width * 0.95
@@ -69,11 +62,11 @@ Item {
         const heightWithoutTable = windowBorder
             + header.height
             + videoHeight
-            + splitViewHandleHeight
+            + splitView.draggerHeight
             + footer.height
             + windowBorder
 
-        let newTableHeight = tableContainer.height
+        let newTableHeight = splitView.tableContainerHeight
         while (heightWithoutTable + newTableHeight > availableScreenHeight) {
             newTableHeight -= 5
         }
@@ -84,8 +77,7 @@ Item {
         mpvqcApplication.width = neededWidth
         mpvqcApplication.height = neededHeight
 
-        playerContainer.setPreferredSizes(videoWidth, videoHeight)
-        tableContainer.setPreferredSizes(videoWidth, newTableHeight)
+        splitView.setPreferredTableSize(videoWidth, newTableHeight)
     }
 
 }

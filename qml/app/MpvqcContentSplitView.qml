@@ -36,6 +36,18 @@ FocusScope {
     readonly property alias splitView: _splitView
     readonly property alias tableContainer: _tableContainer
 
+    readonly property int tableContainerHeight: _tableContainer.height
+    readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
+
+    states: [
+        State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
+        State { name: "normal"; ParentChange { target: _player; parent: _playerContainer } }
+    ]
+
+    function setPreferredTableSize(width: int, height: int): void {
+        _tableContainer.setPreferredSizes(width, height)
+    }
+
     Connections {
         target: mpvqcApplication
 
@@ -43,11 +55,6 @@ FocusScope {
             state = mpvqcApplication.fullscreen ? "fullscreen" : "normal"
         }
     }
-
-    states: [
-        State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
-        State { name: "normal"; ParentChange { target: _player; parent: _playerContainer } }
-    ]
 
     SplitView {
         id: _splitView
@@ -59,11 +66,6 @@ FocusScope {
             id: _playerContainer
 
             SplitView.fillHeight: true
-
-            function setPreferredSizes(width: int, height: int): void {
-                SplitView.preferredWidth = width
-                SplitView.preferredHeight = height
-            }
 
             MpvqcPlayer {
                 id: _player
