@@ -45,6 +45,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "Open &Video...")
         shortcut: "CTRL+Shift+O"
+        icon.source: "qrc:/data/icons/movie_black_24dp.svg"
 
         onTriggered: {
             dialog.open()
@@ -59,6 +60,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Open Subtitles...")
+        icon.source: "qrc:/data/icons/subtitles_black_24dp.svg"
 
         onTriggered: {
             dialog.open()
@@ -72,6 +74,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "&Resize Video to Original Resolution")
         shortcut: "CTRL+R"
+        icon.source: "qrc:/data/icons/aspect_ratio_black_24dp.svg"
 
         onTriggered: root.resizeVideoTriggered()
     }

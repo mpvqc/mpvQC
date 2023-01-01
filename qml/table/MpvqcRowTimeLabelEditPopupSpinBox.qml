@@ -57,8 +57,8 @@ SpinBox {
     }
 
     down.indicator: ToolButton {
-        readonly property url next: "qrc:/data/icons/navigate_next_black_24dp.svg"
-        readonly property url before: "qrc:/data/icons/navigate_before_black_24dp.svg"
+        readonly property url next: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
+        readonly property url before: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
 
         x: root.mirrored ? root.width - width : 0
         height: root.height
@@ -71,8 +71,8 @@ SpinBox {
     }
 
     up.indicator: ToolButton {
-        readonly property url next: "qrc:/data/icons/navigate_next_black_24dp.svg"
-        readonly property url before: "qrc:/data/icons/navigate_before_black_24dp.svg"
+        readonly property url next: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
+        readonly property url before: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
 
         x: root.mirrored ? 0 : root.width - width
         height: root.height

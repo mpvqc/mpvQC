@@ -49,6 +49,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Appearance...")
+        icon.source: "qrc:/data/icons/palette_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -67,6 +68,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Comment Type Settings...")
+        icon.source: "qrc:/data/icons/comment_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -91,6 +93,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Backup Settings...")
+        icon.source: "qrc:/data/icons/settings_backup_restore_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -109,6 +112,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Export Settings...")
+        icon.source: "qrc:/data/icons/upload_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -127,6 +131,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Import Settings...")
+        icon.source: "qrc:/data/icons/download_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -147,6 +152,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Edit mpv.conf...")
+        icon.source: "qrc:/data/icons/movie_edit_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -165,6 +171,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Edit input.conf...")
+        icon.source: "qrc:/data/icons/keyboard_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)

@@ -43,6 +43,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "&New QC Document")
         shortcut: "CTRL+N"
+        icon.source: "qrc:/data/icons/inventory_black_24dp.svg"
 
         onTriggered: {
             root.mpvqcManager.reset()
@@ -58,6 +59,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "&Open QC Document(s)...")
         shortcut: "CTRL+O"
+        icon.source: "qrc:/data/icons/file_open_black_24dp.svg"
 
         onTriggered: {
             dialog.open()
@@ -69,6 +71,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "&Save QC Document")
         shortcut: "CTRL+S"
+        icon.source: "qrc:/data/icons/save_black_24dp.svg"
 
         onTriggered: {
             root.mpvqcManager.save()
@@ -80,6 +83,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "&Save QC Document As...")
         shortcut: "CTRL+Shift+S"
+        icon.source: "qrc:/data/icons/save_as_black_24dp.svg"
 
         onTriggered: {
             root.mpvqcManager.saveAs()
@@ -93,6 +97,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "&Exit mpvQC")
         shortcut: "CTRL+Q"
+        icon.source: "qrc:/data/icons/exit_to_app_black_24dp.svg"
 
         onTriggered: {
             root.mpvqcApplication.close()

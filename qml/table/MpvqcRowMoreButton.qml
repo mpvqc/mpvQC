@@ -39,12 +39,15 @@ ToolButton {
             onCopyCommentClicked: root.copyCommentClicked()
 
             onDeleteCommentClicked: root.deleteCommentClicked()
+
+            onEditCommentClicked: root.editCommentClicked()
         }
 
     }
 
     signal copyCommentClicked()
     signal deleteCommentClicked()
+    signal editCommentClicked()
 
     icon.source: "qrc:/data/icons/more_vert_black_24dp.svg"
     icon.width: 18

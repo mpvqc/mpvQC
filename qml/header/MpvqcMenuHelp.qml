@@ -45,6 +45,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "&Check for Updates...")
+        icon.source: "qrc:/data/icons/update_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -63,6 +64,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
+        icon.source: "qrc:/data/icons/shortcut_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)
@@ -83,6 +85,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "About &mpvQC...")
+        icon.source: "qrc:/data/icons/info_black_24dp.svg"
 
         onTriggered: {
             const dialog = factory.createObject(root)

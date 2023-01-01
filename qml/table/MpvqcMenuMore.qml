@@ -28,18 +28,29 @@ MpvqcMenu {
 
     property alias copyItem: _copyItem
     property alias deleteItem: _deleteItem
+    property alias editItem: _editItem
 
     signal copyCommentClicked()
     signal deleteCommentClicked()
+    signal editCommentClicked()
 
     modal: true
     dim: false
 
     MenuItem {
+        id: _editItem
+
+        text: qsTranslate("CommentTable", "Edit Comment")
+        icon.source: "qrc:/data/icons/edit_black_24dp.svg"
+
+        onTriggered: root.editCommentClicked()
+    }
+
+    MenuItem {
         id: _copyItem
 
         text: qsTranslate("CommentTable", "Copy Comment")
-        // icon.source: "qrc:/data/icons/content_copy_black_24dp.svg"
+        icon.source: "qrc:/data/icons/content_copy_black_24dp.svg"
 
         onTriggered: root.copyCommentClicked()
     }
@@ -48,7 +59,7 @@ MpvqcMenu {
         id: _deleteItem
 
         text: qsTranslate("CommentTable", "Delete Comment")
-        // icon.source: "qrc:/data/icons/delete_black_24dp.svg"
+        icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 
         onTriggered: root.deleteCommentClicked()
     }

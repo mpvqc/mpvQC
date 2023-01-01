@@ -66,6 +66,9 @@ TestCase {
         const deleteCommentClickedSpy = signalSpy.createObject(null, {target: control, signalName: 'deleteCommentClicked'})
         verify(deleteCommentClickedSpy)
 
+        const editCommentClickedSpy = signalSpy.createObject(null, {target: control, signalName: 'editCommentClicked'})
+        verify(deleteCommentClickedSpy)
+
         control.openMenu()
         verify(control.menu)
 
@@ -74,6 +77,9 @@ TestCase {
 
         control.menu.deleteCommentClicked()
         compare(deleteCommentClickedSpy.count, 1)
+
+        control.menu.editCommentClicked()
+        compare(editCommentClickedSpy.count, 1)
     }
 
 }

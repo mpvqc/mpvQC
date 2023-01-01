@@ -172,6 +172,8 @@ Rectangle {
             onCopyCommentClicked: root.copyCommentClicked()
 
             onDeleteCommentClicked: root.deleteCommentClicked()
+
+            onEditCommentClicked: root.startEditing()
         }
 
         Rectangle {

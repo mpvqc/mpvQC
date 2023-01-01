@@ -40,6 +40,17 @@ TestCase {
         }
     }
 
+    function test_editCommentClicked() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        const spy = signalSpy.createObject(null, {target: control, signalName: 'editCommentClicked'})
+        verify(spy)
+
+        mouseClick(control.editItem)
+        compare(spy.count, 1)
+    }
+
     function test_copyCommentClicked() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
