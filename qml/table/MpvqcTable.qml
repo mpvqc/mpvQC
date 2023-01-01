@@ -53,6 +53,7 @@ ListView {
     clip: true
     focus: true
     reuseItems: true
+    interactive: !editMode
     boundsBehavior: Flickable.StopAtBounds
     highlightMoveDuration: 0
     highlightMoveVelocity: -1
@@ -67,8 +68,6 @@ ListView {
 
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }
-
-    highlight: Rectangle { color: Material.accent }
 
     delegate: MpvqcRow {
         mpvqcApplication: root.mpvqcApplication

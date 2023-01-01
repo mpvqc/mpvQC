@@ -58,7 +58,18 @@ Rectangle {
     signal commentEdited(string newComment)
 
     height: Math.max(40, _playButton.height)
-    color: 'transparent' // rowSelected ? Material.accent : index % 2 === 0 ? Qt.darker(Material.background, 1.25) :
+
+    color: {
+        if (rowSelected) {
+            return Material.accent
+        } if (index % 2 === 0) {
+            return 'transparent'
+        } else if (Material.theme === Material.Dark) {
+            return Qt.lighter(Material.background, 1.12)
+        } else {
+            return Qt.darker(Material.background, 1.04)
+        }
+    }
 
     function startEditing(): void {
         _commentLabel.startEditing()
