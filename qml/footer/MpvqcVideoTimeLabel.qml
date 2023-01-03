@@ -96,7 +96,7 @@ Label {
     Connections {
         target: root.mpvqcMpvPlayerPropertiesPyObject
 
-        function onVideo_loadedChanged() {
+        function onDurationChanged() {
             root._recalculateWidth()
         }
     }

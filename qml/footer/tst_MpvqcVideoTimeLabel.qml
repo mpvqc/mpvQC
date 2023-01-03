@@ -54,7 +54,7 @@ MpvqcVideoTimeLabel {
 
         function init() {
             objectUnderTest.mpvqcApplication.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY
-            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
+            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 0
         }
 
         function test_reformat_on_data() {
@@ -64,8 +64,8 @@ MpvqcVideoTimeLabel {
                     change: () => { objectUnderTest.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME },
                 },
                 {
-                    tag: 'videoLoaded',
-                    change: () => { objectUnderTest.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true },
+                    tag: 'durationChanged',
+                    change: () => { objectUnderTest.mpvqcMpvPlayerPropertiesPyObject.duration = 60 * 60 + 1 },
                 },
             ]
         }

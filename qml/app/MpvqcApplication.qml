@@ -38,6 +38,7 @@ ApplicationWindow {
     readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
     readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
+    readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
@@ -53,8 +54,8 @@ ApplicationWindow {
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
     readonly property var mpvqcWidthCalculatorLabel: MpvqcWidthCalculatorLabel
 
-    readonly property bool maximized: root.visibility === Window.Maximized
-    readonly property bool fullscreen: root.visibility === Window.FullScreen
+    readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
+    readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
     readonly property int windowBorder: root.maximized || root.fullscreen ? 0 : 6
     readonly property int windowRadius: 12
@@ -88,33 +89,10 @@ ApplicationWindow {
         }
     }
 
-    function toggleMaximized() {
-        if (root.maximized) {
-            root.showNormal()
-        } else {
-            root.showMaximized()
-        }
-     }
-
-    function toggleFullScreen() {
-        if (root.fullscreen) {
-            root.disableFullScreen()
-        } else {
-            root.enableFullScreen()
-        }
-    }
-
-    function enableFullScreen() {
-        if (!root.fullscreen) {
-            root.showFullScreen()
-        }
-    }
-
-    function disableFullScreen() {
-        if (root.fullscreen) {
-            root.showNormal()
-        }
-    }
+    function toggleMaximized() { mpvqcWindowVisibilityHandler.toggleMaximized() }
+    function toggleFullScreen() { mpvqcWindowVisibilityHandler.toggleFullScreen() }
+    function enableFullScreen() { mpvqcWindowVisibilityHandler.enableFullScreen() }
+    function disableFullScreen() { mpvqcWindowVisibilityHandler.disableFullScreen() }
 
     onClosing: (event) => {
         closeHandler.requestClose()
