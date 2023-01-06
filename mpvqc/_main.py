@@ -58,7 +58,7 @@ def main():
     else:
         dir_program = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-    app_version = "0.7.0"
+    app_version = "0.8.0"
     app_name = "mpvQC"
 
     if platform.system() == "Windows":
