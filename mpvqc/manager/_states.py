@@ -198,8 +198,8 @@ class State(ABC):
         Auto saves the current state
         """
 
-        if m.player.has_video():
-            content = _exporter.get_file_content(self._vid, self._comments or [])
+        if m.player.has_video() and self._comments:
+            content = _exporter.get_file_content(self._vid, self._comments)
             _exporter.write_auto_save(video_path=self._vid, file_content=content)
 
     def on_import(
