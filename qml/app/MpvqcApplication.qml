@@ -43,6 +43,7 @@ ApplicationWindow {
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
     readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
+    readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}

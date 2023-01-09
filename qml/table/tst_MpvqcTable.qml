@@ -84,6 +84,9 @@ TestCase {
                 property var mpvqcTimeFormatUtils: QtObject {
                     function formatTimeToString(time) { return `${time}` }
                 }
+                property var mpvqcSpecialCharacterValidatorPyObject: RegularExpressionValidator {
+                    regularExpression: /[0-9A-Z]+/
+                }
             }
 
             model: ListModel {

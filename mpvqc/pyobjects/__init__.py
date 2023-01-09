@@ -19,6 +19,7 @@ from .application_paths import MpvqcApplicationPathsPyObject
 from .backup import MpvqcBackupPyObject
 from .clipboard import MpvqcClipboardPyObject
 from .comments_model import MpvqcCommentModelPyObject
+from .comments_validator import MpvqcSpecialCharacterValidatorPyObject
 from .environment import MpvqcEnvironmentPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .file_system_helper import MpvqcFileSystemHelperPyObject

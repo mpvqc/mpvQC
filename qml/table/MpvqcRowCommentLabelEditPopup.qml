@@ -30,6 +30,7 @@ Popup {
     required property int paddingAround
 
     property bool acceptValue: true
+    property var mpvqcSpecialCharacterValidatorPyObject: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
 
     signal edited(string newComment)
     signal upPressed()
@@ -60,6 +61,7 @@ Popup {
         leftPadding: root.paddingAround
         rightPadding: root.paddingAround
         focus: true
+        validator: root.mpvqcSpecialCharacterValidatorPyObject
 
         background: Rectangle {
             anchors.fill: parent

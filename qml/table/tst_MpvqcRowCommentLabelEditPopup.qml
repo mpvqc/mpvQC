@@ -42,6 +42,9 @@ TestCase {
                         function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
                     }
                 }
+                property var mpvqcSpecialCharacterValidatorPyObject: RegularExpressionValidator {
+                    regularExpression: /[0-9A-Z]+/
+                }
                 property var activeFocusItem: undefined
             }
             paddingAround: 4
