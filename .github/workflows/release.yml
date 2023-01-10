@@ -153,10 +153,10 @@ jobs:
         with:
           path: build/release
           name: release-build-artifact
-      - name: 'Install Python 3.10'
+      - name: 'Install Python 3.11'
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
       - name: 'Setup Build Environment'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -196,7 +196,7 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
-          ARTIFACT="mpv-dev-x86_64-20220619-git-c1a46ec.7z"
+          ARTIFACT="mpv-dev-x86_64-20230101-git-ad65c88.7z"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
           
           execute curl -L -O "$URL"

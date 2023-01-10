@@ -1,5 +1,9 @@
 # Supposed to be called at repository root level - copied during CI build to root level
 #
+# To build:
+#   make
+#   flatpak-builder build-dir com.github.mpvqc.mpvQC.yml --force-clean
+#   flatpak-builder run build-dir com.github.mpvqc.mpvQC.yml mpvQC
 
 app-id: com.github.mpvqc.mpvQC
 runtime: org.freedesktop.Platform
@@ -26,14 +30,14 @@ cleanup:
   - /include
   - /lib/debug
   - /lib/pkgconfig
-  - /lib/python3.10/site-packages/PySide6/examples
-  - /lib/python3.10/site-packages/PySide6/lupdate
-  - /lib/python3.10/site-packages/PySide6/assistant
-  - /lib/python3.10/site-packages/PySide6/qmllint
-  - /lib/python3.10/site-packages/PySide6/linguist
-  - /lib/python3.10/site-packages/PySide6/Qt/lib/libQt6WebEngineCore.so.6
-  - /lib/python3.10/site-packages/PySide6/Qt/translations/qtwebengine_locales
-  - /lib/python3.10/site-packages/PySide6/Qt/resources
+  - /lib/python3.11/site-packages/PySide6/examples
+  - /lib/python3.11/site-packages/PySide6/lupdate
+  - /lib/python3.11/site-packages/PySide6/assistant
+  - /lib/python3.11/site-packages/PySide6/qmllint
+  - /lib/python3.11/site-packages/PySide6/linguist
+  - /lib/python3.11/site-packages/PySide6/Qt/lib/libQt6WebEngineCore.so.6
+  - /lib/python3.11/site-packages/PySide6/Qt/translations/qtwebengine_locales
+  - /lib/python3.11/site-packages/PySide6/Qt/resources
   - /man
   - /share/doc
   - /share/gtk-doc
@@ -118,8 +122,8 @@ modules:
       - --disable-static
     sources:
       - type: archive
-        url: https://github.com/libass/libass/releases/download/0.16.0/libass-0.16.0.tar.xz
-        sha256: 5dbde9e22339119cf8eed59eea6c623a0746ef5a90b689e68a090109078e3c08
+        url: https://github.com/libass/libass/releases/download/0.17.0/libass-0.17.0.tar.xz
+        sha256: 971e2e1db59d440f88516dcd1187108419a370e64863f70687da599fdf66cc1a
 
   - name: uchardet
     buildsystem: cmake-ninja
@@ -133,8 +137,8 @@ modules:
       - -DBUILD_STATIC=0
     sources:
       - type: archive
-        url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.7.tar.xz
-        sha256: 3fc79408ae1d84b406922fa9319ce005631c95ca0f34b205fad867e8b30e45b1
+        url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
+        sha256: e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
 
   - name: libmpv
     build-commands:
@@ -149,18 +153,18 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://github.com/mpv-player/mpv/archive/v0.34.1.tar.gz
-        sha256: 32ded8c13b6398310fa27767378193dc1db6d78b006b70dbcbd3123a1445e746
+        url: https://github.com/mpv-player/mpv/archive/v0.35.0.tar.gz
+        sha256: dc411c899a64548250c142bf1fa1aa7528f1b4398a24c86b816093999049ec00
       - type: file
-        url: https://waf.io/waf-2.0.24
-        sha256: 93909bca823a675f9f40af7c65b24887c3a3c0efdf411ff1978ba827194bdeb0
+        url: https://waf.io/waf-2.0.25
+        sha256: 21199cd220ccf60434133e1fd2ab8c8e5217c3799199c82722543970dc8e38d5
         dest-filename: waf
 
   - name: python
     sources:
       - type: archive
-        url: https://www.python.org/ftp/python/3.10.7/Python-3.10.7.tar.xz
-        sha256: 6eed8415b7516fb2f260906db5d48dd4c06acc0cb24a7d6cc15296a604dcdc48
+        url: https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tar.xz
+        sha256: 85879192f2cffd56cb16c092905949ebf3e5e394b7f764723529637901dfb58f
 
   # https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.2/krb5
   - name: krb5
@@ -202,20 +206,20 @@ modules:
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "PySide6>=6.3.1" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "PySide6>=6.4.2" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/df/75/244ad17b5cebb8851e6a28473b3d79298d220ea91d546080070829b31bdd/PySide6-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: d7824b1f0c346e8db03870fa8dc5e13b18bc746a9dfabbc69c85529e85903408
+        url: https://files.pythonhosted.org/packages/af/bc/45c2a5ed1e579dc919fa5b481f9df55108281243ec713fb79e20685deaf4/PySide6-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: b9f132133e0681c5d1d47d533108cc9d35f96486251a9f23bdac6f3b6aa53a1c
       - type: file
-        url: https://files.pythonhosted.org/packages/bd/e1/c0acd4fa3a9cb2b908dd3b1551887b7a6e4608d13f48d5273023ce8a90f0/shiboken6-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: 67b4731c55f5d74a72bede9a84691d64664cf7e1e76b606f58b39c8a61ea563d
+        url: https://files.pythonhosted.org/packages/24/f6/f1fe9220a616789a1c6b1b73670d8b1dec882ac730a8b534f963b3f26182/shiboken6-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: 0616c1a12d1e51e680595b3940b986275c1df952a751416a0730a59e5b90105f
       - type: file
-        url: https://files.pythonhosted.org/packages/9f/14/063d8ce95381bada749bc5bb749e126e77453c582ef6a52eb6c447cbed2e/PySide6_Essentials-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: 526434fb2ca94e54d07a7605716e4fb2e1b642440bce32c80a39e847e1710e65
+        url: https://files.pythonhosted.org/packages/e5/96/f43cdcb397f8a8cff6991ef8109385cc5ad9b0ad78c6dc2988b3b776fe49/PySide6_Essentials-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: 8c3d37cca6e27f6da12b50b20e741d593ccc857bdcdb82d97f8f7c8bfe53639a
       - type: file
-        url: https://files.pythonhosted.org/packages/cb/90/65c68f723c2f8a4bd594d7bd0d5101644a28aa1190808ccc2401304bbc76/PySide6_Addons-6.4.0-cp36-abi3-manylinux_2_28_x86_64.whl
-        sha256: 236b0dbaefc03114fc1deeee0041808d64a76650b643cf9ee9d8587e3ba9059a
+        url: https://files.pythonhosted.org/packages/05/5f/b5edac9f262d9cadafdeb9385089c7f81e5bc163a97fc3fa9ba49abac1ae/PySide6_Addons-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: 5c06fa0e1bc6269b9e80e004f928eadc4c7f07bca51e41b375f79f3dc17c94ea
   - name: python3-PyOpenGl
     buildsystem: simple
     build-commands:
