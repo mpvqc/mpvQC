@@ -22,7 +22,7 @@
 
 ### Windows
 
-For portable Windows binaries please look [here](https://mpvqc.rekt.cc/download/).
+For portable Windows binaries please look [here](https://mpvqc.github.io/).
 
 ### Linux
 
