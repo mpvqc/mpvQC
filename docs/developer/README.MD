@@ -5,6 +5,10 @@
 
 This project assumes that a virtual environment is used.
 
+# Internationalization
+
+Please continue [here](internationalization.md).
+
 ## Read Further
 
 * Qt6: https://doc.qt.io/

@@ -21,6 +21,6 @@
   * Edit the `settings.ini` and change `language` to the new `<locale>`
   * If the language option is not present in the `settings.ini`, add a new line `language=<locale>`
 * Open a new pull request
-* Add a new entry in the `MpvqcLanguageModel.qml` file
+* Add a new entry in the `MpvqcLanguageModel.qml` file and upate the `reverse_translator.py` file
 
 **Thank you very much!** 💚

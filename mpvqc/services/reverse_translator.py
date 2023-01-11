@@ -31,11 +31,11 @@ DEFAULT_COMMENT_TYPES_ENGLISH = [
 
 # Must be kept in sync with available languages in qml/models/MpvqcLanguageModel.qml
 SUPPORTED_LANGUAGES = [
-    'en-US',
     'de-DE',
+    'en-US',
+    'es-ES',
     'he-IL',
     'it-IT',
-    'es-ES',
 ]
 
 

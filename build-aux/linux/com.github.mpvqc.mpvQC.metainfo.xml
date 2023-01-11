@@ -5,11 +5,9 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <name>mpvQC</name>
-    <summary>A libmpv based application for the creation of quality control reports of video files.</summary>
+    <summary>A libmpv based application for the quick and easy creation of quality control reports of video files</summary>
     <description>
-        <p>
-            todo: add
-        </p>
+        <p>A libmpv based application for the quick and easy creation of quality control reports of video files</p>
     </description>
     <supports>
       <control>pointing</control>
@@ -18,16 +16,35 @@
     </supports>
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/mpvqc/mpvQC-gtk/master/data/screenshots/mpvQC-1.png</image>
+            <image>https://raw.githubusercontent.com/mpvqc/mpvQC/main/.github/screenshots/screenshot-01.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/mpvqc/mpvQC-gtk/master/data/screenshots/mpvQC-2.png</image>
+            <image>https://raw.githubusercontent.com/mpvqc/mpvQC/main/.github/screenshots/screenshot-02.png</image>
         </screenshot>
     </screenshots>
     <releases>
-        <release date="2019-09-04" version="v0.7.0">
+        <release date="2023-10-01" version="v0.8.0">
             <description>
-                <p>Initial release</p>
+                <ul>
+                    <li>New: Spanish lanuage (thanks to @RcUchiha)</li>
+                    <li>New: Hebrew language (thanks to @cN3rd)</li>
+                    <li>New: New application icon (thanks to @maleunam)</li>
+                    <li>Update: Now works with newer versions of mpv</li>
+                    <li>Bugfix: Fix save indicator not translated immediately on language change</li>
+                    <li>Bugfix: Fix reset operations not working in some cases</li>
+                    <li>Bugfix: Fix file manager and dialog strings not translated</li>
+                    <li>Bugfix: Do not auto save empty QC reports</li>
+                </ul>
+            </description>
+        </release>
+        <release date="2020-09-30" version="v0.7.0">
+            <description>
+                <ul>
+                    <li>Complete refactor of the code</li>
+                    <li>Slightly improved user interface</li>
+                    <li>Now works with newer versions of mpv</li>
+                </ul>
+                <p>Updating is highly recommended.</p>
             </description>
         </release>
     </releases>
