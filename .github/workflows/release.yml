@@ -37,7 +37,7 @@ jobs:
 
           ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
           debug "artifact name: $ARTIFACT_NAME"
-          echo "::set-output name=version::$ARTIFACT_NAME"
+          echo "version=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           
           FILES_UPDATABLE="$(grep -rli -e "$PLACEHOLDER_TAG" -e "$PLACEHOLDER_COMMIT" mpvqc qml)"
           echo "$FILES_UPDATABLE" | while read -r FILE; do
