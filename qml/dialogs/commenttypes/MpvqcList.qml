@@ -49,7 +49,7 @@ ListView {
         color: {
             if (rowSelected) {
                 return Material.accent
-            } if (index % 2 === 0) {
+            } if (index % 2 === 1) {
                 return 'transparent'
             } else if (Material.theme === Material.Dark) {
                 return Qt.lighter(Material.background, 1.12)
