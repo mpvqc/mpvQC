@@ -121,11 +121,18 @@ FocusScope {
 
         function onLayoutOrientationChanged() {
             _forceSplitViewLayoutRefresh()
+            _applySaneDefaultSplitViewSizes()
         }
 
         function _forceSplitViewLayoutRefresh() {
             const bottomElement = _splitView.takeItem(1)
             _splitView.addItem(bottomElement)
+        }
+
+        function _applySaneDefaultSplitViewSizes() {
+            const splitViewWidth = _splitView.width
+            const splitViewHeight = _splitView.height
+            root.setPreferredTableSize(splitViewWidth * (1/3), splitViewHeight * (1/3.5))
         }
     }
 
