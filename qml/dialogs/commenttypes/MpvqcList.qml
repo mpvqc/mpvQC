@@ -36,19 +36,27 @@ ListView {
     reuseItems: true
     boundsBehavior: Flickable.StopAtBounds
 
-    highlight: Rectangle {
-        color: Material.accent
-    }
-
     delegate: Rectangle {
         id: _delegate
 
         required property string type
         required property int index
+        readonly property bool rowSelected: root.currentIndex === index
 
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: root.itemHeight
-        color: 'transparent'
+
+        color: {
+            if (rowSelected) {
+                return Material.accent
+            } if (index % 2 === 0) {
+                return 'transparent'
+            } else if (Material.theme === Material.Dark) {
+                return Qt.lighter(Material.background, 1.12)
+            } else {
+                return Qt.darker(Material.background, 1.04)
+            }
+        }
 
         MouseArea {
             anchors.fill: _delegate
