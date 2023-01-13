@@ -59,7 +59,9 @@ TestCase {
             splitView: QtObject {
                 property int height: 640
                 property int tableContainerHeight: 0
+                property int tableContainerWidth: 0
                 property int draggerHeight: 0
+                property int draggerWidth: 0
                 property int setWidth: 0
                 property int setHeight: 0
                 function setPreferredTableSize(width, height) { setWidth = width; setHeight = height }
@@ -163,6 +165,45 @@ TestCase {
         compare(control.mpvqcApplication.height, 1368)
         compare(control.splitView.setWidth, 854)
         compare(control.splitView.setHeight, 830)
+    }
+
+    function test_resizeVideoInHorizontalSplitView() {
+        let control
+
+        control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        control.availableScreenWidth = 2560 * 0.95
+        control.availableScreenHeight = 1440 * 0.95
+        control.mpvqcApplication.width = 1280
+        control.mpvqcApplication.height = 720
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
+        control.splitView.draggerWidth = 6
+        control.splitView.tableContainerWidth = 200
+        control.resizeVideoInHorizontalSplitView()
+        compare(control.mpvqcApplication.width, 1072)
+        compare(control.mpvqcApplication.height, 532)
+        compare(control.splitView.setWidth, 200)
+        compare(control.splitView.setHeight, 480)
+
+
+        control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        control.availableScreenWidth = 2560 * 0.95
+        control.availableScreenHeight = 1440 * 0.95
+        control.mpvqcApplication.width = 1280
+        control.mpvqcApplication.height = 1200
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
+        control.splitView.draggerWidth = 6
+        control.splitView.tableContainerWidth = 900
+        control.resizeVideoInHorizontalSplitView()
+        compare(control.mpvqcApplication.width, 1772)
+        compare(control.mpvqcApplication.height, 532)
+        compare(control.splitView.setWidth, 900)
+        compare(control.splitView.setHeight, 480)
     }
 
 }

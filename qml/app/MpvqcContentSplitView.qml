@@ -37,7 +37,10 @@ FocusScope {
     readonly property alias tableContainer: _tableContainer
 
     readonly property int tableContainerHeight: _tableContainer.height
+    readonly property int tableContainerWidth: _tableContainer.width
     readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
+    readonly property int draggerWidth: _splitView.width - _playerContainer.width - tableContainerWidth
+    readonly property int orientation: _splitView.orientation
 
     states: [
         State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
