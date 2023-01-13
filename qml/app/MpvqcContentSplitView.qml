@@ -34,7 +34,6 @@ FocusScope {
 
     readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
     readonly property alias playerContainer: _playerContainer
-    readonly property alias splitView: _splitView
     readonly property alias tableContainer: _tableContainer
 
     readonly property int tableContainerHeight: _tableContainer.height
