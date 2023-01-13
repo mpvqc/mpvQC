@@ -49,6 +49,7 @@ ToolButton {
     signal deleteCommentClicked()
     signal editCommentClicked()
 
+    focusPolicy: Qt.NoFocus
     icon.source: "qrc:/data/icons/more_vert_black_24dp.svg"
     icon.width: 18
     icon.height: 18
