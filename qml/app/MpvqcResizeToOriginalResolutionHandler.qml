@@ -28,7 +28,6 @@ Item {
 
     required property var mpvqcApplication
     required property var header
-    required property var footer
     required property var splitView
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -63,7 +62,6 @@ Item {
             + header.height
             + videoHeight
             + splitView.draggerHeight
-            + footer.height
             + windowBorder
 
         let newTableHeight = splitView.tableContainerHeight

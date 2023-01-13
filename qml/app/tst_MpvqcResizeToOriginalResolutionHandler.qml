@@ -56,9 +56,6 @@ TestCase {
             header: QtObject {
                 property int height: 40
             }
-            footer: QtObject {
-                property int height: 28
-            }
             splitView: QtObject {
                 property int height: 640
                 property int tableContainerHeight: 0
@@ -145,7 +142,7 @@ TestCase {
         control.splitView.tableContainerHeight = 200
         control.resizeVideoInVerticalSplitView()
         compare(control.mpvqcApplication.width, 866)
-        compare(control.mpvqcApplication.height, 766)
+        compare(control.mpvqcApplication.height, 738)
         compare(control.splitView.setWidth, 854)
         compare(control.splitView.setHeight, 200)
 
@@ -163,9 +160,9 @@ TestCase {
         control.splitView.tableContainerHeight = 900
         control.resizeVideoInVerticalSplitView()
         compare(control.mpvqcApplication.width, 866)
-        compare(control.mpvqcApplication.height, 1366)
+        compare(control.mpvqcApplication.height, 1368)
         compare(control.splitView.setWidth, 854)
-        compare(control.splitView.setHeight, 800)
+        compare(control.splitView.setHeight, 830)
     }
 
 }

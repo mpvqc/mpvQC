@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import footer
 import player
 import table
 
@@ -66,6 +67,7 @@ FocusScope {
             id: _playerContainer
 
             SplitView.fillHeight: true
+            SplitView.fillWidth: true
 
             MpvqcPlayer {
                 id: _player
@@ -75,8 +77,10 @@ FocusScope {
             }
         }
 
-        Item {
+        Column {
             id: _tableContainer
+
+            SplitView.minimumHeight: _footer.height
 
             function setPreferredSizes(width: int, height: int): void {
                 SplitView.preferredWidth = width
@@ -88,7 +92,15 @@ FocusScope {
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true
-                anchors.fill: parent
+                width: parent.width
+                height: parent.height - _footer.height
+            }
+
+            MpvqcFooter {
+                id: _footer
+
+                mpvqcApplication: root.mpvqcApplication
+                width: parent.width
             }
         }
 

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import footer
 import header
 
 
@@ -39,7 +38,6 @@ FocusScope {
 
         mpvqcApplication: root.mpvqcApplication
         header: _page.header
-        footer: _page.footer
         splitView: _contentSplitView
     }
 
@@ -53,11 +51,6 @@ FocusScope {
             width: parent.width
 
             onResizeVideoTriggered: _videoResizer.resizeVideo()
-        }
-
-        footer: MpvqcFooter {
-            mpvqcApplication: root.mpvqcApplication
-            width: parent.width
         }
 
         MpvqcContentSplitView {
