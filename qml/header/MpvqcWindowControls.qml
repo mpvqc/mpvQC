@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import shared
+
 
 Item {
     id: root
@@ -32,6 +34,7 @@ Item {
 
     ToolButton {
         id: _minimizeButton
+
         height: root.height
         focusPolicy: Qt.NoFocus
         anchors.right: _maximizeButton.left
@@ -62,8 +65,9 @@ Item {
         }
     }
 
-    ToolButton {
+    MpvqcToolButton {
         id: _closeButton
+
         height: root.height
         focusPolicy: Qt.NoFocus
         anchors.right: root.right

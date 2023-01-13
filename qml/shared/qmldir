@@ -10,3 +10,4 @@ MpvqcNewCommentMenu MpvqcNewCommentMenu.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
 MpvqcTextFieldRow MpvqcTextFieldRow.qml
+MpvqcToolButton MpvqcToolButton.qml
