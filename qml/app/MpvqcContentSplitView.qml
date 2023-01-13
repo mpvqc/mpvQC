@@ -61,7 +61,7 @@ FocusScope {
         id: _splitView
 
         anchors.fill: root
-        orientation: Qt.Vertical
+        orientation: root.mpvqcSettings.layoutOrientation
 
         Item {
             id: _playerContainer
@@ -112,6 +112,19 @@ FocusScope {
 
     Component.onDestruction: {
         root.mpvqcSettings.dimensions = _splitView.saveState()
+    }
+
+    Connections {
+        target: root.mpvqcSettings
+
+        function onLayoutOrientationChanged() {
+            _forceSplitViewLayoutRefresh()
+        }
+
+        function _forceSplitViewLayoutRefresh() {
+            const bottomElement = _splitView.takeItem(1)
+            _splitView.addItem(bottomElement)
+        }
     }
 
 }

@@ -101,7 +101,7 @@ Item {
         fileName: root.settingsFile
         category: 'SplitView'
         property var dimensions: ''
-        property var layoutOrientation: Qt.Vertical
+        property int layoutOrientation: Qt.Vertical
     }
     property alias dimensions: _splitViewSettings.dimensions
     property alias layoutOrientation: _splitViewSettings.layoutOrientation
