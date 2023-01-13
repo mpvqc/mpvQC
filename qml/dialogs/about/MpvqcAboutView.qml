@@ -57,7 +57,7 @@ Column {
     Label {
         id: _gitHubLabel
 
-        property url mpvqcGitHubUrl: "https://github.com/mpvqc/mpvQC"
+        property url mpvqcGitHubUrl: "https://mpvqc.github.io"
 
         text: `<html><style type="text/css" title="Tooltip here"></style><a href="${mpvqcGitHubUrl}">${mpvqcGitHubUrl}</a></html>`
         anchors.horizontalCenter: parent.horizontalCenter
