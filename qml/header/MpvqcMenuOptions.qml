@@ -77,11 +77,11 @@ MpvqcMenu {
         }
     }
 
-    MpvqcSubMenuSplitViewOrientation {
+    MpvqcSubMenuWindowTitle {
         mpvqcApplication: root.mpvqcApplication
     }
 
-    MpvqcSubMenuWindowTitle {
+    MpvqcSubMenuSplitViewOrientation {
         mpvqcApplication: root.mpvqcApplication
     }
 
