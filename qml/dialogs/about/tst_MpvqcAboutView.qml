@@ -46,7 +46,7 @@ MpvqcAboutView {
                 {
                      tag: 'github',
                      exec: () => { mouseClick(objectUnderTest.gitHubLabel) },
-                     verify: () => { compare(objectUnderTest.calledUrl, 'https://github.com/mpvqc/mpvQC') },
+                     verify: () => { compare(objectUnderTest.calledUrl, 'https://mpvqc.github.io') },
                 },
                 {
                      tag: 'gnu',
