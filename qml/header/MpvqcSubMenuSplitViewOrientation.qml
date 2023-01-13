@@ -42,7 +42,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "Vertical Split")
         autoExclusive: true
         checkable: true
-        checked: mpvqcSettings.layoutOrientation == Qt.Vertical
+        checked: mpvqcSettings.layoutOrientation === Qt.Vertical
 
         onTriggered: {
             mpvqcSettings.layoutOrientation = Qt.Vertical
@@ -55,7 +55,7 @@ MpvqcMenu {
         text: qsTranslate("MainWindow", "Horizontal Split")
         autoExclusive: true
         checkable: true
-        checked: mpvqcSettings.layoutOrientation == Qt.Horizontal
+        checked: mpvqcSettings.layoutOrientation === Qt.Horizontal
 
         onTriggered: {
             mpvqcSettings.layoutOrientation = Qt.Horizontal
