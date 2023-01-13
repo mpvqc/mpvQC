@@ -27,8 +27,12 @@ Item {
 
     required property var mpvqcApplication
 
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+
     readonly property int marginTop: 4
-    readonly property int marginOther: mpvqcApplication.maximized ? 6 : 0
+    readonly property int marginLeft: mpvqcSettings.layoutOrientation === Qt.Vertical ? marginRight : 6
+    readonly property int marginRight: mpvqcApplication.maximized ? 6 : 0
+    readonly property int marginBottom: mpvqcApplication.maximized ? 2 : 0
 
     property alias formattingOptionsButton: _formattingOptionsButton
 
@@ -51,8 +55,8 @@ Item {
 
             MpvqcRowSelectionLabel {
                 mpvqcApplication: root.mpvqcApplication
-                Layout.bottomMargin: marginOther
-                Layout.leftMargin: marginOther
+                Layout.bottomMargin: root.marginBottom
+                Layout.leftMargin: root.marginLeft
             }
 
             Item { Layout.fillWidth: true }
@@ -60,21 +64,21 @@ Item {
             MpvqcVideoPercentLabel {
                 mpvqcApplication: root.mpvqcApplication
                 horizontalAlignment: Text.AlignRight
-                Layout.bottomMargin: marginOther
+                Layout.bottomMargin: root.marginBottom
             }
 
             MpvqcVideoTimeLabel {
                 mpvqcApplication: root.mpvqcApplication
                 horizontalAlignment: Text.AlignRight
                 Layout.preferredWidth: width
-                Layout.bottomMargin: marginOther
+                Layout.bottomMargin: root.marginBottom
             }
 
             Item {
                 height: 25
                 width: 25
-                Layout.bottomMargin: marginOther
-                Layout.rightMargin: marginOther
+                Layout.bottomMargin: root.marginBottom
+                Layout.rightMargin: root.marginRight
 
                 ToolButton {
                     id: _formattingOptionsButton

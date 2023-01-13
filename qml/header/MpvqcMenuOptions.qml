@@ -81,6 +81,10 @@ MpvqcMenu {
         mpvqcApplication: root.mpvqcApplication
     }
 
+    MpvqcSubMenuSplitViewOrientation {
+        mpvqcApplication: root.mpvqcApplication
+    }
+
     MenuSeparator { }
 
     Action {

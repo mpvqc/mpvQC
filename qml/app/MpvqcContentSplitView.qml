@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import footer
 import player
 import table
 
@@ -33,11 +34,13 @@ FocusScope {
 
     readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
     readonly property alias playerContainer: _playerContainer
-    readonly property alias splitView: _splitView
     readonly property alias tableContainer: _tableContainer
 
     readonly property int tableContainerHeight: _tableContainer.height
+    readonly property int tableContainerWidth: _tableContainer.width
     readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
+    readonly property int draggerWidth: _splitView.width - _playerContainer.width - tableContainerWidth
+    readonly property int orientation: _splitView.orientation
 
     states: [
         State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
@@ -60,12 +63,13 @@ FocusScope {
         id: _splitView
 
         anchors.fill: root
-        orientation: Qt.Vertical
+        orientation: root.mpvqcSettings.layoutOrientation
 
         Item {
             id: _playerContainer
 
             SplitView.fillHeight: true
+            SplitView.fillWidth: true
 
             MpvqcPlayer {
                 id: _player
@@ -75,8 +79,10 @@ FocusScope {
             }
         }
 
-        Item {
+        Column {
             id: _tableContainer
+
+            SplitView.minimumHeight: _footer.height
 
             function setPreferredSizes(width: int, height: int): void {
                 SplitView.preferredWidth = width
@@ -88,7 +94,15 @@ FocusScope {
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true
-                anchors.fill: parent
+                width: parent.width
+                height: parent.height - _footer.height
+            }
+
+            MpvqcFooter {
+                id: _footer
+
+                mpvqcApplication: root.mpvqcApplication
+                width: parent.width
             }
         }
 
@@ -100,6 +114,26 @@ FocusScope {
 
     Component.onDestruction: {
         root.mpvqcSettings.dimensions = _splitView.saveState()
+    }
+
+    Connections {
+        target: root.mpvqcSettings
+
+        function onLayoutOrientationChanged() {
+            _forceSplitViewLayoutRefresh()
+            _applySaneDefaultSplitViewSizes()
+        }
+
+        function _forceSplitViewLayoutRefresh() {
+            const bottomElement = _splitView.takeItem(1)
+            _splitView.addItem(bottomElement)
+        }
+
+        function _applySaneDefaultSplitViewSizes() {
+            const splitViewWidth = _splitView.width
+            const splitViewHeight = _splitView.height
+            root.setPreferredTableSize(splitViewWidth * (1/3), splitViewHeight * (1/3.5))
+        }
     }
 
 }

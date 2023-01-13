@@ -28,7 +28,6 @@ Item {
 
     required property var mpvqcApplication
     required property var header
-    required property var footer
     required property var splitView
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -39,9 +38,13 @@ Item {
     property int availableScreenHeight: Screen.height * 0.95
     property int availableScreenWidth: Screen.width * 0.95
 
-    function resizeVideo() {
-        if (root.canResize()) {
+    function resizeVideo(): void {
+        if (!root.canResize()) { return }
+
+        if (splitView.orientation === Qt.Vertical) {
             root.resizeVideoInVerticalSplitView()
+        } else {
+            root.resizeVideoInHorizontalSplitView()
         }
     }
 
@@ -58,12 +61,11 @@ Item {
         return fitsWidth && fitsHeight
     }
 
-    function resizeVideoInVerticalSplitView() {
+    function resizeVideoInVerticalSplitView(): void {
         const heightWithoutTable = windowBorder
             + header.height
             + videoHeight
             + splitView.draggerHeight
-            + footer.height
             + windowBorder
 
         let newTableHeight = splitView.tableContainerHeight
@@ -78,6 +80,33 @@ Item {
         mpvqcApplication.height = neededHeight
 
         splitView.setPreferredTableSize(videoWidth, newTableHeight)
+    }
+
+    function resizeVideoInHorizontalSplitView(): void {
+        const widthWithoutTable = windowBorder
+            + videoWidth
+            + splitView.draggerWidth
+            + windowBorder
+
+        let newTableWidth = splitView.tableContainerWidth
+        while (widthWithoutTable + newTableWidth > availableScreenWidth) {
+            newTableWidth -= 5
+        }
+
+        const neededHeight = windowBorder
+            + header.height
+            + videoHeight
+            + windowBorder
+        const neededWidth = windowBorder
+            + videoWidth
+            + splitView.draggerWidth
+            + newTableWidth
+            + windowBorder
+
+        mpvqcApplication.width = neededWidth
+        mpvqcApplication.height = neededHeight
+
+        splitView.setPreferredTableSize(newTableWidth, videoHeight)
     }
 
 }

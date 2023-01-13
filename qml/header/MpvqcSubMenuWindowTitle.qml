@@ -35,7 +35,7 @@ MpvqcMenu {
     property alias fileNameFormat: _fileNameFormat
     property alias filePathFormat: _filePathFormat
 
-    title: qsTranslate("MainWindow", "Window Title")
+    title: qsTranslate("MainWindow", "Application Title")
 
     MenuItem {
         id: _defaultFormat
