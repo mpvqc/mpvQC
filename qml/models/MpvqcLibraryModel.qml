@@ -55,6 +55,6 @@ ListModel {
         name: 'python-mpv'
         url: 'https://github.com/jaseg/python-mpv'
         licence: 'AGPL-3.0'
-        version: '@@pypi-python-mpv@@'
+        version: '@@pypi-mpv@@'
     }
 }
