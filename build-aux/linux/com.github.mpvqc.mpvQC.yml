@@ -220,15 +220,15 @@ modules:
       - type: file
         url: https://files.pythonhosted.org/packages/96/df/28d29fe32fc0f28f95d8b1e209c89f3cbbc7f3b68901368ffbe4f49e38c1/PySide6_Addons-6.5.0-cp37-abi3-manylinux_2_28_x86_64.whl
         sha256: 29551ca63a1cbc0fcd17fa9e477282857e2c66c3a55fdb9754b75519d5adf89a
-  - name: python3-mpv
+  - name: python3-python-mpv
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "mpv>=1.0.3" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "python-mpv>=1.0.1" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/42/c3/c692825f7b1460164e85a9f0e5b7b2ceea48a1b89e270d369a786eceb0a2/python_mpv-1.0.3-py3-none-any.whl
-        sha256: d0a0e9266f560a9de0bd60add93ba83577c58e3d904f2b1a7e71a16b9249a83a
+        url: https://files.pythonhosted.org/packages/34/d4/3504f3a873a8f0f32a112cc2e7528a12b617de566dc83bcb57f0b9d1f617/python-mpv-1.0.1.tar.gz
+        sha256: 4c5cc55df484232827ebfa9e498e8370698c6bf7283ba6b1e0329cc42f3aeb8e
 
   - name: mpvQC
     buildsystem: simple
