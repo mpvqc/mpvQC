@@ -177,7 +177,6 @@ jobs:
             --workpath build-windows \
             --icon=build-aux/windows/icon.ico \
             --collect-binaries PySide6 \
-            --collect-binaries glfw \
             --add-data "LICENSE;." \
             --noconsole \
             build/release/main.py
