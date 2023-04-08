@@ -227,8 +227,8 @@ modules:
         --prefix=${FLATPAK_DEST} "mpv>=1.0.3" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/5f/85/ed09d51625eb1da6977d159322cdd7f854dac74e63b3aa6b232de8c1d25b/mpv-1.0.3.tar.gz
-        sha256: b1c5eea91557f5d9a58a8ab0b92e8362d3f0e78c524c2eea3cefef2c5c06eb2c
+        url: https://files.pythonhosted.org/packages/42/c3/c692825f7b1460164e85a9f0e5b7b2ceea48a1b89e270d369a786eceb0a2/python_mpv-1.0.3-py3-none-any.whl
+        sha256: d0a0e9266f560a9de0bd60add93ba83577c58e3d904f2b1a7e71a16b9249a83a
 
   - name: mpvQC
     buildsystem: simple
