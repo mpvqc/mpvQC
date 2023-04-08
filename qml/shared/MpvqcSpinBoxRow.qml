@@ -27,7 +27,7 @@ RowLayout {
 
     required property int prefWidth
 
-    property int spinBoxWidth: 175
+    property int spinBoxWidth: 130
 
     property alias spinBox: _input
     property alias label: _label.text
@@ -48,6 +48,8 @@ RowLayout {
 
     ColumnLayout {
         Layout.fillWidth: true
+        Layout.leftMargin: 10
+        Layout.topMargin: 20
 
         SpinBox {
             id: _input
