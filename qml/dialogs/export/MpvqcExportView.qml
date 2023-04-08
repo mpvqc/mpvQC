@@ -44,6 +44,7 @@ ColumnLayout {
         spacing: 16
         bold: true
         prefWidth: root.width
+        implicitTextFieldWidth: 150
         Layout.topMargin: 20
 
         onTextChanged: (text) => {

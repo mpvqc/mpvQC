@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtCore
 import QtQuick
-import Qt.labs.settings
 
 import models
 
@@ -32,7 +32,7 @@ Item {
     property var uiLanguages: Qt.locale().uiLanguages
 
     property alias language: _settings.language
-    property alias fileName: _settings.fileName
+    property alias location: _settings.location
 
     function _defaultLanguage(): string {
         return _languageModel.identifiers()

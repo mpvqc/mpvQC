@@ -61,7 +61,6 @@ Flickable {
 
             MpvqcButtonRendered {
                 text: 'O'
-                Layout.preferredWidth: 32
             }
 
         }
@@ -90,7 +89,7 @@ Flickable {
             }
 
             MpvqcButtonRendered {
-                text: 'O'; Layout.preferredWidth: 32
+                text: 'O'
             }
 
         }
@@ -102,7 +101,6 @@ Flickable {
 
         MpvqcButtonRendered {
             text: 'E'
-            Layout.preferredWidth: 32
         }
 
     }
