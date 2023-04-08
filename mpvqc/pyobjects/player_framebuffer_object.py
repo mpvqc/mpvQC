@@ -15,12 +15,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import ctypes
-import platform
-
 import inject
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Slot, Signal
+from PySide6.QtGui import QOpenGLContext
 from PySide6.QtOpenGL import QOpenGLFramebufferObject
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
@@ -30,9 +28,16 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
+def get_process_address(_, name):
+    current_gl_context = QOpenGLContext.currentContext()
+    if current_gl_context:
+        return int(current_gl_context.getProcAddress(name))
+    else:
+        return 0
+
+
 @QmlElement
 class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
-
     sig_on_update = Signal()
 
     def __init__(self):
@@ -52,7 +57,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     def __init__(self, parent):
         super(Renderer, self).__init__()
         self._parent = parent
-        self._get_proc_address_resolver = MpvGlGetProcAddressFn(GetProcAddressGetter().wrap)
+        self._get_proc_address_resolver = MpvGlGetProcAddressFn(get_process_address)
         self._ctx = None
 
         from mpvqc.services.player import PlayerService
@@ -79,68 +84,3 @@ class Renderer(QQuickFramebufferObject.Renderer):
             fbo = int(self.framebufferObject().handle())
 
             self._ctx.render(flip_y=False, opengl_fbo={'w': width, 'h': height, 'fbo': fbo})
-
-
-class GetProcAddressGetter:
-    """ fixme: Class gets obsolete once https://bugreports.qt.io/browse/PYSIDE-971 gets fixed """
-
-    def __init__(self):
-        self._func = self._find_platform_wrapper()
-
-    def _find_platform_wrapper(self):
-        os = platform.system()
-        if os == 'Linux':
-            return self._init_linux()
-        elif os == 'Windows':
-            return self._init_windows()
-        raise f'Platform {os} not supported'
-
-    def _init_linux(self):
-        try:
-            from OpenGL import GLX
-            return self._glx_impl
-        except AttributeError:
-            pass
-        try:
-            from OpenGL import EGL
-            return self._egl_impl
-        except AttributeError:
-            pass
-        raise 'Cannot initialize OpenGL'
-
-    def _init_windows(self):
-        from PySide6.QtGui import QOpenGLContext
-        import glfw
-
-        from PySide6.QtGui import QOffscreenSurface
-        self.surface = QOffscreenSurface()
-        self.surface.create()
-
-        if not glfw.init():
-            raise 'Cannot initialize OpenGL'
-
-        glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
-        window = glfw.create_window(1, 1, "mpvQC-OpenGL", None, None)
-
-        glfw.make_context_current(window)
-        QOpenGLContext.currentContext().makeCurrent(self.surface)
-        return self._windows_impl
-
-    def wrap(self, _, name: bytes):
-        address = self._func(name)
-        return ctypes.cast(address, ctypes.c_void_p).value
-
-    @staticmethod
-    def _glx_impl(name: bytes):
-        from OpenGL import GLX
-        return GLX.glXGetProcAddress(name.decode("utf-8"))
-
-    @staticmethod
-    def _egl_impl(name: bytes):
-        from OpenGL import EGL
-        return EGL.eglGetProcAddress(name.decode("utf-8"))
-
-    @staticmethod
-    def _windows_impl(name: bytes):
-        import glfw
-        return glfw.get_proc_address(name.decode('utf8'))
