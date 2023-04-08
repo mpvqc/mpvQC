@@ -74,7 +74,7 @@ Column {
         MpvqcInputControls {
             objectName: "MpvqcInputControls::add"
             focusTextFieldOnCompletion: false
-            placeholderText: qsTranslate("CommentTypesDialog", "Type here to add a new comment type")
+            placeholderText: qsTranslate("CommentTypesDialog", "New comment type")
 
             validateInput: function(input) {
                 return root.validator.validateNewCommentType(input)

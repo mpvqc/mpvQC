@@ -33,16 +33,18 @@ MpvqcMenu {
 
     property alias verticalLayout: _verticalLayout
     property alias horizontalLayout: _horizontalLayout
+    property bool isVerticalLayout: mpvqcSettings.layoutOrientation === Qt.Vertical
 
     title: qsTranslate("MainWindow", "Application Layout")
+    icon.source: !isVerticalLayout ? "qrc:/data/icons/vertical_split_black_24dp.svg" : "qrc:/data/icons/horizontal_split_black_24dp.svg"
 
     MenuItem {
         id: _verticalLayout
 
-        text: qsTranslate("MainWindow", "Vertical Split")
+        text: qsTranslate("MainWindow", "Vertical Layout")
         autoExclusive: true
         checkable: true
-        checked: mpvqcSettings.layoutOrientation === Qt.Vertical
+        checked: root.isVerticalLayout
 
         onTriggered: {
             mpvqcSettings.layoutOrientation = Qt.Vertical
@@ -52,10 +54,10 @@ MpvqcMenu {
     MenuItem {
         id: _horizontalLayout
 
-        text: qsTranslate("MainWindow", "Horizontal Split")
+        text: qsTranslate("MainWindow", "Horizontal Layout")
         autoExclusive: true
         checkable: true
-        checked: mpvqcSettings.layoutOrientation === Qt.Horizontal
+        checked: !root.isVerticalLayout
 
         onTriggered: {
             mpvqcSettings.layoutOrientation = Qt.Horizontal

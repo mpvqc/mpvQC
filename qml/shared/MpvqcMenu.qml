@@ -40,41 +40,6 @@ Menu {
         return result + padding * 2
     }
 
-    delegate: MenuItem {
-        id: control
-
-        property bool hasIcon: control.icon.source.toString() !== ''
-
-        // Customized from src/quickcontrols/material/MenuItem.qml
-        // We added additional padding if there's no icon and control is not checkable
-        contentItem: IconLabel {
-            readonly property real arrowPadding: control.subMenu && control.arrow ? control.arrow.width + control.spacing : 0
-            readonly property real indicatorPadding: control.checkable && control.indicator ? control.indicator.width + control.spacing : 0
-            readonly property real iconPadding: !control.hasIcon && !control.checkable ? root.additionalPadding : 0
-            leftPadding: !control.mirrored ? indicatorPadding + iconPadding : arrowPadding
-            rightPadding: control.mirrored ? indicatorPadding + iconPadding : arrowPadding
-
-            spacing: control.spacing
-            mirrored: control.mirrored
-            display: control.display
-            alignment: Qt.AlignLeft
-
-            icon: control.icon
-            text: control.text
-            font: control.font
-            color: control.enabled ? control.Material.foreground : control.Material.hintTextColor
-        }
-
-        Component.onCompleted: calculateLargestAdditionalPadding()
-
-        function calculateLargestAdditionalPadding() {
-            if (control.hasIcon) {
-                root.additionalPadding = Math.max(root.additionalPadding, control.icon.width + control.spacing)
-            }
-        }
-
-    }
-
     function isMenuSeparator(item: Item): bool {
         return item instanceof MenuSeparator
     }
