@@ -36,6 +36,7 @@ MpvqcMenu {
     property alias filePathFormat: _filePathFormat
 
     title: qsTranslate("MainWindow", "Application Title")
+    icon.source: "qrc:/data/icons/title_black_24dp.svg"
 
     MenuItem {
         id: _defaultFormat
