@@ -55,8 +55,8 @@ class MpvqcApplicationPathsPyObject(QObject):
 
     #
 
-    def get_settings(self) -> str:
-        return str(self._paths.file_settings.absolute())
+    def get_settings(self) -> QUrl:
+        return QUrl.fromLocalFile(self._paths.file_settings.absolute())
 
-    settings_changed = Signal(str)
-    settings = Property(str, get_settings, notify=settings_changed)
+    settings_changed = Signal(QUrl)
+    settings = Property(QUrl, get_settings, notify=settings_changed)

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtCore
 import QtQuick
 import QtQuick.Controls.Material
-import Qt.labs.settings
 
 
 Item {
@@ -34,7 +33,7 @@ Item {
 
     Settings {
         id: _backupSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'Backup'
         property bool enabled: true
         property int interval: 90
@@ -45,7 +44,7 @@ Item {
 
     MpvqcCommonSettings {
         id: _commonSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
     }
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
@@ -53,7 +52,7 @@ Item {
 
     Settings {
         id: _exportSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'Export'
         property string nickname: root.mpvqcEnvironmentPyObject.variable('USERNAME') || root.mpvqcEnvironmentPyObject.variable('USER') || 'nickname'
         property bool writeHeaderDate: true
@@ -71,7 +70,7 @@ Item {
     enum TimeFormat { EMPTY, CURRENT_TIME, REMAINING_TIME, CURRENT_TOTAL_TIME }
     Settings {
         id: _statusBarSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'StatusBar'
         property bool statusbarPercentage: true
         property int timeFormat: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
@@ -83,7 +82,7 @@ Item {
     enum ImportWhenVideoLinkedInDocument { ALWAYS, ASK_EVERY_TIME, NEVER }
     Settings {
         id: _importSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'Import'
         property var lastDirectoryVideo: StandardPaths.writableLocation(StandardPaths.MoviesLocation)
         property var lastDirectoryDocuments: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
@@ -98,7 +97,7 @@ Item {
 
     Settings {
         id: _splitViewSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'SplitView'
         property var dimensions: ''
         property int layoutOrientation: Qt.Vertical
@@ -109,7 +108,7 @@ Item {
 
     Settings {
         id: _themeSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'Theme'
         property int theme: Material.Dark
         property int accent: Material.Orange
@@ -121,7 +120,7 @@ Item {
     enum WindowTitleFormat { DEFAULT, FILE_NAME, FILE_PATH }
     Settings {
         id: _windowSettings
-        fileName: root.settingsFile
+        location: root.settingsFile
         category: 'Window'
         property int titleFormat: MpvqcSettings.WindowTitleFormat.DEFAULT
     }
