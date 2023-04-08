@@ -22,22 +22,16 @@ import QtQuick
 
 ListModel {
     ListElement {
-        name: 'glfw'
-        url: 'https://github.com/glfw/glfw'
-        licence: 'Zlib'
-        version: '@@pypi-glfw@@'
-    }
-    ListElement {
         name: 'Inject'
         url: 'https://github.com/ivankorobkov/python-inject'
         licence: 'Apache-2.0'
         version: '@@pypi-Inject@@'
     }
     ListElement {
-        name: 'PyOpenGL'
-        url: 'https://github.com/mcfletch/pyopengl'
-        licence: 'PyOpenGL License'
-        version: '@@pypi-PyOpenGL@@'
+        name: 'python-mpv'
+        url: 'https://github.com/jaseg/python-mpv'
+        licence: 'AGPL-3.0'
+        version: '@@pypi-mpv@@'
     }
     ListElement {
         name: 'PySide6'
@@ -50,11 +44,5 @@ ListModel {
         url: 'https://github.com/pytest-dev/pytest'
         licence: 'MIT'
         version: '@@pypi-pytest@@'
-    }
-    ListElement {
-        name: 'python-mpv'
-        url: 'https://github.com/jaseg/python-mpv'
-        licence: 'AGPL-3.0'
-        version: '@@pypi-mpv@@'
     }
 }
