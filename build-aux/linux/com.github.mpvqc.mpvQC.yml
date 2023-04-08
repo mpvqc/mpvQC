@@ -78,8 +78,8 @@ modules:
       - --with-udevdir=/app/lib/udev
     sources:
       - type: archive
-        url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.22.1.tar.bz2
-        sha256: 65c6fbe830a44ca105c443b027182c1b2c9053a91d1e72ad849dfab388b94e31
+        url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.24.1.tar.bz2
+        sha256: cbb7fe8a6307f5ce533a05cded70bb93c3ba06395ab9b6d007eb53b75d805f5b
 
   - name: nv-codec-headers
     cleanup:
@@ -88,9 +88,9 @@ modules:
       - PREFIX=/app
     no-autogen: true
     sources:
-      - type: git
-        url: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
-        commit: cf8b0b2bb70b59068b06f1d5610627c8aa6d5652
+      - type: archive
+        url: https://github.com/FFmpeg/nv-codec-headers/releases/download/n12.0.16.0/nv-codec-headers-12.0.16.0.tar.gz
+        sha256: ab0ed1db1c2a03410c7006b941d145a73683eaec121cdf5d3009749fb8dc8a03
 
   - name: ffmpeg
     cleanup:
@@ -110,8 +110,8 @@ modules:
       - --enable-libdav1d
     sources:
       - type: archive
-        url: https://fossies.org/linux/misc/ffmpeg-5.1.2.tar.xz
-        sha256: 619e706d662c8420859832ddc259cd4d4096a48a2ce1eefd052db9e440eef3dc
+        url: https://fossies.org/linux/misc/ffmpeg-6.0.tar.xz
+        sha256: 57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
 
   - name: libass
     cleanup:
@@ -122,8 +122,8 @@ modules:
       - --disable-static
     sources:
       - type: archive
-        url: https://github.com/libass/libass/releases/download/0.17.0/libass-0.17.0.tar.xz
-        sha256: 971e2e1db59d440f88516dcd1187108419a370e64863f70687da599fdf66cc1a
+        url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
+        sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
 
   - name: uchardet
     buildsystem: cmake-ninja
@@ -153,8 +153,8 @@ modules:
       - /share/man
     sources:
       - type: archive
-        url: https://github.com/mpv-player/mpv/archive/v0.35.0.tar.gz
-        sha256: dc411c899a64548250c142bf1fa1aa7528f1b4398a24c86b816093999049ec00
+        url: https://github.com/mpv-player/mpv/archive/v0.35.1.tar.gz
+        sha256: 41df981b7b84e33a2ef4478aaf81d6f4f5c8b9cd2c0d337ac142fc20b387d1a9
       - type: file
         url: https://waf.io/waf-2.0.25
         sha256: 21199cd220ccf60434133e1fd2ab8c8e5217c3799199c82722543970dc8e38d5
@@ -163,8 +163,8 @@ modules:
   - name: python
     sources:
       - type: archive
-        url: https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tar.xz
-        sha256: 85879192f2cffd56cb16c092905949ebf3e5e394b7f764723529637901dfb58f
+        url: https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tar.xz
+        sha256: 8a5db99c961a7ecf27c75956189c9602c968751f11dbeae2b900dbff1c085b5e
 
   # https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.2/krb5
   - name: krb5
@@ -206,38 +206,29 @@ modules:
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "PySide6>=6.4.2" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "PySide6>=6.5.0" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/af/bc/45c2a5ed1e579dc919fa5b481f9df55108281243ec713fb79e20685deaf4/PySide6-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
-        sha256: b9f132133e0681c5d1d47d533108cc9d35f96486251a9f23bdac6f3b6aa53a1c
+        url: https://files.pythonhosted.org/packages/61/c1/37fabc94f958a03a605755ee1298d9f7d9f5d121f3d1ea2d480f79fc3d6c/PySide6-6.5.0-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: 5102c57841b15facb0aeca1f23d689ebc528a609bf5fb907f1ef2747f6415001
       - type: file
-        url: https://files.pythonhosted.org/packages/24/f6/f1fe9220a616789a1c6b1b73670d8b1dec882ac730a8b534f963b3f26182/shiboken6-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
-        sha256: 0616c1a12d1e51e680595b3940b986275c1df952a751416a0730a59e5b90105f
+        url: https://files.pythonhosted.org/packages/05/f8/743a0a67ab81665788180689e0eebd32ac521c56ad003386b3de36f41e4e/shiboken6-6.5.0-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: 46ff977f96c9d45dba3c3a313628356fd40e4423bb65bf2d9870b73396fad8be
       - type: file
-        url: https://files.pythonhosted.org/packages/e5/96/f43cdcb397f8a8cff6991ef8109385cc5ad9b0ad78c6dc2988b3b776fe49/PySide6_Essentials-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
-        sha256: 8c3d37cca6e27f6da12b50b20e741d593ccc857bdcdb82d97f8f7c8bfe53639a
+        url: https://files.pythonhosted.org/packages/9d/cd/da6815d1654bf5daf4cd7a0f0dbb316413f29f9ae62d508cebcab4309094/PySide6_Essentials-6.5.0-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: f00d4f10758cdc3f49f94465ead788ad294dac7d9cc5e1cc0610e97c2bdfc8d7
       - type: file
-        url: https://files.pythonhosted.org/packages/05/5f/b5edac9f262d9cadafdeb9385089c7f81e5bc163a97fc3fa9ba49abac1ae/PySide6_Addons-6.4.2-cp37-abi3-manylinux_2_28_x86_64.whl
-        sha256: 5c06fa0e1bc6269b9e80e004f928eadc4c7f07bca51e41b375f79f3dc17c94ea
-  - name: python3-PyOpenGl
+        url: https://files.pythonhosted.org/packages/96/df/28d29fe32fc0f28f95d8b1e209c89f3cbbc7f3b68901368ffbe4f49e38c1/PySide6_Addons-6.5.0-cp37-abi3-manylinux_2_28_x86_64.whl
+        sha256: 29551ca63a1cbc0fcd17fa9e477282857e2c66c3a55fdb9754b75519d5adf89a
+  - name: python3-mpv
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "PyOpenGl>=3.1.6" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "mpv>=1.0.3" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/80/07/003fe74d2af04be917035b42c53c7ea9e3abe1e353753cebccfe792b4e52/PyOpenGL-3.1.6-py3-none-any.whl
-        sha256: a7139bc3e15d656feae1f7e3ef68c799941ed43fadc78177a23db7e946c20738
-  - name: python3-python-mpv
-    buildsystem: simple
-    build-commands:
-      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "python-mpv>=1.0.1" --no-build-isolation
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/34/d4/3504f3a873a8f0f32a112cc2e7528a12b617de566dc83bcb57f0b9d1f617/python-mpv-1.0.1.tar.gz
-        sha256: 4c5cc55df484232827ebfa9e498e8370698c6bf7283ba6b1e0329cc42f3aeb8e
+        url: https://files.pythonhosted.org/packages/5f/85/ed09d51625eb1da6977d159322cdd7f854dac74e63b3aa6b232de8c1d25b/mpv-1.0.3.tar.gz
+        sha256: b1c5eea91557f5d9a58a8ab0b92e8362d3f0e78c524c2eea3cefef2c5c06eb2c
 
   - name: mpvQC
     buildsystem: simple
