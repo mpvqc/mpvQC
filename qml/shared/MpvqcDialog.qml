@@ -64,15 +64,7 @@ Dialog {
         root.bar.currentIndex = 0
     }
 
-    Component.onCompleted: {
-        const radius = mpvqcApplication.windowRadius
-        background.radius = radius
-        footer.background.radius = radius
-        header.background.radius = radius
-    }
-
     Overlay.modal: Rectangle {
-        radius: root.mpvqcApplication.windowRadius
         color: Color.transparent(root.palette.shadow, 0.5)
         Behavior on opacity { NumberAnimation { duration: 150 } }
     }

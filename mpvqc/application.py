@@ -74,8 +74,26 @@ class MpvqcApplication(QGuiApplication):
     def set_up_imports(self):
         self._engine.addImportPath(':/qml')
 
+    def install__window_event_filter(self):
+        if sys.platform == 'win32':
+            from mpvqc.framelesswindow.win import WindowsEventFilter
+            self._event_filter = WindowsEventFilter(border_width=5)
+            self.installNativeEventFilter(self._event_filter)
+        elif sys.platform == 'linux':
+            from mpvqc.framelesswindow.linux import LinuxEventFilter
+            self._event_filter = LinuxEventFilter(border_width=5)
+            self.installEventFilter(self._event_filter)
+
     def start_engine(self):
         self._engine.load(QUrl.fromLocalFile(':/qml/main.qml'))
+
+    def add_window_effects(self):
+        if sys.platform == 'win32':
+            hwnd = self.topLevelWindows()[0].winId()
+            from mpvqc.framelesswindow.win import WindowsWindowEffect
+            self._effects = WindowsWindowEffect()
+            self._effects.addShadowEffect(hwnd)
+            self._effects.addWindowAnimation(hwnd)
 
     def verify(self):
         if not self._engine.rootObjects():

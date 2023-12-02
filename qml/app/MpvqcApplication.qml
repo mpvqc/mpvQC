@@ -67,18 +67,7 @@ ApplicationWindow {
     ]
 
     background: Rectangle {
-        radius: root.windowRadius
         color: Material.background
-
-        MpvqcWindowMouseCurserHandler {
-            borderWidth: root.windowBorder
-            anchors.fill: parent
-        }
-
-        MpvqcWindowResizeHandler {
-            mpvqcApplication: root
-            borderWidth: root.windowBorder
-        }
 
         MpvqcContent {
             id: _content
@@ -86,7 +75,7 @@ ApplicationWindow {
             mpvqcApplication: root
             focus: true
             anchors.fill: parent
-            anchors.margins: root.windowBorder
+            anchors.margins: root.windowBorder // root.windowBorder
         }
     }
 
