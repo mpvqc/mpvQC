@@ -7,7 +7,7 @@
 
 app-id: com.github.mpvqc.mpvQC
 runtime: org.freedesktop.Platform
-runtime-version: '23.08'
+runtime-version: '22.08'
 sdk: org.freedesktop.Sdk
 command: mpvQC
 
@@ -46,6 +46,98 @@ cleanup:
   - '*.a'
 
 modules:
+  - name: luajit
+    no-autogen: true
+    cleanup:
+      - /bin
+      - /lib/*.a
+      - /include
+      - /lib/pkgconfig
+      - /share/man
+    sources:
+      - type: archive
+        url: http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
+        sha256: 1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3
+      - commands:
+          - sed -i 's|/usr/local|/app|' ./Makefile
+        type: shell
+
+  - name: libv4l2
+    cleanup:
+      - /sbin
+      - /bin
+      - /include
+      - /lib/*.la
+      - /lib/*/*.la
+      - /lib*/*/*/*.la
+      - /lib/pkgconfig
+      - /share/man
+    config-opts:
+      - --disable-static
+      - --disable-bpf
+      - --with-udevdir=/app/lib/udev
+    sources:
+      - type: archive
+        url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.26.0.tar.xz
+        sha256: dab463dc0215e55b2ef1f7a7ab230c3ae8102ea029547eefb4478da0fa8af505
+
+  - name: nv-codec-headers
+    cleanup:
+      - "*"
+    no-autogen: true
+    make-install-args:
+      - PREFIX=/app
+    sources:
+      - type: git
+        url: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+
+  - name: ffmpeg
+    cleanup:
+      - "/include"
+      - "/lib/pkgconfig"
+      - "/share/ffmpeg/examples"
+    config-opts:
+      - "--enable-shared"
+      - "--disable-static"
+      - "--enable-gnutls"
+      - "--disable-doc"
+      - "--disable-programs"
+      - "--disable-encoders"
+      - "--disable-muxers"
+      - "--enable-encoder=png"
+      - "--enable-libv4l2"
+      - "--enable-libdav1d"
+    sources:
+      - type: git
+        url: https://git.ffmpeg.org/ffmpeg.git
+
+  - name: libass
+    cleanup:
+      - /include
+      - /lib/*.la
+      - /lib/pkgconfig
+    config-opts:
+      - --disable-static
+    sources:
+      - type: archive
+        url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
+        sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
+
+  - name: uchardet
+    buildsystem: cmake-ninja
+    cleanup:
+      - /bin
+      - /include
+      - /lib/pkgconfig
+      - /share/man
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_STATIC=0
+    sources:
+      - type: archive
+        url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
+        sha256: e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
+
   - name: libmpv
     cleanup:
       - /share/bash-completion
@@ -65,99 +157,6 @@ modules:
       - type: archive
         url: https://github.com/mpv-player/mpv/archive/v0.37.0.tar.gz
         sha256: 1d2d4adbaf048a2fa6ee134575032c4b2dad9a7efafd5b3e69b88db935afaddf
-    modules:
-      - name: luajit
-        no-autogen: true
-        cleanup:
-          - /bin
-          - /lib/*.a
-          - /include
-          - /lib/pkgconfig
-          - /share/man
-        sources:
-          - type: archive
-            url: https://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
-            sha256: 1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3
-          - type: shell
-            commands:
-              - sed -i 's|/usr/local|/app|' ./Makefile
-
-      - name: libv4l2
-        cleanup:
-          - /sbin
-          - /bin
-          - /include
-          - /lib/*.la
-          - /lib/*/*.la
-          - /lib*/*/*/*.la
-          - /lib/pkgconfig
-          - /share/man
-        config-opts:
-          - --disable-static
-          - --disable-bpf
-          - --with-udevdir=/app/lib/udev
-        sources:
-          - type: archive
-            url: https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.24.1.tar.bz2
-            sha256: cbb7fe8a6307f5ce533a05cded70bb93c3ba06395ab9b6d007eb53b75d805f5b
-
-      - name: nv-codec-headers
-        cleanup:
-          - "*"
-        no-autogen: true
-        make-install-args:
-          - PREFIX=/app
-        sources:
-          - type: git
-            url: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
-
-      - name: ffmpeg
-        cleanup:
-          - /include
-          - /lib/pkgconfig
-          - /share/ffmpeg/examples
-        config-opts:
-          - --enable-shared
-          - --disable-static
-          - --disable-debug
-          - --disable-doc
-          - --disable-programs
-          - --disable-encoders
-          - --disable-muxers
-          - --enable-encoder=png
-          - --enable-libv4l2
-          - --enable-libdav1d
-        sources:
-          - type: archive
-            url: https://fossies.org/linux/misc/ffmpeg-6.0.tar.xz
-            sha256: 57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
-
-      - name: libass
-        cleanup:
-          - /include
-          - /lib/*.la
-          - /lib/pkgconfig
-        config-opts:
-          - --disable-static
-        sources:
-          - type: archive
-            url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
-            sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
-
-      - name: uchardet
-        buildsystem: cmake-ninja
-        cleanup:
-          - /bin
-          - /include
-          - /lib/pkgconfig
-          - /share/man
-        config-opts:
-          - -DCMAKE_BUILD_TYPE=Release
-          - -DBUILD_STATIC=0
-        sources:
-          - type: archive
-            url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
-            sha256: e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
 
   - name: python
     sources:
