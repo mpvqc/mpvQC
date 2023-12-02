@@ -59,7 +59,6 @@ ApplicationWindow {
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
     readonly property int windowBorder: root.maximized || root.fullscreen ? 0 : 6
-    readonly property int windowRadius: 12
 
     readonly property var supportedSubtitleFileExtensions: [
         'aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi',

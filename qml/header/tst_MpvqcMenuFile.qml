@@ -35,7 +35,6 @@ Item {
         id: objectUnderTest
 
         mpvqcApplication: QtObject {
-            property int windowRadius: 12
             property var mpvqcManager: QtObject {
                 function reset() { testHelper.resetCalled = true }
                 function save() { testHelper.saveCalled = true }

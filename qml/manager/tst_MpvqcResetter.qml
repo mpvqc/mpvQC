@@ -28,9 +28,7 @@ Item {
         id: objectUnderTest
 
         saved: true
-        mpvqcApplication: ApplicationWindow {
-            property real windowRadius: 12
-        }
+        mpvqcApplication: ApplicationWindow {}
 
         property var test: TestCase {
             name: "MpvqcResetter"
