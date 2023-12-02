@@ -204,7 +204,7 @@ jobs:
           
           execute curl -L -O "$URL"
           execute 7z x "$ARTIFACT"
-          execute mv mpv-2.dll dist/mpvQC
+          execute mv libmpv-2.dll dist/mpvQC
       - name: 'Compress Artifact'
         shell: pwsh
         run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "${{ needs.build_python.outputs.version }}.zip"
