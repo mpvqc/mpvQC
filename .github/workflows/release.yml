@@ -199,7 +199,7 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
-          ARTIFACT="mpv-dev-x86_64-20230101-git-ad65c88.7z"
+          ARTIFACT="mpv-dev-x86_64-20231126-git-6898d57.7z"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
           
           execute curl -L -O "$URL"
