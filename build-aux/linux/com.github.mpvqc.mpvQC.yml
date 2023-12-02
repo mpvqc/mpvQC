@@ -120,77 +120,24 @@ modules:
 
       - name: ffmpeg
         cleanup:
+          - /include
+          - /lib/pkgconfig
           - /share/ffmpeg/examples
         config-opts:
+          - --enable-shared
+          - --disable-static
           - --disable-debug
           - --disable-doc
           - --disable-programs
-          - --disable-static
           - --disable-encoders
           - --disable-muxers
-          - --enable-shared
-          - --enable-gnutls
-          - --enable-gpl
-          - --enable-version3
-          - --enable-encoder=png,libwebp,libjxl
+          - --enable-encoder=png
           - --enable-libv4l2
           - --enable-libdav1d
-          - --enable-libfontconfig
-          - --enable-libfreetype
-          - --enable-libopus
-          - --enable-librsvg
-          - --enable-libvpx
-          - --enable-libmp3lame
-          - --enable-libwebp
-          - --enable-libjxl
         sources:
           - type: archive
-            url: https://ffmpeg.org/releases/ffmpeg-6.0.tar.gz
-            sha256: f4ccf961403752c93961927715f524576d1f4dd02cd76d8c76aed3bbe6686656
-            x-checker-data:
-              type: anitya
-              project-id: 5405
-              stable-only: true
-              url-template: https://ffmpeg.org/releases/ffmpeg-$version.tar.gz
-        modules:
-          - name: libjxl
-            buildsystem: cmake-ninja
-            config-opts:
-              - -DBUILD_TESTING=OFF
-              - -DJPEGXL_ENABLE_BENCHMARK=OFF
-              - -DJPEGXL_ENABLE_COVERAGE=OFF
-              - -DJPEGXL_ENABLE_EXAMPLES=OFF
-              - -DJPEGXL_ENABLE_FUZZERS=OFF
-              - -DJPEGXL_ENABLE_JNI=OFF
-              - -DJPEGXL_ENABLE_SJPEG=OFF
-              - -DJPEGXL_ENABLE_SKCMS=OFF
-              - -DJPEGXL_ENABLE_TOOLS=OFF
-              - -DJPEGXL_ENABLE_VIEWERS=OFF
-            sources:
-              - type: archive
-                url: https://github.com/libjxl/libjxl/archive/refs/tags/v0.9-snapshot.tar.gz
-                sha256: 2177f72fb141dce69d071c24864fbebc9aa7133e8dda212783609e1996024078
-                x-checker-data:
-                  type: anitya
-                  project-id: 232764
-                  stable-only: true
-                  url-template: https://github.com/libjxl/libjxl/archive/refs/tags/v$version.tar.gz
-            modules:
-              - name: highway
-                buildsystem: cmake-ninja
-                config-opts:
-                  - -DCMAKE_BUILD_TYPE=RelWithDebInfo
-                  - -DBUILD_TESTING=OFF
-                  - -DBUILD_SHARED_LIBS=ON
-                sources:
-                  - type: archive
-                    url: https://github.com/google/highway/archive/refs/tags/1.0.7.tar.gz
-                    sha256: 5434488108186c170a5e2fca5e3c9b6ef59a1caa4d520b008a9b8be6b8abe6c5
-                    x-checker-data:
-                      type: anitya
-                      project-id: 205809
-                      stable-only: true
-                      url-template: https://github.com/google/highway/archive/refs/tags/$version.tar.gz
+            url: https://fossies.org/linux/misc/ffmpeg-6.0.tar.xz
+            sha256: 57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082
 
       - name: libass
         cleanup:
