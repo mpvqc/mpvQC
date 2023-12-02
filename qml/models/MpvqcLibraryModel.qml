@@ -22,15 +22,15 @@ import QtQuick
 
 ListModel {
     ListElement {
-        name: 'Inject'
+        name: 'inject'
         url: 'https://github.com/ivankorobkov/python-inject'
         licence: 'Apache-2.0'
-        version: '@@pypi-Inject@@'
+        version: '@@pypi-inject@@'
     }
     ListElement {
         name: 'python-mpv'
         url: 'https://github.com/jaseg/python-mpv'
-        licence: 'AGPL-3.0'
+        licence: 'GPL-3.0'
         version: '@@pypi-mpv@@'
     }
     ListElement {

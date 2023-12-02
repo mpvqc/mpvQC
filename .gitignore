@@ -530,3 +530,7 @@ build-dir
 # Files
 generated_resources.py
 portable
+
+/com.github.mpvqc.mpvQC.yml
+/build.sh
+/test.sh
