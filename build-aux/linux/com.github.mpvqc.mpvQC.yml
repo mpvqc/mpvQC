@@ -63,8 +63,8 @@ modules:
       - -Dmanpage-build=disabled
     sources:
       - type: archive
-        url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.36.0.tar.gz
-        sha256: 29abc44f8ebee013bb2f9fe14d80b30db19b534c679056e4851ceadf5a5e8bf6
+        url: https://github.com/mpv-player/mpv/archive/v0.37.0.tar.gz
+        sha256: 1d2d4adbaf048a2fa6ee134575032c4b2dad9a7efafd5b3e69b88db935afaddf
     modules:
       - name: luajit
         no-autogen: true
@@ -110,14 +110,13 @@ modules:
 
       - name: nv-codec-headers
         cleanup:
-          - '*'
+          - "*"
         no-autogen: true
         make-install-args:
           - PREFIX=/app
         sources:
-          - type: archive
-            url: https://github.com/FFmpeg/nv-codec-headers/archive/refs/tags/n12.0.16.0.tar.gz
-            sha256: 2a1533b65f55f9da52956faf0627ed3b74868ac0c7f269990edd21369113b48f
+          - type: git
+            url: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
 
       - name: ffmpeg
         cleanup:
@@ -202,8 +201,8 @@ modules:
           - --disable-static
         sources:
           - type: archive
-            url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.gz
-            sha256: d653be97198a0543c69111122173c41a99e0b91426f9e17f06a858982c2fb03d
+            url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
+            sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
 
       - name: uchardet
         buildsystem: cmake-ninja
