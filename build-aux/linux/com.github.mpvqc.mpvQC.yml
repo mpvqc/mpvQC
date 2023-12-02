@@ -82,13 +82,6 @@ modules:
             commands:
               - sed -i 's|/usr/local|/app|' ./Makefile
 
-      - name: libXpresent
-        buildsystem: autotools
-        sources:
-          - type: archive
-            url: https://xorg.freedesktop.org/archive/individual/lib/libXpresent-1.0.1.tar.xz
-            sha256: b964df9e5a066daa5e08d2dc82692c57ca27d00b8cc257e8e960c9f1cf26231b
-
       - name: libv4l2
         cleanup:
           - /sbin
