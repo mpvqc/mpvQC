@@ -41,7 +41,6 @@ TestCase {
 
             canClose: false
             mpvqcApplication: ApplicationWindow {
-                property real windowRadius: 12
                 function close() { closeFuncCalled = true }
             }
         }

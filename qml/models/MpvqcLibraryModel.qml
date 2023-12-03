@@ -26,23 +26,34 @@ ListModel {
         url: 'https://github.com/ivankorobkov/python-inject'
         licence: 'Apache-2.0'
         version: '@@pypi-inject@@'
-    }
-    ListElement {
-        name: 'python-mpv'
-        url: 'https://github.com/jaseg/python-mpv'
-        licence: 'GPL-3.0'
-        version: '@@pypi-mpv@@'
+        os: 'linux, windows'
     }
     ListElement {
         name: 'PySide6'
         url: 'https://wiki.qt.io/Qt_for_Python'
         licence: 'LGPL-3.0'
         version: '@@pypi-PySide6@@'
+        os: 'linux, windows'
+    }
+    ListElement {
+        name: 'python-mpv'
+        url: 'https://github.com/jaseg/python-mpv'
+        licence: 'GPL-3.0'
+        version: '@@pypi-mpv@@'
+        os: 'linux, windows'
+    }
+    ListElement {
+        name: 'pywin32'
+        url: 'https://github.com/mhammond/pywin32'
+        licence: 'PSF'
+        version: '@@pypi-pywin32@@'
+        os: 'windows'
     }
     ListElement {
         name: 'pytest'
         url: 'https://github.com/pytest-dev/pytest'
         licence: 'MIT'
         version: '@@pypi-pytest@@'
+        os: 'linux, windows'
     }
 }

@@ -27,7 +27,7 @@ MpvqcApplication {
     color: 'transparent'
     width: 1280
     height: 720
-    flags: Qt.FramelessWindowHint | Qt.Window
+    flags: Qt.platform.os === 'windows' ? null : Qt.FramelessWindowHint | Qt.Window
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true

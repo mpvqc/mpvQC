@@ -48,13 +48,4 @@ Dialog {
         elide: Text.ElideLeft
     }
 
-    Component.onCompleted: {
-        const radius = mpvqcApplication.windowRadius
-        background.radius = radius
-        footer.background.radius = radius
-        if (header.background) {
-            header.background.radius = radius
-        }
-    }
-
 }

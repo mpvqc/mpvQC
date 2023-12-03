@@ -59,7 +59,6 @@ TestCase {
 
             mpvqcApplication: QtObject {
                 property bool fullscreen: false
-                property int windowRadius: 12
                 property var activeFocusItem
                 property var mpvqcSettings: QtObject {
                     property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}

@@ -40,7 +40,6 @@ TestCase {
         MpvqcDialogEditMpv {
 
             mpvqcApplication: QtObject {
-                property int windowRadius: 12
                 property var mvqcMpvFiles: QtObject {
                     property var editMpvInterface: QtObject {
                         property string fileContent: 'initial'

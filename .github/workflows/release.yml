@@ -80,17 +80,18 @@ jobs:
             exit 1
           fi
           
-          DEPENDENCIES=$(python -m pip list | tail -n +3)
-          BACKUP_IFS=$IFS
-          IFS=$'\n'
-          DEPENDENCIES=( $DEPENDENCIES )
-          IFS=$BACKUP_IFS
+          DEPENDENCIES=("inject" "mpv" "PySide6" "pytest" "pywin32")  # List ALL dependencies for ALL os manually :|
           
           for (( i=0; i<${#DEPENDENCIES[@]}; i++ )) do
-              LINE="${DEPENDENCIES[$i]}"
-              DEPENDENCY=$(echo "$LINE" | awk '{ print $1 }')
-              VERSION=$(echo "$LINE" | awk '{ print $2 }')
-              sed -i "s/@@pypi-$DEPENDENCY@@/$VERSION/g" "$DEPENDENCY_MODEL_PATH"
+            DEPENDENCY="${DEPENDENCIES[$i]}"
+            VERSION=$(curl -s "https://pypi.org/pypi/$DEPENDENCY/json" | jq -r .info.version)
+          
+            if [ -z "$VERSION" ]; then
+              error "Could not fetch version for dependency: $DEPENDENCY"
+              exit 1
+            fi
+          
+            execute sed -i "s/@@pypi-$DEPENDENCY@@/$VERSION/g" "$DEPENDENCY_MODEL_PATH"
           done
           
           if grep '@@' "$DEPENDENCY_MODEL_PATH"; then

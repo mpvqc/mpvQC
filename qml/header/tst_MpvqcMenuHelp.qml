@@ -32,7 +32,6 @@ Item {
         id: objectUnderTest
 
         mpvqcApplication: QtObject {
-            property int windowRadius: 12
             property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
                 property string mpv_version: 'any-version'
                 property string ffmpeg_version: 'any-version'

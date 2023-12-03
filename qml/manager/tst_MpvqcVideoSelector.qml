@@ -30,7 +30,6 @@ Item {
         id: objectUnderTest
 
         mpvqcApplication: ApplicationWindow {
-            property real windowRadius: 12
             property var mpvqcSettings: QtObject {
                 property var importWhenVideoLinkedInDocument: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER
             }

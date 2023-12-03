@@ -63,7 +63,6 @@ TestCase {
 
         MpvqcMenuOptions {
             mpvqcApplication: QtObject {
-                property int windowRadius: 12
                 property var mpvqcSettings: QtObject {
                     property bool backupEnabled: false
                     property int backupInterval: 90
