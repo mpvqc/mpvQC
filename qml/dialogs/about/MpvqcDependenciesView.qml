@@ -68,6 +68,7 @@ ScrollView {
             MpvqcDependency {
                 anchors.horizontalCenter: parent.horizontalCenter
                 dependency: model.name
+                visible: model.os.indexOf(Qt.platform.os) >= 0
                 version: model.version
                 licence: model.licence
                 url: model.url
