@@ -37,6 +37,8 @@ MpvqcMenu {
 
     title: qsTranslate("MainWindow", "Application Title")
     icon.source: "qrc:/data/icons/title_black_24dp.svg"
+    icon.height: 24
+    icon.width: 24
 
     MenuItem {
         id: _defaultFormat

@@ -37,6 +37,8 @@ MpvqcMenu {
 
     title: qsTranslate("MainWindow", "Application Layout")
     icon.source: !isVerticalLayout ? "qrc:/data/icons/vertical_split_black_24dp.svg" : "qrc:/data/icons/horizontal_split_black_24dp.svg"
+    icon.height: 24
+    icon.width: 24
 
     MenuItem {
         id: _verticalLayout
