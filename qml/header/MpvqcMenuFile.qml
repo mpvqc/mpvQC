@@ -29,6 +29,9 @@ MpvqcMenu {
     required property var mpvqcApplication
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
+    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
+    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
 
     property alias resetAction: _resetAction
     property alias openDocumentsAction: _openDocumentsAction
@@ -100,6 +103,21 @@ MpvqcMenu {
 
         onTriggered: {
             console.log("Export triggered")
+
+            // fixme We will move this out of this file at some point, but for testing, this should be fine :)
+
+            const comments = mpvqcCommentTable.getAllComments()
+            const options = {
+                video: mpvqcManager.video,
+                nickname: mpvqcSettings.nickname,
+                generator: `${ Qt.application.name } ${ Qt.application.version }`,
+                writeHeaderDate: mpvqcSettings.writeHeaderDate,
+                writeHeaderGenerator: mpvqcSettings.writeHeaderGenerator,
+                writeHeaderNickname: mpvqcSettings.writeHeaderNickname,
+                writeHeaderVideoPath: mpvqcSettings.writeHeaderVideoPath,
+            }
+            const content = mpvqcExtendedDocumentExporterPyObject.create_file_content(comments, options)
+            console.log("Comments", content)
         }
     }
 

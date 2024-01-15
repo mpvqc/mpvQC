@@ -30,7 +30,8 @@ Item {
     property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
-    property alias saved: state.saved
+    readonly property bool saved: state.saved
+    readonly property url video: state.video
 
     function reset(): void {
         resetter.requestReset()

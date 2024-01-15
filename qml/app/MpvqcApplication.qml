@@ -44,6 +44,7 @@ ApplicationWindow {
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
     readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
+    readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
     readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject {}
     readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
