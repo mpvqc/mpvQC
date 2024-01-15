@@ -93,6 +93,19 @@ MpvqcMenu {
     MenuSeparator { }
 
     Action {
+        id: _exportAction
+
+        text: qsTranslate("MainWindow", "&Export QC Document...")
+        icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
+
+        onTriggered: {
+            console.log("Export triggered")
+        }
+    }
+
+    MenuSeparator { }
+
+    Action {
         id: _quitAction
 
         text: qsTranslate("MainWindow", "&Exit mpvQC")
