@@ -1,7 +1,7 @@
 import os
 import sys
 
-from PySide6.QtCore import QObject
+from PySide6.QtCore import QObject, Signal
 from PySide6.QtGui import QGuiApplication
 
 
@@ -64,13 +64,19 @@ def _figure_out_zoom_factor_on_linux() -> float:
 class OperatingSystemZoomDetectorService(QObject):
     primaryScreenChanged = QGuiApplication.primaryScreenChanged
 
+    zoom_factor_changed = Signal(float)
+
     def __init__(self):
         super().__init__()
         self._zoom_factor = None
-        QGuiApplication.topLevelWindows()[0].screenChanged.connect(_detect_operating_system_zoom_factor)
+        QGuiApplication.topLevelWindows()[0].screenChanged.connect(self._invalidate_zoom_factor)
+
+    def _invalidate_zoom_factor(self, *_):
+        self._zoom_factor = _detect_operating_system_zoom_factor()
+        self.zoom_factor_changed.emit(self._zoom_factor)
 
     @property
     def zoom_factor(self):
         if self._zoom_factor is None:
-            self._zoom_factor = _detect_operating_system_zoom_factor()
+            self._invalidate_zoom_factor()
         return self._zoom_factor

@@ -66,6 +66,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
         from mpvqc.services.player import PlayerService
         self._player_service = inject.instance(PlayerService)
 
+        self._zoom_detector_service.zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
+
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
             self._ctx = MpvRenderContext(
