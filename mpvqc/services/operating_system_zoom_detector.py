@@ -13,8 +13,39 @@ def _detect_operating_system_zoom_factor() -> float:
 
 
 def _figure_out_zoom_factor_on_windows() -> float:
-    # todo implement
-    return 1.0
+    import ctypes
+    import win32api
+
+    def currentMonitorHandle():
+        hwnd = QGuiApplication.topLevelWindows()[0].winId()
+        return ctypes.windll.user32.MonitorFromWindow(ctypes.wintypes.HWND(hwnd), ctypes.wintypes.DWORD(2))
+
+    def monitors_to_dpi_mapping() -> dict[int, int]:
+        MDT_EFFECTIVE_DPI = 0
+
+        dpi_x = ctypes.c_uint()
+        dpi_y = ctypes.c_uint()
+
+        monitors = {}
+
+        for i, monitor in enumerate(win32api.EnumDisplayMonitors()):
+            ctypes.windll.shcore.GetDpiForMonitor(
+                monitor[0].handle,
+                MDT_EFFECTIVE_DPI,
+                ctypes.byref(dpi_x),
+                ctypes.byref(dpi_y)
+            )
+            monitor_handle = int(monitor[0])
+            monitors[monitor_handle] = dpi_x.value
+
+        return monitors
+
+    monitor_to_dpi_mapping = monitors_to_dpi_mapping()
+    current_monitor = currentMonitorHandle()
+
+    dpi = monitor_to_dpi_mapping[current_monitor]
+
+    return dpi / 96
 
 
 def _figure_out_zoom_factor_on_linux() -> float:
