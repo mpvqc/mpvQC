@@ -62,13 +62,12 @@ def _figure_out_zoom_factor_on_linux() -> float:
 
 
 class OperatingSystemZoomDetectorService(QObject):
-    primaryScreenChanged = QGuiApplication.primaryScreenChanged
-
     zoom_factor_changed = Signal(float)
 
     def __init__(self):
         super().__init__()
         self._zoom_factor = None
+        QGuiApplication.primaryScreen().virtualGeometryChanged.connect(self._invalidate_zoom_factor)
         QGuiApplication.topLevelWindows()[0].screenChanged.connect(self._invalidate_zoom_factor)
 
     def _invalidate_zoom_factor(self, *_):
