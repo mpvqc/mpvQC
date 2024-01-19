@@ -19,6 +19,7 @@ import inject
 from PySide6.QtCore import QObject, Signal, Property
 from PySide6.QtQml import QmlElement
 
+from mpvqc.services import OperatingSystemZoomDetectorService
 from mpvqc.services.player import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -27,6 +28,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcMpvPlayerPropertiesPyObject(QObject):
+    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
+
     #
 
     mpv_version_changed = Signal(str)
@@ -87,18 +90,34 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     #
 
     def get_height(self):
-        return self._height
+        return self._height if self._height else 0
 
     heightChanged = Signal(int)
     height = Property(int, get_height, notify=heightChanged)
 
     #
 
+    def get_scaled_height(self):
+        return self._height / self._zoom_detector_service.zoom_factor if self._height else 0
+
+    scaledHeightChanged = Signal(int)
+    scaledHeight = Property(int, get_scaled_height, notify=scaledHeightChanged)
+
+    #
+
     def get_width(self):
-        return self._width
+        return self._width if self._width else 0
 
     widthChanged = Signal(int)
     width = Property(int, get_width, notify=widthChanged)
+
+    #
+
+    def get_scaled_width(self):
+        return self._width / self._zoom_detector_service.zoom_factor if self._width else 0
+
+    scaledWidthChanged = Signal(int)
+    scaledWidth = Property(int, get_scaled_width, notify=scaledWidthChanged)
 
     def __init__(self):
         super().__init__()
@@ -112,6 +131,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self._subscribe_to_time_remaining()
         self._subscribe_to_height()
         self._subscribe_to_width()
+        self._subscribe_to_zoom_factor_changes()
 
     def _subscribe_to_path(self):
         self._path = ''
@@ -184,6 +204,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
                 if value != self._height:
                     self._height = value
                     self.heightChanged.emit(value)
+                    self.scaledHeightChanged.emit(value)
 
     def _subscribe_to_width(self):
         self._width = None
@@ -195,3 +216,11 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
                 if value != self._width:
                     self._width = value
                     self.widthChanged.emit(value)
+                    self.scaledWidthChanged.emit(value)
+
+    def _subscribe_to_zoom_factor_changes(self):
+        def on_change(new_factor):
+            self.scaledHeightChanged.emit(self.get_height() / new_factor)
+            self.scaledWidthChanged.emit(self.get_width() / new_factor)
+
+        self._zoom_detector_service.zoom_factor_changed.connect(on_change)

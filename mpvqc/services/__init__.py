@@ -19,6 +19,7 @@ from .application_environment import ApplicationEnvironmentService
 from .application_paths import ApplicationPathsService
 from .backup import BackupService
 from .file_startup import FileStartupService
+from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .player import PlayerService, SubtitleCacher
 from .resource import ResourceService
 from .resource_reader import ResourceReaderService

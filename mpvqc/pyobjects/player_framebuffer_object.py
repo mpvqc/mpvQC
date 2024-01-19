@@ -24,6 +24,8 @@ from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 from mpv import MpvRenderContext, MpvGlGetProcAddressFn
 
+from mpvqc.services import OperatingSystemZoomDetectorService
+
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
@@ -53,6 +55,7 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
 
 
 class Renderer(QQuickFramebufferObject.Renderer):
+    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
 
     def __init__(self, parent):
         super(Renderer, self).__init__()
@@ -62,6 +65,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
         from mpvqc.services.player import PlayerService
         self._player_service = inject.instance(PlayerService)
+
+        self._zoom_detector_service.zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
 
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
@@ -76,7 +81,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
     def render(self):
         if self._ctx:
-            factor = self._parent.scale()
+            factor: float = self._zoom_detector_service.zoom_factor
             rect = self._parent.size()
 
             width = int(rect.width() * factor)

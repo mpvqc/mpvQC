@@ -48,8 +48,8 @@ TestCase {
                 property int height: 720
                 property int windowBorder: 6
                 property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
-                    property int width: 854
-                    property int height: 480
+                    property int scaledWidth: 854
+                    property int scaledHeight: 480
                     property bool video_loaded: false
                 }
             }
@@ -76,8 +76,8 @@ TestCase {
         control.mpvqcApplication.fullscreen = false
         control.mpvqcApplication.maximized = false
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 0
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 0
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 0
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 0
         control.availableScreenWidth = 2560
         control.availableScreenHeight = 1440
         verify(!control.canResize())
@@ -85,8 +85,8 @@ TestCase {
         control.mpvqcApplication.fullscreen = false
         control.mpvqcApplication.maximized = false
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 720
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
         control.availableScreenWidth = 2560
         control.availableScreenHeight = 1440
         verify(control.canResize())
@@ -94,8 +94,8 @@ TestCase {
         control.mpvqcApplication.fullscreen = true
         control.mpvqcApplication.maximized = false
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 720
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
         control.availableScreenWidth = 2560
         control.availableScreenHeight = 1440
         verify(!control.canResize())
@@ -103,8 +103,8 @@ TestCase {
         control.mpvqcApplication.fullscreen = false
         control.mpvqcApplication.maximized = true
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 720
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
         control.availableScreenWidth = 2560
         control.availableScreenHeight = 1440
         verify(!control.canResize())
@@ -112,8 +112,8 @@ TestCase {
         control.mpvqcApplication.fullscreen = false
         control.mpvqcApplication.maximized = false
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 720
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
         control.availableScreenWidth = 1368
         control.availableScreenHeight = 768
         verify(control.canResize())
@@ -121,8 +121,8 @@ TestCase {
         control.mpvqcApplication.fullscreen = false
         control.mpvqcApplication.maximized = false
         control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 720
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
         control.availableScreenWidth = 1280
         control.availableScreenHeight = 720
         verify(!control.canResize())
@@ -138,8 +138,8 @@ TestCase {
         control.availableScreenHeight = 1440 * 0.95
         control.mpvqcApplication.width = 1280
         control.mpvqcApplication.height = 720
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
         control.splitView.draggerHeight = 6
         control.splitView.tableContainerHeight = 200
         control.resizeVideoInVerticalSplitView()
@@ -156,8 +156,8 @@ TestCase {
         control.availableScreenHeight = 1440 * 0.95
         control.mpvqcApplication.width = 1280
         control.mpvqcApplication.height = 1200
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
         control.splitView.draggerHeight = 6
         control.splitView.tableContainerHeight = 900
         control.resizeVideoInVerticalSplitView()
@@ -177,8 +177,8 @@ TestCase {
         control.availableScreenHeight = 1440 * 0.95
         control.mpvqcApplication.width = 1280
         control.mpvqcApplication.height = 720
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
         control.splitView.draggerWidth = 6
         control.splitView.tableContainerWidth = 200
         control.resizeVideoInHorizontalSplitView()
@@ -195,8 +195,8 @@ TestCase {
         control.availableScreenHeight = 1440 * 0.95
         control.mpvqcApplication.width = 1280
         control.mpvqcApplication.height = 1200
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.width = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.height = 480
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
         control.splitView.draggerWidth = 6
         control.splitView.tableContainerWidth = 900
         control.resizeVideoInHorizontalSplitView()

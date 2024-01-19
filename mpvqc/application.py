@@ -77,11 +77,11 @@ class MpvqcApplication(QGuiApplication):
     def install__window_event_filter(self):
         if sys.platform == 'win32':
             from mpvqc.framelesswindow.win import WindowsEventFilter
-            self._event_filter = WindowsEventFilter(border_width=5)
+            self._event_filter = WindowsEventFilter(border_width=10)
             self.installNativeEventFilter(self._event_filter)
         elif sys.platform == 'linux':
             from mpvqc.framelesswindow.linux import LinuxEventFilter
-            self._event_filter = LinuxEventFilter(border_width=5)
+            self._event_filter = LinuxEventFilter(border_width=10)
             self.installEventFilter(self._event_filter)
 
     def start_engine(self):

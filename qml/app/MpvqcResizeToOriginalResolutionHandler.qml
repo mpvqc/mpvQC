@@ -31,8 +31,8 @@ Item {
     required property var splitView
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property int videoHeight: mpvqcMpvPlayerPropertiesPyObject.height
-    readonly property int videoWidth: mpvqcMpvPlayerPropertiesPyObject.width
+    readonly property int videoHeight: mpvqcMpvPlayerPropertiesPyObject.scaledHeight
+    readonly property int videoWidth: mpvqcMpvPlayerPropertiesPyObject.scaledWidth
     readonly property int windowBorder: mpvqcApplication.windowBorder
 
     property int availableScreenHeight: Screen.height * 0.95

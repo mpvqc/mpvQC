@@ -21,10 +21,12 @@ import inject
 from mpv import MPV
 
 from .application_paths import ApplicationPathsService
+from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 
 
 class PlayerService:
     _paths = inject.attr(ApplicationPathsService)
+    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
 
     def __init__(self, **properties):
         super().__init__(**properties)
@@ -63,6 +65,9 @@ class PlayerService:
         return self._mpv.time_pos or 0
 
     def move_mouse(self, x: int, y: int) -> None:
+        zoom_factor = self._zoom_detector_service.zoom_factor
+        x = int(x * zoom_factor)
+        y = int(y * zoom_factor)
         self._mpv.command_async("mouse", x, y)
 
     def open_video(self, video: str) -> None:
