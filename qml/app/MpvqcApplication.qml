@@ -58,7 +58,14 @@ ApplicationWindow {
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
-    readonly property int windowBorder: root.maximized || root.fullscreen ? 0 : 6
+    readonly property int windowBorder: {
+        const defaultWidth = 6
+        if (Qt.platform.os === 'windows') {
+            return root.fullscreen ? 0 : defaultWidth
+        } else if (Qt.platform.os === 'linux') {
+            return root.maximized || root.fullscreen ? 0 : defaultWidth
+        }
+    }
 
     readonly property var supportedSubtitleFileExtensions: [
         'aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi',
