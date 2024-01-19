@@ -220,7 +220,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
 
     def _subscribe_to_zoom_factor_changes(self):
         def on_change(new_factor):
-            self.scaledHeightChanged.emit(self.get_scaled_height() / new_factor)
+            self.scaledHeightChanged.emit(self.get_height() / new_factor)
             self.scaledWidthChanged.emit(self.get_width() / new_factor)
 
         self._zoom_detector_service.zoom_factor_changed.connect(on_change)
