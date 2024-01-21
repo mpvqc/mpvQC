@@ -18,17 +18,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 
 import app
+import header
 
 
-MpvqcApplication {
+Label {
+    id: root
+
     visible: true
-    color: 'transparent'
     width: 1280
-    height: 720
-    flags: Qt.FramelessWindowHint | Qt.Window
+    height: 220
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
+
+    background: Rectangle {
+        color: "red"
+    }
+
+    MpvqcHeader {
+        mpvqcApplication: root
+        width: parent.width
+
+        onResizeVideoTriggered: _videoResizer.resizeVideo()
+    }
 }

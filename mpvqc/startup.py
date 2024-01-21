@@ -18,6 +18,11 @@
 import os
 import sys
 
+from PySide6 import QtCore
+from PySide6.QtCore import QUrl
+from PySide6.QtQuickWidgets import QQuickWidget
+from PySide6.QtWidgets import QMainWindow, QApplication, QWidget, QVBoxLayout, QPushButton
+
 
 class PreStartUp:
     """Necessary steps for environment, Python and Qt"""
@@ -80,20 +85,53 @@ class StartUp:
 
     @staticmethod
     def start_application():
-        from mpvqc.application import MpvqcApplication
-        app = MpvqcApplication(sys.argv)
 
-        app.set_window_icon()
-        app.create_directories()
-        app.set_up_reverse_translator()
-        app.set_up_signals()
-        app.set_up_imports()
-        app.install__window_event_filter()
-        app.start_engine()
-        app.add_window_effects()
-        app.verify()
+        QApplication.setAttribute(QtCore.Qt.ApplicationAttribute.AA_DontCreateNativeWidgetSiblings)
 
-        sys.exit(app.exec())
+        class MainWindow(QMainWindow):
+            def __init__(self):
+                super().__init__()
+                self.setContentsMargins(0, 0, 0, 0)
+                self.setWindowTitle("My App")
+
+                widget = QWidget()
+
+                layout = QVBoxLayout()
+
+                menubar = QQuickWidget()
+                menubar.engine().addImportPath(':/qml')
+                menubar.setSource(QUrl.fromLocalFile(':/qml/main.qml'))
+                menubar.show()
+
+                menubar2 = QQuickWidget()
+                menubar2.engine().addImportPath(':/qml')
+                menubar2.setSource(QUrl.fromLocalFile(':/qml/main.qml'))
+                menubar2.show()
+
+                layout.addWidget(menubar)
+
+                button = QPushButton("Five")
+                button.setAttribute(QtCore.Qt.WidgetAttribute.WA_NativeWindow, True)
+                button.setMinimumHeight(100)
+
+                import mpv
+                player = mpv.MPV(wid=str(int(button.winId())), #  log_handler=print,
+                                 loglevel='debug')
+                player.play('/home/elias/Videos/mpvQC-dev/test-30fps.mp4')
+
+                layout.addWidget(button)
+                layout.addWidget(menubar2)
+
+                widget.setLayout(layout)
+
+                self.setCentralWidget(widget)
+
+        app = QApplication(sys.argv)
+
+        window = MainWindow()
+        window.show()
+
+        app.exec()
 
 
 def perform_startup():
