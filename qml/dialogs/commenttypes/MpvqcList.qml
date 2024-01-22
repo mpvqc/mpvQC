@@ -52,9 +52,9 @@ ListView {
             } if (index % 2 === 1) {
                 return 'transparent'
             } else if (Material.theme === Material.Dark) {
-                return Qt.lighter(Material.background, 1.12)
+                return Qt.lighter(Material.dialogColor, 1.12)
             } else {
-                return Qt.darker(Material.background, 1.04)
+                return Qt.darker(Material.dialogColor, 1.04)
             }
         }
 
