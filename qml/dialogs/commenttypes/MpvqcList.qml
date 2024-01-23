@@ -45,6 +45,7 @@ ListView {
 
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: root.itemHeight
+        radius: 4
 
         color: {
             if (rowSelected) {
