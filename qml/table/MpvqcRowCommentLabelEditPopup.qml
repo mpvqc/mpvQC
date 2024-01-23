@@ -48,7 +48,7 @@ Popup {
     closePolicy: Popup.CloseOnPressOutside
 
     background: Rectangle {
-        color: root.Material.accent
+        color: root.Material.primary
     }
 
     contentItem: TextField {

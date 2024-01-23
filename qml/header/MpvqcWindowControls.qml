@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Controls.Material.impl
 
 import shared
 
@@ -65,7 +66,7 @@ Item {
         }
     }
 
-    MpvqcToolButton {
+    ToolButton {
         id: _closeButton
 
         height: root.height
@@ -78,5 +79,33 @@ Item {
         onClicked: {
             root.mpvqcApplication.close()
         }
+
+        // Customized from src/quickcontrols/material/ToolButton.qml
+        // We changed the color to use the primary color instead of a ripple color
+        background: Ripple {
+            implicitWidth: _closeButton.Material.touchTarget
+            implicitHeight: _closeButton.Material.touchTarget
+
+            readonly property bool square: _closeButton.contentItem.width <= _closeButton.contentItem.height
+
+            x: (_closeButton.width - width) / 2
+            y: (_closeButton.height - height) / 2
+            clip: !square
+            width: square ? _closeButton.height / 2 : _closeButton.width
+            height: square ? _closeButton.height / 2 : _closeButton.height
+            pressed: _closeButton.pressed
+            anchor: _closeButton
+            active: _closeButton.enabled && (_closeButton.down || _closeButton.visualFocus || _closeButton.hovered)
+
+            color: {
+                if (Qt.platform.os === 'windows') {
+                    return 'red'
+                } else {
+                    return _closeButton.Material.primary
+                }
+            }
+        }
+
     }
+
 }

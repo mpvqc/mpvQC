@@ -67,7 +67,7 @@ TestCase {
                     property bool backupEnabled: false
                     property int backupInterval: 90
                     property int theme: Material.Dark
-                    property int accent: Material.Teal
+                    property int primary: Material.Teal
                     property string nickname: 'nickname'
                     property bool writeHeaderDate: false
                     property bool writeHeaderGenerator: false

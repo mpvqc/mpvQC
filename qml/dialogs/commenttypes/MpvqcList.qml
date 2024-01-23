@@ -33,7 +33,7 @@ ListView {
     highlightResizeDuration: 0
     highlightResizeVelocity: -1
     clip: true
-    reuseItems: true
+    reuseItems: false
     boundsBehavior: Flickable.StopAtBounds
 
     delegate: Rectangle {
@@ -45,16 +45,17 @@ ListView {
 
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: root.itemHeight
+        radius: 4
 
         color: {
             if (rowSelected) {
-                return Material.accent
+                return Material.primary
             } if (index % 2 === 1) {
                 return 'transparent'
             } else if (Material.theme === Material.Dark) {
-                return Qt.lighter(Material.background, 1.12)
+                return Qt.lighter(Material.dialogColor, 1.12)
             } else {
-                return Qt.darker(Material.background, 1.04)
+                return Qt.darker(Material.dialogColor, 1.04)
             }
         }
 
@@ -91,7 +92,18 @@ ListView {
     }
 
     onCurrentIndexChanged: {
-        positionViewAtIndex(currentIndex, ListView.Center)
+        _scrollToItemTimer.start()
+    }
+
+    Timer {
+        id: _scrollToItemTimer
+
+        interval: 0
+        repeat: false
+
+        onTriggered: {
+            positionViewAtIndex(currentIndex, ListView.Contain)
+        }
     }
 
 }

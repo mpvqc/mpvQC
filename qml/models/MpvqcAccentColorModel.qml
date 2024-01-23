@@ -23,60 +23,60 @@ import QtQuick.Controls.Material
 
 ListModel {
     ListElement {
-        accent: Material.Red
+        primary: Material.Red
     }
     ListElement {
-        accent: Material.Pink
+        primary: Material.Pink
     }
     ListElement {
-        accent: Material.Purple
+        primary: Material.Purple
     }
     ListElement {
-        accent: Material.DeepPurple
+        primary: Material.DeepPurple
     }
     ListElement {
-        accent: Material.Indigo
+        primary: Material.Indigo
     }
     ListElement {
-        accent: Material.Blue
+        primary: Material.Blue
     }
     ListElement {
-        accent: Material.LightBlue
+        primary: Material.LightBlue
     }
     ListElement {
-        accent: Material.Cyan
+        primary: Material.Cyan
     }
     ListElement {
-        accent: Material.Teal
+        primary: Material.Teal
     }
     ListElement {
-        accent: Material.Green
+        primary: Material.Green
     }
     ListElement {
-        accent: Material.LightGreen
+        primary: Material.LightGreen
     }
     ListElement {
-        accent: Material.Lime
+        primary: Material.Lime
     }
     ListElement {
-        accent: Material.Yellow
+        primary: Material.Yellow
     }
     ListElement {
-        accent: Material.Amber
+        primary: Material.Amber
     }
     ListElement {
-        accent: Material.Orange
+        primary: Material.Orange
     }
     ListElement {
-        accent: Material.DeepOrange
+        primary: Material.DeepOrange
     }
     ListElement {
-        accent: Material.Brown
+        primary: Material.Brown
     }
     ListElement {
-        accent: Material.Grey
+        primary: Material.Grey
     }
     ListElement {
-        accent: Material.BlueGrey
+        primary: Material.BlueGrey
     }
 }

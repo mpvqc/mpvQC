@@ -61,7 +61,7 @@ Rectangle {
 
     color: {
         if (rowSelected) {
-            return Material.accent
+            return Material.primary
         } if (index % 2 === 1) {
             return 'transparent'
         } else if (Material.theme === Material.Dark) {

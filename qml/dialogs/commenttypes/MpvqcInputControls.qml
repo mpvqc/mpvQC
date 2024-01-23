@@ -96,6 +96,7 @@ Column {
         horizontalAlignment: Text.AlignLeft
         width: root.width
         wrapMode: Label.WordWrap
+        topPadding: 5
     }
 
 }

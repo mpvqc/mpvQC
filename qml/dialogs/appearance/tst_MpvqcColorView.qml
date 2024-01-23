@@ -27,7 +27,7 @@ MpvqcColorView {
 
     mpvqcApplication: QtObject {
         property var mpvqcSettings: QtObject {
-            property int accent: Material.Teal
+            property int primary: Material.Teal
         }
     }
 
@@ -39,7 +39,7 @@ MpvqcColorView {
         when: windowShown
 
         function cleanup() {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.accent = -1
+            objectUnderTest.mpvqcApplication.mpvqcSettings.primary = -1
         }
 
         function test_settingSelected_data() {
@@ -50,13 +50,13 @@ MpvqcColorView {
         }
 
         function test_settingSelected(data) {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.accent = data.color
+            objectUnderTest.mpvqcApplication.mpvqcSettings.primary = data.color
 
             const allSelected = findSelected()
             verify(allSelected.length === 1)
 
             const selected = allSelected[0]
-            compare(selected.accent, data.color)
+            compare(selected.primary, data.color)
         }
 
         function findSelected() {
@@ -79,20 +79,20 @@ MpvqcColorView {
             const firstItem = findItemWith(data.firstColor)
             verify(firstItem)
             mouseClick(firstItem)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.accent, data.firstColor)
+            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.primary, data.firstColor)
 
             const secondItem = findItemWith(data.secondColor)
             verify(secondItem)
             mouseClick(secondItem)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.accent, data.secondColor)
+            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.primary, data.secondColor)
 
             verify(firstItem !== secondItem)
         }
 
-        function findItemWith(accent) {
+        function findItemWith(primary) {
             for (let idx = 0, count = objectUnderTest.count; idx < count; idx++) {
                 const item = objectUnderTest.itemAtIndex(idx)
-                if (item.accent === accent) { return item }
+                if (item.primary === primary) { return item }
             }
             return null
         }
