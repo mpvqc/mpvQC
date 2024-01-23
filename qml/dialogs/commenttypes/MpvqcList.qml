@@ -33,7 +33,7 @@ ListView {
     highlightResizeDuration: 0
     highlightResizeVelocity: -1
     clip: true
-    reuseItems: true
+    reuseItems: false
     boundsBehavior: Flickable.StopAtBounds
 
     delegate: Rectangle {
@@ -92,7 +92,18 @@ ListView {
     }
 
     onCurrentIndexChanged: {
-        positionViewAtIndex(currentIndex, ListView.Center)
+        _scrollToItemTimer.start()
+    }
+
+    Timer {
+        id: _scrollToItemTimer
+
+        interval: 0
+        repeat: false
+
+        onTriggered: {
+            positionViewAtIndex(currentIndex, ListView.Contain)
+        }
     }
 
 }

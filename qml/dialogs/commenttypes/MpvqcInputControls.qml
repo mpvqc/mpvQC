@@ -92,10 +92,11 @@ Column {
 
     Label {
         text: !_textField.error ? ' ' : _textField.error
-        color: Material.primary
+        color: Material.accent
         horizontalAlignment: Text.AlignLeft
         width: root.width
         wrapMode: Label.WordWrap
+        topPadding: 5
     }
 
 }
