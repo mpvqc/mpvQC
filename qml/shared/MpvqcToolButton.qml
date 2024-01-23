@@ -26,7 +26,7 @@ ToolButton {
     id: root
 
     // Customized from src/quickcontrols/material/ToolButton.qml
-    // We changed the color to use the accent color instead of a ripple color
+    // We changed the color to use the primary color instead of a ripple color
     background: Ripple {
         implicitWidth: root.Material.touchTarget
         implicitHeight: root.Material.touchTarget

@@ -42,14 +42,14 @@ GridView {
     cellHeight: itemSize + itemPadding
 
     delegate: MpvqcCircle {
-        required property int accent
-        property bool selected: accent === root.mpvqcSettings.accent
+        required property int primary
+        property bool selected: primary === root.mpvqcSettings.primary
 
         width: root.itemSize
         color: selected ? Material.foreground : 'transparent'
 
         function onItemClicked() {
-            root.mpvqcSettings.accent = accent
+            root.mpvqcSettings.primary = primary
         }
 
         onClicked: {
@@ -58,8 +58,8 @@ GridView {
 
         MpvqcCircle {
             width: parent.width - root.borderSize
-            color: Material.accent
-            Material.accent: parent.accent
+            color: Material.primary
+            Material.primary: parent.primary
             anchors.centerIn: parent
 
             onClicked: {

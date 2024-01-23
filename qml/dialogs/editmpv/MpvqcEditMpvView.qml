@@ -70,7 +70,7 @@ ColumnLayout {
 
     Rectangle {
         height: 2
-        color: Material.accent
+        color: Material.primary
         Layout.topMargin: 20
         Layout.fillWidth: true
     }
@@ -98,7 +98,7 @@ ColumnLayout {
 
     Rectangle {
         height: 2
-        color: Material.accent
+        color: Material.primary
         Layout.fillWidth: true
     }
 

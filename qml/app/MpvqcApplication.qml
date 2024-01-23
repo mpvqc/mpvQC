@@ -121,6 +121,7 @@ ApplicationWindow {
     }
 
     Material.theme: mpvqcSettings.theme
-    Material.accent: mpvqcSettings.accent
+    Material.accent: mpvqcSettings.primary
+    Material.primary: mpvqcSettings.primary
 
 }

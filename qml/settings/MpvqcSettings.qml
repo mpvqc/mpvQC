@@ -111,10 +111,10 @@ Item {
         location: root.settingsFile
         category: 'Theme'
         property int theme: Material.Dark
-        property int accent: Material.Orange
+        property int primary: Material.Orange
     }
     property alias theme: _themeSettings.theme
-    property alias accent: _themeSettings.accent
+    property alias primary: _themeSettings.primary
 
 
     enum WindowTitleFormat { DEFAULT, FILE_NAME, FILE_PATH }
