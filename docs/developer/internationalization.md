@@ -1,26 +1,30 @@
-# Adding a New Language
+# Adding Languages
 
 * Checkout repository
-* Make sure development environment is set up correctly for your os
+* Make sure development environment is set up correctly for your OS
 * Create a new translation file by running
   ```shell
-  make create-new-translation lang=<locale>
-  ```
-  while `<locale>` is the locale for the language to add
-* Update all possible translations by running
-  ```shell
-  make update-translations
+  just add-translation <locale>  # just add-translation fr_FR
   ```
 * New `<locale>.ts` file appears in the `i18n` directory
 * Translate the `ts` file using Qt Linguist 6
 * To test the translation:
+  * Make the application portable
+    ```shell
+    touch portable
+    ```
   * Run
     ```shell
-    make develop-build
+    just build-develop
     ```
-  * Edit the `settings.ini` and change `language` to the new `<locale>`
-  * If the language option is not present in the `settings.ini`, add a new line `language=<locale>`
+  * Start the application and close it
+  * Edit the `appdata/settings.ini`
+    ```ini
+    [Common]
+    language=<locale>
+    ```
+  * Start the application
 * Open a new pull request
-* Add a new entry in the `MpvqcLanguageModel.qml` file and upate the `reverse_translator.py` file
+* Add a new entry in the `qml/models/MpvqcLanguageModel.qml` file and update the `mpvqc/services/reverse_translator.py` file
 
 **Thank you very much!** 💚

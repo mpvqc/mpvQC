@@ -4,5 +4,5 @@
 
 source venv/bin/activate
 
-make develop-clean
-make develop-build
+just clean
+just build-develop
