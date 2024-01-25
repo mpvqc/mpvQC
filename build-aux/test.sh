@@ -4,7 +4,7 @@
 
 export QT_QPA_PLATFORM=offscreen
 
-make test-qml | grep -v \
+just test-qml | grep -v \
     -e 'initTestCase()' \
     -e 'cleanupTestCase()' \
     -e '^QWARN.*QML IconImage: Cannot open' \

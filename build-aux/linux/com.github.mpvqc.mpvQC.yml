@@ -1,7 +1,7 @@
 # Supposed to be called at repository root level - copied during CI build to root level
 #
 # Locally
-#   - make
+#   - just
 #   - distrobox create --name flatpak-builder --init --image bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
 #   - distrobox enter flatpak-builder
 #   - flatpak-builder build-dir com.github.mpvqc.mpvQC.yml --force-clean
