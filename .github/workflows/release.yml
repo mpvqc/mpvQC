@@ -23,6 +23,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
+      - name: 'Install just'
+        uses: taiki-e/install-action@just
       - name: 'Update Project Build Information'
         id: step_version
         run: |
@@ -55,7 +57,7 @@ jobs:
 
           execute sudo apt update -y 
           execute sudo apt upgrade -y
-          execute sudo apt install -y make libmpv1 patchelf libopengl0
+          execute sudo apt install -y libmpv1 patchelf libopengl0
       - name: 'Setup Virtual Environment'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -110,9 +112,9 @@ jobs:
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute source venv/bin/activate
-          execute make test-python
-          execute make clean
-          execute make build
+          execute just test-python
+          execute just clean
+          execute just build
       - name: 'Upload Build Artifact'
         uses: actions/upload-artifact@v3
         if: github.ref_name == 'main'
@@ -130,18 +132,20 @@ jobs:
         uses: jurplel/install-qt-action@v3
         with:
           version: '6.6.0'
+      - name: 'Install just'
+        uses: taiki-e/install-action@just
       - name: 'Lint Qml Files'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
-          execute make lint-qml
+          execute just lint-qml
         continue-on-error: true
       - name: 'Execute Qml Tests'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute export QT_QPA_PLATFORM=offscreen
-          execute make test-qml
+          execute just test-qml
 
   build_windows:
     runs-on: windows-latest
