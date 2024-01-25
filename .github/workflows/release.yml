@@ -10,7 +10,7 @@ defaults:
 
 jobs:
   build_python:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: 'Test Python & Build mpvQC'
     outputs:
       version: ${{ steps.step_version.outputs.version }}
@@ -121,7 +121,7 @@ jobs:
           name: release-build-artifact
 
   test_qml:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: 'Test Qml'
     steps:
       - name: 'Checkout Repository'
@@ -216,7 +216,7 @@ jobs:
           path: "${{ needs.build_python.outputs.version }}.zip"
 
   build_linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
       options: --privileged
