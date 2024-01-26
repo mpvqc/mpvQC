@@ -105,9 +105,9 @@ class QCDocumentToImportNotValidQCDocumentMB(QMessageBox):
     def __init__(self, not_valid_files: List[str]):
         super().__init__()
 
-        self.setWindowTitle(_translate("MessageBoxes", "Imported Document Not Compatible"))
-        self.setText(_translate(
-            "MessageBoxes", "The following file(s) are not compatible:", "", len(not_valid_files)))
+        self.setWindowTitle(QCoreApplication.translate("MessageBoxes", "Imported Document Not Compatible"))
+        self.setText(QCoreApplication.translate(
+            "MessageBoxes", "The following files are not compatible:"))
         self.setInformativeText("- " + "\n\n".join(not_valid_files))
         self.setIcon(QMessageBox.Information)
         self.addButton(QMessageBox.Ok)

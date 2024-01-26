@@ -488,13 +488,10 @@
         <source>Imported Document Not Compatible</source>
         <translation type="unfinished"></translation>
     </message>
-    <message numerus="yes">
+    <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="109"/>
-        <source>The following file(s) are not compatible:</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+        <source>The following files are not compatible:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="123"/>
