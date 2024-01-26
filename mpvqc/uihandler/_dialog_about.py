@@ -15,14 +15,12 @@
 
 import platform
 
-from PyQt5.QtCore import QCoreApplication, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog
 
 from mpvqc import get_resources, get_metadata
 from mpvqc.ui_loader import init_from_resources
-
-_translate = QCoreApplication.translate
 
 
 class AboutDialog(QDialog):

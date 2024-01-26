@@ -15,14 +15,11 @@
 
 from abc import abstractmethod
 
-from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
 from mpvqc import get_settings
 from mpvqc.ui_loader import init_from_resources
-
-_translate = QCoreApplication.translate
 
 
 class _EditConfDialog(QDialog):

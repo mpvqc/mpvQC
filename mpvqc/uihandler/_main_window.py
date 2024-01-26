@@ -24,8 +24,6 @@ from mpvqc.ui_loader import init_from_resources
 from mpvqc.uihandler._search_form import SearchHandler
 from mpvqc.uiutil import SUPPORTED_SUB_FILES, dialogs
 
-_translate = QCoreApplication.translate
-
 
 class MainHandler(QMainWindow):
 
@@ -242,7 +240,8 @@ class MainHandler(QMainWindow):
             txt = "mpvQC"
 
         self.setWindowTitle(
-            txt + " " + (_translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
+            txt + " " + (
+                QCoreApplication.translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
         r = get_resources()

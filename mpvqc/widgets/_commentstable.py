@@ -23,8 +23,6 @@ from mpvqc.manager import Comment
 from mpvqc.uihandler import MainHandler
 from mpvqc.uiutil import CommentTimeDelegate, CommentTypeDelegate, CommentNoteDelegate, CommentsTableSearcher
 
-_translate = QCoreApplication.translate
-
 
 class CommentsTable(QTableView):
     """
@@ -150,7 +148,7 @@ class CommentsTable(QTableView):
         for comment in comments:
             time = QStandardItem(comment.comment_time)
             time.setTextAlignment(Qt.AlignCenter)
-            ct = QStandardItem(_translate("CommentTypes", comment.comment_type))
+            ct = QStandardItem(QCoreApplication.translate("CommentTypes", comment.comment_type))
             note = QStandardItem(comment.comment_note)
             last_entry = [time, ct, note]
             model.appendRow(last_entry)

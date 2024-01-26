@@ -20,8 +20,6 @@ from PyQt5.QtWidgets import QWidget
 from mpvqc.ui_loader import init_from_resources
 from mpvqc.uiutil import SpecialCharacterValidator
 
-_translate = QCoreApplication.translate
-
 
 class SearchHandler(QWidget):
     sig_shown = pyqtSignal()
@@ -109,11 +107,11 @@ class SearchHandler(QWidget):
         self.__current, self.__total = current, total
         if total > 0:
             if current == 1 and total == 1:
-                info = _translate("SearchForm", "{0} comment").format(1)
+                info = QCoreApplication.translate("SearchForm", "{0} comment").format(1)
             else:
-                info = _translate("SearchForm", "{0} of {1} comments").format(current, total)
+                info = QCoreApplication.translate("SearchForm", "{0} of {1} comments").format(current, total)
         elif current == 0 and total == 0:
-            info = _translate("SearchForm", "Phrase not found")
+            info = QCoreApplication.translate("SearchForm", "Phrase not found")
         else:
             info = ""
 

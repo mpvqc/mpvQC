@@ -20,8 +20,6 @@ from PyQt5.QtWidgets import QMenu
 from mpvqc import get_settings
 from mpvqc.uihandler import MainHandler
 
-_translate = QCoreApplication.translate
-
 
 class ContextMenu(QMenu):
     """
@@ -44,8 +42,8 @@ class ContextMenu(QMenu):
 
         ct_list = get_settings().comment_types
         if not ct_list:
-            no_ct_action = _translate("CommentTypes",
-                                      "No comment types defined." + " " + "Define new comment types in the settings.")
+            no_ct_action = QCoreApplication.translate("CommentTypes",
+                                                      "No comment types defined." + " " + "Define new comment types in the settings.")
             ac = self.addAction(no_ct_action)
             ac.setEnabled(False)
         else:

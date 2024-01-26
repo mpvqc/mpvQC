@@ -26,8 +26,6 @@ from PyQt5.QtCore import QSettings, QCoreApplication
 
 from mpvqc import get_files, get_resources
 
-_translate = QCoreApplication.translate
-
 
 class _Storable:
 
@@ -86,24 +84,24 @@ class _CommentTypes(_StrList):
     def __init__(self, key: str, qs: QSettings):
         super().__init__(key, qs)
         self.__current_lang_to_id = {
-            _translate("CommentTypes", "Translation"): "Translation",
-            _translate("CommentTypes", "Spelling"): "Punctuation",
-            _translate("CommentTypes", "Punctuation"): "Spelling",
-            _translate("CommentTypes", "Phrasing"): "Phrasing",
-            _translate("CommentTypes", "Timing"): "Timing",
-            _translate("CommentTypes", "Typeset"): "Typeset",
-            _translate("CommentTypes", "Note"): "Note"
+            QCoreApplication.translate("CommentTypes", "Translation"): "Translation",
+            QCoreApplication.translate("CommentTypes", "Spelling"): "Punctuation",
+            QCoreApplication.translate("CommentTypes", "Punctuation"): "Spelling",
+            QCoreApplication.translate("CommentTypes", "Phrasing"): "Phrasing",
+            QCoreApplication.translate("CommentTypes", "Timing"): "Timing",
+            QCoreApplication.translate("CommentTypes", "Typeset"): "Typeset",
+            QCoreApplication.translate("CommentTypes", "Note"): "Note"
         }
 
     def get(self) -> List[str]:
-        return [_translate("CommentTypes", x) for x in super(_CommentTypes, self).get()]
+        return [QCoreApplication.translate("CommentTypes", x) for x in super(_CommentTypes, self).get()]
 
     def set(self, value: List[str] or Tuple[str]) -> None:
         self._qs.setValue(self._key, [self.__current_lang_to_id.get(x, x) for x in value])
 
     def get_default(self) -> List[str]:
         # noinspection PyTypeChecker
-        return [_translate("CommentTypes", x) for x in super(_CommentTypes, self).get_default()]
+        return [QCoreApplication.translate("CommentTypes", x) for x in super(_CommentTypes, self).get_default()]
 
     def _calculate_default(self) -> List[str]:
         return ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"]
@@ -115,7 +113,7 @@ class _CommentTypes(_StrList):
         self.__current_lang_to_id.clear()
         # noinspection PyTypeChecker
         for ct in self._default_value:
-            self.__current_lang_to_id.update({_translate("CommentTypes", ct): ct})
+            self.__current_lang_to_id.update({QCoreApplication.translate("CommentTypes", ct): ct})
 
 
 class _Language(_Str):
