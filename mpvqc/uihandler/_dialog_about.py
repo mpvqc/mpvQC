@@ -20,7 +20,7 @@ from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog
 
 from mpvqc import get_resources, get_metadata
-from mpvqc.ui import Ui_AboutDialog
+from mpvqc.ui_loader import init_from_resources
 
 _translate = QCoreApplication.translate
 
@@ -31,8 +31,7 @@ class AboutDialog(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.__ui = Ui_AboutDialog()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, "qrc:/data/ui/dialog_about.ui")
 
         r = get_resources()
         md = get_metadata()

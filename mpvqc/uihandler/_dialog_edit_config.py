@@ -20,7 +20,7 @@ from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
 from mpvqc import get_settings
-from mpvqc.ui import Ui_SettingsDialogEditConfig
+from mpvqc.ui_loader import init_from_resources
 
 _translate = QCoreApplication.translate
 
@@ -30,8 +30,7 @@ class _EditConfDialog(QDialog):
     def __init__(self, title: str):
         super().__init__()
 
-        self._ui = Ui_SettingsDialogEditConfig()
-        self._ui.setupUi(self)
+        self._ui = init_from_resources(self, "qrc:/data/ui/dialog_edit_config.ui")
         self._ui.title.setText(title)
 
         self._reset_button = self._ui.buttonBox.addButton(QDialogButtonBox.Reset)

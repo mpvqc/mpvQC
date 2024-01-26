@@ -17,14 +17,13 @@ from PyQt5.QtCore import Qt, pyqtSignal, QEvent, pyqtSlot, QCoreApplication
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtWidgets import QWidget
 
-from mpvqc.ui import Ui_SearchForm
+from mpvqc.ui_loader import init_from_resources
 from mpvqc.uiutil import SpecialCharacterValidator
 
 _translate = QCoreApplication.translate
 
 
 class SearchHandler(QWidget):
-
     sig_shown = pyqtSignal()
     sig_hidden = pyqtSignal()
 
@@ -36,8 +35,7 @@ class SearchHandler(QWidget):
 
     def __init__(self, main_handler):
         super().__init__(parent=main_handler)
-        self.__ui = Ui_SearchForm()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, "qrc:/data/ui/search_form.ui")
 
         self.__ui_label_search_result = self.__ui.searchResultLabel
 

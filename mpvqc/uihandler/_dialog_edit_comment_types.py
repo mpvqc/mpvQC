@@ -17,15 +17,14 @@ from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
 from mpvqc import get_settings
-from mpvqc.ui import Ui_CommentTypesDialog
+from mpvqc.ui_loader import init_from_resources
 
 
 class EditCommentTypesDialog(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.__ui = Ui_CommentTypesDialog()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, "qrc:/data/ui/dialog_edit_comment_types.ui")
 
         self.reset_button = self.__ui.buttonBox.addButton(QDialogButtonBox.Reset)
         self.reset_button.clicked.connect(self.reset)

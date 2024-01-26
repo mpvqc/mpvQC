@@ -20,7 +20,7 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from mpvqc import get_settings, get_resources
-from mpvqc.ui import Ui_MainWindow
+from mpvqc.ui_loader import init_from_resources
 from mpvqc.uihandler._search_form import SearchHandler
 from mpvqc.uiutil import SUPPORTED_SUB_FILES, dialogs
 
@@ -37,9 +37,7 @@ class MainHandler(QMainWindow):
         self.application = application
         self.setAcceptDrops(True)
 
-        # User interface setup
-        self.__ui = Ui_MainWindow()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, "qrc:/data/ui/main_window.ui")
 
         # Widgets
         from mpvqc.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
