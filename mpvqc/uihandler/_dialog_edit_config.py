@@ -27,7 +27,7 @@ class _EditConfDialog(QDialog):
     def __init__(self, title: str):
         super().__init__()
 
-        self._ui = init_from_resources(self, "qrc:/data/ui/dialog_edit_config.ui")
+        self._ui = init_from_resources(self, ":/data/xml/dialog_edit_config.xml")
         self._ui.title.setText(title)
 
         self._reset_button = self._ui.buttonBox.addButton(QDialogButtonBox.Reset)

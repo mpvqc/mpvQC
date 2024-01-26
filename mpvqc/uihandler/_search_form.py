@@ -33,7 +33,7 @@ class SearchHandler(QWidget):
 
     def __init__(self, main_handler):
         super().__init__(parent=main_handler)
-        self.__ui = init_from_resources(self, "qrc:/data/ui/search_form.ui")
+        self.__ui = init_from_resources(self, ":/data/xml/search_form.xml")
 
         self.__ui_label_search_result = self.__ui.searchResultLabel
 
@@ -87,7 +87,7 @@ class SearchHandler(QWidget):
         e_type = e.type()
 
         if e_type == QEvent.LanguageChange:
-            self.__ui.retranslateUi(None)
+            self.__ui.retranslateUi()
             self.on_search_highlight_changed(self.__current, self.__total)
 
     def hide(self):
@@ -116,3 +116,11 @@ class SearchHandler(QWidget):
             info = ""
 
         self.__ui_label_search_result.setText(info)
+
+    def retranslateUi(self):
+        self.searchLineEdit.setPlaceholderText(QCoreApplication.translate("SearchForm", u"Search...", None))
+        self.previousButton.setText(QCoreApplication.translate("SearchForm", u"Previous", None))
+        self.nextButton.setText(QCoreApplication.translate("SearchForm", u"Next", None))
+        self.searchResultLabel.setText("")
+        self.searchCloseButton.setText(QCoreApplication.translate("SearchForm", u"Close", None))
+        pass

@@ -24,7 +24,7 @@ class EditCommentTypesDialog(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.__ui = init_from_resources(self, "qrc:/data/ui/dialog_edit_comment_types.ui")
+        self.__ui = init_from_resources(self, ":/data/xml/dialog_edit_comment_types.xml")
 
         self.reset_button = self.__ui.buttonBox.addButton(QDialogButtonBox.Reset)
         self.reset_button.clicked.connect(self.reset)

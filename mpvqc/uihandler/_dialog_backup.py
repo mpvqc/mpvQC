@@ -33,7 +33,7 @@ class DialogBackup(QDialog):
         self.__qc_manager = qc_manager
         self.__backup_directory = str(get_files().dir_backup)
 
-        self.__ui = init_from_resources(self, "qrc:/data/ui/dialog_backup.ui")
+        self.__ui = init_from_resources(self, ":/data/xml/dialog_backup.xml")
 
         s = get_settings()
         self.__ui.checkBox.setChecked(s.backup_enabled)

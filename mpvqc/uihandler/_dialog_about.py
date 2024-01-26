@@ -29,7 +29,7 @@ class AboutDialog(QDialog):
 
     def __init__(self):
         super().__init__()
-        self.__ui = init_from_resources(self, "qrc:/data/ui/dialog_about.ui")
+        self.__ui = init_from_resources(self, ":/data/xml/dialog_about.xml")
 
         r = get_resources()
         md = get_metadata()
