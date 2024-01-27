@@ -19,7 +19,7 @@ PYTHON := PYTHON_DIR + if os_family() == 'windows' { '/python.exe' } else { '/py
 # https://github.com/linuxdeepin/deepin-system-monitor/issues/22
 
 TOOL_CLI_LUPDATE := PYTHON_DIR + '/pyside6-lupdate'
-TOOL_CLI_LRELEASE := 'lrelease-qt5'
+TOOL_CLI_LRELEASE := 'lrelease'
 TOOL_CLI_RCC := PYTHON_DIR + '/pyrcc5'
 
 
