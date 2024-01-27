@@ -35,7 +35,7 @@ NAME_DIRECTORY_DATA := 'data'
 NAME_DIRECTORY_I18N := 'i18n'
 NAME_DIRECTORY_PY_SOURCES := 'mpvqc'
 
-NAME_FILE_MAIN_ENTRY := 'start.py'
+NAME_FILE_MAIN_ENTRY := 'main.py'
 NAME_FILE_GENERATED_RESOURCES := '_resources_rc.py'
 
 #####                      #####
