@@ -58,7 +58,7 @@ class Resources:
         return self.__get_file_content(":/data/html/" + file_name)
 
     def get_license(self):
-        return self.__get_file_content(":/LICENSE")
+        return self.__get_file_content(":/data/html/license.html")
 
 
 class _Holder:
