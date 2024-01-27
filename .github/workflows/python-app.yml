@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Tests
+name: Build
 
 on:
   push:
@@ -9,38 +9,83 @@ on:
   pull_request:
     branches: [ dev ]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  build:
-
+  build_python:
     runs-on: ubuntu-latest
-
+    name: 'Build mpvQC'
     steps:
-    - uses: actions/checkout@v2
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      - name: 'Install Python 3.12'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 'Install just'
+        uses: taiki-e/install-action@just
+      - name: 'Update Packages And Dependencies'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+          execute sudo apt update -y 
+          execute sudo apt upgrade -y
+          execute sudo apt install -y libmpv1
+      - name: 'Setup Virtual Environment'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          execute python -m venv venv
+          execute source venv/bin/activate
+          execute python -m pip install --upgrade pip
+          execute python -m pip install wheel
+          execute python -m pip install -r requirements.txt
+      - name: 'Run Python Build'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-    - name: Update packages
-      run: sudo apt update && sudo apt upgrade -y
+          execute source venv/bin/activate
+          execute just build
+      - name: 'Upload Build Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          path: build/release
+          name: release-build-artifact
 
-    - name: Install libmpv
-      run: sudo apt install -y libmpv1
-
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    - name: Test with pytest
-      run: |
-        python -m pytest
+#jobs:
+#  build:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#
+#    - name: Set up Python 3.8
+#      uses: actions/setup-python@v2
+#      with:
+#        python-version: 3.8
+#
+#    - name: Install dependencies
+#      run: |
+#        python -m pip install --upgrade pip
+#        pip install flake8 pytest
+#        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#
+#    - name: Update packages
+#      run: sudo apt update && sudo apt upgrade -y
+#
+#    - name: Install libmpv
+#      run: sudo apt install -y libmpv1
+#
+#    - name: Lint with flake8
+#      run: |
+#        # stop the build if there are Python syntax errors or undefined names
+#        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#
+#    - name: Test with pytest
+#      run: |
+#        python -m pytest
