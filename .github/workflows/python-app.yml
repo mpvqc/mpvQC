@@ -94,12 +94,12 @@ jobs:
             --add-data "LICENSE;." \
             --noconsole \
             build/release/main.py
-#      - name: 'Remove Redundant Binaries'
-#        run: |
-#          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-#
-#          execute find dist/mpvQC -type f -name 'Qt6WebEngineCore.dll' -delete
-#          execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
+      - name: 'Remove Redundant Files'
+        run: | # todo ignore more dlls to shrink final artifact size
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
+          # execute find dist/mpvQC -type f -name 'Qt6WebEngineCore.dll' -delete
       - name: 'Make Archive Portable'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
