@@ -27,7 +27,6 @@
 import argparse
 import sys
 from pathlib import Path
-from textwrap import dedent
 
 
 class ArgumentValidator:
@@ -46,7 +45,7 @@ class ArgumentValidator:
             sys.exit(1)
 
 
-class ProjectFileGenerator:
+class QrcFileGenerator:
     _files = []
 
     def __init__(self, root_dir: Path):
@@ -64,7 +63,7 @@ class ProjectFileGenerator:
     def generate_qrc_file(self, qrc_file: Path):
         files = "".join([f"<file>{file}</file>" for file in self._files])
 
-        template = dedent(f"""<!DOCTYPE RCC><RCC version="1.0"><qresource>{files}</qresource></RCC>""").strip("\n")
+        template = f"<!DOCTYPE RCC><RCC version=\"1.0\"><qresource>{files}</qresource></RCC>"
 
         qrc_file.write_text(template, encoding='utf-8')
 
@@ -86,7 +85,7 @@ def run(args):
     validator.validate_directory(root_dir, name='Root directory')
     validator.break_on_errors()
 
-    generator = ProjectFileGenerator(root_dir=root_dir)
+    generator = QrcFileGenerator(root_dir=root_dir)
     generator.glob_files()
     generator.make_files_relative()
     generator.sort_files()
