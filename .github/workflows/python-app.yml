@@ -134,7 +134,7 @@ jobs:
         shell: pwsh
         run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "mpvQC-build-win.zip"
       - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "mpvQC-build-win-x86_64"
           path: "mpvQC-build-win.zip"
