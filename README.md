@@ -16,7 +16,6 @@
 - PyQt5
 - [python-mpv](https://github.com/jaseg/python-mpv) (AGPLv3) (already included in this repository)
 - [libmpv](https://github.com/mpv-player/mpv) (0.29.0 or later)
-- [distutils_ui](https://github.com/frispete/distutils_ui) for developing
 
 ## Installation
 
@@ -26,9 +25,20 @@ For portable Windows binaries please look [here](https://mpvqc.github.io/).
 
 ### Linux
 
-For Linux there is a little work required to get the application up and running.  
-For Ubuntu 20.04 we have listed all steps [here](docs/dev-environment-setup.md).  
-Other distributions behave similarly, but package names vary.
+For Linux there is a little work required to get the application up and running which also involves using the terminal.
+
+1. Make sure you have `PyQt5`, and `libmpv` packages installed
+1. First download the *release-build-artifact* from the release page
+1. Unzip the *release-build-artifact* file
+1. Navigate to the unzipped directory and run the following command.
+   This will tell mpvQC to store settings and backups in this directory.
+   ```shell
+   touch portable
+   ```
+1. Start the application
+   ```shell
+   python main.py 
+   ```
 
 ## Keybindings
 
