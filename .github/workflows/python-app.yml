@@ -7,7 +7,7 @@ on:
   push:
     branches: [ '**' ]
   pull_request:
-    branches: [ dev ]
+    branches: [ '**' ]
 
 defaults:
   run:
@@ -95,17 +95,30 @@ jobs:
             --noconsole \
             build/release/main.py
       - name: 'Remove Redundant Files'
-        run: | # todo ignore more dlls to shrink final artifact size
+        run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
+          execute find dist/mpvQC -type d -name 'qml' -exec rm -r {} \;
+
           execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
-          # execute find dist/mpvQC -type f -name 'Qt6WebEngineCore.dll' -delete
+          execute find dist/mpvQC -type f -name 'd3dcompiler*.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Designer.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Quick.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Qml.dll' -delete
+          execute find dist/mpvQC -type f -name 'libGLES*.dll' -delete
+          execute find dist/mpvQC -type f -name 'libcrypto*' -delete
+          execute find dist/mpvQC -type f -name 'Qt5XmlPatterns.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Network.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Quick3DRuntimeRender.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5QuickTemplates*.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Multimedia.dll' -delete
+          execute find dist/mpvQC -type f -name 'Qt5Location.dll' -delete
+          execute find dist/mpvQC -type f -name 'libeay*.dll' -delete
       - name: 'Make Archive Portable'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute touch dist/mpvQC/_internal/portable
-
       - name: 'Package libmpv'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
