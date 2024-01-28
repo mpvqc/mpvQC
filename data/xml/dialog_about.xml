@@ -84,6 +84,9 @@
        </property>
        <item>
         <widget class="QTextBrowser" name="aboutTextBrowser">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="acceptDrops">
           <bool>false</bool>
          </property>
@@ -92,16 +95,16 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:10pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="searchPaths">
           <stringlist notr="true"/>
          </property>
          <property name="openExternalLinks">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="openLinks">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -146,7 +149,7 @@ p, li { white-space: pre-wrap; }
           <stringlist notr="true"/>
          </property>
          <property name="openExternalLinks">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="openLinks">
           <bool>false</bool>
@@ -191,10 +194,10 @@ p, li { white-space: pre-wrap; }
           <stringlist notr="true"/>
          </property>
          <property name="openExternalLinks">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="openLinks">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>

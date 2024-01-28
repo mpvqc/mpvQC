@@ -15,8 +15,6 @@
 
 import platform
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtWidgets import QDialog
 
 from mpvqc import get_resources, get_metadata
@@ -34,15 +32,10 @@ class AboutDialog(QDialog):
         r = get_resources()
         md = get_metadata()
 
-        self.__ui.creditsTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
         self.__ui.creditsTextBrowser.setHtml(r.get_content_html_file("credits.html"))
 
-        self.__ui.licenceTextBrowser.setTextInteractionFlags(Qt.TextBrowserInteraction)
-        self.__ui.licenceTextBrowser.setText(r.get_license())
-        self.__ui.licenceTextBrowser.setFont(QFontDatabase.systemFont(QFontDatabase.FixedFont))
+        self.__ui.licenceTextBrowser.setHtml(r.get_license())
 
-        self.__ui.aboutTextBrowser.setOpenExternalLinks(True)
-        self.__ui.aboutTextBrowser.setTextInteractionFlags(Qt.NoTextInteraction)
         self.__ui.aboutTextBrowser.setHtml(r.get_content_html_file("about.html").format(
             version=md.app_version,
             platform=platform.architecture()[0],
