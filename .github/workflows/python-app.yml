@@ -98,7 +98,7 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute find dist/mpvQC -type d -name 'qml' -exec rm -r {} \;
+          execute rm -rf dist/mpvQC/_internal/PyQt5/Qt5/qml
 
           execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
           execute find dist/mpvQC -type f -name 'd3dcompiler*.dll' -delete
