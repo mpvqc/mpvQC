@@ -106,7 +106,6 @@ jobs:
           execute find dist/mpvQC -type f -name 'Qt5Quick.dll' -delete
           execute find dist/mpvQC -type f -name 'Qt5Qml.dll' -delete
           execute find dist/mpvQC -type f -name 'libGLES*.dll' -delete
-          execute find dist/mpvQC -type f -name 'libcrypto*' -delete
           execute find dist/mpvQC -type f -name 'Qt5XmlPatterns.dll' -delete
           execute find dist/mpvQC -type f -name 'Qt5Network.dll' -delete
           execute find dist/mpvQC -type f -name 'Qt5Quick3DRuntimeRender.dll' -delete
