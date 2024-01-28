@@ -49,7 +49,7 @@ jobs:
           execute source venv/bin/activate
           execute just build
       - name: 'Upload Build Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: build/release
           name: release-build-artifact
@@ -63,7 +63,7 @@ jobs:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
       - name: 'Download Build Artifact'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: build/release
           name: release-build-artifact
