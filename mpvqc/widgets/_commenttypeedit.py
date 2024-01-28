@@ -54,7 +54,7 @@ class PreferenceCommentTypesWidget(QObject):
 
         self.__line_edit = line_edit
         self.__line_edit.textChanged.connect(lambda txt, fun=self.__on_text_changed_line_edit: fun(txt))
-        self.__line_edit.setValidator(QRegExpValidator(QRegExp("[^\[\]]*")))
+        self.__line_edit.setValidator(QRegExpValidator(QRegExp("[^\\[\\]]*")))
 
         self.__list_widget = list_widget
         self.__list_widget.selectionModel().selectionChanged.connect(

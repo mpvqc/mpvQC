@@ -20,8 +20,6 @@ from PyQt5.QtWidgets import QInputDialog, QMenu, QActionGroup, QAction
 
 from mpvqc import get_settings
 
-_translate = QCoreApplication.translate
-
 
 class _Settings:
 
@@ -37,8 +35,8 @@ class _Settings:
 
         dialog = QInputDialog(parent)
         dialog.setInputMode(QInputDialog.TextInput)
-        dialog.setWindowTitle(_translate("SettingsDialogNickname", "Edit Nickname"))
-        dialog.setLabelText(_translate("SettingsDialogNickname", "New nickname:"))
+        dialog.setWindowTitle(QCoreApplication.translate("SettingsDialogNickname", "Edit Nickname"))
+        dialog.setLabelText(QCoreApplication.translate("SettingsDialogNickname", "New nickname:"))
         dialog.resize(400, 0)
         dialog.setTextValue(s.export_nickname)
 
@@ -82,11 +80,11 @@ class _Settings:
         s = get_settings()
 
         languages = {
-            "English": ("en", _translate("LanguageSelection", "English")),
-            "German": ("de", _translate("LanguageSelection", "German")),
-            "Hebrew": ("he", _translate("LanguageSelection", "Hebrew")),
-            "Italian": ("it", _translate("LanguageSelection", "Italian")),
-            "Spanish": ("es", _translate("LanguageSelection", "Spanish")),
+            "English": ("en", QCoreApplication.translate("LanguageSelection", "English")),
+            "German": ("de", QCoreApplication.translate("LanguageSelection", "German")),
+            "Hebrew": ("he", QCoreApplication.translate("LanguageSelection", "Hebrew")),
+            "Italian": ("it", QCoreApplication.translate("LanguageSelection", "Italian")),
+            "Spanish": ("es", QCoreApplication.translate("LanguageSelection", "Spanish")),
         }
 
         menu.clear()
@@ -96,7 +94,7 @@ class _Settings:
             callback()
 
         for english, _tuple in languages.items():
-            action = menu.addAction(_translate("LanguageSelection", english))
+            action = menu.addAction(QCoreApplication.translate("LanguageSelection", english))
             action.setIconVisibleInMenu(True)
             action.setCheckable(True)
             action.setChecked(s.language == _tuple[0])
@@ -112,7 +110,7 @@ class _Settings:
         from mpvqc.uihandler import EditConfDialogMpvConf
 
         dialog = EditConfDialogMpvConf("mpv.conf")
-        dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit mpv.conf"))
+        dialog.setWindowTitle(QCoreApplication.translate("SettingsDialogEditConfig", "Edit mpv.conf"))
         dialog.exec_()
 
     @staticmethod
@@ -120,7 +118,7 @@ class _Settings:
         from mpvqc.uihandler import EditConfDialogInputConf
 
         dialog = EditConfDialogInputConf("input.conf")
-        dialog.setWindowTitle(_translate("SettingsDialogEditConfig", "Edit input.conf"))
+        dialog.setWindowTitle(QCoreApplication.translate("SettingsDialogEditConfig", "Edit input.conf"))
         dialog.exec_()
 
     @staticmethod

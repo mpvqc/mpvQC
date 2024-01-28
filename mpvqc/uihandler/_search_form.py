@@ -17,14 +17,11 @@ from PyQt5.QtCore import Qt, pyqtSignal, QEvent, pyqtSlot, QCoreApplication
 from PyQt5.QtGui import QKeyEvent, QMouseEvent
 from PyQt5.QtWidgets import QWidget
 
-from mpvqc.ui import Ui_SearchForm
+from mpvqc.ui_loader import init_from_resources
 from mpvqc.uiutil import SpecialCharacterValidator
-
-_translate = QCoreApplication.translate
 
 
 class SearchHandler(QWidget):
-
     sig_shown = pyqtSignal()
     sig_hidden = pyqtSignal()
 
@@ -36,8 +33,7 @@ class SearchHandler(QWidget):
 
     def __init__(self, main_handler):
         super().__init__(parent=main_handler)
-        self.__ui = Ui_SearchForm()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, ":/data/xml/search_form.xml")
 
         self.__ui_label_search_result = self.__ui.searchResultLabel
 
@@ -91,7 +87,7 @@ class SearchHandler(QWidget):
         e_type = e.type()
 
         if e_type == QEvent.LanguageChange:
-            self.__ui.retranslateUi(None)
+            self.__ui.retranslateUi()
             self.on_search_highlight_changed(self.__current, self.__total)
 
     def hide(self):
@@ -111,12 +107,20 @@ class SearchHandler(QWidget):
         self.__current, self.__total = current, total
         if total > 0:
             if current == 1 and total == 1:
-                info = _translate("SearchForm", "{0} comment").format(1)
+                info = QCoreApplication.translate("SearchForm", "{0} comment").format(1)
             else:
-                info = _translate("SearchForm", "{0} of {1} comments").format(current, total)
+                info = QCoreApplication.translate("SearchForm", "{0} of {1} comments").format(current, total)
         elif current == 0 and total == 0:
-            info = _translate("SearchForm", "Phrase not found")
+            info = QCoreApplication.translate("SearchForm", "Phrase not found")
         else:
             info = ""
 
         self.__ui_label_search_result.setText(info)
+
+    def retranslateUi(self):
+        self.searchLineEdit.setPlaceholderText(QCoreApplication.translate("SearchForm", u"Search...", None))
+        self.previousButton.setText(QCoreApplication.translate("SearchForm", u"Previous", None))
+        self.nextButton.setText(QCoreApplication.translate("SearchForm", u"Next", None))
+        self.searchResultLabel.setText("")
+        self.searchCloseButton.setText(QCoreApplication.translate("SearchForm", u"Close", None))
+        pass

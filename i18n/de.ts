@@ -488,13 +488,10 @@
         <source>Imported Document Not Compatible</source>
         <translation>Importiertes QC-Dokument ungültig</translation>
     </message>
-    <message numerus="yes">
+    <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="109"/>
-        <source>The following file(s) are not compatible:</source>
-        <translation>
-            <numerusform>Die folgende Datei ist kein gültiges QC-Dokument:</numerusform>
-            <numerusform>Die folgenden Dateien sind keine gültigen QC-Dokumente:</numerusform>
-        </translation>
+        <source>The following files are not compatible:</source>
+        <translation>Die folgenden Dateien sind keine gültigen QC-Dokumente:</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="123"/>

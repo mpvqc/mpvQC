@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import QDialog
 
 from mpvqc import get_settings, get_files
 from mpvqc.manager import QcManager
-from mpvqc.ui import Ui_BackupDialog
+from mpvqc.ui_loader import init_from_resources
 
 
 class DialogBackup(QDialog):
@@ -33,8 +33,7 @@ class DialogBackup(QDialog):
         self.__qc_manager = qc_manager
         self.__backup_directory = str(get_files().dir_backup)
 
-        self.__ui = Ui_BackupDialog()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, ":/data/xml/dialog_backup.xml")
 
         s = get_settings()
         self.__ui.checkBox.setChecked(s.backup_enabled)

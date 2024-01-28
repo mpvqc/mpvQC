@@ -23,11 +23,11 @@ from typing import Optional, List, Tuple
 from mpvqc.manager import Comment
 from mpvqc.uiutil import replace_special_characters
 
-_REGEX_PATH = re.compile("^path\s*:*\s*")
-_REGEX_LINE = re.compile("^\[\d{2}:\d{2}:\d{2}\]\s*\[[^\[\]]*\]\s*.*$")
+_REGEX_PATH = re.compile(r"^path\s*:*\s*")
+_REGEX_LINE = re.compile(r"^\[\d{2}:\d{2}:\d{2}\]\s*\[[^\[\]]*\]\s*.*$")
 
 # Used to find the first two columns
-_REGEX_COLUMN = re.compile("\[[^\[\]]*\]")
+_REGEX_COLUMN = re.compile(r"\[[^\[\]]*\]")
 
 # If a file is a valid qc document is determined if line (stripped) 1 starts with '[FILE]'.
 QC_DOCUMENT_HEADER = "[FILE]"

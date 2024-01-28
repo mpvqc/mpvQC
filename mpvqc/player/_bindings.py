@@ -4,20 +4,25 @@
 # Python MPV library module
 # Copyright (C) 2017-2022 Sebastian Götte <code@jaseg.net>
 #
-# This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
-# License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later
-# version.
+# python-mpv inherits the underlying libmpv's license, which can be either GPLv2 or later (default) or LGPLv2.1 or
+# later. For details, see the mpv copyright page here: https://github.com/mpv-player/mpv/blob/master/Copyright
 #
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+# You may copy, modify, and redistribute this file under the terms of the GNU General Public License version 2 (or, at
+# your option, any later version), or the GNU Lesser General Public License as published by the Free Software
+# Foundation; either version 2.1 of the License, or (at your option) any later version.
 #
-# You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
-# Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License and the GNU
+# Lesser General Public License for more details.
 #
+# You can find copies of the GPLv2 and LGPLv2.1 licenses in the project repository's LICENSE.GPL and LICENSE.LGPL files.
+
+__version__ = '1.0.5'
 
 from ctypes import *
 import ctypes.util
 import threading
+import queue
 import os
 import sys
 from warnings import warn
@@ -30,12 +35,11 @@ import traceback
 
 if os.name == 'nt':
     # Note: mpv-2.dll with API version 2 corresponds to mpv v0.35.0. Most things should work with the fallback, too.
-    dll = ctypes.util.find_library('mpv-2.dll') or ctypes.util.find_library('mpv-1.dll')
+    dll = ctypes.util.find_library('mpv-2.dll') or ctypes.util.find_library('libmpv-2.dll') or ctypes.util.find_library(
+        'mpv-1.dll')
     if dll is None:
-        raise OSError('Cannot find mpv-1.dll or mpv-2.dll in your system %PATH%. One way to deal with this is to ship '
-                      'the dll with your script and put the directory your script is in into %PATH% before '
-                      '"import mpv": os.environ["PATH"] = os.path.dirname(__file__) + os.pathsep + os.environ["PATH"] '
-                      'If mpv-1.dll is located elsewhere, you can add that path to os.environ["PATH"].')
+        raise OSError(
+            'Cannot find mpv-1.dll, mpv-2.dll or libmpv-2.dll in your system %PATH%. One way to deal with this is to ship the dll with your script and put the directory your script is in into %PATH% before "import mpv": os.environ["PATH"] = os.path.dirname(__file__) + os.pathsep + os.environ["PATH"] If mpv-1.dll is located elsewhere, you can add that path to os.environ["PATH"].')
     backend = CDLL(dll)
     fs_enc = 'utf-8'
 else:
@@ -48,10 +52,8 @@ else:
 
     sofile = ctypes.util.find_library('mpv')
     if sofile is None:
-        raise OSError("Cannot find libmpv in the usual places. Depending on your distro, you may try installing an "
-                      "mpv-devel or mpv-libs package. If you have libmpv around but this script can't find it, consult "
-                      "the documentation for ctypes.util.find_library which this script uses to look up the library "
-                      "filename.")
+        raise OSError(
+            "Cannot find libmpv in the usual places. Depending on your distro, you may try installing an mpv-devel or mpv-libs package. If you have libmpv around but this script can't find it, consult the documentation for ctypes.util.find_library which this script uses to look up the library filename.")
     backend = CDLL(sofile)
     fs_enc = sys.getfilesystemencoding()
 
@@ -308,7 +310,7 @@ class MpvEventID(c_int):
            FILE_LOADED, CLIENT_MESSAGE, VIDEO_RECONFIG, AUDIO_RECONFIG, SEEK, PLAYBACK_RESTART, PROPERTY_CHANGE)
 
     def __repr__(self):
-        return f'<MpvEventID {self.value} (_mpv_event_name(self.value).decode("utf-8"))>'
+        return f'<MpvEventID {self.value} {_mpv_event_name(self.value).decode("utf-8")}>'
 
     @classmethod
     def from_str(kls, s):
@@ -465,8 +467,13 @@ class MpvEventLogMessage(Structure):
 
 
 class MpvEventEndFile(Structure):
-    _fields_ = [('reason', c_int),
-                ('error', c_int)]
+    _fields_ = [
+        ('reason', c_int),
+        ('error', c_int),
+        ('playlist_entry_id', c_ulonglong),
+        ('playlist_insert_id', c_ulonglong),
+        ('playlist_insert_num_entries', c_int),
+    ]
 
     EOF = 0
     RESTARTED = 1
@@ -577,6 +584,12 @@ def _mpv_client_api_version():
     ver = backend.mpv_client_api_version()
     return ver >> 16, ver & 0xFFFF
 
+
+MPV_VERSION = _mpv_client_api_version()
+if MPV_VERSION < (1, 108):
+    ver = '.'.join(str(num) for num in MPV_VERSION)
+    raise RuntimeError(
+        f"python-mpv requires libmpv with an API version of 1.108 or higher (libmpv >= 0.33), but you have an older version ({ver}).")
 
 backend.mpv_free.argtypes = [c_void_p]
 _mpv_free = backend.mpv_free
@@ -924,6 +937,7 @@ class MPV(object):
         self.register_stream_protocol('python', self._python_stream_open)
         self._python_streams = {}
         self._python_stream_catchall = None
+        self._exception_futures = set()
         self.overlay_ids = set()
         self.overlays = {}
         if loglevel is not None or log_handler is not None:
@@ -935,6 +949,20 @@ class MPV(object):
         else:
             self._event_thread = None
 
+    @contextmanager
+    def _enqueue_exceptions(self):
+        try:
+            yield
+        except Exception as e:
+            for fut in self._exception_futures:
+                try:
+                    fut.set_exception(e)
+                    break
+                except InvalidStateError:
+                    pass
+            else:
+                warn(f'Unhandled exception on python-mpv event loop: {e}\n{traceback.format_exc()}', RuntimeWarning)
+
     def _loop(self):
         for event in _event_generator(self._event_handle):
             try:
@@ -945,47 +973,53 @@ class MPV(object):
                         self._core_shutdown = True
 
                 for callback in self._event_callbacks:
-                    callback(event)
+                    with self._enqueue_exceptions():
+                        callback(event)
 
                 if eid == MpvEventID.PROPERTY_CHANGE:
                     pc = event.data
                     name, value, _fmt = pc.name, pc.value, pc.format
                     for handler in self._property_handlers[name]:
-                        handler(name, value)
+                        with self._enqueue_exceptions():
+                            handler(name, value)
 
                 if eid == MpvEventID.LOG_MESSAGE and self._log_handler is not None:
                     ev = event.data
-                    self._log_handler(ev.level, ev.prefix, ev.text)
+                    with self._enqueue_exceptions():
+                        self._log_handler(ev.level, ev.prefix, ev.text)
 
                 if eid == MpvEventID.CLIENT_MESSAGE:
                     # {'event': {'args': ['key-binding', 'foo', 'u-', 'g']}, 'reply_userdata': 0, 'error': 0, 'event_id': 16}
                     target, *args = event.data.args
                     target = target.decode("utf-8")
                     if target in self._message_handlers:
-                        self._message_handlers[target](*args)
+                        with self._enqueue_exceptions():
+                            self._message_handlers[target](*args)
 
                 if eid == MpvEventID.COMMAND_REPLY:
                     key = event.reply_userdata
                     callback = self._command_reply_callbacks.pop(key, None)
                     if callback:
-                        callback(ErrorCode.exception_for_ec(event.error), event.data)
+                        with self._enqueue_exceptions():
+                            callback(ErrorCode.exception_for_ec(event.error), event.data)
 
                 if eid == MpvEventID.QUEUE_OVERFLOW:
                     # cache list, since error handlers will unregister themselves
                     for cb in list(self._command_reply_callbacks.values()):
-                        cb(EventOverflowError(
-                            'libmpv event queue has flown over because events have not been processed fast enough'),
-                           None)
+                        with self._enqueue_exceptions():
+                            cb(EventOverflowError(
+                                'libmpv event queue has flown over because events have not been processed fast enough'),
+                               None)
 
                 if eid == MpvEventID.SHUTDOWN:
                     _mpv_destroy(self._event_handle)
                     for cb in list(self._command_reply_callbacks.values()):
-                        cb(ShutdownError('libmpv core has been shutdown'), None)
+                        with self._enqueue_exceptions():
+                            cb(ShutdownError('libmpv core has been shutdown'), None)
                     return
 
             except Exception as e:
-                print('Exception inside python-mpv event loop:', file=sys.stderr)
-                traceback.print_exc()
+                warn(f'Unhandled {e} inside python-mpv event loop!\n{traceback.format_exc()}', RuntimeWarning)
 
     @property
     def core_shutdown(self):
@@ -999,35 +1033,36 @@ class MPV(object):
         if self._core_shutdown:
             raise ShutdownError('libmpv core has been shutdown')
 
-    def wait_until_paused(self, timeout=None):
+    def wait_until_paused(self, timeout=None, catch_errors=True):
         """Waits until playback of the current title is paused or done. Raises a ShutdownError if the core is shutdown while
         waiting."""
-        self.wait_for_property('core-idle', timeout=timeout)
+        self.wait_for_property('core-idle', timeout=timeout, catch_errors=catch_errors)
 
-    def wait_for_playback(self, timeout=None):
+    def wait_for_playback(self, timeout=None, catch_errors=True):
         """Waits until playback of the current title is finished. Raises a ShutdownError if the core is shutdown while
         waiting.
         """
-        self.wait_for_event('end_file', timeout=timeout)
+        self.wait_for_event('end_file', timeout=timeout, catch_errors=catch_errors)
 
-    def wait_until_playing(self, timeout=None):
+    def wait_until_playing(self, timeout=None, catch_errors=True):
         """Waits until playback of the current title has started. Raises a ShutdownError if the core is shutdown while
         waiting."""
-        self.wait_for_property('core-idle', lambda idle: not idle, timeout=timeout)
+        self.wait_for_property('core-idle', lambda idle: not idle, timeout=timeout, catch_errors=catch_errors)
 
-    def wait_for_property(self, name, cond=lambda val: val, level_sensitive=True, timeout=None):
+    def wait_for_property(self, name, cond=lambda val: val, level_sensitive=True, timeout=None, catch_errors=True):
         """Waits until ``cond`` evaluates to a truthy value on the named property. This can be used to wait for
         properties such as ``idle_active`` indicating the player is done with regular playback and just idling around.
         Raises a ShutdownError when the core is shutdown while waiting.
         """
-        with self.prepare_and_wait_for_property(name, cond, level_sensitive, timeout=timeout) as result:
+        with self.prepare_and_wait_for_property(name, cond, level_sensitive, timeout=timeout,
+                                                catch_errors=catch_errors) as result:
             pass
         return result.result()
 
-    def wait_for_shutdown(self, timeout=None):
+    def wait_for_shutdown(self, timeout=None, catch_errors=True):
         '''Wait for core to shutdown (e.g. through quit() or terminate()).'''
         try:
-            self.wait_for_event(None, timeout=timeout)
+            self.wait_for_event(None, timeout=timeout, catch_errors=catch_errors)
         except ShutdownError:
             return
 
@@ -1047,7 +1082,8 @@ class MPV(object):
         return shutdown_handler.unregister_mpv_events
 
     @contextmanager
-    def prepare_and_wait_for_property(self, name, cond=lambda val: val, level_sensitive=True, timeout=None):
+    def prepare_and_wait_for_property(self, name, cond=lambda val: val, level_sensitive=True, timeout=None,
+                                      catch_errors=True):
         """Context manager that waits until ``cond`` evaluates to a truthy value on the named property. See
         prepare_and_wait_for_event for usage.
         Raises a ShutdownError when the core is shutdown while waiting. Re-raises any errors inside ``cond``.
@@ -1072,6 +1108,9 @@ class MPV(object):
 
         try:
             result.set_running_or_notify_cancel()
+            if catch_errors:
+                self._exception_futures.add(result)
+
             yield result
 
             rv = cond(getattr(self, name.replace('-', '_')))
@@ -1084,18 +1123,20 @@ class MPV(object):
         finally:
             err_unregister()
             self.unobserve_property(name, observer)
+            self._exception_futures.discard(result)
 
-    def wait_for_event(self, *event_types, cond=lambda evt: True, timeout=None):
+    def wait_for_event(self, *event_types, cond=lambda evt: True, timeout=None, catch_errors=True):
         """Waits for the indicated event(s). If cond is given, waits until cond(event) is true. Raises a ShutdownError
         if the core is shutdown while waiting. This also happens when 'shutdown' is in event_types. Re-raises any error
         inside ``cond``.
         """
-        with self.prepare_and_wait_for_event(*event_types, cond=cond, timeout=timeout) as result:
+        with self.prepare_and_wait_for_event(*event_types, cond=cond, timeout=timeout,
+                                             catch_errors=catch_errors) as result:
             pass
         return result.result()
 
     @contextmanager
-    def prepare_and_wait_for_event(self, *event_types, cond=lambda evt: True, timeout=None):
+    def prepare_and_wait_for_event(self, *event_types, cond=lambda evt: True, timeout=None, catch_errors=True):
         """Context manager that waits for the indicated event(s) like wait_for_event after running. If cond is given,
         waits until cond(event) is true. Raises a ShutdownError if the core is shutdown while waiting. This also happens
         when 'shutdown' is in event_types. Re-raises any error inside ``cond``.
@@ -1113,7 +1154,6 @@ class MPV(object):
 
         @self.event_callback(*event_types)
         def target_handler(evt):
-
             try:
                 rv = cond(evt)
                 if rv:
@@ -1130,13 +1170,18 @@ class MPV(object):
 
         try:
             result.set_running_or_notify_cancel()
+            if catch_errors:
+                self._exception_futures.add(result)
+
             yield result
+
             self.check_core_alive()
             result.result(timeout)
 
         finally:
             err_unregister()
             target_handler.unregister_mpv_events()
+            self._exception_futures.discard(result)
 
     def __del__(self):
         if self.handle:
@@ -1443,7 +1488,7 @@ class MPV(object):
         """Mapped mpv print-text command, see man mpv(1)."""
         self.command('print-text', text)
 
-    def show_text(self, string, duration='-1', level=None):
+    def show_text(self, string, duration='-1', level=0):
         """Mapped mpv show_text command, see man mpv(1)."""
         self.command('show_text', string, duration, level)
 
@@ -1467,7 +1512,7 @@ class MPV(object):
         """Mapped mpv discnav command, see man mpv(1)."""
         self.command('discnav', command)
 
-    def mouse(x, y, button=None, mode='single'):
+    def mouse(self, x, y, button=None, mode='single'):
         """Mapped mpv mouse command, see man mpv(1)."""
         if button is None:
             self.command('mouse', x, y, mode)
@@ -1536,13 +1581,13 @@ class MPV(object):
         function decorator if no handler is given.
 
         To unregister the observer, call either of ``mpv.unobserve_property(name, handler)``,
-        ``mpv.unobserve_all_properties(handler)`` or the handler's ``unregister_mpv_properties`` attribute::
+        ``mpv.unobserve_all_properties(handler)`` or the handler's ``unobserve_mpv_properties`` attribute::
 
-            @player.observe_property('volume')
-            def my_handler(new_volume, *):
-                print("It's loud!", volume)
+            @player.property_observer('volume')
+            def my_handler(property_name, new_volume):
+                print("It's loud!", new_volume)
 
-            my_handler.unregister_mpv_properties()
+            my_handler.unobserve_mpv_properties()
 
         exit_handler is a function taking no arguments that is called when the underlying mpv handle is terminated (e.g.
         from calling MPV.terminate() or issuing a "quit" input command).
@@ -1838,32 +1883,72 @@ class MPV(object):
                     frontend = open_fn(uri.decode('utf-8'))
                 except ValueError:
                     return ErrorCode.LOADING_FAILED
+                except Exception as e:
+                    for fut in self._exception_futures:
+                        try:
+                            fut.set_exception(e)
+                            break
+                        except InvalidStateError:
+                            pass
+                    else:
+                        warnings.warn(
+                            f'Unhandled exception {e} inside stream open callback for URI {uri}\n{traceback.format_exc()}')
 
-                def read_backend(_userdata, buf, bufsize):
-                    data = frontend.read(bufsize)
-                    for i in range(len(data)):
-                        buf[i] = data[i]
-                    return len(data)
+                    return ErrorCode.LOADING_FAILED
 
                 cb_info.contents.cookie = None
+
+                def read_backend(_userdata, buf, bufsize):
+                    with self._enqueue_exceptions():
+                        data = frontend.read(bufsize)
+                        for i in range(len(data)):
+                            buf[i] = data[i]
+                        return len(data)
+                    return -1
+
                 read = cb_info.contents.read = StreamReadFn(read_backend)
-                close = cb_info.contents.close = StreamCloseFn(lambda _userdata: frontend.close())
+
+                def close_backend(_userdata):
+                    with self._enqueue_exceptions():
+                        del self._stream_protocol_frontends[proto][uri]
+                        if hasattr(frontend, 'close'):
+                            frontend.close()
+
+                close = cb_info.contents.close = StreamCloseFn(close_backend)
 
                 seek, size, cancel = None, None, None
-                if hasattr(frontend, 'seek'):
-                    seek = cb_info.contents.seek = StreamSeekFn(lambda _userdata, offx: frontend.seek(offx))
-                if hasattr(frontend, 'size') and frontend.size is not None:
-                    size = cb_info.contents.size = StreamSizeFn(lambda _userdata: frontend.size)
-                if hasattr(frontend, 'cancel'):
-                    cancel = cb_info.contents.cancel = StreamCancelFn(lambda _userdata: frontend.cancel())
 
-                # keep frontend and callbacks in memory forever (TODO)
+                if hasattr(frontend, 'seek'):
+                    def seek_backend(_userdata, offx):
+                        with self._enqueue_exceptions():
+                            return frontend.seek(offx)
+                        return ErrorCode.GENERIC
+
+                    seek = cb_info.contents.seek = StreamSeekFn(seek_backend)
+
+                if hasattr(frontend, 'size') and frontend.size is not None:
+                    def size_backend(_userdata):
+                        with self._enqueue_exceptions():
+                            return frontend.size
+                        return 0
+
+                    size = cb_info.contents.size = StreamSizeFn(size_backend)
+
+                if hasattr(frontend, 'cancel'):
+                    def cancel_backend(_userdata):
+                        with self._enqueue_exceptions():
+                            frontend.cancel()
+
+                    cancel = cb_info.contents.cancel = StreamCancelFn(cancel_backend)
+
+                # keep frontend and callbacks in memory until closed
                 frontend._registered_callbacks = [read, close, seek, size, cancel]
                 self._stream_protocol_frontends[proto][uri] = frontend
                 return 0
 
             if proto in self._stream_protocol_cbs:
                 raise KeyError('Stream protocol already registered')
+            # keep backend in memory forever
             self._stream_protocol_cbs[proto] = [open_backend]
             _mpv_stream_cb_add_ro(self.handle, proto.encode('utf-8'), c_void_p(), open_backend)
 
@@ -1946,6 +2031,56 @@ class MPV(object):
             return cb
 
         return register
+
+    @contextmanager
+    def play_context(self):
+        """ Context manager for streaming bytes straight into libmpv.
+
+        This is a convenience wrapper around python_stream. play_context returns a write method, which you can use in
+        the body of the context manager to feed libmpv bytes. All bytes you feed in with write() in the body of a single
+        call of this context manager are treated as one single file. A queue is used internally, so this function is
+        thread-safe. The queue is unlimited, so it cannot block and is safe to call from async code. You can use this
+        function to stream chunked data, e.g. from the network.
+
+        Use it like this:
+
+        with m.play_context() as write:
+            with open(TESTVID, 'rb') as f:
+                while (chunk := f.read(65536)): # Get some chunks of bytes
+                    write(chunk)
+        """
+        q = queue.Queue()
+
+        frame = sys._getframe()
+        stream_name = f'__python_mpv_play_generator_{hash(frame)}'
+        EOF = frame  # Get some unique object as EOF marker
+
+        @self.python_stream(stream_name)
+        def reader():
+            while (chunk := q.get()) is not EOF:
+                if chunk:
+                    yield chunk
+            reader.unregister()
+
+        def write(chunk):
+            q.put(chunk)
+
+        # Start playback before yielding, the first call to reader() will block until write is called at least once.
+        self.play(f'python://{stream_name}')
+        yield write
+        q.put(EOF)
+
+    def play_bytes(self, data):
+        """ Play the given bytes object as a single file. """
+        frame = sys._getframe()
+        stream_name = f'__python_mpv_play_generator_{hash(frame)}'
+
+        @self.python_stream(stream_name)
+        def reader():
+            yield data
+            reader.unregister()  # unregister itself
+
+        self.play(f'python://{stream_name}')
 
     def python_stream_catchall(self, cb):
         """ Register a catch-all python stream to be called when no name matches can be found. Use this decorator on a

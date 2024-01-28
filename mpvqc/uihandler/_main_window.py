@@ -20,11 +20,9 @@ from PyQt5.QtGui import QShowEvent, QCursor, QCloseEvent, QDragEnterEvent, QDrop
 from PyQt5.QtWidgets import QMainWindow, QApplication, QStyle, QDesktopWidget, QVBoxLayout, QWidget, QStyleFactory
 
 from mpvqc import get_settings, get_resources
-from mpvqc.ui import Ui_MainWindow
+from mpvqc.ui_loader import init_from_resources
 from mpvqc.uihandler._search_form import SearchHandler
 from mpvqc.uiutil import SUPPORTED_SUB_FILES, dialogs
-
-_translate = QCoreApplication.translate
 
 
 class MainHandler(QMainWindow):
@@ -37,9 +35,7 @@ class MainHandler(QMainWindow):
         self.application = application
         self.setAcceptDrops(True)
 
-        # User interface setup
-        self.__ui = Ui_MainWindow()
-        self.__ui.setupUi(self)
+        self.__ui = init_from_resources(self, ":/data/xml/main_window.xml")
 
         # Widgets
         from mpvqc.widgets import CommentsTable, StatusBar, MpvWidget, ContextMenu
@@ -244,7 +240,8 @@ class MainHandler(QMainWindow):
             txt = "mpvQC"
 
         self.setWindowTitle(
-            txt + " " + (_translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
+            txt + " " + (
+                QCoreApplication.translate("MainWindow", "(unsaved)") if self.__qc_manager_has_changes else ""))
 
     def __update_ui_language(self) -> None:
         r = get_resources()
@@ -264,7 +261,7 @@ class MainHandler(QMainWindow):
 
         s.comment_types_update_current_language()
         self.widget_context_menu.update_entries()
-        self.__ui.retranslateUi(self)
+        self.__ui.retranslateUi()
         self.user_settings.setup_languages(self.__ui.menuLanguage, self.__update_ui_language)
         self.widget_comments.resize_column_type_column()
         self.__update_window_title()
@@ -395,3 +392,66 @@ class MainHandler(QMainWindow):
     def __check_for_update(self):
         from mpvqc.uiutil import messageboxes
         messageboxes.CheckForUpdates().exec_()
+
+    def retranslateUi(self):
+        self.actionNewQcDocument.setText(QCoreApplication.translate("MainWindow", u"&New QC Document", None))
+#if QT_CONFIG(shortcut)
+        self.actionNewQcDocument.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+N", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionOpenQcDocuments.setText(QCoreApplication.translate("MainWindow", u"&Open QC Document(s)...", None))
+#if QT_CONFIG(shortcut)
+        self.actionOpenQcDocuments.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+O", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionSaveQcDocument.setText(QCoreApplication.translate("MainWindow", u"&Save QC Document", None))
+#if QT_CONFIG(shortcut)
+        self.actionSaveQcDocument.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+S", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionSaveQcDocumentAs.setText(QCoreApplication.translate("MainWindow", u"S&ave QC Document As...", None))
+#if QT_CONFIG(shortcut)
+        self.actionSaveQcDocumentAs.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Shift+S", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionExitMpvQc.setText(QCoreApplication.translate("MainWindow", u"&Exit mpvQC", None))
+#if QT_CONFIG(shortcut)
+        self.actionExitMpvQc.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Q", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionOpenVideoFile.setText(QCoreApplication.translate("MainWindow", u"Open &Video...", None))
+#if QT_CONFIG(shortcut)
+        self.actionOpenVideoFile.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Shift+O", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionOpenNetworkStream.setText(QCoreApplication.translate("MainWindow", u"Open &Network Stream...", None))
+#if QT_CONFIG(shortcut)
+        self.actionOpenNetworkStream.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Alt+Shift+O", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionResizeVideoToOriginalResolution.setText(QCoreApplication.translate("MainWindow", u"&Resize Video to Original Resolution", None))
+#if QT_CONFIG(shortcut)
+        self.actionResizeVideoToOriginalResolution.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+R", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionCheckForUpdates.setText(QCoreApplication.translate("MainWindow", u"&Check for Updates...", None))
+        self.actionAboutQt.setText(QCoreApplication.translate("MainWindow", u"About &Qt", None))
+        self.actionAboutMpvQc.setText(QCoreApplication.translate("MainWindow", u"About &mpvQC", None))
+        self.actionSettings.setText(QCoreApplication.translate("MainWindow", u"&Settings", None))
+#if QT_CONFIG(shortcut)
+        self.actionSettings.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Alt+S", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionOpenSubtitleFile.setText(QCoreApplication.translate("MainWindow", u"&Open Subtitles...", None))
+        self.actionEditCommentTypes.setText(QCoreApplication.translate("MainWindow", u"Edit Comment Types...", None))
+        self.actionEditNickname.setText(QCoreApplication.translate("MainWindow", u"Edit Nickname...", None))
+        self.actionWindowTitleDefault.setText(QCoreApplication.translate("MainWindow", u"Default Title", None))
+        self.actionWindowTitleFile.setText(QCoreApplication.translate("MainWindow", u"Video File", None))
+        self.actionWindowTitlePath.setText(QCoreApplication.translate("MainWindow", u"Video Path", None))
+        self.actionDarkTheme.setText(QCoreApplication.translate("MainWindow", u"Enable Dark Theme", None))
+        self.actionEditMpvConf.setText(QCoreApplication.translate("MainWindow", u"Edit mpv.conf...", None))
+        self.actionEditInputConf.setText(QCoreApplication.translate("MainWindow", u"Edit input.conf...", None))
+        self.actionDocumentBackups.setText(QCoreApplication.translate("MainWindow", u"Enable Backups", None))
+        self.actionOpenBackupPreferences.setText(QCoreApplication.translate("MainWindow", u"Open Backup Preferences...", None))
+        self.actionSaveNickNameToDocument.setText(QCoreApplication.translate("MainWindow", u"Save Nickname", None))
+        self.actionSaveVideoPathToDocument.setText(QCoreApplication.translate("MainWindow", u"Save Video Path", None))
+        self.actionCheckForUpdates_2.setText(QCoreApplication.translate("MainWindow", u"Check for Updates...", None))
+        self.mainWindowFileMenu.setTitle(QCoreApplication.translate("MainWindow", u"&File", None))
+        self.mainWindowVideoMenu.setTitle(QCoreApplication.translate("MainWindow", u"Vi&deo", None))
+        self.mainWindowSettingsMenu.setTitle(QCoreApplication.translate("MainWindow", u"Optio&ns", None))
+        self.menuWindowTitle.setTitle(QCoreApplication.translate("MainWindow", u"Window Title", None))
+        self.menuDocumentSettings.setTitle(QCoreApplication.translate("MainWindow", u"QC Document Export", None))
+        self.menuLanguage.setTitle(QCoreApplication.translate("MainWindow", u"Language", None))
+        self.mainWindowAboutMenu.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
+        pass

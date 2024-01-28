@@ -17,13 +17,11 @@ from os import path
 from pathlib import Path
 from typing import List
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QFileDialog, QInputDialog
 
 from mpvqc import get_settings
 
-_translate = QtCore.QCoreApplication.translate
 _flags = (Qt.Dialog | Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
 # Supported subtitle file extensions for drag and drop and for opening via dialog
@@ -37,7 +35,7 @@ def generate_file_name_proposal(video_file: str):
     nick = "_" + get_settings().export_nickname
 
     # For translator: The file name proposal if video file is unknown
-    untitled = _translate("FileInteractionDialogs", "untitled")
+    untitled = QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
     video = path.splitext(path.basename(video_file))[0] if video_file else untitled
     return "[QC]_{0}{1}.txt".format(video, nick)
@@ -53,10 +51,10 @@ def get_open_video(parent=None) -> path or None:
 
     s = get_settings()
 
-    caption = _translate("FileInteractionDialogs", "Open Video File")
+    caption = QCoreApplication.translate("FileInteractionDialogs", "Open Video File")
     directory = s.import_last_dir_video
-    file_filter = _translate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
-                  _translate("FileInteractionDialogs", "All files") + " (*.*)"
+    file_filter = QCoreApplication.translate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi);;" + \
+                  QCoreApplication.translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     new_video_path = QFileDialog.getOpenFileName(parent=parent, caption=caption,
                                                  directory=directory, filter=file_filter)[0]
@@ -77,10 +75,11 @@ def get_open_subs(parent=None) -> List[str] or None:
 
     s = get_settings()
 
-    caption = _translate("FileInteractionDialogs", "Open Subtitle File")
+    caption = QCoreApplication.translate("FileInteractionDialogs", "Open Subtitle File")
     directory = s.import_last_dir_subtitles
-    file_filter = _translate("FileInteractionDialogs", "Subtitle files") + " ({});;".format(_FILTER_SUBS) + \
-                  _translate("FileInteractionDialogs", "All files") + " (*.*)"
+    file_filter = QCoreApplication.translate("FileInteractionDialogs", "Subtitle files") + " ({});;".format(
+        _FILTER_SUBS) + \
+                  QCoreApplication.translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     new_subtitle_paths = QFileDialog.getOpenFileNames(parent=parent, caption=caption,
                                                       directory=directory, filter=file_filter)[0]
@@ -101,10 +100,10 @@ def get_open_file_names(parent=None) -> List[str] or None:
 
     s = get_settings()
 
-    caption = _translate("FileInteractionDialogs", "Open QC Document(s)")
+    caption = QCoreApplication.translate("FileInteractionDialogs", "Open QC Document(s)")
     directory = s.import_last_dir_document
-    file_filter = _translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
-                  _translate("FileInteractionDialogs", "All files") + " (*.*)"
+    file_filter = QCoreApplication.translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
+                  QCoreApplication.translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     new_document_paths = QFileDialog.getOpenFileNames(parent=parent, caption=caption,
                                                       directory=directory, filter=file_filter)[0]
@@ -127,10 +126,10 @@ def get_save_file_name(video_file: str, parent=None) -> path or None:
     directory = path.dirname(video_file) if video_file else str(Path.home())
     txt_proposal = generate_file_name_proposal(video_file)
 
-    caption = _translate("FileInteractionDialogs", "Save QC Document As")
+    caption = QCoreApplication.translate("FileInteractionDialogs", "Save QC Document As")
     directory = "{0}/{1}".format(directory, txt_proposal)
-    file_filter = _translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
-                  _translate("FileInteractionDialogs", "All files") + " (*.*)"
+    file_filter = QCoreApplication.translate("FileInteractionDialogs", "QC documents") + " (*.txt);;" + \
+                  QCoreApplication.translate("FileInteractionDialogs", "All files") + " (*.*)"
 
     new_file_name = QFileDialog.getSaveFileName(parent=parent, caption=caption,
                                                 directory=directory, filter=file_filter)[0]
@@ -148,8 +147,8 @@ def get_open_network_stream(parent) -> path or None:
 
     dialog = QInputDialog(parent)
     dialog.setInputMode(QInputDialog.TextInput)
-    dialog.setWindowTitle(_translate("FileInteractionDialogs", "Open Network Stream"))
-    dialog.setLabelText(_translate("FileInteractionDialogs", "Enter URL:"))
+    dialog.setWindowTitle(QCoreApplication.translate("FileInteractionDialogs", "Open Network Stream"))
+    dialog.setLabelText(QCoreApplication.translate("FileInteractionDialogs", "Enter URL:"))
     dialog.resize(700, 0)
     dialog.exec_()
     return dialog.textValue()

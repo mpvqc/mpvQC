@@ -489,13 +489,10 @@
         <source>Imported Document Not Compatible</source>
         <translation>המסמכים המיובאים אינם תואמים</translation>
     </message>
-    <message numerus="yes">
+    <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="109"/>
-        <source>The following file(s) are not compatible:</source>
-        <translation>
-            <numerusform>הקובץ הבא אינו תואם:</numerusform>
-            <numerusform>הקבצים הבאים אינם תואמים:</numerusform>
-        </translation>
+        <source>The following files are not compatible:</source>
+        <translation>הקבצים הבאים אינם תואמים:</translation>
     </message>
     <message>
         <location filename="../mpvqc/uiutil/_messageboxes.py" line="123"/>
