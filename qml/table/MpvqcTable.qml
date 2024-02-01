@@ -33,6 +33,10 @@ ListView {
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
     readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator
 
+	property bool haveComments: root.mpvqcApplication.mpvqcCommentTable.count > 0
+    property bool currentlyEditing: root.mpvqcApplication.mpvqcCommentTable.editMode
+    property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
+
     property bool editMode: false
 
     property var deleteCommentMessageBox: null
@@ -140,6 +144,19 @@ ListView {
         root.model.import_comments(comments)
     }
 
+    function _ignore(event: KeyEvent): bool {
+        const key = event.key
+        const modifiers = event.modifiers
+        return key === Qt.Key_Up
+          ||   key === Qt.Key_Down
+          || ( key === Qt.Key_Return && modifiers === Qt.NoModifier )
+          || ( key === Qt.Key_Escape && modifiers === Qt.NoModifier )
+          || ( key === Qt.Key_Delete && modifiers === Qt.NoModifier )
+          || ( key === Qt.Key_Backspace && modifiers === Qt.NoModifier )
+          || ( key === Qt.Key_F && modifiers === Qt.ControlModifier )
+          || ( key === Qt.Key_C && modifiers === Qt.ControlModifier )
+    }
+
     Connections {
         target: root.model
 
@@ -161,19 +178,40 @@ ListView {
         }
     }
 
-    MpvqcTableEventHandler {
-        id: _handler
+    Shortcut {
+        sequence: 'return'
+        autoRepeat: false
+        enabled: !currentlyFullscreen && haveComments && !currentlyEditing
 
-        mpvqcCommentTable: root
-        mpvqcApplication: root.mpvqcApplication
+        onActivated: root.startEditing()
+    }
 
-        onDeleteCommentPressed: root._requestDeleteRow(root.currentIndex)
+    Shortcut {
+        sequence: 'delete'
+        autoRepeat: false
+        enabled: !currentlyFullscreen && haveComments
 
-        onCopyToClipboardPressed: root._copyCurrentCommentToClipboard()
+        onActivated: root._requestDeleteRow(root.currentIndex)
+    }
+
+    Shortcut {
+        sequence: 'backspace'
+        autoRepeat: false
+        enabled: !currentlyFullscreen && haveComments
+
+        onActivated: root._requestDeleteRow(root.currentIndex)
+    }
+
+    Shortcut {
+        sequence: 'ctrl+c'
+        autoRepeat: false
+        enabled: !currentlyFullscreen && haveComments && !currentlyEditing
+
+        onActivated: root._copyCurrentCommentToClipboard()
     }
 
     Keys.onPressed: (event) => {
-        if (_handler.ignore(event))  {
+        if (root._ignore(event))  {
             return
         }
         const command = root.mpvqcKeyCommandGenerator.generateFrom(event)

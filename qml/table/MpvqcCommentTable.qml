@@ -18,8 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 
 import pyobjects
+import shared
 
 
 FocusScope {
@@ -48,5 +50,27 @@ FocusScope {
             mpvqcApplication: root.mpvqcApplication
         }
 
+    }
+
+    Shortcut {
+        sequence: 'e'
+        autoRepeat: false
+
+        onActivated: root.newCommentMenu.popupMenu()
+    }
+
+    Shortcut {
+        sequence: 'f'
+        autoRepeat: false
+
+        onActivated: root.mpvqcApplication.toggleFullScreen()
+    }
+
+    Shortcut {
+        sequence: 'Esc'
+        autoRepeat: false
+        enabled: root.mpvqcApplication.fullscreen
+
+        onActivated: root.mpvqcApplication.disableFullScreen()
     }
 }
