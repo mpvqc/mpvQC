@@ -34,10 +34,9 @@ ListView {
     readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator
 
 	property bool haveComments: root.mpvqcApplication.mpvqcCommentTable.count > 0
-    property bool currentlyEditing: root.mpvqcApplication.mpvqcCommentTable.editMode
-    property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
 
-    property bool editMode: false
+    property bool currentlyEditing: false
+    property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
 
     property var deleteCommentMessageBox: null
     property var deleteCommentMessageBoxFactory: Component {
@@ -57,7 +56,7 @@ ListView {
     clip: true
     focus: true
     reuseItems: true
-    interactive: !editMode
+    interactive: !currentlyEditing
     boundsBehavior: Flickable.StopAtBounds
     highlightMoveDuration: 0
     highlightMoveVelocity: -1
@@ -76,7 +75,7 @@ ListView {
     delegate: MpvqcRow {
         mpvqcApplication: root.mpvqcApplication
         rowSelected: root.currentIndex === index
-        tableInEditMode: root.editMode
+        tableInEditMode: root.currentlyEditing
         width: parent ? parent.width : 0
         widthScrollBar: _scrollBar.visibleWidth
 
@@ -86,9 +85,9 @@ ListView {
 
         onDeleteCommentClicked: root._requestDeleteRow(index)
 
-        onEditingStarted: { root.editMode = true }
+        onEditingStarted: { root.currentlyEditing = true }
 
-        onEditingStopped: { root.editMode = false }
+        onEditingStopped: { root.currentlyEditing = false }
 
         onPlayClicked: root.mpv.jump_to(time)
 
