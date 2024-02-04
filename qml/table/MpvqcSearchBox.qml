@@ -39,7 +39,7 @@ Popup {
     property int xInLeftToRightLayout: marginRight
 
     height: _textField.height + topPadding + bottomPadding
-    width: 420
+    width: 450
 
     x: mirrored ? xInLeftToRightLayout : xInRightToLeftLayout
     y: marginVertical
@@ -99,14 +99,13 @@ Popup {
 			}
 	    }
 
-	    Label {
-	        text: '10/10'
-	    }
-
-		ToolSeparator {
-			rightPadding: mirrored ? 16 : 0
-			leftPadding: mirrored ? 0 : 16
+	    ToolButton {
+			enabled: false
+		    focusPolicy: Qt.NoFocus
+		    text: "10/10"
 		}
+
+		ToolSeparator { padding: 0 }
 
 	    ToolButton {
 		    focusPolicy: Qt.NoFocus
