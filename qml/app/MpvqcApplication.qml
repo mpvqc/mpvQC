@@ -77,6 +77,30 @@ ApplicationWindow {
         'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt'
     ]
 
+    function toggleMaximized() { mpvqcWindowVisibilityHandler.toggleMaximized() }
+    function toggleFullScreen() { mpvqcWindowVisibilityHandler.toggleFullScreen() }
+    function enableFullScreen() { mpvqcWindowVisibilityHandler.enableFullScreen() }
+    function disableFullScreen() { mpvqcWindowVisibilityHandler.disableFullScreen() }
+
+    onClosing: (event) => {
+        closeHandler.requestClose()
+        event.accepted = closeHandler.userConfirmedClose
+    }
+
+    onActiveFocusItemChanged: {
+        if (!activeFocusItem) {
+            return
+        }
+        if (activeFocusItem === contentItem) {
+            mpvqcCommentTable.forceActiveFocus()
+            return
+        }
+        const asString = activeFocusItem.toString()
+        if (asString.includes('QQuickRootItem')) {
+            mpvqcCommentTable.forceActiveFocus()
+        }
+    }
+
     MpvqcContent {
         id: _content
 
@@ -149,30 +173,6 @@ ApplicationWindow {
 	          || ( key === Qt.Key_C && modifiers === Qt.ControlModifier )
 	    }
 
-    }
-
-    function toggleMaximized() { mpvqcWindowVisibilityHandler.toggleMaximized() }
-    function toggleFullScreen() { mpvqcWindowVisibilityHandler.toggleFullScreen() }
-    function enableFullScreen() { mpvqcWindowVisibilityHandler.enableFullScreen() }
-    function disableFullScreen() { mpvqcWindowVisibilityHandler.disableFullScreen() }
-
-    onClosing: (event) => {
-        closeHandler.requestClose()
-        event.accepted = closeHandler.userConfirmedClose
-    }
-
-    onActiveFocusItemChanged: {
-        if (!activeFocusItem) {
-            return
-        }
-        if (activeFocusItem === contentItem) {
-            mpvqcCommentTable.forceActiveFocus()
-            return
-        }
-        const asString = activeFocusItem.toString()
-        if (asString.includes('QQuickRootItem')) {
-            mpvqcCommentTable.forceActiveFocus()
-        }
     }
 
     MpvqcCatchAllMouseArea {
