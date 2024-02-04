@@ -81,7 +81,9 @@ ApplicationWindow {
             mpvqcApplication: root
             focus: true
             anchors.fill: parent
-            anchors.margins: root.windowBorder // root.windowBorder
+            anchors.margins: root.windowBorder
+
+			onSplitViewHandleHovered: (hovered) => _catchAllMouseArea.splitViewHandleHovered(hovered)
         }
     }
 
@@ -107,6 +109,17 @@ ApplicationWindow {
         if (asString.includes('QQuickRootItem')) {
             mpvqcCommentTable.forceActiveFocus()
         }
+    }
+
+    MpvqcCatchAllMouseArea {
+        id: _catchAllMouseArea
+
+        mpvqcApplication: root
+        anchors.fill: parent
+
+        onAfterPressed: {
+	        mpvqcCommentTable.forceActiveFocus()
+	    }
     }
 
     MpvqcQuitHandler {

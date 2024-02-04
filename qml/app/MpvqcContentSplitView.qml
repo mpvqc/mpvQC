@@ -42,6 +42,8 @@ FocusScope {
     readonly property int draggerWidth: _splitView.width - _playerContainer.width - tableContainerWidth
     readonly property int orientation: _splitView.orientation
 
+    signal splitViewHandleHovered(bool hovered)
+
     states: [
         State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
         State { name: "normal"; ParentChange { target: _player; parent: _playerContainer } }
@@ -64,6 +66,12 @@ FocusScope {
 
         anchors.fill: root
         orientation: root.mpvqcSettings.layoutOrientation
+
+		handle: MpvqcSplitViewHandle {
+			control: _splitView
+
+			onHoveredChanged: root.splitViewHandleHovered(hovered)
+		}
 
         Item {
             id: _playerContainer
