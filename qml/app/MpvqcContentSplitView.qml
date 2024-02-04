@@ -97,7 +97,7 @@ FocusScope {
                 SplitView.preferredHeight = height
             }
 
-            MpvqcCommentTable {
+            MpvqcTableWrapper {
                 id: _commentTable
 
                 mpvqcApplication: root.mpvqcApplication

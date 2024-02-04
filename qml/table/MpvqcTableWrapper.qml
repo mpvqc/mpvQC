@@ -48,7 +48,7 @@ FocusScope {
             model: MpvqcCommentModelPyObject {}
             mpvqcApplication: root.mpvqcApplication
 
-			MpvqcSearchPopup {
+			MpvqcSearchBox {
 				id: _searchBox
 
 				mpvqcApplication: root.mpvqcApplication
