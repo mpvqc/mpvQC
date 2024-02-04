@@ -37,6 +37,7 @@ Dialog {
     width: 420
     height: 540
     modal: true
+    z: 2
 
     contentItem: ColumnLayout {
         id: _layout

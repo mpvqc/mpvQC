@@ -35,6 +35,7 @@ MpvqcMenu {
     modal: true
     dim: false
     parent: Overlay.overlay
+    z: 2
 
     function popupMenu(): void {
         mpvqcMpvPlayerPyObject.pause()

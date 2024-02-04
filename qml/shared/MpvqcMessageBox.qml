@@ -36,6 +36,7 @@ Dialog {
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: parent
+    z: 2
 
     header: MpvqcHeader {
         id: _header
