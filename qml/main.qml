@@ -18,16 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 
 import app
 
 
 MpvqcApplication {
     visible: true
-    color: 'transparent'
     width: 1280
     height: 720
     flags: Qt.FramelessWindowHint | Qt.Window
+    color: Material.background
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true

@@ -32,7 +32,8 @@ FocusScope {
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
+    readonly property alias mpvqcCommentTable: _tableWrapper.mpvqcCommentTable
+    readonly property alias mpvqcSearchBox: _tableWrapper.mpvqcSearchBox
     readonly property alias playerContainer: _playerContainer
     readonly property alias tableContainer: _tableContainer
 
@@ -98,7 +99,7 @@ FocusScope {
             }
 
             MpvqcTableWrapper {
-                id: _commentTable
+                id: _tableWrapper
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true

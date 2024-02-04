@@ -28,8 +28,9 @@ FocusScope {
 
     required property var mpvqcApplication
 
-    readonly property alias mpvqcCommentTable: _mpvqcCommentTable
-    property bool haveComments: _mpvqcCommentTable.count > 0
+    readonly property alias mpvqcCommentTable: _mpvqcTable
+    readonly property alias mpvqcSearchBox: _mpvqcSearchBox
+    property bool haveComments: _mpvqcTable.count > 0
 
     Column {
         width: root.width
@@ -40,7 +41,7 @@ FocusScope {
         }
 
         MpvqcTable {
-            id: _mpvqcCommentTable
+            id: _mpvqcTable
 
             width: root.width
             height: haveComments ? root.height : 0
@@ -49,10 +50,10 @@ FocusScope {
             mpvqcApplication: root.mpvqcApplication
 
 			MpvqcSearchBox {
-				id: _searchBox
+				id: _mpvqcSearchBox
 
 				mpvqcApplication: root.mpvqcApplication
-				mpvqcCommentTable: _mpvqcCommentTable
+				mpvqcCommentTable: _mpvqcTable
 
 				onNextOccurrenceRequested: {
 					console.log('On nextOccurrenceRequested')
@@ -66,26 +67,4 @@ FocusScope {
 
     }
 
-    Shortcut {
-        sequence: 'ctrl+f'
-        autoRepeat: false
-        enabled: !mpvqcApplication.fullscreen && root.haveComments && !_mpvqcCommentTable.currentlyEditing
-
-        onActivated: _searchBox.showSearchBox()
-    }
-
-    Shortcut {
-        sequence: 'f'
-        autoRepeat: false
-
-        onActivated: root.mpvqcApplication.toggleFullScreen()
-    }
-
-    Shortcut {
-        sequence: 'Esc'
-        autoRepeat: false
-        enabled: root.mpvqcApplication.fullscreen
-
-        onActivated: root.mpvqcApplication.disableFullScreen()
-    }
 }

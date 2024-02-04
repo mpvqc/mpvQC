@@ -29,7 +29,7 @@ Popup {
     required property var mpvqcApplication
     required property var mpvqcCommentTable
 
-    readonly property int heightIncludingMargins: height + 2 * _searchBox.marginVertical
+    readonly property int heightIncludingMargins: height + 2 * marginVertical
 
     property var mpvqcSpecialCharacterValidatorPyObject: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
 
@@ -37,7 +37,6 @@ Popup {
     property int marginRight: 10
     property int xInRightToLeftLayout: mpvqcCommentTable.width - root.width - marginRight
     property int xInLeftToRightLayout: marginRight
-
 
     height: _textField.height + topPadding + bottomPadding
     width: 420
@@ -56,17 +55,13 @@ Popup {
     signal nextOccurrenceRequested()
     signal previousOccurrenceRequested()
 
-	function showSearchBox() {
+    function showSearchBox() {
 		root.visible = true
-		_focusTextField()
-	}
-
-	function _focusTextField() {
 		_textField.selectAll();
         _textField.forceActiveFocus()
 	}
 
-	function _hideSearchBox() {
+	function hideSearchBox() {
 		root.visible = false
 	}
 
@@ -86,10 +81,6 @@ Popup {
 
 	        Layout.fillWidth: true
 
-			onFocusChanged: {
-				console.log("search text field focus changed", focus)
-			}
-
 	        onTextChanged: {
 	            console.log("Query", text)
 	        }
@@ -99,6 +90,13 @@ Popup {
 		        background.outlineColor = 'transparent'
 		        background.focusedOutlineColor = 'transparent'
 		    }
+
+	        Keys.onPressed: (event) => {
+				if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier && !event.isAutoRepeat) {
+					return root.showSearchBox()
+				}
+				event.accepted = false
+			}
 	    }
 
 	    Label {
@@ -133,7 +131,7 @@ Popup {
 		    icon.width: 18
 		    icon.height: 18
 
-		    onClicked: root._hideSearchBox()
+		    onClicked: root.hideSearchBox()
 		}
 
 	}
@@ -157,7 +155,7 @@ Popup {
 
         function onFullscreenChanged() {
             if (mpvqcApplication.fullscreen) {
-                _hideSearchBox()
+                hideSearchBox()
             }
         }
     }

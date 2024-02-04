@@ -33,7 +33,7 @@ ListView {
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
     readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator
 
-	property bool haveComments: root.mpvqcApplication.mpvqcCommentTable.count > 0
+	property bool haveComments: root.count > 0
 
     property bool currentlyEditing: false
     property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
@@ -156,6 +156,50 @@ ListView {
           || ( key === Qt.Key_C && modifiers === Qt.ControlModifier )
     }
 
+    function _handleDeleteComment(event) {
+        if (event.isAutoRepeat) { return }
+
+		if (!root.mpvqcApplication.fullscreen && root.haveComments) {
+			return root._requestDeleteRow(root.currentIndex)
+		}
+    }
+
+    function _handleCPressed(event) {
+        if (event.modifiers === Qt.ControlModifier) {
+            if (event.isAutoRepeat) { return }
+
+            const haveComments = root.haveComments
+			const notEditing = !root.currentlyEditing
+			const notFullscreen = !root.mpvqcApplication.fullscreen
+
+	        if (haveComments && notEditing && notFullscreen) {
+	            return root._copyCurrentCommentToClipboard()
+	        }
+        }
+        event.accepted = false
+    }
+
+    Keys.onReturnPressed: (event) => {
+        if (event.isAutoRepeat) { return }
+
+		const haveComments = root.haveComments
+		const notEditing = !root.currentlyEditing
+		const notFullscreen = !root.mpvqcApplication.fullscreen
+
+        if (haveComments && notEditing && notFullscreen) {
+            return root.startEditing()
+        }
+    }
+
+	Keys.onPressed: (event) => {
+		if (event.key == Qt.Key_Backspace) { return _handleDeleteComment(event) }
+		if (event.key == Qt.Key_Delete)    { return _handleDeleteComment(event) }
+		if (event.key == Qt.Key_C)         { return _handleCPressed(event) }
+
+		event.accepted = false
+	}
+
+
     Connections {
         target: root.model
 
@@ -174,48 +218,6 @@ ListView {
 
         function onCommentsChanged(): void {
             root.commentsChanged()
-        }
-    }
-
-    Shortcut {
-        sequence: 'return'
-        autoRepeat: false
-        enabled: !currentlyFullscreen && haveComments && !currentlyEditing
-
-        onActivated: root.startEditing()
-    }
-
-    Shortcut {
-        sequence: 'delete'
-        autoRepeat: false
-        enabled: !currentlyFullscreen && haveComments
-
-        onActivated: root._requestDeleteRow(root.currentIndex)
-    }
-
-    Shortcut {
-        sequence: 'backspace'
-        autoRepeat: false
-        enabled: !currentlyFullscreen && haveComments
-
-        onActivated: root._requestDeleteRow(root.currentIndex)
-    }
-
-    Shortcut {
-        sequence: 'ctrl+c'
-        autoRepeat: false
-        enabled: !currentlyFullscreen && haveComments && !currentlyEditing
-
-        onActivated: root._copyCurrentCommentToClipboard()
-    }
-
-    Keys.onPressed: (event) => {
-        if (root._ignore(event))  {
-            return
-        }
-        const command = root.mpvqcKeyCommandGenerator.generateFrom(event)
-        if (command) {
-            root.mpv.execute(command)
         }
     }
 
