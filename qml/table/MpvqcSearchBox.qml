@@ -104,7 +104,8 @@ Popup {
 	    }
 
 		ToolSeparator {
-			rightPadding: 0
+			rightPadding: mirrored ? 16 : 0
+			leftPadding: mirrored ? 0 : 16
 		}
 
 	    ToolButton {
