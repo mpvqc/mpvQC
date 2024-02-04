@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 
 import pyobjects
-import shared
 
 
 FocusScope {
@@ -48,15 +47,31 @@ FocusScope {
             focus: true
             model: MpvqcCommentModelPyObject {}
             mpvqcApplication: root.mpvqcApplication
+
+			MpvqcSearchPopup {
+				id: _searchBox
+
+				mpvqcApplication: root.mpvqcApplication
+				mpvqcCommentTable: _mpvqcCommentTable
+
+				onNextOccurrenceRequested: {
+					console.log('On nextOccurrenceRequested')
+				}
+
+				onPreviousOccurrenceRequested: {
+					console.log('On previousOccurrenceRequested')
+				}
+			}
         }
 
     }
 
     Shortcut {
-        sequence: 'e'
+        sequence: 'ctrl+f'
         autoRepeat: false
+        enabled: !mpvqcApplication.fullscreen && root.haveComments && !_mpvqcCommentTable.currentlyEditing
 
-        onActivated: root.newCommentMenu.popupMenu()
+        onActivated: _searchBox.showSearchBox()
     }
 
     Shortcut {
