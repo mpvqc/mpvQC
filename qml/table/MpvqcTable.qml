@@ -33,7 +33,7 @@ ListView {
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
     readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator
 
-	property bool haveComments: root.count > 0
+    property bool haveComments: root.count > 0
 
     property bool currentlyEditing: false
     property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
@@ -147,57 +147,69 @@ ListView {
         const key = event.key
         const modifiers = event.modifiers
         return key === Qt.Key_Up
-          ||   key === Qt.Key_Down
-          || ( key === Qt.Key_Return && modifiers === Qt.NoModifier )
-          || ( key === Qt.Key_Escape && modifiers === Qt.NoModifier )
-          || ( key === Qt.Key_Delete && modifiers === Qt.NoModifier )
-          || ( key === Qt.Key_Backspace && modifiers === Qt.NoModifier )
-          || ( key === Qt.Key_F && modifiers === Qt.ControlModifier )
-          || ( key === Qt.Key_C && modifiers === Qt.ControlModifier )
+            || key === Qt.Key_Down
+            || (key === Qt.Key_Return && modifiers === Qt.NoModifier)
+            || (key === Qt.Key_Escape && modifiers === Qt.NoModifier)
+            || (key === Qt.Key_Delete && modifiers === Qt.NoModifier)
+            || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier)
+            || (key === Qt.Key_F && modifiers === Qt.ControlModifier)
+            || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
     }
 
     function _handleDeleteComment(event) {
-        if (event.isAutoRepeat) { return }
+        if (event.isAutoRepeat) {
+            return
+        }
 
-		if (!root.mpvqcApplication.fullscreen && root.haveComments) {
-			return root._requestDeleteRow(root.currentIndex)
-		}
+        if (!root.mpvqcApplication.fullscreen && root.haveComments) {
+            return root._requestDeleteRow(root.currentIndex)
+        }
     }
 
     function _handleCPressed(event) {
         if (event.modifiers === Qt.ControlModifier) {
-            if (event.isAutoRepeat) { return }
+            if (event.isAutoRepeat) {
+                return
+            }
 
             const haveComments = root.haveComments
-			const notEditing = !root.currentlyEditing
-			const notFullscreen = !root.mpvqcApplication.fullscreen
+            const notEditing = !root.currentlyEditing
+            const notFullscreen = !root.mpvqcApplication.fullscreen
 
-	        if (haveComments && notEditing && notFullscreen) {
-	            return root._copyCurrentCommentToClipboard()
-	        }
+            if (haveComments && notEditing && notFullscreen) {
+                return root._copyCurrentCommentToClipboard()
+            }
         }
         event.accepted = false
     }
 
     Keys.onReturnPressed: (event) => {
-        if (event.isAutoRepeat) { return }
+        if (event.isAutoRepeat) {
+            return
+        }
 
-		const haveComments = root.haveComments
-		const notEditing = !root.currentlyEditing
-		const notFullscreen = !root.mpvqcApplication.fullscreen
+        const haveComments = root.haveComments
+        const notEditing = !root.currentlyEditing
+        const notFullscreen = !root.mpvqcApplication.fullscreen
 
         if (haveComments && notEditing && notFullscreen) {
             return root.startEditing()
         }
     }
 
-	Keys.onPressed: (event) => {
-		if (event.key == Qt.Key_Backspace) { return _handleDeleteComment(event) }
-		if (event.key == Qt.Key_Delete)    { return _handleDeleteComment(event) }
-		if (event.key == Qt.Key_C)         { return _handleCPressed(event) }
+    Keys.onPressed: (event) => {
+        if (event.key == Qt.Key_Backspace) {
+            return _handleDeleteComment(event)
+        }
+        if (event.key == Qt.Key_Delete) {
+            return _handleDeleteComment(event)
+        }
+        if (event.key == Qt.Key_C) {
+            return _handleCPressed(event)
+        }
 
-		event.accepted = false
-	}
+        event.accepted = false
+    }
 
 
     Connections {

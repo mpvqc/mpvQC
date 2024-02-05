@@ -68,11 +68,11 @@ FocusScope {
         anchors.fill: root
         orientation: root.mpvqcSettings.layoutOrientation
 
-		handle: MpvqcSplitViewHandle {
-			control: _splitView
+        handle: MpvqcSplitViewHandle {
+            control: _splitView
 
-			onHoveredChanged: root.splitViewHandleHovered(hovered)
-		}
+            onHoveredChanged: root.splitViewHandleHovered(hovered)
+        }
 
         Item {
             id: _playerContainer
@@ -141,7 +141,7 @@ FocusScope {
         function _applySaneDefaultSplitViewSizes() {
             const splitViewWidth = _splitView.width
             const splitViewHeight = _splitView.height
-            root.setPreferredTableSize(splitViewWidth * (1/3), splitViewHeight * (1/3.5))
+            root.setPreferredTableSize(splitViewWidth * (1 / 3), splitViewHeight * (1 / 3.5))
         }
     }
 

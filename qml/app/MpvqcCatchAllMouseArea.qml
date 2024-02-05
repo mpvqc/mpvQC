@@ -32,13 +32,13 @@ MouseArea {
     signal afterPressed()
 
     function splitViewHandleHovered(state: bool): void {
-		if (!state) {
-			cursorShape = Qt.ArrowCursor
-		} else if (mpvqcSettings.layoutOrientation === Qt.Vertical) {
-			cursorShape = Qt.SizeVerCursor
-		} else {
-			cursorShape = Qt.SizeHorCursor
-		}
+        if (!state) {
+            cursorShape = Qt.ArrowCursor
+        } else if (mpvqcSettings.layoutOrientation === Qt.Vertical) {
+            cursorShape = Qt.SizeVerCursor
+        } else {
+            cursorShape = Qt.SizeHorCursor
+        }
     }
 
     onPressed: (event) => {

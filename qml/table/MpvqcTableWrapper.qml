@@ -49,20 +49,20 @@ FocusScope {
             model: MpvqcCommentModelPyObject {}
             mpvqcApplication: root.mpvqcApplication
 
-			MpvqcSearchBox {
-				id: _mpvqcSearchBox
+            MpvqcSearchBox {
+                id: _mpvqcSearchBox
 
-				mpvqcApplication: root.mpvqcApplication
-				mpvqcCommentTable: _mpvqcTable
+                mpvqcApplication: root.mpvqcApplication
+                mpvqcCommentTable: _mpvqcTable
 
-				onNextOccurrenceRequested: {
-					console.log('On nextOccurrenceRequested')
-				}
+                onNextOccurrenceRequested: {
+                    console.log('On nextOccurrenceRequested')
+                }
 
-				onPreviousOccurrenceRequested: {
-					console.log('On previousOccurrenceRequested')
-				}
-			}
+                onPreviousOccurrenceRequested: {
+                    console.log('On previousOccurrenceRequested')
+                }
+            }
         }
 
     }

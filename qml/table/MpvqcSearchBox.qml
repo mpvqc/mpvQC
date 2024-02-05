@@ -46,106 +46,107 @@ Popup {
     z: 1
 
     padding: 5
-	closePolicy: Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnEscape
+    transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
 
-	transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
-
-	Material.roundedScale: Material.SmallScale
+    Material.roundedScale: Material.SmallScale
 
     signal nextOccurrenceRequested()
     signal previousOccurrenceRequested()
 
     function showSearchBox() {
-		root.visible = true
-		_textField.selectAll();
+        root.visible = true
+        _textField.selectAll();
         _textField.forceActiveFocus()
-	}
+    }
 
-	function hideSearchBox() {
-		root.visible = false
-	}
+    function hideSearchBox() {
+        root.visible = false
+    }
 
-	RowLayout {
-		width: root.width - root.leftPadding - root.rightPadding
-		spacing: 0
+    RowLayout {
+        width: root.width - root.leftPadding - root.rightPadding
+        spacing: 0
 
-		TextField {
-	        id: _textField
+        TextField {
+            id: _textField
 
-			objectName: 'searchField'
-			height: implicitHeight - 5
-	        focus: false
-	        selectByMouse: true
-	        horizontalAlignment: Text.AlignLeft
-	        validator: root.mpvqcSpecialCharacterValidatorPyObject
+            objectName: 'searchField'
+            height: implicitHeight - 5
+            focus: false
+            selectByMouse: true
+            horizontalAlignment: Text.AlignLeft
+            validator: root.mpvqcSpecialCharacterValidatorPyObject
 
-	        Layout.fillWidth: true
+            Layout.fillWidth: true
 
-	        onTextChanged: {
-	            console.log("Query", text)
-	        }
+            onTextChanged: {
+                console.log("Query", text)
+            }
 
-	        Component.onCompleted: {
-		        background.fillColor = 'transparent'
-		        background.outlineColor = 'transparent'
-		        background.focusedOutlineColor = 'transparent'
-		    }
+            Component.onCompleted: {
+                background.fillColor = 'transparent'
+                background.outlineColor = 'transparent'
+                background.focusedOutlineColor = 'transparent'
+            }
 
-	        Keys.onPressed: (event) => {
-				if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier && !event.isAutoRepeat) {
-					return root.showSearchBox()
-				}
-				event.accepted = false
-			}
-	    }
+            Keys.onPressed: (event) => {
+                if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier && !event.isAutoRepeat) {
+                    return root.showSearchBox()
+                }
+                event.accepted = false
+            }
+        }
 
-	    ToolButton {
-			enabled: false
-		    focusPolicy: Qt.NoFocus
-		    text: "10/10"
-		}
+        ToolButton {
+            enabled: false
+            focusPolicy: Qt.NoFocus
+            text: "10/10"
+        }
 
-		ToolSeparator { padding: 0 }
+        ToolSeparator {
+            padding: 0
+        }
 
-	    ToolButton {
-		    focusPolicy: Qt.NoFocus
-		    icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
-		    icon.width: 24
-		    icon.height: 24
+        ToolButton {
+            focusPolicy: Qt.NoFocus
+            icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
+            icon.width: 24
+            icon.height: 24
 
-		    onClicked: root.previousOccurrenceRequested()
-		}
+            onClicked: root.previousOccurrenceRequested()
+        }
 
-	    ToolButton {
-		    focusPolicy: Qt.NoFocus
-		    icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
-		    icon.width: 24
-		    icon.height: 24
+        ToolButton {
+            focusPolicy: Qt.NoFocus
+            icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
+            icon.width: 24
+            icon.height: 24
 
-		    onClicked: root.nextOccurrenceRequested()
-		}
+            onClicked: root.nextOccurrenceRequested()
+        }
 
-		ToolButton {
-		    focusPolicy: Qt.NoFocus
-		    icon.source: "qrc:/data/icons/close_black_24dp.svg"
-		    icon.width: 18
-		    icon.height: 18
+        ToolButton {
+            focusPolicy: Qt.NoFocus
+            icon.source: "qrc:/data/icons/close_black_24dp.svg"
+            icon.width: 18
+            icon.height: 18
 
-		    onClicked: root.hideSearchBox()
-		}
+            onClicked: root.hideSearchBox()
+        }
 
-	}
+    }
 
-	Shortcut {
+    Shortcut {
         sequence: "return"
-		enabled: root.visible && _textField.activeFocus
+        enabled: root.visible && _textField.activeFocus
 
         onActivated: root.nextOccurrenceRequested()
     }
 
     Shortcut {
         sequence: "shift+return"
-		enabled: root.visible && _textField.activeFocus
+        enabled: root.visible && _textField.activeFocus
 
         onActivated: root.previousOccurrenceRequested()
     }

@@ -9,10 +9,11 @@ import QtQuick.Templates as T
 import QtQuick.Controls.impl
 import QtQuick.Controls.Material
 
-Rectangle {
-	id: root
 
-	required property var control
+Rectangle {
+    id: root
+
+    required property var control
 
     implicitWidth: control.orientation === Qt.Horizontal ? 6 : control.width
     implicitHeight: control.orientation === Qt.Horizontal ? control.height : 6
@@ -36,7 +37,7 @@ Rectangle {
             }
         }
 
-		// Begin: Listen to hover changes
+        // Begin: Listen to hover changes
         property var hoveredd: parent.T.SplitHandle.hovered
 
         onHovereddChanged: {
@@ -45,7 +46,7 @@ Rectangle {
         //   End: Listen to hover changes
     }
 
-	// Begin: Listen to hover changes
+    // Begin: Listen to hover changes
     property var hovered: false
-	//   End: Listen to hover changes
+    //   End: Listen to hover changes
 }
