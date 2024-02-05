@@ -27,16 +27,15 @@ Popup {
     id: root
 
     required property var mpvqcApplication
-    required property var mpvqcCommentTable
+
+    readonly property var mpvqcCommentTable: root.mpvqcApplication.mpvqcCommentTable
+    readonly property var mpvqcSpecialCharacterValidatorPyObject: root.mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
 
     readonly property int heightIncludingMargins: height + 2 * marginVertical
 
-    property var mpvqcSpecialCharacterValidatorPyObject: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
-
-    property int marginVertical: 10
-    property int marginRight: 10
-    property int xInRightToLeftLayout: mpvqcCommentTable.width - root.width - marginRight
-    property int xInLeftToRightLayout: marginRight
+    readonly property int marginVertical: 10
+    readonly property int xInRightToLeftLayout: mpvqcCommentTable.width - root.width - marginVertical
+    readonly property int xInLeftToRightLayout: marginVertical
 
     height: _textField.height + topPadding + bottomPadding
     width: 450
@@ -45,7 +44,7 @@ Popup {
     y: marginVertical
     z: 1
 
-    padding: 5
+    padding: 6
     closePolicy: Popup.CloseOnEscape
     transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
 
@@ -91,7 +90,10 @@ Popup {
             }
 
             Keys.onPressed: (event) => {
-                if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier && !event.isAutoRepeat) {
+                if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier) {
+                    if (event.isAutoRepeat) {
+                        return
+                    }
                     return root.showSearchBox()
                 }
                 event.accepted = false
@@ -152,7 +154,7 @@ Popup {
     }
 
     Connections {
-        target: mpvqcApplication
+        target: root.mpvqcApplication
 
         function onFullscreenChanged() {
             if (mpvqcApplication.fullscreen) {
@@ -160,5 +162,19 @@ Popup {
             }
         }
     }
+
+    Connections {
+        target: root.mpvqcCommentTable
+
+        function onHeightChanged() {
+            const searchBoxHeight = root.height
+            const tableHeight = root.parent.height
+            const spaceToTop = root.y
+            if (tableHeight < searchBoxHeight + spaceToTop * 2) {
+                root.hideSearchBox()
+            }
+        }
+    }
+
 
 }

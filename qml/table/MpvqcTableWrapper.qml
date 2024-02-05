@@ -53,7 +53,6 @@ FocusScope {
                 id: _mpvqcSearchBox
 
                 mpvqcApplication: root.mpvqcApplication
-                mpvqcCommentTable: _mpvqcTable
 
                 onNextOccurrenceRequested: {
                     console.log('On nextOccurrenceRequested')
