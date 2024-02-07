@@ -57,6 +57,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         index_row = index.row()
         self.newItemAdded.emit(index_row)
         self.commentsChanged.emit()
+        self.invalidate_search()
 
     @Slot(list)
     def import_comments(self, comments: list) -> None:
@@ -76,11 +77,13 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         index = self.indexFromItem(item)
         index_row = index.row()
         self.highlightRequested.emit(index_row)
+        self.invalidate_search()
 
     @Slot(int)
     def remove_row(self, row: int) -> None:
         self.removeRow(row)
         self.commentsChanged.emit()
+        self.invalidate_search()
 
     @Slot(int, int)
     def update_time(self, row: int, time: int) -> None:
@@ -99,6 +102,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot(int, str)
     def update_comment(self, index: int, comment: str) -> None:
         self.setData(self.index(index, 0), comment, Role.COMMENT)
+        self.invalidate_search()
 
     @Slot()
     def clear_comments(self) -> None:

@@ -33,13 +33,13 @@ class TestCommentsModelSearch(unittest.TestCase):
         self._model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
         self._model.import_comments([
             {'time': 0, 'commentType': 'commentType', 'comment': 'Word 1'},
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 2'},
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 3'},
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 4'},
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 5'},
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 6'},
-            {'time': 0, 'commentType': 'commentType', 'comment': ''},
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 7'},
+            {'time': 1, 'commentType': 'commentType', 'comment': 'Word 2'},
+            {'time': 2, 'commentType': 'commentType', 'comment': 'Word 3'},
+            {'time': 3, 'commentType': 'commentType', 'comment': 'Word 4'},
+            {'time': 4, 'commentType': 'commentType', 'comment': 'Word 5'},
+            {'time': 5, 'commentType': 'commentType', 'comment': 'Word 6'},
+            {'time': 6, 'commentType': 'commentType', 'comment': ''},
+            {'time': 9, 'commentType': 'commentType', 'comment': 'Word 9'},
         ])
 
         mock = MagicMock()
@@ -58,6 +58,13 @@ class TestCommentsModelSearch(unittest.TestCase):
 
     def _select(self, row_index: int):
         self._selected_index = row_index
+
+    def _import(self):
+        self._model.import_comments([
+            {'time': 7, 'commentType': 'commentType', 'comment': 'Word 7'},
+            {'time': 8, 'commentType': 'commentType', 'comment': 'Word 8'},
+        ])
+        self._select(row_index=8)
 
     def _next(self):
         return self._search(self._query, include_current_row=False, top_down=True, selected_index=self._selected_index)
@@ -140,6 +147,24 @@ class TestCommentsModelSearch(unittest.TestCase):
         self.assertEqual(1, current_result)
         self.assertEqual(1, total_results)
 
+    def test_match_next_after_import(self):
+        self._search(
+            query='Word',
+            include_current_row=True,
+            top_down=True,
+            selected_index=0
+        )
+
+        self._next()
+        self._next()
+        self._import()
+
+        next_idx, current_result, total_results = self._next()
+        self.assertEqual(9, next_idx)
+        self.assertEqual(9, current_result)
+        self.assertEqual(9, total_results)
+
+
     def test_match_previous(self):
         self._search(
             query='Word',
@@ -174,3 +199,20 @@ class TestCommentsModelSearch(unittest.TestCase):
         self.assertEqual(1, next_idx)
         self.assertEqual(2, current_result)
         self.assertEqual(7, total_results)
+
+    def test_match_previous_after_import(self):
+        self._search(
+            query='Word',
+            include_current_row=True,
+            top_down=True,
+            selected_index=0
+        )
+
+        self._next()
+        self._next()
+        self._import()
+
+        next_idx, current_result, total_results = self._previous()
+        self.assertEqual(7, next_idx)
+        self.assertEqual(7, current_result)
+        self.assertEqual(9, total_results)
