@@ -79,7 +79,7 @@ ListView {
         width: parent ? parent.width : 0
         widthScrollBar: _scrollBar.visibleWidth
 
-        onClicked: root._selectRow(index)
+        onClicked: root.selectRow(index)
 
         onCopyCommentClicked: root._copyCurrentCommentToClipboard()
 
@@ -102,7 +102,7 @@ ListView {
         onDownPressed: root.incrementCurrentIndex()
     }
 
-    function _selectRow(index: int): void {
+    function selectRow(index: int): void {
         root.currentIndex = index
     }
 
@@ -216,16 +216,16 @@ ListView {
         target: root.model
 
         function onNewItemAdded(index: int): void {
-            root._selectRow(index)
+            root.selectRow(index)
             root.startEditing()
         }
 
         function onTimeUpdated(index: int): void {
-            root._selectRow(index)
+            root.selectRow(index)
         }
 
         function onHighlightRequested(index: int): void {
-            root._selectRow(index)
+            root.selectRow(index)
         }
 
         function onCommentsChanged(): void {
