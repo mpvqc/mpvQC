@@ -16,10 +16,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import Signal, Slot, QByteArray
+from PySide6.QtCore import Signal, Slot, QByteArray, Qt
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtQml import QmlElement
 
+from mpvqc.impl import Searcher
 from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -37,13 +38,10 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     def __init__(self):
         super().__init__()
+        self._searcher = Searcher()
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
         self.dataChanged.connect(self.commentsChanged)
-
-    # Searching
-    # match = self.match(self.index(0, 0), Role.COMMENT, "comment", 1000)
-    # print(len(match))
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
@@ -105,6 +103,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot()
     def clear_comments(self) -> None:
         self.clear()
+        self.invalidate_search()
 
     @Slot(result=list or None)
     def comments(self) -> list:
@@ -122,6 +121,23 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             'commentType': item.data(Role.TYPE),
             'comment': item.data(Role.COMMENT)
         }
+
+    @Slot(str, bool, bool, int, result=dict)
+    def search(self, query: str, include_current_row: bool, top_down: bool, selected_index: int):
+        return self._searcher.search(query, include_current_row, top_down, selected_index, search_func=self._search)
+
+    def _search(self, query: str) -> list[int]:
+        from_beginning = self.index(0, 0)
+        role = Role.COMMENT
+        flags = Qt.MatchContains | Qt.MatchWrap
+        all_results = -1  # Search everything
+        results = self.match(from_beginning, role, query, all_results, flags)
+        results = sorted(results)
+        return list(map(lambda model_index: model_index.row(), results))
+
+    @Slot()
+    def invalidate_search(self):
+        self._searcher.invalidate()
 
 
 class Role:
