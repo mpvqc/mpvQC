@@ -33,29 +33,64 @@ import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 ApplicationWindow {
     id: root
 
-	readonly property var newCommentMenu: MpvqcNewCommentMenu {
+    readonly property var newCommentMenu: MpvqcNewCommentMenu
+    {
         mpvqcApplication: root
     }
 
-    readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
-    readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
-    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
-    readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
-    readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
+    readonly property var mpvqcManager: MpvqcManager
+    {
+        mpvqcApplication: root
+    }
+    readonly property var mpvqcSettings: MpvqcSettings
+    {
+        mpvqcApplication: root
+    }
+    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes
+    {
+        mpvqcApplication: root
+    }
+    readonly property var mvqcMpvFiles: MpvqcMpvFiles
+    {
+        mpvqcApplication: root
+    }
+    readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler
+    {
+        mpvqcApplication: root
+    }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
-    readonly property alias mpvqcSearchBox: _content.mpvqcSearchBox
 
-    readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
-    readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
-    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
-    readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject {}
-    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
-    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
-    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
-    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
-    readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
+    readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject
+    {
+    }
+    readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject
+    {
+    }
+    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject
+    {
+    }
+    readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject
+    {
+    }
+    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject
+    {
+    }
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject
+    {
+    }
+    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject
+    {
+    }
+    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject
+    {
+    }
+    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject
+    {
+    }
+    readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject
+    {
+    }
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
@@ -78,10 +113,21 @@ ApplicationWindow {
         'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt'
     ]
 
-    function toggleMaximized() { mpvqcWindowVisibilityHandler.toggleMaximized() }
-    function toggleFullScreen() { mpvqcWindowVisibilityHandler.toggleFullScreen() }
-    function enableFullScreen() { mpvqcWindowVisibilityHandler.enableFullScreen() }
-    function disableFullScreen() { mpvqcWindowVisibilityHandler.disableFullScreen() }
+    function toggleMaximized() {
+        mpvqcWindowVisibilityHandler.toggleMaximized()
+    }
+
+    function toggleFullScreen() {
+        mpvqcWindowVisibilityHandler.toggleFullScreen()
+    }
+
+    function enableFullScreen() {
+        mpvqcWindowVisibilityHandler.enableFullScreen()
+    }
+
+    function disableFullScreen() {
+        mpvqcWindowVisibilityHandler.disableFullScreen()
+    }
 
     onClosing: (event) => {
         closeHandler.requestClose()
@@ -112,11 +158,9 @@ ApplicationWindow {
 
         onSplitViewHandleHovered: (hovered) => _catchAllMouseArea.splitViewHandleHovered(hovered)
 
-        Keys.onEscapePressed: (event) => {
+        Keys.onEscapePressed: {
             if (root.fullscreen) {
                 root.disableFullScreen()
-            } else if (root.mpvqcSearchBox.visible) {
-                root.mpvqcSearchBox.hideSearchBox()
             }
         }
 
@@ -159,16 +203,19 @@ ApplicationWindow {
             if (modifiers === Qt.NoModifier) {
                 return root.toggleFullScreen()
             }
-
-            if (modifiers === Qt.ControlModifier && !root.fullscreen && !root.mpvqcCommentTable.currentlyEditing && root.mpvqcCommentTable.haveComments) {
-                return root.mpvqcSearchBox.showSearchBox()
-            }
         }
 
         function _preventFromEverReachingUserDefinedCommands(event): bool {
             const key = event.key
             const modifiers = event.modifiers
-            return key === Qt.Key_Up || key === Qt.Key_Down || (key === Qt.Key_Return && modifiers === Qt.NoModifier) || (key === Qt.Key_Escape && modifiers === Qt.NoModifier) || (key === Qt.Key_Delete && modifiers === Qt.NoModifier) || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier) || (key === Qt.Key_F && modifiers === Qt.ControlModifier) || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
+            return key === Qt.Key_Up
+                || key === Qt.Key_Down
+                || (key === Qt.Key_Return && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_Escape && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_Delete && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_F && modifiers === Qt.ControlModifier)
+                || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
         }
 
     }

@@ -32,7 +32,6 @@ FocusScope {
     readonly property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
 
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
-    readonly property alias mpvqcSearchBox: _contentSplitView.mpvqcSearchBox
 
     signal splitViewHandleHovered(bool hovered)
 

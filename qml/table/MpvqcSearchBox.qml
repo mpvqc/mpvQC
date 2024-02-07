@@ -26,32 +26,38 @@ import QtQuick.Layouts
 Popup {
     id: root
 
-    required property var mpvqcApplication
+    required property var searchFunc
+    required property int tableHeight
+    required property int tableWidth
+    required property bool applicationIsFullscreen
+    required property var mpvqcSpecialCharacterValidatorPyObject
 
-    readonly property var mpvqcCommentTable: root.mpvqcApplication.mpvqcCommentTable
-    readonly property var mpvqcSpecialCharacterValidatorPyObject: root.mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
+    property alias queryText: _textField.text
 
-    readonly property int heightIncludingMargins: height + 2 * marginVertical
+    readonly property int marginVertical: 70
 
-    readonly property int marginVertical: 10
-    readonly property int xInRightToLeftLayout: mpvqcCommentTable.width - root.width - marginVertical
-    readonly property int xInLeftToRightLayout: marginVertical
+    readonly property var searchService: MpvqcSearchService {
+        searchFunc: root.searchFunc
+
+        onHighlightRequested: (index) => {
+            root.highlightRequested(index)
+        }
+    }
 
     height: _textField.height + topPadding + bottomPadding
     width: 450
 
-    x: mirrored ? xInLeftToRightLayout : xInRightToLeftLayout
-    y: marginVertical
+    x: mirrored ? marginVertical : root.tableWidth - width - marginVertical
+    y: 10
     z: 1
 
-    padding: 6
-    closePolicy: Popup.CloseOnEscape
+    padding: 5
+    closePolicy: Popup.NoAutoClose
     transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
 
     Material.roundedScale: Material.SmallScale
 
-    signal nextOccurrenceRequested()
-    signal previousOccurrenceRequested()
+    signal highlightRequested(int rowIndex)
 
     function showSearchBox() {
         root.visible = true
@@ -63,6 +69,18 @@ Popup {
         root.visible = false
     }
 
+    onApplicationIsFullscreenChanged: {
+        if (root.applicationIsFullscreen) {
+            hideSearchBox()
+        }
+    }
+
+    onTableHeightChanged: {
+        if (root.tableHeight < root.height + root.y * 2) {
+            root.hideSearchBox()
+        }
+    }
+
     RowLayout {
         width: root.width - root.leftPadding - root.rightPadding
         spacing: 0
@@ -70,8 +88,6 @@ Popup {
         TextField {
             id: _textField
 
-            objectName: 'searchField'
-            height: implicitHeight - 5
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
@@ -80,7 +96,7 @@ Popup {
             Layout.fillWidth: true
 
             onTextChanged: {
-                console.log("Query", text)
+                root.searchService.search(text)
             }
 
             Component.onCompleted: {
@@ -101,9 +117,15 @@ Popup {
         }
 
         ToolButton {
-            enabled: false
+            id: _resultLabel
+
+            readonly property int currentResult: root.searchService.currentResult
+            readonly property int totalResults: root.searchService.totalResults
+            readonly property bool haveResults: currentResult >= 0 && totalResults >= 0
+
+            text: haveResults ? `${currentResult}/${totalResults}` : ''
             focusPolicy: Qt.NoFocus
-            text: "10/10"
+            enabled: false
         }
 
         ToolSeparator {
@@ -112,20 +134,22 @@ Popup {
 
         ToolButton {
             focusPolicy: Qt.NoFocus
+            enabled: _resultLabel.haveResults
             icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
             icon.width: 24
             icon.height: 24
 
-            onClicked: root.previousOccurrenceRequested()
+            onClicked: root.searchService.requestPrevious()
         }
 
         ToolButton {
             focusPolicy: Qt.NoFocus
+            enabled: _resultLabel.haveResults
             icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
             icon.width: 24
             icon.height: 24
 
-            onClicked: root.nextOccurrenceRequested()
+            onClicked: root.searchService.requestNext()
         }
 
         ToolButton {
@@ -143,38 +167,21 @@ Popup {
         sequence: "return"
         enabled: root.visible && _textField.activeFocus
 
-        onActivated: root.nextOccurrenceRequested()
+        onActivated: root.searchService.requestNext()
     }
 
     Shortcut {
         sequence: "shift+return"
         enabled: root.visible && _textField.activeFocus
 
-        onActivated: root.previousOccurrenceRequested()
+        onActivated: root.searchService.requestPrevious()
     }
 
-    Connections {
-        target: root.mpvqcApplication
+    Shortcut {
+        sequence: "Esc"
+        enabled: _textField.activeFocus
 
-        function onFullscreenChanged() {
-            if (mpvqcApplication.fullscreen) {
-                hideSearchBox()
-            }
-        }
+        onActivated: root.hideSearchBox()
     }
-
-    Connections {
-        target: root.mpvqcCommentTable
-
-        function onHeightChanged() {
-            const searchBoxHeight = root.height
-            const tableHeight = root.parent.height
-            const spaceToTop = root.y
-            if (tableHeight < searchBoxHeight + spaceToTop * 2) {
-                root.hideSearchBox()
-            }
-        }
-    }
-
 
 }
