@@ -29,6 +29,7 @@ MpvqcMenu {
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
     property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
+    property string selectedCommentType: ''
 
     property alias repeater: _repeater
 
@@ -36,10 +37,21 @@ MpvqcMenu {
     dim: false
     parent: Overlay.overlay
     z: 2
+    exit: null
 
     function popupMenu(): void {
         mpvqcMpvPlayerPyObject.pause()
         popup()
+    }
+
+    onClosed: {
+        // Instead of directly adding a comment in the MenuItem triggered signal handler,
+        // we defer adding it until the popup closes. If we would directly add it,
+        // the menu's closing signals would interfere with the focus of the newly added comment.
+        if (selectedCommentType !== '') {
+            mpvqcCommentTable.addNewComment(selectedCommentType)
+            selectedCommentType = ''
+        }
     }
 
     Repeater {
@@ -52,7 +64,7 @@ MpvqcMenu {
 
             onTriggered: {
                 mpvqcApplication.disableFullScreen()
-                root.mpvqcCommentTable.addNewComment(model.type)
+                root.selectedCommentType = model.type
             }
         }
     }
