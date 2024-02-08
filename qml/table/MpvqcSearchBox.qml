@@ -178,10 +178,24 @@ Popup {
     }
 
     Shortcut {
-        sequence: "Esc"
+        sequence: "esc"
         enabled: _textField.activeFocus
 
         onActivated: root.hideSearchBox()
+    }
+
+    Shortcut {
+        sequence: "up"
+        enabled: _textField.activeFocus
+
+        onActivated: root.searchService.requestPrevious()
+    }
+
+    Shortcut {
+        sequence: "down"
+        enabled: _textField.activeFocus
+
+        onActivated: root.searchService.requestNext()
     }
 
 }
