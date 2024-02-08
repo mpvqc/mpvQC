@@ -33,64 +33,25 @@ import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 ApplicationWindow {
     id: root
 
-    readonly property var newCommentMenu: MpvqcNewCommentMenu
-    {
-        mpvqcApplication: root
-    }
-
-    readonly property var mpvqcManager: MpvqcManager
-    {
-        mpvqcApplication: root
-    }
-    readonly property var mpvqcSettings: MpvqcSettings
-    {
-        mpvqcApplication: root
-    }
-    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes
-    {
-        mpvqcApplication: root
-    }
-    readonly property var mvqcMpvFiles: MpvqcMpvFiles
-    {
-        mpvqcApplication: root
-    }
-    readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler
-    {
-        mpvqcApplication: root
-    }
+    readonly property var newCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
+    readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
+    readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
+    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
+    readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
+    readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
-    readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject
-    {
-    }
-    readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject
-    {
-    }
-    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject
-    {
-    }
-    readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject
-    {
-    }
-    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject
-    {
-    }
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject
-    {
-    }
-    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject
-    {
-    }
-    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject
-    {
-    }
-    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject
-    {
-    }
-    readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject
-    {
-    }
+    readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
+    readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
+    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
+    readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject {}
+    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
+    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
+    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
+    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
+    readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
@@ -240,6 +201,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Qt.uiLanguage = mpvqcSettings.language
+        mpvqcCommentTable.forceActiveFocus()
     }
 
     Material.theme: mpvqcSettings.theme
