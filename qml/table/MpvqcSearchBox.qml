@@ -32,7 +32,7 @@ Popup {
     required property bool applicationIsFullscreen
     required property var mpvqcSpecialCharacterValidatorPyObject
 
-    property alias queryText: _textField.text
+    readonly property string searchQuery: visible ? _textField.text : ''
 
     readonly property int marginVertical: 70
 

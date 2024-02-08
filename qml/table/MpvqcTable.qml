@@ -28,6 +28,7 @@ ListView {
     id: root
 
     required property var mpvqcApplication
+    required property string searchQuery
 
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
@@ -78,6 +79,7 @@ ListView {
         tableInEditMode: root.currentlyEditing
         width: parent ? parent.width : 0
         widthScrollBar: _scrollBar.visibleWidth
+        searchQuery: root.searchQuery
 
         onClicked: root.selectRow(index)
 
