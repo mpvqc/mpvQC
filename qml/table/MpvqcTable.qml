@@ -145,19 +145,6 @@ ListView {
         root.model.import_comments(comments)
     }
 
-    function _ignore(event: KeyEvent): bool {
-        const key = event.key
-        const modifiers = event.modifiers
-        return key === Qt.Key_Up
-            || key === Qt.Key_Down
-            || (key === Qt.Key_Return && modifiers === Qt.NoModifier)
-            || (key === Qt.Key_Escape && modifiers === Qt.NoModifier)
-            || (key === Qt.Key_Delete && modifiers === Qt.NoModifier)
-            || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier)
-            || (key === Qt.Key_F && modifiers === Qt.ControlModifier)
-            || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
-    }
-
     function _handleDeleteComment(event) {
         if (event.isAutoRepeat) {
             return
