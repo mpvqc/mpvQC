@@ -94,6 +94,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.sort(0)
 
         self.timeUpdated.emit(item.row())
+        self.invalidate_search()
 
     @Slot(int, str)
     def update_comment_type(self, index: int, comment_type: str) -> None:
