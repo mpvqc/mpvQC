@@ -187,13 +187,13 @@ ListView {
     }
 
     Keys.onPressed: (event) => {
-        if (event.key == Qt.Key_Backspace) {
+        if (event.key === Qt.Key_Backspace) {
             return _handleDeleteComment(event)
         }
-        if (event.key == Qt.Key_Delete) {
+        if (event.key === Qt.Key_Delete) {
             return _handleDeleteComment(event)
         }
-        if (event.key == Qt.Key_C) {
+        if (event.key === Qt.Key_C) {
             return _handleCPressed(event)
         }
 
