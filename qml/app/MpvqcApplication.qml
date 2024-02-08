@@ -95,20 +95,6 @@ ApplicationWindow {
         event.accepted = closeHandler.userConfirmedClose
     }
 
-    onActiveFocusItemChanged: {
-        if (!activeFocusItem) {
-            return
-        }
-        if (activeFocusItem === contentItem) {
-            mpvqcCommentTable.forceActiveFocus()
-            return
-        }
-        const asString = activeFocusItem.toString()
-        if (asString.includes('QQuickRootItem')) {
-            mpvqcCommentTable.forceActiveFocus()
-        }
-    }
-
     MpvqcContent {
         id: _content
 

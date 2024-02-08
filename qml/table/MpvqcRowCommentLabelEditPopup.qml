@@ -45,7 +45,6 @@ Popup {
     rightPadding: 0
     topPadding: paddingAround
     bottomPadding: paddingAround
-    closePolicy: Popup.CloseOnPressOutside
 
     background: Rectangle {
         color: root.Material.primary
@@ -69,13 +68,17 @@ Popup {
         }
 
         onAccepted: root.close()
-
-        onActiveFocusChanged: forceActiveFocus()
     }
 
     onAboutToHide: {
         if (acceptValue) {
             root.edited(_textField.text.trim())
+        }
+    }
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            root.close()
         }
     }
 
