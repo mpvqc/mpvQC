@@ -125,9 +125,10 @@ Popup {
 
             readonly property int currentResult: root.searchService.currentResult
             readonly property int totalResults: root.searchService.totalResults
-            readonly property bool haveResults: currentResult >= 0 && totalResults >= 0
+            readonly property bool haveResults: totalResults > 0
+            readonly property bool displayText: currentResult >= 0 && totalResults >= 0
 
-            text: haveResults ? `${currentResult}/${totalResults}` : ''
+            text: displayText ? `${currentResult}/${totalResults}` : ''
             focusPolicy: Qt.NoFocus
             enabled: false
         }
@@ -137,7 +138,6 @@ Popup {
         }
 
         ToolButton {
-            focusPolicy: Qt.NoFocus
             enabled: _resultLabel.haveResults
             icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
             icon.width: 24
@@ -147,7 +147,6 @@ Popup {
         }
 
         ToolButton {
-            focusPolicy: Qt.NoFocus
             enabled: _resultLabel.haveResults
             icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
             icon.width: 24
@@ -157,7 +156,6 @@ Popup {
         }
 
         ToolButton {
-            focusPolicy: Qt.NoFocus
             icon.source: "qrc:/data/icons/close_black_24dp.svg"
             icon.width: 18
             icon.height: 18
