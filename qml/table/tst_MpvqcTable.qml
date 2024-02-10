@@ -88,6 +88,8 @@ TestCase {
                 }
             }
 
+            searchQuery: 'search Query'
+
             model: ListModel {
                 signal newItemAdded()
                 signal timeUpdated()

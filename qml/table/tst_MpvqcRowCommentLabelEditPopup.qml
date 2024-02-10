@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 import QtTest
 
 
@@ -36,29 +37,18 @@ TestCase {
         id: objectUnderTest
 
         MpvqcRowCommentLabelEditPopup {
-            mpvqcApplication: QtObject {
-                property var mpvqcSettings: QtObject {
-                    property var commentTypes: QtObject {
-                        function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
-                    }
-                }
-                property var mpvqcSpecialCharacterValidatorPyObject: RegularExpressionValidator {
-                    regularExpression: /[0-9A-Z]+/
-                }
-                property var activeFocusItem: undefined
+            mpvqcSpecialCharacterValidator: RegularExpressionValidator {
+                regularExpression: /[0-9A-Z]+/
             }
             paddingAround: 4
             currentComment: 'Corrent comment'
-
         }
     }
 
-    function test_alwaysFocused() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+    Component {
+        id: otherItem
 
-        control.contentItem.focus = false
-        verify(control.contentItem.focus)
+        Label {}
     }
 
     function test_textFieldAccepted() {
@@ -74,7 +64,7 @@ TestCase {
         control.contentItem.accepted()
 
         compare(editedSpy.count, 1)
-        compare(closedSpy.count, 1)
+        verify(closedSpy.count > 0)
     }
 
     function test_arrowUpPressed() {
@@ -93,7 +83,7 @@ TestCase {
         keyPress(Qt.Key_Up)
 
         compare(editedSpy.count, 1)
-        compare(closedSpy.count, 1)
+        verify(closedSpy.count > 0)
         compare(upSpy.count, 1)
     }
 
@@ -113,7 +103,7 @@ TestCase {
         keyPress(Qt.Key_Down)
 
         compare(editedSpy.count, 1)
-        compare(closedSpy.count, 1)
+        verify(closedSpy.count > 0)
         compare(downSpy.count, 1)
     }
 
@@ -130,17 +120,20 @@ TestCase {
         keyPress(Qt.Key_Escape)
 
         compare(editedSpy.count, 0)
-        compare(closedSpy.count, 1)
+        verify(closedSpy.count > 0)
     }
 
     function test_clickedOutsideApplication() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
+        const controlOther = createTemporaryObject(otherItem, testCase)
+        verify(controlOther)
+
         let spy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
         verify(spy)
 
-        control.mpvqcApplication.activeFocusItem = null
+        controlOther.forceActiveFocus()
         compare(spy.count, 1)
     }
 

@@ -36,6 +36,8 @@ Label {
 
     property alias loader: _loader
 
+    property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
+
     signal clicked()
     signal edited(string newComment)
     signal editingStarted()
@@ -67,7 +69,7 @@ Label {
 
     function _stopEditing(): void {
         _closePopup()
-        root.editingStopped()
+        delayEditingStoppedTimer.restart()
     }
 
     function _closePopup(): void {

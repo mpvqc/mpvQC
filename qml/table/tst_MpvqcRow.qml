@@ -40,6 +40,7 @@ TestCase {
 
             rowSelected: false
             tableInEditMode: false
+            searchQuery: ''
 
             mpvqcApplication: QtObject {
                 property var mpvqcWidthCalculatorCommentTypes: QtObject {
