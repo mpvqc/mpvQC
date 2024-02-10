@@ -31,16 +31,6 @@ FocusScope {
     readonly property alias mpvqcCommentTable: _mpvqcTable
     readonly property bool haveComments: _mpvqcTable.count > 0
 
-    readonly property var mpvqcSearchService: MpvqcSearchService {
-        searchFunc: (query, includeCurrentRow, topDown) => {
-            return _mpvqcTable.model.search(query, includeCurrentRow, topDown, _mpvqcTable.currentIndex)
-        }
-
-        onHighlightRequested: (index) => {
-            _mpvqcTable.selectRow(index)
-        }
-    }
-
     Column {
         width: root.width
 
