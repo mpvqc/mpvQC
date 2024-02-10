@@ -32,7 +32,7 @@ Popup {
     required property bool applicationIsFullscreen
     required property var mpvqcSpecialCharacterValidatorPyObject
 
-    readonly property string searchQuery: visible ? _textField.text : ''
+    readonly property string searchQuery: searchQueryActive ? _textField.text : ''
 
     readonly property int marginVertical: 70
 
@@ -43,6 +43,8 @@ Popup {
             root.highlightRequested(index)
         }
     }
+
+    property bool searchQueryActive: false
 
     height: _textField.height + topPadding + bottomPadding
     width: 450
@@ -61,12 +63,14 @@ Popup {
 
     function showSearchBox() {
         root.visible = true
+        root.searchQueryActive = true
         _textField.selectAll();
         _textField.forceActiveFocus()
     }
 
     function hideSearchBox() {
         root.visible = false
+        root.searchQueryActive = false
     }
 
     onApplicationIsFullscreenChanged: {
