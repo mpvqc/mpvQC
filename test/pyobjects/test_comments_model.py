@@ -21,26 +21,176 @@ from unittest.mock import MagicMock
 import inject
 
 from mpvqc.pyobjects import MpvqcCommentModelPyObject
+from mpvqc.pyobjects.comments_model import Role
 from mpvqc.services import PlayerService
+
+
+class TestCommentsModel(unittest.TestCase):
+    _default_comments = [
+        {'time': 0, 'commentType': 'commentType', 'comment': 'Word 1'},
+        {'time': 5, 'commentType': 'commentType', 'comment': 'Word 2'},
+        {'time': 10, 'commentType': 'commentType', 'comment': 'Word 3'},
+        {'time': 15, 'commentType': 'commentType', 'comment': 'Word 4'},
+        {'time': 20, 'commentType': 'commentType', 'comment': 'Word 5'},
+    ]
+
+    def setUp(self):
+        # noinspection PyCallingNonCallable
+        self._model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
+
+        self._model.import_comments(self._default_comments[:])
+
+        self._player_mock = MagicMock()
+        self._player_mock.current_time = 0
+        inject.clear_and_configure(lambda binder: binder
+                                   .bind(PlayerService, self._player_mock))
+
+    def tearDown(self):
+        inject.clear()
+
+    def _mock_player_time(self, time: int):
+        self._player_mock.current_time = time
+
+    def test_add_row_count(self):
+        count = self._model.rowCount()
+        self.assertEqual(count, 5)
+        self._model.add_row('comment')
+        self.assertEqual(count + 1, 6)
+
+    def test_add_row_sorting(self):
+        self._mock_player_time(time=7)
+        self._model.add_row('my custom comment type')
+
+        item = self._model.item(2, 0)
+        self.assertEqual('my custom comment type', item.data(Role.TYPE))
+
+    def test_add_row_signals(self):
+        signals_fired = {}
+
+        def signal_fired(key, val=True):
+            signals_fired[key] = val
+
+        self._model.commentsChanged.connect(lambda: signal_fired('commentsChanged'))
+        self._model.newItemAdded.connect(lambda idx: signal_fired('newItemAdded', idx))
+
+        self._model.add_row('comment type')
+
+        self.assertIsNotNone(signals_fired.get('commentsChanged', None))
+        self.assertIsNotNone(signals_fired.get('newItemAdded', None))
+
+    def test_add_row_invalidates_search(self):
+        self._model._searcher._hits = ['result']
+        self._model.add_row('comment type')
+
+        self.assertIsNone(self._model._searcher._hits)
+
+    def test_import_comments_signals(self):
+        signals_fired = {}
+
+        def signal_fired(key, val=True):
+            signals_fired[key] = val
+
+        self._model.highlightRequested.connect(lambda: signal_fired('highlightRequested'))
+
+        self._model.import_comments([
+            {'time': 0, 'commentType': 'commentType', 'comment': 'Word ok'},
+        ])
+
+        self.assertIsNotNone(signals_fired.get('highlightRequested', None))
+
+    def test_import_comments_invalidates_search(self):
+        self._model._searcher._hits = ['result']
+        self._model.import_comments([
+            {'time': 0, 'commentType': 'commentType', 'comment': 'Word ok'},
+        ])
+
+        self.assertIsNone(self._model._searcher._hits)
+
+    def test_remove_row(self):
+        count = self._model.rowCount()
+        self.assertEqual(count, 5)
+        self._model.remove_row(0)
+        self.assertEqual(count - 1, 4)
+
+    def test_remove_row_signals(self):
+        signals_fired = {}
+
+        def signal_fired(key, val=True):
+            signals_fired[key] = val
+
+        self._model.commentsChanged.connect(lambda: signal_fired('commentsChanged'))
+
+        self._model.remove_row(0)
+
+        self.assertIsNotNone(signals_fired.get('commentsChanged', None))
+
+    def test_remove_row_invalidates_search(self):
+        self._model._searcher._hits = ['result']
+        self._model.remove_row(0)
+
+        self.assertIsNone(self._model._searcher._hits)
+
+    def test_update_time_sorting(self):
+        self._model.update_time(0, time=7)
+
+        index = self._model.index(1, 0)
+        item = self._model.itemFromIndex(index)
+        data = item.data(Role.COMMENT)
+
+        self.assertEqual(data, 'Word 1')
+
+    def test_update_time_signals(self):
+        signals_fired = {}
+
+        def signal_fired(key, val=True):
+            signals_fired[key] = val
+
+        self._model.timeUpdated.connect(lambda: signal_fired('timeUpdated'))
+
+        self._model.update_time(0, time=7)
+
+        self.assertIsNotNone(signals_fired.get('timeUpdated', None))
+
+    def test_update_time_invalidates_search(self):
+        self._model._searcher._hits = ['result']
+        self._model.update_time(0, time=7)
+
+        self.assertIsNone(self._model._searcher._hits)
+
+    def test_update_comment_invalidates_search(self):
+        self._model._searcher._hits = ['result']
+        self._model.update_comment(0, comment='new')
+
+        self.assertIsNone(self._model._searcher._hits)
+
+    def test_clear_comments_invalidates_search(self):
+        self._model._searcher._hits = ['result']
+        self._model.clear_comments()
+
+        self.assertIsNone(self._model._searcher._hits)
+
+    def test_get_all_comments(self):
+        self.assertListEqual(self._default_comments, self._model.comments())
 
 
 class TestCommentsModelSearch(unittest.TestCase):
     _query = ''
     _selected_index = -1
+    _default_comments = [
+        {'time': 0, 'commentType': 'commentType', 'comment': 'Word 1'},
+        {'time': 1, 'commentType': 'commentType', 'comment': 'Word 2'},
+        {'time': 2, 'commentType': 'commentType', 'comment': 'Word 3'},
+        {'time': 3, 'commentType': 'commentType', 'comment': 'Word 4'},
+        {'time': 4, 'commentType': 'commentType', 'comment': 'Word 5'},
+        {'time': 5, 'commentType': 'commentType', 'comment': 'Word 6'},
+        {'time': 6, 'commentType': 'commentType', 'comment': ''},
+        {'time': 9, 'commentType': 'commentType', 'comment': 'Word 9'},
+    ]
 
     def setUp(self):
         # noinspection PyCallingNonCallable
         self._model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
-        self._model.import_comments([
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word 1'},
-            {'time': 1, 'commentType': 'commentType', 'comment': 'Word 2'},
-            {'time': 2, 'commentType': 'commentType', 'comment': 'Word 3'},
-            {'time': 3, 'commentType': 'commentType', 'comment': 'Word 4'},
-            {'time': 4, 'commentType': 'commentType', 'comment': 'Word 5'},
-            {'time': 5, 'commentType': 'commentType', 'comment': 'Word 6'},
-            {'time': 6, 'commentType': 'commentType', 'comment': ''},
-            {'time': 9, 'commentType': 'commentType', 'comment': 'Word 9'},
-        ])
+        self._model.import_comments(self._default_comments)
 
         mock = MagicMock()
         mock.current_time = 0
@@ -163,7 +313,6 @@ class TestCommentsModelSearch(unittest.TestCase):
         self.assertEqual(9, next_idx)
         self.assertEqual(9, current_result)
         self.assertEqual(9, total_results)
-
 
     def test_match_previous(self):
         self._search(
