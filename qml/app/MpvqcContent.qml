@@ -33,6 +33,8 @@ FocusScope {
 
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
 
+    signal splitViewHandleHovered(bool hovered)
+
     MpvqcResizeToOriginalResolutionHandler {
         id: _videoResizer
 
@@ -59,6 +61,8 @@ FocusScope {
             mpvqcApplication: root.mpvqcApplication
             focus: true
             anchors.fill: _page.contentItem
+
+            onSplitViewHandleHovered: (hovered) => root.splitViewHandleHovered(hovered)
 
             MpvqcDragAndDropHandler {
                 anchors.fill: parent

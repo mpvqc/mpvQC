@@ -31,6 +31,7 @@ Rectangle {
     required property int time              // from model
     required property string commentType    // from model
     required property string comment        // from model
+    required property string searchQuery
 
     readonly property var mpvqcWidthCalculatorCommentTypes: mpvqcApplication.mpvqcWidthCalculatorCommentTypes
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
@@ -145,6 +146,7 @@ Rectangle {
             height: root.height
             mpvqcApplication: root.mpvqcApplication
             comment: root.comment
+            searchQuery: root.searchQuery
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
 

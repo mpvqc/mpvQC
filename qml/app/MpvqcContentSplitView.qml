@@ -32,7 +32,7 @@ FocusScope {
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    readonly property alias mpvqcCommentTable: _commentTable.mpvqcCommentTable
+    readonly property alias mpvqcCommentTable: _tableWrapper.mpvqcCommentTable
     readonly property alias playerContainer: _playerContainer
     readonly property alias tableContainer: _tableContainer
 
@@ -41,6 +41,8 @@ FocusScope {
     readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
     readonly property int draggerWidth: _splitView.width - _playerContainer.width - tableContainerWidth
     readonly property int orientation: _splitView.orientation
+
+    signal splitViewHandleHovered(bool hovered)
 
     states: [
         State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
@@ -64,6 +66,12 @@ FocusScope {
 
         anchors.fill: root
         orientation: root.mpvqcSettings.layoutOrientation
+
+        handle: MpvqcSplitViewHandle {
+            control: _splitView
+
+            onHoveredChanged: root.splitViewHandleHovered(hovered)
+        }
 
         Item {
             id: _playerContainer
@@ -89,8 +97,8 @@ FocusScope {
                 SplitView.preferredHeight = height
             }
 
-            MpvqcCommentTable {
-                id: _commentTable
+            MpvqcTableWrapper {
+                id: _tableWrapper
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true
@@ -132,7 +140,7 @@ FocusScope {
         function _applySaneDefaultSplitViewSizes() {
             const splitViewWidth = _splitView.width
             const splitViewHeight = _splitView.height
-            root.setPreferredTableSize(splitViewWidth * (1/3), splitViewHeight * (1/3.5))
+            root.setPreferredTableSize(splitViewWidth * (1 / 3), splitViewHeight * (1 / 3.5))
         }
     }
 

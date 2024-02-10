@@ -28,12 +28,16 @@ ListView {
     id: root
 
     required property var mpvqcApplication
+    required property string searchQuery
 
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
     readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator
 
-    property bool editMode: false
+    property bool haveComments: root.count > 0
+
+    property bool currentlyEditing: false
+    property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
 
     property var deleteCommentMessageBox: null
     property var deleteCommentMessageBoxFactory: Component {
@@ -53,7 +57,7 @@ ListView {
     clip: true
     focus: true
     reuseItems: true
-    interactive: !editMode
+    interactive: !currentlyEditing
     boundsBehavior: Flickable.StopAtBounds
     highlightMoveDuration: 0
     highlightMoveVelocity: -1
@@ -72,19 +76,20 @@ ListView {
     delegate: MpvqcRow {
         mpvqcApplication: root.mpvqcApplication
         rowSelected: root.currentIndex === index
-        tableInEditMode: root.editMode
+        tableInEditMode: root.currentlyEditing
         width: parent ? parent.width : 0
         widthScrollBar: _scrollBar.visibleWidth
+        searchQuery: root.searchQuery
 
-        onClicked: root._selectRow(index)
+        onClicked: root.selectRow(index)
 
         onCopyCommentClicked: root._copyCurrentCommentToClipboard()
 
         onDeleteCommentClicked: root._requestDeleteRow(index)
 
-        onEditingStarted: { root.editMode = true }
+        onEditingStarted: { root.currentlyEditing = true }
 
-        onEditingStopped: { root.editMode = false }
+        onEditingStopped: { root.currentlyEditing = false }
 
         onPlayClicked: root.mpv.jump_to(time)
 
@@ -99,7 +104,7 @@ ListView {
         onDownPressed: root.incrementCurrentIndex()
     }
 
-    function _selectRow(index: int): void {
+    function selectRow(index: int): void {
         root.currentIndex = index
     }
 
@@ -140,45 +145,80 @@ ListView {
         root.model.import_comments(comments)
     }
 
+    function _handleDeleteComment(event) {
+        if (event.isAutoRepeat) {
+            return
+        }
+
+        if (!root.mpvqcApplication.fullscreen && root.haveComments) {
+            return root._requestDeleteRow(root.currentIndex)
+        }
+    }
+
+    function _handleCPressed(event) {
+        if (event.modifiers === Qt.ControlModifier) {
+            if (event.isAutoRepeat) {
+                return
+            }
+
+            const haveComments = root.haveComments
+            const notEditing = !root.currentlyEditing
+            const notFullscreen = !root.mpvqcApplication.fullscreen
+
+            if (haveComments && notEditing && notFullscreen) {
+                return root._copyCurrentCommentToClipboard()
+            }
+        }
+        event.accepted = false
+    }
+
+    Keys.onReturnPressed: (event) => {
+        if (event.isAutoRepeat) {
+            return
+        }
+
+        const haveComments = root.haveComments
+        const notEditing = !root.currentlyEditing
+        const notFullscreen = !root.mpvqcApplication.fullscreen
+
+        if (haveComments && notEditing && notFullscreen) {
+            return root.startEditing()
+        }
+    }
+
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_Backspace) {
+            return _handleDeleteComment(event)
+        }
+        if (event.key === Qt.Key_Delete) {
+            return _handleDeleteComment(event)
+        }
+        if (event.key === Qt.Key_C) {
+            return _handleCPressed(event)
+        }
+
+        event.accepted = false
+    }
+
+
     Connections {
         target: root.model
 
         function onNewItemAdded(index: int): void {
-            root._selectRow(index)
+            root.selectRow(index)
             root.startEditing()
         }
 
         function onTimeUpdated(index: int): void {
-            root._selectRow(index)
+            root.selectRow(index)
         }
 
         function onHighlightRequested(index: int): void {
-            root._selectRow(index)
+            root.selectRow(index)
         }
 
         function onCommentsChanged(): void {
             root.commentsChanged()
-        }
-    }
-
-    MpvqcTableEventHandler {
-        id: _handler
-
-        mpvqcCommentTable: root
-        mpvqcApplication: root.mpvqcApplication
-
-        onDeleteCommentPressed: root._requestDeleteRow(root.currentIndex)
-
-        onCopyToClipboardPressed: root._copyCurrentCommentToClipboard()
-    }
-
-    Keys.onPressed: (event) => {
-        if (_handler.ignore(event))  {
-            return
-        }
-        const command = root.mpvqcKeyCommandGenerator.generateFrom(event)
-        if (command) {
-            root.mpv.execute(command)
         }
     }
 

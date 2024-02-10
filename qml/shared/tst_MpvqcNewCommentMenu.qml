@@ -89,6 +89,7 @@ TestCase {
 
         const item = control.repeater.itemAt(0)
         item.triggered()
+        control.closed()
 
         verify(control.disableFullScreenCalled)
         verify(control.addNewCommentCalled)

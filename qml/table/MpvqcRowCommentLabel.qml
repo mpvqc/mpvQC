@@ -20,12 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import "MpvqcCommentHighlighter.js" as CommentHighlighter
+
 
 Label {
     id: root
 
     required property var mpvqcApplication
     required property string comment
+    required property string searchQuery
     required property bool rowSelected
     required property bool tableInEditMode
 
@@ -33,7 +36,7 @@ Label {
 
     property alias loader: _loader
 
-    property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: editingStopped() }
+    property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
 
     signal clicked()
     signal edited(string newComment)
@@ -42,10 +45,12 @@ Label {
     signal upPressed()
     signal downPressed()
 
-    text: comment
+    textFormat: searchQuery ? Text.StyledText : Text.PlainText
+    text: searchQuery ? CommentHighlighter.highlightComment(comment, searchQuery) : comment
+
     horizontalAlignment: Text.AlignLeft
     verticalAlignment: Text.AlignVCenter
-    elide: LayoutMirroring.enabled ? Text.ElideLeft: Text.ElideRight
+    elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
     leftPadding: paddingAround
     rightPadding: paddingAround
 
@@ -94,7 +99,7 @@ Label {
             implicitWidth: root.width
             implicitHeight: root.height
             currentComment: root.comment
-            mpvqcApplication: root.mpvqcApplication
+            mpvqcSpecialCharacterValidator: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
             paddingAround: root.paddingAround
 
             onClosed: root._stopEditing()

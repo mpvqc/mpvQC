@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2022 mpvQC developers
+# Copyright (C) 2024 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,26 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 
-import inject
-
-from mpvqc.services import ResourceService, ResourceReaderService
-
-
-class TestResourceService(unittest.TestCase):
-
-    def setUp(self):
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ResourceReaderService, ResourceReaderService()))
-
-    def tearDown(self):
-        inject.clear()
-
-    def test_input_conf_exists(self):
-        text = ResourceService().input_conf_content
-        self.assertTrue(text)
-
-    def test_mpv_conf_exists(self):
-        text = ResourceService().mpv_conf_content
-        self.assertTrue(text)
+from .searcher import Searcher

@@ -19,34 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-import pyobjects
 
-
-FocusScope {
+MouseArea {
     id: root
 
     required property var mpvqcApplication
 
-    readonly property alias mpvqcCommentTable: _mpvqcCommentTable
-    property bool haveComments: _mpvqcCommentTable.count > 0
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    Column {
-        width: root.width
+    propagateComposedEvents: true
 
-        MpvqcPlaceholder {
-            width: root.width
-            height: haveComments ? 0 : root.height
+    signal afterPressed()
+
+    function splitViewHandleHovered(state: bool): void {
+        if (!state) {
+            cursorShape = Qt.ArrowCursor
+        } else if (mpvqcSettings.layoutOrientation === Qt.Vertical) {
+            cursorShape = Qt.SizeVerCursor
+        } else {
+            cursorShape = Qt.SizeHorCursor
         }
-
-        MpvqcTable {
-            id: _mpvqcCommentTable
-
-            width: root.width
-            height: haveComments ? root.height : 0
-            focus: true
-            model: MpvqcCommentModelPyObject {}
-            mpvqcApplication: root.mpvqcApplication
-        }
-
     }
+
+    onPressed: (event) => {
+        event.accepted = false
+        root.afterPressed()
+    }
+
 }

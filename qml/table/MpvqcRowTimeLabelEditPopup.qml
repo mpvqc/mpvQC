@@ -40,7 +40,6 @@ Popup {
     modal: true
     width: 180
     padding: 6
-    closePolicy: Popup.CloseOnPressOutside
 
     contentItem: MpvqcRowTimeLabelEditPopupSpinBox {
         id: _spinBox
@@ -63,6 +62,12 @@ Popup {
         }
     }
 
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            root.close()
+        }
+    }
+
     Shortcut {
         sequence: "Esc"
 
@@ -72,12 +77,32 @@ Popup {
         }
     }
 
-    Shortcut { sequence: 'Left'; onActivated: _spinBox.decrementValue() }
+    Shortcut {
+        sequence: 'Left'
 
-    Shortcut { sequence: 'Right'; onActivated: _spinBox.incrementValue() }
+        onActivated: _spinBox.decrementValue()
+    }
 
-    Shortcut { sequence: 'Up'; onActivated: _spinBox.incrementValue() }
+    Shortcut {
+        sequence: 'Right'
 
-    Shortcut { sequence: 'Down'; onActivated: _spinBox.decrementValue() }
+        onActivated: _spinBox.incrementValue()
+    }
+
+    Shortcut {
+        sequence: 'Up'
+
+        onActivated: _spinBox.incrementValue()
+    }
+
+    Shortcut {
+        sequence: 'Down'
+
+        onActivated: _spinBox.decrementValue()
+    }
+
+    Component.onCompleted: {
+        _spinBox.forceActiveFocus()
+    }
 
 }

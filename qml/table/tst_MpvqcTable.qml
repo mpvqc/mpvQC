@@ -88,6 +88,8 @@ TestCase {
                 }
             }
 
+            searchQuery: 'search Query'
+
             model: ListModel {
                 signal newItemAdded()
                 signal timeUpdated()
@@ -130,7 +132,7 @@ TestCase {
 
         mouseClick(control, data.column, row2)
         wait(longTime)
-        verify(!control.editMode)
+        verify(!control.currentlyEditing)
         compare(control.currentIndex, 1)
     }
 
@@ -177,11 +179,11 @@ TestCase {
         wait(shortTime)
         keyPress(Qt.Key_Return)
         wait(shortTime)
-        verify(control.editMode)
+        verify(control.currentlyEditing)
 
         mouseClick(control, data.columnClicked, data.rowClicked)
         wait(longTime)
-        verify(!control.editMode)
+        verify(!control.currentlyEditing)
         compare(control.currentIndex, data.rowIndexExpected)
     }
 
@@ -191,11 +193,11 @@ TestCase {
         wait(shortTime)
         keyPress(Qt.Key_Return)
         wait(shortTime)
-        verify(control.editMode)
+        verify(control.currentlyEditing)
 
         keyPress(Qt.Key_Down)
         wait(longTime)
-        verify(!control.editMode)
+        verify(!control.currentlyEditing)
         compare(control.currentIndex, 1)
     }
 
@@ -205,11 +207,11 @@ TestCase {
         wait(shortTime)
         mouseClick(control, columnTime, row1)
         wait(shortTime)
-        verify(control.editMode)
+        verify(control.currentlyEditing)
 
         mouseClick(control, columnComment, row2)
         wait(longTime)
-        verify(!control.editMode)
+        verify(!control.currentlyEditing)
         compare(control.currentIndex, 0)
     }
 
@@ -219,11 +221,11 @@ TestCase {
         wait(shortTime)
         mouseClick(control, columnCommentType, row1)
         wait(shortTime)
-        verify(control.editMode)
+        verify(control.currentlyEditing)
 
         mouseClick(control, columnComment, row2)
         wait(longTime)
-        verify(!control.editMode)
+        verify(!control.currentlyEditing)
         compare(control.currentIndex, 0)
     }
 

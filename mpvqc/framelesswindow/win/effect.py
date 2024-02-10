@@ -12,10 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 # Inspired and based on:
-#   - https://github.com/zhiyiYo/PyQt-Frameless-Window
-#   - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
+#  - https://github.com/zhiyiYo/PyQt-Frameless-Window
+#  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 from ctypes import POINTER, byref, c_bool, c_int, pointer, sizeof, WinDLL, windll
 from ctypes.wintypes import DWORD, LONG, LPCVOID

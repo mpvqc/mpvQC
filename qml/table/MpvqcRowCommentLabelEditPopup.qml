@@ -25,12 +25,11 @@ import QtQuick.Controls.Material
 Popup {
     id: root
 
-    required property var mpvqcApplication
+    required property var mpvqcSpecialCharacterValidator
     required property string currentComment
     required property int paddingAround
 
     property bool acceptValue: true
-    property var mpvqcSpecialCharacterValidatorPyObject: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
 
     signal edited(string newComment)
     signal upPressed()
@@ -45,7 +44,6 @@ Popup {
     rightPadding: 0
     topPadding: paddingAround
     bottomPadding: paddingAround
-    closePolicy: Popup.CloseOnPressOutside
 
     background: Rectangle {
         color: root.Material.primary
@@ -61,7 +59,7 @@ Popup {
         leftPadding: root.paddingAround
         rightPadding: root.paddingAround
         focus: true
-        validator: root.mpvqcSpecialCharacterValidatorPyObject
+        validator: root.mpvqcSpecialCharacterValidator
 
         background: Rectangle {
             anchors.fill: parent
@@ -69,13 +67,17 @@ Popup {
         }
 
         onAccepted: root.close()
-
-        onActiveFocusChanged: forceActiveFocus()
     }
 
     onAboutToHide: {
         if (acceptValue) {
             root.edited(_textField.text.trim())
+        }
+    }
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            root.close()
         }
     }
 
@@ -103,20 +105,6 @@ Popup {
         onActivated: {
             root.downPressed()
             root.close()
-        }
-    }
-
-    Connections {
-        target: root.mpvqcApplication
-
-        function onActiveFocusItemChanged() {
-            if (clickedOutsideOfApplication()) {
-                root.close()
-            }
-        }
-
-        function clickedOutsideOfApplication(): bool {
-            return !root.mpvqcApplication.activeFocusItem
         }
     }
 

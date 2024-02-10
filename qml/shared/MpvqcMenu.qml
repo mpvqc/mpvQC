@@ -26,6 +26,8 @@ Menu {
 
     property real additionalPadding
 
+    z: 2
+
     width: { // Adapted from: https://martin.rpdev.net/2018/03/13/qt-quick-controls-2-automatically-set-the-width-of-menus.html
         let result = 0
         let padding = 0

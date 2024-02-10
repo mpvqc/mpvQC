@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
 
 import manager
 import pyobjects
 import settings
+import shared
 
 import "MpvqcKeyCommandGenerator.js" as MpvqcKeyCommandGenerator
 import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
@@ -33,12 +33,14 @@ import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 ApplicationWindow {
     id: root
 
+    readonly property var newCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
-    readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
     readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
+
+    readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
@@ -72,39 +74,106 @@ ApplicationWindow {
         'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt'
     ]
 
-    background: Rectangle {
-        color: Material.background
-
-        MpvqcContent {
-            id: _content
-
-            mpvqcApplication: root
-            focus: true
-            anchors.fill: parent
-            anchors.margins: root.windowBorder // root.windowBorder
-        }
+    function toggleMaximized() {
+        mpvqcWindowVisibilityHandler.toggleMaximized()
     }
 
-    function toggleMaximized() { mpvqcWindowVisibilityHandler.toggleMaximized() }
-    function toggleFullScreen() { mpvqcWindowVisibilityHandler.toggleFullScreen() }
-    function enableFullScreen() { mpvqcWindowVisibilityHandler.enableFullScreen() }
-    function disableFullScreen() { mpvqcWindowVisibilityHandler.disableFullScreen() }
+    function toggleFullScreen() {
+        mpvqcWindowVisibilityHandler.toggleFullScreen()
+    }
+
+    function enableFullScreen() {
+        mpvqcWindowVisibilityHandler.enableFullScreen()
+    }
+
+    function disableFullScreen() {
+        mpvqcWindowVisibilityHandler.disableFullScreen()
+    }
 
     onClosing: (event) => {
         closeHandler.requestClose()
         event.accepted = closeHandler.userConfirmedClose
     }
 
-    onActiveFocusItemChanged: {
-        if (!activeFocusItem) {
-            return
+    MpvqcContent {
+        id: _content
+
+        mpvqcApplication: root
+        focus: true
+        anchors.fill: parent
+        anchors.margins: root.windowBorder
+
+        onSplitViewHandleHovered: (hovered) => _catchAllMouseArea.splitViewHandleHovered(hovered)
+
+        Keys.onEscapePressed: {
+            if (root.fullscreen) {
+                root.disableFullScreen()
+            }
         }
-        if (activeFocusItem === contentItem) {
-            mpvqcCommentTable.forceActiveFocus()
-            return
+
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_E) {
+                return _handleEPressed(event)
+            }
+            if (event.key === Qt.Key_F) {
+                return _handleFPressed(event)
+            }
+
+            if (_preventFromEverReachingUserDefinedCommands(event)) {
+                return
+            }
+            const command = root.mpvqcKeyCommandGenerator.generateFrom(event)
+            if (command) {
+                root.mpvqcMpvPlayerPyObject.execute(command)
+            }
         }
-        const asString = activeFocusItem.toString()
-        if (asString.includes('QQuickRootItem')) {
+
+        function _handleEPressed(event) {
+            if (event.isAutoRepeat) {
+                return
+            }
+
+            const modifiers = event.modifiers
+
+            if (modifiers === Qt.NoModifier) {
+                return root.newCommentMenu.popupMenu()
+            }
+        }
+
+        function _handleFPressed(event) {
+            if (event.isAutoRepeat) {
+                return
+            }
+
+            const modifiers = event.modifiers
+
+            if (modifiers === Qt.NoModifier) {
+                return root.toggleFullScreen()
+            }
+        }
+
+        function _preventFromEverReachingUserDefinedCommands(event): bool {
+            const key = event.key
+            const modifiers = event.modifiers
+            return key === Qt.Key_Up
+                || key === Qt.Key_Down
+                || (key === Qt.Key_Return && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_Escape && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_Delete && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier)
+                || (key === Qt.Key_F && modifiers === Qt.ControlModifier)
+                || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
+        }
+
+    }
+
+    MpvqcCatchAllMouseArea {
+        id: _catchAllMouseArea
+
+        mpvqcApplication: root
+        anchors.fill: parent
+
+        onAfterPressed: {
             mpvqcCommentTable.forceActiveFocus()
         }
     }
@@ -118,6 +187,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Qt.uiLanguage = mpvqcSettings.language
+        mpvqcCommentTable.forceActiveFocus()
     }
 
     Material.theme: mpvqcSettings.theme

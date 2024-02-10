@@ -86,30 +86,30 @@ FILE_PY_SOURCES_RESOURCES := DIRECTORY_PY_SOURCES + '/' + NAME_FILE_GENERATED_RE
 FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURCES
 
 build: _check-pyside-setup _clean-build _clean-develop _compile-resources
-    @rm -rf \
-        {{DIRECTORY_BUILD_PY}}
-    @mkdir -p \
-        {{DIRECTORY_BUILD_PY}}
-    @cp -r \
-        {{DIRECTORY_PY_SOURCES}}/. \
-        {{DIRECTORY_BUILD_PY}}
-    @cp \
-        {{FILE_BUILD_RESOURCES}} \
-        {{DIRECTORY_BUILD_PY}}
-    @cp \
-        {{FILE_APP_ENTRY}} \
-        {{DIRECTORY_BUILD_RELEASE}}
-    @echo ''; \
-        echo 'Please find the finished project in {{DIRECTORY_BUILD_RELEASE}}'
+	@rm -rf \
+		{{DIRECTORY_BUILD_PY}}
+	@mkdir -p \
+		{{DIRECTORY_BUILD_PY}}
+	@cp -r \
+		{{DIRECTORY_PY_SOURCES}}/. \
+		{{DIRECTORY_BUILD_PY}}
+	@cp \
+		{{FILE_BUILD_RESOURCES}} \
+		{{DIRECTORY_BUILD_PY}}
+	@cp \
+		{{FILE_APP_ENTRY}} \
+		{{DIRECTORY_BUILD_RELEASE}}
+	@echo ''; \
+		echo 'Please find the finished project in {{DIRECTORY_BUILD_RELEASE}}'
 
 test: test-python test-qml
 
 test-python: _check-pyside-setup _clean-test _compile-resources
-    @cp \
-      {{FILE_BUILD_RESOURCES}} \
-      {{FILE_PY_TEST_RESOURCES}}
-    @{{PYTHON}} -m \
-    pytest test
+	@cp \
+	  {{FILE_BUILD_RESOURCES}} \
+	  {{FILE_PY_TEST_RESOURCES}}
+	@{{PYTHON}} -m \
+	pytest test
 
 test-qml: _check-qml-setup
 	{{TOOL_CLI_QML_TESTRUNNER}} \
@@ -130,7 +130,7 @@ update-translations: _check-pyside-setup _prepare-translation-extractions
 	@# Traverses *.qml and *.py files to update translation files
 	@# Requires translations in .py:   QCoreApplication.translate("context", "string")
 	@# Requires translations in .qml:  qsTranslate("context", "string")
-	cd {{DIRECTORY_BUILD_TRANSLATIONS}}; \
+	@cd {{DIRECTORY_BUILD_TRANSLATIONS}}; \
 		{{TOOL_CLI_LUPDATE}} \
 			-locations none \
 			-project {{FILE_BUILD_TRANSLATIONS_JSON}}
@@ -139,14 +139,14 @@ update-translations: _check-pyside-setup _prepare-translation-extractions
 		{{DIRECTORY_I18N}}
 
 add-translation locale: _check-pyside-setup _prepare-translation-extractions
-    @cd {{DIRECTORY_BUILD_TRANSLATIONS}}; \
-        {{TOOL_CLI_LUPDATE}} \
-            -verbose \
-            -source-language en_US \
-            -target-language {{locale}} \
-            -ts {{DIRECTORY_I18N}}/{{locale}}.ts
-    @echo ''
-    @just update-translations
+	@cd {{DIRECTORY_BUILD_TRANSLATIONS}}; \
+		{{TOOL_CLI_LUPDATE}} \
+			-verbose \
+			-source-language en_US \
+			-target-language {{locale}} \
+			-ts {{DIRECTORY_I18N}}/{{locale}}.ts
+	@echo ''
+	@just update-translations
 
 clean: _clean-build _clean-develop _clean-test
 
