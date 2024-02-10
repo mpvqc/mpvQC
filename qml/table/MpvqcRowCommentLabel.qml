@@ -97,7 +97,7 @@ Label {
             implicitWidth: root.width
             implicitHeight: root.height
             currentComment: root.comment
-            mpvqcApplication: root.mpvqcApplication
+            mpvqcSpecialCharacterValidator: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
             paddingAround: root.paddingAround
 
             onClosed: root._stopEditing()
