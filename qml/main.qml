@@ -24,11 +24,15 @@ import app
 
 
 MpvqcApplication {
-    visible: true
     width: 1280
     height: 720
+
     flags: Qt.FramelessWindowHint | Qt.Window
     color: Material.background
+    visible: true
+
+    font.pointSize: 10
+    font.family: 'NotoSans'
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
