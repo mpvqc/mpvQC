@@ -28,8 +28,6 @@ Column {
 
     readonly property alias textFieldHasFocus: _textField.activeFocus
 
-    property int iconSize: 18
-
     property alias textField: _textField
     property alias acceptButton: _acceptButton
     property alias rejectButton: _rejectButton
@@ -46,11 +44,13 @@ Column {
 
     RowLayout {
         width: root.width
+        spacing: 0
 
         MpvqcInputTextField {
             id: _textField
 
             Layout.fillWidth: true
+            Layout.rightMargin: _acceptButton.leftPadding * 2
 
             onAcceptedInput: (input) => {
                 root.accepted(input)
@@ -64,10 +64,8 @@ Column {
         ToolButton {
             id: _acceptButton
             enabled: _textField.isValid
-            rightPadding: 0
-            leftPadding: 0
-            icon.width: root.iconSize
-            icon.height: root.iconSize
+            icon.width: 20
+            icon.height: 20
             icon.source: "qrc:/data/icons/done_black_24dp.svg"
 
             onClicked: {
@@ -78,10 +76,8 @@ Column {
         ToolButton {
             id: _rejectButton
             enabled: _textField.hasText || _textField.hasError
-            rightPadding: 0
-            leftPadding: 0
-            icon.width: root.iconSize
-            icon.height: root.iconSize
+            icon.width: 20
+            icon.height: 20
             icon.source: "qrc:/data/icons/close_black_24dp.svg"
 
             onClicked: {

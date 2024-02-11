@@ -71,8 +71,7 @@ ListView {
         Label {
             width: _delegate.width
             height: _delegate.height
-            leftPadding: 5
-            rightPadding: 5
+            padding: 15
 
             text: qsTranslate('CommentTypes', _delegate.type)
             elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
