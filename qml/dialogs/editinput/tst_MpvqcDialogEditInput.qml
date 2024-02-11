@@ -40,7 +40,7 @@ TestCase {
         MpvqcDialogEditInput {
 
             mpvqcApplication: QtObject {
-                property var mvqcMpvFiles: QtObject {
+                property var mpvqcMpvFiles: QtObject {
                     property var editInputInterface: QtObject {
                         property string fileContent: 'initial'
                     }
@@ -65,7 +65,7 @@ TestCase {
 
         control.editView.textArea.text = 'changed by user'
         control.accepted()
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'changed by user')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'changed by user')
     }
 
     function test_edit_cancel() {
@@ -73,10 +73,10 @@ TestCase {
         verify(control)
 
         control.editView.textArea.text = 'changed by user'
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
 
         control.rejected()
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
     }
 
     function test_edit_reset() {
@@ -85,17 +85,17 @@ TestCase {
 
         control.editView.textArea.text = 'changed by user'
         compare(control.editView.textArea.text, 'changed by user')
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
         control.reset()
         compare(control.editView.textArea.text, 'default')
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
 
         control.editView.textArea.text = 'changed by user again'
         compare(control.editView.textArea.text, 'changed by user again')
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
         control.reset()
         compare(control.editView.textArea.text, 'default')
-        compare(control.mpvqcApplication.mvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
     }
 
 }

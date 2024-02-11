@@ -33,11 +33,11 @@ import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 ApplicationWindow {
     id: root
 
-    readonly property var newCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
+    readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
-    readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
+    readonly property var mpvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
@@ -138,7 +138,7 @@ ApplicationWindow {
             const modifiers = event.modifiers
 
             if (modifiers === Qt.NoModifier) {
-                return root.newCommentMenu.popupMenu()
+                return root.mpvqcNewCommentMenu.popupMenu()
             }
         }
 
