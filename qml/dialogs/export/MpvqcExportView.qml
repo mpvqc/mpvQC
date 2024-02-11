@@ -42,7 +42,7 @@ ColumnLayout {
         label: qsTranslate("ExportSettings", "Nickname")
         input: root.mpvqcSettings.nickname
         spacing: 16
-        bold: true
+        fontWeight: Font.DemiBold
         prefWidth: root.width
         implicitTextFieldWidth: 150
         Layout.topMargin: 20

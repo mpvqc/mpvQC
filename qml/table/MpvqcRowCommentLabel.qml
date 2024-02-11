@@ -45,7 +45,7 @@ Label {
     signal upPressed()
     signal downPressed()
 
-    textFormat: searchQuery ? Text.StyledText : Text.PlainText
+    textFormat: searchQuery ? Text.RichText : Text.PlainText
     text: searchQuery ? CommentHighlighter.highlightComment(comment, searchQuery) : comment
 
     horizontalAlignment: Text.AlignLeft

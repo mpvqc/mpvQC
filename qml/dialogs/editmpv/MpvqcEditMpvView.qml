@@ -47,7 +47,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignLeft
 
         font.pointSize: 11
-        font.bold: true
+        font.weight: Font.DemiBold
 
         text: `<html> ${text1} <a href='${url}'>${text2}</a>. </html>`
 
