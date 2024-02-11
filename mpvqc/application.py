@@ -19,7 +19,7 @@ import sys
 
 import inject
 from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtGui import QGuiApplication, QIcon, QFont
 from PySide6.QtQml import QQmlApplicationEngine
 
 from mpvqc.services import FileStartupService, ReverseTranslatorService
@@ -38,6 +38,12 @@ class MpvqcApplication(QGuiApplication):
     def set_window_icon(self):
         icon = QIcon(':/data/icon.svg')
         self.setWindowIcon(icon)
+
+        # id = QFontDatabase.addApplicationFont(":/data/fonts/NotoSans-Regular.ttf")
+        # families = QFontDatabase.applicationFontFamilies(id)
+
+        q_font = QFont('Noto Sans')
+        QGuiApplication.setFont(q_font)
 
     def create_directories(self):
         self._start_up.create_missing_directories()
