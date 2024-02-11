@@ -19,15 +19,16 @@ import sys
 
 import inject
 from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
-from PySide6.QtGui import QGuiApplication, QIcon, QFont
+from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, ReverseTranslatorService
+from mpvqc.services import FileStartupService, ReverseTranslatorService, FontLoaderService
 
 
 class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
     _translator = inject.attr(ReverseTranslatorService)
+    _font_loader = inject.attr(FontLoaderService)
 
     def __init__(self, args):
         super().__init__(args)
@@ -39,11 +40,8 @@ class MpvqcApplication(QGuiApplication):
         icon = QIcon(':/data/icon.svg')
         self.setWindowIcon(icon)
 
-        # id = QFontDatabase.addApplicationFont(":/data/fonts/NotoSans-Regular.ttf")
-        # families = QFontDatabase.applicationFontFamilies(id)
-
-        q_font = QFont('Noto Sans')
-        QGuiApplication.setFont(q_font)
+    def load_application_fonts(self):
+        self._font_loader.load_application_fonts()
 
     def create_directories(self):
         self._start_up.create_missing_directories()
@@ -59,6 +57,7 @@ class MpvqcApplication(QGuiApplication):
     def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
         self._engine.uiLanguageChanged.connect(self._retranslate)
+        # self._engine.uiLanguageChanged.connect(lambda: self._font_manager.load_font(self._engine.uiLanguage()))
 
     def _on_quit(self) -> None:
         del self._engine

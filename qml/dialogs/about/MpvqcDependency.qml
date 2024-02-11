@@ -47,9 +47,7 @@ RowLayout {
         text: `
         <html>
             <style type='text/css'></style>
-            <a href='${root.url}'>
-                ${root.dependency}
-            </a>
+            <a href='${root.url}'>${root.dependency}</a>
         </html>
         `
 

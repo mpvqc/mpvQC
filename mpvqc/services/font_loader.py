@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2022 mpvQC developers
+# Copyright (C) 2024 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,13 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .application_environment import ApplicationEnvironmentService
-from .application_paths import ApplicationPathsService
-from .backup import BackupService
-from .file_startup import FileStartupService
-from .font_loader import FontLoaderService
-from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
-from .player import PlayerService, SubtitleCacher
-from .resource import ResourceService
-from .resource_reader import ResourceReaderService
-from .reverse_translator import ReverseTranslatorService
+
+from PySide6.QtGui import QFont, QFontDatabase
+
+
+class FontLoaderService:
+    _used_variants = [
+        'NotoSans-Regular.ttf',
+        'NotoSans-Italic.ttf',
+        'NotoSans-Bold.ttf',
+        'NotoSans-SemiBold.ttf',
+        'NotoSansHebrew-Bold.ttf',
+        'NotoSansHebrew-Regular.ttf',
+        'NotoSansHebrew-SemiBold.ttf',
+    ]
+
+    def load_application_fonts(self):
+        for variant in self._used_variants:
+            QFontDatabase.addApplicationFont(f":/data/fonts/{variant}")
+
+        QFont.insertSubstitution('NotoSans', 'NotoSansHebrew')
