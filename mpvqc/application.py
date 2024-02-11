@@ -80,14 +80,14 @@ class MpvqcApplication(QGuiApplication):
     def set_up_imports(self):
         self._engine.addImportPath(':/qml')
 
-    def install__window_event_filter(self):
+    def install_window_event_filter(self):
         if sys.platform == 'win32':
             from mpvqc.framelesswindow.win import WindowsEventFilter
-            self._event_filter = WindowsEventFilter(border_width=10)
+            self._event_filter = WindowsEventFilter(border_width=6)
             self.installNativeEventFilter(self._event_filter)
         elif sys.platform == 'linux':
             from mpvqc.framelesswindow.linux import LinuxEventFilter
-            self._event_filter = LinuxEventFilter(border_width=10)
+            self._event_filter = LinuxEventFilter(border_width=6)
             self.installEventFilter(self._event_filter)
 
     def start_engine(self):

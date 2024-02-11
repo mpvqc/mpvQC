@@ -61,9 +61,11 @@ ApplicationWindow {
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
     readonly property int windowBorder: {
-        const defaultWidth = 6
+        const defaultWidth = 1
         if (Qt.platform.os === 'windows') {
-            return root.fullscreen ? 0 : defaultWidth
+            if (root.fullscreen) return 0
+            if (root.maximized) return 6  // work around custom window properties
+            return defaultWidth
         } else if (Qt.platform.os === 'linux') {
             return root.maximized || root.fullscreen ? 0 : defaultWidth
         }
