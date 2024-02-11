@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import shared
@@ -88,11 +87,10 @@ ColumnLayout {
             id: _textArea
 
             text: root.fileContent
-            font: fontLoader.font
             background: null
             leftPadding: mirrored ? 22 : 0
-
-            FontLoader { id: fontLoader; source: "qrc:/data/fonts/NotoSansMono-Regular.ttf" }
+            font.family: 'NotoSansMono'
+            font.pointSize: 11
         }
     }
 

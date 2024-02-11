@@ -28,6 +28,7 @@ class FontLoaderService:
         'NotoSansHebrew-Bold.ttf',
         'NotoSansHebrew-Regular.ttf',
         'NotoSansHebrew-SemiBold.ttf',
+        'NotoSansMono-Regular.ttf'
     ]
 
     def load_application_fonts(self):
