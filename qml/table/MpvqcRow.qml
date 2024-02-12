@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
+import shared
+
 
 Rectangle {
     id: root
@@ -88,6 +90,8 @@ Rectangle {
         MpvqcRowPlayButton {
             id: _playButton
 
+            MpvqcDebugRectangle {}
+
             anchors.verticalCenter: parent.verticalCenter
             tableInEditMode: root.tableInEditMode
 
@@ -98,6 +102,8 @@ Rectangle {
 
         MpvqcRowTimeLabel {
             id: _timeLabel
+
+            MpvqcDebugRectangle {}
 
             width: 90
             height: root.height
@@ -118,6 +124,8 @@ Rectangle {
         MpvqcRowCommentTypeLabel {
             id: _commentTypeLabel
 
+            MpvqcDebugRectangle {}
+
             width: root.mpvqcWidthCalculatorCommentTypes.maxWidth
             height: root.height
             mpvqcApplication: root.mpvqcApplication
@@ -136,6 +144,8 @@ Rectangle {
 
         MpvqcRowCommentLabel {
             id: _commentLabel
+
+            MpvqcDebugRectangle {}
 
             width: root.width
                     - _playButton.width
