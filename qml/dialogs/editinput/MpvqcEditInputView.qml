@@ -89,7 +89,7 @@ ColumnLayout {
             text: root.fileContent
             background: null
             leftPadding: mirrored ? 22 : 0
-            font.family: 'NotoSansMono'
+            font.family: 'Noto Sans Mono'
             font.pointSize: 11
         }
     }
