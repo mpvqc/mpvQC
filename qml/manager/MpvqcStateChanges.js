@@ -66,7 +66,7 @@ class ApplicationState {
 
     /** @param change {ImportChanges} */
     findVideo(change) {
-        return change.video ? change.video : this.video
+        return change.video !== null && change.video.toString().trim() !== '' ? change.video : this.video
     }
 
     /**
