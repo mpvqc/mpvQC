@@ -35,7 +35,7 @@ Rectangle {
     required property string comment        // from model
     required property string searchQuery
 
-    readonly property var mpvqcWidthCalculatorCommentTypes: mpvqcApplication.mpvqcWidthCalculatorCommentTypes
+    readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
 
     property alias widthScrollBar: _spacerScrollBar.width
@@ -126,7 +126,7 @@ Rectangle {
 
             MpvqcDebugRectangle {}
 
-            width: root.mpvqcWidthCalculatorCommentTypes.maxWidth
+            width: root.mpvqcLabelWidthCalculator.commentTypesWidth
             height: root.height
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType

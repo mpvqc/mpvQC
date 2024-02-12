@@ -77,8 +77,8 @@ TestCase {
                     function generateFrom(event) {}
                 }
                 property var mpvqcCommentTable: this
-                property var mpvqcWidthCalculatorCommentTypes: QtObject {
-                    property int maxWidth: 150
+                property var mpvqcLabelWidthCalculator: QtObject {
+                    property int commentTypesWidth: 150
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
                     function formatTimeToString(time) { return `${time}` }

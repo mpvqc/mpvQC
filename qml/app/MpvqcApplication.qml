@@ -27,7 +27,6 @@ import shared
 
 import "MpvqcKeyCommandGenerator.js" as MpvqcKeyCommandGenerator
 import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
-import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 
 
 ApplicationWindow {
@@ -36,7 +35,7 @@ ApplicationWindow {
     readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
-    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
+    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
     readonly property var mpvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
@@ -55,7 +54,6 @@ ApplicationWindow {
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
-    readonly property var mpvqcWidthCalculatorLabel: MpvqcWidthCalculatorLabel
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen

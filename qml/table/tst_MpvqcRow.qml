@@ -43,8 +43,8 @@ TestCase {
             searchQuery: ''
 
             mpvqcApplication: QtObject {
-                property var mpvqcWidthCalculatorCommentTypes: QtObject {
-                    property int maxWidth: 120
+                property var mpvqcLabelWidthCalculator: QtObject {
+                    property int commentTypesWidth: 120
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
                     function formatTimeToString(time) { return `${time}` }

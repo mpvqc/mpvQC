@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls
 import QtTest
 
 
@@ -28,12 +29,14 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcWidthCalculatorCommentTypes"
+    name: "MpvqcLabelWidthCalculator"
+
+    Label { id: testHelper }
 
     Component {
-        id: widthCalculator
+        id: commentTypeWidthCalculator
 
-        MpvqcWidthCalculatorCommentTypes {
+        MpvqcLabelWidthCalculator {
             property int calculateCounter: 0
 
             mpvqcApplication: QtObject {
@@ -43,15 +46,30 @@ TestCase {
                     }
                     property var language: 'language'
                 }
-                property var mpvqcWidthCalculatorLabel: QtObject {
-                    function calculateWidthFor(items, parent) { calculateCounter += 1; return items.length }
+            }
+
+            function calculateWidthFor(texts, parent) {
+                calculateCounter += 1;
+                return 42
+            }
+        }
+    }
+
+    Component {
+        id: labelWidthCalculator
+
+        MpvqcLabelWidthCalculator {
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject {
+                    property var commentTypes: QtObject {}
+                    property var language: 'language'
                 }
             }
         }
     }
 
-    function test_recalculationTriggers() {
-        const control = createTemporaryObject(widthCalculator, testCase)
+    function test_commentTypesRecalculationTriggers() {
+        const control = createTemporaryObject(commentTypeWidthCalculator, testCase)
         verify(control)
 
         compare(control.calculateCounter, 1)
@@ -61,6 +79,15 @@ TestCase {
 
         control.mpvqcApplication.mpvqcSettings.languageChanged()
         compare(control.calculateCounter, 3)
+    }
+
+    function test_calculateWidth() {
+        const control = createTemporaryObject(labelWidthCalculator, testCase)
+        verify(control)
+
+        const smallWidth = control.calculateWidthFor(['a', 'bb'], testHelper)
+        const bigWidth = control.calculateWidthFor(['ccc', 'dddd'], testHelper)
+        verify(smallWidth < bigWidth)
     }
 
 }

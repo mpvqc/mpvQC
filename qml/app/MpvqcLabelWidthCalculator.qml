@@ -26,26 +26,38 @@ Item {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
 
-    readonly property int defaultPadding: 8
-    property int maxWidth
+    property int commentTypesWidth
 
-    function recalculateMaxWidth(): void {
+    function _recalculateCommentTypesWidth(): void {
         const commentTypes = mpvqcSettings.commentTypes.items().map(english => qsTranslate("CommentTypes", english))
-        const width = mpvqcWidthCalculatorLabel.calculateWidthFor(commentTypes, root)
-        maxWidth = width
+        root.commentTypesWidth = calculateWidthFor(commentTypes, root)
+    }
+
+    /**
+     * @param texts {Array<string>}
+     * @param parent {QtObject}
+     */
+    function calculateWidthFor(texts, parent): real {
+        const textMetric = Qt.createQmlObject('import QtQuick; TextMetrics { font.family: "Noto Sans"; font.pointSize: 10 }', parent)
+        let width = 0
+        for (const text of texts) {
+            textMetric.text = text
+            width = Math.max(width, textMetric.tightBoundingRect.width)
+        }
+        textMetric.destroy()
+        return width
     }
 
     Connections {
         target: root.mpvqcSettings
 
-        function onCommentTypesChanged() { root.recalculateMaxWidth() }
-        function onLanguageChanged() { root.recalculateMaxWidth() }
+        function onCommentTypesChanged() { root._recalculateCommentTypesWidth() }
+        function onLanguageChanged() { root._recalculateCommentTypesWidth() }
     }
 
     Component.onCompleted: {
-        recalculateMaxWidth()
+        _recalculateCommentTypesWidth()
     }
 
 }
