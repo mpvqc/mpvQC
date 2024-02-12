@@ -57,7 +57,6 @@ class MpvqcApplication(QGuiApplication):
     def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
         self._engine.uiLanguageChanged.connect(self._retranslate)
-        # self._engine.uiLanguageChanged.connect(lambda: self._font_manager.load_font(self._engine.uiLanguage()))
 
     def _on_quit(self) -> None:
         del self._engine
