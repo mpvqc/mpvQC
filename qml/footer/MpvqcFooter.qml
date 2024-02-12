@@ -72,6 +72,7 @@ Item {
                 horizontalAlignment: Text.AlignRight
                 Layout.preferredWidth: width
                 Layout.bottomMargin: root.marginBottom
+                Layout.leftMargin: 12
             }
 
             Item {

@@ -34,7 +34,7 @@ Item {
     function recalculateMaxWidth(): void {
         const commentTypes = mpvqcSettings.commentTypes.items().map(english => qsTranslate("CommentTypes", english))
         const width = mpvqcWidthCalculatorLabel.calculateWidthFor(commentTypes, root)
-        maxWidth = width + root.defaultPadding
+        maxWidth = width
     }
 
     Connections {

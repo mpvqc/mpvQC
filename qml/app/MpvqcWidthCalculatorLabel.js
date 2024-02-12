@@ -26,9 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @param parent
  */
 function calculateWidthFor(texts, parent) {
-    const textMetric = Qt.platform.os === 'windows'
-        ? Qt.createQmlObject('import QtQuick; TextMetrics { font.pixelSize: 16 }', parent)
-        : Qt.createQmlObject('import QtQuick; TextMetrics { }', parent)
+    const textMetric = Qt.createQmlObject('import QtQuick; TextMetrics { font.family: "Noto Sans"; font.pointSize: 10 }', parent)
     let width = 0
     for (const text of texts) {
         textMetric.text = text
