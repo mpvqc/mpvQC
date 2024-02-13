@@ -39,7 +39,7 @@ Label {
     signal editingStarted()
     signal editingStopped()
 
-    text: mpvqcTimeFormatUtils.formatTimeToString(time)
+    text: mpvqcTimeFormatUtils.formatTimeToStringLong(time)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
 

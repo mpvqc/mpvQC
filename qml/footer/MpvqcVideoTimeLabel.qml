@@ -57,13 +57,13 @@ Label {
 
     function currentTime(): string {
         return duration >= secondsPerHour
-            ? mpvqcTimeFormatUtils.formatTimeToString(timePos)
+            ? mpvqcTimeFormatUtils.formatTimeToStringLong(timePos)
             : mpvqcTimeFormatUtils.formatTimeToStringShort(timePos)
     }
 
     function remainingTime(): string {
         const remaining = duration >= secondsPerHour
-            ? mpvqcTimeFormatUtils.formatTimeToString(timeRemaining)
+            ? mpvqcTimeFormatUtils.formatTimeToStringLong(timeRemaining)
             : mpvqcTimeFormatUtils.formatTimeToStringShort(timeRemaining)
         return `-${remaining}`
     }
@@ -71,8 +71,8 @@ Label {
     function currentTotalTime(): string {
         let current; let total
         if (duration >= secondsPerHour) {
-            current = mpvqcTimeFormatUtils.formatTimeToString(timePos)
-            total = mpvqcTimeFormatUtils.formatTimeToString(duration)
+            current = mpvqcTimeFormatUtils.formatTimeToStringLong(timePos)
+            total = mpvqcTimeFormatUtils.formatTimeToStringLong(duration)
         } else {
             current = mpvqcTimeFormatUtils.formatTimeToStringShort(timePos)
             total = mpvqcTimeFormatUtils.formatTimeToStringShort(duration)

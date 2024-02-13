@@ -79,7 +79,7 @@ Rectangle {
     }
 
     function toClipboardContent(): string {
-        const time = mpvqcTimeFormatUtils.formatTimeToString(root.time)
+        const time = mpvqcTimeFormatUtils.formatTimeToStringLong(root.time)
         const type = qsTranslate("CommentTypes", commentType)
         return `[${time}] [${type}] ${comment}`.trim()
     }

@@ -43,7 +43,7 @@ MpvqcVideoTimeLabel {
             function calculateWidthFor(items, parent) { return 42 }
         }
         property var mpvqcTimeFormatUtils: QtObject {
-            function formatTimeToString(seconds) { return 'formatted' }
+            function formatTimeToStringLong(seconds) { return 'formatted' }
             function formatTimeToStringShort(seconds) { return 'formatted' }
         }
     }

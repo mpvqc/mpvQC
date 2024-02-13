@@ -47,7 +47,7 @@ TestCase {
                     property int commentTypesLabelWidth: 120
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
-                    function formatTimeToString(time) { return `${time}` }
+                    function formatTimeToStringLong(time) { return `${time}` }
                 }
             }
 

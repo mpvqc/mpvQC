@@ -48,7 +48,7 @@ MpvqcFooter {
             function calculateWidthFor(items, parent) {}
         }
         property var mpvqcTimeFormatUtils: QtObject {
-            function formatTimeToString(seconds) {}
+            function formatTimeToStringLong(seconds) {}
             function formatTimeToStringShort(seconds) {}
         }
     }

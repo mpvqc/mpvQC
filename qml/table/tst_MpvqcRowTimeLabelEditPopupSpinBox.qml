@@ -46,7 +46,7 @@ TestCase {
                     property int duration: 0
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
-                    function formatTimeToString(time) { return `${time}` }
+                    function formatTimeToStringLong(time) { return `${time}` }
                 }
             }
         }

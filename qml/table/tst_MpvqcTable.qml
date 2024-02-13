@@ -81,7 +81,7 @@ TestCase {
                     property int commentTypesLabelWidth: 150
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
-                    function formatTimeToString(time) { return `${time}` }
+                    function formatTimeToStringLong(time) { return `${time}` }
                 }
                 property var mpvqcSpecialCharacterValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/

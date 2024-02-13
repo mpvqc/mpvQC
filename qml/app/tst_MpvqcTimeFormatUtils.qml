@@ -26,16 +26,16 @@ import "MpvqcTimeFormatUtils.js" as TestObject
 TestCase {
     name: "MpvqcTimeFormatUtils"
 
-    function test_formatTimeToString_data() {
+    function test_formatTimeToStringLong_data() {
         return [
-            { expected: '00:00:00', actual: TestObject.formatTimeToString(0), tag: '0 -> 00:00:00' },
-            { expected: '00:01:08', actual: TestObject.formatTimeToString(68), tag: '68 -> 00:01:08' },
-            { expected: '00:16:39', actual: TestObject.formatTimeToString(999), tag: '999 -> 00:16:39' },
-            { expected: '02:46:40', actual: TestObject.formatTimeToString(10000), tag: '10000 -> 02:46:40' },
+            { expected: '00:00:00', actual: TestObject.formatTimeToStringLong(0), tag: '0 -> 00:00:00' },
+            { expected: '00:01:08', actual: TestObject.formatTimeToStringLong(68), tag: '68 -> 00:01:08' },
+            { expected: '00:16:39', actual: TestObject.formatTimeToStringLong(999), tag: '999 -> 00:16:39' },
+            { expected: '02:46:40', actual: TestObject.formatTimeToStringLong(10000), tag: '10000 -> 02:46:40' },
         ]
     }
 
-    function test_formatTimeToString(data) {
+    function test_formatTimeToStringLong(data) {
         compare(data.actual, data.expected)
     }
 

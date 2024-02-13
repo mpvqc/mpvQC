@@ -33,7 +33,7 @@ SpinBox {
     from: 0
     to: duration > 0 ? duration : 24 * 60 * 60 - 1
     bottomPadding: topPadding
-    textFromValue: (value) => mpvqcTimeFormatUtils.formatTimeToString(value)
+    textFromValue: (value) => mpvqcTimeFormatUtils.formatTimeToStringLong(value)
 
     contentItem: Label {
         text: root.textFromValue(root.value, root.locale)
