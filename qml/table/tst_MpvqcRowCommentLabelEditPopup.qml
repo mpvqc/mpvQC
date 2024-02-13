@@ -40,7 +40,6 @@ TestCase {
             mpvqcSpecialCharacterValidator: RegularExpressionValidator {
                 regularExpression: /[0-9A-Z]+/
             }
-            paddingAround: 4
             currentComment: 'Corrent comment'
         }
     }

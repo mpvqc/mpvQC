@@ -42,6 +42,7 @@ Label {
 
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
+
     text: {
         if (mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
             return mpvqcTimeFormatUtils.formatTimeToStringLong(time)

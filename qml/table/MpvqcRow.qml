@@ -45,6 +45,8 @@ Rectangle {
     property alias commentLabel: _commentLabel
     property alias moreButton: _moreButton
 
+    property int labelPadding: 14
+
     signal clicked()
     signal copyCommentClicked()
     signal deleteCommentClicked()
@@ -90,8 +92,6 @@ Rectangle {
         MpvqcRowPlayButton {
             id: _playButton
 
-            MpvqcDebugRectangle {}
-
             anchors.verticalCenter: parent.verticalCenter
             tableInEditMode: root.tableInEditMode
 
@@ -103,10 +103,11 @@ Rectangle {
         MpvqcRowTimeLabel {
             id: _timeLabel
 
-            MpvqcDebugRectangle {}
-
-            width: root.mpvqcLabelWidthCalculator.timeLabelWidth
+            width: root.mpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
+            leftPadding: LayoutMirroring.enabled ? root.labelPadding : root.labelPadding * (2/3)
+            rightPadding: LayoutMirroring.enabled ? root.labelPadding * (2/3) : root.labelPadding
+
             mpvqcApplication: root.mpvqcApplication
             time: root.time
             rowSelected: root.rowSelected
@@ -124,10 +125,11 @@ Rectangle {
         MpvqcRowCommentTypeLabel {
             id: _commentTypeLabel
 
-            MpvqcDebugRectangle {}
-
-            width: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth
+            width: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding
             height: root.height
+            leftPadding: root.labelPadding
+            rightPadding: root.labelPadding
+
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType
             rowSelected: root.rowSelected
@@ -145,8 +147,6 @@ Rectangle {
         MpvqcRowCommentLabel {
             id: _commentLabel
 
-            MpvqcDebugRectangle {}
-
             width: root.width
                     - _playButton.width
                     - _timeLabel.width
@@ -154,6 +154,9 @@ Rectangle {
                     - _moreButton.width
                     - _spacerScrollBar.width
             height: root.height
+            leftPadding: root.labelPadding
+            rightPadding: root.labelPadding
+
             mpvqcApplication: root.mpvqcApplication
             comment: root.comment
             searchQuery: root.searchQuery

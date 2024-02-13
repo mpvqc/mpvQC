@@ -27,7 +27,6 @@ Popup {
 
     required property var mpvqcSpecialCharacterValidator
     required property string currentComment
-    required property int paddingAround
 
     property bool acceptValue: true
 
@@ -40,10 +39,8 @@ Popup {
     modal: false
     enter: null
     exit: null
-    leftPadding: 0
-    rightPadding: 0
-    topPadding: paddingAround
-    bottomPadding: paddingAround
+    topPadding: 4
+    bottomPadding: 4
 
     background: Rectangle {
         color: root.Material.primary
@@ -56,8 +53,8 @@ Popup {
         selectByMouse: true
         horizontalAlignment: Text.AlignLeft
         bottomPadding: topPadding
-        leftPadding: root.paddingAround
-        rightPadding: root.paddingAround
+        leftPadding: root.leftPadding
+        rightPadding: root.rightPadding
         focus: true
         validator: root.mpvqcSpecialCharacterValidator
 

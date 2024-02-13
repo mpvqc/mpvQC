@@ -32,8 +32,6 @@ Label {
     required property bool rowSelected
     required property bool tableInEditMode
 
-    property int paddingAround: 4
-
     property alias loader: _loader
 
     property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
@@ -51,8 +49,6 @@ Label {
     horizontalAlignment: Text.AlignLeft
     verticalAlignment: Text.AlignVCenter
     elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
-    leftPadding: paddingAround
-    rightPadding: paddingAround
 
     function _grabFocus(): void {
         focus = true
@@ -100,7 +96,8 @@ Label {
             implicitHeight: root.height
             currentComment: root.comment
             mpvqcSpecialCharacterValidator: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
-            paddingAround: root.paddingAround
+            leftPadding: root.leftPadding / 2
+            rightPadding: root.rightPadding / 2
 
             onClosed: root._stopEditing()
 
