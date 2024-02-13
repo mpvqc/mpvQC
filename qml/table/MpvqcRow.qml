@@ -105,7 +105,7 @@ Rectangle {
 
             MpvqcDebugRectangle {}
 
-            width: 90
+            width: root.mpvqcLabelWidthCalculator.timeLabelWidth
             height: root.height
             mpvqcApplication: root.mpvqcApplication
             time: root.time
