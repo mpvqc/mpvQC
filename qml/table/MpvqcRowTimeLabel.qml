@@ -30,6 +30,7 @@ Label {
     required property bool tableInEditMode
 
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
     property alias loader: _loader
@@ -39,9 +40,15 @@ Label {
     signal editingStarted()
     signal editingStopped()
 
-    text: mpvqcTimeFormatUtils.formatTimeToStringLong(time)
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
+    text: {
+        if (mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
+            return mpvqcTimeFormatUtils.formatTimeToStringLong(time)
+        } else {
+            return mpvqcTimeFormatUtils.formatTimeToStringShort(time)
+        }
+    }
 
     function _grabFocus(): void {
         focus = true

@@ -54,6 +54,7 @@ TestCase {
                     function jump_to(time) { jumpToCalled = true; jumpToTime = time }
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
+                    function formatTimeToStringShort(time) { return `${time}` }
                     function formatTimeToStringLong(time) { return `${time}` }
                 }
             }

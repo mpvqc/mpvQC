@@ -41,7 +41,7 @@ QtObject {
     readonly property var nicknameGetterFunc: function() { return root.mpvqcSettings.nickname }
     readonly property var commentGetterFunc: mpvqcCommentTable.getAllComments
     readonly property var settingsGetterFunc: function() { return root.mpvqcSettings }
-    readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToString
+    readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToStringLong
 
     property var generator: new MpvqcDocumentFileExporter.ExportContentGenerator(
         absPathGetterFunc, nicknameGetterFunc, commentGetterFunc, settingsGetterFunc, timeFormatFunc
