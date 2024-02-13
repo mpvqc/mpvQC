@@ -32,7 +32,7 @@ MpvqcApplication {
     visible: true
 
     font.pointSize: 10
-    font.family: 'NotoSans'
+    font.family: 'Noto Sans'
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true

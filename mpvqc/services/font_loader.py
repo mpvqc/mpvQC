@@ -35,4 +35,4 @@ class FontLoaderService:
         for variant in self._used_variants:
             QFontDatabase.addApplicationFont(f":/data/fonts/{variant}")
 
-        QFont.insertSubstitution('NotoSans', 'NotoSansHebrew')
+        QFont.insertSubstitution('Noto Sans', 'Noto Sans Hebrew')
