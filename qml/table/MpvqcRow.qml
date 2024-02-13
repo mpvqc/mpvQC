@@ -126,7 +126,7 @@ Rectangle {
 
             MpvqcDebugRectangle {}
 
-            width: root.mpvqcLabelWidthCalculator.commentTypesWidth
+            width: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth
             height: root.height
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType

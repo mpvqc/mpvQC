@@ -78,7 +78,7 @@ TestCase {
                 }
                 property var mpvqcCommentTable: this
                 property var mpvqcLabelWidthCalculator: QtObject {
-                    property int commentTypesWidth: 150
+                    property int commentTypesLabelWidth: 150
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
                     function formatTimeToString(time) { return `${time}` }

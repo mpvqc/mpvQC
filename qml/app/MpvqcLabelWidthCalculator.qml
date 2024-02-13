@@ -26,19 +26,13 @@ Item {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property real duration: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration
 
-    property int commentTypesWidth
+    property int commentTypesLabelWidth
+    property int timeLabelWidth
 
-    function _recalculateCommentTypesWidth(): void {
-        const commentTypes = mpvqcSettings.commentTypes.items().map(english => qsTranslate("CommentTypes", english))
-        root.commentTypesWidth = calculateWidthFor(commentTypes, root)
-    }
-
-    /**
-     * @param texts {Array<string>}
-     * @param parent {QtObject}
-     */
-    function calculateWidthFor(texts, parent): real {
+    function calculateWidthFor(texts, parent): int {
         const textMetric = Qt.createQmlObject('import QtQuick; TextMetrics { font.family: "Noto Sans"; font.pointSize: 10 }', parent)
         let width = 0
         for (const text of texts) {
@@ -49,15 +43,35 @@ Item {
         return width
     }
 
+    function _recalculateCommentTypesLabelWidth(): void {
+        const commentTypes = mpvqcSettings.commentTypes.items()
+            .map(english => qsTranslate("CommentTypes", english))
+        root.commentTypesLabelWidth = calculateWidthFor(commentTypes, root)
+    }
+
+    function _recalculateTimeLabelWidth(): void {
+        const hour = 60 * 60
+        const texts = []
+        for (let i = 0; i <= 9; i++) {
+            texts.push(duration >= hour ? `${i}${i}:${i}${i}:${i}${i}` : `${i}${i}:${i}${i}`)
+        }
+        root.timeLabelWidth = calculateWidthFor(texts, root)
+    }
+
+    onDurationChanged: {
+        _recalculateTimeLabelWidth()
+    }
+
     Connections {
         target: root.mpvqcSettings
 
-        function onCommentTypesChanged() { root._recalculateCommentTypesWidth() }
-        function onLanguageChanged() { root._recalculateCommentTypesWidth() }
+        function onCommentTypesChanged() { root._recalculateCommentTypesLabelWidth() }
+        function onLanguageChanged() { root._recalculateCommentTypesLabelWidth() }
     }
 
     Component.onCompleted: {
-        _recalculateCommentTypesWidth()
+        _recalculateCommentTypesLabelWidth()
+        _recalculateTimeLabelWidth()
     }
 
 }

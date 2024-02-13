@@ -31,6 +31,20 @@ TestCase {
     when: windowShown
     name: "MpvqcLabelWidthCalculator"
 
+    QtObject {
+        id: testHelperMpvqcApplication
+
+        property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
+            property var duration: 0
+        }
+        property var mpvqcSettings: QtObject {
+            property var commentTypes: QtObject {
+                function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
+            }
+            property var language: 'language'
+        }
+    }
+
     Label { id: testHelper }
 
     Component {
@@ -39,14 +53,7 @@ TestCase {
         MpvqcLabelWidthCalculator {
             property int calculateCounter: 0
 
-            mpvqcApplication: QtObject {
-                property var mpvqcSettings: QtObject {
-                    property var commentTypes: QtObject {
-                        function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
-                    }
-                    property var language: 'language'
-                }
-            }
+            mpvqcApplication: testHelperMpvqcApplication
 
             function calculateWidthFor(texts, parent) {
                 calculateCounter += 1;
@@ -59,12 +66,7 @@ TestCase {
         id: labelWidthCalculator
 
         MpvqcLabelWidthCalculator {
-            mpvqcApplication: QtObject {
-                property var mpvqcSettings: QtObject {
-                    property var commentTypes: QtObject {}
-                    property var language: 'language'
-                }
-            }
+            mpvqcApplication: testHelperMpvqcApplication
         }
     }
 
@@ -72,13 +74,13 @@ TestCase {
         const control = createTemporaryObject(commentTypeWidthCalculator, testCase)
         verify(control)
 
-        compare(control.calculateCounter, 1)
+        const counter = control.calculateCounter
 
         control.mpvqcApplication.mpvqcSettings.commentTypesChanged()
-        compare(control.calculateCounter, 2)
+        compare(control.calculateCounter, counter + 1)
 
         control.mpvqcApplication.mpvqcSettings.languageChanged()
-        compare(control.calculateCounter, 3)
+        compare(control.calculateCounter, counter + 2)
     }
 
     function test_calculateWidth() {
