@@ -49,15 +49,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  @typedef MpvqcImport
  @type {Object}
  @property {Array<MpvqcComment>} comments
- @property {Array<string>?} videos
+ @property {Array<MpvqcImportSuccess>} successful
  @property {Array<MpvqcImportError>} errors
- */
-
-/**
- @typedef MpvqcImportReport
- @type {Object}
- @property {Array<MpvqcImportError>} errors
- @property {Array<MpvqcImportSuccess>} imports
  */
 
 /**
@@ -65,17 +58,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  @type {Object}
  @property {QUrl} url
  @property {string} video
- @property {MpvqcComment} comments
+ @property {Array<MpvqcComment>} comments
  */
 
 /**
  @typedef MpvqcImportError
- @type {Object}
- @property {QUrl} url
- */
-
-/**
- @typedef MpvqcWithUrl
  @type {Object}
  @property {QUrl} url
  */

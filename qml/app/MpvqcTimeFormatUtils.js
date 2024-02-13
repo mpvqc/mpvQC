@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @param secs {number}
  * @return {string}
  */
-function formatTimeToString(secs) {
+function formatTimeToStringLong(secs) {
     const sec_num = Math.max(0, parseInt(secs, 10))
     let hours = Math.floor(sec_num / 3600)
     let minutes = Math.floor((sec_num - (hours * 3600)) / 60)

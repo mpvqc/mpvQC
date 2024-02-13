@@ -48,7 +48,7 @@ class Importer {
     }
 
     /**
-     * @param report {MpvqcImportReport}
+     * @param report {MpvqcImport}
      * @return {Array<MpvqcComment>}
      */
     _combineComments(report) {
@@ -77,7 +77,7 @@ class DocumentFileImporter {
 
     /**
      * @param urls {Array<QUrl>}
-     * @return {MpvqcImportReport}
+     * @return {MpvqcImport}
      */
     importFrom(urls) {
         const errors = [], imports = []

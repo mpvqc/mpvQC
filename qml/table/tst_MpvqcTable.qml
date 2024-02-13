@@ -77,11 +77,11 @@ TestCase {
                     function generateFrom(event) {}
                 }
                 property var mpvqcCommentTable: this
-                property var mpvqcWidthCalculatorCommentTypes: QtObject {
-                    property int maxWidth: 150
+                property var mpvqcLabelWidthCalculator: QtObject {
+                    property int commentTypesLabelWidth: 150
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
-                    function formatTimeToString(time) { return `${time}` }
+                    function formatTimeToStringLong(time) { return `${time}` }
                 }
                 property var mpvqcSpecialCharacterValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/

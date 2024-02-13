@@ -45,8 +45,6 @@ ColumnLayout {
     ToolButton {
         id: _upButton
 
-        rightPadding: 0
-        leftPadding: 0
         icon.width: 28
         icon.height: 28
         icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
@@ -59,8 +57,6 @@ ColumnLayout {
     ToolButton {
         id: _downButton
 
-        rightPadding: 0
-        leftPadding: 0
         icon.width: 28
         icon.height: 28
         icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
@@ -73,8 +69,6 @@ ColumnLayout {
     ToolButton {
         id: _editButton
 
-        rightPadding: 0
-        leftPadding: 0
         icon.width: 18
         icon.height: 18
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
@@ -88,10 +82,8 @@ ColumnLayout {
     ToolButton {
         id: _deleteButton
 
-        rightPadding: 0
-        leftPadding: 0
-        icon.width: 18
-        icon.height: 18
+        icon.width: 24
+        icon.height: 24
         icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 
         onClicked: {

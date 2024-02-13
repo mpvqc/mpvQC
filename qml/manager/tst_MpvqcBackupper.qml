@@ -49,7 +49,7 @@ Item {
                 function url_to_filename_without_suffix(url) { return url }
             }
             property var mpvqcTimeFormatUtils: QtObject {
-                function formatTimeToString(seconds) { return 'formatted' }
+                function formatTimeToStringLong(seconds) { return 'formatted' }
             }
         }
 

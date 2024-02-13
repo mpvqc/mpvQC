@@ -38,7 +38,7 @@ Popup {
     visible: true
     dim: false
     modal: true
-    width: 180
+    width: 155
     padding: 6
 
     contentItem: MpvqcRowTimeLabelEditPopupSpinBox {

@@ -22,12 +22,13 @@ from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, ReverseTranslatorService
+from mpvqc.services import FileStartupService, ReverseTranslatorService, FontLoaderService
 
 
 class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
     _translator = inject.attr(ReverseTranslatorService)
+    _font_loader = inject.attr(FontLoaderService)
 
     def __init__(self, args):
         super().__init__(args)
@@ -38,6 +39,9 @@ class MpvqcApplication(QGuiApplication):
     def set_window_icon(self):
         icon = QIcon(':/data/icon.svg')
         self.setWindowIcon(icon)
+
+    def load_application_fonts(self):
+        self._font_loader.load_application_fonts()
 
     def create_directories(self):
         self._start_up.create_missing_directories()
@@ -74,14 +78,14 @@ class MpvqcApplication(QGuiApplication):
     def set_up_imports(self):
         self._engine.addImportPath(':/qml')
 
-    def install__window_event_filter(self):
+    def install_window_event_filter(self):
         if sys.platform == 'win32':
             from mpvqc.framelesswindow.win import WindowsEventFilter
-            self._event_filter = WindowsEventFilter(border_width=10)
+            self._event_filter = WindowsEventFilter(border_width=6)
             self.installNativeEventFilter(self._event_filter)
         elif sys.platform == 'linux':
             from mpvqc.framelesswindow.linux import LinuxEventFilter
-            self._event_filter = LinuxEventFilter(border_width=10)
+            self._event_filter = LinuxEventFilter(border_width=6)
             self.installEventFilter(self._event_filter)
 
     def start_engine(self):

@@ -50,7 +50,7 @@ Column {
 
     Label {
         text: `${Qt.application.version} - >>>commit-id<<<`
-        font.bold: true
+        font.weight: Font.DemiBold
         anchors.horizontalCenter: parent.horizontalCenter
     }
 

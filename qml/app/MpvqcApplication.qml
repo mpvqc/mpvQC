@@ -27,17 +27,16 @@ import shared
 
 import "MpvqcKeyCommandGenerator.js" as MpvqcKeyCommandGenerator
 import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
-import "MpvqcWidthCalculatorLabel.js" as MpvqcWidthCalculatorLabel
 
 
 ApplicationWindow {
     id: root
 
-    readonly property var newCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
+    readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
-    readonly property var mpvqcWidthCalculatorCommentTypes: MpvqcWidthCalculatorCommentTypes { mpvqcApplication: root }
-    readonly property var mvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
+    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
+    readonly property var mpvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
@@ -55,15 +54,16 @@ ApplicationWindow {
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
-    readonly property var mpvqcWidthCalculatorLabel: MpvqcWidthCalculatorLabel
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
     readonly property int windowBorder: {
-        const defaultWidth = 6
+        const defaultWidth = 1
         if (Qt.platform.os === 'windows') {
-            return root.fullscreen ? 0 : defaultWidth
+            if (root.fullscreen) return 0
+            if (root.maximized) return 6  // work around custom window properties
+            return defaultWidth
         } else if (Qt.platform.os === 'linux') {
             return root.maximized || root.fullscreen ? 0 : defaultWidth
         }
@@ -136,7 +136,7 @@ ApplicationWindow {
             const modifiers = event.modifiers
 
             if (modifiers === Qt.NoModifier) {
-                return root.newCommentMenu.popupMenu()
+                return root.mpvqcNewCommentMenu.popupMenu()
             }
         }
 

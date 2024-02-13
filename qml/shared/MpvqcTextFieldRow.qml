@@ -29,7 +29,7 @@ RowLayout {
 
     property alias label: _label.text
     property alias input: _textField.text
-    property alias bold: _textField.font.bold
+    property alias fontWeight: _textField.font.weight
     property alias implicitTextFieldWidth: _textField.implicitWidth
 
     signal textChanged(string text)

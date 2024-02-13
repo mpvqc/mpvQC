@@ -53,7 +53,7 @@ Item {
                 }
             }
             property var mpvqcTimeFormatUtils: QtObject {
-                function formatTimeToString(seconds) { return 'formatted' }
+                function formatTimeToStringLong(seconds) { return 'formatted' }
             }
         }
 

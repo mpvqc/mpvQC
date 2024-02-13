@@ -81,8 +81,8 @@ QtObject {
         consultUserToPossiblyPick(linkedVideo)
     }
 
-    function isVideoPresent(video: url): void {
-        return video && video != ''
+    function isVideoPresent(video: url): boolean {
+        return video != null && video.toString().trim() !== ''
     }
 
     function pick(video: url): void {

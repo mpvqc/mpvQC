@@ -33,7 +33,7 @@ Label {
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    readonly property var mpvqcWidthCalculatorLabel: mpvqcApplication.mpvqcWidthCalculatorLabel
+    readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
 
     readonly property int duration: mpvqcMpvPlayerPropertiesPyObject.duration
     readonly property int timePos: mpvqcMpvPlayerPropertiesPyObject.time_pos
@@ -57,13 +57,13 @@ Label {
 
     function currentTime(): string {
         return duration >= secondsPerHour
-            ? mpvqcTimeFormatUtils.formatTimeToString(timePos)
+            ? mpvqcTimeFormatUtils.formatTimeToStringLong(timePos)
             : mpvqcTimeFormatUtils.formatTimeToStringShort(timePos)
     }
 
     function remainingTime(): string {
         const remaining = duration >= secondsPerHour
-            ? mpvqcTimeFormatUtils.formatTimeToString(timeRemaining)
+            ? mpvqcTimeFormatUtils.formatTimeToStringLong(timeRemaining)
             : mpvqcTimeFormatUtils.formatTimeToStringShort(timeRemaining)
         return `-${remaining}`
     }
@@ -71,8 +71,8 @@ Label {
     function currentTotalTime(): string {
         let current; let total
         if (duration >= secondsPerHour) {
-            current = mpvqcTimeFormatUtils.formatTimeToString(timePos)
-            total = mpvqcTimeFormatUtils.formatTimeToString(duration)
+            current = mpvqcTimeFormatUtils.formatTimeToStringLong(timePos)
+            total = mpvqcTimeFormatUtils.formatTimeToStringLong(duration)
         } else {
             current = mpvqcTimeFormatUtils.formatTimeToStringShort(timePos)
             total = mpvqcTimeFormatUtils.formatTimeToStringShort(duration)
@@ -82,7 +82,7 @@ Label {
 
     function _recalculateWidth(): real {
         const items = [root.text]
-        width = root.mpvqcWidthCalculatorLabel.calculateWidthFor(items, root)
+        width = root.mpvqcLabelWidthCalculator.calculateWidthFor(items, root)
     }
 
     Connections {

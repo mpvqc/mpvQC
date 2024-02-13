@@ -111,7 +111,7 @@ Item {
         location: root.settingsFile
         category: 'Theme'
         property int theme: Material.Dark
-        property int primary: Material.Orange
+        property int primary: Material.Indigo
     }
     property alias theme: _themeSettings.theme
     property alias primary: _themeSettings.primary

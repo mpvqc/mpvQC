@@ -19,7 +19,7 @@ import inject
 
 from mpvqc.services import ResourceService, ApplicationEnvironmentService, ApplicationPathsService, BackupService, \
     FileStartupService, PlayerService, ResourceReaderService, ReverseTranslatorService, \
-    OperatingSystemZoomDetectorService
+    OperatingSystemZoomDetectorService, FontLoaderService
 
 
 def bindings(binder: inject.Binder):
@@ -27,6 +27,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(ApplicationPathsService, lambda: ApplicationPathsService())
     binder.bind_to_constructor(BackupService, lambda: BackupService())
     binder.bind_to_constructor(FileStartupService, lambda: FileStartupService())
+    binder.bind_to_constructor(FontLoaderService, lambda: FontLoaderService())
     binder.bind_to_constructor(PlayerService, lambda: PlayerService())
     binder.bind_to_constructor(ResourceService, lambda: ResourceService())
     binder.bind_to_constructor(ResourceReaderService, lambda: ResourceReaderService())

@@ -73,9 +73,16 @@ Popup {
         root.searchQueryActive = false
     }
 
+    function _hideSearchBoxWithoutAnimation() {
+        const exitAnimation = root.exit
+        root.exit = null
+        hideSearchBox()
+        root.exit = exitAnimation
+    }
+
     onApplicationIsFullscreenChanged: {
         if (root.applicationIsFullscreen) {
-            hideSearchBox()
+            _hideSearchBoxWithoutAnimation()
         }
     }
 

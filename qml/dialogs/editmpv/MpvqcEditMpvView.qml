@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import shared
@@ -47,7 +46,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignLeft
 
         font.pointSize: 11
-        font.bold: true
+        font.weight: Font.DemiBold
 
         text: `<html> ${text1} <a href='${url}'>${text2}</a>. </html>`
 
@@ -88,11 +87,10 @@ ColumnLayout {
             id: _textArea
 
             text: root.fileContent
-            font: fontLoader.font
             background: null
             leftPadding: mirrored ? 22 : 0
-
-            FontLoader { id: fontLoader; source: "qrc:/data/fonts/NotoSansMono-Regular.ttf" }
+            font.family: 'Noto Sans Mono'
+            font.pointSize: 11
         }
     }
 

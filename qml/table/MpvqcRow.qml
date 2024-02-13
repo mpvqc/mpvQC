@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
+import shared
+
 
 Rectangle {
     id: root
@@ -33,7 +35,7 @@ Rectangle {
     required property string comment        // from model
     required property string searchQuery
 
-    readonly property var mpvqcWidthCalculatorCommentTypes: mpvqcApplication.mpvqcWidthCalculatorCommentTypes
+    readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
 
     property alias widthScrollBar: _spacerScrollBar.width
@@ -42,6 +44,8 @@ Rectangle {
     property alias commentTypeLabel: _commentTypeLabel
     property alias commentLabel: _commentLabel
     property alias moreButton: _moreButton
+
+    property int labelPadding: 14
 
     signal clicked()
     signal copyCommentClicked()
@@ -77,7 +81,7 @@ Rectangle {
     }
 
     function toClipboardContent(): string {
-        const time = mpvqcTimeFormatUtils.formatTimeToString(root.time)
+        const time = mpvqcTimeFormatUtils.formatTimeToStringLong(root.time)
         const type = qsTranslate("CommentTypes", commentType)
         return `[${time}] [${type}] ${comment}`.trim()
     }
@@ -99,8 +103,11 @@ Rectangle {
         MpvqcRowTimeLabel {
             id: _timeLabel
 
-            width: 90
+            width: root.mpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
+            leftPadding: LayoutMirroring.enabled ? root.labelPadding : root.labelPadding * (2/3)
+            rightPadding: LayoutMirroring.enabled ? root.labelPadding * (2/3) : root.labelPadding
+
             mpvqcApplication: root.mpvqcApplication
             time: root.time
             rowSelected: root.rowSelected
@@ -118,8 +125,11 @@ Rectangle {
         MpvqcRowCommentTypeLabel {
             id: _commentTypeLabel
 
-            width: root.mpvqcWidthCalculatorCommentTypes.maxWidth
+            width: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding
             height: root.height
+            leftPadding: root.labelPadding
+            rightPadding: root.labelPadding
+
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType
             rowSelected: root.rowSelected
@@ -144,6 +154,9 @@ Rectangle {
                     - _moreButton.width
                     - _spacerScrollBar.width
             height: root.height
+            leftPadding: root.labelPadding
+            rightPadding: root.labelPadding
+
             mpvqcApplication: root.mpvqcApplication
             comment: root.comment
             searchQuery: root.searchQuery

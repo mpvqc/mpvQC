@@ -81,6 +81,18 @@ ScrollView {
         }
 
         MpvqcDependency {
+            dependency: 'Noto Sans'
+            url: "https://fonts.google.com/noto/specimen/Noto+Sans"
+            licence: "OFL"
+        }
+
+        MpvqcDependency {
+            dependency: 'Noto Sans Hebrew'
+            url: "https://fonts.google.com/noto/specimen/Noto+Sans+Hebrew"
+            licence: "OFL"
+        }
+
+        MpvqcDependency {
             dependency: 'Noto Sans Mono'
             url: "https://fonts.google.com/noto/specimen/Noto+Sans+Mono"
             licence: "OFL"

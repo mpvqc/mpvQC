@@ -26,7 +26,7 @@ import shared
 MpvqcDialog {
     id: root
 
-    readonly property var mvqcMpvFiles: mpvqcApplication.mvqcMpvFiles
+    readonly property var mpvqcMpvFiles: mpvqcApplication.mpvqcMpvFiles
     readonly property var mpvqcResourcePyObject: mpvqcApplication.mpvqcResourcePyObject
 
     property alias editView: _editView
@@ -43,12 +43,12 @@ MpvqcDialog {
 
         width: root.width
         mpvqcApplication: root.mpvqcApplication
-        fileContent: root.mvqcMpvFiles.editInputInterface.fileContent
+        fileContent: root.mpvqcMpvFiles.editInputInterface.fileContent
     }
 
     onAccepted: {
         const currentText = _editView.textArea.text
-        root.mvqcMpvFiles.editInputInterface.fileContent = currentText
+        root.mpvqcMpvFiles.editInputInterface.fileContent = currentText
     }
 
     onReset: {
