@@ -26,6 +26,7 @@ Popup {
     id: root
 
     required property var mpvqcSpecialCharacterValidator
+    required property var backgroundColor
     required property string currentComment
 
     property bool acceptValue: true
@@ -60,7 +61,7 @@ Popup {
 
         background: Rectangle {
             anchors.fill: parent
-            color: Material.background
+            color: root.backgroundColor
         }
 
         onAccepted: root.close()

@@ -38,6 +38,15 @@ Rectangle {
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
 
+    readonly property var backgroundColorSelected: Material.primary
+    readonly property var backgroundColorUnselected: Material.background
+    readonly property var backgroundColorUnselectedAlt: Material.theme === Material.Dark
+        ? Qt.lighter(Material.background, 1.12)
+        : Qt.darker(Material.background, 1.04)
+    readonly property var backgroundColorUnselectedActive: index % 2 === 1
+        ? backgroundColorUnselected
+        : backgroundColorUnselectedAlt
+
     property alias widthScrollBar: _spacerScrollBar.width
     property alias playButton: _playButton
     property alias timeLabel: _timeLabel
@@ -64,17 +73,7 @@ Rectangle {
 
     height: Math.max(40, _playButton.height)
 
-    color: {
-        if (rowSelected) {
-            return Material.primary
-        } if (index % 2 === 1) {
-            return 'transparent'
-        } else if (Material.theme === Material.Dark) {
-            return Qt.lighter(Material.background, 1.12)
-        } else {
-            return Qt.darker(Material.background, 1.04)
-        }
-    }
+    color: rowSelected ? backgroundColorSelected : backgroundColorUnselectedActive
 
     function startEditing(): void {
         _commentLabel.startEditing()
@@ -162,6 +161,7 @@ Rectangle {
             searchQuery: root.searchQuery
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
+            backgroundColor: root.backgroundColorUnselectedActive
 
             onClicked: root.clicked()
 
