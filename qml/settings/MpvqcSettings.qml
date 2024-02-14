@@ -36,7 +36,7 @@ Item {
         location: root.settingsFile
         category: 'Backup'
         property bool enabled: true
-        property int interval: 90
+        property int interval: 60
     }
     property alias backupEnabled: _backupSettings.enabled
     property alias backupInterval: _backupSettings.interval
