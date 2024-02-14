@@ -34,7 +34,7 @@ TestCase {
         model = Qt.createQmlObject('import models; MpvqcCommentTypesModel {}', _item)
     }
 
-    function test_items_data(): Array {
+    function test_items_data() {
         return [ { tag: 'Spelling' }, { tag: 'Punctuation' } ]
     }
 
