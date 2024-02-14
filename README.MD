@@ -37,7 +37,7 @@ Create a run configuration that runs the `build-develop` recipe before starting 
 
 # Internationalization
 
-If you want to help translating this application in other languages, please open a new issue :)
+If you want to help translating this application into other languages, please open a new issue :)
 
 ## Read Further
 
