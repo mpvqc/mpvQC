@@ -137,11 +137,18 @@ ListView {
         root.model.clear_comments()
     }
 
-    function getAllComments(): Array<MpvqcComment> {
+    /**
+     * @returns {Array<MpvqcComment>}
+     */
+    function getAllComments() {
         return root.model.comments()
     }
 
-    function importComments(comments: Array<MpvqcComment>): void {
+    /**
+     *
+     * @param comments {Array<MpvqcComment>}
+     */
+    function importComments(comments): void {
         root.model.import_comments(comments)
     }
 

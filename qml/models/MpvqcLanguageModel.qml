@@ -57,7 +57,7 @@ ListModel {
         translator: 'maddo'
     }
 
-    function identifiers(): Array<string> {
+    function identifiers(): list<string> {
         const marshalled = []
         for (let i = 0; i < count; i++) {
             marshalled.push(this.get(i).identifier)

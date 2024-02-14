@@ -36,7 +36,7 @@ Item {
         resetter.requestReset()
     }
 
-    function openDocuments(documents: Array<url>): void {
+    function openDocuments(documents: list<url>): void {
         const video = ''
         const subtitles = []
         _open(documents, video, subtitles)
@@ -48,20 +48,20 @@ Item {
         _open(documents, video, subtitles)
     }
 
-    function openSubtitles(subtitles: Array<url>): void {
+    function openSubtitles(subtitles: list<url>): void {
         const documents = []
         const video = ''
         _open(documents, video, subtitles)
     }
 
-    function open(documents: Array<url>, video: url, subtitles: Array<url>): void {
+    function open(documents: list<url>, video: url, subtitles: list<url>): void {
         const docs = documents && documents.length > 0 ? documents : []
         const vid = video && video != '' ? video : ''
         const subs = subtitles && subtitles.length > 0 ? subtitles : []
         _open(docs, vid, subs)
     }
 
-    function _open(documents: Array<url>, video: url, subtitles: Array<url>): void {
+    function _open(documents: list<url>, video: url, subtitles: list<url>): void {
         importer.importFrom(documents, video, subtitles)
     }
 

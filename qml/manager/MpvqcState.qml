@@ -35,7 +35,10 @@ Item {
         state = state.handleChange()
     }
 
-    function handleImport(change: MpvqcStateChanges.ImportChanges): void {
+    /**
+     * @param change {MpvqcStateChanges.ImportChanges}
+     */
+    function handleImport(change): void {
         state = state.handleImport(change)
     }
 

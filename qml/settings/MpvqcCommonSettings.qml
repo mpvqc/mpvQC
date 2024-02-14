@@ -47,7 +47,7 @@ Item {
         }
     }
 
-    function _split(items: string): Array<string> {
+    function _split(items: string): list<string> {
         return items.split(',')
             .map((value) => value.trim())
             .filter((value) => value)
