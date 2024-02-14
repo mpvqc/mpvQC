@@ -248,5 +248,4 @@ jobs:
           manifest-path: com.github.mpvqc.mpvQC.yml
           bundle: ${{ needs.build_python.outputs.version }}-linux.flatpak
           branch: main
-          cache: false
           cache-key: flatpak-builder-${{ github.sha }}
