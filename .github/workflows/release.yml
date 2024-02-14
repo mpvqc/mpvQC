@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'Install Python 3.12'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: 'Install just'
@@ -116,7 +116,7 @@ jobs:
           execute just clean
           execute just build
       - name: 'Upload Build Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: github.ref_name == 'main'
         with:
           path: build/release
@@ -158,12 +158,12 @@ jobs:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
       - name: 'Download Build Artifact'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: build/release
           name: release-build-artifact
       - name: 'Install Python 3.12'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: 'Setup Build Environment'
@@ -214,7 +214,7 @@ jobs:
         shell: pwsh
         run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "${{ needs.build_python.outputs.version }}.zip"
       - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "${{ needs.build_python.outputs.version }}-win-x86_64"
           path: "${{ needs.build_python.outputs.version }}.zip"
@@ -233,7 +233,7 @@ jobs:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
       - name: 'Download Build Artifact'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: build/release
           name: release-build-artifact
@@ -243,7 +243,7 @@ jobs:
 
           execute mv build-aux/linux/com.github.mpvqc.mpvQC.yml com.github.mpvqc.mpvQC.yml
       - name: 'Build Flatpak'
-        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
+        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
         with:
           manifest-path: com.github.mpvqc.mpvQC.yml
           bundle: ${{ needs.build_python.outputs.version }}-linux.flatpak
