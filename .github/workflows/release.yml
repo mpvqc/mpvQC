@@ -182,6 +182,7 @@ jobs:
           execute pyinstaller \
             --name mpvQC \
             --workpath build-windows \
+            --contents-directory=internal \
             --icon=build-aux/windows/icon.ico \
             --collect-binaries PySide6 \
             --add-data "LICENSE;." \
