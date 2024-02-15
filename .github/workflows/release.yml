@@ -194,11 +194,6 @@ jobs:
 
           execute find dist/mpvQC -type f -name 'Qt6WebEngineCore.dll' -delete
           execute find dist/mpvQC -type f -name 'opengl32sw.dll' -delete
-      - name: 'Make Archive Portable'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute touch dist/mpvQC/_internal/portable
       - name: 'Package libmpv'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }

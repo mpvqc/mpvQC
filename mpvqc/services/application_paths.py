@@ -26,34 +26,36 @@ from .application_environment import ApplicationEnvironmentService
 
 
 class ApplicationPathsService:
-    _app_environment = inject.attr(ApplicationEnvironmentService)
+    _app = inject.attr(ApplicationEnvironmentService)
 
-    class Impl(NamedTuple):
+    class Paths(NamedTuple):
         dir_backup: Path
         dir_config: Path
         dir_screenshots: Path
 
-    @cached_property
-    def _impl(self) -> 'ApplicationPathsService.Impl':
-        if self._app_environment.is_portable:
-            return self._get_portable()
-        return self._get_non_portable()
+    def __init__(self):
+        if self._app.built_by_pyinstaller:
+            self._paths = self._local_paths()
+        elif self._app.runs_as_flatpak:
+            self._paths = self._system_paths()
+        else:
+            self._paths = self._local_paths()
 
-    def _get_portable(self) -> 'ApplicationPathsService.Impl':
-        dir_app = self._app_environment.executing_directory
-        return ApplicationPathsService.Impl(
+    def _local_paths(self) -> 'ApplicationPathsService.Paths':
+        dir_app = self._app.executing_directory
+        return ApplicationPathsService.Paths(
             dir_backup=dir_app / 'appdata' / 'backups',
             dir_config=dir_app / 'appdata',
             dir_screenshots=dir_app / 'appdata' / 'screenshots'
         )
 
     @staticmethod
-    def _get_non_portable() -> 'ApplicationPathsService.Impl':
+    def _system_paths() -> 'ApplicationPathsService.Paths':
         appname = QCoreApplication.applicationName()
         config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
         pictures = QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
-        return ApplicationPathsService.Impl(
+        return ApplicationPathsService.Paths(
             dir_backup=Path(documents) / appname / 'backups',
             dir_config=Path(config) / appname,
             dir_screenshots=Path(pictures) / appname
@@ -61,15 +63,15 @@ class ApplicationPathsService:
 
     @cached_property
     def dir_backup(self) -> Path:
-        return self._impl.dir_backup
+        return self._paths.dir_backup
 
     @cached_property
     def dir_config(self) -> Path:
-        return self._impl.dir_config
+        return self._paths.dir_config
 
     @cached_property
     def dir_screenshots(self) -> Path:
-        return self._impl.dir_screenshots
+        return self._paths.dir_screenshots
 
     @cached_property
     def file_input_conf(self) -> Path:

@@ -15,10 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 from mpvqc.services import ApplicationEnvironmentService
 
@@ -26,7 +26,7 @@ from mpvqc.services import ApplicationEnvironmentService
 class TestApplicationEnvironmentService(unittest.TestCase):
     MODULE = 'mpvqc.services.application_environment'
 
-    def test_executing_directory_as_distributable(self):
+    def test_built_by_pyinstaller(self):
         try:
             setattr(sys, 'frozen', True)
             setattr(sys, '_MEIPASS', Path(__file__))
@@ -36,7 +36,6 @@ class TestApplicationEnvironmentService(unittest.TestCase):
             delattr(sys, 'frozen')
             delattr(sys, '_MEIPASS')
 
-    def test_executing_directory_non_distributable(self, *_):
         try:
             setattr(sys, 'frozen', False)
             service = ApplicationEnvironmentService()
@@ -44,12 +43,10 @@ class TestApplicationEnvironmentService(unittest.TestCase):
         finally:
             delattr(sys, 'frozen')
 
-    @patch(f'{MODULE}.Path.is_file', return_value=True)
-    def test_portable(self, *_):
+    def test_run_as_flatpak(self, *_):
         service = ApplicationEnvironmentService()
-        self.assertTrue(service.is_portable)
+        self.assertFalse(service.runs_as_flatpak)
 
-    @patch(f'{MODULE}.Path.is_file', return_value=False)
-    def test_non_portable(self, *_):
+        os.environ['FLATPAK_ID'] = "MPVQC_ID"
         service = ApplicationEnvironmentService()
-        self.assertFalse(service.is_portable)
+        self.assertTrue(service.runs_as_flatpak)
