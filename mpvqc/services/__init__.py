@@ -25,3 +25,4 @@ from .player import PlayerService, SubtitleCacher
 from .resource import ResourceService
 from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService
+from .settings import SettingsService

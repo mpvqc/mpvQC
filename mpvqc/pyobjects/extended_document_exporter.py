@@ -16,8 +16,14 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from PySide6.QtCore import QObject, Slot, QUrl
+from pathlib import Path
+
+import inject
+from PySide6.QtCore import QObject, Slot
 from PySide6.QtQml import QmlElement
+from PySide6.QtWidgets import QApplication
+
+from mpvqc.services import SettingsService, PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -25,15 +31,21 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcExtendedDocumentExporterPyObject(QObject):
+    _settings: SettingsService = inject.attr(SettingsService)
+    _player: PlayerService = inject.attr(PlayerService)
 
-    @Slot(list, dict, result=str)
-    def create_file_content(self, comments: list, options: dict) -> str:
+    @Slot(list, result=str)
+    def create_file_content(self, comments: list) -> str:
         for comment in comments:
-            print("PYTHON comment", comment)
-        print("PYTHON # comments", len(comments))
-        print("PYTHON options", options)
+            print("py: comment", comment)
 
-        video: QUrl = options['video']
-        print("PYTHON Video path", video.path())
+        print("py: writeHeaderDate:", self._settings.writeHeaderDate)
+        print("py: writeHeaderGenerator:", self._settings.writeHeaderGenerator)
+        print("py: writeHeaderVideoPath:", self._settings.writeHeaderVideoPath)
+        print("py: writeHeaderNickname:", self._settings.writeHeaderNickname)
+
+        print("py: nickname:", self._settings.nickname)
+        print("py: generator:", f"{QApplication.applicationName()} {QApplication.applicationVersion()}")
+        print("py: video:", Path(self._player.mpv.path) if self._player.mpv.path else "")
 
         return 'return value'
