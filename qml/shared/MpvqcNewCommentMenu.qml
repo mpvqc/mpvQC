@@ -26,9 +26,10 @@ MpvqcMenu {
 
     required property var mpvqcApplication
 
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
-    property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
+    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
+    readonly property var mpvqcMouseCursorPyObject: mpvqcApplication.mpvqcMouseCursorPyObject
     property string selectedCommentType: ''
 
     property alias repeater: _repeater
@@ -39,12 +40,21 @@ MpvqcMenu {
     z: 2
     exit: null
 
+	onAboutToShow: _positionMenu()
+    onClosed: _addComment()
+
+    function _positionMenu(): void {
+        const pos = parent.mapFromGlobal(mpvqcMouseCursorPyObject.cursor_pos)
+		x = root.mMirrored ? pos.x - root.width : pos.x
+		y = pos.y
+    }
+
     function popupMenu(): void {
         mpvqcMpvPlayerPyObject.pause()
         popup()
     }
 
-    onClosed: {
+    function _addComment(): void {
         // Instead of directly adding a comment in the MenuItem triggered signal handler,
         // we defer adding it until the popup closes. If we would directly add it,
         // the menu's closing signals would interfere with the focus of the newly added comment.
