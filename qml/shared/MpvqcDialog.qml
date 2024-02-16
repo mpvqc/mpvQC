@@ -65,8 +65,4 @@ Dialog {
         root.bar.currentIndex = 0
     }
 
-    Overlay.modal: Rectangle {
-        color: Color.transparent(root.palette.shadow, 0.5)
-        Behavior on opacity { NumberAnimation { duration: 150 } }
-    }
 }
