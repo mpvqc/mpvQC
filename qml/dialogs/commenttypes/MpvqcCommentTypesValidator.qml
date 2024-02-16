@@ -51,11 +51,11 @@ QtObject {
         return forbiddenCharactors.test(commentType)
     }
 
-    function _getAllItems(): Array<string> {
+    function _getAllItems(): list<string> {
         return model.items()
     }
 
-    function _alreadyExistsIn(englishCommentTypes: Array<string>, newCommentType: string): bool {
+    function _alreadyExistsIn(englishCommentTypes: list<string>, newCommentType: string): bool {
         return englishCommentTypes.includes(newCommentType)
             || englishCommentTypes.includes(reverseTranslator.lookup_specific_language(language, newCommentType))
     }
@@ -74,14 +74,14 @@ QtObject {
         return null
     }
 
-    function _getAllItemsExcept(item: string): Array<string> {
+    function _getAllItemsExcept(item: string): list<string> {
         const lookup = reverseTranslator.lookup_specific_language(language, item)
         const items = _getAllItems()
         _remove(lookup, items)
         return items
     }
 
-    function _remove(item: string, array: Array<string>): void {
+    function _remove(item: string, array: list<string>): void {
         const index = array.indexOf(item)
         if (index !== -1) {
             array.splice(index, 1)

@@ -117,7 +117,12 @@ FocusScope {
     }
 
     Component.onCompleted: {
-        _splitView.restoreState(root.mpvqcSettings.dimensions)
+        const restored = _splitView.restoreState(root.mpvqcSettings.dimensions)
+        if (!restored) {
+            const defaultTableHeight = _splitView.height * 0.4
+            const defaultTableWidth = _splitView.width * 0.4
+			setPreferredTableSize(defaultTableWidth, defaultTableHeight)
+        }
     }
 
     Component.onDestruction: {

@@ -59,8 +59,12 @@ QtObject {
 
     signal videoSelected(url video)
 
-    /** Every call to this function MUST trigger a 'videoSelected' signal. */
-    function chooseBetween(standaloneVideo: url, otherVideosPotentially: Array<MpvqcImportSuccess>): void {
+    /**
+     * Every call to this function MUST trigger a 'videoSelected' signal.
+     * @param standaloneVideo
+     * @param otherVideosPotentially {Array<MpvqcImportSuccess>}
+     */
+    function chooseBetween(standaloneVideo: url, otherVideosPotentially): void {
         if (isVideoPresent(standaloneVideo)) {
             pick(standaloneVideo)
             return
@@ -81,7 +85,7 @@ QtObject {
         consultUserToPossiblyPick(linkedVideo)
     }
 
-    function isVideoPresent(video: url): boolean {
+    function isVideoPresent(video: url): bool {
         return video != null && video.toString().trim() !== ''
     }
 
@@ -97,7 +101,12 @@ QtObject {
         root.videoSelected('')
     }
 
-    function findFirstExistingVideoFrom(successful: Array<MpvqcImportSuccess>): url {
+    /**
+     *
+     * @param successful {Array<MpvqcImportSuccess>}
+     * @returns {string}
+     */
+    function findFirstExistingVideoFrom(successful): url {
         for (const document of successful) {
             const videoPath = document.video
             const url = mpvqcFileSystemHelperPyObject.absolute_path_to_url(videoPath)

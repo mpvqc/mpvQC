@@ -20,17 +20,17 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
-from PySide6.QtCore import QStandardPaths, QCoreApplication
 
 from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsService
 
 
-class TestPortableFileService(unittest.TestCase):
+class TestApplicationPaths(unittest.TestCase):
     executing_dir = Path.home()
 
     def setUp(self):
         mock = MagicMock()
-        mock.is_portable = True
+        mock.runs_as_flatpak = False
+        mock.built_by_pyinstaller = False
         mock.executing_directory = self.executing_dir
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationEnvironmentService, mock))
@@ -71,56 +71,5 @@ class TestPortableFileService(unittest.TestCase):
     def test_file_settings(self):
         service = ApplicationPathsService()
         expected = self.executing_dir / 'appdata' / 'settings.ini'
-        actual = service.file_settings
-        self.assertEqual(expected, actual)
-
-
-class TestNonPortableFileService(unittest.TestCase):
-    MODULE = 'mpvqc.services.file_service_non_portable'
-    executing_dir = Path.home()
-
-    def setUp(self):
-        QCoreApplication.setApplicationName('mpvQC')
-        mock = MagicMock()
-        mock.is_portable = False
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ApplicationEnvironmentService, mock))
-
-    def tearDown(self):
-        inject.clear()
-
-    def test_directory_backup(self, *_):
-        service = ApplicationPathsService()
-        expected = Path(QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)) / 'mpvQC' / 'backups'
-        actual = service.dir_backup
-        self.assertEqual(expected, actual)
-
-    def test_directory_config(self, *_):
-        service = ApplicationPathsService()
-        expected = Path(QStandardPaths.writableLocation(QStandardPaths.AppConfigLocation))
-        actual = service.dir_config
-        self.assertEqual(expected, actual)
-
-    def test_directory_screenshots(self, *_):
-        service = ApplicationPathsService()
-        expected = Path(QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)) / 'mpvQC'
-        actual = service.dir_screenshots
-        self.assertEqual(expected, actual)
-
-    def test_file_input_conf(self, *_):
-        service = ApplicationPathsService()
-        expected = Path.home() / '.config' / 'mpvQC' / 'input.conf'
-        actual = service.file_input_conf
-        self.assertEqual(expected, actual)
-
-    def test_file_mpv_conf(self, *_):
-        service = ApplicationPathsService()
-        expected = Path.home() / '.config' / 'mpvQC' / 'mpv.conf'
-        actual = service.file_mpv_conf
-        self.assertEqual(expected, actual)
-
-    def test_file_settings(self, *_):
-        service = ApplicationPathsService()
-        expected = Path.home() / '.config' / 'mpvQC' / 'settings.ini'
         actual = service.file_settings
         self.assertEqual(expected, actual)

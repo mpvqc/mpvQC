@@ -41,6 +41,7 @@ TestCase {
                 regularExpression: /[0-9A-Z]+/
             }
             currentComment: 'Corrent comment'
+            backgroundColor: 'transparent'
         }
     }
 

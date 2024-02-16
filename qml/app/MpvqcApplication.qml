@@ -45,6 +45,7 @@ ApplicationWindow {
     readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
     readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
     readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject {}
+    readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
@@ -59,13 +60,12 @@ ApplicationWindow {
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
     readonly property int windowBorder: {
-        const defaultWidth = 1
-        if (Qt.platform.os === 'windows') {
-            if (root.fullscreen) return 0
-            if (root.maximized) return 6  // work around custom window properties
-            return defaultWidth
+        if (root.fullscreen) {
+            return 0
+        } else if (Qt.platform.os === 'windows') {
+            return root.maximized ? 8 : 1  // work around custom window properties
         } else if (Qt.platform.os === 'linux') {
-            return root.maximized || root.fullscreen ? 0 : defaultWidth
+            return root.maximized ? 0 : 1
         }
     }
 

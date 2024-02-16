@@ -28,11 +28,10 @@ Item {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-
-    readonly property int marginTop: 4
-    readonly property int marginLeft: mpvqcSettings.layoutOrientation === Qt.Vertical ? marginRight : 6
-    readonly property int marginRight: mpvqcApplication.maximized ? 6 : 0
-    readonly property int marginBottom: mpvqcApplication.maximized ? 2 : 0
+    readonly property int mBottom: mpvqcApplication.maximized ? 2 : 0
+    readonly property int mLeft: mpvqcSettings.layoutOrientation === Qt.Horizontal
+        ? 6
+        : mpvqcApplication.maximized ? 2 : 0
 
     property alias formattingOptionsButton: _formattingOptionsButton
 
@@ -53,10 +52,14 @@ Item {
         RowLayout {
             width: _content.width
 
+            Rectangle {
+	            width: root.mLeft
+	            color: 'transparent'
+	        }
+
             MpvqcRowSelectionLabel {
                 mpvqcApplication: root.mpvqcApplication
-                Layout.bottomMargin: root.marginBottom
-                Layout.leftMargin: root.marginLeft
+                Layout.bottomMargin: root.mBottom
             }
 
             Item { Layout.fillWidth: true }
@@ -64,22 +67,21 @@ Item {
             MpvqcVideoPercentLabel {
                 mpvqcApplication: root.mpvqcApplication
                 horizontalAlignment: Text.AlignRight
-                Layout.bottomMargin: root.marginBottom
+                Layout.bottomMargin: root.mBottom
             }
 
             MpvqcVideoTimeLabel {
                 mpvqcApplication: root.mpvqcApplication
                 horizontalAlignment: Text.AlignRight
                 Layout.preferredWidth: width
-                Layout.bottomMargin: root.marginBottom
+                Layout.bottomMargin: root.mBottom
                 Layout.leftMargin: 12
             }
 
             Item {
                 height: 25
                 width: 25
-                Layout.bottomMargin: root.marginBottom
-                Layout.rightMargin: root.marginRight
+                Layout.bottomMargin: root.mBottom
 
                 ToolButton {
                     id: _formattingOptionsButton

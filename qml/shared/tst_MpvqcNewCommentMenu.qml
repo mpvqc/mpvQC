@@ -60,6 +60,9 @@ TestCase {
                         addNewCommentCommentType = commentType
                     }
                 }
+                property var mpvqcMouseCursorPyObject: QtObject {
+                    property point cursor_pos: Qt.point(0, 0)
+                }
                 function disableFullScreen() { disableFullScreenCalled = true }
             }
 

@@ -38,7 +38,11 @@ QtObject {
         property var fileReaderFunc: MpvqcFileReader.read
         property var importer: new MpvqcDocumentFileImporter.Importer(timeFormatFunc, reverseLookupFunc, fileReaderFunc)
 
-        function importFrom(documents: Array<url>): MpvqcImport {
+        /**
+         * @param documents
+         * @returns {MpvqcImport}
+         */
+        function importFrom(documents: list<url>): int {
             return importer.importFrom(documents)
         }
     }
@@ -60,19 +64,30 @@ QtObject {
     signal stateChanged(var change)
     signal erroneousDocumentsImported(var documents)
 
-    function importFrom(documents: Array<url>, standaloneVideo: url, subtitles: Array<url>): void {
+    function importFrom(documents: list<url>, standaloneVideo: url, subtitles: list<url>): void {
         const report = fileImporter.importFrom(documents)
         handleImport(report, standaloneVideo, subtitles)
     }
 
-    function handleImport(report: MpvqcImport, standaloneVideo: url, subtitles: Array<url>): void {
+    /**
+     * @param report {MpvqcImport}
+     * @param standaloneVideo
+     * @param subtitles
+     */
+    function handleImport(report, standaloneVideo: url, subtitles: list<url>): void {
         const possiblyLinkedVideosInDocument = report.successful
         videoSelector.report = report
         videoSelector.subtitles = subtitles
         videoSelector.chooseBetween(standaloneVideo, possiblyLinkedVideosInDocument)
     }
 
-    function continueImportProcessingWith(report: MpvqcImport, video: url, subtitles: Array<url>): void {
+    /**
+     *
+     * @param report {MpvqcImport}
+     * @param video
+     * @param subtitles
+     */
+    function continueImportProcessingWith(report, video: url, subtitles: list<url>): void {
         const validDocuments = report.successful.map(document => document.url)
         const erroneousDocuments = report.errors.map(document => document.url)
         const change = new MpvqcStateChanges.ImportChanges(validDocuments, video)
@@ -83,7 +98,11 @@ QtObject {
         _fireErroneousDocumentsImported(erroneousDocuments)
     }
 
-    function _fireCommentsImported(comments: Array<MpvqcComment>): void {
+    /**
+     * @param comments {Array<MpvqcComment>}
+     * @private
+     */
+    function _fireCommentsImported(comments): void {
         if (comments.length > 0) {
             commentsImported(comments)
         }
@@ -95,19 +114,23 @@ QtObject {
         }
     }
 
-    function _fireSubtitlesImported(subtitles: Array<url>): void {
+    function _fireSubtitlesImported(subtitles: list<url>): void {
         if (subtitles.length > 0) {
             subtitlesImported(subtitles)
         }
     }
 
-    function _fireErroneousDocumentsImported(documents: Array<url>): void {
+    function _fireErroneousDocumentsImported(documents: list<url>): void {
         if (documents.length > 0) {
             erroneousDocumentsImported(documents)
         }
     }
 
-    function _fireStateChange(change: MpvqcStateChanges.ImportChanges): void {
+    /**
+     * @param change {MpvqcStateChanges.ImportChanges}
+     * @private
+     */
+    function _fireStateChange(change): void {
         if (change.documents.length > 0 || (change.video && change.video != '')) {
             stateChanged(change)
         }

@@ -25,7 +25,7 @@ MpvqcMessageBox {
 
     readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
 
-    function renderErroneous(documents: Array<url>): string {
+    function renderErroneous(documents: list<url>): string {
         root.customTitle = documents.length === 1
             ? qsTranslate("MessageBoxes", "Document Not Compatible")
             : qsTranslate("MessageBoxes", "Documents Not Compatible")

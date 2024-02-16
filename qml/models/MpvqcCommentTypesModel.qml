@@ -53,7 +53,7 @@ ListModel {
         type: 'Note'
     }
 
-    function items(): Array<string> {
+    function items(): list<string> {
         const marshalled = []
         for (let i = 0; i < count; i++) {
             const item = obtain(i)
@@ -74,7 +74,7 @@ ListModel {
         return this.get(index)?.type
     }
 
-    function copy(parent: any): MpvqcCommentTypesModel {
+    function copy(parent): MpvqcCommentTypesModel {
         const copy = Qt.createQmlObject('import models; MpvqcCommentTypesModel {}', parent)
         copy.clear()
         for (let i = 0; i < this.count; i++) {
@@ -84,14 +84,14 @@ ListModel {
         return copy
     }
 
-    function replaceWith(commentTypes: Array<string>): void {
+    function replaceWith(commentTypes: list<string>): void {
         this.clear()
         for (const commentType of commentTypes) {
             this.add(commentType)
         }
     }
 
-    function reset(parent: any): void {
+    function reset(parent): void {
         const cleanOne = Qt.createQmlObject('import models; MpvqcCommentTypesModel {}', parent)
         const items = cleanOne.items()
         this.clear()

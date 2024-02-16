@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import sys
 from functools import cached_property
 from pathlib import Path
@@ -22,19 +23,26 @@ from pathlib import Path
 
 class ApplicationEnvironmentService:
 
-    @cached_property
-    def executing_directory(self) -> Path:
-        if self._build_by_pyinstaller:
-            # noinspection PyUnresolvedReferences,PyProtectedMember
-            return Path(sys._MEIPASS)
-        else:
-            # Return root directory of repository
-            return Path(__file__).parent.parent.parent
-
-    @cached_property
-    def is_portable(self) -> bool:
-        return (self.executing_directory / 'portable').is_file()
+    @property
+    def built_by_pyinstaller(self) -> bool:
+        return getattr(sys, 'frozen', False)
 
     @property
-    def _build_by_pyinstaller(self) -> bool:
-        return getattr(sys, 'frozen', False)
+    def runs_as_flatpak(self) -> bool:
+        return os.getenv("FLATPAK_ID", None) is not None
+
+    @cached_property
+    def executing_directory(self) -> Path:
+        if self.built_by_pyinstaller:
+            return self._directory_of_mpvqc_exe
+        else:
+            return self._root_of_repository
+
+    @property
+    def _directory_of_mpvqc_exe(self) -> Path:
+        # noinspection PyUnresolvedReferences,PyProtectedMember
+        return Path(sys._MEIPASS).parent
+
+    @property
+    def _root_of_repository(self) -> Path:
+        return Path(__file__).parent.parent.parent

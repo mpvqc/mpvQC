@@ -25,7 +25,7 @@ TestCase {
 
     readonly property MpvqcLanguageModel model: MpvqcLanguageModel {}
 
-    function test_identifier_data(): Array {
+    function test_identifier_data() {
         return [ { tag: 'it-IT' }, { tag: 'es-ES' } ]
     }
 

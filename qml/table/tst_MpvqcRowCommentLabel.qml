@@ -42,6 +42,7 @@ TestCase {
             tableInEditMode: false
             comment: 'comment'
             searchQuery: 'query'
+            backgroundColor: 'transparent'
             focus: false
 
             mpvqcApplication: QtObject {
