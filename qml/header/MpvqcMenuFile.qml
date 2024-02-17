@@ -29,7 +29,7 @@ MpvqcMenu {
     required property var mpvqcApplication
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
-    property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
+    property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
 
     property alias resetAction: _resetAction
     property alias openDocumentsAction: _openDocumentsAction
@@ -101,7 +101,7 @@ MpvqcMenu {
 
         onTriggered: {
             console.log('[INFO]', 'qml: Export triggered', )
-            const content = mpvqcExtendedDocumentExporterPyObject.create_file_content()
+            const content = mpvqcDocumentExporterPyObject.create_file_content()
             console.log('[INFO]', 'qml: content', content)
         }
     }

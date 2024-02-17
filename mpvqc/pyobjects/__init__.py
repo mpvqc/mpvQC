@@ -20,8 +20,8 @@ from .backup import MpvqcBackupPyObject
 from .clipboard import MpvqcClipboardPyObject
 from .comment_model import MpvqcCommentModelPyObject
 from .comments_validator import MpvqcSpecialCharacterValidatorPyObject
+from .document_exporter import MpvqcDocumentExporterPyObject
 from .environment import MpvqcEnvironmentPyObject
-from .extended_document_exporter import MpvqcExtendedDocumentExporterPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .file_system_helper import MpvqcFileSystemHelperPyObject
 from .mouse import MpvqcMouseCursorPyObject

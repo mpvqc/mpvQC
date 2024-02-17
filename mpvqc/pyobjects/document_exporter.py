@@ -43,7 +43,7 @@ def _find_comment_model_in_object_tree() -> MpvqcCommentModelPyObject:
 
 
 @QmlElement
-class MpvqcExtendedDocumentExporterPyObject(QObject):
+class MpvqcDocumentExporterPyObject(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
     _player: PlayerService = inject.attr(PlayerService)
 
