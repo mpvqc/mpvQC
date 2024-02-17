@@ -20,8 +20,7 @@ from unittest.mock import MagicMock
 
 import inject
 
-from mpvqc.pyobjects import MpvqcCommentModelPyObject
-from mpvqc.pyobjects.comments_model import Role
+from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject, Role
 from mpvqc.services import PlayerService
 
 

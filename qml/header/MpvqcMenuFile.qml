@@ -29,7 +29,6 @@ MpvqcMenu {
     required property var mpvqcApplication
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
-    property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
     property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
 
     property alias resetAction: _resetAction
@@ -102,11 +101,7 @@ MpvqcMenu {
 
         onTriggered: {
             console.log('[INFO]', 'qml: Export triggered', )
-
-            // fixme We will move this out of this file at some point, but for testing, this should be fine :)
-
-            const comments = mpvqcCommentTable.getAllComments()
-            const content = mpvqcExtendedDocumentExporterPyObject.create_file_content(comments)
+            const content = mpvqcExtendedDocumentExporterPyObject.create_file_content()
             console.log('[INFO]', 'qml: content', content)
         }
     }

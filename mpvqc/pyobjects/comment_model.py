@@ -38,10 +38,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     def __init__(self):
         super().__init__()
-        self._searcher = Searcher()
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
+        self.setObjectName("mpvqcCommentModel")
         self.dataChanged.connect(self.commentsChanged)
+        self._searcher = Searcher()
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:

@@ -36,6 +36,10 @@ class MpvqcApplication(QGuiApplication):
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
 
+    @property
+    def engine(self) -> QQmlApplicationEngine:
+        return self._engine
+
     def set_window_icon(self):
         icon = QIcon(':/data/icon.svg')
         self.setWindowIcon(icon)
