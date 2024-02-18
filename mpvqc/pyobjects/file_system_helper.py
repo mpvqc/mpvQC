@@ -56,4 +56,4 @@ class MpvqcFileSystemHelperPyObject(QObject):
     @Slot(QUrl, str)
     def write(self, url: QUrl, content: str) -> None:
         path = Path(url.toLocalFile())
-        path.write_text(content, encoding='utf-8')
+        path.write_text(content, encoding='utf-8', newline='\n')
