@@ -19,7 +19,6 @@ from .application_paths import MpvqcApplicationPathsPyObject
 from .backup import MpvqcBackupPyObject
 from .clipboard import MpvqcClipboardPyObject
 from .comment_model import MpvqcCommentModelPyObject
-from .comments_validator import MpvqcSpecialCharacterValidatorPyObject
 from .document_exporter import MpvqcDocumentExporterPyObject
 from .environment import MpvqcEnvironmentPyObject
 from .file_interface import MpvqcFileInterfacePyObject
@@ -30,3 +29,4 @@ from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .resource import MpvqcResourcePyObject
 from .reverse_translator import MpvqcReverseTranslatorPyObject
+from .text_validator import MpvqcDefaultTextValidatorPyObject

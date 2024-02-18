@@ -30,7 +30,7 @@ Popup {
     required property int tableHeight
     required property int tableWidth
     required property bool applicationIsFullscreen
-    required property var mpvqcSpecialCharacterValidatorPyObject
+    required property var mpvqcDefaultTextValidatorPyObject
 
     readonly property string searchQuery: searchQueryActive ? _textField.text : ''
 
@@ -102,7 +102,7 @@ Popup {
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
-            validator: root.mpvqcSpecialCharacterValidatorPyObject
+            validator: root.mpvqcDefaultTextValidatorPyObject
 
             Layout.fillWidth: true
 

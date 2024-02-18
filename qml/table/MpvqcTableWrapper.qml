@@ -56,7 +56,7 @@ FocusScope {
                 tableHeight: _mpvqcTable.height
                 tableWidth: _mpvqcTable.width
                 applicationIsFullscreen: root.mpvqcApplication.fullscreen
-                mpvqcSpecialCharacterValidatorPyObject: root.mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
+                mpvqcDefaultTextValidatorPyObject: root.mpvqcApplication.mpvqcDefaultTextValidatorPyObject
 
                 searchFunc: (query, includeCurrentRow, topDown) => {
                     return _mpvqcTable.model.search(query, includeCurrentRow, topDown, _mpvqcTable.currentIndex)

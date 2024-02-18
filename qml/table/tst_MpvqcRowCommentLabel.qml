@@ -52,7 +52,7 @@ TestCase {
                 property var mpvqcTimeFormatUtils: QtObject {
                     function formatTimeToStringLong(time) { return `${time}` }
                 }
-                property var mpvqcSpecialCharacterValidatorPyObject: RegularExpressionValidator {
+                property var mpvqcDefaultTextValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/
                 }
                 property var activeFocusItem

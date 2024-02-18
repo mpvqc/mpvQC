@@ -97,7 +97,7 @@ Label {
             implicitHeight: root.height
             currentComment: root.comment
             backgroundColor: root.backgroundColor
-            mpvqcSpecialCharacterValidator: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
+            mpvqcDefaultTextValidator: mpvqcApplication.mpvqcDefaultTextValidatorPyObject
             leftPadding: root.leftPadding / 2
             rightPadding: root.rightPadding / 2
 

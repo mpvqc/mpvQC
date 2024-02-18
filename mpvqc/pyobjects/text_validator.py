@@ -23,7 +23,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcSpecialCharacterValidatorPyObject(QValidator):
+class MpvqcDefaultTextValidatorPyObject(QValidator):
 
     def validate(self, user_input: str, position: int):
         return QValidator.Acceptable, self.replace_special_characters(user_input), position

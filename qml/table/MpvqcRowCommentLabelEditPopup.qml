@@ -25,7 +25,7 @@ import QtQuick.Controls.Material
 Popup {
     id: root
 
-    required property var mpvqcSpecialCharacterValidator
+    required property var mpvqcDefaultTextValidator
     required property var backgroundColor
     required property string currentComment
 
@@ -57,7 +57,7 @@ Popup {
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
         focus: true
-        validator: root.mpvqcSpecialCharacterValidator
+        validator: root.mpvqcDefaultTextValidator
 
         background: Rectangle {
             anchors.fill: parent
