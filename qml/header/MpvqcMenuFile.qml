@@ -100,7 +100,7 @@ MpvqcMenu {
         id: _subMenuExtendedExport
 
         mpvqcApplication: root.mpvqcApplication
-        extendedExportTemplateModel: root.extendedExportTemplateModel
+        templateModel: root.extendedExportTemplateModel
         enabled: haveTemplates
 
         onEnabledChanged: {

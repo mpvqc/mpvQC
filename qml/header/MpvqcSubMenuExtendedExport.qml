@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import models
 import shared
 
 
@@ -29,8 +28,7 @@ MpvqcMenu {
 
     required property var mpvqcApplication
 
-    property alias extendedExportTemplateModel: _repeater.model
-
+    property alias templateModel: _repeater.model
     readonly property bool haveTemplates: _repeater.count > 0
 
     title: qsTranslate("MainWindow", "&Export QC Documents")
