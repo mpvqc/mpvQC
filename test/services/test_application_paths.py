@@ -56,6 +56,12 @@ class TestApplicationPaths(unittest.TestCase):
         actual = service.dir_screenshots
         self.assertEqual(expected, actual)
 
+    def test_directory_export_templates(self):
+        service = ApplicationPathsService()
+        expected = self.executing_dir / 'appdata' / 'export-templates'
+        actual = service.dir_export_templates
+        self.assertEqual(expected, actual)
+
     def test_file_input_conf(self):
         service = ApplicationPathsService()
         expected = self.executing_dir / 'appdata' / 'input.conf'

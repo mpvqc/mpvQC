@@ -38,3 +38,7 @@ class TestResourceService(unittest.TestCase):
     def test_mpv_conf_exists(self):
         text = ResourceService().mpv_conf_content
         self.assertTrue(text)
+
+    def test_mpvqc_export_template_exists(self):
+        text = ResourceService().mpvqc_export_template_content
+        self.assertTrue(text)

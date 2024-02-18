@@ -50,3 +50,8 @@ class TestFileStartupService(unittest.TestCase):
         service = FileStartupService()
         service.create_missing_directories()
         self.mocked_file_service.dir_screenshots.mkdir.assert_called()
+
+    def test_dir_export_templates_created(self):
+        service = FileStartupService()
+        service.create_missing_directories()
+        self.mocked_file_service.dir_export_templates.mkdir.assert_called()
