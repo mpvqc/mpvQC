@@ -93,17 +93,8 @@ MpvqcMenu {
 
     MenuSeparator { }
 
-    Action {
-        id: _exportAction
-
-        text: qsTranslate("MainWindow", "&Export QC Document...")
-        icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
-
-        onTriggered: {
-            console.log('[INFO]', 'qml: Export triggered', )
-            const content = mpvqcDocumentExporterPyObject.create_file_content()
-            console.log('[INFO]', 'qml: content', content)
-        }
+    MpvqcSubMenuExtendedExport {
+        mpvqcApplication: root.mpvqcApplication
     }
 
     MenuSeparator { }
