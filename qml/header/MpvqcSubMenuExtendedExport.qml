@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import dialogs
 import shared
 
 
@@ -29,7 +30,20 @@ MpvqcMenu {
     required property var mpvqcApplication
 
     property alias templateModel: _repeater.model
+
+    readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
     readonly property bool haveTemplates: _repeater.count > 0
+
+    readonly property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
+    {
+        property string template
+
+        onSavePressed: (documentUrl) => {
+            console.log("save")
+            console.log("save -> write to file", documentUrl)
+            console.log("save -> use template", template)
+        }
+    }
 
     title: qsTranslate("MainWindow", "&Export QC Documents")
     icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
@@ -49,9 +63,9 @@ MpvqcMenu {
             icon.width: 24
 
             onTriggered: {
-                console.log('[INFO]', 'qml: Export triggered')
-                const content = mpvqcDocumentExporterPyObject.create_file_content()
-                console.log('[INFO]', 'qml: content', content)
+                exportDialog.selectedFile = root.mpvqcDocumentExporterPyObject.generate_file_path_proposal()
+                exportDialog.template = path
+                exportDialog.open()
             }
         }
     }

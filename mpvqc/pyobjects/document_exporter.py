@@ -17,7 +17,7 @@
 
 
 import inject
-from PySide6.QtCore import QObject, Slot
+from PySide6.QtCore import QObject, Slot, QUrl
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import DocumentExporterService
@@ -35,6 +35,6 @@ class MpvqcDocumentExporterPyObject(QObject):
         self._exporter.write()
         return 'todo: remove-me'
 
-    @Slot(result=str)
+    @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> str:
-        return self._exporter.generate_file_path_proposal()
+        return QUrl.fromLocalFile(self._exporter.generate_file_path_proposal())
