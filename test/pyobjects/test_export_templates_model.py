@@ -22,6 +22,7 @@ from unittest.mock import MagicMock
 import inject
 
 from mpvqc.pyobjects import MpvqcExportTemplateModelPyObject
+from mpvqc.pyobjects.export_template_model import Role
 from mpvqc.services import ApplicationPathsService
 
 
@@ -38,9 +39,17 @@ class TestExportTemplatesModel(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
+    def test_no_templates(self):
+        self._mock(paths=())
+        # noinspection PyCallingNonCallable
+        model = MpvqcExportTemplateModelPyObject()
+
+        expected = 0
+        actual = model.rowCount()
+        self.assertEqual(expected, actual)
+
     def test_templates(self):
         self._mock(paths=(Path.home(), Path.cwd()))
-
         # noinspection PyCallingNonCallable
         model = MpvqcExportTemplateModelPyObject()
 
@@ -48,12 +57,16 @@ class TestExportTemplatesModel(unittest.TestCase):
         actual = model.rowCount()
         self.assertEqual(expected, actual)
 
-    def test_no_templates(self):
-        self._mock(paths=())
-
+    def test_model_sorted(self):
+        self._mock(paths=(Path("/xy"), Path('/z'), Path("/a"), Path('/b'),))
         # noinspection PyCallingNonCallable
         model = MpvqcExportTemplateModelPyObject()
 
-        expected = 0
-        actual = model.rowCount()
-        self.assertEqual(expected, actual)
+        expected = ['a', 'b', 'xy', 'z']
+        actual = [
+            model.item(0, 0).data(Role.NAME),
+            model.item(1, 0).data(Role.NAME),
+            model.item(2, 0).data(Role.NAME),
+            model.item(3, 0).data(Role.NAME),
+        ]
+        self.assertListEqual(expected, actual)

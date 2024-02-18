@@ -33,6 +33,7 @@ class MpvqcExportTemplateModelPyObject(QStandardItemModel):
     def __init__(self):
         super().__init__()
         self.setItemRoleNames(Role.MAPPING)
+        self.setSortRole(Role.NAME)
         self._initialize_model()
 
     def _initialize_model(self):
@@ -41,6 +42,7 @@ class MpvqcExportTemplateModelPyObject(QStandardItemModel):
             item.setData(str(template.absolute()), Role.PATH)
             item.setData(template.stem, Role.NAME)
             self.appendRow(item)
+        self.sort(0)
 
 
 class Role:
