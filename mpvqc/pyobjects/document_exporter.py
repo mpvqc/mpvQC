@@ -36,5 +36,6 @@ class MpvqcDocumentExporterPyObject(QObject):
         return 'todo: remove-me'
 
     @Slot(result=QUrl)
-    def generate_file_path_proposal(self) -> str:
-        return QUrl.fromLocalFile(self._exporter.generate_file_path_proposal())
+    def generate_file_path_proposal(self) -> QUrl:
+        path = self._exporter.generate_file_path_proposal()
+        return QUrl.fromLocalFile(str(path))

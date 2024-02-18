@@ -51,29 +51,22 @@ class DocumentExporterService:
             self._comment_model = _find_comment_model_in_object_tree()
         return self._comment_model.comments()
 
-    def generate_file_path_proposal(self) -> str:
-        def video_directory() -> str:
-            if self._player.mpv.path:
-                return str(Path(self._player.mpv.path).parent)
-            else:
-                return QStandardPaths.writableLocation(QStandardPaths.MoviesLocation)
+    def generate_file_path_proposal(self) -> Path:
+        video = Path(self._player.mpv.path) if self._player.mpv.path else None
 
-        def video_name() -> str:
-            if self._player.mpv.path:
-                return Path(self._player.mpv.path).stem
-            else:
-                return QApplication.translate("FileInteractionDialogs", "untitled")
+        if video:
+            video_directory = str(video.parent)
+            video_name = video.stem
+        else:
+            video_directory = QStandardPaths.writableLocation(QStandardPaths.MoviesLocation)
+            video_name = QApplication.translate("FileInteractionDialogs", "untitled")
 
-        def file_name() -> str:
-            nickname = self._settings.nickname
-            if nickname:
-                return f"[QC]_{video_name()}_{nickname}.txt"
-            else:
-                return f"[QC]_{video_name()}.txt"
+        if nickname := self._settings.nickname:
+            file_name = f"[QC]_{video_name}_{nickname}.txt"
+        else:
+            file_name = f"[QC]_{video_name}.txt"
 
-        video_directory = video_directory()
-        suggestion = Path(video_directory) / file_name()
-        return str(suggestion.absolute())
+        return Path(video_directory).joinpath(file_name).absolute()
 
     def write(self) -> str:
         for comment in self._comments:

@@ -33,6 +33,7 @@ QtObject {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
     readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
     readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
@@ -71,40 +72,8 @@ QtObject {
     }
 
     function requestSaveAs(): void {
-        exportDialog.selectedFile = filePathProposal()
+        exportDialog.selectedFile = mpvqcDocumentExporterPyObject.generate_file_path_proposal()
         exportDialog.open()
-    }
-
-    function filePathProposal(): string {
-        const directory = getVideoDirectory()
-        const videoName = getVideoName()
-        const fileName = getFileNameWith(videoName)
-        return `${directory}/${fileName}`
-    }
-
-    function getVideoDirectory(): url {
-        if (video != '') {
-            return mpvqcFileSystemHelperPyObject.url_to_parent_file_url(video)
-        } else {
-            return StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
-        }
-    }
-
-    function getVideoName(): string {
-        if (video != '') {
-            return mpvqcFileSystemHelperPyObject.url_to_filename_without_suffix(video)
-        } else {
-            return qsTranslate("FileInteractionDialogs", "untitled")
-        }
-    }
-
-    function getFileNameWith(video: url): string {
-        const nickname = mpvqcSettings.nickname
-        if (nickname != '') {
-            return `[QC]_${video}_${nickname}.txt`
-        } else {
-            return `[QC]_${video}.txt`
-        }
     }
 
 }

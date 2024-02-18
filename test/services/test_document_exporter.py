@@ -53,7 +53,7 @@ class TestDocumentExporterService(unittest.TestCase):
         )
         expected = home / 'Documents' / '[QC]_my-movie_some-nickname.txt'
         actual = self._service.generate_file_path_proposal()
-        self.assertEqual(str(expected), actual)
+        self.assertEqual(expected, actual)
 
         # --
         self._mock_generate_file_path_proposal_with(
@@ -62,7 +62,7 @@ class TestDocumentExporterService(unittest.TestCase):
         )
         expected = home / 'Documents' / '[QC]_my-movie.txt'
         actual = self._service.generate_file_path_proposal()
-        self.assertEqual(str(expected), actual)
+        self.assertEqual(expected, actual)
 
         # --
         self._mock_generate_file_path_proposal_with(
@@ -71,7 +71,7 @@ class TestDocumentExporterService(unittest.TestCase):
         )
         expected = movies / '[QC]_untitled_some-nickname.txt'
         actual = self._service.generate_file_path_proposal()
-        self.assertEqual(str(expected), actual)
+        self.assertEqual(expected, actual)
 
         # --
         self._mock_generate_file_path_proposal_with(
@@ -80,4 +80,4 @@ class TestDocumentExporterService(unittest.TestCase):
         )
         expected = movies / '[QC]_untitled.txt'
         actual = self._service.generate_file_path_proposal()
-        self.assertEqual(str(expected), actual)
+        self.assertEqual(expected, actual)
