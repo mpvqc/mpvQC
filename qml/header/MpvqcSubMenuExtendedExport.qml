@@ -29,61 +29,33 @@ MpvqcMenu {
 
     required property var mpvqcApplication
 
-    title: qsTranslate("MainWindow", "&Export QC Document...")
+    property alias extendedExportTemplateModel: _repeater.model
+
+    readonly property bool haveTemplates: _repeater.count > 0
+
+    title: qsTranslate("MainWindow", "&Export QC Documents")
     icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
     icon.height: 24
     icon.width: 24
 
-    // https://doc.qt.io/qt-6/qml-qtqml-models-instantiator.html#model-prop
-
-    MenuItem {
-        id: _exportAction
-
-        text: qsTranslate("MainWindow", "My template 01")
-        // icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
-        // visible: false
-        // height: 0
-
-        onTriggered: {
-            console.log('[INFO]', 'qml: Export triggered', )
-            const content = mpvqcDocumentExporterPyObject.create_file_content()
-            console.log('[INFO]', 'qml: content', content)
-        }
-    }
-
-    /*Repeater {
+    Repeater {
         id: _repeater
 
-        model: MpvqcLanguageModel {}
+        delegate: MenuItem {
+            required property string name
+            required property string path
 
-        MenuItem {
-            id: item
-
-            required property var language
-            required property var identifier
-
-            property var timer: Timer {
-                interval: 125
-
-                onTriggered: {
-                    Qt.uiLanguage = item.identifier
-                    root.mpvqcSettings.language = item.identifier
-                }
-            }
-
-            text: qsTranslate("Languages", item.language)
-            autoExclusive: true
-            checkable: true
-            checked: item.identifier === Qt.uiLanguage
-
-            function changeLanguage() {
-                timer.start()
-            }
+            text: name
+            icon.source: "qrc:/data/icons/notes_black_24dp.svg"
+            icon.height: 24
+            icon.width: 24
 
             onTriggered: {
-                changeLanguage()
+                console.log('[INFO]', 'qml: Export triggered')
+                const content = mpvqcDocumentExporterPyObject.create_file_content()
+                console.log('[INFO]', 'qml: content', content)
             }
         }
-    }*/
+    }
 
 }

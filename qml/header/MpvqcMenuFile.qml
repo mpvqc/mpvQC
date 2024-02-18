@@ -27,6 +27,7 @@ MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
+    required property var extendedExportTemplateModel
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
     property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
@@ -91,10 +92,22 @@ MpvqcMenu {
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {
+        height: _subMenuExtendedExport.haveTemplates ? implicitHeight : 0
+    }
 
     MpvqcSubMenuExtendedExport {
+        id: _subMenuExtendedExport
+
         mpvqcApplication: root.mpvqcApplication
+        extendedExportTemplateModel: root.extendedExportTemplateModel
+        enabled: haveTemplates
+
+        onEnabledChanged: {
+            parent.enabled = enabled
+            parent.visible = enabled
+            parent.height = enabled ? parent.implicitHeight : 0
+        }
     }
 
     MenuSeparator { }
