@@ -31,6 +31,7 @@ class FileStartupService:
         self._paths.dir_config.mkdir(exist_ok=True, parents=True)
         self._paths.dir_backup.mkdir(exist_ok=True, parents=True)
         self._paths.dir_screenshots.mkdir(exist_ok=True, parents=True)
+        self._paths.dir_export_templates.mkdir(exist_ok=True, parents=True)
 
     def create_missing_files(self) -> None:
         self._create_missing_input_conf()

@@ -32,6 +32,7 @@ class ApplicationPathsService:
         dir_backup: Path
         dir_config: Path
         dir_screenshots: Path
+        dir_export_templates: Path
 
     def __init__(self):
         if self._app.built_by_pyinstaller:
@@ -46,7 +47,8 @@ class ApplicationPathsService:
         return ApplicationPathsService.Paths(
             dir_backup=dir_app / 'appdata' / 'backups',
             dir_config=dir_app / 'appdata',
-            dir_screenshots=dir_app / 'appdata' / 'screenshots'
+            dir_screenshots=dir_app / 'appdata' / 'screenshots',
+            dir_export_templates=dir_app / 'appdata' / 'export-templates',
         )
 
     @staticmethod
@@ -58,7 +60,8 @@ class ApplicationPathsService:
         return ApplicationPathsService.Paths(
             dir_backup=Path(documents) / appname / 'backups',
             dir_config=Path(config) / appname,
-            dir_screenshots=Path(pictures) / appname
+            dir_screenshots=Path(pictures) / appname,
+            dir_export_templates=Path(config) / appname / 'export-templates',
         )
 
     @cached_property
@@ -72,6 +75,10 @@ class ApplicationPathsService:
     @cached_property
     def dir_screenshots(self) -> Path:
         return self._paths.dir_screenshots
+
+    @cached_property
+    def dir_export_templates(self) -> Path:
+        return self._paths.dir_export_templates
 
     @cached_property
     def file_input_conf(self) -> Path:
