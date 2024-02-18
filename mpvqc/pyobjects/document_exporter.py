@@ -28,9 +28,13 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcDocumentExporterPyObject(QObject):
-    _exporter = inject.attr(DocumentExporterService)
+    _exporter: DocumentExporterService = inject.attr(DocumentExporterService)
 
     @Slot()
     def create_file_content(self) -> str:
         self._exporter.write()
         return 'todo: remove-me'
+
+    @Slot(result=str)
+    def generate_file_path_proposal(self) -> str:
+        return self._exporter.generate_file_path_proposal()

@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Optional
 
 import inject
+from PySide6.QtCore import QStandardPaths
 from PySide6.QtGui import QGuiApplication, QStandardItemModel
 from PySide6.QtWidgets import QApplication
 
@@ -49,6 +50,30 @@ class DocumentExporterService:
         if self._comment_model is None:
             self._comment_model = _find_comment_model_in_object_tree()
         return self._comment_model.comments()
+
+    def generate_file_path_proposal(self) -> str:
+        def video_directory() -> str:
+            if self._player.mpv.path:
+                return str(Path(self._player.mpv.path).parent)
+            else:
+                return QStandardPaths.writableLocation(QStandardPaths.MoviesLocation)
+
+        def video_name() -> str:
+            if self._player.mpv.path:
+                return Path(self._player.mpv.path).stem
+            else:
+                return QApplication.translate("FileInteractionDialogs", "untitled")
+
+        def file_name() -> str:
+            nickname = self._settings.nickname
+            if nickname:
+                return f"[QC]_{video_name()}_{nickname}.txt"
+            else:
+                return f"[QC]_{video_name()}.txt"
+
+        video_directory = video_directory()
+        suggestion = Path(video_directory) / file_name()
+        return str(suggestion.absolute())
 
     def write(self) -> str:
         for comment in self._comments:
