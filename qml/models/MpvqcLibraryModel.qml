@@ -29,6 +29,13 @@ ListModel {
         os: 'linux, windows'
     }
     ListElement {
+        name: 'jinja2'
+        url: 'https://github.com/pallets/jinja/'
+        licence: 'BSD-3-Clause'
+        version: '@@pypi-Jinja2@@'
+        os: 'linux, windows'
+    }
+    ListElement {
         name: 'PySide6'
         url: 'https://wiki.qt.io/Qt_for_Python'
         licence: 'LGPL-3.0'
