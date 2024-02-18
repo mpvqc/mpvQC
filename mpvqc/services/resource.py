@@ -33,6 +33,10 @@ class ResourceService:
     def mpv_conf_content(self) -> str:
         return self._read_from_resource(path=':/data/config/mpv.conf')
 
+    @property
+    def mpvqc_export_template_content(self) -> str:
+        return self._read_from_resource(path=':/data/config/mpvQC-export.template')
+
     @cache
     def _read_from_resource(self, path: str) -> str:
         return self._resource_reader.read_from(path)

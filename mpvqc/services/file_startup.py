@@ -36,15 +36,27 @@ class FileStartupService:
     def create_missing_files(self) -> None:
         self._create_missing_input_conf()
         self._create_missing_mpv_conf()
+        self._create_missing_mpvqc_export_template()
 
     def _create_missing_input_conf(self) -> None:
-        file: Path = self._paths.file_input_conf
-        if not file.exists():
-            content = self._resources.input_conf_content
-            file.write_text(content, encoding='utf-8')
+        self._create_missing_file(
+            path=self._paths.file_input_conf,
+            content=self._resources.input_conf_content
+        )
 
     def _create_missing_mpv_conf(self) -> None:
-        file: Path = self._paths.file_mpv_conf
-        if not file.exists():
-            content = self._resources.mpv_conf_content
-            file.write_text(content, encoding='utf-8')
+        self._create_missing_file(
+            path=self._paths.file_mpv_conf,
+            content=self._resources.mpv_conf_content
+        )
+
+    def _create_missing_mpvqc_export_template(self) -> None:
+        self._create_missing_file(
+            path=self._paths.file_mpvqc_export_template,
+            content=self._resources.mpvqc_export_template_content
+        )
+
+    @staticmethod
+    def _create_missing_file(path: Path, content: str) -> None:
+        if not path.exists():
+            path.write_text(content, encoding='utf-8')

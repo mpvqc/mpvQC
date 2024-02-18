@@ -91,3 +91,7 @@ class ApplicationPathsService:
     @cached_property
     def file_settings(self) -> Path:
         return self.dir_config / 'settings.ini'
+
+    @cached_property
+    def file_mpvqc_export_template(self) -> Path:
+        return self.dir_export_templates / 'mpvQC-export.template'
