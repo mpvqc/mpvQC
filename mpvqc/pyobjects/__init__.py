@@ -21,6 +21,7 @@ from .clipboard import MpvqcClipboardPyObject
 from .comment_model import MpvqcCommentModelPyObject
 from .document_exporter import MpvqcDocumentExporterPyObject
 from .environment import MpvqcEnvironmentPyObject
+from .export_template_model import MpvqcExportTemplateModelPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .file_system_helper import MpvqcFileSystemHelperPyObject
 from .mouse import MpvqcMouseCursorPyObject
