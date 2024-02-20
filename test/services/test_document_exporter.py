@@ -17,14 +17,16 @@
 
 import unittest
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import inject
 from PySide6.QtCore import QStandardPaths, QCoreApplication, QTranslator, QLocale
 from parameterized import parameterized
 
-from mpvqc.services import PlayerService, SettingsService, DocumentExporterService, DocumentRendererService
+from mpvqc.services import PlayerService, SettingsService, DocumentExporterService, DocumentRendererService, \
+    DocumentBackupService, ApplicationPathsService
 
 
 class TestDocumentRendererService(unittest.TestCase):
@@ -59,6 +61,44 @@ class TestDocumentRendererService(unittest.TestCase):
     def test_filter_as_time(self, expected, seconds):
         actual = DocumentRendererService.Filters.as_time(seconds)
         self.assertEqual(expected, actual)
+
+
+class BackupServiceTest(unittest.TestCase):
+    MODULE = 'mpvqc.services.document_exporter'
+
+    any_directory = Path('any-directory')
+
+    def setUp(self):
+        mock = MagicMock()
+        mock.is_portable = True
+        mock.dir_backup = self.any_directory
+        inject.clear_and_configure(lambda binder: binder
+                                   .bind(ApplicationPathsService, mock))
+
+    def tearDown(self):
+        inject.clear()
+
+    @patch(f'{MODULE}.ZipFile')
+    def test_zip_name(self, zip_file_mock: MagicMock):
+        service = DocumentBackupService()
+        service.backup('video', 'expected-content')
+
+        zip_file_mock.assert_called()
+
+        zip_name = zip_file_mock.call_args.args[0]
+        self.assertEqual(f'{datetime.now():%Y-%m}.zip', zip_name.name)
+
+    @patch(f'{MODULE}.ZipFile')
+    def test_zip_content(self, zip_file_mock: MagicMock):
+        service = DocumentBackupService()
+        service.backup('video', 'expected-content')
+
+        writestr_mock = zip_file_mock.return_value.__enter__.return_value.writestr
+        writestr_mock.assert_called()
+
+        filename, content = writestr_mock.call_args.args
+        self.assertIn(f'{datetime.now():%Y-%m-%d}', filename)
+        self.assertEqual('expected-content', content)
 
 
 class TestDocumentExporterService(unittest.TestCase):

@@ -17,8 +17,7 @@
 
 from .application_environment import ApplicationEnvironmentService
 from .application_paths import ApplicationPathsService
-from .backup import BackupService
-from .document_exporter import DocumentExporterService, DocumentRendererService
+from .document_exporter import DocumentBackupService, DocumentExporterService, DocumentRendererService
 from .file_startup import FileStartupService
 from .font_loader import FontLoaderService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService

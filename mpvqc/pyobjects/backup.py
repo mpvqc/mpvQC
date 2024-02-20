@@ -19,7 +19,7 @@ import inject
 from PySide6.QtCore import Slot, QObject
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import BackupService
+from mpvqc.services import DocumentBackupService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -27,7 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcBackupPyObject(QObject):
-    _backup = inject.attr(BackupService)
+    _backup = inject.attr(DocumentBackupService)
 
     @Slot(str, str)
     def write_backup(self, video_name: str, content: str) -> None:
