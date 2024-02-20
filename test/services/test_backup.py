@@ -37,6 +37,9 @@ class TestPortableFileService(unittest.TestCase):
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationPathsService, mock))
 
+    def tearDown(self):
+        inject.clear()
+
     @patch(f'{MODULE}.ZipFile')
     def test_zip_name(self, zip_file_mock: MagicMock):
         service = BackupService()
