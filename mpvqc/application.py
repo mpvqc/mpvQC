@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+from functools import cache
 
 import inject
 from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
@@ -36,9 +37,13 @@ class MpvqcApplication(QGuiApplication):
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
 
-    @property
-    def engine(self) -> QQmlApplicationEngine:
-        return self._engine
+    @cache
+    def find_object(self, object_type, name: str):
+        root = self._engine.rootObjects()
+        assert root, "Cannot find root object in QQmlApplicationEngine"
+        obj = root[0].findChild(object_type, name)
+        assert obj, f"Cannot find {object_type} with name '{name}'"
+        return obj
 
     def set_window_icon(self):
         icon = QIcon(':/data/icon.svg')
