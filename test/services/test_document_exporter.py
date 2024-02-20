@@ -16,19 +16,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from dataclasses import dataclass
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
 from PySide6.QtCore import QStandardPaths
+from parameterized import parameterized
 
 from mpvqc.services import PlayerService, SettingsService, DocumentExporterService
 
 
 class TestDocumentExporterService(unittest.TestCase):
-    _service = DocumentExporterService()
+    """Comment to enforce space"""
 
-    def _mock_generate_file_path_proposal_with(self, video: Path or None, nickname: str or None):
+    _movies = Path(QStandardPaths.writableLocation(QStandardPaths.MoviesLocation))
+    _home = Path('/')
+
+    @dataclass
+    class FilePathProposalTestSet:
+        video: Path or None
+        nickname: str or None
+        expected: Path
+
+    @staticmethod
+    def _mock_generate_file_path_proposal_with(video: Path or None, nickname: str or None):
         settings_mock = MagicMock()
         settings_mock.nickname = nickname
 
@@ -42,42 +54,32 @@ class TestDocumentExporterService(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
-    def test_generate_file_path_proposal(self):
-        home = Path('/')
-        movies = Path(QStandardPaths.writableLocation(QStandardPaths.MoviesLocation))
-
-        # --
-        self._mock_generate_file_path_proposal_with(
-            video=home / 'Documents' / 'my-movie.mp4',
-            nickname='some-nickname'
-        )
-        expected = home / 'Documents' / '[QC]_my-movie_some-nickname.txt'
-        actual = self._service.generate_file_path_proposal()
-        self.assertEqual(expected, actual)
-
-        # --
-        self._mock_generate_file_path_proposal_with(
-            video=home / 'Documents' / 'my-movie.mp4',
-            nickname=None
-        )
-        expected = home / 'Documents' / '[QC]_my-movie.txt'
-        actual = self._service.generate_file_path_proposal()
-        self.assertEqual(expected, actual)
-
-        # --
-        self._mock_generate_file_path_proposal_with(
+    @parameterized.expand([
+        FilePathProposalTestSet(
+            video=_home / 'Documents' / 'my-movie.mp4',
+            nickname='some-nickname',
+            expected=_home / 'Documents' / '[QC]_my-movie_some-nickname.txt',
+        ),
+        FilePathProposalTestSet(
+            video=_home / 'Documents' / 'my-movie.mp4',
+            nickname=None,
+            expected=_home / 'Documents' / '[QC]_my-movie.txt',
+        ),
+        FilePathProposalTestSet(
             video=None,
-            nickname='some-nickname'
-        )
-        expected = movies / '[QC]_untitled_some-nickname.txt'
-        actual = self._service.generate_file_path_proposal()
-        self.assertEqual(expected, actual)
-
-        # --
-        self._mock_generate_file_path_proposal_with(
+            nickname='some-nickname',
+            expected=_movies / '[QC]_untitled_some-nickname.txt',
+        ),
+        FilePathProposalTestSet(
             video=None,
-            nickname=None
+            nickname=None,
+            expected=_movies / '[QC]_untitled.txt',
+        ),
+    ])
+    def test_generate_file_path_proposal_2(self, case: 'FilePathProposalTestSet'):
+        self._mock_generate_file_path_proposal_with(
+            video=case.video,
+            nickname=case.nickname,
         )
-        expected = movies / '[QC]_untitled.txt'
-        actual = self._service.generate_file_path_proposal()
-        self.assertEqual(expected, actual)
+        actual = DocumentExporterService().generate_file_path_proposal()
+        self.assertEqual(case.expected, actual)
