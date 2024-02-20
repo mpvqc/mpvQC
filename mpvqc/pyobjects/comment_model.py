@@ -123,7 +123,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @staticmethod
     def _create_comment_from(item) -> dict[str, str]:
         return {
-            'time': item.data(Role.TIME),
+            'time': int(item.data(Role.TIME)),
             'commentType': item.data(Role.TYPE),
             'comment': item.data(Role.COMMENT)
         }

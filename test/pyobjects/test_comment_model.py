@@ -364,3 +364,8 @@ class TestCommentsModelSearch(unittest.TestCase):
         self.assertEqual(7, next_idx)
         self.assertEqual(7, current_result)
         self.assertEqual(9, total_results)
+
+    def test_time_is_int(self):
+        self._model.import_comments([{'time': 999.99, 'commentType': 'commentType', 'comment': 'Word 1'}, ])
+        comment = self._model.comments()[-1]
+        self.assertEqual(999, comment['time'])
