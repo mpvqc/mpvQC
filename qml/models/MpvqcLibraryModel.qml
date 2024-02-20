@@ -36,17 +36,17 @@ ListModel {
         os: 'linux, windows'
     }
     ListElement {
-        name: 'PySide6'
-        url: 'https://wiki.qt.io/Qt_for_Python'
-        licence: 'LGPL-3.0'
-        version: '@@pypi-PySide6@@'
-        os: 'linux, windows'
-    }
-    ListElement {
         name: 'python-mpv'
         url: 'https://github.com/jaseg/python-mpv'
         licence: 'GPL-3.0'
         version: '@@pypi-mpv@@'
+        os: 'linux, windows'
+    }
+    ListElement {
+        name: 'PySide6'
+        url: 'https://wiki.qt.io/Qt_for_Python'
+        licence: 'LGPL-3.0'
+        version: '@@pypi-PySide6@@'
         os: 'linux, windows'
     }
     ListElement {
@@ -55,6 +55,15 @@ ListModel {
         licence: 'PSF'
         version: '@@pypi-pywin32@@'
         os: 'windows'
+    }
+
+    // Tests
+    ListElement {
+        name: 'parameterized'
+        url: 'https://github.com/wolever/parameterized'
+        licence: 'BSD License'
+        version: '@@pypi-parameterized@@'
+        os: 'linux, windows'
     }
     ListElement {
         name: 'pytest'
