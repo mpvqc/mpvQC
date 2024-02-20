@@ -21,7 +21,7 @@ import inject
 from PySide6.QtCore import QObject, Slot, QUrl
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import DocumentExporterService
+from mpvqc.services import DocumentExportService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -29,7 +29,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcDocumentExporterPyObject(QObject):
-    _exporter: DocumentExporterService = inject.attr(DocumentExporterService)
+    _exporter: DocumentExportService = inject.attr(DocumentExportService)
 
     @Slot(str, QUrl)
     def write_with(self, template_path: str, file_url: QUrl):

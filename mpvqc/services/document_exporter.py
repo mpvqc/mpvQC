@@ -31,7 +31,7 @@ from .player import PlayerService
 from .settings import SettingsService
 
 
-class DocumentRendererService:
+class DocumentRenderService:
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
 
@@ -97,9 +97,9 @@ class DocumentBackupService:
             file.writestr(file_name, content)
 
 
-class DocumentExporterService:
+class DocumentExportService:
     _player: PlayerService = inject.attr(PlayerService)
-    _renderer: DocumentRendererService = inject.attr(DocumentRendererService)
+    _renderer: DocumentRenderService = inject.attr(DocumentRenderService)
     _settings: SettingsService = inject.attr(SettingsService)
 
     def generate_file_path_proposal(self) -> Path:

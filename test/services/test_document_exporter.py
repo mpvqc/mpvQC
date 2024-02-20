@@ -25,11 +25,11 @@ import inject
 from PySide6.QtCore import QStandardPaths, QCoreApplication, QTranslator, QLocale
 from parameterized import parameterized
 
-from mpvqc.services import PlayerService, SettingsService, DocumentExporterService, DocumentRendererService, \
+from mpvqc.services import PlayerService, SettingsService, DocumentExportService, DocumentRenderService, \
     DocumentBackupService, ApplicationPathsService
 
 
-class TestDocumentRendererService(unittest.TestCase):
+class DocumentRenderServiceTest(unittest.TestCase):
     _translator = QTranslator()
 
     def tearDown(self):
@@ -50,7 +50,7 @@ class TestDocumentRendererService(unittest.TestCase):
     ])
     def test_filter_as_comment_type(self, language: str, input: str, expected: str):
         self._load_language(language)
-        self.assertEqual(expected, DocumentRendererService.Filters.as_comment_type(input))
+        self.assertEqual(expected, DocumentRenderService.Filters.as_comment_type(input))
 
     @parameterized.expand([
         ('00:00:00', 0),
@@ -59,11 +59,11 @@ class TestDocumentRendererService(unittest.TestCase):
         ('02:46:40', 10000),
     ])
     def test_filter_as_time(self, expected, seconds):
-        actual = DocumentRendererService.Filters.as_time(seconds)
+        actual = DocumentRenderService.Filters.as_time(seconds)
         self.assertEqual(expected, actual)
 
 
-class BackupServiceTest(unittest.TestCase):
+class DocumentBackupServiceTest(unittest.TestCase):
     MODULE = 'mpvqc.services.document_exporter'
 
     any_directory = Path('any-directory')
@@ -101,7 +101,7 @@ class BackupServiceTest(unittest.TestCase):
         self.assertEqual('expected-content', content)
 
 
-class TestDocumentExporterService(unittest.TestCase):
+class DocumentExportServiceTest(unittest.TestCase):
     """Comment to enforce space"""
 
     _movies = Path(QStandardPaths.writableLocation(QStandardPaths.MoviesLocation))
@@ -155,5 +155,5 @@ class TestDocumentExporterService(unittest.TestCase):
             video=case.video,
             nickname=case.nickname,
         )
-        actual = DocumentExporterService().generate_file_path_proposal()
+        actual = DocumentExportService().generate_file_path_proposal()
         self.assertEqual(case.expected, actual)
