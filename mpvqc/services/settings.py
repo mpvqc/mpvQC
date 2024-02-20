@@ -29,22 +29,38 @@ class SettingsService:
         settings_file_path = self._paths.file_settings.absolute()
         self._settings = QSettings(str(settings_file_path), QSettings.defaultFormat())
 
+    def _bool(self, key: str):
+        value = self._settings.value(key, False)
+        if isinstance(value, bool):
+            return value
+        elif isinstance(value, str):
+            return value.upper() == 'TRUE'
+        else:
+            return False
+
+    def _str(self, key: str, default=''):
+        return str(self._settings.value(key, default))
+
     @property
     def nickname(self) -> str:
-        return self._settings.value("Export/nickname")
+        return self._str('Export/nickname')
 
     @property
     def writeHeaderDate(self) -> bool:
-        return bool(self._settings.value("Export/writeHeaderDate"))
+        return self._bool('Export/writeHeaderDate')
 
     @property
     def writeHeaderGenerator(self) -> bool:
-        return bool(self._settings.value("Export/writeHeaderGenerator"))
+        return self._bool('Export/writeHeaderGenerator')
 
     @property
     def writeHeaderNickname(self) -> bool:
-        return bool(self._settings.value("Export/writeHeaderNickname"))
+        return self._bool('Export/writeHeaderNickname')
 
     @property
     def writeHeaderVideoPath(self) -> bool:
-        return bool(self._settings.value("Export/writeHeaderVideoPath"))
+        return self._bool('Export/writeHeaderVideoPath')
+
+    @property
+    def language(self) -> str:
+        return self._str('Common/language', default='en-US')
