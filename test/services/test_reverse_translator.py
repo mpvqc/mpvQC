@@ -17,8 +17,8 @@
 
 import unittest
 
-import pytest
 from PySide6.QtCore import QCoreApplication, QTranslator, QLocale
+from parameterized import parameterized
 
 from mpvqc.services import ReverseTranslatorService
 
@@ -66,7 +66,7 @@ class TestReverseTranslatorService(unittest.TestCase):
         self.assertEqual('Typeset', service._language_lookup_table['it-IT']['Cartelli'])
 
 
-@pytest.mark.parametrize('expected, translated', [
+@parameterized.expand([
     ('Spelling', 'Spelling'),
     ('Spelling', 'Rechtschreibung'),
     ('Spelling', 'איות'),
@@ -78,7 +78,7 @@ def test_lookup(expected: str, translated: str) -> None:
     assert expected == SERVICE.lookup(translated)
 
 
-@pytest.mark.parametrize('language, expected, translated', [
+@parameterized.expand([
     ('en-US', 'Spelling', 'Spelling'),
     ('en-US', 'Rechtschreibung', 'Rechtschreibung'),
     ('de-DE', 'Spelling', 'Rechtschreibung'),
