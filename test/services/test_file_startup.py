@@ -23,7 +23,7 @@ import inject
 from mpvqc.services import ApplicationPathsService, FileStartupService, ResourceService
 
 
-class TestFileStartupService(unittest.TestCase):
+class FileStartupServiceTest(unittest.TestCase):
     MODULE = 'mpvqc.services.file_startup'
 
     mocked_file_service = MagicMock()

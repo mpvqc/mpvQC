@@ -22,7 +22,7 @@ import inject
 from mpvqc.services import ResourceService, ResourceReaderService
 
 
-class TestResourceService(unittest.TestCase):
+class ResourceServiceTest(unittest.TestCase):
 
     def setUp(self):
         inject.clear_and_configure(lambda binder: binder

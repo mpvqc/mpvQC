@@ -24,7 +24,7 @@ import inject
 from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsService
 
 
-class TestApplicationPaths(unittest.TestCase):
+class ApplicationPathsServiceTest(unittest.TestCase):
     executing_dir = Path.home()
 
     def setUp(self):

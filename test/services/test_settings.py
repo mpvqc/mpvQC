@@ -26,7 +26,7 @@ from parameterized import parameterized
 from mpvqc.services import ApplicationPathsService, SettingsService
 
 
-class TestSettings(unittest.TestCase):
+class SettingsServiceTest(unittest.TestCase):
     _path = Path()
 
     # https://github.com/wolever/parameterized

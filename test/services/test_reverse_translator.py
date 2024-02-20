@@ -45,7 +45,7 @@ def set_up_service() -> ReverseTranslatorService:
 SERVICE = set_up_service()
 
 
-class TestReverseTranslatorService(unittest.TestCase):
+class ReverseTranslatorServiceTest(unittest.TestCase):
     app = QCoreApplication()
     translator = QTranslator()
 
