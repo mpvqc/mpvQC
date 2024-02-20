@@ -21,10 +21,44 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
-from PySide6.QtCore import QStandardPaths
+from PySide6.QtCore import QStandardPaths, QCoreApplication, QTranslator, QLocale
 from parameterized import parameterized
 
-from mpvqc.services import PlayerService, SettingsService, DocumentExporterService
+from mpvqc.services import PlayerService, SettingsService, DocumentExporterService, DocumentRendererService
+
+
+class TestDocumentRendererService(unittest.TestCase):
+    _translator = QTranslator()
+
+    def tearDown(self):
+        app = QCoreApplication.instance()
+        app.removeTranslator(self._translator)
+
+    def _load_language(self, language: str) -> None:
+        app = QCoreApplication.instance()
+        app.removeTranslator(self._translator)
+        self._translator.load(f':/i18n/{QLocale(language).name()}.qm')
+        app.installTranslator(self._translator)
+
+    @parameterized.expand([
+        ('de-DE', 'Translation', 'Übersetzung'),
+        ('de-DE', 'Spelling', 'Rechtschreibung'),
+        ('he-IL', 'Translation', 'תרגום'),
+        ('he-IL', 'Spelling', 'איות'),
+    ])
+    def test_filter_as_comment_type(self, language: str, input: str, expected: str):
+        self._load_language(language)
+        self.assertEqual(expected, DocumentRendererService.Filters.as_comment_type(input))
+
+    @parameterized.expand([
+        ('00:00:00', 0),
+        ('00:01:08', 68),
+        ('00:16:39', 999),
+        ('02:46:40', 10000),
+    ])
+    def test_filter_as_time(self, expected, seconds):
+        actual = DocumentRendererService.Filters.as_time(seconds)
+        self.assertEqual(expected, actual)
 
 
 class TestDocumentExporterService(unittest.TestCase):
