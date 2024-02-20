@@ -61,6 +61,10 @@ class PlayerService:
         return self._mpv
 
     @property
+    def path(self) -> str:
+        return self._mpv.path
+
+    @property
     def current_time(self) -> int:
         return self._mpv.time_pos or 0
 

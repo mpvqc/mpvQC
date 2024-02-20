@@ -52,9 +52,7 @@ class DocumentExporterService:
         return self._comment_model.comments()
 
     def generate_file_path_proposal(self) -> Path:
-        video = Path(self._player.mpv.path) if self._player.mpv.path else None
-
-        if video:
+        if video := Path(self._player.path) if self._player.path else None:
             video_directory = str(video.parent)
             video_name = video.stem
         else:

@@ -33,7 +33,7 @@ class TestDocumentExporterService(unittest.TestCase):
         settings_mock.nickname = nickname
 
         player_mock = MagicMock()
-        player_mock.mpv.path = str(video) if video else None
+        player_mock.path = str(video) if video else None
 
         inject.clear_and_configure(lambda binder: binder
                                    .bind(SettingsService, settings_mock)
