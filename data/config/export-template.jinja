@@ -1,0 +1,11 @@
+[FILE]
+{{ 'date      : ' + date + '\n'       if write_date       else '' -}}
+{{ 'generator : ' + generator + '\n'  if write_generator  else '' -}}
+{{ 'nick      : ' + nickname + '\n'   if write_nickname   else '' -}}
+{{ 'path      : ' + video_path + '\n' if write_video_path else '' -}}
+
+{{ '\n' }}[DATA]
+{% for comment in comments -%}
+[{{ comment['time'] | as_time }}] [{{ comment['commentType'] | as_comment_type }}] {{ comment['comment'] | trim }}
+{% endfor -%}
+# total lines: {{ comments | count}}
