@@ -39,9 +39,8 @@ MpvqcMenu {
         property string template
 
         onSavePressed: (documentUrl) => {
-            console.log("save")
-            console.log("save -> write to file", documentUrl)
-            console.log("save -> use template", template)
+            root.mpvqcDocumentExporterPyObject.write_with(template, documentUrl)
+            console.log("todo handle write errors and display messagebox")
         }
     }
 

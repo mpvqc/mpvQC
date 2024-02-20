@@ -15,6 +15,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from pathlib import Path
 
 import inject
 from PySide6.QtCore import QObject, Slot, QUrl
@@ -30,10 +31,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcDocumentExporterPyObject(QObject):
     _exporter: DocumentExporterService = inject.attr(DocumentExporterService)
 
-    @Slot()
-    def create_file_content(self) -> str:
-        self._exporter.write()
-        return 'todo: remove-me'
+    @Slot(str, QUrl)
+    def write_with(self, template_path: str, file_url: QUrl):
+        self._exporter.write_template(Path(template_path), Path(file_url.path()))
 
     @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> QUrl:

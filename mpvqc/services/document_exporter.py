@@ -16,40 +16,71 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pathlib import Path
-from typing import Optional
 
 import inject
+from PySide6.QtCore import QLocale, QDateTime
 from PySide6.QtCore import QStandardPaths
-from PySide6.QtGui import QGuiApplication, QStandardItemModel
+from PySide6.QtGui import QStandardItemModel
 from PySide6.QtWidgets import QApplication
+from jinja2 import Environment, BaseLoader
 
 from .player import PlayerService
 from .settings import SettingsService
 
 
-def _find_comment_model_in_object_tree():
-    engine = QGuiApplication.instance().engine
-    assert engine, "Cannot find QQmlApplicationEngine in QGuiApplication.instance()"
-    root = engine.rootObjects()
-    assert root, "Cannot find root object in QQmlApplicationEngine"
-    model = root[0].findChild(QStandardItemModel, "mpvqcCommentModel")
-    assert model, "Cannot find comment model in root object"
-    return model
+class DocumentRendererService:
+    _player: PlayerService = inject.attr(PlayerService)
+    _settings: SettingsService = inject.attr(SettingsService)
+
+    class Filters:
+
+        @staticmethod
+        def as_time(seconds: int):
+            hours, remainder = divmod(seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            return f'{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}'
+
+        @staticmethod
+        def as_comment_type(comment_type: str):
+            return QApplication.translate("CommentTypes", comment_type)
+
+    def __init__(self):
+        self._env = Environment(loader=BaseLoader())
+        self._env.filters['as_time'] = self.Filters.as_time
+        self._env.filters['as_comment_type'] = self.Filters.as_comment_type
+
+    @property
+    def _arguments(self) -> dict:
+        write_date = self._settings.writeHeaderDate
+        write_generator = self._settings.writeHeaderGenerator
+        write_video_path = self._settings.writeHeaderVideoPath
+        write_nickname = self._settings.writeHeaderNickname
+
+        date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
+        comments = QApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
+
+        return {
+            'write_date': write_date,
+            'write_generator': write_generator,
+            'write_video_path': write_video_path,
+            'write_nickname': write_nickname,
+
+            'date': date,
+            'generator': f"{QApplication.applicationName()} {QApplication.applicationVersion()}",
+            'video_path': str(Path(self._player.path)) if self._player.path else "",
+            'nickname': self._settings.nickname,
+
+            'comments': comments,
+        }
+
+    def render(self, template: str):
+        return self._env.from_string(template).render(**self._arguments)
 
 
 class DocumentExporterService:
-    _settings: SettingsService = inject.attr(SettingsService)
     _player: PlayerService = inject.attr(PlayerService)
-
-    def __init__(self):
-        from mpvqc.pyobjects import MpvqcCommentModelPyObject
-        self._comment_model: Optional[MpvqcCommentModelPyObject] = None
-
-    @property
-    def _comments(self):
-        if self._comment_model is None:
-            self._comment_model = _find_comment_model_in_object_tree()
-        return self._comment_model.comments()
+    _renderer: DocumentRendererService = inject.attr(DocumentRendererService)
+    _settings: SettingsService = inject.attr(SettingsService)
 
     def generate_file_path_proposal(self) -> Path:
         if video := Path(self._player.path) if self._player.path else None:
@@ -66,17 +97,12 @@ class DocumentExporterService:
 
         return Path(video_directory).joinpath(file_name).absolute()
 
-    def write(self) -> str:
-        for comment in self._comments:
-            print("py: comment", comment)
+    def write_template(self, template: Path, file: Path):
+        print("Template", template)
+        print("File", file)
 
-        print("py: writeHeaderDate:", self._settings.writeHeaderDate)
-        print("py: writeHeaderGenerator:", self._settings.writeHeaderGenerator)
-        print("py: writeHeaderVideoPath:", self._settings.writeHeaderVideoPath)
-        print("py: writeHeaderNickname:", self._settings.writeHeaderNickname)
+        content = self._renderer.render(
+            template=template.read_text(encoding='utf-8'),
+        )
 
-        print("py: nickname:", self._settings.nickname)
-        print("py: generator:", f"{QApplication.applicationName()} {QApplication.applicationVersion()}")
-        print("py: video:", Path(self._player.mpv.path) if self._player.mpv.path else "")
-
-        return 'return value'
+        print(content)
