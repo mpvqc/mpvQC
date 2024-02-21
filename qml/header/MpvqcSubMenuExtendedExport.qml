@@ -44,7 +44,7 @@ MpvqcMenu {
         }
     }
 
-    title: qsTranslate("MainWindow", "&Export QC Documents")
+    title: qsTranslate("MainWindow", "&Export QC Document")
     icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
     icon.height: 24
     icon.width: 24
@@ -62,8 +62,11 @@ MpvqcMenu {
             icon.width: 24
 
             onTriggered: {
+                const title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name)
+
                 exportDialog.selectedFile = root.mpvqcDocumentExporterPyObject.generate_file_path_proposal()
                 exportDialog.template = path
+                exportDialog.title = title
                 exportDialog.open()
             }
         }
