@@ -42,3 +42,24 @@ class ResourceServiceTest(unittest.TestCase):
     def test_mpvqc_export_template_exists(self):
         text = ResourceService().mpvqc_export_template_content
         self.assertTrue(text)
+
+    def test_default_export_template(self):
+        template = ResourceService().default_export_template
+        self.assertTrue(template)
+
+        # contains all mpvQC expressions
+        required_arguments = [
+            "write_date", "date",
+            "write_generator", "generator",
+            "write_nickname", "nickname",
+            "write_video_path", "video_path",
+            "comments",
+            "comment['time'] | as_time",
+            "comment['commentType'] | as_comment_type",
+            "comment['comment'] | trim",
+        ]
+        for arg in required_arguments:
+            self.assertIn(arg, template, f"Expected to find mpvQC expression '{arg}' in export template")
+
+        # ends with '\n'
+        self.assertEqual('\n', template[-1])

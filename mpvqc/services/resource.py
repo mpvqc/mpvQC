@@ -37,6 +37,10 @@ class ResourceService:
     def mpvqc_export_template_content(self) -> str:
         return self._read_from_resource(path=':/data/config/mpvQC-export.template')
 
+    @property
+    def default_export_template(self) -> str:
+        return self._read_from_resource(path=':/data/config/export-template.jinja')
+
     @cache
     def _read_from_resource(self, path: str) -> str:
         return self._resource_reader.read_from(path)
