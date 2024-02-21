@@ -19,6 +19,7 @@ import unittest
 from unittest.mock import MagicMock
 
 import inject
+from parameterized import parameterized
 
 from mpvqc.services import ApplicationPathsService, FileStartupService, ResourceService
 
@@ -36,22 +37,29 @@ class FileStartupServiceTest(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
-    def test_dir_config_created(self):
+    @parameterized.expand([
+        'dir_config',
+        'dir_backup',
+        'dir_screenshots',
+        'dir_export_templates',
+    ])
+    def test_directories_created(self, mocked_dir):
         service = FileStartupService()
         service.create_missing_directories()
-        self.mocked_file_service.dir_config.mkdir.assert_called()
+        path_mock = getattr(self.mocked_file_service, mocked_dir)
+        path_mock.mkdir.assert_called()
 
-    def test_dir_backup_created(self):
-        service = FileStartupService()
-        service.create_missing_directories()
-        self.mocked_file_service.dir_backup.mkdir.assert_called()
+    @parameterized.expand([
+        'file_input_conf',
+        'file_mpv_conf',
+        'file_export_template_readme',
+    ])
+    def test_files_created(self, mocked_file):
+        path_mock = getattr(self.mocked_file_service, mocked_file)
+        path_mock.exists.return_value = False
 
-    def test_dir_screenshots_created(self):
         service = FileStartupService()
-        service.create_missing_directories()
-        self.mocked_file_service.dir_screenshots.mkdir.assert_called()
+        service.create_missing_files()
 
-    def test_dir_export_templates_created(self):
-        service = FileStartupService()
-        service.create_missing_directories()
-        self.mocked_file_service.dir_export_templates.mkdir.assert_called()
+        path_mock.exists.assert_called()
+        path_mock.write_text.assert_called()
