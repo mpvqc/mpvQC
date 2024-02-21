@@ -48,7 +48,7 @@ class DocumentRenderService:
             return QApplication.translate("CommentTypes", comment_type)
 
     def __init__(self):
-        self._env = Environment(loader=BaseLoader())
+        self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)
         self._env.filters['as_time'] = self.Filters.as_time
         self._env.filters['as_comment_type'] = self.Filters.as_comment_type
 

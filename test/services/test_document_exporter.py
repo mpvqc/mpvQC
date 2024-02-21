@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import textwrap
 import unittest
 from dataclasses import dataclass
 from datetime import datetime
@@ -26,10 +27,41 @@ from PySide6.QtCore import QStandardPaths, QCoreApplication, QTranslator, QLocal
 from parameterized import parameterized
 
 from mpvqc.services import PlayerService, SettingsService, DocumentExportService, DocumentRenderService, \
-    DocumentBackupService, ApplicationPathsService
+    DocumentBackupService, ApplicationPathsService, ResourceService
+
+_mock_app = MagicMock()
+
+
+def _mock_test_data(
+        video: Path or None = None,
+        nickname: str or None = None,
+        comments: list or None = None,
+        write_header_date: str or None = None,
+        write_header_generator: str or None = None,
+        write_header_video_path: str or None = None,
+        write_header_nickname: str or None = None,
+):
+    _mock_app.find_object.return_value.comments.return_value = comments or []
+
+    player_mock = MagicMock()
+    player_mock.path = str(video) if video else None
+
+    settings_mock = MagicMock()
+    settings_mock.nickname = nickname
+    settings_mock.writeHeaderDate = write_header_date
+    settings_mock.writeHeaderGenerator = write_header_generator
+    settings_mock.writeHeaderVideoPath = write_header_video_path
+    settings_mock.writeHeaderNickname = write_header_nickname
+    settings_mock.language = 'en-US'
+
+    inject.clear_and_configure(lambda binder: binder
+                               .bind(SettingsService, settings_mock)
+                               .bind(PlayerService, player_mock))
 
 
 class DocumentRenderServiceTest(unittest.TestCase):
+    _resources: ResourceService = inject.attr(ResourceService)
+
     _translator = QTranslator()
 
     def tearDown(self):
@@ -60,6 +92,72 @@ class DocumentRenderServiceTest(unittest.TestCase):
     ])
     def test_filter_as_time(self, expected, seconds):
         actual = DocumentRenderService.Filters.as_time(seconds)
+        self.assertEqual(expected, actual)
+
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_ends_with_line_break(self, *_):
+        _mock_test_data()
+        actual = DocumentRenderService().render(self._resources.default_export_template)
+        self.assertEqual('\n', actual[-1])
+
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_render_no_header(self, *_):
+        _mock_test_data()
+
+        expected = textwrap.dedent(
+            '''\
+            [FILE]
+    
+            [DATA]
+            # total lines: 0
+            '''
+        )
+        actual = DocumentRenderService().render(self._resources.default_export_template)
+
+        self.assertEqual(expected, actual)
+
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_render_partial_header(self, *_):
+        _mock_test_data(
+            write_header_video_path=True, video='/path/to/video',
+            write_header_nickname=True, nickname='ಠ_ಠ'
+        )
+
+        expected = textwrap.dedent(
+            '''\
+            [FILE]
+            nick      : ಠ_ಠ
+            path      : /path/to/video
+    
+            [DATA]
+            # total lines: 0
+            '''
+        )
+        actual = DocumentRenderService().render(self._resources.default_export_template)
+
+        self.assertEqual(expected, actual)
+
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_render_comments(self, *_):
+        _mock_test_data(comments=[
+            {'time': 0, 'commentType': 'Translation', 'comment': 'My first comment'},
+            {'time': 50, 'commentType': 'Spelling', 'comment': 'My second comment'},
+            {'time': 100, 'commentType': 'Phrasing', 'comment': 'My third comment'},
+        ])
+
+        expected = textwrap.dedent(
+            '''\
+            [FILE]
+    
+            [DATA]
+            [00:00:00] [Translation] My first comment
+            [00:00:50] [Spelling] My second comment
+            [00:01:40] [Phrasing] My third comment
+            # total lines: 3
+            '''
+        )
+        actual = DocumentRenderService().render(self._resources.default_export_template)
+
         self.assertEqual(expected, actual)
 
 
@@ -113,18 +211,6 @@ class DocumentExportServiceTest(unittest.TestCase):
         nickname: str or None
         expected: Path
 
-    @staticmethod
-    def _mock_generate_file_path_proposal_with(video: Path or None, nickname: str or None):
-        settings_mock = MagicMock()
-        settings_mock.nickname = nickname
-
-        player_mock = MagicMock()
-        player_mock.path = str(video) if video else None
-
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(SettingsService, settings_mock)
-                                   .bind(PlayerService, player_mock))
-
     def tearDown(self):
         inject.clear()
 
@@ -151,9 +237,6 @@ class DocumentExportServiceTest(unittest.TestCase):
         ),
     ])
     def test_generate_file_path_proposal_2(self, case: 'FilePathProposalTestSet'):
-        self._mock_generate_file_path_proposal_with(
-            video=case.video,
-            nickname=case.nickname,
-        )
+        _mock_test_data(video=case.video, nickname=case.nickname)
         actual = DocumentExportService().generate_file_path_proposal()
         self.assertEqual(case.expected, actual)
