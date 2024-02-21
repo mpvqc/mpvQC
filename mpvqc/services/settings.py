@@ -18,7 +18,7 @@
 import inject
 from PySide6.QtCore import QSettings
 
-from . import ApplicationPathsService
+from .application_paths import ApplicationPathsService
 
 
 # noinspection PyPep8Naming
