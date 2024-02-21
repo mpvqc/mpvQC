@@ -34,8 +34,8 @@ class ResourceService:
         return self._read_from_resource(path=':/data/config/mpv.conf')
 
     @property
-    def mpvqc_export_template_content(self) -> str:
-        return self._read_from_resource(path=':/data/config/mpvQC-export.template')
+    def export_template_readme(self) -> str:
+        return self._read_from_resource(path=':/data/config/Readme.txt')
 
     @property
     def default_export_template(self) -> str:
