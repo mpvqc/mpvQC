@@ -33,7 +33,7 @@ def _figure_out_zoom_factor_on_windows() -> float:
     import ctypes
     import win32api
 
-    def currentMonitorHandle():
+    def current_monitor_handle():
         hwnd = QGuiApplication.topLevelWindows()[0].winId()
         return ctypes.windll.user32.MonitorFromWindow(ctypes.wintypes.HWND(hwnd), ctypes.wintypes.DWORD(2))
 
@@ -58,7 +58,7 @@ def _figure_out_zoom_factor_on_windows() -> float:
         return monitors
 
     monitor_to_dpi_mapping = monitors_to_dpi_mapping()
-    current_monitor = currentMonitorHandle()
+    current_monitor = current_monitor_handle()
 
     dpi = monitor_to_dpi_mapping[current_monitor]
 
