@@ -61,7 +61,7 @@ ListModel {
     ListElement {
         name: 'parameterized'
         url: 'https://github.com/wolever/parameterized'
-        licence: 'BSD License'
+        licence: 'BSD'
         version: '@@pypi-parameterized@@'
         os: 'linux, windows'
     }
