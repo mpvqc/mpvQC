@@ -40,7 +40,17 @@ MpvqcMenu {
 
         onSavePressed: (documentUrl) => {
             root.mpvqcDocumentExporterPyObject.export(template, documentUrl)
-            console.log("todo handle write errors and display messagebox")
+        }
+    }
+
+    property var exportErrorDialog
+    property var exportErrorDialogFactory: Component
+    {
+        MpvqcMessageBox {
+            mpvqcApplication: root.mpvqcApplication
+
+            customTitle: qsTranslate("MessageBoxes", "Export Error")
+            standardButtons: Dialog.Ok
         }
     }
 
@@ -48,6 +58,22 @@ MpvqcMenu {
     icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
     icon.height: 24
     icon.width: 24
+
+    function openExportFileSelectionDialog(name: string, path: url): void {
+        root.exportDialog.selectedFile = root.mpvqcDocumentExporterPyObject.generate_file_path_proposal()
+        root.exportDialog.template = path
+        root.exportDialog.title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name)
+        root.exportDialog.open()
+    }
+
+    function displayExportErrorDialog(message: string, lineNr: int): void {
+        root.exportErrorDialog = root.exportErrorDialogFactory.createObject(root)
+        root.exportErrorDialog.customText = lineNr
+            ? qsTranslate("MessageBoxes", "Error at line %1: %2").arg(lineNr).arg(message)
+            : message
+        root.exportErrorDialog.closed.connect(root.exportErrorDialog.destroy)
+        root.exportErrorDialog.open()
+    }
 
     Repeater {
         id: _repeater
@@ -62,13 +88,16 @@ MpvqcMenu {
             icon.width: 24
 
             onTriggered: {
-                const title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name)
-
-                exportDialog.selectedFile = root.mpvqcDocumentExporterPyObject.generate_file_path_proposal()
-                exportDialog.template = path
-                exportDialog.title = title
-                exportDialog.open()
+                root.openExportFileSelectionDialog(name, path)
             }
+        }
+    }
+
+    Connections {
+        target: root.mpvqcDocumentExporterPyObject
+
+        function onExportErrorOccurred(message: string, lineNr: int): void {
+            root.displayExportErrorDialog(message, lineNr)
         }
     }
 

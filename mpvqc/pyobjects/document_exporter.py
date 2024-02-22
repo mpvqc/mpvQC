@@ -18,7 +18,7 @@
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import QObject, Slot, QUrl
+from PySide6.QtCore import QObject, Slot, QUrl, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import DocumentExportService
@@ -30,6 +30,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcDocumentExporterPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
+
+    exportErrorOccurred = Signal(str, int or None)
 
     @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> QUrl:
@@ -45,4 +47,8 @@ class MpvqcDocumentExporterPyObject(QObject):
     def export(self, template_path: QUrl, file_url: QUrl):
         file = Path(file_url.path())
         template = Path(template_path.path())
-        self._exporter.export(file, template)
+
+        error = self._exporter.export(file, template)
+
+        if error:
+            self.exportErrorOccurred.emit(error.message, error.line_nr)

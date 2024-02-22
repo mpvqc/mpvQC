@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -24,7 +25,7 @@ from PySide6.QtCore import QLocale, QDateTime
 from PySide6.QtCore import QStandardPaths
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtWidgets import QApplication
-from jinja2 import Environment, BaseLoader
+from jinja2 import Environment, BaseLoader, TemplateSyntaxError, TemplateError
 
 from .application_paths import ApplicationPathsService
 from .player import PlayerService
@@ -104,6 +105,11 @@ class DocumentExportService:
     _settings: SettingsService = inject.attr(SettingsService)
     _resources: ResourceService = inject.attr(ResourceService)
 
+    @dataclass
+    class ExportError:
+        message: str
+        line_nr: int or None
+
     def generate_file_path_proposal(self) -> Path:
         if video := Path(self._player.path) if self._player.path else None:
             video_directory = str(video.parent)
@@ -119,14 +125,17 @@ class DocumentExportService:
 
         return Path(video_directory).joinpath(file_name).absolute()
 
-    def export(self, file: Path, template: Path):
-        print("export :: template", template)
-        print("export :: file", file)
-
+    def export(self, file: Path, template: Path) -> ExportError or None:
         user_template = template.read_text(encoding='utf-8')
-        content = self._renderer.render(user_template)
 
-        print(content)
+        try:
+            content = self._renderer.render(user_template)
+        except TemplateSyntaxError as e:
+            return self.ExportError(e.message, line_nr=e.lineno)
+        except TemplateError as e:
+            return self.ExportError(e.message, line_nr=None)
+
+        file.write_text(content, encoding='utf-8', newline='\n')
 
     def save(self, file: Path) -> None:
         user_template = self._resources.default_export_template
