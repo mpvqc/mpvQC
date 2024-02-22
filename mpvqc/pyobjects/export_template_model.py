@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QByteArray
+from PySide6.QtCore import QByteArray, QUrl
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtQml import QmlElement
 
@@ -28,7 +28,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcExportTemplateModelPyObject(QStandardItemModel):
-    _app_paths = inject.attr(ApplicationPathsService)
+    _app_paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
 
     def __init__(self):
         super().__init__()
@@ -38,8 +38,11 @@ class MpvqcExportTemplateModelPyObject(QStandardItemModel):
 
     def _initialize_model(self):
         for template in self._app_paths.files_export_templates:
+            path = str(template.absolute())
+            url = QUrl.fromLocalFile(path)
+
             item = QStandardItem()
-            item.setData(str(template.absolute()), Role.PATH)
+            item.setData(url, Role.PATH)
             item.setData(template.stem, Role.NAME)
             self.appendRow(item)
         self.sort(0)

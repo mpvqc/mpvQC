@@ -28,6 +28,7 @@ from jinja2 import Environment, BaseLoader
 
 from .application_paths import ApplicationPathsService
 from .player import PlayerService
+from .resource import ResourceService
 from .settings import SettingsService
 
 
@@ -101,6 +102,7 @@ class DocumentExportService:
     _player: PlayerService = inject.attr(PlayerService)
     _renderer: DocumentRenderService = inject.attr(DocumentRenderService)
     _settings: SettingsService = inject.attr(SettingsService)
+    _resources: ResourceService = inject.attr(ResourceService)
 
     def generate_file_path_proposal(self) -> Path:
         if video := Path(self._player.path) if self._player.path else None:
@@ -117,12 +119,17 @@ class DocumentExportService:
 
         return Path(video_directory).joinpath(file_name).absolute()
 
-    def write_template(self, template: Path, file: Path):
-        print("Template", template)
-        print("File", file)
+    def export(self, file: Path, template: Path):
+        print("export :: template", template)
+        print("export :: file", file)
 
-        content = self._renderer.render(
-            template=template.read_text(encoding='utf-8'),
-        )
+        user_template = template.read_text(encoding='utf-8')
+        content = self._renderer.render(user_template)
 
         print(content)
+
+    def save(self, file: Path) -> None:
+        user_template = self._resources.default_export_template
+        content = self._renderer.render(user_template)
+
+        file.write_text(content, encoding='utf-8', newline='\n')

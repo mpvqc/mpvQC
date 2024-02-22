@@ -36,10 +36,10 @@ MpvqcMenu {
 
     readonly property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
     {
-        property string template
+        property url template
 
         onSavePressed: (documentUrl) => {
-            root.mpvqcDocumentExporterPyObject.write_with(template, documentUrl)
+            root.mpvqcDocumentExporterPyObject.export(template, documentUrl)
             console.log("todo handle write errors and display messagebox")
         }
     }
@@ -54,7 +54,7 @@ MpvqcMenu {
 
         delegate: MenuItem {
             required property string name
-            required property string path
+            required property url path
 
             text: name
             icon.source: "qrc:/data/icons/notes_black_24dp.svg"

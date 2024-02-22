@@ -31,11 +31,18 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcDocumentExporterPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
 
-    @Slot(str, QUrl)
-    def write_with(self, template_path: str, file_url: QUrl):
-        self._exporter.write_template(Path(template_path), Path(file_url.path()))
-
     @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> QUrl:
         path = self._exporter.generate_file_path_proposal()
         return QUrl.fromLocalFile(str(path))
+
+    @Slot(QUrl)
+    def save(self, file_url: QUrl) -> None:
+        path = Path(file_url.path())
+        self._exporter.save(path)
+
+    @Slot(QUrl, QUrl)
+    def export(self, template_path: QUrl, file_url: QUrl):
+        file = Path(file_url.path())
+        template = Path(template_path.path())
+        self._exporter.export(file, template)
