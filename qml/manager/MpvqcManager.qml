@@ -75,9 +75,6 @@ Item {
     }
 
     MpvqcBackupper {
-        id: backupper
-
-        video: state.video
         mpvqcApplication: root.mpvqcApplication
     }
 

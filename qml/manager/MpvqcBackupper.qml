@@ -19,53 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-import "MpvqcDocumentFileExporter.js" as MpvqcDocumentFileExporter
 
-
-QtObject {
+Timer {
     id: root
 
-    required property url video
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
     readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
-    property var mpvqcBackupPyObject: mpvqcApplication.mpvqcBackupPyObject
+    readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
 
-    readonly property var absPathGetterFunc:mpvqcFileSystemHelperPyObject.url_to_absolute_path
-    readonly property var nicknameGetterFunc: function() { return root.mpvqcSettings.nickname }
-    readonly property var commentGetterFunc: mpvqcCommentTable.getAllComments
-    readonly property var settingsGetterFunc: function() { return root.mpvqcSettings }
-    readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToStringLong
+    repeat: true
+    interval: Math.max(15, root.mpvqcSettings.backupInterval) * 1000
+    running: root.mpvqcSettings.backupEnabled
+        && mpvqcMpvPlayerPropertiesPyObject.video_loaded
+        && mpvqcCommentTable.count > 0
 
-    property var generator: new MpvqcDocumentFileExporter.ExportContentGenerator(
-        absPathGetterFunc, nicknameGetterFunc, commentGetterFunc, settingsGetterFunc, timeFormatFunc
-    )
-
-    property var timer: Timer {
-        interval: Math.max(15, root.mpvqcSettings.backupInterval) * 1000
-        running: root.mpvqcSettings.backupEnabled
-        repeat: true
-
-        onTriggered: {
-            backup()
-        }
-    }
-
-    function backup(): void {
-        const videoName = getVideoName()
-        const content = generator.createBackupContent(root.video)
-        mpvqcBackupPyObject.write_backup(videoName, content)
-    }
-
-    function getVideoName(): string {
-        if (video && video != '') {
-            return mpvqcFileSystemHelperPyObject.url_to_filename_without_suffix(video)
-        } else {
-            return qsTranslate("FileInteractionDialogs", "untitled")
-        }
+    onTriggered: {
+        mpvqcDocumentExporterPyObject.backup()
     }
 
 }
