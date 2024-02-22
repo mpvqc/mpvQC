@@ -46,6 +46,7 @@ def _mock_test_data(
 
     player_mock = MagicMock()
     player_mock.path = str(video) if video else None
+    player_mock.has_video = bool(video)
 
     settings_mock = MagicMock()
     settings_mock.nickname = nickname
@@ -168,11 +169,16 @@ class DocumentBackupServiceTest(unittest.TestCase):
     any_directory = Path('any-directory')
 
     def setUp(self):
-        mock = MagicMock()
-        mock.is_portable = True
-        mock.dir_backup = self.any_directory
+        paths_mock = MagicMock()
+        paths_mock.is_portable = True
+        paths_mock.dir_backup = self.any_directory
+
+        player_mock = MagicMock()
+        player_mock.has_video = True
+
         inject.clear_and_configure(lambda binder: binder
-                                   .bind(ApplicationPathsService, mock))
+                                   .bind(PlayerService, player_mock)
+                                   .bind(ApplicationPathsService, paths_mock))
 
     def tearDown(self):
         inject.clear()

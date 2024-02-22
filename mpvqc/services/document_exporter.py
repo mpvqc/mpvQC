@@ -72,7 +72,7 @@ class DocumentRenderService:
 
             'date': date,
             'generator': f"{QApplication.applicationName()} {QApplication.applicationVersion()}",
-            'video_path': str(Path(self._player.path)) if self._player.path else "",
+            'video_path': str(Path(self._player.path)) if self._player.has_video else "",
             'nickname': self._settings.nickname,
 
             'comments': comments,
