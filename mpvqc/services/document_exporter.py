@@ -83,20 +83,34 @@ class DocumentRenderService:
 
 
 class DocumentBackupService:
-    _paths = inject.attr(ApplicationPathsService)
+    _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
+    _player: PlayerService = inject.attr(PlayerService)
+    _renderer: DocumentRenderService = inject.attr(DocumentRenderService)
+    _resources: ResourceService = inject.attr(ResourceService)
 
-    def backup(self, video_name: str, content: str) -> None:
+    @property
+    def _video_name(self) -> str:
+        if self._player.has_video:
+            return Path(self._player.path).name
+        else:
+            return QApplication.translate("FileInteractionDialogs", "untitled")
+
+    @property
+    def _content(self) -> str:
+        return self._renderer.render(self._resources.backup_template)
+
+    def backup(self) -> None:
         now = datetime.now()
 
         zip_name = f'{now:%Y-%m}.zip'
         zip_path = self._paths.dir_backup / zip_name
         zip_mode = 'a' if zip_path.exists() else 'w'
 
-        file_name = f'{now:%Y-%m-%d_%H-%M-%S}_{video_name}.txt'
+        file_name = f'{now:%Y-%m-%d_%H-%M-%S}_{self._video_name}.txt'
 
         # noinspection PyTypeChecker
         with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as file:
-            file.writestr(file_name, content)
+            file.writestr(file_name, self._content)
 
 
 class DocumentExportService:

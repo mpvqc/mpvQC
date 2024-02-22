@@ -38,6 +38,10 @@ class ResourceService:
         return self._read_from_resource(path=':/data/config/Readme.txt')
 
     @property
+    def backup_template(self) -> str:
+        return self._read_from_resource(path=':/data/config/backup-template.jinja')
+
+    @property
     def default_export_template(self) -> str:
         return self._read_from_resource(path=':/data/config/export-template.jinja')
 

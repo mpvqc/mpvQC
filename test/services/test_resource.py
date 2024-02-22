@@ -43,6 +43,10 @@ class ResourceServiceTest(unittest.TestCase):
         text = ResourceService().export_template_readme
         self.assertTrue(text)
 
+    def test_backup_template(self):
+        template = ResourceService().backup_template
+        self.assertTrue(template)
+
     def test_default_export_template(self):
         template = ResourceService().default_export_template
         self.assertTrue(template)

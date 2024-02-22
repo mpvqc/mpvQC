@@ -162,6 +162,24 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_render_backup(self, *_):
+        _mock_test_data(
+            write_header_video_path=False, video='/path/to/video/ignore/user/setting',
+            comments=[
+                {'time': 0, 'commentType': 'Translation', 'comment': 'My first comment'},
+                {'time': 50, 'commentType': 'Spelling', 'comment': 'My second comment'},
+                {'time': 100, 'commentType': 'Phrasing', 'comment': 'My third comment'},
+            ])
+
+        rendered = DocumentRenderService().render(self._resources.backup_template)
+
+        self.assertIn('path      : /path/to/video/ignore/user/setting', rendered)
+        self.assertIn('[00:00:00] [Translation] My first comment', rendered)
+        self.assertIn('[00:00:50] [Spelling] My second comment', rendered)
+        self.assertIn('[00:01:40] [Phrasing] My third comment', rendered)
+        self.assertIn('# total lines: 3', rendered)
+
 
 class DocumentBackupServiceTest(unittest.TestCase):
     MODULE = 'mpvqc.services.document_exporter'
@@ -177,16 +195,19 @@ class DocumentBackupServiceTest(unittest.TestCase):
         player_mock.has_video = True
 
         inject.clear_and_configure(lambda binder: binder
-                                   .bind(PlayerService, player_mock)
-                                   .bind(ApplicationPathsService, paths_mock))
+                                   .bind(ApplicationPathsService, paths_mock)
+                                   .bind(PlayerService, player_mock))
 
     def tearDown(self):
         inject.clear()
 
     @patch(f'{MODULE}.ZipFile')
-    def test_zip_name(self, zip_file_mock: MagicMock):
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_zip_name(self, q_app, zip_file_mock: MagicMock):
+        _mock_test_data()
+
         service = DocumentBackupService()
-        service.backup('video', 'expected-content')
+        service.backup()
 
         zip_file_mock.assert_called()
 
@@ -194,16 +215,22 @@ class DocumentBackupServiceTest(unittest.TestCase):
         self.assertEqual(f'{datetime.now():%Y-%m}.zip', zip_name.name)
 
     @patch(f'{MODULE}.ZipFile')
-    def test_zip_content(self, zip_file_mock: MagicMock):
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_zip_content(self, q_app, zip_file_mock: MagicMock):
+        _mock_test_data(video='/path/to/nice/video', comments=[
+            {'time': 0, 'commentType': 'Frrrranky', 'comment': 'Suuuuuuuper'},
+        ])
+
         service = DocumentBackupService()
-        service.backup('video', 'expected-content')
+        service.backup()
 
         writestr_mock = zip_file_mock.return_value.__enter__.return_value.writestr
         writestr_mock.assert_called()
 
         filename, content = writestr_mock.call_args.args
         self.assertIn(f'{datetime.now():%Y-%m-%d}', filename)
-        self.assertEqual('expected-content', content)
+        self.assertIn('/path/to/nice/video', content)
+        self.assertIn('[00:00:00] [Frrrranky] Suuuuuuuper', content)
 
 
 class DocumentExportServiceTest(unittest.TestCase):
