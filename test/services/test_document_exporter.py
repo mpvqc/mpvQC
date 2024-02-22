@@ -24,6 +24,7 @@ from unittest.mock import MagicMock, patch
 
 import inject
 from PySide6.QtCore import QStandardPaths, QCoreApplication, QTranslator, QLocale
+from jinja2 import TemplateSyntaxError, TemplateError
 from parameterized import parameterized
 
 from mpvqc.services import PlayerService, SettingsService, DocumentExportService, DocumentRenderService, \
@@ -211,6 +212,16 @@ class DocumentExportServiceTest(unittest.TestCase):
         nickname: str or None
         expected: Path
 
+    def setUp(self):
+        self._resources_mock = MagicMock()
+        self._resources_mock.default_export_template = 'template'
+        self._file_mock = MagicMock()
+        self._template_mock = MagicMock()
+
+        self._renderer_mock = MagicMock()
+        inject.clear_and_configure(lambda binder: binder
+                                   .bind(DocumentRenderService, self._renderer_mock))
+
     def tearDown(self):
         inject.clear()
 
@@ -240,3 +251,31 @@ class DocumentExportServiceTest(unittest.TestCase):
         _mock_test_data(video=case.video, nickname=case.nickname)
         actual = DocumentExportService().generate_file_path_proposal()
         self.assertEqual(case.expected, actual)
+
+    def test_export(self):
+        service = DocumentExportService()
+        error = service.export(self._file_mock, self._template_mock)
+
+        self._template_mock.read_text.assert_called_once()
+        self._renderer_mock.render.assert_called_once()
+        self._file_mock.write_text.assert_called_once()
+        self.assertIsNone(error)
+
+        self._renderer_mock.render.side_effect = TemplateSyntaxError(message='error', lineno=42)
+        error = service.export(self._file_mock, self._template_mock)
+        self.assertIsNotNone(error)
+        self.assertEqual('error', error.message)
+        self.assertEqual(42, error.line_nr)
+
+        self._renderer_mock.render.side_effect = TemplateError(message='error #2')
+        error = service.export(self._file_mock, self._template_mock)
+        self.assertIsNotNone(error)
+        self.assertEqual('error #2', error.message)
+        self.assertIsNone(error.line_nr)
+
+    def test_save(self):
+        service = DocumentExportService()
+        service.save(self._file_mock)
+
+        self._renderer_mock.render.assert_called_once()
+        self._file_mock.write_text.assert_called_once()
