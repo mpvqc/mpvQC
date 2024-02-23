@@ -2,7 +2,7 @@
 date      : {{ date }}
 path      : {{ video_path }}
 
-{{ '\n' }}[DATA]
+[DATA]
 {% for comment in comments -%}
 [{{ comment['time'] | as_time }}] [{{ comment['commentType'] | as_comment_type }}] {{ comment['comment'] | trim }}
 {% endfor -%}
