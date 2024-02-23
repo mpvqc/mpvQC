@@ -37,100 +37,108 @@ TestCase {
         id: objectUnderTest
 
         MpvqcExporter {
-            property var writenFilePath: ''
-            property var writenContent: ''
+            property bool saveCalled: false
 
             video: ''
             document: ''
 
             mpvqcApplication: QtObject {
-                property var mpvqcSettings: QtObject
-                {
-                    property string nickname: 'nickname'
-                }
-
-                property var mpvqcCommentTable: QtObject
-                {
-                    function getAllComments() {
-                        return []
-                    }
-                }
-
-                property var mpvqcFileSystemHelperPyObject: QtObject
-                {
-                    function write(filePath, content) {
-                        writenFilePath = filePath
-                        writenContent = content
-                    }
-                }
-
                 property var mpvqcDocumentExporterPyObject: QtObject
                 {
                     function generate_file_path_proposal() {
                         return '/some/path'
                     }
-                }
 
-                property var mpvqcTimeFormatUtils: QtObject
-                {
-                    function formatTimeToStringLong(seconds) {
-                        return 'formatted'
+                    function save(document: url) {
+                        saveCalled = true
                     }
                 }
             }
-
-            generator: QtObject {
-                function createExportContent(video) {
-                    return 'content'
-                }
-            }
-
         }
     }
 
-    function test_save() {
-        let control = createTemporaryObject(objectUnderTest, testCase)
+    function test_saveNoDocument() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        verify(savedSpy)
+
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+
+        control.document = ''
         control.requestSave()
 
         compare(control.exportDialog.selectedFile.toString(), '/some/path.txt')
-        compare(control.writenFilePath, '')
-        compare(control.writenContent, '')
+        verify(control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+    }
 
-
-        control = createTemporaryObject(objectUnderTest, testCase)
+    function test_saveDocument() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
+
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        verify(savedSpy)
+
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
         control.document = '/some/path'
         control.requestSave()
 
-        compare(control.writenFilePath, '/some/path')
-        compare(control.writenContent, 'content')
+        verify(!control.exportDialog.visible)
+        verify(control.saveCalled)
+        compare(savedSpy.count, 1)
     }
 
-    function test_saveAs() {
-        let control = createTemporaryObject(objectUnderTest, testCase)
+    function test_saveAsAccepted() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
-        let savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
         verify(savedSpy)
 
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+
         control.requestSaveAs()
+
+        verify(control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+
         control.exportDialog.accepted()
 
+        verify(control.saveCalled)
         compare(savedSpy.count, 1)
+    }
 
-
-        control = createTemporaryObject(objectUnderTest, testCase)
+    function test_saveAsRejected() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
-        savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
         verify(savedSpy)
 
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+
         control.requestSaveAs()
+
+        verify(control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+
         control.exportDialog.rejected()
 
+        verify(!control.saveCalled)
         compare(savedSpy.count, 0)
     }
 

@@ -22,8 +22,6 @@ import QtQuick
 
 import dialogs
 
-import "MpvqcDocumentFileExporter.js" as MpvqcDocumentFileExporter
-
 
 QtObject {
     id: root
@@ -32,23 +30,10 @@ QtObject {
     required property url document
     required property var mpvqcApplication
 
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
-    readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
-    readonly property var absPathGetterFunc: mpvqcFileSystemHelperPyObject.url_to_absolute_path
-    readonly property var nicknameGetterFunc: function() { return root.mpvqcSettings.nickname }
-    readonly property var commentGetterFunc: mpvqcCommentTable.getAllComments
-    readonly property var settingsGetterFunc: function() { return root.mpvqcSettings }
-    readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToStringLong
-
-    property var generator: new MpvqcDocumentFileExporter.ExportContentGenerator(
-        absPathGetterFunc, nicknameGetterFunc, commentGetterFunc, settingsGetterFunc, timeFormatFunc
-    )
-
-    property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument {
+    property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
+    {
 
         onSavePressed: (documentUrl) => {
             root.save(documentUrl)
@@ -58,17 +43,20 @@ QtObject {
     signal saved(url newDocument)
 
     function requestSave(): void {
-        if (document != '') {
+        if (_documentKnown()) {
             save(document)
         } else {
             requestSaveAs()
         }
     }
 
-    function save(document: url): void {
-        const content = generator.createExportContent(video)
-        mpvqcFileSystemHelperPyObject.write(document, content)
-        saved(document)
+    function _documentKnown(): bool {
+        return document && document.toString() !== ''
+    }
+
+    function save(newDocumentUrl: url): void {
+        mpvqcDocumentExporterPyObject.save(newDocumentUrl)
+        saved(newDocumentUrl)
     }
 
     function requestSaveAs(): void {
