@@ -34,7 +34,7 @@ _mock_app = MagicMock()
 
 
 def _mock_test_data(
-        video: Path or None = None,
+        video: Path or str or None = None,
         nickname: str or None = None,
         comments: list or None = None,
         write_header_date: str or None = None,
@@ -126,10 +126,10 @@ class DocumentRenderServiceTest(unittest.TestCase):
         )
 
         expected = textwrap.dedent(
-            '''\
+            f'''\
             [FILE]
             nick      : ಠ_ಠ
-            path      : /path/to/video
+            path      : {Path('/path/to/video')}
     
             [DATA]
             # total lines: 0
@@ -174,7 +174,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         rendered = DocumentRenderService().render(self._resources.backup_template)
 
-        self.assertIn('path      : /path/to/video/ignore/user/setting', rendered)
+        self.assertIn(f'path      : {Path('/path/to/video/ignore/user/setting')}', rendered)
         self.assertIn('[00:00:00] [Translation] My first comment', rendered)
         self.assertIn('[00:00:50] [Spelling] My second comment', rendered)
         self.assertIn('[00:01:40] [Phrasing] My third comment', rendered)
@@ -229,7 +229,7 @@ class DocumentBackupServiceTest(unittest.TestCase):
 
         filename, content = writestr_mock.call_args.args
         self.assertIn(f'{datetime.now():%Y-%m-%d}', filename)
-        self.assertIn('/path/to/nice/video', content)
+        self.assertIn(f'{Path('/path/to/nice/video')}', content)
         self.assertIn('[00:00:00] [Frrrranky] Suuuuuuuper', content)
 
 
@@ -237,7 +237,7 @@ class DocumentExportServiceTest(unittest.TestCase):
     """Comment to enforce space"""
 
     _movies = Path(QStandardPaths.writableLocation(QStandardPaths.MoviesLocation))
-    _home = Path('/')
+    _home = Path.home()
 
     @dataclass
     class FilePathProposalTestSet:
