@@ -62,15 +62,10 @@ TestCase {
 
     function test_backup_data() {
         return [
-            {tag: 'enabled-❌️-video-❌️-comments-❌', enabled: false, video: false, haveComments: false, backup: false},
-            {tag: 'enabled-❌️-video-❌️-comments-✔️', enabled: false, video: false, haveComments: true, backup: false},
-            {tag: 'enabled-❌️-video-✔️-comments-❌', enabled: false, video: true, haveComments: false, backup: false},
-            {tag: 'enabled-❌️-video-✔️-comments-✔️', enabled: false, video: true, haveComments: true, backup: false},
-            {tag: 'enabled-✔️-video-❌️-comments-❌', enabled: true, video: false, haveComments: false, backup: false},
-            {tag: 'enabled-✔️-video-❌️-comments-✔️', enabled: true, video: false, haveComments: true, backup: false},
-            {tag: 'enabled-✔️-video-✔️-comments-❌️', enabled: true, video: true, haveComments: false, backup: false},
-            {tag: 'enabled-✔️-video-✔️-comments-✔️', enabled: true, video: true, haveComments: true, backup: true},
-
+            {tag: 'enabled-❌️-comments-❌', enabled: false, haveComments: false, backup: false},
+            {tag: 'enabled-❌️-comments-✔️', enabled: false, haveComments: true, backup: false},
+            {tag: 'enabled-✔️-comments-❌', enabled: true, haveComments: false, backup: false},
+            {tag: 'enabled-✔️-comments-✔️', enabled: true, haveComments: true, backup: true},
         ]
     }
 
@@ -80,7 +75,6 @@ TestCase {
         verify(!control.backupCalled)
 
         control.mpvqcApplication.mpvqcSettings.backupEnabled = data.enabled
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = data.video
         control.mpvqcApplication.mpvqcCommentTable.count = data.haveComments ? 100 : 0
 
         control.interval = 1

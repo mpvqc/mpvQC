@@ -32,9 +32,7 @@ Timer {
 
     repeat: true
     interval: Math.max(15, root.mpvqcSettings.backupInterval) * 1000
-    running: root.mpvqcSettings.backupEnabled
-        && mpvqcMpvPlayerPropertiesPyObject.video_loaded
-        && mpvqcCommentTable.count > 0
+    running: root.mpvqcSettings.backupEnabled && mpvqcCommentTable.count > 0
 
     onTriggered: {
         mpvqcDocumentExporterPyObject.backup()
