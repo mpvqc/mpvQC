@@ -32,12 +32,11 @@ ListView {
 
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
-    readonly property var mpvqcKeyCommandGenerator: mpvqcApplication.mpvqcKeyCommandGenerator
 
     property bool haveComments: root.count > 0
 
     property bool currentlyEditing: false
-    property bool currentlyFullscreen: root.mpvqcApplication.fullscreen
+    property bool currentlyFullscreen: mpvqcApplication.fullscreen
 
     property var deleteCommentMessageBox: null
     property var deleteCommentMessageBoxFactory: Component {

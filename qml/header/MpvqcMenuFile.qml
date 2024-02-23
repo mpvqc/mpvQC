@@ -30,7 +30,6 @@ MpvqcMenu {
     required property var extendedExportTemplateModel
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
-    property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
 
     property alias resetAction: _resetAction
     property alias openDocumentsAction: _openDocumentsAction

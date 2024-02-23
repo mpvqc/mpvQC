@@ -43,17 +43,3 @@ class MpvqcFileSystemHelperPyObject(QObject):
     @Slot(QUrl, result=bool or None)
     def url_is_file(self, url: QUrl) -> bool:
         return Path(url.toLocalFile()).absolute().is_file()
-
-    @Slot(QUrl, result=str or None)
-    def url_to_filename_without_suffix(self, url: QUrl) -> str:
-        return Path(url.toLocalFile()).stem
-
-    @Slot(QUrl, result=QUrl or None)
-    def url_to_parent_file_url(self, url: QUrl) -> QUrl:
-        path = Path(url.toLocalFile()).absolute()
-        return QUrl.fromLocalFile(path.parent)
-
-    @Slot(QUrl, str)
-    def write(self, url: QUrl, content: str) -> None:
-        path = Path(url.toLocalFile())
-        path.write_text(content, encoding='utf-8', newline='\n')
