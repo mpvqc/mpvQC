@@ -45,13 +45,13 @@ class MpvqcDocumentExporterPyObject(QObject):
 
     @Slot(QUrl)
     def save(self, file_url: QUrl) -> None:
-        path = Path(file_url.path())
+        path = Path(file_url.toLocalFile())
         self._exporter.save(path)
 
     @Slot(QUrl, QUrl)
     def export(self, template_path: QUrl, file_url: QUrl):
-        file = Path(file_url.path())
-        template = Path(template_path.path())
+        file = Path(file_url.toLocalFile())
+        template = Path(template_path.toLocalFile())
 
         error = self._exporter.export(file, template)
 
