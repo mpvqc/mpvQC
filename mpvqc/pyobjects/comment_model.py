@@ -46,7 +46,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
-        seconds = self._player.current_time
+        seconds = round(self._player.current_time)
         item = QStandardItem()
         item.setData(seconds, Role.TIME)
         item.setData(comment_type, Role.TYPE)
