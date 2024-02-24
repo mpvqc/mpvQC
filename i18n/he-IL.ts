@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="he" sourcelanguage="en">
+<TS version="2.1" language="he_IL" sourcelanguage="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -21,54 +21,59 @@
     </message>
     <message>
         <source>Development</source>
-        <translation type="unfinished"></translation>
+        <translation>פיתוח</translation>
     </message>
     <message>
         <source>Artwork</source>
-        <translation type="unfinished"></translation>
+        <translation>לוגו</translation>
     </message>
     <message>
         <source>Translation</source>
-        <translation type="unfinished">תרגום</translation>
+        <translation>תרגום</translation>
     </message>
     <message>
         <source>Libraries</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates from english, emphasizing &quot;third-party&quot;</translatorcomment>
+        <translation>ספריות צד-שלישי</translation>
     </message>
     <message>
         <source>Dependencies</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This program comes with absolutely no warranty.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>See the %1 for details.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GNU General Public License, version 3 or later</source>
-        <translation type="unfinished"></translation>
+        <translation>תלויות</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>שונות</translation>
+    </message>
+    <message>
+        <source>See the %1 for details.</source>
+        <translatorcomment>Deviates</translatorcomment>
+        <translation>ראו את %1 לפרטים נוספים.</translation>
+    </message>
+    <message>
+        <source>This program comes with absolutely no warranty.</source>
+        <translatorcomment>Deviates</translatorcomment>
+        <translation>לתוכנה זו אין אחריות בכלל.</translation>
+    </message>
+    <message>
+        <source>GNU General Public License, version 3 or later</source>
+        <translation>רישיון GNU GPL, גרסא 3 או מאוחרת יותר</translation>
     </message>
 </context>
 <context>
     <name>AppearanceDialog</name>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>מראה</translation>
     </message>
     <message>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Differs from English since in hebrew &quot;template&quot; and &quot;theme&quot; use pretty much the same word in this context</translatorcomment>
+        <translation>סוג עיצוב</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Changed TL to emphasize &quot;Accent Color&quot;/&quot;Accent Color&quot;</translatorcomment>
+        <translation>צבע ראשי</translation>
     </message>
 </context>
 <context>
@@ -98,42 +103,46 @@
     <name>BackupSettings</name>
     <message>
         <source>Backup Enabled</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates to emphasize &quot;automatic backup&quot;</translatorcomment>
+        <translation>הפעל גיבוי אוטומטי</translation>
     </message>
     <message>
         <source>Backup Interval</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates, changed &quot;intervals&quot; to &quot;frequency&quot;</translatorcomment>
+        <translation type="unfinished">תדירות גיבוי אוטומטי</translation>
     </message>
     <message>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>שניות</translation>
     </message>
     <message>
         <source>Backup Location</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates, emphasizes &quot;folder&quot; instead of generic location.</translatorcomment>
+        <translation>תיקיית גיבויים</translation>
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates to emphasize &quot;automatic backup&quot;</translatorcomment>
+        <translation>הגדרות גיבוי אוטומטי</translation>
     </message>
 </context>
 <context>
     <name>CommentTable</name>
     <message>
         <source>Edit Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>ערוך הערה</translation>
     </message>
     <message>
         <source>Copy Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>העתק הערה</translation>
     </message>
     <message>
         <source>Delete Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>מחק הערה</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
-        <translation type="unfinished">פתח מסמכ(י) QC</translation>
+        <translation>פתח מסמכ(י) QC</translation>
     </message>
     <message>
         <source>Ctrl</source>
@@ -141,7 +150,7 @@
     </message>
     <message>
         <source>Open Video</source>
-        <translation type="unfinished"></translation>
+        <translation>פתח וידאו</translation>
     </message>
     <message>
         <source>Shift</source>
@@ -149,7 +158,7 @@
     </message>
     <message>
         <source>Add Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>הוסף הערה</translation>
     </message>
 </context>
 <context>
@@ -223,84 +232,86 @@
     </message>
     <message>
         <source>A comment type must not be blank</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Changed TL to reflect &quot;Comment cannot be empty&quot;</translatorcomment>
+        <translation>הערה אינה יכולה להיות ריקה</translation>
     </message>
     <message>
         <source>Characters &apos;,[]&apos; not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>התווים &apos;[],&apos; אינם מורשים</translation>
     </message>
     <message>
         <source>Comment type already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>סוג ההערה קיים</translation>
     </message>
     <message>
         <source>Comment Types</source>
-        <translation type="unfinished"></translation>
+        <translation>סוגי הערות</translation>
     </message>
     <message>
         <source>New comment type</source>
-        <translation type="unfinished"></translation>
+        <translation>סוג הערות חדש</translation>
     </message>
 </context>
 <context>
     <name>EditInputConf</name>
     <message>
         <source>Edit input.conf</source>
-        <translation type="unfinished">עריכת קובץ input.conf</translation>
+        <translation>עריכת קובץ input.conf</translation>
     </message>
     <message>
         <source>Changes to the input.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>שינויים לקובץ input.conf יהיו זמינים אחרי הפעלה מחדש של התוכנה.</translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">קראו עוד</translation>
     </message>
 </context>
 <context>
     <name>EditMpvConf</name>
     <message>
         <source>Edit mpv.conf</source>
-        <translation type="unfinished">עריכת קובץ mpv.conf</translation>
+        <translation>עריכת קובץ mpv.conf</translation>
     </message>
     <message>
         <source>Changes to the mpv.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>שינויים לקובץ mpv.conf יהיו זמינים אחרי הפעלה מחדש של התוכנה.</translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">קראו עוד</translation>
     </message>
 </context>
 <context>
     <name>ExportSettings</name>
     <message>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>הגדרות ייצוא</translation>
     </message>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>כינוי</translation>
     </message>
     <message>
         <source>Document Header</source>
-        <translation type="unfinished"></translation>
+        <translation>ראש המסמך</translation>
     </message>
     <message>
         <source>Write Date</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates from original. (&quot;Date&quot; =&gt; &quot;Creation Time&quot;)</translatorcomment>
+        <translation>כתוב זמן יצירה</translation>
     </message>
     <message>
         <source>Write &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>כתוב &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Write Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>כתוב כינוי</translation>
     </message>
     <message>
         <source>Write Video Path</source>
-        <translation type="unfinished"></translation>
+        <translation>כתוב נתיב לוידאו</translation>
     </message>
 </context>
 <context>
@@ -351,38 +362,38 @@
     </message>
     <message>
         <source>Open Subtitle(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>פתח כתוביות</translation>
     </message>
     <message>
         <source>Open Video</source>
-        <translation type="unfinished"></translation>
+        <translation>פתח וידאו</translation>
     </message>
     <message>
         <source>Export QC Document Using %1 Template</source>
-        <translation type="unfinished"></translation>
+        <translation>ייצא מסמך QC בעזרת התבנית %1</translation>
     </message>
 </context>
 <context>
     <name>ImportSettings</name>
     <message>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>הגדרות ייבוא</translation>
     </message>
     <message>
         <source>Open video if found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">פתח וידאו אם נמצא</translation>
     </message>
     <message>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>תמיד</translation>
     </message>
     <message>
         <source>Ask every time</source>
-        <translation type="unfinished"></translation>
+        <translation>שאל בכל פעם</translation>
     </message>
     <message>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>אף פעם</translation>
     </message>
 </context>
 <context>
@@ -408,23 +419,23 @@
     <name>Languages</name>
     <message>
         <source>English</source>
-        <translation type="unfinished">אנגלית</translation>
+        <translation>אנגלית</translation>
     </message>
     <message>
         <source>German</source>
-        <translation type="unfinished">גרמנית</translation>
+        <translation>גרמנית</translation>
     </message>
     <message>
         <source>Hebrew</source>
-        <translation type="unfinished">עברית</translation>
+        <translation>עברית</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation type="unfinished">איטלקית</translation>
+        <translation>איטלקית</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation type="unfinished"></translation>
+        <translation>ספרדית</translation>
     </message>
 </context>
 <context>
@@ -567,115 +578,121 @@
     </message>
     <message>
         <source>Default format</source>
-        <translation type="unfinished"></translation>
+        <translation>פורמט ברירת מחדל</translation>
     </message>
     <message>
         <source>Current time</source>
-        <translation type="unfinished"></translation>
+        <translation>זמן נוכחי</translation>
     </message>
     <message>
         <source>Remaining time</source>
-        <translation type="unfinished"></translation>
+        <translation>הזמן שנותר</translation>
     </message>
     <message>
         <source>Hide time</source>
-        <translation type="unfinished"></translation>
+        <translation>הסתר זמן</translation>
     </message>
     <message>
         <source>Progress in percent</source>
-        <translation type="unfinished"></translation>
+        <translation>התקדמות באחוזים</translation>
     </message>
     <message>
         <source>&amp;Save QC Document As...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;שמור מסמך QC בשם...</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;עזרה</translation>
     </message>
     <message>
         <source>Keyboard Shortcuts...</source>
-        <translation type="unfinished"></translation>
+        <translation>קיצורי מקלדת...</translation>
     </message>
     <message>
         <source>About &amp;mpvQC...</source>
-        <translation type="unfinished"></translation>
+        <translation>אודות &amp;mpvQC...</translation>
     </message>
     <message>
         <source>&amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;אפשרויות</translation>
     </message>
     <message>
         <source>&amp;Appearance...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;מראה...</translation>
     </message>
     <message>
         <source>&amp;Comment Type Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;הגדרות סוגי הערות...</translation>
     </message>
     <message>
         <source>&amp;Backup Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;הגדרות גיבוי אוטומטי...</translation>
     </message>
     <message>
         <source>&amp;Export Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;הגדרות ייצוא...</translation>
     </message>
     <message>
         <source>&amp;Import Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;הגדרות ייבוא...</translation>
     </message>
     <message>
         <source>&amp;Edit mpv.conf...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;עריכת קובץ mpv.conf...</translation>
     </message>
     <message>
         <source>&amp;Edit input.conf...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;עריכת קובץ input.conf...</translation>
     </message>
     <message>
         <source>&amp;Video</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;וידאו</translation>
     </message>
     <message>
         <source>&amp;Language</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;שפה</translation>
     </message>
     <message>
         <source>%1 (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (לא שמור)</translation>
     </message>
     <message>
         <source>Short text</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Debug/test option</translatorcomment>
+        <translation>טקסט קצר</translation>
     </message>
     <message>
         <source>Very very long text so that we can compare</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Debug/test option</translatorcomment>
+        <translation>טקסט מאוד מאוד ארוך שאפשר להשוות איתו דברים</translation>
     </message>
     <message>
         <source>&amp;Open Subtitle(s)...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;פתח כתוביות...</translation>
     </message>
     <message>
         <source>&amp;Export QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;יצא מסמכ(י) QC</translation>
     </message>
     <message>
         <source>Application Layout</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates</translatorcomment>
+        <translation>אופן התצוגה</translation>
     </message>
     <message>
         <source>Vertical Layout</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates</translatorcomment>
+        <translation>תצוגה אנכית</translation>
     </message>
     <message>
         <source>Horizontal Layout</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates</translatorcomment>
+        <translation>תצוגה אופקית</translation>
     </message>
     <message>
         <source>Application Title</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Deviates</translatorcomment>
+        <translation type="unfinished">הגדרות כותרת</translation>
     </message>
 </context>
 <context>
@@ -686,12 +703,11 @@
     </message>
     <message>
         <source>Do you really want to quit without saving your QC?</source>
-        <translation>האם אתה באמת רוצה לצאת מבלי לשמור את מסמך בקרת האיכות שלך?</translation>
+        <translation>האם ברצונך לצאת מבלי לשמור את מסמך בקרת האיכות שלך?</translation>
     </message>
     <message>
         <source>Do you really want to create a new QC document without saving your QC?</source>
-        <translation type="unfinished">האם ברצונך ליצור מסמך QC חדש מבלי לשמור את מסמך ה-QC הנוכחי?
-שינויים שלא שמרת לקובץ ה-QC יאבדו.</translation>
+        <translation>האם ברצונך ליצור מסמך QC חדש מבלי לשמור את מסמך ה-QC הנוכחי?</translation>
     </message>
     <message>
         <source>Video Found</source>
@@ -740,27 +756,27 @@ Are you sure you have permission to write in the selected directory?</source>
     </message>
     <message>
         <source>Delete Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>מחיקת הערה</translation>
     </message>
     <message>
         <source>Do you really want to delete this comment?</source>
-        <translation type="unfinished"></translation>
+        <translation>האם ברצונך למחוק את הערה זו?</translation>
     </message>
     <message>
         <source>Document Not Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">המסמך אינו בפורמט המתאים</translation>
     </message>
     <message>
         <source>Documents Not Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">המסמך אינם בפורמט המתאים</translation>
     </message>
     <message>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>שגיאה בייצוא</translation>
     </message>
     <message>
         <source>Error at line %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>שגיאה בשורה %1: %2</translation>
     </message>
 </context>
 <context>
