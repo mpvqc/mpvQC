@@ -23,13 +23,12 @@ from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, ReverseTranslatorService, FontLoaderService
+from mpvqc.services import FileStartupService, FontLoaderService
 
 
 class MpvqcApplication(QGuiApplication):
-    _start_up = inject.attr(FileStartupService)
-    _translator = inject.attr(ReverseTranslatorService)
-    _font_loader = inject.attr(FontLoaderService)
+    _start_up: FileStartupService = inject.attr(FileStartupService)
+    _font_loader: FontLoaderService = inject.attr(FontLoaderService)
 
     def __init__(self, args):
         super().__init__(args)
@@ -55,9 +54,6 @@ class MpvqcApplication(QGuiApplication):
     def create_directories(self):
         self._start_up.create_missing_directories()
         self._start_up.create_missing_files()
-
-    def set_up_reverse_translator(self):
-        self._translator.set_up(self._change_language)
 
     def _change_language(self, target_locale: str) -> None:
         self._engine.setUiLanguage(target_locale)
