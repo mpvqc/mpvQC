@@ -27,7 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcReverseTranslatorPyObject(QObject):
-    _translator = inject.attr(ReverseTranslatorService)
+    _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
 
     @Slot(str, result=str or None)
     def lookup(self, non_english: str) -> str:
@@ -35,4 +35,4 @@ class MpvqcReverseTranslatorPyObject(QObject):
 
     @Slot(str, str, result=str or None)
     def lookup_specific_language(self, language: str, non_english: str) -> str:
-        return self._translator.lookup_specific_language(language, non_english)
+        return self._translator.lookup_specific_language(non_english, language)

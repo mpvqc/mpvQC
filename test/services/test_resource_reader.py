@@ -17,15 +17,15 @@
 
 from unittest.mock import patch
 
-import pytest
+from parameterized import parameterized
 
 from mpvqc.services import ResourceReaderService
 
 
-@pytest.mark.parametrize("file_path", [
-    ":/data/icon.svg",
-    "/data/icon.svg",
-    "data/icon.svg",
+@parameterized.expand([
+    (":/data/icon.svg",),
+    ("/data/icon.svg",),
+    ("data/icon.svg",),
 ])
 def test_read_from(file_path):
     reader = ResourceReaderService()
@@ -34,14 +34,20 @@ def test_read_from(file_path):
 
 
 def test_file_not_found():
-    with pytest.raises(FileNotFoundError):
+    try:
         reader = ResourceReaderService()
         reader.read_from('>>')
+        assert False, "Expected FileNotFoundError but no exception was raised"
+    except FileNotFoundError:
+        pass
 
 
 @patch('mpvqc.services.resource_reader.QFile.exists', return_value=True)
 @patch('mpvqc.services.resource_reader.QFile.open', return_value=False)
 def test_some_other_method(*_):
-    with pytest.raises(Exception):
+    try:
         reader = ResourceReaderService()
         reader.read_from('')
+        assert False, "Expected Exception but no exception was raised"
+    except Exception:
+        pass

@@ -90,10 +90,10 @@ Column {
 
         text: `
         <html>
-            <style type="text/css"></style>
-            This program comes with absolutely no warranty.<br>
-            See the <a href="${gnuLicenceUrl}"> GNU General Public License, version 3 or later</a> for details.
-        </html>
+            <style type="text/css"></style>` + 
+            qsTranslate("AboutDialog", "This program comes with absolutely no warranty.") + "<br>" +
+            qsTranslate("AboutDialog", "See the %1 for details.").arg("<a href=\"${gnuLicenceUrl}\">" + qsTranslate("AboutDialog","GNU General Public License, version 3 or later") + "</a>") +
+        `</html>
         `
 
         onLinkActivated: {

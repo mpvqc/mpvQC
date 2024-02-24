@@ -76,25 +76,13 @@ ScrollView {
         }
 
         MpvqcHeader {
-            text: 'Other'
+            text: qsTranslate("AboutDialog", "Other")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         MpvqcDependency {
             dependency: 'Noto Sans'
             url: "https://fonts.google.com/noto/specimen/Noto+Sans"
-            licence: "OFL"
-        }
-
-        MpvqcDependency {
-            dependency: 'Noto Sans Hebrew'
-            url: "https://fonts.google.com/noto/specimen/Noto+Sans+Hebrew"
-            licence: "OFL"
-        }
-
-        MpvqcDependency {
-            dependency: 'Noto Sans Mono'
-            url: "https://fonts.google.com/noto/specimen/Noto+Sans+Mono"
             licence: "OFL"
         }
 

@@ -42,9 +42,9 @@ ApplicationWindow {
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
-    readonly property var mpvqcBackupPyObject: MpvqcBackupPyObject {}
     readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
-    readonly property var mpvqcSpecialCharacterValidatorPyObject: MpvqcSpecialCharacterValidatorPyObject {}
+    readonly property var mpvqcDocumentExporterPyObject: MpvqcDocumentExporterPyObject {}
+    readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
     readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}

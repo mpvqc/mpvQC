@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
+import pyobjects
+
 
 Item {
     id: root
@@ -54,6 +56,7 @@ Item {
 
             MpvqcMenuFile {
                 mpvqcApplication: root.mpvqcApplication
+                extendedExportTemplateModel: MpvqcExportTemplateModelPyObject {}
             }
 
             MpvqcMenuVideo {

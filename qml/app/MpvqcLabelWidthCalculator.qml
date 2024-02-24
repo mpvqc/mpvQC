@@ -26,7 +26,6 @@ Item {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
     readonly property real duration: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration
 
     property int commentTypesLabelWidth

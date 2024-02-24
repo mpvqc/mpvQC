@@ -45,6 +45,7 @@ Item {
             }
             function close() { closeCalled = true }
         }
+        extendedExportTemplateModel: []
     }
 
     TestCase {

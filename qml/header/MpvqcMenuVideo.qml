@@ -59,7 +59,7 @@ MpvqcMenu {
             mpvqcApplication: root.mpvqcApplication
         }
 
-        text: qsTranslate("MainWindow", "&Open Subtitles...")
+        text: qsTranslate("MainWindow", "&Open Subtitle(s)...")
         icon.source: "qrc:/data/icons/subtitles_black_24dp.svg"
 
         onTriggered: {

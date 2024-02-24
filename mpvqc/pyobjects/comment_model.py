@@ -38,14 +38,15 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     def __init__(self):
         super().__init__()
-        self._searcher = Searcher()
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
+        self.setObjectName("mpvqcCommentModel")
         self.dataChanged.connect(self.commentsChanged)
+        self._searcher = Searcher()
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
-        seconds = self._player.current_time
+        seconds = round(self._player.current_time)
         item = QStandardItem()
         item.setData(seconds, Role.TIME)
         item.setData(comment_type, Role.TYPE)
@@ -122,7 +123,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @staticmethod
     def _create_comment_from(item) -> dict[str, str]:
         return {
-            'time': item.data(Role.TIME),
+            'time': int(item.data(Role.TIME)),
             'commentType': item.data(Role.TYPE),
             'comment': item.data(Role.COMMENT)
         }

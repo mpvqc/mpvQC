@@ -77,7 +77,7 @@ class ProjectFileGenerator:
             'translations': translations,
         }
         data = json.dumps([structure], indent=2, sort_keys=True)
-        file.write_text(data, encoding='utf-8')
+        file.write_text(data, encoding='utf-8', newline='\n')
 
 
 def main():

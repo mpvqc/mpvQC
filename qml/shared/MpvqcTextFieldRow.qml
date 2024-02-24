@@ -48,7 +48,7 @@ RowLayout {
         focus: true
         selectByMouse: true
         bottomPadding: topPadding
-        horizontalAlignment: Text.AlignLeft
+        horizontalAlignment: mirrored ? Text.AlignRight : Text.AlignLeft
 
         onTextChanged: {
             root.textChanged(text)

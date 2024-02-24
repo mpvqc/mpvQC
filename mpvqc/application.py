@@ -16,25 +16,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+from functools import cache
 
 import inject
 from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, ReverseTranslatorService, FontLoaderService
+from mpvqc.services import FileStartupService, FontLoaderService
 
 
 class MpvqcApplication(QGuiApplication):
-    _start_up = inject.attr(FileStartupService)
-    _translator = inject.attr(ReverseTranslatorService)
-    _font_loader = inject.attr(FontLoaderService)
+    _start_up: FileStartupService = inject.attr(FileStartupService)
+    _font_loader: FontLoaderService = inject.attr(FontLoaderService)
 
     def __init__(self, args):
         super().__init__(args)
         self._engine = QQmlApplicationEngine()
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
+
+    @cache
+    def find_object(self, object_type, name: str):
+        root = self._engine.rootObjects()
+        assert root, "Cannot find root object in QQmlApplicationEngine"
+        obj = root[0].findChild(object_type, name)
+        assert obj, f"Cannot find {object_type} with name '{name}'"
+        return obj
 
     def set_window_icon(self):
         icon = QIcon(':/data/icon.svg')
@@ -46,9 +54,6 @@ class MpvqcApplication(QGuiApplication):
     def create_directories(self):
         self._start_up.create_missing_directories()
         self._start_up.create_missing_files()
-
-    def set_up_reverse_translator(self):
-        self._translator.set_up(self._change_language)
 
     def _change_language(self, target_locale: str) -> None:
         self._engine.setUiLanguage(target_locale)
@@ -62,13 +67,14 @@ class MpvqcApplication(QGuiApplication):
         del self._engine
 
     def _retranslate(self):
-        locale = QLocale(self._engine.uiLanguage())
-
         self.removeTranslator(self._translator_qt)
         self.removeTranslator(self._translator_mpvqc)
 
+        identifier = self._engine.uiLanguage()
+        locale = QLocale(identifier)
+
         self._translator_qt.load(locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
-        self._translator_mpvqc.load(f':/i18n/{locale.name()}.qm')
+        self._translator_mpvqc.load(f':/i18n/{identifier}.qm')
 
         self.installTranslator(self._translator_qt)
         self.installTranslator(self._translator_mpvqc)

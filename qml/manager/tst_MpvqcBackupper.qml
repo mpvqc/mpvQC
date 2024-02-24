@@ -21,96 +21,66 @@ import QtQuick
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
 
     width: 400
     height: 400
+    visible: true
+    name: 'MpvqcBackupper'
 
-    property string videoName: ''
-    property string content: ''
-
-    MpvqcBackupper {
+    Component {
         id: objectUnderTest
 
-        video: ''
+        MpvqcBackupper {
+            property bool backupCalled: false
 
-        mpvqcApplication: QtObject {
-            property var mpvqcSettings: QtObject {
-                property string nickname: 'nickname'
-                property int backupInterval: 90
-                property bool backupEnabled: true
-            }
-            property var mpvqcCommentTable: QtObject {
-                function getAllComments() { return [] }
-            }
-            property var mpvqcFileSystemHelperPyObject: QtObject {
-                function url_to_absolute_path(url) { return url }
-                function url_to_filename_without_suffix(url) { return url }
-            }
-            property var mpvqcTimeFormatUtils: QtObject {
-                function formatTimeToStringLong(seconds) { return 'formatted' }
-            }
-        }
-
-        mpvqcBackupPyObject: QtObject {
-            function write_backup(videoName, content) {
-                testHelper.videoName= videoName
-                testHelper.content = content
-            }
-        }
-
-        generator: QtObject {
-            function createBackupContent(video) { return 'content' }
-        }
-
-        property var test: TestCase {
-            name: "MpvqcBackupper"
-            when: windowShown
-
-            function init() {
-                testHelper.videoName= ''
-                testHelper.content = ''
-                objectUnderTest.video = ''
-                objectUnderTest.timer.interval = 1
-            }
-
-            function test_backup_data() {
-                return [
-                    {
-                        tag: 'enabled-no-video',
-                        enabled: true,
-                        video: '',
-                        expectedVideoName: 'untitled',
-                        expectedContent: 'content'
-                    },
-                    {
-                        tag: 'enabled-with-video',
-                        enabled: true,
-                        video: 'video-name',
-                        expectedVideoName: 'video-name',
-                        expectedContent: 'content'
-                    },
-                    {
-                        tag: 'disabled',
-                        enabled: false,
-                        video: '',
-                        expectedVideoName: '',
-                        expectedContent: ''
-                    },
-                ]
-            }
-
-            function test_backup(data) {
-                objectUnderTest.mpvqcSettings.backupEnabled = data.enabled
-                objectUnderTest.video = data.video
-                wait(25)
-                compare(testHelper.videoName, data.expectedVideoName)
-                compare(testHelper.content, data.expectedContent)
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject
+                {
+                    property int backupInterval: 1
+                    property bool backupEnabled: false
+                }
+                property var mpvqcCommentTable: QtObject
+                {
+                    property int count: -1
+                }
+                property var mpvqcDocumentExporterPyObject: QtObject
+                {
+                    function backup() {
+                        backupCalled = true
+                    }
+                }
+                property var mpvqcMpvPlayerPropertiesPyObject: QtObject
+                {
+                    property bool video_loaded: false
+                }
             }
 
         }
+    }
 
+    function test_backup_data() {
+        return [
+            {tag: 'enabled-❌️-comments-❌', enabled: false, haveComments: false, backup: false},
+            {tag: 'enabled-❌️-comments-✔️', enabled: false, haveComments: true, backup: false},
+            {tag: 'enabled-✔️-comments-❌', enabled: true, haveComments: false, backup: false},
+            {tag: 'enabled-✔️-comments-✔️', enabled: true, haveComments: true, backup: true},
+        ]
+    }
+
+    function test_backup(data) {
+        let control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+        verify(!control.backupCalled)
+
+        control.mpvqcApplication.mpvqcSettings.backupEnabled = data.enabled
+        control.mpvqcApplication.mpvqcCommentTable.count = data.haveComments ? 100 : 0
+
+        control.interval = 1
+        wait(25)
+
+        compare(control.backupCalled, data.backup)
     }
 
 }

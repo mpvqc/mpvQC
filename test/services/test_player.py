@@ -21,7 +21,7 @@ from unittest.mock import Mock
 from mpvqc.services import SubtitleCacher
 
 
-class TestSubtitleCacher(unittest.TestCase):
+class SubtitleCacherTest(unittest.TestCase):
     subtitle = 'test'
     subtitles = (subtitle,)
 

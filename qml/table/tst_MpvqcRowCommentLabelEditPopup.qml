@@ -37,7 +37,7 @@ TestCase {
         id: objectUnderTest
 
         MpvqcRowCommentLabelEditPopup {
-            mpvqcSpecialCharacterValidator: RegularExpressionValidator {
+            mpvqcDefaultTextValidator: RegularExpressionValidator {
                 regularExpression: /[0-9A-Z]+/
             }
             currentComment: 'Corrent comment'

@@ -17,7 +17,7 @@
 
 from .application_environment import ApplicationEnvironmentService
 from .application_paths import ApplicationPathsService
-from .backup import BackupService
+from .document_exporter import DocumentBackupService, DocumentExportService, DocumentRenderService
 from .file_startup import FileStartupService
 from .font_loader import FontLoaderService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
@@ -25,3 +25,4 @@ from .player import PlayerService, SubtitleCacher
 from .resource import ResourceService
 from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService
+from .settings import SettingsService
