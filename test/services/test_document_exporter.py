@@ -75,6 +75,36 @@ class DocumentRenderServiceTest(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    def test_video_path_video_name(self, *_, ):
+        _mock_test_data(video=Path.home() / 'video.mkv')
+        service = DocumentRenderService()
+
+        template = textwrap.dedent(
+            '''\
+            video_path: {{ video_path }}
+            video_name: {{ video_name }}
+            '''
+        )
+        expected = textwrap.dedent(
+            f'''\
+            video_path: {Path.home() / 'video.mkv'}
+            video_name: video.mkv
+            '''
+        )
+        actual = service.render(template)
+        self.assertEqual(expected, actual)
+
+        _mock_test_data(video=None)
+        expected = textwrap.dedent(
+            f'''\
+            video_path: 
+            video_name: 
+            '''
+        )
+        actual = service.render(template)
+        self.assertEqual(expected, actual)
+
+    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
     def test_ends_with_line_break(self, *_):
         _mock_test_data()
         actual = DocumentRenderService().render(self._resources.default_export_template)

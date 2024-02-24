@@ -27,6 +27,7 @@
 
         write_video_path   bool           True if the user enabled the path of the video to be included in reports
               video_path   str            Absolute path of the video or the empty string if no video was present
+              video_name   str            The name + extension of the video or the empty string if no video was present
 
           write_nickname   bool           True if the user enabled the nickname to be included in reports
                 nickname   str            Nickname of the person creating the report

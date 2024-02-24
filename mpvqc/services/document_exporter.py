@@ -63,6 +63,15 @@ class DocumentRenderService:
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
         comments = QApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
+        generator = f"{QApplication.applicationName()} {QApplication.applicationVersion()}"
+        nickname = self._settings.nickname
+
+        if self._player.has_video:
+            video_path = f'{Path(self._player.path)}'
+            video_name = f'{Path(self._player.path).name}'
+        else:
+            video_path = ''
+            video_name = ''
 
         return {
             'write_date': write_date,
@@ -71,9 +80,10 @@ class DocumentRenderService:
             'write_nickname': write_nickname,
 
             'date': date,
-            'generator': f"{QApplication.applicationName()} {QApplication.applicationVersion()}",
-            'video_path': str(Path(self._player.path)) if self._player.has_video else "",
-            'nickname': self._settings.nickname,
+            'generator': generator,
+            'video_path': video_path,
+            'video_name': video_name,
+            'nickname': nickname,
 
             'comments': comments,
         }
