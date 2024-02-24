@@ -35,7 +35,7 @@ class ResourceService:
 
     @property
     def export_template_readme(self) -> str:
-        return self._read_from_resource(path=':/data/config/Readme.txt')
+        return self._read_from_resource(path=':/data/config/extended-export-readme.txt')
 
     @property
     def backup_template(self) -> str:
