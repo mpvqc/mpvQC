@@ -35,6 +35,22 @@
         <source>Dependencies</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>See the %1 for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This program comes with absolutely no warranty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GNU General Public License, version 3 or later</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppearanceDialog</name>
@@ -190,7 +206,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type here to add a new comment type</source>
+        <source>New comment type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -301,6 +317,10 @@
         <source>Open Video</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export QC Document Using %1 Template</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImportSettings</name>
@@ -383,7 +403,7 @@
     </message>
     <message>
         <source>Window Title</source>
-        <translation type="unfinished">Titolo Finestra</translation>
+        <translation type="obsolete">Titolo Finestra</translation>
     </message>
     <message>
         <source>Language</source>
@@ -464,10 +484,6 @@
     <message>
         <source>Ctrl+Alt+S</source>
         <translation type="obsolete">Ctrl+Alt+S</translation>
-    </message>
-    <message>
-        <source>&amp;Open Subtitles...</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Default Title</source>
@@ -569,6 +585,30 @@
         <source>Very very long text so that we can compare</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Open Subtitle(s)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vertical Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Horizontal Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application Title</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageBoxes</name>
@@ -610,6 +650,14 @@
     </message>
     <message>
         <source>Documents Not Compatible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error at line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
