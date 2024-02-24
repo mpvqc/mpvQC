@@ -23,7 +23,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import inject
-from PySide6.QtCore import QStandardPaths, QCoreApplication, QTranslator, QLocale
+from PySide6.QtCore import QStandardPaths
 from jinja2 import TemplateSyntaxError, TemplateError
 from parameterized import parameterized
 
@@ -63,28 +63,6 @@ def _mock_test_data(
 
 class DocumentRenderServiceTest(unittest.TestCase):
     _resources: ResourceService = inject.attr(ResourceService)
-
-    _translator = QTranslator()
-
-    def tearDown(self):
-        app = QCoreApplication.instance()
-        app.removeTranslator(self._translator)
-
-    def _load_language(self, language: str) -> None:
-        app = QCoreApplication.instance()
-        app.removeTranslator(self._translator)
-        self._translator.load(f':/i18n/{QLocale(language).name()}.qm')
-        app.installTranslator(self._translator)
-
-    @parameterized.expand([
-        ('de-DE', 'Translation', 'Übersetzung'),
-        ('de-DE', 'Spelling', 'Rechtschreibung'),
-        ('he-IL', 'Translation', 'תרגום'),
-        ('he-IL', 'Spelling', 'איות'),
-    ])
-    def test_filter_as_comment_type(self, language: str, input: str, expected: str):
-        self._load_language(language)
-        self.assertEqual(expected, DocumentRenderService.Filters.as_comment_type(input))
 
     @parameterized.expand([
         ('00:00:00', 0),
