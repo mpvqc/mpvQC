@@ -1,7 +1,6 @@
 import unittest
 
 from PySide6.QtCore import QUrl, QObject
-from PySide6.QtWidgets import QApplication
 
 from mpvqc.application import MpvqcApplication
 
@@ -14,22 +13,27 @@ class TestApplication(unittest.TestCase):
         ApplicationWindow {
             visible: false; width: 50; height: 50
         
-            Button { objectName: "button"; text: "Click Me" }
+            Button { objectName: "button-click-me"; text: "Click Me" }
         }
         """
 
+    _app: MpvqcApplication or None = None
+
     def setUp(self):
-        if app := QApplication.instance():
-            app.shutdown()
-        self.app = MpvqcApplication([])
-        self.app._engine.loadData(self.qml.encode(), QUrl())
+        self.tearDown()
+        self._app = MpvqcApplication([])
+        self._app._engine.loadData(self.qml.encode(), QUrl())
+
+    def tearDown(self):
+        if self._app:
+            self._app.shutdown()
 
     def test_find_object(self):
-        obj = self.app.find_object(QObject, "button")
+        obj = self._app.find_object(QObject, "button-click-me")
         self.assertIsNotNone(obj)
 
         try:
-            self.app.find_object(QObject, "label")
+            self._app.find_object(QObject, "label")
             assert False, "Expected AssertionError but no exception was raised"
         except AssertionError:
             pass
