@@ -26,7 +26,9 @@ MpvqcMessageBox {
     id: root
 
     width: 420
-    customTitle: contentItem.title
+    customTitle: _contentItem.title
 
-    contentItem: MpvqcUpdateView {}
+    contentItem: MpvqcUpdateView {
+        id: _contentItem
+    }
 }
