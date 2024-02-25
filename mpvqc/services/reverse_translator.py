@@ -33,18 +33,13 @@ class LookupTable:
             del self._translator
 
     def _create_lookup_tables(self) -> None:
-        for identifier in self._language_identifiers():
-            assert self._translator.load(f':/i18n/{identifier}.qm'), f'Cannot load language: {identifier}'
+        for entry_info in QDir(':/i18n').entryInfoList():
+            identifier = entry_info.baseName()
+            resource_path = entry_info.filePath()
+            assert self._translator.load(resource_path), f'Cannot load language: {identifier}'
+
             self._add_to_combined_lookup_table()
             self._add_to_language_lookup_table(language=identifier)
-
-    @staticmethod
-    def _language_identifiers() -> list[str]:
-        identifiers = []
-        for identifier_qm in QDir(':/i18n').entryList():
-            identifier, _, _ = identifier_qm.partition('.')
-            identifiers.append(identifier)
-        return identifiers
 
     @property
     def _default_comment_types(self) -> list[str]:
