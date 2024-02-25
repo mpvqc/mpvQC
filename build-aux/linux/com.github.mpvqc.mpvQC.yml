@@ -19,7 +19,6 @@ finish-args:
   - --socket=wayland
   - --socket=fallback-x11
   - --socket=pulseaudio
-  - --env=LC_ALL=C  # todo: should work but doesn't: --env=LC_NUMERIC=C
 
 build-options:
   cflags: -O2 -g
@@ -250,11 +249,20 @@ modules:
       - type: file
         url: https://files.pythonhosted.org/packages/62/1f/73a1064babd1f50be9b740a2ac5bf355fd6be2b914d68455268209f78829/inject-5.2.0-py2.py3-none-any.whl
         sha256: 0eaed0083c180b1dd3dba169dfa2b7b077fc0d65f454b4cbed1866243cc231a0
+  - name: python3-jinja2
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} "Jinja2>=3.1.3" --no-build-isolation
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/30/6d/6de6be2d02603ab56e72997708809e8a5b0fbfee080735109b40a3564843/Jinja2-3.1.3-py3-none-any.whl
+        sha256: ac8bd6544d4bb2c9792bf3a159e80bba8fda7f07e81bc3aed565432d5925ba90
   - name: python3-PySide6
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "PySide6>=6.5.0" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "PySide6>=6.6.0" --no-build-isolation
     sources:
       - type: file
         url: https://files.pythonhosted.org/packages/14/cd/f8117f92430564af4cb60bc38d93de8dcb1d051c955cf0a62e6563fe7f55/PySide6-6.6.0-cp38-abi3-manylinux_2_28_x86_64.whl
