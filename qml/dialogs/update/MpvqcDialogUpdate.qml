@@ -22,9 +22,13 @@ import QtQuick.Controls
 import shared
 
 
-MpvqcDialog {
+MpvqcMessageBox {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
+    width: 420
+    customTitle: _contentItem.title
+
+    contentItem: MpvqcUpdateView {
+        id: _contentItem
+    }
 }
