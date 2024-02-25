@@ -106,7 +106,7 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
-          execute find . -type f -name 'tst_*.qml' -delete
+          execute find . -type f -name 'tst_*' -delete
       - name: 'Run Python Build'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
