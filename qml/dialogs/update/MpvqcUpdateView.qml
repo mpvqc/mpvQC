@@ -23,7 +23,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 
-ColumnLayout {
+Label {
     id: root
 
     readonly property var openUrlExternally: Qt.openUrlExternally
@@ -41,9 +41,14 @@ ColumnLayout {
     }
 
     property string title: qsTranslate("VersionCheckDialog", "Checking for Updates...")
-    property string text: qsTranslate("VersionCheckDialog", "Loading...")
     property var request: new XMLHttpRequest()
 
+    text: qsTranslate("VersionCheckDialog", "Loading...")
+    horizontalAlignment: Text.AlignLeft
+    wrapMode: Label.WordWrap
+    elide: Text.ElideLeft
+
+    onLinkActivated: root.openUrlExternally(root.mpvqcHomeUrl)
 
     function checkForUpdate() {
         const asynchronous = true
@@ -98,23 +103,10 @@ ColumnLayout {
         root.text = qsTranslate("VersionCheckDialog", "A connection to the server could not be established.")
     }
 
-    Label {
-        text: root.text
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        wrapMode: Text.WordWrap
-
-        onLinkActivated: root.openUrlExternally(root.mpvqcHomeUrl)
-
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
-        }
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+        hoverEnabled: true
     }
-
 }
