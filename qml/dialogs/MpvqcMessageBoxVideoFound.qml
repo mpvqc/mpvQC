@@ -23,8 +23,8 @@ import shared
 
 
 MpvqcMessageBox {
-    customTitle: qsTranslate("MessageBoxes", "Video Found")
-    customText: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
+    title: qsTranslate("MessageBoxes", "Video Found")
+    text: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
     standardButtons: Dialog.Yes | Dialog.No
 
 }

@@ -23,8 +23,8 @@ import shared
 
 
 MpvqcMessageBox {
-    customTitle: qsTranslate("MessageBoxes", "Unsaved Changes")
-    customText: qsTranslate("MessageBoxes", "Do you really want to create a new QC document without saving your QC?")
+    title: qsTranslate("MessageBoxes", "Unsaved Changes")
+    text: qsTranslate("MessageBoxes", "Do you really want to create a new QC document without saving your QC?")
     standardButtons: Dialog.Yes | Dialog.No
 
 }
