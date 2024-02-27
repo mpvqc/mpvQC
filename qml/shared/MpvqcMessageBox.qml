@@ -29,6 +29,7 @@ Dialog {
     property alias text: _content.text
 
     width: 420
+    z: 2
     parent: mpvqcApplication.contentItem
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
