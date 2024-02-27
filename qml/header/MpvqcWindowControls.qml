@@ -21,8 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material.impl
 
-import shared
-
 
 Item {
     id: root

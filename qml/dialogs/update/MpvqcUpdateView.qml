@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQml
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 
 Label {
