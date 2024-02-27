@@ -43,20 +43,20 @@ class PreStartUp:
         from PySide6 import QtCore
         from PySide6.QtCore import QtMsgType
 
-        def qt_message_handler(level: QtMsgType, context, message):
+        def handler(level: QtMsgType, context, message):
             if level == QtMsgType.QtInfoMsg:
-                level = 'Info'
+                level = 'INFO'
             elif level == QtMsgType.QtWarningMsg:
-                level = 'Warning'
+                level = 'WARNING'
             elif level == QtMsgType.QtCriticalMsg:
-                level = 'critical'
+                level = 'CRITICAL'
             elif level == QtMsgType.QtFatalMsg:
-                level = 'fatal'
+                level = 'FATAL'
             else:
-                level = 'Debug'
+                level = 'DEBUG'
             print(f"{level:}: {message} ({context.file}:{context.line:d}, {context.file})")
 
-        QtCore.qInstallMessageHandler(qt_message_handler)
+        QtCore.qInstallMessageHandler(handler)
 
     @staticmethod
     def prepare_dependency_injection():

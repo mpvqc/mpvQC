@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def add_root_directory_to_path():
+def add_repository_root_directory_to_path():
     import os
     from pathlib import Path
 
     os.environ["PATH"] = str(Path(__file__).parent.parent.absolute()) + os.pathsep + os.environ["PATH"]
 
 
-add_root_directory_to_path()
+add_repository_root_directory_to_path()
 
 try:
     import test.generated_resources
