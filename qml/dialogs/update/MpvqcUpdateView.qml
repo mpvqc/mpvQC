@@ -87,7 +87,7 @@ Label {
     function _handleNewVersionAvailable(version: string) {
         root.title = qsTranslate("VersionCheckDialog", "New Version Available")
         const message = qsTranslate("VersionCheckDialog", "There is a new version of mpvQC available (%1). Visit %2 to download it.")
-            .arg(`<strong>${version}</strong>`)
+            .arg(`<i>${version}</i>`)
             .arg(`<a href="${mpvqcHomeUrl}">${mpvqcHomeUrl}</a>`)
         root.text = `<html>${message}</html>`
     }
