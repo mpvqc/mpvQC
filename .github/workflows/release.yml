@@ -10,8 +10,8 @@ defaults:
 
 jobs:
   build_python:
-    runs-on: ubuntu-latest
-    name: 'Test Python & Build mpvQC'
+    runs-on: windows-latest
+    name: 'Build'
     outputs:
       version: ${{ steps.step_version.outputs.version }}
     steps:
@@ -19,24 +19,42 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: 'Remove Qml Test Files'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          
+          execute find . -type f -name 'tst_*' -delete
       - name: 'Install Python 3.12'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: 'Install just'
         uses: taiki-e/install-action@just
-      - name: 'Update Project Build Information'
+      - name: 'Download libmpv'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          ARTIFACT="mpv-dev-x86_64-20240211-git-f5c4f0b.7z"
+          SHA1="7e9aa859440666696b8cf81cb7c9a0591aa9405b"
+          URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
+
+          execute curl -L -O "$URL"
+          echo -e "\033[0;34mecho -n $SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
+          echo -n "$SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
+          execute sha1sum --check "$ARTIFACT.sha1"
+          execute 7z x "$ARTIFACT"
+      - name: 'Set Build Information'
         id: step_version
         run: |
           function debug() { echo -e "\033[0;35m$*\033[0m"; }
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
+
           PLACEHOLDER_TAG=">>>tag<<<"
           PLACEHOLDER_COMMIT=">>>commit-id<<<"
-          
+
           CURRENT_TAG="$(git describe --tags --abbrev=0)"
           debug "git tag: $CURRENT_TAG"
-          
+
           CURRENT_COMMIT="$(git rev-parse HEAD)"
           CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
           debug "git commit: $CURRENT_COMMIT"
@@ -44,35 +62,18 @@ jobs:
           ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
           debug "artifact name: $ARTIFACT_NAME"
           echo "version=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-          
-          FILES_UPDATABLE="$(grep -rli -e "$PLACEHOLDER_TAG" -e "$PLACEHOLDER_COMMIT" mpvqc qml)"
-          echo "$FILES_UPDATABLE" | while read -r FILE; do
-            execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "$FILE"
-            execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "$FILE"
-            execute cat "$FILE"
-          done
-      - name: 'Update Packages And Dependencies'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute sudo apt update -y 
-          execute sudo apt upgrade -y
-          execute sudo apt install -y libmpv1 patchelf libopengl0
-      - name: 'Setup Virtual Environment'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "mpvqc/startup.py"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "mpvqc/startup.py"
+          execute cat "mpvqc/startup.py"
 
-          execute python -m venv venv
-          execute source venv/bin/activate
-          execute python -m pip install --upgrade pip
-          execute python -m pip install wheel
-          execute python -m pip install -r requirements.txt
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qml/dialogs/about/MpvqcAboutView.qml"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qml/dialogs/about/MpvqcAboutView.qml"
+          execute cat "qml/dialogs/about/MpvqcAboutView.qml"
       - name: 'Set Dependency Versions'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           function error() { echo -e "\033[0;31m$*\033[0m"; }
-          
-          execute source venv/bin/activate
           
           DEPENDENCY_MODEL_FILE='MpvqcLibraryModel.qml'
           DEPENDENCY_MODEL_PATH=$(find qml -type f -name "$DEPENDENCY_MODEL_FILE")
@@ -102,16 +103,20 @@ jobs:
           else
             execute cat "$DEPENDENCY_MODEL_PATH"
           fi
-      - name: 'Remove Qml Test Files'
+      - name: 'Setup Virtual Environment'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
-          execute find . -type f -name 'tst_*' -delete
+
+          execute python -m venv venv
+          execute source venv/Scripts/activate
+          execute python -m pip install --upgrade pip
+          execute python -m pip install wheel
+          execute python -m pip install -r requirements.txt
       - name: 'Run Python Build'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute source venv/bin/activate
+          execute source venv/Scripts/activate
           execute just test-python
           execute just clean
           execute just build
@@ -127,10 +132,10 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
-      - name: 'Install Qt 6.6.2'
+      - name: 'Install Qt 6.6.1'
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.6.2'
+          version: '6.6.1'
       - name: 'Install just'
         uses: taiki-e/install-action@just
       - name: 'Lint Qml Files'
