@@ -1,5 +1,5 @@
 inject>=5.2.0
 mpv>=1.0.5
-PySide6==6.6.1
-pytest>=7.4.3
+PySide6==6.6.2
+pytest>=8.0.2
 pywin32>=306; sys_platform == 'win32'
