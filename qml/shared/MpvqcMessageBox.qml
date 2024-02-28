@@ -43,4 +43,6 @@ Dialog {
         elide: Text.ElideLeft
     }
 
+    footer: MpvqcKeyboardFocusableButtonBox {}
+
 }
