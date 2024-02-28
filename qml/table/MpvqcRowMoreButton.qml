@@ -27,12 +27,13 @@ ToolButton {
     required property bool tableInEditMode
 
     property var menu: null
-    property var menuFactory: Component {
+    property var menuFactory: Component
+    {
 
         MpvqcMenuMore {
-            property int spaceToBorder: root.width * 1/4
+            property int spaceToBorder: 10
 
-            x: mirrored ? spaceToBorder : - (width - spaceToBorder * 3)
+            x: mirrored ? spaceToBorder : -(width - spaceToBorder * 3)
             y: spaceToBorder
             transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
 
@@ -40,7 +41,10 @@ ToolButton {
 
             onDeleteCommentClicked: root.deleteCommentClicked()
 
-            onEditCommentClicked: root.editCommentClicked()
+            onEditCommentClicked: {
+                exit = null
+                root.editCommentClicked()
+            }
         }
 
     }

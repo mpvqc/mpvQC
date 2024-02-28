@@ -23,8 +23,8 @@ import shared
 
 
 MpvqcMessageBox {
-    customTitle: qsTranslate("MessageBoxes", "Delete Comment")
-    customText: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
+    title: qsTranslate("MessageBoxes", "Delete Comment")
+    text: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
     standardButtons: Dialog.Yes | Dialog.Cancel
 
 }

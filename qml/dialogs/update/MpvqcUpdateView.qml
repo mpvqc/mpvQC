@@ -20,10 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQml
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 
-ColumnLayout {
+Label {
     id: root
 
     readonly property var openUrlExternally: Qt.openUrlExternally
@@ -41,9 +40,14 @@ ColumnLayout {
     }
 
     property string title: qsTranslate("VersionCheckDialog", "Checking for Updates...")
-    property string text: qsTranslate("VersionCheckDialog", "Loading...")
     property var request: new XMLHttpRequest()
 
+    text: qsTranslate("VersionCheckDialog", "Loading...")
+    horizontalAlignment: Text.AlignLeft
+    wrapMode: Label.WordWrap
+    elide: Text.ElideLeft
+
+    onLinkActivated: root.openUrlExternally(root.mpvqcHomeUrl)
 
     function checkForUpdate() {
         const asynchronous = true
@@ -83,7 +87,7 @@ ColumnLayout {
     function _handleNewVersionAvailable(version: string) {
         root.title = qsTranslate("VersionCheckDialog", "New Version Available")
         const message = qsTranslate("VersionCheckDialog", "There is a new version of mpvQC available (%1). Visit %2 to download it.")
-            .arg(`<strong>${version}</strong>`)
+            .arg(`<i>${version}</i>`)
             .arg(`<a href="${mpvqcHomeUrl}">${mpvqcHomeUrl}</a>`)
         root.text = `<html>${message}</html>`
     }
@@ -98,23 +102,10 @@ ColumnLayout {
         root.text = qsTranslate("VersionCheckDialog", "A connection to the server could not be established.")
     }
 
-    Label {
-        text: root.text
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        wrapMode: Text.WordWrap
-
-        onLinkActivated: root.openUrlExternally(root.mpvqcHomeUrl)
-
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
-        }
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+        hoverEnabled: true
     }
-
 }

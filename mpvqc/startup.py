@@ -39,6 +39,26 @@ class PreStartUp:
         QSettings.setDefaultFormat(QSettings.IniFormat)
 
     @staticmethod
+    def set_up_logging():
+        from PySide6 import QtCore
+        from PySide6.QtCore import QtMsgType
+
+        def handler(level: QtMsgType, context, message):
+            if level == QtMsgType.QtInfoMsg:
+                level = 'INFO'
+            elif level == QtMsgType.QtWarningMsg:
+                level = 'WARNING'
+            elif level == QtMsgType.QtCriticalMsg:
+                level = 'CRITICAL'
+            elif level == QtMsgType.QtFatalMsg:
+                level = 'FATAL'
+            else:
+                level = 'DEBUG'
+            print(f"{level:}: {message} ({context.file}:{context.line:d}, {context.file})")
+
+        QtCore.qInstallMessageHandler(handler)
+
+    @staticmethod
     def prepare_dependency_injection():
         from mpvqc.injections import configure_injections
         configure_injections()
@@ -102,6 +122,7 @@ def perform_startup():
     we.set_qt_application_name()
     we.set_qt_application_version()
     we.set_qt_settings_format()
+    we.set_up_logging()
     we.prepare_dependency_injection()
     we.set_render_backend()
     we.inject_environment_variables()

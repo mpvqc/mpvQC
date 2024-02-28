@@ -26,27 +26,23 @@ Dialog {
 
     required property var mpvqcApplication
 
-    property alias customTitle: _header.text
-    property alias customText: _content.text
+    property alias text: _content.text
 
-    implicitWidth: Math.max(_content.implicitWidth, _header.implicitWidth) + 60
+    width: 420
+    z: 2
     parent: mpvqcApplication.contentItem
-    modal: true
-    dim: false
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: parent
-    z: 2
-
-    header: MpvqcHeader {
-        id: _header
-    }
 
     contentItem: Label {
         id: _content
 
         horizontalAlignment: Text.AlignLeft
+        wrapMode: Label.WordWrap
         elide: Text.ElideLeft
     }
+
+    footer: MpvqcKeyboardFocusableButtonBox {}
 
 }
