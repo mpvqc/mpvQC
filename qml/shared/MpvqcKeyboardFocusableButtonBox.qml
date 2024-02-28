@@ -72,7 +72,15 @@ DialogButtonBox {
     }
 
     Shortcut {
-        sequence: "Tab"
+        sequence: "return"
+
+        onActivated: {
+            _listView.currentItem.clicked()
+        }
+    }
+
+    Shortcut {
+        sequence: "tab"
 
         onActivated: {
             _listView.incrementCurrentIndex()
@@ -80,7 +88,7 @@ DialogButtonBox {
     }
 
     Shortcut {
-        sequence: "Shift+Tab"
+        sequence: "shift+tab"
 
         onActivated: {
             _listView.decrementCurrentIndex()
