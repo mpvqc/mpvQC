@@ -53,11 +53,12 @@ class FontLoaderTest(unittest.TestCase):
             self.assertTrue(file.exists(), f"Expected to find {variant} in resources but couldn't")
 
     def test_fonts_loaded(self):
-        # It's not possible to clear Qt's entire font database. To verify that our required fonts have been loaded,
-        # we only test a selection of rather uncommon fonts :)
+        # It's not possible to clear Qt's entire font database. Additionally, font backends on different OS's behave
+        # differently. Therefore, we just test for the common font families.
         font_families = [
-            'Noto Sans SemiBold',
-            'Noto Sans Hebrew SemiBold',
+            'Noto Sans',
+            'Noto Sans Hebrew',
+            'Noto Sans Mono',
         ]
 
         FontLoaderService().load_application_fonts()
