@@ -17,14 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick.Controls
-
 import shared
 
 
-MpvqcDialog {
+MpvqcMessageBox {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
+    width: 420
+    title: _contentItem.title
+
+    contentItem: MpvqcUpdateView {
+        id: _contentItem
+    }
 }
