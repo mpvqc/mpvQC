@@ -49,7 +49,7 @@ MpvqcMenu {
         MpvqcMessageBox {
             mpvqcApplication: root.mpvqcApplication
 
-            customTitle: qsTranslate("MessageBoxes", "Export Error")
+            title: qsTranslate("MessageBoxes", "Export Error")
             standardButtons: Dialog.Ok
         }
     }
@@ -68,7 +68,7 @@ MpvqcMenu {
 
     function displayExportErrorDialog(message: string, lineNr: int): void {
         root.exportErrorDialog = root.exportErrorDialogFactory.createObject(root)
-        root.exportErrorDialog.customText = lineNr
+        root.exportErrorDialog.text = lineNr
             ? qsTranslate("MessageBoxes", "Error at line %1: %2").arg(lineNr).arg(message)
             : message
         root.exportErrorDialog.closed.connect(root.exportErrorDialog.destroy)
