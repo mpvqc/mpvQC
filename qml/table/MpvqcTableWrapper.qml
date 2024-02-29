@@ -36,6 +36,7 @@ FocusScope {
         MpvqcPlaceholder {
             width: root.width
             height: haveComments ? 0 : root.height
+            mpvqcApplication: root.mpvqcApplication
         }
 
         MpvqcTable {

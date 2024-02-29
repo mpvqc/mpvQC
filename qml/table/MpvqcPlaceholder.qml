@@ -25,10 +25,25 @@ import QtQuick.Layouts
 Flickable {
     id: root
 
+    required property var mpvqcApplication
+
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+
+    readonly property bool horizontalOrientation: mpvqcSettings.layoutOrientation === Qt.Horizontal
+    readonly property var textAlignment: horizontalOrientation
+        ? Qt.AlignLeft
+        : Qt.AlignVCenter | Qt.AlignRight
+
+    readonly property int columns: horizontalOrientation ? 1 : 2
+
+    readonly property int spacing: 30
+    readonly property int shortcutBottomMargin: horizontalOrientation ? spacing + 10 : 0
+    readonly property int columnSpacing: horizontalOrientation ? 0 : spacing
+
     clip: true
 
     component MpvqcDescriptiveText: Label {
-        Layout.alignment : Qt.AlignVCenter | Qt.AlignRight
+        Layout.alignment: root.textAlignment
     }
 
     component MpvqcButtonRendered: Button {
@@ -42,14 +57,16 @@ Flickable {
 
     GridLayout {
         anchors.centerIn: root.contentItem
-        columns: 2
-        columnSpacing: 30
+        columns: root.columns
+        columnSpacing: root.columnSpacing
+        rowSpacing: 10
 
         MpvqcDescriptiveText {
             text: qsTranslate("CommentTable", "Open QC Document(s)")
         }
 
         RowLayout {
+            Layout.bottomMargin: root.shortcutBottomMargin
 
             MpvqcButtonRendered {
                 text: qsTranslate("CommentTable", "Ctrl")
@@ -71,6 +88,7 @@ Flickable {
         }
 
         RowLayout {
+            Layout.bottomMargin: root.shortcutBottomMargin
 
             MpvqcButtonRendered {
                 text: qsTranslate("CommentTable", "Ctrl")
