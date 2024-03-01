@@ -25,6 +25,6 @@
     ```
   * Start the application
 * Open a new pull request
-* Add a new entry in the `qml/models/MpvqcLanguageModel.qml` file and update the `mpvqc/services/reverse_translator.py` file
+* Add a new entry in the `qml/models/MpvqcLanguageModel.qml` file
 
 **Thank you very much!** 💚

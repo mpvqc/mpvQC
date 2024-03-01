@@ -99,7 +99,7 @@ class ProjectFileGenerator:
     def generate_project_file(self, output: Path):
         structure = {'files': [str(file) for file in self._files]}
         data = json.dumps(structure, indent=2, sort_keys=True)
-        output.write_text(data, encoding='utf-8')
+        output.write_text(data, encoding='utf-8', newline='\n')
 
 
 def run(args):

@@ -22,7 +22,7 @@ import inject
 from mpvqc.services import ResourceService, ResourceReaderService
 
 
-class TestResourceService(unittest.TestCase):
+class ResourceServiceTest(unittest.TestCase):
 
     def setUp(self):
         inject.clear_and_configure(lambda binder: binder
@@ -38,3 +38,32 @@ class TestResourceService(unittest.TestCase):
     def test_mpv_conf_exists(self):
         text = ResourceService().mpv_conf_content
         self.assertTrue(text)
+
+    def test_export_template_readme_exists(self):
+        text = ResourceService().export_template_readme
+        self.assertTrue(text)
+
+    def test_backup_template(self):
+        template = ResourceService().backup_template
+        self.assertTrue(template)
+
+    def test_default_export_template(self):
+        template = ResourceService().default_export_template
+        self.assertTrue(template)
+
+        # contains all mpvQC expressions
+        required_arguments = [
+            "write_date", "date",
+            "write_generator", "generator",
+            "write_nickname", "nickname",
+            "write_video_path", "video_path",
+            "comments",
+            "comment['time'] | as_time",
+            "comment['commentType'] | as_comment_type",
+            "comment['comment'] | trim",
+        ]
+        for arg in required_arguments:
+            self.assertIn(arg, template, f"Expected to find mpvQC expression '{arg}' in export template")
+
+        # ends with '\n'
+        self.assertEqual('\n', template[-1])

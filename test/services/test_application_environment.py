@@ -23,7 +23,7 @@ from pathlib import Path
 from mpvqc.services import ApplicationEnvironmentService
 
 
-class TestApplicationEnvironmentService(unittest.TestCase):
+class ApplicationEnvironmentServiceTest(unittest.TestCase):
     MODULE = 'mpvqc.services.application_environment'
 
     def test_built_by_pyinstaller(self):

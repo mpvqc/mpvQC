@@ -22,8 +22,6 @@ import QtQuick
 
 import dialogs
 
-import "MpvqcDocumentFileExporter.js" as MpvqcDocumentFileExporter
-
 
 QtObject {
     id: root
@@ -32,22 +30,10 @@ QtObject {
     required property url document
     required property var mpvqcApplication
 
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
-    readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
+    readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
 
-    readonly property var absPathGetterFunc: mpvqcFileSystemHelperPyObject.url_to_absolute_path
-    readonly property var nicknameGetterFunc: function() { return root.mpvqcSettings.nickname }
-    readonly property var commentGetterFunc: mpvqcCommentTable.getAllComments
-    readonly property var settingsGetterFunc: function() { return root.mpvqcSettings }
-    readonly property var timeFormatFunc: mpvqcTimeFormatUtils.formatTimeToStringLong
-
-    property var generator: new MpvqcDocumentFileExporter.ExportContentGenerator(
-        absPathGetterFunc, nicknameGetterFunc, commentGetterFunc, settingsGetterFunc, timeFormatFunc
-    )
-
-    property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument {
+    property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
+    {
 
         onSavePressed: (documentUrl) => {
             root.save(documentUrl)
@@ -57,54 +43,25 @@ QtObject {
     signal saved(url newDocument)
 
     function requestSave(): void {
-        if (document != '') {
+        if (_documentKnown()) {
             save(document)
         } else {
             requestSaveAs()
         }
     }
 
-    function save(document: url): void {
-        const content = generator.createExportContent(video)
-        mpvqcFileSystemHelperPyObject.write(document, content)
-        saved(document)
+    function _documentKnown(): bool {
+        return document && document.toString() !== ''
+    }
+
+    function save(newDocumentUrl: url): void {
+        mpvqcDocumentExporterPyObject.save(newDocumentUrl)
+        saved(newDocumentUrl)
     }
 
     function requestSaveAs(): void {
-        exportDialog.selectedFile = filePathProposal()
+        exportDialog.selectedFile = mpvqcDocumentExporterPyObject.generate_file_path_proposal()
         exportDialog.open()
-    }
-
-    function filePathProposal(): string {
-        const directory = getVideoDirectory()
-        const videoName = getVideoName()
-        const fileName = getFileNameWith(videoName)
-        return `${directory}/${fileName}`
-    }
-
-    function getVideoDirectory(): url {
-        if (video != '') {
-            return mpvqcFileSystemHelperPyObject.url_to_parent_file_url(video)
-        } else {
-            return StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
-        }
-    }
-
-    function getVideoName(): string {
-        if (video != '') {
-            return mpvqcFileSystemHelperPyObject.url_to_filename_without_suffix(video)
-        } else {
-            return qsTranslate("FileInteractionDialogs", "untitled")
-        }
-    }
-
-    function getFileNameWith(video: url): string {
-        const nickname = mpvqcSettings.nickname
-        if (nickname != '') {
-            return `[QC]_${video}_${nickname}.txt`
-        } else {
-            return `[QC]_${video}.txt`
-        }
     }
 
 }

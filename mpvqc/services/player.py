@@ -61,6 +61,14 @@ class PlayerService:
         return self._mpv
 
     @property
+    def path(self) -> str or None:
+        return self._mpv.path
+
+    @property
+    def has_video(self) -> bool:
+        return self.path is not None
+
+    @property
     def current_time(self) -> int:
         return self._mpv.time_pos or 0
 

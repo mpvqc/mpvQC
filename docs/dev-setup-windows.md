@@ -16,3 +16,5 @@
     1. `python -m venv venv`
     1. `source venv/Scripts/activate`
 1. Install requirements `python -m pip install -r requirements.txt`
+1. Download [libmpv](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/), extract it and move the
+   libmpv-*.dll into the root of the repository

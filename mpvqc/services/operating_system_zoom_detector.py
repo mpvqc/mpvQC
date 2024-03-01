@@ -1,3 +1,20 @@
+# mpvQC
+#
+# Copyright (C) 2024 mpvQC developers
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import os
 import sys
 
@@ -16,7 +33,7 @@ def _figure_out_zoom_factor_on_windows() -> float:
     import ctypes
     import win32api
 
-    def currentMonitorHandle():
+    def current_monitor_handle():
         hwnd = QGuiApplication.topLevelWindows()[0].winId()
         return ctypes.windll.user32.MonitorFromWindow(ctypes.wintypes.HWND(hwnd), ctypes.wintypes.DWORD(2))
 
@@ -41,7 +58,7 @@ def _figure_out_zoom_factor_on_windows() -> float:
         return monitors
 
     monitor_to_dpi_mapping = monitors_to_dpi_mapping()
-    current_monitor = currentMonitorHandle()
+    current_monitor = current_monitor_handle()
 
     dpi = monitor_to_dpi_mapping[current_monitor]
 

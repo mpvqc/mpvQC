@@ -35,7 +35,8 @@ Label {
 
     property alias loader: _loader
 
-    property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
+    readonly property var mpvqcDefaultTextValidatorPyObject: mpvqcApplication.mpvqcDefaultTextValidatorPyObject
+    readonly property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
 
     signal clicked()
     signal edited(string newComment)
@@ -97,7 +98,7 @@ Label {
             implicitHeight: root.height
             currentComment: root.comment
             backgroundColor: root.backgroundColor
-            mpvqcSpecialCharacterValidator: mpvqcApplication.mpvqcSpecialCharacterValidatorPyObject
+            mpvqcDefaultTextValidator: root.mpvqcDefaultTextValidatorPyObject
             leftPadding: root.leftPadding / 2
             rightPadding: root.rightPadding / 2
 

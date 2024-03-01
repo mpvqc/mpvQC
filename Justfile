@@ -132,7 +132,7 @@ build-develop: _check-pyside-setup _clean-develop _compile-resources
 		{{FILE_BUILD_RESOURCES}} {{DIRECTORY_PY_SOURCES}}
 
 # Traverses QML and Python files and updates translation files with new strings
-update-translations: _check-pyside-setup _prepare-translation-extractions
+update-translations: _check-pyside-setup _clean-develop _prepare-translation-extractions
 	@# Traverses *.qml and *.py files to update translation files
 	@# Requires translations in .py:   QCoreApplication.translate("context", "string")
 	@# Requires translations in .qml:  qsTranslate("context", "string")

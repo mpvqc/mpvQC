@@ -29,10 +29,10 @@ ListModel {
         os: 'linux, windows'
     }
     ListElement {
-        name: 'PySide6'
-        url: 'https://wiki.qt.io/Qt_for_Python'
-        licence: 'LGPL-3.0'
-        version: '@@pypi-PySide6@@'
+        name: 'jinja2'
+        url: 'https://github.com/pallets/jinja/'
+        licence: 'BSD-3-Clause'
+        version: '@@pypi-Jinja2@@'
         os: 'linux, windows'
     }
     ListElement {
@@ -43,11 +43,27 @@ ListModel {
         os: 'linux, windows'
     }
     ListElement {
+        name: 'PySide6'
+        url: 'https://wiki.qt.io/Qt_for_Python'
+        licence: 'LGPL-3.0'
+        version: '@@pypi-PySide6@@'
+        os: 'linux, windows'
+    }
+    ListElement {
         name: 'pywin32'
         url: 'https://github.com/mhammond/pywin32'
         licence: 'PSF'
         version: '@@pypi-pywin32@@'
         os: 'windows'
+    }
+
+    // Tests
+    ListElement {
+        name: 'parameterized'
+        url: 'https://github.com/wolever/parameterized'
+        licence: 'BSD'
+        version: '@@pypi-parameterized@@'
+        os: 'linux, windows'
     }
     ListElement {
         name: 'pytest'

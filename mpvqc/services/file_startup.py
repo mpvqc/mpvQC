@@ -24,26 +24,39 @@ from .resource import ResourceService
 
 
 class FileStartupService:
-    _paths = inject.attr(ApplicationPathsService)
-    _resources = inject.attr(ResourceService)
+    _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
+    _resources: ResourceService = inject.attr(ResourceService)
 
     def create_missing_directories(self) -> None:
         self._paths.dir_config.mkdir(exist_ok=True, parents=True)
         self._paths.dir_backup.mkdir(exist_ok=True, parents=True)
         self._paths.dir_screenshots.mkdir(exist_ok=True, parents=True)
+        self._paths.dir_export_templates.mkdir(exist_ok=True, parents=True)
 
     def create_missing_files(self) -> None:
         self._create_missing_input_conf()
         self._create_missing_mpv_conf()
+        self._create_missing_export_template_readme()
 
     def _create_missing_input_conf(self) -> None:
-        file: Path = self._paths.file_input_conf
-        if not file.exists():
-            content = self._resources.input_conf_content
-            file.write_text(content, encoding='utf-8')
+        self._create_missing_file(
+            path=self._paths.file_input_conf,
+            content=self._resources.input_conf_content
+        )
 
     def _create_missing_mpv_conf(self) -> None:
-        file: Path = self._paths.file_mpv_conf
-        if not file.exists():
-            content = self._resources.mpv_conf_content
-            file.write_text(content, encoding='utf-8')
+        self._create_missing_file(
+            path=self._paths.file_mpv_conf,
+            content=self._resources.mpv_conf_content
+        )
+
+    def _create_missing_export_template_readme(self) -> None:
+        self._create_missing_file(
+            path=self._paths.file_export_template_readme,
+            content=self._resources.export_template_readme
+        )
+
+    @staticmethod
+    def _create_missing_file(path: Path, content: str) -> None:
+        if not path.exists():
+            path.write_text(content, encoding='utf-8', newline='\n')

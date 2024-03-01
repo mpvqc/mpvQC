@@ -15,24 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+from PySide6.QtCore import QDir
 from PySide6.QtGui import QFont, QFontDatabase
 
 
 class FontLoaderService:
-    _used_variants = [
-        'NotoSans-Regular.ttf',
-        'NotoSans-Italic.ttf',
-        'NotoSans-Bold.ttf',
-        'NotoSans-SemiBold.ttf',
-        'NotoSansHebrew-Bold.ttf',
-        'NotoSansHebrew-Regular.ttf',
-        'NotoSansHebrew-SemiBold.ttf',
-        'NotoSansMono-Regular.ttf'
-    ]
 
-    def load_application_fonts(self):
-        for variant in self._used_variants:
-            QFontDatabase.addApplicationFont(f":/data/fonts/{variant}")
+    @staticmethod
+    def load_application_fonts():
+        for entry_info in QDir(':/data/fonts').entryInfoList():
+            resource_path = entry_info.filePath()
+            assert QFontDatabase.addApplicationFont(resource_path) >= 0, f"Cannot load font from {resource_path}"
 
         QFont.insertSubstitution('Noto Sans', 'Noto Sans Hebrew')

@@ -21,161 +21,125 @@ import QtQuick
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
 
     width: 400
     height: 400
+    visible: true
+    name: 'MpvqcExporter'
 
-    property string filePath: ''
-    property string content: ''
+    Component {
+        id: signalSpy; SignalSpy {}
+    }
 
-    MpvqcExporter {
+    Component {
         id: objectUnderTest
 
-        video: ''
-        document: ''
+        MpvqcExporter {
+            property bool saveCalled: false
 
-        mpvqcApplication: QtObject {
-            property var mpvqcSettings: QtObject {
-                property string nickname: 'nickname'
-            }
-            property var mpvqcCommentTable: QtObject {
-                function getAllComments() { return [] }
-            }
-            property var mpvqcFileSystemHelperPyObject: QtObject {
-                function url_to_absolute_path(url) { return 'absolute::' +url }
-                function url_to_parent_file_url(url) { return 'parent::' + url }
-                function url_to_filename_without_suffix(url) { return 'fileNameWithoutSuffix::' + url }
-                function write(filePath, content) {
-                    testHelper.filePath = filePath
-                    testHelper.content = content
+            video: ''
+            document: ''
+
+            mpvqcApplication: QtObject {
+                property var mpvqcDocumentExporterPyObject: QtObject
+                {
+                    function generate_file_path_proposal() {
+                        return '/some/path'
+                    }
+
+                    function save(document: url) {
+                        saveCalled = true
+                    }
                 }
             }
-            property var mpvqcTimeFormatUtils: QtObject {
-                function formatTimeToStringLong(seconds) { return 'formatted' }
-            }
         }
+    }
 
-        generator: QtObject {
-            function createExportContent(video) { return 'content' }
-        }
+    function test_saveNoDocument() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        property var test: TestCase {
-            name: "MpvqcExporter"
-            when: windowShown
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        verify(savedSpy)
 
-            SignalSpy { id: savedSpy; target: objectUnderTest; signalName: 'saved' }
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
-            function init() {
-                testHelper.filePath= ''
-                testHelper.content = ''
+        control.document = ''
+        control.requestSave()
 
-                objectUnderTest.video = ''
-                objectUnderTest.document = ''
-                objectUnderTest.exportDialog.selectedFile = ''
+        compare(control.exportDialog.selectedFile.toString(), '/some/path.txt')
+        verify(control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
+    }
 
-                savedSpy.clear()
-            }
+    function test_saveDocument() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-            function test_requestSave_data() {
-                return [
-                    { tag: 'document', document: 'something', expectedEmptyFilePathProposal: true },
-                    { tag: 'no-document', document: '', expectedEmptyFilePathProposal: false },
-                ]
-            }
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        verify(savedSpy)
 
-            function test_requestSave(data) {
-                objectUnderTest.document = data.document
-                objectUnderTest.requestSave()
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
-                if (data.expectedEmptyFilePathProposal) {
-                    verify(!objectUnderTest.exportDialog.selectedFile.toString().includes('file:///'))
-                } else {
-                    verify(objectUnderTest.exportDialog.selectedFile.toString().includes('file:///'))
-                }
-            }
+        control.document = '/some/path'
+        control.requestSave()
 
-            function test_requestSaveAs_data() {
-                return [
-                    { tag: 'saved', saved: true, acceptDialog: true, },
-                    { tag: 'rejected', saved: false, acceptDialog: false, },
-                ]
-            }
+        verify(!control.exportDialog.visible)
+        verify(control.saveCalled)
+        compare(savedSpy.count, 1)
+    }
 
-            function test_requestSaveAs(data) {
-                objectUnderTest.requestSaveAs()
+    function test_saveAsAccepted() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-                if (data.acceptDialog) {
-                    objectUnderTest.exportDialog.accepted()
-                }
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        verify(savedSpy)
 
-                compare(savedSpy.count, data.saved ? 1 : 0)
-            }
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
-            function test_save() {
-                const document = 'a-new-document.txt'
+        control.requestSaveAs()
 
-                objectUnderTest.save(document)
+        verify(control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
-                compare(testHelper.filePath, document)
-                compare(testHelper.content, 'content')
-                compare(savedSpy.count, 1)
-            }
+        control.exportDialog.accepted()
 
-            function test_getVideoDirectory_data() {
-                return [
-                    {
-                        tag: 'video',
-                        video: 'any-video.mkv',
-                        verify: (actual) => compare(actual, 'parent::any-video.mkv')
-                    },
-                    {
-                        tag: 'no-video',
-                        video: '',
-                        verify: (actual) => verify(actual.toString().includes('file:///'))
-                    },
-                ]
-            }
+        verify(control.saveCalled)
+        compare(savedSpy.count, 1)
+    }
 
-            function test_getVideoDirectory(data) {
-                objectUnderTest.video = data.video
-                const actual = objectUnderTest.getVideoDirectory()
-                data.verify(actual)
-            }
+    function test_saveAsRejected() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-            function test_getVideoName_data() {
-                return [
-                    {
-                        tag: 'video',
-                        video: 'any-video.mkv',
-                        expected: 'fileNameWithoutSuffix::any-video.mkv'
-                    },
-                    { tag: 'no-video', video: '', expected: 'untitled' },
-                ]
-            }
+        const savedSpy = signalSpy.createObject(control, {target: control, signalName: 'saved'})
+        verify(savedSpy)
 
-            function test_getVideoName(data) {
-                objectUnderTest.video = data.video
-                compare(objectUnderTest.getVideoName(), data.expected)
-            }
+        verify(!control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
-            function test_getFileNameWith_data() {
-                return [
-                    { tag: 'nickname', video: 'any-video', nickname: 'saitama', expected: '[QC]_any-video_saitama.txt' },
-                    { tag: 'no-nickname', video: 'any-video', nickname: '', expected: '[QC]_any-video.txt' },
-                    { tag: 'no-nickname-no-video', video: '', nickname: '', expected: '[QC]_.txt' },
-                ]
-            }
+        control.requestSaveAs()
 
-            function test_getFileNameWith(data) {
-                objectUnderTest.mpvqcApplication.mpvqcSettings.nickname = data.nickname
-                const proposal = objectUnderTest.getFileNameWith(data.video)
-                compare(proposal, data.expected)
-            }
+        verify(control.exportDialog.visible)
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
 
-        }
+        control.exportDialog.rejected()
 
+        verify(!control.saveCalled)
+        compare(savedSpy.count, 0)
     }
 
 }

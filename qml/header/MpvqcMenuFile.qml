@@ -27,6 +27,7 @@ MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
+    required property var extendedExportTemplateModel
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
 
@@ -87,6 +88,24 @@ MpvqcMenu {
 
         onTriggered: {
             root.mpvqcManager.saveAs()
+        }
+    }
+
+    MenuSeparator {
+        height: _subMenuExtendedExport.haveTemplates ? implicitHeight : 0
+    }
+
+    MpvqcSubMenuExtendedExport {
+        id: _subMenuExtendedExport
+
+        mpvqcApplication: root.mpvqcApplication
+        templateModel: root.extendedExportTemplateModel
+        enabled: haveTemplates
+
+        onEnabledChanged: {
+            parent.enabled = enabled
+            parent.visible = enabled
+            parent.height = enabled ? parent.implicitHeight : 0
         }
     }
 

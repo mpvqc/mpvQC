@@ -15,59 +15,66 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Callable
+from functools import cached_property
 
-from PySide6.QtCore import QCoreApplication
-
-DEFAULT_COMMENT_TYPES_ENGLISH = [
-    'Translation',
-    'Spelling',
-    'Punctuation',
-    'Phrasing',
-    'Timing',
-    'Typeset',
-    'Note',
-]
-
-# Must be kept in sync with available languages in qml/models/MpvqcLanguageModel.qml
-SUPPORTED_LANGUAGES = [
-    'de-DE',
-    'en-US',
-    'es-ES',
-    'he-IL',
-    'it-IT',
-]
+from PySide6.QtCore import QDir, QTranslator
 
 
-class ReverseTranslatorService:
+class LookupTable:
 
     def __init__(self):
         self._combined_lookup_table: dict[str, str] = {}
         self._language_lookup_table: dict[str, dict[str, str]] = {}
 
-    def lookup(self, non_english: str) -> str:
-        return self._combined_lookup_table.get(non_english, non_english)
+        self._translator = QTranslator()
+        try:
+            self._create_lookup_tables()
+        finally:
+            del self._translator
 
-    def lookup_specific_language(self, language: str, non_english: str) -> str:
-        language_lookup = self._language_lookup_table.get(language, {})
-        return language_lookup.get(non_english, non_english)
+    def _create_lookup_tables(self) -> None:
+        for entry_info in QDir(':/i18n').entryInfoList():
+            identifier = entry_info.baseName()
+            resource_path = entry_info.filePath()
+            assert self._translator.load(resource_path), f'Cannot load language: {identifier}'
 
-    def set_up(self, translate_into: Callable[[str], None]) -> None:
-        for language in SUPPORTED_LANGUAGES:
-            translate_into(language)
             self._add_to_combined_lookup_table()
-            self._add_to_lookup_table_for(language)
+            self._add_to_language_lookup_table(language=identifier)
+
+    @property
+    def _default_comment_types(self) -> list[str]:
+        return ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note']
 
     def _add_to_combined_lookup_table(self) -> None:
-        for english in DEFAULT_COMMENT_TYPES_ENGLISH:
-            # noinspection PyTypeChecker
-            translated = QCoreApplication.translate("CommentTypes", english)
+        for english in self._default_comment_types:
+            translated = self._translator.translate("CommentTypes", english)
             self._combined_lookup_table[translated] = english
 
-    def _add_to_lookup_table_for(self, language: str) -> None:
+    def _add_to_language_lookup_table(self, language: str) -> None:
         language_lookup: dict[str, str] = {}
-        for english in DEFAULT_COMMENT_TYPES_ENGLISH:
-            # noinspection PyTypeChecker
-            translated = QCoreApplication.translate("CommentTypes", english)
+        for english in self._default_comment_types:
+            translated = self._translator.translate("CommentTypes", english)
             language_lookup[translated] = english
         self._language_lookup_table[language] = language_lookup
+
+    def lookup(self, comment_type: str, language: str or None = None) -> str:
+        if language is None:
+            return self._combined_lookup_table.get(comment_type, comment_type)
+
+        mapping = self._language_lookup_table.get(language, {})
+        return mapping.get(comment_type, comment_type)
+
+
+class ReverseTranslatorService:
+    """Service that offers reverse translation of comment types.
+    It provides comment type identifiers mpvQC internally uses for the comment type model"""
+
+    @cached_property
+    def _lookup_table(self):
+        return LookupTable()
+
+    def lookup(self, comment_type_in_current_language: str) -> str:
+        return self._lookup_table.lookup(comment_type_in_current_language)
+
+    def lookup_specific_language(self, comment_type_in_current_language: str, language: str) -> str:
+        return self._lookup_table.lookup(comment_type_in_current_language, language)

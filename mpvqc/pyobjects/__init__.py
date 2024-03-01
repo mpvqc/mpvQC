@@ -16,11 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .application_paths import MpvqcApplicationPathsPyObject
-from .backup import MpvqcBackupPyObject
 from .clipboard import MpvqcClipboardPyObject
-from .comments_model import MpvqcCommentModelPyObject
-from .comments_validator import MpvqcSpecialCharacterValidatorPyObject
+from .comment_model import MpvqcCommentModelPyObject
+from .document_exporter import MpvqcDocumentExporterPyObject
 from .environment import MpvqcEnvironmentPyObject
+from .export_template_model import MpvqcExportTemplateModelPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .file_system_helper import MpvqcFileSystemHelperPyObject
 from .mouse import MpvqcMouseCursorPyObject
@@ -29,3 +29,4 @@ from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .resource import MpvqcResourcePyObject
 from .reverse_translator import MpvqcReverseTranslatorPyObject
+from .text_validator import MpvqcDefaultTextValidatorPyObject

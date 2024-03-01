@@ -15,26 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
-from zipfile import ZipFile, ZIP_DEFLATED
+from PySide6.QtGui import QValidator
+from PySide6.QtQml import QmlElement
 
-import inject
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
 
-from .application_paths import ApplicationPathsService
 
+@QmlElement
+class MpvqcDefaultTextValidatorPyObject(QValidator):
 
-class BackupService:
-    _paths = inject.attr(ApplicationPathsService)
+    def validate(self, user_input: str, position: int):
+        return QValidator.Acceptable, self.replace_special_characters(user_input), position
 
-    def backup(self, video_name: str, content: str) -> None:
-        now = datetime.now()
-
-        zip_name = f'{now:%Y-%m}.zip'
-        zip_path = self._paths.dir_backup / zip_name
-        zip_mode = 'a' if zip_path.exists() else 'w'
-
-        file_name = f'{now:%Y-%m-%d_%H-%M-%S}_{video_name}.txt'
-
-        # noinspection PyTypeChecker
-        with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as file:
-            file.writestr(file_name, content)
+    @staticmethod
+    def replace_special_characters(string_to_replace) -> str:
+        return string_to_replace \
+            .replace(u'\xad', '')  # https://www.charbase.com/00ad-unicode-soft-hyphen

@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from functools import cached_property
 from pathlib import Path
 from typing import NamedTuple
 
@@ -32,6 +31,7 @@ class ApplicationPathsService:
         dir_backup: Path
         dir_config: Path
         dir_screenshots: Path
+        dir_export_templates: Path
 
     def __init__(self):
         if self._app.built_by_pyinstaller:
@@ -46,7 +46,8 @@ class ApplicationPathsService:
         return ApplicationPathsService.Paths(
             dir_backup=dir_app / 'appdata' / 'backups',
             dir_config=dir_app / 'appdata',
-            dir_screenshots=dir_app / 'appdata' / 'screenshots'
+            dir_screenshots=dir_app / 'appdata' / 'screenshots',
+            dir_export_templates=dir_app / 'appdata' / 'export-templates',
         )
 
     @staticmethod
@@ -58,29 +59,42 @@ class ApplicationPathsService:
         return ApplicationPathsService.Paths(
             dir_backup=Path(documents) / appname / 'backups',
             dir_config=Path(config) / appname,
-            dir_screenshots=Path(pictures) / appname
+            dir_screenshots=Path(pictures) / appname,
+            dir_export_templates=Path(config) / appname / 'export-templates',
         )
 
-    @cached_property
+    @property
     def dir_backup(self) -> Path:
         return self._paths.dir_backup
 
-    @cached_property
+    @property
     def dir_config(self) -> Path:
         return self._paths.dir_config
 
-    @cached_property
+    @property
     def dir_screenshots(self) -> Path:
         return self._paths.dir_screenshots
 
-    @cached_property
+    @property
+    def dir_export_templates(self) -> Path:
+        return self._paths.dir_export_templates
+
+    @property
     def file_input_conf(self) -> Path:
         return self.dir_config / 'input.conf'
 
-    @cached_property
+    @property
     def file_mpv_conf(self) -> Path:
         return self.dir_config / 'mpv.conf'
 
-    @cached_property
+    @property
     def file_settings(self) -> Path:
         return self.dir_config / 'settings.ini'
+
+    @property
+    def file_export_template_readme(self) -> Path:
+        return self.dir_export_templates / 'Readme.txt'
+
+    @property
+    def files_export_templates(self) -> tuple[Path, ...]:
+        return tuple(self.dir_export_templates.glob("*.jinja"))

@@ -19,9 +19,9 @@ import unittest
 from unittest.mock import MagicMock
 
 import inject
+from parameterized import parameterized
 
-from mpvqc.pyobjects import MpvqcCommentModelPyObject
-from mpvqc.pyobjects.comments_model import Role
+from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject, Role
 from mpvqc.services import PlayerService
 
 
@@ -56,6 +56,25 @@ class TestCommentsModel(unittest.TestCase):
         self.assertEqual(count, 5)
         self._model.add_row('comment')
         self.assertEqual(count + 1, 6)
+
+    @parameterized.expand([
+        (0, 0.499999),
+        (0, 0.500000),
+        (1, 0.500001),
+        (1, 1.499999),
+        (2, 1.500001),
+    ])
+    def test_add_comment_time_rounded(self, expected, input_time):
+        self._model.clear()
+        self._mock_player_time(time=input_time)
+
+        self._model.add_row('comment')
+
+        index = self._model.index(0, 0)
+        item = self._model.itemFromIndex(index)
+        actual = item.data(Role.TIME)
+
+        self.assertEqual(expected, actual)
 
     def test_add_row_sorting(self):
         self._mock_player_time(time=7)
@@ -111,6 +130,10 @@ class TestCommentsModel(unittest.TestCase):
         self.assertEqual(count, 5)
         self._model.remove_row(0)
         self.assertEqual(count - 1, 4)
+
+    def test_clear_comments(self):
+        self._model.clear_comments()
+        self.assertEqual(0, self._model.rowCount())
 
     def test_remove_row_signals(self):
         signals_fired = {}
@@ -365,3 +388,8 @@ class TestCommentsModelSearch(unittest.TestCase):
         self.assertEqual(7, next_idx)
         self.assertEqual(7, current_result)
         self.assertEqual(9, total_results)
+
+    def test_time_is_int(self):
+        self._model.import_comments([{'time': 999.99, 'commentType': 'commentType', 'comment': 'Word 1'}, ])
+        comment = self._model.comments()[-1]
+        self.assertEqual(999, comment['time'])

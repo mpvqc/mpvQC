@@ -24,7 +24,7 @@ import inject
 from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsService
 
 
-class TestApplicationPaths(unittest.TestCase):
+class ApplicationPathsServiceTest(unittest.TestCase):
     executing_dir = Path.home()
 
     def setUp(self):
@@ -54,6 +54,12 @@ class TestApplicationPaths(unittest.TestCase):
         service = ApplicationPathsService()
         expected = self.executing_dir / 'appdata' / 'screenshots'
         actual = service.dir_screenshots
+        self.assertEqual(expected, actual)
+
+    def test_directory_export_templates(self):
+        service = ApplicationPathsService()
+        expected = self.executing_dir / 'appdata' / 'export-templates'
+        actual = service.dir_export_templates
         self.assertEqual(expected, actual)
 
     def test_file_input_conf(self):
