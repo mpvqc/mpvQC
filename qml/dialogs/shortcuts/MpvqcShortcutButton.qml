@@ -1,7 +1,7 @@
 /*
 mpvQC
 
-Copyright (C) 2022 mpvQC developers
+Copyright (C) 2024 mpvQC developers
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,22 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import shared
 
+Button {
+    enabled: false
+    visible: text
+    height: text ? implicitHeight : 0
+    width: text ? implicitWidth : 0
 
-MpvqcDialog {
-    id: root
-
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
-    readonly property int columns: mpvqcApplication.width < 1080 ? 1 : 2
-
-    width: columns === 1 ? 500 : 1000
-    height: Math.min(1080, mpvqcApplication.height * 0.85)
-
-    MpvqcShortcutView {
-        property string title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
+    contentItem: Label {
+        text: parent.text
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
-
 }
