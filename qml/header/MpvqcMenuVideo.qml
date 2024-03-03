@@ -44,7 +44,7 @@ MpvqcMenu {
         }
 
         text: qsTranslate("MainWindow", "Open &Video...")
-        shortcut: "CTRL+Shift+O"
+        shortcut: "CTRL+Alt+O"
         icon.source: "qrc:/data/icons/movie_black_24dp.svg"
 
         onTriggered: {

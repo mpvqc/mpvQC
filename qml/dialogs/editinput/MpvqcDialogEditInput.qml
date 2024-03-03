@@ -31,8 +31,8 @@ MpvqcDialog {
 
     property alias editView: _editView
 
-    width: Math.min(960, mpvqcApplication.width * 0.75)
-    height: Math.min(960, mpvqcApplication.height * 0.75)
+    width: Math.min(1080, mpvqcApplication.width * 0.85)
+    height: Math.min(1080, mpvqcApplication.height * 0.85)
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
     closePolicy: Popup.CloseOnEscape
 

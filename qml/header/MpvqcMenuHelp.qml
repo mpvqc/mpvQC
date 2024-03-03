@@ -65,6 +65,7 @@ MpvqcMenu {
 
         text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
         icon.source: "qrc:/data/icons/shortcut_black_24dp.svg"
+        shortcut: "?"
 
         onTriggered: {
             const dialog = factory.createObject(root)
