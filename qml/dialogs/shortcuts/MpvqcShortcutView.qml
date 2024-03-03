@@ -108,6 +108,11 @@ ScrollView {
         }
 
         MpvqcShortcut {
+            label: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
+            button1: "?"
+        }
+
+        MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Quit")
             button1: "Ctrl"
             button2: "Q"
