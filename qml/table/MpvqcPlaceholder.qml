@@ -99,7 +99,7 @@ Flickable {
             }
 
             MpvqcButtonRendered {
-                text: qsTranslate("CommentTable", "Shift")
+                text: qsTranslate("CommentTable", "Alt")
             }
 
             Label {
