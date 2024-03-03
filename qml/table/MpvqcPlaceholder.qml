@@ -69,7 +69,7 @@ Flickable {
             Layout.bottomMargin: root.shortcutBottomMargin
 
             MpvqcButtonRendered {
-                text: qsTranslate("CommentTable", "Ctrl")
+                text: qsTranslate("KeyboardKeys", "Ctrl")
             }
 
             Label {
@@ -91,7 +91,7 @@ Flickable {
             Layout.bottomMargin: root.shortcutBottomMargin
 
             MpvqcButtonRendered {
-                text: qsTranslate("CommentTable", "Ctrl")
+                text: qsTranslate("KeyboardKeys", "Ctrl")
             }
 
             Label {
@@ -99,7 +99,7 @@ Flickable {
             }
 
             MpvqcButtonRendered {
-                text: qsTranslate("CommentTable", "Alt")
+                text: qsTranslate("KeyboardKeys", "Alt")
             }
 
             Label {

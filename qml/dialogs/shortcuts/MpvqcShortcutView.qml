@@ -66,39 +66,39 @@ ScrollView {
             id: _shortcut
 
             label: qsTranslate("ShortcutsDialog", "New QC Document")
-            button1: "Ctrl"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
             button2: "N"
         }
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Open QC Document(s)")
-            button1: "Ctrl"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
             button3: "O"
         }
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Save QC Document")
-            button1: "Ctrl"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
             button2: "S"
         }
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Save as new QC Document")
-            button1: "Ctrl"
-            button2: "Shift"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            button2: qsTranslate("KeyboardKeys", "Shift")
             button3: "S"
         }
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Open Video")
-            button1: "Ctrl"
-            button2: "Alt"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            button2: qsTranslate("KeyboardKeys", "Alt")
             button3: "O"
         }
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Resize Video to Original Resolution")
-            button1: "Ctrl"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
             button2: "R"
         }
 
@@ -114,7 +114,7 @@ ScrollView {
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Quit")
-            button1: "Ctrl"
+            button1: qsTranslate("KeyboardKeys", "Ctrl")
             button2: "Q"
         }
 
@@ -145,13 +145,13 @@ ScrollView {
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Seek Backward by 5 Seconds to Keyframe")
-            button1: "Shift"
+            button1: qsTranslate("KeyboardKeys", "Shift")
             button2: "←"
         }
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Seek Forward by 5 Seconds to Keyframe")
-            button1: "Shift"
+            button1: qsTranslate("KeyboardKeys", "Shift")
             button2: "→"
         }
 
@@ -197,7 +197,7 @@ ScrollView {
 
         MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Video Screenshot (Scaled)")
-            button1: "Shift"
+            button1: qsTranslate("KeyboardKeys", "Shift")
             button2: "S"
         }
 
