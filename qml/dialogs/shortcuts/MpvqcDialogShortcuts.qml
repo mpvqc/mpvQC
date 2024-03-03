@@ -29,13 +29,35 @@ MpvqcDialog {
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
 
-    readonly property int columns: mpvqcApplication.width < 1080 ? 1 : 2
+    readonly property int singleColumn: mpvqcApplication.width < 1080
 
-    width: columns === 1 ? 500 : 1000
+    width: singleColumn ? 530 : 1000
     height: Math.min(1080, mpvqcApplication.height * 0.85)
 
-    MpvqcShortcutView {
-        property string title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
+    /*
+     * For some reason property binding didn't do the job,
+     * so we force the engine to recreate the component when the window becomes small enough.
+     */
+
+    readonly property var largeLayoutView: Component
+    {
+        MpvqcShortcutView {
+            singleColumn: false
+        }
     }
 
+    readonly property var smallLayoutView: Component
+    {
+        MpvqcShortcutView {
+            singleColumn: true
+        }
+    }
+
+    Loader {
+        id: _loader
+
+        property string title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
+
+        sourceComponent: root.singleColumn ? smallLayoutView : largeLayoutView
+    }
 }

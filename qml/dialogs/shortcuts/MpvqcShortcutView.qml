@@ -27,8 +27,17 @@ import shared
 ScrollView {
     id: root
 
-    contentHeight: availableHeight
-    // contentWidth: availableWidth
+    required property bool singleColumn
+
+    Binding on contentHeight {
+        when: !root.singleColumn
+        value: root.availableHeight
+    }
+
+    Binding on contentWidth {
+        when: root.singleColumn
+        value: root.availableWidth
+    }
 
     ScrollBar.horizontal.policy: contentWidth > width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: contentHeight > height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
@@ -41,8 +50,9 @@ ScrollView {
         readonly property int elementHeight: Math.max(_header.height, _shortcut.height)
         readonly property int elementWidth: Math.max(_header.width, _shortcut.width)
 
-        rows: root.contentHeight / elementHeight
-        flow: GridLayout.TopToBottom
+        rows: root.contentHeight / _grid.elementHeight
+        columns: 1
+        flow: root.singleColumn ? GridLayout.LeftToRight : GridLayout.TopToBottom
         columnSpacing: 20
 
         MpvqcHeader {
