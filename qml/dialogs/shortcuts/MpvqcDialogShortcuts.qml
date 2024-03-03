@@ -28,8 +28,8 @@ MpvqcDialog {
 
     readonly property int singleColumn: mpvqcApplication.width < 1080
 
-    width: singleColumn ? 530 : 1000
-    height: Math.min(1080, mpvqcApplication.height * 0.85)
+    contentWidth: singleColumn ? 470 : 950
+    contentHeight: Math.min(1080, mpvqcApplication.height * 0.75)
 
     /*
      * For some reason property binding didn't do the job,

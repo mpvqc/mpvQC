@@ -42,7 +42,7 @@ ScrollView {
     ScrollBar.horizontal.policy: contentWidth > width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: contentHeight > height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
-    leftPadding: LayoutMirroring.enabled ? 20 : 0
+    leftPadding: LayoutMirroring.enabled ? 22 : 0
 
     GridLayout {
         id: _grid

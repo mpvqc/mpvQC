@@ -34,8 +34,8 @@ Dialog {
 
     anchors.centerIn: parent
     parent: mpvqcApplication.contentItem
-    width: 420
-    height: 540
+    contentWidth: 370
+    contentHeight: 450
     modal: true
     z: 2
     closePolicy: Popup.CloseOnEscape
