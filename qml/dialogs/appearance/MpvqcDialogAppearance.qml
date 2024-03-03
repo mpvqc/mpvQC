@@ -26,9 +26,6 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
     ScrollView {
         property string title: qsTranslate("AppearanceDialog", "Appearance")
 

@@ -38,6 +38,8 @@ Dialog {
     height: 540
     modal: true
     z: 2
+    closePolicy: Popup.CloseOnEscape
+    standardButtons: Dialog.Ok
 
     contentItem: ColumnLayout {
         id: _layout

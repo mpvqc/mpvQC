@@ -26,9 +26,6 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
     readonly property int singleColumn: mpvqcApplication.width < 1080
 
     width: singleColumn ? 530 : 1000

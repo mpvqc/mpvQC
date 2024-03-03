@@ -25,9 +25,6 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
     MpvqcExportView {
         property string title: qsTranslate("ExportSettings", "Export Settings")
 

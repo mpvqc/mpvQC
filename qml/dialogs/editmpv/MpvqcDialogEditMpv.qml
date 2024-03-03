@@ -34,7 +34,6 @@ MpvqcDialog {
     width: Math.min(1080, mpvqcApplication.width * 0.85)
     height: Math.min(1080, mpvqcApplication.height * 0.85)
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
-    closePolicy: Popup.CloseOnEscape
 
     MpvqcEditMpvView {
         id: _editView

@@ -25,9 +25,6 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
     MpvqcAboutView {
         property string title: qsTranslate("AboutDialog", "About")
 
