@@ -26,9 +26,6 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
     ScrollView {
         property string title: qsTranslate("AppearanceDialog", "Appearance")
 
@@ -45,6 +42,9 @@ MpvqcDialog {
             MpvqcThemeView {
                 mpvqcApplication: root.mpvqcApplication
                 width: parent.width
+
+                // workaround padding issue in rtl
+                Binding on x { when: root.mirrored; value: -8 }
             }
 
             MpvqcHeader {

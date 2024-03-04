@@ -26,7 +26,6 @@ MpvqcDialog {
     id: root
 
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
-    closePolicy: Popup.CloseOnEscape
 
     MpvqcCommentTypesView {
         id: _view

@@ -25,9 +25,6 @@ import shared
 MpvqcDialog {
     id: root
 
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-
     MpvqcBackupView {
         property string title: qsTranslate("BackupSettings", "Backup Settings")
 

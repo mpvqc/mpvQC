@@ -51,7 +51,9 @@ DialogButtonBox {
         }
 
         function applyVisualFocusToCurrentItem(): void {
-            currentItem.down = true
+            if (currentItem) {
+                currentItem.down = true
+            }
         }
 
         function focusRejectedButton(): void {
