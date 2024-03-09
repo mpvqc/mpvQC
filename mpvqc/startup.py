@@ -112,6 +112,7 @@ class StartUp:
         app.start_engine()
         app.add_window_effects()
         app.verify()
+        app.notify_ready()
 
         sys.exit(app.exec())
 

@@ -19,7 +19,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo
+from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -29,6 +29,8 @@ from mpvqc.services import FileStartupService, FontLoaderService
 class MpvqcApplication(QGuiApplication):
     _start_up: FileStartupService = inject.attr(FileStartupService)
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
+
+    application_ready = Signal(name='applicationReady')
 
     def __init__(self, args):
         super().__init__(args)
@@ -108,3 +110,6 @@ class MpvqcApplication(QGuiApplication):
     def verify(self):
         if not self._engine.rootObjects():
             sys.exit(-1)
+
+    def notify_ready(self):
+        self.application_ready.emit()
