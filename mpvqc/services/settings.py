@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from enum import Enum
+
 import inject
 from PySide6.QtCore import QSettings
 
@@ -41,6 +43,12 @@ class SettingsService:
     def _str(self, key: str, default=''):
         return str(self._settings.value(key, default))
 
+    def _int(self, key: str, default=0):
+        try:
+            return int(self._str(key, default=str(default)))
+        except ValueError:
+            return default
+
     @property
     def nickname(self) -> str:
         return self._str('Export/nickname')
@@ -64,3 +72,17 @@ class SettingsService:
     @property
     def language(self) -> str:
         return self._str('Common/language', default='en-US')
+
+    class ImportWhenVideoLinkedInDocument(Enum):
+        ALWAYS = 0
+        ASK_EVERY_TIME = 1
+        NEVER = 2
+
+    @property
+    def import_video_when_video_linked_in_document(self) -> ImportWhenVideoLinkedInDocument:
+        default = SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME
+        value = self._int('Import/importWhenVideoLinkedInDocument', default=default.value)
+        try:
+            return self.ImportWhenVideoLinkedInDocument(value)
+        except ValueError:
+            return default

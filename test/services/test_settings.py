@@ -29,8 +29,6 @@ from mpvqc.services import ApplicationPathsService, SettingsService
 class SettingsServiceTest(unittest.TestCase):
     _path = Path()
 
-    # https://github.com/wolever/parameterized
-
     def setUp(self):
         mock = MagicMock()
         mock.file_settings = self._path
@@ -73,3 +71,15 @@ class SettingsServiceTest(unittest.TestCase):
     def test_bool(self, input, expected):
         self._mock_settings(input)
         self.assertEqual(expected, self._settings.writeHeaderDate)
+
+    @parameterized.expand([
+        ({'Import/importWhenVideoLinkedInDocument': 0}, SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS),
+        ({'Import/importWhenVideoLinkedInDocument': 1}, SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME),
+        ({'Import/importWhenVideoLinkedInDocument': 2}, SettingsService.ImportWhenVideoLinkedInDocument.NEVER),
+        ({
+             'Import/importWhenVideoLinkedInDocument': SettingsService.ImportWhenVideoLinkedInDocument.NEVER.value
+         }, SettingsService.ImportWhenVideoLinkedInDocument.NEVER),
+    ])
+    def test_import_video_when_video_linked_in_document(self, input, expected):
+        self._mock_settings(input)
+        self.assertEqual(expected, self._settings.import_video_when_video_linked_in_document)
