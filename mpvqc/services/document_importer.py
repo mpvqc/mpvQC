@@ -35,7 +35,7 @@ class DocumentImporterService:
     class DocumentImportResult:
         valid_documents: list[Path]
         invalid_documents: list[Path]
-        videos: list[Path]
+        existing_videos: list[Path]
         comments: list[Comment]
 
     def read(self, documents: list[Path]) -> DocumentImportResult:

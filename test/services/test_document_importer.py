@@ -105,7 +105,7 @@ class DocumentImporterServiceTest(unittest.TestCase):
         result = self._service.read([p1])
         self.assertFalse(result.invalid_documents)
         self.assertTrue(result.valid_documents)
-        self.assertTrue(result.videos)
+        self.assertTrue(result.existing_videos)
         self.assertEqual('/home/luffy/Videos/an existing video with spaces.mp4', path.call_args[0][0])
         self.assertEqual(3, len(result.comments))
 
@@ -133,7 +133,7 @@ class DocumentImporterServiceTest(unittest.TestCase):
         result = self._service.read([p1])
         self.assertFalse(result.invalid_documents)
         self.assertTrue(result.valid_documents)
-        self.assertTrue(result.videos)
+        self.assertTrue(result.existing_videos)
         self.assertEqual('C:\\Videos\\mpvQC\\an existing video with spaces on Windows.mp4', path.call_args[0][0])
         self.assertEqual(3, len(result.comments))
 
@@ -161,7 +161,7 @@ class DocumentImporterServiceTest(unittest.TestCase):
         result = self._service.read([p1])
         self.assertFalse(result.invalid_documents)
         self.assertTrue(result.valid_documents)
-        self.assertFalse(result.videos)
+        self.assertFalse(result.existing_videos)
         self.assertEqual('/home/luffy/Videos/a not existing video with spaces.mp4', path.call_args[0][0])
         self.assertEqual(4, len(result.comments))
 
@@ -179,5 +179,5 @@ class DocumentImporterServiceTest(unittest.TestCase):
         self.assertEqual(1, len(result.invalid_documents))
         self.assertEqual('path-1', getattr(result.invalid_documents[0], 'mpvqc_name'))
         self.assertEqual(3, len(result.valid_documents))
-        self.assertEqual(2, len(result.videos))
+        self.assertEqual(2, len(result.existing_videos))
         self.assertEqual(10, len(result.comments))
