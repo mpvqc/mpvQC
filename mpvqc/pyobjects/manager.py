@@ -25,7 +25,8 @@ from PySide6.QtQml import QmlElement, QQmlComponent
 from PySide6.QtWidgets import QApplication
 
 from mpvqc.impl import InitialState, ApplicationState, ImportChange
-from mpvqc.services import DocumentImporterService, VideoSelectorService, PlayerService, DocumentBackupService
+from mpvqc.services import DocumentImporterService, VideoSelectorService, PlayerService, DocumentBackupService, \
+    DocumentExportService
 from .comment_model import MpvqcCommentModelPyObject
 
 QML_IMPORT_NAME = "pyobjects"
@@ -34,22 +35,16 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcManagerPyObject(QObject):
+    _importer: DocumentImporterService = inject.attr(DocumentImporterService)
+    _exporter: DocumentExportService = inject.attr(DocumentExportService)
+    _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
+    _player: PlayerService = inject.attr(PlayerService)
+    _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
 
-    def get_saved(self):
-        return self.state.saved
-
-    def set_saved(self, value: bool):
-        if value != self._saved:
-            self._saved = value
-            self.saved_changed.emit(value)
-
-    _saved = True
-    saved_changed = Signal(bool)
-    saved = Property(bool, get_saved, set_saved, notify=saved_changed)
-
-    #
-
-    _state = InitialState.new()
+    def __init__(self):
+        super().__init__()
+        QApplication.instance().application_ready.connect(lambda: self._on_application_ready())
+        self._state = InitialState.new()
 
     @property
     def state(self):
@@ -63,12 +58,6 @@ class MpvqcManagerPyObject(QObject):
     @cached_property
     def _comment_model(self) -> MpvqcCommentModelPyObject:
         return QApplication.instance().find_object(QStandardItemModel, 'mpvqcCommentModel')
-
-    #
-
-    def __init__(self):
-        super().__init__()
-        QApplication.instance().application_ready.connect(lambda: self._on_application_ready())
 
     def _on_application_ready(self):
 
@@ -91,12 +80,21 @@ class MpvqcManagerPyObject(QObject):
 
         self._comment_model.commentsChanged.connect(on_comments_changed)
 
-    #
+    # Qml Properties
 
-    _importer: DocumentImporterService = inject.attr(DocumentImporterService)
-    _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
-    _player: PlayerService = inject.attr(PlayerService)
-    _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
+    def get_saved(self):
+        return self.state.saved
+
+    def set_saved(self, value: bool):
+        if value != self._saved:
+            self._saved = value
+            self.saved_changed.emit(value)
+
+    _saved = True
+    saved_changed = Signal(bool)
+    saved = Property(bool, get_saved, set_saved, notify=saved_changed)
+
+    # Qml Slots
 
     @Slot()
     def reset_impl(self):
@@ -162,10 +160,12 @@ class MpvqcManagerPyObject(QObject):
             if not paths:
                 return
 
-            message_box = self.message_box_document_not_compatible_factory.createObject(None, {
+            properties = {
                 'count': len(paths),
                 'text': '\n'.join([p.name for p in paths])
-            })
+            }
+
+            message_box = self.message_box_document_not_compatible_factory.createObject(None, properties)
             message_box.closed.connect(message_box.deleteLater)
             message_box.open()
 
@@ -178,11 +178,28 @@ class MpvqcManagerPyObject(QObject):
 
     @Slot()
     def save_impl(self):
-        raise NotImplementedError('todo')
+        if document := self.state.document:
+            self._save(document)
+        else:
+            self.save_as_impl()
+
+    def _save(self, path: Path):
+        self._exporter.save(path)
+        self.state = self.state.handle_save(path)
 
     @Slot()
     def save_as_impl(self):
-        raise NotImplementedError('todo')
+        path_proposal = self._exporter.generate_file_path_proposal()
+
+        properties = {
+            'selectedFile': QUrl.fromLocalFile(path_proposal)
+        }
+
+        dialog = self.dialog_export_document_factory.createObject(None, properties)
+        dialog.accepted.connect(dialog.deleteLater)
+        dialog.rejected.connect(dialog.deleteLater)
+        dialog.savePressed.connect(lambda url: self._save(Path(url.toLocalFile())))
+        dialog.open()
 
     @Slot()
     def backup_impl(self):

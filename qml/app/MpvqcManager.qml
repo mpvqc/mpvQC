@@ -43,8 +43,7 @@ MpvqcManagerPyObject {
 
     property var mpvqcDialogExportDocumentFactory: Component
     {
-        MpvqcDialogExportDocument {
-        }
+        MpvqcDialogExportDocument {}
     }
 
     property var mpvqcMessageBoxVideoFoundFactory: Component
@@ -89,10 +88,11 @@ MpvqcManagerPyObject {
     }
 
     function save(): void {
+        root.save_impl()
     }
 
     function saveAs(): void {
+        root.save_as_impl()
     }
-
 
 }

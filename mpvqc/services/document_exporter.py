@@ -162,7 +162,7 @@ class DocumentExportService:
         file.write_text(content, encoding='utf-8', newline='\n')
 
     def save(self, file: Path) -> None:
-        user_template = self._resources.default_export_template
-        content = self._renderer.render(user_template)
+        export_template = self._resources.default_export_template
+        content = self._renderer.render(export_template)
 
         file.write_text(content, encoding='utf-8', newline='\n')
