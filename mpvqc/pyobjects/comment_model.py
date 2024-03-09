@@ -21,6 +21,7 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtQml import QmlElement
 
 from mpvqc.impl import Searcher
+from mpvqc.models import Comment
 from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -60,17 +61,16 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.commentsChanged.emit()
         self.invalidate_search()
 
-    @Slot(list)
-    def import_comments(self, comments: list) -> None:
+    def import_comments(self, comments: list[Comment]) -> None:
         if not comments:
             return
 
         item = None
         for comment in comments:
             item = QStandardItem()
-            item.setData(comment['time'], Role.TIME)
-            item.setData(comment['commentType'], Role.TYPE)
-            item.setData(comment['comment'], Role.COMMENT)
+            item.setData(comment.time, Role.TIME)
+            item.setData(comment.comment_type, Role.TYPE)
+            item.setData(comment.comment, Role.COMMENT)
             self.appendRow(item)
 
         self.sort(0)

@@ -21,17 +21,18 @@ from unittest.mock import MagicMock
 import inject
 from parameterized import parameterized
 
+from mpvqc.models import Comment
 from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject, Role
 from mpvqc.services import PlayerService
 
 
 class TestCommentsModel(unittest.TestCase):
     _default_comments = [
-        {'time': 0, 'commentType': 'commentType', 'comment': 'Word 1'},
-        {'time': 5, 'commentType': 'commentType', 'comment': 'Word 2'},
-        {'time': 10, 'commentType': 'commentType', 'comment': 'Word 3'},
-        {'time': 15, 'commentType': 'commentType', 'comment': 'Word 4'},
-        {'time': 20, 'commentType': 'commentType', 'comment': 'Word 5'},
+        Comment(time=0, comment_type='commentType', comment='Word 1'),
+        Comment(time=5, comment_type='commentType', comment='Word 2'),
+        Comment(time=10, comment_type='commentType', comment='Word 3'),
+        Comment(time=15, comment_type='commentType', comment='Word 4'),
+        Comment(time=20, comment_type='commentType', comment='Word 5'),
     ]
 
     def setUp(self):
@@ -112,7 +113,7 @@ class TestCommentsModel(unittest.TestCase):
         self._model.highlightRequested.connect(lambda: signal_fired('highlightRequested'))
 
         self._model.import_comments([
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word ok'},
+            Comment(time=0, comment_type='commentType', comment='Word ok'),
         ])
 
         self.assertIsNotNone(signals_fired.get('highlightRequested', None))
@@ -120,7 +121,7 @@ class TestCommentsModel(unittest.TestCase):
     def test_import_comments_invalidates_search(self):
         self._model._searcher._hits = ['result']
         self._model.import_comments([
-            {'time': 0, 'commentType': 'commentType', 'comment': 'Word ok'},
+            Comment(time=0, comment_type='commentType', comment='Word ok'),
         ])
 
         self.assertIsNone(self._model._searcher._hits)
@@ -193,21 +194,24 @@ class TestCommentsModel(unittest.TestCase):
         self.assertIsNone(self._model._searcher._hits)
 
     def test_get_all_comments(self):
-        self.assertListEqual(self._default_comments, self._model.comments())
+        self.assertListEqual(self._default_comments, self.map_to_objects(self._model.comments()))
+
+    def map_to_objects(self, comments: list):
+        return list(map(lambda c: Comment(c['time'], c['commentType'], c['comment']), comments))
 
 
 class TestCommentsModelSearch(unittest.TestCase):
     _query = ''
     _selected_index = -1
     _default_comments = [
-        {'time': 0, 'commentType': 'commentType', 'comment': 'Word 1'},
-        {'time': 1, 'commentType': 'commentType', 'comment': 'Word 2'},
-        {'time': 2, 'commentType': 'commentType', 'comment': 'Word 3'},
-        {'time': 3, 'commentType': 'commentType', 'comment': 'Word 4'},
-        {'time': 4, 'commentType': 'commentType', 'comment': 'Word 5'},
-        {'time': 5, 'commentType': 'commentType', 'comment': 'Word 6'},
-        {'time': 6, 'commentType': 'commentType', 'comment': ''},
-        {'time': 9, 'commentType': 'commentType', 'comment': 'Word 9'},
+        Comment(time=0, comment_type='commentType', comment='Word 1'),
+        Comment(time=1, comment_type='commentType', comment='Word 2'),
+        Comment(time=2, comment_type='commentType', comment='Word 3'),
+        Comment(time=3, comment_type='commentType', comment='Word 4'),
+        Comment(time=4, comment_type='commentType', comment='Word 5'),
+        Comment(time=5, comment_type='commentType', comment='Word 6'),
+        Comment(time=6, comment_type='commentType', comment=''),
+        Comment(time=9, comment_type='commentType', comment='Word 9'),
     ]
 
     def setUp(self):
@@ -234,8 +238,8 @@ class TestCommentsModelSearch(unittest.TestCase):
 
     def _import(self):
         self._model.import_comments([
-            {'time': 7, 'commentType': 'commentType', 'comment': 'Word 7'},
-            {'time': 8, 'commentType': 'commentType', 'comment': 'Word 8'},
+            Comment(time=7, comment_type='commentType', comment='Word 7'),
+            Comment(time=8, comment_type='commentType', comment='Word 8'),
         ])
         self._select(row_index=8)
 
@@ -390,6 +394,8 @@ class TestCommentsModelSearch(unittest.TestCase):
         self.assertEqual(9, total_results)
 
     def test_time_is_int(self):
-        self._model.import_comments([{'time': 999.99, 'commentType': 'commentType', 'comment': 'Word 1'}, ])
+        self._model.import_comments([
+            Comment(time=999.99, comment_type='commentType', comment='Word 1'),
+        ])
         comment = self._model.comments()[-1]
         self.assertEqual(999, comment['time'])
