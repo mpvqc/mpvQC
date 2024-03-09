@@ -30,11 +30,10 @@ QtObject {
     required property url document
     required property var mpvqcApplication
 
-    readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
+    // readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
 
     property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
     {
-
         onSavePressed: (documentUrl) => {
             root.save(documentUrl)
         }
@@ -55,12 +54,12 @@ QtObject {
     }
 
     function save(newDocumentUrl: url): void {
-        mpvqcDocumentExporterPyObject.save(newDocumentUrl)
+        // mpvqcExtendedDocumentExporterPyObject.save(newDocumentUrl)
         saved(newDocumentUrl)
     }
 
     function requestSaveAs(): void {
-        exportDialog.selectedFile = mpvqcDocumentExporterPyObject.generate_file_path_proposal()
+        // exportDialog.selectedFile = mpvqcExtendedDocumentExporterPyObject.generate_file_path_proposal()
         exportDialog.open()
     }
 

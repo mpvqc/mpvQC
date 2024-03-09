@@ -35,11 +35,3 @@ class MpvqcFileSystemHelperPyObject(QObject):
     def url_to_absolute_path(self, url: QUrl) -> str:
         path = Path(url.toLocalFile())
         return str(path.absolute())
-
-    @Slot(str, result=QUrl or None)
-    def absolute_path_to_url(self, file: str) -> QUrl:
-        return QUrl.fromLocalFile(file)
-
-    @Slot(QUrl, result=bool or None)
-    def url_is_file(self, url: QUrl) -> bool:
-        return Path(url.toLocalFile()).absolute().is_file()

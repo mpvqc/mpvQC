@@ -17,19 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtTest
-
-import "MpvqcFileReader.js" as TestObject
+import QtQuick
 
 
-TestCase {
-    name: "MpvqcFileReader"
+Item {
+    id: root
 
-    property string file: 'tst_MpvqcFileReader-input-01.txt'
-    property string expected: 'file-content\n'
+    required property var mpvqcApplication
 
-    function test_read() {
-        compare(TestObject.read(file), expected)
+    readonly property bool saved: false
+
+    function save(): void {
+        exporter.requestSave()
+    }
+
+    function saveAs(): void {
+        exporter.requestSaveAs()
     }
 
 }
