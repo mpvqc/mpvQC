@@ -83,7 +83,7 @@ class PlayerService:
         self._subtitle_cacher.load_cached_subtitles()
         self.play()
 
-    def open_subtitles(self, subtitles: tuple[str]) -> None:
+    def open_subtitles(self, subtitles: tuple[str, ...]) -> None:
         self._subtitle_cacher.open(subtitles)
 
     def play(self) -> None:
@@ -125,7 +125,7 @@ class SubtitleCacher:
         self._load_subtitles_func = load_subtitles_func
         self._cache = set()
 
-    def open(self, subtitles: tuple[str]) -> None:
+    def open(self, subtitles: tuple[str, ...]) -> None:
         if self._have_video():
             self._load_subtitles(subtitles)
         else:

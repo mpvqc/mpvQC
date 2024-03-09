@@ -22,7 +22,7 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class ImportChange:
-    documents: tuple[Path, ...]
+    documents: list[Path]
     video: Path or None
 
     @property
@@ -87,7 +87,7 @@ class OtherState(ApplicationState):
     def handle_import(self, change: ImportChange) -> ApplicationState:
         def imported_is_currently_loaded_video():
             imported = str(change.video.absolute())
-            current = str(self.video.absolute())
+            current = str(self.video.absolute()) if self.video else None
             return imported == current
 
         if change.only_video_imported and imported_is_currently_loaded_video():

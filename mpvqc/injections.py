@@ -25,6 +25,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.ApplicationPathsService, lambda: s.ApplicationPathsService())
     binder.bind_to_constructor(s.DocumentBackupService, lambda: s.DocumentBackupService())
     binder.bind_to_constructor(s.DocumentExportService, lambda: s.DocumentExportService())
+    binder.bind_to_constructor(s.DocumentImporterService, lambda: s.DocumentImporterService())
     binder.bind_to_constructor(s.DocumentRenderService, lambda: s.DocumentRenderService())
     binder.bind_to_constructor(s.FileStartupService, lambda: s.FileStartupService())
     binder.bind_to_constructor(s.FontLoaderService, lambda: s.FontLoaderService())

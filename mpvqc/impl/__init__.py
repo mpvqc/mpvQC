@@ -16,5 +16,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from .application_state import ImportChange, InitialState, OtherState
+from .application_state import ImportChange, ApplicationState, InitialState, OtherState
 from .searcher import Searcher
