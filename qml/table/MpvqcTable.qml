@@ -38,9 +38,8 @@ ListView {
     property bool currentlyEditing: false
     property bool currentlyFullscreen: mpvqcApplication.fullscreen
 
-    property var deleteCommentMessageBox: null
-    property var deleteCommentMessageBoxFactory: Component {
-
+    property var deleteCommentMessageBoxFactory: Component
+    {
         MpvqcMessageBoxDeleteComment {
             property int index
 
@@ -48,7 +47,6 @@ ListView {
 
             onAccepted: root.model.remove_row(index)
         }
-
     }
 
     signal commentsChanged()
@@ -108,10 +106,10 @@ ListView {
     }
 
     function _requestDeleteRow(index: int): void {
-        deleteCommentMessageBox = deleteCommentMessageBoxFactory.createObject(root)
-        deleteCommentMessageBox.index = index
-        deleteCommentMessageBox.closed.connect(deleteCommentMessageBox.destroy)
-        deleteCommentMessageBox.open()
+        const messageBox = deleteCommentMessageBoxFactory.createObject(root)
+        messageBox.index = index
+        messageBox.closed.connect(messageBox.destroy)
+        messageBox.open()
     }
 
     function _copyCurrentCommentToClipboard() {
@@ -130,25 +128,6 @@ ListView {
 
     function addNewComment(commentType: string): void {
         root.model.add_row(commentType)
-    }
-
-    function clearComments(): void {
-        root.model.clear_comments()
-    }
-
-    /**
-     * @returns {Array<MpvqcComment>}
-     */
-    function getAllComments() {
-        return root.model.comments()
-    }
-
-    /**
-     *
-     * @param comments {Array<MpvqcComment>}
-     */
-    function importComments(comments): void {
-        root.model.import_comments(comments)
     }
 
     function _handleDeleteComment(event) {
@@ -205,7 +184,6 @@ ListView {
 
         event.accepted = false
     }
-
 
     Connections {
         target: root.model
