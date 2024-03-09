@@ -21,16 +21,15 @@ import inject
 from PySide6.QtCore import QObject, Slot, QUrl, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import DocumentExportService, DocumentBackupService
+from mpvqc.services import DocumentExportService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcDocumentExporterPyObject(QObject):
+class MpvqcExtendedDocumentExporterPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
 
     exportErrorOccurred = Signal(str, int or None)
 
@@ -38,15 +37,6 @@ class MpvqcDocumentExporterPyObject(QObject):
     def generate_file_path_proposal(self) -> QUrl:
         path = self._exporter.generate_file_path_proposal()
         return QUrl.fromLocalFile(str(path))
-
-    @Slot()
-    def backup(self) -> None:
-        self._backupper.backup()
-
-    @Slot(QUrl)
-    def save(self, file_url: QUrl) -> None:
-        path = Path(file_url.toLocalFile())
-        self._exporter.save(path)
 
     @Slot(QUrl, QUrl)
     def export(self, template_path: QUrl, file_url: QUrl):
