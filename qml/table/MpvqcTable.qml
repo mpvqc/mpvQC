@@ -38,6 +38,7 @@ ListView {
     property bool currentlyEditing: false
     property bool currentlyFullscreen: mpvqcApplication.fullscreen
 
+    property var deleteCommentMessageBox: null
     property var deleteCommentMessageBoxFactory: Component
     {
         MpvqcMessageBoxDeleteComment {
@@ -106,10 +107,10 @@ ListView {
     }
 
     function _requestDeleteRow(index: int): void {
-        const messageBox = deleteCommentMessageBoxFactory.createObject(root)
-        messageBox.index = index
-        messageBox.closed.connect(messageBox.destroy)
-        messageBox.open()
+        deleteCommentMessageBox = deleteCommentMessageBoxFactory.createObject(root)
+        deleteCommentMessageBox.index = index
+        deleteCommentMessageBox.closed.connect(deleteCommentMessageBox.destroy)
+        deleteCommentMessageBox.open()
     }
 
     function _copyCurrentCommentToClipboard() {

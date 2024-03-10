@@ -18,80 +18,105 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtTest
+import QtQuick
 
 
-MpvqcDragAndDropHandler {
-    id: objectUnderTest
+TestCase {
+    id: testCase
+
     width: 400
     height: 400
+    visible: true
+    when: windowShown
+    name: "MpvqcDragAndDropHandler"
 
-    supportedSubtitleFileExtensions: [ 'ass' ]
+    Component {
+        id: signalSpy;
 
-    TestCase {
-        id: testCase
-        name: "MpvqcDragAndDropHandler"
-        when: windowShown
-
-        property bool accepted: false
-
-        SignalSpy { id: filesDroppedSpy; target: objectUnderTest; signalName: 'filesDropped' }
-
-        function cleanup() {
-            filesDroppedSpy.clear()
-            testCase.accepted = false
+        SignalSpy {
         }
-
-        function test_enter_data() {
-            return [
-                {
-                    tag: 'accept', accepted: true,
-                    event: {
-                        formats: ['text/uri-list'],
-                        hasUrls: true,
-                        accept: (action) => { accepted = true }
-                    }
-                },
-                { tag: 'ignore', accepted: false, event: { formats: [], hasUrls: true } },
-            ]
-        }
-
-        function test_enter(data) {
-            objectUnderTest.handleEnter(data.event)
-            compare(testCase.accepted, data.accepted)
-        }
-
-        function test_drop_data() {
-            return [
-                {
-                    tag: 'all', documents: ['document.txt'], video: 'video.mp4', subtitles: ['subtitle.ass'],
-                    event: {
-                        formats: ['text/uri-list'],
-                        hasUrls: true,
-                        urls: [ 'document.txt', 'video.mp4', 'subtitle.ass']
-                    }
-                },
-                {
-                    tag: 'partial', documents: ['document.txt'], video: 'video.mp4', subtitles: [],
-                    event: {
-                        formats: ['text/uri-list'],
-                        hasUrls: true,
-                        urls: [ 'document.txt', 'video.mp4', 'subtitle']
-                    }
-                },
-                { tag: 'ignore', event: { formats: [], hasUrls: true } },
-            ]
-        }
-
-        function test_drop(data) {
-            objectUnderTest.handleDrop(data.event)
-            if (data.event.urls) {
-                const [documents, video, subtitles] = filesDroppedSpy.signalArguments[0]
-                compare(data.documents, documents)
-                compare(data.video, video)
-                compare(data.subtitles, subtitles)
-            }
-        }
-
     }
 
- }
+    Component {
+        id: objectUnderTest
+
+        MpvqcDragAndDropHandler {
+            supportedSubtitleFileExtensions: ['ass']
+        }
+    }
+
+    SignalSpy {
+        id: filesDroppedSpy; target: objectUnderTest; signalName: 'filesDropped'
+    }
+
+    function test_enter() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        let accepted = false
+        control.handleEnter({
+            formats: ['text/uri-list'],
+            hasUrls: true,
+            accept: () => {
+                accepted = true
+            }
+        })
+        verify(accepted)
+
+        accepted = false
+        control.handleEnter({
+            formats: [],
+            hasUrls: true
+        })
+        verify(!accepted)
+    }
+
+    function test_drop() {
+        let control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        let spy = signalSpy.createObject(control, {target: control, signalName: 'filesDropped'})
+        verify(spy)
+
+        control.handleDrop({
+            formats: ['text/uri-list'],
+            hasUrls: true,
+            urls: ['file:///document.txt', 'file:///video.mp4', 'file:///subtitle.ass'],
+        })
+
+        function validateCase1() {
+            compare(spy.count, 1)
+            let [documents, videos, subtitles] = spy.signalArguments[0]
+            compare(documents, ['file:///document.txt'])
+            compare(videos, ['file:///video.mp4'])
+            compare(subtitles, ['file:///subtitle.ass'])
+        }
+
+        validateCase1()
+
+        //
+
+        control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        spy = signalSpy.createObject(control, {target: control, signalName: 'filesDropped'})
+        verify(spy)
+
+        control.handleDrop({
+            formats: ['text/uri-list'],
+            hasUrls: true,
+            urls: ['file:///document.txt', 'file:///video.mp4', 'file:///subtitle.ass-not'],
+        })
+
+        function validateCase2() {
+            compare(spy.count, 1)
+            let [documents, videos, subtitles] = spy.signalArguments[0]
+            compare(documents, ['file:///document.txt'])
+            compare(videos, ['file:///video.mp4', 'file:///subtitle.ass-not'])
+            compare(subtitles, [])
+        }
+
+        validateCase2()
+    }
+
+}
