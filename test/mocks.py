@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2022 mpvQC developers
+# Copyright (C) 2024 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,20 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def add_repository_root_to_path():
-    import os
-    from pathlib import Path
-
-    os.environ["PATH"] = str(Path(__file__).parent.parent.absolute()) + os.pathsep + os.environ["PATH"]
+from PySide6.QtCore import QObject, Signal, QUrl
 
 
-add_repository_root_to_path()
+class MockedMessageBox(QObject):
+    accepted = Signal()
+    rejected = Signal()
+    closed = Signal()
 
-try:
-    import test.generated_resources
-except ImportError:
-    import sys
+    def open(self):
+        pass
 
-    print('Can not find resource module \'test.generated_resources\'', file=sys.stderr)
-    print('To execute individual tests, please run \'just test-python\' once before', file=sys.stderr)
-    sys.exit(1)
+
+class MockedDialog(QObject):
+    accepted = Signal()
+    rejected = Signal()
+    savePressed = Signal(QUrl)
+
+    def open(self):
+        pass

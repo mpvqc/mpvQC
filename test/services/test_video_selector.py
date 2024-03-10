@@ -20,10 +20,10 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
-from PySide6.QtCore import QObject, Signal
 from parameterized import parameterized
 
 from mpvqc.services import SettingsService, VideoSelectorService
+from test.mocks import MockedMessageBox
 
 
 class VideoSelectorServiceTest(unittest.TestCase):
@@ -142,7 +142,7 @@ class VideoSelectorServiceTest(unittest.TestCase):
         }
 
         user_selection = MagicMock()
-        user_selection.createObject.return_value = MockedDialog()
+        user_selection.createObject.return_value = MockedMessageBox()
         self._service.select_video_from(
             video_found_dialog_factory=user_selection,
             on_video_selected=self._pick_video,
@@ -160,12 +160,3 @@ class VideoSelectorServiceTest(unittest.TestCase):
         user_selection.createObject.return_value.rejected.emit()
         self.assertIsNone(self._result)
         self._reset()
-
-
-class MockedDialog(QObject):
-    accepted = Signal()
-    rejected = Signal()
-    closed = Signal()
-
-    def open(self):
-        pass
