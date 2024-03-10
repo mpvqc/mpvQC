@@ -18,8 +18,11 @@
 import unittest
 from pathlib import Path
 
+import inject
+
 from mpvqc.impl import ImportChange, InitialState
 from mpvqc.impl.application_state import ApplicationState, OtherState
+from mpvqc.services import TypeMapperService
 
 
 class ImportChangeTest(unittest.TestCase):
@@ -174,6 +177,13 @@ class InitialStateTest(unittest.TestCase):
 
 
 class OtherStateTest(unittest.TestCase):
+
+    def setUp(self):
+        inject.clear_and_configure(lambda binder: binder
+                                   .bind(TypeMapperService, TypeMapperService()))
+
+    def tearDown(self):
+        inject.clear()
 
     def test_handle_import(self):
         initial_document = None

@@ -27,4 +27,5 @@ from .resource import ResourceService
 from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService
 from .settings import SettingsService
+from .type_mapper import TypeMapperService
 from .video_selector import VideoSelectorService

@@ -21,15 +21,17 @@ import inject
 from PySide6.QtCore import QSettings
 
 from .application_paths import ApplicationPathsService
+from .type_mapper import TypeMapperService
 
 
 # noinspection PyPep8Naming
 class SettingsService:
     _paths = inject.attr(ApplicationPathsService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     def __init__(self):
-        settings_file_path = self._paths.file_settings.absolute()
-        self._settings = QSettings(str(settings_file_path), QSettings.defaultFormat())
+        path = self._type_mapper.map_path_to_str(self._paths.file_settings)
+        self._settings = QSettings(path, QSettings.defaultFormat())
 
     def _bool(self, key: str):
         value = self._settings.value(key, False)

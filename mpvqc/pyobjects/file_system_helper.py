@@ -15,13 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pathlib import Path
-
 import inject
 from PySide6.QtCore import QUrl, Slot, QObject
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService
+from mpvqc.services import ApplicationPathsService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -30,8 +28,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcFileSystemHelperPyObject(QObject):
     _paths = inject.attr(ApplicationPathsService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     @Slot(QUrl, result=str or None)
     def url_to_absolute_path(self, url: QUrl) -> str:
-        path = Path(url.toLocalFile())
-        return str(path.absolute())
+        return self._type_mapper.map_url_to_path_string(url)

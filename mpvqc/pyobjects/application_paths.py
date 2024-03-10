@@ -19,7 +19,7 @@ import inject
 from PySide6.QtCore import QObject, Signal, Property, QUrl
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService
+from mpvqc.services import ApplicationPathsService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -28,11 +28,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcApplicationPathsPyObject(QObject):
     _paths = inject.attr(ApplicationPathsService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     #
 
     def get_config_input(self) -> str:
-        return str(self._paths.file_input_conf.absolute())
+        return self._type_mapper.map_path_to_str(self._paths.file_input_conf)
 
     input_conf_changed = Signal(str)
     input_conf = Property(str, get_config_input, notify=input_conf_changed)
@@ -40,7 +41,7 @@ class MpvqcApplicationPathsPyObject(QObject):
     #
 
     def get_config_mpv(self) -> str:
-        return str(self._paths.file_mpv_conf.absolute())
+        return self._type_mapper.map_path_to_str(self._paths.file_mpv_conf)
 
     mpv_conf_changed = Signal(str)
     mpv_conf = Property(str, get_config_mpv, notify=mpv_conf_changed)
@@ -48,7 +49,7 @@ class MpvqcApplicationPathsPyObject(QObject):
     #
 
     def get_dir_backup(self) -> QUrl:
-        return QUrl.fromLocalFile(self._paths.dir_backup.absolute())
+        return self._type_mapper.map_path_to_url(self._paths.dir_backup)
 
     dir_backup_changed = Signal(QUrl)
     dir_backup = Property(QUrl, get_dir_backup, notify=dir_backup_changed)
@@ -56,7 +57,7 @@ class MpvqcApplicationPathsPyObject(QObject):
     #
 
     def get_settings(self) -> QUrl:
-        return QUrl.fromLocalFile(self._paths.file_settings.absolute())
+        return self._type_mapper.map_path_to_url(self._paths.file_settings)
 
     settings_changed = Signal(QUrl)
     settings = Property(QUrl, get_settings, notify=settings_changed)

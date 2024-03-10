@@ -19,6 +19,10 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
 
+import inject
+
+from mpvqc.services import TypeMapperService
+
 
 @dataclass(frozen=True)
 class ImportChange:
@@ -86,11 +90,12 @@ class OtherState(ApplicationState):
 
     def handle_import(self, change: ImportChange) -> ApplicationState:
         def imported_is_currently_loaded_video():
-            imported = str(change.video.absolute())
-            current = str(self.video.absolute()) if self.video else None
+            mapper: TypeMapperService = inject.instance(TypeMapperService)
+            imported = mapper.map_path_to_str(change.video)
+            current = mapper.map_path_to_str(self.video)
             return imported == current
 
-        if change.only_video_imported and imported_is_currently_loaded_video():
+        if self.video and change.only_video_imported and imported_is_currently_loaded_video():
             return OtherState(document=self.document, video=self.video, saved=self.saved)
         else:
             return OtherState(document=None, video=self.find_video(change), saved=False)

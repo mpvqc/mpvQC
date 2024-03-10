@@ -19,7 +19,7 @@ import inject
 from PySide6.QtCore import QObject, Signal, Property
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import OperatingSystemZoomDetectorService
+from mpvqc.services import OperatingSystemZoomDetectorService, TypeMapperService
 from mpvqc.services.player import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -29,6 +29,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcMpvPlayerPropertiesPyObject(QObject):
     _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     #
 
@@ -47,8 +48,14 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
 
     #
 
+    def get_path(self) -> str:
+        if path := self.mpv.path:
+            return self._type_mapper.normalize_path_str(path)
+        else:
+            return ''
+
     path_changed = Signal(str)
-    path = Property(str, lambda self: str(self.mpv.path), notify=path_changed)
+    path = Property(str, get_path, notify=path_changed)
 
     #
 

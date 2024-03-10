@@ -26,7 +26,7 @@ from PySide6.QtWidgets import QApplication
 
 from mpvqc.impl import InitialState, ApplicationState, ImportChange
 from mpvqc.services import DocumentImporterService, VideoSelectorService, PlayerService, DocumentBackupService, \
-    DocumentExportService
+    DocumentExportService, TypeMapperService
 from .comment_model import MpvqcCommentModelPyObject
 
 QML_IMPORT_NAME = "pyobjects"
@@ -35,11 +35,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcManagerPyObject(QObject):
-    _importer: DocumentImporterService = inject.attr(DocumentImporterService)
-    _exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
-    _player: PlayerService = inject.attr(PlayerService)
     _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
+    _exporter: DocumentExportService = inject.attr(DocumentExportService)
+    _importer: DocumentImporterService = inject.attr(DocumentImporterService)
+    _player: PlayerService = inject.attr(PlayerService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
 
     def __init__(self):
         super().__init__()
@@ -129,7 +130,11 @@ class MpvqcManagerPyObject(QObject):
 
     @Slot(list, list, list)
     def open_impl(self, documents: list[QUrl], videos: list[QUrl], subtitles: list[QUrl]):
-        document_import_result = self._importer.read(self._to_paths(documents))
+        documents = self._type_mapper.map_urls_to_path(documents)
+        videos = self._type_mapper.map_urls_to_path(videos)
+        subtitles = self._type_mapper.map_urls_to_path_strings(subtitles)
+
+        document_import_result = self._importer.read(documents)
 
         def on_video_selected(video: Path or None):
             _load_new_comments()
@@ -147,7 +152,7 @@ class MpvqcManagerPyObject(QObject):
 
         def _load_new_subtitles():
             if subtitles:
-                self._player.open_subtitles(self._to_path_strings(subtitles))
+                self._player.open_subtitles(subtitles)
 
         def _update_state(video: Path or None):
             if video or document_import_result.valid_documents:
@@ -170,7 +175,7 @@ class MpvqcManagerPyObject(QObject):
             message_box.open()
 
         self._video_selector.select_video_from(
-            existing_videos_dropped=self._to_paths(videos),
+            existing_videos_dropped=videos,
             existing_videos_from_documents=document_import_result.existing_videos,
             video_found_dialog_factory=self.message_box_video_found_factory,
             on_video_selected=on_video_selected
@@ -192,31 +197,15 @@ class MpvqcManagerPyObject(QObject):
         path_proposal = self._exporter.generate_file_path_proposal()
 
         properties = {
-            'selectedFile': QUrl.fromLocalFile(path_proposal)
+            'selectedFile': self._type_mapper.map_path_to_url(path_proposal)
         }
 
         dialog = self.dialog_export_document_factory.createObject(None, properties)
         dialog.accepted.connect(dialog.deleteLater)
         dialog.rejected.connect(dialog.deleteLater)
-        dialog.savePressed.connect(lambda url: self._save(Path(url.toLocalFile())))
+        dialog.savePressed.connect(lambda url: self._save(self._type_mapper.map_url_to_path(url)))
         dialog.open()
 
     @Slot()
     def backup_impl(self):
         self._backupper.backup()
-
-    @staticmethod
-    def _to_paths(urls: list[QUrl]) -> list[Path]:
-        paths = []
-        for url in urls:
-            path = Path(url.toLocalFile()).absolute()
-            paths.append(path)
-        return paths
-
-    @staticmethod
-    def _to_path_strings(urls: list[QUrl]) -> tuple[str, ...]:
-        paths = []
-        for url in urls:
-            path = Path(url.toLocalFile()).absolute()
-            paths.append(f'{path}')
-        return tuple(paths)
