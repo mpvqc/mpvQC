@@ -106,12 +106,10 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.setData(self.index(index, 0), comment, Role.COMMENT)
         self.invalidate_search()
 
-    @Slot()
     def clear_comments(self) -> None:
         self.clear()
         self.invalidate_search()
 
-    @Slot(result=list or None)
     def comments(self) -> list:
         comments = []
         for row in range(0, self.rowCount()):

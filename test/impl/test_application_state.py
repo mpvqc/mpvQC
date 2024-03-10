@@ -28,28 +28,28 @@ from mpvqc.services import TypeMapperService
 class ImportChangeTest(unittest.TestCase):
 
     def test_import_change(self):
-        change = ImportChange(documents=tuple(), video=None)
+        change = ImportChange(documents=[], video=None)
         self.assertFalse(change.only_video_imported)
         self.assertFalse(change.exactly_one_document_imported)
 
-        change = ImportChange(documents=(Path.home(),), video=None)
+        change = ImportChange(documents=[Path.home()], video=None)
         self.assertFalse(change.only_video_imported)
         self.assertTrue(change.exactly_one_document_imported)
         self.assertEqual(Path.home(), change.imported_document)
 
-        change = ImportChange(documents=tuple([Path.home(), Path.home().joinpath('other')]), video=None)
+        change = ImportChange(documents=[Path.home(), Path.home().joinpath('other')], video=None)
         self.assertFalse(change.only_video_imported)
         self.assertFalse(change.exactly_one_document_imported)
 
-        change = ImportChange(documents=tuple(), video=Path.home())
+        change = ImportChange(documents=[], video=Path.home())
         self.assertTrue(change.only_video_imported)
         self.assertFalse(change.exactly_one_document_imported)
 
-        change = ImportChange(documents=(Path.home(),), video=Path.home())
+        change = ImportChange(documents=[Path.home()], video=Path.home())
         self.assertFalse(change.only_video_imported)
         self.assertTrue(change.exactly_one_document_imported)
 
-        change = ImportChange(documents=tuple([Path.home(), Path.home().joinpath('other')]), video=Path.home())
+        change = ImportChange(documents=[Path.home(), Path.home().joinpath('other')], video=Path.home())
         self.assertFalse(change.only_video_imported)
         self.assertFalse(change.exactly_one_document_imported)
 
@@ -59,24 +59,24 @@ class ApplicationStateTest(unittest.TestCase):
     def test_find_video(self):
         state = ApplicationState(document=None, video=None, saved=True)
         imported_video = None
-        change = ImportChange(documents=tuple(), video=imported_video)
+        change = ImportChange(documents=[], video=imported_video)
         self.assertIsNone(state.find_video(change=change))
 
         state = ApplicationState(document=None, video=None, saved=True)
         imported_video = Path.home()
-        change = ImportChange(documents=tuple(), video=imported_video)
+        change = ImportChange(documents=[], video=imported_video)
         self.assertEqual(imported_video, state.find_video(change))
 
         existing_video = Path.home() / 'existing'
         state = ApplicationState(document=None, video=existing_video, saved=True)
         imported_video = None
-        change = ImportChange(documents=tuple(), video=imported_video)
+        change = ImportChange(documents=[], video=imported_video)
         self.assertEqual(existing_video, state.find_video(change))
 
         existing_video = Path.home() / 'existing'
         state = ApplicationState(document=None, video=existing_video, saved=True)
         imported_video = Path.home()
-        change = ImportChange(documents=tuple(), video=imported_video)
+        change = ImportChange(documents=[], video=imported_video)
         self.assertEqual(imported_video, state.find_video(change))
 
     def test_handle_save(self):
@@ -141,7 +141,7 @@ class InitialStateTest(unittest.TestCase):
     def test_handle_import(self):
         state = InitialState.new()
         imported_video = Path.home()
-        change = ImportChange(documents=tuple(), video=imported_video)
+        change = ImportChange(documents=[], video=imported_video)
         state = state.handle_import(change)
         self.assertIsInstance(state, InitialState)
         self.assertEqual(imported_video, state.video)
@@ -149,7 +149,7 @@ class InitialStateTest(unittest.TestCase):
         initial_video = Path.home()
         state = InitialState.new(video=initial_video)
         imported_video = Path.home() / 'imported-video'
-        change = ImportChange(documents=tuple(), video=imported_video)
+        change = ImportChange(documents=[], video=imported_video)
         state = state.handle_import(change)
         self.assertIsInstance(state, InitialState)
         self.assertEqual(imported_video, state.video)
@@ -158,7 +158,7 @@ class InitialStateTest(unittest.TestCase):
         state = InitialState.new(video=initial_video)
         imported_video = Path.home() / 'imported-video'
         imported_document = Path.home() / 'imported-document'
-        change = ImportChange(documents=(imported_document,), video=imported_video)
+        change = ImportChange(documents=[imported_document], video=imported_video)
         state = state.handle_import(change)
         self.assertEqual(imported_video, state.video)
         self.assertEqual(imported_document, state.document)
@@ -169,7 +169,7 @@ class InitialStateTest(unittest.TestCase):
         imported_video = None
         imported_document_1 = Path.home() / 'imported-document-1'
         imported_document_2 = Path.home() / 'imported-document-2'
-        change = ImportChange(documents=(imported_document_1, imported_document_2), video=imported_video)
+        change = ImportChange(documents=[imported_document_1, imported_document_2], video=imported_video)
         state = state.handle_import(change)
         self.assertEqual(initial_video, state.video)
         self.assertIsNone(state.document)
@@ -191,7 +191,7 @@ class OtherStateTest(unittest.TestCase):
         initial_saved = True
         state = OtherState(initial_document, initial_video, initial_saved)
         imported_video = Path.home() / 'video'
-        imported_documents = tuple()
+        imported_documents = []
         change = ImportChange(documents=imported_documents, video=imported_video)
         state = state.handle_import(change)
         self.assertIsNone(state.document)
@@ -203,7 +203,7 @@ class OtherStateTest(unittest.TestCase):
         initial_saved = False
         state = OtherState(initial_document, initial_video, initial_saved)
         imported_video = Path.home() / 'video'
-        imported_documents = tuple()
+        imported_documents = []
         change = ImportChange(documents=imported_documents, video=imported_video)
         state = state.handle_import(change)
         self.assertEqual(initial_document, state.document)
@@ -215,7 +215,7 @@ class OtherStateTest(unittest.TestCase):
         initial_saved = True
         state = OtherState(initial_document, initial_video, initial_saved)
         imported_video = Path.home() / 'video-imported'
-        imported_documents = tuple()
+        imported_documents = []
         change = ImportChange(documents=imported_documents, video=imported_video)
         state = state.handle_import(change)
         self.assertIsNone(state.document)
@@ -228,7 +228,7 @@ class OtherStateTest(unittest.TestCase):
         state = OtherState(initial_document, initial_video, initial_saved)
         imported_video = Path.home() / 'video-2'
         imported_document = Path.home() / 'imported-document'
-        change = ImportChange(documents=(imported_document,), video=imported_video)
+        change = ImportChange(documents=[imported_document], video=imported_video)
         state = state.handle_import(change)
         self.assertIsNone(state.document)
         self.assertFalse(state.saved)

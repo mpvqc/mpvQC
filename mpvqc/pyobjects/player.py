@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import Slot, QUrl, QObject
+from PySide6.QtCore import Slot, QObject
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import PlayerService
@@ -28,17 +28,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcMpvPlayerPyObject(QObject):
     _player = inject.attr(PlayerService)
-
-    @Slot(QUrl)
-    def open_video(self, video: QUrl) -> None:
-        self._player.open_video(video.toString())
-        self._player.play()
-
-    @Slot(list)
-    def open_subtitles(self, subtitles: list[str]) -> None:
-        subtitles = map(lambda url_str: QUrl(url_str).toLocalFile(), subtitles)
-        # noinspection PyTypeChecker
-        self._player.open_subtitles(tuple(subtitles))
 
     @Slot()
     def pause(self) -> None:

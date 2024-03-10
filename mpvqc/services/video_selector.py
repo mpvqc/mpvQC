@@ -21,7 +21,7 @@ from typing import Callable
 import inject
 from PySide6.QtQml import QQmlComponent
 
-from mpvqc.services.settings import SettingsService
+from .settings import SettingsService
 
 
 class VideoSelectorService:
