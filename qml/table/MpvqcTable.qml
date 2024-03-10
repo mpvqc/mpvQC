@@ -39,8 +39,8 @@ ListView {
     property bool currentlyFullscreen: mpvqcApplication.fullscreen
 
     property var deleteCommentMessageBox: null
-    property var deleteCommentMessageBoxFactory: Component {
-
+    property var deleteCommentMessageBoxFactory: Component
+    {
         MpvqcMessageBoxDeleteComment {
             property int index
 
@@ -48,7 +48,6 @@ ListView {
 
             onAccepted: root.model.remove_row(index)
         }
-
     }
 
     signal commentsChanged()
@@ -132,25 +131,6 @@ ListView {
         root.model.add_row(commentType)
     }
 
-    function clearComments(): void {
-        root.model.clear_comments()
-    }
-
-    /**
-     * @returns {Array<MpvqcComment>}
-     */
-    function getAllComments() {
-        return root.model.comments()
-    }
-
-    /**
-     *
-     * @param comments {Array<MpvqcComment>}
-     */
-    function importComments(comments): void {
-        root.model.import_comments(comments)
-    }
-
     function _handleDeleteComment(event) {
         if (event.isAutoRepeat) {
             return
@@ -205,7 +185,6 @@ ListView {
 
         event.accepted = false
     }
-
 
     Connections {
         target: root.model

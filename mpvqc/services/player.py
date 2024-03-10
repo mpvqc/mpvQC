@@ -22,11 +22,13 @@ from mpv import MPV
 
 from .application_paths import ApplicationPathsService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
+from .type_mapper import TypeMapperService
 
 
 class PlayerService:
     _paths = inject.attr(ApplicationPathsService)
     _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     def __init__(self, **properties):
         super().__init__(**properties)
@@ -39,8 +41,8 @@ class PlayerService:
             input_cursor="no",
             input_default_bindings="no",
             config="yes",
-            config_dir=str(self._paths.dir_config),
-            screenshot_directory=str(self._paths.dir_screenshots),
+            config_dir=self._type_mapper.map_path_to_str(self._paths.dir_config),
+            screenshot_directory=self._type_mapper.map_path_to_str(self._paths.dir_screenshots),
             ytdl="yes",
             # log_handler=logging.mpv_log_handler,
         )
@@ -83,7 +85,7 @@ class PlayerService:
         self._subtitle_cacher.load_cached_subtitles()
         self.play()
 
-    def open_subtitles(self, subtitles: tuple[str]) -> None:
+    def open_subtitles(self, subtitles: list[str]) -> None:
         self._subtitle_cacher.open(subtitles)
 
     def play(self) -> None:
@@ -125,7 +127,7 @@ class SubtitleCacher:
         self._load_subtitles_func = load_subtitles_func
         self._cache = set()
 
-    def open(self, subtitles: tuple[str]) -> None:
+    def open(self, subtitles: list[str]) -> None:
         if self._have_video():
             self._load_subtitles(subtitles)
         else:

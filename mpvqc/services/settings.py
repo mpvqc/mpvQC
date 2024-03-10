@@ -15,19 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from enum import Enum
+
 import inject
 from PySide6.QtCore import QSettings
 
 from .application_paths import ApplicationPathsService
+from .type_mapper import TypeMapperService
 
 
 # noinspection PyPep8Naming
 class SettingsService:
     _paths = inject.attr(ApplicationPathsService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     def __init__(self):
-        settings_file_path = self._paths.file_settings.absolute()
-        self._settings = QSettings(str(settings_file_path), QSettings.defaultFormat())
+        path = self._type_mapper.map_path_to_str(self._paths.file_settings)
+        self._settings = QSettings(path, QSettings.defaultFormat())
 
     def _bool(self, key: str):
         value = self._settings.value(key, False)
@@ -40,6 +44,12 @@ class SettingsService:
 
     def _str(self, key: str, default=''):
         return str(self._settings.value(key, default))
+
+    def _int(self, key: str, default=0):
+        try:
+            return int(self._str(key, default=str(default)))
+        except ValueError:
+            return default
 
     @property
     def nickname(self) -> str:
@@ -64,3 +74,17 @@ class SettingsService:
     @property
     def language(self) -> str:
         return self._str('Common/language', default='en-US')
+
+    class ImportWhenVideoLinkedInDocument(Enum):
+        ALWAYS = 0
+        ASK_EVERY_TIME = 1
+        NEVER = 2
+
+    @property
+    def import_video_when_video_linked_in_document(self) -> ImportWhenVideoLinkedInDocument:
+        default = SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME
+        value = self._int('Import/importWhenVideoLinkedInDocument', default=default.value)
+        try:
+            return self.ImportWhenVideoLinkedInDocument(value)
+        except ValueError:
+            return default

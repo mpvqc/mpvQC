@@ -17,26 +17,26 @@
 
 import inject
 
-from mpvqc.services import ResourceService, ApplicationEnvironmentService, ApplicationPathsService, \
-    DocumentBackupService, FileStartupService, PlayerService, ResourceReaderService, ReverseTranslatorService, \
-    OperatingSystemZoomDetectorService, FontLoaderService, SettingsService, DocumentExportService, \
-    DocumentRenderService
+import mpvqc.services as s
 
 
 def bindings(binder: inject.Binder):
-    binder.bind_to_constructor(ApplicationEnvironmentService, lambda: ApplicationEnvironmentService())
-    binder.bind_to_constructor(ApplicationPathsService, lambda: ApplicationPathsService())
-    binder.bind_to_constructor(DocumentBackupService, lambda: DocumentBackupService())
-    binder.bind_to_constructor(DocumentExportService, lambda: DocumentExportService())
-    binder.bind_to_constructor(DocumentRenderService, lambda: DocumentRenderService())
-    binder.bind_to_constructor(FileStartupService, lambda: FileStartupService())
-    binder.bind_to_constructor(FontLoaderService, lambda: FontLoaderService())
-    binder.bind_to_constructor(PlayerService, lambda: PlayerService())
-    binder.bind_to_constructor(ResourceService, lambda: ResourceService())
-    binder.bind_to_constructor(ResourceReaderService, lambda: ResourceReaderService())
-    binder.bind_to_constructor(ReverseTranslatorService, lambda: ReverseTranslatorService())
-    binder.bind_to_constructor(OperatingSystemZoomDetectorService, lambda: OperatingSystemZoomDetectorService())
-    binder.bind_to_constructor(SettingsService, lambda: SettingsService())
+    binder.bind_to_constructor(s.ApplicationEnvironmentService, lambda: s.ApplicationEnvironmentService())
+    binder.bind_to_constructor(s.ApplicationPathsService, lambda: s.ApplicationPathsService())
+    binder.bind_to_constructor(s.DocumentBackupService, lambda: s.DocumentBackupService())
+    binder.bind_to_constructor(s.DocumentExportService, lambda: s.DocumentExportService())
+    binder.bind_to_constructor(s.DocumentImporterService, lambda: s.DocumentImporterService())
+    binder.bind_to_constructor(s.DocumentRenderService, lambda: s.DocumentRenderService())
+    binder.bind_to_constructor(s.FileStartupService, lambda: s.FileStartupService())
+    binder.bind_to_constructor(s.FontLoaderService, lambda: s.FontLoaderService())
+    binder.bind_to_constructor(s.OperatingSystemZoomDetectorService, lambda: s.OperatingSystemZoomDetectorService())
+    binder.bind_to_constructor(s.PlayerService, lambda: s.PlayerService())
+    binder.bind_to_constructor(s.ResourceReaderService, lambda: s.ResourceReaderService())
+    binder.bind_to_constructor(s.ResourceService, lambda: s.ResourceService())
+    binder.bind_to_constructor(s.ReverseTranslatorService, lambda: s.ReverseTranslatorService())
+    binder.bind_to_constructor(s.SettingsService, lambda: s.SettingsService())
+    binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
+    binder.bind_to_constructor(s.VideoSelectorService, lambda: s.VideoSelectorService())
 
 
 def configure_injections():

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import manager
 import pyobjects
 import settings
 import shared
@@ -43,7 +42,7 @@ ApplicationWindow {
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
-    readonly property var mpvqcDocumentExporterPyObject: MpvqcDocumentExporterPyObject {}
+    readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
     readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
     readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}

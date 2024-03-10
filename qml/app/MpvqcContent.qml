@@ -68,8 +68,8 @@ FocusScope {
                 anchors.fill: parent
                 supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
 
-                onFilesDropped: (docs, vid, subs) => {
-                    root.mpvqcManager.open(docs, vid, subs)
+                onFilesDropped: (documents, videos, subtitles) => {
+                    root.mpvqcManager.open(documents, videos, subtitles)
                 }
             }
         }

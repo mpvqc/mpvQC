@@ -25,7 +25,7 @@ DropArea {
 
     readonly property string acceptedFormat: 'text/uri-list'
 
-    signal filesDropped(var documents, url video, var subtitles)
+    signal filesDropped(var documents, var videos, var subtitles)
 
     onEntered: (event) => handleEnter(event)
     onDropped: (event) => handleDrop(event)
@@ -51,8 +51,7 @@ DropArea {
     function _open(urls) {
         const decodedUrls = _decodeURIs(urls)
         const { documents, videos, subtitles } = _splitByFileExtension(decodedUrls)
-        const video = videos.length > 0 ? videos[0] : ''
-        filesDropped(documents, video, subtitles)
+        filesDropped(documents, videos, subtitles)
     }
 
     function _decodeURIs(urls) {
@@ -60,9 +59,12 @@ DropArea {
     }
 
     function _splitByFileExtension(urls) {
-        const documents = []; const videos = []; const subtitles = []
-        for (const url of urls) {
-            const urlString = url.toString()
+        const documents = [];
+        const videos = [];
+        const subtitles = []
+
+        for (const urlString of urls) {
+            const url = Qt.resolvedUrl(urlString)
             if (urlString.endsWith('.txt')) {
                 documents.push(url)
             } else if (_endsWithAny(supportedSubtitleFileExtensions, urlString)) {

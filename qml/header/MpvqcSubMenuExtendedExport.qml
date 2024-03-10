@@ -31,7 +31,7 @@ MpvqcMenu {
 
     property alias templateModel: _repeater.model
 
-    readonly property var mpvqcDocumentExporterPyObject: mpvqcApplication.mpvqcDocumentExporterPyObject
+    readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property bool haveTemplates: _repeater.count > 0
 
     readonly property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
@@ -39,7 +39,7 @@ MpvqcMenu {
         property url template
 
         onSavePressed: (documentUrl) => {
-            root.mpvqcDocumentExporterPyObject.export(template, documentUrl)
+            root.mpvqcExtendedDocumentExporterPyObject.export(template, documentUrl)
         }
     }
 
@@ -60,7 +60,7 @@ MpvqcMenu {
     icon.width: 24
 
     function openExportFileSelectionDialog(name: string, path: url): void {
-        root.exportDialog.selectedFile = root.mpvqcDocumentExporterPyObject.generate_file_path_proposal()
+        root.exportDialog.selectedFile = root.mpvqcExtendedDocumentExporterPyObject.generate_file_path_proposal()
         root.exportDialog.template = path
         root.exportDialog.title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name)
         root.exportDialog.open()
@@ -94,7 +94,7 @@ MpvqcMenu {
     }
 
     Connections {
-        target: root.mpvqcDocumentExporterPyObject
+        target: root.mpvqcExtendedDocumentExporterPyObject
 
         function onExportErrorOccurred(message: string, lineNr: int): void {
             root.displayExportErrorDialog(message, lineNr)

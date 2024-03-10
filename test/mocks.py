@@ -15,6 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from PySide6.QtCore import QObject, Signal, QUrl
 
-from .application_state import ImportChange, ApplicationState, InitialState, OtherState
-from .searcher import Searcher
+
+class MockedMessageBox(QObject):
+    accepted = Signal()
+    rejected = Signal()
+    closed = Signal()
+
+    def open(self):
+        pass
+
+
+class MockedDialog(QObject):
+    accepted = Signal()
+    rejected = Signal()
+    savePressed = Signal(QUrl)
+
+    def open(self):
+        pass

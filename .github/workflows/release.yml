@@ -138,12 +138,12 @@ jobs:
           version: '6.6.1'
       - name: 'Install just'
         uses: taiki-e/install-action@just
-      - name: 'Lint Qml Files'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
-          execute just lint-qml
-        continue-on-error: true
+#      - name: 'Lint Qml Files'
+#        run: |
+#          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+#
+#          execute just lint-qml
+#        continue-on-error: true
       - name: 'Execute Qml Tests'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }

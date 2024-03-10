@@ -15,43 +15,32 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pathlib import Path
-
 import inject
 from PySide6.QtCore import QObject, Slot, QUrl, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import DocumentExportService, DocumentBackupService
+from mpvqc.services import DocumentExportService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcDocumentExporterPyObject(QObject):
+class MpvqcExtendedDocumentExporterPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     exportErrorOccurred = Signal(str, int or None)
 
     @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> QUrl:
         path = self._exporter.generate_file_path_proposal()
-        return QUrl.fromLocalFile(str(path))
-
-    @Slot()
-    def backup(self) -> None:
-        self._backupper.backup()
-
-    @Slot(QUrl)
-    def save(self, file_url: QUrl) -> None:
-        path = Path(file_url.toLocalFile())
-        self._exporter.save(path)
+        return self._type_mapper.map_path_to_url(path)
 
     @Slot(QUrl, QUrl)
-    def export(self, template_path: QUrl, file_url: QUrl):
-        file = Path(file_url.toLocalFile())
-        template = Path(template_path.toLocalFile())
+    def export(self, template_url: QUrl, file_url: QUrl):
+        file = self._type_mapper.map_url_to_path(file_url)
+        template = self._type_mapper.map_url_to_path(template_url)
 
         error = self._exporter.export(file, template)
 

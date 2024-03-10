@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2024 mpvQC developers
+# Copyright (C) 2024
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from dataclasses import dataclass
 
-from .application_state import ImportChange, ApplicationState, InitialState, OtherState
-from .searcher import Searcher
+
+@dataclass
+class Comment:
+    time: int
+    comment_type: str
+    comment: str
