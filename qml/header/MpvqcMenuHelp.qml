@@ -39,7 +39,7 @@ MpvqcMenu {
         id: _updateAction
 
         property var factory: Component {
-            MpvqcDialogUpdate {
+            MpvqcMessageBoxVersionCheck {
                 mpvqcApplication: root.mpvqcApplication
             }
         }

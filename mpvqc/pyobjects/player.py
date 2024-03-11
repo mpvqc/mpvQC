@@ -19,7 +19,7 @@ import inject
 from PySide6.QtCore import Slot, QObject
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService
+from mpvqc.services import PlayerService, KeyCommandGeneratorService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -27,15 +27,17 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcMpvPlayerPyObject(QObject):
-    _player = inject.attr(PlayerService)
+    _player: PlayerService = inject.attr(PlayerService)
+    _command_generator: KeyCommandGeneratorService = inject.attr(KeyCommandGeneratorService)
 
     @Slot()
     def pause(self) -> None:
         self._player.pause()
 
-    @Slot(str)
-    def execute(self, command) -> None:
-        self._player.execute(command)
+    @Slot(int, int)
+    def handle_key_event(self, key: int, modifiers: int):
+        if command := self._command_generator.generate_command(key, modifiers):
+            self._player.execute(command)
 
     @Slot(int)
     def jump_to(self, seconds: int) -> None:

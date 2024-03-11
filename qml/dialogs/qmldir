@@ -17,8 +17,6 @@ MpvqcDialogExport export/MpvqcDialogExport.qml
 
 MpvqcDialogShortcuts shortcuts/MpvqcDialogShortcuts.qml
 
-MpvqcDialogUpdate update/MpvqcDialogUpdate.qml
-
 MpvqcDialogExportDocument MpvqcDialogExportDocument.qml
 MpvqcDialogImportDocuments MpvqcDialogImportDocuments.qml
 MpvqcDialogImportSubtitles MpvqcDialogImportSubtitles.qml
@@ -26,6 +24,7 @@ MpvqcDialogImportVideo MpvqcDialogImportVideo.qml
 
 MpvqcMessageBoxDeleteComment MpvqcMessageBoxDeleteComment.qml
 MpvqcMessageBoxDocumentNotCompatible MpvqcMessageBoxDocumentNotCompatible.qml
-MpvqcMessageBoxVideoFound MpvqcMessageBoxVideoFound.qml
-MpvqcMessageBoxQuit MpvqcMessageBoxQuit.qml
 MpvqcMessageBoxNewDocument MpvqcMessageBoxNewDocument.qml
+MpvqcMessageBoxQuit MpvqcMessageBoxQuit.qml
+MpvqcMessageBoxVersionCheck MpvqcMessageBoxVersionCheck.qml
+MpvqcMessageBoxVideoFound MpvqcMessageBoxVideoFound.qml
