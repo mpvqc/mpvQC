@@ -31,26 +31,26 @@ import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
 ApplicationWindow {
     id: root
 
-    readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
-    readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
-    readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
+    readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcMpvFiles: MpvqcMpvFiles { mpvqcApplication: root }
+    readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
+    readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
-    readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
     readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
-    readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
-    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
-    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
     readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
-    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
+    readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
+    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
+    readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
+    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
+    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
