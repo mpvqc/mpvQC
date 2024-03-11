@@ -228,6 +228,7 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
       options: --privileged
     name: 'Build Linux'
+    if: github.ref_name == 'skip until we seriously want to build a release'
     needs:
       - build_python
       - test_qml
