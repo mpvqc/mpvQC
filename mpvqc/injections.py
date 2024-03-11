@@ -36,6 +36,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.ReverseTranslatorService, lambda: s.ReverseTranslatorService())
     binder.bind_to_constructor(s.SettingsService, lambda: s.SettingsService())
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
+    binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
     binder.bind_to_constructor(s.VideoSelectorService, lambda: s.VideoSelectorService())
 
 

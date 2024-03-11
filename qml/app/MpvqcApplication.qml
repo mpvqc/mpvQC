@@ -51,6 +51,7 @@ ApplicationWindow {
     readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
     readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
     readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
+    readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
     readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils

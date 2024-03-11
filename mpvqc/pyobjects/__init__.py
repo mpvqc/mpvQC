@@ -31,3 +31,4 @@ from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .resource import MpvqcResourcePyObject
 from .reverse_translator import MpvqcReverseTranslatorPyObject
 from .text_validator import MpvqcDefaultTextValidatorPyObject
+from .version_checker import MpvqcVersionCheckerPyObject
