@@ -24,7 +24,6 @@ import pyobjects
 import settings
 import shared
 
-import "MpvqcKeyCommandGenerator.js" as MpvqcKeyCommandGenerator
 import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
 
 
@@ -53,7 +52,6 @@ ApplicationWindow {
     readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
-    readonly property var mpvqcKeyCommandGenerator: MpvqcKeyCommandGenerator
     readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
@@ -122,10 +120,8 @@ ApplicationWindow {
             if (_preventFromEverReachingUserDefinedCommands(event)) {
                 return
             }
-            const command = root.mpvqcKeyCommandGenerator.generateFrom(event)
-            if (command) {
-                root.mpvqcMpvPlayerPyObject.execute(command)
-            }
+
+            root.mpvqcMpvPlayerPyObject.handle_key_event(event.key, event.modifiers)
         }
 
         function _handleEPressed(event) {
