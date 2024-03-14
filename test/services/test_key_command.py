@@ -28,10 +28,6 @@ from mpvqc.services import KeyCommandGeneratorService
 class KeyCommandTest(unittest.TestCase):
     _service = KeyCommandGeneratorService()
 
-    @staticmethod
-    def _key_event(key: int, modifiers: int or None = Qt.NoModifier):
-        return
-
     @parameterized.expand([
         (None, None, Qt.NoModifier),
         (None, None, Qt.ShiftModifier),
