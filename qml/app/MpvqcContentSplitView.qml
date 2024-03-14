@@ -49,16 +49,10 @@ FocusScope {
         State { name: "normal"; ParentChange { target: _player; parent: _playerContainer } }
     ]
 
-    function setPreferredTableSize(width: int, height: int): void {
-        _tableContainer.setPreferredSizes(width, height)
-    }
-
-    Connections {
-        target: mpvqcApplication
-
-        function onFullscreenChanged() {
-            state = mpvqcApplication.fullscreen ? "fullscreen" : "normal"
-        }
+    function applySaneDefaultSplitViewSize() {
+        const prefHeight = _splitView.height * 0.4
+        const prefWidth = _splitView.width * 0.4
+        _tableContainer.setPreferredSizes(prefWidth, prefHeight)
     }
 
     SplitView {
@@ -116,37 +110,30 @@ FocusScope {
 
     }
 
-    Component.onCompleted: {
-        const restored = _splitView.restoreState(root.mpvqcSettings.dimensions)
-        if (!restored) {
-            const defaultTableHeight = _splitView.height * 0.4
-            const defaultTableWidth = _splitView.width * 0.4
-			setPreferredTableSize(defaultTableWidth, defaultTableHeight)
-        }
-    }
-
-    Component.onDestruction: {
-        root.mpvqcSettings.dimensions = _splitView.saveState()
-    }
-
     Connections {
         target: root.mpvqcSettings
 
         function onLayoutOrientationChanged() {
             _forceSplitViewLayoutRefresh()
-            _applySaneDefaultSplitViewSizes()
+            root.applySaneDefaultSplitViewSize()
         }
 
         function _forceSplitViewLayoutRefresh() {
             const bottomElement = _splitView.takeItem(1)
             _splitView.addItem(bottomElement)
         }
+    }
 
-        function _applySaneDefaultSplitViewSizes() {
-            const splitViewWidth = _splitView.width
-            const splitViewHeight = _splitView.height
-            root.setPreferredTableSize(splitViewWidth * (1 / 3), splitViewHeight * (1 / 3.5))
+    Connections {
+        target: mpvqcApplication
+
+        function onFullscreenChanged() {
+            state = mpvqcApplication.fullscreen ? "fullscreen" : "normal"
         }
+    }
+
+    Component.onCompleted: {
+        root.applySaneDefaultSplitViewSize()
     }
 
 }
