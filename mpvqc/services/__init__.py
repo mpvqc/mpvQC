@@ -23,7 +23,7 @@ from .file_startup import FileStartupService
 from .font_loader import FontLoaderService
 from .key_command import KeyCommandGeneratorService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
-from .player import PlayerService, SubtitleCacher
+from .player import PlayerService
 from .resource import ResourceService
 from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService

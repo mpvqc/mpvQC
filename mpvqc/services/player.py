@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Iterable, Callable
+from typing import Iterable
 
 import inject
 from mpv import MPV
@@ -32,6 +32,8 @@ class PlayerService:
 
     def __init__(self, **properties):
         super().__init__(**properties)
+        self._cached_subtitles = set()
+
         self._mpv = MPV(
             vo="libmpv",
             keep_open="yes",
@@ -46,17 +48,6 @@ class PlayerService:
             ytdl="yes",
             # log_handler=logging.mpv_log_handler,
         )
-        self._subtitle_cacher = SubtitleCacher(
-            is_video_loaded_func=self._is_video_loaded,
-            load_subtitles_func=self._load_subtitles
-        )
-
-    def _is_video_loaded(self) -> bool:
-        return bool(self._mpv.path)
-
-    def _load_subtitles(self, subtitles) -> None:
-        for subtitle in subtitles:
-            self._mpv.command("sub-add", subtitle, "select")
 
     @property
     def mpv(self) -> MPV:
@@ -82,11 +73,27 @@ class PlayerService:
 
     def open_video(self, video: str) -> None:
         self._mpv.command("loadfile", video, "replace")
-        self._subtitle_cacher.load_cached_subtitles()
+        self._open_cached_subtitles()
         self.play()
 
-    def open_subtitles(self, subtitles: list[str]) -> None:
-        self._subtitle_cacher.open(subtitles)
+    def _open_cached_subtitles(self):
+        if self._cached_subtitles:
+            self.open_subtitles(self._cached_subtitles)
+            self._cached_subtitles.clear()
+
+    def open_subtitles(self, subtitles: Iterable[str]) -> None:
+
+        def _load():
+            for subtitle in subtitles:
+                self._mpv.command("sub-add", subtitle, "select")
+
+        def _cache():
+            self._cached_subtitles = self._cached_subtitles | set(subtitles)
+
+        if self.has_video:
+            _load()
+        else:
+            _cache()
 
     def play(self) -> None:
         self._mpv.pause = False
@@ -114,34 +121,3 @@ class PlayerService:
 
     def scroll_down(self) -> None:
         self._mpv.command_async("keypress", f"MOUSE_BTN4")
-
-
-class SubtitleCacher:
-
-    def __init__(
-            self,
-            is_video_loaded_func: Callable[[], bool],
-            load_subtitles_func: Callable[[Iterable[str]], None]
-    ):
-        self._is_video_loaded_func = is_video_loaded_func
-        self._load_subtitles_func = load_subtitles_func
-        self._cache = set()
-
-    def open(self, subtitles: list[str]) -> None:
-        if self._have_video():
-            self._load_subtitles(subtitles)
-        else:
-            self._cache_subtitles(subtitles)
-
-    def _have_video(self) -> bool:
-        return self._is_video_loaded_func()
-
-    def _load_subtitles(self, subtitles: Iterable[str]) -> None:
-        self._load_subtitles_func(subtitles)
-
-    def _cache_subtitles(self, subtitles) -> None:
-        self._cache = self._cache | set(subtitles)
-
-    def load_cached_subtitles(self) -> None:
-        self._load_subtitles(self._cache)
-        self._cache.clear()

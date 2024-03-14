@@ -83,7 +83,7 @@ jobs:
             exit 1
           fi
           
-          DEPENDENCIES=("inject" "Jinja2" "mpv" "PySide6" "pywin32" "parameterized" "pytest")  # List ALL dependencies for ALL os manually :|
+          DEPENDENCIES=("inject" "Jinja2" "mpv" "PySide6" "pywin32" "parameterized")  # List ALL dependencies for ALL os manually :|
           
           for (( i=0; i<${#DEPENDENCIES[@]}; i++ )) do
             DEPENDENCY="${DEPENDENCIES[$i]}"

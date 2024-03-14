@@ -62,28 +62,6 @@ Flickable {
         rowSpacing: 10
 
         MpvqcDescriptiveText {
-            text: qsTranslate("CommentTable", "Open QC Document(s)")
-        }
-
-        RowLayout {
-            Layout.bottomMargin: root.shortcutBottomMargin
-
-            MpvqcButtonRendered {
-                text: qsTranslate("KeyboardKeys", "Ctrl")
-            }
-
-            Label {
-                text: '+'
-            }
-
-            MpvqcButtonRendered {
-                text: 'O'
-            }
-
-        }
-
-
-        MpvqcDescriptiveText {
             text: qsTranslate("CommentTable", "Open Video")
         }
 
@@ -118,7 +96,17 @@ Flickable {
         }
 
         MpvqcButtonRendered {
+            Layout.bottomMargin: root.shortcutBottomMargin
+
             text: 'E'
+        }
+
+        MpvqcDescriptiveText {
+            text: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
+        }
+
+        MpvqcButtonRendered {
+            text: '?'
         }
 
     }

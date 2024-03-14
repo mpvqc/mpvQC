@@ -65,11 +65,4 @@ ListModel {
         version: '@@pypi-parameterized@@'
         os: 'linux, windows'
     }
-    ListElement {
-        name: 'pytest'
-        url: 'https://github.com/pytest-dev/pytest'
-        licence: 'MIT'
-        version: '@@pypi-pytest@@'
-        os: 'linux, windows'
-    }
 }

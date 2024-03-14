@@ -99,10 +99,8 @@ Item {
         id: _splitViewSettings
         location: root.settingsFile
         category: 'SplitView'
-        property var dimensions: ''
         property int layoutOrientation: Qt.Vertical
     }
-    property alias dimensions: _splitViewSettings.dimensions
     property alias layoutOrientation: _splitViewSettings.layoutOrientation
 
 
