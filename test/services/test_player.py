@@ -16,47 +16,76 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from unittest.mock import Mock
+from unittest.mock import MagicMock, patch
 
-from mpvqc.services import SubtitleCacher
+import inject
+
+from mpvqc.services import PlayerService, TypeMapperService, OperatingSystemZoomDetectorService, ApplicationPathsService
 
 
-class SubtitleCacherTest(unittest.TestCase):
+class PlayerServiceTest(unittest.TestCase):
+    video = 'video'
     subtitle = 'test'
     subtitles = (subtitle,)
 
-    def test_open_video_not_present(self):
-        cacher = SubtitleCacher(
-            is_video_loaded_func=lambda: False,
-            load_subtitles_func=lambda: None
-        )
-        cacher.open(self.subtitles)
-        self.assertIn(self.subtitle, cacher._cache)
+    def setUp(self):
+        inject.clear_and_configure(lambda binder: binder
+                                   .bind(TypeMapperService, TypeMapperService())
+                                   .bind(ApplicationPathsService, MagicMock())
+                                   .bind(OperatingSystemZoomDetectorService, MagicMock()))
 
-    def test_open_video_present(self):
-        mock = Mock()
-        cacher = SubtitleCacher(
-            is_video_loaded_func=lambda: True,
-            load_subtitles_func=mock()
-        )
-        cacher.open(self.subtitles)
-        mock.assert_called()
+    def tearDown(self):
+        inject.clear()
 
-    def test_load_subtitles(self):
-        mock = Mock()
-        cacher = SubtitleCacher(
-            is_video_loaded_func=lambda: True,
-            load_subtitles_func=mock()
-        )
-        cacher.load_cached_subtitles()
-        mock.assert_called()
+    def _mock(self, has_video: bool = False):
+        self._mpv_mock = MagicMock()
+        self._mpv_mock.path = 'video' if has_video else None
 
-    def test_load_subtitles_empties_cache(self):
-        mock = Mock()
-        cacher = SubtitleCacher(
-            is_video_loaded_func=lambda: True,
-            load_subtitles_func=mock()
-        )
-        cacher._cache.update(self.subtitle)
-        cacher.load_cached_subtitles()
-        self.assertFalse(cacher._cache)
+        def _mocked_command(arg1, arg2, arg3):
+            if arg1 == 'loadfile':
+                self._mpv_mock.path = 'video'
+
+        self._mpv_mock.command = MagicMock(side_effect=_mocked_command)
+        self._service: PlayerService = PlayerService()
+        self._service._mpv = self._mpv_mock
+
+    @patch('mpvqc.services.player.MPV', return_value=MagicMock())
+    def test_open_video_not_present(self, *_):
+        self._mock(has_video=False)
+        self._service.open_subtitles(self.subtitles)
+        self.assertFalse(self._mpv_mock.command.called)
+        self.assertIn(self.subtitle, self._service._cached_subtitles)
+
+    @patch('mpvqc.services.player.MPV', return_value=MagicMock())
+    def test_open_video_present(self, *_):
+        self._mock(has_video=True)
+        self._service.open_subtitles(self.subtitles)
+        self._mpv_mock.command.assert_called()
+        self.assertNotIn(self.subtitle, self._service._cached_subtitles)
+        self.assertFalse(self._service._cached_subtitles)
+
+    @patch('mpvqc.services.player.MPV', return_value=MagicMock())
+    def test_load_subtitles(self, *_):
+        self._mock(has_video=False)
+        self._service.open_subtitles(self.subtitles)
+        self._service.open_video(self.video)
+
+        self._mpv_mock.command.assert_called()
+        loadfile, video, replace = self._mpv_mock.command.call_args_list[0][0]
+        self.assertEqual('loadfile', loadfile)
+        self.assertEqual(self.video, video)
+        self.assertEqual('replace', replace)
+
+        sub_add, subtitle, select = self._mpv_mock.command.call_args_list[1][0]
+        self.assertEqual('sub-add', sub_add)
+        self.assertEqual(self.subtitle, subtitle)
+        self.assertEqual('select', select)
+
+    @patch('mpvqc.services.player.MPV', return_value=MagicMock())
+    def test_load_subtitles_empties_cache(self, *_):
+        self._mock(has_video=False)
+        self._service.open_subtitles(self.subtitles)
+        self._service.open_video(self.video)
+
+        self.assertNotIn(self.subtitle, self._service._cached_subtitles)
+        self.assertFalse(self._service._cached_subtitles)
