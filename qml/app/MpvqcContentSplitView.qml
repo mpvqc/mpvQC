@@ -55,6 +55,10 @@ FocusScope {
         _tableContainer.setPreferredSizes(prefWidth, prefHeight)
     }
 
+    function setPreferredTableSize(width: int, height: int): void {
+        _tableContainer.setPreferredSizes(width, height)
+    }
+
     SplitView {
         id: _splitView
 
