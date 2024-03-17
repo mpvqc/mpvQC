@@ -182,7 +182,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         rendered = DocumentRenderService().render(self._resources.backup_template)
 
-        self.assertIn(f'path      : {Path('/path/to/video/ignore/user/setting')}', rendered)
+        self.assertIn(f'path      : {Path("/path/to/video/ignore/user/setting")}', rendered)
         self.assertIn('[00:00:00] [Translation] My first comment', rendered)
         self.assertIn('[00:00:50] [Spelling] My second comment', rendered)
         self.assertIn('[00:01:40] [Phrasing] My third comment', rendered)
@@ -237,7 +237,7 @@ class DocumentBackupServiceTest(unittest.TestCase):
 
         filename, content = writestr_mock.call_args.args
         self.assertIn(f'{datetime.now():%Y-%m-%d}', filename)
-        self.assertIn(f'{Path('/path/to/nice/video')}', content)
+        self.assertIn(f'{Path("/path/to/nice/video")}', content)
         self.assertIn('[00:00:00] [Frrrranky] Suuuuuuuper', content)
 
 

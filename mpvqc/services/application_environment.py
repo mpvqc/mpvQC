@@ -28,20 +28,26 @@ class ApplicationEnvironmentService:
         return getattr(sys, 'frozen', False)
 
     @property
+    def built_by_nuitka(self) -> bool:
+        return "__compiled__" in globals()
+
+    @property
     def runs_as_flatpak(self) -> bool:
         return os.getenv("FLATPAK_ID", None) is not None
 
     @cached_property
     def executing_directory(self) -> Path:
-        if self.built_by_pyinstaller:
+        if self.built_by_pyinstaller or self.built_by_nuitka:
             return self._directory_of_mpvqc_exe
         else:
             return self._root_of_repository
 
     @property
     def _directory_of_mpvqc_exe(self) -> Path:
-        # noinspection PyUnresolvedReferences,PyProtectedMember
-        return Path(sys._MEIPASS).parent
+        if self.built_by_pyinstaller:
+            return Path(sys._MEIPASS).parent
+        else:
+            return Path(sys.argv[0]).parent
 
     @property
     def _root_of_repository(self) -> Path:
