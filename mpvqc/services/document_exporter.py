@@ -21,10 +21,8 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import inject
-from PySide6.QtCore import QLocale, QDateTime
-from PySide6.QtCore import QStandardPaths
+from PySide6.QtCore import QLocale, QDateTime, QCoreApplication, QStandardPaths
 from PySide6.QtGui import QStandardItemModel
-from PySide6.QtWidgets import QApplication
 from jinja2 import Environment, BaseLoader, TemplateSyntaxError, TemplateError
 
 from .application_paths import ApplicationPathsService
@@ -47,7 +45,7 @@ class DocumentRenderService:
 
         @staticmethod
         def as_comment_type(comment_type: str):
-            return QApplication.translate("CommentTypes", comment_type)
+            return QCoreApplication.translate("CommentTypes", comment_type)
 
     def __init__(self):
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)
@@ -62,8 +60,8 @@ class DocumentRenderService:
         write_nickname = self._settings.writeHeaderNickname
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
-        comments = QApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
-        generator = f"{QApplication.applicationName()} {QApplication.applicationVersion()}"
+        comments = QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
+        generator = f"{QCoreApplication.applicationName()} {QCoreApplication.applicationVersion()}"
         nickname = self._settings.nickname
 
         if self._player.has_video:
@@ -103,7 +101,7 @@ class DocumentBackupService:
         if self._player.has_video:
             return Path(self._player.path).name
         else:
-            return QApplication.translate("FileInteractionDialogs", "untitled")
+            return QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
     @property
     def _content(self) -> str:
@@ -140,7 +138,7 @@ class DocumentExportService:
             video_name = video.stem
         else:
             video_directory = QStandardPaths.writableLocation(QStandardPaths.MoviesLocation)
-            video_name = QApplication.translate("FileInteractionDialogs", "untitled")
+            video_name = QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
         if nickname := self._settings.nickname:
             file_name = f"[QC]_{video_name}_{nickname}.txt"

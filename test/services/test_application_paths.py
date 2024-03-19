@@ -30,7 +30,7 @@ class ApplicationPathsServiceTest(unittest.TestCase):
     def setUp(self):
         mock = MagicMock()
         mock.runs_as_flatpak = False
-        mock.built_by_pyinstaller = False
+        mock.built_by_nuitka = False
         mock.executing_directory = self.executing_dir
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationEnvironmentService, mock))

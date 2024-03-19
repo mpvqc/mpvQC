@@ -36,7 +36,7 @@ class VersionCheckerService:
     def _latest_version(self) -> str:
         with urllib.request.urlopen(self.UPDATE_URL, timeout=5) as connection:
             text = connection.read().decode("utf-8").strip()
-            return f'{json.loads(text)['latest']}'.strip()
+            return f"{json.loads(text)['latest']}".strip()
 
     def check_for_new_version(self) -> Tuple[str, str]:
         try:

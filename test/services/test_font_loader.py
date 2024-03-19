@@ -18,9 +18,8 @@
 
 import unittest
 
-from PySide6.QtCore import QFile
+from PySide6.QtCore import QFile, QCoreApplication
 from PySide6.QtGui import QFontDatabase
-from PySide6.QtWidgets import QApplication
 
 from mpvqc.services import FontLoaderService
 
@@ -30,7 +29,7 @@ class FontLoaderTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tearDownClass()
-        setattr(cls, 'app', QApplication([]))
+        setattr(cls, 'app', QCoreApplication([]))
 
     @classmethod
     def tearDownClass(cls):

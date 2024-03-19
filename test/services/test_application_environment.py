@@ -24,24 +24,6 @@ from mpvqc.services import ApplicationEnvironmentService
 
 
 class ApplicationEnvironmentServiceTest(unittest.TestCase):
-    MODULE = 'mpvqc.services.application_environment'
-
-    def test_built_by_pyinstaller(self):
-        try:
-            setattr(sys, 'frozen', True)
-            setattr(sys, '_MEIPASS', Path(__file__))
-            service = ApplicationEnvironmentService()
-            self.assertTrue(service.executing_directory.exists())
-        finally:
-            delattr(sys, 'frozen')
-            delattr(sys, '_MEIPASS')
-
-        try:
-            setattr(sys, 'frozen', False)
-            service = ApplicationEnvironmentService()
-            self.assertTrue(service.executing_directory.exists())
-        finally:
-            delattr(sys, 'frozen')
 
     def test_run_as_flatpak(self, *_):
         service = ApplicationEnvironmentService()

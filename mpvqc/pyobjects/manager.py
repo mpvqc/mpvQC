@@ -19,10 +19,9 @@ from functools import cached_property
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import QObject, Slot, Signal, Property, QUrl
+from PySide6.QtCore import QObject, Slot, Signal, Property, QUrl, QCoreApplication
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
-from PySide6.QtWidgets import QApplication
 
 from mpvqc.impl import InitialState, ApplicationState, ImportChange
 from mpvqc.services import DocumentImporterService, VideoSelectorService, PlayerService, DocumentBackupService, \
@@ -44,7 +43,7 @@ class MpvqcManagerPyObject(QObject):
 
     def __init__(self):
         super().__init__()
-        QApplication.instance().application_ready.connect(lambda: self._on_application_ready())
+        QCoreApplication.instance().application_ready.connect(lambda: self._on_application_ready())
         self._state = InitialState.new()
 
     @property
@@ -58,7 +57,7 @@ class MpvqcManagerPyObject(QObject):
 
     @cached_property
     def _comment_model(self) -> MpvqcCommentModelPyObject:
-        return QApplication.instance().find_object(QStandardItemModel, 'mpvqcCommentModel')
+        return QCoreApplication.instance().find_object(QStandardItemModel, 'mpvqcCommentModel')
 
     def _on_application_ready(self):
 

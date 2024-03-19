@@ -51,7 +51,7 @@ MpvqcAboutView {
                 {
                      tag: 'gnu',
                      exec: () => { mouseClick(objectUnderTest.licenceLabel) },
-                     verify: () => { compare(objectUnderTest.calledUrl, 'https://www.gnu.org/licenses/agpl-3.0.html') },
+                     verify: () => { compare(objectUnderTest.calledUrl, 'https://www.gnu.org/licenses/gpl-3.0.html') },
                 }
             ]
         }

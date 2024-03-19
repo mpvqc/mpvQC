@@ -34,7 +34,7 @@ class ApplicationPathsService:
         dir_export_templates: Path
 
     def __init__(self):
-        if self._app.built_by_pyinstaller:
+        if self._app.built_by_nuitka:
             self._paths = self._local_paths()
         elif self._app.runs_as_flatpak:
             self._paths = self._system_paths()
