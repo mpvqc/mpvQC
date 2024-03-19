@@ -50,11 +50,3 @@ If you want to help translating this application into other languages, please op
 * Importing JavaScript Resources in QML: https://doc.qt.io/qt-6/qtqml-javascript-imports.html
 * Qt, QtQuick & Python examples are located in `venv/lib/<python-version>/site-packages/PySide6/examples`
   after dev environment is set up completely
-
-
-[//]: # (https://forum.qt.io/topic/146562/pyside6-deploy-build-error/5)
-[//]: # (https://nuitka.net/doc/user-manual.html)
-[//]: # (pyside6-deploy.exe)
-
-Known issues:
- - Qt internal strings not translated

@@ -81,7 +81,7 @@ Column {
     Label {
         id: _licenceLabel
 
-        property url gnuLicenceUrl: "https://www.gnu.org/licenses/agpl-3.0.html"
+        property url gnuLicenceUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
 
         width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
