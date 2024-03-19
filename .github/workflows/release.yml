@@ -217,15 +217,12 @@ jobs:
             --noinclude-dlls=Qt6WebEngine* \
             --noinclude-data-files=PySide6/QtWidgets.pyd \
             --output-filename=mpvQC.exe
-      - name: 'Cleanup Deployable'
+      - name: 'Remove Redundant Binaries'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
-          mkdir -p dist/mpvQC
-          mv deployment/main.dist/* dist/mpvQC
 
-          execute find dist/mpvQC -type f -name 'qt6widgets.dll' -delete
-          execute find dist/mpvQC -type f -name 'QtWidgets.pyd' -delete
+          execute find deployment/main.dist -type f -name 'qt6widgets.dll' -delete
+          execute find deployment/main.dist -type f -name 'QtWidgets.pyd' -delete
       - name: 'Package libmpv'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -239,10 +236,10 @@ jobs:
           echo -n "$SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
           execute sha1sum --check "$ARTIFACT.sha1"
           execute 7z x "$ARTIFACT"
-          execute mv libmpv-2.dll dist/mpvQC
+          execute mv libmpv-2.dll deployment/main.dist
       - name: 'Compress Artifact'
         shell: pwsh
-        run: Compress-Archive -Path "dist\mpvQC\*" -DestinationPath "${{ needs.build_python.outputs.version }}.zip"
+        run: Compress-Archive -Path "deployment\main.dist\*" -DestinationPath "${{ needs.build_python.outputs.version }}.zip"
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
