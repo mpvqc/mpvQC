@@ -102,7 +102,7 @@ Flickable {
         }
 
         MpvqcDescriptiveText {
-            text: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
+            text: qsTranslate("CommentTable", "Show Keyboard Shortcuts")
         }
 
         MpvqcButtonRendered {

@@ -117,22 +117,18 @@
     </message>
     <message>
         <source>Open QC Document(s)</source>
-        <translation type="unfinished">פתח מסמכ(י) QC</translation>
-    </message>
-    <message>
-        <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">פתח מסמכ(י) QC</translation>
     </message>
     <message>
         <source>Open Video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Shift</source>
+        <source>Add Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Comment</source>
+        <source>Show Keyboard Shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -222,7 +218,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type here to add a new comment type</source>
+        <source>New comment type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -341,6 +337,10 @@
         <source>Open Video</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export QC Document Using %1 Template</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImportSettings</name>
@@ -362,6 +362,21 @@
     </message>
     <message>
         <source>Never</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>KeyboardKeys</name>
+    <message>
+        <source>Ctrl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -423,7 +438,7 @@
     </message>
     <message>
         <source>Window Title</source>
-        <translation>כותרת החלון</translation>
+        <translation type="vanished">כותרת החלון</translation>
     </message>
     <message>
         <source>QC Document Export</source>
@@ -487,7 +502,7 @@
     </message>
     <message>
         <source>&amp;Open Subtitles...</source>
-        <translation>&amp;פתח כתוביות...</translation>
+        <translation type="vanished">&amp;פתח כתוביות...</translation>
     </message>
     <message>
         <source>Edit Comment Types...</source>
@@ -633,6 +648,30 @@
         <source>Very very long text so that we can compare</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Open Subtitle(s)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vertical Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Horizontal Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application Title</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageBoxes</name>
@@ -710,6 +749,14 @@ Are you sure you have permission to write in the selected directory?</source>
         <source>Documents Not Compatible</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error at line %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchForm</name>
@@ -757,10 +804,125 @@ Are you sure you have permission to write in the selected directory?</source>
     </message>
 </context>
 <context>
+    <name>ShortcutsDialog</name>
+    <message>
+        <source>Keyboard Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mpvQC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open QC Document(s)</source>
+        <translation type="unfinished">פתח מסמכ(י) QC</translation>
+    </message>
+    <message>
+        <source>Save QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as new QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Video to Original Resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Fullscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Play/Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Backward by 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Forward by 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Backward by 5 Seconds to Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Forward by 5 Seconds to Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decrease Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increase Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Mute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Step Backward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Step Forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Audio Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Screenshot (Unscaled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Screenshot (Scaled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Render Modes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Video Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>VersionCheckDialog</name>
     <message>
         <source>New Version Available</source>
-        <translation type="vanished">גרסה חדשה זמינה</translation>
+        <translation>גרסה חדשה זמינה</translation>
     </message>
     <message>
         <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.github.io/&apos;&gt;https://mpvqc.github.io/&lt;/a&gt; to download it.</source>
@@ -768,23 +930,35 @@ Are you sure you have permission to write in the selected directory?</source>
     </message>
     <message>
         <source>You are already using the most recent version of mpvQC!</source>
-        <translation type="vanished">אתה משתמש בגרסה העדכנית ביותר של mpvQC!</translation>
+        <translation>אתה משתמש בגרסה העדכנית ביותר של mpvQC!</translation>
     </message>
     <message>
         <source>Server Error</source>
-        <translation type="vanished">שגיאת שרת</translation>
+        <translation>שגיאת שרת</translation>
     </message>
     <message>
         <source>The server returned error code {}.</source>
-        <translation type="vanished">השרת החזיר קוד שגיאה {}.</translation>
+        <translation>השרת החזיר קוד שגיאה {}.</translation>
     </message>
     <message>
         <source>Server Not Reachable</source>
-        <translation type="vanished">אין גישה לשרת</translation>
+        <translation>אין גישה לשרת</translation>
     </message>
     <message>
         <source>A connection to the server could not be established.</source>
-        <translation type="vanished">לא ניתן היה ליצור חיבור לשרת.</translation>
+        <translation>לא ניתן היה ליצור חיבור לשרת.</translation>
+    </message>
+    <message>
+        <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checking for Updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
