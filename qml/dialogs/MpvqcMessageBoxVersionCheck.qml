@@ -48,12 +48,14 @@ MpvqcMessageBox {
         }
     }
 
-    Timer {
-        interval: 150  // Delay it, otherwise the animation would make the message box laggy
-        running: true
+    Component.onCompleted: {
+        root.mpvqcVersionCheckerPyObject.check_for_new_version()
+    }
 
-        onTriggered: {
-            const {title, text} = root.mpvqcVersionCheckerPyObject.check_for_new_version()
+    Connections {
+        target: root.mpvqcVersionCheckerPyObject
+
+        function onVersionChecked(title: string, text: string) {
             root.title = title
             root.contentItem.text = text
         }
