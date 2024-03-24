@@ -28,8 +28,6 @@ ColumnLayout {
     required property var mpvqcApplication
     required property string fileContent
 
-    property var openUrlExternally: Qt.openUrlExternally
-
     property alias textArea: _textArea
 
     Label {
@@ -46,9 +44,11 @@ ColumnLayout {
         font.pointSize: 11
         font.weight: Font.DemiBold
 
-        text: `<html> ${text1} <a href='${url}'>${text2}</a>. </html>`
+        text: `${text1} <a href='${url}'>${text2}</a>.`
 
-        onLinkActivated: root.openUrlExternally(url)
+        onLinkActivated: (link) => {
+            Qt.openUrlExternally(link)
+        }
 
         MouseArea {
             anchors.fill: parent

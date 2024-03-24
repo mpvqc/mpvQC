@@ -24,13 +24,6 @@ import shared
 
 
 Column {
-    id: root
-
-    property var openUrlExternally: Qt.openUrlExternally
-
-    property alias gitHubLabel: _gitHubLabel
-    property alias licenceLabel: _licenceLabel
-
     width: parent.width
     topPadding: 20
     spacing: 8
@@ -55,15 +48,13 @@ Column {
     }
 
     Label {
-        id: _gitHubLabel
+        readonly property url mpvqcGitHubUrl: "https://mpvqc.github.io"
 
-        property url mpvqcGitHubUrl: "https://mpvqc.github.io"
-
-        text: `<html><style type="text/css" title="Tooltip here"></style><a href="${mpvqcGitHubUrl}">${mpvqcGitHubUrl}</a></html>`
+        text: `<a href="${mpvqcGitHubUrl}">${mpvqcGitHubUrl}</a>`
         anchors.horizontalCenter: parent.horizontalCenter
 
-        onLinkActivated: {
-            root.openUrlExternally(mpvqcGitHubUrl)
+        onLinkActivated: (link) => {
+            Qt.openUrlExternally(link)
         }
 
         MouseArea {
@@ -79,38 +70,28 @@ Column {
     }
 
     Label {
-        id: _licenceLabel
-
-        property url gnuLicenceUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
-
         width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
 
-        text: `
-        <html>
-            <style type="text/css"></style>
-            This program comes with absolutely no warranty.<br>
-            See the <a href="${gnuLicenceUrl}"> GNU General Public License, version 3 or later</a> for details.
-        </html>
-        `
+        text: `This program comes with absolutely no warranty.<br>See the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a> for details.`
 
-        onLinkActivated: {
-            root.openUrlExternally(gnuLicenceUrl)
+        onLinkActivated: (link) => {
+            Qt.openUrlExternally(link)
         }
 
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.NoButton
-            cursorShape: _licenceLabel.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
         }
 
         ToolTip {
-            y: - _licenceLabel.height + 35
+            y: -parent.height + 35
             delay: 500
-            visible: _licenceLabel.hoveredLink
-            text: _licenceLabel.gnuLicenceUrl
+            visible: parent.hoveredLink
+            text: parent.hoveredLink
         }
     }
 

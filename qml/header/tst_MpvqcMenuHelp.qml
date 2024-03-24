@@ -79,6 +79,13 @@ Item {
             verify(_dialogMock.openCalled)
         }
 
+        function test_extended_reports() {
+            objectUnderTest.extendedExportsAction.factory = _factoryMock
+            objectUnderTest.extendedExportsAction.trigger()
+            verify(_factoryMock.createObjectCalled)
+            verify(_dialogMock.openCalled)
+        }
+
         function test_about() {
             objectUnderTest.aboutAction.factory = _factoryMock
             objectUnderTest.aboutAction.trigger()

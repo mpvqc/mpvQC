@@ -1,7 +1,7 @@
 /*
 mpvQC
 
-Copyright (C) 2022 mpvQC developers
+Copyright (C) 2024 mpvQC developers
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,14 +24,12 @@ import shared
 
 
 MpvqcMessageBox {
-    id: root
-
-    readonly property var mpvqcVersionCheckerPyObject: mpvqcApplication.mpvqcVersionCheckerPyObject
-
-    title: qsTranslate("VersionCheckDialog", "Checking for Updates...")
+    title: qsTranslate("MessageBoxes", "Extended Exports")
 
     contentItem: Label {
-        text: qsTranslate("VersionCheckDialog", "Loading...")
+        text: qsTranslate("MessageBoxes", "mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2")
+            .arg(`<a href="https://jinja.palletsprojects.com/en/3.1.x/">Jinja template</a>`)
+            .arg(`<a href="https://mpvqc.github.io/export-templates">https://mpvqc.github.io/export-templates</a>`)
         horizontalAlignment: Text.AlignLeft
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
@@ -45,19 +43,6 @@ MpvqcMessageBox {
             acceptedButtons: Qt.NoButton
             cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
             hoverEnabled: true
-        }
-    }
-
-    Component.onCompleted: {
-        root.mpvqcVersionCheckerPyObject.check_for_new_version()
-    }
-
-    Connections {
-        target: root.mpvqcVersionCheckerPyObject
-
-        function onVersionChecked(title: string, text: string) {
-            root.title = title
-            root.contentItem.text = text
         }
     }
 

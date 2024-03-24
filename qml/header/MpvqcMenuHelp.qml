@@ -31,6 +31,7 @@ MpvqcMenu {
 
     property alias updateAction: _updateAction
     property alias shortcutAction: _shortcutAction
+    property alias extendedExportsAction: _extendedExportsAction
     property alias aboutAction: _aboutAction
 
     title: qsTranslate("MainWindow", "&Help")
@@ -38,7 +39,8 @@ MpvqcMenu {
     Action {
         id: _updateAction
 
-        property var factory: Component {
+        property var factory: Component
+        {
             MpvqcMessageBoxVersionCheck {
                 mpvqcApplication: root.mpvqcApplication
             }
@@ -57,7 +59,8 @@ MpvqcMenu {
     Action {
         id: _shortcutAction
 
-        property var factory: Component {
+        property var factory: Component
+        {
             MpvqcDialogShortcuts {
                 mpvqcApplication: root.mpvqcApplication
             }
@@ -74,12 +77,34 @@ MpvqcMenu {
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {
+    }
+
+    Action {
+        id: _extendedExportsAction
+
+        property var factory: Component
+        {
+            MpvqcMessageBoxExtendedExport {
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
+
+        text: qsTranslate("MainWindow", "Extended Exports...")
+        icon.source: "qrc:/data/icons/upload_black_24dp.svg"
+
+        onTriggered: {
+            const messageBox = factory.createObject(root)
+            messageBox.closed.connect(messageBox.destroy)
+            messageBox.open()
+        }
+    }
 
     Action {
         id: _aboutAction
 
-        property var factory: Component {
+        property var factory: Component
+        {
             MpvqcDialogAbout {
                 mpvqcApplication: root.mpvqcApplication
             }
