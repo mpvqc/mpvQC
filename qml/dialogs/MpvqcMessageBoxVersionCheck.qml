@@ -36,8 +36,8 @@ MpvqcMessageBox {
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
 
-        onLinkActivated: {
-            Qt.openUrlExternally(root.mpvqcVersionCheckerPyObject.home_url)
+        onLinkActivated: (link) => {
+            Qt.openUrlExternally(link)
         }
 
         MouseArea {

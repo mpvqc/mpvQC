@@ -17,7 +17,7 @@
 from typing import Callable
 
 import inject
-from PySide6.QtCore import Signal, Slot, Property, QUrl, QThreadPool, QRunnable, QObject
+from PySide6.QtCore import Signal, Slot, QThreadPool, QRunnable, QObject
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import VersionCheckerService
@@ -41,15 +41,7 @@ class VersionCheckRunnable(QRunnable):
 
 @QmlElement
 class MpvqcVersionCheckerPyObject(QObject):
-    _checker: VersionCheckerService = inject.attr(VersionCheckerService)
-
     versionChecked = Signal(str, str)
-
-    def get_home_url(self) -> QUrl:
-        return QUrl(self._checker.HOME_URL)
-
-    home_url_changed = Signal(QUrl)
-    home_url = Property(QUrl, get_home_url, notify=home_url_changed)
 
     @Slot()
     def check_for_new_version(self) -> None:

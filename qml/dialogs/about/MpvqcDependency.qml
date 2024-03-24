@@ -34,43 +34,33 @@ RowLayout {
     property string version: ''
     property string licence: ''
     property string url: ''
-    property var openUrlExternally: Qt.openUrlExternally
-
-    property alias urlLabel: _urlLabel
 
     width: parent.width
     spacing: 24
 
     Label {
-        id: _urlLabel
-
-        text: `
-        <html>
-            <style type='text/css'></style>
-            <a href='${root.url}'>${root.dependency}</a>
-        </html>
-        `
+        text: `<a href='${root.url}'>${root.dependency}</a>`
 
         elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
         horizontalAlignment: Text.AlignRight
         Layout.preferredWidth: columnOneWidth
 
-        onLinkActivated: {
-            root.openUrlExternally(root.url)
+        onLinkActivated: (link) => {
+            Qt.openUrlExternally(link)
         }
 
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.NoButton
-            cursorShape: _urlLabel.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
             hoverEnabled: true
         }
 
         ToolTip {
-            y: - _urlLabel.height - 15
+            y: - parent.height - 15
             text: root.url
             delay: 500
-            visible: _urlLabel.hoveredLink
+            visible: parent.hoveredLink
         }
     }
 
