@@ -151,7 +151,7 @@ jobs:
           execute export QT_QPA_PLATFORM=offscreen
           execute just test-qml
 
-  build_windows-nuitka:
+  build_windows:
     runs-on: windows-latest
     name: 'Build Windows'
     needs:
@@ -237,14 +237,11 @@ jobs:
           execute sha1sum --check "$ARTIFACT.sha1"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
-      - name: 'Compress Artifact'
-        shell: pwsh
-        run: Compress-Archive -Path "deployment\main.dist\*" -DestinationPath "${{ needs.build_python.outputs.version }}.zip"
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
           name: "${{ needs.build_python.outputs.version }}-win-x86_64"
-          path: "${{ needs.build_python.outputs.version }}.zip"
+          path: "deployment/main.dist"
 
   build_linux:
     runs-on: ubuntu-latest
