@@ -34,7 +34,6 @@ Rectangle {
     required property string commentType    // from model
     required property string comment        // from model
     required property string searchQuery
-    required property int widthScrollBar
 
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
@@ -48,6 +47,7 @@ Rectangle {
         ? backgroundColorUnselected
         : backgroundColorUnselectedAlt
 
+    property alias widthScrollBar: _spacerScrollBar.width
     property alias playButton: _playButton
     property alias timeLabel: _timeLabel
     property alias commentTypeLabel: _commentTypeLabel

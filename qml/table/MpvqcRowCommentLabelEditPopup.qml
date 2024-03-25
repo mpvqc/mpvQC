@@ -57,7 +57,6 @@ Popup {
         rightPadding: root.rightPadding
         focus: true
         wrapMode: Text.WordWrap
-        // validator: root.mpvqcDefaultTextValidator
 
         background: Rectangle {
             anchors.fill: parent

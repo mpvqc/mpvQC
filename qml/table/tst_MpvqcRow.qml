@@ -41,6 +41,7 @@ TestCase {
             rowSelected: false
             tableInEditMode: false
             searchQuery: ''
+            widthScrollBar: 16
 
             mpvqcApplication: QtObject {
                 property var mpvqcLabelWidthCalculator: QtObject {

@@ -39,8 +39,9 @@ TestCase {
         MpvqcRowCommentLabelEditPopup {
             mpvqcDefaultTextValidator: RegularExpressionValidator {
                 regularExpression: /[0-9A-Z]+/
+                function replace_special_characters(text: string): string { return text}
             }
-            currentComment: 'Corrent comment'
+            currentComment: 'Current comment'
             backgroundColor: 'transparent'
         }
     }
@@ -61,7 +62,7 @@ TestCase {
         let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
         verify(closedSpy)
 
-        control.contentItem.accepted()
+        keyPress(Qt.Key_Return)
 
         compare(editedSpy.count, 1)
         verify(closedSpy.count > 0)
