@@ -35,7 +35,7 @@ TestCase {
     property int columnComment: 300
     property int columnMenuMore: 395
 
-    property int row1: 10
+    property int row1: 8
     property int row2: 60
 
     width: 400
