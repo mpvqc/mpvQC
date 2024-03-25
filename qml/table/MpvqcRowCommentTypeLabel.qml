@@ -38,7 +38,6 @@ Label {
 
     text: qsTranslate("CommentTypes", commentType)
     horizontalAlignment: Text.AlignLeft
-    verticalAlignment: Text.AlignVCenter
 
     function _grabFocus(): void {
         focus = true

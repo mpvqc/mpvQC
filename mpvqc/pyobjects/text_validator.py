@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from PySide6.QtCore import Slot
 from PySide6.QtGui import QValidator
 from PySide6.QtQml import QmlElement
 
@@ -28,7 +29,9 @@ class MpvqcDefaultTextValidatorPyObject(QValidator):
     def validate(self, user_input: str, position: int):
         return QValidator.Acceptable, self.replace_special_characters(user_input), position
 
-    @staticmethod
-    def replace_special_characters(string_to_replace) -> str:
+    @Slot(str, result=str)
+    def replace_special_characters(self, string_to_replace) -> str:
         return string_to_replace \
-            .replace(u'\xad', '')  # https://www.charbase.com/00ad-unicode-soft-hyphen
+            .replace(u'\xad', '') \
+            .replace('\r', '') \
+            .replace('\n', '')

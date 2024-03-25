@@ -47,10 +47,9 @@ Label {
 
     textFormat: searchQuery ? Text.RichText : Text.PlainText
     text: searchQuery ? CommentHighlighter.highlightComment(comment, searchQuery) : comment
-
+    wrapMode: Text.WordWrap
+    height: _loader.item ? _loader.item.contentItem.height + topPadding : implicitHeight
     horizontalAlignment: Text.AlignLeft
-    verticalAlignment: Text.AlignVCenter
-    elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
 
     function _grabFocus(): void {
         focus = true
@@ -95,12 +94,13 @@ Label {
 
         MpvqcRowCommentLabelEditPopup {
             implicitWidth: root.width
-            implicitHeight: root.height
             currentComment: root.comment
             backgroundColor: root.backgroundColor
             mpvqcDefaultTextValidator: root.mpvqcDefaultTextValidatorPyObject
             leftPadding: root.leftPadding / 2
             rightPadding: root.rightPadding / 2
+            topPadding: root.topPadding / 2
+            bottomPadding: root.bottomPadding / 2
 
             onClosed: root._stopEditing()
 

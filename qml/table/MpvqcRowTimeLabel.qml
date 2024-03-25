@@ -41,7 +41,6 @@ Label {
     signal editingStopped()
 
     horizontalAlignment: Text.AlignHCenter
-    verticalAlignment: Text.AlignVCenter
 
     text: {
         if (mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {

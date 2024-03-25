@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
+import shared
+
 
 Rectangle {
     id: root
@@ -32,6 +34,7 @@ Rectangle {
     required property string commentType    // from model
     required property string comment        // from model
     required property string searchQuery
+    required property int widthScrollBar
 
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
@@ -45,7 +48,6 @@ Rectangle {
         ? backgroundColorUnselected
         : backgroundColorUnselectedAlt
 
-    property alias widthScrollBar: _spacerScrollBar.width
     property alias playButton: _playButton
     property alias timeLabel: _timeLabel
     property alias commentTypeLabel: _commentTypeLabel
@@ -69,7 +71,7 @@ Rectangle {
     signal commentTypeEdited(string newCommentType)
     signal commentEdited(string newComment)
 
-    height: Math.max(40, _playButton.height)
+    height: Math.max(_commentLabel.height, _playButton.height)
 
     color: rowSelected ? backgroundColorSelected : backgroundColorUnselectedActive
 
@@ -89,7 +91,6 @@ Rectangle {
         MpvqcRowPlayButton {
             id: _playButton
 
-            anchors.verticalCenter: parent.verticalCenter
             tableInEditMode: root.tableInEditMode
 
             onButtonClicked: root.clicked()
@@ -102,8 +103,10 @@ Rectangle {
 
             width: root.mpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
-            leftPadding: LayoutMirroring.enabled ? root.labelPadding : root.labelPadding * (2/3)
-            rightPadding: LayoutMirroring.enabled ? root.labelPadding * (2/3) : root.labelPadding
+            leftPadding: LayoutMirroring.enabled ? root.labelPadding : root.labelPadding * (2 / 3)
+            rightPadding: LayoutMirroring.enabled ? root.labelPadding * (2 / 3) : root.labelPadding
+            topPadding: 13
+            bottomPadding: 13
 
             mpvqcApplication: root.mpvqcApplication
             time: root.time
@@ -126,6 +129,8 @@ Rectangle {
             height: root.height
             leftPadding: root.labelPadding
             rightPadding: root.labelPadding
+            topPadding: 13
+            bottomPadding: 13
 
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType
@@ -145,14 +150,15 @@ Rectangle {
             id: _commentLabel
 
             width: root.width
-                    - _playButton.width
-                    - _timeLabel.width
-                    - _commentTypeLabel.width
-                    - _moreButton.width
-                    - _spacerScrollBar.width
-            height: root.height
+                - _playButton.width
+                - _timeLabel.width
+                - _commentTypeLabel.width
+                - _moreButton.width
+                - _spacerScrollBar.width
             leftPadding: root.labelPadding
             rightPadding: root.labelPadding
+            topPadding: 13
+            bottomPadding: 13
 
             mpvqcApplication: root.mpvqcApplication
             comment: root.comment
@@ -177,9 +183,8 @@ Rectangle {
         MpvqcRowMoreButton {
             id: _moreButton
 
-            width: visible ? implicitWidth : 0
+            width: _playButton.width
             visible: root.rowSelected
-            anchors.verticalCenter: parent.verticalCenter
             tableInEditMode: root.tableInEditMode
 
             onCopyCommentClicked: root.copyCommentClicked()
@@ -190,11 +195,18 @@ Rectangle {
         }
 
         Rectangle {
-            id: _spacerScrollBar
             height: root.height
-            color: Material.background
+            width: _playButton.width
+            visible: !root.rowSelected
+            color: 'transparent'
         }
 
+        Rectangle {
+            id: _spacerScrollBar
+            height: root.height
+            width: root.widthScrollBar
+            color: Material.background
+        }
     }
 
 }
