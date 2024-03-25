@@ -32,8 +32,6 @@ Popup {
     property bool acceptValue: true
 
     signal edited(string newComment)
-    signal upPressed()
-    signal downPressed()
 
     visible: true
     dim: false
@@ -47,29 +45,32 @@ Popup {
         color: root.Material.primary
     }
 
-    contentItem: TextField {
+    contentItem: TextArea {
         id: _textField
 
         text: root.currentComment
         selectByMouse: true
         horizontalAlignment: mirrored ? Text.AlignRight : Text.AlignLeft
-        bottomPadding: topPadding
+        bottomPadding: root.bottomPadding
+        topPadding: root.topPadding
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
         focus: true
-        validator: root.mpvqcDefaultTextValidator
+        wrapMode: Text.WordWrap
 
         background: Rectangle {
             anchors.fill: parent
             color: root.backgroundColor
         }
 
-        onAccepted: root.close()
+        Keys.onReturnPressed: root.close()
     }
 
     onAboutToHide: {
         if (acceptValue) {
-            root.edited(_textField.text.trim())
+            const rawText = _textField.text.trim()
+            const sanitizedText = root.mpvqcDefaultTextValidator.replace_special_characters(rawText)
+            root.edited(sanitizedText)
         }
     }
 
@@ -84,24 +85,6 @@ Popup {
 
         onActivated: {
             root.acceptValue = false
-            root.close()
-        }
-    }
-
-    Shortcut {
-        sequence: 'Up'
-
-        onActivated: {
-            root.upPressed()
-            root.close()
-        }
-    }
-
-    Shortcut {
-        sequence: 'Down'
-
-        onActivated: {
-            root.downPressed()
             root.close()
         }
     }

@@ -35,7 +35,7 @@ TestCase {
     property int columnComment: 300
     property int columnMenuMore: 395
 
-    property int row1: 20
+    property int row1: 8
     property int row2: 60
 
     width: 400
@@ -76,9 +76,11 @@ TestCase {
                 property var mpvqcCommentTable: this
                 property var mpvqcLabelWidthCalculator: QtObject {
                     property int commentTypesLabelWidth: 150
+                    property int timeLabelWidth: 30
                 }
                 property var mpvqcTimeFormatUtils: QtObject {
                     function formatTimeToStringLong(time) { return `${time}` }
+                    function formatTimeToStringShort(time) { return `${time}` }
                 }
                 property var mpvqcDefaultTextValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/
@@ -184,20 +186,6 @@ TestCase {
         compare(control.currentIndex, data.rowIndexExpected)
     }
 
-    function test_arrowKeyPressedWhileEditingComment() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-        wait(shortTime)
-        keyPress(Qt.Key_Return)
-        wait(shortTime)
-        verify(control.currentlyEditing)
-
-        keyPress(Qt.Key_Down)
-        wait(longTime)
-        verify(!control.currentlyEditing)
-        compare(control.currentIndex, 1)
-    }
-
     function test_selectionWhileEditingTimeOnPressedOutside() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
@@ -255,7 +243,7 @@ TestCase {
             { tag: 'via-menu', exec: (control) => {
                 mouseClick(control, columnMenuMore, row1)
                 wait(shortTime)
-                mouseClick(control, columnMenuMore - 10, row2 + 30)
+                mouseClick(control, columnMenuMore - 10, row2 + 20)
             } },
             { tag: 'via-shortcut-backspace', exec: (control) => keyPress(Qt.Key_Backspace) },
             { tag: 'via-shortcut-delete', exec: (control) => keyPress(Qt.Key_Delete) },

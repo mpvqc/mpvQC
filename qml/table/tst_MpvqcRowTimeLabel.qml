@@ -88,23 +88,6 @@ TestCase {
         compare(control.jumpToCalled, true)
         compare(control.jumpToTime, 10)
         editingStartedSpy.clear()
-
-        // no-row-selection/edit-mode
-        const clickedSpy = signalSpy.createObject(control, {target: control, signalName: 'clicked'})
-        control.rowSelected = false
-        control.tableInEditMode = true
-        compare(clickedSpy.count, 0)
-        mouseClick(control)
-        compare(clickedSpy.count, 1)
-        clickedSpy.clear()
-
-        // no-row-selection/no-edit-mode
-        control.rowSelected = false
-        control.tableInEditMode = false
-        compare(clickedSpy.count, 0)
-        mouseClick(control)
-        compare(clickedSpy.count, 1)
-        clickedSpy.clear()
     }
 
     function createControlInEditMode(): Item {

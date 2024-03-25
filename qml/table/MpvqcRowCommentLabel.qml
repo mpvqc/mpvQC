@@ -38,19 +38,24 @@ Label {
     readonly property var mpvqcDefaultTextValidatorPyObject: mpvqcApplication.mpvqcDefaultTextValidatorPyObject
     readonly property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
 
-    signal clicked()
     signal edited(string newComment)
     signal editingStarted()
     signal editingStopped()
-    signal upPressed()
-    signal downPressed()
 
     textFormat: searchQuery ? Text.RichText : Text.PlainText
-    text: searchQuery ? CommentHighlighter.highlightComment(comment, searchQuery) : comment
-
+    wrapMode: Text.WordWrap
     horizontalAlignment: Text.AlignLeft
-    verticalAlignment: Text.AlignVCenter
-    elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
+
+    text: {
+        if (_loader.item) return ''  // Avoid rendering text below the popup
+        if (searchQuery) return CommentHighlighter.highlightComment(comment, searchQuery)
+        return comment
+    }
+
+    height: {
+        if (_loader.item) return _loader.item.contentItem.height + topPadding
+        return implicitHeight
+    }
 
     function _grabFocus(): void {
         focus = true
@@ -76,14 +81,13 @@ Label {
 
     MouseArea {
         anchors.fill: parent
+        enabled: root.rowSelected
 
         onClicked: {
-            if (root.rowSelected && root.tableInEditMode) {
+            if (root.tableInEditMode) {
                 root._grabFocus()
-            } else if (root.rowSelected) {
-                root.startEditing()
             } else {
-                root.clicked()
+                root.startEditing()
             }
         }
     }
@@ -95,20 +99,17 @@ Label {
 
         MpvqcRowCommentLabelEditPopup {
             implicitWidth: root.width
-            implicitHeight: root.height
             currentComment: root.comment
             backgroundColor: root.backgroundColor
             mpvqcDefaultTextValidator: root.mpvqcDefaultTextValidatorPyObject
             leftPadding: root.leftPadding / 2
             rightPadding: root.rightPadding / 2
+            topPadding: root.topPadding / 2
+            bottomPadding: root.bottomPadding / 2
 
             onClosed: root._stopEditing()
 
             onEdited: (newComment) => root.edited(newComment)
-
-            onUpPressed: root.upPressed()
-
-            onDownPressed: root.downPressed()
         }
     }
 

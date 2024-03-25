@@ -74,24 +74,6 @@ TestCase {
         verify(control.loader.sourceComponent)
         compare(spy.count, 1)
         spy.clear()
-
-        // no-row-selection/edit-mode
-        spy = signalSpy.createObject(control, {target: control, signalName: 'clicked'})
-        verify(spy)
-        control.rowSelected = false
-        control.tableInEditMode = true
-        compare(spy.count, 0)
-        mouseClick(control)
-        compare(spy.count, 1)
-        spy.clear()
-
-        // no-row-selection/no-edit-mode
-        control.rowSelected = false
-        control.tableInEditMode = false
-        compare(spy.count, 0)
-        mouseClick(control)
-        compare(spy.count, 1)
-        spy.clear()
     }
 
     function createControlInEditMode(): Item {

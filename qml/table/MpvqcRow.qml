@@ -39,8 +39,8 @@ Rectangle {
     readonly property var backgroundColorSelected: Material.primary
     readonly property var backgroundColorUnselected: Material.background
     readonly property var backgroundColorUnselectedAlt: Material.theme === Material.Dark
-        ? Qt.lighter(Material.background, 1.12)
-        : Qt.darker(Material.background, 1.04)
+        ? Qt.lighter(Material.background, 1.30)
+        : Qt.darker(Material.background, 1.10)
     readonly property var backgroundColorUnselectedActive: index % 2 === 1
         ? backgroundColorUnselected
         : backgroundColorUnselectedAlt
@@ -52,7 +52,8 @@ Rectangle {
     property alias commentLabel: _commentLabel
     property alias moreButton: _moreButton
 
-    property int labelPadding: 14
+    readonly property int leftAndRightPadding: 14
+    readonly property int topAndBottomPadding: 13
 
     signal clicked()
     signal copyCommentClicked()
@@ -69,7 +70,7 @@ Rectangle {
     signal commentTypeEdited(string newCommentType)
     signal commentEdited(string newComment)
 
-    height: Math.max(40, _playButton.height)
+    height: Math.max(_commentLabel.height, _playButton.height)
 
     color: rowSelected ? backgroundColorSelected : backgroundColorUnselectedActive
 
@@ -89,7 +90,6 @@ Rectangle {
         MpvqcRowPlayButton {
             id: _playButton
 
-            anchors.verticalCenter: parent.verticalCenter
             tableInEditMode: root.tableInEditMode
 
             onButtonClicked: root.clicked()
@@ -102,15 +102,15 @@ Rectangle {
 
             width: root.mpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
-            leftPadding: LayoutMirroring.enabled ? root.labelPadding : root.labelPadding * (2/3)
-            rightPadding: LayoutMirroring.enabled ? root.labelPadding * (2/3) : root.labelPadding
+            leftPadding: LayoutMirroring.enabled ? root.leftAndRightPadding : root.leftAndRightPadding * (2 / 3)
+            rightPadding: LayoutMirroring.enabled ? root.leftAndRightPadding * (2 / 3) : root.leftAndRightPadding
+            topPadding: root.topAndBottomPadding
+            bottomPadding: root.topAndBottomPadding
 
             mpvqcApplication: root.mpvqcApplication
             time: root.time
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
-
-            onClicked: root.clicked()
 
             onEdited: (newTime) => root.timeEdited(newTime)
 
@@ -124,15 +124,15 @@ Rectangle {
 
             width: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding
             height: root.height
-            leftPadding: root.labelPadding
-            rightPadding: root.labelPadding
+            leftPadding: root.leftAndRightPadding
+            rightPadding: root.leftAndRightPadding
+            topPadding: root.topAndBottomPadding
+            bottomPadding: root.topAndBottomPadding
 
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
-
-            onClicked: root.clicked()
 
             onEdited: (newCommentType) => root.commentTypeEdited(newCommentType)
 
@@ -145,14 +145,15 @@ Rectangle {
             id: _commentLabel
 
             width: root.width
-                    - _playButton.width
-                    - _timeLabel.width
-                    - _commentTypeLabel.width
-                    - _moreButton.width
-                    - _spacerScrollBar.width
-            height: root.height
-            leftPadding: root.labelPadding
-            rightPadding: root.labelPadding
+                - _playButton.width
+                - _timeLabel.width
+                - _commentTypeLabel.width
+                - _moreButton.width
+                - _spacerScrollBar.width
+            leftPadding: root.leftAndRightPadding
+            rightPadding: root.leftAndRightPadding
+            topPadding: root.topAndBottomPadding
+            bottomPadding: root.topAndBottomPadding
 
             mpvqcApplication: root.mpvqcApplication
             comment: root.comment
@@ -161,25 +162,18 @@ Rectangle {
             tableInEditMode: root.tableInEditMode
             backgroundColor: root.backgroundColorUnselectedActive
 
-            onClicked: root.clicked()
-
             onEdited: (newComment) => root.commentEdited(newComment)
 
             onEditingStarted: root.editingStarted()
 
             onEditingStopped: root.editingStopped()
-
-            onUpPressed: root.upPressed()
-
-            onDownPressed: root.downPressed()
         }
 
         MpvqcRowMoreButton {
             id: _moreButton
 
-            width: visible ? implicitWidth : 0
+            width: _playButton.width
             visible: root.rowSelected
-            anchors.verticalCenter: parent.verticalCenter
             tableInEditMode: root.tableInEditMode
 
             onCopyCommentClicked: root.copyCommentClicked()
@@ -190,11 +184,18 @@ Rectangle {
         }
 
         Rectangle {
-            id: _spacerScrollBar
             height: root.height
-            color: Material.background
+            width: _playButton.width
+            visible: !root.rowSelected
+            color: 'transparent'
         }
 
+        Rectangle {
+            id: _spacerScrollBar
+            height: root.height
+            width: root.widthScrollBar
+            color: Material.background
+        }
     }
 
 }

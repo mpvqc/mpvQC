@@ -81,24 +81,6 @@ TestCase {
         verify(control.loader.sourceComponent)
         compare(spy.count, 1)
         spy.clear()
-
-        // no-row-selection/edit-mode
-        spy = signalSpy.createObject(control, {target: control, signalName: 'clicked'})
-        verify(spy)
-        control.rowSelected = false
-        control.tableInEditMode = true
-        compare(spy.count, 0)
-        mouseClick(control)
-        compare(spy.count, 1)
-        spy.clear()
-
-        // no-row-selection/no-edit-mode
-        control.rowSelected = false
-        control.tableInEditMode = false
-        compare(spy.count, 0)
-        mouseClick(control)
-        compare(spy.count, 1)
-        spy.clear()
     }
 
     function createControlInEditMode(): Item {
@@ -137,21 +119,6 @@ TestCase {
         verify(control.loader.sourceComponent)
         compare(spy.count, 1)
         compare(spy.signalArguments[0][0], 'New Comment')
-    }
-
-    function test_popupUpAndDownPressed() {
-        const control = createControlInEditMode()
-
-        const popup = control.loader.item
-        verify(popup)
-
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'upPressed'})
-        popup.upPressed()
-        compare(spy.count, 1)
-
-        spy = signalSpy.createObject(control, {target: control, signalName: 'downPressed'})
-        popup.downPressed()
-        compare(spy.count, 1)
     }
 
 }
