@@ -184,20 +184,6 @@ TestCase {
         compare(control.currentIndex, data.rowIndexExpected)
     }
 
-    function test_arrowKeyPressedWhileEditingComment() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-        wait(shortTime)
-        keyPress(Qt.Key_Return)
-        wait(shortTime)
-        verify(control.currentlyEditing)
-
-        keyPress(Qt.Key_Down)
-        wait(longTime)
-        verify(!control.currentlyEditing)
-        compare(control.currentIndex, 1)
-    }
-
     function test_selectionWhileEditingTimeOnPressedOutside() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)

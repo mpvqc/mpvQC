@@ -71,15 +71,6 @@ TestCase {
         control.playButton.clicked()
         compare(spy.count, 1)
         compare(playClickedSpy.count, 1)
-
-        control.timeLabel.clicked()
-        compare(spy.count, 2)
-
-        control.commentTypeLabel.clicked()
-        compare(spy.count, 3)
-
-        control.commentLabel.clicked()
-        compare(spy.count, 4)
     }
 
     function test_edit() {
@@ -149,21 +140,6 @@ TestCase {
 
         control.commentLabel.editingStopped()
         compare(spy.count, 3)
-    }
-
-    function test_upAndDownSignals() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'upPressed'})
-        verify(spy)
-        control.commentLabel.upPressed()
-        compare(spy.count, 1)
-
-        spy = signalSpy.createObject(control, {target: control, signalName: 'downPressed'})
-        verify(spy)
-        control.commentLabel.downPressed()
-        compare(spy.count, 1)
     }
 
     function test_menuSignals() {

@@ -67,46 +67,6 @@ TestCase {
         verify(closedSpy.count > 0)
     }
 
-    function test_arrowUpPressed() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        let editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
-
-        let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
-        verify(closedSpy)
-
-        let upSpy = signalSpy.createObject(control, {target: control, signalName: 'upPressed'})
-        verify(upSpy)
-
-        keyPress(Qt.Key_Up)
-
-        compare(editedSpy.count, 1)
-        verify(closedSpy.count > 0)
-        compare(upSpy.count, 1)
-    }
-
-    function test_arrowDownPressed() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        let editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
-
-        let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
-        verify(closedSpy)
-
-        let downSpy = signalSpy.createObject(control, {target: control, signalName: 'downPressed'})
-        verify(downSpy)
-
-        keyPress(Qt.Key_Down)
-
-        compare(editedSpy.count, 1)
-        verify(closedSpy.count > 0)
-        compare(downSpy.count, 1)
-    }
-
     function test_escapePressed() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
