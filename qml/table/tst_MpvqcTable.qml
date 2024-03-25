@@ -243,7 +243,7 @@ TestCase {
             { tag: 'via-menu', exec: (control) => {
                 mouseClick(control, columnMenuMore, row1)
                 wait(shortTime)
-                mouseClick(control, columnMenuMore - 10, row2 + 30)
+                mouseClick(control, columnMenuMore - 10, row2 + 20)
             } },
             { tag: 'via-shortcut-backspace', exec: (control) => keyPress(Qt.Key_Backspace) },
             { tag: 'via-shortcut-delete', exec: (control) => keyPress(Qt.Key_Delete) },
