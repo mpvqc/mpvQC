@@ -41,8 +41,8 @@ Rectangle {
     readonly property var backgroundColorSelected: Material.primary
     readonly property var backgroundColorUnselected: Material.background
     readonly property var backgroundColorUnselectedAlt: Material.theme === Material.Dark
-        ? Qt.lighter(Material.background, 1.12)
-        : Qt.darker(Material.background, 1.04)
+        ? Qt.lighter(Material.background, 1.30)
+        : Qt.darker(Material.background, 1.10)
     readonly property var backgroundColorUnselectedActive: index % 2 === 1
         ? backgroundColorUnselected
         : backgroundColorUnselectedAlt
