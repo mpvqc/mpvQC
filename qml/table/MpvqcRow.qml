@@ -113,8 +113,6 @@ Rectangle {
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
 
-            onClicked: root.clicked()
-
             onEdited: (newTime) => root.timeEdited(newTime)
 
             onEditingStarted: root.editingStarted()
@@ -136,8 +134,6 @@ Rectangle {
             commentType: root.commentType
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
-
-            onClicked: root.clicked()
 
             onEdited: (newCommentType) => root.commentTypeEdited(newCommentType)
 
@@ -167,17 +163,11 @@ Rectangle {
             tableInEditMode: root.tableInEditMode
             backgroundColor: root.backgroundColorUnselectedActive
 
-            onClicked: root.clicked()
-
             onEdited: (newComment) => root.commentEdited(newComment)
 
             onEditingStarted: root.editingStarted()
 
             onEditingStopped: root.editingStopped()
-
-            onUpPressed: root.upPressed()
-
-            onDownPressed: root.downPressed()
         }
 
         MpvqcRowMoreButton {

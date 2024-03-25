@@ -32,8 +32,6 @@ Popup {
     property bool acceptValue: true
 
     signal edited(string newComment)
-    signal upPressed()
-    signal downPressed()
 
     visible: true
     dim: false
@@ -88,24 +86,6 @@ Popup {
 
         onActivated: {
             root.acceptValue = false
-            root.close()
-        }
-    }
-
-    Shortcut {
-        sequence: 'Up'
-
-        onActivated: {
-            root.upPressed()
-            root.close()
-        }
-    }
-
-    Shortcut {
-        sequence: 'Down'
-
-        onActivated: {
-            root.downPressed()
             root.close()
         }
     }

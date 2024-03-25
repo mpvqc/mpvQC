@@ -31,7 +31,6 @@ Label {
 
     property alias loader: _loader
 
-    signal clicked()
     signal edited(string newCommentType)
     signal editingStarted()
     signal editingStopped()
@@ -63,14 +62,13 @@ Label {
 
     MouseArea {
         anchors.fill: parent
+        enabled: root.rowSelected
 
         onClicked: {
-            if (root.rowSelected && root.tableInEditMode) {
+            if (root.tableInEditMode) {
                 root._grabFocus()
-            } else if (root.rowSelected) {
-                root._startEditing()
             } else {
-                root.clicked()
+                root._startEditing()
             }
         }
     }
@@ -89,7 +87,6 @@ Label {
             onClosed: root._stopEditing()
 
             onItemClicked: (newCommentType) => root.edited(newCommentType)
-
         }
     }
 

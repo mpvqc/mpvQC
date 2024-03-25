@@ -50,6 +50,15 @@ ListView {
         }
     }
 
+    readonly property Timer delayEnsureVisibleTimer: Timer
+    {
+        interval: 0
+
+        onTriggered: {
+            root._ensureVisible()
+        }
+    }
+
     signal commentsChanged()
 
     clip: true
@@ -79,6 +88,16 @@ ListView {
         widthScrollBar: _scrollBar.visibleWidth
         searchQuery: root.searchQuery
 
+        onHeightChanged: {
+            if (rowSelected && tableInEditMode) {
+                if (index === root.count - 1) {
+                    root.delayEnsureVisibleTimer.restart()
+                } else {
+                    root._ensureVisible()
+                }
+            }
+        }
+
         onClicked: root.selectRow(index)
 
         onCopyCommentClicked: root._copyCurrentCommentToClipboard()
@@ -97,9 +116,15 @@ ListView {
 
         onCommentEdited: (newComment) => root.model.update_comment(index, newComment)
 
-        onUpPressed: root.decrementCurrentIndex()
+        MouseArea {
+            anchors.fill: parent
+            enabled: !rowSelected
+            z: -1
 
-        onDownPressed: root.incrementCurrentIndex()
+            onClicked: {
+                root.selectRow(index)
+            }
+        }
     }
 
     function selectRow(index: int): void {
@@ -122,9 +147,13 @@ ListView {
         const index = root.currentIndex
         const item = root.itemAtIndex(index)
         if (item) {
-            root.positionViewAtIndex(index, ListView.Visible)
+            _ensureVisible()
             item.startEditing()
         }
+    }
+
+    function _ensureVisible(): void {
+        root.positionViewAtIndex(root.currentIndex, ListView.Contain)
     }
 
     function addNewComment(commentType: string): void {
