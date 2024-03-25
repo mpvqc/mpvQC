@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
-import shared
-
 
 Rectangle {
     id: root
@@ -54,7 +52,8 @@ Rectangle {
     property alias commentLabel: _commentLabel
     property alias moreButton: _moreButton
 
-    property int labelPadding: 14
+    readonly property int leftAndRightPadding: 14
+    readonly property int topAndBottomPadding: 13
 
     signal clicked()
     signal copyCommentClicked()
@@ -103,10 +102,10 @@ Rectangle {
 
             width: root.mpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
-            leftPadding: LayoutMirroring.enabled ? root.labelPadding : root.labelPadding * (2 / 3)
-            rightPadding: LayoutMirroring.enabled ? root.labelPadding * (2 / 3) : root.labelPadding
-            topPadding: 13
-            bottomPadding: 13
+            leftPadding: LayoutMirroring.enabled ? root.leftAndRightPadding : root.leftAndRightPadding * (2 / 3)
+            rightPadding: LayoutMirroring.enabled ? root.leftAndRightPadding * (2 / 3) : root.leftAndRightPadding
+            topPadding: root.topAndBottomPadding
+            bottomPadding: root.topAndBottomPadding
 
             mpvqcApplication: root.mpvqcApplication
             time: root.time
@@ -125,10 +124,10 @@ Rectangle {
 
             width: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding
             height: root.height
-            leftPadding: root.labelPadding
-            rightPadding: root.labelPadding
-            topPadding: 13
-            bottomPadding: 13
+            leftPadding: root.leftAndRightPadding
+            rightPadding: root.leftAndRightPadding
+            topPadding: root.topAndBottomPadding
+            bottomPadding: root.topAndBottomPadding
 
             mpvqcApplication: root.mpvqcApplication
             commentType: root.commentType
@@ -151,10 +150,10 @@ Rectangle {
                 - _commentTypeLabel.width
                 - _moreButton.width
                 - _spacerScrollBar.width
-            leftPadding: root.labelPadding
-            rightPadding: root.labelPadding
-            topPadding: 13
-            bottomPadding: 13
+            leftPadding: root.leftAndRightPadding
+            rightPadding: root.leftAndRightPadding
+            topPadding: root.topAndBottomPadding
+            bottomPadding: root.topAndBottomPadding
 
             mpvqcApplication: root.mpvqcApplication
             comment: root.comment
