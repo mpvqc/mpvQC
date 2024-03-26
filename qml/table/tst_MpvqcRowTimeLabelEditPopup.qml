@@ -40,6 +40,7 @@ TestCase {
 
             width: parent.width
             height: parent.height
+            exit: null
 
             time: 10
             acceptValue: true

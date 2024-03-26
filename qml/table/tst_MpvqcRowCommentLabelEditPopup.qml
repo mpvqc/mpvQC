@@ -43,6 +43,8 @@ TestCase {
             }
             currentComment: 'Current comment'
             backgroundColor: 'transparent'
+            exit: null
+            enter: null
         }
     }
 

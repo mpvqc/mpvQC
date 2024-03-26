@@ -32,13 +32,15 @@ TestCase {
     property int columnPlayButton: 5
     property int columnTime: 50
     property int columnCommentType: 150
-    property int columnComment: 300
-    property int columnMenuMore: 395
+    property int columnComment: 400
+    property int columnMenuMore: 490
 
-    property int row1: 8
-    property int row2: 60
+    property int row1: 40 / 2
+    property int row2: 40 / 2 + 40
+    property int row3: 40 / 2 + 40 * 2
+    property int row4: 40 / 2 + 40 * 3
 
-    width: 400
+    width: 500
     height: 400
     visible: true
     when: windowShown
@@ -84,6 +86,8 @@ TestCase {
                 }
                 property var mpvqcDefaultTextValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/
+
+                    function replace_special_characters(s) { return s }
                 }
             }
 
@@ -117,10 +121,10 @@ TestCase {
 
     function test_selectionWhileNotEditing_data() {
         return [
-            { tag: 'on-other-row-play-button-clicked', column: columnPlayButton },
-            { tag: 'on-other-row-time-label-clicked', column: columnTime },
-            { tag: 'on-other-row-comment-type-label-clicked', column: columnCommentType },
-            { tag: 'on-other-row-comment-label-clicked', column: columnComment },
+            {tag: 'on-other-row-play-button-clicked', column: columnPlayButton},
+            {tag: 'on-other-row-time-label-clicked', column: columnTime},
+            {tag: 'on-other-row-comment-type-label-clicked', column: columnCommentType},
+            {tag: 'on-other-row-comment-label-clicked', column: columnComment},
         ]
     }
 
@@ -216,14 +220,18 @@ TestCase {
 
     function test_copyToClipboard_data() {
         return [
-            { tag: 'via-menu', exec: (control) => {
-                mouseClick(control, columnMenuMore, row1)
-                wait(shortTime)
-                mouseClick(control, columnMenuMore - 10, row2)
-            } },
-            { tag: 'via-shortcut', exec: (control) => {
-                keyPress(Qt.Key_C, Qt.ControlModifier)
-            } },
+            {
+                tag: 'via-menu', exec: (control) => {
+                    mouseClick(control, columnMenuMore, row1)
+                    wait(shortTime)
+                    mouseClick(control, columnMenuMore, row3)
+                }
+            },
+            {
+                tag: 'via-shortcut', exec: (control) => {
+                    keyPress(Qt.Key_C, Qt.ControlModifier)
+                }
+            },
         ]
     }
 
@@ -240,13 +248,15 @@ TestCase {
 
     function test_deleteComment_data() {
         return [
-            { tag: 'via-menu', exec: (control) => {
-                mouseClick(control, columnMenuMore, row1)
-                wait(shortTime)
-                mouseClick(control, columnMenuMore - 10, row2 + 20)
-            } },
-            { tag: 'via-shortcut-backspace', exec: (control) => keyPress(Qt.Key_Backspace) },
-            { tag: 'via-shortcut-delete', exec: (control) => keyPress(Qt.Key_Delete) },
+            {
+                tag: 'via-menu', exec: (control) => {
+                    mouseClick(control, columnMenuMore, row1)
+                    wait(shortTime)
+                    mouseClick(control, columnMenuMore, row4)
+                }
+            },
+            {tag: 'via-shortcut-backspace', exec: (control) => keyPress(Qt.Key_Backspace)},
+            {tag: 'via-shortcut-delete', exec: (control) => keyPress(Qt.Key_Delete)},
         ]
     }
 
