@@ -23,6 +23,7 @@ TOOL_CLI_QML_TESTRUNNER := 'qmltestrunner'
 TOOL_CLI_QML_LINTER := 'qmllint'
 
 export QT_QPA_PLATFORM := 'offscreen'
+export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'dense'
 
 #####       #####
 ##### Names #####
@@ -116,8 +117,11 @@ test-python: _check-pyside-setup _clean-test _compile-resources
 
 # Runs all QML tests
 test-qml: _check-qml-setup
-    {{ TOOL_CLI_QML_TESTRUNNER }} -silent \
-    	-input {{ DIRECTORY_QML_TESTS }} -import {{ DIRECTORY_QML_TESTS }}
+    {{ TOOL_CLI_QML_TESTRUNNER }} \
+      -silent \
+      -style Material  \
+      -input {{ DIRECTORY_QML_TESTS }} \
+      -import {{ DIRECTORY_QML_TESTS }}
 
 # Will run the linter against QML files
 lint-qml: _check-qml-setup
