@@ -29,7 +29,23 @@ Label {
     required property bool rowSelected
     required property bool tableInEditMode
 
-    property alias loader: _loader
+    property var menu: undefined
+    property var menuFactory: Component
+    {
+        MpvqcRowCommentTypeLabelEditMenu {
+            readonly property int additionalSpace: 7
+
+            y: additionalSpace
+            x: mirrored ? - (width - root.width + additionalSpace) : additionalSpace
+
+            currentCommentType: root.commentType
+            mpvqcApplication: root.mpvqcApplication
+
+            onClosed: root.editingStopped()
+
+            onItemClicked: (newCommentType) => root.edited(newCommentType)
+        }
+    }
 
     signal edited(string newCommentType)
     signal editingStarted()
@@ -48,16 +64,9 @@ Label {
     }
 
     function openMenu(): void {
-        _loader.sourceComponent = _editComponent
-    }
-
-    function _stopEditing(): void {
-        _closeMenu()
-        editingStopped()
-    }
-
-    function _closeMenu(): void {
-        _loader.sourceComponent = undefined
+        menu = menuFactory.createObject(root)
+        menu.closed.connect(menu.destroy)
+        menu.open()
     }
 
     MouseArea {
@@ -70,23 +79,6 @@ Label {
             } else {
                 root._startEditing()
             }
-        }
-    }
-
-    Loader { id: _loader; asynchronous: true }
-
-    Component {
-        id: _editComponent
-
-        MpvqcRowCommentTypeLabelEditMenu {
-            y: (-1/2) * (height - root.height)
-            x: mirrored ? - (width - root.width) : 0
-            currentCommentType: root.commentType
-            mpvqcApplication: root.mpvqcApplication
-
-            onClosed: root._stopEditing()
-
-            onItemClicked: (newCommentType) => root.edited(newCommentType)
         }
     }
 

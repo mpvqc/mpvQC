@@ -29,12 +29,12 @@ ToolButton {
     property var menu: null
     property var menuFactory: Component
     {
-
         MpvqcMenuMore {
-            property int spaceToBorder: 10
+            property int additionalSpace: 7
 
-            x: mirrored ? spaceToBorder : -(width - spaceToBorder * 3)
-            y: spaceToBorder
+            x: mirrored ? additionalSpace : - (width - root.width + additionalSpace)
+            y: additionalSpace
+
             transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
 
             onCopyCommentClicked: root.copyCommentClicked()

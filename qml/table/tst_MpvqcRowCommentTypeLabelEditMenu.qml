@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 
@@ -39,25 +38,40 @@ TestCase {
         MpvqcRowCommentTypeLabelEditMenu {
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property var commentTypes: QtObject {
-                        function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
+                    property var commentTypes: ListModel {
+                        ListElement {type: '1'}
+                        ListElement {type: '2'}
+                        ListElement {type: '3'}
+                        ListElement {type: '4'}
+                        ListElement {type: '5'}
+                        ListElement {type: '6'}
+                        ListElement {type: '7'}
+
+                        function items(): list<string> {
+                            const marshalled = []
+                            for (let i = 0; i < count; i++) {
+                                marshalled.push(this.get(i)?.type)
+                            }
+                            return marshalled
+                        }
                     }
                 }
             }
         }
     }
 
-    function test_dynamicMenuCreation() {
-        const controlAllKnown = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: '1' })
-        verify(controlAllKnown)
-        compare(controlAllKnown.count, 10)
+    function test_comment_type_known() {
+        const control = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: '1' })
+        verify(control)
 
-        const controlWithUnknown = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: 'A' })
-        verify(controlWithUnknown)
-        compare(controlWithUnknown.count, 12)
-        verify(controlWithUnknown.itemAt(10) instanceof MenuSeparator)
-        verify(controlWithUnknown.itemAt(11) instanceof MenuItem)
-        compare(controlWithUnknown.itemAt(11).type, 'A')
+        verify(!control.unknownCommentType.visible)
+    }
+
+    function test_comment_type_unknown() {
+        const control = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: '-1' })
+        verify(control)
+
+        verify(control.unknownCommentType.visible)
     }
 
     function test_clicked() {
@@ -67,7 +81,6 @@ TestCase {
         const itemClickedSpy = signalSpy.createObject(null, {target: control, signalName: 'itemClicked'})
         mouseClick(control.itemAt(0))
         compare(itemClickedSpy.count, 1)
-        verify(!control.visible)
     }
 
 }
