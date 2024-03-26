@@ -33,8 +33,11 @@ Label {
     property var menuFactory: Component
     {
         MpvqcRowCommentTypeLabelEditMenu {
-            y: (-1/2) * (height - root.height)
-            x: mirrored ? - (width - root.width) : 0
+            readonly property int additionalSpace: 7
+
+            y: additionalSpace
+            x: mirrored ? - (width - root.width + additionalSpace) : additionalSpace
+
             currentCommentType: root.commentType
             mpvqcApplication: root.mpvqcApplication
 

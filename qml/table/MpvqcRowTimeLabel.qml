@@ -100,8 +100,13 @@ Label {
         id: _editComponent
 
         MpvqcRowTimeLabelEditPopup {
-            y: (-1/2) * (height - root.height)
-            x: mirrored ? - (width - root.width) : 0
+            readonly property int additionalSpace: 7
+
+            y: additionalSpace
+            x: mirrored ? - (width - root.width + additionalSpace) : additionalSpace
+
+            transformOrigin: mirrored ? Popup.TopRight : Popup.TopLeft
+
             time: root.time
             mpvqcApplication: root.mpvqcApplication
 
