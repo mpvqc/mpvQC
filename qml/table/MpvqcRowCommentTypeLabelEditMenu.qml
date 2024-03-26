@@ -29,9 +29,13 @@ MpvqcMenu {
     required property var mpvqcApplication
     required property string currentCommentType
 
+    readonly property alias unknownCommentType: _unknownCommentType
+    readonly property alias repeater: _repeater
+
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var commentTypes: mpvqcSettings.commentTypes.items()
-    readonly property var currentCommentTypeKnown: commentTypes.some(commentType => commentType === currentCommentType)
+    readonly property var commentTypes: mpvqcSettings.commentTypes
+    readonly property bool isCommentTypeKnown: commentTypes.items().some(commentType => commentType === currentCommentType)
+    readonly property bool isCommentTypeUnknown: !isCommentTypeKnown
 
     signal itemClicked(string commentType)
 
@@ -39,41 +43,10 @@ MpvqcMenu {
     dim: false
     modal: true
 
-    function _createMenu(): void {
-        for (const commentType of commentTypes) {
-            const object = menuItem.createObject(null, { type: commentType })
-            repeater.model.append(object)
-        }
-    }
-
-    function _appendUnknown(): void {
-        const separator = menuSeparator.createObject(null)
-        const unknown = menuItem.createObject(null, { type: root.currentCommentType })
-        repeater.model.append(separator)
-        repeater.model.append(unknown)
-    }
-
-    Component.onCompleted: {
-        _createMenu()
-        if (!currentCommentTypeKnown) {
-            _appendUnknown()
-        }
-    }
-
     Repeater {
-        id: repeater
+        id: _repeater
 
-        model: ObjectModel {}
-    }
-
-    Component {
-        id: menuSeparator
-
-        MenuSeparator {}
-    }
-
-    Component {
-        id: menuItem
+        model: root.commentTypes
 
         MenuItem {
             required property string type
@@ -86,6 +59,27 @@ MpvqcMenu {
             onTriggered: {
                 root.itemClicked(type)
             }
+        }
+    }
+
+    MenuSeparator {
+        visible: root.isCommentTypeUnknown
+        height: root.isCommentTypeUnknown ? implicitHeight : 0
+    }
+
+    MenuItem {
+        id: _unknownCommentType
+
+        visible: root.isCommentTypeUnknown
+        height: root.isCommentTypeUnknown ? implicitHeight : 0
+
+        text: qsTranslate("CommentTypes", root.currentCommentType)
+        autoExclusive: true
+        checkable: true
+        checked: visible
+
+        onTriggered: {
+            root.itemClicked(root.currentCommentType)
         }
     }
 

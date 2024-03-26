@@ -44,8 +44,22 @@ TestCase {
 
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property var commentTypes: QtObject {
-                        function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
+                    property var commentTypes: ListModel {
+                        ListElement {type: '1'}
+                        ListElement {type: '2'}
+                        ListElement {type: '3'}
+                        ListElement {type: '4'}
+                        ListElement {type: '5'}
+                        ListElement {type: '6'}
+                        ListElement {type: '7'}
+
+                        function items(): list<string> {
+                            const marshalled = []
+                            for (let i = 0; i < count; i++) {
+                                marshalled.push(this.get(i)?.type)
+                            }
+                            return marshalled
+                        }
                     }
                 }
             }
@@ -68,10 +82,8 @@ TestCase {
         verify(spy)
         control.rowSelected = true
         control.tableInEditMode = false
-        verify(!control.loader.sourceComponent)
         compare(spy.count, 0)
         mouseClick(control)
-        verify(control.loader.sourceComponent)
         compare(spy.count, 1)
         spy.clear()
     }
@@ -79,32 +91,29 @@ TestCase {
     function createControlInEditMode(): Item {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        control.loader.asynchronous = false
+        verify(!control.menu)
         control.openMenu()
-        verify(control)
+        verify(control.menu)
         return control
     }
 
     function test_stopEdit() {
         const control = createControlInEditMode()
 
-        const menu = control.loader.item
-        verify(menu)
-
+        mouseClick(control)
         const editingStoppedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingStopped'})
-        menu.closed()
-        verify(!control.loader.sourceComponent)
+
+        control.menu.closed()
         compare(editingStoppedSpy.count, 1)
     }
 
     function test_edit() {
         const control = createControlInEditMode()
 
-        const menu = control.loader.item
-        verify(menu)
-
         const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        menu.itemClicked('newCommentType')
+
+        control.menu.itemClicked('newCommentType')
+
         compare(editedSpy.count, 1)
         compare(editedSpy.signalArguments[0][0], 'newCommentType')
     }
