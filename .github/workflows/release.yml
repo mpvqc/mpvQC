@@ -208,8 +208,9 @@ jobs:
             --noinclude-qt-plugins=sqldrivers \
             --noinclude-qt-translations \
             --noinclude-dlls=opengl32sw.dll \
-            --noinclude-dlls=qt6pdf.dll \
             --noinclude-dlls=qt6designer.dll \
+            --noinclude-dlls=qt6pdf.dll \
+            --noinclude-dlls=qt6widgets.dll \
             --noinclude-dlls=Qt6Charts* \
             --noinclude-dlls=Qt6Quick3D* \
             --noinclude-dlls=Qt6Sensors* \
@@ -221,7 +222,6 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute find deployment/main.dist -type f -name 'qt6widgets.dll' -delete
           execute find deployment/main.dist -type f -name 'QtWidgets.pyd' -delete
       - name: 'Package libmpv'
         run: |
