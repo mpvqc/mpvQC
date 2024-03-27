@@ -94,7 +94,7 @@ Label {
         }
     }
 
-    Loader { id: _loader; asynchronous: false }
+    Loader { id: _loader }
 
     Component {
         id: _editComponent
