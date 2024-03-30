@@ -23,6 +23,7 @@ import mpvqc.services as s
 def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.ApplicationEnvironmentService, lambda: s.ApplicationEnvironmentService())
     binder.bind_to_constructor(s.ApplicationPathsService, lambda: s.ApplicationPathsService())
+    binder.bind_to_constructor(s.CommentTypeValidatorService, lambda: s.CommentTypeValidatorService())
     binder.bind_to_constructor(s.DocumentBackupService, lambda: s.DocumentBackupService())
     binder.bind_to_constructor(s.DocumentExportService, lambda: s.DocumentExportService())
     binder.bind_to_constructor(s.DocumentImporterService, lambda: s.DocumentImporterService())

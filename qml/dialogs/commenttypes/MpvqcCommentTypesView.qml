@@ -28,6 +28,7 @@ Column {
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcReverseTranslatorPyObject: mpvqcApplication.mpvqcReverseTranslatorPyObject
+    property var mpvqcCommentTypeValidatorPyObject: mpvqcApplication.mpvqcCommentTypeValidatorPyObject
 
     function acceptTemporaryState(): void {
         _controller.acceptModelCopy()
@@ -51,21 +52,23 @@ Column {
         }
     }
 
-    MpvqcCommentTypesValidator {
-        id: _validator
-
-        model: _listView.model
-        language: root.mpvqcSettings.language
-        reverseTranslator: root.mpvqcReverseTranslatorPyObject
-    }
-
     MpvqcInputComponent {
         id: _input
 
-        validator: _validator
         width: root.width
         height: 100
         topPadding: 15
+
+        validateNewCommentType: (input) => {
+            const items = _listView.model.items()
+            return mpvqcCommentTypeValidatorPyObject.validate_new_comment_type(input, items)
+        }
+
+        validateEditingOfCommentType: (input, inputBeingEdited) => {
+            const items = _listView.model.items()
+            console.info(input, inputBeingEdited, items)
+            return mpvqcCommentTypeValidatorPyObject.validate_editing_of_comment_type(input, inputBeingEdited, items)
+        }
 
         onAdded: (commentType) => {
             _controller.add(commentType)
