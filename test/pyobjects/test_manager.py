@@ -42,7 +42,7 @@ class ManagerResetTest(unittest.TestCase):
         self._mocked_comments_model = MagicMock()
         q_app.return_value.find_object.return_value = self._mocked_comments_model
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_saved_reset(self, q_app_mock):
         self.init(q_app_mock)
 
@@ -56,7 +56,7 @@ class ManagerResetTest(unittest.TestCase):
         self.assertEqual(state_before, state_after)
         self._mocked_comments_model.clear_comments.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_unsaved_reset_do_reset(self, q_app_mock):
         self.init(q_app_mock)
 
@@ -66,7 +66,7 @@ class ManagerResetTest(unittest.TestCase):
 
         self._mocked_comments_model.clear_comments.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_unsaved_reset_cancel_reset(self, q_app_mock):
         self.init(q_app_mock)
 
@@ -97,7 +97,7 @@ class ManagerSaveTest(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_saved_save(self, *_):
         self.init()
 
@@ -113,7 +113,7 @@ class ManagerSaveTest(unittest.TestCase):
         saved_path = self._exporter_mock.save.call_args[0][0]
         self.assertEqual(self._document, saved_path)
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_unsaved_save_do_save(self, *_):
         self.init()
 
@@ -129,7 +129,7 @@ class ManagerSaveTest(unittest.TestCase):
         self.assertTrue(self._manager.state.saved)
         self.assertEqual(self._document, self._manager.state.document)
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_unsaved_save_cancel_save(self, *_):
         self.init()
 
@@ -190,7 +190,7 @@ class ManagerImportTest(unittest.TestCase):
                                    .bind(PlayerService, self._player_mock)
                                    .bind(TypeMapperService, TypeMapperService()))
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_import_document(self, q_app_mock):
         self.init(
             q_app_mock,
@@ -207,7 +207,7 @@ class ManagerImportTest(unittest.TestCase):
         self.assertFalse(self._manager.state.saved)
         self.assertIsNone(self._manager.state.document)
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_import_video(self, q_app_mock):
         self.init(
             q_app_mock,
@@ -225,7 +225,7 @@ class ManagerImportTest(unittest.TestCase):
         self.assertIsNone(self._manager.state.document)
         self.assertEqual(self._video, self._manager.state.video)
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_import_subtitles(self, q_app_mock):
         self.init(
             q_app_mock,
@@ -239,7 +239,7 @@ class ManagerImportTest(unittest.TestCase):
 
         self._player_mock.open_subtitles.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_import_multiple(self, q_app_mock):
         self.init(
             q_app_mock,
@@ -259,7 +259,7 @@ class ManagerImportTest(unittest.TestCase):
         self._player_mock.open_video.assert_called_once()
         self._player_mock.open_subtitles.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QApplication.instance', return_value=MagicMock())
+    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
     def test_import_erroneous_documents(self, q_app_mock):
         self.init(
             q_app_mock,
