@@ -29,8 +29,19 @@ ListModel {
         qsTranslate('Languages', 'Spanish'),
     ]
 
-    // Must be kept in sync with available languages in mpvqc/services/reverse_translator.py
-    // Make sure to sort elements by 'identifier'
+    readonly property string systemLanguage: {
+        const uiLanguages = Qt.locale().uiLanguages
+        return _identifiers()
+            .find(language => uiLanguages.includes(language)) ?? 'en-US'
+    }
+
+    function _identifiers(): list<string> {
+        const marshalled = []
+        for (let i = 0; i < count; i++) {
+            marshalled.push(this.get(i).identifier)
+        }
+        return marshalled
+    }
 
     ListElement {
         language: 'German'
@@ -55,14 +66,6 @@ ListModel {
         language: 'Italian'
         identifier: 'it-IT'
         translator: 'maddo'
-    }
-
-    function identifiers(): list<string> {
-        const marshalled = []
-        for (let i = 0; i < count; i++) {
-            marshalled.push(this.get(i).identifier)
-        }
-        return marshalled
     }
 
 }
