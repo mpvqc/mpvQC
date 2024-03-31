@@ -65,7 +65,6 @@ Column {
         }
 
         onResetRequested: {
-            _listView.scrollToLastItem = false
             _controller.model.length = 0
             _controller.model.push(...mpvqcSettings.getDefaultCommentTypes())
         }
