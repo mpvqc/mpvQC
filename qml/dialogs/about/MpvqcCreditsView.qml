@@ -77,6 +77,9 @@ ScrollView {
                 visible: translator
                 spacing: 10
 
+                required property string translator
+                required property string language
+
                 Label {
                     text: translator
                     horizontalAlignment: Text.AlignRight

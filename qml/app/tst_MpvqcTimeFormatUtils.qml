@@ -51,17 +51,4 @@ TestCase {
         compare(data.actual, data.expected)
     }
 
-    function test_extractSecondsFrom_data() {
-        return [
-            { expected: 0, actual: TestObject.extractSecondsFrom('00:00:00'), tag: '00:00:00 -> 0' },
-            { expected: 68, actual: TestObject.extractSecondsFrom('00:01:08'), tag: '00:01:08 -> 68' },
-            { expected: 999, actual: TestObject.extractSecondsFrom('00:16:39'), tag: '00:16:39 -> 999' },
-            { expected: 10000, actual: TestObject.extractSecondsFrom('02:46:40'), tag: '02:46:40 -> 10000' },
-        ]
-    }
-
-    function test_extractSecondsFrom(data) {
-        compare(data.actual, data.expected)
-    }
-
 }

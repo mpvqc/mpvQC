@@ -28,13 +28,13 @@ Item {
 
     readonly property MpvqcLanguageModel _languageModel: MpvqcLanguageModel {}
 
-    property var uiLanguages: Qt.locale().uiLanguages
+    readonly property list<string> uiLanguages: Qt.locale().uiLanguages
 
     property alias language: _settings.language
     property alias commentTypes: _settings.commentTypes
     property alias location: _settings.location
 
-    function _defaultLanguage(): string {
+    function _getDefaultLanguage(): string {
         return _languageModel.identifiers()
             .find(language => uiLanguages.includes(language)) ?? 'en-US'
     }
@@ -46,8 +46,8 @@ Item {
     Settings {
         id: _settings
         category: 'Common'
-        property string language: root._defaultLanguage()
-        property list <string> commentTypes: getDefaultCommentTypes()
+        property string language: root._getDefaultLanguage()
+        property list <string> commentTypes: root.getDefaultCommentTypes()
     }
 
 }

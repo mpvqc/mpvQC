@@ -46,8 +46,8 @@ MpvqcMenu {
         MenuItem {
             id: item
 
-            required property var language
-            required property var identifier
+            required property string language
+            required property string identifier
 
             property var timer: Timer {
                 interval: 125
