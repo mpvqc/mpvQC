@@ -39,10 +39,6 @@ class ResourceServiceTest(unittest.TestCase):
         text = ResourceService().mpv_conf_content
         self.assertTrue(text)
 
-    def test_export_template_readme_exists(self):
-        text = ResourceService().export_template_readme
-        self.assertTrue(text)
-
     def test_backup_template(self):
         template = ResourceService().backup_template
         self.assertTrue(template)

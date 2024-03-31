@@ -52,7 +52,6 @@ class FileStartupServiceTest(unittest.TestCase):
     @parameterized.expand([
         'file_input_conf',
         'file_mpv_conf',
-        'file_export_template_readme',
     ])
     def test_files_created(self, mocked_file):
         path_mock = getattr(self.mocked_file_service, mocked_file)

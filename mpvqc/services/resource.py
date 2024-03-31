@@ -34,10 +34,6 @@ class ResourceService:
         return self._read_from_resource(path=':/data/config/mpv.conf')
 
     @property
-    def export_template_readme(self) -> str:
-        return self._read_from_resource(path=':/data/config/extended-export-readme.txt')
-
-    @property
     def backup_template(self) -> str:
         return self._read_from_resource(path=':/data/config/backup-template.jinja')
 

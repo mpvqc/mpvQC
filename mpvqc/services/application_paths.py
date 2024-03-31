@@ -92,9 +92,5 @@ class ApplicationPathsService:
         return self.dir_config / 'settings.ini'
 
     @property
-    def file_export_template_readme(self) -> Path:
-        return self.dir_export_templates / 'Readme.txt'
-
-    @property
     def files_export_templates(self) -> tuple[Path, ...]:
         return tuple(self.dir_export_templates.glob("*.jinja"))
