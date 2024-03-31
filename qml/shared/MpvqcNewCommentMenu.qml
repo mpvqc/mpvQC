@@ -70,11 +70,13 @@ MpvqcMenu {
         model: mpvqcSettings.commentTypes
 
         MenuItem {
-            text: qsTranslate("CommentTypes", model.type)
+            required property string modelData
+
+            text: qsTranslate("CommentTypes", modelData)
 
             onTriggered: {
                 mpvqcApplication.disableFullScreen()
-                root.selectedCommentType = model.type
+                root.selectedCommentType = modelData
             }
         }
     }

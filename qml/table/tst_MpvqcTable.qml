@@ -63,7 +63,7 @@ TestCase {
                 property bool fullscreen: false
                 property var activeFocusItem
                 property var mpvqcSettings: QtObject {
-                    property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
+                    property var commentTypes: ['0', '1', '2', '3']
                 }
                 property var mpvqcMpvPlayerPyObject: QtObject {
                     function pause() {}

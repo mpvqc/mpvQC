@@ -34,7 +34,7 @@ MpvqcMenu {
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var commentTypes: mpvqcSettings.commentTypes
-    readonly property bool isCommentTypeKnown: commentTypes.items().some(commentType => commentType === currentCommentType)
+    readonly property bool isCommentTypeKnown: commentTypes.some(commentType => commentType === currentCommentType)
     readonly property bool isCommentTypeUnknown: !isCommentTypeKnown
 
     signal itemClicked(string commentType)
@@ -49,15 +49,15 @@ MpvqcMenu {
         model: root.commentTypes
 
         MenuItem {
-            required property string type
+            required property string modelData
 
-            text: qsTranslate("CommentTypes", type)
+            text: qsTranslate("CommentTypes", modelData)
             autoExclusive: true
             checkable: true
-            checked: type === root.currentCommentType
+            checked: modelData === root.currentCommentType
 
             onTriggered: {
-                root.itemClicked(type)
+                root.itemClicked(modelData)
             }
         }
     }

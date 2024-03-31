@@ -38,9 +38,7 @@ TestCase {
             property var duration: 0
         }
         property var mpvqcSettings: QtObject {
-            property var commentTypes: QtObject {
-                function items() { return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'] }
-            }
+            property var commentTypes: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
             property var language: 'language'
         }
     }

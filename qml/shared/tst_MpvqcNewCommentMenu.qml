@@ -49,7 +49,7 @@ TestCase {
 
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
+                    property var commentTypes: ['1', '2', '3']
                 }
                 property var mpvqcMpvPlayerPyObject: QtObject {
                     function pause() { pauseCalled = true }
@@ -98,7 +98,7 @@ TestCase {
         verify(control.addNewCommentCalled)
 
         const actual = control.addNewCommentCommentType
-        const expected = control.mpvqcApplication.mpvqcSettings.commentTypes.get(0).type
+        const expected = control.mpvqcApplication.mpvqcSettings.commentTypes[0]
         compare(actual, expected)
     }
 

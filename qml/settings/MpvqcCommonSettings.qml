@@ -27,11 +27,11 @@ Item {
     id: root
 
     readonly property MpvqcLanguageModel _languageModel: MpvqcLanguageModel {}
-    readonly property MpvqcCommentTypesModel commentTypes: MpvqcCommentTypesModel {}
 
     property var uiLanguages: Qt.locale().uiLanguages
 
     property alias language: _settings.language
+    property alias commentTypes: _settings.commentTypes
     property alias location: _settings.location
 
     function _defaultLanguage(): string {
@@ -39,29 +39,15 @@ Item {
             .find(language => uiLanguages.includes(language)) ?? 'en-US'
     }
 
-    function restore(): void {
-        const value = _settings.value('commentTypes')
-        if (value) {
-            const items = _split(value)
-            root.commentTypes.replaceWith(items)
-        }
-    }
-
-    function _split(items: string): list<string> {
-        return items.split(',')
-            .map((value) => value.trim())
-            .filter((value) => value)
-    }
-
-    function save(): void {
-        const commaSeparated = commentTypes.items().join(', ')
-        _settings.setValue('commentTypes', commaSeparated)
+    function getDefaultCommentTypes(): list<string> {
+        return ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note']
     }
 
     Settings {
         id: _settings
         category: 'Common'
         property string language: root._defaultLanguage()
+        property list <string> commentTypes: getDefaultCommentTypes()
     }
 
 }

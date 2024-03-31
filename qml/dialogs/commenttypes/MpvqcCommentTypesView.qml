@@ -43,7 +43,7 @@ Column {
     MpvqcCommentTypesViewController {
         id: _controller
 
-        model: mpvqcSettings.commentTypes.items()
+        model: mpvqcSettings.commentTypes
         selectedIndex: _listView.currentIndex
 
         onHighlightIndexRequested: index => {
@@ -56,12 +56,10 @@ Column {
         }
 
         onAcceptCopyRequested: copy => {
-            if (copy.length === 0) {
-                const defaultCommentTypes = mpvqcSettings.getDefaultCommentTypes()
-                mpvqcSettings.commentTypes.replaceWith(defaultCommentTypes)
-            } else {
-                mpvqcSettings.commentTypes.replaceWith(copy)
-            }
+            const newCommentTypes = copy.length === 0 ? mpvqcSettings.getDefaultCommentTypes() : copy
+
+            mpvqcSettings.commentTypes.length = 0
+            mpvqcSettings.commentTypes.push(...newCommentTypes)
         }
 
         onResetRequested: {
