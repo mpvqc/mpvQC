@@ -28,6 +28,7 @@ Column {
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcReverseTranslatorPyObject: mpvqcApplication.mpvqcReverseTranslatorPyObject
+    property var mpvqcCommentTypeValidatorPyObject: mpvqcApplication.mpvqcCommentTypeValidatorPyObject
 
     function acceptTemporaryState(): void {
         _controller.acceptModelCopy()
@@ -45,34 +46,51 @@ Column {
         model: mpvqcSettings.commentTypes
         selectedIndex: _listView.currentIndex
 
+        onHighlightIndexRequested: index => {
+            _listView.currentIndex = index
+        }
+
         onEditClicked: (commentType) => {
             const translated = qsTranslate('CommentTypes', commentType)
             _input.startEditing(translated)
         }
-    }
 
-    MpvqcCommentTypesValidator {
-        id: _validator
+        onAcceptCopyRequested: copy => {
+            const newCommentTypes = copy.length === 0 ? mpvqcSettings.getDefaultCommentTypes() : copy
 
-        model: _listView.model
-        language: root.mpvqcSettings.language
-        reverseTranslator: root.mpvqcReverseTranslatorPyObject
+            mpvqcSettings.commentTypes.length = 0
+            mpvqcSettings.commentTypes.push(...newCommentTypes)
+        }
+
+        onResetRequested: {
+            _controller.model.length = 0
+            _controller.model.push(...mpvqcSettings.getDefaultCommentTypes())
+        }
     }
 
     MpvqcInputComponent {
         id: _input
 
-        validator: _validator
         width: root.width
         height: 100
         topPadding: 15
+
+        validateNewCommentType: (input) => {
+            const items = _listView.model
+            return mpvqcCommentTypeValidatorPyObject.validate_new_comment_type(input, items)
+        }
+
+        validateEditingOfCommentType: (input, inputBeingEdited) => {
+            const items = _listView.model
+            return mpvqcCommentTypeValidatorPyObject.validate_editing_of_comment_type(input, inputBeingEdited, items)
+        }
 
         onAdded: (commentType) => {
             _controller.add(commentType)
         }
 
         onEdited: (commentType) => {
-            const english = root.mpvqcReverseTranslatorPyObject.lookup_specific_language(root.mpvqcSettings.language, commentType)
+            const english = root.mpvqcReverseTranslatorPyObject.lookup(commentType)
             _controller.replaceWith(english)
         }
     }
@@ -98,7 +116,7 @@ Column {
 
             height: _listView.height
             upEnabled: controlsEnabled && _listView.currentIndex > 0
-            downEnabled: controlsEnabled && _listView.currentIndex !== _listView.model.count - 1
+            downEnabled: controlsEnabled && _listView.currentIndex !== _listView.model.length - 1
             editEnabled: controlsEnabled && _listView.currentIndex >= 0
             deleteEnabled: controlsEnabled && _listView.currentIndex >= 0
 

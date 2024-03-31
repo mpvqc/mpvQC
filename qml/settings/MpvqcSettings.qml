@@ -21,6 +21,8 @@ import QtCore
 import QtQuick
 import QtQuick.Controls.Material
 
+import models
+
 
 Item {
     id: root
@@ -28,8 +30,8 @@ Item {
     required property var mpvqcApplication
 
     readonly property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
-    readonly property var mpvqcEnvironmentPyObject: mpvqcApplication.mpvqcEnvironmentPyObject
     readonly property var settingsFile: mpvqcApplicationPathsPyObject.settings
+    readonly property var mpvqcEnvironmentPyObject: mpvqcApplication.mpvqcEnvironmentPyObject
 
     Settings {
         id: _backupSettings
@@ -42,12 +44,20 @@ Item {
     property alias backupInterval: _backupSettings.interval
 
 
-    MpvqcCommonSettings {
+    readonly property MpvqcLanguageModel _languageModel: MpvqcLanguageModel {}
+    Settings {
         id: _commonSettings
         location: root.settingsFile
+        category: 'Common'
+        property string language: root._languageModel.systemLanguage
+        property list<string> commentTypes: root.getDefaultCommentTypes()
     }
     property alias language: _commonSettings.language
     property alias commentTypes: _commonSettings.commentTypes
+
+    function getDefaultCommentTypes(): list<string> {
+        return ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note']
+    }
 
 
     Settings {
@@ -124,12 +134,4 @@ Item {
     }
     property alias windowTitleFormat: _windowSettings.titleFormat
 
-
-    Component.onCompleted: {
-        _commonSettings.restore()
-    }
-
-    Component.onDestruction: {
-        _commonSettings.save()
-    }
 }

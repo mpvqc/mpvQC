@@ -18,23 +18,22 @@
 
 import unittest
 
-from PySide6.QtCore import QFile, QCoreApplication
+from PySide6.QtCore import QFile
 from PySide6.QtGui import QFontDatabase
 
+from mpvqc.application import MpvqcApplication
 from mpvqc.services import FontLoaderService
 
 
 class FontLoaderTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.tearDownClass()
-        setattr(cls, 'app', QCoreApplication([]))
+    def setUp(self):
+        self.tearDown()
+        self._app = MpvqcApplication([])
 
-    @classmethod
-    def tearDownClass(cls):
-        if hasattr(cls, 'app'):
-            getattr(cls, 'app').shutdown()
+    def tearDown(self):
+        if hasattr(self, '_app') and self._app:
+            self._app.shutdown()
 
     def test_fonts_present_in_resources(self):
         variants = [

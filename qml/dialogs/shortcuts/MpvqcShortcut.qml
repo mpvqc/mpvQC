@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 
@@ -26,9 +26,17 @@ RowLayout {
     id: root
 
     property alias label: _description.text
+
     property alias button1: _button1.text
+    property alias button1Icon: _button1.icon.source
+
     property alias button2: _button2.text
+    property alias button2Icon: _button2.icon.source
+
     property alias button3: _button3.text
+    property alias button3Icon: _button3.icon.source
+
+    property bool isAndConnection: true
 
     readonly property int buttonWidths: 230
     readonly property int labelWidth: 210
@@ -49,10 +57,10 @@ RowLayout {
         }
 
         Label {
-            text: '+'
-            height: _button2.text ? parent.height : 0
-            width: _button2.text ? implicitWidth : 0
-            visible: _button2.text
+            text: root.isAndConnection ? '+' : '/'
+            height: _button2.hasContent ? parent.height : 0
+            width: _button2.hasContent ? implicitWidth : 0
+            visible: _button2.hasContent
             verticalAlignment: Text.AlignVCenter
         }
 
@@ -63,9 +71,9 @@ RowLayout {
         Label {
             text: '+'
 
-            height: _button3.text ? parent.height : 0
-            width: _button3.text ? implicitWidth : 0
-            visible: _button3.text
+            height: _button3.hasContent ? parent.height : 0
+            width: _button3.hasContent ? implicitWidth : 0
+            visible: _button3.hasContent
             verticalAlignment: Text.AlignVCenter
         }
 

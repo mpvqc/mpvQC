@@ -18,6 +18,7 @@
 from .application_paths import MpvqcApplicationPathsPyObject
 from .clipboard import MpvqcClipboardPyObject
 from .comment_model import MpvqcCommentModelPyObject
+from .comment_type_validator import MpvqcCommentTypeValidatorPyObject
 from .environment import MpvqcEnvironmentPyObject
 from .export_template_model import MpvqcExportTemplateModelPyObject
 from .extended_document_exporter import MpvqcExtendedDocumentExporterPyObject

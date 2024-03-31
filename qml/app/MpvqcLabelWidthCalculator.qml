@@ -43,7 +43,7 @@ Item {
     }
 
     function _recalculateCommentTypesLabelWidth(): void {
-        const commentTypes = mpvqcSettings.commentTypes.items()
+        const commentTypes = mpvqcSettings.commentTypes
             .map(english => qsTranslate("CommentTypes", english))
         root.commentTypesLabelWidth = calculateWidthFor(commentTypes, root)
     }

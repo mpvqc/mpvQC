@@ -74,7 +74,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
         actual = DocumentRenderService.Filters.as_time(seconds)
         self.assertEqual(expected, actual)
 
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_video_path_video_name(self, *_, ):
         _mock_test_data(video=Path.home() / 'video.mkv')
         service = DocumentRenderService()
@@ -104,13 +104,13 @@ class DocumentRenderServiceTest(unittest.TestCase):
         actual = service.render(template)
         self.assertEqual(expected, actual)
 
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_ends_with_line_break(self, *_):
         _mock_test_data()
         actual = DocumentRenderService().render(self._resources.default_export_template)
         self.assertEqual('\n', actual[-1])
 
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_render_no_header(self, *_):
         _mock_test_data()
 
@@ -126,7 +126,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_render_partial_header(self, *_):
         _mock_test_data(
             write_header_video_path=True, video='/path/to/video',
@@ -147,7 +147,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_render_comments(self, *_):
         _mock_test_data(comments=[
             {'time': 0, 'commentType': 'Translation', 'comment': 'My first comment'},
@@ -170,7 +170,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_render_backup(self, *_):
         _mock_test_data(
             write_header_video_path=False, video='/path/to/video/ignore/user/setting',
@@ -210,7 +210,7 @@ class DocumentBackupServiceTest(unittest.TestCase):
         inject.clear()
 
     @patch(f'{MODULE}.ZipFile')
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_zip_name(self, q_app, zip_file_mock: MagicMock):
         _mock_test_data()
 
@@ -223,7 +223,7 @@ class DocumentBackupServiceTest(unittest.TestCase):
         self.assertEqual(f'{datetime.now():%Y-%m}.zip', zip_name.name)
 
     @patch(f'{MODULE}.ZipFile')
-    @patch('mpvqc.services.document_exporter.QApplication.instance', return_value=_mock_app)
+    @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_zip_content(self, q_app, zip_file_mock: MagicMock):
         _mock_test_data(video='/path/to/nice/video', comments=[
             {'time': 0, 'commentType': 'Frrrranky', 'comment': 'Suuuuuuuper'},

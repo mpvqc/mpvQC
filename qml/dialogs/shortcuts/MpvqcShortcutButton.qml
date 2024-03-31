@@ -18,18 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 
 
 Button {
-    enabled: false
-    visible: text
-    height: text ? implicitHeight : 0
-    width: text ? implicitWidth : 0
+    readonly property bool hasContent: text || icon.source.toString()
 
-    contentItem: Label {
-        text: parent.text
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-    }
+    enabled: false
+    visible: hasContent
+    height: hasContent ? implicitHeight : 0
+    width: hasContent ? implicitWidth : 0
 }

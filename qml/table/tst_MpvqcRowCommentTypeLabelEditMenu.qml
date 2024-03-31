@@ -38,23 +38,7 @@ TestCase {
         MpvqcRowCommentTypeLabelEditMenu {
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property var commentTypes: ListModel {
-                        ListElement {type: '1'}
-                        ListElement {type: '2'}
-                        ListElement {type: '3'}
-                        ListElement {type: '4'}
-                        ListElement {type: '5'}
-                        ListElement {type: '6'}
-                        ListElement {type: '7'}
-
-                        function items(): list<string> {
-                            const marshalled = []
-                            for (let i = 0; i < count; i++) {
-                                marshalled.push(this.get(i)?.type)
-                            }
-                            return marshalled
-                        }
-                    }
+                    property var commentTypes: ['1', '2', '3', '4', '5', '6', '7']
                 }
             }
         }

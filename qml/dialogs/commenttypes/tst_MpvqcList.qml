@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-import models
-
 
 Item {
     id: testHelper
@@ -33,7 +31,7 @@ Item {
         id: objectUnderTest
         anchors.fill: testHelper
 
-        model: MpvqcCommentTypesModel {}
+        model: ['Type 0', 'Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5']
         itemHeight: 42
     }
 

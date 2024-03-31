@@ -57,10 +57,6 @@ class MpvqcApplication(QGuiApplication):
         self._start_up.create_missing_directories()
         self._start_up.create_missing_files()
 
-    def _change_language(self, target_locale: str) -> None:
-        self._engine.setUiLanguage(target_locale)
-        self._retranslate()
-
     def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
         self._engine.uiLanguageChanged.connect(self._retranslate)

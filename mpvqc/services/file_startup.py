@@ -36,7 +36,6 @@ class FileStartupService:
     def create_missing_files(self) -> None:
         self._create_missing_input_conf()
         self._create_missing_mpv_conf()
-        self._create_missing_export_template_readme()
 
     def _create_missing_input_conf(self) -> None:
         self._create_missing_file(
@@ -48,12 +47,6 @@ class FileStartupService:
         self._create_missing_file(
             path=self._paths.file_mpv_conf,
             content=self._resources.mpv_conf_content
-        )
-
-    def _create_missing_export_template_readme(self) -> None:
-        self._create_missing_file(
-            path=self._paths.file_export_template_readme,
-            content=self._resources.export_template_readme
         )
 
     @staticmethod

@@ -51,14 +51,3 @@ function formatTimeToStringShort(secs) {
     if (seconds < 10) seconds = `0${ seconds }`
     return `${ minutes }:${ seconds }`
 }
-
-
-/**
- * https://thewebdev.info/2021/05/23/how-to-convert-hhmmss-time-string-to-seconds-only-in-javascript/
- * @param timeString {string}
- * @returns {number}
- */
-function extractSecondsFrom(timeString) {
-    const [hours, minutes, seconds] = timeString.split(':')
-    return (+hours) * 60 * 60 + (+minutes) * 60 + (+seconds)
-}

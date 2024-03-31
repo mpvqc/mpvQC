@@ -27,9 +27,8 @@ MpvqcInputComponent {
     width: 400
     height: 400
 
-    validator: QtObject {
-        function validateEditingOf(a, b) {}
-    }
+    validateNewCommentType: input => null
+    validateEditingOfCommentType: (input, inputBeingEdited) => null
 
     TestCase {
         name: "MpvqcInputComponent"

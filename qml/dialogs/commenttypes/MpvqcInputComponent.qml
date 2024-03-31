@@ -23,7 +23,13 @@ import QtQuick
 Column {
     id: root
 
-    required property var validator
+    required property var validateNewCommentType        // function with:
+                                                        //   param :  input
+                                                        //   return:  string or null | validation error if error exists
+    required property var validateEditingOfCommentType  // function with:
+                                                        //   param :  input
+                                                        //   param :  comment type being edited
+                                                        //   return:  string or null | validation error if error exists
 
     readonly property alias loader: _loader
     readonly property alias editing: _loader.editing
@@ -76,13 +82,9 @@ Column {
             focusTextFieldOnCompletion: false
             placeholderText: qsTranslate("CommentTypesDialog", "New comment type")
 
-            validateInput: function(input) {
-                return root.validator.validateNewCommentType(input)
-            }
+            validateInput: input => root.validateNewCommentType(input)
 
-            onAccepted: (input) => {
-                root.added(input)
-            }
+            onAccepted: input => root.added(input)
         }
     }
 
@@ -93,17 +95,11 @@ Column {
             objectName: "MpvqcInputControls::edit"
             focusTextFieldOnCompletion: true
 
-            validateInput: function(input) {
-                return root.validator.validateEditingOf(placeholderText, input)
-            }
+            validateInput: input => root.validateEditingOfCommentType(input, placeholderText)
 
-            onAccepted: (input) => {
-                root.edited(input)
-            }
+            onAccepted: input => root.edited(input)
 
-            onDone: {
-                _loader.stopEditMode()
-            }
+            onDone: _loader.stopEditMode()
         }
     }
 
