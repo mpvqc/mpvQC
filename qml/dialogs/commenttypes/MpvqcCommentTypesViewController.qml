@@ -19,54 +19,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-import models
 
 
-Item {
+QtObject {
     required property int selectedIndex
-    required property MpvqcCommentTypesModel model
+    required property list <string> model
 
-    readonly property MpvqcCommentTypesModel modelCopy: model.copy(parent)
-    readonly property int thisItemOnly: 1
+    property list <string> modelCopy: [...model]
+    property bool countIncreased: false
 
     signal editClicked(string commentType)
-
-    width: 0; height: 0
+    signal highlightIndexRequested(int index)
+    signal acceptCopyRequested(list<string> copy)
+    signal resetRequested()
 
     function add(commentType: string): void {
-        modelCopy.add(commentType)
+        modelCopy.push(commentType)
+        highlightIndexRequested(modelCopy.length - 1)
     }
 
     function replaceWith(commentType: string): void {
-        modelCopy.replace(selectedIndex, commentType)
+        modelCopy[selectedIndex] = commentType
     }
 
     function moveUp(): void {
-        modelCopy.move(selectedIndex, selectedIndex - 1, thisItemOnly)
+        const current = selectedIndex;
+        const previous = current - 1;
+        [modelCopy[current], modelCopy[previous]] = [modelCopy[previous], modelCopy[current]];
+        highlightIndexRequested(previous)
     }
 
     function moveDown(): void {
-        modelCopy.move(selectedIndex, selectedIndex + 1, thisItemOnly)
+        const current = selectedIndex;
+        const next = current + 1;
+        [modelCopy[current], modelCopy[next]] = [modelCopy[next], modelCopy[current]];
+        highlightIndexRequested(next)
     }
 
     function startEditing(): void {
-        const item = modelCopy.get(selectedIndex)
-        editClicked(item.type)
+        const item = modelCopy[selectedIndex]
+        editClicked(item)
     }
 
     function deleteItem(): void {
-        modelCopy.remove(selectedIndex)
+        const current = selectedIndex
+        const isLastIndex = current === modelCopy.length - 1
+
+        modelCopy.splice(current, 1)
+
+        if (isLastIndex) {
+            highlightIndexRequested(current - 1)
+        } else {
+            highlightIndexRequested(current)
+        }
     }
 
     function acceptModelCopy(): void {
-        if (modelCopy.count === 0) {
-            modelCopy.reset(parent)
-        }
-        model.replaceWith(modelCopy.items())
+        acceptCopyRequested(modelCopy)
     }
 
     function reset(): void {
-        modelCopy.reset(parent)
+        resetRequested()
     }
 
 }

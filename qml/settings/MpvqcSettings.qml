@@ -124,6 +124,9 @@ Item {
     }
     property alias windowTitleFormat: _windowSettings.titleFormat
 
+    function getDefaultCommentTypes(): list<string> {
+        return ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note']
+    }
 
     Component.onCompleted: {
         _commonSettings.restore()

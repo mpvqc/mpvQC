@@ -43,12 +43,31 @@ Column {
     MpvqcCommentTypesViewController {
         id: _controller
 
-        model: mpvqcSettings.commentTypes
+        model: mpvqcSettings.commentTypes.items()
         selectedIndex: _listView.currentIndex
+
+        onHighlightIndexRequested: index => {
+            _listView.currentIndex = index
+        }
 
         onEditClicked: (commentType) => {
             const translated = qsTranslate('CommentTypes', commentType)
             _input.startEditing(translated)
+        }
+
+        onAcceptCopyRequested: copy => {
+            if (copy.length === 0) {
+                const defaultCommentTypes = mpvqcSettings.getDefaultCommentTypes()
+                mpvqcSettings.commentTypes.replaceWith(defaultCommentTypes)
+            } else {
+                mpvqcSettings.commentTypes.replaceWith(copy)
+            }
+        }
+
+        onResetRequested: {
+            _listView.scrollToLastItem = false
+            _controller.model.length = 0
+            _controller.model.push(...mpvqcSettings.getDefaultCommentTypes())
         }
     }
 
@@ -60,13 +79,12 @@ Column {
         topPadding: 15
 
         validateNewCommentType: (input) => {
-            const items = _listView.model.items()
+            const items = _listView.model
             return mpvqcCommentTypeValidatorPyObject.validate_new_comment_type(input, items)
         }
 
         validateEditingOfCommentType: (input, inputBeingEdited) => {
-            const items = _listView.model.items()
-            console.info(input, inputBeingEdited, items)
+            const items = _listView.model
             return mpvqcCommentTypeValidatorPyObject.validate_editing_of_comment_type(input, inputBeingEdited, items)
         }
 
@@ -75,7 +93,7 @@ Column {
         }
 
         onEdited: (commentType) => {
-            const english = root.mpvqcReverseTranslatorPyObject.lookup_specific_language(root.mpvqcSettings.language, commentType)
+            const english = root.mpvqcReverseTranslatorPyObject.lookup(commentType)
             _controller.replaceWith(english)
         }
     }
@@ -101,7 +119,7 @@ Column {
 
             height: _listView.height
             upEnabled: controlsEnabled && _listView.currentIndex > 0
-            downEnabled: controlsEnabled && _listView.currentIndex !== _listView.model.count - 1
+            downEnabled: controlsEnabled && _listView.currentIndex !== _listView.model.length - 1
             editEnabled: controlsEnabled && _listView.currentIndex >= 0
             deleteEnabled: controlsEnabled && _listView.currentIndex >= 0
 

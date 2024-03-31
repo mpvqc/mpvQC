@@ -39,7 +39,7 @@ ListView {
     delegate: Rectangle {
         id: _delegate
 
-        required property string type
+        required property string modelData
         required property int index
         readonly property bool rowSelected: root.currentIndex === index
 
@@ -73,7 +73,7 @@ ListView {
             height: _delegate.height
             padding: 15
 
-            text: qsTranslate('CommentTypes', _delegate.type)
+            text: qsTranslate('CommentTypes', _delegate.modelData)
             elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
 
             horizontalAlignment: Text.AlignLeft
@@ -88,21 +88,6 @@ ListView {
         readonly property var visibleWidth: isShown ? width : 0
 
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-    }
-
-    onCurrentIndexChanged: {
-        _scrollToItemTimer.start()
-    }
-
-    Timer {
-        id: _scrollToItemTimer
-
-        interval: 0
-        repeat: false
-
-        onTriggered: {
-            positionViewAtIndex(currentIndex, ListView.Contain)
-        }
     }
 
 }
