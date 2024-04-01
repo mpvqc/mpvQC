@@ -43,7 +43,10 @@ MpvqcMenu {
         text: qsTranslate("CommentTable", "Edit Comment")
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
 
-        onTriggered: root.editCommentClicked()
+        onTriggered: {
+            exit = null
+            root.editCommentClicked()
+        }
     }
 
     MenuItem {

@@ -52,6 +52,17 @@ Rectangle {
     property alias commentLabel: _commentLabel
     property alias moreButton: _moreButton
 
+    property var contextMenuFactory: Component
+    {
+        MpvqcMenuMore {
+            onCopyCommentClicked: root.copyCommentClicked()
+
+            onDeleteCommentClicked: root.deleteCommentClicked()
+
+            onEditCommentClicked: root.startEditing()
+        }
+    }
+
     readonly property int leftAndRightPadding: 14
     readonly property int topAndBottomPadding: 13
 
@@ -76,6 +87,12 @@ Rectangle {
 
     function startEditing(): void {
         _commentLabel.startEditing()
+    }
+
+    function createContextMenu(): Component {
+        const contextMenu = contextMenuFactory.createObject(root)
+        contextMenu.closed.connect(contextMenu.destroy)
+        return contextMenu
     }
 
     function toClipboardContent(): string {
@@ -177,18 +194,37 @@ Rectangle {
             onEditingStopped: root.editingStopped()
         }
 
-        MpvqcRowMoreButton {
+        ToolButton {
             id: _moreButton
+
+            readonly property int additionalMenuPadding: 7
 
             width: _playButton.width
             visible: root.rowSelected
-            tableInEditMode: root.tableInEditMode
+            focusPolicy: Qt.NoFocus
+            icon.source: "qrc:/data/icons/more_vert_black_24dp.svg"
+            icon.width: 18
+            icon.height: 18
 
-            onCopyCommentClicked: root.copyCommentClicked()
+            function _grabFocus(): void {
+                focus = true
+            }
 
-            onDeleteCommentClicked: root.deleteCommentClicked()
+            function _openMenu(): void {
+                const contextMenu = root.createContextMenu()
+                contextMenu.x = mirrored ? additionalMenuPadding : x + _moreButton.width - contextMenu.width - additionalMenuPadding
+                contextMenu.y = additionalMenuPadding
+                contextMenu.transformOrigin = mirrored ? Popup.TopLeft : Popup.TopRight
+                contextMenu.open()
+            }
 
-            onEditCommentClicked: root.startEditing()
+            onClicked: {
+                if (root.tableInEditMode) {
+                    _moreButton._grabFocus()
+                } else {
+                    _moreButton._openMenu()
+                }
+            }
         }
 
         Rectangle {
