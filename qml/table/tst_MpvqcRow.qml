@@ -143,21 +143,6 @@ TestCase {
         compare(spy.count, 3)
     }
 
-    function test_menuSignals() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'copyCommentClicked'})
-        verify(spy)
-        control.moreButton.copyCommentClicked()
-        compare(spy.count, 1)
-
-        spy = signalSpy.createObject(control, {target: control, signalName: 'deleteCommentClicked'})
-        verify(spy)
-        control.moreButton.deleteCommentClicked()
-        compare(spy.count, 1)
-    }
-
     function test_copyClipboardContent() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)

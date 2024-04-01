@@ -102,7 +102,7 @@ ListView {
 
         onCopyCommentClicked: root._copyCurrentCommentToClipboard()
 
-        onDeleteCommentClicked: root._requestDeleteRow(index)
+        onDeleteCommentClicked: root._requestDeleteRow()
 
         onEditingStarted: { root.currentlyEditing = true }
 
@@ -115,25 +115,15 @@ ListView {
         onCommentTypeEdited: (newCommentType) => root.model.update_comment_type(index, newCommentType)
 
         onCommentEdited: (newComment) => root.model.update_comment(index, newComment)
-
-        MouseArea {
-            anchors.fill: parent
-            enabled: !rowSelected
-            z: -1
-
-            onClicked: {
-                root.selectRow(index)
-            }
-        }
     }
 
     function selectRow(index: int): void {
         root.currentIndex = index
     }
 
-    function _requestDeleteRow(index: int): void {
+    function _requestDeleteRow(): void {
         deleteCommentMessageBox = deleteCommentMessageBoxFactory.createObject(root)
-        deleteCommentMessageBox.index = index
+        deleteCommentMessageBox.index = root.currentIndex
         deleteCommentMessageBox.closed.connect(deleteCommentMessageBox.destroy)
         deleteCommentMessageBox.open()
     }
@@ -166,7 +156,7 @@ ListView {
         }
 
         if (!root.mpvqcApplication.fullscreen && root.haveComments) {
-            return root._requestDeleteRow(root.currentIndex)
+            return root._requestDeleteRow()
         }
     }
 
