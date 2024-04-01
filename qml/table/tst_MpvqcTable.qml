@@ -80,7 +80,7 @@ TestCase {
                     property int commentTypesLabelWidth: 150
                     property int timeLabelWidth: 30
                 }
-                property var mpvqcTimeFormatUtils: QtObject {
+                property var mpvqcUtilityPyObject: QtObject {
                     function formatTimeToStringLong(time) { return `${time}` }
                     function formatTimeToStringShort(time) { return `${time}` }
                 }

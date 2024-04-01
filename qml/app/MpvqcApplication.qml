@@ -24,8 +24,6 @@ import pyobjects
 import settings
 import shared
 
-import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
-
 
 ApplicationWindow {
     id: root
@@ -51,9 +49,8 @@ ApplicationWindow {
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
     readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
+    readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
-
-    readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen

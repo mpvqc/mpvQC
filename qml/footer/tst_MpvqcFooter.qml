@@ -47,7 +47,7 @@ MpvqcFooter {
         property var mpvqcLabelWidthCalculator: QtObject {
             function calculateWidthFor(items, parent) {}
         }
-        property var mpvqcTimeFormatUtils: QtObject {
+        property var mpvqcUtilityPyObject: QtObject {
             function formatTimeToStringLong(seconds) {}
             function formatTimeToStringShort(seconds) {}
         }
