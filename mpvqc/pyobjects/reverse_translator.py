@@ -32,7 +32,3 @@ class MpvqcReverseTranslatorPyObject(QObject):
     @Slot(str, result=str or None)
     def lookup(self, non_english: str) -> str:
         return self._translator.lookup(non_english)
-
-    @Slot(str, str, result=str or None)
-    def lookup_specific_language(self, language: str, non_english: str) -> str:
-        return self._translator.lookup_specific_language(non_english, language)
