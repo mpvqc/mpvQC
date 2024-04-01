@@ -42,7 +42,7 @@ MpvqcVideoTimeLabel {
         property var mpvqcLabelWidthCalculator: QtObject {
             function calculateWidthFor(items, parent) { return 42 }
         }
-        property var mpvqcTimeFormatUtils: QtObject {
+        property var mpvqcUtilityPyObject: QtObject {
             function formatTimeToStringLong(seconds) { return 'formatted' }
             function formatTimeToStringShort(seconds) { return 'formatted' }
         }

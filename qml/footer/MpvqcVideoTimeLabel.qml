@@ -32,7 +32,7 @@ Label {
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
 
     readonly property int duration: mpvqcMpvPlayerPropertiesPyObject.duration
@@ -57,25 +57,25 @@ Label {
 
     function currentTime(): string {
         return duration >= secondsPerHour
-            ? mpvqcTimeFormatUtils.formatTimeToStringLong(timePos)
-            : mpvqcTimeFormatUtils.formatTimeToStringShort(timePos)
+            ? mpvqcUtilityPyObject.formatTimeToStringLong(timePos)
+            : mpvqcUtilityPyObject.formatTimeToStringShort(timePos)
     }
 
     function remainingTime(): string {
         const remaining = duration >= secondsPerHour
-            ? mpvqcTimeFormatUtils.formatTimeToStringLong(timeRemaining)
-            : mpvqcTimeFormatUtils.formatTimeToStringShort(timeRemaining)
+            ? mpvqcUtilityPyObject.formatTimeToStringLong(timeRemaining)
+            : mpvqcUtilityPyObject.formatTimeToStringShort(timeRemaining)
         return `-${remaining}`
     }
 
     function currentTotalTime(): string {
         let current; let total
         if (duration >= secondsPerHour) {
-            current = mpvqcTimeFormatUtils.formatTimeToStringLong(timePos)
-            total = mpvqcTimeFormatUtils.formatTimeToStringLong(duration)
+            current = mpvqcUtilityPyObject.formatTimeToStringLong(timePos)
+            total = mpvqcUtilityPyObject.formatTimeToStringLong(duration)
         } else {
-            current = mpvqcTimeFormatUtils.formatTimeToStringShort(timePos)
-            total = mpvqcTimeFormatUtils.formatTimeToStringShort(duration)
+            current = mpvqcUtilityPyObject.formatTimeToStringShort(timePos)
+            total = mpvqcUtilityPyObject.formatTimeToStringShort(duration)
         }
         return `${current}/${total}`
     }

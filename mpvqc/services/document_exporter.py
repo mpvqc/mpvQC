@@ -26,6 +26,7 @@ from PySide6.QtGui import QStandardItemModel
 from jinja2 import Environment, BaseLoader, TemplateSyntaxError, TemplateError
 
 from .application_paths import ApplicationPathsService
+from .formatter_time import TimeFormatterService
 from .player import PlayerService
 from .resource import ResourceService
 from .settings import SettingsService
@@ -36,12 +37,10 @@ class DocumentRenderService:
     _settings: SettingsService = inject.attr(SettingsService)
 
     class Filters:
+        _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
 
-        @staticmethod
-        def as_time(seconds: int):
-            hours, remainder = divmod(seconds, 3600)
-            minutes, seconds = divmod(remainder, 60)
-            return f'{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}'
+        def as_time(self, seconds: int):
+            return self._time_formatter.format_time_to_string(seconds, long_format=True)
 
         @staticmethod
         def as_comment_type(comment_type: str):
@@ -49,8 +48,9 @@ class DocumentRenderService:
 
     def __init__(self):
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)
-        self._env.filters['as_time'] = self.Filters.as_time
-        self._env.filters['as_comment_type'] = self.Filters.as_comment_type
+        self._filters = self.Filters()
+        self._env.filters['as_time'] = self._filters.as_time
+        self._env.filters['as_comment_type'] = self._filters.as_comment_type
 
     @property
     def _arguments(self) -> dict:

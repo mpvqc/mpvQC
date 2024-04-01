@@ -53,7 +53,7 @@ TestCase {
                     function pause() { pauseCalled = true }
                     function jump_to(time) { jumpToCalled = true; jumpToTime = time }
                 }
-                property var mpvqcTimeFormatUtils: QtObject {
+                property var mpvqcUtilityPyObject: QtObject {
                     function formatTimeToStringShort(time) { return `${time}` }
                     function formatTimeToStringLong(time) { return `${time}` }
                 }

@@ -72,17 +72,15 @@ TestCase {
                 property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
                     property int duration: 60
                 }
-                property var mpvqcClipboardPyObject: QtObject {
-                    function copy_to_clipboard(text) { clipboardText = text }
+                property var mpvqcUtilityPyObject: QtObject {
+                    function copyToClipboard(text) { clipboardText = text }
+                    function formatTimeToStringLong(time) { return `${time}` }
+                    function formatTimeToStringShort(time) { return `${time}` }
                 }
                 property var mpvqcCommentTable: this
                 property var mpvqcLabelWidthCalculator: QtObject {
                     property int commentTypesLabelWidth: 150
                     property int timeLabelWidth: 30
-                }
-                property var mpvqcTimeFormatUtils: QtObject {
-                    function formatTimeToStringLong(time) { return `${time}` }
-                    function formatTimeToStringShort(time) { return `${time}` }
                 }
                 property var mpvqcDefaultTextValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/

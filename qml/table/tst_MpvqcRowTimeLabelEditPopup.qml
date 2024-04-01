@@ -49,7 +49,7 @@ TestCase {
                 property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
                     property int duration: 0
                 }
-                property var mpvqcTimeFormatUtils: QtObject {
+                property var mpvqcUtilityPyObject: QtObject {
                     function formatTimeToStringLong(time) { return `${time}` }
                 }
             }

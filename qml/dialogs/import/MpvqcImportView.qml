@@ -31,10 +31,6 @@ ColumnLayout {
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    property alias selectionAlways: _selectionAlways
-    property alias selectionAsk: _selectionAsk
-    property alias selectionNever: _selectionNever
-
     RowLayout {
         Layout.topMargin: 20
         spacing: 30
@@ -46,53 +42,36 @@ ColumnLayout {
             Layout.preferredWidth: 165
         }
 
-        ColumnLayout {
+        ComboBox {
             Layout.preferredWidth: 165
 
-            ButtonGroup { id: radioGroup }
+            textRole: 'text'
+            valueRole: 'value'
 
-            CheckBox {
-                id: _selectionAlways
-
-                property var selection: MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS
-
-                text: qsTranslate("ImportSettings", "Always")
-                checked: root.mpvqcSettings.importWhenVideoLinkedInDocument == selection
-                ButtonGroup.group: radioGroup
-
-                onPressed: {
-                    root.mpvqcSettings.importWhenVideoLinkedInDocument = selection
+            model: [
+                {
+                    text: qsTranslate("ImportSettings", "Always"),
+                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS,
+                },
+                {
+                    text: qsTranslate("ImportSettings", "Ask every time"),
+                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME,
+                },
+                {
+                    text: qsTranslate("ImportSettings", "Never"),
+                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER,
                 }
+            ]
+
+            onActivated: {
+                root.mpvqcSettings.importWhenVideoLinkedInDocument = currentValue
             }
 
-            CheckBox {
-                id: _selectionAsk
-
-                property var selection: MpvqcSettings.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME
-
-                text: qsTranslate("ImportSettings", "Ask every time")
-                checked: root.mpvqcSettings.importWhenVideoLinkedInDocument == selection
-                ButtonGroup.group: radioGroup
-
-                onPressed: {
-                    root.mpvqcSettings.importWhenVideoLinkedInDocument = selection
-                }
-            }
-
-            CheckBox {
-                id: _selectionNever
-
-                property var selection: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER
-
-                text: qsTranslate("ImportSettings", "Never")
-                checked: root.mpvqcSettings.importWhenVideoLinkedInDocument == selection
-                ButtonGroup.group: radioGroup
-
-                onPressed: {
-                    root.mpvqcSettings.importWhenVideoLinkedInDocument = selection
-                }
+            Component.onCompleted: {
+                currentIndex = indexOfValue(root.mpvqcSettings.importWhenVideoLinkedInDocument)
             }
         }
+
     }
 
 }

@@ -34,7 +34,7 @@ Rectangle {
     required property string searchQuery
 
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     readonly property var backgroundColorSelected: Material.primary
     readonly property var backgroundColorUnselected: Material.background
@@ -79,7 +79,7 @@ Rectangle {
     }
 
     function toClipboardContent(): string {
-        const time = mpvqcTimeFormatUtils.formatTimeToStringLong(root.time)
+        const time = mpvqcUtilityPyObject.formatTimeToStringLong(root.time)
         const type = qsTranslate("CommentTypes", commentType)
         return `[${time}] [${type}] ${comment}`.trim()
     }

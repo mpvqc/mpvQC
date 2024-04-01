@@ -31,7 +31,7 @@ ListView {
     required property string searchQuery
 
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-    readonly property var mpvqcClipboardPyObject: mpvqcApplication.mpvqcClipboardPyObject
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     property bool haveComments: root.count > 0
 
@@ -140,7 +140,7 @@ ListView {
 
     function _copyCurrentCommentToClipboard() {
         const text = root.currentItem.toClipboardContent()
-        root.mpvqcClipboardPyObject.copy_to_clipboard(text)
+        root.mpvqcUtilityPyObject.copyToClipboard(text)
     }
 
     function startEditing(): void {

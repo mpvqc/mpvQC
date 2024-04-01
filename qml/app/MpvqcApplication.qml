@@ -24,8 +24,6 @@ import pyobjects
 import settings
 import shared
 
-import "MpvqcTimeFormatUtils.js" as MpvqcTimeFormatUtils
-
 
 ApplicationWindow {
     id: root
@@ -40,20 +38,14 @@ ApplicationWindow {
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
-    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
     readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
-    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
     readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
-    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
-    readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
-    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
+    readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
-
-    readonly property var mpvqcTimeFormatUtils: MpvqcTimeFormatUtils
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen

@@ -29,7 +29,7 @@ Label {
     required property bool rowSelected
     required property bool tableInEditMode
 
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
@@ -43,9 +43,9 @@ Label {
 
     text: {
         if (mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
-            return mpvqcTimeFormatUtils.formatTimeToStringLong(time)
+            return mpvqcUtilityPyObject.formatTimeToStringLong(time)
         } else {
-            return mpvqcTimeFormatUtils.formatTimeToStringShort(time)
+            return mpvqcUtilityPyObject.formatTimeToStringShort(time)
         }
     }
 

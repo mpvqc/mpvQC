@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2022 mpvQC developers
+# Copyright (C) 2024 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,21 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import inject
-from PySide6.QtCore import QUrl, Slot, QObject
-from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, TypeMapperService
+class TimeFormatterService:
 
-QML_IMPORT_NAME = "pyobjects"
-QML_IMPORT_MAJOR_VERSION = 1
-
-
-@QmlElement
-class MpvqcFileSystemHelperPyObject(QObject):
-    _paths = inject.attr(ApplicationPathsService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
-
-    @Slot(QUrl, result=str or None)
-    def url_to_absolute_path(self, url: QUrl) -> str:
-        return self._type_mapper.map_url_to_path_string(url)
+    @staticmethod
+    def format_time_to_string(input_seconds: float, *, long_format: bool) -> str:
+        hours, remainder = divmod(input_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        if long_format:
+            return f'{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}'
+        else:
+            return f'{int(minutes):02d}:{int(seconds):02d}'

@@ -27,7 +27,7 @@ SpinBox {
     required property var mpvqcApplication
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var mpvqcTimeFormatUtils: mpvqcApplication.mpvqcTimeFormatUtils
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var duration: mpvqcMpvPlayerPropertiesPyObject.duration
 
     from: 0
@@ -36,9 +36,9 @@ SpinBox {
 
     textFromValue: (value) => {
         if (duration >= 60 * 60) {
-            return mpvqcTimeFormatUtils.formatTimeToStringLong(value)
+            return mpvqcUtilityPyObject.formatTimeToStringLong(value)
         } else {
-            return mpvqcTimeFormatUtils.formatTimeToStringShort(value)
+            return mpvqcUtilityPyObject.formatTimeToStringShort(value)
         }
     }
 

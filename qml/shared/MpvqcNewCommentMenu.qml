@@ -29,7 +29,7 @@ MpvqcMenu {
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
-    readonly property var mpvqcMouseCursorPyObject: mpvqcApplication.mpvqcMouseCursorPyObject
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     property string selectedCommentType: ''
 
     property alias repeater: _repeater
@@ -44,7 +44,7 @@ MpvqcMenu {
     onClosed: _addComment()
 
     function _positionMenu(): void {
-        const pos = parent.mapFromGlobal(mpvqcMouseCursorPyObject.cursor_pos)
+        const pos = parent.mapFromGlobal(mpvqcUtilityPyObject.cursorPosition)
 		x = root.mMirrored ? pos.x - root.width : pos.x
 		y = pos.y
     }
