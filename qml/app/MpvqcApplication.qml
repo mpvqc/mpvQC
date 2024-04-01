@@ -44,7 +44,6 @@ ApplicationWindow {
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcResourcePyObject: MpvqcResourcePyObject {}
-    readonly property var mpvqcReverseTranslatorPyObject: MpvqcReverseTranslatorPyObject {}
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 

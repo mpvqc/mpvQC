@@ -26,7 +26,6 @@ from .player import MpvqcMpvPlayerPyObject
 from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .resource import MpvqcResourcePyObject
-from .reverse_translator import MpvqcReverseTranslatorPyObject
 from .text_validator import MpvqcDefaultTextValidatorPyObject
 from .utility import MpvqcUtilityPyObject
 from .version_checker import MpvqcVersionCheckerPyObject

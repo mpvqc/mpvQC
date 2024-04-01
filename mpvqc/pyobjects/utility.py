@@ -22,7 +22,7 @@ from PySide6.QtCore import QObject, Slot, QUrl, Signal, QPoint, Property
 from PySide6.QtGui import QClipboard, QCursor
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import TimeFormatterService, TypeMapperService
+from mpvqc.services import TimeFormatterService, TypeMapperService, ReverseTranslatorService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -41,6 +41,7 @@ class MpvqcUtilityPyObject(QObject):
 
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
 
     def __init__(self):
         super().__init__()
@@ -62,6 +63,10 @@ class MpvqcUtilityPyObject(QObject):
     def formatTimeToStringShort(self, seconds: float) -> str:
         return self._time_formatter.format_time_to_string(seconds, long_format=False)
 
-    @Slot(QUrl, result=str or None)
+    @Slot(QUrl, result=str)
     def urlToAbsolutePath(self, url: QUrl) -> str:
         return self._type_mapper.map_url_to_path_string(url)
+
+    @Slot(str, result=str)
+    def reverseLookupCommentType(self, non_english: str) -> str:
+        return self._translator.lookup(non_english)

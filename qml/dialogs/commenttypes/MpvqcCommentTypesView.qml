@@ -27,7 +27,7 @@ Column {
     required property var mpvqcApplication
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var mpvqcReverseTranslatorPyObject: mpvqcApplication.mpvqcReverseTranslatorPyObject
+    property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     property var mpvqcCommentTypeValidatorPyObject: mpvqcApplication.mpvqcCommentTypeValidatorPyObject
 
     function acceptTemporaryState(): void {
@@ -90,7 +90,7 @@ Column {
         }
 
         onEdited: (commentType) => {
-            const english = root.mpvqcReverseTranslatorPyObject.lookup(commentType)
+            const english = root.mpvqcUtilityPyObject.reverseLookupCommentType(commentType)
             _controller.replaceWith(english)
         }
     }
