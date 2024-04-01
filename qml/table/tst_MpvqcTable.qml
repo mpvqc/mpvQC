@@ -129,7 +129,7 @@ TestCase {
     function test_selectionWhileNotEditing(data) {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
 
         mouseClick(control, data.column, row2)
         wait(longTime)
@@ -177,9 +177,9 @@ TestCase {
     function test_selectionWhileEditingComment(data) {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         keyPress(Qt.Key_Return)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         verify(control.currentlyEditing)
 
         mouseClick(control, data.columnClicked, data.rowClicked)
@@ -191,9 +191,9 @@ TestCase {
     function test_selectionWhileEditingTimeOnPressedOutside() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         mouseClick(control, columnTime, row1)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         verify(control.currentlyEditing)
 
         mouseClick(control, columnComment, row2)
@@ -205,9 +205,9 @@ TestCase {
     function test_selectionWhileEditingCommentTypeOnPressedOutside() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         mouseClick(control, columnCommentType, row1)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         verify(control.currentlyEditing)
 
         mouseClick(control, columnComment, row2)
@@ -253,14 +253,14 @@ TestCase {
             {
                 tag: 'via-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore, row1)
-                    wait(shortTime)
+                    waitForRendering(control, shortTime)
                     mouseClick(control, columnMenuMore, row3)
                 }
             },
             {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
-                    wait(shortTime)
+                    waitForRendering(control, shortTime)
                     mouseClick(control, columnMenuMore / 2, row3)
                 }
             },
@@ -275,10 +275,10 @@ TestCase {
     function test_copyToClipboard(data) {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
 
         data.exec(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
 
         compare(control.clipboardText, '[10] [Comment Type 1] Comment 1')
     }
@@ -288,14 +288,14 @@ TestCase {
             {
                 tag: 'via-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore, row1)
-                    wait(shortTime)
+                    waitForRendering(control, shortTime)
                     mouseClick(control, columnMenuMore, row4)
                 }
             },
             {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
-                    wait(shortTime)
+                    waitForRendering(control, shortTime)
                     mouseClick(control, columnMenuMore / 2, row4)
                 }
             },
@@ -307,10 +307,10 @@ TestCase {
     function test_deleteComment(data) {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
 
         data.exec(control)
-        wait(shortTime)
+        waitForRendering(control, shortTime)
         verify(control.deleteCommentMessageBox)
 
         control.deleteCommentMessageBox.accepted()
