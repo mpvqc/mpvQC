@@ -84,6 +84,14 @@ Rectangle {
         return `[${time}] [${type}] ${comment}`.trim()
     }
 
+    MouseArea {
+        anchors.fill: parent
+        enabled: !rowSelected
+        z: -1
+
+        onClicked: root.clicked()
+    }
+
     Row {
         width: root.width
 

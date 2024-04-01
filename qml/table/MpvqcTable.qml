@@ -115,16 +115,6 @@ ListView {
         onCommentTypeEdited: (newCommentType) => root.model.update_comment_type(index, newCommentType)
 
         onCommentEdited: (newComment) => root.model.update_comment(index, newComment)
-
-        MouseArea {
-            anchors.fill: parent
-            enabled: !rowSelected
-            z: -1
-
-            onClicked: {
-                root.selectRow(index)
-            }
-        }
     }
 
     function selectRow(index: int): void {
