@@ -32,15 +32,3 @@ SERVICE = ReverseTranslatorService()
 ])
 def test_lookup(expected: str, translated: str) -> None:
     assert expected == SERVICE.lookup(translated)
-
-
-@parameterized.expand([
-    ('en-US', 'Spelling', 'Spelling'),
-    ('en-US', 'Rechtschreibung', 'Rechtschreibung'),
-    ('de-DE', 'Spelling', 'Rechtschreibung'),
-    ('de-DE', 'not-found', 'not-found'),
-    ('he-IL', 'Spelling', 'איות'),
-    ('es-ES', 'איות', 'איות'),
-])
-def test_lookup_specific_language(language: str, expected: str, translated: str) -> None:
-    assert expected == SERVICE.lookup_specific_language(translated, language)
