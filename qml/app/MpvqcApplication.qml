@@ -40,7 +40,6 @@ ApplicationWindow {
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
     readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
-    readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
     readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
     readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}

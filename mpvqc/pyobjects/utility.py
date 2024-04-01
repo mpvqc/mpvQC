@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from os import environ
+
 import inject
 from PySide6.QtCore import QObject, Slot, QUrl
 from PySide6.QtGui import QClipboard
@@ -41,6 +43,10 @@ class MpvqcUtilityPyObject(QObject):
     @Slot(str)
     def copyToClipboard(self, text: str) -> None:
         self._clipboard.setText(text)
+
+    @Slot(str, result=str or None)
+    def getEnviornmentVariable(self, key: str) -> str or None:
+        return environ.get(key) or None
 
     @Slot(float, result=str)
     def formatTimeToStringLong(self, seconds: float) -> str:
