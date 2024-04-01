@@ -52,7 +52,7 @@ Rectangle {
     property alias commentLabel: _commentLabel
     property alias moreButton: _moreButton
 
-    property var contextMenuFactory: Component
+    readonly property var contextMenuFactory: Component
     {
         MpvqcMenuMore {
             onCopyCommentClicked: root.copyCommentClicked()
@@ -107,6 +107,23 @@ Rectangle {
         z: -1
 
         onClicked: root.clicked()
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        enabled: !root.tableInEditMode
+        acceptedButtons: Qt.RightButton
+        z: -1
+
+        onClicked: {
+            root.clicked()
+
+            const contextMenu = root.createContextMenu()
+            const pos = root.mapFromGlobal(root.mpvqcUtilityPyObject.cursorPosition)
+            contextMenu.x = LayoutMirroring.enabled ? pos.x - contextMenu.width : pos.x
+            contextMenu.y = pos.y
+            contextMenu.open()
+        }
     }
 
     Row {
