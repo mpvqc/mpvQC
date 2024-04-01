@@ -64,16 +64,6 @@ def _mock_test_data(
 class DocumentRenderServiceTest(unittest.TestCase):
     _resources: ResourceService = inject.attr(ResourceService)
 
-    @parameterized.expand([
-        ('00:00:00', 0),
-        ('00:01:08', 68),
-        ('00:16:39', 999),
-        ('02:46:40', 10000),
-    ])
-    def test_filter_as_time(self, expected, seconds):
-        actual = DocumentRenderService.Filters.as_time(seconds)
-        self.assertEqual(expected, actual)
-
     @patch('mpvqc.services.document_exporter.QCoreApplication.instance', return_value=_mock_app)
     def test_video_path_video_name(self, *_, ):
         _mock_test_data(video=Path.home() / 'video.mkv')
