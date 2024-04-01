@@ -18,8 +18,8 @@
 from os import environ
 
 import inject
-from PySide6.QtCore import QObject, Slot, QUrl
-from PySide6.QtGui import QClipboard
+from PySide6.QtCore import QObject, Slot, QUrl, Signal, QPoint, Property
+from PySide6.QtGui import QClipboard, QCursor
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import TimeFormatterService, TypeMapperService
@@ -28,10 +28,16 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyPep8Naming
+# noinspection PyPep8Naming, PyMethodMayBeStatic
 @QmlElement
 class MpvqcUtilityPyObject(QObject):
     """A collection of mostly unrelated utility functions"""
+
+    def get_cursor_position(self) -> QPoint:
+        return QCursor.pos()
+
+    cursorPositionChanged = Signal(QPoint)
+    cursorPosition = Property(QPoint, get_cursor_position, notify=cursorPositionChanged)
 
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)

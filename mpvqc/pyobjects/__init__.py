@@ -22,7 +22,6 @@ from .export_template_model import MpvqcExportTemplateModelPyObject
 from .extended_document_exporter import MpvqcExtendedDocumentExporterPyObject
 from .file_interface import MpvqcFileInterfacePyObject
 from .manager import MpvqcManagerPyObject
-from .mouse import MpvqcMouseCursorPyObject
 from .player import MpvqcMpvPlayerPyObject
 from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
