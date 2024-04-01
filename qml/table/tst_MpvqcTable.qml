@@ -226,6 +226,13 @@ TestCase {
                 }
             },
             {
+                tag: 'via-context-menu', exec: (control) => {
+                    mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
+                    wait(shortTime)
+                    mouseClick(control, columnMenuMore / 2, row3)
+                }
+            },
+            {
                 tag: 'via-shortcut', exec: (control) => {
                     keyPress(Qt.Key_C, Qt.ControlModifier)
                 }
@@ -251,6 +258,13 @@ TestCase {
                     mouseClick(control, columnMenuMore, row1)
                     wait(shortTime)
                     mouseClick(control, columnMenuMore, row4)
+                }
+            },
+            {
+                tag: 'via-context-menu', exec: (control) => {
+                    mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
+                    wait(shortTime)
+                    mouseClick(control, columnMenuMore / 2, row4)
                 }
             },
             {tag: 'via-shortcut-backspace', exec: (control) => keyPress(Qt.Key_Backspace)},
