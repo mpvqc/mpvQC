@@ -17,6 +17,7 @@
 
 import inject
 from PySide6.QtCore import QObject, Slot, QUrl
+from PySide6.QtGui import QClipboard
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import TimeFormatterService, TypeMapperService
@@ -32,6 +33,14 @@ class MpvqcUtilityPyObject(QObject):
 
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+
+    def __init__(self):
+        super().__init__()
+        self._clipboard = QClipboard()
+
+    @Slot(str)
+    def copyToClipboard(self, text: str) -> None:
+        self._clipboard.setText(text)
 
     @Slot(float, result=str)
     def formatTimeToStringLong(self, seconds: float) -> str:

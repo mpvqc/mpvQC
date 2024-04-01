@@ -38,7 +38,6 @@ ApplicationWindow {
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
-    readonly property var mpvqcClipboardPyObject: MpvqcClipboardPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
     readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
     readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}

@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .application_paths import MpvqcApplicationPathsPyObject
-from .clipboard import MpvqcClipboardPyObject
 from .comment_model import MpvqcCommentModelPyObject
 from .comment_type_validator import MpvqcCommentTypeValidatorPyObject
 from .environment import MpvqcEnvironmentPyObject
