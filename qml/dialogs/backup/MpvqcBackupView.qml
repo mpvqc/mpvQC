@@ -31,7 +31,7 @@ ColumnLayout {
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
-    property var mpvqcFileSystemHelperPyObject: mpvqcApplication.mpvqcFileSystemHelperPyObject
+    property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     property var openBackupLocationFunc: Qt.openUrlExternally
 
     property alias backupEnabledSwitch: _backupEnable
@@ -87,7 +87,7 @@ ColumnLayout {
             y: - _backupLocationOpenButton.height + 10
             delay: 500
             visible: _backupLocationOpenButton.hovered
-            text: root.mpvqcFileSystemHelperPyObject.url_to_absolute_path(_backupLocationOpenButton.backupDirectory)
+            text: root.mpvqcUtilityPyObject.urlToAbsolutePath(_backupLocationOpenButton.backupDirectory)
         }
 
     }

@@ -78,8 +78,8 @@ TestCase {
                 property var mpvqcApplicationPathsPyObject: QtObject {
                     property url dir_backup: 'file:///hello.txt'
                 }
-                property var mpvqcFileSystemHelperPyObject: QtObject {
-                    function url_to_absolute_path(url) { return `${url}-as-abs-path` }
+                property var mpvqcUtilityPyObject: QtObject {
+                    function urlToAbsolutePath(url) { return `${url}-as-abs-path` }
                 }
             }
         }

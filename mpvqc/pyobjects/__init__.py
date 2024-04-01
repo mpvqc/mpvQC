@@ -23,7 +23,6 @@ from .environment import MpvqcEnvironmentPyObject
 from .export_template_model import MpvqcExportTemplateModelPyObject
 from .extended_document_exporter import MpvqcExtendedDocumentExporterPyObject
 from .file_interface import MpvqcFileInterfacePyObject
-from .file_system_helper import MpvqcFileSystemHelperPyObject
 from .manager import MpvqcManagerPyObject
 from .mouse import MpvqcMouseCursorPyObject
 from .player import MpvqcMpvPlayerPyObject

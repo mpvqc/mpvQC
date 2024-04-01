@@ -43,7 +43,6 @@ ApplicationWindow {
     readonly property var mpvqcDefaultTextValidatorPyObject: MpvqcDefaultTextValidatorPyObject {}
     readonly property var mpvqcEnvironmentPyObject: MpvqcEnvironmentPyObject {}
     readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
-    readonly property var mpvqcFileSystemHelperPyObject: MpvqcFileSystemHelperPyObject {}
     readonly property var mpvqcMouseCursorPyObject: MpvqcMouseCursorPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
