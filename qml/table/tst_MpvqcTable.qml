@@ -216,6 +216,38 @@ TestCase {
         compare(control.currentIndex, 0)
     }
 
+    function test_editComment_data() {
+        return [
+            {
+                tag: 'via-menu', exec: (control) => {
+                    mouseClick(control, columnMenuMore, row1)
+                    waitForRendering(control, shortTime)
+                    mouseClick(control, columnMenuMore, row1)
+                }
+            },
+            {
+                tag: 'via-context-menu', exec: (control) => {
+                    mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
+                    waitForRendering(control, shortTime)
+                    mouseClick(control, columnMenuMore / 2, row2)
+                }
+            },
+            {
+                tag: 'via-shortcut-return', exec: (control) => keyPress(Qt.Key_Return)
+            },
+        ]
+    }
+
+    function test_editComment(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+        waitForRendering(control, shortTime)
+
+        verify(!control.currentlyEditing)
+        data.exec(control)
+        verify(control.currentlyEditing)
+    }
+
     function test_copyToClipboard_data() {
         return [
             {

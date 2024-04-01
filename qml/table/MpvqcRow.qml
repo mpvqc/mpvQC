@@ -118,10 +118,11 @@ Rectangle {
         onClicked: {
             root.clicked()
 
+            const mirrored = LayoutMirroring.enabled
             const contextMenu = root.createContextMenu()
-            const pos = root.mapFromGlobal(root.mpvqcUtilityPyObject.cursorPosition)
-            contextMenu.x = LayoutMirroring.enabled ? pos.x - contextMenu.width : pos.x
-            contextMenu.y = pos.y
+            contextMenu.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft
+            contextMenu.x = mirrored ? mouseX - contextMenu.width : mouseX
+            contextMenu.y = mouseY
             contextMenu.open()
         }
     }
