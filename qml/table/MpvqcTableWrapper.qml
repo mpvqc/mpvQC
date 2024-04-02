@@ -30,63 +30,58 @@ FocusScope {
     readonly property alias mpvqcCommentTable: _mpvqcTable
     readonly property bool haveComments: _mpvqcTable.count > 0
 
-    Column {
+    MpvqcPlaceholder {
         width: root.width
+        height: haveComments ? 0 : root.height
+        mpvqcApplication: root.mpvqcApplication
+    }
 
-        MpvqcPlaceholder {
-            width: root.width
-            height: haveComments ? 0 : root.height
-            mpvqcApplication: root.mpvqcApplication
-        }
+    MpvqcTable {
+        id: _mpvqcTable
 
-        MpvqcTable {
-            id: _mpvqcTable
+        mpvqcApplication: root.mpvqcApplication
 
-            mpvqcApplication: root.mpvqcApplication
+        width: root.width
+        height: haveComments ? root.height : 0
+        focus: true
+        model: MpvqcCommentModelPyObject {}
+        searchQuery: _mpvqcSearchBox.searchQuery
 
-            width: root.width
-            height: haveComments ? root.height : 0
-            focus: true
-            model: MpvqcCommentModelPyObject {}
-            searchQuery: _mpvqcSearchBox.searchQuery
+        MpvqcSearchBox {
+            id: _mpvqcSearchBox
 
-            MpvqcSearchBox {
-                id: _mpvqcSearchBox
+            tableHeight: _mpvqcTable.height
+            tableWidth: _mpvqcTable.width
+            applicationIsFullscreen: root.mpvqcApplication.fullscreen
+            mpvqcDefaultTextValidatorPyObject: root.mpvqcApplication.mpvqcDefaultTextValidatorPyObject
 
-                tableHeight: _mpvqcTable.height
-                tableWidth: _mpvqcTable.width
-                applicationIsFullscreen: root.mpvqcApplication.fullscreen
-                mpvqcDefaultTextValidatorPyObject: root.mpvqcApplication.mpvqcDefaultTextValidatorPyObject
-
-                searchFunc: (query, includeCurrentRow, topDown) => {
-                    return _mpvqcTable.model.search(query, includeCurrentRow, topDown, _mpvqcTable.currentIndex)
-                }
-
-                onHighlightRequested: (index) => {
-                    _mpvqcTable.selectRow(index)
-                }
+            searchFunc: (query, includeCurrentRow, topDown) => {
+                return _mpvqcTable.model.search(query, includeCurrentRow, topDown, _mpvqcTable.currentIndex)
             }
 
-            Keys.onEscapePressed: (event) => {
-                if (_mpvqcSearchBox.visible) {
-                    return _mpvqcSearchBox.hideSearchBox()
-                }
-                event.accepted = false
-            }
-
-            Keys.onPressed: (event) => {
-                if (event.key === Qt.Key_F
-                    && event.modifiers === Qt.ControlModifier
-                    && !root.mpvqcApplication.fullscreen
-                    && !root.mpvqcCommentTable.currentlyEditing
-                    && root.mpvqcCommentTable.haveComments
-                ) {
-                    return _mpvqcSearchBox.showSearchBox()
-                }
-                event.accepted = false
+            onHighlightRequested: (index) => {
+                _mpvqcTable.selectRow(index)
             }
         }
 
+        Keys.onEscapePressed: (event) => {
+            if (_mpvqcSearchBox.visible) {
+                return _mpvqcSearchBox.hideSearchBox()
+            }
+            event.accepted = false
+        }
+
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_F
+                && event.modifiers === Qt.ControlModifier
+                && !root.mpvqcApplication.fullscreen
+                && !root.mpvqcCommentTable.currentlyEditing
+                && root.mpvqcCommentTable.haveComments
+            ) {
+                return _mpvqcSearchBox.showSearchBox()
+            }
+            event.accepted = false
+        }
     }
 
 }
