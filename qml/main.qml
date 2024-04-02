@@ -27,6 +27,9 @@ MpvqcApplication {
     width: 1280
     height: 720
 
+    minimumWidth: 960
+    minimumHeight: 540
+
     flags: Qt.FramelessWindowHint | Qt.Window
     color: Material.background
     visible: true
