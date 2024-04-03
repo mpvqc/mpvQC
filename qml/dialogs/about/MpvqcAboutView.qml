@@ -75,9 +75,15 @@ Column {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
 
-        text: 
-            qsTranslate("AboutDialog", "This program comes with absolutely no warranty.") + "<br>" +
-            qsTranslate("AboutDialog", "See the %1 for details.").arg("<a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">" + qsTranslate("AboutDialog","GNU General Public License, version 3 or later") + "</a>") +
+        readonly property url licenseUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
+        //: This text is part of the software license description. This is the name of the license being used.
+        readonly property string licenseText: qsTranslate("AboutDialog", "GNU General Public License, version 3 or later")
+        readonly property string anchor: `<a href="${licenseUrl}">${licenseText}</a>`
+
+            //: This text is part of the software license description
+        text: qsTranslate("AboutDialog", "This program comes with absolutely no warranty.") + "<br>"
+            //: This text is part of the software license description. Argument %1 will be the link to the license
+            + qsTranslate("AboutDialog", "See the %1 for details.").arg(anchor)
 
         onLinkActivated: (link) => {
             Qt.openUrlExternally(link)
