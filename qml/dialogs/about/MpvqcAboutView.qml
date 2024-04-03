@@ -65,7 +65,7 @@ Column {
     }
 
     Label {
-        text: "Copyright © mpvQC Developers"
+        text: qsTranslate("AboutDialog", "Copyright © mpvQC Developers")
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -75,7 +75,9 @@ Column {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
 
-        text: `This program comes with absolutely no warranty.<br>See the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a> for details.`
+        text: 
+            qsTranslate("AboutDialog", "This program comes with absolutely no warranty.") + "<br>" +
+            qsTranslate("AboutDialog", "See the %1 for details.").arg("<a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">" + qsTranslate("AboutDialog","GNU General Public License, version 3 or later") + "</a>") +
 
         onLinkActivated: (link) => {
             Qt.openUrlExternally(link)

@@ -76,7 +76,7 @@ ScrollView {
         }
 
         MpvqcHeader {
-            text: 'Other'
+            text: qsTranslate("AboutDialog", "Other")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
