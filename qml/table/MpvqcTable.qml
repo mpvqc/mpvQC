@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.Material
 
 import dialogs
@@ -70,8 +69,8 @@ ListView {
     highlightResizeVelocity: -1
 
     highlight: Rectangle {
-        width: parent.width
-        height: parent.height
+        width: parent?.width ?? 0
+        height: parent?.height ?? 0
         color: Material.primary
     }
 
