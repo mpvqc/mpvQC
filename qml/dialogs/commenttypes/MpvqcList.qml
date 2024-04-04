@@ -26,45 +26,53 @@ ListView {
 
     required property int itemHeight
 
+    readonly property int defaultHighlightMoveDuration: 50
+    readonly property bool isDarkTheme: Material.theme === Material.Dark
+    readonly property color baseColor: 'transparent'
+    readonly property color altColorDark: Qt.lighter(Material.dialogColor, 1.12)
+    readonly property color altColorLight: Qt.darker(Material.dialogColor, 1.04)
+
     spacing: 0
-    highlightMoveDuration: 0
-    highlightMoveVelocity: -1
-    highlightResizeDuration: 0
-    highlightResizeVelocity: -1
     clip: true
-    reuseItems: false
+    reuseItems: true
     boundsBehavior: Flickable.StopAtBounds
 
-    delegate: Rectangle {
+    highlightMoveDuration: defaultHighlightMoveDuration
+    highlightMoveVelocity: -1
+    highlightResizeDuration: 50
+    highlightResizeVelocity: -1
+
+    highlight: Rectangle {
+        width: parent?.width ?? 0
+        height: parent?.height ?? 0
+        color: Material.primary
+        radius: Material.ExtraSmallScale
+    }
+
+    delegate: ItemDelegate {
         id: _delegate
 
         required property string modelData
         required property int index
         readonly property bool rowSelected: root.currentIndex === index
 
+        readonly property color backgroundColor: root.isDarkTheme
+            ? index % 2 === 0 ? root.altColorDark : root.baseColor
+            : index % 2 === 0 ? root.altColorLight : root.baseColor
+
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: root.itemHeight
-        radius: 4
 
-        color: {
-            if (rowSelected) {
-                return Material.primary
-            } if (index % 2 === 1) {
-                return 'transparent'
-            } else if (Material.theme === Material.Dark) {
-                return Qt.lighter(Material.dialogColor, 1.12)
-            } else {
-                return Qt.darker(Material.dialogColor, 1.04)
-            }
+        background: Rectangle {
+            parent: _delegate.parent
+            y: _delegate.y
+            height: _delegate.height
+            color: _delegate.backgroundColor
+            radius: Material.ExtraSmallScale
         }
 
-        MouseArea {
-            anchors.fill: _delegate
-
-            onClicked: {
-                root.currentIndex = index
-                forceActiveFocus()
-            }
+        onClicked: {
+            root.currentIndex = index
         }
 
         Label {
@@ -78,6 +86,14 @@ ListView {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
         }
+    }
+
+    function disableMovingHighlightRectangle(): void {
+        root.highlightMoveDuration = 0
+    }
+
+    function enableMovingHighlightRectangle(): void {
+        root.highlightMoveDuration = root.defaultHighlightMoveDuration
     }
 
     ScrollBar.vertical: ScrollBar {

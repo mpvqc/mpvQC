@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.Material
 
 import dialogs
@@ -33,10 +32,10 @@ ListView {
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
-    property bool haveComments: root.count > 0
+    readonly property bool haveComments: root.count > 0
+    readonly property int defaultHighlightMoveDuration: 50
 
     property bool currentlyEditing: false
-    property bool currentlyFullscreen: mpvqcApplication.fullscreen
 
     property var deleteCommentMessageBox: null
     property var deleteCommentMessageBoxFactory: Component
@@ -59,17 +58,21 @@ ListView {
         }
     }
 
-    signal commentsChanged()
-
     clip: true
     focus: true
     reuseItems: true
     interactive: !currentlyEditing
     boundsBehavior: Flickable.StopAtBounds
-    highlightMoveDuration: 0
+    highlightMoveDuration: defaultHighlightMoveDuration
     highlightMoveVelocity: -1
-    highlightResizeDuration: 0
+    highlightResizeDuration: 50
     highlightResizeVelocity: -1
+
+    highlight: Rectangle {
+        width: parent?.width ?? 0
+        height: parent?.height ?? 0
+        color: Material.primary
+    }
 
     ScrollBar.vertical: ScrollBar {
         id: _scrollBar
@@ -177,6 +180,14 @@ ListView {
         event.accepted = false
     }
 
+    function disableMovingHighlightRectangle(): void {
+        root.highlightMoveDuration = 0
+    }
+
+    function enableMovingHighlightRectangle(): void {
+        root.highlightMoveDuration = root.defaultHighlightMoveDuration
+    }
+
     Keys.onReturnPressed: (event) => {
         if (event.isAutoRepeat) {
             return
@@ -209,20 +220,21 @@ ListView {
         target: root.model
 
         function onNewItemAdded(index: int): void {
+            root.disableMovingHighlightRectangle()
             root.selectRow(index)
+            root.enableMovingHighlightRectangle()
             root.startEditing()
+        }
+
+        function onCommentsImported(): void {
+            const lastIndex = root.count - 1
+            root.disableMovingHighlightRectangle()
+            root.selectRow(lastIndex)
+            root.enableMovingHighlightRectangle()
         }
 
         function onTimeUpdated(index: int): void {
             root.selectRow(index)
-        }
-
-        function onHighlightRequested(index: int): void {
-            root.selectRow(index)
-        }
-
-        function onCommentsChanged(): void {
-            root.commentsChanged()
         }
     }
 
