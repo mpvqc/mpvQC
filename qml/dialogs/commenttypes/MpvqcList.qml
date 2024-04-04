@@ -28,9 +28,9 @@ ListView {
 
     readonly property int defaultHighlightMoveDuration: 50
     readonly property bool isDarkTheme: Material.theme === Material.Dark
-    readonly property color baseColor: Material.dialogColor
-    readonly property color altColorDark: Qt.lighter(baseColor, 1.12)
-    readonly property color altColorLight: palette.alternateBase
+    readonly property color baseColor: 'transparent'
+    readonly property color altColorDark: Qt.lighter(Material.dialogColor, 1.12)
+    readonly property color altColorLight: Qt.darker(Material.dialogColor, 1.04)
 
     spacing: 0
     clip: true

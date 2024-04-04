@@ -37,13 +37,12 @@ Item {
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     readonly property bool isDarkTheme: Material.theme === Material.Dark
-    readonly property color dark1: Material.background
-    readonly property color dark2: Qt.lighter(dark1, 1.30)
-    readonly property color light1: palette.base
-    readonly property color light2: palette.alternateBase
+    readonly property color baseColor: Material.background
+    readonly property color altColorDark: Qt.lighter(baseColor, 1.30)
+    readonly property color altColorLight: Qt.darker(baseColor, 1.10)
     readonly property color backgroundColor: isDarkTheme
-        ? index % 2 === 0 ? dark1 : dark2
-        : index % 2 === 0 ? light1 : light2
+        ? index % 2 === 1 ? baseColor : altColorDark
+        : index % 2 === 1 ? baseColor : altColorLight
 
     property alias widthScrollBar: _spacerScrollBar.width
     property alias playButton: _playButton
