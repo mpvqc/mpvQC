@@ -110,13 +110,13 @@ class TestCommentsModel(unittest.TestCase):
         def signal_fired(key, val=True):
             signals_fired[key] = val
 
-        self._model.highlightRequested.connect(lambda: signal_fired('highlightRequested'))
+        self._model.commentsImported.connect(lambda: signal_fired('commentsImported'))
 
         self._model.import_comments([
             Comment(time=0, comment_type='commentType', comment='Word ok'),
         ])
 
-        self.assertIsNotNone(signals_fired.get('highlightRequested', None))
+        self.assertIsNotNone(signals_fired.get('commentsImported', None))
 
     def test_import_comments_invalidates_search(self):
         self._model._searcher._hits = ['result']

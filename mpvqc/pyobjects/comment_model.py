@@ -34,7 +34,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     newItemAdded = Signal(int)  # param: row_index
     timeUpdated = Signal(int)  # param: row_index
-    highlightRequested = Signal(int)  # param: row_index
+    commentsImported = Signal()
     commentsChanged = Signal()
 
     def __init__(self):
@@ -65,7 +65,6 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         if not comments:
             return
 
-        item = None
         for comment in comments:
             item = QStandardItem()
             item.setData(comment.time, Role.TIME)
@@ -75,9 +74,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
         self.sort(0)
 
-        index = self.indexFromItem(item)
-        index_row = index.row()
-        self.highlightRequested.emit(index_row)
+        self.commentsImported.emit()
         self.invalidate_search()
 
     @Slot(int)
