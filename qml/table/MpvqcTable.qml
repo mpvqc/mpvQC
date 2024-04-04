@@ -59,8 +59,6 @@ ListView {
         }
     }
 
-    signal commentsChanged()
-
     clip: true
     focus: true
     reuseItems: true
@@ -238,10 +236,6 @@ ListView {
 
         function onTimeUpdated(index: int): void {
             root.selectRow(index)
-        }
-
-        function onCommentsChanged(): void {
-            root.commentsChanged()
         }
     }
 
