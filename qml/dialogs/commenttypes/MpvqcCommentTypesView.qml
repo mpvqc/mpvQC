@@ -86,12 +86,18 @@ Column {
         }
 
         onAdded: (commentType) => {
+            _listView.disableMovingHighlightRectangle()
             _controller.add(commentType)
+            _listView.enableMovingHighlightRectangle()
         }
 
         onEdited: (commentType) => {
+            _listView.disableMovingHighlightRectangle()
+            const currentIndex = _listView.currentIndex
             const english = root.mpvqcUtilityPyObject.reverseLookupCommentType(commentType)
             _controller.replaceWith(english)
+            _listView.currentIndex = currentIndex
+            _listView.enableMovingHighlightRectangle()
         }
     }
 
@@ -121,11 +127,15 @@ Column {
             deleteEnabled: controlsEnabled && _listView.currentIndex >= 0
 
             onUpClicked: {
+                _listView.disableMovingHighlightRectangle()
                 _controller.moveUp()
+                _listView.enableMovingHighlightRectangle()
             }
 
             onDownClicked: {
+                _listView.disableMovingHighlightRectangle()
                 _controller.moveDown()
+                _listView.enableMovingHighlightRectangle()
             }
 
             onEditClicked: {
@@ -133,7 +143,9 @@ Column {
             }
 
             onDeleteClicked: {
+                _listView.disableMovingHighlightRectangle()
                 _controller.deleteItem()
+                _listView.enableMovingHighlightRectangle()
             }
         }
     }
