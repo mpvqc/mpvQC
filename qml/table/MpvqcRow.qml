@@ -21,7 +21,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 
-Rectangle {
+Item {
     id: root
 
     required property var mpvqcApplication
@@ -36,14 +36,14 @@ Rectangle {
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
-    readonly property var backgroundColorSelected: Material.primary
-    readonly property var backgroundColorUnselected: Material.background
-    readonly property var backgroundColorUnselectedAlt: Material.theme === Material.Dark
-        ? Qt.lighter(Material.background, 1.30)
-        : Qt.darker(Material.background, 1.10)
-    readonly property var backgroundColorUnselectedActive: index % 2 === 1
-        ? backgroundColorUnselected
-        : backgroundColorUnselectedAlt
+    readonly property bool isDarkTheme: Material.theme === Material.Dark
+    readonly property color dark1: Material.background
+    readonly property color dark2: Qt.lighter(dark1, 1.30)
+    readonly property color light1: palette.base
+    readonly property color light2: palette.alternateBase
+    readonly property color backgroundColor: isDarkTheme
+        ? index % 2 === 0 ? dark1 : dark2
+        : index % 2 === 0 ? light1 : light2
 
     property alias widthScrollBar: _spacerScrollBar.width
     property alias playButton: _playButton
@@ -83,8 +83,6 @@ Rectangle {
 
     height: Math.max(_commentLabel.height, _playButton.height)
 
-    color: rowSelected ? backgroundColorSelected : backgroundColorUnselectedActive
-
     function startEditing(): void {
         _commentLabel.startEditing()
     }
@@ -99,6 +97,15 @@ Rectangle {
         const time = mpvqcUtilityPyObject.formatTimeToStringLong(root.time)
         const type = qsTranslate("CommentTypes", commentType)
         return `[${time}] [${type}] ${comment}`.trim()
+    }
+
+    Rectangle {
+        y: root.y
+        width: root.width
+        height: root.height
+        parent: root.parent
+        color: root.backgroundColor
+        z: -2
     }
 
     MouseArea {
@@ -203,7 +210,7 @@ Rectangle {
             searchQuery: root.searchQuery
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
-            backgroundColor: root.backgroundColorUnselectedActive
+            backgroundColor: root.backgroundColor
 
             onEdited: (newComment) => root.commentEdited(newComment)
 

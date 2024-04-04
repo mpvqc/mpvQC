@@ -66,10 +66,16 @@ ListView {
     reuseItems: true
     interactive: !currentlyEditing
     boundsBehavior: Flickable.StopAtBounds
-    highlightMoveDuration: 0
+    highlightMoveDuration: 50
     highlightMoveVelocity: -1
-    highlightResizeDuration: 0
+    highlightResizeDuration: 50
     highlightResizeVelocity: -1
+
+    highlight: Rectangle {
+        width: parent.width
+        height: parent.height
+        color: Material.primary
+    }
 
     ScrollBar.vertical: ScrollBar {
         id: _scrollBar
