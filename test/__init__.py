@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 def add_repository_root_to_path():
     import os
     from pathlib import Path
@@ -25,10 +26,10 @@ def add_repository_root_to_path():
 add_repository_root_to_path()
 
 try:
-    import test.generated_resources
+    import test.generated_resources  # noqa: F401
 except ImportError:
     import sys
 
-    print('Can not find resource module \'test.generated_resources\'', file=sys.stderr)
-    print('To execute individual tests, please run \'just test-python\' once before', file=sys.stderr)
+    print("Can not find resource module 'test.generated_resources'", file=sys.stderr)
+    print("To execute individual tests, please run 'just test-python' once before", file=sys.stderr)
     sys.exit(1)

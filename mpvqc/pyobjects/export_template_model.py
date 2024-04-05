@@ -57,6 +57,6 @@ class Role:
     PATH = 1020
 
     MAPPING = {
-        NAME: QByteArray(b'name'),
-        PATH: QByteArray(b'path'),
+        NAME: QByteArray(b"name"),
+        PATH: QByteArray(b"path"),
     }

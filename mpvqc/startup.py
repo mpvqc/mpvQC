@@ -17,34 +17,40 @@
 
 
 class StartUp:
+    """"""
 
     @staticmethod
     def configure_qt_application_data():
         from PySide6.QtCore import QCoreApplication
-        QCoreApplication.setApplicationName('mpvQC')
-        QCoreApplication.setOrganizationName('mpvQC')
-        QCoreApplication.setApplicationVersion('>>>tag<<<')
+
+        QCoreApplication.setApplicationName("mpvQC")
+        QCoreApplication.setOrganizationName("mpvQC")
+        QCoreApplication.setApplicationVersion(">>>tag<<<")
 
     @staticmethod
     def configure_qt_settings():
         from PySide6.QtCore import QSettings
+
         QSettings.setDefaultFormat(QSettings.IniFormat)
 
     @staticmethod
     def configure_qt_logging():
         from PySide6 import QtCore
         from .logging import qt_log_handler
+
         QtCore.qInstallMessageHandler(qt_log_handler())
 
     @staticmethod
     def configure_qt_render_backend():
         from PySide6.QtQuick import QSGRendererInterface
         from PySide6.QtQuick import QQuickWindow
+
         QQuickWindow.setGraphicsApi(QSGRendererInterface.GraphicsApi.OpenGL)
 
     @staticmethod
     def configure_dependency_injection():
         from mpvqc.injections import configure_injections
+
         configure_injections()
 
     @staticmethod
@@ -53,25 +59,24 @@ class StartUp:
 
         # Qt expects 'qtquickcontrols2.conf' at root level, but the way we handle resources does not allow that.
         # So we need to override the path here
-        os.environ['QT_QUICK_CONTROLS_CONF'] = ':/data/qtquickcontrols2.conf'
+        os.environ["QT_QUICK_CONTROLS_CONF"] = ":/data/qtquickcontrols2.conf"
 
         # Requirement for mpv
-        os.environ['LC_NUMERIC'] = 'C'
+        os.environ["LC_NUMERIC"] = "C"
 
     @staticmethod
     def import_mpvqc_resources():
-        # noinspection PyUnresolvedReferences
-        import mpvqc.generated_resources
+        import mpvqc.generated_resources  # noqa: F401
 
     @staticmethod
     def import_mpvqc_bindings():
-        # noinspection PyUnresolvedReferences
-        import mpvqc.pyobjects
+        import mpvqc.pyobjects  # noqa: F401
 
     @staticmethod
     def start_application():
         import sys
         from mpvqc.application import MpvqcApplication
+
         app = MpvqcApplication(sys.argv)
 
         app.set_window_icon()

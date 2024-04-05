@@ -23,7 +23,7 @@ from PySide6.QtGui import QGuiApplication
 
 
 def _detect_operating_system_zoom_factor() -> float:
-    if sys.platform == 'win32':
+    if sys.platform == "win32":
         return _figure_out_zoom_factor_on_windows()
     else:
         return _figure_out_zoom_factor_on_linux()
@@ -47,10 +47,7 @@ def _figure_out_zoom_factor_on_windows() -> float:
 
         for i, monitor in enumerate(win32api.EnumDisplayMonitors()):
             ctypes.windll.shcore.GetDpiForMonitor(
-                monitor[0].handle,
-                MDT_EFFECTIVE_DPI,
-                ctypes.byref(dpi_x),
-                ctypes.byref(dpi_y)
+                monitor[0].handle, MDT_EFFECTIVE_DPI, ctypes.byref(dpi_x), ctypes.byref(dpi_y)
             )
             monitor_handle = int(monitor[0])
             monitors[monitor_handle] = dpi_x.value
@@ -74,7 +71,7 @@ def _figure_out_zoom_factor_on_linux() -> float:
     try:
         factor = os.getenv("MPVQC_VIDEO_SCALING_FACTOR", default_factor)
         return float(factor)
-    except:
+    except ValueError:
         return default_factor
 
 

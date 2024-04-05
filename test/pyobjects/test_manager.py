@@ -23,12 +23,18 @@ import inject
 
 from mpvqc.impl import OtherState
 from mpvqc.pyobjects import MpvqcManagerPyObject
-from mpvqc.services import DocumentExportService, TypeMapperService, VideoSelectorService, DocumentImporterService, \
-    PlayerService
+from mpvqc.services import (
+    DocumentExportService,
+    TypeMapperService,
+    VideoSelectorService,
+    DocumentImporterService,
+    PlayerService,
+)
 from test.mocks import MockedMessageBox, MockedDialog
 
 
 class ManagerResetTest(unittest.TestCase):
+    """"""
 
     def init(self, q_app: MagicMock):
         # noinspection PyCallingNonCallable
@@ -42,7 +48,7 @@ class ManagerResetTest(unittest.TestCase):
         self._mocked_comments_model = MagicMock()
         q_app.return_value.find_object.return_value = self._mocked_comments_model
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_saved_reset(self, q_app_mock):
         self.init(q_app_mock)
 
@@ -56,7 +62,7 @@ class ManagerResetTest(unittest.TestCase):
         self.assertEqual(state_before, state_after)
         self._mocked_comments_model.clear_comments.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_unsaved_reset_do_reset(self, q_app_mock):
         self.init(q_app_mock)
 
@@ -66,7 +72,7 @@ class ManagerResetTest(unittest.TestCase):
 
         self._mocked_comments_model.clear_comments.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_unsaved_reset_cancel_reset(self, q_app_mock):
         self.init(q_app_mock)
 
@@ -83,7 +89,7 @@ class ManagerSaveTest(unittest.TestCase):
     def init(self):
         # noinspection PyCallingNonCallable
         self._manager: MpvqcManagerPyObject = MpvqcManagerPyObject()
-        self._document = Path().home() / 'Documents' / 'my-doc.txt'
+        self._document = Path().home() / "Documents" / "my-doc.txt"
 
         self._mocked_dialog = MockedDialog()
         factory = MagicMock()
@@ -91,13 +97,15 @@ class ManagerSaveTest(unittest.TestCase):
         self._manager.dialog_export_document_factory = factory
 
         self._exporter_mock = MagicMock()
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(DocumentExportService, self._exporter_mock))
+        # fmt: on
 
     def tearDown(self):
         inject.clear()
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_saved_save(self, *_):
         self.init()
 
@@ -113,7 +121,7 @@ class ManagerSaveTest(unittest.TestCase):
         saved_path = self._exporter_mock.save.call_args[0][0]
         self.assertEqual(self._document, saved_path)
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_unsaved_save_do_save(self, *_):
         self.init()
 
@@ -129,7 +137,7 @@ class ManagerSaveTest(unittest.TestCase):
         self.assertTrue(self._manager.state.saved)
         self.assertEqual(self._document, self._manager.state.document)
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_unsaved_save_cancel_save(self, *_):
         self.init()
 
@@ -144,17 +152,18 @@ class ManagerSaveTest(unittest.TestCase):
 class ManagerImportTest(unittest.TestCase):
     _type_mapper = TypeMapperService()
 
-    _document = Path().home() / 'Documents' / 'my-doc.txt'
+    _document = Path().home() / "Documents" / "my-doc.txt"
     _document_url = _type_mapper.map_path_to_url(_document)
 
-    _video = Path().home() / 'Video' / 'my-video.mp4'
+    _video = Path().home() / "Video" / "my-video.mp4"
     _video_url = _type_mapper.map_path_to_url(_video)
 
     def init(
-            self, q_app: MagicMock,
-            *,
-            import_result: DocumentImporterService.DocumentImportResult,
-            pick_video: Path or None = None
+        self,
+        q_app: MagicMock,
+        *,
+        import_result: DocumentImporterService.DocumentImportResult,
+        pick_video: Path or None = None,
     ):
         # noinspection PyCallingNonCallable
         self._manager: MpvqcManagerPyObject = MpvqcManagerPyObject()
@@ -175,7 +184,7 @@ class ManagerImportTest(unittest.TestCase):
         self._video_selector_mock = MagicMock()
 
         def on_video_selected(*args, **kwargs):
-            kwargs['on_video_selected'](pick_video)
+            kwargs["on_video_selected"](pick_video)
 
         self._video_selector_mock.select_video_from.side_effect = on_video_selected
 
@@ -184,20 +193,22 @@ class ManagerImportTest(unittest.TestCase):
 
         self._player_mock = MagicMock()
 
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(VideoSelectorService, self._video_selector_mock)
                                    .bind(DocumentImporterService, self._importer_mock)
                                    .bind(PlayerService, self._player_mock)
                                    .bind(TypeMapperService, TypeMapperService()))
+        # fmt: on
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_import_document(self, q_app_mock):
         self.init(
             q_app_mock,
             pick_video=None,
             import_result=DocumentImporterService.DocumentImportResult(
                 valid_documents=[self._document], invalid_documents=[], existing_videos=[], comments=[]
-            )
+            ),
         )
 
         self._manager.state = OtherState(document=Path.home(), video=None, saved=True)
@@ -207,14 +218,14 @@ class ManagerImportTest(unittest.TestCase):
         self.assertFalse(self._manager.state.saved)
         self.assertIsNone(self._manager.state.document)
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_import_video(self, q_app_mock):
         self.init(
             q_app_mock,
             pick_video=self._video,
             import_result=DocumentImporterService.DocumentImportResult(
                 valid_documents=[], invalid_documents=[], existing_videos=[], comments=[]
-            )
+            ),
         )
 
         self._manager.state = OtherState(document=Path.home(), video=None, saved=True)
@@ -225,48 +236,46 @@ class ManagerImportTest(unittest.TestCase):
         self.assertIsNone(self._manager.state.document)
         self.assertEqual(self._video, self._manager.state.video)
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_import_subtitles(self, q_app_mock):
         self.init(
             q_app_mock,
             pick_video=None,
             import_result=DocumentImporterService.DocumentImportResult(
                 valid_documents=[], invalid_documents=[], existing_videos=[], comments=[]
-            )
+            ),
         )
 
         self._manager.open_subtitles_impl([self._document_url])
 
         self._player_mock.open_subtitles.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_import_multiple(self, q_app_mock):
         self.init(
             q_app_mock,
             pick_video=self._video,
             import_result=DocumentImporterService.DocumentImportResult(
                 valid_documents=[self._document, self._document], invalid_documents=[], existing_videos=[], comments=[]
-            )
+            ),
         )
 
         self._manager.open_impl(
-            documents=[self._document_url, self._document_url],
-            videos=[self._video_url],
-            subtitles=[self._document_url]
+            documents=[self._document_url, self._document_url], videos=[self._video_url], subtitles=[self._document_url]
         )
 
         self._mocked_comments_model.import_comments.assert_called_once()
         self._player_mock.open_video.assert_called_once()
         self._player_mock.open_subtitles.assert_called_once()
 
-    @patch('mpvqc.pyobjects.manager.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
     def test_import_erroneous_documents(self, q_app_mock):
         self.init(
             q_app_mock,
             pick_video=self._video,
             import_result=DocumentImporterService.DocumentImportResult(
                 valid_documents=[], invalid_documents=[self._document, self._document], existing_videos=[], comments=[]
-            )
+            ),
         )
 
         self._manager.open_impl([self._document_url, self._document_url], [self._video_url], [])

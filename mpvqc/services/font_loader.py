@@ -20,11 +20,12 @@ from PySide6.QtGui import QFont, QFontDatabase
 
 
 class FontLoaderService:
+    """"""
 
     @staticmethod
     def load_application_fonts():
-        for entry_info in QDir(':/data/fonts').entryInfoList():
+        for entry_info in QDir(":/data/fonts").entryInfoList():
             resource_path = entry_info.filePath()
             assert QFontDatabase.addApplicationFont(resource_path) >= 0, f"Cannot load font from {resource_path}"
 
-        QFont.insertSubstitution('Noto Sans', 'Noto Sans Hebrew')
+        QFont.insertSubstitution("Noto Sans", "Noto Sans Hebrew")

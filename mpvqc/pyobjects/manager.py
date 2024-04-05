@@ -24,8 +24,14 @@ from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
 from mpvqc.impl import InitialState, ApplicationState, ImportChange
-from mpvqc.services import DocumentImporterService, VideoSelectorService, PlayerService, DocumentBackupService, \
-    DocumentExportService, TypeMapperService
+from mpvqc.services import (
+    DocumentImporterService,
+    VideoSelectorService,
+    PlayerService,
+    DocumentBackupService,
+    DocumentExportService,
+    TypeMapperService,
+)
 from .comment_model import MpvqcCommentModelPyObject
 
 QML_IMPORT_NAME = "pyobjects"
@@ -57,15 +63,15 @@ class MpvqcManagerPyObject(QObject):
 
     @cached_property
     def _comment_model(self) -> MpvqcCommentModelPyObject:
-        return QCoreApplication.instance().find_object(QStandardItemModel, 'mpvqcCommentModel')
+        return QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel")
 
     def _on_application_ready(self):
-
         def bind_qml_property_with(name: str) -> QQmlComponent:
             qml_prop = self.property(name)
             assert qml_prop, f"Could not find qml property with name '{name}'"
             return qml_prop
 
+        # fmt: off
         self.dialog_export_document_factory \
             = bind_qml_property_with(name='mpvqcDialogExportDocumentFactory')
         self.message_box_video_found_factory \
@@ -74,6 +80,7 @@ class MpvqcManagerPyObject(QObject):
             = bind_qml_property_with(name='mpvqcMessageBoxNewDocumentFactory')
         self.message_box_document_not_compatible_factory \
             = bind_qml_property_with(name='mpvqcMessageBoxDocumentNotCompatibleFactory')
+        # fmt: on
 
         def on_comments_changed():
             self.state = self.state.handle_change()
@@ -147,7 +154,7 @@ class MpvqcManagerPyObject(QObject):
 
         def _load_new_video(video: Path or None):
             if video:
-                self._player.open_video(f'{video}')
+                self._player.open_video(f"{video}")
 
         def _load_new_subtitles():
             if subtitles:
@@ -164,10 +171,7 @@ class MpvqcManagerPyObject(QObject):
             if not paths:
                 return
 
-            properties = {
-                'count': len(paths),
-                'text': '\n'.join([p.name for p in paths])
-            }
+            properties = {"count": len(paths), "text": "\n".join([p.name for p in paths])}
 
             message_box = self.message_box_document_not_compatible_factory.createObject(None, properties)
             message_box.closed.connect(message_box.deleteLater)
@@ -177,7 +181,7 @@ class MpvqcManagerPyObject(QObject):
             existing_videos_dropped=videos,
             existing_videos_from_documents=document_import_result.existing_videos,
             video_found_dialog_factory=self.message_box_video_found_factory,
-            on_video_selected=on_video_selected
+            on_video_selected=on_video_selected,
         )
 
     @Slot()
@@ -195,9 +199,7 @@ class MpvqcManagerPyObject(QObject):
     def save_as_impl(self):
         path_proposal = self._exporter.generate_file_path_proposal()
 
-        properties = {
-            'selectedFile': self._type_mapper.map_path_to_url(path_proposal)
-        }
+        properties = {"selectedFile": self._type_mapper.map_path_to_url(path_proposal)}
 
         dialog = self.dialog_export_document_factory.createObject(None, properties)
         dialog.accepted.connect(dialog.deleteLater)

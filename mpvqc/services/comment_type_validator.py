@@ -26,13 +26,9 @@ from .reverse_translator import ReverseTranslatorService
 class CommentTypeValidatorService:
     _reverse_translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
 
-    _forbidden_characters = re.compile(r'[\[\]]')
+    _forbidden_characters = re.compile(r"[\[\]]")
 
-    def validate_new_comment_type(
-            self,
-            new_comment_type: str,
-            existing_comment_types: list[str]
-    ) -> str or None:
+    def validate_new_comment_type(self, new_comment_type: str, existing_comment_types: list[str]) -> str or None:
         if not new_comment_type:
             return self._must_not_be_blank()
         if self._contains_forbidden_characters(new_comment_type):
@@ -49,10 +45,7 @@ class CommentTypeValidatorService:
         return new_comment_type in existing_comment_types or translated in existing_comment_types
 
     def validate_editing_of_comment_type(
-            self,
-            new_comment_type: str,
-            comment_type_being_edited: str,
-            existing_comment_types: list[str]
+        self, new_comment_type: str, comment_type_being_edited: str, existing_comment_types: list[str]
     ):
         if not new_comment_type:
             return self._must_not_be_blank()
@@ -73,7 +66,7 @@ class CommentTypeValidatorService:
 
     @staticmethod
     def _must_not_contain_forbidden_characters():
-        return QCoreApplication.translate("CommentTypesDialog", "Characters '{}' not allowed").format('[]')
+        return QCoreApplication.translate("CommentTypesDialog", "Characters '{}' not allowed").format("[]")
 
     @staticmethod
     def _must_not_already_exist():

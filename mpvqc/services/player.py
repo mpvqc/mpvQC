@@ -82,7 +82,6 @@ class PlayerService:
             self._cached_subtitles.clear()
 
     def open_subtitles(self, subtitles: Iterable[str]) -> None:
-
         def _load():
             for subtitle in subtitles:
                 self._mpv.command("sub-add", subtitle, "select")
@@ -117,7 +116,7 @@ class PlayerService:
         self._mpv.command_async("keyup", "MOUSE_BTN0")
 
     def scroll_up(self) -> None:
-        self._mpv.command_async("keypress", f"MOUSE_BTN3")
+        self._mpv.command_async("keypress", "MOUSE_BTN3")
 
     def scroll_down(self) -> None:
-        self._mpv.command_async("keypress", f"MOUSE_BTN4")
+        self._mpv.command_async("keypress", "MOUSE_BTN4")

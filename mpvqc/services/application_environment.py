@@ -22,6 +22,7 @@ from pathlib import Path
 
 
 class ApplicationEnvironmentService:
+    """"""
 
     @property
     def built_by_nuitka(self) -> bool:

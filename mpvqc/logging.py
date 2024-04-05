@@ -22,11 +22,11 @@ def qt_log_handler() -> Callable:
     from PySide6.QtCore import QtMsgType
 
     levels = {
-        QtMsgType.QtInfoMsg: 'INFO',
-        QtMsgType.QtWarningMsg: 'WARNING',
-        QtMsgType.QtCriticalMsg: 'CRITICAL',
-        QtMsgType.QtFatalMsg: 'FATAL',
-        QtMsgType.QtDebugMsg: 'DEBUG',
+        QtMsgType.QtInfoMsg: "INFO",
+        QtMsgType.QtWarningMsg: "WARNING",
+        QtMsgType.QtCriticalMsg: "CRITICAL",
+        QtMsgType.QtFatalMsg: "FATAL",
+        QtMsgType.QtDebugMsg: "DEBUG",
     }
 
     def handler(message_type: QtMsgType, _, message):

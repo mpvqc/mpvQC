@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import sys
 
 from PySide6.QtCore import Qt
@@ -42,15 +43,16 @@ _KEY_MAPPINGS = {
     Qt.Key_Right: ("RIGHT",),
     Qt.Key_Up: ("UP", True),
     Qt.Key_Down: ("DOWN", True),
-    Qt.Key_Backspace: ('BACKSPACE', True),
-    Qt.Key_Return: ('ENTER', True),
-    Qt.Key_Enter: ('ENTER', True),
-    Qt.Key_Space: ('SPACE',),
-    Qt.Key_NumberSign: ('SHARP', False, True),
+    Qt.Key_Backspace: ("BACKSPACE", True),
+    Qt.Key_Return: ("ENTER", True),
+    Qt.Key_Enter: ("ENTER", True),
+    Qt.Key_Space: ("SPACE",),
+    Qt.Key_NumberSign: ("SHARP", False, True),
 }
 
 
 class KeyCommandGeneratorService:
+    """"""
 
     def generate_command(self, key: int, modifiers: int) -> str or None:
         if not key or modifiers is None:

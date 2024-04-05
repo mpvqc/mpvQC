@@ -64,6 +64,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
         self._ctx = None
 
         from mpvqc.services.player import PlayerService
+
         self._player_service = inject.instance(PlayerService)
 
         self._zoom_detector_service.zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
@@ -72,8 +73,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
         if self._ctx is None:
             self._ctx = MpvRenderContext(
                 self._player_service.mpv,
-                api_type='opengl',
-                opengl_init_params={'get_proc_address': self._get_proc_address_resolver}
+                api_type="opengl",
+                opengl_init_params={"get_proc_address": self._get_proc_address_resolver},
             )
             self._ctx.update_cb = self._parent.sig_on_update.emit
 
@@ -88,4 +89,4 @@ class Renderer(QQuickFramebufferObject.Renderer):
             height = int(rect.height() * factor)
             fbo = int(self.framebufferObject().handle())
 
-            self._ctx.render(flip_y=False, opengl_fbo={'w': width, 'h': height, 'fbo': fbo})
+            self._ctx.render(flip_y=False, opengl_fbo={"w": width, "h": height, "fbo": fbo})

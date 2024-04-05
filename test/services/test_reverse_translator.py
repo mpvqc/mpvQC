@@ -22,13 +22,15 @@ from mpvqc.services import ReverseTranslatorService
 SERVICE = ReverseTranslatorService()
 
 
-@parameterized.expand([
-    ('Spelling', 'Spelling'),
-    ('Spelling', 'Rechtschreibung'),
-    ('Spelling', 'איות'),
-    ('Spelling', 'Typo'),
-    ('Spelling', 'Ortografía'),
-    ('not-found', 'not-found'),
-])
+@parameterized.expand(
+    [
+        ("Spelling", "Spelling"),
+        ("Spelling", "Rechtschreibung"),
+        ("Spelling", "איות"),
+        ("Spelling", "Typo"),
+        ("Spelling", "Ortografía"),
+        ("not-found", "not-found"),
+    ]
+)
 def test_lookup(expected: str, translated: str) -> None:
     assert expected == SERVICE.lookup(translated)

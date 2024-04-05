@@ -41,26 +41,26 @@ class ApplicationPathsService:
         else:
             self._paths = self._local_paths()
 
-    def _local_paths(self) -> 'ApplicationPathsService.Paths':
+    def _local_paths(self) -> "ApplicationPathsService.Paths":
         dir_app = self._app.executing_directory
         return ApplicationPathsService.Paths(
-            dir_backup=dir_app / 'appdata' / 'backups',
-            dir_config=dir_app / 'appdata',
-            dir_screenshots=dir_app / 'appdata' / 'screenshots',
-            dir_export_templates=dir_app / 'appdata' / 'export-templates',
+            dir_backup=dir_app / "appdata" / "backups",
+            dir_config=dir_app / "appdata",
+            dir_screenshots=dir_app / "appdata" / "screenshots",
+            dir_export_templates=dir_app / "appdata" / "export-templates",
         )
 
     @staticmethod
-    def _system_paths() -> 'ApplicationPathsService.Paths':
+    def _system_paths() -> "ApplicationPathsService.Paths":
         appname = QCoreApplication.applicationName()
         config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
         pictures = QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
         return ApplicationPathsService.Paths(
-            dir_backup=Path(documents) / appname / 'backups',
+            dir_backup=Path(documents) / appname / "backups",
             dir_config=Path(config) / appname,
             dir_screenshots=Path(pictures) / appname,
-            dir_export_templates=Path(config) / appname / 'export-templates',
+            dir_export_templates=Path(config) / appname / "export-templates",
         )
 
     @property
@@ -81,15 +81,15 @@ class ApplicationPathsService:
 
     @property
     def file_input_conf(self) -> Path:
-        return self.dir_config / 'input.conf'
+        return self.dir_config / "input.conf"
 
     @property
     def file_mpv_conf(self) -> Path:
-        return self.dir_config / 'mpv.conf'
+        return self.dir_config / "mpv.conf"
 
     @property
     def file_settings(self) -> Path:
-        return self.dir_config / 'settings.ini'
+        return self.dir_config / "settings.ini"
 
     @property
     def files_export_templates(self) -> tuple[Path, ...]:

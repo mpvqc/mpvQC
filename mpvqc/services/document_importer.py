@@ -28,8 +28,8 @@ from .reverse_translator import ReverseTranslatorService
 class DocumentImporterService:
     _reverse_translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
 
-    _REGEX_PATH = re.compile('^path\\s*?:(?P<path>.*)$')
-    _REGEX_COMMENT = re.compile(r'^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$')
+    _REGEX_PATH = re.compile("^path\\s*?:(?P<path>.*)$")
+    _REGEX_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
 
     @dataclass
     class DocumentImportResult:
@@ -45,9 +45,9 @@ class DocumentImporterService:
         all_comments: list[Comment] = []
 
         for document in documents:
-            content = document.read_text(encoding='utf-8')
+            content = document.read_text(encoding="utf-8")
 
-            if content.startswith('[FILE]'):
+            if content.startswith("[FILE]"):
                 valid_documents.append(document)
             else:
                 invalid_documents.append(document)
@@ -81,7 +81,7 @@ class DocumentImporterService:
         if match is None:
             return
 
-        return Path(match.group('path').strip())
+        return Path(match.group("path").strip())
 
     def _parse_comment(self, line: str) -> Comment or None:
         match = self._REGEX_COMMENT.match(line.strip())
@@ -89,11 +89,11 @@ class DocumentImporterService:
         if match is None:
             return
 
-        time = match.group('time').strip()
-        comment_type = match.group('type').strip()
-        comment = match.group('comment').strip()
+        time = match.group("time").strip()
+        comment_type = match.group("type").strip()
+        comment = match.group("comment").strip()
 
-        hours, minutes, seconds = map(int, time.split(':'))
+        hours, minutes, seconds = map(int, time.split(":"))
         time = hours * 3600 + minutes * 60 + seconds
         comment_type = self._reverse_translator.lookup(comment_type)
 

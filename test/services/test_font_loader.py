@@ -26,37 +26,38 @@ from mpvqc.services import FontLoaderService
 
 
 class FontLoaderTest(unittest.TestCase):
+    """"""
 
     def setUp(self):
         self.tearDown()
         self._app = MpvqcApplication([])
 
     def tearDown(self):
-        if hasattr(self, '_app') and self._app:
+        if hasattr(self, "_app") and self._app:
             self._app.shutdown()
 
     def test_fonts_present_in_resources(self):
         variants = [
-            'NotoSans-Regular.ttf',
-            'NotoSans-Italic.ttf',
-            'NotoSans-Bold.ttf',
-            'NotoSans-SemiBold.ttf',
-            'NotoSansHebrew-Bold.ttf',
-            'NotoSansHebrew-Regular.ttf',
-            'NotoSansHebrew-SemiBold.ttf',
-            'NotoSansMono-Regular.ttf'
+            "NotoSans-Regular.ttf",
+            "NotoSans-Italic.ttf",
+            "NotoSans-Bold.ttf",
+            "NotoSans-SemiBold.ttf",
+            "NotoSansHebrew-Bold.ttf",
+            "NotoSansHebrew-Regular.ttf",
+            "NotoSansHebrew-SemiBold.ttf",
+            "NotoSansMono-Regular.ttf",
         ]
         for variant in variants:
-            file = QFile(f':/data/fonts/{variant}')
+            file = QFile(f":/data/fonts/{variant}")
             self.assertTrue(file.exists(), f"Expected to find {variant} in resources but couldn't")
 
     def test_fonts_loaded(self):
         # It's not possible to clear Qt's entire font database. Additionally, font backends on different OS's behave
         # differently. Therefore, we just test for the common font families.
         font_families = [
-            'Noto Sans',
-            'Noto Sans Hebrew',
-            'Noto Sans Mono',
+            "Noto Sans",
+            "Noto Sans Hebrew",
+            "Noto Sans Mono",
         ]
 
         FontLoaderService().load_application_fonts()
@@ -65,6 +66,7 @@ class FontLoaderTest(unittest.TestCase):
 
         for font_family in font_families:
             self.assertIn(
-                font_family, loaded_font_families,
-                msg=f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}"
+                font_family,
+                loaded_font_families,
+                msg=f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}",
             )

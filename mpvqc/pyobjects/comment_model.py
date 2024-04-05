@@ -118,9 +118,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @staticmethod
     def _create_comment_from(item) -> dict[str, str]:
         return {
-            'time': int(item.data(Role.TIME)),
-            'commentType': item.data(Role.TYPE),
-            'comment': item.data(Role.COMMENT)
+            "time": int(item.data(Role.TIME)),
+            "commentType": item.data(Role.TYPE),
+            "comment": item.data(Role.COMMENT),
         }
 
     @Slot(str, bool, bool, int, result=dict)
@@ -154,7 +154,7 @@ class Role:
     COMMENT = 1030
 
     MAPPING = {
-        TIME: QByteArray(b'time'),
-        TYPE: QByteArray(b'commentType'),
-        COMMENT: QByteArray(b'comment'),
+        TIME: QByteArray(b"time"),
+        TYPE: QByteArray(b"commentType"),
+        COMMENT: QByteArray(b"comment"),
     }

@@ -51,17 +51,17 @@ class ApplicationState:
     def find_video(self, change: ImportChange) -> Path or None:
         return change.video if change.video else self.video
 
-    def handle_save(self, document: Path) -> 'ApplicationState':
+    def handle_save(self, document: Path) -> "ApplicationState":
         return OtherState(document, self.video, saved=True)
 
     @abstractmethod
-    def handle_import(self, change: ImportChange) -> 'ApplicationState':
+    def handle_import(self, change: ImportChange) -> "ApplicationState":
         pass
 
-    def handle_change(self) -> 'ApplicationState':
+    def handle_change(self) -> "ApplicationState":
         return OtherState(self.document, self.video, saved=False)
 
-    def handle_reset(self) -> 'ApplicationState':
+    def handle_reset(self) -> "ApplicationState":
         return InitialState.new(video=self.video)
 
 
@@ -87,6 +87,7 @@ class InitialState(ApplicationState):
 
 @dataclass(frozen=True)
 class OtherState(ApplicationState):
+    """"""
 
     def handle_import(self, change: ImportChange) -> ApplicationState:
         def imported_is_currently_loaded_video():

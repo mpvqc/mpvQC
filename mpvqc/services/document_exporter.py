@@ -49,8 +49,8 @@ class DocumentRenderService:
     def __init__(self):
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)
         self._filters = self.Filters()
-        self._env.filters['as_time'] = self._filters.as_time
-        self._env.filters['as_comment_type'] = self._filters.as_comment_type
+        self._env.filters["as_time"] = self._filters.as_time
+        self._env.filters["as_comment_type"] = self._filters.as_comment_type
 
     @property
     def _arguments(self) -> dict:
@@ -65,25 +65,23 @@ class DocumentRenderService:
         nickname = self._settings.nickname
 
         if self._player.has_video:
-            video_path = f'{Path(self._player.path)}'
-            video_name = f'{Path(self._player.path).name}'
+            video_path = f"{Path(self._player.path)}"
+            video_name = f"{Path(self._player.path).name}"
         else:
-            video_path = ''
-            video_name = ''
+            video_path = ""
+            video_name = ""
 
         return {
-            'write_date': write_date,
-            'write_generator': write_generator,
-            'write_video_path': write_video_path,
-            'write_nickname': write_nickname,
-
-            'date': date,
-            'generator': generator,
-            'video_path': video_path,
-            'video_name': video_name,
-            'nickname': nickname,
-
-            'comments': comments,
+            "write_date": write_date,
+            "write_generator": write_generator,
+            "write_video_path": write_video_path,
+            "write_nickname": write_nickname,
+            "date": date,
+            "generator": generator,
+            "video_path": video_path,
+            "video_name": video_name,
+            "nickname": nickname,
+            "comments": comments,
         }
 
     def render(self, template: str):
@@ -110,11 +108,11 @@ class DocumentBackupService:
     def backup(self) -> None:
         now = datetime.now()
 
-        zip_name = f'{now:%Y-%m}.zip'
+        zip_name = f"{now:%Y-%m}.zip"
         zip_path = self._paths.dir_backup / zip_name
-        zip_mode = 'a' if zip_path.exists() else 'w'
+        zip_mode = "a" if zip_path.exists() else "w"
 
-        file_name = f'{now:%Y-%m-%d_%H-%M-%S}_{self._video_name}.txt'
+        file_name = f"{now:%Y-%m-%d_%H-%M-%S}_{self._video_name}.txt"
 
         # noinspection PyTypeChecker
         with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as file:
@@ -148,7 +146,7 @@ class DocumentExportService:
         return Path(video_directory).joinpath(file_name).absolute()
 
     def export(self, file: Path, template: Path) -> ExportError or None:
-        user_template = template.read_text(encoding='utf-8')
+        user_template = template.read_text(encoding="utf-8")
 
         try:
             content = self._renderer.render(user_template)
@@ -157,10 +155,10 @@ class DocumentExportService:
         except TemplateError as e:
             return self.ExportError(e.message, line_nr=None)
 
-        file.write_text(content, encoding='utf-8', newline='\n')
+        file.write_text(content, encoding="utf-8", newline="\n")
 
     def save(self, file: Path) -> None:
         export_template = self._resources.default_export_template
         content = self._renderer.render(export_template)
 
-        file.write_text(content, encoding='utf-8', newline='\n')
+        file.write_text(content, encoding="utf-8", newline="\n")

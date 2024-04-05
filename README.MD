@@ -17,15 +17,17 @@ We use `just` (https://github.com/casey/just) to build our application.
 ```shell
 $ just --list
 Available recipes:
-    add-translation locale # Allows adding additional languages
-    build                  # Builds the project into build/release
-    build-develop          # Builds the project. This will add all compiled resources into the Python source directory.
-    clean                  # Removes ALL generated files
-    lint-qml               # Will run the linter against QML files
-    test                   # Runs all Python and QML tests
-    test-python            # Runs all Python tests
-    test-qml               # Runs all QML tests
-    update-translations    # Traverses QML and Python files and updates translation files with new strings
+    add-translation locale # Add new language
+    build                  # Build full project into build/release
+    build-develop          # Build and compile resources into source directory
+    clean                  # Remove ALL generated files
+    format                 # Format code
+    lint-python            # Lint Python files
+    lint-qml               # Lint QML files
+    test                   # Run Python and QML tests
+    test-python            # Run Python tests
+    test-qml               # Run QML tests
+    update-translations    # Update *.ts files by traversing the source code
 ```
 
 Run `just build-develop` after each change in the `data`, `i18n`, or `qml` directories.

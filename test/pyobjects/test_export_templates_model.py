@@ -27,14 +27,17 @@ from mpvqc.services import ApplicationPathsService
 
 
 class TestExportTemplatesModel(unittest.TestCase):
+    """"""
 
     @staticmethod
     def _mock(paths: tuple[Path, ...]):
         # noinspection PyCallingNonCallable
         mock = MagicMock()
         mock.files_export_templates = paths
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationPathsService, mock))
+        # fmt: on
 
     def tearDown(self):
         inject.clear()
@@ -58,11 +61,18 @@ class TestExportTemplatesModel(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_model_sorted(self):
-        self._mock(paths=(Path("/xy"), Path('/z'), Path("/a"), Path('/b'),))
+        self._mock(
+            paths=(
+                Path("/xy"),
+                Path("/z"),
+                Path("/a"),
+                Path("/b"),
+            )
+        )
         # noinspection PyCallingNonCallable
         model = MpvqcExportTemplateModelPyObject()
 
-        expected = ['a', 'b', 'xy', 'z']
+        expected = ["a", "b", "xy", "z"]
         actual = [
             model.item(0, 0).data(Role.NAME),
             model.item(1, 0).data(Role.NAME),

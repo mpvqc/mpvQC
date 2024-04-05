@@ -23,9 +23,10 @@ from mpvqc.services import VersionCheckerService
 
 
 class VersionCheckerServiceTest(unittest.TestCase):
+    """"""
 
     @staticmethod
-    def _mock_response(mock, *, status=200, body='', error=None):
+    def _mock_response(mock, *, status=200, body="", error=None):
         if error:
             mock.side_effect = error
             return
@@ -47,44 +48,44 @@ class VersionCheckerServiceTest(unittest.TestCase):
 
     @property
     def _http_error(self):
-        return HTTPError('http://example.com', 500, 'Internal Error', {}, None)
+        return HTTPError("http://example.com", 500, "Internal Error", {}, None)
 
     @property
     def _url_error(self):
         return URLError(reason="it's a mock, brooooo")
 
-    @patch('mpvqc.services.version_checker.urllib.request.urlopen')
-    @patch('mpvqc.services.version_checker.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.services.version_checker.urllib.request.urlopen")
+    @patch("mpvqc.services.version_checker.QCoreApplication.instance", return_value=MagicMock())
     def test_latest(self, qcore_mock, request_mock):
         self._mock_response(request_mock, body='{ "latest": "0.1.0" }')
-        self._mock_current_version(qcore_mock, version='0.1.0')
+        self._mock_current_version(qcore_mock, version="0.1.0")
 
         expected_title = "👌"
         self._verify(expected_title)
 
-    @patch('mpvqc.services.version_checker.urllib.request.urlopen')
-    @patch('mpvqc.services.version_checker.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.services.version_checker.urllib.request.urlopen")
+    @patch("mpvqc.services.version_checker.QCoreApplication.instance", return_value=MagicMock())
     def test_update_available(self, qcore_mock, request_mock):
         self._mock_response(request_mock, body='{ "latest": "0.1.0" }')
-        self._mock_current_version(qcore_mock, version='0.1.1')
+        self._mock_current_version(qcore_mock, version="0.1.1")
 
         expected_title = "New Version Available"
         self._verify(expected_title)
 
-    @patch('mpvqc.services.version_checker.urllib.request.urlopen')
-    @patch('mpvqc.services.version_checker.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.services.version_checker.urllib.request.urlopen")
+    @patch("mpvqc.services.version_checker.QCoreApplication.instance", return_value=MagicMock())
     def test_server_error(self, qcore_mock, request_mock):
         self._mock_response(request_mock, error=self._http_error)
-        self._mock_current_version(qcore_mock, version='0.1.0')
+        self._mock_current_version(qcore_mock, version="0.1.0")
 
         expected_title = "Server Error"
         self._verify(expected_title)
 
-    @patch('mpvqc.services.version_checker.urllib.request.urlopen')
-    @patch('mpvqc.services.version_checker.QCoreApplication.instance', return_value=MagicMock())
+    @patch("mpvqc.services.version_checker.urllib.request.urlopen")
+    @patch("mpvqc.services.version_checker.QCoreApplication.instance", return_value=MagicMock())
     def test_url_error(self, qcore_mock, request_mock):
         self._mock_response(request_mock, error=self._url_error)
-        self._mock_current_version(qcore_mock, version='0.1.0')
+        self._mock_current_version(qcore_mock, version="0.1.0")
 
         expected_title = "Server Not Reachable"
         self._verify(expected_title)

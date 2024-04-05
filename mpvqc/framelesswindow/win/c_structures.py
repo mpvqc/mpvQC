@@ -56,7 +56,8 @@ class WINDOWCOMPOSITIONATTRIB(Enum):
 
 
 class ACCENT_STATE(Enum):
-    """ Client area status enumeration class """
+    """Client area status enumeration class"""
+
     ACCENT_DISABLED = 0
     ACCENT_ENABLE_GRADIENT = 1
     ACCENT_ENABLE_TRANSPARENTGRADIENT = 2
@@ -67,7 +68,7 @@ class ACCENT_STATE(Enum):
 
 
 class ACCENT_POLICY(Structure):
-    """ Specific attributes of client area """
+    """Specific attributes of client area"""
 
     _fields_ = [
         ("AccentState", DWORD),
@@ -141,21 +142,18 @@ class MINMAXINFO(Structure):
 
 class PWINDOWPOS(Structure):
     _fields_ = [
-        ('hWnd', HWND),
-        ('hwndInsertAfter', HWND),
-        ('x', c_int),
-        ('y', c_int),
-        ('cx', c_int),
-        ('cy', c_int),
-        ('flags', UINT)
+        ("hWnd", HWND),
+        ("hwndInsertAfter", HWND),
+        ("x", c_int),
+        ("y", c_int),
+        ("cx", c_int),
+        ("cy", c_int),
+        ("flags", UINT),
     ]
 
 
 class NCCALCSIZE_PARAMS(Structure):
-    _fields_ = [
-        ('rgrc', RECT * 3),
-        ('lppos', POINTER(PWINDOWPOS))
-    ]
+    _fields_ = [("rgrc", RECT * 3), ("lppos", POINTER(PWINDOWPOS))]
 
 
 LPNCCALCSIZE_PARAMS = POINTER(NCCALCSIZE_PARAMS)
@@ -163,8 +161,8 @@ LPNCCALCSIZE_PARAMS = POINTER(NCCALCSIZE_PARAMS)
 
 class DWM_BLURBEHIND(Structure):
     _fields_ = [
-        ('dwFlags', DWORD),
-        ('fEnable', BOOL),
-        ('hRgnBlur', HRGN),
-        ('fTransitionOnMaximized', BOOL),
+        ("dwFlags", DWORD),
+        ("fEnable", BOOL),
+        ("hRgnBlur", HRGN),
+        ("fTransitionOnMaximized", BOOL),
     ]

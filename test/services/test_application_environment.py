@@ -16,19 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
 import unittest
-from pathlib import Path
 
 from mpvqc.services import ApplicationEnvironmentService
 
 
 class ApplicationEnvironmentServiceTest(unittest.TestCase):
+    """"""
 
     def test_run_as_flatpak(self, *_):
         service = ApplicationEnvironmentService()
         self.assertFalse(service.runs_as_flatpak)
 
-        os.environ['FLATPAK_ID'] = "MPVQC_ID"
+        os.environ["FLATPAK_ID"] = "MPVQC_ID"
         service = ApplicationEnvironmentService()
         self.assertTrue(service.runs_as_flatpak)

@@ -38,7 +38,6 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             return False, 0
 
         if msg.message == win32con.WM_NCHITTEST and (self.border_width is not None):
-
             x, y, w, h = self.get_window_size(msg.hWnd)
             x_pos = (win32api.LOWORD(msg.lParam) - x) % 65536
             y_pos = win32api.HIWORD(msg.lParam) - y
