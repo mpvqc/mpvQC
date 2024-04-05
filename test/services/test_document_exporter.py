@@ -86,7 +86,7 @@ class DocumentRenderServiceTest(unittest.TestCase):
 
         _mock_test_data(video=None)
         expected = textwrap.dedent(
-            f'''\
+            """\
             video_path: 
             video_name: 
             '''
