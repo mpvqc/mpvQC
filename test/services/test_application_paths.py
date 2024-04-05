@@ -32,50 +32,52 @@ class ApplicationPathsServiceTest(unittest.TestCase):
         mock.runs_as_flatpak = False
         mock.built_by_nuitka = False
         mock.executing_directory = self.executing_dir
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationEnvironmentService, mock))
+        # fmt: on
 
     def tearDown(self):
         inject.clear()
 
     def test_directory_backup(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata' / 'backups'
+        expected = self.executing_dir / "appdata" / "backups"
         actual = service.dir_backup
         self.assertEqual(expected, actual)
 
     def test_directory_config(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata'
+        expected = self.executing_dir / "appdata"
         actual = service.dir_config
         self.assertEqual(expected, actual)
 
     def test_directory_screenshots(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata' / 'screenshots'
+        expected = self.executing_dir / "appdata" / "screenshots"
         actual = service.dir_screenshots
         self.assertEqual(expected, actual)
 
     def test_directory_export_templates(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata' / 'export-templates'
+        expected = self.executing_dir / "appdata" / "export-templates"
         actual = service.dir_export_templates
         self.assertEqual(expected, actual)
 
     def test_file_input_conf(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata' / 'input.conf'
+        expected = self.executing_dir / "appdata" / "input.conf"
         actual = service.file_input_conf
         self.assertEqual(expected, actual)
 
     def test_file_mpv_conf(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata' / 'mpv.conf'
+        expected = self.executing_dir / "appdata" / "mpv.conf"
         actual = service.file_mpv_conf
         self.assertEqual(expected, actual)
 
     def test_file_settings(self):
         service = ApplicationPathsService()
-        expected = self.executing_dir / 'appdata' / 'settings.ini'
+        expected = self.executing_dir / "appdata" / "settings.ini"
         actual = service.file_settings
         self.assertEqual(expected, actual)

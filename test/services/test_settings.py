@@ -32,54 +32,63 @@ class SettingsServiceTest(unittest.TestCase):
     def setUp(self):
         mock = MagicMock()
         mock.file_settings = self._path
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationPathsService, mock))
+        # fmt: on
         self._settings = SettingsService()
 
     def tearDown(self):
         inject.clear()
 
     def _mock_settings(self, values: dict[str, ...]):
-        q_settings = QSettings(f'{self._path}', QSettings.Format.IniFormat)
+        q_settings = QSettings(f"{self._path}", QSettings.Format.IniFormat)
         q_settings.clear()
         for key, value in values.items():
             q_settings.setValue(key, value)
         self._settings._settings = q_settings
 
-    @parameterized.expand([
-        ({}, ''),
-        ({'Export/nickname': ''}, ''),
-        ({'Export/nickname': True}, 'True'),
-        ({'Export/nickname': 1}, '1'),
-        ({'Export/nickname': 'nick'}, 'nick'),
-    ])
+    @parameterized.expand(
+        [
+            ({}, ""),
+            ({"Export/nickname": ""}, ""),
+            ({"Export/nickname": True}, "True"),
+            ({"Export/nickname": 1}, "1"),
+            ({"Export/nickname": "nick"}, "nick"),
+        ]
+    )
     def test_string(self, input, expected):
         self._mock_settings(input)
         self.assertEqual(expected, self._settings.nickname)
 
     def test_string_with_default(self):
         self._mock_settings({})
-        self.assertEqual('en-US', self._settings.language)
+        self.assertEqual("en-US", self._settings.language)
 
-    @parameterized.expand([
-        ({}, False),
-        ({'Export/writeHeaderDate': ''}, False),
-        ({'Export/writeHeaderDate': True}, True),
-        ({'Export/writeHeaderDate': 1}, False),
-        ({'Export/writeHeaderDate': 'true'}, True),
-    ])
+    @parameterized.expand(
+        [
+            ({}, False),
+            ({"Export/writeHeaderDate": ""}, False),
+            ({"Export/writeHeaderDate": True}, True),
+            ({"Export/writeHeaderDate": 1}, False),
+            ({"Export/writeHeaderDate": "true"}, True),
+        ]
+    )
     def test_bool(self, input, expected):
         self._mock_settings(input)
         self.assertEqual(expected, self._settings.writeHeaderDate)
 
-    @parameterized.expand([
-        ({'Import/importWhenVideoLinkedInDocument': 0}, SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS),
-        ({'Import/importWhenVideoLinkedInDocument': 1}, SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME),
-        ({'Import/importWhenVideoLinkedInDocument': 2}, SettingsService.ImportWhenVideoLinkedInDocument.NEVER),
-        ({
-             'Import/importWhenVideoLinkedInDocument': SettingsService.ImportWhenVideoLinkedInDocument.NEVER.value
-         }, SettingsService.ImportWhenVideoLinkedInDocument.NEVER),
-    ])
+    # fmt: off
+    @parameterized.expand(
+        [
+
+            ({"Import/importWhenVideoLinkedInDocument": 0}, SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS),
+            ({"Import/importWhenVideoLinkedInDocument": 1}, SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME,),
+            ({"Import/importWhenVideoLinkedInDocument": 2}, SettingsService.ImportWhenVideoLinkedInDocument.NEVER),
+            ({"Import/importWhenVideoLinkedInDocument": SettingsService.ImportWhenVideoLinkedInDocument.NEVER.value}, SettingsService.ImportWhenVideoLinkedInDocument.NEVER,),
+        ]
+    )
+    # fmt: on
     def test_import_video_when_video_linked_in_document(self, input, expected):
         self._mock_settings(input)
         self.assertEqual(expected, self._settings.import_video_when_video_linked_in_document)

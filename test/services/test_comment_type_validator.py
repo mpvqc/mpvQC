@@ -24,47 +24,52 @@ from mpvqc.services import ReverseTranslatorService, CommentTypeValidatorService
 
 
 class CommentTypeValidatorServiceTest(unittest.TestCase):
+    """"""
 
     def setUp(self):
         self._service = CommentTypeValidatorService()
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ReverseTranslatorService, ReverseTranslatorService()))
+        # fmt: on
 
     def tearDown(self):
         inject.clear()
 
-    @parameterized.expand([
-        ('A comment type must not be blank', None, []),
-        ('A comment type must not be blank', '', []),
-        ('Characters \'[]\' not allowed', 'New Comment [Type', []),
-        ('Comment type already exists', 'Translation', ['Phrasing', 'Note', 'Translation']),
-        ('Comment type already exists', 'Hinweis', ['Phrasing', 'Note', 'Translation']),
-    ])
+    @parameterized.expand(
+        [
+            ("A comment type must not be blank", None, []),
+            ("A comment type must not be blank", "", []),
+            ("Characters '[]' not allowed", "New Comment [Type", []),
+            ("Comment type already exists", "Translation", ["Phrasing", "Note", "Translation"]),
+            ("Comment type already exists", "Hinweis", ["Phrasing", "Note", "Translation"]),
+        ]
+    )
     def test_validate_new_comment_type(
-            self,
-            expected_error: str,
-            new_comment_type: str,
-            existing_comment_types: list[str]
+        self, expected_error: str, new_comment_type: str, existing_comment_types: list[str]
     ):
         actual_error = self._service.validate_new_comment_type(new_comment_type, existing_comment_types)
         self.assertEqual(expected_error, actual_error)
 
-    @parameterized.expand([
-        ('A comment type must not be blank', None, 'blub', []),
-        ('A comment type must not be blank', '', 'blub', []),
-        ('Characters \'[]\' not allowed', 'New Comment [Type', 'blub', []),
-        (None, 'Translation', 'Translation', ['Phrasing', 'Note', 'Translation']),
-        ('Comment type already exists', 'Translation', 'Note', ['Phrasing', 'Note', 'Translation']),
-        (None, 'Hinweis', 'Note', ['Phrasing', 'Note', 'Translation']),
-        ('Comment type already exists', 'Hinweis', 'Phrasing', ['Phrasing', 'Note', 'Translation']),
-    ])
+    @parameterized.expand(
+        [
+            ("A comment type must not be blank", None, "blub", []),
+            ("A comment type must not be blank", "", "blub", []),
+            ("Characters '[]' not allowed", "New Comment [Type", "blub", []),
+            (None, "Translation", "Translation", ["Phrasing", "Note", "Translation"]),
+            ("Comment type already exists", "Translation", "Note", ["Phrasing", "Note", "Translation"]),
+            (None, "Hinweis", "Note", ["Phrasing", "Note", "Translation"]),
+            ("Comment type already exists", "Hinweis", "Phrasing", ["Phrasing", "Note", "Translation"]),
+        ]
+    )
     def test_validate_editing_of_comment_type(
-            self,
-            expected_error: str,
-            new_comment_type: str,
-            comment_type_being_edited: str,
-            existing_comment_types: list[str]
+        self,
+        expected_error: str,
+        new_comment_type: str,
+        comment_type_being_edited: str,
+        existing_comment_types: list[str],
     ):
-        actual_error = self._service.validate_editing_of_comment_type(new_comment_type, comment_type_being_edited,
-                                                                      existing_comment_types)
+        actual_error = self._service.validate_editing_of_comment_type(
+            new_comment_type, comment_type_being_edited, existing_comment_types
+        )
         self.assertEqual(expected_error, actual_error)

@@ -23,10 +23,13 @@ from mpvqc.services import ResourceService, ResourceReaderService
 
 
 class ResourceServiceTest(unittest.TestCase):
+    """"""
 
     def setUp(self):
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ResourceReaderService, ResourceReaderService()))
+        # fmt: on
 
     def tearDown(self):
         inject.clear()
@@ -49,10 +52,14 @@ class ResourceServiceTest(unittest.TestCase):
 
         # contains all mpvQC expressions
         required_arguments = [
-            "write_date", "date",
-            "write_generator", "generator",
-            "write_nickname", "nickname",
-            "write_video_path", "video_path",
+            "write_date",
+            "date",
+            "write_generator",
+            "generator",
+            "write_nickname",
+            "nickname",
+            "write_video_path",
+            "video_path",
             "comments",
             "comment['time'] | as_time",
             "comment['commentType'] | as_comment_type",
@@ -61,5 +68,4 @@ class ResourceServiceTest(unittest.TestCase):
         for arg in required_arguments:
             self.assertIn(arg, template, f"Expected to find mpvQC expression '{arg}' in export template")
 
-        # ends with '\n'
-        self.assertEqual('\n', template[-1])
+        self.assertEqual("\n", template[-1])

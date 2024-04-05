@@ -26,21 +26,25 @@ from mpvqc.services import TimeFormatterService
 class TimeFormatterServiceTest(unittest.TestCase):
     _service = TimeFormatterService()
 
-    @parameterized.expand([
-        ('00:00:00', 0),
-        ('00:01:08', 68),
-        ('00:16:39', 999),
-        ('02:46:40', 10000),
-    ])
+    @parameterized.expand(
+        [
+            ("00:00:00", 0),
+            ("00:01:08", 68),
+            ("00:16:39", 999),
+            ("02:46:40", 10000),
+        ]
+    )
     def test_format_time_to_string_long(self, expected, input_seconds):
         actual = self._service.format_time_to_string(input_seconds, long_format=True)
         self.assertEqual(expected, actual)
 
-    @parameterized.expand([
-        ('00:00', 0),
-        ('01:08', 68),
-        ('16:39', 999),
-    ])
+    @parameterized.expand(
+        [
+            ("00:00", 0),
+            ("01:08", 68),
+            ("16:39", 999),
+        ]
+    )
     def test_format_time_to_string_short(self, expected, input_seconds):
         actual = self._service.format_time_to_string(input_seconds, long_format=False)
         self.assertEqual(expected, actual)

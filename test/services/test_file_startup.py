@@ -25,34 +25,40 @@ from mpvqc.services import ApplicationPathsService, FileStartupService, Resource
 
 
 class FileStartupServiceTest(unittest.TestCase):
-    MODULE = 'mpvqc.services.file_startup'
+    MODULE = "mpvqc.services.file_startup"
 
     mocked_file_service = MagicMock()
 
     def setUp(self):
+        # fmt: off
         inject.clear_and_configure(lambda binder: binder
                                    .bind(ApplicationPathsService, self.mocked_file_service)
                                    .bind(ResourceService, MagicMock()))
+        # fmt: on
 
     def tearDown(self):
         inject.clear()
 
-    @parameterized.expand([
-        'dir_config',
-        'dir_backup',
-        'dir_screenshots',
-        'dir_export_templates',
-    ])
+    @parameterized.expand(
+        [
+            "dir_config",
+            "dir_backup",
+            "dir_screenshots",
+            "dir_export_templates",
+        ]
+    )
     def test_directories_created(self, mocked_dir):
         service = FileStartupService()
         service.create_missing_directories()
         path_mock = getattr(self.mocked_file_service, mocked_dir)
         path_mock.mkdir.assert_called()
 
-    @parameterized.expand([
-        'file_input_conf',
-        'file_mpv_conf',
-    ])
+    @parameterized.expand(
+        [
+            "file_input_conf",
+            "file_mpv_conf",
+        ]
+    )
     def test_files_created(self, mocked_file):
         path_mock = getattr(self.mocked_file_service, mocked_file)
         path_mock.exists.return_value = False
