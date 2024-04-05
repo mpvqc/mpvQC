@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# ruff: noqa: F401
 from .application_paths import MpvqcApplicationPathsPyObject
 from .comment_model import MpvqcCommentModelPyObject
 from .comment_type_validator import MpvqcCommentTypeValidatorPyObject

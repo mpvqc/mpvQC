@@ -60,13 +60,11 @@ class StartUp:
 
     @staticmethod
     def import_mpvqc_resources():
-        # noinspection PyUnresolvedReferences
-        import mpvqc.generated_resources
+        import mpvqc.generated_resources  # noqa: F401
 
     @staticmethod
     def import_mpvqc_bindings():
-        # noinspection PyUnresolvedReferences
-        import mpvqc.pyobjects
+        import mpvqc.pyobjects  # noqa: F401
 
     @staticmethod
     def start_application():

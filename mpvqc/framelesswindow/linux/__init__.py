@@ -16,4 +16,5 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
+# ruff: noqa: F401
 from .event import LinuxEventFilter

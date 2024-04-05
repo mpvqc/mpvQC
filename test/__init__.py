@@ -25,7 +25,7 @@ def add_repository_root_to_path():
 add_repository_root_to_path()
 
 try:
-    import test.generated_resources
+    import test.generated_resources  # noqa: F401
 except ImportError:
     import sys
 
