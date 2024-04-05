@@ -74,7 +74,7 @@ def _figure_out_zoom_factor_on_linux() -> float:
     try:
         factor = os.getenv("MPVQC_VIDEO_SCALING_FACTOR", default_factor)
         return float(factor)
-    except:
+    except ValueError:
         return default_factor
 
 
