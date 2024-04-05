@@ -30,22 +30,13 @@ class MpvqcCommentTypeValidatorPyObject(QObject):
     _validator: CommentTypeValidatorService = inject.attr(CommentTypeValidatorService)
 
     @Slot(str, list, result=str or None)
-    def validate_new_comment_type(
-            self,
-            new_comment_type: str,
-            existing_comment_types: list[str]
-    ) -> str or None:
+    def validate_new_comment_type(self, new_comment_type: str, existing_comment_types: list[str]) -> str or None:
         return self._validator.validate_new_comment_type(new_comment_type, existing_comment_types)
 
     @Slot(str, str, list, result=str or None)
     def validate_editing_of_comment_type(
-            self,
-            new_comment_type: str,
-            comment_type_being_edited: str,
-            existing_comment_types: list[str]
+        self, new_comment_type: str, comment_type_being_edited: str, existing_comment_types: list[str]
     ) -> str or None:
         return self._validator.validate_editing_of_comment_type(
-            new_comment_type,
-            comment_type_being_edited,
-            existing_comment_types
+            new_comment_type, comment_type_being_edited, existing_comment_types
         )

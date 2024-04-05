@@ -22,11 +22,7 @@ from typing import Callable
 
 
 def report_result(next_idx: int, current_result: int, total_results: int):
-    return {
-        'nextIndex': next_idx,
-        'currentResult': current_result,
-        'totalResults': total_results
-    }
+    return {"nextIndex": next_idx, "currentResult": current_result, "totalResults": total_results}
 
 
 @dataclass
@@ -47,8 +43,9 @@ class Hits:
             next_idx = bisect.bisect_right(self.row_indexes_matched, current_row - include_current_row) % total
         else:
             next_idx = (bisect.bisect_left(self.row_indexes_matched, current_row + include_current_row) - 1) % total
-        return report_result(next_idx=self.row_indexes_matched[next_idx], current_result=next_idx + 1,
-                             total_results=total)
+        return report_result(
+            next_idx=self.row_indexes_matched[next_idx], current_result=next_idx + 1, total_results=total
+        )
 
     @staticmethod
     def _no_results():
@@ -56,20 +53,19 @@ class Hits:
 
 
 class Searcher:
-
     def __init__(self):
-        self._last_query = ''
+        self._last_query = ""
         self._hits: Hits | None = None
 
     def search(
-            self,
-            query: str,
-            include_current_row: bool,
-            top_down: bool,
-            selected_index: int,
-            search_func: Callable[[str], list[int]]
+        self,
+        query: str,
+        include_current_row: bool,
+        top_down: bool,
+        selected_index: int,
+        search_func: Callable[[str], list[int]],
     ):
-        if query == '':
+        if query == "":
             self._last_query = query
             self._hits = None
             return report_result(-1, -1, -1)

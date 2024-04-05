@@ -26,6 +26,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcFileInterfacePyObject(QObject):
+    """"""
 
     def __init__(self):
         super().__init__()
@@ -40,7 +41,7 @@ class MpvqcFileInterfacePyObject(QObject):
     def set_file_path(self, value: str) -> None:
         self._file_path = Path(value)
         self.filePathChanged.emit(value)
-        content = self._file_path.read_text(encoding='utf-8')
+        content = self._file_path.read_text(encoding="utf-8")
         self.set_file_content(content)
 
     #
@@ -54,7 +55,7 @@ class MpvqcFileInterfacePyObject(QObject):
     def set_file_content(self, value: str):
         self._file_content = value
         self.fileContentChanged.emit(value)
-        self._file_path.write_text(self._file_content, encoding='utf-8', newline='\n')
+        self._file_path.write_text(self._file_content, encoding="utf-8", newline="\n")
 
     fileContentChanged = Signal(str)
     fileContent = Property(str, get_file_content, set_file_content, notify=fileContentChanged)

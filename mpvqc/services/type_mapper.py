@@ -21,6 +21,7 @@ from PySide6.QtCore import QUrl
 
 
 class TypeMapperService:
+    """"""
 
     @staticmethod
     def map_urls_to_path(urls: list[QUrl]) -> list[Path]:
@@ -36,16 +37,16 @@ class TypeMapperService:
 
     @staticmethod
     def map_url_to_path_string(url: QUrl) -> str:
-        return f'{Path(url.toLocalFile()).resolve()}'
+        return f"{Path(url.toLocalFile()).resolve()}"
 
     @staticmethod
     def map_path_to_url(path: Path) -> QUrl:
-        return QUrl.fromLocalFile(f'{path.resolve()}')
+        return QUrl.fromLocalFile(f"{path.resolve()}")
 
     @staticmethod
     def map_path_to_str(path: Path) -> str:
-        return f'{path.resolve()}'
+        return f"{path.resolve()}"
 
     @staticmethod
     def normalize_path_str(path: str) -> str:
-        return f'{Path(path).resolve()}'
+        return f"{Path(path).resolve()}"

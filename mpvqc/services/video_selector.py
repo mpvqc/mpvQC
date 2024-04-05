@@ -28,11 +28,11 @@ class VideoSelectorService:
     _settings: SettingsService = inject.attr(SettingsService)
 
     def select_video_from(
-            self,
-            existing_videos_dropped: list[Path],
-            existing_videos_from_documents: list[Path],
-            video_found_dialog_factory: QQmlComponent,
-            on_video_selected: Callable[[Path or None], None]
+        self,
+        existing_videos_dropped: list[Path],
+        existing_videos_from_documents: list[Path],
+        video_found_dialog_factory: QQmlComponent,
+        on_video_selected: Callable[[Path or None], None],
     ):
         def pick(video: Path or None):
             on_video_selected(video)
@@ -54,13 +54,17 @@ class VideoSelectorService:
 
     @property
     def _user_never_wants_to_import_linked_video(self) -> bool:
-        return (self._settings.import_video_when_video_linked_in_document
-                == SettingsService.ImportWhenVideoLinkedInDocument.NEVER)
+        return (
+            self._settings.import_video_when_video_linked_in_document
+            == SettingsService.ImportWhenVideoLinkedInDocument.NEVER
+        )
 
     @property
     def _user_always_wants_to_import_linked_video(self) -> bool:
-        return (self._settings.import_video_when_video_linked_in_document
-                == SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS)
+        return (
+            self._settings.import_video_when_video_linked_in_document
+            == SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS
+        )
 
     @staticmethod
     def ask_user(video_found_dialog_factory: QQmlComponent, on_do_open: Callable, on_do_not_open: Callable):

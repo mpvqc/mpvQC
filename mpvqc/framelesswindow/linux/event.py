@@ -22,7 +22,9 @@ from typing import Optional
 from PySide6.QtCore import QCoreApplication, QObject, QEvent, Qt
 from PySide6.QtGui import QCursor, QGuiApplication, QWindow
 
+
 class LinuxEventFilter(QObject):
+    """"""
 
     def __init__(self, border_width=None) -> None:
         super().__init__()

@@ -21,6 +21,7 @@ from PySide6.QtCore import QDir, QTranslator
 
 
 class LookupTable:
+    """"""
 
     def __init__(self):
         self._combined_lookup_table: dict[str, str] = {}
@@ -32,16 +33,16 @@ class LookupTable:
             del self._translator
 
     def _create_lookup_tables(self) -> None:
-        for entry_info in QDir(':/i18n').entryInfoList():
+        for entry_info in QDir(":/i18n").entryInfoList():
             identifier = entry_info.baseName()
             resource_path = entry_info.filePath()
-            assert self._translator.load(resource_path), f'Cannot load language: {identifier}'
+            assert self._translator.load(resource_path), f"Cannot load language: {identifier}"
 
             self._add_to_combined_lookup_table()
 
     @property
     def _default_comment_types(self) -> list[str]:
-        return ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note']
+        return ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"]
 
     def _add_to_combined_lookup_table(self) -> None:
         for english in self._default_comment_types:

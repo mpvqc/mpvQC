@@ -52,7 +52,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         if path := self.mpv.path:
             return self._type_mapper.normalize_path_str(path)
         else:
-            return ''
+            return ""
 
     path_changed = Signal(str)
     path = Property(str, get_path, notify=path_changed)
@@ -141,9 +141,9 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self._subscribe_to_zoom_factor_changes()
 
     def _subscribe_to_path(self):
-        self._path = ''
+        self._path = ""
 
-        @self.mpv.property_observer('path')
+        @self.mpv.property_observer("path")
         def observer(_, value: str):
             if value and value != self._path:
                 self._path = value
@@ -151,9 +151,9 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
             self.video_loaded_changed.emit(bool(value))
 
     def _subscribe_to_filename(self):
-        self._filename = ''
+        self._filename = ""
 
-        @self.mpv.property_observer('filename')
+        @self.mpv.property_observer("filename")
         def observer(_, value: str):
             if value and value != self._filename:
                 self._filename = value
@@ -162,7 +162,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def _subscribe_to_duration(self):
         self._duration = None
 
-        @self.mpv.property_observer('duration')
+        @self.mpv.property_observer("duration")
         def observer(_, value: float):
             if value:
                 self._duration = value
@@ -171,7 +171,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def _subscribe_to_percent_pos(self):
         self._percent_pos = None
 
-        @self.mpv.property_observer('percent-pos')
+        @self.mpv.property_observer("percent-pos")
         def observer(_, value: float):
             if value:
                 value = round(value)
@@ -182,7 +182,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def _subscribe_to_time_pos(self):
         self._time_pos = None
 
-        @self.mpv.property_observer('time-pos')
+        @self.mpv.property_observer("time-pos")
         def observer(_, value: float):
             if value:
                 value = round(value)
@@ -193,7 +193,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def _subscribe_to_time_remaining(self):
         self._time_remaining = None
 
-        @self.mpv.property_observer('time-remaining')
+        @self.mpv.property_observer("time-remaining")
         def observer(_, value: float):
             if value:
                 value = round(value)
@@ -204,7 +204,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def _subscribe_to_height(self):
         self._height = None
 
-        @self.mpv.property_observer('height')
+        @self.mpv.property_observer("height")
         def observer(_, value: float):
             if value:
                 value = round(value)
@@ -216,7 +216,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def _subscribe_to_width(self):
         self._width = None
 
-        @self.mpv.property_observer('width')
+        @self.mpv.property_observer("width")
         def observer(_, value: float):
             if value:
                 value = round(value)

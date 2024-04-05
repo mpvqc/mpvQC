@@ -30,7 +30,7 @@ class MpvqcApplication(QGuiApplication):
     _start_up: FileStartupService = inject.attr(FileStartupService)
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
 
-    application_ready = Signal(name='applicationReady')
+    application_ready = Signal(name="applicationReady")
 
     def __init__(self, args):
         super().__init__(args)
@@ -47,7 +47,7 @@ class MpvqcApplication(QGuiApplication):
         return obj
 
     def set_window_icon(self):
-        icon = QIcon(':/data/icon.svg')
+        icon = QIcon(":/data/icon.svg")
         self.setWindowIcon(icon)
 
     def load_application_fonts(self):
@@ -72,7 +72,7 @@ class MpvqcApplication(QGuiApplication):
         locale = QLocale(identifier)
 
         self._translator_qt.load(locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
-        self._translator_mpvqc.load(f':/i18n/{identifier}.qm')
+        self._translator_mpvqc.load(f":/i18n/{identifier}.qm")
 
         self.installTranslator(self._translator_qt)
         self.installTranslator(self._translator_mpvqc)
@@ -80,25 +80,28 @@ class MpvqcApplication(QGuiApplication):
         self.setLayoutDirection(locale.textDirection())
 
     def set_up_imports(self):
-        self._engine.addImportPath(':/qml')
+        self._engine.addImportPath(":/qml")
 
     def install_window_event_filter(self):
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             from mpvqc.framelesswindow.win import WindowsEventFilter
+
             self._event_filter = WindowsEventFilter(border_width=6)
             self.installNativeEventFilter(self._event_filter)
-        elif sys.platform == 'linux':
+        elif sys.platform == "linux":
             from mpvqc.framelesswindow.linux import LinuxEventFilter
+
             self._event_filter = LinuxEventFilter(border_width=6)
             self.installEventFilter(self._event_filter)
 
     def start_engine(self):
-        self._engine.load(QUrl.fromLocalFile(':/qml/main.qml'))
+        self._engine.load(QUrl.fromLocalFile(":/qml/main.qml"))
 
     def add_window_effects(self):
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             hwnd = self.topLevelWindows()[0].winId()
             from mpvqc.framelesswindow.win import WindowsWindowEffect
+
             self._effects = WindowsWindowEffect()
             self._effects.addShadowEffect(hwnd)
             self._effects.addWindowAnimation(hwnd)

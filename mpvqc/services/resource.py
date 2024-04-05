@@ -27,19 +27,19 @@ class ResourceService:
 
     @property
     def input_conf_content(self) -> str:
-        return self._read_from_resource(path=':/data/config/input.conf')
+        return self._read_from_resource(path=":/data/config/input.conf")
 
     @property
     def mpv_conf_content(self) -> str:
-        return self._read_from_resource(path=':/data/config/mpv.conf')
+        return self._read_from_resource(path=":/data/config/mpv.conf")
 
     @property
     def backup_template(self) -> str:
-        return self._read_from_resource(path=':/data/config/backup-template.jinja')
+        return self._read_from_resource(path=":/data/config/backup-template.jinja")
 
     @property
     def default_export_template(self) -> str:
-        return self._read_from_resource(path=':/data/config/export-template.jinja')
+        return self._read_from_resource(path=":/data/config/export-template.jinja")
 
     @cache
     def _read_from_resource(self, path: str) -> str:

@@ -25,13 +25,14 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcDefaultTextValidatorPyObject(QValidator):
-
     def validate(self, user_input: str, position: int):
         return QValidator.Acceptable, self.replace_special_characters(user_input), position
 
     @Slot(str, result=str)
     def replace_special_characters(self, string_to_replace) -> str:
+        # fmt: off
         return string_to_replace \
             .replace(u'\xad', '') \
             .replace('\r', '') \
             .replace('\n', '')
+        # fmt: on

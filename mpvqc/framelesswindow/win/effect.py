@@ -26,6 +26,7 @@ from .c_structures import ACCENT_POLICY, MARGINS, WINDOWCOMPOSITIONATTRIB, WINDO
 
 
 class WindowsWindowEffect:
+    """"""
 
     def __init__(self):
         self.user32 = WinDLL("user32")

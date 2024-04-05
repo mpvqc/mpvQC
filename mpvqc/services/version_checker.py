@@ -25,8 +25,8 @@ from PySide6.QtCore import QCoreApplication
 
 
 class VersionCheckerService:
-    HOME_URL = 'https://mpvqc.github.io'
-    UPDATE_URL = f'{HOME_URL}/api/v1/public/version'
+    HOME_URL = "https://mpvqc.github.io"
+    UPDATE_URL = f"{HOME_URL}/api/v1/public/version"
 
     @property
     def _current_version(self) -> str:
@@ -39,6 +39,7 @@ class VersionCheckerService:
             return f"{json.loads(text)['latest']}".strip()
 
     def check_for_new_version(self) -> Tuple[str, str]:
+        # fmt: off
         try:
             latest_version = self._latest_version
         except urllib.error.HTTPError as e:
@@ -62,3 +63,4 @@ class VersionCheckerService:
         title = "👌"
         text = QCoreApplication.translate("VersionCheckDialog", "You are already using the most recent version of mpvQC!")
         return title, text
+        # fmt: on

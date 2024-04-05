@@ -82,7 +82,6 @@ class PlayerService:
             self._cached_subtitles.clear()
 
     def open_subtitles(self, subtitles: Iterable[str]) -> None:
-
         def _load():
             for subtitle in subtitles:
                 self._mpv.command("sub-add", subtitle, "select")
