@@ -43,7 +43,7 @@ RowLayout {
 
         elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
         horizontalAlignment: Text.AlignRight
-        Layout.preferredWidth: columnOneWidth
+        Layout.preferredWidth: root.columnOneWidth
 
         onLinkActivated: (link) => {
             Qt.openUrlExternally(link)
@@ -71,7 +71,7 @@ RowLayout {
         visible: text
         elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
         horizontalAlignment: Text.AlignLeft
-        Layout.preferredWidth: columnTwoWidth
+        Layout.preferredWidth: root.columnTwoWidth
 
         MouseArea {
             id: _mouseArea
@@ -94,7 +94,7 @@ RowLayout {
         text: root.licence
         elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
         horizontalAlignment: Text.AlignLeft
-        Layout.preferredWidth: columnThreeWidth
+        Layout.preferredWidth: root.columnThreeWidth
     }
 
 }

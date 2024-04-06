@@ -32,7 +32,6 @@ ColumnLayout {
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property var mpvqcApplicationPathsPyObject: mpvqcApplication.mpvqcApplicationPathsPyObject
     property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
-    property var openBackupLocationFunc: Qt.openUrlExternally
 
     property alias backupEnabledSwitch: _backupEnable
     property alias backupIntervalSpinBox: _backupInterval.spinBox
@@ -44,11 +43,11 @@ ColumnLayout {
 
         label: qsTranslate("BackupSettings", "Backup Enabled")
         prefWidth: root.width
-        checked: mpvqcSettings.backupEnabled
+        checked: root.mpvqcSettings.backupEnabled
         Layout.topMargin: 20
 
         onToggled: (state) => {
-            mpvqcSettings.backupEnabled = state
+            root.mpvqcSettings.backupEnabled = state
         }
     }
 
@@ -63,7 +62,7 @@ ColumnLayout {
         valueTo: 5 * 60
 
         onValueModified: (value) => {
-            mpvqcSettings.backupInterval = value
+            root.mpvqcSettings.backupInterval = value
         }
     }
 
@@ -80,7 +79,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         onClicked: {
-            root.openBackupLocationFunc(backupDirectory)
+            Qt.openUrlExternally(backupDirectory)
         }
 
         ToolTip {

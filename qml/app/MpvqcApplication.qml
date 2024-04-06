@@ -163,7 +163,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         onAfterPressed: {
-            mpvqcCommentTable.forceActiveFocus()
+            root.mpvqcCommentTable.forceActiveFocus()
         }
     }
 
@@ -171,7 +171,7 @@ ApplicationWindow {
         id: closeHandler
 
         mpvqcApplication: root
-        canClose: mpvqcManager.saved
+        canClose: root.mpvqcManager.saved
     }
 
     Component.onCompleted: {

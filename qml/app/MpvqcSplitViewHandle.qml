@@ -21,9 +21,9 @@ Rectangle {
         : Qt.lighter(control.Material.background, T.SplitHandle.hovered ? 1.2 : 1.1)
 
     Rectangle {
-        color: control.Material.secondaryTextColor
-        width: control.orientation === Qt.Horizontal ? thickness : length
-        height: control.orientation === Qt.Horizontal ? length : thickness
+        color: root.control.Material.secondaryTextColor
+        width: root.control.orientation === Qt.Horizontal ? thickness : length
+        height: root.control.orientation === Qt.Horizontal ? length : thickness
         radius: thickness
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2

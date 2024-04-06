@@ -40,7 +40,7 @@ ScrollView {
     }
 
     ScrollBar.horizontal {
-        policy: contentWidth > width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        policy: root.contentWidth > width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         position: root.mirrored ? 1.0 - ScrollBar.horizontal.size : 0
     }
 

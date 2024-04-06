@@ -86,7 +86,7 @@ ColumnLayout {
 
             text: root.fileContent
             background: null
-            leftPadding: mirrored ? 22 : 0
+            leftPadding: _scrollView.mirrored ? 22 : 0
             font.family: 'Noto Sans Mono'
             font.pointSize: 11
         }

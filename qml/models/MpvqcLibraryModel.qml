@@ -46,7 +46,7 @@ ListModel {
         name: 'PySide6'
         url: 'https://wiki.qt.io/Qt_for_Python'
         licence: 'LGPL-3.0'
-        version: '@@pypi-PySide6@@'
+        version: '@@pypi-PySide6-Essentials@@'
         os: 'linux, windows'
     }
     ListElement {

@@ -67,7 +67,7 @@ MpvqcMenu {
     Repeater {
         id: _repeater
 
-        model: mpvqcSettings.commentTypes
+        model: root.mpvqcSettings.commentTypes
 
         MenuItem {
             required property string modelData

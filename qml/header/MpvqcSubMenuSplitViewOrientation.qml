@@ -48,7 +48,7 @@ MpvqcMenu {
         checked: root.isVerticalLayout
 
         onTriggered: {
-            mpvqcSettings.layoutOrientation = Qt.Vertical
+            root.mpvqcSettings.layoutOrientation = Qt.Vertical
         }
     }
 
@@ -61,7 +61,7 @@ MpvqcMenu {
         checked: !root.isVerticalLayout
 
         onTriggered: {
-            mpvqcSettings.layoutOrientation = Qt.Horizontal
+            root.mpvqcSettings.layoutOrientation = Qt.Horizontal
         }
     }
 
