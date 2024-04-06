@@ -109,7 +109,7 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        enabled: !rowSelected
+        enabled: !root.rowSelected
         z: -1
 
         onClicked: root.clicked()
@@ -262,7 +262,7 @@ Item {
             id: _spacerScrollBar
             height: root.height
             width: root.widthScrollBar
-            color: Material.background
+            color: root.Material.background
         }
     }
 

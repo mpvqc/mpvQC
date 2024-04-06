@@ -55,6 +55,6 @@ MpvqcDialog {
 
         property string title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
 
-        sourceComponent: root.singleColumn ? smallLayoutView : largeLayoutView
+        sourceComponent: root.singleColumn ? root.smallLayoutView : root.largeLayoutView
     }
 }

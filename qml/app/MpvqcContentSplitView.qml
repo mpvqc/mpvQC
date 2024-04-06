@@ -44,6 +44,7 @@ FocusScope {
 
     signal splitViewHandleHovered(bool hovered)
 
+    state: mpvqcApplication.fullscreen ? "fullscreen" : "normal"
     states: [
         State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
         State { name: "normal"; ParentChange { target: _player; parent: _playerContainer } }
@@ -129,14 +130,6 @@ FocusScope {
         function _forceSplitViewLayoutRefresh() {
             const bottomElement = _splitView.takeItem(1)
             _splitView.addItem(bottomElement)
-        }
-    }
-
-    Connections {
-        target: mpvqcApplication
-
-        function onFullscreenChanged() {
-            state = mpvqcApplication.fullscreen ? "fullscreen" : "normal"
         }
     }
 

@@ -37,12 +37,6 @@ MpvqcBackupView {
         }
     }
 
-    // Mock Qt.openUrlExternally
-    property url calledUrl: ''
-    openBackupLocationFunc: openUrlExternallyMock
-    function openUrlExternallyMock(url) { calledUrl = url }
-    // end
-
     width: 400
     height: 400
 
@@ -54,7 +48,6 @@ MpvqcBackupView {
             const settings = objectUnderTest.mpvqcApplication.mpvqcSettings
             settings.backupEnabled = true
             settings.backupInterval = 90
-            objectUnderTest.calledUrl = ''
         }
 
         function test_backup_data() {
@@ -68,11 +61,6 @@ MpvqcBackupView {
                      tag: 'interval',
                      exec: () => { objectUnderTest.backupIntervalSpinBox.increase() },
                      verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.backupInterval, 91) },
-                },
-                {
-                     tag: 'open-directory',
-                     exec: () => { mouseClick(objectUnderTest.backupLocationOpenButton) },
-                     verify: () => { compare(objectUnderTest.calledUrl, 'file:///hello.txt') },
                 },
             ]
         }

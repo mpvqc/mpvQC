@@ -44,14 +44,14 @@ ScrollView {
 
         MpvqcDependency {
             dependency: 'libmpv'
-            version: mpvqcMpvPlayerPropertiesPyObject.mpv_version.replace('mpv ', '')
+            version: root.mpvqcMpvPlayerPropertiesPyObject.mpv_version.replace('mpv ', '')
             url: "https://mpv.io/"
             licence: "GPL-2.0+"
         }
 
         MpvqcDependency {
             dependency: 'ffmpeg'
-            version: mpvqcMpvPlayerPropertiesPyObject.ffmpeg_version.replace('ffmpeg ', '')
+            version: root.mpvqcMpvPlayerPropertiesPyObject.ffmpeg_version.replace('ffmpeg ', '')
             url: "https://ffmpeg.org/"
             licence: "GPL-2.0+"
         }

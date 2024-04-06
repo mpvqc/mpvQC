@@ -52,18 +52,18 @@ TestCase {
                     property var commentTypes: ['1', '2', '3']
                 }
                 property var mpvqcMpvPlayerPyObject: QtObject {
-                    function pause() { pauseCalled = true }
+                    function pause() { objectUnderTest.pauseCalled = true }
                 }
                 property var mpvqcCommentTable: QtObject {
                     function addNewComment(commentType) {
-                        addNewCommentCalled = true
+                        objectUnderTest.addNewCommentCalled = true
                         addNewCommentCommentType = commentType
                     }
                 }
                 property var mpvqcUtilityPyObject: QtObject {
                     property point cursorPosition: Qt.point(0, 0)
                 }
-                function disableFullScreen() { disableFullScreenCalled = true }
+                function disableFullScreen() { objectUnderTest.disableFullScreenCalled = true }
             }
 
             function popup() { popupCalled = true }

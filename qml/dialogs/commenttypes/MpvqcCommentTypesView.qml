@@ -43,7 +43,7 @@ Column {
     MpvqcCommentTypesViewController {
         id: _controller
 
-        model: mpvqcSettings.commentTypes
+        model: root.mpvqcSettings.commentTypes
         selectedIndex: _listView.currentIndex
 
         onHighlightIndexRequested: index => {
@@ -56,7 +56,7 @@ Column {
         }
 
         onAcceptCopyRequested: copy => {
-            const newCommentTypes = copy.length === 0 ? mpvqcSettings.getDefaultCommentTypes() : copy
+            const newCommentTypes = copy.length === 0 ? root.mpvqcSettings.getDefaultCommentTypes() : copy
 
             mpvqcSettings.commentTypes.length = 0
             mpvqcSettings.commentTypes.push(...newCommentTypes)
@@ -64,7 +64,7 @@ Column {
 
         onResetRequested: {
             _controller.model.length = 0
-            _controller.model.push(...mpvqcSettings.getDefaultCommentTypes())
+            _controller.model.push(...root.mpvqcSettings.getDefaultCommentTypes())
         }
     }
 
@@ -77,12 +77,12 @@ Column {
 
         validateNewCommentType: (input) => {
             const items = _listView.model
-            return mpvqcCommentTypeValidatorPyObject.validate_new_comment_type(input, items)
+            return root.mpvqcCommentTypeValidatorPyObject.validate_new_comment_type(input, items)
         }
 
         validateEditingOfCommentType: (input, inputBeingEdited) => {
             const items = _listView.model
-            return mpvqcCommentTypeValidatorPyObject.validate_editing_of_comment_type(input, inputBeingEdited, items)
+            return root.mpvqcCommentTypeValidatorPyObject.validate_editing_of_comment_type(input, inputBeingEdited, items)
         }
 
         onAdded: (commentType) => {

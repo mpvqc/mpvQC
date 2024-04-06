@@ -44,7 +44,7 @@ MpvqcMenu {
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
 
         onTriggered: {
-            exit = null
+            root.exit = null
             root.editCommentClicked()
         }
     }

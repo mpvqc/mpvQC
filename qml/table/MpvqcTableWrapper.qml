@@ -32,7 +32,7 @@ FocusScope {
 
     MpvqcPlaceholder {
         width: root.width
-        height: haveComments ? 0 : root.height
+        height: root.haveComments ? 0 : root.height
         mpvqcApplication: root.mpvqcApplication
     }
 

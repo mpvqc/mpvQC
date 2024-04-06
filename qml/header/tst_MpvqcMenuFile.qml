@@ -43,7 +43,7 @@ Item {
             property var mpvqcSettings: QtObject {
                 property string lastDirectoryDocuments: 'initial directory'
             }
-            function close() { closeCalled = true }
+            function close() { testHelper.closeCalled = true }
         }
         extendedExportTemplateModel: []
     }
