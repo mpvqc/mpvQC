@@ -50,6 +50,13 @@ FocusScope {
         MpvqcSearchBox {
             id: _mpvqcSearchBox
 
+            MpvqcSearchBoxDragHandler {
+                parent: _mpvqcSearchBox.background
+                commentTable: _mpvqcTable
+                searchBox: _mpvqcSearchBox
+                topBottomMargin: _mpvqcSearchBox.customMarginTop
+            }
+
             tableHeight: _mpvqcTable.height
             tableWidth: _mpvqcTable.width
             applicationIsFullscreen: root.mpvqcApplication.fullscreen

@@ -33,7 +33,8 @@ Popup {
 
     readonly property string searchQuery: searchQueryActive ? _textField.text : ''
 
-    readonly property int marginVertical: 70
+    readonly property int customMarginVertical: 70
+    readonly property int customMarginTop: 10
 
     readonly property var searchService: MpvqcSearchService {
         searchFunc: root.searchFunc
@@ -48,8 +49,8 @@ Popup {
     height: _textField.height + topPadding + bottomPadding
     width: 450
 
-    x: mirrored ? marginVertical : root.tableWidth - width - marginVertical
-    y: 10
+    x: mirrored ? customMarginVertical : root.tableWidth - width - customMarginVertical
+    y: customMarginTop
     z: 1
 
     padding: 5
@@ -85,10 +86,8 @@ Popup {
         }
     }
 
-    onTableHeightChanged: {
-        if (root.tableHeight < root.height + root.y * 2) {
-            root.hideSearchBox()
-        }
+    onClosed: {
+        y = customMarginTop
     }
 
     RowLayout {
