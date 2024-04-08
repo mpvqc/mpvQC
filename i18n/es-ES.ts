@@ -81,29 +81,6 @@
 <context>
     <name>BackupDialog</name>
     <message>
-        <source>Backup Preferences</source>
-        <translation type="vanished">Preferencias de respaldo</translation>
-    </message>
-    <message>
-        <source>Enable Backups</source>
-        <translation type="vanished">Habilitar respaldos</translation>
-    </message>
-    <message>
-        <source>Every</source>
-        <translation type="vanished">Cada</translation>
-    </message>
-    <message>
-        <source>seconds</source>
-        <translation type="vanished">segundos</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">Abrir</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSettings</name>
-    <message>
         <source>Backup Enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,7 +98,7 @@
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferencias de respaldo</translation>
     </message>
 </context>
 <context>

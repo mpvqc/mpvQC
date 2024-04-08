@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de" sourcelanguage="en">
+<TS version="2.1" language="de_DE" sourcelanguage="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Translation</source>
-        <translation type="unfinished">Übersetzung</translation>
+        <translation>Übersetzung</translation>
     </message>
     <message>
         <source>Libraries</source>
@@ -81,29 +81,6 @@
 <context>
     <name>BackupDialog</name>
     <message>
-        <source>Backup Preferences</source>
-        <translation type="vanished">Backupeinstellungen</translation>
-    </message>
-    <message>
-        <source>Enable Backups</source>
-        <translation type="vanished">Backups aktivieren</translation>
-    </message>
-    <message>
-        <source>Every</source>
-        <translation type="vanished">Alle</translation>
-    </message>
-    <message>
-        <source>seconds</source>
-        <translation type="vanished">Sekunden</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">Öffnen</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSettings</name>
-    <message>
         <source>Backup Enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,7 +98,7 @@
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Backupeinstellungen</translation>
     </message>
 </context>
 <context>

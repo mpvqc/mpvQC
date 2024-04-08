@@ -81,29 +81,6 @@
 <context>
     <name>BackupDialog</name>
     <message>
-        <source>Backup Preferences</source>
-        <translation type="vanished">הגדרות גיבוי אוטומטי</translation>
-    </message>
-    <message>
-        <source>Enable Backups</source>
-        <translation type="vanished">הפעל גיבוי אוטומטי</translation>
-    </message>
-    <message>
-        <source>Every</source>
-        <translation type="vanished">כל</translation>
-    </message>
-    <message>
-        <source>seconds</source>
-        <translation type="vanished">שניות</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">פתח</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSettings</name>
-    <message>
         <source>Backup Enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,7 +98,7 @@
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>הגדרות גיבוי אוטומטי</translation>
     </message>
 </context>
 <context>

@@ -77,13 +77,6 @@
 <context>
     <name>BackupDialog</name>
     <message>
-        <source>seconds</source>
-        <translation type="obsolete">secondi</translation>
-    </message>
-</context>
-<context>
-    <name>BackupSettings</name>
-    <message>
         <source>Backup Enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93,7 +86,7 @@
     </message>
     <message>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Secondi</translation>
     </message>
     <message>
         <source>Backup Location</source>
