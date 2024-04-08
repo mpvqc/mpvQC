@@ -28,10 +28,10 @@ MpvqcMessageBox {
 
     readonly property var mpvqcVersionCheckerPyObject: mpvqcApplication.mpvqcVersionCheckerPyObject
 
-    title: qsTranslate("VersionCheckDialog", "Checking for Updates...")
+    title: qsTranslate("MessageBoxes", "Checking for Updates...")
 
     contentItem: Label {
-        text: qsTranslate("VersionCheckDialog", "Loading...")
+        text: qsTranslate("MessageBoxes", "Loading...")
         horizontalAlignment: Text.AlignLeft
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
