@@ -38,7 +38,7 @@ MpvqcDialog {
     MpvqcEditInputView {
         id: _editView
 
-        property string title: qsTranslate("EditInputConf", "Edit input.conf")
+        property string title: qsTranslate("InputConfEditDialog", "Edit input.conf")
 
         width: root.contentWidth
         mpvqcApplication: root.mpvqcApplication

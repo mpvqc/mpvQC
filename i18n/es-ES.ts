@@ -181,36 +181,6 @@
     </message>
 </context>
 <context>
-    <name>EditInputConf</name>
-    <message>
-        <source>Edit input.conf</source>
-        <translation type="unfinished">Editar input.conf</translation>
-    </message>
-    <message>
-        <source>Changes to the input.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Learn more</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EditMpvConf</name>
-    <message>
-        <source>Edit mpv.conf</source>
-        <translation type="unfinished">Editar mpv.conf</translation>
-    </message>
-    <message>
-        <source>Changes to the mpv.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Learn more</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ExportSettings</name>
     <message>
         <source>Export Settings</source>
@@ -304,6 +274,21 @@
     </message>
     <message>
         <source>Never</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InputConfEditDialog</name>
+    <message>
+        <source>Edit input.conf</source>
+        <translation type="unfinished">Editar input.conf</translation>
+    </message>
+    <message>
+        <source>Changes to the input.conf are available after a restart.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -568,6 +553,21 @@
     </message>
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MpvConfEditDialog</name>
+    <message>
+        <source>Edit mpv.conf</source>
+        <translation type="unfinished">Editar mpv.conf</translation>
+    </message>
+    <message>
+        <source>Changes to the mpv.conf are available after a restart.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
