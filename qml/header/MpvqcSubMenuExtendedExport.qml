@@ -62,6 +62,7 @@ MpvqcMenu {
     function openExportFileSelectionDialog(name: string, path: url): void {
         root.exportDialog.selectedFile = root.mpvqcExtendedDocumentExporterPyObject.generate_file_path_proposal()
         root.exportDialog.template = path
+        //: %1 will be the name of the template used to export
         root.exportDialog.title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name)
         root.exportDialog.open()
     }
@@ -69,6 +70,7 @@ MpvqcMenu {
     function displayExportErrorDialog(message: string, lineNr: int): void {
         root.exportErrorDialog = root.exportErrorDialogFactory.createObject(root)
         root.exportErrorDialog.text = lineNr
+            //: %1 will be the line nr of the error, %2 will be the error message (probably in English)
             ? qsTranslate("MessageBoxes", "Error at line %1: %2").arg(lineNr).arg(message)
             : message
         root.exportErrorDialog.closed.connect(root.exportErrorDialog.destroy)

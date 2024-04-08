@@ -5,34 +5,42 @@
     <name>AboutDialog</name>
     <message>
         <source>About</source>
+        <extracomment>Title of a tab in the about dialog</extracomment>
         <translation type="unfinished">Informazioni</translation>
     </message>
     <message>
         <source>Credits</source>
+        <extracomment>Title of a tab in the about dialog</extracomment>
         <translation type="unfinished">Crediti</translation>
     </message>
     <message>
         <source>Development</source>
+        <extracomment>Header for the section about people that contributed source code to the project</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Artwork</source>
+        <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation</source>
+        <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
         <translation type="unfinished">Traduzione</translation>
     </message>
     <message>
         <source>Libraries</source>
+        <extracomment>Header for the section about code dependencies of the project</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Dependencies</source>
+        <extracomment>Title of a tab in the about dialog</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copyright © mpvQC Developers</source>
+        <extracomment>This text is part of the software license description</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -52,6 +60,7 @@
     </message>
     <message>
         <source>Other</source>
+        <extracomment>Header for the section about other dependencies like fonts and icons</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -200,6 +209,7 @@
     </message>
     <message>
         <source>Write &apos;%1&apos;</source>
+        <extracomment>%1 will be the application name. Most probably &apos;mpvQC&apos; :)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -215,6 +225,7 @@
     <name>FileInteractionDialogs</name>
     <message>
         <source>untitled</source>
+        <extracomment>Will be used in the file name proposal when saving a qc document when there&apos;s no video being loaded</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -251,6 +262,7 @@
     </message>
     <message>
         <source>Export QC Document Using %1 Template</source>
+        <extracomment>%1 will be the name of the template used to export</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -462,14 +474,7 @@
     </message>
     <message>
         <source>%1 (unsaved)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Short text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Very very long text so that we can compare</source>
+        <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -545,6 +550,7 @@
     </message>
     <message>
         <source>Error at line %1: %2</source>
+        <extracomment>%1 will be the line nr of the error, %2 will be the error message (probably in English)</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -553,6 +559,7 @@
     </message>
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
+        <extracomment>%1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC&apos;s documentation about export templates</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

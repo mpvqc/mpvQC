@@ -99,6 +99,7 @@ class DocumentBackupService:
         if self._player.has_video:
             return Path(self._player.path).name
         else:
+            #: Will be used in the file name proposal when saving a qc document when there's no video being loaded
             return QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
     @property

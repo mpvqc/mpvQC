@@ -65,6 +65,7 @@ Column {
     }
 
     Label {
+        //: This text is part of the software license description
         text: qsTranslate("AboutDialog", "Copyright © mpvQC Developers")
         anchors.horizontalCenter: parent.horizontalCenter
     }

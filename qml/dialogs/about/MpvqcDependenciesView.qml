@@ -57,6 +57,7 @@ ScrollView {
         }
 
         MpvqcHeader {
+            //: Header for the section about code dependencies of the project
             text: qsTranslate("AboutDialog", "Libraries")
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -76,6 +77,7 @@ ScrollView {
         }
 
         MpvqcHeader {
+            //: Header for the section about other dependencies like fonts and icons
             text: qsTranslate("AboutDialog", "Other")
             anchors.horizontalCenter: parent.horizontalCenter
         }
