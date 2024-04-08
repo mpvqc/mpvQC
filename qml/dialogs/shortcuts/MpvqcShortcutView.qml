@@ -29,6 +29,10 @@ ScrollView {
 
     required property bool singleColumn
 
+    readonly property string keyCtrl: qsTranslate("KeyboardKeys", "Ctrl")
+    readonly property string keyShift: qsTranslate("KeyboardKeys", "Shift")
+    readonly property string keyAlt: qsTranslate("KeyboardKeys", "Alt")
+
     Binding on contentHeight {
         when: !root.singleColumn
         value: root.availableHeight
@@ -71,156 +75,156 @@ ScrollView {
         MpvqcShortcut {
             id: _shortcut
 
-            label: qsTranslate("KeyboardKeys", "New QC Document")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            label: qsTranslate("ShortcutsDialog", "New QC Document")
+            button1: root.keyCtrl
             button2: "N"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Open QC Document(s)")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            label: qsTranslate("ShortcutsDialog", "Open QC Document(s)")
+            button1: root.keyCtrl
             button3: "O"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Save QC Document")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            label: qsTranslate("ShortcutsDialog", "Save QC Document")
+            button1: root.keyCtrl
             button2: "S"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Save as new QC Document")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
-            button2: qsTranslate("KeyboardKeys", "Shift")
+            label: qsTranslate("ShortcutsDialog", "Save as new QC Document")
+            button1: root.keyCtrl
+            button2: root.keyShift
             button3: "S"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Open Video")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
-            button2: qsTranslate("KeyboardKeys", "Alt")
+            label: qsTranslate("ShortcutsDialog", "Open Video")
+            button1: root.keyCtrl
+            button2: root.keyAlt
             button3: "O"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Resize Video to Original Resolution")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            label: qsTranslate("ShortcutsDialog", "Resize Video to Original Resolution")
+            button1: root.keyCtrl
             button2: "R"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Add Comment")
+            label: qsTranslate("ShortcutsDialog", "Add Comment")
             button1: "E"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Keyboard Shortcuts")
+            label: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
             button1: "?"
         }
 
         MpvqcShortcut {
             label: qsTranslate("KeyboardKeys", "Quit")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            button1: root.keyCtrl
             button2: "Q"
         }
 
         MpvqcHeader {
-            text: qsTranslate("KeyboardKeys", "Comments")
+            text: qsTranslate("ShortcutsDialog", "Comments")
             Layout.fillWidth: true
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Edit Comment")
+            label: qsTranslate("ShortcutsDialog", "Edit Comment")
             button1Icon: "qrc:/data/icons/keyboard_return_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Copy Comment to Clipboard")
-            button1: qsTranslate("KeyboardKeys", "Ctrl")
+            label: qsTranslate("ShortcutsDialog", "Copy Comment to Clipboard")
+            button1: root.keyCtrl
             button2: "C"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Delete Comment")
+            label: qsTranslate("ShortcutsDialog", "Delete Comment")
             button1Icon: "qrc:/data/icons/keyboard_backspace_black_24dp.svg"
             isAndConnection: false
             button2: qsTranslate("KeyboardKeys", "Delete")
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Previous Comment")
+            label: qsTranslate("ShortcutsDialog", "Previous Comment")
             button1Icon: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Next Comment")
+            label: qsTranslate("ShortcutsDialog", "Next Comment")
             button1Icon: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
         }
 
         MpvqcHeader {
-            text: qsTranslate("KeyboardKeys", "Video")
+            text: qsTranslate("ShortcutsDialog", "Video")
             Layout.fillWidth: true
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Toggle Fullscreen")
+            label: qsTranslate("ShortcutsDialog", "Toggle Fullscreen")
             button1: "F"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Toggle Play/Pause")
+            label: qsTranslate("ShortcutsDialog", "Toggle Play/Pause")
             button1Icon: "qrc:/data/icons/space_bar_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Seek Backward by 2 Seconds")
+            label: qsTranslate("ShortcutsDialog", "Seek Backward by 2 Seconds")
             button1Icon: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Seek Forward by 2 Seconds")
+            label: qsTranslate("ShortcutsDialog", "Seek Forward by 2 Seconds")
             button1Icon: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Seek Backward by 5 Seconds to Keyframe")
-            button1: qsTranslate("KeyboardKeys", "Shift")
+            label: qsTranslate("ShortcutsDialog", "Seek Backward by 5 Seconds to Keyframe")
+            button1: root.keyShift
             button2Icon: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Seek Forward by 5 Seconds to Keyframe")
-            button1: qsTranslate("KeyboardKeys", "Shift")
+            label: qsTranslate("ShortcutsDialog", "Seek Forward by 5 Seconds to Keyframe")
+            button1: root.keyShift
             button2Icon: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Decrease Volume")
+            label: qsTranslate("ShortcutsDialog", "Decrease Volume")
             button1: "9"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Increase Volume")
+            label: qsTranslate("ShortcutsDialog", "Increase Volume")
             button1: "0"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Toggle Mute")
+            label: qsTranslate("ShortcutsDialog", "Toggle Mute")
             button1: "M"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Frame Step Backward")
+            label: qsTranslate("ShortcutsDialog", "Frame Step Backward")
             button1: ","
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Frame Step Forward")
+            label: qsTranslate("ShortcutsDialog", "Frame Step Forward")
             button1: "."
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Cycle Through Subtitle Tracks")
+            label: qsTranslate("ShortcutsDialog", "Cycle Through Subtitle Tracks")
             button1: "J"
         }
 
@@ -230,23 +234,23 @@ ScrollView {
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Video Screenshot (Unscaled)")
+            label: qsTranslate("ShortcutsDialog", "Video Screenshot (Unscaled)")
             button1: "S"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Video Screenshot (Scaled)")
-            button1: qsTranslate("KeyboardKeys", "Shift")
+            label: qsTranslate("ShortcutsDialog", "Video Screenshot (Scaled)")
+            button1: root.keyShift
             button2: "S"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Cycle Through Subtitle Render Modes")
+            label: qsTranslate("ShortcutsDialog", "Cycle Through Subtitle Render Modes")
             button1: "B"
         }
 
         MpvqcShortcut {
-            label: qsTranslate("KeyboardKeys", "Toggle Video Statistics")
+            label: qsTranslate("ShortcutsDialog", "Toggle Video Statistics")
             button1: "I"
         }
     }

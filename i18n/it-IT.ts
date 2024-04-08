@@ -363,55 +363,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open QC Document(s)</source>
-        <translation type="unfinished">Apri Documento QC</translation>
-    </message>
-    <message>
-        <source>Save QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save as new QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Resize Video to Original Resolution</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Apri Documento QC</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Comments</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy Comment to Clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -419,80 +375,8 @@
         <translation type="unfinished">Cancella</translation>
     </message>
     <message>
-        <source>Previous Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Video</source>
-        <translation type="unfinished">Video</translation>
-    </message>
-    <message>
-        <source>Toggle Fullscreen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Play/Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Backward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Forward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Backward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Forward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Decrease Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Increase Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Mute</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame Step Backward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame Step Forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cycle Through Subtitle Tracks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Screenshot (Unscaled)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Screenshot (Scaled)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cycle Through Subtitle Render Modes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Video Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Video</translation>
     </message>
 </context>
 <context>
@@ -833,10 +717,126 @@
     </message>
     <message>
         <source>Open QC Document(s)</source>
-        <translation type="obsolete">Apri Documento QC</translation>
+        <translation type="unfinished">Apri Documento QC</translation>
     </message>
     <message>
         <source>Cycle Through Audio Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as new QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Video to Original Resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Comment to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video</source>
+        <translation type="unfinished">Video</translation>
+    </message>
+    <message>
+        <source>Toggle Fullscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Play/Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Backward by 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Forward by 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Backward by 5 Seconds to Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Forward by 5 Seconds to Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decrease Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increase Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Mute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Step Backward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Step Forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Screenshot (Unscaled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Screenshot (Scaled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Render Modes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Video Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
