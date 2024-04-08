@@ -190,7 +190,7 @@
     </message>
 </context>
 <context>
-    <name>ExportSettings</name>
+    <name>ExportSettingsDialog</name>
     <message>
         <source>Export Settings</source>
         <translation type="unfinished"></translation>
@@ -267,7 +267,7 @@
     </message>
 </context>
 <context>
-    <name>ImportSettings</name>
+    <name>ImportSettingsDialog</name>
     <message>
         <source>Import Settings</source>
         <translation type="unfinished"></translation>

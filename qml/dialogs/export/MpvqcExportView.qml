@@ -39,7 +39,7 @@ ColumnLayout {
     MpvqcTextFieldRow {
         id: _nicknameInput
 
-        label: qsTranslate("ExportSettings", "Nickname")
+        label: qsTranslate("ExportSettingsDialog", "Nickname")
         input: root.mpvqcSettings.nickname
         spacing: 16
         fontWeight: Font.DemiBold
@@ -53,7 +53,7 @@ ColumnLayout {
     }
 
     MpvqcHeader {
-        text: qsTranslate("ExportSettings", "Document Header")
+        text: qsTranslate("ExportSettingsDialog", "Document Header")
         Layout.topMargin: 30
         Layout.bottomMargin: 10
         Layout.fillWidth: true
@@ -62,7 +62,7 @@ ColumnLayout {
     MpvqcSwitchRow {
         id: _dateToggle
 
-        label: qsTranslate("ExportSettings", "Write Date")
+        label: qsTranslate("ExportSettingsDialog", "Write Date")
         checked: root.mpvqcSettings.writeHeaderDate
         prefWidth: root.width
 
@@ -74,7 +74,8 @@ ColumnLayout {
     MpvqcSwitchRow {
         id: _generatorToggle
 
-        label: qsTranslate("ExportSettings", "Write '%1'").arg(Qt.application.name)
+        //: %1 will be the application name. Most probably 'mpvQC' :)
+        label: qsTranslate("ExportSettingsDialog", "Write '%1'").arg(Qt.application.name)
         checked: root.mpvqcSettings.writeHeaderGenerator
         prefWidth: root.width
 
@@ -86,7 +87,7 @@ ColumnLayout {
     MpvqcSwitchRow {
         id: _nicknameToggle
 
-        label: qsTranslate("ExportSettings", "Write Nickname")
+        label: qsTranslate("ExportSettingsDialog", "Write Nickname")
         checked: root.mpvqcSettings.writeHeaderNickname
         prefWidth: root.width
 
@@ -98,7 +99,7 @@ ColumnLayout {
     MpvqcSwitchRow {
         id: _pathToggle
 
-        label: qsTranslate("ExportSettings", "Write Video Path")
+        label: qsTranslate("ExportSettingsDialog", "Write Video Path")
         checked: root.mpvqcSettings.writeHeaderVideoPath
         prefWidth: root.width
 
