@@ -41,7 +41,7 @@ ColumnLayout {
     MpvqcSwitchRow {
         id: _backupEnable
 
-        label: qsTranslate("BackupSettings", "Backup Enabled")
+        label: qsTranslate("BackupDialog", "Backup Enabled")
         prefWidth: root.width
         checked: root.mpvqcSettings.backupEnabled
         Layout.topMargin: 20
@@ -54,8 +54,8 @@ ColumnLayout {
     MpvqcSpinBoxRow {
         id: _backupInterval
 
-        label: qsTranslate("BackupSettings", "Backup Interval")
-        suffix: qsTranslate("BackupSettings", "Seconds")
+        label: qsTranslate("BackupDialog", "Backup Interval")
+        suffix: qsTranslate("BackupDialog", "Seconds")
         prefWidth: root.width
         value: root.mpvqcSettings.backupInterval
         valueFrom: 15
@@ -71,7 +71,7 @@ ColumnLayout {
 
         property url backupDirectory: root.mpvqcApplicationPathsPyObject.dir_backup
 
-        text: qsTranslate("BackupSettings", "Backup Location")
+        text: qsTranslate("BackupDialog", "Backup Location")
         icon.source: "qrc:/data/icons/launch_black_24dp.svg"
         hoverEnabled: true
         Layout.alignment: Qt.AlignHCenter

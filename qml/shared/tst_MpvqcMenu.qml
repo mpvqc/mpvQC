@@ -27,20 +27,20 @@ Item {
     MpvqcMenu {
         id: objectUnderTest1
 
-        Action { text: qsTranslate("MainWindow", "Short text") }
+        Action { text: "Short text" }
     }
 
     MpvqcMenu {
         id: objectUnderTest2
 
-        Action { text: qsTranslate("MainWindow", "Short text") }
+        Action { text: "Short text" }
         MenuSeparator { }
     }
 
     MpvqcMenu {
         id: objectUnderTest3
 
-        Action { text: qsTranslate("MainWindow", "Very very long text so that we can compare") }
+        Action { text: "Very very long text so that we can compare" }
     }
 
     TestCase {

@@ -34,7 +34,7 @@ MpvqcMenu {
     property alias extendedExportsAction: _extendedExportsAction
     property alias aboutAction: _aboutAction
 
-    title: qsTranslate("MainWindow", "&Help")
+    title: qsTranslate("MainWindow", "Help")
 
     Action {
         id: _updateAction
@@ -46,7 +46,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Check for Updates...")
+        text: qsTranslate("MainWindow", "Check for Updates...")
         icon.source: "qrc:/data/icons/update_black_24dp.svg"
 
         onTriggered: {
@@ -110,7 +110,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "About &mpvQC...")
+        text: qsTranslate("MainWindow", "About mpvQC...")
         icon.source: "qrc:/data/icons/info_black_24dp.svg"
 
         onTriggered: {

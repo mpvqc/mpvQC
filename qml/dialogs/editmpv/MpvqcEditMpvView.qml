@@ -34,8 +34,8 @@ ColumnLayout {
         id: label
 
         property string url: 'https://mpv.io/manual/master/#configuration-files'
-        property string text1: qsTranslate("EditMpvConf", 'Changes to the mpv.conf are available after a restart.')
-        property string text2: qsTranslate("EditMpvConf", 'Learn more')
+        property string text1: qsTranslate("MpvConfEditDialog", 'Changes to the mpv.conf are available after a restart.')
+        property string text2: qsTranslate("MpvConfEditDialog", 'Learn more')
 
         Layout.topMargin: 20
         Layout.fillWidth: true

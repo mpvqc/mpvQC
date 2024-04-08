@@ -38,7 +38,7 @@ MpvqcDialog {
     MpvqcEditMpvView {
         id: _editView
 
-        property string title: qsTranslate("EditMpvConf", "Edit mpv.conf")
+        property string title: qsTranslate("MpvConfEditDialog", "Edit mpv.conf")
 
         width: root.contentWidth
         mpvqcApplication: root.mpvqcApplication

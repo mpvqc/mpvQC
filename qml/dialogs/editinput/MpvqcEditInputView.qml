@@ -34,8 +34,8 @@ ColumnLayout {
         id: label
 
         property string url: 'https://mpv.io/manual/master/#list-of-input-commands'
-        property string text1: qsTranslate("EditInputConf", 'Changes to the input.conf are available after a restart.')
-        property string text2: qsTranslate("EditInputConf", 'Learn more')
+        property string text1: qsTranslate("InputConfEditDialog", 'Changes to the input.conf are available after a restart.')
+        property string text2: qsTranslate("InputConfEditDialog", 'Learn more')
 
         Layout.topMargin: 20
         Layout.fillWidth: true

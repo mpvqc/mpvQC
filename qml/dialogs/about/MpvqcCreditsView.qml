@@ -35,6 +35,7 @@ ScrollView {
         width: parent.width
 
         MpvqcHeader {
+            //: Header for the section about people that contributed source code to the project
             text: qsTranslate("AboutDialog", "Development")
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -50,6 +51,7 @@ ScrollView {
         }
 
         MpvqcHeader {
+            //: Header for the section about people that contributed images, icons or other artwork to the project
             text: qsTranslate("AboutDialog", "Artwork")
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -65,6 +67,7 @@ ScrollView {
         }
 
         MpvqcHeader {
+            //: Header for the section about people that contributed images, icons or other artwork to the project
             text: qsTranslate("AboutDialog", "Translation")
             anchors.horizontalCenter: parent.horizontalCenter
         }

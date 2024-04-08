@@ -37,7 +37,7 @@ MpvqcMenu {
     property alias editMpvAction: _editMpvAction
     property alias editInputAction: _editInputAction
 
-    title: qsTranslate("MainWindow", "&Options")
+    title: qsTranslate("MainWindow", "Options")
 
     Action {
         id: _appearanceAction
@@ -48,7 +48,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Appearance...")
+        text: qsTranslate("MainWindow", "Appearance...")
         icon.source: "qrc:/data/icons/palette_black_24dp.svg"
 
         onTriggered: {
@@ -67,7 +67,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Comment Type Settings...")
+        text: qsTranslate("MainWindow", "Comment Type Settings...")
         icon.source: "qrc:/data/icons/comment_black_24dp.svg"
 
         onTriggered: {
@@ -96,7 +96,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Backup Settings...")
+        text: qsTranslate("MainWindow", "Backup Settings...")
         icon.source: "qrc:/data/icons/settings_backup_restore_black_24dp.svg"
 
         onTriggered: {
@@ -115,7 +115,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Export Settings...")
+        text: qsTranslate("MainWindow", "Export Settings...")
         icon.source: "qrc:/data/icons/upload_black_24dp.svg"
 
         onTriggered: {
@@ -134,7 +134,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Import Settings...")
+        text: qsTranslate("MainWindow", "Import Settings...")
         icon.source: "qrc:/data/icons/download_black_24dp.svg"
 
         onTriggered: {
@@ -155,7 +155,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Edit mpv.conf...")
+        text: qsTranslate("MainWindow", "Edit mpv.conf...")
         icon.source: "qrc:/data/icons/movie_edit_black_24dp.svg"
 
         onTriggered: {
@@ -174,7 +174,7 @@ MpvqcMenu {
             }
         }
 
-        text: qsTranslate("MainWindow", "&Edit input.conf...")
+        text: qsTranslate("MainWindow", "Edit input.conf...")
         icon.source: "qrc:/data/icons/keyboard_black_24dp.svg"
 
         onTriggered: {

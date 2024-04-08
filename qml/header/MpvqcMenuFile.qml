@@ -37,12 +37,12 @@ MpvqcMenu {
     property alias saveAsAction: _saveAsAction
     property alias quitAction: _quitAction
 
-    title: qsTranslate("MainWindow", "&File")
+    title: qsTranslate("MainWindow", "File")
 
     Action {
         id: _resetAction
 
-        text: qsTranslate("MainWindow", "&New QC Document")
+        text: qsTranslate("MainWindow", "New QC Document")
         shortcut: "CTRL+N"
         icon.source: "qrc:/data/icons/inventory_black_24dp.svg"
 
@@ -58,7 +58,7 @@ MpvqcMenu {
             mpvqcApplication: root.mpvqcApplication
         }
 
-        text: qsTranslate("MainWindow", "&Open QC Document(s)...")
+        text: qsTranslate("MainWindow", "Open QC Document(s)...")
         shortcut: "CTRL+O"
         icon.source: "qrc:/data/icons/file_open_black_24dp.svg"
 
@@ -70,7 +70,7 @@ MpvqcMenu {
     Action {
         id: _saveAction
 
-        text: qsTranslate("MainWindow", "&Save QC Document")
+        text: qsTranslate("MainWindow", "Save QC Document")
         shortcut: "CTRL+S"
         icon.source: "qrc:/data/icons/save_black_24dp.svg"
 
@@ -82,7 +82,7 @@ MpvqcMenu {
     Action {
         id: _saveAsAction
 
-        text: qsTranslate("MainWindow", "&Save QC Document As...")
+        text: qsTranslate("MainWindow", "Save QC Document As...")
         shortcut: "CTRL+Shift+S"
         icon.source: "qrc:/data/icons/save_as_black_24dp.svg"
 
@@ -114,7 +114,7 @@ MpvqcMenu {
     Action {
         id: _quitAction
 
-        text: qsTranslate("MainWindow", "&Exit mpvQC")
+        text: qsTranslate("MainWindow", "Exit mpvQC")
         shortcut: "CTRL+Q"
         icon.source: "qrc:/data/icons/exit_to_app_black_24dp.svg"
 

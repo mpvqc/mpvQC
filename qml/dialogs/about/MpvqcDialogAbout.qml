@@ -26,18 +26,21 @@ MpvqcDialog {
     id: root
 
     MpvqcAboutView {
+        //: Title of a tab in the about dialog
         property string title: qsTranslate("AboutDialog", "About")
 
         width: root.width
     }
 
     MpvqcCreditsView {
+        //: Title of a tab in the about dialog
         property string title: qsTranslate("AboutDialog", "Credits")
 
         width: root.width
     }
 
     MpvqcDependenciesView {
+        //: Title of a tab in the about dialog
         property string title: qsTranslate("AboutDialog", "Dependencies")
 
         width: root.width

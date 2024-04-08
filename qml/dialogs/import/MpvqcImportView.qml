@@ -36,7 +36,7 @@ ColumnLayout {
         spacing: 30
 
         Label {
-            text: qsTranslate("ImportSettings", "Open video if found")
+            text: qsTranslate("ImportSettingsDialog", "Open video if found")
             horizontalAlignment: Text.AlignRight
             wrapMode: Text.Wrap
             Layout.preferredWidth: 165
@@ -50,15 +50,15 @@ ColumnLayout {
 
             model: [
                 {
-                    text: qsTranslate("ImportSettings", "Always"),
+                    text: qsTranslate("ImportSettingsDialog", "Always"),
                     value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS,
                 },
                 {
-                    text: qsTranslate("ImportSettings", "Ask every time"),
+                    text: qsTranslate("ImportSettingsDialog", "Ask every time"),
                     value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME,
                 },
                 {
-                    text: qsTranslate("ImportSettings", "Never"),
+                    text: qsTranslate("ImportSettingsDialog", "Never"),
                     value: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER,
                 }
             ]
