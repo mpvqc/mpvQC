@@ -12,10 +12,6 @@
         <translation type="unfinished">Crediti</translation>
     </message>
     <message>
-        <source>Licence</source>
-        <translation type="obsolete">Licenza</translation>
-    </message>
-    <message>
         <source>Development</source>
         <translation type="unfinished"></translation>
     </message>
@@ -112,10 +108,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open QC Document(s)</source>
-        <translation type="obsolete">Apri Documento QC</translation>
-    </message>
-    <message>
         <source>Open Video</source>
         <translation type="unfinished"></translation>
     </message>
@@ -161,26 +153,6 @@
 </context>
 <context>
     <name>CommentTypesDialog</name>
-    <message>
-        <source>Type here to add new comment types</source>
-        <translation type="obsolete">Definisci nuova classe commento</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="obsolete">Aggiungi</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="obsolete">Rimuovi</translation>
-    </message>
-    <message>
-        <source>Move Up</source>
-        <translation type="obsolete">Sposta su</translation>
-    </message>
-    <message>
-        <source>Move Down</source>
-        <translation type="obsolete">Sposta giù</translation>
-    </message>
     <message>
         <source>A comment type must not be blank</source>
         <translation type="unfinished"></translation>
@@ -270,20 +242,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Video File</source>
-        <translation type="obsolete">Apri File Video</translation>
-    </message>
-    <message>
         <source>Video files</source>
         <translation type="unfinished">File Video</translation>
     </message>
     <message>
         <source>All files</source>
         <translation type="unfinished">Tutti i file</translation>
-    </message>
-    <message>
-        <source>Open Subtitle File</source>
-        <translation type="obsolete">Apri file di sottotitoli</translation>
     </message>
     <message>
         <source>Subtitle files</source>
@@ -352,39 +316,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open QC Document(s)</source>
-        <translation type="obsolete">Apri Documento QC</translation>
-    </message>
-    <message>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete</source>
         <translation type="unfinished">Cancella</translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation type="obsolete">Video</translation>
-    </message>
-</context>
-<context>
-    <name>LanguageSelection</name>
-    <message>
-        <source>English</source>
-        <translation type="obsolete">Inglese</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation type="obsolete">Tedesco</translation>
-    </message>
-    <message>
-        <source>Italian</source>
-        <translation type="obsolete">Italiano</translation>
-    </message>
-    <message>
-        <source>Hebrew</source>
-        <translation type="vanished">Ebraico</translation>
     </message>
 </context>
 <context>
@@ -425,10 +362,6 @@
         <translation type="unfinished">Opzioni</translation>
     </message>
     <message>
-        <source>Window Title</source>
-        <translation type="obsolete">Titolo Finestra</translation>
-    </message>
-    <message>
         <source>Language</source>
         <translation type="unfinished">Lingua</translation>
     </message>
@@ -437,76 +370,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ctrl+N</source>
-        <translation type="obsolete">Ctrl+N</translation>
-    </message>
-    <message>
         <source>Open QC Document(s)...</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation type="obsolete">Ctrl+O</translation>
     </message>
     <message>
         <source>Save QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ctrl+S</source>
-        <translation type="obsolete">Ctrl+S</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+S</source>
-        <translation type="obsolete">Ctrl+Shift+S</translation>
-    </message>
-    <message>
         <source>Exit mpvQC</source>
         <translation type="unfinished">Esci da mpvQC</translation>
-    </message>
-    <message>
-        <source>Ctrl+Q</source>
-        <translation type="obsolete">Ctrl+Q</translation>
     </message>
     <message>
         <source>Open Video...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ctrl+Shift+O</source>
-        <translation type="obsolete">Ctrl+Shift+O</translation>
-    </message>
-    <message>
-        <source>Ctrl+Alt+Shift+O</source>
-        <translation type="obsolete">Ctrl+Alt+Shift+O</translation>
-    </message>
-    <message>
         <source>Resize Video to Original Resolution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ctrl+R</source>
-        <translation type="obsolete">Ctrl+R</translation>
-    </message>
-    <message>
         <source>Check for Updates...</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>About Qt</source>
-        <translation type="obsolete">Informazioni su Qt</translation>
-    </message>
-    <message>
-        <source>About mpvQC</source>
-        <translation type="obsolete">Informazioni su mpvQC</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="obsolete">Impostazioni</translation>
-    </message>
-    <message>
-        <source>Ctrl+Alt+S</source>
-        <translation type="obsolete">Ctrl+Alt+S</translation>
     </message>
     <message>
         <source>Default Title</source>
@@ -632,10 +517,6 @@
         <translation>Vuoi davvero chiudere l&apos;applicazione senza salvare il tuo QC?</translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation type="vanished">Cancella</translation>
-    </message>
-    <message>
         <source>Unsaved Changes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -682,20 +563,6 @@
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SearchForm</name>
-    <message>
-        <source>Close</source>
-        <translation type="obsolete">Chiudi</translation>
-    </message>
-</context>
-<context>
-    <name>SettingsDialogEditConfig</name>
-    <message>
-        <source>Changes will be applied after restart.</source>
-        <translation type="obsolete">Devi riavviare l&apos;applicazione per applicare le impostazioni.</translation>
     </message>
 </context>
 <context>

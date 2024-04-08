@@ -4,20 +4,12 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>About mpvQC</source>
-        <translation type="vanished">Acerca de mpvQC</translation>
-    </message>
-    <message>
         <source>About</source>
         <translation>Acerca de</translation>
     </message>
     <message>
         <source>Credits</source>
         <translation>Créditos</translation>
-    </message>
-    <message>
-        <source>Licence</source>
-        <translation type="vanished">Licencia</translation>
     </message>
     <message>
         <source>Development</source>
@@ -116,10 +108,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open QC Document(s)</source>
-        <translation type="obsolete">Abrir Documento(s) de QC</translation>
-    </message>
-    <message>
         <source>Open Video</source>
         <translation type="unfinished"></translation>
     </message>
@@ -165,38 +153,6 @@
 </context>
 <context>
     <name>CommentTypesDialog</name>
-    <message>
-        <source>Edit Comment Types</source>
-        <translation type="vanished">Editar Tipos de Comentarios</translation>
-    </message>
-    <message>
-        <source>Comment Types </source>
-        <translation type="vanished">Tipos de Comentarios </translation>
-    </message>
-    <message>
-        <source>Add new comment types or rearange them.</source>
-        <translation type="vanished">Añade nuevos tipos de comentarios o reordénalos.</translation>
-    </message>
-    <message>
-        <source>Type here to add new comment types</source>
-        <translation type="vanished">Escriba aquí para añadir nuevos tipos de comentarios</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="vanished">Agregar</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="vanished">Eliminar</translation>
-    </message>
-    <message>
-        <source>Move Up</source>
-        <translation type="vanished">Subir</translation>
-    </message>
-    <message>
-        <source>Move Down</source>
-        <translation type="vanished">Bajar</translation>
-    </message>
     <message>
         <source>A comment type must not be blank</source>
         <translation type="unfinished"></translation>
@@ -286,20 +242,12 @@
         <translation>sin título</translation>
     </message>
     <message>
-        <source>Open Video File</source>
-        <translation type="vanished">Abrir Archivo de Video</translation>
-    </message>
-    <message>
         <source>Video files</source>
         <translation>Archivos de video</translation>
     </message>
     <message>
         <source>All files</source>
         <translation>Todos los archivos</translation>
-    </message>
-    <message>
-        <source>Open Subtitle File</source>
-        <translation type="vanished">Abrir Archivo de Subtítulos</translation>
     </message>
     <message>
         <source>Subtitle files</source>
@@ -316,14 +264,6 @@
     <message>
         <source>Save QC Document As</source>
         <translation>Guardar Documento de QC Como</translation>
-    </message>
-    <message>
-        <source>Open Network Stream</source>
-        <translation type="vanished">Abrir Transmisión de Red</translation>
-    </message>
-    <message>
-        <source>Enter URL:</source>
-        <translation type="vanished">Introduce la URL:</translation>
     </message>
     <message>
         <source>Open Subtitle(s)</source>
@@ -376,51 +316,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New QC Document</source>
-        <translation type="obsolete">Nuevo Documento de QC</translation>
-    </message>
-    <message>
-        <source>Open QC Document(s)</source>
-        <translation type="obsolete">Abrir Documento(s) de QC</translation>
-    </message>
-    <message>
-        <source>Save QC Document</source>
-        <translation type="obsolete">Guardar Documento de QC</translation>
-    </message>
-    <message>
-        <source>Resize Video to Original Resolution</source>
-        <translation type="obsolete">Cambiar el Tamaño del Video a la Resolución Original</translation>
-    </message>
-    <message>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete</source>
         <translation type="unfinished">Borrar</translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation type="obsolete">Video</translation>
-    </message>
-</context>
-<context>
-    <name>LanguageSelection</name>
-    <message>
-        <source>English</source>
-        <translation type="vanished">Inglés</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation type="vanished">Alemán</translation>
-    </message>
-    <message>
-        <source>Italian</source>
-        <translation type="vanished">Italiano</translation>
-    </message>
-    <message>
-        <source>Hebrew</source>
-        <translation type="vanished">Hebreo</translation>
     </message>
 </context>
 <context>
@@ -461,14 +362,6 @@
         <translation>Opciones</translation>
     </message>
     <message>
-        <source>Window Title</source>
-        <translation type="vanished">Título de la Ventana</translation>
-    </message>
-    <message>
-        <source>QC Document Export</source>
-        <translation type="vanished">Exportación de documentos de QC</translation>
-    </message>
-    <message>
         <source>Language</source>
         <translation>Lenguaje</translation>
     </message>
@@ -481,96 +374,32 @@
         <translation>Nuevo Documento de QC</translation>
     </message>
     <message>
-        <source>Ctrl+N</source>
-        <translation type="vanished">Ctrl+N</translation>
-    </message>
-    <message>
         <source>Open QC Document(s)...</source>
         <translation>Abrir Documento(s) de QC...</translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation type="vanished">Ctrl+O</translation>
     </message>
     <message>
         <source>Save QC Document</source>
         <translation>Guardar Documento de QC</translation>
     </message>
     <message>
-        <source>Ctrl+S</source>
-        <translation type="vanished">Ctrl+S</translation>
-    </message>
-    <message>
         <source>Save QC Document As...</source>
         <translation>Guardar Documento de QC como...</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+S</source>
-        <translation type="vanished">Ctrl+Shift+S</translation>
     </message>
     <message>
         <source>Exit mpvQC</source>
         <translation>Salir de mpvQC</translation>
     </message>
     <message>
-        <source>Ctrl+Q</source>
-        <translation type="vanished">Ctrl+Q</translation>
-    </message>
-    <message>
         <source>Open Video...</source>
         <translation>Abrir Video...</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+O</source>
-        <translation type="vanished">Ctrl+Shift+O</translation>
-    </message>
-    <message>
-        <source>Open Network Stream...</source>
-        <translation type="vanished">Abrir Transmisión de Red...</translation>
-    </message>
-    <message>
-        <source>Ctrl+Alt+Shift+O</source>
-        <translation type="vanished">Ctrl+Alt+Shift+O</translation>
     </message>
     <message>
         <source>Resize Video to Original Resolution</source>
         <translation>Cambiar el Tamaño del Video a la Resolución Original</translation>
     </message>
     <message>
-        <source>Ctrl+R</source>
-        <translation type="vanished">Ctrl+R</translation>
-    </message>
-    <message>
         <source>Check for Updates...</source>
         <translation>Buscar Actualizaciones...</translation>
-    </message>
-    <message>
-        <source>About Qt</source>
-        <translation type="vanished">Acerca de Qt</translation>
-    </message>
-    <message>
-        <source>About mpvQC</source>
-        <translation type="vanished">Acerca de mpvQC</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="vanished">Ajustes</translation>
-    </message>
-    <message>
-        <source>Ctrl+Alt+S</source>
-        <translation type="vanished">Ctrl+Alt+S</translation>
-    </message>
-    <message>
-        <source>Open Subtitles...</source>
-        <translation type="vanished">Abrir Subtítulos...</translation>
-    </message>
-    <message>
-        <source>Edit Comment Types...</source>
-        <translation type="vanished">Editar Tipos de Comentarios...</translation>
-    </message>
-    <message>
-        <source>Edit Nickname...</source>
-        <translation type="vanished">Editar Apodo...</translation>
     </message>
     <message>
         <source>Default Title</source>
@@ -585,36 +414,12 @@
         <translation>Ruta de Video</translation>
     </message>
     <message>
-        <source>Enable Dark Theme</source>
-        <translation type="vanished">Habilitar Tema Oscuro</translation>
-    </message>
-    <message>
         <source>Edit mpv.conf...</source>
         <translation>Editar mpv.conf...</translation>
     </message>
     <message>
         <source>Edit input.conf...</source>
         <translation>Editar input.conf...</translation>
-    </message>
-    <message>
-        <source>Enable Backups</source>
-        <translation type="vanished">Habilitar Respaldos</translation>
-    </message>
-    <message>
-        <source>Open Backup Preferences...</source>
-        <translation type="vanished">Abrir Preferencias de Respaldo...</translation>
-    </message>
-    <message>
-        <source>Save Nickname</source>
-        <translation type="vanished">Guardar Apodo</translation>
-    </message>
-    <message>
-        <source>Save Video Path</source>
-        <translation type="vanished">Guardar la Ruta de Video</translation>
-    </message>
-    <message>
-        <source>(unsaved)</source>
-        <translation type="vanished">(sin guardar)</translation>
     </message>
     <message>
         <source>Default format</source>
@@ -712,14 +517,6 @@
         <translation>¿Realmente quieres cerrar sin guardar tu QC?</translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation type="vanished">Borrar</translation>
-    </message>
-    <message>
-        <source>Keep</source>
-        <translation type="vanished">Conservar</translation>
-    </message>
-    <message>
         <source>Unsaved Changes</source>
         <translation>Cambios sin Guardar</translation>
     </message>
@@ -734,35 +531,6 @@
     <message>
         <source>A video was found. Do you want to open it?</source>
         <translation>Se encontró un video. ¿Quieres abrirlo?</translation>
-    </message>
-    <message>
-        <source>Existing Comments</source>
-        <translation type="vanished">Comentarios Existentes</translation>
-    </message>
-    <message>
-        <source>What do you want to do with the existing comments?</source>
-        <translation type="vanished">¿Qué quieres hacer con los comentarios existentes?</translation>
-    </message>
-    <message>
-        <source>Imported Document Not Compatible</source>
-        <translation type="vanished">Documento Importado No Compatible</translation>
-    </message>
-    <message numerus="yes">
-        <source>The following file(s) are not compatible:</source>
-        <translation type="vanished">
-            <numerusform>Los siguientes archivos no son compatibles:</numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Saving the QC Document Failed</source>
-        <translation type="vanished">Error al Guardar el Documento de QC</translation>
-    </message>
-    <message>
-        <source>Saving the QC document failed.
-Are you sure you have permission to write in the selected directory?</source>
-        <translation type="vanished">No se pudo guardar el documento de QC.
-¿Estás seguro de que tienes permiso para escribir en el directorio seleccionado?</translation>
     </message>
     <message>
         <source>Delete Comment</source>
@@ -795,51 +563,6 @@ Are you sure you have permission to write in the selected directory?</source>
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SearchForm</name>
-    <message>
-        <source>Search...</source>
-        <translation type="vanished">Buscar...</translation>
-    </message>
-    <message>
-        <source>Previous</source>
-        <translation type="vanished">Anterior</translation>
-    </message>
-    <message>
-        <source>Next</source>
-        <translation type="vanished">Siguiente</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="vanished">Cerrar</translation>
-    </message>
-</context>
-<context>
-    <name>SettingsDialogEditConfig</name>
-    <message>
-        <source>Changes will be applied after restart.</source>
-        <translation type="vanished">Los cambios se aplicarán después del reinicio.</translation>
-    </message>
-    <message>
-        <source>Edit mpv.conf</source>
-        <translation type="vanished">Editar mpv.conf</translation>
-    </message>
-    <message>
-        <source>Edit input.conf</source>
-        <translation type="vanished">Editar input.conf</translation>
-    </message>
-</context>
-<context>
-    <name>SettingsDialogNickname</name>
-    <message>
-        <source>Edit Nickname</source>
-        <translation type="vanished">Editar Apodo</translation>
-    </message>
-    <message>
-        <source>New nickname:</source>
-        <translation type="vanished">Nuevo apodo:</translation>
     </message>
 </context>
 <context>
@@ -978,10 +701,6 @@ Are you sure you have permission to write in the selected directory?</source>
     <message>
         <source>New Version Available</source>
         <translation>Nueva Versión Disponible</translation>
-    </message>
-    <message>
-        <source>There is a new version of mpvQC available ({}).&lt;br&gt;Visit &lt;a href=&apos;https://mpvqc.github.io/&apos;&gt;https://mpvqc.github.io/&lt;/a&gt; to download it.</source>
-        <translation type="vanished">Hay una nueva versión de mpvQC disponible ({}).&lt;br&gt;Visita &lt;a href=&apos;https://mpvqc.github.io/&apos;&gt;https://mpvqc.github.io/&lt;/a&gt; para descargarla.</translation>
     </message>
     <message>
         <source>You are already using the most recent version of mpvQC!</source>
