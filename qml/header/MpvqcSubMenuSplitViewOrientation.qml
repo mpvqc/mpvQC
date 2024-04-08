@@ -42,7 +42,7 @@ MpvqcMenu {
     MenuItem {
         id: _verticalLayout
 
-        text: qsTranslate("MainWindow", "Vertical Layout")
+        text: qsTranslate("MainWindow", "Video Above Comments")
         autoExclusive: true
         checkable: true
         checked: root.isVerticalLayout
@@ -55,7 +55,7 @@ MpvqcMenu {
     MenuItem {
         id: _horizontalLayout
 
-        text: qsTranslate("MainWindow", "Horizontal Layout")
+        text: qsTranslate("MainWindow", "Video Next to Comments")
         autoExclusive: true
         checkable: true
         checked: !root.isVerticalLayout

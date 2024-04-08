@@ -486,19 +486,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Vertical Layout</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Horizontal Layout</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Application Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Extended Exports...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Above Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Next to Comments</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
