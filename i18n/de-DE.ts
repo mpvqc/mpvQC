@@ -39,6 +39,29 @@
         <source>Dependencies</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Copyright © mpvQC Developers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GNU General Public License, version 3 or later</source>
+        <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This program comes with absolutely no warranty.</source>
+        <extracomment>This text is part of the software license description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>See the %1 for details.</source>
+        <extracomment>This text is part of the software license description. Argument %1 will be the link to the license</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppearanceDialog</name>
@@ -136,31 +159,31 @@
     <name>CommentTypes</name>
     <message>
         <source>Translation</source>
-        <translation>Übersetzung</translation>
+        <translation type="vanished">Übersetzung</translation>
     </message>
     <message>
         <source>Punctuation</source>
-        <translation>Interpunktion</translation>
+        <translation type="vanished">Interpunktion</translation>
     </message>
     <message>
         <source>Spelling</source>
-        <translation>Rechtschreibung</translation>
+        <translation type="vanished">Rechtschreibung</translation>
     </message>
     <message>
         <source>Phrasing</source>
-        <translation>Ausdruck</translation>
+        <translation type="vanished">Ausdruck</translation>
     </message>
     <message>
         <source>Timing</source>
-        <translation>Timing</translation>
+        <translation type="vanished">Timing</translation>
     </message>
     <message>
         <source>Typeset</source>
-        <translation>Typeset</translation>
+        <translation type="vanished">Typeset</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation>Hinweis</translation>
+        <translation type="vanished">Hinweis</translation>
     </message>
     <message>
         <source>No comment types defined. Define new comment types in the settings.</source>
@@ -206,10 +229,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Characters &apos;,[]&apos; not allowed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Comment type already exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -219,6 +238,10 @@
     </message>
     <message>
         <source>New comment type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Characters &apos;{}&apos; not allowed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -377,6 +400,138 @@
     </message>
     <message>
         <source>Alt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open QC Document(s)</source>
+        <translation type="unfinished">QC-Dokument(e) öffnen</translation>
+    </message>
+    <message>
+        <source>Save QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as new QC Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resize Video to Original Resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keyboard Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Comment to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">Löschen</translation>
+    </message>
+    <message>
+        <source>Previous Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Fullscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Play/Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Backward by 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Forward by 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Backward by 5 Seconds to Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek Forward by 5 Seconds to Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decrease Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increase Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Mute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Step Backward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Step Forward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Screenshot (Unscaled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Screenshot (Scaled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Render Modes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Video Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -672,6 +827,10 @@
         <source>Application Title</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Extended Exports...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageBoxes</name>
@@ -756,6 +915,14 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
         <source>Error at line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Extended Exports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SearchForm</name>
@@ -809,111 +976,11 @@ Sind Sie sicher, dass Sie Schreibrechte im ausgewählten Verzeichnis haben?</tra
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>mpvQC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open QC Document(s)</source>
-        <translation type="unfinished">QC-Dokument(e) öffnen</translation>
-    </message>
-    <message>
-        <source>Save QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save as new QC Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Resize Video to Original Resolution</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Comment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Fullscreen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Play/Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Backward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Forward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Backward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seek Forward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Decrease Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Increase Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Mute</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame Step Backward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame Step Forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cycle Through Subtitle Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">QC-Dokument(e) öffnen</translation>
     </message>
     <message>
         <source>Cycle Through Audio Tracks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Screenshot (Unscaled)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Screenshot (Scaled)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cycle Through Subtitle Render Modes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle Video Statistics</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
