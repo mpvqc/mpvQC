@@ -97,26 +97,32 @@
     <name>CommentTable</name>
     <message>
         <source>Edit Comment</source>
+        <extracomment>Context menu on right click in comments table</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy Comment</source>
+        <extracomment>Context menu on right click in comments table</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete Comment</source>
+        <extracomment>Context menu on right click in comments table</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Video</source>
+        <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add Comment</source>
+        <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Show Keyboard Shortcuts</source>
+        <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -691,6 +697,10 @@
     <message>
         <source>Toggle Video Statistics</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open QC Document(s)</source>
+        <translation type="unfinished">פתח מסמכ(י) QC</translation>
     </message>
 </context>
 <context>

@@ -40,6 +40,7 @@ MpvqcMenu {
     MenuItem {
         id: _editItem
 
+        //: Context menu on right click in comments table
         text: qsTranslate("CommentTable", "Edit Comment")
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
 
@@ -52,6 +53,7 @@ MpvqcMenu {
     MenuItem {
         id: _copyItem
 
+        //: Context menu on right click in comments table
         text: qsTranslate("CommentTable", "Copy Comment")
         icon.source: "qrc:/data/icons/content_copy_black_24dp.svg"
 
@@ -61,6 +63,7 @@ MpvqcMenu {
     MenuItem {
         id: _deleteItem
 
+        //: Context menu on right click in comments table
         text: qsTranslate("CommentTable", "Delete Comment")
         icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 

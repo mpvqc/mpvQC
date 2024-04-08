@@ -62,6 +62,7 @@ Flickable {
         rowSpacing: 10
 
         MpvqcDescriptiveText {
+            //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Open Video")
         }
 
@@ -92,6 +93,7 @@ Flickable {
 
 
         MpvqcDescriptiveText {
+            //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Add Comment")
         }
 
@@ -102,6 +104,7 @@ Flickable {
         }
 
         MpvqcDescriptiveText {
+            //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Show Keyboard Shortcuts")
         }
 
