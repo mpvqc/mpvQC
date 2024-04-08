@@ -48,6 +48,7 @@ Label {
         if (root.saved) {
             return title
         } else {
+            //: %1 will be the title of the application (one of: mpvQC, file name, file path)
             return qsTranslate("MainWindow", "%1 (unsaved)").arg(title)
         }
     }
