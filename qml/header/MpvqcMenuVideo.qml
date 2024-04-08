@@ -34,7 +34,7 @@ MpvqcMenu {
 
     signal resizeVideoTriggered()
 
-    title: qsTranslate("MainWindow", "&Video")
+    title: qsTranslate("MainWindow", "Video")
 
     Action {
         id: _openVideoAction
@@ -43,7 +43,7 @@ MpvqcMenu {
             mpvqcApplication: root.mpvqcApplication
         }
 
-        text: qsTranslate("MainWindow", "Open &Video...")
+        text: qsTranslate("MainWindow", "Open Video...")
         shortcut: "CTRL+Alt+O"
         icon.source: "qrc:/data/icons/movie_black_24dp.svg"
 
@@ -59,7 +59,7 @@ MpvqcMenu {
             mpvqcApplication: root.mpvqcApplication
         }
 
-        text: qsTranslate("MainWindow", "&Open Subtitle(s)...")
+        text: qsTranslate("MainWindow", "Open Subtitle(s)...")
         icon.source: "qrc:/data/icons/subtitles_black_24dp.svg"
 
         onTriggered: {
@@ -72,7 +72,7 @@ MpvqcMenu {
     Action {
         id: _resizeToOriginalResolutionAction
 
-        text: qsTranslate("MainWindow", "&Resize Video to Original Resolution")
+        text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
         shortcut: "CTRL+R"
         icon.source: "qrc:/data/icons/aspect_ratio_black_24dp.svg"
 

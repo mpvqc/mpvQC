@@ -54,7 +54,7 @@ MpvqcMenu {
         }
     }
 
-    title: qsTranslate("MainWindow", "&Export QC Document")
+    title: qsTranslate("MainWindow", "Export QC Document")
     icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
     icon.height: 24
     icon.width: 24

@@ -404,7 +404,7 @@
     </message>
     <message>
         <source>New QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neues QC-Dokument</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
@@ -412,7 +412,7 @@
     </message>
     <message>
         <source>Save QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QC-Dokument speichern</translation>
     </message>
     <message>
         <source>Save as new QC Document</source>
@@ -424,7 +424,7 @@
     </message>
     <message>
         <source>Resize Video to Original Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Video auf Originalgröße skalieren</translation>
     </message>
     <message>
         <source>Add Comment</source>
@@ -468,7 +468,7 @@
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Video</translation>
     </message>
     <message>
         <source>Toggle Fullscreen</source>
@@ -580,16 +580,16 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <source>File</source>
+        <translation>Datei</translation>
     </message>
     <message>
-        <source>Vi&amp;deo</source>
-        <translation type="vanished">&amp;Video</translation>
+        <source>Video</source>
+        <translation>Video</translation>
     </message>
     <message>
-        <source>Optio&amp;ns</source>
-        <translation type="vanished">&amp;Optionen</translation>
+        <source>Options</source>
+        <translation>Optionen</translation>
     </message>
     <message>
         <source>Window Title</source>
@@ -601,63 +601,63 @@
     </message>
     <message>
         <source>Language</source>
-        <translation type="vanished">Sprache</translation>
+        <translation>Sprache</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="vanished">Hilfe</translation>
+        <translation>Hilfe</translation>
     </message>
     <message>
-        <source>&amp;New QC Document</source>
-        <translation>&amp;Neues QC-Dokument</translation>
+        <source>New QC Document</source>
+        <translation>Neues QC-Dokument</translation>
     </message>
     <message>
-        <source>&amp;Open QC Document(s)...</source>
-        <translation>QC-Dokument(e) &amp;öffnen ...</translation>
+        <source>Open QC Document(s)...</source>
+        <translation>QC-Dokument(e) öffnen ...</translation>
     </message>
     <message>
-        <source>&amp;Save QC Document</source>
-        <translation>QC-Dokument &amp;speichern</translation>
+        <source>Save QC Document</source>
+        <translation>QC-Dokument speichern</translation>
     </message>
     <message>
-        <source>S&amp;ave QC Document As...</source>
-        <translation type="vanished">QC-Dokument speichern &amp;als ...</translation>
+        <source>Save QC Document As...</source>
+        <translation>QC-Dokument speichern als ...</translation>
     </message>
     <message>
-        <source>&amp;Exit mpvQC</source>
-        <translation>mpvQC b&amp;eenden</translation>
+        <source>Exit mpvQC</source>
+        <translation>mpvQC beenden</translation>
     </message>
     <message>
-        <source>Open &amp;Video...</source>
-        <translation>&amp;Videodatei öffnen ...</translation>
+        <source>Open Video...</source>
+        <translation>Videodatei öffnen ...</translation>
     </message>
     <message>
-        <source>Open &amp;Network Stream...</source>
-        <translation type="vanished">&amp;Netzwerkstream öffnen ...</translation>
+        <source>Open Network Stream...</source>
+        <translation type="vanished">Netzwerkstream öffnen ...</translation>
     </message>
     <message>
-        <source>&amp;Resize Video to Original Resolution</source>
-        <translation>Video auf Originalgröße skalie&amp;ren</translation>
+        <source>Resize Video to Original Resolution</source>
+        <translation>Video auf Originalgröße skalieren</translation>
     </message>
     <message>
-        <source>&amp;Check for Updates...</source>
-        <translation>Auf &amp;Updates prüfen ...</translation>
+        <source>Check for Updates...</source>
+        <translation>Auf Updates prüfen ...</translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
-        <translation type="vanished">Über &amp;Qt</translation>
+        <source>About Qt</source>
+        <translation type="vanished">Über Qt</translation>
     </message>
     <message>
-        <source>About &amp;mpvQC</source>
-        <translation type="vanished">Über &amp;mpvQC</translation>
+        <source>About mpvQC</source>
+        <translation type="vanished">Über mpvQC</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
-        <translation type="vanished">&amp;Einstellungen</translation>
+        <source>Settings</source>
+        <translation type="vanished">Einstellungen</translation>
     </message>
     <message>
-        <source>&amp;Open Subtitles...</source>
-        <translation type="vanished">&amp;Untertiteldatei öffnen ...</translation>
+        <source>Open Subtitles...</source>
+        <translation type="vanished">Untertiteldatei öffnen ...</translation>
     </message>
     <message>
         <source>Edit Comment Types...</source>
@@ -685,11 +685,11 @@
     </message>
     <message>
         <source>Edit mpv.conf...</source>
-        <translation type="vanished">mpv.conf editieren ...</translation>
+        <translation>mpv.conf editieren ...</translation>
     </message>
     <message>
         <source>Edit input.conf...</source>
-        <translation type="vanished">input.conf editieren ...</translation>
+        <translation>input.conf editieren ...</translation>
     </message>
     <message>
         <source>Enable Backups</source>
@@ -706,10 +706,6 @@
     <message>
         <source>Save Video Path</source>
         <translation type="vanished">Videopfad speichern</translation>
-    </message>
-    <message>
-        <source>Check for Updates...</source>
-        <translation type="vanished">Auf Updates prüfen ...</translation>
     </message>
     <message>
         <source>(unsaved)</source>
@@ -736,59 +732,31 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Save QC Document As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Keyboard Shortcuts...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About &amp;mpvQC...</source>
+        <source>About mpvQC...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Options</source>
+        <source>Appearance...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Appearance...</source>
+        <source>Comment Type Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Comment Type Settings...</source>
+        <source>Backup Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Backup Settings...</source>
+        <source>Export Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Export Settings...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Import Settings...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Edit mpv.conf...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Edit input.conf...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Language</source>
+        <source>Import Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -804,11 +772,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Open Subtitle(s)...</source>
+        <source>Open Subtitle(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Export QC Document</source>
+        <source>Export QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

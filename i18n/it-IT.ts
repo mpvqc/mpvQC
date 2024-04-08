@@ -428,7 +428,7 @@
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Video</translation>
     </message>
     <message>
         <source>Toggle Fullscreen</source>
@@ -540,16 +540,16 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;File</source>
-        <translation type="unfinished">&amp;File</translation>
+        <source>File</source>
+        <translation type="unfinished">File</translation>
     </message>
     <message>
-        <source>Vi&amp;deo</source>
-        <translation type="obsolete">Vi&amp;deo</translation>
+        <source>Video</source>
+        <translation type="unfinished">Video</translation>
     </message>
     <message>
-        <source>Optio&amp;ns</source>
-        <translation type="obsolete">Opzio&amp;ni</translation>
+        <source>Options</source>
+        <translation type="unfinished">Opzioni</translation>
     </message>
     <message>
         <source>Window Title</source>
@@ -557,10 +557,10 @@
     </message>
     <message>
         <source>Language</source>
-        <translation type="obsolete">Lingua</translation>
+        <translation type="unfinished">Lingua</translation>
     </message>
     <message>
-        <source>&amp;New QC Document</source>
+        <source>New QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -568,7 +568,7 @@
         <translation type="obsolete">Ctrl+N</translation>
     </message>
     <message>
-        <source>&amp;Open QC Document(s)...</source>
+        <source>Open QC Document(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -576,7 +576,7 @@
         <translation type="obsolete">Ctrl+O</translation>
     </message>
     <message>
-        <source>&amp;Save QC Document</source>
+        <source>Save QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -588,15 +588,15 @@
         <translation type="obsolete">Ctrl+Shift+S</translation>
     </message>
     <message>
-        <source>&amp;Exit mpvQC</source>
-        <translation type="unfinished">&amp;Esci da mpvQC</translation>
+        <source>Exit mpvQC</source>
+        <translation type="unfinished">Esci da mpvQC</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
         <translation type="obsolete">Ctrl+Q</translation>
     </message>
     <message>
-        <source>Open &amp;Video...</source>
+        <source>Open Video...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -608,7 +608,7 @@
         <translation type="obsolete">Ctrl+Alt+Shift+O</translation>
     </message>
     <message>
-        <source>&amp;Resize Video to Original Resolution</source>
+        <source>Resize Video to Original Resolution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -616,20 +616,20 @@
         <translation type="obsolete">Ctrl+R</translation>
     </message>
     <message>
-        <source>&amp;Check for Updates...</source>
+        <source>Check for Updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
-        <translation type="obsolete">Informazioni su &amp;Qt</translation>
+        <source>About Qt</source>
+        <translation type="obsolete">Informazioni su Qt</translation>
     </message>
     <message>
-        <source>About &amp;mpvQC</source>
-        <translation type="obsolete">Informazioni su &amp;mpvQC</translation>
+        <source>About mpvQC</source>
+        <translation type="obsolete">Informazioni su mpvQC</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
-        <translation type="obsolete">&amp;Impostazioni</translation>
+        <source>Settings</source>
+        <translation type="obsolete">Impostazioni</translation>
     </message>
     <message>
         <source>Ctrl+Alt+S</source>
@@ -668,11 +668,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Save QC Document As...</source>
+        <source>Save QC Document As...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Help</source>
+        <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -680,47 +680,35 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About &amp;mpvQC...</source>
+        <source>About mpvQC...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Options</source>
+        <source>Appearance...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Appearance...</source>
+        <source>Comment Type Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Comment Type Settings...</source>
+        <source>Backup Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Backup Settings...</source>
+        <source>Export Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Export Settings...</source>
+        <source>Import Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Import Settings...</source>
+        <source>Edit mpv.conf...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Edit mpv.conf...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Edit input.conf...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Language</source>
+        <source>Edit input.conf...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -736,11 +724,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Open Subtitle(s)...</source>
+        <source>Open Subtitle(s)...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Export QC Document</source>
+        <source>Export QC Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

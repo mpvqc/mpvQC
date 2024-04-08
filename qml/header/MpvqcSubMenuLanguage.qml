@@ -33,7 +33,7 @@ MpvqcMenu {
 
     property alias repeater: _repeater
 
-    title: qsTranslate("MainWindow", "&Language")
+    title: qsTranslate("MainWindow", "Language")
     icon.source: "qrc:/data/icons/language_black_24dp.svg"
     icon.height: 24
     icon.width: 24
