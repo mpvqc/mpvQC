@@ -132,35 +132,31 @@
     <name>CommentTypes</name>
     <message>
         <source>Translation</source>
-        <translation type="vanished">Traduzione</translation>
+        <translation>Traduzione</translation>
     </message>
     <message>
         <source>Punctuation</source>
-        <translation type="vanished">Punteggiatura</translation>
+        <translation>Punteggiatura</translation>
     </message>
     <message>
         <source>Spelling</source>
-        <translation type="vanished">Typo</translation>
+        <translation>Typo</translation>
     </message>
     <message>
         <source>Phrasing</source>
-        <translation type="vanished">Adattamento</translation>
+        <translation>Adattamento</translation>
     </message>
     <message>
         <source>Timing</source>
-        <translation type="vanished">Timing</translation>
+        <translation>Timing</translation>
     </message>
     <message>
         <source>Typeset</source>
-        <translation type="vanished">Cartelli</translation>
+        <translation>Cartelli</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation type="vanished">Note</translation>
-    </message>
-    <message>
-        <source>No comment types defined. Define new comment types in the settings.</source>
-        <translation type="vanished">Nessuna classe selezionata. Creane una nuova classe nelle impostazioni.</translation>
+        <translation>Note</translation>
     </message>
 </context>
 <context>

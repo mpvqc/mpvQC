@@ -136,35 +136,31 @@
     <name>CommentTypes</name>
     <message>
         <source>Translation</source>
-        <translation type="vanished">תרגום</translation>
+        <translation>תרגום</translation>
     </message>
     <message>
         <source>Spelling</source>
-        <translation type="vanished">איות</translation>
+        <translation>איות</translation>
     </message>
     <message>
         <source>Punctuation</source>
-        <translation type="vanished">פיסוק</translation>
+        <translation>פיסוק</translation>
     </message>
     <message>
         <source>Phrasing</source>
-        <translation type="vanished">ניסוח</translation>
+        <translation>ניסוח</translation>
     </message>
     <message>
         <source>Timing</source>
-        <translation type="vanished">תזמון</translation>
+        <translation>תזמון</translation>
     </message>
     <message>
         <source>Typeset</source>
-        <translation type="vanished">עיצוב דפוס</translation>
+        <translation>עיצוב דפוס</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation type="vanished">הערה</translation>
-    </message>
-    <message>
-        <source>No comment types defined. Define new comment types in the settings.</source>
-        <translation type="vanished">לא הוגדרו סוגי הערות. הגדר סוגי הערות חדשים בהגדרות.</translation>
+        <translation>הערה</translation>
     </message>
 </context>
 <context>

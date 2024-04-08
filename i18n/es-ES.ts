@@ -136,35 +136,31 @@
     <name>CommentTypes</name>
     <message>
         <source>Translation</source>
-        <translation type="vanished">Traducción</translation>
+        <translation>Traducción</translation>
     </message>
     <message>
         <source>Punctuation</source>
-        <translation type="vanished">Puntuación</translation>
+        <translation>Puntuación</translation>
     </message>
     <message>
         <source>Spelling</source>
-        <translation type="vanished">Ortografía</translation>
+        <translation>Ortografía</translation>
     </message>
     <message>
         <source>Phrasing</source>
-        <translation type="vanished">Redacción</translation>
+        <translation>Redacción</translation>
     </message>
     <message>
         <source>Timing</source>
-        <translation type="vanished">Sincronización</translation>
+        <translation>Sincronización</translation>
     </message>
     <message>
         <source>Typeset</source>
-        <translation type="vanished">Edición</translation>
+        <translation>Edición</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation type="vanished">Nota</translation>
-    </message>
-    <message>
-        <source>No comment types defined. Define new comment types in the settings.</source>
-        <translation type="vanished">No hay tipos de comentarios definidos. Defina nuevos tipos de comentarios en los ajustes.</translation>
+        <translation>Nota</translation>
     </message>
 </context>
 <context>

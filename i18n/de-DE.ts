@@ -136,35 +136,31 @@
     <name>CommentTypes</name>
     <message>
         <source>Translation</source>
-        <translation type="vanished">Übersetzung</translation>
+        <translation>Übersetzung</translation>
     </message>
     <message>
         <source>Punctuation</source>
-        <translation type="vanished">Interpunktion</translation>
+        <translation>Interpunktion</translation>
     </message>
     <message>
         <source>Spelling</source>
-        <translation type="vanished">Rechtschreibung</translation>
+        <translation>Rechtschreibung</translation>
     </message>
     <message>
         <source>Phrasing</source>
-        <translation type="vanished">Ausdruck</translation>
+        <translation>Ausdruck</translation>
     </message>
     <message>
         <source>Timing</source>
-        <translation type="vanished">Timing</translation>
+        <translation>Timing</translation>
     </message>
     <message>
         <source>Typeset</source>
-        <translation type="vanished">Typeset</translation>
+        <translation>Typeset</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation type="vanished">Hinweis</translation>
-    </message>
-    <message>
-        <source>No comment types defined. Define new comment types in the settings.</source>
-        <translation type="vanished">Es sind keine Anmerkungen definiert. Definieren Sie Anmerkungen in den Einstellungen.</translation>
+        <translation>Hinweis</translation>
     </message>
 </context>
 <context>
@@ -287,7 +283,7 @@
     <name>FileInteractionDialogs</name>
     <message>
         <source>untitled</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Video File</source>
