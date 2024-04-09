@@ -76,18 +76,18 @@ class RequirementsUpdater:
         version: str
 
     def parse(self, requirements_file: Path):
-        for requirement in parse_requirements(f'{requirements_file}', session=PipSession()):
+        for requirement in parse_requirements(f"{requirements_file}", session=PipSession()):
             name_requirement_version = requirement.requirement.split(";")[0]
-            name, requirement, version = re.split('(>=|==|<=)', name_requirement_version)
+            name, requirement, version = re.split("(>=|==|<=)", name_requirement_version)
             self._requirements.append(self.Requirement(name, requirement, version))
 
     def resolve_required_versions(self):
         for requirement in self._requirements:
             name = requirement.name
-            if requirement.requirement == '==':
+            if requirement.requirement == "==":
                 resolved = self.ResolvedRequirement(name, requirement.version)
-            elif requirement.requirement == '>=':
-                with urllib.request.urlopen(f'https://pypi.org/pypi/{name}/json', timeout=5) as connection:
+            elif requirement.requirement == ">=":
+                with urllib.request.urlopen(f"https://pypi.org/pypi/{name}/json", timeout=5) as connection:
                     text = connection.read().decode("utf-8").strip()
                 version = f"{json.loads(text)['info']['version']}".strip()
                 resolved = self.ResolvedRequirement(name, version)
@@ -97,7 +97,7 @@ class RequirementsUpdater:
 
     def replace_in_files(self, files: list[Path]):
         for file in files:
-            text = file.read_text(encoding='utf-8')
+            text = file.read_text(encoding="utf-8")
             for requirement in self._resolved_requirements:
                 search = self._replace_tag.format(name=requirement.name)
                 text = text.replace(search, requirement.version)
@@ -106,7 +106,7 @@ class RequirementsUpdater:
     def validate(self, files: list[Path]):
         error = False
         for file in files:
-            for index, line in enumerate(file.read_text(encoding='utf-8').splitlines(keepends=False)):
+            for index, line in enumerate(file.read_text(encoding="utf-8").splitlines(keepends=False)):
                 if self._validate_tag in line:
                     error = True
                     print(f"Unresolved versions in {file}:{index + 1}:{line}", file=sys.stderr)
@@ -117,8 +117,9 @@ class RequirementsUpdater:
 def main():
     parser = argparse.ArgumentParser(description="Set dependency versions based on a requirements.txt file")
     parser.add_argument("--requirements", type=str, required=True, help="requirements.txt file")
-    parser.add_argument("--update-inplace", type=str, action="append", default=[],
-                        help="file to update versions inplace")
+    parser.add_argument(
+        "--update-inplace", type=str, action="append", default=[], help="file to update versions inplace"
+    )
     run(parser.parse_args())
 
 
