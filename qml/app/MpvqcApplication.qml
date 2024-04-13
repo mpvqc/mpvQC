@@ -36,6 +36,7 @@ ApplicationWindow {
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
+    readonly property alias playerArea: _content.playerArea
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
@@ -50,15 +51,7 @@ ApplicationWindow {
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
-    readonly property int windowBorder: {
-        if (root.fullscreen) {
-            return 0
-        } else if (Qt.platform.os === 'windows') {
-            return root.maximized ? 8 : 1  // work around custom window properties
-        } else if (Qt.platform.os === 'linux') {
-            return root.maximized ? 0 : 1
-        }
-    }
+    readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
     readonly property var supportedSubtitleFileExtensions: [
         'aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi',

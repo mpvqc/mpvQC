@@ -19,7 +19,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo, Signal
+from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo, Signal, QObject
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -95,12 +95,17 @@ class MpvqcApplication(QGuiApplication):
             self.installEventFilter(self._event_filter)
 
     def start_engine(self):
-        self._engine.load(QUrl.fromLocalFile(":/qml/main.qml"))
-
-    def add_window_effects(self):
         if sys.platform == "win32":
-            hwnd = self.topLevelWindows()[0].winId()
+            url = QUrl.fromLocalFile(":/qml/MainWindows.qml")
+        else:
+            url = QUrl.fromLocalFile(":/qml/Main.qml")
+        self._engine.load(url)
+
+    def add_outer_window_effects(self):
+        if sys.platform == "win32":
             from mpvqc.framelesswindow.win import WindowsWindowEffect
+
+            hwnd = self.topLevelWindows()[0].winId()
 
             self._effects = WindowsWindowEffect()
             self._effects.addShadowEffect(hwnd)
@@ -112,3 +117,8 @@ class MpvqcApplication(QGuiApplication):
 
     def notify_ready(self):
         self.application_ready.emit()
+
+    def add_nested_window_effects(self):
+        if sys.platform == "win32":
+            self._controls_window = self.find_object(QObject, "mpvqcControlsWindow")
+            self._effects.addWindowAnimation(self._controls_window.winId())

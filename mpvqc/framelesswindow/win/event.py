@@ -17,12 +17,16 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 import ctypes.wintypes
-from ctypes import c_void_p
+from ctypes import cast
+from ctypes.wintypes import LPRECT
 
 import PySide6.QtCore
 import win32api
 import win32con
 import win32gui
+
+from .c_structures import LPNCCALCSIZE_PARAMS
+from .utils import isMaximized, isFullScreen, getResizeBorderThickness, Taskbar
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
@@ -42,7 +46,7 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             x_pos = (win32api.LOWORD(msg.lParam) - x) % 65536
             y_pos = win32api.HIWORD(msg.lParam) - y
 
-            bw = 0 if self.isWindowMaximized(msg.hWnd) or self.isFullScreen(msg.hWnd) else self.border_width
+            bw = 0 if isMaximized(msg.hWnd) or isFullScreen(msg.hWnd) else self.border_width
             lx = x_pos < bw
             rx = x_pos > w - bw
             ty = y_pos < bw
@@ -65,11 +69,38 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             elif rx:
                 return True, win32con.HTRIGHT
         elif msg.message == win32con.WM_NCCALCSIZE:
+            if msg.wParam:
+                rect = cast(msg.lParam, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
+            else:
+                rect = cast(msg.lParam, LPRECT).contents
+
+            isMax = isMaximized(msg.hWnd)
+            isFull = isFullScreen(msg.hWnd)
+
+            # adjust the size of client rect
+            if isMax and not isFull:
+                ty = getResizeBorderThickness(msg.hWnd, False)
+                rect.top += ty
+                rect.bottom -= ty
+
+                tx = getResizeBorderThickness(msg.hWnd, True)
+                rect.left += tx
+                rect.right -= tx
+
+            # handle the situation that an auto-hide taskbar is enabled
+            if (isMax or isFull) and Taskbar.isAutoHide():
+                position = Taskbar.getPosition(msg.hWnd)
+                if position == Taskbar.LEFT:
+                    rect.top += Taskbar.AUTO_HIDE_THICKNESS
+                elif position == Taskbar.BOTTOM:
+                    rect.bottom -= Taskbar.AUTO_HIDE_THICKNESS
+                elif position == Taskbar.LEFT:
+                    rect.left += Taskbar.AUTO_HIDE_THICKNESS
+                elif position == Taskbar.RIGHT:
+                    rect.right -= Taskbar.AUTO_HIDE_THICKNESS
+
             result = 0 if not msg.wParam else win32con.WVR_REDRAW
             return True, result
-        elif msg.message == win32con.WM_GETMINMAXINFO:
-            if self.isWindowMaximized(msg.hWnd):
-                return True, 1
         return False, 0
 
     @classmethod
@@ -78,33 +109,3 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
         width = right - left
         height = bottom - top
         return left, top, width, height
-
-    @classmethod
-    def isWindowMaximized(cls, hwnd: int or c_void_p) -> bool:
-        windowPlacement = win32gui.GetWindowPlacement(hwnd)
-        if not windowPlacement:
-            return False
-        return windowPlacement[1] == win32con.SW_MAXIMIZE
-
-    def isFullScreen(self, hwnd: int or c_void_p):
-        if not hwnd:
-            return False
-
-        hwnd = int(hwnd)
-        winRect = win32gui.GetWindowRect(hwnd)
-        if not winRect:
-            return False
-
-        monitorInfo = self.getMonitorInfo(hwnd, win32con.MONITOR_DEFAULTTOPRIMARY)
-        if not monitorInfo:
-            return False
-
-        monitorRect = monitorInfo["Monitor"]
-        return all(i == j for i, j in zip(winRect, monitorRect))
-
-    def getMonitorInfo(self, hwnd: int or c_void_p, dwFlags: int):
-        monitor = win32api.MonitorFromWindow(hwnd, dwFlags)
-        if not monitor:
-            return
-
-        return win32api.GetMonitorInfo(monitor)
