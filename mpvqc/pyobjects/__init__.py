@@ -26,6 +26,7 @@ from .manager import MpvqcManagerPyObject
 from .player import MpvqcMpvPlayerPyObject
 from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
+from .player_win_id import MpvWindowPyObject
 from .resource import MpvqcResourcePyObject
 from .text_validator import MpvqcDefaultTextValidatorPyObject
 from .utility import MpvqcUtilityPyObject

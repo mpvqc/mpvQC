@@ -32,6 +32,16 @@ MpvqcMpvFrameBufferObjectPyObject {
         mpvqcApplication: root.mpvqcApplication
     }
 
+    property point applicationWideTopLeft: Qt.point(0, 0)
+
+    onWidthChanged: {
+        applicationWideTopLeft = root.mapToItem(mpvqcApplication.contentItem, x, y)
+    }
+
+    onHeightChanged: {
+        applicationWideTopLeft = root.mapToItem(mpvqcApplication.contentItem, x, y)
+    }
+
     MpvqcPlayerMouseArea {
         mpvqcApplication: root.mpvqcApplication
         anchors.fill: root

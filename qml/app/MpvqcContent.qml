@@ -32,6 +32,7 @@ FocusScope {
     readonly property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
 
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
+    readonly property alias playerArea: _contentSplitView.playerArea
 
     signal splitViewHandleHovered(bool hovered)
 
@@ -47,6 +48,10 @@ FocusScope {
         id: _page
 
         anchors.fill: parent
+
+        background: Rectangle {
+            color: 'transparent'
+        }
 
         header: MpvqcHeader {
             mpvqcApplication: root.mpvqcApplication

@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QSize, QCoreApplication, QObject
 from PySide6.QtCore import Slot, Signal
 from PySide6.QtGui import QOpenGLContext
 from PySide6.QtOpenGL import QOpenGLFramebufferObject
@@ -63,16 +63,20 @@ class Renderer(QQuickFramebufferObject.Renderer):
         self._get_proc_address_resolver = MpvGlGetProcAddressFn(get_process_address)
         self._ctx = None
 
-        from mpvqc.services.player import PlayerService
-
-        self._player_service = inject.instance(PlayerService)
-
         self._zoom_detector_service.zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
 
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
+            from mpvqc.services.player import PlayerService
+
+            player = inject.instance(PlayerService)
+            player.init()
+
+            player_properties = QCoreApplication.instance().find_object(QObject, "mpvqcPlayerProperties")
+            player_properties.init()
+
             self._ctx = MpvRenderContext(
-                self._player_service.mpv,
+                mpv=player.mpv,
                 api_type="opengl",
                 opengl_init_params={"get_proc_address": self._get_proc_address_resolver},
             )

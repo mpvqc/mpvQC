@@ -36,7 +36,7 @@ MpvqcMenu {
 
     modal: true
     dim: false
-    parent: Overlay.overlay
+    parent: mpvqcApplication.contentItem
     z: 2
     exit: null
 
