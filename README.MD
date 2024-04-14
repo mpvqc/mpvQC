@@ -1,6 +1,6 @@
 # mpvQC
 
-<img alt="Logo" src="https://avatars3.githubusercontent.com/u/47739558?s=200&v=4" width="128" height="128"/>
+<img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
 libmpv based application for the quick and easy creation of quality control reports of video files.  
 Visit <a href="https://mpvqc.github.io">https://mpvqc.github.io</a> for downloads.

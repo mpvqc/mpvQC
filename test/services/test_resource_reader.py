@@ -32,7 +32,7 @@ from mpvqc.services import ResourceReaderService
 def test_read_from(file_path):
     reader = ResourceReaderService()
     content = reader.read_from(file_path)
-    assert content.startswith("<svg ")
+    assert content.startswith("<?xml ")
 
 
 def test_file_not_found():
