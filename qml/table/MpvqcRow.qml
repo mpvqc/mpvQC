@@ -49,11 +49,10 @@ Item {
     property alias timeLabel: _timeLabel
     property alias commentTypeLabel: _commentTypeLabel
     property alias commentLabel: _commentLabel
-    property alias moreButton: _moreButton
 
     readonly property var contextMenuFactory: Component
     {
-        MpvqcMenuMore {
+        MpvqcRowContextMenu {
             onCopyCommentClicked: root.copyCommentClicked()
 
             onDeleteCommentClicked: root.deleteCommentClicked()
@@ -86,7 +85,7 @@ Item {
         _commentLabel.startEditing()
     }
 
-    function createContextMenu(): Component {
+    function createContextMenu() {
         const contextMenu = contextMenuFactory.createObject(root)
         contextMenu.closed.connect(contextMenu.destroy)
         return contextMenu
@@ -197,7 +196,6 @@ Item {
                 - _playButton.width
                 - _timeLabel.width
                 - _commentTypeLabel.width
-                - _moreButton.width
                 - _spacerScrollBar.width
             leftPadding: root.leftAndRightPadding
             rightPadding: root.leftAndRightPadding
@@ -216,46 +214,6 @@ Item {
             onEditingStarted: root.editingStarted()
 
             onEditingStopped: root.editingStopped()
-        }
-
-        ToolButton {
-            id: _moreButton
-
-            readonly property int additionalMenuPadding: 7
-
-            width: _playButton.width
-            visible: root.rowSelected
-            focusPolicy: Qt.NoFocus
-            icon.source: "qrc:/data/icons/more_vert_black_24dp.svg"
-            icon.width: 18
-            icon.height: 18
-
-            function _grabFocus(): void {
-                focus = true
-            }
-
-            function _openMenu(): void {
-                const contextMenu = root.createContextMenu()
-                contextMenu.x = mirrored ? additionalMenuPadding : x + _moreButton.width - contextMenu.width - additionalMenuPadding
-                contextMenu.y = additionalMenuPadding
-                contextMenu.transformOrigin = mirrored ? Popup.TopLeft : Popup.TopRight
-                contextMenu.open()
-            }
-
-            onClicked: {
-                if (root.tableInEditMode) {
-                    _moreButton._grabFocus()
-                } else {
-                    _moreButton._openMenu()
-                }
-            }
-        }
-
-        Rectangle {
-            height: root.height
-            width: _playButton.width
-            visible: !root.rowSelected
-            color: 'transparent'
         }
 
         Rectangle {

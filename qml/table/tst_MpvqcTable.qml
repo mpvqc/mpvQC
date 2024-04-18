@@ -152,10 +152,6 @@ TestCase {
                 columnClicked: columnCommentType, rowClicked: row1, rowIndexExpected: 0
             },
             {
-                tag: 'on-same-row-menu-more-clicked',
-                columnClicked: columnMenuMore, rowClicked: row1, rowIndexExpected: 0
-            },
-            {
                 tag: 'on-other-row-play-button-clicked',
                 columnClicked: columnPlayButton, rowClicked: row2, rowIndexExpected: 1
             },
@@ -219,13 +215,6 @@ TestCase {
     function test_editComment_data() {
         return [
             {
-                tag: 'via-menu', exec: (control) => {
-                    mouseClick(control, columnMenuMore, row1)
-                    waitForRendering(control, shortTime)
-                    mouseClick(control, columnMenuMore, row1)
-                }
-            },
-            {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
                     waitForRendering(control, shortTime)
@@ -250,13 +239,6 @@ TestCase {
 
     function test_copyToClipboard_data() {
         return [
-            {
-                tag: 'via-menu', exec: (control) => {
-                    mouseClick(control, columnMenuMore, row1)
-                    waitForRendering(control, shortTime)
-                    mouseClick(control, columnMenuMore, row3)
-                }
-            },
             {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
@@ -285,13 +267,6 @@ TestCase {
 
     function test_deleteComment_data() {
         return [
-            {
-                tag: 'via-menu', exec: (control) => {
-                    mouseClick(control, columnMenuMore, row1)
-                    waitForRendering(control, shortTime)
-                    mouseClick(control, columnMenuMore, row4)
-                }
-            },
             {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)

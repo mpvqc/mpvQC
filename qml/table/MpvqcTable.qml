@@ -69,7 +69,7 @@ ListView {
     highlightResizeVelocity: -1
 
     highlight: Rectangle {
-        width: parent?.width ?? 0
+        width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
         color: Material.primary
     }

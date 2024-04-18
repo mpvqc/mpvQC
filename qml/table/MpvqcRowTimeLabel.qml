@@ -33,10 +33,34 @@ Label {
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
-    property alias loader: _loader
+    property var popup: undefined
+    property var popupFactory: Component
+    {
+        MpvqcRowTimeLabelEditPopup {
+            readonly property int additionalSpace: 7
+
+            y: additionalSpace
+            x: mirrored ? -(width - root.width + additionalSpace) : additionalSpace
+
+            transformOrigin: mirrored ? Popup.TopRight : Popup.TopLeft
+
+            time: root.time
+            mpvqcApplication: root.mpvqcApplication
+
+            onClosed: root.editingStopped()
+
+            onEdited: (newTime) => root.edited(newTime)
+
+            onEditingAborted: root._jumpTo(root.time)
+
+            onValueChanged: (newTemporaryTime) => root._jumpTo(newTemporaryTime)
+        }
+    }
 
     signal edited(int newTime)
+
     signal editingStarted()
+
     signal editingStopped()
 
     horizontalAlignment: Text.AlignHCenter
@@ -53,11 +77,11 @@ Label {
         focus = true
     }
 
-    function _startEditing(): void {
+    function _startEditing(mouseX: int, mouseY: int): void {
         editingStarted()
         _pauseVideo()
         _jumpTo(root.time)
-        openPopup()
+        openPopup(mouseX, mouseY)
     }
 
     function _pauseVideo(): void {
@@ -68,17 +92,14 @@ Label {
         root.mpv.jump_to(newTime)
     }
 
-    function openPopup(): void {
-        _loader.sourceComponent = _editComponent
-    }
-
-    function _stopEditing(): void {
-        _closePopup()
-        editingStopped()
-    }
-
-    function _closePopup(): void {
-        _loader.sourceComponent = undefined
+    function openPopup(mouseX: int, mouseY: int): void {
+        const mirrored = LayoutMirroring.enabled
+        popup = popupFactory.createObject(root)
+        popup.closed.connect(popup.destroy)
+        popup.y = mouseY
+        popup.x = mirrored ? mouseX - popup.width : mouseX
+        popup.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft
+        popup.open()
     }
 
     MouseArea {
@@ -89,34 +110,8 @@ Label {
             if (root.tableInEditMode) {
                 root._grabFocus()
             } else {
-                root._startEditing()
+                root._startEditing(mouseX, mouseY)
             }
-        }
-    }
-
-    Loader { id: _loader }
-
-    Component {
-        id: _editComponent
-
-        MpvqcRowTimeLabelEditPopup {
-            readonly property int additionalSpace: 7
-
-            y: additionalSpace
-            x: mirrored ? - (width - root.width + additionalSpace) : additionalSpace
-
-            transformOrigin: mirrored ? Popup.TopRight : Popup.TopLeft
-
-            time: root.time
-            mpvqcApplication: root.mpvqcApplication
-
-            onClosed: root._stopEditing()
-
-            onEdited: (newTime) => root.edited(newTime)
-
-            onEditingAborted: root._jumpTo(root.time)
-
-            onValueChanged: (newTemporaryTime) => root._jumpTo(newTemporaryTime)
         }
     }
 

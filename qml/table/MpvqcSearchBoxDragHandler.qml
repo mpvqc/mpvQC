@@ -80,9 +80,4 @@ DragHandler {
         }
     }
 
-    Binding on cursorShape {
-        when: active
-        value: Qt.DragMoveCursor
-    }
-
 }
