@@ -35,7 +35,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcMenuMore {
+        MpvqcRowContextMenu {
             visible: true
         }
     }

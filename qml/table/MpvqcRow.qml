@@ -52,7 +52,7 @@ Item {
 
     readonly property var contextMenuFactory: Component
     {
-        MpvqcMenuMore {
+        MpvqcRowContextMenu {
             onCopyCommentClicked: root.copyCommentClicked()
 
             onDeleteCommentClicked: root.deleteCommentClicked()
@@ -85,7 +85,7 @@ Item {
         _commentLabel.startEditing()
     }
 
-    function createContextMenu(): Component {
+    function createContextMenu() {
         const contextMenu = contextMenuFactory.createObject(root)
         contextMenu.closed.connect(contextMenu.destroy)
         return contextMenu
