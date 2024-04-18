@@ -92,7 +92,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
         verify(!control.menu)
-        control.openMenu()
+        control.openMenu(0, 0)
         verify(control.menu)
         return control
     }

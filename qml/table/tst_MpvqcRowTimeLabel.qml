@@ -73,74 +73,72 @@ TestCase {
         verify(control.focus)
 
         // row-selection/no-edit-mode
-        const editingStartedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingStarted'})
+        const spy = signalSpy.createObject(control, {target: control, signalName: 'editingStarted'})
+        verify(spy)
+
         control.rowSelected = true
         control.tableInEditMode = false
-        verify(!control.loader.sourceComponent)
-        compare(editingStartedSpy.count, 0)
+        compare(spy.count, 0)
         compare(control.pauseCalled, false)
         compare(control.jumpToCalled, false)
         compare(control.jumpToTime, -1)
         mouseClick(control)
-        verify(control.loader.sourceComponent)
-        compare(editingStartedSpy.count, 1)
+        verify(control.popup)
+        compare(spy.count, 1)
         compare(control.pauseCalled, true)
         compare(control.jumpToCalled, true)
         compare(control.jumpToTime, 10)
-        editingStartedSpy.clear()
+        spy.clear()
     }
 
     function createControlInEditMode(): Item {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
-        control.loader.asynchronous = false
-        control.openPopup()
+        control.openPopup(0, 0)
         verify(control)
         return control
     }
 
     function test_stopEdit() {
         const control = createControlInEditMode()
+        verify(control.popup)
 
-        const popup = control.loader.item
-        verify(popup)
+        const spy = signalSpy.createObject(control, {target: control, signalName: 'editingStopped'})
+        verify(spy)
 
-        const editingStoppedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingStopped'})
-        popup.closed()
-        verify(!control.loader.sourceComponent)
-        compare(editingStoppedSpy.count, 1)
+        control.popup.closed()
+        compare(spy.count, 1)
     }
 
     function test_edit() {
         const control = createControlInEditMode()
+        verify(control.popup)
 
-        const popup = control.loader.item
-        verify(popup)
+        const spy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
+        verify(spy)
 
-        const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        popup.edited(42)
-        compare(editedSpy.count, 1)
-        compare(editedSpy.signalArguments[0][0], 42)
+        control.popup.edited(42)
+
+        compare(spy.count, 1)
+        compare(spy.signalArguments[0][0], 42)
     }
 
     function test_abortEdit() {
         const control = createControlInEditMode()
+        verify(control.popup)
 
-        const popup = control.loader.item
-        verify(popup)
+        control.popup.editingAborted()
 
-        popup.editingAborted()
         compare(control.jumpToCalled, true)
         compare(control.jumpToTime, 10)
     }
 
     function test_seek() {
         const control = createControlInEditMode()
+        verify(control.popup)
 
-        const popup = control.loader.item
-        verify(popup)
+        control.popup.valueChanged(42)
 
-        popup.valueChanged(42)
         compare(control.jumpToCalled, true)
         compare(control.jumpToTime, 42)
     }

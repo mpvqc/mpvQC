@@ -33,11 +33,6 @@ Label {
     property var menuFactory: Component
     {
         MpvqcRowCommentTypeLabelEditMenu {
-            readonly property int additionalSpace: 7
-
-            y: additionalSpace
-            x: mirrored ? - (width - root.width + additionalSpace) : additionalSpace
-
             currentCommentType: root.commentType
             mpvqcApplication: root.mpvqcApplication
 
@@ -58,14 +53,18 @@ Label {
         focus = true
     }
 
-    function _startEditing(): void {
+    function _startEditing(mouseX: int, mouseY: int): void {
         editingStarted()
-        openMenu()
+        openMenu(mouseX, mouseY)
     }
 
-    function openMenu(): void {
+    function openMenu(mouseX: int, mouseY: int): void {
+        const mirrored = LayoutMirroring.enabled
         menu = menuFactory.createObject(root)
         menu.closed.connect(menu.destroy)
+        menu.y = mouseY
+        menu.x = mirrored ? mouseX - menu.width : mouseX
+        menu.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft
         menu.open()
     }
 
@@ -77,7 +76,8 @@ Label {
             if (root.tableInEditMode) {
                 root._grabFocus()
             } else {
-                root._startEditing()
+                editingStarted()
+                openMenu(mouseX, mouseY)
             }
         }
     }
