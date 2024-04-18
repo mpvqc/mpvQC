@@ -33,7 +33,7 @@ Popup {
 
     readonly property string searchQuery: searchQueryActive ? _textField.text : ''
 
-    readonly property int customMarginVertical: 70
+    readonly property int customMarginVertical: 30
     readonly property int customMarginTop: 10
 
     readonly property var searchService: MpvqcSearchService {
