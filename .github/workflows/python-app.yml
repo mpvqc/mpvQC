@@ -120,8 +120,8 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
-          ARTIFACT="mpv-dev-x86_64-20240211-git-f5c4f0b.7z"
-          SHA1="7e9aa859440666696b8cf81cb7c9a0591aa9405b"
+          ARTIFACT="mpv-dev-x86_64-20240421-git-b364e4a.7z"
+          SHA1="1bd96112aecc4b17ad003c9d3fd3909d362d4ac3"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
           
           execute curl -L -O "$URL"
