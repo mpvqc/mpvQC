@@ -74,7 +74,7 @@ SpinBox {
         icon.width: 28
         icon.height: 28
 
-        onClicked: root.decrementValue()
+        onPressed: root.decrementValue()
     }
 
     up.indicator: ToolButton {
@@ -88,7 +88,7 @@ SpinBox {
         icon.width: 28
         icon.height: 28
 
-        onClicked: root.incrementValue()
+        onPressed: root.incrementValue()
     }
 
     background: Rectangle {

@@ -106,7 +106,7 @@ Label {
         anchors.fill: parent
         enabled: root.rowSelected
 
-        onClicked: {
+        onPressed: {
             if (root.tableInEditMode) {
                 root._grabFocus()
             } else {

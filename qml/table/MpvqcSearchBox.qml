@@ -148,7 +148,7 @@ Popup {
             icon.width: 24
             icon.height: 24
 
-            onClicked: root.searchService.requestPrevious()
+            onPressed: root.searchService.requestPrevious()
         }
 
         ToolButton {
@@ -157,7 +157,7 @@ Popup {
             icon.width: 24
             icon.height: 24
 
-            onClicked: root.searchService.requestNext()
+            onPressed: root.searchService.requestNext()
         }
 
         ToolButton {
@@ -165,7 +165,7 @@ Popup {
             icon.width: 18
             icon.height: 18
 
-            onClicked: root.hideSearchBox()
+            onPressed: root.hideSearchBox()
         }
 
     }

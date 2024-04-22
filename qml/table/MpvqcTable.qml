@@ -101,7 +101,7 @@ ListView {
             }
         }
 
-        onClicked: root.selectRow(index)
+        onPressed: root.selectRow(index)
 
         onCopyCommentClicked: root._copyCurrentCommentToClipboard()
 
@@ -111,7 +111,7 @@ ListView {
 
         onEditingStopped: { root.currentlyEditing = false }
 
-        onPlayClicked: root.mpv.jump_to(time)
+        onPlayPressed: root.mpv.jump_to(time)
 
         onTimeEdited: (newTime) => root.model.update_time(index, newTime)
 

@@ -63,15 +63,15 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'clicked'})
+        let spy = signalSpy.createObject(control, {target: control, signalName: 'pressed'})
         verify(spy)
 
-        let playClickedSpy = signalSpy.createObject(control, {target: control, signalName: 'playClicked'})
-        verify(playClickedSpy)
+        let playPressed = signalSpy.createObject(control, {target: control, signalName: 'playPressed'})
+        verify(playPressed)
 
-        control.playButton.clicked()
+        mousePress(control.playButton)
         compare(spy.count, 1)
-        compare(playClickedSpy.count, 1)
+        compare(playPressed.count, 1)
     }
 
     function test_edit() {

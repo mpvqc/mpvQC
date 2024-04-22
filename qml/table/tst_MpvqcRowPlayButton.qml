@@ -44,24 +44,24 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
-        const buttonClickedSpy = signalSpy.createObject(null, {target: control, signalName: 'buttonClicked'})
-        verify(buttonClickedSpy)
+        const buttonPressedSpy = signalSpy.createObject(null, {target: control, signalName: 'buttonPressed'})
+        verify(buttonPressedSpy)
 
-        const playClickedSpy = signalSpy.createObject(null, {target: control, signalName: 'playClicked'})
-        verify(playClickedSpy)
+        const playPressedSpy = signalSpy.createObject(null, {target: control, signalName: 'playPressed'})
+        verify(playPressedSpy)
 
         control.tableInEditMode = false
         mouseClick(control)
-        compare(buttonClickedSpy.count, 1)
-        compare(playClickedSpy.count, 1)
+        compare(buttonPressedSpy.count, 1)
+        compare(playPressedSpy.count, 1)
 
-        buttonClickedSpy.clear()
-        playClickedSpy.clear()
+        buttonPressedSpy.clear()
+        playPressedSpy.clear()
 
         control.tableInEditMode = true
         mouseClick(control)
-        compare(buttonClickedSpy.count, 1)
-        compare(playClickedSpy.count, 0)
+        compare(buttonPressedSpy.count, 1)
+        compare(playPressedSpy.count, 0)
     }
 
 }
