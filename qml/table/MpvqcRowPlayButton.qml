@@ -25,19 +25,19 @@ ToolButton {
 
     required property bool tableInEditMode
 
-    signal buttonClicked()
-    signal playClicked()
+    signal buttonPressed()
+    signal playPressed()
 
     focusPolicy: Qt.NoFocus
     icon.source: "qrc:/data/icons/play_arrow_black_24dp.svg"
     icon.width: 18
     icon.height: 18
 
-    onClicked: {
-        root.buttonClicked()
+    onPressed: {
+        root.buttonPressed()
 
         if (!root.tableInEditMode) {
-            root.playClicked()
+            root.playPressed()
         }
     }
 

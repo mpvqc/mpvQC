@@ -64,13 +64,10 @@ Item {
     readonly property int leftAndRightPadding: 14
     readonly property int topAndBottomPadding: 13
 
-    signal clicked()
+    signal pressed()
     signal copyCommentClicked()
     signal deleteCommentClicked()
-    signal playClicked()
-
-    signal upPressed()
-    signal downPressed()
+    signal playPressed()
 
     signal editingStarted()
     signal editingStopped()
@@ -111,7 +108,7 @@ Item {
         enabled: !root.rowSelected
         z: -1
 
-        onClicked: root.clicked()
+        onPressed: root.pressed()
     }
 
     MouseArea {
@@ -120,8 +117,8 @@ Item {
         acceptedButtons: Qt.RightButton
         z: -1
 
-        onClicked: {
-            root.clicked()
+        onPressed: {
+            root.pressed()
 
             const mirrored = LayoutMirroring.enabled
             const contextMenu = root.createContextMenu()
@@ -140,9 +137,9 @@ Item {
 
             tableInEditMode: root.tableInEditMode
 
-            onButtonClicked: root.clicked()
+            onButtonPressed: root.pressed()
 
-            onPlayClicked: root.playClicked()
+            onPlayPressed: root.playPressed()
         }
 
         MpvqcRowTimeLabel {
