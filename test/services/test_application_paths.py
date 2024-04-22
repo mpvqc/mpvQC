@@ -21,16 +21,15 @@ from unittest.mock import MagicMock
 
 import inject
 
-from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsService
+from mpvqc.services import ApplicationPathsService, ApplicationEnvironmentService
 
 
 class ApplicationPathsServiceTest(unittest.TestCase):
     executing_dir = Path.home()
 
-    def setUp(self):
+    def _mock(self, portable: bool = False):
         mock = MagicMock()
-        mock.runs_as_flatpak = False
-        mock.built_by_nuitka = False
+        mock.is_portable = portable
         mock.executing_directory = self.executing_dir
         # fmt: off
         inject.clear_and_configure(lambda binder: binder
@@ -40,43 +39,59 @@ class ApplicationPathsServiceTest(unittest.TestCase):
     def tearDown(self):
         inject.clear()
 
+    def test_path_distinction(self):
+        self._mock(portable=False)
+        service = ApplicationPathsService()
+        self.assertNotIn("appdata", f"{service.dir_config}")
+
+        self._mock(portable=True)
+        service = ApplicationPathsService()
+        self.assertIn("appdata", f"{service.dir_config}")
+
     def test_directory_backup(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata" / "backups"
         actual = service.dir_backup
         self.assertEqual(expected, actual)
 
     def test_directory_config(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata"
         actual = service.dir_config
         self.assertEqual(expected, actual)
 
     def test_directory_screenshots(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata" / "screenshots"
         actual = service.dir_screenshots
         self.assertEqual(expected, actual)
 
     def test_directory_export_templates(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata" / "export-templates"
         actual = service.dir_export_templates
         self.assertEqual(expected, actual)
 
     def test_file_input_conf(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata" / "input.conf"
         actual = service.file_input_conf
         self.assertEqual(expected, actual)
 
     def test_file_mpv_conf(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata" / "mpv.conf"
         actual = service.file_mpv_conf
         self.assertEqual(expected, actual)
 
     def test_file_settings(self):
+        self._mock(portable=True)
         service = ApplicationPathsService()
         expected = self.executing_dir / "appdata" / "settings.ini"
         actual = service.file_settings
