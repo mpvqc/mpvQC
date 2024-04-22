@@ -69,9 +69,6 @@ Item {
     signal deleteCommentClicked()
     signal playPressed()
 
-    signal upPressed()
-    signal downPressed()
-
     signal editingStarted()
     signal editingStopped()
 
