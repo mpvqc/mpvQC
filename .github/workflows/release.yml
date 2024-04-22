@@ -223,6 +223,11 @@ jobs:
           execute sha1sum --check "$ARTIFACT.sha1"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
+      - name: 'Make Application Portable'
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute touch deployment/main.dist/portable
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:

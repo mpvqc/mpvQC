@@ -34,14 +34,12 @@ class ApplicationPathsService:
         dir_export_templates: Path
 
     def __init__(self):
-        if self._app.built_by_nuitka:
-            self._paths = self._local_paths()
-        elif self._app.runs_as_flatpak:
-            self._paths = self._system_paths()
+        if self._app.is_portable:
+            self._paths = self._paths_next_to_executable()
         else:
-            self._paths = self._local_paths()
+            self._paths = self._xdg_paths()
 
-    def _local_paths(self) -> "ApplicationPathsService.Paths":
+    def _paths_next_to_executable(self) -> "ApplicationPathsService.Paths":
         dir_app = self._app.executing_directory
         return ApplicationPathsService.Paths(
             dir_backup=dir_app / "appdata" / "backups",
@@ -51,7 +49,7 @@ class ApplicationPathsService:
         )
 
     @staticmethod
-    def _system_paths() -> "ApplicationPathsService.Paths":
+    def _xdg_paths() -> "ApplicationPathsService.Paths":
         appname = QCoreApplication.applicationName()
         config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
