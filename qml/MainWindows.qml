@@ -26,26 +26,35 @@ import pyobjects
 ApplicationWindow {
     id: root
 
-    x: app.x
-    y: app.y
-    width: app.width
-    height: app.height
+    x: appWindow.x
+    y: appWindow.y
+    width: appWindow.width
+    height: appWindow.height
 
-    minimumWidth: app.minimumWidth
-    minimumHeight: app.minimumHeight
+    minimumWidth: appWindow.minimumWidth
+    minimumHeight: appWindow.minimumHeight
 
     flags: Qt.FramelessWindowHint | Qt.Window
     visibility: Window.Windowed
 
-    Material.theme: app.mpvqcSettings.theme
-    Material.accent: app.mpvqcSettings.primary
-    Material.primary: app.mpvqcSettings.primary
+    Material.theme: appWindow.mpvqcSettings.theme
+    Material.accent: appWindow.mpvqcSettings.primary
+    Material.primary: appWindow.mpvqcSettings.primary
+
+    onActiveFocusItemChanged: {
+        if (activeFocusItem != null) {
+            // Due to us being required to stack 3 windows, this outer window can obtain focus. This is the case when
+            // the video player window was clicked using the mouse. As soon as this happens, we refocus the appWindow
+            appWindow.requestActivate()
+            appWindow.focusCommentTable()
+        }
+    }
 
     WindowContainer {
-        x: app.playerArea.applicationWideTopLeft.x
-        y: app.playerArea.applicationWideTopLeft.y
-        width: app.playerArea.width
-        height: app.playerArea.height
+        x: appWindow.playerArea.applicationWideTopLeft.x
+        y: appWindow.playerArea.applicationWideTopLeft.y
+        width: appWindow.playerArea.width
+        height: appWindow.playerArea.height
 
         window: MpvWindowPyObject {
             flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput
@@ -53,7 +62,7 @@ ApplicationWindow {
         }
 
         Main {
-            id: app
+            id: appWindow
 
             objectName: 'mpvqcControlsWindow'
             color: 'transparent'
@@ -65,7 +74,7 @@ ApplicationWindow {
             }
 
             onVisibilityChanged: {
-                root.visibility = app.visibility
+                root.visibility = appWindow.visibility
             }
         }
     }

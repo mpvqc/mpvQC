@@ -58,6 +58,10 @@ ApplicationWindow {
         'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt'
     ]
 
+    function focusCommentTable() {
+        root.mpvqcCommentTable.forceActiveFocus()
+    }
+
     function toggleMaximized() {
         mpvqcWindowVisibilityHandler.toggleMaximized()
     }
@@ -74,7 +78,7 @@ ApplicationWindow {
         mpvqcWindowVisibilityHandler.disableFullScreen()
     }
 
-    onClosing: (event) => {
+    onClosing: event => {
         closeHandler.requestClose()
         event.accepted = closeHandler.userConfirmedClose
     }
@@ -87,7 +91,7 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
-        onSplitViewHandleHovered: (hovered) => _catchAllMouseArea.splitViewHandleHovered(hovered)
+        onSplitViewHandleHovered: hovered => _catchAllMouseArea.splitViewHandleHovered(hovered)
 
         Keys.onEscapePressed: {
             if (root.fullscreen) {
@@ -95,7 +99,7 @@ ApplicationWindow {
             }
         }
 
-        Keys.onPressed: (event) => {
+        Keys.onPressed: event => {
             if (event.key === Qt.Key_E) {
                 return _handleEPressed(event)
             }
@@ -139,12 +143,12 @@ ApplicationWindow {
             const modifiers = event.modifiers
             return key === Qt.Key_Up
                 || key === Qt.Key_Down
-                || (key === Qt.Key_Return && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_Escape && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_Delete && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_F && modifiers === Qt.ControlModifier)
-                || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
+                || key === Qt.Key_Return && modifiers === Qt.NoModifier
+                || key === Qt.Key_Escape && modifiers === Qt.NoModifier
+                || key === Qt.Key_Delete && modifiers === Qt.NoModifier
+                || key === Qt.Key_Backspace && modifiers === Qt.NoModifier
+                || key === Qt.Key_F && modifiers === Qt.ControlModifier
+                || key === Qt.Key_C && modifiers === Qt.ControlModifier
         }
 
     }
@@ -156,7 +160,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         onAfterPressed: {
-            root.mpvqcCommentTable.forceActiveFocus()
+            root.focusCommentTable()
         }
     }
 
