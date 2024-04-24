@@ -51,8 +51,8 @@ ApplicationWindow {
     }
 
     WindowContainer {
-        x: appWindow.playerArea.applicationWideTopLeft.x
-        y: appWindow.playerArea.applicationWideTopLeft.y
+        x: appWindow.playerArea.globalCoordinate.x
+        y: appWindow.playerArea.globalCoordinate.y
         width: appWindow.playerArea.width
         height: appWindow.playerArea.height
 
