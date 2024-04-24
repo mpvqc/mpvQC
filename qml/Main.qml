@@ -31,7 +31,7 @@ MpvqcApplication {
     minimumHeight: 540
 
     flags: Qt.FramelessWindowHint | Qt.Window
-    color: Material.background
+    color: 'transparent'
     visible: true
 
     font.pointSize: 10

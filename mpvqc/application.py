@@ -96,7 +96,7 @@ class MpvqcApplication(QGuiApplication):
 
     def start_engine(self):
         if sys.platform == "win32":
-            url = QUrl.fromLocalFile(":/qml/MainWindows.qml")
+            url = QUrl.fromLocalFile(":/qml/Main.qml")
         else:
             url = QUrl.fromLocalFile(":/qml/Main.qml")
         self._engine.load(url)
@@ -120,7 +120,7 @@ class MpvqcApplication(QGuiApplication):
         self.application_ready.emit()
 
     def add_nested_window_effects(self):
-        # return
+        return
         if sys.platform == "win32":
             self._controls_window = self.find_object(QObject, "mpvqcControlsWindow")
             self._effects.addWindowAnimation(self._controls_window.winId())
