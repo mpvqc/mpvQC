@@ -26,7 +26,7 @@ import win32con
 import win32gui
 
 from .c_structures import LPNCCALCSIZE_PARAMS
-from .utils import isMaximized, isFullScreen, getResizeBorderThickness, Taskbar
+from .utils import isMaximized, isFullScreen, getResizeBorderThickness, Taskbar, erase_background
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
@@ -101,6 +101,10 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
 
             result = 0 if not msg.wParam else win32con.WVR_REDRAW
             return True, result
+        elif msg.message == win32con.WM_ERASEBKGND:
+            erase_background(msg.hWnd)
+            return True, 0
+
         return False, 0
 
     @classmethod

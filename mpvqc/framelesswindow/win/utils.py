@@ -3,6 +3,7 @@
 # Copied from https://github.com/zhiyiYo/PyQt-Frameless-Window/blob/PySide6/qframelesswindow/utils/win32_utils.py
 # https://github.com/zhiyiYo/PyQt-Frameless-Window/blob/af20448127fd8111037742dd1be4e9de1c18b7ec/qframelesswindow/utils/win32_utils.py
 
+import ctypes
 import sys
 from ctypes import Structure, byref, sizeof, windll, c_int
 from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT
@@ -18,6 +19,23 @@ from PySide6.QtGui import QGuiApplication
 ABM_GETSTATE = 4
 ABS_AUTOHIDE = 1
 ABM_GETTASKBARPOS = 5
+
+GetClientRect = ctypes.windll.user32.GetClientRect
+FillRect = ctypes.windll.user32.FillRect
+CreateSolidBrush = ctypes.windll.gdi32.CreateSolidBrush
+
+
+def erase_background(hwnd):
+    rect = RECT()
+    GetClientRect(hwnd, ctypes.byref(rect))
+
+    hdc = ctypes.windll.user32.GetDC(hwnd)
+    brush = CreateSolidBrush(0x00000000)
+
+    FillRect(hdc, ctypes.byref(rect), brush)
+
+    ctypes.windll.user32.ReleaseDC(hwnd, hdc)
+    ctypes.windll.gdi32.DeleteObject(brush)
 
 
 def isMaximized(hWnd):

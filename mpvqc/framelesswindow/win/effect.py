@@ -16,13 +16,13 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-from ctypes import POINTER, byref, c_bool, c_int, pointer, sizeof, WinDLL, windll
-from ctypes.wintypes import DWORD, LONG, LPCVOID
+from ctypes import POINTER, byref, c_int, WinDLL, windll
+from ctypes.wintypes import LONG
 
 import win32con
 import win32gui
 
-from .c_structures import ACCENT_POLICY, MARGINS, WINDOWCOMPOSITIONATTRIB, WINDOWCOMPOSITIONATTRIBDATA, DWM_BLURBEHIND
+from .c_structures import MARGINS
 
 
 class WindowsWindowEffect:
@@ -31,30 +31,10 @@ class WindowsWindowEffect:
     def __init__(self):
         self.user32 = WinDLL("user32")
         self.dwmapi = WinDLL("dwmapi")
-        self.SetWindowCompositionAttribute = self.user32.SetWindowCompositionAttribute
+
         self.DwmExtendFrameIntoClientArea = self.dwmapi.DwmExtendFrameIntoClientArea
-        self.DwmEnableBlurBehindWindow = self.dwmapi.DwmEnableBlurBehindWindow
-        self.DwmSetWindowAttribute = self.dwmapi.DwmSetWindowAttribute
-
-        self.SetWindowCompositionAttribute.restype = c_bool
         self.DwmExtendFrameIntoClientArea.restype = LONG
-        self.DwmEnableBlurBehindWindow.restype = LONG
-        self.DwmSetWindowAttribute.restype = LONG
-
-        self.SetWindowCompositionAttribute.argtypes = [
-            c_int,
-            POINTER(WINDOWCOMPOSITIONATTRIBDATA),
-        ]
-        self.DwmSetWindowAttribute.argtypes = [c_int, DWORD, LPCVOID, DWORD]
         self.DwmExtendFrameIntoClientArea.argtypes = [c_int, POINTER(MARGINS)]
-        self.DwmEnableBlurBehindWindow.argtypes = [c_int, POINTER(DWM_BLURBEHIND)]
-
-        # Initialize structure
-        self.accentPolicy = ACCENT_POLICY()
-        self.winCompAttrData = WINDOWCOMPOSITIONATTRIBDATA()
-        self.winCompAttrData.Attribute = WINDOWCOMPOSITIONATTRIB.WCA_ACCENT_POLICY.value
-        self.winCompAttrData.SizeOfData = sizeof(self.accentPolicy)
-        self.winCompAttrData.Data = pointer(self.accentPolicy)
 
     def addShadowEffect(self, hWnd):
         if not self._isDwmCompositionEnabled():
@@ -79,6 +59,7 @@ class WindowsWindowEffect:
             style
             | win32con.WS_MINIMIZEBOX
             | win32con.WS_MAXIMIZEBOX
+            | win32con.WS_SYSMENU
             | win32con.WS_CAPTION
             | win32con.CS_DBLCLKS
             | win32con.WS_THICKFRAME,
