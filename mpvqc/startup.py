@@ -61,6 +61,13 @@ class StartUp:
         if sys.platform == "linux":
             os.environ["QT_QPA_PLATFORM"] = "xcb"
 
+        return
+
+        os.environ["QT_WIN_DEBUG_CONSOLE"] = "1"
+        os.environ["QT_LOGGING_TO_CONSOLE"] = "1"
+        os.environ["QT_DEBUG"] = "1"
+        os.environ["QT_LOGGING_RULES"] = "qt.qpa.window.debug=true"
+
     @staticmethod
     def import_mpvqc_resources():
         import mpvqc.generated_resources  # noqa: F401

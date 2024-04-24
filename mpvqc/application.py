@@ -106,9 +106,10 @@ class MpvqcApplication(QGuiApplication):
             from mpvqc.framelesswindow.win import WindowsWindowEffect
 
             hwnd = self.topLevelWindows()[0].winId()
+            # return
 
             self._effects = WindowsWindowEffect()
-            self._effects.addShadowEffect(hwnd)
+            # self._effects.addShadowEffect(hwnd)
             self._effects.addWindowAnimation(hwnd)
 
     def verify(self):
@@ -119,6 +120,7 @@ class MpvqcApplication(QGuiApplication):
         self.application_ready.emit()
 
     def add_nested_window_effects(self):
+        # return
         if sys.platform == "win32":
             self._controls_window = self.find_object(QObject, "mpvqcControlsWindow")
             self._effects.addWindowAnimation(self._controls_window.winId())

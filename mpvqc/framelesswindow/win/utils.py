@@ -2,7 +2,6 @@
 #
 # Copied from https://github.com/zhiyiYo/PyQt-Frameless-Window/blob/PySide6/qframelesswindow/utils/win32_utils.py
 # https://github.com/zhiyiYo/PyQt-Frameless-Window/blob/af20448127fd8111037742dd1be4e9de1c18b7ec/qframelesswindow/utils/win32_utils.py
-
 import sys
 from ctypes import Structure, byref, sizeof, windll, c_int
 from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT
@@ -19,20 +18,53 @@ ABM_GETSTATE = 4
 ABS_AUTOHIDE = 1
 ABM_GETTASKBARPOS = 5
 
+SM_CXPADDEDBORDER = 92
+
+
+def GetDpiForWindow(handle):
+    return windll.user32.GetDpiForWindow(handle)
+
+
+def GetSystemMetricsForDpi(arg, dpi):
+    return windll.user32.GetSystemMetricsForDpi(arg, dpi)
+
+
+def GetWindowRect(handle):
+    left, top, right, bottom = win32gui.GetWindowRect(handle)
+    rect = RECT()
+    rect.left = left
+    rect.top = top
+    rect.right = right
+    rect.bottom = bottom
+    return rect
+
+
+def GetThemePartSize(*args):
+    def get_system_metrics(metric):
+        return win32api.GetSystemMetrics(metric)
+
+    # Example usage
+    title_bar_height = get_system_metrics(win32con.SM_CYCAPTION)
+    print("Titlebar Height:", title_bar_height)
+    return 0
+
 
 def isMaximized(hWnd):
-    """Determine whether the window is maximized
+    placement = win32gui.GetWindowPlacement(hWnd)
+    return placement and placement[1] == win32con.SW_MAXIMIZE
 
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-    """
-    windowPlacement = win32gui.GetWindowPlacement(hWnd)
-    if not windowPlacement:
-        return False
 
-    return windowPlacement[1] == win32con.SW_MAXIMIZE
+def win32_dpi_scale(value, dpi):
+    return int(value * dpi / 96)
+
+
+def win32_titlebar_rect(handle) -> 'PyRECT':
+    top_and_bottom_borders = 2
+    dpi = GetDpiForWindow(handle)
+    caption_height = win32api.GetSystemMetrics(win32con.SM_CYCAPTION)
+    caption_height = win32_dpi_scale(caption_height, dpi) + top_and_bottom_borders
+    client_rect = win32gui.GetClientRect(handle)
+    return client_rect[0], client_rect[1], client_rect[2], client_rect[1] + caption_height
 
 
 def isFullScreen(hWnd):

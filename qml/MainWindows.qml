@@ -48,7 +48,7 @@ ApplicationWindow {
         height: app.playerArea.height
 
         window: MpvWindowPyObject {
-            flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput
+            flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput | Qt.SubWindow
             color: "black"
         }
 
@@ -57,6 +57,7 @@ ApplicationWindow {
 
             objectName: 'mpvqcControlsWindow'
             color: 'transparent'
+            flags: Qt.FramelessWindowHint | Qt.SubWindow
 
             onClosing: event => {
                 if (event.accepted) {
