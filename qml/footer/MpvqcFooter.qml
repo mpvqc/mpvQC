@@ -29,7 +29,8 @@ Item {
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property int mBottom: mpvqcApplication.maximized ? 2 : 0
-    readonly property int mLeft: mpvqcSettings.layoutOrientation === Qt.Horizontal
+    readonly property bool horizontalLayout: mpvqcSettings.layoutOrientation === Qt.Horizontal
+    readonly property int mLeft: horizontalLayout
         ? 6
         : mpvqcApplication.maximized ? 2 : 0
 
@@ -53,16 +54,18 @@ Item {
             width: _content.width
 
             Rectangle {
-	            width: root.mLeft
-	            color: 'transparent'
-	        }
+                width: root.mLeft
+                color: 'transparent'
+            }
 
             MpvqcRowSelectionLabel {
                 mpvqcApplication: root.mpvqcApplication
                 Layout.bottomMargin: root.mBottom
             }
 
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
 
             MpvqcVideoPercentLabel {
                 mpvqcApplication: root.mpvqcApplication
@@ -86,8 +89,11 @@ Item {
                 ToolButton {
                     id: _formattingOptionsButton
 
-                    property var menu: MpvqcFooterSettingsMenu {
+                    property var menu: MpvqcFooterSettingsMenu
+                    {
                         mpvqcApplication: root.mpvqcApplication
+                        y: -height
+                        transformOrigin: mirrored && !horizontalLayout ? Popup.BottomLeft : Popup.BottomRight
                     }
 
                     icon.source: "qrc:/data/icons/expand_more_black_24dp.svg"
