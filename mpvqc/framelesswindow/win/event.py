@@ -18,7 +18,6 @@
 
 import ctypes.wintypes
 from ctypes import cast
-from ctypes.wintypes import LPRECT
 
 import PySide6.QtCore
 import win32api
@@ -44,7 +43,7 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
         if msg.message == win32con.WM_NCHITTEST and (self.border_width is not None):
             x, y, w, h = self.get_window_size(msg.hWnd)
             x_pos = (win32api.LOWORD(msg.lParam) - x) % 65536
-            y_pos = win32api.HIWORD(msg.lParam) - y
+            y_pos = (win32api.HIWORD(msg.lParam) - y) % 65536
 
             bw = 0 if isMaximized(msg.hWnd) or isFullScreen(msg.hWnd) else self.border_width
             lx = x_pos < bw
@@ -68,11 +67,8 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
                 return True, win32con.HTLEFT
             elif rx:
                 return True, win32con.HTRIGHT
-        elif msg.message == win32con.WM_NCCALCSIZE:
-            if msg.wParam:
-                rect = cast(msg.lParam, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
-            else:
-                rect = cast(msg.lParam, LPRECT).contents
+        elif msg.message == win32con.WM_NCCALCSIZE and msg.wParam:
+            rect = cast(msg.lParam, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
 
             isMax = isMaximized(msg.hWnd)
             isFull = isFullScreen(msg.hWnd)
