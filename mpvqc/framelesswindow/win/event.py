@@ -22,90 +22,119 @@ from ctypes import cast
 import PySide6.QtCore
 import win32api
 import win32con
-import win32gui
 
 from .c_structures import LPNCCALCSIZE_PARAMS
-from .utils import isMaximized, isFullScreen, getResizeBorderThickness, Taskbar, erase_background
+from .utils import is_maximized, is_fullscreen, get_resize_border_thickness, Taskbar, get_window_size
+
+RESIZE_BORDER_WIDTH = 6
+
+
+def handle_non_client_hit_test(hwnd, l_param) -> tuple[bool, int]:
+    if is_maximized(hwnd) or is_fullscreen(hwnd):
+        return False, win32con.HTNOWHERE
+
+    x, y, w, h = get_window_size(hwnd)
+    x_pos = (win32api.LOWORD(l_param) - x) % 65536
+    y_pos = (win32api.HIWORD(l_param) - y) % 65536
+
+    lx = x_pos < RESIZE_BORDER_WIDTH
+    rx = x_pos > w - RESIZE_BORDER_WIDTH
+    ty = y_pos < RESIZE_BORDER_WIDTH
+    by = y_pos > h - RESIZE_BORDER_WIDTH
+
+    if lx and ty:
+        return True, win32con.HTTOPLEFT
+    if rx and by:
+        return True, win32con.HTBOTTOMRIGHT
+    if rx and ty:
+        return True, win32con.HTTOPRIGHT
+    if lx and by:
+        return True, win32con.HTBOTTOMLEFT
+    if ty:
+        return True, win32con.HTTOP
+    if by:
+        return True, win32con.HTBOTTOM
+    if lx:
+        return True, win32con.HTLEFT
+    if rx:
+        return True, win32con.HTRIGHT
+
+    return False, win32con.HTNOWHERE
+
+
+def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
+    rect = cast(l_param, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
+
+    maximized = is_maximized(hwnd)
+    fullscreen = is_fullscreen(hwnd)
+
+    # adjust the size of client rect
+    if maximized and not fullscreen:
+        ty = get_resize_border_thickness(hwnd, False)
+        rect.top += ty
+        rect.bottom -= ty
+
+        tx = get_resize_border_thickness(hwnd, True)
+        rect.left += tx
+        rect.right -= tx
+
+    if (maximized or fullscreen) and Taskbar.is_auto_hide():
+        position = Taskbar.get_position(hwnd)
+        if position == Taskbar.LEFT:
+            rect.top += Taskbar.AUTO_HIDE_THICKNESS
+        elif position == Taskbar.BOTTOM:
+            rect.bottom -= Taskbar.AUTO_HIDE_THICKNESS
+        elif position == Taskbar.LEFT:
+            rect.left += Taskbar.AUTO_HIDE_THICKNESS
+        elif position == Taskbar.RIGHT:
+            rect.right -= Taskbar.AUTO_HIDE_THICKNESS
+
+    return True, win32con.WVR_REDRAW
+
+
+GetClientRect = ctypes.windll.user32.GetClientRect
+GetDC = ctypes.windll.user32.GetDC
+CreateSolidBrush = ctypes.windll.gdi32.CreateSolidBrush
+FillRect = ctypes.windll.user32.FillRect
+ReleaseDC = ctypes.windll.user32.ReleaseDC
+DeleteObject = ctypes.windll.gdi32.DeleteObject
+
+
+def handle_erase_background(hwnd) -> tuple[bool, int]:
+    rect = ctypes.wintypes.RECT()
+    GetClientRect(hwnd, ctypes.byref(rect))
+
+    hdc = GetDC(hwnd)
+    brush = CreateSolidBrush(0x00000000)
+
+    FillRect(hdc, ctypes.byref(rect), brush)
+
+    ReleaseDC(hwnd, hdc)
+    DeleteObject(brush)
+    return True, 0
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
-    def __init__(self, border_width=None) -> None:
-        super().__init__()
-        self.border_width = border_width
-        self.monitor_info = None
+    """"""
 
-    def nativeEventFilter(self, eventType, message):
+    def nativeEventFilter(self, _, message):
         msg = ctypes.wintypes.MSG.from_address(message.__int__())
 
-        if not msg.hWnd:
+        hwnd = msg.hWnd
+
+        if not hwnd:
             return False, 0
 
-        if msg.message == win32con.WM_NCHITTEST and (self.border_width is not None):
-            x, y, w, h = self.get_window_size(msg.hWnd)
-            x_pos = (win32api.LOWORD(msg.lParam) - x) % 65536
-            y_pos = (win32api.HIWORD(msg.lParam) - y) % 65536
+        l_param = msg.lParam
+        w_param = msg.wParam
+        message = msg.message
 
-            bw = 0 if isMaximized(msg.hWnd) or isFullScreen(msg.hWnd) else self.border_width
-            lx = x_pos < bw
-            rx = x_pos > w - bw
-            ty = y_pos < bw
-            by = y_pos > h - bw
-
-            if lx and ty:
-                return True, win32con.HTTOPLEFT
-            elif rx and by:
-                return True, win32con.HTBOTTOMRIGHT
-            elif rx and ty:
-                return True, win32con.HTTOPRIGHT
-            elif lx and by:
-                return True, win32con.HTBOTTOMLEFT
-            elif ty:
-                return True, win32con.HTTOP
-            elif by:
-                return True, win32con.HTBOTTOM
-            elif lx:
-                return True, win32con.HTLEFT
-            elif rx:
-                return True, win32con.HTRIGHT
-        elif msg.message == win32con.WM_NCCALCSIZE and msg.wParam:
-            rect = cast(msg.lParam, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
-
-            isMax = isMaximized(msg.hWnd)
-            isFull = isFullScreen(msg.hWnd)
-
-            # adjust the size of client rect
-            if isMax and not isFull:
-                ty = getResizeBorderThickness(msg.hWnd, False)
-                rect.top += ty
-                rect.bottom -= ty
-
-                tx = getResizeBorderThickness(msg.hWnd, True)
-                rect.left += tx
-                rect.right -= tx
-
-            # handle the situation that an auto-hide taskbar is enabled
-            if (isMax or isFull) and Taskbar.isAutoHide():
-                position = Taskbar.getPosition(msg.hWnd)
-                if position == Taskbar.LEFT:
-                    rect.top += Taskbar.AUTO_HIDE_THICKNESS
-                elif position == Taskbar.BOTTOM:
-                    rect.bottom -= Taskbar.AUTO_HIDE_THICKNESS
-                elif position == Taskbar.LEFT:
-                    rect.left += Taskbar.AUTO_HIDE_THICKNESS
-                elif position == Taskbar.RIGHT:
-                    rect.right -= Taskbar.AUTO_HIDE_THICKNESS
-
-            result = 0 if not msg.wParam else win32con.WVR_REDRAW
-            return True, result
-        elif msg.message == win32con.WM_ERASEBKGND:
-            erase_background(msg.hWnd)
-            return True, 0
-
-        return False, 0
-
-    @classmethod
-    def get_window_size(cls, hwnd):
-        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-        width = right - left
-        height = bottom - top
-        return left, top, width, height
+        match message:
+            case win32con.WM_NCHITTEST:
+                return handle_non_client_hit_test(hwnd, l_param)
+            case win32con.WM_NCCALCSIZE if w_param:
+                return handle_non_client_calculate_size(hwnd, l_param)
+            case win32con.WM_ERASEBKGND:
+                return handle_erase_background(hwnd)
+            case _:
+                return False, 0

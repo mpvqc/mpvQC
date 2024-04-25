@@ -17,5 +17,6 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 # ruff: noqa: F401
-from .effect import WindowsWindowEffect
 from .event import WindowsEventFilter
+
+from .utils import extend_frame_into_client_area, configure_gwl_style

@@ -81,12 +81,10 @@ class StartUp:
         app.create_directories()
         app.set_up_signals()
         app.set_up_imports()
-        app.install_window_event_filter()
         app.start_engine()
-        app.add_outer_window_effects()
         app.verify()
         app.notify_ready()
-        app.add_nested_window_effects()
+        app.configure_frameless_window()
 
         sys.exit(app.exec())
 

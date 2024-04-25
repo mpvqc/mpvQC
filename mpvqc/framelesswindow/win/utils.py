@@ -1,13 +1,24 @@
-# coding:utf-8
+# Copyright 2023
 #
-# Copied from https://github.com/zhiyiYo/PyQt-Frameless-Window/blob/PySide6/qframelesswindow/utils/win32_utils.py
-# https://github.com/zhiyiYo/PyQt-Frameless-Window/blob/af20448127fd8111037742dd1be4e9de1c18b7ec/qframelesswindow/utils/win32_utils.py
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# Inspired and based on:
+#  - https://github.com/zhiyiYo/PyQt-Frameless-Window
+#  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 import ctypes
-import sys
 from ctypes import Structure, byref, sizeof, windll, c_int
-from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT
-from platform import platform
+from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT, LONG
 
 import win32api
 import win32con
@@ -16,215 +27,108 @@ import win32print
 from PySide6.QtCore import QOperatingSystemVersion, QVersionNumber
 from PySide6.QtGui import QGuiApplication
 
-ABM_GETSTATE = 4
-ABS_AUTOHIDE = 1
-ABM_GETTASKBARPOS = 5
-
-GetClientRect = ctypes.windll.user32.GetClientRect
-FillRect = ctypes.windll.user32.FillRect
-CreateSolidBrush = ctypes.windll.gdi32.CreateSolidBrush
+from .c_structures import MARGINS
 
 
-def erase_background(hwnd):
-    rect = RECT()
-    GetClientRect(hwnd, ctypes.byref(rect))
-
-    hdc = ctypes.windll.user32.GetDC(hwnd)
-    brush = CreateSolidBrush(0x00000000)
-
-    FillRect(hdc, ctypes.byref(rect), brush)
-
-    ctypes.windll.user32.ReleaseDC(hwnd, hdc)
-    ctypes.windll.gdi32.DeleteObject(brush)
+def get_window_size(hwnd) -> tuple[int, int, int, int]:
+    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    width = right - left
+    height = bottom - top
+    return left, top, width, height
 
 
-def isMaximized(hWnd):
-    """Determine whether the window is maximized
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-    """
-    windowPlacement = win32gui.GetWindowPlacement(hWnd)
-    if not windowPlacement:
+def is_maximized(hwnd):
+    window_placement = win32gui.GetWindowPlacement(hwnd)
+    if not window_placement:
         return False
 
-    return windowPlacement[1] == win32con.SW_MAXIMIZE
+    return window_placement[1] == win32con.SW_MAXIMIZE
 
 
-def isFullScreen(hWnd):
-    """Determine whether the window is full screen
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-    """
-    if not hWnd:
+def is_fullscreen(hwnd):
+    win_rect = win32gui.GetWindowRect(hwnd)
+    if not win_rect:
         return False
 
-    hWnd = int(hWnd)
-    winRect = win32gui.GetWindowRect(hWnd)
-    if not winRect:
+    monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTOPRIMARY)
+    if not monitor_info:
         return False
 
-    monitorInfo = getMonitorInfo(hWnd, win32con.MONITOR_DEFAULTTOPRIMARY)
-    if not monitorInfo:
-        return False
-
-    monitorRect = monitorInfo["Monitor"]
-    return all(i == j for i, j in zip(winRect, monitorRect))
+    monitor_rect = monitor_info["Monitor"]
+    return all(i == j for i, j in zip(win_rect, monitor_rect))
 
 
-def isCompositionEnabled():
-    """detect if dwm composition is enabled"""
-    bResult = c_int(0)
-    windll.dwmapi.DwmIsCompositionEnabled(byref(bResult))
-    return bool(bResult.value)
+def is_composition_enabled():
+    b_result = c_int(0)
+    windll.dwmapi.DwmIsCompositionEnabled(byref(b_result))
+    return bool(b_result.value)
 
 
-def getMonitorInfo(hWnd, dwFlags):
-    """get monitor info, return `None` if failed
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-
-    dwFlags: int
-        Determines the return value if the window does not intersect any display monitor
-    """
-    monitor = win32api.MonitorFromWindow(hWnd, dwFlags)
+def get_monitor_info(hwnd, dw_flags):
+    monitor = win32api.MonitorFromWindow(hwnd, dw_flags)
     if not monitor:
         return
 
     return win32api.GetMonitorInfo(monitor)
 
 
-def getResizeBorderThickness(hWnd, horizontal=True):
-    """get resize border thickness of widget
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-
-    dpiScale: bool
-        whether to use dpi scale
-    """
-    window = findWindow(hWnd)
+def get_resize_border_thickness(hwnd, horizontal=True):
+    window = find_window(hwnd)
     if not window:
         return 0
 
     frame = win32con.SM_CXSIZEFRAME if horizontal else win32con.SM_CYSIZEFRAME
-    result = getSystemMetrics(hWnd, frame, horizontal) + getSystemMetrics(hWnd, 92, horizontal)
+    result = get_system_metrics(hwnd, frame, horizontal) + get_system_metrics(hwnd, 92, horizontal)
 
     if result > 0:
         return result
 
-    thickness = 8 if isCompositionEnabled() else 4
+    thickness = 8 if is_composition_enabled() else 4
     return round(thickness * window.devicePixelRatio())
 
 
-def getSystemMetrics(hWnd, index, horizontal):
-    """get system metrics"""
+def get_system_metrics(hwnd, index, horizontal):
     if not hasattr(windll.user32, "GetSystemMetricsForDpi"):
         return win32api.GetSystemMetrics(index)
 
-    dpi = getDpiForWindow(hWnd, horizontal)
+    dpi = get_dpi_for_window(hwnd, horizontal)
     return windll.user32.GetSystemMetricsForDpi(index, dpi)
 
 
-def getDpiForWindow(hWnd, horizontal=True):
-    """get dpi for window
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-
-    dpiScale: bool
-        whether to use dpi scale
-    """
+def get_dpi_for_window(hwnd, horizontal=True):
     if hasattr(windll.user32, "GetDpiForWindow"):
-        return windll.user32.GetDpiForWindow(hWnd)
+        return windll.user32.GetDpiForWindow(hwnd)
 
-    hdc = win32gui.GetDC(hWnd)
+    hdc = win32gui.GetDC(hwnd)
     if not hdc:
         return 96
 
-    dpiX = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSX)
-    dpiY = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSY)
-    win32gui.ReleaseDC(hWnd, hdc)
-    if dpiX > 0 and horizontal:
-        return dpiX
-    elif dpiY > 0 and not horizontal:
-        return dpiY
+    dpi_x = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSX)
+    dpi_y = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSY)
+    win32gui.ReleaseDC(hwnd, hdc)
+    if dpi_x > 0 and horizontal:
+        return dpi_x
+    elif dpi_y > 0 and not horizontal:
+        return dpi_y
 
     return 96
 
 
-def findWindow(hWnd):
-    """find window by hWnd, return `None` if not found
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-    """
-    if not hWnd:
-        return
-
+def find_window(hwnd):
     windows = QGuiApplication.topLevelWindows()
     if not windows:
         return
 
-    hWnd = int(hWnd)
+    hwnd = int(hwnd)
     for window in windows:
-        if window and int(window.winId()) == hWnd:
+        if window and int(window.winId()) == hwnd:
             return window
 
 
-def isGreaterEqualWin8_1():
-    """determine if the windows version ≥ Win8.1"""
+def is_greater_equal_win8_1():
     cv = QOperatingSystemVersion.current()
     cv = QVersionNumber(cv.majorVersion(), cv.minorVersion(), cv.microVersion())
     return cv >= QVersionNumber(8, 1, 0)
-
-
-def isGreaterEqualWin10():
-    """determine if the windows version ≥ Win10"""
-    cv = QOperatingSystemVersion.current()
-    return sys.platform == "win32" and cv.majorVersion() >= 10
-
-
-def isGreaterEqualWin11():
-    """determine if the windows version ≥ Win11"""
-    return isGreaterEqualWin10() and sys.getwindowsversion().build >= 22000
-
-
-def isWin7():
-    """determine if the windows version is Win7"""
-    return "Windows-7" in platform()
-
-
-def releaseMouseLeftButton(hWnd, x=0, y=0):
-    """release mouse left button at (x, y)
-
-    Parameters
-    ----------
-    hWnd: int or `sip.voidptr`
-        window handle
-
-    x: int
-        mouse x pos
-
-    y: int
-        mouse y pos
-    """
-    lp = (y & 0xFFFF) << 16 | (x & 0xFFFF)
-    win32api.SendMessage(int(hWnd), win32con.WM_LBUTTONUP, 0, lp)
 
 
 class APPBARDATA(Structure):
@@ -247,88 +151,77 @@ class Taskbar:
 
     AUTO_HIDE_THICKNESS = 2
 
-    @staticmethod
-    def isAutoHide():
-        """detect whether the taskbar is hidden automatically"""
-        appbarData = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, RECT(0, 0, 0, 0), 0)
-        taskbarState = windll.shell32.SHAppBarMessage(ABM_GETSTATE, byref(appbarData))
+    ABS_AUTOHIDE = 1
+    ABM_GETSTATE = 4
+    ABM_GETTASKBARPOS = 5
 
-        return taskbarState == ABS_AUTOHIDE
+    @staticmethod
+    def is_auto_hide():
+        appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, RECT(0, 0, 0, 0), 0)
+        taskbar_state = windll.shell32.SHAppBarMessage(Taskbar.ABM_GETSTATE, byref(appbar_data))
+
+        return taskbar_state == Taskbar.ABS_AUTOHIDE
 
     @classmethod
-    def getPosition(cls, hWnd):
-        """get the position of auto-hide task bar
-
-        Parameters
-        ----------
-        hWnd: int or `sip.voidptr`
-            window handle
-        """
-        if isGreaterEqualWin8_1():
-            monitorInfo = getMonitorInfo(hWnd, win32con.MONITOR_DEFAULTTONEAREST)
-            if not monitorInfo:
+    def get_position(cls, hwnd):
+        if is_greater_equal_win8_1():
+            monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+            if not monitor_info:
                 return cls.NO_POSITION
 
-            monitor = RECT(*monitorInfo["Monitor"])
-            appbarData = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, monitor, 0)
+            monitor = RECT(*monitor_info["Monitor"])
+            appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, monitor, 0)
             positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
             for position in positions:
-                appbarData.uEdge = position
-                if windll.shell32.SHAppBarMessage(11, byref(appbarData)):
+                appbar_data.uEdge = position
+                if windll.shell32.SHAppBarMessage(11, byref(appbar_data)):
                     return position
 
             return cls.NO_POSITION
 
-        appbarData = APPBARDATA(
+        appbar_data = APPBARDATA(
             sizeof(APPBARDATA), win32gui.FindWindow("Shell_TrayWnd", None), 0, 0, RECT(0, 0, 0, 0), 0
         )
-        if appbarData.hWnd:
-            windowMonitor = win32api.MonitorFromWindow(hWnd, win32con.MONITOR_DEFAULTTONEAREST)
-            if not windowMonitor:
+        if appbar_data.hWnd:
+            window_monitor = win32api.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+            if not window_monitor:
                 return cls.NO_POSITION
 
-            taskbarMonitor = win32api.MonitorFromWindow(appbarData.hWnd, win32con.MONITOR_DEFAULTTOPRIMARY)
-            if not taskbarMonitor:
+            taskbar_monitor = win32api.MonitorFromWindow(appbar_data.hWnd, win32con.MONITOR_DEFAULTTOPRIMARY)
+            if not taskbar_monitor:
                 return cls.NO_POSITION
 
-            if taskbarMonitor == windowMonitor:
-                windll.shell32.SHAppBarMessage(ABM_GETTASKBARPOS, byref(appbarData))
-                return appbarData.uEdge
+            if taskbar_monitor == window_monitor:
+                windll.shell32.SHAppBarMessage(Taskbar.ABM_GETTASKBARPOS, byref(appbar_data))
+                return appbar_data.uEdge
 
         return cls.NO_POSITION
 
 
-class WindowsMoveResize:
-    """Tool class for moving and resizing Windows window"""
+dwmapi = ctypes.windll.dwmapi
 
-    @staticmethod
-    def startSystemMove(window, globalPos):
-        """resize window
+DwmExtendFrameIntoClientArea = dwmapi.DwmExtendFrameIntoClientArea
+DwmExtendFrameIntoClientArea.argtypes = [ctypes.wintypes.HWND, ctypes.POINTER(MARGINS)]
+DwmExtendFrameIntoClientArea.restype = LONG
 
-        Parameters
-        ----------
-        window: QWidget
-            window
 
-        globalPos: QPoint
-            the global point of mouse release event
-        """
-        win32gui.ReleaseCapture()
-        win32api.SendMessage(int(window.winId()), win32con.WM_SYSCOMMAND, win32con.SC_MOVE | win32con.HTCAPTION, 0)
+def extend_frame_into_client_area(hwnd):
+    """Enables drop shadow if 'configure_gwl_style' gets called as well for the same hwnd"""
 
-    @classmethod
-    def starSystemResize(cls, window, globalPos, edges):
-        """resize window
+    margins = MARGINS(-1, -1, -1, -1)
+    DwmExtendFrameIntoClientArea(hwnd, ctypes.byref(margins))
 
-        Parameters
-        ----------
-        window: QWidget
-            window
 
-        globalPos: QPoint
-            the global point of mouse release event
-
-        edges: `Qt.Edges`
-            window edges
-        """
-        pass
+def configure_gwl_style(hwnd):
+    style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
+    win32gui.SetWindowLong(
+        hwnd,
+        win32con.GWL_STYLE,
+        style
+        | win32con.WS_MINIMIZEBOX
+        | win32con.WS_MAXIMIZEBOX
+        | win32con.WS_SYSMENU
+        | win32con.WS_CAPTION
+        | win32con.CS_DBLCLKS
+        | win32con.WS_THICKFRAME,
+    )
