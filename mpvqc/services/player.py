@@ -34,20 +34,26 @@ class PlayerService:
         super().__init__(**properties)
         self._cached_subtitles = set()
 
-        self._mpv = MPV(
-            vo="libmpv",
-            keep_open="yes",
-            idle="yes",
-            osc="yes",
-            cursor_autohide="no",
-            input_cursor="no",
-            input_default_bindings="no",
-            config="yes",
-            config_dir=self._type_mapper.map_path_to_str(self._paths.dir_config),
-            screenshot_directory=self._type_mapper.map_path_to_str(self._paths.dir_screenshots),
-            ytdl="yes",
-            # log_handler=logging.mpv_log_handler,
-        )
+        self._init_args = {
+            "keep_open": "yes",
+            "idle": "yes",
+            "osc": "yes",
+            "cursor_autohide": "no",
+            "input_cursor": "no",
+            "input_default_bindings": "no",
+            "config": "yes",
+            "config_dir": self._type_mapper.map_path_to_str(self._paths.dir_config),
+            "screenshot_directory": self._type_mapper.map_path_to_str(self._paths.dir_screenshots),
+            "ytdl": "yes",
+        }
+
+    def init(self, win_id: int or None = None):
+        if win_id is None:
+            args = {"vo": "libmpv"}
+        else:
+            args = {"wid": win_id}
+
+        self._mpv = MPV(**dict(self._init_args, **args))
 
     @property
     def mpv(self) -> MPV:
@@ -120,3 +126,6 @@ class PlayerService:
 
     def scroll_down(self) -> None:
         self._mpv.command_async("keypress", "MOUSE_BTN4")
+
+    def terminate(self) -> None:
+        self._mpv.terminate()

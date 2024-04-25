@@ -19,7 +19,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo, Signal
+from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo, Signal, QObject
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -82,33 +82,48 @@ class MpvqcApplication(QGuiApplication):
     def set_up_imports(self):
         self._engine.addImportPath(":/qml")
 
-    def install_window_event_filter(self):
-        if sys.platform == "win32":
-            from mpvqc.framelesswindow.win import WindowsEventFilter
-
-            self._event_filter = WindowsEventFilter(border_width=6)
-            self.installNativeEventFilter(self._event_filter)
-        elif sys.platform == "linux":
-            from mpvqc.framelesswindow.linux import LinuxEventFilter
-
-            self._event_filter = LinuxEventFilter(border_width=6)
-            self.installEventFilter(self._event_filter)
-
     def start_engine(self):
-        self._engine.load(QUrl.fromLocalFile(":/qml/main.qml"))
-
-    def add_window_effects(self):
         if sys.platform == "win32":
-            hwnd = self.topLevelWindows()[0].winId()
-            from mpvqc.framelesswindow.win import WindowsWindowEffect
-
-            self._effects = WindowsWindowEffect()
-            self._effects.addShadowEffect(hwnd)
-            self._effects.addWindowAnimation(hwnd)
+            url = QUrl.fromLocalFile(":/qml/MainWindows.qml")
+        else:
+            url = QUrl.fromLocalFile(":/qml/Main.qml")
+        self._engine.load(url)
 
     def verify(self):
         if not self._engine.rootObjects():
             sys.exit(-1)
+
+    def configure_frameless_window(self):
+        """"""
+
+        def init_windows_window_event_filter():
+            from mpvqc.framelesswindow.win import WindowsEventFilter
+
+            self._event_filter = WindowsEventFilter()
+            self.installNativeEventFilter(self._event_filter)
+
+        def init_linux_window_event_filter():
+            from mpvqc.framelesswindow.linux import LinuxEventFilter
+
+            window = self.topLevelWindows()[0]
+            self._event_filter = LinuxEventFilter(window, app=self)
+            self.installEventFilter(self._event_filter)
+
+        def init_windows_window_effects():
+            from mpvqc.framelesswindow.win import extend_frame_into_client_area, configure_gwl_style
+
+            hwnd_top_lvl = self.topLevelWindows()[0].winId()
+            extend_frame_into_client_area(hwnd_top_lvl)
+            configure_gwl_style(hwnd_top_lvl)
+
+            hwnd_controls = self.find_object(QObject, "mpvqcControlsWindow").winId()
+            configure_gwl_style(hwnd_controls)
+
+        if sys.platform == "win32":
+            init_windows_window_event_filter()
+            init_windows_window_effects()
+        else:
+            init_linux_window_event_filter()
 
     def notify_ready(self):
         self.application_ready.emit()

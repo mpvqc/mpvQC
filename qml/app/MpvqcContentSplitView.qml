@@ -35,6 +35,7 @@ FocusScope {
     readonly property alias mpvqcCommentTable: _tableWrapper.mpvqcCommentTable
     readonly property alias playerContainer: _playerContainer
     readonly property alias tableContainer: _tableContainer
+    readonly property alias playerArea: _player
 
     readonly property int tableContainerHeight: _tableContainer.height
     readonly property int tableContainerWidth: _tableContainer.width
@@ -46,8 +47,16 @@ FocusScope {
 
     state: mpvqcApplication.fullscreen ? "fullscreen" : "normal"
     states: [
-        State { name: "fullscreen"; ParentChange { target: _player; parent: root } },
-        State { name: "normal"; ParentChange { target: _player; parent: _playerContainer } }
+        State {
+            name: "fullscreen"
+            ParentChange { target: _player; parent: root }
+            PropertyChanges { _tableContainer { visible: false } }
+        },
+        State {
+            name: "normal"
+            ParentChange { target: _player; parent: _playerContainer }
+            PropertyChanges { _tableContainer { visible: true } }
+        }
     ]
 
     function applySaneDefaultSplitViewSize() {

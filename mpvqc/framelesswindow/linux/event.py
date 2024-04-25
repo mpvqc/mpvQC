@@ -17,38 +17,33 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 
-from typing import Optional
-
-from PySide6.QtCore import QCoreApplication, QObject, QEvent, Qt
+from PySide6.QtCore import QObject, QEvent, Qt
 from PySide6.QtGui import QCursor, QGuiApplication, QWindow
 
 
 class LinuxEventFilter(QObject):
     """"""
 
-    def __init__(self, border_width=None) -> None:
+    def __init__(self, window: QWindow, app: QGuiApplication) -> None:
         super().__init__()
-        self.border_width = border_width
+        self._border_width = 6
 
-        self._app: QGuiApplication = QCoreApplication.instance()
-        self._window: Optional[QWindow] = None
+        self._window = window
+        self._app = app
 
     def eventFilter(self, obj, event):
         if event.type() != QEvent.MouseButtonPress and event.type() != QEvent.MouseMove:
             return False
 
-        if self._window is None:
-            self._window = self._app.topLevelWindows()[0]
-
         pos = QCursor.pos() - self._window.position()
         edges = Qt.Edge(0)
-        if pos.x() < self.border_width:
+        if pos.x() < self._border_width:
             edges |= Qt.LeftEdge
-        if pos.x() >= self._window.width() - self.border_width:
+        if pos.x() >= self._window.width() - self._border_width:
             edges |= Qt.RightEdge
-        if pos.y() < self.border_width:
+        if pos.y() < self._border_width:
             edges |= Qt.TopEdge
-        if pos.y() >= self._window.height() - self.border_width:
+        if pos.y() >= self._window.height() - self._border_width:
             edges |= Qt.BottomEdge
 
         if event.type() == QEvent.MouseMove and self._window.windowState() == Qt.WindowNoState:

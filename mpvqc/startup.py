@@ -41,13 +41,6 @@ class StartUp:
         QtCore.qInstallMessageHandler(qt_log_handler())
 
     @staticmethod
-    def configure_qt_render_backend():
-        from PySide6.QtQuick import QSGRendererInterface
-        from PySide6.QtQuick import QQuickWindow
-
-        QQuickWindow.setGraphicsApi(QSGRendererInterface.GraphicsApi.OpenGL)
-
-    @staticmethod
     def configure_dependency_injection():
         from mpvqc.injections import configure_injections
 
@@ -56,6 +49,7 @@ class StartUp:
     @staticmethod
     def configure_environment_variables():
         import os
+        import sys
 
         # Qt expects 'qtquickcontrols2.conf' at root level, but the way we handle resources does not allow that.
         # So we need to override the path here
@@ -63,6 +57,9 @@ class StartUp:
 
         # Requirement for mpv
         os.environ["LC_NUMERIC"] = "C"
+
+        if sys.platform == "linux":
+            os.environ["QT_QPA_PLATFORM"] = "xcb"
 
     @staticmethod
     def import_mpvqc_resources():
@@ -84,11 +81,10 @@ class StartUp:
         app.create_directories()
         app.set_up_signals()
         app.set_up_imports()
-        app.install_window_event_filter()
         app.start_engine()
-        app.add_window_effects()
         app.verify()
         app.notify_ready()
+        app.configure_frameless_window()
 
         sys.exit(app.exec())
 
@@ -100,7 +96,6 @@ def perform_startup():
     we.configure_qt_settings()
     we.configure_qt_logging()
     we.configure_dependency_injection()
-    we.configure_qt_render_backend()
     we.configure_environment_variables()
 
     we.import_mpvqc_resources()

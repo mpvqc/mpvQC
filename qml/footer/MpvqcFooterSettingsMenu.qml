@@ -38,8 +38,6 @@ MpvqcMenu {
 
     modal: true
     dim: false
-    y: -height
-    transformOrigin: mirrored ? Popup.BottomLeft : Popup.BottomRight
 
     MenuItem {
         id: _defaultFormat
@@ -93,7 +91,7 @@ MpvqcMenu {
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {}
 
     Action {
         id: _percentage

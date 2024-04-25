@@ -36,6 +36,7 @@ ApplicationWindow {
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
+    readonly property alias playerArea: _content.playerArea
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
@@ -50,20 +51,16 @@ ApplicationWindow {
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
 
-    readonly property int windowBorder: {
-        if (root.fullscreen) {
-            return 0
-        } else if (Qt.platform.os === 'windows') {
-            return root.maximized ? 8 : 1  // work around custom window properties
-        } else if (Qt.platform.os === 'linux') {
-            return root.maximized ? 0 : 1
-        }
-    }
+    readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
     readonly property var supportedSubtitleFileExtensions: [
         'aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi',
         'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt'
     ]
+
+    function focusCommentTable() {
+        root.mpvqcCommentTable.forceActiveFocus()
+    }
 
     function toggleMaximized() {
         mpvqcWindowVisibilityHandler.toggleMaximized()
@@ -81,7 +78,7 @@ ApplicationWindow {
         mpvqcWindowVisibilityHandler.disableFullScreen()
     }
 
-    onClosing: (event) => {
+    onClosing: event => {
         closeHandler.requestClose()
         event.accepted = closeHandler.userConfirmedClose
     }
@@ -94,7 +91,7 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
-        onSplitViewHandleHovered: (hovered) => _catchAllMouseArea.splitViewHandleHovered(hovered)
+        onSplitViewHandleHovered: hovered => _catchAllMouseArea.splitViewHandleHovered(hovered)
 
         Keys.onEscapePressed: {
             if (root.fullscreen) {
@@ -102,7 +99,7 @@ ApplicationWindow {
             }
         }
 
-        Keys.onPressed: (event) => {
+        Keys.onPressed: event => {
             if (event.key === Qt.Key_E) {
                 return _handleEPressed(event)
             }
@@ -146,12 +143,12 @@ ApplicationWindow {
             const modifiers = event.modifiers
             return key === Qt.Key_Up
                 || key === Qt.Key_Down
-                || (key === Qt.Key_Return && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_Escape && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_Delete && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_Backspace && modifiers === Qt.NoModifier)
-                || (key === Qt.Key_F && modifiers === Qt.ControlModifier)
-                || (key === Qt.Key_C && modifiers === Qt.ControlModifier)
+                || key === Qt.Key_Return && modifiers === Qt.NoModifier
+                || key === Qt.Key_Escape && modifiers === Qt.NoModifier
+                || key === Qt.Key_Delete && modifiers === Qt.NoModifier
+                || key === Qt.Key_Backspace && modifiers === Qt.NoModifier
+                || key === Qt.Key_F && modifiers === Qt.ControlModifier
+                || key === Qt.Key_C && modifiers === Qt.ControlModifier
         }
 
     }
@@ -163,7 +160,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         onAfterPressed: {
-            root.mpvqcCommentTable.forceActiveFocus()
+            root.focusCommentTable()
         }
     }
 
