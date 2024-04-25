@@ -44,8 +44,22 @@ ScrollView {
     }
 
     ScrollBar.horizontal {
+        id: hScrollBar
+        stepSize: 1/15
         policy: root.contentWidth > width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         position: root.mirrored ? 1.0 - ScrollBar.horizontal.size : 0
+    }
+
+    WheelHandler {
+        enabled: !root.singleColumn
+
+        onWheel: event => {
+            if (event.angleDelta.y > 0) {
+                hScrollBar.decrease()
+            } else {
+                hScrollBar.increase()
+            }
+        }
     }
 
     ScrollBar.vertical {
