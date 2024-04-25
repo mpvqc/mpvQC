@@ -7,7 +7,10 @@
   just add-translation <locale>  # just add-translation fr_FR
   ```
 * New `<locale>.ts` file appears in the `i18n` directory
-* Translate the `ts` file using Qt Linguist 6
+* Translate the `ts` file using Qt Linguist 6:
+  ```shell
+  pyside6-linguist i18n/<locale>.ts # pyside6-linguist i18n/fr_FR.ts
+  ```
 * To test the translation:
   * Make the application portable
     ```shell
