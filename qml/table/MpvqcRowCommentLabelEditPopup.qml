@@ -50,7 +50,7 @@ Popup {
 
         text: root.currentComment
         selectByMouse: true
-        horizontalAlignment: root.mirrored ? Text.AlignRight : Text.AlignLeft
+        horizontalAlignment: Text.AlignLeft
         bottomPadding: root.bottomPadding
         topPadding: root.topPadding
         leftPadding: root.leftPadding
