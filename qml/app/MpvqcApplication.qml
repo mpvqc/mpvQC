@@ -91,8 +91,6 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
-        onSplitViewHandleHovered: hovered => _catchAllMouseArea.splitViewHandleHovered(hovered)
-
         Keys.onEscapePressed: {
             if (root.fullscreen) {
                 root.disableFullScreen()
@@ -153,13 +151,13 @@ ApplicationWindow {
 
     }
 
-    MpvqcCatchAllMouseArea {
-        id: _catchAllMouseArea
-
-        mpvqcApplication: root
+    MouseArea {
         anchors.fill: parent
+        cursorShape: undefined
+        propagateComposedEvents: true
 
-        onAfterPressed: {
+        onPressed: event => {
+            event.accepted = false
             root.focusCommentTable()
         }
     }
@@ -173,7 +171,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Qt.uiLanguage = mpvqcSettings.language
-        mpvqcCommentTable.forceActiveFocus()
+        root.focusCommentTable()
     }
 
     Material.theme: mpvqcSettings.theme
