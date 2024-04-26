@@ -118,10 +118,10 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
-      - name: 'Install Qt 6.6.2'
+      - name: 'Install Qt 6.7.0'
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.6.2'
+          version: '6.7.0'
       - name: 'Install just'
         uses: taiki-e/install-action@just
 #      - name: 'Lint Qml Files'

@@ -25,18 +25,6 @@ import models
 
 
 Item {
-    QtObject {
-        readonly property list<string> forTranslationTool: [
-            qsTranslate('CommentTypes', 'Translation'),
-            qsTranslate('CommentTypes', 'Spelling'),
-            qsTranslate('CommentTypes', 'Punctuation'),
-            qsTranslate('CommentTypes', 'Phrasing'),
-            qsTranslate('CommentTypes', 'Timing'),
-            qsTranslate('CommentTypes', 'Typeset'),
-            qsTranslate('CommentTypes', 'Note'),
-        ]
-    }
-
     id: root
 
     required property var mpvqcApplication
@@ -148,4 +136,15 @@ Item {
     }
     property alias windowTitleFormat: _windowSettings.titleFormat
 
+    QtObject {
+        readonly property list<string> forTranslationTool: [
+            qsTranslate('CommentTypes', 'Translation'),
+            qsTranslate('CommentTypes', 'Spelling'),
+            qsTranslate('CommentTypes', 'Punctuation'),
+            qsTranslate('CommentTypes', 'Phrasing'),
+            qsTranslate('CommentTypes', 'Timing'),
+            qsTranslate('CommentTypes', 'Typeset'),
+            qsTranslate('CommentTypes', 'Note'),
+        ]
+    }
 }
