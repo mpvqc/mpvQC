@@ -58,13 +58,13 @@ TestCase {
                     commentTable: _commentTable
                     searchBox: _searchBox
                     topBottomMargin: testCase.topBottomMargin
-                    handleTransition: transition => { /* Disable animation */ }
+                    handleTransition: { /* Disable animation */ }
                 }
             }
         }
     }
 
-    function create(): Component {
+    function create(): QtObject {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
         verify(control.commentTable)
