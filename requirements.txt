@@ -1,8 +1,8 @@
 inject>=5.2.1
 Jinja2>=3.1.4
-mpv>=1.0.6
-PySide6-Essentials==6.7.1
+mpv>=1.0.7
+PySide6-Essentials==6.7.2
 pywin32>=306; sys_platform == 'win32'
 
 parameterized>=0.9.0
-pytest>=8.0.2
+pytest>=8.2.2
