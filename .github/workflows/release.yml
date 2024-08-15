@@ -24,18 +24,18 @@ jobs:
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
           execute find . -type f -name 'tst_*' -delete
-      - name: 'Install Python 3.11'
+      - name: 'Install Python 3.12'
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: 'Install just'
         uses: taiki-e/install-action@just
       - name: 'Download libmpv'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          ARTIFACT="mpv-dev-x86_64-20240211-git-f5c4f0b.7z"
-          SHA1="7e9aa859440666696b8cf81cb7c9a0591aa9405b"
+          ARTIFACT="mpv-dev-x86_64-20240811-git-4e50da3.7z"
+          SHA1="37e1172f74cb7a3e443197fd1f7ad757ec164be6"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
 
           execute curl -L -O "$URL"
@@ -119,7 +119,7 @@ jobs:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
       - name: 'Install Qt 6.7.1'
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: '6.7.1'
       - name: 'Install just'
@@ -146,10 +146,10 @@ jobs:
     steps:
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
-      - name: 'Install Python 3.11'
+      - name: 'Install Python 3.12'
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: 'Remove Python sources'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -177,7 +177,6 @@ jobs:
           execute source venv/Scripts/activate
           
           execute python.exe -m nuitka main.py \
-            --follow-imports \
             --assume-yes-for-downloads \
             --standalone \
             --deployment \
@@ -185,7 +184,7 @@ jobs:
             --output-dir=deployment \
             --include-data-files=LICENSE=LICENSE \
             --include-data-files=venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
-            --windows-disable-console \
+            --windows-console-mode=attach \
             --windows-icon-from-ico=build-aux/windows/icon.ico \
             --include-qt-plugins=all \
             --include-qt-plugins=qml \
@@ -213,8 +212,8 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          ARTIFACT="mpv-dev-x86_64-20240211-git-f5c4f0b.7z"
-          SHA1="7e9aa859440666696b8cf81cb7c9a0591aa9405b"
+          ARTIFACT="mpv-dev-x86_64-20240811-git-4e50da3.7z"
+          SHA1="37e1172f74cb7a3e443197fd1f7ad757ec164be6"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
 
           execute curl -L -O "$URL"
