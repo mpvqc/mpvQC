@@ -177,7 +177,6 @@ jobs:
           execute source venv/Scripts/activate
           
           execute python.exe -m nuitka main.py \
-            --follow-imports \
             --assume-yes-for-downloads \
             --standalone \
             --deployment \
@@ -185,7 +184,7 @@ jobs:
             --output-dir=deployment \
             --include-data-files=LICENSE=LICENSE \
             --include-data-files=venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
-            --windows-disable-console \
+            --windows-console-mode=attach \
             --windows-icon-from-ico=build-aux/windows/icon.ico \
             --include-qt-plugins=all \
             --include-qt-plugins=qml \
