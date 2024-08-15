@@ -34,8 +34,8 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          ARTIFACT="mpv-dev-x86_64-20240211-git-f5c4f0b.7z"
-          SHA1="7e9aa859440666696b8cf81cb7c9a0591aa9405b"
+          ARTIFACT="mpv-dev-x86_64-20240811-git-4e50da3.7z"
+          SHA1="37e1172f74cb7a3e443197fd1f7ad757ec164be6"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
 
           execute curl -L -O "$URL"
@@ -213,8 +213,8 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          ARTIFACT="mpv-dev-x86_64-20240211-git-f5c4f0b.7z"
-          SHA1="7e9aa859440666696b8cf81cb7c9a0591aa9405b"
+          ARTIFACT="mpv-dev-x86_64-20240811-git-4e50da3.7z"
+          SHA1="37e1172f74cb7a3e443197fd1f7ad757ec164be6"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
 
           execute curl -L -O "$URL"
