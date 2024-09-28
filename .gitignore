@@ -526,6 +526,7 @@ $RECYCLE.BIN/
 .flatpak-builder
 appdata
 build-dir
+venv-runner/
 
 # Files
 generated_resources.py
