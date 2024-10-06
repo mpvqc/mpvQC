@@ -21,7 +21,7 @@ from unittest.mock import MagicMock
 
 import inject
 
-from mpvqc.services import ApplicationPathsService, ApplicationEnvironmentService
+from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsService
 
 
 class ApplicationPathsServiceTest(unittest.TestCase):

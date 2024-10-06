@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide6.QtCore import QObject, Signal, QUrl
+from PySide6.QtCore import QObject, QUrl, Signal
 
 
 class MockedMessageBox(QObject):

@@ -20,8 +20,8 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
-from PySide6.QtCore import QSettings
 from parameterized import parameterized
+from PySide6.QtCore import QSettings
 
 from mpvqc.services import ApplicationPathsService, SettingsService
 

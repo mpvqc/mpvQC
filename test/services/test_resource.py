@@ -19,7 +19,7 @@ import unittest
 
 import inject
 
-from mpvqc.services import ResourceService, ResourceReaderService
+from mpvqc.services import ResourceReaderService, ResourceService
 
 
 class ResourceServiceTest(unittest.TestCase):

@@ -18,9 +18,9 @@
 
 import unittest
 
-from PySide6.QtCore import Qt, QEvent
-from PySide6.QtGui import QKeyEvent
 from parameterized import parameterized
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtGui import QKeyEvent
 
 from mpvqc.services import KeyCommandGeneratorService
 

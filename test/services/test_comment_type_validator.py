@@ -20,7 +20,7 @@ import unittest
 import inject
 from parameterized import parameterized
 
-from mpvqc.services import ReverseTranslatorService, CommentTypeValidatorService
+from mpvqc.services import CommentTypeValidatorService, ReverseTranslatorService
 
 
 class CommentTypeValidatorServiceTest(unittest.TestCase):

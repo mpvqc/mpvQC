@@ -25,12 +25,12 @@ from mpvqc.impl import OtherState
 from mpvqc.pyobjects import MpvqcManagerPyObject
 from mpvqc.services import (
     DocumentExportService,
-    TypeMapperService,
-    VideoSelectorService,
     DocumentImporterService,
     PlayerService,
+    TypeMapperService,
+    VideoSelectorService,
 )
-from test.mocks import MockedMessageBox, MockedDialog
+from test.mocks import MockedDialog, MockedMessageBox
 
 
 class ManagerResetTest(unittest.TestCase):

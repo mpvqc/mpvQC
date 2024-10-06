@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 
 import inject
 
-from mpvqc.services import PlayerService, TypeMapperService, OperatingSystemZoomDetectorService, ApplicationPathsService
+from mpvqc.services import ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService, TypeMapperService
 
 
 class PlayerServiceTest(unittest.TestCase):

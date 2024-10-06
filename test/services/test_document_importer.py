@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 
 import inject
 
-from mpvqc.services import ReverseTranslatorService, DocumentImporterService
+from mpvqc.services import DocumentImporterService, ReverseTranslatorService
 
 DOCUMENT_1 = """\
 erroneous_document

@@ -23,18 +23,18 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import inject
-from PySide6.QtCore import QStandardPaths
-from jinja2 import TemplateSyntaxError, TemplateError
+from jinja2 import TemplateError, TemplateSyntaxError
 from parameterized import parameterized
+from PySide6.QtCore import QStandardPaths
 
 from mpvqc.services import (
-    PlayerService,
-    SettingsService,
+    ApplicationPathsService,
+    DocumentBackupService,
     DocumentExportService,
     DocumentRenderService,
-    DocumentBackupService,
-    ApplicationPathsService,
+    PlayerService,
     ResourceService,
+    SettingsService,
 )
 
 _mock_app = MagicMock()
