@@ -92,6 +92,7 @@ _default:
 
 # Format code
 format:
+    @{{ PYTHON }} -m ruff check --select I --fix
     @{{ PYTHON }} -m ruff format
 
 # Build full project into build/release

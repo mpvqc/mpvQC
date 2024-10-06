@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QObject, QCoreApplication
+from PySide6.QtCore import QCoreApplication, QObject
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickWindow
 

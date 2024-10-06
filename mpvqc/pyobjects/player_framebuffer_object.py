@@ -16,13 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QSize, QCoreApplication, QObject
-from PySide6.QtCore import Slot, Signal
+from mpv import MpvGlGetProcAddressFn, MpvRenderContext
+from PySide6.QtCore import QCoreApplication, QObject, QSize, Signal, Slot
 from PySide6.QtGui import QOpenGLContext
 from PySide6.QtOpenGL import QOpenGLFramebufferObject
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
-from mpv import MpvRenderContext, MpvGlGetProcAddressFn
 
 from mpvqc.services import OperatingSystemZoomDetectorService
 

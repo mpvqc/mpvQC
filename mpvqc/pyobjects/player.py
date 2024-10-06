@@ -16,10 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import Slot, QObject
+from PySide6.QtCore import QObject, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService, KeyCommandGeneratorService
+from mpvqc.services import KeyCommandGeneratorService, PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1

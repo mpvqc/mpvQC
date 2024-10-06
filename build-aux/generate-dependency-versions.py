@@ -22,11 +22,11 @@
 import argparse
 import json
 import re
+import sys
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
-import sys
 from pip._internal.network.session import PipSession
 from pip._internal.req import parse_requirements
 

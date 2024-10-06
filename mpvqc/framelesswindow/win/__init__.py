@@ -18,5 +18,4 @@
 
 # ruff: noqa: F401
 from .event import WindowsEventFilter
-
-from .utils import extend_frame_into_client_area, configure_gwl_style
+from .utils import configure_gwl_style, extend_frame_into_client_area

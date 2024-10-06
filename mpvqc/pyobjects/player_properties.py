@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import OperatingSystemZoomDetectorService, TypeMapperService

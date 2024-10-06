@@ -16,7 +16,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QObject, Slot, QUrl, Signal
+from PySide6.QtCore import QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import DocumentExportService, TypeMapperService

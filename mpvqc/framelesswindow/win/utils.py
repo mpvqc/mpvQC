@@ -17,8 +17,8 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 import ctypes
-from ctypes import Structure, byref, sizeof, windll, c_int
-from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT, LONG
+from ctypes import Structure, byref, c_int, sizeof, windll
+from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
 
 import win32api
 import win32con

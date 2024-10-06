@@ -18,11 +18,11 @@
 from os import environ
 
 import inject
-from PySide6.QtCore import QObject, Slot, QUrl, Signal, QPoint, Property
+from PySide6.QtCore import Property, QObject, QPoint, QUrl, Signal, Slot
 from PySide6.QtGui import QClipboard, QCursor
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import TimeFormatterService, TypeMapperService, ReverseTranslatorService
+from mpvqc.services import ReverseTranslatorService, TimeFormatterService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1

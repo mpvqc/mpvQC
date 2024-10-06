@@ -24,7 +24,7 @@ import win32api
 import win32con
 
 from .c_structures import LPNCCALCSIZE_PARAMS
-from .utils import is_maximized, is_fullscreen, get_resize_border_thickness, Taskbar, get_window_size
+from .utils import Taskbar, get_resize_border_thickness, get_window_size, is_fullscreen, is_maximized
 
 RESIZE_BORDER_WIDTH = 6
 

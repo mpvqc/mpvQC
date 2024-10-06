@@ -36,6 +36,7 @@ class StartUp:
     @staticmethod
     def configure_qt_logging():
         from PySide6 import QtCore
+
         from .logging import qt_log_handler
 
         QtCore.qInstallMessageHandler(qt_log_handler())
@@ -72,6 +73,7 @@ class StartUp:
     @staticmethod
     def start_application():
         import sys
+
         from mpvqc.application import MpvqcApplication
 
         app = MpvqcApplication(sys.argv)

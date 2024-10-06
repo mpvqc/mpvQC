@@ -31,6 +31,7 @@ def _detect_operating_system_zoom_factor() -> float:
 
 def _figure_out_zoom_factor_on_windows() -> float:
     import ctypes
+
     import win32api
 
     def current_monitor_handle():

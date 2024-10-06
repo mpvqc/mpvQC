@@ -17,7 +17,7 @@
 from typing import Callable
 
 import inject
-from PySide6.QtCore import Signal, Slot, QThreadPool, QRunnable, QObject
+from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import VersionCheckerService
