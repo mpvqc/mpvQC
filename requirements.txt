@@ -6,3 +6,5 @@ pywin32>=306; sys_platform == 'win32'
 
 parameterized>=0.9.0
 pytest>=8.3.2
+
+ruff>=0.6.9
