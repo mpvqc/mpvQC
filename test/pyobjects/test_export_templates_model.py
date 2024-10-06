@@ -15,68 +15,48 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
 
-from mpvqc.pyobjects import MpvqcExportTemplateModelPyObject
-from mpvqc.pyobjects.export_template_model import Role
+from mpvqc.pyobjects.export_template_model import MpvqcExportTemplateModelPyObject, Role
 from mpvqc.services import ApplicationPathsService
 
 
-class TestExportTemplatesModel(unittest.TestCase):
-    """"""
+def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModelPyObject:
+    mock = MagicMock()
+    mock.files_export_templates = mocked_paths
+    inject.clear_and_configure(lambda binder: binder.bind(ApplicationPathsService, mock))
+    # noinspection PyCallingNonCallable
+    return MpvqcExportTemplateModelPyObject()
 
-    @staticmethod
-    def _mock(paths: tuple[Path, ...]):
-        # noinspection PyCallingNonCallable
-        mock = MagicMock()
-        mock.files_export_templates = paths
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ApplicationPathsService, mock))
-        # fmt: on
 
-    def tearDown(self):
-        inject.clear()
+def test_no_templates():
+    model = make_model(mocked_paths=())
+    assert 0 == model.rowCount()
 
-    def test_no_templates(self):
-        self._mock(paths=())
-        # noinspection PyCallingNonCallable
-        model = MpvqcExportTemplateModelPyObject()
 
-        expected = 0
-        actual = model.rowCount()
-        self.assertEqual(expected, actual)
+def test_templates():
+    model = make_model(mocked_paths=(Path.home(), Path.cwd()))
+    assert 2 == model.rowCount()
 
-    def test_templates(self):
-        self._mock(paths=(Path.home(), Path.cwd()))
-        # noinspection PyCallingNonCallable
-        model = MpvqcExportTemplateModelPyObject()
 
-        expected = 2
-        actual = model.rowCount()
-        self.assertEqual(expected, actual)
-
-    def test_model_sorted(self):
-        self._mock(
-            paths=(
-                Path("/xy"),
-                Path("/z"),
-                Path("/a"),
-                Path("/b"),
-            )
+def test_templates_sorted():
+    model = make_model(
+        mocked_paths=(
+            Path("/xy"),
+            Path("/z"),
+            Path("/a"),
+            Path("/b"),
         )
-        # noinspection PyCallingNonCallable
-        model = MpvqcExportTemplateModelPyObject()
+    )
 
-        expected = ["a", "b", "xy", "z"]
-        actual = [
-            model.item(0, 0).data(Role.NAME),
-            model.item(1, 0).data(Role.NAME),
-            model.item(2, 0).data(Role.NAME),
-            model.item(3, 0).data(Role.NAME),
-        ]
-        self.assertListEqual(expected, actual)
+    expected = ["a", "b", "xy", "z"]
+    actual = [
+        model.item(0, 0).data(Role.NAME),
+        model.item(1, 0).data(Role.NAME),
+        model.item(2, 0).data(Role.NAME),
+        model.item(3, 0).data(Role.NAME),
+    ]
+    assert actual == expected
