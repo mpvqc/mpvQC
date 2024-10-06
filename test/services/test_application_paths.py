@@ -15,84 +15,48 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
+import pytest
 
 from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsService
 
+EXECUTING_DIRECTORY = Path.home()
 
-class ApplicationPathsServiceTest(unittest.TestCase):
-    executing_dir = Path.home()
 
-    def _mock(self, portable: bool = False):
-        mock = MagicMock()
-        mock.is_portable = portable
-        mock.executing_directory = self.executing_dir
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ApplicationEnvironmentService, mock))
-        # fmt: on
+@pytest.fixture()
+def portable_service():
+    _configure_injection(portable=True)
+    return ApplicationPathsService()
 
-    def tearDown(self):
-        inject.clear()
 
-    def test_path_distinction(self):
-        self._mock(portable=False)
-        service = ApplicationPathsService()
-        self.assertNotIn("appdata", f"{service.dir_config}")
+@pytest.fixture()
+def non_portable_service():
+    _configure_injection(portable=False)
+    return ApplicationPathsService()
 
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        self.assertIn("appdata", f"{service.dir_config}")
 
-    def test_directory_backup(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata" / "backups"
-        actual = service.dir_backup
-        self.assertEqual(expected, actual)
+def _configure_injection(portable: bool):
+    mock = MagicMock()
+    mock.is_portable = portable
+    mock.executing_directory = EXECUTING_DIRECTORY
 
-    def test_directory_config(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata"
-        actual = service.dir_config
-        self.assertEqual(expected, actual)
+    def config(binder: inject.Binder):
+        binder.bind(ApplicationEnvironmentService, mock)
 
-    def test_directory_screenshots(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata" / "screenshots"
-        actual = service.dir_screenshots
-        self.assertEqual(expected, actual)
+    inject.configure(config, clear=True)
 
-    def test_directory_export_templates(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata" / "export-templates"
-        actual = service.dir_export_templates
-        self.assertEqual(expected, actual)
 
-    def test_file_input_conf(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata" / "input.conf"
-        actual = service.file_input_conf
-        self.assertEqual(expected, actual)
+def test_service(non_portable_service, portable_service):
+    assert "appdata" in f"{portable_service.dir_config}"
+    assert "appdata" not in f"{non_portable_service.dir_config}"
 
-    def test_file_mpv_conf(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata" / "mpv.conf"
-        actual = service.file_mpv_conf
-        self.assertEqual(expected, actual)
-
-    def test_file_settings(self):
-        self._mock(portable=True)
-        service = ApplicationPathsService()
-        expected = self.executing_dir / "appdata" / "settings.ini"
-        actual = service.file_settings
-        self.assertEqual(expected, actual)
+    assert portable_service.dir_backup == EXECUTING_DIRECTORY / "appdata" / "backups"
+    assert portable_service.dir_config == EXECUTING_DIRECTORY / "appdata"
+    assert portable_service.dir_screenshots == EXECUTING_DIRECTORY / "appdata" / "screenshots"
+    assert portable_service.dir_export_templates == EXECUTING_DIRECTORY / "appdata" / "export-templates"
+    assert portable_service.file_input_conf == EXECUTING_DIRECTORY / "appdata" / "input.conf"
+    assert portable_service.file_mpv_conf == EXECUTING_DIRECTORY / "appdata" / "mpv.conf"
+    assert portable_service.file_settings == EXECUTING_DIRECTORY / "appdata" / "settings.ini"
