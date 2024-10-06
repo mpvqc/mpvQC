@@ -32,5 +32,9 @@ class MockedDialog(QObject):
     rejected = Signal()
     savePressed = Signal(QUrl)
 
+    def __init__(self):
+        super().__init__()
+        self.openCalled = False
+
     def open(self):
-        pass
+        self.openCalled = True
