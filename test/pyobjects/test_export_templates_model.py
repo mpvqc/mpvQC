@@ -27,7 +27,11 @@ from mpvqc.services import ApplicationPathsService
 def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModelPyObject:
     mock = MagicMock()
     mock.files_export_templates = mocked_paths
-    inject.clear_and_configure(lambda binder: binder.bind(ApplicationPathsService, mock))
+
+    def config(binder: inject.Binder):
+        binder.bind(ApplicationPathsService, mock)
+
+    inject.configure(config, clear=True)
     # noinspection PyCallingNonCallable
     return MpvqcExportTemplateModelPyObject()
 

@@ -116,7 +116,10 @@ def make_model(
     player_mock = MagicMock()
     player_mock.current_time = set_player_time
 
-    inject.clear_and_configure(lambda binder: binder.bind(PlayerService, player_mock))
+    def config(binder: inject.Binder):
+        binder.bind(PlayerService, player_mock)
+
+    inject.configure(config, clear=True)
 
     return model
 

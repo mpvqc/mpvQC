@@ -25,14 +25,12 @@ from mpvqc.impl.application_state import ApplicationState, OtherState
 from mpvqc.services import TypeMapperService
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def setup_inject():
-    # fmt: off
-    inject.clear_and_configure(lambda binder: binder
-                               .bind(TypeMapperService, TypeMapperService()))
-    # fmt: on
-    yield
-    inject.clear()
+    def config(binder: inject.Binder):
+        binder.bind(TypeMapperService, TypeMapperService())
+
+    inject.configure(config, clear=True)
 
 
 def test_import_change():
@@ -184,7 +182,7 @@ def test_handle_import_from_initial_state():
     assert not state.saved
 
 
-def test_handle_import_from_other_state(setup_inject):
+def test_handle_import_from_other_state():
     initial_document = None
     initial_video = Path.home() / "video"
     initial_saved = True
