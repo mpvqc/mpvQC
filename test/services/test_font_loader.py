@@ -15,58 +15,41 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import unittest
-
 from PySide6.QtCore import QFile
 from PySide6.QtGui import QFontDatabase
 
-from mpvqc.application import MpvqcApplication
 from mpvqc.services import FontLoaderService
 
 
-class FontLoaderTest(unittest.TestCase):
-    """"""
+def test_fonts_present_in_resources(qt_app):
+    variants = [
+        "NotoSans-Regular.ttf",
+        "NotoSans-Italic.ttf",
+        "NotoSans-Bold.ttf",
+        "NotoSans-SemiBold.ttf",
+        "NotoSansHebrew-Bold.ttf",
+        "NotoSansHebrew-Regular.ttf",
+        "NotoSansHebrew-SemiBold.ttf",
+        "NotoSansMono-Regular.ttf",
+    ]
+    for variant in variants:
+        file = QFile(f":/data/fonts/{variant}")
+        assert file.exists(), f"Expected to find {variant} in resources but couldn't"
 
-    def setUp(self):
-        self.tearDown()
-        self._app = MpvqcApplication([])
 
-    def tearDown(self):
-        if hasattr(self, "_app") and self._app:
-            self._app.shutdown()
+def test_fonts_loaded(qt_app):
+    # It's not possible to clear Qt's entire font database. Additionally, font backends on different OS's behave
+    # differently. Therefore, we just test for the common font families.
+    verifiable_font_families = [
+        "Noto Sans",
+        "Noto Sans Hebrew",
+        "Noto Sans Mono",
+    ]
 
-    def test_fonts_present_in_resources(self):
-        variants = [
-            "NotoSans-Regular.ttf",
-            "NotoSans-Italic.ttf",
-            "NotoSans-Bold.ttf",
-            "NotoSans-SemiBold.ttf",
-            "NotoSansHebrew-Bold.ttf",
-            "NotoSansHebrew-Regular.ttf",
-            "NotoSansHebrew-SemiBold.ttf",
-            "NotoSansMono-Regular.ttf",
-        ]
-        for variant in variants:
-            file = QFile(f":/data/fonts/{variant}")
-            self.assertTrue(file.exists(), f"Expected to find {variant} in resources but couldn't")
+    FontLoaderService().load_application_fonts()
+    loaded_font_families = QFontDatabase.families()
 
-    def test_fonts_loaded(self):
-        # It's not possible to clear Qt's entire font database. Additionally, font backends on different OS's behave
-        # differently. Therefore, we just test for the common font families.
-        font_families = [
-            "Noto Sans",
-            "Noto Sans Hebrew",
-            "Noto Sans Mono",
-        ]
-
-        FontLoaderService().load_application_fonts()
-
-        loaded_font_families = QFontDatabase.families()
-
-        for font_family in font_families:
-            self.assertIn(
-                font_family,
-                loaded_font_families,
-                msg=f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}",
-            )
+    for font_family in verifiable_font_families:
+        assert (
+            font_family in loaded_font_families
+        ), f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}"

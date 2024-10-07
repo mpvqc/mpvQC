@@ -9,7 +9,7 @@ def type_mapper() -> TypeMapperService:
     return TypeMapperService()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def qt_app() -> MpvqcApplication:
     app = MpvqcApplication([])
     yield app
