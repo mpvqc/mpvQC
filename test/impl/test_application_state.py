@@ -26,9 +26,9 @@ from mpvqc.services import TypeMapperService
 
 
 @pytest.fixture(autouse=True)
-def setup_inject():
+def setup_inject(type_mapper):
     def config(binder: inject.Binder):
-        binder.bind(TypeMapperService, TypeMapperService())
+        binder.bind(TypeMapperService, type_mapper)
 
     inject.configure(config, clear=True)
 

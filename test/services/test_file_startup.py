@@ -58,7 +58,7 @@ def test_directories_created(
 ):
     file_startup_service.create_missing_directories()
     path_mock = getattr(application_paths_service_mock, mocked_dir)
-    path_mock.mkdir.assert_called()
+    assert path_mock.mkdir.called
 
 
 @pytest.mark.parametrize(
@@ -78,5 +78,5 @@ def test_files_created(
 
     file_startup_service.create_missing_files()
 
-    path_mock.exists.assert_called()
-    path_mock.write_text.assert_called()
+    assert path_mock.exists.called
+    assert path_mock.write_text.called

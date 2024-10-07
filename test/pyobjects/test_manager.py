@@ -94,7 +94,7 @@ def manager(
 
 @pytest.fixture(autouse=True)
 def qt_app(comments_model_mock):
-    with patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=(MagicMock())) as mock:
+    with patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock()) as mock:
         mock.return_value.find_object.return_value = comments_model_mock
         yield mock
 
