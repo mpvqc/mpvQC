@@ -15,14 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from parameterized import parameterized
+import pytest
 
 from mpvqc.services import ReverseTranslatorService
 
-SERVICE = ReverseTranslatorService()
+
+@pytest.fixture()
+def service() -> ReverseTranslatorService:
+    return ReverseTranslatorService()
 
 
-@parameterized.expand(
+@pytest.mark.parametrize(
+    "expected, translated",
     [
         ("Spelling", "Spelling"),
         ("Spelling", "Rechtschreibung"),
@@ -30,7 +34,7 @@ SERVICE = ReverseTranslatorService()
         ("Spelling", "Typo"),
         ("Spelling", "Ortografía"),
         ("not-found", "not-found"),
-    ]
+    ],
 )
-def test_lookup(expected: str, translated: str) -> None:
-    assert expected == SERVICE.lookup(translated)
+def test_lookup2(service, expected, translated):
+    assert expected == service.lookup(translated)

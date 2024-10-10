@@ -87,7 +87,15 @@ FILE_BUILD_RESOURCES := DIRECTORY_BUILD_RESOURCES + '/' + NAME_FILE_GENERATED_RE
 FILE_PY_SOURCES_RESOURCES := DIRECTORY_PY_SOURCES + '/' + NAME_FILE_GENERATED_RESOURCES
 FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURCES
 
+_default:
+    @just --list
+
+# Format code
+format:
+    @{{ PYTHON }} -m ruff format
+
 # Build full project into build/release
+[group('build')]
 build: _check-pyside-setup _clean-build _clean-develop _compile-resources
     @rm -rf \
     	{{ DIRECTORY_BUILD_PY }}
@@ -105,32 +113,8 @@ build: _check-pyside-setup _clean-build _clean-develop _compile-resources
     @echo ''; \
     	echo 'Please find the finished project in {{ DIRECTORY_BUILD_RELEASE }}'
 
-# Run Python and QML tests
-test: test-python test-qml
-
-# Run Python tests
-test-python: _check-pyside-setup _clean-test _compile-resources
-    @cp \
-      {{ FILE_BUILD_RESOURCES }} \
-      {{ FILE_PY_TEST_RESOURCES }}
-    @{{ PYTHON }} -m pytest test
-
-# Lint Python files
-lint-python:
-    @{{ PYTHON }} -m ruff check
-
-# Run QML tests
-test-qml: _check-qml-setup
-    {{ TOOL_CLI_QML_TESTRUNNER }} \
-      -silent \
-      -input {{ DIRECTORY_QML_TESTS }} \
-      -import {{ DIRECTORY_QML_TESTS }}
-
-# Lint QML files
-lint-qml: _check-qml-setup
-    @find {{ DIRECTORY_QML_TESTS }} -type f -name '*.qml' -exec {{ TOOL_CLI_QML_LINTER }} -I {{ DIRECTORY_QML_TESTS }} {} \;
-
 # Build and compile resources into source directory
+[group('build')]
 build-develop: _check-pyside-setup _clean-develop _compile-resources
     @# Generates resources and copies them into the source directory
     @# This allows to develop/debug the project normally
@@ -138,7 +122,24 @@ build-develop: _check-pyside-setup _clean-develop _compile-resources
     @cp \
     	{{ FILE_BUILD_RESOURCES }} {{ DIRECTORY_PY_SOURCES }}
 
+# Remove ALL generated files
+[group('build')]
+clean: _clean-build _clean-develop _clean-test
+
+# Add new language
+[group('i18n')]
+add-translation locale: _check-pyside-setup _prepare-translation-extractions
+    @cd {{ DIRECTORY_BUILD_TRANSLATIONS }}; \
+    	{{ TOOL_CLI_LUPDATE }} \
+    		-verbose \
+    		-source-language en_US \
+    		-target-language {{ locale }} \
+    		-ts {{ DIRECTORY_I18N }}/{{ locale }}.ts
+    @echo ''
+    @just update-translations
+
 # Update *.ts files by traversing the source code
+[group('i18n')]
 update-translations: _check-pyside-setup _clean-develop _prepare-translation-extractions
     @# Traverses *.qml and *.py files to update translation files
     @# Requires translations in .py:   QCoreApplication.translate("context", "string")
@@ -151,23 +152,35 @@ update-translations: _check-pyside-setup _clean-develop _prepare-translation-ext
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}/{{ NAME_DIRECTORY_I18N }}/*.ts \
     	{{ DIRECTORY_I18N }}
 
-# Add new language
-add-translation locale: _check-pyside-setup _prepare-translation-extractions
-    @cd {{ DIRECTORY_BUILD_TRANSLATIONS }}; \
-    	{{ TOOL_CLI_LUPDATE }} \
-    		-verbose \
-    		-source-language en_US \
-    		-target-language {{ locale }} \
-    		-ts {{ DIRECTORY_I18N }}/{{ locale }}.ts
-    @echo ''
-    @just update-translations
+# Lint Python files
+[group('lint')]
+lint-python:
+    @{{ PYTHON }} -m ruff check
 
-# Remove ALL generated files
-clean: _clean-build _clean-develop _clean-test
+# Lint QML files
+[group('lint')]
+lint-qml: _check-qml-setup
+    @find {{ DIRECTORY_QML_TESTS }} -type f -name '*.qml' -exec {{ TOOL_CLI_QML_LINTER }} -I {{ DIRECTORY_QML_TESTS }} {} \;
 
-# Format code
-format:
-    @{{ PYTHON }} -m ruff format
+# Run Python and QML tests
+[group('test')]
+test: test-python test-qml
+
+# Run Python tests
+[group('test')]
+test-python: _check-pyside-setup _clean-test _compile-resources
+    @cp \
+      {{ FILE_BUILD_RESOURCES }} \
+      {{ FILE_PY_TEST_RESOURCES }}
+    @{{ PYTHON }} -m pytest test
+
+# Run QML tests
+[group('test')]
+test-qml: _check-qml-setup
+    {{ TOOL_CLI_QML_TESTRUNNER }} \
+      -silent \
+      -input {{ DIRECTORY_QML_TESTS }} \
+      -import {{ DIRECTORY_QML_TESTS }}
 
 _clean-build:
     @rm -rf \

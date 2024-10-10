@@ -15,270 +15,340 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import inject
+import pytest
 
 from mpvqc.impl import OtherState
 from mpvqc.pyobjects import MpvqcManagerPyObject
 from mpvqc.services import (
     DocumentExportService,
-    TypeMapperService,
-    VideoSelectorService,
     DocumentImporterService,
     PlayerService,
+    TypeMapperService,
+    VideoSelectorService,
 )
-from test.mocks import MockedMessageBox, MockedDialog
+from test.mocks import MockedDialog, MockedMessageBox
+
+RANDOM_FILE = Path().home() / "Documents" / "my-doc.txt"
+RANDOM_VIDEO = Path().home() / "Video" / "my-video.mp4"
 
 
-class ManagerResetTest(unittest.TestCase):
-    """"""
-
-    def init(self, q_app: MagicMock):
-        # noinspection PyCallingNonCallable
-        self._manager: MpvqcManagerPyObject = MpvqcManagerPyObject()
-
-        self._mocked_message_box = MockedMessageBox()
-        factory = MagicMock()
-        factory.createObject.return_value = self._mocked_message_box
-        self._manager.message_box_new_document_factory = factory
-
-        self._mocked_comments_model = MagicMock()
-        q_app.return_value.find_object.return_value = self._mocked_comments_model
-
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_saved_reset(self, q_app_mock):
-        self.init(q_app_mock)
-
-        state_before = self._manager.state
-        self.assertTrue(state_before.saved)
-
-        self._manager.reset_impl()
-
-        state_after = self._manager.state
-        self.assertTrue(state_after.saved)
-        self.assertEqual(state_before, state_after)
-        self._mocked_comments_model.clear_comments.assert_called_once()
-
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_unsaved_reset_do_reset(self, q_app_mock):
-        self.init(q_app_mock)
-
-        self._manager.state = OtherState(document=None, video=None, saved=False)
-        self._manager.reset_impl()
-        self._mocked_message_box.accepted.emit()
-
-        self._mocked_comments_model.clear_comments.assert_called_once()
-
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_unsaved_reset_cancel_reset(self, q_app_mock):
-        self.init(q_app_mock)
-
-        self._manager.state = OtherState(document=None, video=None, saved=False)
-        self._manager.reset_impl()
-        self._mocked_message_box.rejected.emit()
-
-        self.assertFalse(self._mocked_comments_model.clear_comments.called)
+@pytest.fixture()
+def comments_model_mock() -> MagicMock:
+    return MagicMock()
 
 
-class ManagerSaveTest(unittest.TestCase):
-    _type_mapper = TypeMapperService()
-
-    def init(self):
-        # noinspection PyCallingNonCallable
-        self._manager: MpvqcManagerPyObject = MpvqcManagerPyObject()
-        self._document = Path().home() / "Documents" / "my-doc.txt"
-
-        self._mocked_dialog = MockedDialog()
-        factory = MagicMock()
-        factory.createObject.return_value = self._mocked_dialog
-        self._manager.dialog_export_document_factory = factory
-
-        self._exporter_mock = MagicMock()
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(DocumentExportService, self._exporter_mock))
-        # fmt: on
-
-    def tearDown(self):
-        inject.clear()
-
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_saved_save(self, *_):
-        self.init()
-
-        self._manager.state = OtherState(document=None, video=None, saved=True)
-
-        self._manager.save_impl()
-        self.assertFalse(self._exporter_mock.save.called)
-
-        self._manager.state = OtherState(document=self._document, video=None, saved=True)
-        self._manager.save_impl()
-
-        self._exporter_mock.save.assert_called_once()
-        saved_path = self._exporter_mock.save.call_args[0][0]
-        self.assertEqual(self._document, saved_path)
-
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_unsaved_save_do_save(self, *_):
-        self.init()
-
-        self._manager.state = OtherState(document=None, video=None, saved=True)
-        self._manager.save_impl()
-
-        self._mocked_dialog.savePressed.emit(self._type_mapper.map_path_to_url(self._document))
-
-        self._exporter_mock.save.assert_called_once()
-        saved_path = self._exporter_mock.save.call_args[0][0]
-        self.assertEqual(self._document, saved_path)
-
-        self.assertTrue(self._manager.state.saved)
-        self.assertEqual(self._document, self._manager.state.document)
-
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_unsaved_save_cancel_save(self, *_):
-        self.init()
-
-        self._manager.state = OtherState(document=None, video=None, saved=False)
-        self._manager.save_impl()
-
-        self.assertFalse(self._exporter_mock.save.called)
-        self.assertFalse(self._manager.state.saved)
-        self.assertIsNone(self._manager.state.document)
+@pytest.fixture()
+def exporter_service_mock() -> MagicMock:
+    return MagicMock()
 
 
-class ManagerImportTest(unittest.TestCase):
-    _type_mapper = TypeMapperService()
+@pytest.fixture()
+def player_service_mock() -> MagicMock:
+    return MagicMock()
 
-    _document = Path().home() / "Documents" / "my-doc.txt"
-    _document_url = _type_mapper.map_path_to_url(_document)
 
-    _video = Path().home() / "Video" / "my-video.mp4"
-    _video_url = _type_mapper.map_path_to_url(_video)
+@pytest.fixture()
+def document_not_compatible_message_box() -> MagicMock:
+    return MagicMock()
 
-    def init(
-        self,
-        q_app: MagicMock,
-        *,
+
+@pytest.fixture()
+def confirm_reset_message_box() -> MockedMessageBox:
+    return MockedMessageBox()
+
+
+@pytest.fixture()
+def export_document_dialog() -> MockedDialog:
+    return MockedDialog()
+
+
+@pytest.fixture()
+def manager(
+    confirm_reset_message_box,
+    export_document_dialog,
+    document_not_compatible_message_box,
+) -> MpvqcManagerPyObject:
+    # noinspection PyCallingNonCallable
+    manager = MpvqcManagerPyObject()
+
+    factory = MagicMock()
+    factory.createObject.return_value = confirm_reset_message_box
+    manager.message_box_new_document_factory = factory
+
+    factory = MagicMock()
+    factory.createObject.return_value = export_document_dialog
+    manager.dialog_export_document_factory = factory
+
+    factory = MagicMock()
+    factory.createObject.return_value = document_not_compatible_message_box
+    manager.message_box_document_not_compatible_factory = factory
+
+    manager.message_box_video_found_factory = MagicMock()
+
+    return manager
+
+
+@pytest.fixture(autouse=True)
+def qt_app(comments_model_mock):
+    with patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock()) as mock:
+        mock.return_value.find_object.return_value = comments_model_mock
+        yield mock
+
+
+@pytest.fixture(autouse=True)
+def configure_inject(exporter_service_mock):
+    def config(binder: inject.Binder):
+        binder.bind(DocumentExportService, exporter_service_mock)
+
+    inject.configure(config, clear=True, allow_override=True)
+
+
+@pytest.fixture()
+def reconfigure_inject(
+    player_service_mock,
+    type_mapper,
+):
+    def _reconfigure_inject(
         import_result: DocumentImporterService.DocumentImportResult,
         pick_video: Path or None = None,
     ):
-        # noinspection PyCallingNonCallable
-        self._manager: MpvqcManagerPyObject = MpvqcManagerPyObject()
-
-        # Mock message boxes
-        self._mocked_message_box_document_not_compatible = MagicMock()
-        factory = MagicMock()
-        factory.createObject.return_value = self._mocked_message_box_document_not_compatible
-        self._manager.message_box_document_not_compatible_factory = factory
-
-        self._manager.message_box_video_found_factory = MagicMock()
-
-        # Mock pyobjects
-        self._mocked_comments_model = MagicMock()
-        q_app.return_value.find_object.return_value = self._mocked_comments_model
-
-        # Mock services
-        self._video_selector_mock = MagicMock()
-
-        def on_video_selected(*args, **kwargs):
+        def on_video_selected(*_, **kwargs):
             kwargs["on_video_selected"](pick_video)
 
-        self._video_selector_mock.select_video_from.side_effect = on_video_selected
+        video_selector_mock = MagicMock()
+        video_selector_mock.select_video_from.side_effect = on_video_selected
 
-        self._importer_mock = MagicMock()
-        self._importer_mock.read.return_value = import_result
+        importer_mock = MagicMock()
+        importer_mock.read.return_value = import_result
 
-        self._player_mock = MagicMock()
+        def config(binder: inject.Binder):
+            binder.bind(VideoSelectorService, video_selector_mock)
+            binder.bind(DocumentImporterService, importer_mock)
+            binder.bind(PlayerService, player_service_mock)
+            binder.bind(TypeMapperService, type_mapper)
 
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(VideoSelectorService, self._video_selector_mock)
-                                   .bind(DocumentImporterService, self._importer_mock)
-                                   .bind(PlayerService, self._player_mock)
-                                   .bind(TypeMapperService, TypeMapperService()))
-        # fmt: on
+        inject.configure(config, clear=True)
 
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_import_document(self, q_app_mock):
-        self.init(
-            q_app_mock,
-            pick_video=None,
-            import_result=DocumentImporterService.DocumentImportResult(
-                valid_documents=[self._document], invalid_documents=[], existing_videos=[], comments=[]
-            ),
-        )
+    return _reconfigure_inject
 
-        self._manager.state = OtherState(document=Path.home(), video=None, saved=True)
-        self._manager.open_documents_impl([self._document_url])
 
-        self._mocked_comments_model.import_comments.assert_called_once()
-        self.assertFalse(self._manager.state.saved)
-        self.assertIsNone(self._manager.state.document)
+def test_reset_saved_state(manager, comments_model_mock):
+    state_before = manager.state
+    assert state_before.saved
 
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_import_video(self, q_app_mock):
-        self.init(
-            q_app_mock,
-            pick_video=self._video,
-            import_result=DocumentImporterService.DocumentImportResult(
-                valid_documents=[], invalid_documents=[], existing_videos=[], comments=[]
-            ),
-        )
+    manager.reset_impl()
 
-        self._manager.state = OtherState(document=Path.home(), video=None, saved=True)
-        self._manager.open_video_impl(self._video_url)
+    state_after = manager.state
+    assert state_after.saved
+    assert state_after == state_before
+    assert comments_model_mock.clear_comments.called
 
-        self._player_mock.open_video.assert_called_once()
-        self.assertFalse(self._manager.state.saved)
-        self.assertIsNone(self._manager.state.document)
-        self.assertEqual(self._video, self._manager.state.video)
 
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_import_subtitles(self, q_app_mock):
-        self.init(
-            q_app_mock,
-            pick_video=None,
-            import_result=DocumentImporterService.DocumentImportResult(
-                valid_documents=[], invalid_documents=[], existing_videos=[], comments=[]
-            ),
-        )
+def test_reset_unsaved_state_do_reset(manager, comments_model_mock, confirm_reset_message_box):
+    manager.state = OtherState(document=None, video=None, saved=False)
 
-        self._manager.open_subtitles_impl([self._document_url])
+    manager.reset_impl()
+    confirm_reset_message_box.accepted.emit()
 
-        self._player_mock.open_subtitles.assert_called_once()
+    assert comments_model_mock.clear_comments.called
 
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_import_multiple(self, q_app_mock):
-        self.init(
-            q_app_mock,
-            pick_video=self._video,
-            import_result=DocumentImporterService.DocumentImportResult(
-                valid_documents=[self._document, self._document], invalid_documents=[], existing_videos=[], comments=[]
-            ),
-        )
 
-        self._manager.open_impl(
-            documents=[self._document_url, self._document_url], videos=[self._video_url], subtitles=[self._document_url]
-        )
+def test_reset_unsaved_state_cancel_reset(manager, comments_model_mock, confirm_reset_message_box):
+    manager.state = OtherState(document=None, video=None, saved=False)
 
-        self._mocked_comments_model.import_comments.assert_called_once()
-        self._player_mock.open_video.assert_called_once()
-        self._player_mock.open_subtitles.assert_called_once()
+    manager.reset_impl()
+    confirm_reset_message_box.rejected.emit()
 
-    @patch("mpvqc.pyobjects.manager.QCoreApplication.instance", return_value=MagicMock())
-    def test_import_erroneous_documents(self, q_app_mock):
-        self.init(
-            q_app_mock,
-            pick_video=self._video,
-            import_result=DocumentImporterService.DocumentImportResult(
-                valid_documents=[], invalid_documents=[self._document, self._document], existing_videos=[], comments=[]
-            ),
-        )
+    assert not comments_model_mock.clear_comments.called
 
-        self._manager.open_impl([self._document_url, self._document_url], [self._video_url], [])
 
-        self._player_mock.open_video.assert_called_once()
-        self._mocked_message_box_document_not_compatible.open.assert_called_once()
+def test_save_saved_state_no_document_opens_dialog(
+    manager,
+    export_document_dialog,
+    exporter_service_mock,
+):
+    manager.state = OtherState(document=None, video=None, saved=True)
+    manager.save_impl()
+
+    assert export_document_dialog.openCalled
+    assert not exporter_service_mock.save.called
+
+
+def test_save_saved_state_with_document(
+    manager,
+    export_document_dialog,
+    exporter_service_mock,
+):
+    manager.state = OtherState(document=RANDOM_FILE, video=None, saved=True)
+    manager.save_impl()
+
+    assert not export_document_dialog.openCalled
+    assert exporter_service_mock.save.called
+    saved_path = exporter_service_mock.save.call_args[0][0]
+    assert RANDOM_FILE == saved_path
+
+
+def test_save_unsaved_state_do_save(
+    manager,
+    export_document_dialog,
+    exporter_service_mock,
+    type_mapper,
+):
+    manager.state = OtherState(document=None, video=None, saved=False)
+
+    manager.save_impl()
+
+    assert export_document_dialog.openCalled
+
+    export_document_dialog.savePressed.emit(type_mapper.map_path_to_url(RANDOM_FILE))
+
+    assert exporter_service_mock.save.called
+    saved_path = exporter_service_mock.save.call_args[0][0]
+    assert RANDOM_FILE == saved_path
+    assert manager.state.saved
+    assert RANDOM_FILE == manager.state.document
+
+
+def test_save_unsaved_state_cancel_save(
+    manager,
+    export_document_dialog,
+    exporter_service_mock,
+):
+    manager.state = OtherState(document=None, video=None, saved=False)
+    manager.save_impl()
+
+    assert export_document_dialog.openCalled
+
+    export_document_dialog.rejected.emit()
+
+    assert not exporter_service_mock.save.called
+    assert not manager.state.saved
+    assert manager.state.document is None
+
+
+def test_import_document(
+    reconfigure_inject,
+    manager,
+    type_mapper,
+    comments_model_mock,
+):
+    reconfigure_inject(
+        import_result=DocumentImporterService.DocumentImportResult(
+            valid_documents=[RANDOM_FILE],
+            invalid_documents=[],
+            existing_videos=[],
+            comments=[],
+        ),
+        pick_video=None,
+    )
+
+    manager.state = OtherState(document=Path.home(), video=None, saved=True)
+    manager.open_documents_impl([type_mapper.map_path_to_url(RANDOM_FILE)])
+
+    assert comments_model_mock.import_comments.called
+    assert not manager.state.saved
+    assert manager.state.document is None
+
+
+def test_import_video(
+    reconfigure_inject,
+    manager,
+    type_mapper,
+    player_service_mock,
+):
+    reconfigure_inject(
+        import_result=DocumentImporterService.DocumentImportResult(
+            valid_documents=[],
+            invalid_documents=[],
+            existing_videos=[],
+            comments=[],
+        ),
+        pick_video=RANDOM_VIDEO,
+    )
+
+    manager.state = OtherState(document=Path.home(), video=None, saved=True)
+    manager.open_video_impl(type_mapper.map_path_to_url(RANDOM_VIDEO))
+
+    assert player_service_mock.open_video.called
+    assert not manager.state.saved
+    assert manager.state.document is None
+    assert RANDOM_VIDEO == manager.state.video
+
+
+def test_import_subtitles(
+    reconfigure_inject,
+    manager,
+    type_mapper,
+    player_service_mock,
+):
+    reconfigure_inject(
+        import_result=DocumentImporterService.DocumentImportResult(
+            valid_documents=[],
+            invalid_documents=[],
+            existing_videos=[],
+            comments=[],
+        ),
+        pick_video=None,
+    )
+
+    manager.open_subtitles_impl([type_mapper.map_path_to_url(RANDOM_FILE)])
+    assert player_service_mock.open_subtitles.called
+
+
+def test_import_multiple_files(
+    reconfigure_inject,
+    manager,
+    type_mapper,
+    comments_model_mock,
+    player_service_mock,
+):
+    reconfigure_inject(
+        import_result=DocumentImporterService.DocumentImportResult(
+            valid_documents=[RANDOM_FILE, RANDOM_FILE],
+            invalid_documents=[],
+            existing_videos=[],
+            comments=[],
+        ),
+        pick_video=RANDOM_VIDEO,
+    )
+
+    manager.open_impl(
+        documents=[type_mapper.map_path_to_url(RANDOM_FILE)] * 2,
+        videos=[type_mapper.map_path_to_url(RANDOM_VIDEO)],
+        subtitles=[type_mapper.map_path_to_url(RANDOM_FILE)],
+    )
+
+    assert comments_model_mock.import_comments.called
+    assert player_service_mock.open_video.called
+    assert player_service_mock.open_subtitles.called
+
+
+def test_import_erroneous_documents(
+    reconfigure_inject,
+    manager,
+    type_mapper,
+    player_service_mock,
+    document_not_compatible_message_box,
+):
+    reconfigure_inject(
+        import_result=DocumentImporterService.DocumentImportResult(
+            valid_documents=[],
+            invalid_documents=[RANDOM_FILE, RANDOM_FILE],
+            existing_videos=[],
+            comments=[],
+        ),
+        pick_video=RANDOM_VIDEO,
+    )
+
+    manager.open_impl(
+        documents=[type_mapper.map_path_to_url(RANDOM_FILE)] * 2,
+        videos=[type_mapper.map_path_to_url(RANDOM_VIDEO)],
+        subtitles=[],
+    )
+
+    assert player_service_mock.open_video.called
+    assert document_not_compatible_message_box.open.called

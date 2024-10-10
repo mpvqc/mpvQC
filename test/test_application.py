@@ -15,42 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+import pytest
+from PySide6.QtCore import QObject, QUrl
 
-from PySide6.QtCore import QUrl, QObject
+QML = """
+    import QtQuick
+    import QtQuick.Controls
 
-from mpvqc.application import MpvqcApplication
+    ApplicationWindow {
+        visible: false; width: 50; height: 50
+
+        Button { objectName: "button-click-me"; text: "Click Me" }
+    }
+"""
 
 
-class TestApplication(unittest.TestCase):
-    qml = """
-        import QtQuick
-        import QtQuick.Controls
-        
-        ApplicationWindow {
-            visible: false; width: 50; height: 50
-        
-            Button { objectName: "button-click-me"; text: "Click Me" }
-        }
-        """
+def test_find_object(qt_app):
+    qt_app._engine.loadData(QML.encode(), QUrl())
+    obj = qt_app.find_object(QObject, "button-click-me")
+    assert obj
 
-    _app: MpvqcApplication or None = None
-
-    def setUp(self):
-        self.tearDown()
-        self._app = MpvqcApplication([])
-        self._app._engine.loadData(self.qml.encode(), QUrl())
-
-    def tearDown(self):
-        if self._app:
-            self._app.shutdown()
-
-    def test_find_object(self):
-        obj = self._app.find_object(QObject, "button-click-me")
-        self.assertIsNotNone(obj)
-
-        try:
-            self._app.find_object(QObject, "label")
-            assert False, "Expected AssertionError but no exception was raised"
-        except AssertionError:
-            pass
+    with pytest.raises(AssertionError):
+        qt_app.find_object(QObject, "other-button-that-does-not-exist")

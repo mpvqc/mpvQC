@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 from unittest.mock import MagicMock, patch
 
 import inject
+import pytest
 
-from mpvqc.services import ReverseTranslatorService, DocumentImporterService
+from mpvqc.services import DocumentImporterService, ReverseTranslatorService
 
 DOCUMENT_1 = """\
 erroneous_document
@@ -61,125 +61,113 @@ path       :                 /home/luffy/Videos/a not existing video with spaces
 """
 
 
-class DocumentImporterServiceTest(unittest.TestCase):
-    MODULE = "mpvqc.services.document_importer"
+@pytest.fixture(autouse=True, scope="module")
+def configure_inject():
+    def config(binder: inject.Binder):
+        binder.bind(ReverseTranslatorService, ReverseTranslatorService())
 
-    _service = DocumentImporterService()
+    inject.configure(config, clear=True)
 
-    def setUp(self):
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ReverseTranslatorService, ReverseTranslatorService()))
-        # fmt: on
 
-    def tearDown(self):
-        inject.clear()
+@pytest.fixture(scope="module")
+def make_document_mock():
+    def _make_document_mock(name, and_return_content):
+        mock = MagicMock()
+        mock.mpvqc_name = name
+        mock.read_text.return_value = and_return_content
+        return mock
 
-    @staticmethod
-    def _mock(name, and_return_content):
-        p = MagicMock()
-        p.mpvqc_name = name
-        p.read_text.return_value = and_return_content
-        return p
+    return _make_document_mock
 
-    @staticmethod
-    def _mocked_is_file_function(path: MagicMock):
-        file_path = path.call_args[0][0]
+
+@pytest.fixture(scope="module")
+def mocked_pathlib():
+    def _mocked_is_file_function(mocked_path: MagicMock):
+        file_path = mocked_path.call_args[0][0]
         return "an existing video" in file_path
 
-    def test_import_document_1(self):
-        p1 = self._mock("path-1", and_return_content=DOCUMENT_1)
-        p2 = self._mock("path-2", and_return_content=DOCUMENT_1)
-        result = self._service.read([p1, p2])
+    with patch("mpvqc.services.document_importer.Path") as mock:
+        mock.return_value.is_file.side_effect = lambda: _mocked_is_file_function(mock)
+        yield mock
 
-        self.assertFalse(result.valid_documents)
-        self.assertTrue(result.invalid_documents)
 
-        self.assertEqual("path-1", getattr(result.invalid_documents[0], "mpvqc_name"))
-        self.assertEqual("path-2", getattr(result.invalid_documents[1], "mpvqc_name"))
+@pytest.fixture(scope="module")
+def service() -> DocumentImporterService:
+    return DocumentImporterService()
 
-    @patch(f"{MODULE}.Path")
-    def test_import_document_2(self, path):
-        path.return_value.is_file.side_effect = lambda: self._mocked_is_file_function(path)
 
-        p1 = self._mock("path-1", and_return_content=DOCUMENT_2)
+def test_import_invalid_documents(service, make_document_mock):
+    path_1 = make_document_mock("path-1", and_return_content=DOCUMENT_1)
+    path_2 = make_document_mock("path-2", and_return_content=DOCUMENT_1)
 
-        result = self._service.read([p1])
-        self.assertFalse(result.invalid_documents)
-        self.assertTrue(result.valid_documents)
-        self.assertTrue(result.existing_videos)
-        self.assertEqual("/home/luffy/Videos/an existing video with spaces.mp4", path.call_args[0][0])
-        self.assertEqual(3, len(result.comments))
+    result = service.read([path_1, path_2])
 
-        comment = result.comments[0]
-        self.assertEqual(1, comment.time)
-        self.assertEqual("CommentType", comment.comment_type)
-        self.assertEqual("Document 2 / Comment 1", comment.comment)
+    assert not result.valid_documents
+    assert result.invalid_documents
+    assert "path-1" == getattr(result.invalid_documents[0], "mpvqc_name")
+    assert "path-2" == getattr(result.invalid_documents[1], "mpvqc_name")
 
-        comment = result.comments[1]
-        self.assertEqual(120, comment.time)
-        self.assertEqual("CommentType", comment.comment_type)
-        self.assertEqual("Document 2 / Comment 2", comment.comment)
 
-        comment = result.comments[2]
-        self.assertEqual(10800, comment.time)
-        self.assertEqual("CommentType", comment.comment_type)
-        self.assertEqual("Document 2 / Comment 3", comment.comment)
+def test_import_valid_documents(service, make_document_mock, mocked_pathlib):
+    path_1 = make_document_mock("path-1", and_return_content=DOCUMENT_2)
+    result = service.read([path_1])
+    assert not result.invalid_documents
+    assert result.valid_documents
+    assert result.existing_videos
+    assert "/home/luffy/Videos/an existing video with spaces.mp4" == mocked_pathlib.call_args[0][0]
+    assert 3 == len(result.comments)
+    comment = result.comments[0]
+    assert 1 == comment.time
+    assert "CommentType" == comment.comment_type
+    assert "Document 2 / Comment 1" == comment.comment
+    comment = result.comments[1]
+    assert 120 == comment.time
+    assert "CommentType" == comment.comment_type
+    assert "Document 2 / Comment 2" == comment.comment
+    comment = result.comments[2]
+    assert 10800 == comment.time
+    assert "CommentType" == comment.comment_type
+    assert "Document 2 / Comment 3" == comment.comment
 
-    @patch(f"{MODULE}.Path")
-    def test_import_document_3(self, path):
-        path.return_value.is_file.side_effect = lambda: self._mocked_is_file_function(path)
+    path_2 = make_document_mock("path-2", and_return_content=DOCUMENT_3)
+    result = service.read([path_2])
+    assert not result.invalid_documents
+    assert result.valid_documents
+    assert result.existing_videos
+    assert "C:\\Videos\\mpvQC\\an existing video with spaces on Windows.mp4" == mocked_pathlib.call_args[0][0]
+    assert 3 == len(result.comments)
+    comment = result.comments[0]
+    assert 11 == comment.time
+    assert "A SPECIAL Comment-_-Type" == comment.comment_type
+    assert "Document 3 / Comment 1" == comment.comment
+    comment = result.comments[1]
+    assert 1320 == comment.time
+    assert "YOOOOO-comment-type" == comment.comment_type
+    assert "Document 3 / Comment 2" == comment.comment
+    comment = result.comments[2]
+    assert 118800 == comment.time
+    assert "Phrasing" == comment.comment_type
+    assert "Document 3 / Comment 3" == comment.comment
 
-        p1 = self._mock("path-1", and_return_content=DOCUMENT_3)
+    path_3 = make_document_mock("path-3", and_return_content=DOCUMENT_4)
+    result = service.read([path_3])
+    assert not result.invalid_documents
+    assert result.valid_documents
+    assert not result.existing_videos
+    assert "/home/luffy/Videos/a not existing video with spaces.mp4" == mocked_pathlib.call_args[0][0]
+    assert 4 == len(result.comments)
 
-        result = self._service.read([p1])
-        self.assertFalse(result.invalid_documents)
-        self.assertTrue(result.valid_documents)
-        self.assertTrue(result.existing_videos)
-        self.assertEqual("C:\\Videos\\mpvQC\\an existing video with spaces on Windows.mp4", path.call_args[0][0])
-        self.assertEqual(3, len(result.comments))
 
-        comment = result.comments[0]
-        self.assertEqual(11, comment.time)
-        self.assertEqual("A SPECIAL Comment-_-Type", comment.comment_type)
-        self.assertEqual("Document 3 / Comment 1", comment.comment)
+def test_import_multiple_documents(service, make_document_mock, mocked_pathlib):
+    path_1 = make_document_mock("path-1", and_return_content=DOCUMENT_1)
+    path_2 = make_document_mock("path-2", and_return_content=DOCUMENT_2)
+    path_3 = make_document_mock("path-3", and_return_content=DOCUMENT_3)
+    path_4 = make_document_mock("path-4", and_return_content=DOCUMENT_4)
 
-        comment = result.comments[1]
-        self.assertEqual(1320, comment.time)
-        self.assertEqual("YOOOOO-comment-type", comment.comment_type)
-        self.assertEqual("Document 3 / Comment 2", comment.comment)
+    result = service.read([path_1, path_2, path_3, path_4])
 
-        comment = result.comments[2]
-        self.assertEqual(118800, comment.time)
-        self.assertEqual("Phrasing", comment.comment_type)
-        self.assertEqual("Document 3 / Comment 3", comment.comment)
-
-    @patch(f"{MODULE}.Path")
-    def test_import_document_4(self, path):
-        path.return_value.is_file.side_effect = lambda: self._mocked_is_file_function(path)
-
-        p1 = self._mock("path-1", and_return_content=DOCUMENT_4)
-
-        result = self._service.read([p1])
-        self.assertFalse(result.invalid_documents)
-        self.assertTrue(result.valid_documents)
-        self.assertFalse(result.existing_videos)
-        self.assertEqual("/home/luffy/Videos/a not existing video with spaces.mp4", path.call_args[0][0])
-        self.assertEqual(4, len(result.comments))
-
-    @patch(f"{MODULE}.Path")
-    def test_import_multiple_documents(self, path):
-        path.return_value.is_file.side_effect = lambda: self._mocked_is_file_function(path)
-
-        p1 = self._mock("path-1", and_return_content=DOCUMENT_1)
-        p2 = self._mock("path-2", and_return_content=DOCUMENT_2)
-        p3 = self._mock("path-3", and_return_content=DOCUMENT_3)
-        p4 = self._mock("path-4", and_return_content=DOCUMENT_4)
-
-        result = self._service.read([p1, p2, p3, p4])
-
-        self.assertEqual(1, len(result.invalid_documents))
-        self.assertEqual("path-1", getattr(result.invalid_documents[0], "mpvqc_name"))
-        self.assertEqual(3, len(result.valid_documents))
-        self.assertEqual(2, len(result.existing_videos))
-        self.assertEqual(10, len(result.comments))
+    assert 1 == len(result.invalid_documents)
+    assert "path-1" == getattr(result.invalid_documents[0], "mpvqc_name")
+    assert 3 == len(result.valid_documents)
+    assert 2 == len(result.existing_videos)
+    assert 10 == len(result.comments)

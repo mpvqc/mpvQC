@@ -19,7 +19,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QUrl, QTranslator, QLocale, QLibraryInfo, Signal, QObject
+from PySide6.QtCore import QLibraryInfo, QLocale, QObject, QTranslator, QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -110,7 +110,7 @@ class MpvqcApplication(QGuiApplication):
             self.installEventFilter(self._event_filter)
 
         def init_windows_window_effects():
-            from mpvqc.framelesswindow.win import extend_frame_into_client_area, configure_gwl_style
+            from mpvqc.framelesswindow.win import configure_gwl_style, extend_frame_into_client_area
 
             hwnd_top_lvl = self.topLevelWindows()[0].winId()
             extend_frame_into_client_area(hwnd_top_lvl)

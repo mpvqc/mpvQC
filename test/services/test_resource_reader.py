@@ -17,39 +17,37 @@
 
 from unittest.mock import patch
 
-from parameterized import parameterized
+import pytest
 
 from mpvqc.services import ResourceReaderService
 
 
-@parameterized.expand(
+@pytest.fixture(scope="module")
+def service() -> ResourceReaderService:
+    return ResourceReaderService()
+
+
+@pytest.mark.parametrize(
+    "file_path",
     [
-        (":/data/icon.svg",),
-        ("/data/icon.svg",),
-        ("data/icon.svg",),
-    ]
+        ":/data/icon.svg",
+        "/data/icon.svg",
+        "data/icon.svg",
+    ],
 )
-def test_read_from(file_path):
-    reader = ResourceReaderService()
-    content = reader.read_from(file_path)
-    assert content.startswith("<?xml ")
+def test_read_from(service, file_path):
+    assert service.read_from(file_path).startswith("<?xml ")
 
 
-def test_file_not_found():
-    try:
-        reader = ResourceReaderService()
-        reader.read_from(">>")
-        assert False, "Expected FileNotFoundError but no exception was raised"
-    except FileNotFoundError:
-        pass
+def test_read_from_errors(service):
+    with pytest.raises(FileNotFoundError):
+        service.read_from(">>")
 
+    module = "mpvqc.services.resource_reader"
 
-@patch("mpvqc.services.resource_reader.QFile.exists", return_value=True)
-@patch("mpvqc.services.resource_reader.QFile.open", return_value=False)
-def test_some_other_method(*_):
-    try:
-        reader = ResourceReaderService()
-        reader.read_from("")
-        assert False, "Expected Exception but no exception was raised"
-    except Exception:
-        pass
+    with (
+        patch(f"{module}.QFile.exists", return_value=True),
+        patch(f"{module}.QFile.open", return_value=False),
+        pytest.raises(ValueError),
+    ):
+        service.read_from("")

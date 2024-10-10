@@ -56,13 +56,4 @@ ListModel {
         version: '@@pypi-pywin32@@'
         os: 'windows'
     }
-
-    // Tests
-    ListElement {
-        name: 'parameterized'
-        url: 'https://github.com/wolever/parameterized'
-        licence: 'BSD'
-        version: '@@pypi-parameterized@@'
-        os: 'linux, windows'
-    }
 }

@@ -15,359 +15,391 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 from unittest.mock import MagicMock
 
 import inject
-from parameterized import parameterized
+import pytest
 
 from mpvqc.models import Comment
 from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject, Role
 from mpvqc.services import PlayerService
 
+DEFAULT_COMMENTS = (
+    Comment(time=0, comment_type="commentType", comment="Word 1"),
+    Comment(time=5, comment_type="commentType", comment="Word 2"),
+    Comment(time=10, comment_type="commentType", comment="Word 3"),
+    Comment(time=15, comment_type="commentType", comment="Word 4"),
+    Comment(time=20, comment_type="commentType", comment="Word 5"),
+)
 
-class TestCommentsModel(unittest.TestCase):
-    _default_comments = [
-        Comment(time=0, comment_type="commentType", comment="Word 1"),
-        Comment(time=5, comment_type="commentType", comment="Word 2"),
-        Comment(time=10, comment_type="commentType", comment="Word 3"),
-        Comment(time=15, comment_type="commentType", comment="Word 4"),
-        Comment(time=20, comment_type="commentType", comment="Word 5"),
-    ]
-
-    def setUp(self):
-        # noinspection PyCallingNonCallable
-        self._model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
-
-        self._model.import_comments(self._default_comments[:])
-
-        self._player_mock = MagicMock()
-        self._player_mock.current_time = 0
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(PlayerService, self._player_mock))
-        # fmt: on
-
-    def tearDown(self):
-        inject.clear()
-
-    def _mock_player_time(self, time: int):
-        self._player_mock.current_time = time
-
-    def test_add_row_count(self):
-        count = self._model.rowCount()
-        self.assertEqual(count, 5)
-        self._model.add_row("comment")
-        self.assertEqual(count + 1, 6)
-
-    @parameterized.expand(
-        [
-            (0, 0.499999),
-            (0, 0.500000),
-            (1, 0.500001),
-            (1, 1.499999),
-            (2, 1.500001),
-        ]
-    )
-    def test_add_comment_time_rounded(self, expected, input_time):
-        self._model.clear()
-        self._mock_player_time(time=input_time)
-
-        self._model.add_row("comment")
-
-        index = self._model.index(0, 0)
-        item = self._model.itemFromIndex(index)
-        actual = item.data(Role.TIME)
-
-        self.assertEqual(expected, actual)
-
-    def test_add_row_sorting(self):
-        self._mock_player_time(time=7)
-        self._model.add_row("my custom comment type")
-
-        item = self._model.item(2, 0)
-        self.assertEqual("my custom comment type", item.data(Role.TYPE))
-
-    def test_add_row_signals(self):
-        signals_fired = {}
-
-        def signal_fired(key, val=True):
-            signals_fired[key] = val
-
-        self._model.commentsChanged.connect(lambda: signal_fired("commentsChanged"))
-        self._model.newItemAdded.connect(lambda idx: signal_fired("newItemAdded", idx))
-
-        self._model.add_row("comment type")
-
-        self.assertIsNotNone(signals_fired.get("commentsChanged", None))
-        self.assertIsNotNone(signals_fired.get("newItemAdded", None))
-
-    def test_add_row_invalidates_search(self):
-        self._model._searcher._hits = ["result"]
-        self._model.add_row("comment type")
-
-        self.assertIsNone(self._model._searcher._hits)
-
-    def test_import_comments_signals(self):
-        signals_fired = {}
-
-        def signal_fired(key, val=True):
-            signals_fired[key] = val
-
-        self._model.commentsImported.connect(lambda: signal_fired("commentsImported"))
-
-        self._model.import_comments(
-            [
-                Comment(time=0, comment_type="commentType", comment="Word ok"),
-            ]
-        )
-
-        self.assertIsNotNone(signals_fired.get("commentsImported", None))
-
-    def test_import_comments_invalidates_search(self):
-        self._model._searcher._hits = ["result"]
-        self._model.import_comments(
-            [
-                Comment(time=0, comment_type="commentType", comment="Word ok"),
-            ]
-        )
-
-        self.assertIsNone(self._model._searcher._hits)
-
-    def test_remove_row(self):
-        count = self._model.rowCount()
-        self.assertEqual(count, 5)
-        self._model.remove_row(0)
-        self.assertEqual(count - 1, 4)
-
-    def test_clear_comments(self):
-        self._model.clear_comments()
-        self.assertEqual(0, self._model.rowCount())
-
-    def test_remove_row_signals(self):
-        signals_fired = {}
-
-        def signal_fired(key, val=True):
-            signals_fired[key] = val
-
-        self._model.commentsChanged.connect(lambda: signal_fired("commentsChanged"))
-
-        self._model.remove_row(0)
-
-        self.assertIsNotNone(signals_fired.get("commentsChanged", None))
-
-    def test_remove_row_invalidates_search(self):
-        self._model._searcher._hits = ["result"]
-        self._model.remove_row(0)
-
-        self.assertIsNone(self._model._searcher._hits)
-
-    def test_update_time_sorting(self):
-        self._model.update_time(0, time=7)
-
-        index = self._model.index(1, 0)
-        item = self._model.itemFromIndex(index)
-        data = item.data(Role.COMMENT)
-
-        self.assertEqual(data, "Word 1")
-
-    def test_update_time_signals(self):
-        signals_fired = {}
-
-        def signal_fired(key, val=True):
-            signals_fired[key] = val
-
-        self._model.timeUpdated.connect(lambda: signal_fired("timeUpdated"))
-
-        self._model.update_time(0, time=7)
-
-        self.assertIsNotNone(signals_fired.get("timeUpdated", None))
-
-    def test_update_time_invalidates_search(self):
-        self._model._searcher._hits = ["result"]
-        self._model.update_time(0, time=7)
-
-        self.assertIsNone(self._model._searcher._hits)
-
-    def test_update_comment_invalidates_search(self):
-        self._model._searcher._hits = ["result"]
-        self._model.update_comment(0, comment="new")
-
-        self.assertIsNone(self._model._searcher._hits)
-
-    def test_clear_comments_invalidates_search(self):
-        self._model._searcher._hits = ["result"]
-        self._model.clear_comments()
-
-        self.assertIsNone(self._model._searcher._hits)
-
-    def test_get_all_comments(self):
-        self.assertListEqual(self._default_comments, self.map_to_objects(self._model.comments()))
-
-    def map_to_objects(self, comments: list):
-        return list(map(lambda c: Comment(c["time"], c["commentType"], c["comment"]), comments))
+DEFAULT_COMMENTS_SEARCH = (
+    Comment(time=0, comment_type="commentType", comment="Word 1"),
+    Comment(time=1, comment_type="commentType", comment="Word 2"),
+    Comment(time=2, comment_type="commentType", comment="Word 3"),
+    Comment(time=3, comment_type="commentType", comment="Word 4"),
+    Comment(time=4, comment_type="commentType", comment="Word 5"),
+    Comment(time=5, comment_type="commentType", comment="Word 6"),
+    Comment(time=6, comment_type="commentType", comment=""),
+    Comment(time=9, comment_type="commentType", comment="Word 9"),
+)
 
 
-class TestCommentsModelSearch(unittest.TestCase):
-    _query = ""
-    _selected_index = -1
-    _default_comments = [
-        Comment(time=0, comment_type="commentType", comment="Word 1"),
-        Comment(time=1, comment_type="commentType", comment="Word 2"),
-        Comment(time=2, comment_type="commentType", comment="Word 3"),
-        Comment(time=3, comment_type="commentType", comment="Word 4"),
-        Comment(time=4, comment_type="commentType", comment="Word 5"),
-        Comment(time=5, comment_type="commentType", comment="Word 6"),
-        Comment(time=6, comment_type="commentType", comment=""),
-        Comment(time=9, comment_type="commentType", comment="Word 9"),
-    ]
+class SignalHelper:
+    """Helper class to help with signal logging"""
 
-    def setUp(self):
-        # noinspection PyCallingNonCallable
-        self._model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
-        self._model.import_comments(self._default_comments)
+    def __init__(self):
+        self.signals_fired = {}
 
-        mock = MagicMock()
-        mock.current_time = 0
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(PlayerService, mock))
-        # fmt: on
+    def log(self, signal_name: str, val=True):
+        self.signals_fired[signal_name] = val
 
-    def tearDown(self):
-        inject.clear()
+    def has_logged(self, signal_name: str) -> bool:
+        return signal_name in self.signals_fired
 
-    def _search(self, query, include_current_row, top_down, selected_index):
+
+@pytest.fixture()
+def signal_helper() -> SignalHelper:
+    return SignalHelper()
+
+
+class SearchHelper:
+    """Helper class to abstract search functionality"""
+
+    def __init__(self):
+        self._model = make_model(set_comments=list(DEFAULT_COMMENTS_SEARCH))
+        self._query = ""
+        self._selected_index = -1
+
+    def search(
+        self,
+        query: str,
+        include_current_row: bool,
+        top_down: bool,
+        selected_index: int,
+    ) -> tuple[int, int, int]:
         result = self._model.search(query, include_current_row, top_down, selected_index)
         self._query = query
         self._selected_index = result["nextIndex"]
         return result["nextIndex"], result["currentResult"], result["totalResults"]
 
-    def _select(self, row_index: int):
-        self._selected_index = row_index
+    def select(self, index: int):
+        self._selected_index = index
 
-    def _import(self):
-        self._model.import_comments(
-            [
-                Comment(time=7, comment_type="commentType", comment="Word 7"),
-                Comment(time=8, comment_type="commentType", comment="Word 8"),
-            ]
-        )
-        self._select(row_index=8)
+    def next(self) -> tuple[int, int, int]:
+        return self.search(self._query, include_current_row=False, top_down=True, selected_index=self._selected_index)
 
-    def _next(self):
-        return self._search(self._query, include_current_row=False, top_down=True, selected_index=self._selected_index)
+    def previous(self) -> tuple[int, int, int]:
+        return self.search(self._query, include_current_row=False, top_down=False, selected_index=self._selected_index)
 
-    def _previous(self):
-        return self._search(self._query, include_current_row=False, top_down=False, selected_index=self._selected_index)
+    def import_more_comments(self):
+        comments = [
+            Comment(time=7, comment_type="commentType", comment="Word 7"),
+            Comment(time=8, comment_type="commentType", comment="Word 8"),
+        ]
+        self._model.import_comments(comments)
+        self.select(index=8)
 
-    def test_empty_search(self):
-        next_idx, current_result, total_results = self._search(
-            query="", include_current_row=True, top_down=True, selected_index=0
-        )
 
-        self.assertEqual(-1, next_idx)
-        self.assertEqual(-1, current_result)
-        self.assertEqual(-1, total_results)
+@pytest.fixture()
+def search_helper() -> SearchHelper:
+    return SearchHelper()
 
-    def test_no_match(self):
-        next_idx, current_result, total_results = self._search(
-            query="Query", include_current_row=True, top_down=True, selected_index=0
-        )
 
-        self.assertEqual(-1, next_idx)
-        self.assertEqual(0, current_result)
-        self.assertEqual(0, total_results)
+def make_model(
+    set_comments=DEFAULT_COMMENTS,
+    set_player_time: int | float = 0,
+) -> MpvqcCommentModelPyObject:
+    # noinspection PyCallingNonCallable
+    model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
+    model.import_comments(set_comments)
 
-    def test_match(self):
-        next_idx, current_result, total_results = self._search(
-            query="Word", include_current_row=True, top_down=True, selected_index=0
-        )
+    player_mock = MagicMock()
+    player_mock.current_time = set_player_time
 
-        self.assertEqual(0, next_idx)
-        self.assertEqual(1, current_result)
-        self.assertEqual(7, total_results)
+    def config(binder: inject.Binder):
+        binder.bind(PlayerService, player_mock)
 
-    def test_match_next(self):
-        self._search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    inject.configure(config, clear=True)
 
-        next_idx, current_result, total_results = self._next()
-        self.assertEqual(1, next_idx)
-        self.assertEqual(2, current_result)
-        self.assertEqual(7, total_results)
+    return model
 
-        next_idx, current_result, total_results = self._next()
-        self.assertEqual(2, next_idx)
-        self.assertEqual(3, current_result)
-        self.assertEqual(7, total_results)
 
-    def test_match_next_new_query(self):
-        self._search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+def test_add_comment():
+    model = make_model()
+    assert model.rowCount() == 5
+    model.add_row("comment type")
+    assert model.rowCount() == 6
 
-        self._next()
-        self._next()
 
-        next_idx, current_result, total_results = self._search(
-            query="4", include_current_row=True, top_down=True, selected_index=0
-        )
-        self.assertEqual(3, next_idx)
-        self.assertEqual(1, current_result)
-        self.assertEqual(1, total_results)
+@pytest.mark.parametrize(
+    "expected,test_input",
+    [
+        (0, 0.499999),
+        (0, 0.500000),
+        (1, 0.500001),
+        (1, 1.499999),
+        (2, 1.500001),
+    ],
+)
+def test_add_comment_rounds_time(expected, test_input):
+    model = make_model(set_comments=[], set_player_time=test_input)
 
-    def test_match_next_after_import(self):
-        self._search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    model.add_row("comment type")
 
-        self._next()
-        self._next()
-        self._import()
+    item = model.item(0, 0)
+    actual = item.data(Role.TIME)
+    assert expected == actual
 
-        next_idx, current_result, total_results = self._next()
-        self.assertEqual(9, next_idx)
-        self.assertEqual(9, current_result)
-        self.assertEqual(9, total_results)
 
-    def test_match_previous(self):
-        self._search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+def test_add_comment_sorts_model():
+    custom_comment_type = "my custom comment type"
+    model = make_model(set_player_time=7)
 
-        next_idx, current_result, total_results = self._previous()
-        self.assertEqual(7, next_idx)
-        self.assertEqual(7, current_result)
-        self.assertEqual(7, total_results)
+    model.add_row(custom_comment_type)
 
-        next_idx, current_result, total_results = self._previous()
-        self.assertEqual(5, next_idx)
-        self.assertEqual(6, current_result)
-        self.assertEqual(7, total_results)
+    item = model.item(2, 0)
+    actual = item.data(Role.TYPE)
+    assert custom_comment_type == actual
 
-    def test_match_previous_change_selection(self):
-        self._search(query="Word", include_current_row=True, top_down=True, selected_index=0)
 
-        self._previous()
-        self._previous()
-        self._select(row_index=2)
+def test_add_comment_invalidates_search_results():
+    model = make_model()
+    model._searcher._hits = ["result"]
 
-        next_idx, current_result, total_results = self._previous()
-        self.assertEqual(1, next_idx)
-        self.assertEqual(2, current_result)
-        self.assertEqual(7, total_results)
+    model.add_row("comment type")
 
-    def test_match_previous_after_import(self):
-        self._search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    assert model._searcher._hits is None
 
-        self._next()
-        self._next()
-        self._import()
 
-        next_idx, current_result, total_results = self._previous()
-        self.assertEqual(7, next_idx)
-        self.assertEqual(7, current_result)
-        self.assertEqual(9, total_results)
+def test_add_comment_fires_signals(signal_helper):
+    model = make_model()
+    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
+    model.newItemAdded.connect(lambda idx: signal_helper.log("newItemAdded", idx))
 
-    def test_time_is_int(self):
-        self._model.import_comments(
-            [
-                Comment(time=999.99, comment_type="commentType", comment="Word 1"),
-            ]
-        )
-        comment = self._model.comments()[-1]
-        self.assertEqual(999, comment["time"])
+    model.add_row("comment type")
+
+    assert signal_helper.has_logged("commentsChanged")
+    assert signal_helper.has_logged("newItemAdded")
+
+
+def test_import_comments():
+    model = make_model()
+    # noinspection PyTypeChecker
+    comment = Comment(time=999.99, comment_type="commentType", comment="Word 1")
+
+    assert model.rowCount() == 5
+    model.import_comments([comment])
+    assert model.rowCount() == 6
+
+    # Ensure even importing float time properties results in time being stored as int
+    assert 999 == model.comments()[-1]["time"]
+
+
+def test_import_comments_invalidates_search_results():
+    model = make_model()
+    model._searcher._hits = ["result"]
+
+    model.import_comments(list(DEFAULT_COMMENTS))
+
+    assert model._searcher._hits is None
+
+
+def test_import_comments_fires_signals(signal_helper):
+    model = make_model()
+    model.commentsImported.connect(lambda: signal_helper.log("commentsImported"))
+
+    model.import_comments(list(DEFAULT_COMMENTS))
+
+    assert signal_helper.has_logged("commentsImported")
+
+
+def test_remove_comment():
+    model = make_model()
+    assert model.rowCount() == 5
+    model.remove_row(0)
+    assert model.rowCount() == 4
+
+
+def test_remove_comment_invalidates_search_results():
+    model = make_model()
+    model._searcher._hits = ["result"]
+
+    model.remove_row(0)
+
+    assert model._searcher._hits is None
+
+
+def test_remove_comment_fires_signals(signal_helper):
+    model = make_model()
+    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
+
+    model.remove_row(0)
+
+    assert signal_helper.has_logged("commentsChanged")
+
+
+def test_clear_comments():
+    model = make_model()
+    model.clear_comments()
+    assert 0 == model.rowCount()
+
+
+def test_clear_comments_invalidates_search_results():
+    model = make_model()
+    model._searcher._hits = ["result"]
+
+    model.clear_comments()
+
+    assert model._searcher._hits is None
+
+
+def test_update_time_sorts_model_again():
+    model = make_model()
+    model.update_time(row=0, time=7)
+
+    item = model.item(1, 0)
+    actual = item.data(Role.COMMENT)
+
+    assert actual == "Word 1"
+
+
+def test_update_time_invalidates_search_results():
+    model = make_model()
+    model._searcher._hits = ["result"]
+
+    model.update_time(row=0, time=7)
+
+    assert model._searcher._hits is None
+
+
+def test_update_time_fires_signals(signal_helper):
+    model = make_model()
+    model.timeUpdated.connect(lambda: signal_helper.log("timeUpdated"))
+
+    model.update_time(row=0, time=7)
+
+    assert signal_helper.has_logged("timeUpdated")
+
+
+def test_update_comment_invalidates_search_results():
+    model = make_model()
+    model._searcher._hits = ["result"]
+
+    model.update_comment(index=0, comment="new")
+
+    assert model._searcher._hits is None
+
+
+def test_get_all_comments():
+    model = make_model()
+
+    actual = [
+        Comment(time=comment["time"], comment_type=comment["commentType"], comment=comment["comment"])
+        for comment in model.comments()
+    ]
+
+    assert actual == list(DEFAULT_COMMENTS)
+
+
+def test_search_with_empty_query(search_helper):
+    next_idx, current_result, total_results = search_helper.search(
+        query="", include_current_row=True, top_down=True, selected_index=0
+    )
+    assert -1 == next_idx
+    assert -1 == current_result
+    assert -1 == total_results
+
+
+def test_search_no_match(search_helper):
+    next_idx, current_result, total_results = search_helper.search(
+        query="Query", include_current_row=True, top_down=True, selected_index=0
+    )
+    assert -1 == next_idx
+    assert 0 == current_result
+    assert 0 == total_results
+
+
+def test_search_match(search_helper):
+    next_idx, current_result, total_results = search_helper.search(
+        query="Word", include_current_row=True, top_down=True, selected_index=0
+    )
+    assert 0 == next_idx
+    assert 1 == current_result
+    assert 7 == total_results
+
+
+def test_search_match_next(search_helper):
+    search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+
+    next_idx, current_result, total_results = search_helper.next()
+    assert 1 == next_idx
+    assert 2 == current_result
+    assert 7 == total_results
+
+    next_idx, current_result, total_results = search_helper.next()
+    assert 2 == next_idx
+    assert 3 == current_result
+    assert 7 == total_results
+
+
+def test_search_match_next_new_query(search_helper):
+    search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    search_helper.next()
+    search_helper.next()
+
+    next_idx, current_result, total_results = search_helper.search(
+        query="4", include_current_row=True, top_down=True, selected_index=0
+    )
+    assert 3 == next_idx
+    assert 1 == current_result
+    assert 1 == total_results
+
+
+def test_search_match_next_after_import(search_helper):
+    search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    search_helper.next()
+    search_helper.next()
+    search_helper.import_more_comments()
+
+    next_idx, current_result, total_results = search_helper.next()
+    assert 9 == next_idx
+    assert 9 == current_result
+    assert 9 == total_results
+
+
+def test_search_match_previous(search_helper):
+    search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+
+    next_idx, current_result, total_results = search_helper.previous()
+    assert 7 == next_idx
+    assert 7 == current_result
+    assert 7 == total_results
+
+    next_idx, current_result, total_results = search_helper.previous()
+    assert 5 == next_idx
+    assert 6 == current_result
+    assert 7 == total_results
+
+
+def test_search_match_previous_with_selection_change(search_helper):
+    search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    search_helper.previous()
+    search_helper.previous()
+    search_helper.select(index=2)
+
+    next_idx, current_result, total_results = search_helper.previous()
+    assert 1 == next_idx
+    assert 2 == current_result
+    assert 7 == total_results
+
+
+def test_search_match_previous_after_import(search_helper):
+    search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
+    search_helper.next()
+    search_helper.next()
+    search_helper.import_more_comments()
+
+    next_idx, current_result, total_results = search_helper.previous()
+    assert 7 == next_idx
+    assert 7 == current_result
+    assert 9 == total_results

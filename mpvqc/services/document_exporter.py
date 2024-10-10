@@ -18,12 +18,12 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import inject
-from PySide6.QtCore import QLocale, QDateTime, QCoreApplication, QStandardPaths
+from jinja2 import BaseLoader, Environment, TemplateError, TemplateSyntaxError
+from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QStandardPaths
 from PySide6.QtGui import QStandardItemModel
-from jinja2 import Environment, BaseLoader, TemplateSyntaxError, TemplateError
 
 from .application_paths import ApplicationPathsService
 from .formatter_time import TimeFormatterService

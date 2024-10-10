@@ -15,36 +15,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import unittest
-
-from parameterized import parameterized
+import pytest
 
 from mpvqc.services import TimeFormatterService
 
 
-class TimeFormatterServiceTest(unittest.TestCase):
-    _service = TimeFormatterService()
+@pytest.fixture(scope="module")
+def service():
+    return TimeFormatterService()
 
-    @parameterized.expand(
-        [
-            ("00:00:00", 0),
-            ("00:01:08", 68),
-            ("00:16:39", 999),
-            ("02:46:40", 10000),
-        ]
-    )
-    def test_format_time_to_string_long(self, expected, input_seconds):
-        actual = self._service.format_time_to_string(input_seconds, long_format=True)
-        self.assertEqual(expected, actual)
 
-    @parameterized.expand(
-        [
-            ("00:00", 0),
-            ("01:08", 68),
-            ("16:39", 999),
-        ]
-    )
-    def test_format_time_to_string_short(self, expected, input_seconds):
-        actual = self._service.format_time_to_string(input_seconds, long_format=False)
-        self.assertEqual(expected, actual)
+@pytest.mark.parametrize(
+    "expected, input_seconds",
+    [
+        ("00:00:00", 0),
+        ("00:01:08", 68),
+        ("00:16:39", 999),
+        ("02:46:40", 10000),
+    ],
+)
+def test_format_time_to_string_long(service, expected, input_seconds):
+    actual = service.format_time_to_string(input_seconds, long_format=True)
+    assert expected == actual
+
+
+@pytest.mark.parametrize(
+    "expected, input_seconds",
+    [
+        ("00:00", 0),
+        ("01:08", 68),
+        ("16:39", 999),
+    ],
+)
+def test_format_time_to_string_short(service, expected, input_seconds):
+    actual = service.format_time_to_string(input_seconds, long_format=False)
+    assert expected == actual

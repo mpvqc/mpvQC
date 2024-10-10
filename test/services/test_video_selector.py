@@ -15,179 +15,151 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+from collections.abc import Callable
 from pathlib import Path
+from typing import Optional
 from unittest.mock import MagicMock
 
 import inject
-from parameterized import parameterized
+import pytest
 
 from mpvqc.services import SettingsService, VideoSelectorService
 from test.mocks import MockedMessageBox
 
+CHOICE = SettingsService.ImportWhenVideoLinkedInDocument
 
-class VideoSelectorServiceTest(unittest.TestCase):
-    _existing_1 = Path.home() / "Videos" / "some-existing-video-1.mp4"
-    _existing_2 = Path.home() / "Videos" / "some-existing-video-2.mp4"
-    _existing_3 = Path.home() / "Videos" / "some-existing-video-3.mp4"
+EXISTING_1 = Path.home() / "Videos" / "some-existing-video-1.mp4"
+EXISTING_2 = Path.home() / "Videos" / "some-existing-video-2.mp4"
+EXISTING_3 = Path.home() / "Videos" / "some-existing-video-3.mp4"
 
-    _service = VideoSelectorService()
-    _result = Path or None
 
-    @staticmethod
-    def mock_user_choice(choice: SettingsService.ImportWhenVideoLinkedInDocument):
-        mock = MagicMock()
-        mock.import_video_when_video_linked_in_document = choice
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(SettingsService, mock))
-        # fmt: on
+@pytest.fixture(scope="module")
+def service():
+    return VideoSelectorService()
 
-    def tearDown(self):
-        inject.clear()
-        self._reset()
 
-    def _select_video_based_on(self, user_input):
-        self._service.select_video_from(
-            on_video_selected=self._pick_video, video_found_dialog_factory=MagicMock(), **user_input
+@pytest.fixture(scope="module")
+def make_select_video(service):
+    selected_video: Optional[Path] = None
+
+    def set_selected_video(video):
+        nonlocal selected_video
+        selected_video = video
+
+    def get_selected_video() -> Path | None:
+        return selected_video
+
+    def _make_select_video(
+        existing_videos_dropped: list[Path],
+        existing_videos_from_documents: list[Path],
+    ) -> Callable[[], Path | None]:
+        service.select_video_from(
+            on_video_selected=lambda video: set_selected_video(video),
+            video_found_dialog_factory=MagicMock(),
+            existing_videos_dropped=existing_videos_dropped,
+            existing_videos_from_documents=existing_videos_from_documents,
         )
 
-    def _pick_video(self, video: Path or None):
-        self._result = video
+        return get_selected_video
 
-    def _reset(self):
-        self._result = None
+    return _make_select_video
 
-    @parameterized.expand(
-        [
-            (
-                {
-                    "existing_videos_dropped": [_existing_1],
-                    "existing_videos_from_documents": [],
-                },
-                _existing_1,
-            ),
-            (
-                {
-                    "existing_videos_dropped": [_existing_2, _existing_3, _existing_1],
-                    "existing_videos_from_documents": [],
-                },
-                _existing_2,
-            ),
-        ]
+
+def mock_user_choice(choice: CHOICE):
+    mock = MagicMock()
+    mock.import_video_when_video_linked_in_document = choice
+
+    def config(binder: inject.Binder):
+        binder.bind(SettingsService, mock)
+
+    inject.configure(config, clear=True)
+
+
+@pytest.mark.parametrize(
+    "videos_dropped, videos_from_documents, expected",
+    [
+        ([EXISTING_1], [], EXISTING_1),
+        ([EXISTING_2, EXISTING_3, EXISTING_1], [], EXISTING_2),
+    ],
+)
+def test_existing_video_dropped(make_select_video, expected, videos_dropped, videos_from_documents):
+    video_getter = make_select_video(
+        existing_videos_dropped=videos_dropped,
+        existing_videos_from_documents=videos_from_documents,
     )
-    def test_existing_video_dropped_n(self, user_input, expected):
-        self._select_video_based_on(user_input)
-        self.assertEqual(expected, self._result)
+    assert video_getter() == expected
 
-    @parameterized.expand(
-        [
-            (
-                {
-                    "existing_videos_dropped": [_existing_1],
-                    "existing_videos_from_documents": [_existing_2],
-                },
-                _existing_1,
-            ),
-            (
-                {
-                    "existing_videos_dropped": [],
-                    "existing_videos_from_documents": [],
-                },
-                None,
-            ),
-            (
-                {
-                    "existing_videos_dropped": [],
-                    "existing_videos_from_documents": [_existing_2],
-                },
-                None,
-            ),
-        ]
+
+@pytest.mark.parametrize(
+    "videos_dropped, videos_from_documents, expected",
+    [
+        ([EXISTING_1], [EXISTING_2], EXISTING_1),
+        ([], [], None),
+        ([], [EXISTING_2], None),
+    ],
+)
+def test_user_never_wants_to_import_video(make_select_video, expected, videos_dropped, videos_from_documents):
+    mock_user_choice(CHOICE.NEVER)
+    video_getter = make_select_video(
+        existing_videos_dropped=videos_dropped,
+        existing_videos_from_documents=videos_from_documents,
     )
-    def test_user_never_wants_to_import_video(self, user_input, expected):
-        self.mock_user_choice(SettingsService.ImportWhenVideoLinkedInDocument.NEVER)
+    assert video_getter() == expected
 
-        self._select_video_based_on(user_input)
-        self.assertEqual(expected, self._result)
 
-    @parameterized.expand(
-        [
-            (
-                {
-                    "existing_videos_dropped": [_existing_1],
-                    "existing_videos_from_documents": [],
-                },
-                _existing_1,
-            ),
-            (
-                {
-                    "existing_videos_dropped": [],
-                    "existing_videos_from_documents": [],
-                },
-                None,
-            ),
-        ]
+@pytest.mark.parametrize(
+    "videos_dropped, videos_from_documents, expected",
+    [
+        ([EXISTING_1], [], EXISTING_1),
+        ([], [], None),
+        ([EXISTING_1], [EXISTING_2], EXISTING_1),
+        ([], [EXISTING_3], EXISTING_3),
+    ],
+)
+def test_user_always_wants_to_import_video(make_select_video, expected, videos_dropped, videos_from_documents):
+    mock_user_choice(CHOICE.ALWAYS)
+    video_getter = make_select_video(
+        existing_videos_dropped=videos_dropped,
+        existing_videos_from_documents=videos_from_documents,
     )
-    def test_no_videos_found_in_document(self, user_input, expected):
-        self.mock_user_choice(SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS)
+    assert video_getter() == expected
 
-        self._select_video_based_on(user_input)
-        self.assertEqual(expected, self._result)
 
-    @parameterized.expand(
-        [
-            (
-                {
-                    "existing_videos_dropped": [_existing_1],
-                    "existing_videos_from_documents": [_existing_2],
-                },
-                _existing_1,
-            ),
-            (
-                {
-                    "existing_videos_dropped": [],
-                    "existing_videos_from_documents": [_existing_3],
-                },
-                _existing_3,
-            ),
-        ]
+def test_user_will_be_asked(service, make_select_video):
+    mock_user_choice(CHOICE.ASK_EVERY_TIME)
+    video_getter = make_select_video(
+        existing_videos_dropped=[EXISTING_1],
+        existing_videos_from_documents=[EXISTING_2],
     )
-    def test_user_always_wants_to_import_video(self, user_input, expected):
-        self.mock_user_choice(SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS)
+    assert video_getter() == EXISTING_1
 
-        self._select_video_based_on(user_input)
-        self.assertEqual(expected, self._result)
+    #
 
-    def test_user_will_be_asked(self):
-        self.mock_user_choice(SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME)
+    selected_video: Optional[Path] = None
 
-        user_input = {
-            "existing_videos_dropped": [self._existing_1],
-            "existing_videos_from_documents": [self._existing_2],
-        }
+    def set_selected_video(video):
+        nonlocal selected_video
+        selected_video = video
 
-        self._select_video_based_on(user_input)
-        self.assertEqual(self._existing_1, self._result)
-        self._reset()
+    user_selection = MagicMock()
+    user_selection.createObject.return_value = MockedMessageBox()
+    service.select_video_from(
+        existing_videos_dropped=[],
+        existing_videos_from_documents=[EXISTING_3],
+        on_video_selected=lambda video: set_selected_video(video),
+        video_found_dialog_factory=user_selection,
+    )
+    user_selection.createObject.return_value.accepted.emit()
+    assert selected_video == EXISTING_3
 
-        user_input = {
-            "existing_videos_dropped": [],
-            "existing_videos_from_documents": [self._existing_3],
-        }
+    #
 
-        user_selection = MagicMock()
-        user_selection.createObject.return_value = MockedMessageBox()
-        self._service.select_video_from(
-            video_found_dialog_factory=user_selection, on_video_selected=self._pick_video, **user_input
-        )
-        user_selection.createObject.return_value.accepted.emit()
-        self.assertEqual(self._existing_3, self._result)
-        self._reset()
-
-        self._service.select_video_from(
-            video_found_dialog_factory=user_selection, on_video_selected=self._pick_video, **user_input
-        )
-        user_selection.createObject.return_value.rejected.emit()
-        self.assertIsNone(self._result)
-        self._reset()
+    selected_video = None
+    service.select_video_from(
+        existing_videos_dropped=[],
+        existing_videos_from_documents=[EXISTING_3],
+        on_video_selected=lambda video: set_selected_video(video),
+        video_found_dialog_factory=user_selection,
+    )
+    user_selection.createObject.return_value.rejected.emit()
+    assert selected_video is None

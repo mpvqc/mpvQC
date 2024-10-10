@@ -17,7 +17,7 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 
-from PySide6.QtCore import QObject, QEvent, Qt
+from PySide6.QtCore import QEvent, QObject, Qt
 from PySide6.QtGui import QCursor, QGuiApplication, QWindow
 
 

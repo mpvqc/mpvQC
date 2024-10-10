@@ -17,7 +17,7 @@
 
 import inject
 from PySide6.QtCore import QByteArray
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ApplicationPathsService, TypeMapperService

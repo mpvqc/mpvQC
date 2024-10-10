@@ -19,19 +19,20 @@ from functools import cached_property
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import QObject, Slot, Signal, Property, QUrl, QCoreApplication
+from PySide6.QtCore import Property, QCoreApplication, QObject, QUrl, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
-from mpvqc.impl import InitialState, ApplicationState, ImportChange
+from mpvqc.impl import ApplicationState, ImportChange, InitialState
 from mpvqc.services import (
-    DocumentImporterService,
-    VideoSelectorService,
-    PlayerService,
     DocumentBackupService,
     DocumentExportService,
+    DocumentImporterService,
+    PlayerService,
     TypeMapperService,
+    VideoSelectorService,
 )
+
 from .comment_model import MpvqcCommentModelPyObject
 
 QML_IMPORT_NAME = "pyobjects"
