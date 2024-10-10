@@ -15,80 +15,87 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
-from parameterized import parameterized
+import pytest
 from PySide6.QtCore import QSettings
 
 from mpvqc.services import ApplicationPathsService, SettingsService
 
 
-class SettingsServiceTest(unittest.TestCase):
-    _path = Path()
+@pytest.fixture(scope="module")
+def make_settings():
+    settings_path = Path()
+    mock = MagicMock()
+    mock.file_settings = settings_path
 
-    def setUp(self):
-        mock = MagicMock()
-        mock.file_settings = self._path
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ApplicationPathsService, mock))
-        # fmt: on
-        self._settings = SettingsService()
+    def config(binder: inject.Binder):
+        binder.bind(ApplicationPathsService, mock)
 
-    def tearDown(self):
-        inject.clear()
+    inject.configure(config, clear=True)
 
-    def _mock_settings(self, values: dict[str, ...]):
-        q_settings = QSettings(f"{self._path}", QSettings.Format.IniFormat)
+    def _make_settings(values: dict[str, ...]) -> SettingsService:
+        q_settings = QSettings(f"{settings_path}", QSettings.Format.IniFormat)
         q_settings.clear()
         for key, value in values.items():
             q_settings.setValue(key, value)
-        self._settings._settings = q_settings
 
-    @parameterized.expand(
-        [
-            ({}, ""),
-            ({"Export/nickname": ""}, ""),
-            ({"Export/nickname": True}, "True"),
-            ({"Export/nickname": 1}, "1"),
-            ({"Export/nickname": "nick"}, "nick"),
-        ]
-    )
-    def test_string(self, input, expected):
-        self._mock_settings(input)
-        self.assertEqual(expected, self._settings.nickname)
+        app_settings = SettingsService()
+        app_settings._settings = q_settings
+        return app_settings
 
-    def test_string_with_default(self):
-        self._mock_settings({})
-        self.assertEqual("en-US", self._settings.language)
+    return _make_settings
 
-    @parameterized.expand(
-        [
-            ({}, False),
-            ({"Export/writeHeaderDate": ""}, False),
-            ({"Export/writeHeaderDate": True}, True),
-            ({"Export/writeHeaderDate": 1}, False),
-            ({"Export/writeHeaderDate": "true"}, True),
-        ]
-    )
-    def test_bool(self, input, expected):
-        self._mock_settings(input)
-        self.assertEqual(expected, self._settings.writeHeaderDate)
 
-    # fmt: off
-    @parameterized.expand(
-        [
+def test_settings_language(make_settings):
+    settings = make_settings({})
+    assert settings.language == "en-US"
 
-            ({"Import/importWhenVideoLinkedInDocument": 0}, SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS),
-            ({"Import/importWhenVideoLinkedInDocument": 1}, SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME,),
-            ({"Import/importWhenVideoLinkedInDocument": 2}, SettingsService.ImportWhenVideoLinkedInDocument.NEVER),
-            ({"Import/importWhenVideoLinkedInDocument": SettingsService.ImportWhenVideoLinkedInDocument.NEVER.value}, SettingsService.ImportWhenVideoLinkedInDocument.NEVER,),
-        ]
-    )
-    # fmt: on
-    def test_import_video_when_video_linked_in_document(self, input, expected):
-        self._mock_settings(input)
-        self.assertEqual(expected, self._settings.import_video_when_video_linked_in_document)
+
+@pytest.mark.parametrize(
+    "config, expected",
+    [
+        ({}, ""),
+        ({"Export/nickname": ""}, ""),
+        ({"Export/nickname": True}, "True"),
+        ({"Export/nickname": 1}, "1"),
+        ({"Export/nickname": "nick"}, "nick"),
+    ],
+)
+def test_settings_string(make_settings, config, expected):
+    settings = make_settings(config)
+    assert expected == settings.nickname
+
+
+@pytest.mark.parametrize(
+    "config, expected",
+    [
+        ({}, False),
+        ({"Export/writeHeaderDate": ""}, False),
+        ({"Export/writeHeaderDate": True}, True),
+        ({"Export/writeHeaderDate": 1}, False),
+        ({"Export/writeHeaderDate": "true"}, True),
+    ],
+)
+def test_settings_bool(make_settings, config, expected):
+    settings = make_settings(config)
+    assert expected == settings.writeHeaderDate
+
+
+ENUM_VALUE = SettingsService.ImportWhenVideoLinkedInDocument
+
+
+@pytest.mark.parametrize(
+    "config, expected",
+    [
+        ({"Import/importWhenVideoLinkedInDocument": 0}, ENUM_VALUE.ALWAYS),
+        ({"Import/importWhenVideoLinkedInDocument": 1}, ENUM_VALUE.ASK_EVERY_TIME),
+        ({"Import/importWhenVideoLinkedInDocument": 2}, ENUM_VALUE.NEVER),
+        ({"Import/importWhenVideoLinkedInDocument": ENUM_VALUE.NEVER.value}, ENUM_VALUE.NEVER),
+    ],
+)
+def test_settings_enum(make_settings, config, expected):
+    settings = make_settings(config)
+    assert expected == settings.import_video_when_video_linked_in_document

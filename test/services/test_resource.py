@@ -22,7 +22,7 @@ from mpvqc.services import ResourceReaderService, ResourceService
 
 
 @pytest.fixture(autouse=True, scope="module")
-def configure_injections(type_mapper):
+def configure_injections():
     def config(binder: inject.Binder):
         binder.bind(ResourceReaderService, ResourceReaderService())
 
