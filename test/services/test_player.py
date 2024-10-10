@@ -15,79 +15,87 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+from collections.abc import Generator
 from unittest.mock import MagicMock, patch
 
 import inject
+import pytest
 
-from mpvqc.services import ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService, TypeMapperService
+from mpvqc.services import TypeMapperService, ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService
+
+VIDEO = "video"
+SUBTITLE = "test"
+SUBTITLES = (SUBTITLE,)
 
 
-class PlayerServiceTest(unittest.TestCase):
-    video = "video"
-    subtitle = "test"
-    subtitles = (subtitle,)
+@pytest.fixture(autouse=True, scope="module")
+def configure_injections(type_mapper):
+    def config(binder: inject.Binder):
+        binder.bind(TypeMapperService, type_mapper)
+        binder.bind(ApplicationPathsService, MagicMock())
+        binder.bind(OperatingSystemZoomDetectorService, MagicMock())
 
-    def setUp(self):
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(TypeMapperService, TypeMapperService())
-                                   .bind(ApplicationPathsService, MagicMock())
-                                   .bind(OperatingSystemZoomDetectorService, MagicMock()))
-        # fmt: on
+    inject.configure(config, clear=True)
 
-    def tearDown(self):
-        inject.clear()
 
-    def _mock(self, has_video: bool = False):
-        self._mpv_mock = MagicMock()
-        self._mpv_mock.path = "video" if has_video else None
+def create_mpv_and_player_service(has_video: bool = False) -> Generator[MagicMock, PlayerService]:
+    mpv_mock = MagicMock()
+    mpv_mock.path = "video" if has_video else None
 
-        def _mocked_command(arg1, arg2, arg3):
-            if arg1 == "loadfile":
-                self._mpv_mock.path = "video"
+    def _mocked_command(arg1, _, __):
+        if arg1 == "loadfile":
+            mpv_mock.path = "video"
 
-        self._mpv_mock.command = MagicMock(side_effect=_mocked_command)
-        self._service: PlayerService = PlayerService()
-        self._service._mpv = self._mpv_mock
+    mpv_mock.command = MagicMock(side_effect=_mocked_command)
+    service: PlayerService = PlayerService()
+    service._mpv = mpv_mock
 
-    @patch("mpvqc.services.player.MPV", return_value=MagicMock())
-    def test_open_video_not_present(self, *_):
-        self._mock(has_video=False)
-        self._service.open_subtitles(self.subtitles)
-        self.assertFalse(self._mpv_mock.command.called)
-        self.assertIn(self.subtitle, self._service._cached_subtitles)
+    with patch("mpvqc.services.player.MPV", return_value=MagicMock()):
+        yield mpv_mock, service
 
-    @patch("mpvqc.services.player.MPV", return_value=MagicMock())
-    def test_open_video_present(self, *_):
-        self._mock(has_video=True)
-        self._service.open_subtitles(self.subtitles)
-        self._mpv_mock.command.assert_called()
-        self.assertNotIn(self.subtitle, self._service._cached_subtitles)
-        self.assertFalse(self._service._cached_subtitles)
 
-    @patch("mpvqc.services.player.MPV", return_value=MagicMock())
-    def test_load_subtitles(self, *_):
-        self._mock(has_video=False)
-        self._service.open_subtitles(self.subtitles)
-        self._service.open_video(self.video)
+def test_subtitles_open_video_not_present():
+    mpv_mock, service = next(create_mpv_and_player_service(has_video=False))
 
-        self._mpv_mock.command.assert_called()
-        loadfile, video, replace = self._mpv_mock.command.call_args_list[0][0]
-        self.assertEqual("loadfile", loadfile)
-        self.assertEqual(self.video, video)
-        self.assertEqual("replace", replace)
+    service.open_subtitles(SUBTITLES)
 
-        sub_add, subtitle, select = self._mpv_mock.command.call_args_list[1][0]
-        self.assertEqual("sub-add", sub_add)
-        self.assertEqual(self.subtitle, subtitle)
-        self.assertEqual("select", select)
+    assert not mpv_mock.command.called
+    assert SUBTITLE in service._cached_subtitles
 
-    @patch("mpvqc.services.player.MPV", return_value=MagicMock())
-    def test_load_subtitles_empties_cache(self, *_):
-        self._mock(has_video=False)
-        self._service.open_subtitles(self.subtitles)
-        self._service.open_video(self.video)
 
-        self.assertNotIn(self.subtitle, self._service._cached_subtitles)
-        self.assertFalse(self._service._cached_subtitles)
+def test_subtitles_open_video_present():
+    mpv_mock, service = next(create_mpv_and_player_service(has_video=True))
+
+    service.open_subtitles(SUBTITLES)
+
+    assert mpv_mock.command.called
+    assert SUBTITLE not in service._cached_subtitles
+    assert not service._cached_subtitles
+
+
+def test_subtitles_load_subtitles():
+    mpv_mock, service = next(create_mpv_and_player_service(has_video=False))
+
+    service.open_subtitles(SUBTITLES)
+    service.open_video(VIDEO)
+
+    assert mpv_mock.command.called
+    loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
+    assert "loadfile" == loadfile
+    assert VIDEO == video
+    assert "replace" == replace
+
+    sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
+    assert "sub-add" == sub_add
+    assert SUBTITLE == subtitle
+    assert "select" == select
+
+
+def test_subtitles_empties_cache():
+    mpv_mock, service = next(create_mpv_and_player_service(has_video=False))
+
+    service.open_subtitles(SUBTITLES)
+    service.open_video(VIDEO)
+
+    assert SUBTITLE not in service._cached_subtitles
+    assert not service._cached_subtitles
