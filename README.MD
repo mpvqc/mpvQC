@@ -15,19 +15,27 @@ This project assumes that a virtual environment is used:
 We use `just` (https://github.com/casey/just) to build our application.
 
 ```shell
-$ just --list
+$ just
 Available recipes:
-    add-translation locale # Add new language
+    format                 # Format code
+
+    [build]
     build                  # Build full project into build/release
     build-develop          # Build and compile resources into source directory
     clean                  # Remove ALL generated files
-    format                 # Format code
+
+    [i18n]
+    add-translation locale # Add new language
+    update-translations    # Update *.ts files by traversing the source code
+
+    [lint]
     lint-python            # Lint Python files
     lint-qml               # Lint QML files
+
+    [test]
     test                   # Run Python and QML tests
     test-python            # Run Python tests
     test-qml               # Run QML tests
-    update-translations    # Update *.ts files by traversing the source code
 ```
 
 Run `just build-develop` after each change in the `data`, `i18n`, or `qml` directories.
