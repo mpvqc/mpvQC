@@ -21,7 +21,7 @@ from unittest.mock import MagicMock, patch
 import inject
 import pytest
 
-from mpvqc.services import TypeMapperService, ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService
+from mpvqc.services import ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService, TypeMapperService
 
 VIDEO = "video"
 SUBTITLE = "test"

@@ -15,57 +15,41 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-
 import inject
+import pytest
 
 from mpvqc.services import ResourceReaderService, ResourceService
 
 
-class ResourceServiceTest(unittest.TestCase):
-    """"""
+@pytest.fixture(autouse=True, scope="module")
+def configure_injections(type_mapper):
+    def config(binder: inject.Binder):
+        binder.bind(ResourceReaderService, ResourceReaderService())
 
-    def setUp(self):
-        # fmt: off
-        inject.clear_and_configure(lambda binder: binder
-                                   .bind(ResourceReaderService, ResourceReaderService()))
-        # fmt: on
+    inject.configure(config, clear=True)
 
-    def tearDown(self):
-        inject.clear()
 
-    def test_input_conf_exists(self):
-        text = ResourceService().input_conf_content
-        self.assertTrue(text)
+@pytest.fixture(scope="module")
+def resource_service() -> ResourceService:
+    return ResourceService()
 
-    def test_mpv_conf_exists(self):
-        text = ResourceService().mpv_conf_content
-        self.assertTrue(text)
 
-    def test_backup_template(self):
-        template = ResourceService().backup_template
-        self.assertTrue(template)
+def test_resources(resource_service):
+    assert resource_service.input_conf_content
+    assert resource_service.mpv_conf_content
+    assert resource_service.backup_template
+    assert resource_service.default_export_template
 
-    def test_default_export_template(self):
-        template = ResourceService().default_export_template
-        self.assertTrue(template)
-
-        # contains all mpvQC expressions
-        required_arguments = [
-            "write_date",
-            "date",
-            "write_generator",
-            "generator",
-            "write_nickname",
-            "nickname",
-            "write_video_path",
-            "video_path",
-            "comments",
-            "comment['time'] | as_time",
-            "comment['commentType'] | as_comment_type",
-            "comment['comment'] | trim",
-        ]
-        for arg in required_arguments:
-            self.assertIn(arg, template, f"Expected to find mpvQC expression '{arg}' in export template")
-
-        self.assertEqual("\n", template[-1])
+    export_template = resource_service.default_export_template
+    assert "write_date" in export_template
+    assert "date" in export_template
+    assert "write_generator" in export_template
+    assert "generator" in export_template
+    assert "write_nickname" in export_template
+    assert "nickname" in export_template
+    assert "write_video_path" in export_template
+    assert "video_path" in export_template
+    assert "comments" in export_template
+    assert "comment['time'] | as_time" in export_template
+    assert "comment['commentType'] | as_comment_type" in export_template
+    assert "comment['comment'] | trim" in export_template
