@@ -87,7 +87,9 @@ jobs:
           execute python -m venv venv
           execute source venv/Scripts/activate
           execute python build-aux/generate-dependency-versions.py \
-            --requirements requirements.txt \
+            --pyproject-file pyproject.toml \
+            --optional-group dev \
+            insert \
             --update-inplace "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
       - name: 'Run Python Build'

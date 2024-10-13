@@ -102,15 +102,10 @@ install-dependencies:
 	  echo "Please activate virtual environment first"
 	  exit 1
 	fi
-	python -c '
-	import tomllib
-
-	with open("pyproject.toml", "rb") as file:
-		toml_file = tomllib.load(file)
-	project_deps = [f"\"{dep}\"" for dep in toml_file["project"]["dependencies"]]
-	develop_deps = [f"\"{dep}\"" for dep in toml_file["project"]["optional-dependencies"]["dev"]]
-	print(" ".join(project_deps + develop_deps))
-	' | xargs pip install
+	python build-aux/generate-dependency-versions.py \
+	  --pyproject-file pyproject.toml \
+	  --optional-group dev \
+	  extract | xargs pip install
 
 
 # Build full project into build/release
