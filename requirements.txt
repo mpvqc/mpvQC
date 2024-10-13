@@ -1,9 +1,0 @@
-inject>=5.2.1
-Jinja2>=3.1.4
-mpv>=1.0.7
-PySide6-Essentials==6.7.3
-pywin32>=307; sys_platform == 'win32'
-
-pytest>=8.3.3
-
-ruff>=0.6.9
