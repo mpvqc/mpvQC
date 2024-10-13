@@ -29,5 +29,3 @@
   * Start the application
 * Open a new pull request
 * Add a new entry in the `qml/models/MpvqcLanguageModel.qml` file
-
-**Thank you very much!** 💚
