@@ -151,6 +151,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: 'Install just'
+        uses: taiki-e/install-action@just
       - name: 'Remove Python sources'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
