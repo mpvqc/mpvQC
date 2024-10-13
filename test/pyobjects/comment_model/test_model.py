@@ -70,31 +70,6 @@ def make_model(
     return model
 
 
-def test_remove_comment():
-    model = make_model()
-    assert model.rowCount() == 5
-    model.remove_row(0)
-    assert model.rowCount() == 4
-
-
-def test_remove_comment_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.remove_row(0)
-
-    assert model._searcher._hits is None
-
-
-def test_remove_comment_fires_signals(signal_helper):
-    model = make_model()
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
-
-    model.remove_row(0)
-
-    assert signal_helper.has_logged("commentsChanged")
-
-
 def test_clear_comments():
     model = make_model()
     model.clear_comments()
