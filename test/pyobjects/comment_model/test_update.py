@@ -15,14 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from unittest.mock import MagicMock
-
-import inject
 import pytest
 
 from mpvqc.models import Comment
-from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject, Role
-from mpvqc.services import PlayerService
+from mpvqc.pyobjects.comment_model import Role
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -33,45 +29,16 @@ DEFAULT_COMMENTS = (
 )
 
 
-class SignalHelper:
-    """Helper class to help with signal logging"""
-
-    def __init__(self):
-        self.signals_fired = {}
-
-    def log(self, signal_name: str, val=True):
-        self.signals_fired[signal_name] = val
-
-    def has_logged(self, signal_name: str) -> bool:
-        return signal_name in self.signals_fired
-
-
 @pytest.fixture()
-def signal_helper() -> SignalHelper:
-    return SignalHelper()
+def model(make_model):
+    # noinspection PyArgumentList
+    return make_model(
+        set_comments=DEFAULT_COMMENTS,
+        set_player_time=0,
+    )
 
 
-def make_model(
-    set_comments=DEFAULT_COMMENTS,
-    set_player_time: int | float = 0,
-) -> MpvqcCommentModelPyObject:
-    # noinspection PyCallingNonCallable
-    model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
-    model.import_comments(set_comments)
-
-    player_mock = MagicMock()
-    player_mock.current_time = set_player_time
-
-    def config(binder: inject.Binder):
-        binder.bind(PlayerService, player_mock)
-
-    inject.configure(config, clear=True)
-
-    return model
-
-
-def test_update_time_sorts_model_again():
-    model = make_model()
+def test_update_time_sorts_model_again(model):
     model.update_time(row=0, time=7)
 
     item = model.item(1, 0)
@@ -80,8 +47,7 @@ def test_update_time_sorts_model_again():
     assert actual == "Word 1"
 
 
-def test_update_time_invalidates_search_results():
-    model = make_model()
+def test_update_time_invalidates_search_results(model):
     model._searcher._hits = ["result"]
 
     model.update_time(row=0, time=7)
@@ -89,8 +55,7 @@ def test_update_time_invalidates_search_results():
     assert model._searcher._hits is None
 
 
-def test_update_time_fires_signals(signal_helper):
-    model = make_model()
+def test_update_time_fires_signals(model, signal_helper):
     model.timeUpdated.connect(lambda: signal_helper.log("timeUpdated"))
 
     model.update_time(row=0, time=7)
@@ -98,8 +63,7 @@ def test_update_time_fires_signals(signal_helper):
     assert signal_helper.has_logged("timeUpdated")
 
 
-def test_update_comment_invalidates_search_results():
-    model = make_model()
+def test_update_comment_invalidates_search_results(model):
     model._searcher._hits = ["result"]
 
     model.update_comment(index=0, comment="new")
