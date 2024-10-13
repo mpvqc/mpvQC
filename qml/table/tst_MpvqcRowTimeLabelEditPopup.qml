@@ -76,15 +76,35 @@ TestCase {
         compare(valueChangedSpy.count, data.accept ? 1 : 0)
     }
 
-
-    function test_close_data() {
-        return [
-            { tag: 'accepting', accept: true },
-            { tag: 'rejecting', accept: false },
-        ]
+    function test_closeWithChange_data() {
+        return [{ tag: 'accepting', accept: true }, { tag: 'rejecting', accept: false }]
     }
 
-    function test_close(data) {
+    function test_closeWithChange(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        const editingAbortedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingAborted'})
+        verify(editingAbortedSpy)
+
+        const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
+        verify(editedSpy)
+
+        control.acceptValue = data.accept
+        control.contentItem.value = 11
+        control.close()
+
+        compare(editedSpy.count, data.accept ? 1 : 0)
+        compare(editingAbortedSpy.count, data.accept ? 0 : 1)
+
+        verify(!control.visible)
+    }
+
+    function test_closeWithoutChange_data() {
+        return [{ tag: 'accepting', accept: true }, { tag: 'rejecting', accept: false }]
+    }
+
+    function test_closeWithoutChange(data) {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
@@ -97,8 +117,8 @@ TestCase {
         control.acceptValue = data.accept
         control.close()
 
-        compare(editedSpy.count, data.accept ? 1 : 0)
-        compare(editingAbortedSpy.count, data.accept ? 0 : 1)
+        compare(editedSpy.count, 0)
+        compare(editingAbortedSpy.count, 1)
 
         verify(!control.visible)
     }

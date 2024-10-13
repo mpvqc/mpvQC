@@ -44,8 +44,11 @@ FocusScope {
         width: root.width
         height: haveComments ? root.height : 0
         focus: true
-        model: MpvqcCommentModelPyObject {}
         searchQuery: _mpvqcSearchBox.searchQuery
+
+        model: MpvqcCommentModelPyObject {
+            selectedRow: _mpvqcTable.currentIndex
+        }
 
         MpvqcSearchBox {
             id: _mpvqcSearchBox

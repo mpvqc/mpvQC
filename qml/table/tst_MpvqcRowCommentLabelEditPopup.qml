@@ -54,7 +54,24 @@ TestCase {
         Label {}
     }
 
-    function test_textFieldAccepted() {
+    function test_commentEditingSkipped() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        let editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
+        verify(editedSpy)
+
+        let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
+        verify(closedSpy)
+
+        control.contentItem.text = "changed"
+        keyPress(Qt.Key_Return)
+
+        compare(editedSpy.count, 1)
+        verify(closedSpy.count > 0)
+    }
+
+    function test_commentEditingAccepted() {
         const control = createTemporaryObject(objectUnderTest, testCase)
         verify(control)
 
@@ -66,7 +83,7 @@ TestCase {
 
         keyPress(Qt.Key_Return)
 
-        compare(editedSpy.count, 1)
+        compare(editedSpy.count, 0)
         verify(closedSpy.count > 0)
     }
 

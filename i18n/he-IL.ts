@@ -728,6 +728,18 @@
         <source>Quit</source>
         <translation>צא מ-mpvQC</translation>
     </message>
+    <message>
+        <source>Open Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo Previous Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Redo Previous Action</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VersionCheckDialog</name>
