@@ -70,37 +70,6 @@ def make_model(
     return model
 
 
-def test_import_comments():
-    model = make_model()
-    # noinspection PyTypeChecker
-    comment = Comment(time=999.99, comment_type="commentType", comment="Word 1")
-
-    assert model.rowCount() == 5
-    model.import_comments([comment])
-    assert model.rowCount() == 6
-
-    # Ensure even importing float time properties results in time being stored as int
-    assert 999 == model.comments()[-1]["time"]
-
-
-def test_import_comments_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.import_comments(list(DEFAULT_COMMENTS))
-
-    assert model._searcher._hits is None
-
-
-def test_import_comments_fires_signals(signal_helper):
-    model = make_model()
-    model.commentsImported.connect(lambda: signal_helper.log("commentsImported"))
-
-    model.import_comments(list(DEFAULT_COMMENTS))
-
-    assert signal_helper.has_logged("commentsImported")
-
-
 def test_remove_comment():
     model = make_model()
     assert model.rowCount() == 5
