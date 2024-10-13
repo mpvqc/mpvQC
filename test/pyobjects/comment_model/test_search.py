@@ -15,24 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from unittest.mock import MagicMock
-
-import inject
 import pytest
 
 from mpvqc.models import Comment
-from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject, Role
-from mpvqc.services import PlayerService
 
-DEFAULT_COMMENTS = (
-    Comment(time=0, comment_type="commentType", comment="Word 1"),
-    Comment(time=5, comment_type="commentType", comment="Word 2"),
-    Comment(time=10, comment_type="commentType", comment="Word 3"),
-    Comment(time=15, comment_type="commentType", comment="Word 4"),
-    Comment(time=20, comment_type="commentType", comment="Word 5"),
-)
-
-DEFAULT_COMMENTS_SEARCH = (
+DEFAULT_COMMENTS_SEARCH = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
     Comment(time=1, comment_type="commentType", comment="Word 2"),
     Comment(time=2, comment_type="commentType", comment="Word 3"),
@@ -41,32 +28,14 @@ DEFAULT_COMMENTS_SEARCH = (
     Comment(time=5, comment_type="commentType", comment="Word 6"),
     Comment(time=6, comment_type="commentType", comment=""),
     Comment(time=9, comment_type="commentType", comment="Word 9"),
-)
-
-
-class SignalHelper:
-    """Helper class to help with signal logging"""
-
-    def __init__(self):
-        self.signals_fired = {}
-
-    def log(self, signal_name: str, val=True):
-        self.signals_fired[signal_name] = val
-
-    def has_logged(self, signal_name: str) -> bool:
-        return signal_name in self.signals_fired
-
-
-@pytest.fixture()
-def signal_helper() -> SignalHelper:
-    return SignalHelper()
+]
 
 
 class SearchHelper:
     """Helper class to abstract search functionality"""
 
-    def __init__(self):
-        self._model = make_model(set_comments=list(DEFAULT_COMMENTS_SEARCH))
+    def __init__(self, model):
+        self._model = model
         self._query = ""
         self._selected_index = -1
 
@@ -101,204 +70,12 @@ class SearchHelper:
 
 
 @pytest.fixture()
-def search_helper() -> SearchHelper:
-    return SearchHelper()
-
-
-def make_model(
-    set_comments=DEFAULT_COMMENTS,
-    set_player_time: int | float = 0,
-) -> MpvqcCommentModelPyObject:
-    # noinspection PyCallingNonCallable
-    model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
-    model.import_comments(set_comments)
-
-    player_mock = MagicMock()
-    player_mock.current_time = set_player_time
-
-    def config(binder: inject.Binder):
-        binder.bind(PlayerService, player_mock)
-
-    inject.configure(config, clear=True)
-
-    return model
-
-
-def test_add_comment():
-    model = make_model()
-    assert model.rowCount() == 5
-    model.add_row("comment type")
-    assert model.rowCount() == 6
-
-
-@pytest.mark.parametrize(
-    "expected,test_input",
-    [
-        (0, 0.499999),
-        (0, 0.500000),
-        (1, 0.500001),
-        (1, 1.499999),
-        (2, 1.500001),
-    ],
-)
-def test_add_comment_rounds_time(expected, test_input):
-    model = make_model(set_comments=[], set_player_time=test_input)
-
-    model.add_row("comment type")
-
-    item = model.item(0, 0)
-    actual = item.data(Role.TIME)
-    assert expected == actual
-
-
-def test_add_comment_sorts_model():
-    custom_comment_type = "my custom comment type"
-    model = make_model(set_player_time=7)
-
-    model.add_row(custom_comment_type)
-
-    item = model.item(2, 0)
-    actual = item.data(Role.TYPE)
-    assert custom_comment_type == actual
-
-
-def test_add_comment_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.add_row("comment type")
-
-    assert model._searcher._hits is None
-
-
-def test_add_comment_fires_signals(signal_helper):
-    model = make_model()
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
-    model.newItemAdded.connect(lambda idx: signal_helper.log("newItemAdded", idx))
-
-    model.add_row("comment type")
-
-    assert signal_helper.has_logged("commentsChanged")
-    assert signal_helper.has_logged("newItemAdded")
-
-
-def test_import_comments():
-    model = make_model()
-    # noinspection PyTypeChecker
-    comment = Comment(time=999.99, comment_type="commentType", comment="Word 1")
-
-    assert model.rowCount() == 5
-    model.import_comments([comment])
-    assert model.rowCount() == 6
-
-    # Ensure even importing float time properties results in time being stored as int
-    assert 999 == model.comments()[-1]["time"]
-
-
-def test_import_comments_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.import_comments(list(DEFAULT_COMMENTS))
-
-    assert model._searcher._hits is None
-
-
-def test_import_comments_fires_signals(signal_helper):
-    model = make_model()
-    model.commentsImported.connect(lambda: signal_helper.log("commentsImported"))
-
-    model.import_comments(list(DEFAULT_COMMENTS))
-
-    assert signal_helper.has_logged("commentsImported")
-
-
-def test_remove_comment():
-    model = make_model()
-    assert model.rowCount() == 5
-    model.remove_row(0)
-    assert model.rowCount() == 4
-
-
-def test_remove_comment_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.remove_row(0)
-
-    assert model._searcher._hits is None
-
-
-def test_remove_comment_fires_signals(signal_helper):
-    model = make_model()
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
-
-    model.remove_row(0)
-
-    assert signal_helper.has_logged("commentsChanged")
-
-
-def test_clear_comments():
-    model = make_model()
-    model.clear_comments()
-    assert 0 == model.rowCount()
-
-
-def test_clear_comments_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.clear_comments()
-
-    assert model._searcher._hits is None
-
-
-def test_update_time_sorts_model_again():
-    model = make_model()
-    model.update_time(row=0, time=7)
-
-    item = model.item(1, 0)
-    actual = item.data(Role.COMMENT)
-
-    assert actual == "Word 1"
-
-
-def test_update_time_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.update_time(row=0, time=7)
-
-    assert model._searcher._hits is None
-
-
-def test_update_time_fires_signals(signal_helper):
-    model = make_model()
-    model.timeUpdated.connect(lambda: signal_helper.log("timeUpdated"))
-
-    model.update_time(row=0, time=7)
-
-    assert signal_helper.has_logged("timeUpdated")
-
-
-def test_update_comment_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.update_comment(index=0, comment="new")
-
-    assert model._searcher._hits is None
-
-
-def test_get_all_comments():
-    model = make_model()
-
-    actual = [
-        Comment(time=comment["time"], comment_type=comment["commentType"], comment=comment["comment"])
-        for comment in model.comments()
-    ]
-
-    assert actual == list(DEFAULT_COMMENTS)
+def search_helper(make_model) -> SearchHelper:
+    # noinspection PyArgumentList
+    model, _ = make_model(
+        set_comments=DEFAULT_COMMENTS_SEARCH,
+    )
+    return SearchHelper(model)
 
 
 def test_search_with_empty_query(search_helper):

@@ -67,9 +67,12 @@ Popup {
     }
 
     onAboutToHide: {
-        if (acceptValue) {
-            const rawText = _textField.text.trim()
-            const sanitizedText = root.mpvqcDefaultTextValidator.replace_special_characters(rawText)
+        if (!acceptValue) return
+
+        const rawText = _textField.text.trim()
+        const sanitizedText = root.mpvqcDefaultTextValidator.replace_special_characters(rawText)
+
+        if (root.currentComment !== sanitizedText) {
             root.edited(sanitizedText)
         }
     }

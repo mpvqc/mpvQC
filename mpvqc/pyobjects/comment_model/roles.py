@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2024 mpvQC developers
+# Copyright (C) 2022 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,5 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# ruff: noqa: F401
-from .application_state import ApplicationState, ImportChange, InitialState, OtherState
+from PySide6.QtCore import QByteArray
+
+
+class Role:
+    """
+    See: https://doc.qt.io/qt-6/qstandarditem.html#ItemType-enum
+
+    Roles above 1000 are user definable roles. We use a role per value.
+    In the Qt & Python context the value or role '1020' maps to 'timeStr' in Qml
+    """
+
+    TIME = 1010
+    TYPE = 1020
+    COMMENT = 1030
+
+    MAPPING = {
+        TIME: QByteArray(b"time"),
+        TYPE: QByteArray(b"commentType"),
+        COMMENT: QByteArray(b"comment"),
+    }
