@@ -23,12 +23,10 @@ import argparse
 import json
 import re
 import sys
+import tomllib
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-
-from pip._internal.network.session import PipSession
-from pip._internal.req import parse_requirements
 
 
 class ArgumentValidator:
@@ -64,6 +62,12 @@ class RequirementsUpdater:
     _requirements = []
     _resolved_requirements = []
 
+    _requirements_for_pip = ""
+
+    @property
+    def requirements_for_pip(self):
+        return self._requirements_for_pip
+
     @dataclass
     class Requirement:
         name: str
@@ -75,9 +79,18 @@ class RequirementsUpdater:
         name: str
         version: str
 
-    def parse(self, requirements_file: Path):
-        for requirement in parse_requirements(f"{requirements_file}", session=PipSession()):
-            name_requirement_version = requirement.requirement.split(";")[0]
+    def parse(self, pyproject_toml: Path, optional_groups: list[str]):
+        toml_content = pyproject_toml.read_text(encoding="utf-8")
+        toml_data = tomllib.loads(toml_content)
+
+        deps = toml_data["project"]["dependencies"][:]
+        for group in optional_groups:
+            deps.extend(toml_data["project"]["optional-dependencies"][group])
+
+        self._requirements_for_pip = " ".join(f"\"{dep}\"" for dep in deps)
+
+        for dep in deps:
+            name_requirement_version = dep.split(";")[0]
             name, requirement, version = re.split("(>=|==|<=)", name_requirement_version)
             self._requirements.append(self.Requirement(name, requirement, version))
 
@@ -115,25 +128,67 @@ class RequirementsUpdater:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Set dependency versions based on a requirements.txt file")
-    parser.add_argument("--requirements", type=str, required=True, help="requirements.txt file")
+    parser = argparse.ArgumentParser(description="Work with dependencies from a pyproject.toml file")
+    parser.add_argument("--pyproject-file", type=str, required=True, help="pyproject file")
     parser.add_argument(
-        "--update-inplace", type=str, action="append", default=[], help="file to update versions inplace"
+        "--optional-group",
+        type=str,
+        action="append",
+        default=[],
+        help="optional dependencies group to include",
     )
-    run(parser.parse_args())
+
+    sub_parsers = parser.add_subparsers(dest="command")
+
+    sub_parsers.add_parser("extract", help="Extract dependencies from a pyproject.toml file")
+
+    insert_parser = sub_parsers.add_parser("insert", help="Insert dependencies into a file using placeholders")
+    insert_parser.add_argument(
+        "--update-inplace",
+        type=str,
+        action="append",
+        default=[],
+        help="file to update versions inplace",
+    )
+
+    args = parser.parse_args()
+
+    match args.command:
+        case None:
+            parser.print_help()
+        case "extract":
+            run_extract(args)
+        case "insert":
+            run_insert(args)
+        case _:
+            raise ValueError(f"Unknown command '{args.command}'")
 
 
-def run(args):
-    requirements = Path(args.requirements).absolute()
+def run_extract(args):
+    pyproject_toml = Path(args.pyproject_file)
+    optional_groups = args.optional_group
+
+    validator = ArgumentValidator()
+    validator.validate_files([pyproject_toml])
+    validator.break_on_errors()
+
+    updater = RequirementsUpdater()
+    updater.parse(pyproject_toml, optional_groups)
+    print(updater.requirements_for_pip)
+
+
+def run_insert(args):
+    pyproject_toml = Path(args.pyproject_file)
+    optional_groups = args.optional_group
     source_files = [Path(path).absolute() for path in args.update_inplace]
 
     validator = ArgumentValidator()
-    validator.validate_files([requirements, *source_files])
+    validator.validate_files([pyproject_toml, *source_files])
     validator.require_files(source_files, min_amount=1, requirement="file(s) to write dependency versions to")
     validator.break_on_errors()
 
     updater = RequirementsUpdater()
-    updater.parse(requirements)
+    updater.parse(pyproject_toml, optional_groups)
     updater.resolve_required_versions()
     updater.replace_in_files(source_files)
     updater.validate(source_files)

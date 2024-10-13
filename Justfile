@@ -92,7 +92,21 @@ _default:
 
 # Format code
 format:
+    @{{ PYTHON }} -m ruff check --fix
     @{{ PYTHON }} -m ruff format
+
+# Install dependencies into the virtual environment
+install-dependencies:
+	#!/usr/bin/env bash
+	if [[ -z "${VIRTUAL_ENV}" ]]; then
+	  echo "Please activate virtual environment first"
+	  exit 1
+	fi
+	python build-aux/generate-dependency-versions.py \
+	  --pyproject-file pyproject.toml \
+	  --optional-group dev \
+	  extract | xargs pip install
+
 
 # Build full project into build/release
 [group('build')]

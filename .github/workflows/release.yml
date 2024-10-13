@@ -77,8 +77,7 @@ jobs:
           execute python -m venv venv
           execute source venv/Scripts/activate
           execute python -m pip install --upgrade pip
-          execute python -m pip install wheel ruff
-          execute python -m pip install -r requirements.txt
+          execute just install-dependencies
       - name: 'Set Dependency Versions'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -88,7 +87,9 @@ jobs:
           execute python -m venv venv
           execute source venv/Scripts/activate
           execute python build-aux/generate-dependency-versions.py \
-            --requirements requirements.txt \
+            --pyproject-file pyproject.toml \
+            --optional-group dev \
+            insert \
             --update-inplace "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
       - name: 'Run Python Build'
@@ -150,6 +151,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: 'Install just'
+        uses: taiki-e/install-action@just
       - name: 'Remove Python sources'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -167,8 +170,7 @@ jobs:
           execute python -m venv venv
           execute source venv/Scripts/activate
           execute python -m pip install --upgrade pip
-          execute python -m pip install wheel
-          execute python -m pip install -r requirements.txt
+          execute just install-dependencies
           execute python -m pip install nuitka
       - name: 'Build Bundle'
         run: |
