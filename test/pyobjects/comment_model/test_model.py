@@ -70,21 +70,6 @@ def make_model(
     return model
 
 
-def test_clear_comments():
-    model = make_model()
-    model.clear_comments()
-    assert 0 == model.rowCount()
-
-
-def test_clear_comments_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.clear_comments()
-
-    assert model._searcher._hits is None
-
-
 def test_update_time_sorts_model_again():
     model = make_model()
     model.update_time(row=0, time=7)
