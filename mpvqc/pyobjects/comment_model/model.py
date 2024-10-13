@@ -20,9 +20,9 @@ from PySide6.QtCore import QByteArray, Qt, Signal, Slot
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
-from mpvqc.impl import Searcher
 from mpvqc.models import Comment
 from mpvqc.services import PlayerService
+from .searcher import Searcher
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1

@@ -58,12 +58,12 @@ class Searcher:
         self._hits: Hits | None = None
 
     def search(
-        self,
-        query: str,
-        include_current_row: bool,
-        top_down: bool,
-        selected_index: int,
-        search_func: Callable[[str], list[int]],
+            self,
+            query: str,
+            include_current_row: bool,
+            top_down: bool,
+            selected_index: int,
+            search_func: Callable[[str], list[int]],
     ):
         if query == "":
             self._last_query = query
