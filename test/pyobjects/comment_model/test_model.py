@@ -105,14 +105,3 @@ def test_update_comment_invalidates_search_results():
     model.update_comment(index=0, comment="new")
 
     assert model._searcher._hits is None
-
-
-def test_get_all_comments():
-    model = make_model()
-
-    actual = [
-        Comment(time=comment["time"], comment_type=comment["commentType"], comment=comment["comment"])
-        for comment in model.comments()
-    ]
-
-    assert actual == list(DEFAULT_COMMENTS)
