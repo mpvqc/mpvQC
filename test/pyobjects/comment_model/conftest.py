@@ -26,7 +26,20 @@ from mpvqc.pyobjects import MpvqcCommentModelPyObject
 from mpvqc.services import PlayerService
 
 
-@pytest.fixture()
+class SignalHelper:
+    """Helper class to help with signal logging"""
+
+    def __init__(self):
+        self.signals_fired = {}
+
+    def log(self, signal_name: str, val=True):
+        self.signals_fired[signal_name] = val
+
+    def has_logged(self, signal_name: str) -> bool:
+        return signal_name in self.signals_fired
+
+
+@pytest.fixture(scope="session")
 def make_model() -> Callable[[Iterable[Comment], int | float], MpvqcCommentModelPyObject]:
     def _make_model(
         set_comments: Iterable[Comment],
@@ -47,3 +60,8 @@ def make_model() -> Callable[[Iterable[Comment], int | float], MpvqcCommentModel
         return model
 
     return _make_model
+
+
+@pytest.fixture()
+def signal_helper() -> SignalHelper:
+    return SignalHelper()

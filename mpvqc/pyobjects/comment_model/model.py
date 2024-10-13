@@ -22,6 +22,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
 from mpvqc.services import PlayerService
+
 from .searcher import Searcher
 
 QML_IMPORT_NAME = "pyobjects"

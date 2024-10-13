@@ -70,64 +70,6 @@ def make_model(
     return model
 
 
-def test_add_comment():
-    model = make_model()
-    assert model.rowCount() == 5
-    model.add_row("comment type")
-    assert model.rowCount() == 6
-
-
-@pytest.mark.parametrize(
-    "expected,test_input",
-    [
-        (0, 0.499999),
-        (0, 0.500000),
-        (1, 0.500001),
-        (1, 1.499999),
-        (2, 1.500001),
-    ],
-)
-def test_add_comment_rounds_time(expected, test_input):
-    model = make_model(set_comments=[], set_player_time=test_input)
-
-    model.add_row("comment type")
-
-    item = model.item(0, 0)
-    actual = item.data(Role.TIME)
-    assert expected == actual
-
-
-def test_add_comment_sorts_model():
-    custom_comment_type = "my custom comment type"
-    model = make_model(set_player_time=7)
-
-    model.add_row(custom_comment_type)
-
-    item = model.item(2, 0)
-    actual = item.data(Role.TYPE)
-    assert custom_comment_type == actual
-
-
-def test_add_comment_invalidates_search_results():
-    model = make_model()
-    model._searcher._hits = ["result"]
-
-    model.add_row("comment type")
-
-    assert model._searcher._hits is None
-
-
-def test_add_comment_fires_signals(signal_helper):
-    model = make_model()
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
-    model.newItemAdded.connect(lambda idx: signal_helper.log("newItemAdded", idx))
-
-    model.add_row("comment type")
-
-    assert signal_helper.has_logged("commentsChanged")
-    assert signal_helper.has_logged("newItemAdded")
-
-
 def test_import_comments():
     model = make_model()
     # noinspection PyTypeChecker
