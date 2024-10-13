@@ -18,6 +18,7 @@ We use `just` (https://github.com/casey/just) to build our application.
 $ just
 Available recipes:
     format                 # Format code
+    install-dependencies   # Install dependencies into the virtual environment
 
     [build]
     build                  # Build full project into build/release
