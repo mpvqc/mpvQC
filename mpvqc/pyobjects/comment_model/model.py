@@ -18,6 +18,7 @@
 import inject
 from PySide6.QtCore import QByteArray, Qt, Signal, Slot
 from PySide6.QtGui import QStandardItem, QStandardItemModel
+from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
@@ -140,22 +141,3 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot()
     def invalidate_search(self):
         self._searcher.invalidate()
-
-
-class Role:
-    """
-    See: https://doc.qt.io/qt-6/qstandarditem.html#ItemType-enum
-
-    Roles above 1000 are user definable roles. We use a role per value.
-    In the Qt & Python context the value or role '1020' maps to 'timeStr' in Qml
-    """
-
-    TIME = 1010
-    TYPE = 1020
-    COMMENT = 1030
-
-    MAPPING = {
-        TIME: QByteArray(b"time"),
-        TYPE: QByteArray(b"commentType"),
-        COMMENT: QByteArray(b"comment"),
-    }
