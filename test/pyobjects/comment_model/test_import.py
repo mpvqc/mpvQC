@@ -19,13 +19,13 @@ import pytest
 
 from mpvqc.models import Comment
 
-DEFAULT_COMMENTS = (
+DEFAULT_COMMENTS = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
     Comment(time=5, comment_type="commentType", comment="Word 2"),
     Comment(time=10, comment_type="commentType", comment="Word 3"),
     Comment(time=15, comment_type="commentType", comment="Word 4"),
     Comment(time=20, comment_type="commentType", comment="Word 5"),
-)
+]
 
 
 @pytest.fixture()
@@ -52,7 +52,7 @@ def test_import_comments(model):
 def test_import_comments_invalidates_search_results(model):
     model._searcher._hits = ["result"]
 
-    model.import_comments(list(DEFAULT_COMMENTS))
+    model.import_comments(DEFAULT_COMMENTS)
 
     assert model._searcher._hits is None
 
@@ -60,6 +60,6 @@ def test_import_comments_invalidates_search_results(model):
 def test_import_comments_fires_signals(model, signal_helper):
     model.commentsImported.connect(lambda: signal_helper.log("commentsImported"))
 
-    model.import_comments(list(DEFAULT_COMMENTS))
+    model.import_comments(DEFAULT_COMMENTS)
 
     assert signal_helper.has_logged("commentsImported")

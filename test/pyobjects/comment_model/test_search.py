@@ -19,7 +19,7 @@ import pytest
 
 from mpvqc.models import Comment
 
-DEFAULT_COMMENTS_SEARCH = (
+DEFAULT_COMMENTS_SEARCH = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
     Comment(time=1, comment_type="commentType", comment="Word 2"),
     Comment(time=2, comment_type="commentType", comment="Word 3"),
@@ -28,7 +28,7 @@ DEFAULT_COMMENTS_SEARCH = (
     Comment(time=5, comment_type="commentType", comment="Word 6"),
     Comment(time=6, comment_type="commentType", comment=""),
     Comment(time=9, comment_type="commentType", comment="Word 9"),
-)
+]
 
 
 class SearchHelper:
@@ -73,7 +73,7 @@ class SearchHelper:
 def search_helper(make_model) -> SearchHelper:
     # noinspection PyArgumentList
     model = make_model(
-        set_comments=list(DEFAULT_COMMENTS_SEARCH),
+        set_comments=DEFAULT_COMMENTS_SEARCH,
     )
     return SearchHelper(model)
 

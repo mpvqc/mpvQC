@@ -19,13 +19,13 @@ import pytest
 
 from mpvqc.models import Comment
 
-DEFAULT_COMMENTS = (
+DEFAULT_COMMENTS = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
     Comment(time=5, comment_type="commentType", comment="Word 2"),
     Comment(time=10, comment_type="commentType", comment="Word 3"),
     Comment(time=15, comment_type="commentType", comment="Word 4"),
     Comment(time=20, comment_type="commentType", comment="Word 5"),
-)
+]
 
 
 @pytest.fixture()
@@ -43,4 +43,4 @@ def test_get_all_comments(model):
         for comment in model.comments()
     ]
 
-    assert actual == list(DEFAULT_COMMENTS)
+    assert actual == DEFAULT_COMMENTS
