@@ -57,10 +57,12 @@ def test_update_time_invalidates_search_results(model):
 
 def test_update_time_fires_signals(model, signal_helper):
     model.timeUpdated.connect(lambda: signal_helper.log("timeUpdated"))
+    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
 
     model.update_time(row=0, time=7)
 
     assert signal_helper.has_logged("timeUpdated")
+    assert signal_helper.has_logged("commentsChanged")
 
 
 def test_update_comment_invalidates_search_results(model):
