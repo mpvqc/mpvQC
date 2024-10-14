@@ -16,15 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QByteArray, Qt, Signal, Slot
-from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtGui import QStandardItem, QStandardItemModel, QUndoStack
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
 from mpvqc.services import PlayerService
 
+from .roles import Role
 from .searcher import Searcher
+from .undo_redo import MpvqcModelImportCommand
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -47,6 +48,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.dataChanged.connect(self.commentsChanged)
         self._searcher = Searcher()
 
+        self._undo_stack = QUndoStack(self)
+        # self._selected_index = -1
+
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
         seconds = round(self._player.current_time)
@@ -67,17 +71,22 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         if not comments:
             return
 
-        for comment in comments:
-            item = QStandardItem()
-            item.setData(comment.time, Role.TIME)
-            item.setData(comment.comment_type, Role.TYPE)
-            item.setData(comment.comment, Role.COMMENT)
-            self.appendRow(item)
+        def on_undo():
+            self.invalidate_search()
 
-        self.sort(0)
+        def on_redo():
+            self.commentsImported.emit()
+            self.invalidate_search()
+            self.sort(0)
 
-        self.commentsImported.emit()
-        self.invalidate_search()
+        self._undo_stack.push(
+            MpvqcModelImportCommand(
+                model=self,
+                comments=comments,
+                on_undo=on_undo,
+                on_redo=on_redo,
+            )
+        )
 
     @Slot(int)
     def remove_row(self, row: int) -> None:
@@ -108,6 +117,16 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     def clear_comments(self) -> None:
         self.clear()
         self.invalidate_search()
+
+    @Slot()
+    def undo(self):
+        if self._undo_stack.canUndo():
+            self._undo_stack.undo()
+
+    @Slot()
+    def redo(self):
+        if self._undo_stack.canRedo():
+            self._undo_stack.redo()
 
     def comments(self) -> list:
         comments = []

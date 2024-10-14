@@ -63,3 +63,55 @@ def test_import_comments_fires_signals(model, signal_helper):
     model.import_comments(DEFAULT_COMMENTS)
 
     assert signal_helper.has_logged("commentsImported")
+
+
+def test_import_comments_undo_redo(model):
+    # noinspection PyTypeChecker
+    comments = [
+        Comment(time=1, comment_type="commentType", comment="Undo Redo 1"),
+        Comment(time=6, comment_type="commentType", comment="Undo Redo 2"),
+        Comment(time=11, comment_type="commentType", comment="Undo Redo 3"),
+    ]
+    assert model.rowCount() == 5
+
+    model.import_comments(comments)
+    assert model.rowCount() == 8
+    comments = model.comments()
+    assert comments[1]["comment"] == "Undo Redo 1"
+    assert comments[3]["comment"] == "Undo Redo 2"
+    assert comments[5]["comment"] == "Undo Redo 3"
+
+    model.undo()
+    assert model.rowCount() == 5
+    comments = model.comments()
+    assert comments[1]["comment"] == "Word 2"
+    assert comments[3]["comment"] == "Word 4"
+
+    model.redo()
+    assert model.rowCount() == 8
+    comments = model.comments()
+    assert comments[1]["comment"] == "Undo Redo 1"
+    assert comments[3]["comment"] == "Undo Redo 2"
+    assert comments[5]["comment"] == "Undo Redo 3"
+
+
+def test_import_comments_undo_redo_invalidates_search(model):
+    comment = Comment(time=99, comment_type="commentType", comment="Word 1")
+    model.import_comments([comment])
+
+    model._searcher._hits = ["result"]
+    model.undo()
+    assert model._searcher._hits is None
+
+    model._searcher._hits = ["result"]
+    model.redo()
+    assert model._searcher._hits is None
+
+
+# todo
+#   - fix selecting the last imported comment (also fix the signal to send an index up through the qml layer)
+#      extend the test cases that check these signals are fired (in python) including the index
+#   - introduce a signal that fires after an import has been undone,
+#      the index param must be the row that has been selected before importing
+#      add test that confirms this signal is fired on undo action
+#   - within this test also check that the 'commentsImported' signal fires again after redo action
