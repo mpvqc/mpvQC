@@ -39,6 +39,11 @@ class SignalHelper:
         return signal_name in self.signals_fired
 
 
+@pytest.fixture()
+def signal_helper() -> SignalHelper:
+    return SignalHelper()
+
+
 @pytest.fixture(scope="session")
 def make_model() -> Callable[[Iterable[Comment], int | float], MpvqcCommentModelPyObject]:
     def _make_model(
@@ -60,8 +65,3 @@ def make_model() -> Callable[[Iterable[Comment], int | float], MpvqcCommentModel
         return model
 
     return _make_model
-
-
-@pytest.fixture()
-def signal_helper() -> SignalHelper:
-    return SignalHelper()
