@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, Signal, Slot, Property, QModelIndex
 from PySide6.QtGui import QStandardItem, QStandardItemModel, QUndoStack
 from PySide6.QtQml import QmlElement
 
@@ -40,6 +40,15 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     commentsImported = Signal()
     commentsChanged = Signal()
 
+    def get_selected_row(self) -> int:
+        return self._selected_row
+
+    def set_selected_row(self, index: int) -> None:
+        self._selected_row = index
+
+    selectedRowChanged = Signal(int)
+    selectedRow = Property(int, get_selected_row, set_selected_row, notify=selectedRowChanged)
+
     def __init__(self):
         super().__init__()
         self.setItemRoleNames(Role.MAPPING)
@@ -49,7 +58,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self._searcher = Searcher()
 
         self._undo_stack = QUndoStack(self)
-        # self._selected_index = -1
+        self._selected_row = -1
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
