@@ -87,6 +87,8 @@ class MpvqcManagerPyObject(QObject):
             self.state = self.state.handle_change()
 
         self._comment_model.commentsChanged.connect(on_comments_changed)
+        self._comment_model.commentsImported.connect(lambda _: on_comments_changed())
+        self._comment_model.commentsImportedUndone.connect(lambda _: on_comments_changed())
 
     # Qml Properties
 
@@ -144,10 +146,11 @@ class MpvqcManagerPyObject(QObject):
         document_import_result = self._importer.read(documents)
 
         def on_video_selected(video: Path or None):
+            state = self._state
             _load_new_comments()
             _load_new_video(video)
             _load_new_subtitles()
-            _update_state(video)
+            _update_state(state, video)
             _display_erroneous_documents()
 
         def _load_new_comments():
@@ -161,10 +164,10 @@ class MpvqcManagerPyObject(QObject):
             if subtitles:
                 self._player.open_subtitles(subtitles)
 
-        def _update_state(video: Path or None):
+        def _update_state(state, video: Path or None):
             if video or document_import_result.valid_documents:
                 change = ImportChange(document_import_result.valid_documents, video)
-                self.state = self.state.handle_import(change)
+                self.state = state.handle_import(change)
 
         def _display_erroneous_documents():
             paths = document_import_result.invalid_documents
