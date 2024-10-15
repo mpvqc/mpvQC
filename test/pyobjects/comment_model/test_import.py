@@ -109,10 +109,25 @@ def test_import_comments_undo_redo_invalidates_search(model):
     assert model._searcher._hits is None
 
 
-# todo
-#   - fix selecting the last imported comment (also fix the signal to send an index up through the qml layer)
-#      extend the test cases that check these signals are fired (in python) including the index
-#   - introduce a signal that fires after an import has been undone,
-#      the index param must be the row that has been selected before importing
-#      add test that confirms this signal is fired on undo action
-#   - within this test also check that the 'commentsImported' signal fires again after redo action
+def test_import_comments_undo_redo_fires_signals(model, signal_helper):
+    model.commentsImported.connect(lambda val: signal_helper.log("commentsImported", val))
+    model.commentsImportedUndone.connect(lambda val: signal_helper.log("commentsImportedUndone", val))
+    model.set_selected_row(3)
+
+    comment = Comment(time=99, comment_type="commentType", comment="Word 1")
+    model.import_comments([comment])
+
+    assert signal_helper.has_logged("commentsImported")
+    assert 5 == signal_helper.logged_value("commentsImported")
+
+    signal_helper.reset()
+    model.undo()
+
+    assert signal_helper.has_logged("commentsImportedUndone")
+    assert 3 == signal_helper.logged_value("commentsImportedUndone")
+
+    signal_helper.reset()
+    model.redo()
+
+    assert signal_helper.has_logged("commentsImported")
+    assert 5 == signal_helper.logged_value("commentsImported")

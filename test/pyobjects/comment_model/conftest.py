@@ -41,6 +41,9 @@ class SignalHelper:
     def logged_value(self, signal_name: str) -> Any:
         return self.signals_fired[signal_name]
 
+    def reset(self):
+        self.signals_fired = {}
+
 
 @pytest.fixture()
 def signal_helper() -> SignalHelper:

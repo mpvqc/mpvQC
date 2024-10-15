@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import Qt, Signal, Slot, Property, QModelIndex
+from PySide6.QtCore import Property, QModelIndex, Qt, Signal, Slot
 from PySide6.QtGui import QStandardItem, QStandardItemModel, QUndoStack
 from PySide6.QtQml import QmlElement
 
@@ -38,6 +38,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     newItemAdded = Signal(int)  # param: row_index
     timeUpdated = Signal(int)  # param: row_index
     commentsImported = Signal(int)  # param: row_index
+    commentsImportedUndone = Signal(int)  # param: row_index
     commentsChanged = Signal()
 
     def get_selected_row(self) -> int:
@@ -82,6 +83,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
         def on_undo(row: int):
             self.invalidate_search()
+            self.commentsImportedUndone.emit(row)
 
         def on_redo(index: QModelIndex):
             self.invalidate_search()
@@ -94,7 +96,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
                 comments=comments,
                 on_undo=on_undo,
                 on_redo=on_redo,
-                selected_row=self._selected_row
+                selected_row=self._selected_row,
             )
         )
 
@@ -125,8 +127,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.invalidate_search()
 
     def clear_comments(self) -> None:
-        self.clear()
-        self.invalidate_search()
+        self.undo()
 
     @Slot()
     def undo(self):

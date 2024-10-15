@@ -220,20 +220,26 @@ ListView {
         target: root.model
 
         function onNewItemAdded(index: int): void {
-            root.disableMovingHighlightRectangle()
-            root.selectRow(index)
-            root.enableMovingHighlightRectangle()
+            _quickSelect(index)
             root.startEditing()
         }
 
         function onCommentsImported(index: int): void {
-            root.disableMovingHighlightRectangle()
-            root.selectRow(index)
-            root.enableMovingHighlightRectangle()
+            _quickSelect(index)
+        }
+
+        function onCommentsImportedUndone(index: int): void {
+            _quickSelect(index)
         }
 
         function onTimeUpdated(index: int): void {
             root.selectRow(index)
+        }
+
+        function _quickSelect(index: int): void {
+            root.disableMovingHighlightRectangle()
+            root.selectRow(index)
+            root.enableMovingHighlightRectangle()
         }
     }
 
