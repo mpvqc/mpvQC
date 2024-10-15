@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Callable, Iterable
+from typing import Any, Callable, Iterable
 from unittest.mock import MagicMock
 
 import inject
@@ -37,6 +37,9 @@ class SignalHelper:
 
     def has_logged(self, signal_name: str) -> bool:
         return signal_name in self.signals_fired
+
+    def logged_value(self, signal_name: str) -> Any:
+        return self.signals_fired[signal_name]
 
 
 @pytest.fixture()

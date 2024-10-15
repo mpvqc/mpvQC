@@ -37,7 +37,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     newItemAdded = Signal(int)  # param: row_index
     timeUpdated = Signal(int)  # param: row_index
-    commentsImported = Signal()
+    commentsImported = Signal(int)  # param: row_index
     commentsChanged = Signal()
 
     def get_selected_row(self) -> int:
@@ -80,13 +80,13 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         if not comments:
             return
 
-        def on_undo():
+        def on_undo(row: int):
             self.invalidate_search()
 
-        def on_redo():
-            self.commentsImported.emit()
+        def on_redo(index: QModelIndex):
             self.invalidate_search()
             self.sort(0)
+            self.commentsImported.emit(index.row())
 
         self._undo_stack.push(
             MpvqcModelImportCommand(
@@ -94,6 +94,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
                 comments=comments,
                 on_undo=on_undo,
                 on_redo=on_redo,
+                selected_row=self._selected_row
             )
         )
 

@@ -226,10 +226,9 @@ ListView {
             root.startEditing()
         }
 
-        function onCommentsImported(): void {
-            const lastIndex = root.count - 1
+        function onCommentsImported(index: int): void {
             root.disableMovingHighlightRectangle()
-            root.selectRow(lastIndex)
+            root.selectRow(index)
             root.enableMovingHighlightRectangle()
         }
 

@@ -30,6 +30,7 @@ class MpvqcModelImportCommand(QUndoCommand):
         self,
         model: QStandardItemModel,
         comments: list[Comment],
+        selected_row: int,
         on_redo: Callable,
         on_undo: Callable,
     ):
@@ -38,6 +39,7 @@ class MpvqcModelImportCommand(QUndoCommand):
         self._comments = comments
         self._on_redo = on_redo
         self._on_undo = on_undo
+        self._previously_selected_row = selected_row
 
         self._persistent_indices = []
 
@@ -45,10 +47,11 @@ class MpvqcModelImportCommand(QUndoCommand):
         for index in self._persistent_indices:
             self._model.removeRow(index.row())
 
-        self._on_undo()
+        self._on_undo(self._previously_selected_row)
 
     def redo(self):
         persistent_indices = []
+        model_index = None
 
         for comment in self._comments:
             item = QStandardItem()
@@ -59,8 +62,8 @@ class MpvqcModelImportCommand(QUndoCommand):
 
             self._model.appendRow(item)
 
-            index = QPersistentModelIndex(item.index())
-            persistent_indices.append(index)
+            model_index = QPersistentModelIndex(item.index())
+            persistent_indices.append(model_index)
 
         self._persistent_indices = persistent_indices
-        self._on_redo()
+        self._on_redo(model_index)

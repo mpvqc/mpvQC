@@ -58,11 +58,12 @@ def test_import_comments_invalidates_search_results(model):
 
 
 def test_import_comments_fires_signals(model, signal_helper):
-    model.commentsImported.connect(lambda: signal_helper.log("commentsImported"))
+    model.commentsImported.connect(lambda val: signal_helper.log("commentsImported", val))
 
     model.import_comments(DEFAULT_COMMENTS)
 
     assert signal_helper.has_logged("commentsImported")
+    assert 9 == signal_helper.logged_value("commentsImported")
 
 
 def test_import_comments_undo_redo(model):
