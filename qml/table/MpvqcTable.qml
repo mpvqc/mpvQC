@@ -180,6 +180,15 @@ ListView {
         event.accepted = false
     }
 
+    function _handleZPressed(event) {
+        // noinspection JSBitwiseOperatorUsage
+        if (event.modifiers & Qt.ShiftModifier) {
+            root.model.redo()
+        } else {
+            root.model.undo()
+        }
+    }
+
     function disableMovingHighlightRectangle(): void {
         root.highlightMoveDuration = 0
     }
@@ -202,18 +211,18 @@ ListView {
         }
     }
 
-    Keys.onPressed: (event) => {
-        if (event.key === Qt.Key_Backspace) {
-            return _handleDeleteComment(event)
+    Keys.onPressed: event => {
+        switch (event.key) {
+            case Qt.Key_Delete:
+            case Qt.Key_Backspace:
+                return _handleDeleteComment(event)
+            case Qt.Key_C:
+                return _handleCPressed(event)
+            case Qt.Key_Z:
+                return _handleZPressed(event)
+            default:
+                event.accepted = false
         }
-        if (event.key === Qt.Key_Delete) {
-            return _handleDeleteComment(event)
-        }
-        if (event.key === Qt.Key_C) {
-            return _handleCPressed(event)
-        }
-
-        event.accepted = false
     }
 
     Connections {

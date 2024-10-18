@@ -127,7 +127,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.invalidate_search()
 
     def clear_comments(self) -> None:
-        self.undo()
+        self.clear()
+        self.invalidate_search()
 
     @Slot()
     def undo(self):

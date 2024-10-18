@@ -137,6 +137,25 @@ ScrollView {
         }
 
         MpvqcShortcut {
+            label: qsTranslate("ShortcutsDialog", "Open Search")
+            button1: root.keyCtrl
+            button2: "F"
+        }
+
+        MpvqcShortcut {
+            label: qsTranslate("ShortcutsDialog", "Undo Previous Action")
+            button1: root.keyCtrl
+            button2: "Z"
+        }
+
+        MpvqcShortcut {
+            label: qsTranslate("ShortcutsDialog", "Redo Previous Action")
+            button1: root.keyCtrl
+            button2: root.keyShift
+            button3: "Z"
+        }
+
+        MpvqcShortcut {
             label: qsTranslate("ShortcutsDialog", "Quit")
             button1: root.keyCtrl
             button2: "Q"
