@@ -96,11 +96,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         if not comments:
             return
 
-        def on_undo(row: int):
+        def on_after_undo(row: int):
             self.invalidate_search()
             self.commentsImportedUndone.emit(row)
 
-        def on_redo(index: QModelIndex):
+        def on_after_redo(index: QModelIndex):
             self.invalidate_search()
             self.sort(0)
             self.commentsImported.emit(index.row())
@@ -109,9 +109,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             MpvqcModelImportCommand(
                 model=self,
                 comments=comments,
-                on_undo=on_undo,
-                on_redo=on_redo,
-                selected_row=self._selected_row,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+                previously_selected_row=self._selected_row,
             )
         )
 
