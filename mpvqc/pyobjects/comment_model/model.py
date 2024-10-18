@@ -63,10 +63,31 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self._undo_stack = QUndoStack(self)
         self._selected_row = -1
 
+    def import_comments(self, comments: list[Comment]) -> None:
+        if not comments:
+            return
+
+        def on_after_undo(row: int):
+            self.invalidate_search()
+            self.commentsImportedUndone.emit(row)
+
+        def on_after_redo(index: QModelIndex):
+            self.invalidate_search()
+            self.sort(0)
+            self.commentsImported.emit(index.row())
+
+        self._undo_stack.push(
+            MpvqcModelImportCommand(
+                model=self,
+                comments=comments,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+                previously_selected_row=self._selected_row,
+            )
+        )
+
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
-        """"""
-
         def on_after_undo(row: int):
             self.newCommentAddedUndone.emit(row)
             self.commentsChanged.emit()
@@ -89,29 +110,6 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
                 previously_selected_row=self._selected_row,
                 on_after_undo=on_after_undo,
                 on_after_redo=on_after_redo,
-            )
-        )
-
-    def import_comments(self, comments: list[Comment]) -> None:
-        if not comments:
-            return
-
-        def on_after_undo(row: int):
-            self.invalidate_search()
-            self.commentsImportedUndone.emit(row)
-
-        def on_after_redo(index: QModelIndex):
-            self.invalidate_search()
-            self.sort(0)
-            self.commentsImported.emit(index.row())
-
-        self._undo_stack.push(
-            MpvqcModelImportCommand(
-                model=self,
-                comments=comments,
-                on_after_undo=on_after_undo,
-                on_after_redo=on_after_redo,
-                previously_selected_row=self._selected_row,
             )
         )
 
