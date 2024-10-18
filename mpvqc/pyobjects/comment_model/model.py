@@ -17,7 +17,7 @@
 
 import inject
 from PySide6.QtCore import Property, QModelIndex, Qt, Signal, Slot
-from PySide6.QtGui import QStandardItem, QStandardItemModel, QUndoStack
+from PySide6.QtGui import QStandardItemModel, QUndoStack
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
@@ -25,7 +25,7 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import MpvqcModelImportCommand
+from .undo_redo import MpvqcModelAddCommentCommand, MpvqcModelImportCommand
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -35,10 +35,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
-    newItemAdded = Signal(int)  # param: row_index
-    timeUpdated = Signal(int)  # param: row_index
-    commentsImported = Signal(int)  # param: row_index
-    commentsImportedUndone = Signal(int)  # param: row_index
+    newCommentAddedInitially = Signal(int)  # param: row of new comment
+    newCommentAddedRedone = Signal(int)  # param: row of new redone comment
+    newCommentAddedUndone = Signal(int)  # param: row of previously selected comment before comment has been added
+    timeUpdated = Signal(int)  # param: row index after time update
+    commentsImported = Signal(int)  # param: row of last imported comment
+    commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
     commentsChanged = Signal()
 
     def get_selected_row(self) -> int:
@@ -63,19 +65,32 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
-        seconds = round(self._player.current_time)
-        item = QStandardItem()
-        item.setData(seconds, Role.TIME)
-        item.setData(comment_type, Role.TYPE)
-        item.setData("", Role.COMMENT)
-        self.appendRow(item)
-        self.sort(0)
+        """"""
 
-        index = self.indexFromItem(item)
-        index_row = index.row()
-        self.newItemAdded.emit(index_row)
-        self.commentsChanged.emit()
-        self.invalidate_search()
+        def on_after_undo(row: int):
+            self.newCommentAddedUndone.emit(row)
+            self.commentsChanged.emit()
+            self.invalidate_search()
+
+        def on_after_redo(index: QModelIndex, added_initially: bool):
+            self.sort(0)
+
+            signal = self.newCommentAddedInitially if added_initially else self.newCommentAddedRedone
+            signal.emit(index.row())
+
+            self.commentsChanged.emit()
+            self.invalidate_search()
+
+        self._undo_stack.push(
+            MpvqcModelAddCommentCommand(
+                model=self,
+                comment_type=comment_type,
+                time=round(self._player.current_time),
+                previously_selected_row=self._selected_row,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+            )
+        )
 
     def import_comments(self, comments: list[Comment]) -> None:
         if not comments:

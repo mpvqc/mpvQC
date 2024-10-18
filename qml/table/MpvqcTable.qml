@@ -228,9 +228,17 @@ ListView {
     Connections {
         target: root.model
 
-        function onNewItemAdded(index: int): void {
+        function onNewCommentAddedInitially(index: int): void {
             _quickSelect(index)
             root.startEditing()
+        }
+
+        function onNewCommentAddedUndone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onNewCommentAddedRedone(index: int): void {
+            _quickSelect(index)
         }
 
         function onCommentsImported(index: int): void {
