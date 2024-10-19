@@ -52,8 +52,74 @@ def test_remove_comment_invalidates_search_results(model):
 
 
 def test_remove_comment_fires_signals(model, signal_helper):
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
+    model.commentRemoved.connect(lambda: signal_helper.log("commentRemoved"))
 
     model.remove_row(0)
 
-    assert signal_helper.has_logged("commentsChanged")
+    assert signal_helper.has_logged("commentRemoved")
+
+
+def test_remove_comment_undo_redo(model):
+    assert model.rowCount() == 5
+
+    model.remove_row(0)
+    assert model.rowCount() == 4
+    comment = model.comments()[0]
+    assert comment["comment"] == "Word 2"
+
+    model.undo()
+    assert model.rowCount() == 5
+    comment = model.comments()[0]
+    assert comment["comment"] == "Word 1"
+
+    model.redo()
+    assert model.rowCount() == 4
+    comment = model.comments()[0]
+    assert comment["comment"] == "Word 2"
+
+
+def test_remove_comment_undo_sorts_model(model):
+    assert model.rowCount() == 5
+
+    model.remove_row(1)
+    expected = ["Word 1", "Word 3", "Word 4", "Word 5"]
+    assert expected == [ct["comment"] for ct in model.comments()]
+
+    model.undo()
+    expected = ["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"]
+    assert expected == [ct["comment"] for ct in model.comments()]
+
+
+def test_remove_comment_undo_redo_invalidates_search_results(model):
+    model.remove_row(0)
+
+    model._searcher._hits = ["result"]
+    model.undo()
+    assert model._searcher._hits is None
+
+    model._searcher._hits = ["result"]
+    model.redo()
+    assert model._searcher._hits is None
+
+
+def test_remove_comment_undo_redo_fires_signals(model, signal_helper):
+    model.commentRemoved.connect(lambda: signal_helper.log("commentRemoved"))
+    model.commentRemovedUndone.connect(lambda val: signal_helper.log("commentRemovedUndone", val))
+
+    model.remove_row(3)
+
+    assert signal_helper.has_logged("commentRemoved")
+    assert not signal_helper.has_logged("commentRemovedUndone")
+
+    signal_helper.reset()
+    model.undo()
+
+    assert not signal_helper.has_logged("commentRemoved")
+    assert signal_helper.has_logged("commentRemovedUndone")
+    assert 3 == signal_helper.logged_value("commentRemovedUndone")
+
+    signal_helper.reset()
+    model.redo()
+
+    assert signal_helper.has_logged("commentRemoved")
+    assert not signal_helper.has_logged("commentRemovedUndone")

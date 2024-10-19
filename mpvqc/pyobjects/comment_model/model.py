@@ -25,7 +25,8 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import MpvqcModelAddCommentCommand, MpvqcModelImportCommand
+from .undo_redo import MpvqcModelAddCommentCommand, MpvqcModelImportCommand, MpvqcModelRemoveCommentCommand
+from .utility import create_comment_from
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -35,12 +36,18 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
+    commentsImported = Signal(int)  # param: row of last imported comment
+    commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
+
     newCommentAddedInitially = Signal(int)  # param: row of new comment
     newCommentAddedRedone = Signal(int)  # param: row of new redone comment
     newCommentAddedUndone = Signal(int)  # param: row of previously selected comment before comment has been added
+
+    commentRemoved = Signal()
+    commentRemovedUndone = Signal(int)  # param: row of comment that has been added back to the model
+
     timeUpdated = Signal(int)  # param: row index after time update
-    commentsImported = Signal(int)  # param: row of last imported comment
-    commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
+
     commentsChanged = Signal()
 
     def get_selected_row(self) -> int:
@@ -62,6 +69,10 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
         self._undo_stack = QUndoStack(self)
         self._selected_row = -1
+
+        # from PySide6.QtWidgets import QUndoView
+        # self.undoView = QUndoView(self._undo_stack)
+        # self.undoView.show()
 
     def import_comments(self, comments: list[Comment]) -> None:
         if not comments:
@@ -90,7 +101,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     def add_row(self, comment_type: str) -> None:
         def on_after_undo(row: int):
             self.newCommentAddedUndone.emit(row)
-            self.commentsChanged.emit()
+            self.commentsChanged.emit()  # todo remove me
             self.invalidate_search()
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
@@ -99,7 +110,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             signal = self.newCommentAddedInitially if added_initially else self.newCommentAddedRedone
             signal.emit(index.row())
 
-            self.commentsChanged.emit()
+            self.commentsChanged.emit()  # todo remove me
             self.invalidate_search()
 
         self._undo_stack.push(
@@ -115,9 +126,23 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     @Slot(int)
     def remove_row(self, row: int) -> None:
-        self.removeRow(row)
-        self.commentsChanged.emit()
-        self.invalidate_search()
+        def on_after_undo(_row: int):
+            self.sort(0)
+            self.commentRemovedUndone.emit(_row)
+            self.invalidate_search()
+
+        def on_after_redo():
+            self.commentRemoved.emit()
+            self.invalidate_search()
+
+        self._undo_stack.push(
+            MpvqcModelRemoveCommentCommand(
+                model=self,
+                row=row,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+            )
+        )
 
     @Slot(int, int)
     def update_time(self, row: int, time: int) -> None:
@@ -157,17 +182,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         comments = []
         for row in range(0, self.rowCount()):
             item = self.item(row, column=0)
-            comment = self._create_comment_from(item)
+            comment = create_comment_from(item)
             comments.append(comment)
         return comments
-
-    @staticmethod
-    def _create_comment_from(item) -> dict[str, str]:
-        return {
-            "time": int(item.data(Role.TIME)),
-            "commentType": item.data(Role.TYPE),
-            "comment": item.data(Role.COMMENT),
-        }
 
     @Slot(str, bool, bool, int, result=dict)
     def search(self, query: str, include_current_row: bool, top_down: bool, selected_index: int):

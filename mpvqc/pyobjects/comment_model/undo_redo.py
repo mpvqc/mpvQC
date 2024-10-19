@@ -23,6 +23,7 @@ from PySide6.QtGui import QStandardItem, QStandardItemModel, QUndoCommand
 from mpvqc.models import Comment
 
 from .roles import Role
+from .utility import create_comment_from, create_item_from
 
 
 class MpvqcModelImportCommand(QUndoCommand):
@@ -35,38 +36,33 @@ class MpvqcModelImportCommand(QUndoCommand):
         on_after_undo: Callable,
     ):
         super().__init__()
+        self.setText(f"import comments | size:{len(comments)}")
         self._model = model
         self._comments = comments
         self._on_after_redo = on_after_redo
         self._on_after_undo = on_after_undo
         self._previously_selected_row = previously_selected_row
 
-        self._persistent_indices = []
+        self._rows: list[int] = []
 
     def undo(self):
-        for index in self._persistent_indices:
-            self._model.removeRow(index.row())
+        for row in reversed(self._rows):
+            self._model.removeRow(row)
 
         self._on_after_undo(self._previously_selected_row)
 
     def redo(self):
-        persistent_indices = []
+        indices = []
         model_index = None
 
         for comment in self._comments:
-            item = QStandardItem()
-
-            item.setData(comment.time, Role.TIME)
-            item.setData(comment.comment_type, Role.TYPE)
-            item.setData(comment.comment, Role.COMMENT)
-
+            item = create_item_from(comment)
             self._model.appendRow(item)
-
             model_index = QPersistentModelIndex(item.index())
-            persistent_indices.append(model_index)
+            indices.append(model_index)
 
-        self._persistent_indices = persistent_indices
         self._on_after_redo(model_index)
+        self._rows = [index.row() for index in indices]
 
 
 class MpvqcModelAddCommentCommand(QUndoCommand):
@@ -80,6 +76,7 @@ class MpvqcModelAddCommentCommand(QUndoCommand):
         on_after_undo: Callable,
     ):
         super().__init__()
+        self.setText(f"add comment | {time}:{comment_type}")
         self._model = model
         self._comment_type = comment_type
         self._time = time
@@ -88,10 +85,10 @@ class MpvqcModelAddCommentCommand(QUndoCommand):
         self._on_after_undo = on_after_undo
 
         self._added_initially = True
-        self._index: Optional[QPersistentModelIndex] = None
+        self._added_row: int | None = None
 
     def undo(self):
-        self._model.removeRow(self._index.row())
+        self._model.removeRow(self._added_row)
         self._on_after_undo(self._previously_selected_row)
 
     def redo(self):
@@ -101,6 +98,36 @@ class MpvqcModelAddCommentCommand(QUndoCommand):
         item.setData("", Role.COMMENT)
 
         self._model.appendRow(item)
-        self._index = QPersistentModelIndex(item.index())
-        self._on_after_redo(self._index, self._added_initially)
+        index = QPersistentModelIndex(item.index())
+        self._on_after_redo(index, self._added_initially)
         self._added_initially = False
+        self._added_row = index.row()
+
+
+class MpvqcModelRemoveCommentCommand(QUndoCommand):
+    def __init__(
+        self,
+        model: QStandardItemModel,
+        row: int,
+        on_after_redo: Callable,
+        on_after_undo: Callable,
+    ):
+        super().__init__()
+        self.setText(f"remove comment | row: {row}")
+        self._model = model
+        self._row = row
+        self._on_after_redo = on_after_redo
+        self._on_after_undo = on_after_undo
+
+        self._comment: Optional[dict] = None
+
+    def undo(self):
+        item = create_item_from(self._comment)
+        self._model.appendRow(item)
+        self._on_after_undo(self._row)
+
+    def redo(self):
+        item = self._model.item(self._row)
+        self._comment = create_comment_from(item)
+        self._model.removeRow(self._row)
+        self._on_after_redo()

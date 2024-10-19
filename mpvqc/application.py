@@ -20,13 +20,14 @@ from functools import cache
 
 import inject
 from PySide6.QtCore import QLibraryInfo, QLocale, QObject, QTranslator, QUrl, Signal
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtWidgets import QApplication
 
 from mpvqc.services import FileStartupService, FontLoaderService
 
 
-class MpvqcApplication(QGuiApplication):
+class MpvqcApplication(QApplication):  # todo restore: QApplication -> QGuiApplication
     _start_up: FileStartupService = inject.attr(FileStartupService)
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
 

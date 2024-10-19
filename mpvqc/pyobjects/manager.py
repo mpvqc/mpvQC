@@ -83,12 +83,18 @@ class MpvqcManagerPyObject(QObject):
             = bind_qml_property_with(name='mpvqcMessageBoxDocumentNotCompatibleFactory')
         # fmt: on
 
-        def on_comments_changed():
+        def on_comments_changed(*_):
             self.state = self.state.handle_change()
 
+        self._comment_model.commentsImported.connect(on_comments_changed)
+        self._comment_model.commentsImportedUndone.connect(on_comments_changed)
+
         self._comment_model.commentsChanged.connect(on_comments_changed)
-        self._comment_model.commentsImported.connect(lambda _: on_comments_changed())
-        self._comment_model.commentsImportedUndone.connect(lambda _: on_comments_changed())
+
+        # todo new comment added signals
+
+        self._comment_model.commentRemoved.connect(on_comments_changed)
+        self._comment_model.commentRemovedUndone.connect(on_comments_changed)
 
     # Qml Properties
 
