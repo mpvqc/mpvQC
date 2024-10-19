@@ -86,12 +86,14 @@ class MpvqcManagerPyObject(QObject):
         def on_comments_changed(*_):
             self.state = self.state.handle_change()
 
+        self._comment_model.commentsChanged.connect(on_comments_changed)
+
         self._comment_model.commentsImported.connect(on_comments_changed)
         self._comment_model.commentsImportedUndone.connect(on_comments_changed)
 
-        self._comment_model.commentsChanged.connect(on_comments_changed)
-
-        # todo new comment added signals
+        self._comment_model.newCommentAddedInitially.connect(on_comments_changed)
+        self._comment_model.newCommentAddedUndone.connect(on_comments_changed)
+        self._comment_model.newCommentAddedRedone.connect(on_comments_changed)
 
         self._comment_model.commentRemoved.connect(on_comments_changed)
         self._comment_model.commentRemovedUndone.connect(on_comments_changed)

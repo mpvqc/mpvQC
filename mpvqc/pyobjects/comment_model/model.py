@@ -101,7 +101,6 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     def add_row(self, comment_type: str) -> None:
         def on_after_undo(row: int):
             self.newCommentAddedUndone.emit(row)
-            self.commentsChanged.emit()  # todo remove me
             self.invalidate_search()
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
@@ -110,7 +109,6 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             signal = self.newCommentAddedInitially if added_initially else self.newCommentAddedRedone
             signal.emit(index.row())
 
-            self.commentsChanged.emit()  # todo remove me
             self.invalidate_search()
 
         self._undo_stack.push(

@@ -86,12 +86,10 @@ def test_add_comment_invalidates_search_results(model):
 
 
 def test_add_comment_fires_signals(model, signal_helper):
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
     model.newCommentAddedInitially.connect(lambda idx: signal_helper.log("newCommentAddedInitially", idx))
 
     model.add_row("comment type")
 
-    assert signal_helper.has_logged("commentsChanged")
     assert signal_helper.has_logged("newCommentAddedInitially")
 
 
@@ -148,14 +146,12 @@ def test_add_comment_undo_redo_invalidates_search_results(model):
 def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     # noinspection PyArgumentList
     model = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
     model.newCommentAddedInitially.connect(lambda val: signal_helper.log("newCommentAddedInitially", val))
     model.newCommentAddedRedone.connect(lambda val: signal_helper.log("newCommentAddedRedone", val))
     model.newCommentAddedUndone.connect(lambda val: signal_helper.log("newCommentAddedUndone", val))
     model.set_selected_row(3)
 
     model.add_row("undo redo comment type")
-    assert signal_helper.has_logged("commentsChanged")
     assert signal_helper.has_logged("newCommentAddedInitially")
     assert not signal_helper.has_logged("newCommentAddedUndone")
     assert not signal_helper.has_logged("newCommentAddedRedone")
@@ -164,7 +160,6 @@ def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     signal_helper.reset()
     model.undo()
 
-    assert signal_helper.has_logged("commentsChanged")
     assert not signal_helper.has_logged("newCommentAddedInitially")
     assert signal_helper.has_logged("newCommentAddedUndone")
     assert not signal_helper.has_logged("newCommentAddedRedone")
@@ -173,7 +168,6 @@ def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     signal_helper.reset()
     model.redo()
 
-    assert signal_helper.has_logged("commentsChanged")
     assert not signal_helper.has_logged("newCommentAddedInitially")
     assert not signal_helper.has_logged("newCommentAddedUndone")
     assert signal_helper.has_logged("newCommentAddedRedone")
