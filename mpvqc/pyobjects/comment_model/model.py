@@ -25,7 +25,7 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import MpvqcModelAddCommentCommand, MpvqcModelImportCommand, MpvqcModelRemoveCommentCommand
+from .undo_redo import AddComment, ImportComments, RemoveComment
 from .utility import create_comment_from
 
 QML_IMPORT_NAME = "pyobjects"
@@ -88,7 +88,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             self.commentsImported.emit(index.row())
 
         self._undo_stack.push(
-            MpvqcModelImportCommand(
+            ImportComments(
                 model=self,
                 comments=comments,
                 on_after_undo=on_after_undo,
@@ -112,7 +112,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             self.invalidate_search()
 
         self._undo_stack.push(
-            MpvqcModelAddCommentCommand(
+            AddComment(
                 model=self,
                 comment_type=comment_type,
                 time=round(self._player.current_time),
@@ -134,7 +134,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             self.invalidate_search()
 
         self._undo_stack.push(
-            MpvqcModelRemoveCommentCommand(
+            RemoveComment(
                 model=self,
                 row=row,
                 on_after_undo=on_after_undo,

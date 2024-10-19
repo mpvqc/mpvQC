@@ -26,7 +26,7 @@ from .roles import Role
 from .utility import create_comment_from, create_item_from
 
 
-class MpvqcModelImportCommand(QUndoCommand):
+class ImportComments(QUndoCommand):
     def __init__(
         self,
         model: QStandardItemModel,
@@ -65,7 +65,7 @@ class MpvqcModelImportCommand(QUndoCommand):
         self._rows = [index.row() for index in indices]
 
 
-class MpvqcModelAddCommentCommand(QUndoCommand):
+class AddComment(QUndoCommand):
     def __init__(
         self,
         model: QStandardItemModel,
@@ -100,11 +100,12 @@ class MpvqcModelAddCommentCommand(QUndoCommand):
         self._model.appendRow(item)
         index = QPersistentModelIndex(item.index())
         self._on_after_redo(index, self._added_initially)
+
         self._added_initially = False
         self._added_row = index.row()
 
 
-class MpvqcModelRemoveCommentCommand(QUndoCommand):
+class RemoveComment(QUndoCommand):
     def __init__(
         self,
         model: QStandardItemModel,
