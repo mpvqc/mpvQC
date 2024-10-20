@@ -97,14 +97,6 @@ def test_update_time_fires_signals(model, signal_helper):
     assert 1 == signal_helper.logged_value("timeUpdatedRedone")
 
 
-def test_update_comment_invalidates_search_results(model):
-    model._searcher._hits = ["result"]
-
-    model.update_comment(index=0, comment="new")
-
-    assert model._searcher._hits is None
-
-
 def test_update_comment_type(model):
     model.update_comment_type(row=0, comment_type="updated comment type")
     assert model.item(0, 0).data(Role.TYPE) == "updated comment type"
@@ -120,6 +112,48 @@ def test_update_comment_type_fires_signals(model, signal_helper):
     model.commentsEdited.connect(lambda: signal_helper.log("commentsEdited"))
 
     model.update_comment_type(row=0, comment_type="updated comment type")
+    assert signal_helper.has_logged("commentsEdited")
+
+    signal_helper.reset()
+    model.undo()
+
+    assert signal_helper.has_logged("commentsEdited")
+
+    signal_helper.reset()
+    model.redo()
+
+    assert signal_helper.has_logged("commentsEdited")
+
+
+def test_update_comment(model):
+    model.update_comment(row=0, comment="new comment")
+    assert model.item(0, 0).data(Role.COMMENT) == "new comment"
+
+    model.undo()
+    assert model.item(0, 0).data(Role.COMMENT) == "Word 1"
+
+    model.redo()
+    assert model.item(0, 0).data(Role.COMMENT) == "new comment"
+
+
+def test_update_comment_invalidates_search_results(model):
+    model._searcher._hits = ["result"]
+    model.update_comment(row=0, comment="new")
+    assert model._searcher._hits is None
+
+    model._searcher._hits = ["result"]
+    model.undo()
+    assert model._searcher._hits is None
+
+    model._searcher._hits = ["result"]
+    model.redo()
+    assert model._searcher._hits is None
+
+
+def test_update_comment_fires_signals(model, signal_helper):
+    model.commentsEdited.connect(lambda: signal_helper.log("commentsEdited"))
+
+    model.update_comment(row=0, comment="new")
     assert signal_helper.has_logged("commentsEdited")
 
     signal_helper.reset()

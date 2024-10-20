@@ -221,3 +221,33 @@ class UpdateCommentType(QUndoCommand):
         index = self._model.index(self._row, 0)
         self._old_comment_type = self._model.data(index, Role.TYPE)
         self._model.setData(index, self._new_comment_type, Role.TYPE)
+
+
+class UpdateComment(QUndoCommand):
+    def __init__(
+        self,
+        model: QStandardItemModel,
+        row: int,
+        new_text: str,
+        on_after_undo: Callable,
+        on_after_redo: Callable,
+    ):
+        super().__init__()
+        self._model = model
+        self._row = row
+        self._new_text = new_text
+        self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
+
+        self._old_comment: str | None = None
+
+    def undo(self):
+        index = self._model.index(self._row, 0)
+        self._model.setData(index, self._old_comment, Role.COMMENT)
+        self._on_after_undo()
+
+    def redo(self):
+        index = self._model.index(self._row, 0)
+        self._old_comment = self._model.data(index, Role.COMMENT)
+        self._model.setData(index, self._new_text, Role.COMMENT)
+        self._on_after_redo()
