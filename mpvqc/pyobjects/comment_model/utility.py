@@ -21,6 +21,7 @@ from PySide6.QtGui import QStandardItem
 
 from mpvqc.models import Comment
 
+from .item import CommentItem
 from .roles import Role
 
 
@@ -32,8 +33,8 @@ def create_comment_from(item: QStandardItem) -> dict[str, str]:
     }
 
 
-def create_item_from(comment: dict[str, Any] | Comment) -> QStandardItem:
-    item = QStandardItem()
+def create_item_from(comment: dict[str, Any] | Comment) -> CommentItem:
+    item = CommentItem()
     if isinstance(comment, Comment):
         item.setData(comment.time, Role.TIME)
         item.setData(comment.comment_type, Role.TYPE)

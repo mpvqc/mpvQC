@@ -18,10 +18,11 @@
 from typing import Callable, Optional
 
 from PySide6.QtCore import QPersistentModelIndex
-from PySide6.QtGui import QStandardItem, QStandardItemModel, QUndoCommand
+from PySide6.QtGui import QStandardItemModel, QUndoCommand
 
 from mpvqc.models import Comment
 
+from .item import CommentItem
 from .roles import Role
 from .utility import create_comment_from, create_item_from
 
@@ -92,7 +93,7 @@ class AddComment(QUndoCommand):
         self._on_after_undo(self._previously_selected_row)
 
     def redo(self):
-        item = QStandardItem()
+        item = CommentItem()
         item.setData(self._time, Role.TIME)
         item.setData(self._comment_type, Role.TYPE)
         item.setData("", Role.COMMENT)
