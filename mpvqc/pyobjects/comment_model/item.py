@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2024 mpvQC developers
+# Copyright (C) 2022 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,5 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# ruff: noqa: F401
-from .application_state import ApplicationState, ImportChange, InitialState, OtherState
+
+import itertools
+
+from PySide6.QtGui import QStandardItem
+
+from .roles import Role
+
+ID_COUNTER = itertools.count()
+
+
+class CommentItem(QStandardItem):
+    def __init__(self):
+        super().__init__()
+        self._id = next(ID_COUNTER)
+
+    def __lt__(self, other: "CommentItem") -> bool:
+        this_time = self.data(Role.TIME)
+        that_time = other.data(Role.TIME)
+
+        if this_time < that_time:
+            return True
+        elif this_time > that_time:
+            return False
+        else:
+            return self._id < other._id

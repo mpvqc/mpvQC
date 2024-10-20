@@ -87,7 +87,7 @@ ListView {
         mpvqcApplication: root.mpvqcApplication
         rowSelected: root.currentIndex === index
         tableInEditMode: root.currentlyEditing
-        width: parent ? parent.width : 0
+        width: parent ? root.width : 0
         widthScrollBar: _scrollBar.visibleWidth
         searchQuery: root.searchQuery
 
@@ -180,6 +180,21 @@ ListView {
         event.accepted = false
     }
 
+    function _handleZPressed(event) {
+        const ctrlPressed = event.modifiers & Qt.ControlModifier
+        const shiftPressed = event.modifiers & Qt.ShiftModifier
+
+        if (ctrlPressed && !event.isAutoRepeat) {
+            if (shiftPressed) {
+                root.model.redo()
+            } else {
+                root.model.undo()
+            }
+            return
+        }
+        event.accepted = false
+    }
+
     function disableMovingHighlightRectangle(): void {
         root.highlightMoveDuration = 0
     }
@@ -202,39 +217,69 @@ ListView {
         }
     }
 
-    Keys.onPressed: (event) => {
-        if (event.key === Qt.Key_Backspace) {
-            return _handleDeleteComment(event)
+    Keys.onPressed: event => {
+        switch (event.key) {
+            case Qt.Key_Delete:
+            case Qt.Key_Backspace:
+                return _handleDeleteComment(event)
+            case Qt.Key_C:
+                return _handleCPressed(event)
+            case Qt.Key_Z:
+                return _handleZPressed(event)
+            default:
+                event.accepted = false
         }
-        if (event.key === Qt.Key_Delete) {
-            return _handleDeleteComment(event)
-        }
-        if (event.key === Qt.Key_C) {
-            return _handleCPressed(event)
-        }
-
-        event.accepted = false
     }
 
     Connections {
         target: root.model
 
-        function onNewItemAdded(index: int): void {
-            root.disableMovingHighlightRectangle()
-            root.selectRow(index)
-            root.enableMovingHighlightRectangle()
+        function onCommentsImported(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onCommentsImportedUndone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onCommentsClearedUndone(): void {
+            const lastIndex = root.count - 1
+            _quickSelect(lastIndex)
+        }
+
+        function onNewCommentAddedInitially(index: int): void {
+            _quickSelect(index)
             root.startEditing()
         }
 
-        function onCommentsImported(): void {
-            const lastIndex = root.count - 1
-            root.disableMovingHighlightRectangle()
-            root.selectRow(lastIndex)
-            root.enableMovingHighlightRectangle()
+        function onNewCommentAddedUndone(index: int): void {
+            _quickSelect(index)
         }
 
-        function onTimeUpdated(index: int): void {
+        function onNewCommentAddedRedone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onCommentRemovedUndone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onTimeUpdatedInitially(index: int): void {
             root.selectRow(index)
+        }
+
+        function onTimeUpdatedUndone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onTimeUpdatedRedone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function _quickSelect(index: int): void {
+            root.disableMovingHighlightRectangle()
+            root.selectRow(index)
+            root.enableMovingHighlightRectangle()
         }
     }
 

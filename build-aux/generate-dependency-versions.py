@@ -87,7 +87,7 @@ class RequirementsUpdater:
         for group in optional_groups:
             deps.extend(toml_data["project"]["optional-dependencies"][group])
 
-        self._requirements_for_pip = " ".join(f"\"{dep}\"" for dep in deps)
+        self._requirements_for_pip = " ".join(f'"{dep}"' for dep in deps)
 
         for dep in deps:
             name_requirement_version = dep.split(";")[0]
