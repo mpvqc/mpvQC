@@ -39,30 +39,62 @@ def model(make_model):
 
 
 def test_update_time_sorts_model_again(model):
-    model.update_time(row=0, time=7)
+    model.update_time(row=0, new_time=7)
+    assert model.item(0, 0).data(Role.COMMENT) == "Word 2"
+    assert model.item(1, 0).data(Role.COMMENT) == "Word 1"
 
-    item = model.item(1, 0)
-    actual = item.data(Role.COMMENT)
+    model.undo()
+    assert model.item(0, 0).data(Role.COMMENT) == "Word 1"
+    assert model.item(1, 0).data(Role.COMMENT) == "Word 2"
 
-    assert actual == "Word 1"
+    model.redo()
+    assert model.item(0, 0).data(Role.COMMENT) == "Word 2"
+    assert model.item(1, 0).data(Role.COMMENT) == "Word 1"
 
 
 def test_update_time_invalidates_search_results(model):
     model._searcher._hits = ["result"]
+    model.update_time(row=0, new_time=7)
+    assert model._searcher._hits is None
 
-    model.update_time(row=0, time=7)
+    model._searcher._hits = ["result"]
+    model.undo()
+    assert model._searcher._hits is None
 
+    model._searcher._hits = ["result"]
+    model.redo()
     assert model._searcher._hits is None
 
 
 def test_update_time_fires_signals(model, signal_helper):
-    model.timeUpdated.connect(lambda: signal_helper.log("timeUpdated"))
-    model.commentsChanged.connect(lambda: signal_helper.log("commentsChanged"))
+    model.commentsEdited.connect(lambda: signal_helper.log("commentsEdited"))
+    model.timeUpdatedInitially.connect(lambda idx: signal_helper.log("timeUpdatedInitially", idx))
+    model.timeUpdatedUndone.connect(lambda idx: signal_helper.log("timeUpdatedUndone", idx))
+    model.timeUpdatedRedone.connect(lambda idx: signal_helper.log("timeUpdatedRedone", idx))
 
-    model.update_time(row=0, time=7)
+    model.update_time(row=0, new_time=7)
+    assert signal_helper.has_logged("commentsEdited")
+    assert signal_helper.has_logged("timeUpdatedInitially")
+    assert not signal_helper.has_logged("timeUpdatedUndone")
+    assert not signal_helper.has_logged("timeUpdatedRedone")
+    assert 1 == signal_helper.logged_value("timeUpdatedInitially")
 
-    assert signal_helper.has_logged("timeUpdated")
-    assert signal_helper.has_logged("commentsChanged")
+    signal_helper.reset()
+    model.undo()
+
+    assert signal_helper.has_logged("commentsEdited")
+    assert not signal_helper.has_logged("timeUpdatedInitially")
+    assert signal_helper.has_logged("timeUpdatedUndone")
+    assert not signal_helper.has_logged("timeUpdatedRedone")
+
+    signal_helper.reset()
+    model.redo()
+
+    assert signal_helper.has_logged("commentsEdited")
+    assert not signal_helper.has_logged("timeUpdatedInitially")
+    assert not signal_helper.has_logged("timeUpdatedUndone")
+    assert signal_helper.has_logged("timeUpdatedRedone")
+    assert 1 == signal_helper.logged_value("timeUpdatedRedone")
 
 
 def test_update_comment_invalidates_search_results(model):

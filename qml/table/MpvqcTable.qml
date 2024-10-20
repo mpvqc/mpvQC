@@ -258,8 +258,16 @@ ListView {
             _quickSelect(index)
         }
 
-        function onTimeUpdated(index: int): void {
+        function onTimeUpdatedInitially(index: int): void {
             root.selectRow(index)
+        }
+
+        function onTimeUpdatedUndone(index: int): void {
+            _quickSelect(index)
+        }
+
+        function onTimeUpdatedRedone(index: int): void {
+            _quickSelect(index)
         }
 
         function _quickSelect(index: int): void {

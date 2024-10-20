@@ -27,7 +27,7 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import AddComment, ClearComments, ImportComments, RemoveComment
+from .undo_redo import AddComment, ClearComments, ImportComments, RemoveComment, UpdateTime
 from .utility import retrieve_comments_from
 
 QML_IMPORT_NAME = "pyobjects"
@@ -38,6 +38,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
+    commentsEdited = Signal()
+
     commentsImported = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
 
@@ -45,15 +47,15 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     commentsClearedUndone = Signal()
 
     newCommentAddedInitially = Signal(int)  # param: row of new comment
-    newCommentAddedRedone = Signal(int)  # param: row of new redone comment
     newCommentAddedUndone = Signal(int)  # param: row of previously selected comment before comment has been added
+    newCommentAddedRedone = Signal(int)  # param: row of new redone comment
 
     commentRemoved = Signal()
     commentRemovedUndone = Signal(int)  # param: row of comment that has been added back to the model
 
-    timeUpdated = Signal(int)  # param: row index after time update
-
-    commentsChanged = Signal()
+    timeUpdatedInitially = Signal(int)  # param: row index after time update
+    timeUpdatedUndone = Signal(int)  # param: row index after time update restore
+    timeUpdatedRedone = Signal(int)  # param: row index after time update
 
     def get_selected_row(self) -> int:
         return self._selected_row
@@ -69,7 +71,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
         self.setObjectName("mpvqcCommentModel")
-        self.dataChanged.connect(self.commentsChanged)
+        self.dataChanged.connect(self.commentsEdited)
         self._searcher = Searcher()
 
         self._undo_stack = QUndoStack(self)
@@ -165,15 +167,27 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         )
 
     @Slot(int, int)
-    def update_time(self, row: int, time: int) -> None:
-        index = self.index(row, 0)
-        item = self.itemFromIndex(index)
+    def update_time(self, row: int, new_time: int) -> None:
+        def on_after_undo(_row: int):
+            self.invalidate_search()
+            self.sort(0)
+            self.timeUpdatedUndone.emit(_row)
 
-        self.setData(index, time, Role.TIME)
-        self.sort(0)
+        def on_after_redo(index: QModelIndex, added_initially: bool):
+            self.invalidate_search()
+            self.sort(0)
+            signal = self.timeUpdatedInitially if added_initially else self.timeUpdatedRedone
+            signal.emit(index.row())
 
-        self.timeUpdated.emit(item.row())
-        self.invalidate_search()
+        self._undo_stack.push(
+            UpdateTime(
+                model=self,
+                row=row,
+                new_time=new_time,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+            )
+        )
 
     @Slot(int, str)
     def update_comment_type(self, index: int, comment_type: str) -> None:
@@ -204,7 +218,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     def _search(self, query: str) -> list[int]:
         from_beginning = self.index(0, 0)
         role = Role.COMMENT
-        flags = Qt.MatchContains | Qt.MatchWrap
+        flags = Qt.MatchFlag.MatchContains | Qt.MatchFlag.MatchWrap
         all_results = -1  # Search everything
         results = self.match(from_beginning, role, query, all_results, flags)
         results = sorted(results)

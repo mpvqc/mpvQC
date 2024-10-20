@@ -33,15 +33,15 @@ class ImportComments(QUndoCommand):
         model: QStandardItemModel,
         comments: list[Comment],
         previously_selected_row: int,
-        on_after_redo: Callable,
         on_after_undo: Callable,
+        on_after_redo: Callable,
     ):
         super().__init__()
         self.setText(f"import comments | size:{len(comments)}")
         self._model = model
         self._comments = comments
-        self._on_after_redo = on_after_redo
         self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
         self._previously_selected_row = previously_selected_row
 
         self._rows: list[int] = []
@@ -70,13 +70,14 @@ class ClearComments(QUndoCommand):
     def __init__(
         self,
         model: QStandardItemModel,
-        on_after_redo: Callable,
         on_after_undo: Callable,
+        on_after_redo: Callable,
     ):
         super().__init__()
+        self.setText("clear comments")
         self._model = model
-        self._on_after_redo = on_after_redo
         self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
 
         self._comments: list[dict[str, Any]] = []
 
@@ -99,8 +100,8 @@ class AddComment(QUndoCommand):
         comment_type: str,
         time: int,
         previously_selected_row: int,
-        on_after_redo: Callable,
         on_after_undo: Callable,
+        on_after_redo: Callable,
     ):
         super().__init__()
         self.setText(f"add comment | {time}:{comment_type}")
@@ -108,8 +109,8 @@ class AddComment(QUndoCommand):
         self._comment_type = comment_type
         self._time = time
         self._previously_selected_row = previously_selected_row
-        self._on_after_redo = on_after_redo
         self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
 
         self._added_initially = True
         self._added_row: int | None = None
@@ -137,15 +138,15 @@ class RemoveComment(QUndoCommand):
         self,
         model: QStandardItemModel,
         row: int,
-        on_after_redo: Callable,
         on_after_undo: Callable,
+        on_after_redo: Callable,
     ):
         super().__init__()
         self.setText(f"remove comment | row: {row}")
         self._model = model
         self._row = row
-        self._on_after_redo = on_after_redo
         self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
 
         self._comment: Optional[dict[str, Any]] = None
 
@@ -159,3 +160,39 @@ class RemoveComment(QUndoCommand):
         self._comment = create_comment_from(item)
         self._model.removeRow(self._row)
         self._on_after_redo()
+
+
+class UpdateTime(QUndoCommand):
+    def __init__(
+        self,
+        model: QStandardItemModel,
+        row: int,
+        new_time: int,
+        on_after_undo: Callable,
+        on_after_redo: Callable,
+    ):
+        super().__init__()
+        self.setText(f"update time | row:{row} new-time:{new_time}")
+        self._model = model
+        self._row = row
+        self._new_time = new_time
+        self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
+
+        self._added_initially = True
+        self._old_time: int | None = None
+        self._new_row: int | None = None
+
+    def undo(self):
+        item = self._model.item(self._new_row)
+        item.setData(self._old_time, Role.TIME)
+        self._on_after_undo(self._row)
+
+    def redo(self):
+        index = QPersistentModelIndex(self._model.index(self._row, 0))
+        self._old_time = self._model.data(index, Role.TIME)
+        self._model.setData(index, self._new_time, Role.TIME)
+        self._on_after_redo(index, self._added_initially)
+
+        self._added_initially = False
+        self._new_row = index.row()
