@@ -86,7 +86,13 @@ class MpvqcManagerPyObject(QObject):
         def on_comments_changed(*_):
             self.state = self.state.handle_change()
 
+        def on_comments_cleared(*_):
+            self.state = self.state.handle_reset()
+
         self._comment_model.commentsChanged.connect(on_comments_changed)
+
+        self._comment_model.commentsCleared.connect(on_comments_cleared)
+        self._comment_model.commentsClearedUndone.connect(on_comments_changed)
 
         self._comment_model.commentsImported.connect(on_comments_changed)
         self._comment_model.commentsImportedUndone.connect(on_comments_changed)
@@ -126,7 +132,6 @@ class MpvqcManagerPyObject(QObject):
 
         def _reset():
             self._comment_model.clear_comments()
-            self.state = self.state.handle_reset()
 
         if self.saved:
             _reset()

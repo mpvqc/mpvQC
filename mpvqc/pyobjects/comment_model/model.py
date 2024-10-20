@@ -39,6 +39,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     commentsImported = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
 
+    commentsCleared = Signal()
+    commentsClearedUndone = Signal()
+
     newCommentAddedInitially = Signal(int)  # param: row of new comment
     newCommentAddedRedone = Signal(int)  # param: row of new redone comment
     newCommentAddedUndone = Signal(int)  # param: row of previously selected comment before comment has been added
@@ -96,6 +99,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
                 previously_selected_row=self._selected_row,
             )
         )
+
+    def clear_comments(self) -> None:
+        self.clear()
+        self.invalidate_search()
+        self.commentsCleared.emit()
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
@@ -160,10 +168,6 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot(int, str)
     def update_comment(self, index: int, comment: str) -> None:
         self.setData(self.index(index, 0), comment, Role.COMMENT)
-        self.invalidate_search()
-
-    def clear_comments(self) -> None:
-        self.clear()
         self.invalidate_search()
 
     @Slot()

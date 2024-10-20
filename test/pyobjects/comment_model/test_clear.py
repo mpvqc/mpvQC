@@ -48,3 +48,11 @@ def test_clear_comments_invalidates_search_results(model):
     model.clear_comments()
 
     assert model._searcher._hits is None
+
+
+def test_clear_comments_fires_signals(model, signal_helper):
+    model.commentsCleared.connect(lambda: signal_helper.log("commentsCleared"))
+
+    model.clear_comments()
+
+    assert signal_helper.has_logged("commentsCleared")
