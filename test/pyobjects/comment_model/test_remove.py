@@ -31,10 +31,11 @@ DEFAULT_COMMENTS = (
 @pytest.fixture()
 def model(make_model):
     # noinspection PyArgumentList
-    return make_model(
+    model, _ = make_model(
         set_comments=DEFAULT_COMMENTS,
         set_player_time=0,
     )
+    return model
 
 
 def test_remove_comment(model):

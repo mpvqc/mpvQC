@@ -31,9 +31,9 @@ def assert_comments(expected: list[list[Any]], actual: list[dict[str, Any]]):
         assert c_e[2] == c_a["comment"]
 
 
-def test_undo_redo_combination(make_sophisticated_model):
+def test_undo_redo_combination(make_model):
     # noinspection PyArgumentList
-    model, set_time = make_sophisticated_model(set_comments=[], set_player_time=0)
+    model, set_time = make_model(set_comments=[], set_player_time=0)
     model.import_comments(
         [
             Comment(time=10, comment_type="type 1", comment="Word 1"),

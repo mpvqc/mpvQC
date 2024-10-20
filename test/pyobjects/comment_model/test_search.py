@@ -72,7 +72,7 @@ class SearchHelper:
 @pytest.fixture()
 def search_helper(make_model) -> SearchHelper:
     # noinspection PyArgumentList
-    model = make_model(
+    model, _ = make_model(
         set_comments=DEFAULT_COMMENTS_SEARCH,
     )
     return SearchHelper(model)

@@ -32,10 +32,11 @@ DEFAULT_COMMENTS = [
 @pytest.fixture()
 def model(make_model):
     # noinspection PyArgumentList
-    return make_model(
+    model, _ = make_model(
         set_comments=DEFAULT_COMMENTS,
         set_player_time=0,
     )
+    return model
 
 
 def test_add_comment(model):
@@ -56,7 +57,7 @@ def test_add_comment(model):
 )
 def test_add_comment_rounds_time(make_model, expected, test_input):
     # noinspection PyArgumentList
-    model = make_model(set_comments=[], set_player_time=test_input)
+    model, _ = make_model(set_comments=[], set_player_time=test_input)
 
     model.add_row("comment type")
 
@@ -68,7 +69,7 @@ def test_add_comment_rounds_time(make_model, expected, test_input):
 def test_add_comment_sorts_model(make_model):
     custom_comment_type = "my custom comment type"
     # noinspection PyArgumentList
-    model = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=7)
+    model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=7)
 
     model.add_row(custom_comment_type)
 
@@ -95,7 +96,7 @@ def test_add_comment_fires_signals(model, signal_helper):
 
 def test_add_comment_undo_redo(make_model):
     # noinspection PyArgumentList
-    model = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
+    model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
     assert model.rowCount() == 5
 
     model.add_row("undo redo comment type")
@@ -116,7 +117,7 @@ def test_add_comment_undo_redo(make_model):
 
 def test_add_comment_undo_redo_sorts_model(make_model):
     # noinspection PyArgumentList
-    model = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=7)
+    model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=7)
 
     model.add_row("undo redo comment type")
     expected = ["commentType", "commentType", "undo redo comment type", "commentType", "commentType", "commentType"]
@@ -145,7 +146,7 @@ def test_add_comment_undo_redo_invalidates_search_results(model):
 
 def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     # noinspection PyArgumentList
-    model = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
+    model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
     model.newCommentAddedInitially.connect(lambda val: signal_helper.log("newCommentAddedInitially", val))
     model.newCommentAddedRedone.connect(lambda val: signal_helper.log("newCommentAddedRedone", val))
     model.newCommentAddedUndone.connect(lambda val: signal_helper.log("newCommentAddedUndone", val))
