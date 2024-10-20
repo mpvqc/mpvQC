@@ -16,4 +16,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # ruff: noqa: F401
-from .model import MpvqcCommentModelPyObject, Role
+from .model import MpvqcCommentModelPyObject
