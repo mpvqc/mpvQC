@@ -55,7 +55,7 @@ Popup {
     }
 
     onAboutToHide: {
-        if (acceptValue) {
+        if (acceptValue && root.time !== _spinBox.value) {
             root.edited(_spinBox.value)
         } else {
             root.editingAborted()

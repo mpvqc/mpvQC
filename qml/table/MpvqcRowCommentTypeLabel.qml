@@ -38,7 +38,11 @@ Label {
 
             onClosed: root.editingStopped()
 
-            onItemClicked: (newCommentType) => root.edited(newCommentType)
+            onItemClicked: (newCommentType) => {
+                if (root.commentType !== newCommentType) {
+                    root.edited(newCommentType)
+                }
+            }
         }
     }
 
