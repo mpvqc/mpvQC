@@ -181,12 +181,18 @@ ListView {
     }
 
     function _handleZPressed(event) {
-        // noinspection JSBitwiseOperatorUsage
-        if (event.modifiers & Qt.ShiftModifier) {
-            root.model.redo()
-        } else {
-            root.model.undo()
+        const ctrlPressed = event.modifiers & Qt.ControlModifier
+        const shiftPressed = event.modifiers & Qt.ShiftModifier
+
+        if (ctrlPressed && !event.isAutoRepeat) {
+            if (shiftPressed) {
+                root.model.redo()
+            } else {
+                root.model.undo()
+            }
+            return
         }
+        event.accepted = false
     }
 
     function disableMovingHighlightRectangle(): void {
