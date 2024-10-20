@@ -87,7 +87,7 @@ ListView {
         mpvqcApplication: root.mpvqcApplication
         rowSelected: root.currentIndex === index
         tableInEditMode: root.currentlyEditing
-        width: parent ? parent.width : 0
+        width: parent ? root.width : 0
         widthScrollBar: _scrollBar.visibleWidth
         searchQuery: root.searchQuery
 

@@ -24,7 +24,7 @@ from mpvqc.models import Comment
 
 from .item import CommentItem
 from .roles import Role
-from .utility import create_comment_from, create_item_from, retrieve_comments_from
+from .utils import create_comment_from, create_item_from, retrieve_comments_from
 
 
 class ImportComments(QUndoCommand):
@@ -198,7 +198,7 @@ class UpdateTime(QUndoCommand):
         self._new_row = index.row()
 
 
-class UpdateCommentType(QUndoCommand):
+class UpdateType(QUndoCommand):
     def __init__(
         self,
         model: QStandardItemModel,

@@ -27,16 +27,8 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import (
-    AddComment,
-    ClearComments,
-    ImportComments,
-    RemoveComment,
-    UpdateComment,
-    UpdateCommentType,
-    UpdateTime,
-)
-from .utility import retrieve_comments_from
+from .undo import AddComment, ClearComments, ImportComments, RemoveComment, UpdateComment, UpdateTime, UpdateType
+from .utils import retrieve_comments_from
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -84,10 +76,6 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
         self._undo_stack = QUndoStack(self)
         self._selected_row = -1
-
-        # from PySide6.QtWidgets import QUndoView
-        # self.undoView = QUndoView(self._undo_stack)
-        # self.undoView.show()
 
     def import_comments(self, comments: list[Comment]) -> None:
         if not comments:
@@ -200,7 +188,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot(int, str)
     def update_comment_type(self, row: int, comment_type: str) -> None:
         self._undo_stack.push(
-            UpdateCommentType(
+            UpdateType(
                 model=self,
                 row=row,
                 new_comment_type=comment_type,
@@ -223,12 +211,12 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         )
 
     @Slot()
-    def undo(self):
+    def undo(self) -> None:
         if self._undo_stack.canUndo():
             self._undo_stack.undo()
 
     @Slot()
-    def redo(self):
+    def redo(self) -> None:
         if self._undo_stack.canRedo():
             self._undo_stack.redo()
 
@@ -236,7 +224,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         return retrieve_comments_from(self)
 
     @Slot(str, bool, bool, int, result=dict)
-    def search(self, query: str, include_current_row: bool, top_down: bool, selected_index: int):
+    def search(self, query: str, include_current_row: bool, top_down: bool, selected_index: int) -> dict:
         return self._searcher.search(query, include_current_row, top_down, selected_index, search_func=self._search)
 
     def _search(self, query: str) -> list[int]:
@@ -249,5 +237,5 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         return list(map(lambda model_index: model_index.row(), results))
 
     @Slot()
-    def invalidate_search(self):
+    def invalidate_search(self) -> None:
         self._searcher.invalidate()
