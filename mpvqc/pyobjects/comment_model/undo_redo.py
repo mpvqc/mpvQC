@@ -196,3 +196,28 @@ class UpdateTime(QUndoCommand):
 
         self._added_initially = False
         self._new_row = index.row()
+
+
+class UpdateCommentType(QUndoCommand):
+    def __init__(
+        self,
+        model: QStandardItemModel,
+        row: int,
+        new_comment_type: str,
+    ):
+        super().__init__()
+        self.setText(f"update comment type | row:{row} new-comment-time:{new_comment_type}")
+        self._model = model
+        self._row = row
+        self._new_comment_type = new_comment_type
+
+        self._old_comment_type: str | None = None
+
+    def undo(self):
+        index = self._model.index(self._row, 0)
+        self._model.setData(index, self._old_comment_type, Role.TYPE)
+
+    def redo(self):
+        index = self._model.index(self._row, 0)
+        self._old_comment_type = self._model.data(index, Role.TYPE)
+        self._model.setData(index, self._new_comment_type, Role.TYPE)

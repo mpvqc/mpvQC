@@ -27,7 +27,7 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import AddComment, ClearComments, ImportComments, RemoveComment, UpdateTime
+from .undo_redo import AddComment, ClearComments, ImportComments, RemoveComment, UpdateCommentType, UpdateTime
 from .utility import retrieve_comments_from
 
 QML_IMPORT_NAME = "pyobjects"
@@ -190,8 +190,14 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         )
 
     @Slot(int, str)
-    def update_comment_type(self, index: int, comment_type: str) -> None:
-        self.setData(self.index(index, 0), comment_type, Role.TYPE)
+    def update_comment_type(self, row: int, comment_type: str) -> None:
+        self._undo_stack.push(
+            UpdateCommentType(
+                model=self,
+                row=row,
+                new_comment_type=comment_type,
+            )
+        )
 
     @Slot(int, str)
     def update_comment(self, index: int, comment: str) -> None:
