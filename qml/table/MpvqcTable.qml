@@ -236,6 +236,11 @@ ListView {
             _quickSelect(index)
         }
 
+        function onCommentsClearedUndone(): void {
+            const lastIndex = root.count - 1
+            _quickSelect(lastIndex)
+        }
+
         function onNewCommentAddedInitially(index: int): void {
             _quickSelect(index)
             root.startEditing()

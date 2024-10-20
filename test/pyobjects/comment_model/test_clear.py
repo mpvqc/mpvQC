@@ -56,3 +56,49 @@ def test_clear_comments_fires_signals(model, signal_helper):
     model.clear_comments()
 
     assert signal_helper.has_logged("commentsCleared")
+
+
+def test_clear_comments_undo_redo(model):
+    assert model.rowCount() == 5
+    model.clear_comments()
+    assert model.rowCount() == 0
+
+    model.undo()
+    assert model.rowCount() == 5
+    assert ["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"] == [c["comment"] for c in model.comments()]
+
+    model.redo()
+    assert model.rowCount() == 0
+
+
+def test_clear_comments_undo_redo_invalidates_search_results(model):
+    model.clear_comments()
+
+    model._searcher._hits = ["result"]
+    model.undo()
+    assert model._searcher._hits is None
+
+    model._searcher._hits = ["result"]
+    model.redo()
+    assert model._searcher._hits is None
+
+
+def test_clear_comments_undo_redo_fires_signals(model, signal_helper):
+    model.commentsCleared.connect(lambda: signal_helper.log("commentsCleared"))
+    model.commentsClearedUndone.connect(lambda: signal_helper.log("commentsClearedUndone"))
+
+    model.clear_comments()
+    assert signal_helper.has_logged("commentsCleared")
+    assert not signal_helper.has_logged("commentsClearedUndone")
+
+    signal_helper.reset()
+    model.undo()
+
+    assert not signal_helper.has_logged("commentsCleared")
+    assert signal_helper.has_logged("commentsClearedUndone")
+
+    signal_helper.reset()
+    model.redo()
+
+    assert signal_helper.has_logged("commentsCleared")
+    assert not signal_helper.has_logged("commentsClearedUndone")

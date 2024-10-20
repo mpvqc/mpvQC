@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 from PySide6.QtCore import QPersistentModelIndex
 from PySide6.QtGui import QStandardItemModel, QUndoCommand
@@ -24,7 +24,7 @@ from mpvqc.models import Comment
 
 from .item import CommentItem
 from .roles import Role
-from .utility import create_comment_from, create_item_from
+from .utility import create_comment_from, create_item_from, retrieve_comments_from
 
 
 class ImportComments(QUndoCommand):
@@ -64,6 +64,32 @@ class ImportComments(QUndoCommand):
 
         self._on_after_redo(model_index)
         self._rows = [index.row() for index in indices]
+
+
+class ClearComments(QUndoCommand):
+    def __init__(
+        self,
+        model: QStandardItemModel,
+        on_after_redo: Callable,
+        on_after_undo: Callable,
+    ):
+        super().__init__()
+        self._model = model
+        self._on_after_redo = on_after_redo
+        self._on_after_undo = on_after_undo
+
+        self._comments: list[dict[str, Any]] = []
+
+    def undo(self):
+        for comment in self._comments:
+            item = create_item_from(comment)
+            self._model.appendRow(item)
+        self._on_after_undo()
+
+    def redo(self):
+        self._comments = retrieve_comments_from(self._model)
+        self._model.clear()
+        self._on_after_redo()
 
 
 class AddComment(QUndoCommand):
@@ -121,7 +147,7 @@ class RemoveComment(QUndoCommand):
         self._on_after_redo = on_after_redo
         self._on_after_undo = on_after_undo
 
-        self._comment: Optional[dict] = None
+        self._comment: Optional[dict[str, Any]] = None
 
     def undo(self):
         item = create_item_from(self._comment)

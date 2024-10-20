@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Any
+
 import inject
 from PySide6.QtCore import Property, QModelIndex, Qt, Signal, Slot
 from PySide6.QtGui import QStandardItemModel, QUndoStack
@@ -25,8 +27,8 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo_redo import AddComment, ImportComments, RemoveComment
-from .utility import create_comment_from
+from .undo_redo import AddComment, ClearComments, ImportComments, RemoveComment
+from .utility import retrieve_comments_from
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -101,9 +103,21 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         )
 
     def clear_comments(self) -> None:
-        self.clear()
-        self.invalidate_search()
-        self.commentsCleared.emit()
+        def on_after_undo():
+            self.invalidate_search()
+            self.commentsClearedUndone.emit()
+
+        def on_after_redo():
+            self.invalidate_search()
+            self.commentsCleared.emit()
+
+        self._undo_stack.push(
+            ClearComments(
+                model=self,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+            )
+        )
 
     @Slot(str)
     def add_row(self, comment_type: str) -> None:
@@ -180,13 +194,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         if self._undo_stack.canRedo():
             self._undo_stack.redo()
 
-    def comments(self) -> list:
-        comments = []
-        for row in range(0, self.rowCount()):
-            item = self.item(row, column=0)
-            comment = create_comment_from(item)
-            comments.append(comment)
-        return comments
+    def comments(self) -> list[dict[str, Any]]:
+        return retrieve_comments_from(self)
 
     @Slot(str, bool, bool, int, result=dict)
     def search(self, query: str, include_current_row: bool, top_down: bool, selected_index: int):

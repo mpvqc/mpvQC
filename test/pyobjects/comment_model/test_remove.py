@@ -83,11 +83,11 @@ def test_remove_comment_undo_sorts_model(model):
 
     model.remove_row(1)
     expected = ["Word 1", "Word 3", "Word 4", "Word 5"]
-    assert expected == [ct["comment"] for ct in model.comments()]
+    assert expected == [c["comment"] for c in model.comments()]
 
     model.undo()
     expected = ["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"]
-    assert expected == [ct["comment"] for ct in model.comments()]
+    assert expected == [c["comment"] for c in model.comments()]
 
 
 def test_remove_comment_undo_redo_invalidates_search_results(model):

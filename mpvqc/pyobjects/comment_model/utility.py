@@ -17,7 +17,7 @@
 
 from typing import Any
 
-from PySide6.QtGui import QStandardItem
+from PySide6.QtGui import QStandardItem, QStandardItemModel
 
 from mpvqc.models import Comment
 
@@ -25,7 +25,16 @@ from .item import CommentItem
 from .roles import Role
 
 
-def create_comment_from(item: QStandardItem) -> dict[str, str]:
+def retrieve_comments_from(model: QStandardItemModel) -> list[dict[str, Any]]:
+    comments = []
+    for row in range(0, model.rowCount()):
+        item = model.item(row, column=0)
+        comment = create_comment_from(item)
+        comments.append(comment)
+    return comments
+
+
+def create_comment_from(item: QStandardItem) -> dict[str, Any]:
     return {
         "time": int(item.data(Role.TIME)),
         "commentType": item.data(Role.TYPE),
