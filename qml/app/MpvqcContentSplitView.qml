@@ -134,6 +134,19 @@ FocusScope {
         }
     }
 
+    Connections {
+        target: root.mpvqcCommentTable
+        readonly property int count: target.count
+
+        function onCountChanged() {
+            // we effectively force a redraw of the table here. if we don't do this and delete the last row
+            // in the table, the table will not rerender completely and there might be color artifacts of the
+            // alternating row colors
+            _footer.height += 1
+            _footer.height -= 1
+        }
+    }
+
     Component.onCompleted: {
         root.applySaneDefaultSplitViewSize()
     }
