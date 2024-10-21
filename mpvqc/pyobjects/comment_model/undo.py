@@ -251,3 +251,25 @@ class UpdateComment(QUndoCommand):
         self._old_comment = self._model.data(index, Role.COMMENT)
         self._model.setData(index, self._new_text, Role.COMMENT)
         self._on_after_redo()
+
+
+class AddAndUpdateCommentCommand(QUndoCommand):
+    def __init__(self, add_comment: AddComment):
+        super().__init__()
+        self._add_comment = add_comment
+        self._update_comment = None
+        self.allow_update_from_row = None
+
+    def merge_with(self, update_comment: UpdateComment):
+        self._update_comment = update_comment
+        self._update_comment.redo()
+
+    def undo(self):
+        if self._update_comment is not None:
+            self._update_comment.undo()
+        self._add_comment.undo()
+
+    def redo(self):
+        self._add_comment.redo()
+        if self._update_comment is not None:
+            self._update_comment.redo()

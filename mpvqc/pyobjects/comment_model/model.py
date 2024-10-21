@@ -27,7 +27,16 @@ from mpvqc.services import PlayerService
 
 from .roles import Role
 from .searcher import Searcher
-from .undo import AddComment, ClearComments, ImportComments, RemoveComment, UpdateComment, UpdateTime, UpdateType
+from .undo import (
+    AddAndUpdateCommentCommand,
+    AddComment,
+    ClearComments,
+    ImportComments,
+    RemoveComment,
+    UpdateComment,
+    UpdateTime,
+    UpdateType,
+)
 from .utils import retrieve_comments_from
 
 QML_IMPORT_NAME = "pyobjects"
@@ -62,6 +71,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     def set_selected_row(self, index: int) -> None:
         self._selected_row = index
+        self._prevent_add_comment_and_update_comment_merge()
 
     selectedRowChanged = Signal(int)
     selectedRow = Property(int, get_selected_row, set_selected_row, notify=selectedRowChanged)
@@ -74,8 +84,14 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.dataChanged.connect(self.commentsEdited)
         self._searcher = Searcher()
 
+        self._add_command: AddAndUpdateCommentCommand | None = None
+
         self._undo_stack = QUndoStack(self)
+        self._undo_stack.indexChanged.connect(self._prevent_add_comment_and_update_comment_merge)
         self._selected_row = -1
+
+    def _prevent_add_comment_and_update_comment_merge(self, *_):
+        self._add_command = None
 
     def import_comments(self, comments: list[Comment]) -> None:
         if not comments:
@@ -131,8 +147,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
             self.invalidate_search()
 
-        self._undo_stack.push(
-            AddComment(
+        command = AddAndUpdateCommentCommand(
+            add_comment=AddComment(
                 model=self,
                 comment_type=comment_type,
                 time=round(self._player.current_time),
@@ -141,6 +157,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
                 on_after_redo=on_after_redo,
             )
         )
+
+        self._undo_stack.push(command)
+        self._add_command = command
 
     @Slot(int)
     def remove_row(self, row: int) -> None:
@@ -200,15 +219,18 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         def on_update():
             self.invalidate_search()
 
-        self._undo_stack.push(
-            UpdateComment(
-                model=self,
-                row=row,
-                new_text=comment,
-                on_after_undo=on_update,
-                on_after_redo=on_update,
-            )
+        update_command = UpdateComment(
+            model=self,
+            row=row,
+            new_text=comment,
+            on_after_undo=on_update,
+            on_after_redo=on_update,
         )
+
+        if self._add_command is not None:
+            self._add_command.merge_with(update_command)
+        else:
+            self._undo_stack.push(update_command)
 
     @Slot()
     def undo(self) -> None:
