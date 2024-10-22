@@ -47,7 +47,7 @@ class ImportComments(QUndoCommand):
         self._rows: list[int] = []
 
     def undo(self):
-        for row in reversed(self._rows):
+        for row in sorted(self._rows, reverse=True):
             self._model.removeRow(row)
 
         self._on_after_undo(self._previously_selected_row)

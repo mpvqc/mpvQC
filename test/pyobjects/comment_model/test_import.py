@@ -50,6 +50,30 @@ def test_import_comments(model):
     assert 999 == model.comments()[-1]["time"]
 
 
+def test_import_sorts_comments(make_model):
+    # noinspection PyArgumentList
+    model, _ = make_model(
+        set_comments=[],
+        set_player_time=0,
+    )
+
+    comments = [
+        Comment(time=1, comment_type="commentType", comment="Word 1"),
+        Comment(time=2, comment_type="commentType", comment="Word 2"),
+        Comment(time=1, comment_type="commentType", comment="Word 3"),
+        Comment(time=2, comment_type="commentType", comment="Word 4"),
+    ]
+
+    model.import_comments(comments)
+    assert ["Word 1", "Word 3", "Word 2", "Word 4"] == [c["comment"] for c in model.comments()]
+
+    model.undo()
+    assert not model.comments()
+
+    model.redo()
+    assert ["Word 1", "Word 3", "Word 2", "Word 4"] == [c["comment"] for c in model.comments()]
+
+
 def test_import_comments_invalidates_search_results(model):
     model._searcher._hits = ["result"]
 
