@@ -23,7 +23,7 @@ from PySide6.QtCore import Property, QCoreApplication, QObject, QUrl, Signal, Sl
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
-from mpvqc.impl import ApplicationState, ImportChange, InitialState
+from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject
 from mpvqc.services import (
     DocumentBackupService,
     DocumentExportService,
@@ -33,7 +33,7 @@ from mpvqc.services import (
     VideoSelectorService,
 )
 
-from .comment_model import MpvqcCommentModelPyObject
+from .state import ApplicationState, ImportChange, InitialState
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1

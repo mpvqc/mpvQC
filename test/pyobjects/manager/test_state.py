@@ -20,8 +20,7 @@ from pathlib import Path
 import inject
 import pytest
 
-from mpvqc.impl import ImportChange, InitialState
-from mpvqc.impl.application_state import ApplicationState, OtherState
+from mpvqc.pyobjects.manager.state import ApplicationState, ImportChange, InitialState, OtherState
 from mpvqc.services import TypeMapperService
 
 
