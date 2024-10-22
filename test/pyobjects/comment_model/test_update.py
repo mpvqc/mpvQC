@@ -68,13 +68,11 @@ def test_update_time_invalidates_search_results(model):
 
 
 def test_update_time_fires_signals(model, signal_helper):
-    model.commentsEdited.connect(lambda: signal_helper.log("commentsEdited"))
     model.timeUpdatedInitially.connect(lambda idx: signal_helper.log("timeUpdatedInitially", idx))
     model.timeUpdatedUndone.connect(lambda idx: signal_helper.log("timeUpdatedUndone", idx))
     model.timeUpdatedRedone.connect(lambda idx: signal_helper.log("timeUpdatedRedone", idx))
 
     model.update_time(row=0, new_time=7)
-    assert signal_helper.has_logged("commentsEdited")
     assert signal_helper.has_logged("timeUpdatedInitially")
     assert not signal_helper.has_logged("timeUpdatedUndone")
     assert not signal_helper.has_logged("timeUpdatedRedone")
@@ -83,7 +81,6 @@ def test_update_time_fires_signals(model, signal_helper):
     signal_helper.reset()
     model.undo()
 
-    assert signal_helper.has_logged("commentsEdited")
     assert not signal_helper.has_logged("timeUpdatedInitially")
     assert signal_helper.has_logged("timeUpdatedUndone")
     assert not signal_helper.has_logged("timeUpdatedRedone")
@@ -91,7 +88,6 @@ def test_update_time_fires_signals(model, signal_helper):
     signal_helper.reset()
     model.redo()
 
-    assert signal_helper.has_logged("commentsEdited")
     assert not signal_helper.has_logged("timeUpdatedInitially")
     assert not signal_helper.has_logged("timeUpdatedUndone")
     assert signal_helper.has_logged("timeUpdatedRedone")
@@ -110,20 +106,29 @@ def test_update_comment_type(model):
 
 
 def test_update_comment_type_fires_signals(model, signal_helper):
-    model.commentsEdited.connect(lambda: signal_helper.log("commentsEdited"))
+    model.commentTypeUpdated.connect(lambda idx: signal_helper.log("commentTypeUpdated", idx))
+    model.commentTypeUpdatedUndone.connect(lambda idx: signal_helper.log("commentTypeUpdatedUndone", idx))
 
     model.update_comment_type(row=0, comment_type="updated comment type")
-    assert signal_helper.has_logged("commentsEdited")
+    assert signal_helper.has_logged("commentTypeUpdated")
+    assert not signal_helper.has_logged("commentTypeUpdatedUndone")
+    assert 0 == signal_helper.logged_value("commentTypeUpdated")
 
     signal_helper.reset()
     model.undo()
+    model.set_selected_row(3)
 
-    assert signal_helper.has_logged("commentsEdited")
+    assert not signal_helper.has_logged("commentTypeUpdated")
+    assert signal_helper.has_logged("commentTypeUpdatedUndone")
+    assert 0 == signal_helper.logged_value("commentTypeUpdatedUndone")
 
     signal_helper.reset()
     model.redo()
+    model.set_selected_row(2)
 
-    assert signal_helper.has_logged("commentsEdited")
+    assert signal_helper.has_logged("commentTypeUpdated")
+    assert not signal_helper.has_logged("commentTypeUpdatedUndone")
+    assert 0 == signal_helper.logged_value("commentTypeUpdated")
 
 
 def test_update_comment(model):
@@ -152,17 +157,25 @@ def test_update_comment_invalidates_search_results(model):
 
 
 def test_update_comment_fires_signals(model, signal_helper):
-    model.commentsEdited.connect(lambda: signal_helper.log("commentsEdited"))
+    model.commentUpdated.connect(lambda idx: signal_helper.log("commentUpdated", idx))
+    model.commentUpdatedUndone.connect(lambda idx: signal_helper.log("commentUpdatedUndone", idx))
 
     model.update_comment(row=0, comment="new")
-    assert signal_helper.has_logged("commentsEdited")
+    assert signal_helper.has_logged("commentUpdated")
+    assert not signal_helper.has_logged("commentUpdatedUndone")
+    assert 0 == signal_helper.logged_value("commentUpdated")
 
     signal_helper.reset()
     model.undo()
+    model.set_selected_row(3)
 
-    assert signal_helper.has_logged("commentsEdited")
+    assert not signal_helper.has_logged("commentUpdated")
+    assert signal_helper.has_logged("commentUpdatedUndone")
+    assert 0 == signal_helper.logged_value("commentUpdatedUndone")
 
     signal_helper.reset()
     model.redo()
 
-    assert signal_helper.has_logged("commentsEdited")
+    assert signal_helper.has_logged("commentUpdated")
+    assert not signal_helper.has_logged("commentUpdatedUndone")
+    assert 0 == signal_helper.logged_value("commentUpdated")

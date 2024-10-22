@@ -89,8 +89,6 @@ class MpvqcManagerPyObject(QObject):
         def on_comments_cleared(*_):
             self.state = self.state.handle_reset()
 
-        self._comment_model.commentsEdited.connect(on_comments_changed)
-
         self._comment_model.commentsCleared.connect(on_comments_cleared)
         self._comment_model.commentsClearedUndone.connect(on_comments_changed)
 
@@ -103,6 +101,16 @@ class MpvqcManagerPyObject(QObject):
 
         self._comment_model.commentRemoved.connect(on_comments_changed)
         self._comment_model.commentRemovedUndone.connect(on_comments_changed)
+
+        self._comment_model.timeUpdatedInitially.connect(on_comments_changed)
+        self._comment_model.timeUpdatedUndone.connect(on_comments_changed)
+        self._comment_model.timeUpdatedRedone.connect(on_comments_changed)
+
+        self._comment_model.commentTypeUpdated.connect(on_comments_changed)
+        self._comment_model.commentTypeUpdatedUndone.connect(on_comments_changed)
+
+        self._comment_model.commentUpdated.connect(on_comments_changed)
+        self._comment_model.commentUpdatedUndone.connect(on_comments_changed)
 
     # Qml Properties
 

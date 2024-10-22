@@ -47,8 +47,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
 
-    commentsEdited = Signal()
-
     commentsImported = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
 
@@ -66,6 +64,12 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     timeUpdatedUndone = Signal(int)  # param: row index after time update restore
     timeUpdatedRedone = Signal(int)  # param: row index after time update
 
+    commentTypeUpdated = Signal(int)
+    commentTypeUpdatedUndone = Signal(int)
+
+    commentUpdated = Signal(int)
+    commentUpdatedUndone = Signal(int)
+
     def get_selected_row(self) -> int:
         return self._selected_row
 
@@ -81,9 +85,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
         self.setObjectName("mpvqcCommentModel")
-        self.dataChanged.connect(self.commentsEdited)
-        self._searcher = Searcher()
 
+        self._searcher = Searcher()
         self._add_command: AddAndUpdateCommentCommand | None = None
 
         self._undo_stack = QUndoStack(self)
@@ -206,25 +209,38 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     @Slot(int, str)
     def update_comment_type(self, row: int, comment_type: str) -> None:
+        def on_after_undo(_row: int):
+            self.commentTypeUpdatedUndone.emit(_row)
+
+        def on_after_redo(_row: int):
+            self.commentTypeUpdated.emit(_row)
+
         self._undo_stack.push(
             UpdateType(
                 model=self,
                 row=row,
                 new_comment_type=comment_type,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
             )
         )
 
     @Slot(int, str)
     def update_comment(self, row: int, comment: str) -> None:
-        def on_update():
+        def on_after_undo(_row: int):
             self.invalidate_search()
+            self.commentUpdatedUndone.emit(_row)
+
+        def on_after_redo(_row: int):
+            self.invalidate_search()
+            self.commentUpdated.emit(_row)
 
         update_command = UpdateComment(
             model=self,
             row=row,
             new_text=comment,
-            on_after_undo=on_update,
-            on_after_redo=on_update,
+            on_after_undo=on_after_undo,
+            on_after_redo=on_after_redo,
         )
 
         if self._add_command is not None:

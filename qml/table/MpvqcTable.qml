@@ -276,6 +276,22 @@ ListView {
             _quickSelect(index)
         }
 
+        function onCommentTypeUpdated(index: int) {
+            _quickSelect(index)
+        }
+
+        function onCommentTypeUpdatedUndone(index: int) {
+            _quickSelect(index)
+        }
+
+        function onCommentUpdated(index: int) {
+            _quickSelect(index)
+        }
+
+        function onCommentUpdatedUndone(index: int) {
+            _quickSelect(index)
+        }
+
         function _quickSelect(index: int): void {
             root.disableMovingHighlightRectangle()
             root.selectRow(index)
