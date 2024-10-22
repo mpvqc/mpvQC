@@ -204,23 +204,29 @@ class UpdateType(QUndoCommand):
         model: QStandardItemModel,
         row: int,
         new_comment_type: str,
+        on_after_undo: Callable,
+        on_after_redo: Callable,
     ):
         super().__init__()
         self.setText(f"update comment type | row:{row} new-comment-time:{new_comment_type}")
         self._model = model
         self._row = row
         self._new_comment_type = new_comment_type
+        self._on_after_undo = on_after_undo
+        self._on_after_redo = on_after_redo
 
         self._old_comment_type: str | None = None
 
     def undo(self):
         index = self._model.index(self._row, 0)
         self._model.setData(index, self._old_comment_type, Role.TYPE)
+        self._on_after_undo(self._row)
 
     def redo(self):
         index = self._model.index(self._row, 0)
         self._old_comment_type = self._model.data(index, Role.TYPE)
         self._model.setData(index, self._new_comment_type, Role.TYPE)
+        self._on_after_redo(self._row)
 
 
 class UpdateComment(QUndoCommand):
@@ -244,13 +250,13 @@ class UpdateComment(QUndoCommand):
     def undo(self):
         index = self._model.index(self._row, 0)
         self._model.setData(index, self._old_comment, Role.COMMENT)
-        self._on_after_undo()
+        self._on_after_undo(self._row)
 
     def redo(self):
         index = self._model.index(self._row, 0)
         self._old_comment = self._model.data(index, Role.COMMENT)
         self._model.setData(index, self._new_text, Role.COMMENT)
-        self._on_after_redo()
+        self._on_after_redo(self._row)
 
 
 class AddAndUpdateCommentCommand(QUndoCommand):
