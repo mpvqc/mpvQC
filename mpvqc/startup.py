@@ -50,7 +50,6 @@ class StartUp:
     @staticmethod
     def configure_environment_variables():
         import os
-        import sys
 
         # Qt expects 'qtquickcontrols2.conf' at root level, but the way we handle resources does not allow that.
         # So we need to override the path here
@@ -58,9 +57,6 @@ class StartUp:
 
         # Requirement for mpv
         os.environ["LC_NUMERIC"] = "C"
-
-        if sys.platform == "linux":
-            os.environ["QT_QPA_PLATFORM"] = "xcb"
 
     @staticmethod
     def import_mpvqc_resources():

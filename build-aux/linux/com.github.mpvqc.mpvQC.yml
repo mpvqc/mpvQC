@@ -1,14 +1,8 @@
 # Supposed to be called at repository root level - copied during CI build to root level
-#
-# Locally
-#   - just
-#   - distrobox create --name flatpak-builder --init --image bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
-#   - distrobox enter flatpak-builder
-#   - flatpak-builder build-dir com.github.mpvqc.mpvQC.yml --force-clean
 
-app-id: com.github.mpvqc.mpvQC
+id: com.github.mpvqc.mpvQC
 runtime: org.freedesktop.Platform
-runtime-version: '22.08'
+runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 command: mpvQC
 
@@ -16,6 +10,7 @@ finish-args:
   - --device=dri
   - --filesystem=home
   - --share=ipc
+  - --share=network
   - --socket=wayland
   - --socket=fallback-x11
   - --socket=pulseaudio
@@ -50,17 +45,25 @@ modules:
     no-autogen: true
     cleanup:
       - /bin
-      - /lib/*.a
       - /include
       - /lib/pkgconfig
       - /share/man
     sources:
-      - type: archive
-        url: http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
-        sha256: 1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3
-      - commands:
+      - type: git
+        url: https://github.com/LuaJIT/LuaJIT.git
+        mirror-urls:
+          - https://luajit.org/git/luajit.git
+        disable-shallow-clone: true
+        commit: 97813fb924edf822455f91a5fbbdfdb349e5984f
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/LuaJIT/LuaJIT/commits
+          commit-query: first( .[].sha )
+          version-query: first( .[].sha )
+          timestamp-query: first( .[].commit.committer.date )
+      - type: shell
+        commands:
           - sed -i 's|/usr/local|/app|' ./Makefile
-        type: shell
 
   - name: libv4l2
     cleanup:
@@ -83,13 +86,20 @@ modules:
 
   - name: nv-codec-headers
     cleanup:
-      - "*"
+      - '*'
     no-autogen: true
     make-install-args:
       - PREFIX=/app
     sources:
       - type: git
-        url: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+        url: https://github.com/FFmpeg/nv-codec-headers.git
+        mirror-urls:
+          - https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+        tag: n12.2.72.0
+        commit: c69278340ab1d5559c7d7bf0edf615dc33ddbba7
+        x-checker-data:
+          type: git
+          tag-pattern: ^n([\d.]+)$
 
   - name: ffmpeg
     cleanup:
@@ -109,34 +119,52 @@ modules:
       - "--enable-libdav1d"
     sources:
       - type: git
-        url: https://git.ffmpeg.org/ffmpeg.git
+        url: https://github.com/FFmpeg/FFmpeg.git
+        mirror-urls:
+          - https://git.ffmpeg.org/ffmpeg.git
+        commit: b08d7969c550a804a59511c7b83f2dd8cc0499b8
+        tag: n7.1
+        x-checker-data:
+          type: git
+          tag-pattern: ^n([\d.]{3,7})$
 
   - name: libass
     cleanup:
       - /include
-      - /lib/*.la
       - /lib/pkgconfig
     config-opts:
       - --disable-static
+      - --enable-asm
+      - --enable-harfbuzz
+      - --enable-fontconfig
     sources:
-      - type: archive
-        url: https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.xz
-        sha256: f0da0bbfba476c16ae3e1cfd862256d30915911f7abaa1b16ce62ee653192784
+      - type: git
+        url: https://github.com/libass/libass.git
+        tag: 0.17.3
+        commit: e46aedea0a0d17da4c4ef49d84b94a7994664ab5
+        x-checker-data:
+          type: git
+          tag-pattern: ^(\d\.\d{1,3}\.\d{1,2})$
 
   - name: uchardet
     buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_STATIC=0
     cleanup:
       - /bin
       - /include
       - /lib/pkgconfig
       - /share/man
-    config-opts:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DBUILD_STATIC=0
     sources:
       - type: archive
         url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
         sha256: e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
+        x-checker-data:
+          type: html
+          url: https://www.freedesktop.org/software/uchardet/releases/
+          version-pattern: uchardet-(\d\.\d+\.?\d*).tar.xz
+          url-template: https://www.freedesktop.org/software/uchardet/releases/uchardet-$version.tar.xz
 
   - name: libplacebo
     buildsystem: meson
@@ -148,57 +176,16 @@ modules:
       - /lib/pkgconfig
     sources:
       - type: git
-        url: https://code.videolan.org/videolan/libplacebo.git
+        url: https://github.com/haasn/libplacebo.git
         mirror-urls:
-          - https://github.com/haasn/libplacebo.git
-        tag: v6.338.1
-        commit: 2805a0d01c029084ab36bf5d0e3c8742012a0b27
-    modules:
-      - name: shaderc
-        buildsystem: cmake-ninja
-        builddir: true
-        config-opts:
-          - -DSHADERC_SKIP_COPYRIGHT_CHECK=ON
-          - -DSHADERC_SKIP_EXAMPLES=ON
-          - -DSHADERC_SKIP_TESTS=ON
-          - -DSPIRV_SKIP_EXECUTABLES=ON
-          - -DENABLE_GLSLANG_BINARIES=OFF
-        cleanup:
-          - /bin
-          - /include
-          - /lib/cmake
-          - /lib/pkgconfig
-        sources:
-          - type: git
-            url: https://github.com/google/shaderc.git
-            tag: v2023.7
-            commit: 3882b16417077aa8eaa7b5775920e7ba4b8a224d
-          - type: git
-            url: https://github.com/KhronosGroup/SPIRV-Tools.git
-            tag: v2023.2
-            commit: 44d72a9b36702f093dd20815561a56778b2d181e
-            dest: third_party/spirv-tools
-          - type: git
-            url: https://github.com/KhronosGroup/SPIRV-Headers.git
-            tag: sdk-1.3.250.1
-            commit: 268a061764ee69f09a477a695bf6a11ffe311b8d
-            dest: third_party/spirv-headers
-          - type: git
-            url: https://github.com/KhronosGroup/glslang.git
-            tag: 13.1.1
-            commit: 36d08c0d940cf307a23928299ef52c7970d8cee6
-            dest: third_party/glslang
+          - https://code.videolan.org/videolan/libplacebo.git
+        tag: v7.349.0
+        commit: 1fd3c7bde7b943fe8985c893310b5269a09b46c5
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
 
   - name: libmpv
-    cleanup:
-      - /include
-      - /lib/pkgconfig
-      - /share/man
-      - /share/bash-completion
-      - /share/zsh
-      - /share/doc
-      - /share/icons
-      - /share/applications
     buildsystem: meson
     config-opts:
       - -Dlibmpv=true
@@ -207,18 +194,26 @@ modules:
       - -Dbuild-date=false
       - -Dalsa=disabled
       - -Dmanpage-build=disabled
+      - -Dvulkan=enabled
+    cleanup:
+      - /include
+      - /lib/pkgconfig
     sources:
-      - type: archive
-        url: https://github.com/mpv-player/mpv/archive/v0.37.0.tar.gz
-        sha256: 1d2d4adbaf048a2fa6ee134575032c4b2dad9a7efafd5b3e69b88db935afaddf
+      - type: git
+        url: https://github.com/mpv-player/mpv.git
+        tag: v0.39.0
+        commit: a0fba7be57f3822d967b04f0f6b6d6341e7516e7
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
 
   - name: python
     sources:
       - type: archive
-        url: https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tar.xz
-        sha256: 795c34f44df45a0e9b9710c8c71c15c671871524cd412ca14def212e8ccb155d
+        url: https://www.python.org/ftp/python/3.12.7/Python-3.12.7.tar.xz
+        sha256: 24887b92e2afd4a2ac602419ad4b596372f67ac9b077190f459aba390faf5550
 
-  # https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.2/krb5
+  # https://github.com/flathub/io.qt.qtwebengine.BaseApp/tree/branch/6.7/krb5
   - name: krb5
     subdir: src
     cleanup:
@@ -237,57 +232,51 @@ modules:
       - type: file
         path: build-aux/linux/krb5.conf
       - type: archive
-        url: https://kerberos.org/dist/krb5/1.20/krb5-1.20.1.tar.gz
-        sha256: 704aed49b19eb5a7178b34b2873620ec299db08752d6a8574f95d41879ab8851
+        url: https://kerberos.org/dist/krb5/1.21/krb5-1.21.2.tar.gz
+        sha256: 9560941a9d843c0243a71b17a7ac6fe31c7cebb5bce3983db79e52ae7e850491
 
   - name: python3-inject
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "inject>=5.2.0" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "inject>=5.2.1" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/62/1f/73a1064babd1f50be9b740a2ac5bf355fd6be2b914d68455268209f78829/inject-5.2.0-py2.py3-none-any.whl
-        sha256: 0eaed0083c180b1dd3dba169dfa2b7b077fc0d65f454b4cbed1866243cc231a0
+        url: https://files.pythonhosted.org/packages/e9/db/3250e21ff08b3466e1ce8d0b2b09edcd6af7672f709d8625e142e824eb0b/inject-5.2.1-py2.py3-none-any.whl
+        sha256: e40a5b1bebd8a4050b6f98f3396f3de6e9e2e411ad2a2145f16f351cb6f54e51
   - name: python3-jinja2
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "Jinja2>=3.1.3" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "Jinja2>=3.1.4" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/30/6d/6de6be2d02603ab56e72997708809e8a5b0fbfee080735109b40a3564843/Jinja2-3.1.3-py3-none-any.whl
-        sha256: 7d6d50dd97d52cbc355597bd845fabfbac3f551e1f99619e39a35ce8c370b5fa
+        url: https://files.pythonhosted.org/packages/31/80/3a54838c3fb461f6fec263ebf3a3a41771bd05190238de3486aae8540c36/jinja2-3.1.4-py3-none-any.whl
+        sha256: bc5dd2abb727a5319567b7a813e6a2e7318c39f4f487cfe6c89c6f9c7d25197d
       - type: file
-        url: https://files.pythonhosted.org/packages/0a/0d/2454f072fae3b5a137c119abf15465d1771319dfe9e4acbb31722a0fff91/MarkupSafe-2.1.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-        sha256: f5dfb42c4604dddc8e4305050aa6deb084540643ed5804d7455b5df8fe16f5e5
+        url: https://files.pythonhosted.org/packages/f3/f0/89e7aadfb3749d0f52234a0c8c7867877876e0a20b60e2188e9850794c17/MarkupSafe-3.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+        sha256: e17c96c14e19278594aa4841ec148115f9c7615a47382ecb6b82bd8fea3ab0c8
   - name: python3-PySide6
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "PySide6>=6.6.0" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "PySide6-Essentials>=6.7.3" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/14/cd/f8117f92430564af4cb60bc38d93de8dcb1d051c955cf0a62e6563fe7f55/PySide6-6.6.0-cp38-abi3-manylinux_2_28_x86_64.whl
-        sha256: d487eab0f9bfc5c9141b474093e16207ff48cd9335e6465a01deb8dff0693fbc
+        url: https://files.pythonhosted.org/packages/b2/e9/5c0c67de510da7818703d01123f7998cc495e99c0e6979a6ed6eb2ee09d0/shiboken6-6.7.3-cp39-abi3-manylinux_2_28_x86_64.whl
+        sha256: f0852e5781de78be5b13c140ec4c7fb9734e2aaf2986eb2d6a224363e03efccc
       - type: file
-        url: https://files.pythonhosted.org/packages/6b/eb/72572b8db7713305b6a15ea7aa04bd7240cd9d84c33cc790218532fc0f43/shiboken6-6.6.0-cp38-abi3-manylinux_2_28_x86_64.whl
-        sha256: 456b89fb4b323e0c5002d92e4d346b48bb4e709db801208df8a0d6b4f5efc33d
-      - type: file
-        url: https://files.pythonhosted.org/packages/e2/f0/09e8e38a51f705eecda1202cb51a9fcc7affb0f9fd3be44bf58ce25528dc/PySide6_Essentials-6.6.0-cp38-abi3-manylinux_2_28_x86_64.whl
-        sha256: 60284641619f964e1cb4d53cf3169d7a385e0378b74edb75610918d2aea1c4e5
-      - type: file
-        url: https://files.pythonhosted.org/packages/d9/37/94576a9a1c4070652d508e277642e896693d49d83fc329949c13de19cef5/PySide6_Addons-6.6.0-cp38-abi3-manylinux_2_28_x86_64.whl
-        sha256: 5c56e963b841aeaacbc9ca8ca34df45308818dbd6fc59faa2b5a00a299e9892b
+        url: https://files.pythonhosted.org/packages/8d/d8/a08ca6eca6839be5d604e4035ce899f9d6df0f612191f4ed4d03e51f1e0e/PySide6_Essentials-6.7.3-cp39-abi3-manylinux_2_28_x86_64.whl
+        sha256: cda6fd26aead48f32e57f044d18aa75dc39265b49d7957f515ce7ac3989e7029
   - name: python3-mpv
     buildsystem: simple
     build-commands:
       - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
-        --prefix=${FLATPAK_DEST} "mpv>=1.0.5" --no-build-isolation
+        --prefix=${FLATPAK_DEST} "mpv>=1.0.7" --no-build-isolation
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/10/2d/691b5c80a5faa756856740e2bcd17b4b3a07cf11fa8daf07b9952d411251/mpv-1.0.5-py3-none-any.whl
-        sha256: 52f3c804bd8aa18b941d220b2d8a3484a1406bd9aeae003e277671c6ad054b38
+        url: https://files.pythonhosted.org/packages/aa/3f/d835556e34804cd0078507ed0f8a550f15d2861b875656193dd3451b720b/mpv-1.0.7-py3-none-any.whl
+        sha256: 520fb134c18185b69c7fce4aa3514f14371028022d92eb193818e9fefb1e9fe8
 
   - name: mpvQC
     buildsystem: simple
