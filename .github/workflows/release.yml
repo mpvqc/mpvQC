@@ -111,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: build/release
-          name: release-build-artifact
+          name: release-build-win
 
   test_qml:
     runs-on: ubuntu-latest
@@ -161,7 +161,7 @@ jobs:
       - name: 'Download Build Artifact'
         uses: actions/download-artifact@v4
         with:
-          name: release-build-artifact
+          name: release-build-win
           path: .
       - name: 'Setup Build Environment'
         run: |
@@ -252,7 +252,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: build/release
-          name: release-build-artifact
+          name: release-build-win
       - name: 'Prepare Flatpak Build'
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
