@@ -9,7 +9,7 @@ defaults:
     shell: bash
 
 jobs:
-  build_python:
+  build_python_win:
     runs-on: windows-latest
     name: 'Build'
     outputs:
@@ -142,7 +142,7 @@ jobs:
     runs-on: windows-latest
     name: 'Build Windows'
     needs:
-      - build_python
+      - build_python_win
       - test_qml
     steps:
       - name: 'Checkout Repository'
@@ -232,36 +232,5 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ needs.build_python.outputs.version }}-win-x86_64"
+          name: "${{ needs.build_python_win.outputs.version }}-win-x86_64"
           path: "deployment/main.dist"
-
-  build_linux:
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
-      options: --privileged
-    name: 'Build Linux'
-    if: github.ref_name == 'skip until we seriously want to build a release'
-    needs:
-      - build_python
-      - test_qml
-    steps:
-      - name: 'Checkout Repository'
-        uses: actions/checkout@v4
-      - name: 'Download Build Artifact'
-        uses: actions/download-artifact@v4
-        with:
-          path: build/release
-          name: release-build-win
-      - name: 'Prepare Flatpak Build'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute mv build-aux/linux/com.github.mpvqc.mpvQC.yml com.github.mpvqc.mpvQC.yml
-      - name: 'Build Flatpak'
-        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
-        with:
-          manifest-path: com.github.mpvqc.mpvQC.yml
-          bundle: ${{ needs.build_python.outputs.version }}-linux.flatpak
-          branch: main
-          cache-key: flatpak-builder-${{ github.sha }}
