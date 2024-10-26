@@ -1,54 +1,75 @@
-name: 'Pipeline'
+name: Pipeline
 
 on:
   push:
-    branches: [ '**' ]
+    branches:
+      - '**'
+    tags:
+      - '*'
 
 defaults:
   run:
     shell: bash
 
+env:
+  LIBMPV_URL: https://sourceforge.net/projects/mpv-player-windows/files/libmpv/mpv-dev-x86_64-20240811-git-4e50da3.7z
+  LIBMPV_SHA1: 37e1172f74cb7a3e443197fd1f7ad757ec164be6
+
 jobs:
-  build_python:
-    runs-on: windows-latest
-    name: 'Build'
+  matrix-build:
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.os }})
     outputs:
-      version: ${{ steps.step_version.outputs.version }}
+      artifact_app_name: ${{ steps.build_step.outputs.artifact_app_name }}
     steps:
-      - name: 'Checkout Repository'
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: 'Remove Qml Test Files'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
-          execute find . -type f -name 'tst_*' -delete
-      - name: 'Install Python 3.12'
+      - name: Install Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: 'Install just'
+      - name: Install just
         uses: taiki-e/install-action@just
-      - name: 'Download libmpv'
+      - name: Run Build
+        id: build_step
         run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          set -euo pipefail
 
-          ARTIFACT="mpv-dev-x86_64-20240811-git-4e50da3.7z"
-          SHA1="37e1172f74cb7a3e443197fd1f7ad757ec164be6"
-          URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
-
-          execute curl -L -O "$URL"
-          echo -e "\033[0;34mecho -n $SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
-          echo -n "$SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
-          execute sha1sum --check "$ARTIFACT.sha1"
-          execute 7z x "$ARTIFACT"
-      - name: 'Set Build Information'
-        id: step_version
-        run: |
           function debug() { echo -e "\033[0;35m$*\033[0m"; }
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
+
+          echo "::group::Download libmpv"
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            execute sudo apt install -y libmpv2 patchelf libopengl0
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            ARTIFACT="$(basename "$LIBMPV_URL")"
+
+            execute curl -L -O "$LIBMPV_URL"
+            echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
+            echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
+            execute sha1sum --check "$ARTIFACT.sha1"
+            execute 7z x "$ARTIFACT"
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+
+          echo "::group::Remove Qml Test Files"
+          execute find . -type f -name 'tst_*' -delete
+          echo "::endgroup::"
+
+
+          echo "::group::Set Build Information"
           PLACEHOLDER_TAG=">>>tag<<<"
           PLACEHOLDER_COMMIT=">>>commit-id<<<"
 
@@ -61,7 +82,7 @@ jobs:
 
           ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
           debug "artifact name: $ARTIFACT_NAME"
-          echo "version=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+          echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
           execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "mpvqc/startup.py"
           execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "mpvqc/startup.py"
@@ -70,68 +91,69 @@ jobs:
           execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qml/dialogs/about/MpvqcAboutView.qml"
           execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qml/dialogs/about/MpvqcAboutView.qml"
           execute cat "qml/dialogs/about/MpvqcAboutView.qml"
-      - name: 'Setup Virtual Environment'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          echo "::endgroup::"
 
+
+          echo "::group::Setup Virtual Environment"
           execute python -m venv venv
-          execute source venv/Scripts/activate
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            execute source venv/bin/activate
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            execute source venv/Scripts/activate
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
           execute python -m pip install --upgrade pip
           execute just install-dependencies
-      - name: 'Set Dependency Versions'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          echo "::endgroup::"
 
+
+          echo "::group::Set Dependency Versions"
           DEPENDENCY_MODEL_PATH='qml/models/MpvqcLibraryModel.qml'
-
-          execute python -m venv venv
-          execute source venv/Scripts/activate
           execute python build-aux/generate-dependency-versions.py \
             --pyproject-file pyproject.toml \
             --optional-group dev \
             insert \
             --update-inplace "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
-      - name: 'Run Python Build'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          echo "::endgroup::"
 
-          execute source venv/Scripts/activate
+
+          echo "::group::Lint Python"
+          execute just lint-python
+          echo "::endgroup::"
+
+
+          echo "::group::Run Python Build"
           execute just test-python
           execute just clean
           execute just build
-      - name: 'Lint Python Files'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          echo "::endgroup::"
 
-          execute source venv/Scripts/activate
-          execute just lint-python
-        continue-on-error: true
-      - name: 'Upload Build Artifact'
+
+          RELEASE_NAME="release-build-${RUNNER_OS@L}"
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          debug "Uploading build/release as $RELEASE_NAME"
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           path: build/release
-          name: release-build-artifact
+          name: ${{ steps.build_step.outputs.release_name }}
 
   test_qml:
     runs-on: ubuntu-latest
-    name: 'Test Qml'
+    name: Test Qml
     steps:
-      - name: 'Checkout Repository'
+      - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: 'Install Qt 6.7.2'
+      - name: Install Qt 6.7.3
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.2'
-      - name: 'Install just'
+          version: 6.7.3
+      - name: Install just
         uses: taiki-e/install-action@just
-#      - name: 'Lint Qml Files'
-#        run: |
-#          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-#
-#          execute just lint-qml
-#        continue-on-error: true
-      - name: 'Execute Qml Tests'
+      - name: Execute Qml Tests
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
@@ -140,30 +162,30 @@ jobs:
 
   build_windows:
     runs-on: windows-latest
-    name: 'Build Windows'
+    name: Build Windows
     needs:
-      - build_python
+      - matrix-build
       - test_qml
     steps:
-      - name: 'Checkout Repository'
+      - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: 'Install Python 3.12'
+      - name: Install Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: 'Install just'
+      - name: Install just
         uses: taiki-e/install-action@just
-      - name: 'Remove Python sources'
+      - name: Remove Python sources
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
+
           execute rm -rf mpvqc main.py
-      - name: 'Download Build Artifact'
+      - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: release-build-artifact
+          name: release-build-windows
           path: .
-      - name: 'Setup Build Environment'
+      - name: Setup Build Environment
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
@@ -172,12 +194,12 @@ jobs:
           execute python -m pip install --upgrade pip
           execute just install-dependencies
           execute python -m pip install nuitka
-      - name: 'Build Bundle'
+      - name: Build Bundle
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute source venv/Scripts/activate
-          
+
           execute python.exe -m nuitka main.py \
             --assume-yes-for-downloads \
             --standalone \
@@ -187,7 +209,7 @@ jobs:
             --include-data-files=LICENSE=LICENSE \
             --include-data-files=venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
             --windows-console-mode=attach \
-            --windows-icon-from-ico=build-aux/windows/icon.ico \
+            --windows-icon-from-ico=build-aux/icon.ico \
             --include-qt-plugins=all \
             --include-qt-plugins=qml \
             --noinclude-qt-plugins=designer \
@@ -205,12 +227,12 @@ jobs:
             --noinclude-dlls=Qt6WebEngine* \
             --noinclude-data-files=PySide6/QtWidgets.pyd \
             --output-filename=mpvQC.exe
-      - name: 'Remove Redundant Binaries'
+      - name: Remove Redundant Binaries
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute find deployment/main.dist -type f -name 'QtWidgets.pyd' -delete
-      - name: 'Package libmpv'
+      - name: Package libmpv
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
@@ -224,44 +246,13 @@ jobs:
           execute sha1sum --check "$ARTIFACT.sha1"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
-      - name: 'Make Application Portable'
+      - name: Make Application Portable
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute touch deployment/main.dist/portable
-      - name: 'Upload Artifact'
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ needs.build_python.outputs.version }}-win-x86_64"
-          path: "deployment/main.dist"
-
-  build_linux:
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
-      options: --privileged
-    name: 'Build Linux'
-    if: github.ref_name == 'skip until we seriously want to build a release'
-    needs:
-      - build_python
-      - test_qml
-    steps:
-      - name: 'Checkout Repository'
-        uses: actions/checkout@v4
-      - name: 'Download Build Artifact'
-        uses: actions/download-artifact@v4
-        with:
-          path: build/release
-          name: release-build-artifact
-      - name: 'Prepare Flatpak Build'
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute mv build-aux/linux/com.github.mpvqc.mpvQC.yml com.github.mpvqc.mpvQC.yml
-      - name: 'Build Flatpak'
-        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
-        with:
-          manifest-path: com.github.mpvqc.mpvQC.yml
-          bundle: ${{ needs.build_python.outputs.version }}-linux.flatpak
-          branch: main
-          cache-key: flatpak-builder-${{ github.sha }}
+          name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
+          path: deployment/main.dist

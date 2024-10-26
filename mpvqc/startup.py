@@ -22,10 +22,13 @@ class StartUp:
     @staticmethod
     def configure_qt_application_data():
         from PySide6.QtCore import QCoreApplication
+        from PySide6.QtQuickControls2 import QQuickStyle
 
         QCoreApplication.setApplicationName("mpvQC")
         QCoreApplication.setOrganizationName("mpvQC")
         QCoreApplication.setApplicationVersion(">>>tag<<<")
+
+        QQuickStyle.setStyle("Material")
 
     @staticmethod
     def configure_qt_settings():
@@ -51,9 +54,7 @@ class StartUp:
     def configure_environment_variables():
         import os
 
-        # Qt expects 'qtquickcontrols2.conf' at root level, but the way we handle resources does not allow that.
-        # So we need to override the path here
-        os.environ["QT_QUICK_CONTROLS_CONF"] = ":/data/qtquickcontrols2.conf"
+        os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
 
         # Requirement for mpv
         os.environ["LC_NUMERIC"] = "C"

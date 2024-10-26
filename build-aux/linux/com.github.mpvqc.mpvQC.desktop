@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=mpvQC
-Icon=com.github.mpvqc.mpvQC
-Exec=mpvQC
-Terminal=false
-Type=Application
-Categories=GTK;AudioVideo;Video;
-StartupNotify=true

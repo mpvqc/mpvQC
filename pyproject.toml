@@ -13,7 +13,7 @@ dependencies = [
 ]
 classifiers = [
     "Development Status :: 3 - Alpha", # 3 - Alpha, 4 - Beta, 5 - Production/Stable
-    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "License :: OSI Approved :: GNU General Public License v3",
     "Programming Language :: Python :: 3.12",
     "Private :: Do Not Upload"
 ]
