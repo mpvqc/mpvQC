@@ -207,7 +207,7 @@ jobs:
             --include-data-files=LICENSE=LICENSE \
             --include-data-files=venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
             --windows-console-mode=attach \
-            --windows-icon-from-ico=build-aux/windows/icon.ico \
+            --windows-icon-from-ico=build-aux/icon.ico \
             --include-qt-plugins=all \
             --include-qt-plugins=qml \
             --noinclude-qt-plugins=designer \
