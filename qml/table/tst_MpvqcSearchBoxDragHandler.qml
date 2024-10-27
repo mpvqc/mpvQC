@@ -58,7 +58,6 @@ TestCase {
                     commentTable: _commentTable
                     searchBox: _searchBox
                     topBottomMargin: testCase.topBottomMargin
-                    handleTransition: { /* Disable animation */ }
                 }
             }
         }
@@ -76,13 +75,15 @@ TestCase {
         const control = create()
 
         const yBefore = control.searchBox.y
-        mouseDrag(control.searchBox, 0, 0, 0, 50)
+        mouseDrag(control.searchBox, 0, 0, 0, -50)
         const yAfter = control.searchBox.y
-        verify(yBefore < yAfter)
+        verify(yBefore > yAfter)
     }
 
     function test_canNotDragAboveMarginTop() {
         const control = create()
+
+        mouseDrag(control.searchBox, 0, 0, 0, -1000)
 
         const yBefore = control.searchBox.y
         mouseDrag(control.searchBox, 0, 0, 0, -500)

@@ -26,7 +26,6 @@ Popup {
     id: root
 
     required property var searchFunc
-    required property int tableHeight
     required property int tableWidth
     required property bool applicationIsFullscreen
     required property var mpvqcDefaultTextValidatorPyObject
@@ -50,7 +49,6 @@ Popup {
     width: 450
 
     x: mirrored ? customMarginVertical : root.tableWidth - width - customMarginVertical
-    y: customMarginTop
     z: 1
 
     padding: 5
@@ -84,10 +82,6 @@ Popup {
         if (root.applicationIsFullscreen) {
             _hideSearchBoxWithoutAnimation()
         }
-    }
-
-    onClosed: {
-        y = customMarginTop
     }
 
     RowLayout {

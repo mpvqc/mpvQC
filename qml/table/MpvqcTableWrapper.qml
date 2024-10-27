@@ -60,7 +60,6 @@ FocusScope {
                 topBottomMargin: _mpvqcSearchBox.customMarginTop
             }
 
-            tableHeight: _mpvqcTable.height
             tableWidth: _mpvqcTable.width
             applicationIsFullscreen: root.mpvqcApplication.fullscreen
             mpvqcDefaultTextValidatorPyObject: root.mpvqcApplication.mpvqcDefaultTextValidatorPyObject
