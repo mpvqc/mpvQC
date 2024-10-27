@@ -27,9 +27,6 @@ DragHandler {
     required property var searchBox
     required property int topBottomMargin
 
-    readonly property int minimalY: topBottomMargin
-    readonly property int maximalY: commentTable.height - searchBox.height - topBottomMargin
-
     readonly property var dragStartAnimation: NumberAnimation
     {
         target: searchBox
@@ -48,7 +45,44 @@ DragHandler {
         duration: 75
     }
 
-    property var handleTransition: transition => {
+    readonly property var _currentYBinding: Binding
+    {
+        when: root.searchBox.visible
+        target: root.searchBox
+        property: "y"
+        value: currentY
+    }
+
+    readonly property int minimalY: topBottomMargin
+    readonly property int maximalY: commentTable.height - searchBox.height - topBottomMargin
+
+    property int currentY: maximalY
+    property int transistionStartedY: -1
+    property bool stickToBottom: true
+
+    function recalculateCurrentY(newPosition: int) {
+        if (!root.active && stickToBottom) {
+            currentY = maximalY
+            return
+        }
+
+        if (newPosition >= maximalY) {
+            currentY = maximalY
+            stickToBottom = true
+            return;
+        }
+
+        if (newPosition >= minimalY) {
+            currentY = newPosition
+            stickToBottom = newPosition >= maximalY - 15
+            return;
+        }
+
+        currentY = topBottomMargin
+        stickToBottom = false
+    }
+
+    function handleTransition(transition) {
         switch (transition) {
             case PointerDevice.GrabExclusive:
                 dragStartAnimation.start()
@@ -63,21 +97,20 @@ DragHandler {
     xAxis.enabled: false
     dragThreshold: 0
 
-    onMaximalYChanged: {
-        const tableHeight = root.commentTable.height
-        if (tableHeight <= 0) return
-        const maximalSearchBoxY = root.searchBox.y + root.searchBox.height + minimalY
-        if (tableHeight > 0 && tableHeight < maximalSearchBoxY) {
-            searchBox.y = maximalY
-        }
-    }
     onGrabChanged: transition => root.handleTransition(transition)
 
-    yAxis.onActiveValueChanged: delta => {
-        const newPosition = searchBox.y + delta
-        if (newPosition >= minimalY && newPosition <= maximalY) {
-            searchBox.y = newPosition
-        }
+    onActiveChanged: {
+        transistionStartedY = active ? searchBox.y : -1
+    }
+
+    onMaximalYChanged: {
+        if (maximalY <= 0) return
+        root.recalculateCurrentY(root.currentY)
+    }
+
+    yAxis.onActiveValueChanged: {
+        const possiblePosition = transistionStartedY + yAxis.activeValue
+        root.recalculateCurrentY(possiblePosition)
     }
 
 }
