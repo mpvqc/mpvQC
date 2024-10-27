@@ -37,7 +37,6 @@ MpvqcMenu {
     property alias repeater: _repeater
 
     modal: true
-    dim: false
     parent: mpvqcApplication.contentItem
     z: 2
     exit: null

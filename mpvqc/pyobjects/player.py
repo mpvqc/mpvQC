@@ -66,3 +66,7 @@ class MpvqcMpvPlayerPyObject(QObject):
     @Slot()
     def release_mouse_left(self) -> None:
         self._player.release_mouse_left()
+
+    @Slot()
+    def terminate(self) -> None:
+        self._player.terminate()

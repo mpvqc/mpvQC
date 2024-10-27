@@ -34,7 +34,6 @@ FocusScope {
     readonly property alias mpvqcCommentTable: _table.publicInterface
     readonly property alias playerContainer: _playerContainer
     readonly property alias tableContainer: _tableContainer
-    readonly property alias playerArea: _player
 
     readonly property int tableContainerHeight: _tableContainer.height
     readonly property int tableContainerWidth: _tableContainer.width
@@ -47,7 +46,7 @@ FocusScope {
         State {
             name: "fullscreen"
             ParentChange {
-                target: _player
+                target: _playerLoader
                 parent: root
             }
             PropertyChanges {
@@ -59,7 +58,7 @@ FocusScope {
         State {
             name: "normal"
             ParentChange {
-                target: _player
+                target: _playerLoader
                 parent: _playerContainer
             }
             PropertyChanges {
@@ -90,24 +89,43 @@ FocusScope {
             id: _playerContainer
 
             SplitView.minimumHeight: 200
-            SplitView.minimumWidth: 400
+            SplitView.minimumWidth: 500
 
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            MpvqcPlayer {
-                id: _player
+            Component {
+                id: _linuxPlayer
 
-                mpvqcApplication: root.mpvqcApplication
-                anchors.fill: parent // qmllint disable unqualified
+                MpvqcPlayerLinux {
+                    mpvqcApplication: root.mpvqcApplication
+                    anchors.fill: parent
+                }
             }
+
+            Component {
+                id: _windowsPlayer
+
+                MpvqcPlayerWindows {
+                    mpvqcApplication: root.mpvqcApplication
+                    anchors.fill: parent // qmllint disable unqualified
+                }
+            }
+
+            Loader {
+                id: _playerLoader
+                anchors.fill: parent
+
+                sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
+            }
+
         }
 
         Column {
             id: _tableContainer
 
             SplitView.minimumHeight: 200
-            SplitView.minimumWidth: 400
+            SplitView.minimumWidth: 500
 
             function setPreferredSizes(width: int, height: int): void {
                 SplitView.preferredWidth = width;

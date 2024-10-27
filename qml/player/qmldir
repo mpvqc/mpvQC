@@ -1,3 +1,4 @@
 module player
 
-MpvqcPlayer MpvqcPlayer.qml
+MpvqcPlayerLinux MpvqcPlayerLinux.qml
+MpvqcPlayerWindows MpvqcPlayerWindows.qml

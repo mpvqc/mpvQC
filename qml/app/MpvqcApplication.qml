@@ -35,7 +35,6 @@ ApplicationWindow {
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property var mpvqcCommentTable: _content.mpvqcCommentTable
-    readonly property alias playerArea: _content.playerArea
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
