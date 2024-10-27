@@ -33,11 +33,13 @@ Dialog {
 
     default property alias content: _stack.children
 
+    popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     anchors.centerIn: parent
     parent: mpvqcApplication.contentItem
     contentWidth: 370
     contentHeight: 450
     modal: true
+    dim: false
     z: 2
     closePolicy: Popup.CloseOnEscape
     standardButtons: Dialog.Ok

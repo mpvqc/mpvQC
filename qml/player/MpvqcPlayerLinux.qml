@@ -30,16 +30,6 @@ MpvqcMpvFrameBufferObjectPyObject {
 
     readonly property var mpvqcNewCommentMenu: mpvqcApplication.mpvqcNewCommentMenu
 
-    property point globalCoordinate: Qt.point(0, 0)
-
-    onWidthChanged: {
-        globalCoordinate = root.mapToItem(mpvqcApplication.contentItem, x, y)
-    }
-
-    onHeightChanged: {
-        globalCoordinate = root.mapToItem(mpvqcApplication.contentItem, x, y)
-    }
-
     MpvqcPlayerMouseArea {
         mpvqcApplication: root.mpvqcApplication
         anchors.fill: root

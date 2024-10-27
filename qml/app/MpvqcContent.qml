@@ -32,7 +32,6 @@ FocusScope {
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
-    readonly property alias playerArea: _contentSplitView.playerArea
 
     MpvqcResizeToOriginalResolutionHandler {
         id: _videoResizer
