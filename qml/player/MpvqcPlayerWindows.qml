@@ -23,21 +23,18 @@ import pyobjects
 import shared
 
 
-MpvqcMpvFrameBufferObjectPyObject {
+WindowContainer {
     id: root
+
+    window: MpvWindowPyObject {
+        flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput
+        color: "black"
+    }
 
     required property var mpvqcApplication
 
-    readonly property var mpvqcNewCommentMenu: mpvqcApplication.mpvqcNewCommentMenu
-
-    property point globalCoordinate: Qt.point(0, 0)
-
-    onWidthChanged: {
-        globalCoordinate = root.mapToItem(mpvqcApplication.contentItem, x, y)
-    }
-
-    onHeightChanged: {
-        globalCoordinate = root.mapToItem(mpvqcApplication.contentItem, x, y)
+    property var menu: MpvqcNewCommentMenu {
+        mpvqcApplication: root.mpvqcApplication
     }
 
     MpvqcPlayerMouseArea {
@@ -45,7 +42,7 @@ MpvqcMpvFrameBufferObjectPyObject {
         anchors.fill: root
 
         onRightMouseButtonPressed: {
-            root.mpvqcNewCommentMenu.popupMenu()
+            root.menu.popupMenu()
         }
     }
 
