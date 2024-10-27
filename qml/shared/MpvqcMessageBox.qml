@@ -27,6 +27,7 @@ Dialog {
 
     property alias text: _content.text
 
+    popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     width: 420
     z: 2
     parent: mpvqcApplication.contentItem
