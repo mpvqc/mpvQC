@@ -236,13 +236,11 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          ARTIFACT="mpv-dev-x86_64-20240811-git-4e50da3.7z"
-          SHA1="37e1172f74cb7a3e443197fd1f7ad757ec164be6"
-          URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
+          ARTIFACT="$(basename "$LIBMPV_URL")"
 
-          execute curl -L -O "$URL"
-          echo -e "\033[0;34mecho -n $SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
-          echo -n "$SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
+          execute curl -L -O "$LIBMPV_URL"
+          echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
+          echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
           execute sha1sum --check "$ARTIFACT.sha1"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
