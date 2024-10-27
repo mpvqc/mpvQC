@@ -73,8 +73,19 @@ ApplicationWindow {
                 }
             }
 
+            function forceRerender() {
+                appWindow.height += 1; appWindow.width += 1
+                appWindow.height -= 1; appWindow.width -= 1
+                appWindow.x += 1; appWindow.y += 1
+                appWindow.x -= 1; appWindow.y -= 1
+            }
+
             onVisibilityChanged: {
                 root.visibility = appWindow.visibility
+
+                if (appWindow.visibility !== Window.FullScreen) {
+                    appWindow.forceRerender()
+                }
             }
         }
     }
