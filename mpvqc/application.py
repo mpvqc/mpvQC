@@ -19,7 +19,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QLibraryInfo, QLocale, QObject, QTranslator, QUrl, Signal
+from PySide6.QtCore import QLibraryInfo, QLocale, QTranslator, QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -82,10 +82,7 @@ class MpvqcApplication(QGuiApplication):
         self.setLayoutDirection(locale.textDirection())
 
     def start_engine(self):
-        if sys.platform == "win32":
-            url = QUrl.fromLocalFile(":/qt/qml/MainWindows.qml")
-        else:
-            url = QUrl.fromLocalFile(":/qt/qml/Main.qml")
+        url = QUrl.fromLocalFile(":/qt/qml/Main.qml")
         self._engine.load(url)
 
     def notify_ready(self):
@@ -115,9 +112,6 @@ class MpvqcApplication(QGuiApplication):
             hwnd_top_lvl = self.topLevelWindows()[0].winId()
             extend_frame_into_client_area(hwnd_top_lvl)
             configure_gwl_style(hwnd_top_lvl)
-
-            hwnd_controls = self.find_object(QObject, "mpvqcControlsWindow").winId()
-            configure_gwl_style(hwnd_controls)
 
         if sys.platform == "win32":
             init_windows_window_event_filter()
