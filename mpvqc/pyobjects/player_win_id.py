@@ -43,7 +43,3 @@ class MpvWindowPyObject(QQuickWindow):
     def _on_application_ready(self):
         player_properties = QCoreApplication.instance().find_object(QObject, "mpvqcPlayerProperties")
         player_properties.init()
-
-    def close(self):
-        self._player.terminate()
-        return super().close()

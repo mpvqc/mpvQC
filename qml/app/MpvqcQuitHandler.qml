@@ -29,6 +29,9 @@ Item {
     required property var mpvqcApplication
     required property bool canClose
 
+    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+
     property bool userConfirmedClose: false
 
     property var quitDialog: null
@@ -54,6 +57,14 @@ Item {
 
     function _close() {
         userConfirmedClose = true;
+        _workaroundNativeWindowInterfering()
         mpvqcApplication.close();
     }
+
+    function _workaroundNativeWindowInterfering() {
+        if (Qt.platform.os === "windows" && mpvqcManager.saved) {
+            mpvqcMpvPlayerPyObject.terminate()
+        }
+    }
+
 }
