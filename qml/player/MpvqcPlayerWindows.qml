@@ -44,6 +44,10 @@ WindowContainer {
         onRightMouseButtonPressed: {
             root.menu.popupMenu()
         }
+
+        onPressed: {
+            root.mpvqcApplication.requestActivate()
+        }
     }
 
 }
