@@ -34,6 +34,7 @@ Dialog {
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: parent
+    dim: false
 
     contentItem: Label {
         id: _content

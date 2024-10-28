@@ -39,6 +39,7 @@ Dialog {
     contentWidth: 370
     contentHeight: 450
     modal: true
+    dim: false
     z: 2
     closePolicy: Popup.CloseOnEscape
     standardButtons: Dialog.Ok

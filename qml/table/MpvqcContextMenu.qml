@@ -33,7 +33,6 @@ MpvqcMenu {
     signal editCommentClicked(index: int)
 
     modal: true
-    dim: false
 
     onAboutToShow: {
         if (root.mMirrored) {

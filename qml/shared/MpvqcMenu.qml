@@ -27,6 +27,7 @@ Menu {
     z: 2
     x: mMirrored ? -width + parent.width : 0
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
+    dim: false
 
     width: {
         // Adapted from: https://martin.rpdev.net/2018/03/13/qt-quick-controls-2-automatically-set-the-width-of-menus.html
