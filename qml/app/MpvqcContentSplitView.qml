@@ -89,7 +89,7 @@ FocusScope {
             id: _playerContainer
 
             SplitView.minimumHeight: 200
-            SplitView.minimumWidth: 400
+            SplitView.minimumWidth: 500
 
             SplitView.fillHeight: true
             SplitView.fillWidth: true
@@ -125,7 +125,7 @@ FocusScope {
             id: _tableContainer
 
             SplitView.minimumHeight: 200
-            SplitView.minimumWidth: 400
+            SplitView.minimumWidth: 500
 
             function setPreferredSizes(width: int, height: int): void {
                 SplitView.preferredWidth = width;
