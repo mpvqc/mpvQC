@@ -38,6 +38,11 @@ class MpvqcApplication(QGuiApplication):
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
 
+        if sys.platform == "win32":
+            from mpvqc.framelesswindow.win import WindowsEventFilter
+
+            self.event_filter = WindowsEventFilter()
+
     @cache
     def find_object(self, object_type, name: str):
         root = self._engine.rootObjects()
@@ -94,10 +99,7 @@ class MpvqcApplication(QGuiApplication):
         """"""
 
         def init_windows_window_event_filter():
-            from mpvqc.framelesswindow.win import WindowsEventFilter
-
-            self._event_filter = WindowsEventFilter()
-            self.installNativeEventFilter(self._event_filter)
+            self.installNativeEventFilter(self.event_filter)
 
         def init_linux_window_event_filter():
             from mpvqc.framelesswindow.linux import LinuxEventFilter

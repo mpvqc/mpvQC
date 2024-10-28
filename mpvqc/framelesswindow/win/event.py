@@ -117,12 +117,19 @@ def handle_erase_background(hwnd) -> tuple[bool, int]:
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     """"""
 
+    def __init__(self):
+        super().__init__()
+        self._ignore_events = set()
+
+    def ignore_native_events_for(self, hwnd):
+        self._ignore_events.add(hwnd)
+
     def nativeEventFilter(self, _, message):
         msg = ctypes.wintypes.MSG.from_address(message.__int__())
 
         hwnd = msg.hWnd
 
-        if not hwnd:
+        if not hwnd or hwnd in self._ignore_events:
             return False, 0
 
         l_param = msg.lParam

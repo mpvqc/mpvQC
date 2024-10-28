@@ -26,6 +26,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
+# noinspection PyUnresolvedReferences
 @QmlElement
 class MpvWindowPyObject(QQuickWindow):
     _player: PlayerService = inject.attr(PlayerService)
@@ -33,7 +34,11 @@ class MpvWindowPyObject(QQuickWindow):
     def __init__(self):
         super().__init__()
         self._player.init(win_id=self.winId())
-        QCoreApplication.instance().application_ready.connect(lambda: self._on_application_ready())
+        q_app = QCoreApplication.instance()
+
+        q_app.application_ready.connect(lambda: self._on_application_ready())
+
+        q_app.event_filter.ignore_native_events_for(self.winId())
 
     def _on_application_ready(self):
         player_properties = QCoreApplication.instance().find_object(QObject, "mpvqcPlayerProperties")
