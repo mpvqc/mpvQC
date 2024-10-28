@@ -38,43 +38,25 @@ TestCase {
         MpvqcDialogEditInput {
 
             mpvqcApplication: QtObject {
-                property var mpvqcMpvFiles: QtObject {
-                    property var editInputInterface: QtObject {
-                        property string fileContent: 'initial'
-                    }
-                }
-                property var mpvqcResourcePyObject: QtObject {
-                    function get_input_conf_content() { return 'default' }
+                property var mpvqcPlayerFilesPyObject: QtObject {
+                    property string default_input_conf_content: "default"
+                    property url input_conf_url: ""
                 }
             }
         }
     }
 
-    function test_initial() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        compare(control.editView.textArea.text, 'initial')
-    }
-
     function test_edit_accept() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
+        let acceptCalled = false
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            "editView.accept": () => { acceptCalled = true }
+        })
         verify(control)
 
         control.editView.textArea.text = 'changed by user'
         control.accepted()
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'changed by user')
-    }
-
-    function test_edit_cancel() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        control.editView.textArea.text = 'changed by user'
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
-
-        control.rejected()
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
+        verify(acceptCalled)
     }
 
     function test_edit_reset() {
@@ -82,18 +64,9 @@ TestCase {
         verify(control)
 
         control.editView.textArea.text = 'changed by user'
-        compare(control.editView.textArea.text, 'changed by user')
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
-        control.reset()
-        compare(control.editView.textArea.text, 'default')
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
 
-        control.editView.textArea.text = 'changed by user again'
-        compare(control.editView.textArea.text, 'changed by user again')
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
         control.reset()
         compare(control.editView.textArea.text, 'default')
-        compare(control.mpvqcApplication.mpvqcMpvFiles.editInputInterface.fileContent, 'initial')
     }
 
 }

@@ -21,13 +21,12 @@ from .comment_model import MpvqcCommentModelPyObject
 from .comment_type_validator import MpvqcCommentTypeValidatorPyObject
 from .export_template_model import MpvqcExportTemplateModelPyObject
 from .extended_document_exporter import MpvqcExtendedDocumentExporterPyObject
-from .file_interface import MpvqcFileInterfacePyObject
 from .manager import MpvqcManagerPyObject
 from .player import MpvqcMpvPlayerPyObject
+from .player_files import MpvqcPlayerFilesPyObject
 from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .player_win_id import MpvWindowPyObject
-from .resource import MpvqcResourcePyObject
 from .text_validator import MpvqcDefaultTextValidatorPyObject
 from .utility import MpvqcUtilityPyObject
 from .version_checker import MpvqcVersionCheckerPyObject

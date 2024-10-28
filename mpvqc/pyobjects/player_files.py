@@ -16,23 +16,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QObject, Slot
+from PySide6.QtCore import Property, QObject, QUrl
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ResourceService
+from mpvqc.services import ApplicationPathsService, ResourceService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcResourcePyObject(QObject):
-    _resources = inject.attr(ResourceService)
+class MpvqcPlayerFilesPyObject(QObject):
+    _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _resources: ResourceService = inject.attr(ResourceService)
 
-    @Slot(result=str or None)
-    def get_input_conf_content(self) -> str:
+    @Property(QUrl, constant=True, final=True)
+    def input_conf_url(self) -> QUrl:
+        return self._type_mapper.map_path_to_url(self._paths.file_input_conf)
+
+    @Property(QUrl, constant=True, final=True)
+    def mpv_conf_url(self) -> QUrl:
+        return self._type_mapper.map_path_to_url(self._paths.file_mpv_conf)
+
+    @Property(str)
+    def default_input_conf_content(self) -> str:
         return self._resources.input_conf_content
 
-    @Slot(result=str or None)
-    def get_mpv_conf_content(self) -> str:
+    @Property(str)
+    def default_mpv_conf_content(self) -> str:
         return self._resources.mpv_conf_content

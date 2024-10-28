@@ -218,7 +218,7 @@ TestCase {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
                     waitForRendering(control, shortTime)
-                    mouseClick(control, columnMenuMore / 2, row2)
+                    mouseClick(control, columnMenuMore / 2, row2 - 25)
                 }
             },
             {
@@ -243,7 +243,7 @@ TestCase {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
                     waitForRendering(control, shortTime)
-                    mouseClick(control, columnMenuMore / 2, row3)
+                    mouseClick(control, columnMenuMore / 2, row3 - 20)
                 }
             },
             {
@@ -271,7 +271,7 @@ TestCase {
                 tag: 'via-context-menu', exec: (control) => {
                     mouseClick(control, columnMenuMore / 2, row1, Qt.RightButton)
                     waitForRendering(control, shortTime)
-                    mouseClick(control, columnMenuMore / 2, row4)
+                    mouseClick(control, columnMenuMore / 2, row3)
                 }
             },
             {tag: 'via-shortcut-backspace', exec: (control) => keyPress(Qt.Key_Backspace)},

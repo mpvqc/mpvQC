@@ -26,9 +26,17 @@ ColumnLayout {
     id: root
 
     required property var mpvqcApplication
-    required property string fileContent
 
-    property alias textArea: _textArea
+    readonly property alias textArea: _textArea
+    readonly property var mpvqcPlayerFilesPyObject: mpvqcApplication.mpvqcPlayerFilesPyObject
+
+    property var accept: () => {
+        _textArea.textDocument.save()
+    }
+
+    property var reset: () => {
+        _textArea.text = mpvqcPlayerFilesPyObject.default_input_conf_content
+    }
 
     Label {
         id: label
@@ -84,11 +92,12 @@ ColumnLayout {
         TextArea {
             id: _textArea
 
-            text: root.fileContent
             background: null
             leftPadding: _scrollView.mirrored ? 22 : 0
             font.family: 'Noto Sans Mono'
             font.pointSize: 11
+
+            textDocument.source: mpvqcPlayerFilesPyObject.input_conf_url
         }
     }
 
