@@ -112,7 +112,7 @@ ListModel {
         category: qsTranslate("ShortcutsDialog", "Comments")
         label: qsTranslate("ShortcutsDialog", "Delete Comment")
         button1Icon: "qrc:/data/icons/keyboard_backspace_black_24dp.svg"
-        isAndConnection: false
+        isSeparateShortcut: true
         button2: qsTranslate("KeyboardKeys", "Delete")
     }
 
