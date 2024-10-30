@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-
 RowLayout {
     id: root
 
@@ -38,19 +37,23 @@ RowLayout {
 
     property bool isAndConnection: true
 
-    readonly property int buttonWidths: 230
-    readonly property int labelWidth: 210
-    readonly property int minimumCombinedWidth: spacing + buttonWidths + labelWidth
+    property int rightMargin: 0
 
-    spacing: 20
+
+    Label {
+        id: _description
+
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignLeft
+    }
+
+    Rectangle {
+        color: "transparent"
+        Layout.fillWidth: true
+    }
 
     RowLayout {
         spacing: 4
-
-        Rectangle {
-            color: 'transparent'
-            Layout.fillWidth: true
-        }
 
         MpvqcShortcutButton {
             id: _button1
@@ -80,19 +83,12 @@ RowLayout {
         MpvqcShortcutButton {
             id: _button3
         }
-
-        Layout.minimumWidth: root.buttonWidths
-        Layout.maximumWidth: root.buttonWidths
     }
 
-    Label {
-        id: _description
-
-        wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignLeft
-
-        Layout.minimumWidth: root.labelWidth
-        Layout.maximumWidth: root.labelWidth
+    Rectangle {
+        color: "transparent"
+        Layout.preferredWidth: root.rightMargin
     }
+
 
 }
