@@ -122,7 +122,6 @@ ColumnLayout {
             delegate: MpvqcHeader {
                 text: section
                 width: _listView.itemWidth
-                horizontalAlignment: Text.AlignLeft
             }
         }
 
