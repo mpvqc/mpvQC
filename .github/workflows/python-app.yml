@@ -28,8 +28,6 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute sudo apt update -y 
-          execute sudo apt upgrade -y
           execute sudo apt install -y libmpv1 qttools5-dev-tools
       - name: 'Setup Virtual Environment'
         run: |
@@ -120,8 +118,8 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
           
-          ARTIFACT="mpv-dev-x86_64-20240421-git-b364e4a.7z"
-          SHA1="1bd96112aecc4b17ad003c9d3fd3909d362d4ac3"
+          ARTIFACT="mpv-dev-x86_64-20241027-git-fbf8695.7z"
+          SHA1="62d5facf23864c1b938bd3a3e55be5d1fa3ff56f"
           URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/$ARTIFACT"
           
           execute curl -L -O "$URL"

@@ -17,21 +17,21 @@
 #
 # You can find copies of the GPLv2 and LGPLv2.1 licenses in the project repository's LICENSE.GPL and LICENSE.LGPL files.
 
-__version__ = '1.0.6'
+__version__ = '1.0.7'
 
-from ctypes import *
-import ctypes.util
-import threading
-import queue
-import os
-import sys
-from warnings import warn
-from functools import partial, wraps
-from contextlib import contextmanager
-from concurrent.futures import Future, InvalidStateError
 import collections
+import ctypes.util
+import os
+import queue
 import re
+import sys
+import threading
 import traceback
+from concurrent.futures import Future, InvalidStateError
+from contextlib import contextmanager
+from ctypes import *
+from functools import partial, wraps
+from warnings import warn
 
 if os.name == 'nt':
     # Note: mpv-2.dll with API version 2 corresponds to mpv v0.35.0. Most things should work with the fallback, too.
@@ -1011,7 +1011,7 @@ class MPV(object):
                         with self._enqueue_exceptions():
                             cb(EventOverflowError(
                                 'libmpv event queue has flown over because events have not been processed fast enough'),
-                               None)
+                                None)
 
                 if eid == MpvEventID.SHUTDOWN:
                     _mpv_destroy(self._event_handle)
@@ -1097,31 +1097,38 @@ class MPV(object):
                 rv = cond(val)
                 if rv:
                     result.set_result(rv)
-            except Exception as e:
-                try:
-                    result.set_exception(e)
-                except InvalidStateError:
-                    pass
+
             except InvalidStateError:
                 pass
 
-        self.observe_property(name, observer)
-        err_unregister = self._set_error_handler(result)
+            except Exception as e:
+                try:
+                    result.set_exception(e)
+                except:
+                    pass
 
         try:
             result.set_running_or_notify_cancel()
+
+            self.observe_property(name, observer)
+            err_unregister = self._set_error_handler(result)
             if catch_errors:
                 self._exception_futures.add(result)
 
             yield result
 
-            rv = cond(getattr(self, name.replace('-', '_')))
-            if level_sensitive and rv:
-                result.set_result(rv)
+            if level_sensitive:
+                rv = cond(getattr(self, name.replace('-', '_')))
+                if rv:
+                    result.set_result(rv)
+                    return
 
-            else:
-                self.check_core_alive()
-                result.result(timeout)
+            self.check_core_alive()
+            result.result(timeout)
+
+        except InvalidStateError:
+            pass
+
         finally:
             err_unregister()
             self.unobserve_property(name, observer)
@@ -1902,7 +1909,6 @@ class MPV(object):
                     else:
                         warnings.warn(
                             f'Unhandled exception {e} inside stream open callback for URI {uri}\n{traceback.format_exc()}')
-
                     return ErrorCode.LOADING_FAILED
 
                 cb_info.contents.cookie = None

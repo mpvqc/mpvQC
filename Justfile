@@ -16,10 +16,8 @@
 PYTHON_DIR := invocation_directory() + '/' + if os_family() == 'windows' { 'venv/Scripts' } else { 'venv/bin' }
 PYTHON := PYTHON_DIR + if os_family() == 'windows' { '/python.exe' } else { '/python3' }
 
-# https://github.com/linuxdeepin/deepin-system-monitor/issues/22
-
 TOOL_CLI_LUPDATE := PYTHON_DIR + '/pyside6-lupdate'
-TOOL_CLI_LRELEASE := 'lrelease'
+TOOL_CLI_LRELEASE := PYTHON_DIR + '/pyside6-lrelease'
 TOOL_CLI_RCC := PYTHON_DIR + '/pyrcc5'
 
 
@@ -74,7 +72,11 @@ FILE_BUILD_RESOURCES := DIRECTORY_BUILD_RESOURCES + '/' + NAME_FILE_GENERATED_RE
 
 FILE_PY_SOURCES_RESOURCES := DIRECTORY_PY_SOURCES + '/' + NAME_FILE_GENERATED_RESOURCES
 
+_default:
+    @just --list
 
+# Build full project into build/release
+[group('build')]
 build: _clean-build _clean-develop _compile-resources
     @rm -rf \
         {{DIRECTORY_BUILD_PY}}
@@ -92,6 +94,8 @@ build: _clean-build _clean-develop _compile-resources
     @echo ''; \
         echo 'Please find the finished project in {{DIRECTORY_BUILD_RELEASE}}'
 
+# Build and compile resources into source directory
+[group('build')]
 build-develop: _clean-develop _compile-resources
 	@# Generates resources and copies them into the source directory
 	@# This allows to develop/debug the project normally
@@ -99,6 +103,24 @@ build-develop: _clean-develop _compile-resources
 	@cp \
 		{{FILE_BUILD_RESOURCES}} {{DIRECTORY_PY_SOURCES}}
 
+# Remove ALL generated files
+[group('build')]
+clean: _clean-build _clean-develop
+
+# Add new language
+[group('i18n')]
+add-translation locale: _prepare-translation-extractions
+    @cd {{DIRECTORY_BUILD_TRANSLATIONS}}; \
+        {{TOOL_CLI_LUPDATE}} \
+            -verbose \
+            -source-language en_US \
+            -target-language {{locale}} \
+            -ts {{DIRECTORY_I18N}}/{{locale}}.ts
+    @echo ''
+    @just update-translations
+
+# Add new language
+[group('i18n')]
 update-translations: _prepare-translation-extractions
 	@# Traverses *.qml and *.py files to update translation files
 	@# Requires translations in .py:   QCoreApplication.translate("context", "string")
@@ -110,18 +132,6 @@ update-translations: _prepare-translation-extractions
 	@cp -r \
 		{{DIRECTORY_BUILD_TRANSLATIONS}}/{{NAME_DIRECTORY_I18N}}/*.ts \
 		{{DIRECTORY_I18N}}
-
-add-translation locale: _prepare-translation-extractions
-    @cd {{DIRECTORY_BUILD_TRANSLATIONS}}; \
-        {{TOOL_CLI_LUPDATE}} \
-            -verbose \
-            -source-language en_US \
-            -target-language {{locale}} \
-            -ts {{DIRECTORY_I18N}}/{{locale}}.ts
-    @echo ''
-    @just update-translations
-
-clean: _clean-build _clean-develop
 
 _clean-build:
 	@rm -rf \
