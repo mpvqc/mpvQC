@@ -25,7 +25,7 @@ import QtQml.Models
 DelegateModel {
     id: delegateModel
 
-    property var filterAcceptsItem: function(item) { return true; }
+    property var filterAcceptsItem: item => true
 
     function update() {
         if (items.count > 0) {
@@ -57,4 +57,8 @@ DelegateModel {
     }
 
     filterOnGroup: "visible"
+
+    Component.onCompleted: {
+        _filterModel.update()
+    }
 }

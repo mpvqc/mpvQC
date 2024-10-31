@@ -27,20 +27,19 @@ import shared
 ColumnLayout {
     id: root
 
-
     spacing: 0
 
     TextField {
         id: _textField
 
+        Layout.fillWidth: true
+        Layout.topMargin: 10
+        Layout.bottomMargin: 20
+
         focus: true
         selectByMouse: true
         placeholderText: "Search"
         horizontalAlignment: Text.AlignLeft
-
-        Layout.fillWidth: true
-        Layout.topMargin: 10
-        Layout.bottomMargin: 20
 
         onTextChanged: {
             _listView.filterQuery = _textField.text.trim().toLowerCase()
@@ -57,14 +56,18 @@ ColumnLayout {
         readonly property int scrollBarSpaceRight2Left: LayoutMirroring.enabled ? scrollBarSpace : 0
 
         readonly property int itemWidth: {
-            if (_listView.count > 0) {
-                const item = _listView.itemAtIndex(0)
-                if (item) return item.width
+            if (count > 0) {
+                const item = itemAtIndex(0)
+                if (item)
+                    return item.width
             }
             return 0
         }
 
         property string filterQuery: ""
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         width: parent.width
         height: parent.height
@@ -72,21 +75,34 @@ ColumnLayout {
         clip: true
         boundsBehavior: Flickable.StopAtBounds
 
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        model: _filterModel
+
+        ScrollBar.vertical: ScrollBar {
+            id: _scrollBar
+
+            readonly property bool isShown: _listView.contentHeight > _listView.height
+            readonly property int visibleWidth: isShown ? width : 0
+
+            policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
 
         onFilterQueryChanged: {
             _filterModel.update()
         }
 
-        Component.onCompleted: {
-            _filterModel.update()
+        section {
+            property: "category"
+
+            delegate: MpvqcHeader {
+                text: section
+                width: _listView.itemWidth
+            }
         }
 
         MpvqcShortcutFilterModel {
             id: _filterModel
 
-            filterAcceptsItem: function (item) {
+            filterAcceptsItem: item => {
                 if (!_listView.filterQuery) {
                     return true
                 }
@@ -95,8 +111,7 @@ ColumnLayout {
                 return label.includes(_listView.filterQuery)
             }
 
-            model: MpvqcShortcutModel {
-            }
+            model: MpvqcShortcutModel {}
 
             delegate: MpvqcShortcut {
                 label: model.label
@@ -113,27 +128,6 @@ ColumnLayout {
                 rightMargin: _listView.scrollBarSpaceRight2Left
             }
         }
-
-        model: _filterModel
-
-        section {
-            property: "category"
-
-            delegate: MpvqcHeader {
-                text: section
-                width: _listView.itemWidth
-            }
-        }
-
-        ScrollBar.vertical: ScrollBar {
-            id: _scrollBar
-
-            readonly property bool isShown: _listView.contentHeight > _listView.height
-            readonly property int visibleWidth: isShown ? width : 0
-
-            policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-        }
     }
-
 
 }
