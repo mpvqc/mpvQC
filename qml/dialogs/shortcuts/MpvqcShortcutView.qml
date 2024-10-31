@@ -55,16 +55,8 @@ ColumnLayout {
         readonly property int scrollBarSpaceLeft2Right: LayoutMirroring.enabled ? 0 : scrollBarSpace
         readonly property int scrollBarSpaceRight2Left: LayoutMirroring.enabled ? scrollBarSpace : 0
 
-        readonly property int itemWidth: {
-            if (count > 0) {
-                const item = itemAtIndex(0)
-                if (item)
-                    return item.width
-            }
-            return 0
-        }
-
         property string filterQuery: ""
+        property int itemWidth: -1
 
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -84,6 +76,12 @@ ColumnLayout {
             readonly property int visibleWidth: isShown ? width : 0
 
             policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
+
+        onCountChanged: {
+            if (itemWidth < 0 && count > 0) {
+                itemWidth = itemAtIndex(0).width
+            }
         }
 
         onFilterQueryChanged: {
