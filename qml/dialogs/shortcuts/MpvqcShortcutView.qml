@@ -103,12 +103,28 @@ ColumnLayout {
             id: _filterModel
 
             filterAcceptsItem: item => {
-                if (!_listView.filterQuery) {
+                const query = _listView.filterQuery
+                if (!query) {
                     return true
                 }
 
-                const label = item.label.toLowerCase()
-                return label.includes(_listView.filterQuery)
+                if (item.label.toLowerCase().includes(query)) {
+                    return true
+                }
+
+                if (item.category.toLowerCase().includes(query)) {
+                    return true
+                }
+
+                const buttons = [item.button1, item.button2, item.button3]
+                    .filter(Boolean)
+                    .map(text => text.toLowerCase())
+
+                if (item.isSeparateShortcut) {
+                    return buttons.some(text => text.includes(query))
+                }
+
+                return buttons.join("+").includes(query)
             }
 
             model: MpvqcShortcutModel {}
