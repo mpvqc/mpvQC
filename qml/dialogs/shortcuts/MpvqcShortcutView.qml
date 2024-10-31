@@ -24,267 +24,124 @@ import QtQuick.Layouts
 import shared
 
 
-ScrollView {
+ColumnLayout {
     id: root
 
-    required property bool singleColumn
+    spacing: 0
 
-    readonly property string keyCtrl: qsTranslate("KeyboardKeys", "Ctrl")
-    readonly property string keyShift: qsTranslate("KeyboardKeys", "Shift")
-    readonly property string keyAlt: qsTranslate("KeyboardKeys", "Alt")
+    TextField {
+        id: _textField
 
-    Binding on contentHeight {
-        when: !root.singleColumn
-        value: root.availableHeight
+        Layout.fillWidth: true
+        Layout.topMargin: 10
+        Layout.bottomMargin: 20
+
+        focus: true
+        selectByMouse: true
+        placeholderText: "Search"
+        horizontalAlignment: Text.AlignLeft
+
+        onTextChanged: {
+            _listView.filterQuery = _textField.text.trim().toLowerCase()
+        }
+
     }
 
-    Binding on contentWidth {
-        when: root.singleColumn
-        value: root.availableWidth
-    }
+    ListView {
+        id: _listView
 
-    ScrollBar.horizontal {
-        id: hScrollBar
-        stepSize: 1/15
-        policy: root.contentWidth > width ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-        position: root.mirrored ? 1.0 - ScrollBar.horizontal.size : 0
-    }
+        readonly property int spaceBetweenItemAndScrollbar: 4
+        readonly property int scrollBarSpace: _scrollBar.width + spaceBetweenItemAndScrollbar
+        readonly property int scrollBarSpaceLeft2Right: LayoutMirroring.enabled ? 0 : scrollBarSpace
+        readonly property int scrollBarSpaceRight2Left: LayoutMirroring.enabled ? scrollBarSpace : 0
 
-    WheelHandler {
-        enabled: !root.singleColumn
+        property string filterQuery: ""
+        property int itemWidth: -1
 
-        onWheel: event => {
-            if (event.angleDelta.y > 0) {
-                hScrollBar.decrease()
-            } else {
-                hScrollBar.increase()
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        width: parent.width
+        height: parent.height
+        spacing: 10
+        clip: true
+        boundsBehavior: Flickable.StopAtBounds
+
+        model: _filterModel
+
+        ScrollBar.vertical: ScrollBar {
+            id: _scrollBar
+
+            readonly property bool isShown: _listView.contentHeight > _listView.height
+            readonly property int visibleWidth: isShown ? width : 0
+
+            policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        }
+
+        onCountChanged: {
+            if (itemWidth < 0 && count > 0) {
+                itemWidth = itemAtIndex(0).width
+            }
+        }
+
+        onFilterQueryChanged: {
+            _filterModel.update()
+        }
+
+        section {
+            property: "category"
+
+            delegate: MpvqcHeader {
+                text: section
+                width: _listView.itemWidth
+            }
+        }
+
+        MpvqcShortcutFilterModel {
+            id: _filterModel
+
+            filterAcceptsItem: item => {
+                const query = _listView.filterQuery
+                if (!query) {
+                    return true
+                }
+
+                if (item.label.toLowerCase().includes(query)) {
+                    return true
+                }
+
+                if (item.category.toLowerCase().includes(query)) {
+                    return true
+                }
+
+                const buttons = [item.button1, item.button2, item.button3]
+                    .filter(Boolean)
+                    .map(text => text.toLowerCase())
+
+                if (item.isSeparateShortcut) {
+                    return buttons.some(text => text.includes(query))
+                }
+
+                return buttons.join("+").includes(query)
+            }
+
+            model: MpvqcShortcutModel {}
+
+            delegate: MpvqcShortcut {
+                label: model.label
+                button1: model.button1
+                button1Icon: model.button1Icon
+                button2: model.button2
+                button2Icon: model.button2Icon
+                button3: model.button3
+                button3Icon: model.button3Icon
+                isSeparateShortcut: model.isSeparateShortcut
+                scrollBarSpace: _listView.scrollBarSpace
+
+                width: parent ? parent.width - _listView.scrollBarSpaceLeft2Right : 0
+                rightMargin: _listView.scrollBarSpaceRight2Left
             }
         }
     }
 
-    ScrollBar.vertical {
-        policy: contentHeight > height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-    }
-
-    leftPadding: LayoutMirroring.enabled ? 22 : 0
-
-    GridLayout {
-        id: _grid
-
-        readonly property int elementHeight: Math.max(_header.height, _shortcut.height)
-        readonly property int elementWidth: Math.max(_header.width, _shortcut.width)
-
-        rows: root.contentHeight / _grid.elementHeight
-        columns: 1
-        flow: root.singleColumn ? GridLayout.LeftToRight : GridLayout.TopToBottom
-        columnSpacing: 20
-
-        MpvqcHeader {
-            id: _header
-
-            text: "mpvQC"
-            Layout.fillWidth: true
-        }
-
-        MpvqcShortcut {
-            id: _shortcut
-
-            label: qsTranslate("ShortcutsDialog", "New QC Document")
-            button1: root.keyCtrl
-            button2: "N"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Open QC Document(s)")
-            button1: root.keyCtrl
-            button3: "O"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Save QC Document")
-            button1: root.keyCtrl
-            button2: "S"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Save as new QC Document")
-            button1: root.keyCtrl
-            button2: root.keyShift
-            button3: "S"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Open Video")
-            button1: root.keyCtrl
-            button2: root.keyAlt
-            button3: "O"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Resize Video to Original Resolution")
-            button1: root.keyCtrl
-            button2: "R"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Add Comment")
-            button1: "E"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
-            button1: "?"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Open Search")
-            button1: root.keyCtrl
-            button2: "F"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Undo Previous Action")
-            button1: root.keyCtrl
-            button2: "Z"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Redo Previous Action")
-            button1: root.keyCtrl
-            button2: root.keyShift
-            button3: "Z"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Quit")
-            button1: root.keyCtrl
-            button2: "Q"
-        }
-
-        MpvqcHeader {
-            text: qsTranslate("ShortcutsDialog", "Comments")
-            Layout.fillWidth: true
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Edit Comment")
-            button1Icon: "qrc:/data/icons/keyboard_return_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Copy Comment to Clipboard")
-            button1: root.keyCtrl
-            button2: "C"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Delete Comment")
-            button1Icon: "qrc:/data/icons/keyboard_backspace_black_24dp.svg"
-            isAndConnection: false
-            button2: qsTranslate("KeyboardKeys", "Delete")
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Previous Comment")
-            button1Icon: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Next Comment")
-            button1Icon: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
-        }
-
-        MpvqcHeader {
-            text: qsTranslate("ShortcutsDialog", "Video")
-            Layout.fillWidth: true
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Toggle Fullscreen")
-            button1: "F"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Toggle Play/Pause")
-            button1Icon: "qrc:/data/icons/space_bar_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Seek Backward by 2 Seconds")
-            button1Icon: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Seek Forward by 2 Seconds")
-            button1Icon: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Seek Backward by 5 Seconds to Keyframe")
-            button1: root.keyShift
-            button2Icon: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Seek Forward by 5 Seconds to Keyframe")
-            button1: root.keyShift
-            button2Icon: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Decrease Volume")
-            button1: "9"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Increase Volume")
-            button1: "0"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Toggle Mute")
-            button1: "M"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Frame Step Backward")
-            button1: ","
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Frame Step Forward")
-            button1: "."
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Cycle Through Subtitle Tracks")
-            button1: "J"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Cycle Through Audio Tracks")
-            button1: "#"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Video Screenshot (Unscaled)")
-            button1: "S"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Video Screenshot (Scaled)")
-            button1: root.keyShift
-            button2: "S"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Cycle Through Subtitle Render Modes")
-            button1: "B"
-        }
-
-        MpvqcShortcut {
-            label: qsTranslate("ShortcutsDialog", "Toggle Video Statistics")
-            button1: "I"
-        }
-    }
 }

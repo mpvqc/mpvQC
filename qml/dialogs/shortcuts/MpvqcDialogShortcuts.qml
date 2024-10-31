@@ -26,35 +26,10 @@ import shared
 MpvqcDialog {
     id: root
 
-    readonly property int singleColumn: mpvqcApplication.width < 1080
-
-    contentWidth: singleColumn ? 490 : 950
+    contentWidth: 500
     contentHeight: Math.min(1080, mpvqcApplication.height * 0.75)
 
-    /*
-     * For some reason property binding didn't do the job,
-     * so we force the engine to recreate the component when the window becomes small enough.
-     */
-
-    readonly property var largeLayoutView: Component
-    {
-        MpvqcShortcutView {
-            singleColumn: false
-        }
-    }
-
-    readonly property var smallLayoutView: Component
-    {
-        MpvqcShortcutView {
-            singleColumn: true
-        }
-    }
-
-    Loader {
-        id: _loader
-
+    MpvqcShortcutView {
         property string title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
-
-        sourceComponent: root.singleColumn ? root.smallLayoutView : root.largeLayoutView
     }
 }

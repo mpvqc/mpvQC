@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-
 RowLayout {
     id: root
 
@@ -36,28 +35,35 @@ RowLayout {
     property alias button3: _button3.text
     property alias button3Icon: _button3.icon.source
 
-    property bool isAndConnection: true
+    property bool isSeparateShortcut: false
+    property int rightMargin: 0
+    property int scrollBarSpace: 0
 
-    readonly property int buttonWidths: 230
-    readonly property int labelWidth: 210
-    readonly property int minimumCombinedWidth: spacing + buttonWidths + labelWidth
+    Label {
+        id: _description
 
-    spacing: 20
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignLeft
+
+        Layout.maximumWidth: root.width - _buttons.width - root.scrollBarSpace
+    }
+
+    Rectangle {
+        color: "transparent"
+        Layout.fillWidth: true
+    }
 
     RowLayout {
-        spacing: 4
+        id: _buttons
 
-        Rectangle {
-            color: 'transparent'
-            Layout.fillWidth: true
-        }
+        spacing: 4
 
         MpvqcShortcutButton {
             id: _button1
         }
 
         Label {
-            text: root.isAndConnection ? '+' : '/'
+            text: root.isSeparateShortcut ? '/' : '+'
             height: _button2.hasContent ? parent.height : 0
             width: _button2.hasContent ? implicitWidth : 0
             visible: _button2.hasContent
@@ -80,19 +86,12 @@ RowLayout {
         MpvqcShortcutButton {
             id: _button3
         }
-
-        Layout.minimumWidth: root.buttonWidths
-        Layout.maximumWidth: root.buttonWidths
     }
 
-    Label {
-        id: _description
-
-        wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignLeft
-
-        Layout.minimumWidth: root.labelWidth
-        Layout.maximumWidth: root.labelWidth
+    Rectangle {
+        color: "transparent"
+        Layout.preferredWidth: root.rightMargin
     }
+
 
 }
