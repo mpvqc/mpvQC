@@ -107,6 +107,7 @@ ColumnLayout {
                 button3: model.button3
                 button3Icon: model.button3Icon
                 isSeparateShortcut: model.isSeparateShortcut
+                scrollBarSpace: _listView.scrollBarSpace
 
                 width: parent ? parent.width - _listView.scrollBarSpaceLeft2Right : 0
                 rightMargin: _listView.scrollBarSpaceRight2Left

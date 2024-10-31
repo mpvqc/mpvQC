@@ -36,16 +36,16 @@ RowLayout {
     property alias button3Icon: _button3.icon.source
 
     property bool isSeparateShortcut: false
-
     property int rightMargin: 0
-
-    // todo breakup long descriptions
+    property int scrollBarSpace: 0
 
     Label {
         id: _description
 
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignLeft
+
+        Layout.maximumWidth: root.width - _buttons.width - root.scrollBarSpace
     }
 
     Rectangle {
@@ -54,6 +54,8 @@ RowLayout {
     }
 
     RowLayout {
+        id: _buttons
+
         spacing: 4
 
         MpvqcShortcutButton {
