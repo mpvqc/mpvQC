@@ -2,8 +2,8 @@
 
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
-libmpv based application for the quick and easy creation of quality control reports of video files.  
-Visit <a href="https://mpvqc.github.io">https://mpvqc.github.io</a> for downloads.
+A libmpv-based application for quick and easy creation of video file quality control reports.  
+https://mpvqc.github.io
 
 # Development Setup
 
