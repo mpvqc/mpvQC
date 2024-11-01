@@ -107,4 +107,22 @@ Item {
         splitView.setPreferredTableSize(newTableWidth, videoHeight)
     }
 
+    Connections {
+        target: root.mpvqcMpvPlayerPropertiesPyObject
+
+        property var delayVideoResize: Timer{
+            interval: 100
+
+            onTriggered: {
+                root.resizeVideo()
+            }
+        }
+
+        function onVideo_loaded_changed(loaded: bool) {
+            if (loaded) {
+                delayVideoResize.start()
+            }
+        }
+    }
+
 }
