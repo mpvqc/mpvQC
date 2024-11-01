@@ -18,7 +18,7 @@
 from typing import Any, Callable, Optional
 
 from PySide6.QtCore import QPersistentModelIndex
-from PySide6.QtGui import QStandardItemModel, QUndoCommand
+from PySide6.QtGui import QStandardItemModel, QUndoCommand, QUndoStack
 
 from mpvqc.models import Comment
 
@@ -279,3 +279,25 @@ class AddAndUpdateCommentCommand(QUndoCommand):
         self._add_comment.redo()
         if self._update_comment is not None:
             self._update_comment.redo()
+
+
+class MpvqcUndoStack(QUndoStack):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.indexChanged.connect(self.prevent_add_update_merge)
+        self._last_add_command: AddAndUpdateCommentCommand | None = None
+
+    def push(self, command: QUndoCommand):
+        match command:
+            case AddAndUpdateCommentCommand():
+                super().push(command)
+                self._last_add_command = command
+            case UpdateComment() if self._last_add_command:
+                # noinspection PyTypeChecker
+                self._last_add_command.merge_with(command)
+                self.prevent_add_update_merge()
+            case _:
+                super().push(command)
+
+    def prevent_add_update_merge(self, *_):
+        self._last_add_command = None

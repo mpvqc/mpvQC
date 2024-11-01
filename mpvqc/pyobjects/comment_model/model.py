@@ -19,7 +19,7 @@ from typing import Any
 
 import inject
 from PySide6.QtCore import Property, QModelIndex, Qt, Signal, Slot
-from PySide6.QtGui import QStandardItemModel, QUndoStack
+from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
@@ -32,6 +32,7 @@ from .undo import (
     AddComment,
     ClearComments,
     ImportComments,
+    MpvqcUndoStack,
     RemoveComment,
     UpdateComment,
     UpdateTime,
@@ -75,7 +76,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     def set_selected_row(self, index: int) -> None:
         self._selected_row = index
-        self._prevent_add_comment_and_update_comment_merge()
+        self._undo_stack.prevent_add_update_merge()
 
     selectedRowChanged = Signal(int)
     selectedRow = Property(int, get_selected_row, set_selected_row, notify=selectedRowChanged)
@@ -87,14 +88,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.setObjectName("mpvqcCommentModel")
 
         self._searcher = Searcher()
-        self._add_command: AddAndUpdateCommentCommand | None = None
-
-        self._undo_stack = QUndoStack(self)
-        self._undo_stack.indexChanged.connect(self._prevent_add_comment_and_update_comment_merge)
+        self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
-
-    def _prevent_add_comment_and_update_comment_merge(self, *_):
-        self._add_command = None
 
     def import_comments(self, comments: list[Comment]) -> None:
         if not comments:
@@ -160,9 +155,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
                 on_after_redo=on_after_redo,
             )
         )
-
         self._undo_stack.push(command)
-        self._add_command = command
 
     @Slot(int)
     def remove_row(self, row: int) -> None:
@@ -235,18 +228,15 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             self.invalidate_search()
             self.commentUpdated.emit(_row)
 
-        update_command = UpdateComment(
-            model=self,
-            row=row,
-            new_text=comment,
-            on_after_undo=on_after_undo,
-            on_after_redo=on_after_redo,
+        self._undo_stack.push(
+            UpdateComment(
+                model=self,
+                row=row,
+                new_text=comment,
+                on_after_undo=on_after_undo,
+                on_after_redo=on_after_redo,
+            )
         )
-
-        if self._add_command is not None:
-            self._add_command.merge_with(update_command)
-        else:
-            self._undo_stack.push(update_command)
 
     @Slot()
     def undo(self) -> None:
