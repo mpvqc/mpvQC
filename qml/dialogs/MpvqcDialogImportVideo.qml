@@ -27,11 +27,12 @@ FileDialog {
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     title: qsTranslate("FileInteractionDialogs", "Open Video")
     currentFolder: mpvqcSettings.lastDirectoryVideo
     nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Video files") + " (*.mp4 *.mkv *.avi)",
+        qsTranslate("FileInteractionDialogs", "Video files") + mpvqcUtilityPyObject.videoFileEndings,
         qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
     ]
 

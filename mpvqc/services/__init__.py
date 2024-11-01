@@ -25,6 +25,7 @@ from .file_startup import FileStartupService
 from .font_loader import FontLoaderService
 from .formatter_time import TimeFormatterService
 from .key_command import KeyCommandGeneratorService
+from .mimetype_provider import MimetypeProviderService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .player import PlayerService
 from .resource import ResourceService

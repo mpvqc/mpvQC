@@ -31,6 +31,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.FileStartupService, lambda: s.FileStartupService())
     binder.bind_to_constructor(s.FontLoaderService, lambda: s.FontLoaderService())
     binder.bind_to_constructor(s.KeyCommandGeneratorService, lambda: s.KeyCommandGeneratorService())
+    binder.bind_to_constructor(s.MimetypeProviderService, lambda: s.MimetypeProviderService())
     binder.bind_to_constructor(s.OperatingSystemZoomDetectorService, lambda: s.OperatingSystemZoomDetectorService())
     binder.bind_to_constructor(s.PlayerService, lambda: s.PlayerService())
     binder.bind_to_constructor(s.ResourceReaderService, lambda: s.ResourceReaderService())
