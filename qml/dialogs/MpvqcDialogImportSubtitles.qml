@@ -34,7 +34,7 @@ FileDialog {
     fileMode: FileDialog.OpenFiles
     nameFilters: [
         qsTranslate("FileInteractionDialogs", "Subtitle files") + _subtitleFormatString(),
-        qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
+        qsTranslate("FileInteractionDialogs", "All files") + " (*)",
     ]
 
     function _subtitleFormatString() {

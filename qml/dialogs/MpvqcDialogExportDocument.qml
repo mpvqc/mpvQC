@@ -26,7 +26,7 @@ FileDialog {
     defaultSuffix: 'txt'
     nameFilters: [
         qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)",
-        qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
+        qsTranslate("FileInteractionDialogs", "All files") + " (*)",
     ]
 
     signal savePressed(url fileUrl)

@@ -33,7 +33,7 @@ FileDialog {
     fileMode: FileDialog.OpenFiles
     nameFilters: [
         qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)",
-        qsTranslate("FileInteractionDialogs", "All files") + " (*.*)",
+        qsTranslate("FileInteractionDialogs", "All files") + " (*)",
     ]
 
     onAccepted: {
