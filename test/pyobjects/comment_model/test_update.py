@@ -179,3 +179,14 @@ def test_update_comment_fires_signals(model, signal_helper):
     assert signal_helper.has_logged("commentUpdated")
     assert not signal_helper.has_logged("commentUpdatedUndone")
     assert 0 == signal_helper.logged_value("commentUpdated")
+
+
+def test_update_comments_consecutively_undo_redo(make_model):
+    model, set_time = make_model(DEFAULT_COMMENTS, 999)
+    model.add_row("comment-type")
+
+    model.update_comment(row=5, comment="First")
+    model.update_comment(row=5, comment="First - Second")
+    model.undo()
+
+    assert model.item(5, 0).data(Role.COMMENT) == "First"
