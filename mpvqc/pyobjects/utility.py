@@ -22,7 +22,7 @@ from PySide6.QtCore import Property, QObject, QPoint, QUrl, Signal, Slot
 from PySide6.QtGui import QClipboard, QCursor
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ReverseTranslatorService, TimeFormatterService, TypeMapperService
+from mpvqc.services import MimetypeProviderService, ReverseTranslatorService, TimeFormatterService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -42,6 +42,7 @@ class MpvqcUtilityPyObject(QObject):
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
+    _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
 
     def __init__(self):
         super().__init__()
@@ -70,3 +71,7 @@ class MpvqcUtilityPyObject(QObject):
     @Slot(str, result=str)
     def reverseLookupCommentType(self, non_english: str) -> str:
         return self._translator.lookup(non_english)
+
+    @Property(str, constant=True, final=True)
+    def videoFileEndings(self) -> str:
+        return self._mimetype_provider.video_file_endings
