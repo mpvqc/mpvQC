@@ -21,36 +21,33 @@ import QtQuick
 import QtTest
 
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
 
-    property url currentFile: 'file:///hello.txt'
-    property var savedUrl: ''
+    readonly property url currentFile: 'file:///hello.txt'
 
-    width: 400
-    height: 400
+    name: "MpvqcDialogExportDocument2"
+    when: windowShown
 
-    MpvqcDialogExportDocument {
+    Component {
         id: objectUnderTest
 
-        onSavePressed: (fileUrl) => {
-            testHelper.savedUrl = fileUrl
+        MpvqcDialogExportDocument {
+            property url savedUrlInTest
+
+            onSavePressed: fileUrl => {
+                this.savedUrlInTest = fileUrl
+            }
         }
     }
 
-    TestCase {
-        name: "MpvqcDialogExportDocument"
-        when: windowShown
+    function test_save() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function init() {
-            testHelper.savedUrl = ''
-        }
-
-        function test_save() {
-            objectUnderTest.currentFile = testHelper.currentFile
-            objectUnderTest.accepted()
-            compare(testHelper.savedUrl, testHelper.currentFile)
-        }
+        control.currentFile = testCase.currentFile
+        control.accepted()
+        compare(control.savedUrlInTest, testCase.currentFile)
     }
 
 }
