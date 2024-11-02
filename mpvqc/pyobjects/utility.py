@@ -18,7 +18,7 @@
 from os import environ
 
 import inject
-from PySide6.QtCore import Property, QObject, QPoint, QUrl, Signal, Slot
+from PySide6.QtCore import Property, QObject, QPoint, QUrl, Slot
 from PySide6.QtGui import QClipboard, QCursor
 from PySide6.QtQml import QmlElement
 
@@ -41,6 +41,22 @@ class MpvqcUtilityPyObject(QObject):
     def __init__(self):
         super().__init__()
         self._clipboard = QClipboard()
+
+    @Property(QPoint, final=True)
+    def cursorPosition(self) -> QPoint:
+        return QCursor.pos()
+
+    @Property(str, constant=True, final=True)
+    def videoFileGlobPattern(self) -> str:
+        return self._mimetype_provider.video_file_glob_pattern
+
+    @Property(str, constant=True, final=True)
+    def subtitleFileGlobPattern(self) -> str:
+        return self._mimetype_provider.subtitle_file_glob_pattern
+
+    @Property(list, constant=True, final=True)
+    def subtitleFileExtensions(self) -> list:
+        return self._mimetype_provider.subtitle_file_extensions
 
     @Slot(str)
     def copyToClipboard(self, text: str) -> None:
@@ -65,19 +81,3 @@ class MpvqcUtilityPyObject(QObject):
     @Slot(str, result=str)
     def reverseLookupCommentType(self, non_english: str) -> str:
         return self._translator.lookup(non_english)
-
-    @Property(QPoint, final=True)
-    def cursorPosition(self) -> QPoint:
-        return QCursor.pos()
-
-    @Property(str, constant=True, final=True)
-    def videoFileGlobPattern(self) -> str:
-        return self._mimetype_provider.video_file_glob_pattern
-
-    @Property(str, constant=True, final=True)
-    def subtitleFileGlobPattern(self) -> str:
-        return self._mimetype_provider.subtitle_file_glob_pattern
-
-    @Property(list, constant=True, final=True)
-    def subtitleFileExtensions(self) -> list:
-        return self._mimetype_provider.subtitle_file_extensions
