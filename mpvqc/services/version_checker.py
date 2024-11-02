@@ -18,7 +18,7 @@
 import json
 import urllib.error
 import urllib.request
-from functools import cached_property
+from functools import cache
 from typing import Tuple
 
 from PySide6.QtCore import QCoreApplication
@@ -32,16 +32,10 @@ class VersionCheckerService:
     def _current_version(self) -> str:
         return QCoreApplication.instance().applicationVersion()
 
-    @cached_property
-    def _latest_version(self) -> str:
-        with urllib.request.urlopen(self.UPDATE_URL, timeout=5) as connection:
-            text = connection.read().decode("utf-8").strip()
-            return f"{json.loads(text)['latest']}".strip()
-
     def check_for_new_version(self) -> Tuple[str, str]:
         # fmt: off
         try:
-            latest_version = self._latest_version
+            latest_version = self._fetch_latest_version()
         except urllib.error.HTTPError as e:
             title = QCoreApplication.translate("VersionCheckDialog", "Server Error")
             text = QCoreApplication.translate("VersionCheckDialog", "The server returned error code {}.").format(e.code)
@@ -64,3 +58,9 @@ class VersionCheckerService:
         text = QCoreApplication.translate("VersionCheckDialog", "You are already using the most recent version of mpvQC!")
         return title, text
         # fmt: on
+
+    @cache
+    def _fetch_latest_version(self) -> str:
+        with urllib.request.urlopen(self.UPDATE_URL, timeout=5) as connection:
+            text = connection.read().decode("utf-8").strip()
+            return f"{json.loads(text)['latest']}".strip()
