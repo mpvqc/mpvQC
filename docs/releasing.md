@@ -7,6 +7,7 @@ This guide is intended for mpvQC developers preparing a new release.
 - Update libmpv in the CI pipeline
 - Ensure there are no Python linter issues.
 - Confirm translations are complete and up-to-date.
+  - Run `just update-translations`. There should **not** be any new translation
 - Recommended: Manually verify that a recent CI build runs on Windows.
 - Recommended: Manually verify that a recent build runs on Linux.
 
