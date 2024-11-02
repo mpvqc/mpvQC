@@ -73,5 +73,5 @@ class MpvqcUtilityPyObject(QObject):
         return self._translator.lookup(non_english)
 
     @Property(str, constant=True, final=True)
-    def videoFileEndings(self) -> str:
-        return self._mimetype_provider.video_file_endings
+    def videoFileGlobPattern(self) -> str:
+        return self._mimetype_provider.video_file_glob_pattern

@@ -22,14 +22,14 @@ from PySide6.QtCore import QMimeDatabase
 
 class MimetypeProviderService:
     @cached_property
-    def video_file_endings(self):
-        video_types = set()
-        video_types.add("*.mp4")
-        video_types.add("*.mkv")
-        video_types.add("*.avi")
+    def video_file_glob_pattern(self):
+        patterns = set()
+        patterns.add("*.avi")
+        patterns.add("*.mkv")
+        patterns.add("*.mp4")
 
         for mime_type in QMimeDatabase().allMimeTypes():
             if mime_type.name().startswith("video/"):
-                video_types.update(mime_type.globPatterns())
+                patterns.update(mime_type.globPatterns())
 
-        return f" ({" ".join(sorted(video_types))})"
+        return f" ({" ".join(sorted(patterns))})"
