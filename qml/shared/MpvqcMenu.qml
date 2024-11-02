@@ -41,7 +41,7 @@ Menu {
                 padding = Math.max(item.padding, padding);
             }
         }
-        return result + padding * 2;
+        return (result + padding * 2) * 1.03;
     }
 
     function isMenuSeparator(item: Item): bool {
