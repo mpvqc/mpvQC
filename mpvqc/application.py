@@ -23,12 +23,13 @@ from PySide6.QtCore import QLibraryInfo, QLocale, QTranslator, QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, FontLoaderService
+from mpvqc.services import FileStartupService, FontLoaderService, FramelessWindowService
 
 
 class MpvqcApplication(QGuiApplication):
     _start_up: FileStartupService = inject.attr(FileStartupService)
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
+    _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
 
     application_ready = Signal(name="applicationReady")
 
@@ -37,11 +38,6 @@ class MpvqcApplication(QGuiApplication):
         self._engine = QQmlApplicationEngine()
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
-
-        if sys.platform == "win32":
-            from mpvqc.framelesswindow.win import WindowsEventFilter
-
-            self.event_filter = WindowsEventFilter()
 
     @cache
     def find_object(self, object_type, name: str):
@@ -96,27 +92,5 @@ class MpvqcApplication(QGuiApplication):
         self.application_ready.emit()
 
     def configure_frameless_window(self):
-        """"""
-
-        def init_windows_window_event_filter():
-            self.installNativeEventFilter(self.event_filter)
-
-        def init_linux_window_event_filter():
-            from mpvqc.framelesswindow.linux import LinuxEventFilter
-
-            window = self.topLevelWindows()[0]
-            self._event_filter = LinuxEventFilter(window, app=self)
-            self.installEventFilter(self._event_filter)
-
-        def init_windows_window_effects():
-            from mpvqc.framelesswindow.win import configure_gwl_style, extend_frame_into_client_area
-
-            hwnd_top_lvl = self.topLevelWindows()[0].winId()
-            extend_frame_into_client_area(hwnd_top_lvl)
-            configure_gwl_style(hwnd_top_lvl)
-
-        if sys.platform == "win32":
-            init_windows_window_event_filter()
-            init_windows_window_effects()
-        else:
-            init_linux_window_event_filter()
+        window = self.topLevelWindows()[0]
+        self._frameless_window.configure_for(self, window)
