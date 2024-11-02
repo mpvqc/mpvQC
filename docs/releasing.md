@@ -5,6 +5,7 @@ This guide is intended for mpvQC developers preparing a new release.
 ## Pre-release Checklist
 
 - Update libmpv in the CI pipeline
+- Check if default mpv.conf and input.conf are up-to-date
 - Ensure there are no Python linter issues.
 - Confirm translations are complete and up-to-date.
   - Run `just update-translations`. There should **not** be any new translation
