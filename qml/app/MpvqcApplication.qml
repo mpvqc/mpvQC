@@ -49,13 +49,7 @@ ApplicationWindow {
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
-
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
-
-    readonly property var supportedSubtitleFileExtensions: [
-        'aqt', 'ass', 'idx', 'js', 'jss', 'mks', 'rt', 'scc', 'smi',
-        'srt', 'ssa', 'sub', 'sup', 'utf', 'utf-8', 'utf8', 'vtt'
-    ]
 
     function focusCommentTable() {
         root.mpvqcCommentTable.forceActiveFocus()

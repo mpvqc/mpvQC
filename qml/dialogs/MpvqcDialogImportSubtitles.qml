@@ -27,20 +27,15 @@ FileDialog {
 
     property var mpvqcManager: mpvqcApplication.mpvqcManager
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     title: qsTranslate("FileInteractionDialogs", "Open Subtitle(s)")
     currentFolder: mpvqcSettings.lastDirectorySubtitles
     fileMode: FileDialog.OpenFiles
     nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Subtitle files") + _subtitleFormatString(),
+        qsTranslate("FileInteractionDialogs", "Subtitle files") + mpvqcUtilityPyObject.subtitleFileGlobPattern,
         qsTranslate("FileInteractionDialogs", "All files") + " (*)",
     ]
-
-    function _subtitleFormatString() {
-        const formats = supportedSubtitleFileExtensions.map(ending => `*.${ending}`).join(' ')
-        return ` (${formats})`
-    }
 
     onAccepted: {
         mpvqcSettings.lastDirectorySubtitles = currentFolder

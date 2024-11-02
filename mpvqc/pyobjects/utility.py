@@ -75,3 +75,11 @@ class MpvqcUtilityPyObject(QObject):
     @Property(str, constant=True, final=True)
     def videoFileGlobPattern(self) -> str:
         return self._mimetype_provider.video_file_glob_pattern
+
+    @Property(str, constant=True, final=True)
+    def subtitleFileGlobPattern(self) -> str:
+        return self._mimetype_provider.subtitle_file_glob_pattern
+
+    @Property(list, constant=True, final=True)
+    def subtitleFileExtensions(self) -> list:
+        return self._mimetype_provider.subtitle_file_extensions

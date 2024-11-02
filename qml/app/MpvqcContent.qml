@@ -29,7 +29,8 @@ FocusScope {
     required property var mpvqcApplication
 
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
-    readonly property var supportedSubtitleFileExtensions: mpvqcApplication.supportedSubtitleFileExtensions
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+    readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
     readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
     readonly property alias playerArea: _contentSplitView.playerArea
