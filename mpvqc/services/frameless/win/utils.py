@@ -19,6 +19,7 @@
 import ctypes
 from ctypes import Structure, byref, c_int, sizeof, windll
 from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
+from functools import lru_cache
 
 import win32api
 import win32con
@@ -225,3 +226,11 @@ def configure_gwl_style(hwnd):
         | win32con.CS_DBLCLKS
         | win32con.WS_THICKFRAME,
     )
+
+
+@lru_cache(maxsize=32)
+def prevent_window_resize_for(hwnd):
+    style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
+    style &= ~win32con.WS_THICKFRAME
+    win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
+    return None

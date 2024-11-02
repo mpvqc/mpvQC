@@ -28,6 +28,10 @@ class FramelessWindowService:
             # Needs to bound to a class variable, else garbage collector will clean up immediately
             self._event_filter = WindowsEventFilter()
 
+    @property
+    def event_filter(self):
+        return self._event_filter
+
     def configure_for(self, app: QGuiApplication, top_lvl_window: QWindow):
         def configure_for_linux():
             from .linux import LinuxEventFilter
@@ -37,11 +41,13 @@ class FramelessWindowService:
             app.installEventFilter(self._event_filter)
 
         def configure_for_windows():
-            from .win import configure_gwl_style, extend_frame_into_client_area
+            hwnd_top_lvl = top_lvl_window.winId()
+            self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
 
             app.installNativeEventFilter(self._event_filter)
 
-            hwnd_top_lvl = top_lvl_window.winId()
+            from .win import configure_gwl_style, extend_frame_into_client_area
+
             extend_frame_into_client_area(hwnd_top_lvl)
             configure_gwl_style(hwnd_top_lvl)
 
@@ -51,9 +57,3 @@ class FramelessWindowService:
             configure_for_linux()
         else:
             raise ValueError(f"Unsupported platform: {sys.platform}")
-
-    def ignore_events_for(self, hwnd):
-        if sys.platform == "win32":
-            self._event_filter.ignore_native_events_for(hwnd)
-        else:
-            raise ValueError(f"Operation not supported on platform: {sys.platform}")

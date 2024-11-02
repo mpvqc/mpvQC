@@ -24,7 +24,14 @@ import win32api
 import win32con
 
 from .c_structures import LPNCCALCSIZE_PARAMS
-from .utils import Taskbar, get_resize_border_thickness, get_window_size, is_fullscreen, is_maximized
+from .utils import (
+    Taskbar,
+    get_resize_border_thickness,
+    get_window_size,
+    is_fullscreen,
+    is_maximized,
+    prevent_window_resize_for,
+)
 
 RESIZE_BORDER_WIDTH = 6
 
@@ -119,18 +126,30 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
 
     def __init__(self):
         super().__init__()
-        self._ignore_events = set()
+        self._top_lvl_hwnd = None
+        self._embedded_player_hwnd = None
 
-    def ignore_native_events_for(self, hwnd):
-        self._ignore_events.add(hwnd)
+    def set_top_lvl_hwnd(self, hwnd):
+        self._top_lvl_hwnd = hwnd
+
+    def set_embedded_player_hwnd(self, hwnd):
+        self._embedded_player_hwnd = hwnd
 
     def nativeEventFilter(self, _, message):
         msg = ctypes.wintypes.MSG.from_address(message.__int__())
 
         hwnd = msg.hWnd
 
-        if not hwnd or hwnd in self._ignore_events:
-            return False, 0
+        match hwnd:
+            case None:
+                return False, 0
+            case self._embedded_player_hwnd:
+                return False, 0
+            case self._top_lvl_hwnd:
+                pass
+            case _:
+                prevent_window_resize_for(hwnd)
+                return False, 0
 
         l_param = msg.lParam
         w_param = msg.wParam

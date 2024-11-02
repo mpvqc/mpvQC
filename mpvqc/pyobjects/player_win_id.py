@@ -42,4 +42,4 @@ class MpvWindowPyObject(QQuickWindow):
         player_properties = QCoreApplication.instance().find_object(QObject, "mpvqcPlayerProperties")
         player_properties.init()
 
-        self._frameless_window.ignore_events_for(hwnd=self.winId())
+        self._frameless_window.event_filter.set_embedded_player_hwnd(self.winId())
