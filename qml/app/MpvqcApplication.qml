@@ -131,15 +131,17 @@ ApplicationWindow {
 
         function _preventFromEverReachingUserDefinedCommands(event): bool {
             const key = event.key
-            const modifiers = event.modifiers
+            const noModifier = event.modifiers === Qt.NoModifier
+            const ctrlModifier = event.modifiers & Qt.ControlModifier
             return key === Qt.Key_Up
                 || key === Qt.Key_Down
-                || key === Qt.Key_Return && modifiers === Qt.NoModifier
-                || key === Qt.Key_Escape && modifiers === Qt.NoModifier
-                || key === Qt.Key_Delete && modifiers === Qt.NoModifier
-                || key === Qt.Key_Backspace && modifiers === Qt.NoModifier
-                || key === Qt.Key_F && modifiers === Qt.ControlModifier
-                || key === Qt.Key_C && modifiers === Qt.ControlModifier
+                || key === Qt.Key_Return && noModifier
+                || key === Qt.Key_Escape && noModifier
+                || key === Qt.Key_Delete && noModifier
+                || key === Qt.Key_Backspace && noModifier
+                || key === Qt.Key_F && ctrlModifier
+                || key === Qt.Key_C && ctrlModifier
+                || key === Qt.Key_Z && ctrlModifier
         }
 
     }
