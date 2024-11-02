@@ -39,10 +39,10 @@ class MpvqcPlayerFilesPyObject(QObject):
     def mpv_conf_url(self) -> QUrl:
         return self._type_mapper.map_path_to_url(self._paths.file_mpv_conf)
 
-    @Property(str)
+    @Property(str, constant=True, final=True)
     def default_input_conf_content(self) -> str:
         return self._resources.input_conf_content
 
-    @Property(str)
+    @Property(str, constant=True, final=True)
     def default_mpv_conf_content(self) -> str:
         return self._resources.mpv_conf_content

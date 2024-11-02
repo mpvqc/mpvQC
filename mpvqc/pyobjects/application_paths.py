@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import Property, QObject, QUrl, Signal
+from PySide6.QtCore import Property, QObject, QUrl
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ApplicationPathsService, TypeMapperService
@@ -30,34 +30,18 @@ class MpvqcApplicationPathsPyObject(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
-    #
-
-    def get_config_input(self) -> str:
+    @Property(str, constant=True, final=True)
+    def input_conf(self) -> str:
         return self._type_mapper.map_path_to_str(self._paths.file_input_conf)
 
-    input_conf_changed = Signal(str)
-    input_conf = Property(str, get_config_input, notify=input_conf_changed)
-
-    #
-
-    def get_config_mpv(self) -> str:
+    @Property(str, constant=True, final=True)
+    def mpv_conf(self) -> str:
         return self._type_mapper.map_path_to_str(self._paths.file_mpv_conf)
 
-    mpv_conf_changed = Signal(str)
-    mpv_conf = Property(str, get_config_mpv, notify=mpv_conf_changed)
-
-    #
-
-    def get_dir_backup(self) -> QUrl:
+    @Property(QUrl, constant=True, final=True)
+    def dir_backup(self) -> QUrl:
         return self._type_mapper.map_path_to_url(self._paths.dir_backup)
 
-    dir_backup_changed = Signal(QUrl)
-    dir_backup = Property(QUrl, get_dir_backup, notify=dir_backup_changed)
-
-    #
-
-    def get_settings(self) -> QUrl:
+    @Property(QUrl, constant=True, final=True)
+    def settings(self) -> QUrl:
         return self._type_mapper.map_path_to_url(self._paths.file_settings)
-
-    settings_changed = Signal(QUrl)
-    settings = Property(QUrl, get_settings, notify=settings_changed)
