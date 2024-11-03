@@ -26,9 +26,16 @@ MpvqcDialog {
     id: root
 
     MpvqcBackupView {
+        id: _backupView
+
         property string title: qsTranslate("BackupDialog", "Backup Settings")
 
         width: root.width
         mpvqcApplication: root.mpvqcApplication
     }
+
+    onAccepted: {
+        _backupView.accept()
+    }
+
 }

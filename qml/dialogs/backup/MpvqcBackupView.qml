@@ -37,17 +37,24 @@ ColumnLayout {
     property alias backupIntervalSpinBox: _backupInterval.spinBox
     property alias backupLocationOpenButton: _backupLocationOpenButton
 
+    property bool currentBackupEnabled: root.mpvqcSettings.backupEnabled
+    property int currentBackupInterval: root.mpvqcSettings.backupInterval
+
+    function accept() {
+        mpvqcSettings.backupEnabled = currentBackupEnabled
+        mpvqcSettings.backupInterval = currentBackupInterval
+    }
 
     MpvqcSwitchRow {
         id: _backupEnable
 
         label: qsTranslate("BackupDialog", "Backup Enabled")
         prefWidth: root.width
-        checked: root.mpvqcSettings.backupEnabled
+        checked: currentBackupEnabled
         Layout.topMargin: 20
 
-        onToggled: (state) => {
-            root.mpvqcSettings.backupEnabled = state
+        onToggled: state => {
+            root.currentBackupEnabled = state
         }
     }
 
@@ -57,12 +64,12 @@ ColumnLayout {
         label: qsTranslate("BackupDialog", "Backup Interval")
         suffix: qsTranslate("BackupDialog", "Seconds")
         prefWidth: root.width
-        value: root.mpvqcSettings.backupInterval
+        value: currentBackupInterval
         valueFrom: 15
         valueTo: 5 * 60
 
-        onValueModified: (value) => {
-            root.mpvqcSettings.backupInterval = value
+        onValueModified: value => {
+            root.currentBackupInterval = value
         }
     }
 
@@ -88,7 +95,6 @@ ColumnLayout {
             visible: _backupLocationOpenButton.hovered
             text: root.mpvqcUtilityPyObject.urlToAbsolutePath(_backupLocationOpenButton.backupDirectory)
         }
-
     }
 
 }

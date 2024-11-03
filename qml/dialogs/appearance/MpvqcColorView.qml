@@ -33,6 +33,11 @@ GridView {
     property int itemSize: 52
     property int itemPadding: 8
     property int borderSize: 12
+    property var initialColor: null
+
+    function reset(): void {
+        root.mpvqcSettings.primary = initialColor
+    }
 
     boundsBehavior: Flickable.StopAtBounds
     model: MpvqcAccentColorModel {}
@@ -66,6 +71,10 @@ GridView {
                 parent.onItemClicked()
             }
         }
+    }
+
+    Component.onCompleted: {
+        root.initialColor = root.mpvqcSettings.primary
     }
 
 }
