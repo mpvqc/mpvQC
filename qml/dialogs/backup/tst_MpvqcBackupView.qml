@@ -21,54 +21,68 @@ import QtQuick
 import QtTest
 
 
-MpvqcBackupView {
-    id: objectUnderTest
+TestCase {
+    id: testCase
 
-    mpvqcApplication: QtObject {
-        property var mpvqcSettings: QtObject {
-            property bool backupEnabled: true
-            property int backupInterval: 90
-        }
-        property var mpvqcApplicationPathsPyObject: QtObject {
-            property url dir_backup: 'file:///hello.txt'
-        }
-        property var mpvqcUtilityPyObject: QtObject {
-            function urlToAbsolutePath(url) { return `${url}-as-abs-path` }
+    name: "MpvqcBackupView"
+    when: windowShown
+    width: 400
+    height: 400
+    visible: true
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcBackupView {
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject {
+                    property bool backupEnabled: true
+                    property int backupInterval: 90
+                }
+                property var mpvqcApplicationPathsPyObject: QtObject {
+                    property url dir_backup: 'file:///hello.txt'
+                }
+                property var mpvqcUtilityPyObject: QtObject {
+                    function urlToAbsolutePath(url) {
+                        return `${ url }-as-abs-path`
+                    }
+                }
+            }
         }
     }
 
-    width: 400
-    height: 400
+    function test_value_change() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-    TestCase {
-        name: "MpvqcBackupView"
-        when: windowShown
+        verifyTemporaryValues(control)
 
-        function init() {
-            const settings = objectUnderTest.mpvqcApplication.mpvqcSettings
-            settings.backupEnabled = true
-            settings.backupInterval = 90
-        }
+        control.accept()
 
-        function test_backup_data() {
-            return [
-                {
-                     tag: 'toggle',
-                     exec: () => { objectUnderTest.backupEnabledSwitch.checked = false },
-                     verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.backupEnabled, false) },
-                },
-                {
-                     tag: 'interval',
-                     exec: () => { objectUnderTest.backupIntervalSpinBox.increase() },
-                     verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.backupInterval, 91) },
-                },
-            ]
-        }
+        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, false)
+        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 91)
 
-        function test_backup(data) {
-            data.exec()
-            data.verify()
-        }
+    }
+
+    function verifyTemporaryValues(control) {
+        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, true)
+        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 90)
+
+        control.backupEnabledSwitch.checked = false
+        compare(control.currentBackupEnabled, false)
+
+        control.backupIntervalSpinBox.increase()
+        compare(control.currentBackupInterval, 91)
+    }
+
+    function test_reset() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        verifyTemporaryValues(control)
+
+        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, true)
+        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 90)
     }
 
 }
