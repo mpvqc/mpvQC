@@ -36,19 +36,33 @@ ColumnLayout {
     property alias nicknameToggle: _nicknameToggle
     property alias pathToggle: _pathToggle
 
+    property string currentNickname: root.mpvqcSettings.nickname
+    property bool currentWriteHeaderDate: root.mpvqcSettings.writeHeaderDate
+    property bool currentWriteHeaderGenerator: root.mpvqcSettings.writeHeaderGenerator
+    property bool currentWriteHeaderNickname: root.mpvqcSettings.writeHeaderNickname
+    property bool currentWriteHeaderVideoPath: root.mpvqcSettings.writeHeaderVideoPath
+
+    function accept() {
+        root.mpvqcSettings.nickname = currentNickname
+        root.mpvqcSettings.writeHeaderDate = currentWriteHeaderDate
+        root.mpvqcSettings.writeHeaderGenerator = currentWriteHeaderGenerator
+        root.mpvqcSettings.writeHeaderNickname = currentWriteHeaderNickname
+        root.mpvqcSettings.writeHeaderVideoPath = currentWriteHeaderVideoPath
+    }
+
     MpvqcTextFieldRow {
         id: _nicknameInput
 
         label: qsTranslate("ExportSettingsDialog", "Nickname")
-        input: root.mpvqcSettings.nickname
+        input: root.currentNickname
         spacing: 16
         fontWeight: Font.DemiBold
         prefWidth: root.width
         implicitTextFieldWidth: 150
         Layout.topMargin: 20
 
-        onTextChanged: (text) => {
-            root.mpvqcSettings.nickname = text
+        onTextChanged: text => {
+            root.currentNickname = text
         }
     }
 
@@ -63,11 +77,11 @@ ColumnLayout {
         id: _dateToggle
 
         label: qsTranslate("ExportSettingsDialog", "Write Date")
-        checked: root.mpvqcSettings.writeHeaderDate
+        checked: root.currentWriteHeaderDate
         prefWidth: root.width
 
-        onToggled: (state) => {
-            root.mpvqcSettings.writeHeaderDate = state
+        onToggled: state => {
+            root.currentWriteHeaderDate = state
         }
     }
 
@@ -76,11 +90,11 @@ ColumnLayout {
 
         //: %1 will be the application name. Most probably 'mpvQC' :)
         label: qsTranslate("ExportSettingsDialog", "Write '%1'").arg(Qt.application.name)
-        checked: root.mpvqcSettings.writeHeaderGenerator
+        checked: root.currentWriteHeaderGenerator
         prefWidth: root.width
 
-        onToggled: (state) => {
-            root.mpvqcSettings.writeHeaderGenerator = state
+        onToggled: state => {
+            root.currentWriteHeaderGenerator = state
         }
     }
 
@@ -88,11 +102,11 @@ ColumnLayout {
         id: _nicknameToggle
 
         label: qsTranslate("ExportSettingsDialog", "Write Nickname")
-        checked: root.mpvqcSettings.writeHeaderNickname
+        checked: root.currentWriteHeaderNickname
         prefWidth: root.width
 
-        onToggled: (state) => {
-            root.mpvqcSettings.writeHeaderNickname = state
+        onToggled: state => {
+            root.currentWriteHeaderNickname = state
         }
     }
 
@@ -100,11 +114,11 @@ ColumnLayout {
         id: _pathToggle
 
         label: qsTranslate("ExportSettingsDialog", "Write Video Path")
-        checked: root.mpvqcSettings.writeHeaderVideoPath
+        checked: root.currentWriteHeaderVideoPath
         prefWidth: root.width
 
-        onToggled: (state) => {
-            root.mpvqcSettings.writeHeaderVideoPath = state
+        onToggled: state => {
+            root.currentWriteHeaderVideoPath = state
         }
     }
 

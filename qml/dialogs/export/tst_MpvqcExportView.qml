@@ -21,68 +21,75 @@ import QtQuick
 import QtTest
 
 
-MpvqcExportView {
-    id: objectUnderTest
+TestCase {
+    id: testCase
 
-    mpvqcApplication: QtObject {
-        property var mpvqcSettings: QtObject {
-            property string nickname: 'nickname'
-            property bool writeHeaderDate: false
-            property bool writeHeaderGenerator: false
-            property bool writeHeaderNickname: false
-            property bool writeHeaderVideoPath: false
+    name: "MpvqcExportView"
+    when: windowShown
+    width: 400
+    height: 400
+    visible: true
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcExportView {
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject {
+                    property string nickname: 'nickname'
+                    property bool writeHeaderDate: false
+                    property bool writeHeaderGenerator: false
+                    property bool writeHeaderNickname: false
+                    property bool writeHeaderVideoPath: false
+                }
+            }
         }
     }
 
-    width: 400
-    height: 400
+    function test_accept() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-    TestCase {
-        name: "MpvqcExportView"
-        when: windowShown
+        changeValues(control)
+        control.accept()
 
-        function init() {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.nickname = 'nickname'
-            objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderDate = false
-            objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderGenerator = false
-            objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderNickname = false
-            objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderVideoPath = false
-        }
+        compare(control.mpvqcApplication.mpvqcSettings.nickname, 'nickname-edited')
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderDate, true)
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderGenerator, true)
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderNickname, true)
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderVideoPath, true)
+    }
 
-        function test_export_data() {
-            return [
-                {
-                    tag: 'nickname',
-                    exec: () => { objectUnderTest.nicknameInput.input = 'other-nickname' },
-                    verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.nickname, 'other-nickname') },
-                },
-                {
-                    tag: 'header/date',
-                    exec: () => { objectUnderTest.dateToggle.checked = true },
-                    verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderDate, true) },
-                },
-                {
-                    tag: 'header/generator',
-                    exec: () => { objectUnderTest.generatorToggle.checked = true },
-                    verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderGenerator, true) },
-                },
-                {
-                    tag: 'header/nickname',
-                    exec: () => { objectUnderTest.nicknameToggle.checked = true },
-                    verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderNickname, true) },
-                },
-                {
-                    tag: 'header/nickname',
-                    exec: () => { objectUnderTest.pathToggle.checked = true },
-                    verify: () => { compare(objectUnderTest.mpvqcApplication.mpvqcSettings.writeHeaderVideoPath, true) },
-                },
-            ]
-        }
+    function changeValues(control) {
+        compare(control.currentNickname, 'nickname')
+        compare(control.currentWriteHeaderDate, false)
+        compare(control.currentWriteHeaderGenerator, false)
+        compare(control.currentWriteHeaderNickname, false)
+        compare(control.currentWriteHeaderVideoPath, false)
 
-        function test_export(data) {
-            data.exec()
-            data.verify()
-        }
+        control.nicknameInput.input = 'nickname-edited'
+        control.dateToggle.toggle.toggle()
+        control.generatorToggle.toggle.toggle()
+        control.nicknameToggle.toggle.toggle()
+        control.pathToggle.toggle.toggle()
+
+        compare(control.currentNickname, 'nickname-edited')
+        compare(control.currentWriteHeaderDate, true)
+        compare(control.currentWriteHeaderGenerator, true)
+        compare(control.currentWriteHeaderNickname, true)
+        compare(control.currentWriteHeaderVideoPath, true)
+    }
+
+    function test_reject() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
+
+        changeValues(control)
+        compare(control.mpvqcApplication.mpvqcSettings.nickname, 'nickname')
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderDate, false)
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderGenerator, false)
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderNickname, false)
+        compare(control.mpvqcApplication.mpvqcSettings.writeHeaderVideoPath, false)
     }
 
 }

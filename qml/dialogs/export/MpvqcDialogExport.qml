@@ -26,10 +26,16 @@ MpvqcDialog {
     id: root
 
     MpvqcExportView {
+        id: _exportView
+
         property string title: qsTranslate("ExportSettingsDialog", "Export Settings")
 
         width: root.width
         mpvqcApplication: root.mpvqcApplication
+    }
+
+    onAccepted: {
+        _exportView.accept()
     }
 
 }
