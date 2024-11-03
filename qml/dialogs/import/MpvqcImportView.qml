@@ -31,6 +31,14 @@ ColumnLayout {
 
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
+    readonly property alias importPolicyComboBox: _importPolicyComboBox
+
+    property int currentImportPolicy: root.mpvqcSettings.importWhenVideoLinkedInDocument
+
+    function accept() {
+        root.mpvqcSettings.importWhenVideoLinkedInDocument = currentImportPolicy
+    }
+
     RowLayout {
         Layout.topMargin: 20
         spacing: 30
@@ -43,6 +51,8 @@ ColumnLayout {
         }
 
         ComboBox {
+            id: _importPolicyComboBox
+
             Layout.preferredWidth: 165
 
             textRole: 'text'
@@ -63,12 +73,12 @@ ColumnLayout {
                 }
             ]
 
-            onActivated: {
-                root.mpvqcSettings.importWhenVideoLinkedInDocument = currentValue
+            onActivated: value => {
+                root.currentImportPolicy = value
             }
 
             Component.onCompleted: {
-                currentIndex = indexOfValue(root.mpvqcSettings.importWhenVideoLinkedInDocument)
+                currentIndex = indexOfValue(root.currentImportPolicy)
             }
         }
 
