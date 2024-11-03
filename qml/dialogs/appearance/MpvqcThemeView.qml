@@ -31,6 +31,11 @@ ListView {
     property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     property int itemSize: 52
     property int borderSize: 12
+    property var initialTheme: null
+
+    function reset(): void {
+        root.mpvqcSettings.theme = initialTheme
+    }
 
     boundsBehavior: Flickable.StopAtBounds
     model: MpvqcThemeModel {}
@@ -64,6 +69,10 @@ ListView {
                 parent.onItemClicked()
             }
         }
+    }
+
+    Component.onCompleted: {
+        root.initialTheme = root.mpvqcSettings.theme
     }
 
 }

@@ -22,80 +22,104 @@ import QtQuick.Controls.Material
 import QtTest
 
 
-MpvqcColorView {
-    id: objectUnderTest
+TestCase {
+    id: testCase
 
-    mpvqcApplication: QtObject {
-        property var mpvqcSettings: QtObject {
-            property int primary: Material.Teal
+    readonly property int initialColor: Material.Teal
+
+    name: "MpvqcColorView"
+    when: windowShown
+    width: 400
+    height: 400
+    visible: true
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcColorView {
+            width: parent.width
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject {
+                    property int primary: testCase.initialColor
+                }
+            }
+
+            function findSelected() {
+                for (let idx = 0; idx < this.count; idx++) {
+                    const item = this.itemAtIndex(idx)
+                    if (item.selected) return item
+                }
+                return null
+            }
+
+            function findItemWithColor(primary) {
+                for (let idx = 0; idx < this.count; idx++) {
+                    const item = this.itemAtIndex(idx)
+                    if (item.primary === primary) {
+                        return item
+                    }
+                }
+                return null
+            }
         }
     }
 
-    width: 400
-    height: 400
+    function test_colorFromSettingsSelected_data() {
+        return [
+            { tag: 'indigo', color: Material.Indigo },
+            { tag: 'amber', color: Material.Amber },
+        ]
+    }
 
-    TestCase {
-        name: "MpvqcColorView"
-        when: windowShown
+    function test_colorFromSettingsSelected(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function cleanup() {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.primary = -1
-        }
+        control.mpvqcApplication.mpvqcSettings.primary = data.color
 
-        function test_settingSelected_data() {
-            return [
-                { tag: 'indigo', color: Material.Indigo },
-                { tag: 'amber', color: Material.Amber },
-            ]
-        }
+        const selected = control.findSelected()
+        verify(selected)
 
-        function test_settingSelected(data) {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.primary = data.color
+        compare(selected.primary, data.color)
+    }
 
-            const allSelected = findSelected()
-            verify(allSelected.length === 1)
+    function test_click_data() {
+        return [
+            { tag: 'cyan/teal', firstColor: Material.Cyan, secondColor: Material.Teal },
+            { tag: 'purple/lime', firstColor: Material.Purple, secondColor: Material.Lime },
+        ]
+    }
 
-            const selected = allSelected[0]
-            compare(selected.primary, data.color)
-        }
+    function test_click(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function findSelected() {
-            const selected = []
-            for (let idx = 0, count = objectUnderTest.count; idx < count; idx++) {
-                const item = objectUnderTest.itemAtIndex(idx)
-                if (item.selected) { selected.push(item) }
-            }
-            return selected
-        }
+        const selection1 = control.findItemWithColor(data.firstColor)
+        verify(selection1)
+        mouseClick(selection1)
+        compare(control.mpvqcApplication.mpvqcSettings.primary, data.firstColor)
 
-        function test_click_data() {
-            return [
-                { tag: 'cyan/teal', firstColor: Material.Cyan, secondColor: Material.Teal },
-                { tag: 'purple/lime', firstColor: Material.Purple, secondColor: Material.Lime },
-            ]
-        }
+        const selection2 = control.findItemWithColor(data.secondColor)
+        verify(selection2)
+        mouseClick(selection2)
+        compare(control.mpvqcApplication.mpvqcSettings.primary, data.secondColor)
 
-        function test_click(data) {
-            const firstItem = findItemWith(data.firstColor)
-            verify(firstItem)
-            mouseClick(firstItem)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.primary, data.firstColor)
+        verify(selection1 !== selection2)
+    }
 
-            const secondItem = findItemWith(data.secondColor)
-            verify(secondItem)
-            mouseClick(secondItem)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.primary, data.secondColor)
+    function test_reset() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-            verify(firstItem !== secondItem)
-        }
+        compare(control.mpvqcApplication.mpvqcSettings.primary, testCase.initialColor)
 
-        function findItemWith(primary) {
-            for (let idx = 0, count = objectUnderTest.count; idx < count; idx++) {
-                const item = objectUnderTest.itemAtIndex(idx)
-                if (item.primary === primary) { return item }
-            }
-            return null
-        }
+        const selection = control.findItemWithColor(Material.Purple)
+        verify(selection)
+        mouseClick(selection)
+        compare(control.mpvqcApplication.mpvqcSettings.primary, Material.Purple)
+
+        control.reset()
+        compare(control.mpvqcApplication.mpvqcSettings.primary, testCase.initialColor)
     }
 
 }

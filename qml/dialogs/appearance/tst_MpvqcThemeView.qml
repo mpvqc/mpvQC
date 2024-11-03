@@ -22,80 +22,91 @@ import QtQuick.Controls.Material
 import QtTest
 
 
-MpvqcThemeView {
-    id: objectUnderTest
+TestCase {
+    id: testCase
 
-    mpvqcApplication: QtObject {
-        property var mpvqcSettings: QtObject {
-            property int theme: Material.Dark
+    readonly property int initialTheme: Material.Dark
+
+    name: "MpvqcThemeView"
+    when: windowShown
+    width: 400
+    height: 400
+    visible: true
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcThemeView {
+            width: parent.width
+            mpvqcApplication: QtObject {
+                property var mpvqcSettings: QtObject {
+                    property int theme: testCase.initialTheme
+                }
+            }
+
+            function findSelected() {
+                for (let idx = 0; idx < this.count; idx++) {
+                    const item = this.itemAtIndex(idx)
+                    if (item.selected) return item
+                }
+                return null
+            }
+
+            function findItemWithTheme(theme) {
+                for (let idx = 0; idx < this.count; idx++) {
+                    const item = this.itemAtIndex(idx)
+                    if (item.theme === theme) return item
+                }
+                return null
+            }
         }
     }
 
-    width: 400
-    height: 400
+    function test_themeFromSettingsSelected_data() {
+        return [
+            { tag: 'dark', color: Material.Dark },
+            { tag: 'light', color: Material.Light },
+        ]
+    }
 
-    TestCase {
-        name: "MpvqcThemeView"
-        when: windowShown
+    function test_themeFromSettingsSelected(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function cleanup() {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.theme = -1
-        }
+        control.mpvqcApplication.mpvqcSettings.theme = data.color
 
-        function test_settingSelected_data() {
-            return [
-                { tag: 'dark', color: Material.Dark },
-                { tag: 'light', color: Material.Light },
-            ]
-        }
+        const selected = control.findSelected()
+        verify(selected)
 
-        function test_settingSelected(data) {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.theme = data.color
+        compare(selected.theme, data.color)
+    }
 
-            const allSelected = findSelected()
-            verify(allSelected.length === 1)
+    function test_click() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-            const selected = allSelected[0]
-            compare(selected.theme, data.color)
-        }
+        compare(control.mpvqcApplication.mpvqcSettings.theme, testCase.initialTheme)
 
-        function findSelected() {
-            const selected = []
-            for (let idx = 0, count = objectUnderTest.count; idx < count; idx++) {
-                const item = objectUnderTest.itemAtIndex(idx)
-                if (item.selected) { selected.push(item) }
-            }
-            return selected
-        }
+        const selection = control.findItemWithTheme(Material.Light)
+        verify(selection)
+        mouseClick(selection)
+        compare(control.mpvqcApplication.mpvqcSettings.theme, Material.Light)
+    }
 
-        function test_click_data() {
-            return [
-                { tag: 'dark', firstColor: Material.Dark, secondColor: Material.Light },
-                { tag: 'light', firstColor: Material.Light, secondColor: Material.Dark },
-            ]
-        }
+    function test_reset() {
+        const control = createTemporaryObject(objectUnderTest, testCase)
+        verify(control)
 
-        function test_click(data) {
-            const firstItem = findItemWith(data.firstColor)
-            verify(firstItem)
-            mouseClick(firstItem)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.theme, data.firstColor)
+        compare(control.mpvqcApplication.mpvqcSettings.theme, testCase.initialTheme)
 
-            const secondItem = findItemWith(data.secondColor)
-            verify(secondItem)
-            mouseClick(secondItem)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.theme, data.secondColor)
+        const selection = control.findItemWithTheme(Material.Light)
+        verify(selection)
+        mouseClick(selection)
+        compare(control.mpvqcApplication.mpvqcSettings.theme, Material.Light)
 
-            verify(firstItem !== secondItem)
-        }
+        control.reset()
 
-        function findItemWith(theme) {
-            for (let idx = 0, count = objectUnderTest.count; idx < count; idx++) {
-                const item = objectUnderTest.itemAtIndex(idx)
-                if (item.theme === theme) { return item }
-            }
-            return null
-        }
+        compare(control.mpvqcApplication.mpvqcSettings.theme, testCase.initialTheme)
     }
 
 }

@@ -40,6 +40,8 @@ MpvqcDialog {
             }
 
             MpvqcThemeView {
+                id: _themeView
+
                 mpvqcApplication: root.mpvqcApplication
                 width: parent.width
 
@@ -53,10 +55,17 @@ MpvqcDialog {
             }
 
             MpvqcColorView {
+                id: _colorView
+
                 mpvqcApplication: root.mpvqcApplication
                 width: parent.width
             }
         }
+    }
+
+    onRejected: {
+        _themeView.reset()
+        _colorView.reset()
     }
 
 }
