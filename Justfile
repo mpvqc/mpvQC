@@ -26,6 +26,8 @@ export QT_QPA_PLATFORM := 'offscreen'
 export QT_QUICK_CONTROLS_STYLE := 'Material'
 export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
 
+export QML_IMPORT_PATH := DIRECTORY_QML_TESTS
+
 #####       #####
 ##### Names #####
 #####       #####
@@ -193,8 +195,7 @@ test-python: _check-pyside-setup _clean-test _compile-resources
 test-qml: _check-qml-setup
     {{ TOOL_CLI_QML_TESTRUNNER }} \
       -silent \
-      -input {{ DIRECTORY_QML_TESTS }} \
-      -import {{ DIRECTORY_QML_TESTS }}
+      -input {{ DIRECTORY_QML_TESTS }}
 
 _clean-build:
     @rm -rf \
