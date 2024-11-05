@@ -39,9 +39,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     percent_pos_changed = Signal(int)
     time_pos_changed = Signal(int)
     time_remaining_changed = Signal(int)
-    heightChanged = Signal(int)
     scaledHeightChanged = Signal(int)
-    widthChanged = Signal(int)
     scaledWidthChanged = Signal(int)
 
     def __init__(self):
@@ -52,12 +50,13 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
 
         self._path = ""
         self._filename = ""
+        self._height = 0
+        self._width = 0
+
         self._duration = None
         self._percent_pos = None
         self._time_pos = None
         self._time_remaining = None
-        self._height = None
-        self._width = None
 
     def init(self):
         player = inject.instance(PlayerService)
@@ -75,8 +74,8 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         player.observe("width", self._on_player_width_changed)
 
         def on_zoom_factor_changed(new_factor):
-            self.scaledHeightChanged.emit(self.height / new_factor)
-            self.scaledWidthChanged.emit(self.width / new_factor)
+            self.scaledHeightChanged.emit(self._height / new_factor)
+            self.scaledWidthChanged.emit(self._width / new_factor)
 
         self._zoom_detector_service.zoom_factor_changed.connect(on_zoom_factor_changed)
 
@@ -155,10 +154,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
                 self._time_remaining = value
                 self.time_remaining_changed.emit(value)
 
-    @Property(int, notify=heightChanged)
-    def height(self):
-        return self._height or 0
-
     @Property(int, notify=scaledHeightChanged)
     def scaledHeight(self):
         return self._height / self._zoom_detector_service.zoom_factor if self._height else 0
@@ -168,12 +163,7 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
             value = round(value)
             if value != self._height:
                 self._height = value
-                self.heightChanged.emit(value)
                 self.scaledHeightChanged.emit(value)
-
-    @Property(int, notify=widthChanged)
-    def width(self):
-        return self._width or 0
 
     @Property(int, notify=scaledWidthChanged)
     def scaledWidth(self):
@@ -184,5 +174,4 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
             value = round(value)
             if value != self._width:
                 self._width = value
-                self.widthChanged.emit(value)
                 self.scaledWidthChanged.emit(value)
