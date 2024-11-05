@@ -60,20 +60,25 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self._width = None
 
     def init(self):
-        self.mpv = inject.instance(PlayerService).mpv
+        player = inject.instance(PlayerService)
 
-        self._subscribe_to_path()
-        self._subscribe_to_filename()
-        self._subscribe_to_duration()
-        self._subscribe_to_percent_pos()
-        self._subscribe_to_time_pos()
-        self._subscribe_to_time_remaining()
-        self._subscribe_to_height()
-        self._subscribe_to_width()
-        self._subscribe_to_zoom_factor_changes()
+        self._mpv_version = player.mpv_version
+        self._ffmpeg_version = player.ffmpeg_version
 
-        self._mpv_version = self.mpv.mpv_version
-        self._ffmpeg_version = self.mpv.ffmpeg_version
+        player.observe("path", self._on_player_path_changed)
+        player.observe("filename", self._on_player_filename_changed)
+        player.observe("duration", self._on_player_duration_changed)
+        player.observe("percent-pos", self._on_player_percent_pos_changed)
+        player.observe("time-pos", self._on_player_time_pos_changed)
+        player.observe("time-remaining", self._on_player_time_remaining_changed)
+        player.observe("height", self._on_player_height_changed)
+        player.observe("width", self._on_player_width_changed)
+
+        def on_zoom_factor_changed(new_factor):
+            self.scaledHeightChanged.emit(self.height / new_factor)
+            self.scaledWidthChanged.emit(self.width / new_factor)
+
+        self._zoom_detector_service.zoom_factor_changed.connect(on_zoom_factor_changed)
 
     @Property(str, constant=True)
     def mpv_version(self) -> str:
@@ -93,74 +98,62 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
             return self._type_mapper.normalize_path_str(self._path)
         return ""
 
-    def _subscribe_to_path(self):
-        @self.mpv.property_observer("path")
-        def observer(_, value: str):
-            if value and value != self._path:
-                self._path = value
-                self.path_changed.emit(value)
-            self.video_loaded_changed.emit(bool(value))
+    def _on_player_path_changed(self, _, value: str):
+        if value and value != self._path:
+            self._path = value
+            self.path_changed.emit(value)
+        self.video_loaded_changed.emit(bool(value))
 
     @Property(str, notify=filename_changed)
     def filename(self) -> str:
         return self._filename
 
-    def _subscribe_to_filename(self):
-        @self.mpv.property_observer("filename")
-        def observer(_, value: str):
-            if value and value != self._filename:
-                self._filename = value
-                self.filename_changed.emit(value)
+    def _on_player_filename_changed(self, _, value: str):
+        if value and value != self._filename:
+            self._filename = value
+            self.filename_changed.emit(value)
 
     @Property(float, notify=duration_changed)
     def duration(self):
         return self._duration
 
-    def _subscribe_to_duration(self):
-        @self.mpv.property_observer("duration")
-        def observer(_, value: float):
-            if value:
-                self._duration = value
-                self.duration_changed.emit(value)
+    def _on_player_duration_changed(self, _, value: float):
+        if value:
+            self._duration = value
+            self.duration_changed.emit(value)
 
     @Property(int, notify=percent_pos_changed)
     def percent_pos(self):
         return self._percent_pos
 
-    def _subscribe_to_percent_pos(self):
-        @self.mpv.property_observer("percent-pos")
-        def observer(_, value: float):
-            if value:
-                value = round(value)
-                if value != self._percent_pos:
-                    self._percent_pos = value
-                    self.percent_pos_changed.emit(value)
+    def _on_player_percent_pos_changed(self, _, value: float):
+        if value:
+            value = round(value)
+            if value != self._percent_pos:
+                self._percent_pos = value
+                self.percent_pos_changed.emit(value)
 
     @Property(int, notify=time_pos_changed)
     def time_pos(self):
         return self._time_pos
 
-    def _subscribe_to_time_pos(self):
-        @self.mpv.property_observer("time-pos")
-        def observer(_, value: float):
-            if value:
-                value = round(value)
-                if value != self._time_pos:
-                    self._time_pos = value
-                    self.time_pos_changed.emit(value)
+    def _on_player_time_pos_changed(self, _, value: float):
+        if value:
+            value = round(value)
+            if value != self._time_pos:
+                self._time_pos = value
+                self.time_pos_changed.emit(value)
 
     @Property(int, notify=time_remaining_changed)
     def time_remaining(self):
         return self._time_remaining
 
-    def _subscribe_to_time_remaining(self):
-        @self.mpv.property_observer("time-remaining")
-        def observer(_, value: float):
-            if value:
-                value = round(value)
-                if value != self._time_remaining:
-                    self._time_remaining = value
-                    self.time_remaining_changed.emit(value)
+    def _on_player_time_remaining_changed(self, _, value: float):
+        if value:
+            value = round(value)
+            if value != self._time_remaining:
+                self._time_remaining = value
+                self.time_remaining_changed.emit(value)
 
     @Property(int, notify=heightChanged)
     def height(self):
@@ -170,15 +163,13 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def scaledHeight(self):
         return self._height / self._zoom_detector_service.zoom_factor if self._height else 0
 
-    def _subscribe_to_height(self):
-        @self.mpv.property_observer("height")
-        def observer(_, value: float):
-            if value:
-                value = round(value)
-                if value != self._height:
-                    self._height = value
-                    self.heightChanged.emit(value)
-                    self.scaledHeightChanged.emit(value)
+    def _on_player_height_changed(self, _, value: float):
+        if value:
+            value = round(value)
+            if value != self._height:
+                self._height = value
+                self.heightChanged.emit(value)
+                self.scaledHeightChanged.emit(value)
 
     @Property(int, notify=widthChanged)
     def width(self):
@@ -188,19 +179,10 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def scaledWidth(self):
         return self._width / self._zoom_detector_service.zoom_factor if self._width else 0
 
-    def _subscribe_to_width(self):
-        @self.mpv.property_observer("width")
-        def observer(_, value: float):
-            if value:
-                value = round(value)
-                if value != self._width:
-                    self._width = value
-                    self.widthChanged.emit(value)
-                    self.scaledWidthChanged.emit(value)
-
-    def _subscribe_to_zoom_factor_changes(self):
-        def on_change(new_factor):
-            self.scaledHeightChanged.emit(self.height / new_factor)
-            self.scaledWidthChanged.emit(self.width / new_factor)
-
-        self._zoom_detector_service.zoom_factor_changed.connect(on_change)
+    def _on_player_width_changed(self, _, value: float):
+        if value:
+            value = round(value)
+            if value != self._width:
+                self._width = value
+                self.widthChanged.emit(value)
+                self.scaledWidthChanged.emit(value)

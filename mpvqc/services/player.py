@@ -60,6 +60,14 @@ class PlayerService:
         return self._mpv
 
     @property
+    def mpv_version(self) -> str:
+        return self._mpv.mpv_version
+
+    @property
+    def ffmpeg_version(self) -> str:
+        return self._mpv.ffmpeg_version
+
+    @property
     def path(self) -> str or None:
         return self._mpv.path
 
@@ -129,3 +137,6 @@ class PlayerService:
 
     def terminate(self) -> None:
         self._mpv.terminate()
+
+    def observe(self, property_name, handler):
+        self._mpv.observe_property(property_name, handler)
