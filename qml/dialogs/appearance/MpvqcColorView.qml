@@ -33,10 +33,12 @@ GridView {
     property int itemSize: 52
     property int itemPadding: 8
     property int borderSize: 12
-    property var initialColor: null
+    property color initialAccent: null
+    property color initialPrimary: null
 
     function reset(): void {
-        root.mpvqcSettings.primary = initialColor
+        root.mpvqcSettings.accent = initialAccent
+        root.mpvqcSettings.primary = initialPrimary
     }
 
     boundsBehavior: Flickable.StopAtBounds
@@ -47,13 +49,15 @@ GridView {
     cellHeight: itemSize + itemPadding
 
     delegate: MpvqcCircle {
-        required property int primary
+        required property color primary
+        required property color accent
         property bool selected: primary === root.mpvqcSettings.primary
 
         width: root.itemSize
         color: selected ? Material.foreground : 'transparent'
 
         function onItemClicked() {
+            root.mpvqcSettings.accent = accent
             root.mpvqcSettings.primary = primary
         }
 
@@ -63,8 +67,8 @@ GridView {
 
         MpvqcCircle {
             width: parent.width - root.borderSize
-            color: Material.primary
-            Material.primary: parent.primary
+            color: primary
+            Material.primary: primary
             anchors.centerIn: parent
 
             onClicked: {
@@ -74,7 +78,8 @@ GridView {
     }
 
     Component.onCompleted: {
-        root.initialColor = root.mpvqcSettings.primary
+        root.initialAccent = root.mpvqcSettings.accent
+        root.initialPrimary = root.mpvqcSettings.primary
     }
 
 }

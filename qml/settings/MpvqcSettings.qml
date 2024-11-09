@@ -121,9 +121,11 @@ Item {
         location: root.settingsFile
         category: 'Theme'
         property int theme: Material.Dark
-        property int primary: Material.Indigo
+        property color accent: "#9FA8DA"
+        property color primary: "#3F51B5"
     }
     property alias theme: _themeSettings.theme
+    property alias accent: _themeSettings.accent
     property alias primary: _themeSettings.primary
 
 

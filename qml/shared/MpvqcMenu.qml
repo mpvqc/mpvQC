@@ -24,8 +24,7 @@ import QtQuick.Controls
 Menu {
     id: root
 
-    property real additionalPadding
-    property bool mMirrored: root.count > 0 && itemAt(0).mirrored
+    readonly property bool mMirrored: root.count > 0 && itemAt(0).mirrored
 
     z: 2
     x: mMirrored ? -width + parent.width : 0
