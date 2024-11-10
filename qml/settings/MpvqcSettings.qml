@@ -150,11 +150,16 @@ QtObject {
 
     readonly property Settings _themeSettings: Settings {
         property alias theme: root.theme
-        property alias accent: root.accent
-        property alias primary: root.primary
+        property string color: root.primary
+        property string colorLighter: root.accent
 
         category: 'Theme'
         location: root.settingsFile
+
+        Component.onCompleted: {
+            root.primary = color
+            root.accent = colorLighter
+        }
     }
 
     property int theme: Material.Dark
