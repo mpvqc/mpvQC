@@ -157,8 +157,8 @@ QtObject {
         location: root.settingsFile
 
         Component.onCompleted: {
-            root.primary = color
-            root.accent = colorLighter
+            root.primary = color;
+            root.accent = colorLighter;
         }
     }
 
