@@ -18,65 +18,101 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls.Material
-
 
 ListModel {
     ListElement {
-        primary: Material.Red
+        // "Material.Red"
+        primary: "#F44336"
+        accent: "#EF9A9A"
     }
     ListElement {
-        primary: Material.Pink
+        // "Material.Pink"
+        primary: "#E91E63"
+        accent: "#F48FB1"
     }
     ListElement {
-        primary: Material.Purple
+        // "Material.Purple"
+        primary: "#9C27B0"
+        accent: "#CE93D8"
     }
     ListElement {
-        primary: Material.DeepPurple
+        // "Material.DeepPurple"
+        primary: "#673AB7"
+        accent: "#B39DDB"
     }
     ListElement {
-        primary: Material.Indigo
+        // "Material.Indigo"
+        primary: "#3F51B5"
+        accent: "#9FA8DA"
     }
     ListElement {
-        primary: Material.Blue
+        // "Material.Blue"
+        primary: "#2196F3"
+        accent: "#90CAF9"
     }
     ListElement {
-        primary: Material.LightBlue
+        // "Material.LightBlue"
+        primary: "#03A9F4"
+        accent: "#81D4FA"
     }
     ListElement {
-        primary: Material.Cyan
+        // "Material.Cyan"
+        primary: "#00BCD4"
+        accent: "#80DEEA"
     }
     ListElement {
-        primary: Material.Teal
+        // "Material.Teal"
+        primary: "#009688"
+        accent: "#80CBC4"
     }
     ListElement {
-        primary: Material.Green
+        // "Material.Green"
+        primary: "#4CAF50"
+        accent: "#A5D6A7"
     }
     ListElement {
-        primary: Material.LightGreen
+        // "Material.LightGreen"
+        primary: "#8BC34A"
+        accent: "#C5E1A5"
     }
     ListElement {
-        primary: Material.Lime
+        // "Material.Lime"
+        primary: "#CDDC39"
+        accent: "#E6EE9C"
     }
     ListElement {
-        primary: Material.Yellow
+        // "Material.Yellow"
+        primary: "#FFEB3B"
+        accent: "#FFF59D"
     }
     ListElement {
-        primary: Material.Amber
+        // "Material.Amber"
+        primary: "#FFC107"
+        accent: "#FFE082"
     }
     ListElement {
-        primary: Material.Orange
+        // "Material.Orange"
+        primary: "#FF9800"
+        accent: "#FFCC80"
     }
     ListElement {
-        primary: Material.DeepOrange
+        // "Material.DeepOrange"
+        primary: "#FF5722"
+        accent: "#FFAB91"
     }
     ListElement {
-        primary: Material.Brown
+        // "Material.Brown"
+        primary: "#795548"
+        accent: "#BCAAA4"
     }
     ListElement {
-        primary: Material.Grey
+        // "Material.Grey"
+        primary: "#9E9E9E"
+        accent: "#EEEEEE"
     }
     ListElement {
-        primary: Material.BlueGrey
+        // "Material.BlueGrey"
+        primary: "#607D8B"
+        accent: "#B0BEC5"
     }
 }

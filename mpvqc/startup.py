@@ -34,7 +34,7 @@ class StartUp:
     def configure_qt_settings():
         from PySide6.QtCore import QSettings
 
-        QSettings.setDefaultFormat(QSettings.IniFormat)
+        QSettings.setDefaultFormat(QSettings.Format.IniFormat)
 
     @staticmethod
     def configure_qt_logging():

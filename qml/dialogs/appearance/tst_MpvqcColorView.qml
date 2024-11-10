@@ -25,7 +25,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    readonly property int initialColor: Material.Teal
+    readonly property color initialColor: "#009688"
 
     name: "MpvqcColorView"
     when: windowShown
@@ -40,11 +40,12 @@ TestCase {
             width: parent.width
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property int primary: testCase.initialColor
+                    property color accent: "transparent"
+                    property color primary: testCase.initialColor
                 }
             }
 
-            function findSelected() {
+            function findSelected(): variant {
                 for (let idx = 0; idx < this.count; idx++) {
                     const item = this.itemAtIndex(idx)
                     if (item.selected) return item
@@ -52,7 +53,7 @@ TestCase {
                 return null
             }
 
-            function findItemWithColor(primary) {
+            function findItemWithColor(primary: color): variant {
                 for (let idx = 0; idx < this.count; idx++) {
                     const item = this.itemAtIndex(idx)
                     if (item.primary === primary) {
@@ -66,8 +67,8 @@ TestCase {
 
     function test_colorFromSettingsSelected_data() {
         return [
-            { tag: 'indigo', color: Material.Indigo },
-            { tag: 'amber', color: Material.Amber },
+            { tag: 'indigo', color: "#3f51b5" },
+            { tag: 'amber', color: "#ffc107" },
         ]
     }
 
@@ -85,8 +86,8 @@ TestCase {
 
     function test_click_data() {
         return [
-            { tag: 'cyan/teal', firstColor: Material.Cyan, secondColor: Material.Teal },
-            { tag: 'purple/lime', firstColor: Material.Purple, secondColor: Material.Lime },
+            { tag: 'cyan/teal', firstColor: "#00bcd4", secondColor: "#009688" },
+            { tag: 'purple/lime', firstColor: "#9c27b0", secondColor: "#cddc39" },
         ]
     }
 
@@ -113,10 +114,10 @@ TestCase {
 
         compare(control.mpvqcApplication.mpvqcSettings.primary, testCase.initialColor)
 
-        const selection = control.findItemWithColor(Material.Purple)
+        const selection = control.findItemWithColor("#673ab7")
         verify(selection)
         mouseClick(selection)
-        compare(control.mpvqcApplication.mpvqcSettings.primary, Material.Purple)
+        compare(control.mpvqcApplication.mpvqcSettings.primary, "#673ab7")
 
         control.reset()
         compare(control.mpvqcApplication.mpvqcSettings.primary, testCase.initialColor)

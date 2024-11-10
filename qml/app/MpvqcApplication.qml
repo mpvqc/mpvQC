@@ -51,6 +51,9 @@ ApplicationWindow {
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
+    property color primaryColor: mpvqcSettings.primary
+    property color accentColor: mpvqcSettings.accent
+
     function focusCommentTable() {
         root.mpvqcCommentTable.forceActiveFocus()
     }
@@ -170,7 +173,11 @@ ApplicationWindow {
     }
 
     Material.theme: mpvqcSettings.theme
-    Material.accent: mpvqcSettings.primary
-    Material.primary: mpvqcSettings.primary
+    Material.accent: accentColor
+    Material.primary: primaryColor
+
+    Behavior on color { ColorAnimation { duration: 150 }}
+    Behavior on primaryColor { ColorAnimation { duration: 150 }}
+    Behavior on accentColor { ColorAnimation { duration: 150 }}
 
 }
