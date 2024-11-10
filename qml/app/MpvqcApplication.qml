@@ -173,7 +173,7 @@ ApplicationWindow {
     }
 
     Material.theme: mpvqcSettings.theme
-    Material.accent: accentColor
+    Material.accent: mpvqcSettings.theme === Material.Dark ? accentColor : primaryColor
     Material.primary: primaryColor
 
     Behavior on color { ColorAnimation { duration: 150 }}
