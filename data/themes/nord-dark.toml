@@ -1,0 +1,27 @@
+schema-version = "v1"
+
+name = "Nord Dark"
+variant = "dark"
+
+background = "#2e3440"
+foreground = "#d8dee9"
+
+[[colors]]
+control = "#bf616a"
+row-highlight = "#934b52"
+
+[[colors]]
+control = "#d08770"
+row-highlight = "#a06856"
+
+[[colors]]
+control = "#ebcb8b"
+row-highlight = "#b59c6b"
+
+[[colors]]
+control = "#a3be8c"
+row-highlight = "#7d926c"
+
+[[colors]]
+control = "#b48ead"
+row-highlight = "#8a6d85"
