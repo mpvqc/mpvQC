@@ -1,0 +1,52 @@
+schema-version = "v1"
+
+name = "Material You Dark"
+variant = "dark"
+
+[[colors]]
+background = "#150c0c" # surf container lowest
+foreground = "#f3dedd" # inverse surf
+control = "#ffb9ba" #primary container
+row-highlight = "#5c0013" # inverse primary container
+
+[[colors]]
+background = "#140c0a" # surf container lowest
+foreground = "#f1dfda" # inverse surf
+control = "#ffbba7" #primary container
+row-highlight = "#541200" # inverse primary container
+
+[[colors]]
+background = "#110e08" # surf container lowest
+foreground = "#ebe1d6" # inverse surf
+control = "#fbc768" #primary container
+row-highlight = "#392700" # inverse primary container
+
+[[colors]]
+background = "#0d0f09" # surf container lowest
+foreground = "#e3e3d9" # inverse surf
+control = "#bce186" #primary container
+row-highlight = "#1c2f00" # inverse primary container
+
+[[colors]]
+background = "#0b0f11"  # surf container lowest
+foreground = "#e0e3e5"  # inverse surf
+control = "#84d8fa"  #primary container
+row-highlight = "#002e3c"  # inverse primary container
+
+[[colors]]
+background = "#0c0e13"  # surf container lowest
+foreground = "#e2e2e9"  # inverse surf
+control = "#b5caff"  #primary container
+row-highlight = "#00285f"  # inverse primary container
+
+[[colors]]
+background = "#100d12"  # surf container lowest
+foreground = "#e9e0e8"  # inverse surf
+control = "#e5bbff"  #primary container
+row-highlight = "#410e62"  # inverse primary container
+
+[[colors]]
+background = "#180b0c"  # surf container lowest
+foreground = "#f7dcdd"  # inverse surf
+control = "#ffb8be"  #primary container
+row-highlight = "#5b0019"  # inverse primary container

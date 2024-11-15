@@ -35,7 +35,7 @@ QtObject {
         readonly property bool isDark: mpvqcSettings.theme === _dark
         readonly property int variant: isDark ? Material.Dark : Material.Light
 
-        property var temp: mpvqcUtilityPyObject.getThemes()["Nord Dark"][3]  // todo remove and read values from settings
+        property var temp: mpvqcUtilityPyObject.getThemes()["Material You Dark"][0]  // todo remove and read values from settings
 
         property color background: temp.background
         property color foreground: temp.foreground
@@ -68,13 +68,15 @@ QtObject {
             repeat: true
             interval: 2000
 
+            property int maxThemes: 4
+            property int tt: 1
+
             function randomInteger(min, max) {
               return Math.floor(Math.random() * (max - min + 1)) + min;
             }
 
             onTriggered: {
-                const rndInt = randomInteger(0, 7)
-                // _impl.temp = mpvqcUtilityPyObject.getThemes()["Nord Dark"][rndInt]
+                _impl.temp = mpvqcUtilityPyObject.getThemes()["Material You Dark"][tt++ % maxThemes]
             }
         }
     }
