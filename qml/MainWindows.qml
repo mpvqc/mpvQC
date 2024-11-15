@@ -40,7 +40,7 @@ ApplicationWindow {
     Material.theme: appWindow.mpvqcSettings.theme
     Material.background: appWindow.Material.background
     Material.foreground: appWindow.Material.foreground
-    Material.accent: appWindow.mpvqcSettings.primary
+    Material.accent: appWindow.mpvqcSettings.accent
 
     onActiveFocusItemChanged: {
         if (activeFocusItem != null) {

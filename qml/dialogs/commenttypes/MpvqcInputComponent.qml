@@ -23,6 +23,8 @@ import QtQuick
 Column {
     id: root
 
+    required property var mpvqcApplication
+
     required property var validateNewCommentType        // function with:
                                                         //   param :  input
                                                         //   return:  string or null | validation error if error exists
@@ -79,7 +81,10 @@ Column {
 
         MpvqcInputControls {
             objectName: "MpvqcInputControls::add"
+
+            mpvqcApplication: root.mpvqcApplication
             focusTextFieldOnCompletion: false
+
             placeholderText: qsTranslate("CommentTypesDialog", "New comment type")
 
             validateInput: input => root.validateNewCommentType(input)
@@ -93,6 +98,8 @@ Column {
 
         MpvqcInputControls {
             objectName: "MpvqcInputControls::edit"
+
+            mpvqcApplication: root.mpvqcApplication
             focusTextFieldOnCompletion: true
 
             validateInput: input => root.validateEditingOfCommentType(input, placeholderText)

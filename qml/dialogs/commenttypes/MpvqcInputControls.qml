@@ -25,6 +25,10 @@ import QtQuick.Layouts
 Column {
     id: root
 
+    required property var mpvqcApplication
+
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
     readonly property alias textFieldHasFocus: _textField.activeFocus
 
     property alias textField: _textField
@@ -87,7 +91,7 @@ Column {
 
     Label {
         text: !_textField.error ? ' ' : _textField.error
-        color: Material.accent
+        color: root.mpvqcTheme.control
         horizontalAlignment: Text.AlignLeft
         width: root.width
         wrapMode: Label.WordWrap

@@ -71,6 +71,8 @@ Column {
     MpvqcInputComponent {
         id: _input
 
+        mpvqcApplication: root.mpvqcApplication
+
         width: root.width
         height: 100
         topPadding: 15
