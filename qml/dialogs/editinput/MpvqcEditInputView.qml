@@ -27,8 +27,10 @@ ColumnLayout {
 
     required property var mpvqcApplication
 
-    readonly property alias textArea: _textArea
     readonly property var mpvqcPlayerFilesPyObject: mpvqcApplication.mpvqcPlayerFilesPyObject
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
+    readonly property alias textArea: _textArea
 
     property var accept: () => {
         _textArea.textDocument.save()
@@ -75,7 +77,7 @@ ColumnLayout {
 
     Rectangle {
         height: 2
-        color: Material.primary
+        color: root.mpvqcTheme.control
         Layout.topMargin: 20
         Layout.fillWidth: true
     }
@@ -103,7 +105,7 @@ ColumnLayout {
 
     Rectangle {
         height: 2
-        color: Material.primary
+        color: root.mpvqcTheme.control
         Layout.fillWidth: true
     }
 

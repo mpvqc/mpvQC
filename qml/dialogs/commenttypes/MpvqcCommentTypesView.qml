@@ -107,6 +107,8 @@ Column {
         MpvqcList {
             id: _listView
 
+            mpvqcApplication: root.mpvqcApplication
+
             itemHeight: _listViewControls.buttonHeight
             model: _controller.modelCopy
             enabled: !_input.editing

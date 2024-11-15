@@ -27,6 +27,8 @@ Item {
 
     required property var mpvqcApplication
 
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
     property alias minimizeButton: _minimizeButton
     property alias maximizeButton: _maximizeButton
     property alias closeButton: _closeButton
@@ -99,7 +101,7 @@ Item {
                 if (Qt.platform.os === 'windows') {
                     return 'red'
                 } else {
-                    return _closeButton.Material.primary
+                    return root.mpvqcTheme.control
                 }
             }
         }

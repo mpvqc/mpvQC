@@ -68,7 +68,7 @@ GridView {
         MpvqcCircle {
             width: parent.width - root.borderSize
             color: primary
-            Material.primary: primary
+            Material.primary: primary // todo remove
             anchors.centerIn: parent
 
             onClicked: {
