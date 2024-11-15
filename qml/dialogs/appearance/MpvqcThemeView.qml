@@ -49,7 +49,7 @@ ListView {
         property bool selected: theme === root.mpvqcSettings.theme
 
         width: root.itemSize
-        color: selected ? Material.foreground : 'transparent'
+        color: selected ? Material.foreground : 'transparent' //todo remove
 
         function onItemClicked() {
             root.mpvqcSettings.theme = theme
@@ -61,8 +61,8 @@ ListView {
 
         MpvqcCircle {
             width: parent.width - root.borderSize
-            color: Material.background
-            Material.theme: parent.theme
+            color: Material.background // todo remove
+            Material.theme: parent.theme // todo remove
             anchors.centerIn: parent
 
             onClicked: {

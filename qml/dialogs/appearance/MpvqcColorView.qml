@@ -54,7 +54,7 @@ GridView {
         property bool selected: primary === root.mpvqcSettings.primary
 
         width: root.itemSize
-        color: selected ? Material.foreground : 'transparent'
+        color: selected ? Material.foreground : 'transparent' // todo remove
 
         function onItemClicked() {
             root.mpvqcSettings.accent = accent
