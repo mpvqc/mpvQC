@@ -1,0 +1,47 @@
+schema-version = "v1"
+
+name = "Nord Dark"
+variant = "dark"
+
+background = "#2e3440"
+foreground = "#d8dee9"
+
+[[colors]]
+control = "#E08A92"
+row-highlight = "#BF616A"
+row-highlight-text = "#FFFFFF"
+
+[[colors]]
+control = "#E9A988"
+row-highlight = "#D08770"
+row-highlight-text = "Qt.darker #3B2A29 1.15"
+
+[[colors]]
+control = "#C0D5A5"
+row-highlight = "#A3BE8C"
+row-highlight-text = "Qt.darker #2E3A2C 1.25"
+
+[[colors]]
+control = "#9DB6D6"
+row-highlight = "#81A1C1"
+row-highlight-text = "#2A3B4A"
+
+[[colors]]
+control = "#7996C1"
+row-highlight = "#5E81AC"
+row-highlight-text = "Qt.lighter #000000 1.20"
+
+[[colors]]
+control = "#F7DC9E"
+row-highlight = "#EBCB8B"
+row-highlight-text = "#1E1E1E"
+
+[[colors]]
+control = "#CBA5C2"
+row-highlight = "#B48EAD"
+row-highlight-text = "#2D2A2E"
+
+[[colors]]
+control = "#A7D8E5"
+row-highlight = "#88C0D0"
+row-highlight-text = "Qt.darker #1E1E1E 1.15"
