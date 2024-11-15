@@ -31,7 +31,10 @@ Label {
     required property string searchQuery
     required property bool rowSelected
     required property bool tableInEditMode
-    required property var backgroundColor
+
+    required property color backgroundColor
+    required property color selectionColor
+    required property color selectedTextColor
 
     property alias loader: _loader
 
@@ -101,6 +104,8 @@ Label {
             implicitWidth: root.width
             currentComment: root.comment
             backgroundColor: root.backgroundColor
+            selectionColor: root.selectionColor
+            selectedTextColor: root.selectedTextColor
             mpvqcDefaultTextValidator: root.mpvqcDefaultTextValidatorPyObject
             leftPadding: root.leftPadding / 2
             rightPadding: root.rightPadding / 2

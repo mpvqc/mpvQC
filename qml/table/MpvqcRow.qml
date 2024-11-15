@@ -28,7 +28,10 @@ Item {
     required property bool rowSelected
     required property bool tableInEditMode
     required property string searchQuery
+
+    required property color selectionColor
     required property color backgroundColor
+    required property color selectedTextColor
 
     required property int index             // from model
     required property int time              // from model
@@ -201,6 +204,8 @@ Item {
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
             backgroundColor: root.backgroundColor
+            selectionColor: root.selectionColor
+            selectedTextColor: root.selectedTextColor
 
             onEdited: (newComment) => root.commentEdited(newComment)
 

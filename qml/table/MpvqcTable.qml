@@ -87,11 +87,12 @@ ListView {
     delegate: MpvqcRow {
         readonly property bool isOdd: index % 2 === 1
 
-        readonly property color foregroundColor: root.mpvqcTheme.getForeground(isOdd)
         backgroundColor: root.mpvqcTheme.getBackground(isOdd)
+        selectionColor: root.mpvqcTheme.rowHighlight
+        selectedTextColor: root.mpvqcTheme.rowHighlightText
 
         Material.background: backgroundColor
-        Material.foreground: rowSelected ? root.mpvqcTheme.rowHighlightText : foregroundColor
+        Material.foreground: rowSelected ? root.mpvqcTheme.rowHighlightText : root.mpvqcTheme.foreground
 
         mpvqcApplication: root.mpvqcApplication
         rowSelected: root.currentIndex === index

@@ -25,8 +25,11 @@ Popup {
     id: root
 
     required property var mpvqcDefaultTextValidator
-    required property var backgroundColor
     required property string currentComment
+
+    required property color backgroundColor
+    required property color selectionColor
+    required property color selectedTextColor
 
     property bool acceptValue: true
 
@@ -46,6 +49,8 @@ Popup {
 
         text: root.currentComment
         selectByMouse: true
+        selectionColor: root.selectionColor
+        selectedTextColor: root.selectedTextColor
         horizontalAlignment: Text.AlignLeft
         bottomPadding: root.bottomPadding
         topPadding: root.topPadding
