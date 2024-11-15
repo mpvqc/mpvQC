@@ -23,21 +23,77 @@ import QtQuick.Controls.Material
 QtObject {
     id: root
 
-    readonly property bool isDark: true
-    readonly property int variant: isDark ? Material.Dark : Material.Light
+    required property var mpvqcApplication
 
-    readonly property color background: "#2e3440"
-    readonly property color foreground: "#d8dee9"
+    readonly property QtObject _: QtObject {
+        id: _impl
 
-    readonly property color control: "#bf616a"
-    readonly property color rowHighlight:  "#934b52"
-    readonly property color rowHighlightText: "#d8dee9"
+        readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
+        readonly property var mpvqcUtilityPyObject: root.mpvqcApplication.mpvqcUtilityPyObject
+        readonly property int _dark: Material.Dark
 
-    readonly property color rowBase: "#2e3440"
-    readonly property color rowBaseText: "#d8dee9"
+        readonly property bool isDark: mpvqcSettings.theme === _dark
+        readonly property int variant: isDark ? Material.Dark : Material.Light
 
-    readonly property color rowBaseAlternate: Qt.lighter("#2e3440", 1.3)
-    readonly property color rowBaseAlternateText: "#d8dee9"
+        property var temp: mpvqcUtilityPyObject.getThemes()["Nord Dark"][3]  // todo remove and read values from settings
+
+        property color background: temp.background
+        property color foreground: temp.foreground
+
+        Behavior on background { ColorAnimation { duration: 150 }}
+        Behavior on foreground { ColorAnimation { duration: 150 }}
+
+        property color rowHighlight: temp.rowHighlight
+        property color rowHighlightText: temp.rowHighlightText
+        property color control: temp.control
+
+        Behavior on control { ColorAnimation { duration: 150 }}
+        Behavior on rowHighlight { ColorAnimation { duration: 150 }}
+        Behavior on rowHighlightText { ColorAnimation { duration: 150 }}
+
+        property color rowBase: temp.rowBase
+        property color rowBaseText: temp.rowBaseText
+
+        Behavior on rowBase { ColorAnimation { duration: 150 }}
+        Behavior on rowBaseText { ColorAnimation { duration: 150 }}
+
+        property color rowBaseAlternate: temp.rowBaseAlternate
+        property color rowBaseAlternateText: temp.rowBaseAlternateText
+
+        Behavior on rowBaseAlternate { ColorAnimation { duration: 150 }}
+        Behavior on rowBaseAlternateText { ColorAnimation { duration: 150 }}
+
+        property var cursorTimer: Timer {
+            running: true
+            repeat: true
+            interval: 2000
+
+            function randomInteger(min, max) {
+              return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            onTriggered: {
+                const rndInt = randomInteger(0, 7)
+                // _impl.temp = mpvqcUtilityPyObject.getThemes()["Nord Dark"][rndInt]
+            }
+        }
+    }
+
+    readonly property alias isDark: _impl.isDark
+    readonly property alias variant: _impl.variant
+
+    readonly property alias background: _impl.background
+    readonly property alias foreground: _impl.foreground
+
+    readonly property alias control: _impl.control
+    readonly property alias rowHighlight: _impl.rowHighlight
+    readonly property alias rowHighlightText: _impl.rowHighlightText
+
+    readonly property alias rowBase: _impl.rowBase
+    readonly property alias rowBaseText: _impl.rowBaseText
+
+    readonly property alias rowBaseAlternate: _impl.rowBaseAlternate
+    readonly property alias rowBaseAlternateText: _impl.rowBaseAlternateText
 
     function getBackground(isOdd: bool): color {
         return isOdd ? root.rowBase : root.rowBaseAlternate

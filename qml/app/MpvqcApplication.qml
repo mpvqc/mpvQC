@@ -33,7 +33,7 @@ ApplicationWindow {
     readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
-    readonly property var mpvqcTheme: MpvqcTheme {}
+    readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
     readonly property alias playerArea: _content.playerArea
@@ -51,9 +51,6 @@ ApplicationWindow {
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
-
-    property color primaryColor: mpvqcSettings.primary
-    property color accentColor: mpvqcSettings.accent
 
     function focusCommentTable() {
         root.mpvqcCommentTable.forceActiveFocus()
@@ -174,14 +171,9 @@ ApplicationWindow {
     }
 
     Material.theme: root.mpvqcTheme.variant
+    Material.accent: root.mpvqcTheme.control
 
     Material.background: root.mpvqcTheme.background
     Material.foreground: root.mpvqcTheme.foreground
-
-    Material.accent: root.mpvqcTheme.control
-
-    Behavior on color { ColorAnimation { duration: 150 }}
-    Behavior on primaryColor { ColorAnimation { duration: 150 }}
-    Behavior on accentColor { ColorAnimation { duration: 150 }}
 
 }
