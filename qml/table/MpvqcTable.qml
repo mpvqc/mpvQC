@@ -31,6 +31,7 @@ ListView {
 
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
 
     readonly property bool haveComments: root.count > 0
     readonly property int defaultHighlightMoveDuration: 50
@@ -71,7 +72,7 @@ ListView {
     highlight: Rectangle {
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
-        color: Material.primary
+        color: root.mpvqcTheme.rowHighlight
     }
 
     ScrollBar.vertical: ScrollBar {
@@ -84,12 +85,22 @@ ListView {
     }
 
     delegate: MpvqcRow {
+        readonly property bool isOdd: index % 2 === 1
+
+        readonly property color foregroundColor: root.mpvqcTheme.getForeground(isOdd)
+        backgroundColor: root.mpvqcTheme.getBackground(isOdd)
+
+        Material.background: backgroundColor
+        Material.foreground: rowSelected ? root.mpvqcTheme.rowHighlightText : foregroundColor
+
         mpvqcApplication: root.mpvqcApplication
         rowSelected: root.currentIndex === index
         tableInEditMode: root.currentlyEditing
         width: parent ? root.width : 0
-        widthScrollBar: _scrollBar.visibleWidth
         searchQuery: root.searchQuery
+
+        scrollBarWidth: _scrollBar.visibleWidth
+        scrollBarBackgroundColor: root.mpvqcTheme.background
 
         onHeightChanged: {
             if (rowSelected && tableInEditMode) {

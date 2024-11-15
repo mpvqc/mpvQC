@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.Material
 
 
@@ -33,6 +32,7 @@ Popup {
 
     signal edited(string newComment)
 
+    background: null
     visible: true
     dim: false
     modal: false
@@ -40,10 +40,6 @@ Popup {
     exit: null
     topPadding: 4
     bottomPadding: 4
-
-    background: Rectangle {
-        color: root.Material.primary
-    }
 
     contentItem: TextArea {
         id: _textField
