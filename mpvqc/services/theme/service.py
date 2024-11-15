@@ -15,6 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# ruff: noqa: F401
-from .schema import Theme
-from .service import ThemeService
+
+class ThemeService:
+    pass
