@@ -42,6 +42,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
     binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
     binder.bind_to_constructor(s.VideoSelectorService, lambda: s.VideoSelectorService())
+    binder.bind_to_constructor(s.ThemeService, lambda: s.ThemeService())
 
 
 def configure_injections():
