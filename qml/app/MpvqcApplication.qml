@@ -33,6 +33,7 @@ ApplicationWindow {
     readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
+    readonly property var mpvqcTheme: MpvqcTheme {}
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
     readonly property alias playerArea: _content.playerArea
@@ -172,9 +173,12 @@ ApplicationWindow {
         root.focusCommentTable()
     }
 
-    Material.theme: mpvqcSettings.theme
-    Material.accent: mpvqcSettings.theme === Material.Dark ? accentColor : primaryColor
-    Material.primary: primaryColor
+    Material.theme: root.mpvqcTheme.variant
+
+    Material.background: root.mpvqcTheme.background
+    Material.foreground: root.mpvqcTheme.foreground
+
+    Material.accent: root.mpvqcTheme.control
 
     Behavior on color { ColorAnimation { duration: 150 }}
     Behavior on primaryColor { ColorAnimation { duration: 150 }}

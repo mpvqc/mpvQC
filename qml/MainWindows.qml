@@ -38,6 +38,8 @@ ApplicationWindow {
     visibility: Window.Windowed
 
     Material.theme: appWindow.mpvqcSettings.theme
+    Material.background: appWindow.Material.background
+    Material.foreground: appWindow.Material.foreground
     Material.accent: appWindow.mpvqcSettings.primary
     Material.primary: appWindow.mpvqcSettings.primary
 
