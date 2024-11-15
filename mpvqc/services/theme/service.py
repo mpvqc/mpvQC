@@ -46,8 +46,8 @@ class QmlTheme:
         return QmlTheme(
             name=theme.name,
             isDark=theme.is_dark,
-            background=theme.background,
-            foreground=theme.foreground,
+            background=color_set.background,
+            foreground=color_set.foreground,
             control=color_set.control,
             rowHighlight=color_set.row_highlight,
             rowHighlightText=color_set.row_highlight_text,

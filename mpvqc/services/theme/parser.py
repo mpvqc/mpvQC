@@ -68,12 +68,12 @@ def _parse_v1_theme(theme: dict) -> Theme:
         if color is not None:
             return parse_color(f"{color}")
 
-    background = get_color("background")
-    foreground = get_color("foreground")
-
     color_sets = []
 
     for color_set in get("colors", is_list=True):
+        background = get_color("background", from_container=color_set)
+        foreground = get_color("foreground", from_container=color_set)
+
         control = get_color("control", from_container=color_set)
         row_highlight = get_color("row-highlight", from_container=color_set)
 
@@ -99,6 +99,8 @@ def _parse_v1_theme(theme: dict) -> Theme:
 
         color_sets.append(
             ThemeColorSet(
+                background=background,
+                foreground=foreground,
                 control=control,
                 row_highlight=row_highlight,
                 row_highlight_text=row_highlight_text,
@@ -109,10 +111,4 @@ def _parse_v1_theme(theme: dict) -> Theme:
             )
         )
 
-    return Theme(
-        name=name,
-        is_dark=variant == "dark",
-        background=background,
-        foreground=foreground,
-        colors=color_sets,
-    )
+    return Theme(name=name, is_dark=variant == "dark", colors=color_sets)

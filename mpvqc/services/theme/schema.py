@@ -24,13 +24,13 @@ from PySide6.QtGui import QColor
 class Theme:
     name: str
     is_dark: bool
-    background: QColor
-    foreground: QColor
     colors: list["ThemeColorSet"]
 
 
 @dataclass(frozen=True)
 class ThemeColorSet:
+    background: QColor
+    foreground: QColor
     control: QColor
     row_highlight: QColor
     row_highlight_text: QColor

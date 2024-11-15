@@ -33,14 +33,16 @@ schema-version = "v1"
 
 name = "Nord Dark"
 variant = "Dark"
-background = "#2e3440"
-foreground = "#d8dee9"
 
 [[colors]]
+background = "#2e3440"
+foreground = "#d8dee9"
 control = "#bf616a"
 row-highlight = "#934b52"
 
 [[colors]]
+background = "#2e3440"
+foreground = "#d8dee9"
 control = "#d08770"
 row-highlight = "#a06856"
 """
@@ -57,10 +59,9 @@ schema-version = "v1"
 name = "Nord Dark"
 variant = "dark"
 
+[[colors]]
 background = "#2e3440"
 foreground = "#d8dee9"
-
-[[colors]]
 control = "#bf616a"
 row-highlight = "#934b52"
 """
