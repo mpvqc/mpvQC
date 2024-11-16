@@ -48,22 +48,23 @@ def _parse_v1_theme(theme: dict) -> Theme:
         case other_value:
             raise ThemeParseError(f"Cannot parse schema theme-name: {other_value}")
 
+    def error(message: str) -> ThemeParseError:
+        return ThemeParseError(f"Cannot parse schema '{theme_name}'. {message}")
+
     match theme.get("theme-variant"):
         case str(v) if v.strip().lower() == "light":
-            theme_variant = "light"
+            is_dark = False
         case str(v) if v.strip().lower() == "dark":
-            theme_variant = "dark"
+            is_dark = True
         case other_value:
-            raise ThemeParseError(
-                f"Cannot parse variant '{other_value}' from theme '{theme_name}'. Allowed values are 'dark' and 'light'"
-            )
+            raise error(f'Property theme-variant = "{other_value}" not supported. Allowed values: dark, light')
 
     def get(prop: str, from_container=None, is_list=False, throw_if_missing=True) -> Any:
         value = (from_container or theme).get(prop)
         if value is None and throw_if_missing:
-            raise ThemeParseError(f"Cannot parse property '{prop}' from theme '{theme_name}'")
+            raise error(f"Property '{prop}' not found")
         if is_list and not isinstance(value, list) and throw_if_missing:
-            raise ThemeParseError(f"Cannot parse list property '{prop}' from theme '{theme_name}'")
+            raise error(f"Property '{prop}' required to be a list")
         return value
 
     def get_color(prop: str, from_container=None, throw_if_missing=True) -> QColor | None:
@@ -90,10 +91,10 @@ def _parse_v1_theme(theme: dict) -> Theme:
         row_base_text = row_base_text or foreground
 
         match get_color("row-base-alternate", from_container=color_set, throw_if_missing=False):
-            case None if theme_variant == "light":
-                row_base_alternate = parse_color(f"Qt.darker {row_base.name(QColor.NameFormat.HexRgb)} 1.1")
-            case None if theme_variant == "dark":
+            case None if is_dark:
                 row_base_alternate = parse_color(f"Qt.lighter {row_base.name(QColor.NameFormat.HexRgb)} 1.3")
+            case None if not is_dark:
+                row_base_alternate = parse_color(f"Qt.darker {row_base.name(QColor.NameFormat.HexRgb)} 1.1")
             case color_value:
                 row_base_alternate = color_value
 
@@ -114,4 +115,4 @@ def _parse_v1_theme(theme: dict) -> Theme:
             )
         )
 
-    return Theme(name=theme_name, is_dark=theme_variant == "dark", colors=color_sets)
+    return Theme(name=theme_name, is_dark=is_dark, colors=color_sets)
