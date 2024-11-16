@@ -70,7 +70,7 @@ class MpvqcUtilityPyObject(QObject):
         self._clipboard.setText(text)
 
     @Slot(str, result=str or None)
-    def getEnviornmentVariable(self, key: str) -> str or None:
+    def getEnvironmentVariable(self, key: str) -> str or None:
         return environ.get(key) or None
 
     @Slot(float, result=str)

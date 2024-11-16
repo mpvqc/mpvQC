@@ -86,7 +86,7 @@ QtObject {
         location: root.settingsFile
     }
 
-    property string nickname: root.mpvqcUtilityPyObject.getEnviornmentVariable('USERNAME') || root.mpvqcUtilityPyObject.getEnviornmentVariable('USER') || 'nickname'
+    property string nickname: root.mpvqcUtilityPyObject.getEnvironmentVariable('USERNAME') || root.mpvqcUtilityPyObject.getEnvironmentVariable('USER') || 'nickname'
     property bool writeHeaderDate: true
     property bool writeHeaderGenerator: true
     property bool writeHeaderNickname: false
