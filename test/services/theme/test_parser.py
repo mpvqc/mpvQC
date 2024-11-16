@@ -32,7 +32,7 @@ VALID_THEME_V1 = """
 schema-version = "v1"
 
 theme-name = "Nord Dark"
-variant = "Dark"
+theme-variant = "Dark"
 
 [[colors]]
 background = "#2e3440"
@@ -57,7 +57,7 @@ VALID_THEME_V1_BASE = """
 schema-version = "v1"
 
 theme-name = "Nord Dark"
-variant = "dark"
+theme-variant = "dark"
 
 [[colors]]
 background = "#2e3440"
@@ -82,7 +82,7 @@ def _append(line: str) -> str:
         ('theme-name = "Nord Dark"', 'theme-name = ""'),
         ('theme-name = "Nord Dark"', "theme-name = 1"),
         ("theme-name =", "names ="),
-        ('variant = "dark"', 'variant = "dark lord"'),
+        ('theme-variant = "dark"', 'theme-variant = "dark lord"'),
         ('background = "#2e3440"', 'background = ""'),
         ('foreground = "#d8dee9"', 'foreground = "#d8dee"'),
         ("[[colors]]", 'colors = "not-list"'),
@@ -129,7 +129,7 @@ def test_row_base_alternate():
         parse_color(f"Qt.lighter {theme.colors[0].row_base.name(QColor.NameFormat.HexRgb)} 1.3"),
     )
 
-    theme = parse_theme(_replace('variant = "dark"', 'variant = "light"'))
+    theme = parse_theme(_replace('theme-variant = "dark"', 'theme-variant = "light"'))
     assert_colors(
         theme.colors[0].row_base_alternate,
         QColor("#2a2f3a"),

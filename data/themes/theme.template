@@ -1,12 +1,12 @@
 schema-version = "v1" # required
 
 theme-name = "" # required
-variant = "" # required, either: dark, light
-background = "" # required, color: default background color
-foreground = "" # required, color: default text color
+theme-variant = "" # required, either: dark, light
 
 [[colors]]
-
+background = "" # required, color: default background color
+foreground = "" # required, color: default text color
+  
 control = "" # required, color: control element color
 row-highlight = "" # required, color: default row highlight background color
 row-highlight-text = "" # optional, color: text color if row is highlighted, defaults to foreground

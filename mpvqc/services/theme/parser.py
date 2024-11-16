@@ -48,11 +48,11 @@ def _parse_v1_theme(theme: dict) -> Theme:
         case other_value:
             raise ThemeParseError(f"Cannot parse schema theme-name: {other_value}")
 
-    match theme.get("variant"):
+    match theme.get("theme-variant"):
         case str(v) if v.strip().lower() == "light":
-            variant = "light"
+            theme_variant = "light"
         case str(v) if v.strip().lower() == "dark":
-            variant = "dark"
+            theme_variant = "dark"
         case other_value:
             raise ThemeParseError(
                 f"Cannot parse variant '{other_value}' from theme '{theme_name}'. Allowed values are 'dark' and 'light'"
@@ -90,9 +90,9 @@ def _parse_v1_theme(theme: dict) -> Theme:
         row_base_text = row_base_text or foreground
 
         match get_color("row-base-alternate", from_container=color_set, throw_if_missing=False):
-            case None if variant == "light":
+            case None if theme_variant == "light":
                 row_base_alternate = parse_color(f"Qt.darker {row_base.name(QColor.NameFormat.HexRgb)} 1.1")
-            case None if variant == "dark":
+            case None if theme_variant == "dark":
                 row_base_alternate = parse_color(f"Qt.lighter {row_base.name(QColor.NameFormat.HexRgb)} 1.3")
             case color_value:
                 row_base_alternate = color_value
@@ -114,4 +114,4 @@ def _parse_v1_theme(theme: dict) -> Theme:
             )
         )
 
-    return Theme(name=theme_name, is_dark=variant == "dark", colors=color_sets)
+    return Theme(name=theme_name, is_dark=theme_variant == "dark", colors=color_sets)

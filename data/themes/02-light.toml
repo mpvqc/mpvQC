@@ -1,7 +1,7 @@
 schema-version = "v1"
 
 theme-name = "Material You"
-variant = "dark"
+theme-variant = "dark"
 
 [[colors]]
 background = "#fff0f0"
