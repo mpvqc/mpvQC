@@ -5,64 +5,193 @@ theme-variant = "dark"
 theme-preview = "#f4f4e9"
 
 [[colors]]
-background = "#fff0f0"
-foreground = "#410002"
-control = "#8f4a4d"
-row-highlight = "#8f4a4d"
-row-highlight-text = "#fff0f0"
+background = "#FFF0F0"
+foreground = "#524343"
+control = "#775657"
+row-highlight = "#8F4A4D"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F0DEDE"
 
 [[colors]]
-background = "#ffdbd1"
-foreground = "#3a0b01"
-control = "#8f4c37"
-row-highlight = "#8f4c37"
-row-highlight-text = "#ffdbd1"
+background = "#FFF0F0"
+foreground = "#4E3F3F"
+control = "#583B3C"
+row-highlight = "#6E2F33"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F0DEDE"
 
 [[colors]]
-background = "#fdf2e5"
-foreground = "#201b13"
-control = "#ffdea8"
-row-highlight = "#ffdea8"
-row-highlight-text = "#271900"
+background = "#FFF0F0"
+foreground = "#2D2121"
+control = "#341B1C"
+row-highlight = "#440F14"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F0DEDE"
 
 [[colors]]
-background = "#f4f4e9"
-foreground = "#1a1c16"
-control = "#cfeda2"
-row-highlight = "#cfeda2"
-row-highlight-text = "#111f00"
+background = "#FFF1ED"
+foreground = "#53433F"
+control = "#77574E"
+row-highlight = "#8F4C37"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F1DFDA"
 
+[[colors]]
+background = "#FFF1ED"
+foreground = "#4F3F3B"
+control = "#593C33"
+row-highlight = "#6D311F"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F1DFDA"
 
-#[[colors]]
-#background = ""
-#foreground = ""
-#control = ""
-#row-highlight = ""
-#
-#
-#[[colors]]
-#background = ""
-#foreground = ""
-#control = ""
-#row-highlight = ""
-#
-#
-#[[colors]]
-#background = ""
-#foreground = ""
-#control = ""
-#row-highlight = ""
-#
-#
-#[[colors]]
-#background = ""
-#foreground = ""
-#control = ""
-#row-highlight = ""
-#
-#
-#[[colors]]
-#background = ""
-#foreground = ""
-#control = ""
-#row-highlight = ""
+[[colors]]
+background = "#FFF1ED"
+foreground = "#2E211D"
+control = "#341C15"
+row-highlight = "#431103"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F1DFDA"
+
+[[colors]]
+background = "#FDF2E5"
+foreground = "#4E4639"
+control = "#6D5C3F"
+row-highlight = "#7B580C"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#ECE1D4"
+
+[[colors]]
+background = "#FDF2E5"
+foreground = "#4A4235"
+control = "#504126"
+row-highlight = "#593E00"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#ECE1D4"
+
+[[colors]]
+background = "#FDF2E5"
+foreground = "#2A2318"
+control = "#2D2009"
+row-highlight = "#2F1F00"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#ECE1D4"
+
+[[colors]]
+background = "#F4F4E9"
+foreground = "#45483D"
+control = "#586249"
+row-highlight = "#4D662A"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E2E3D8"
+
+[[colors]]
+background = "#F4F4E9"
+foreground = "#414439"
+control = "#3D462F"
+row-highlight = "#334910"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E2E3D8"
+
+[[colors]]
+background = "#F4F4E9"
+foreground = "#22251B"
+control = "#1D2511"
+row-highlight = "#162700"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E2E3D8"
+
+[[colors]]
+background = "#F0F4F7"
+foreground = "#40484C"
+control = "#4C616B"
+row-highlight = "#0D6680"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#DEE3E6"
+
+[[colors]]
+background = "#F0F4F7"
+foreground = "#3C4448"
+control = "#31464F"
+row-highlight = "#00495D"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#DEE3E6"
+
+[[colors]]
+background = "#F0F4F7"
+foreground = "#1D2529"
+control = "#0F252D"
+row-highlight = "#002632"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#DEE3E6"
+
+[[colors]]
+background = "#F3F3FA"
+foreground = "#44474F"
+control = "#575E71"
+row-highlight = "#455E91"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E2E2E9"
+
+[[colors]]
+background = "#F3F3FA"
+foreground = "#40434B"
+control = "#3B4355"
+row-highlight = "#284274"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E2E2E9"
+
+[[colors]]
+background = "#F3F3FA"
+foreground = "#21242B"
+control = "#1B2233"
+row-highlight = "#00204F"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E2E2E9"
+
+[[colors]]
+background = "#FAF1F9"
+foreground = "#4B454D"
+control = "#675A6E"
+row-highlight = "#725188"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E9E0E8"
+
+[[colors]]
+background = "#FAF1F9"
+foreground = "#474149"
+control = "#4B3E52"
+row-highlight = "#55366A"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E9E0E8"
+
+[[colors]]
+background = "#FAF1F9"
+foreground = "#27222A"
+control = "#291E30"
+row-highlight = "#321347"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#E9E0E8"
+
+[[colors]]
+background = "#FFF0F0"
+foreground = "#524344"
+control = "#765658"
+row-highlight = "#8F4951"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F0DEDF"
+
+[[colors]]
+background = "#FFF0F0"
+foreground = "#4E3F40"
+control = "#583B3D"
+row-highlight = "#6D2F37"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F0DEDF"
+
+[[colors]]
+background = "#FFF0F0"
+foreground = "#2D2122"
+control = "#341B1E"
+row-highlight = "#440E18"
+row-highlight-text = "#FFFFFF"
+row-base-alternate = "#F0DEDF"

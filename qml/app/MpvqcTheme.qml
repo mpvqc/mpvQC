@@ -35,7 +35,7 @@ QtObject {
         readonly property bool isDark: mpvqcSettings.theme === _dark
         readonly property int variant: isDark ? Material.Dark : Material.Light
 
-        property var temp: mpvqcThemesPyObject.get_options_for_theme("Material You")[3]  // todo remove and read values from settings
+        property var temp: mpvqcThemesPyObject.get_options_for_theme("Material You")[0]  // todo remove and read values from settings
 
         property color background: temp.background
         property color foreground: temp.foreground
@@ -66,11 +66,11 @@ QtObject {
         property var timer: Timer {
             running: true; repeat: true; interval: 2000
 
-            property int maxThemes: 4
+            property int maxThemes: 24
             property int tt: 1
 
             onTriggered: {
-                // _impl.temp = mpvqcThemesPyObject.get_options_for_theme("Material You")[tt++ % maxThemes]
+                _impl.temp = mpvqcThemesPyObject.get_options_for_theme("Material You")[tt++ % maxThemes]
             }
         }
     }
