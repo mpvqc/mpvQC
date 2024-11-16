@@ -47,6 +47,7 @@ ApplicationWindow {
     readonly property var mpvqcPlayerFilesPyObject: MpvqcPlayerFilesPyObject {}
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
+    readonly property var mpvqcThemesPyObject: MpvqcThemesPyObject {}
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen

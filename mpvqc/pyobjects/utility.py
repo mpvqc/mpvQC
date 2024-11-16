@@ -25,7 +25,6 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import (
     MimetypeProviderService,
     ReverseTranslatorService,
-    ThemeService,
     TimeFormatterService,
     TypeMapperService,
 )
@@ -43,7 +42,6 @@ class MpvqcUtilityPyObject(QObject):
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
     _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
-    _themes: ThemeService = inject.attr(ThemeService)
 
     def __init__(self):
         super().__init__()
@@ -88,7 +86,3 @@ class MpvqcUtilityPyObject(QObject):
     @Slot(str, result=str)
     def reverseLookupCommentType(self, non_english: str) -> str:
         return self._translator.lookup(non_english)
-
-    @Slot(result=dict)
-    def getThemes(self):
-        return self._themes.get_themes()

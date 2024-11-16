@@ -28,5 +28,6 @@ from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .player_win_id import MpvWindowPyObject
 from .text_validator import MpvqcDefaultTextValidatorPyObject
+from .themes import MpvqcThemesPyObject
 from .utility import MpvqcUtilityPyObject
 from .version_checker import MpvqcVersionCheckerPyObject
