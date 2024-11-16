@@ -4,49 +4,49 @@ name = "Material You Dark"
 variant = "dark"
 
 [[colors]]
-background = "#150c0c" # surf container lowest
-foreground = "#f3dedd" # inverse surf
-control = "#ffb9ba" #primary container
-row-highlight = "#5c0013" # inverse primary container
+background = "#150c0c"
+foreground = "#f3dedd"
+control = "#ffb9ba"
+row-highlight = "#5c0013"
 
 [[colors]]
-background = "#140c0a" # surf container lowest
-foreground = "#f1dfda" # inverse surf
-control = "#ffbba7" #primary container
-row-highlight = "#541200" # inverse primary container
+background = "#140c0a"
+foreground = "#f1dfda"
+control = "#ffbba7"
+row-highlight = "#541200"
 
 [[colors]]
-background = "#110e08" # surf container lowest
-foreground = "#ebe1d6" # inverse surf
-control = "#fbc768" #primary container
-row-highlight = "#392700" # inverse primary container
+background = "#110e08"
+foreground = "#ebe1d6"
+control = "#fbc768"
+row-highlight = "#392700"
 
 [[colors]]
-background = "#0d0f09" # surf container lowest
-foreground = "#e3e3d9" # inverse surf
-control = "#bce186" #primary container
-row-highlight = "#1c2f00" # inverse primary container
+background = "#0d0f09"
+foreground = "#e3e3d9"
+control = "#bce186"
+row-highlight = "#1c2f00"
 
 [[colors]]
-background = "#0b0f11"  # surf container lowest
-foreground = "#e0e3e5"  # inverse surf
-control = "#84d8fa"  #primary container
-row-highlight = "#002e3c"  # inverse primary container
+background = "#0b0f11"
+foreground = "#e0e3e5"
+control = "#84d8fa"
+row-highlight = "#002e3c"
 
 [[colors]]
-background = "#0c0e13"  # surf container lowest
-foreground = "#e2e2e9"  # inverse surf
-control = "#b5caff"  #primary container
-row-highlight = "#00285f"  # inverse primary container
+background = "#0c0e13"
+foreground = "#e2e2e9"
+control = "#b5caff"
+row-highlight = "#00285f"
 
 [[colors]]
-background = "#100d12"  # surf container lowest
-foreground = "#e9e0e8"  # inverse surf
-control = "#e5bbff"  #primary container
-row-highlight = "#410e62"  # inverse primary container
+background = "#100d12"
+foreground = "#e9e0e8"
+control = "#e5bbff"
+row-highlight = "#410e62"
 
 [[colors]]
-background = "#180b0c"  # surf container lowest
-foreground = "#f7dcdd"  # inverse surf
-control = "#ffb8be"  #primary container
-row-highlight = "#5b0019"  # inverse primary container
+background = "#180b0c"
+foreground = "#f7dcdd"
+control = "#ffb8be"
+row-highlight = "#5b0019"
