@@ -86,6 +86,7 @@ def _append(line: str) -> str:
         ('background = "#2e3440"', 'background = ""'),
         ('foreground = "#d8dee9"', 'foreground = "#d8dee"'),
         ("[[colors]]", 'colors = "not-list"'),
+        ("[[colors]]", "[[colors]"),
         ('control = "#bf616a"', 'controls = "#bf616a"'),
         ('row-highlight = "#934b52"', ""),
     ],

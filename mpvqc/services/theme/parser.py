@@ -25,7 +25,10 @@ from mpvqc.services.theme.utils import parse_color
 
 
 def parse_theme(theme: str) -> Theme:
-    data = tomllib.loads(theme)
+    try:
+        data = tomllib.loads(theme)
+    except tomllib.TOMLDecodeError as e:
+        raise ThemeParseError(e)
 
     match data.get("schema-version"):
         case "v1":
