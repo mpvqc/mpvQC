@@ -38,15 +38,15 @@ def parse_theme(theme: str) -> Theme:
 
 
 def _parse_v1_theme(theme: dict) -> Theme:
-    match theme.get("name"):
+    match theme.get("theme-name"):
         case None:
-            raise ThemeParseError("Cannot parse schema without 'name' property")
+            raise ThemeParseError("Cannot parse schema without 'theme-name' property")
         case str(name) if name.strip() == "":
-            raise ThemeParseError("Cannot parse schema without 'name' property")
+            raise ThemeParseError("Cannot parse schema without 'theme-name' property")
         case str(name):
-            name = name.strip()
+            theme_name = name.strip()
         case other_value:
-            raise ThemeParseError(f"Cannot parse schema name: {other_value}")
+            raise ThemeParseError(f"Cannot parse schema theme-name: {other_value}")
 
     match theme.get("variant"):
         case str(v) if v.strip().lower() == "light":
@@ -55,15 +55,15 @@ def _parse_v1_theme(theme: dict) -> Theme:
             variant = "dark"
         case other_value:
             raise ThemeParseError(
-                f"Cannot parse variant '{other_value}' from theme '{name}'. Allowed values are 'dark' and 'light'"
+                f"Cannot parse variant '{other_value}' from theme '{theme_name}'. Allowed values are 'dark' and 'light'"
             )
 
     def get(prop: str, from_container=None, is_list=False, throw_if_missing=True) -> Any:
         value = (from_container or theme).get(prop)
         if value is None and throw_if_missing:
-            raise ThemeParseError(f"Cannot parse property '{prop}' from theme '{name}'")
+            raise ThemeParseError(f"Cannot parse property '{prop}' from theme '{theme_name}'")
         if is_list and not isinstance(value, list) and throw_if_missing:
-            raise ThemeParseError(f"Cannot parse list property '{prop}' from theme '{name}'")
+            raise ThemeParseError(f"Cannot parse list property '{prop}' from theme '{theme_name}'")
         return value
 
     def get_color(prop: str, from_container=None, throw_if_missing=True) -> QColor | None:
@@ -114,4 +114,4 @@ def _parse_v1_theme(theme: dict) -> Theme:
             )
         )
 
-    return Theme(name=name, is_dark=variant == "dark", colors=color_sets)
+    return Theme(name=theme_name, is_dark=variant == "dark", colors=color_sets)

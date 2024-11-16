@@ -31,7 +31,7 @@ def assert_colors(*colors):
 VALID_THEME_V1 = """
 schema-version = "v1"
 
-name = "Nord Dark"
+theme-name = "Nord Dark"
 variant = "Dark"
 
 [[colors]]
@@ -56,7 +56,7 @@ def test_parse_valid_v1():
 VALID_THEME_V1_BASE = """
 schema-version = "v1"
 
-name = "Nord Dark"
+theme-name = "Nord Dark"
 variant = "dark"
 
 [[colors]]
@@ -79,9 +79,9 @@ def _append(line: str) -> str:
     "old, new",
     [
         ('schema-version = "v1"', 'schema-version = "v0"'),
-        ('name = "Nord Dark"', 'name = ""'),
-        ('name = "Nord Dark"', "name = 1"),
-        ("name =", "names ="),
+        ('theme-name = "Nord Dark"', 'theme-name = ""'),
+        ('theme-name = "Nord Dark"', "theme-name = 1"),
+        ("theme-name =", "names ="),
         ('variant = "dark"', 'variant = "dark lord"'),
         ('background = "#2e3440"', 'background = ""'),
         ('foreground = "#d8dee9"', 'foreground = "#d8dee"'),

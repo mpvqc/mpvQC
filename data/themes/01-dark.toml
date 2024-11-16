@@ -1,6 +1,6 @@
 schema-version = "v1"
 
-name = "Material You Dark"
+theme-name = "Material You Dark"
 variant = "dark"
 
 [[colors]]

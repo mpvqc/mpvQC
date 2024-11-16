@@ -1,6 +1,6 @@
 schema-version = "v1"
 
-name = "Nord Dark"
+theme-name = "Nord Dark"
 variant = "dark"
 
 [[colors]]

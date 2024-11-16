@@ -1,6 +1,6 @@
 schema-version = "v1" # required
 
-name = "" # required
+theme-name = "" # required
 variant = "" # required, either: dark, light
 background = "" # required, color: default background color
 foreground = "" # required, color: default text color
