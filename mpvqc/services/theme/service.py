@@ -27,10 +27,27 @@ from .parser import parse_theme
 from .schema import Theme, ThemeColorSet
 
 
+class ThemeService:
+    @staticmethod
+    def get_theme_summaries() -> list[dict]:
+        summaries, _ = parse_themes()
+        return summaries
+
+    @staticmethod
+    def get_options_for_theme(name: str) -> list[dict]:
+        _, color_options = parse_themes()
+        return color_options.get(name, [])
+
+
 @dataclass(frozen=True)
-class QmlTheme:
+class QmlThemeSummary:
     name: str
     isDark: bool
+    preview: QColor
+
+
+@dataclass(frozen=True)
+class QmlThemeColors:
     background: QColor
     foreground: QColor
     control: QColor
@@ -41,52 +58,62 @@ class QmlTheme:
     rowBaseAlternate: QColor
     rowBaseAlternateText: QColor
 
-    @staticmethod
-    def make_from(theme: Theme, color_set: ThemeColorSet) -> "QmlTheme":
-        return QmlTheme(
-            name=theme.name,
-            isDark=theme.is_dark,
-            background=color_set.background,
-            foreground=color_set.foreground,
-            control=color_set.control,
-            rowHighlight=color_set.row_highlight,
-            rowHighlightText=color_set.row_highlight_text,
-            rowBase=color_set.row_base,
-            rowBaseText=color_set.row_base_text,
-            rowBaseAlternate=color_set.row_base_alternate,
-            rowBaseAlternateText=color_set.row_base_alternate_text,
-        )
+
+@cache
+def parse_themes() -> tuple[list[dict], dict[str, list[dict]]]:
+    summaries: list[dict] = []
+    color_options: dict[str, list[dict]] = {}
+
+    themes = parse_builtin_themes()
+
+    for theme in themes:
+        summary = map_to_summary(theme)
+        # noinspection PyTypeChecker
+        summaries.append(asdict(summary))
+
+        for color_set in theme.colors:
+            color_option = map_to_qml_color_set(color_set)
+            # noinspection PyTypeChecker
+            color_options.setdefault(theme.name, []).append(asdict(color_option))
+
+    return summaries, color_options
 
 
-class ThemeService:
-    _resource_reader: ResourceReaderService = inject.attr(ResourceReaderService)
+def parse_builtin_themes() -> list[Theme]:
+    resource_reader = inject.instance(ResourceReaderService)
 
-    @cache
-    def get_themes(self) -> dict[str, list[QmlTheme]]:
-        theme_mapping = {}
+    directory = QDir(":/data/themes")
+    directory.setNameFilters(["*.toml"])
+    directory.setSorting(QDir.SortFlag.Name)
 
-        themes = self._parse_builtin_themes()
+    themes = []
 
-        for theme in themes:
-            for color_set in theme.colors:
-                qml_theme = QmlTheme.make_from(theme, color_set)
-                # noinspection PyTypeChecker
-                qml_theme = asdict(qml_theme)
-                theme_mapping.setdefault(theme.name.title(), []).append(qml_theme)
+    for entry in directory.entryInfoList():
+        resource_path = entry.filePath()
+        file_content = resource_reader.read_from(resource_path)
+        theme = parse_theme(file_content)
+        themes.append(theme)
 
-        return theme_mapping
+    return themes
 
-    def _parse_builtin_themes(self) -> list[Theme]:
-        themes = []
 
-        directory = QDir(":/data/themes")
-        directory.setNameFilters(["*.toml"])
-        directory.setSorting(QDir.SortFlag.Name)
+def map_to_summary(theme: Theme) -> QmlThemeSummary:
+    return QmlThemeSummary(
+        name=theme.name,
+        isDark=theme.is_dark,
+        preview=theme.preview,
+    )
 
-        for entry in directory.entryInfoList():
-            resource_path = entry.filePath()
-            file_content = self._resource_reader.read_from(resource_path)
-            theme = parse_theme(file_content)
-            themes.append(theme)
 
-        return themes
+def map_to_qml_color_set(colors: ThemeColorSet) -> QmlThemeColors:
+    return QmlThemeColors(
+        background=colors.background,
+        foreground=colors.foreground,
+        control=colors.control,
+        rowHighlight=colors.row_highlight,
+        rowHighlightText=colors.row_highlight_text,
+        rowBase=colors.row_base,
+        rowBaseText=colors.row_base_text,
+        rowBaseAlternate=colors.row_base_alternate,
+        rowBaseAlternateText=colors.row_base_alternate_text,
+    )

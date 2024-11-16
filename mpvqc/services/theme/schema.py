@@ -24,6 +24,7 @@ from PySide6.QtGui import QColor
 class Theme:
     name: str
     is_dark: bool
+    preview: QColor
     colors: list["ThemeColorSet"]
 
 

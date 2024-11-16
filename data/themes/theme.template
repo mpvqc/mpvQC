@@ -2,6 +2,7 @@ schema-version = "v1" # required
 
 theme-name = "" # required
 theme-variant = "" # required, either: dark, light
+theme-preview = "" # required, a color that can be used to present the following color options
 
 [[colors]]
 background = "" # required, color: default background color

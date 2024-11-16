@@ -2,6 +2,7 @@ schema-version = "v1"
 
 theme-name = "Nord Dark"
 theme-variant = "dark"
+theme-preview = "#2e3440"
 
 [[colors]]
 background = "#2e3440"

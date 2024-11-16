@@ -72,6 +72,8 @@ def _parse_v1_theme(theme: dict) -> Theme:
         if color is not None:
             return parse_color(f"{color}")
 
+    preview_color = get_color("theme-preview")
+
     color_sets = []
 
     for color_set in get("colors", is_list=True):
@@ -115,4 +117,4 @@ def _parse_v1_theme(theme: dict) -> Theme:
             )
         )
 
-    return Theme(name=theme_name, is_dark=is_dark, colors=color_sets)
+    return Theme(name=theme_name, is_dark=is_dark, preview=preview_color, colors=color_sets)

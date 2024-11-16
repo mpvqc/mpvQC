@@ -25,6 +25,10 @@ def service():
     return ThemeService()
 
 
-def test_themes_can_be_parsed(service):
-    collections = service.get_themes()
-    assert len(collections) > 0
+def test_parse_builtin_themes(service):
+    summaries = service.get_theme_summaries()
+    assert len(summaries) > 0
+
+    for summary in summaries:
+        color_options = service.get_options_for_theme(summary["name"])
+        assert len(color_options) > 3

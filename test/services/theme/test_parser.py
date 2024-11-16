@@ -33,6 +33,7 @@ schema-version = "v1"
 
 theme-name = "Nord Dark"
 theme-variant = "Dark"
+theme-preview = "#2e3440"
 
 [[colors]]
 background = "#2e3440"
@@ -58,6 +59,7 @@ schema-version = "v1"
 
 theme-name = "Nord Dark"
 theme-variant = "dark"
+theme-preview = "#2e3440"
 
 [[colors]]
 background = "#2e3440"
@@ -83,6 +85,7 @@ def _append(line: str) -> str:
         ('theme-name = "Nord Dark"', "theme-name = 1"),
         ("theme-name =", "names ="),
         ('theme-variant = "dark"', 'theme-variant = "dark lord"'),
+        ('theme-preview = "#2e3440"', 'theme-preview = "2e3440"'),
         ('background = "#2e3440"', 'background = ""'),
         ('foreground = "#d8dee9"', 'foreground = "#d8dee"'),
         ("[[colors]]", 'colors = "not-list"'),
