@@ -20,19 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
-import models
-import shared
-
-
 ListView {
     id: root
 
     required property var mpvqcApplication
+
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
 
     readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
     readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
+    readonly property bool isDarkTheme: mpvqcThemesPyObject.getThemeSummary(currentThemeIdentifier).isDark
 
     readonly property int itemSize: 52
     readonly property int borderSize: 5
@@ -40,14 +38,19 @@ ListView {
     property var initialThemeIdentifier: null
 
     function reset(): void {
-        root.mpvqcSettings.themeIdentifier = initialThemeIdentifier
+        root.mpvqcSettings.themeIdentifier = initialThemeIdentifier;
+    }
+
+    Component.onCompleted: {
+        root.initialThemeIdentifier = root.currentThemeIdentifier;
+        root.selectInitialIndex();
     }
 
     function selectInitialIndex(): void {
         for (const [index, item] of model.entries()) {
             if (item.name === root.currentThemeIdentifier) {
-                root.currentIndex = index
-                break
+                root.currentIndex = index;
+                break;
             }
         }
     }
@@ -66,19 +69,24 @@ ListView {
     highlightResizeVelocity: -1
 
     highlight: Rectangle {
+        readonly property var colors: root.mpvqcThemesPyObject
+            .getThemeColorOption(root.currentThemeColorOption, root.currentThemeIdentifier)
+
         width: root.itemSize
         height: root.itemSize
-        color: {
-            const themeIdentifier = root.currentItem.name
-            const currentColorOption = root.currentThemeColorOption
-            root.mpvqcThemesPyObject.getThemeColorOption(currentColorOption, themeIdentifier).control
-        }
-        radius: Material.MediumScale
+        color: colors.control
+        radius: Material.SmallScale
 
-        Behavior on color { ColorAnimation { duration: root.highlightMoveDuration }}
+        Behavior on color {
+            ColorAnimation {
+                duration: root.highlightMoveDuration
+            }
+        }
     }
 
     delegate: ItemDelegate {
+        id: _delegate
+
         required property string name
         required property color preview
         required property int index
@@ -95,15 +103,50 @@ ListView {
             radius: Material.LargeScale
         }
 
-        onClicked: {
-            root.currentIndex = index
-            root.mpvqcSettings.themeIdentifier = name
+        onPressed: {
+            pressAnimation.restart();
+            root.currentIndex = index;
+            root.mpvqcSettings.themeIdentifier = name;
+        }
+
+        SequentialAnimation {
+            id: pressAnimation
+
+            PropertyAnimation {
+                target: _delegate
+                property: "scale"
+                to: 1.1
+                duration: 125
+                easing.type: Easing.InOutQuad
+            }
+
+            PropertyAnimation {
+                target: _delegate
+                property: "scale"
+                to: 1.0
+                duration: 125
+                easing.type: Easing.InOutQuad
+            }
         }
     }
 
-    Component.onCompleted: {
-        root.initialThemeIdentifier = root.currentThemeIdentifier
-        root.selectInitialIndex()
-    }
+    populate: Transition {
+        SequentialAnimation {
+            PropertyAnimation {
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 150
+                easing.type: Easing.InOutQuad
+            }
 
+            PropertyAnimation {
+                property: "scale"
+                from: 0.95
+                to: 1.0
+                duration: 150
+                easing.type: Easing.InOutCubic
+            }
+        }
+    }
 }
