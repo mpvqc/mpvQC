@@ -1,6 +1,5 @@
 module shared
 
-MpvqcCircle MpvqcCircle.qml
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
