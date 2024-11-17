@@ -25,48 +25,49 @@ QtObject {
 
     required property var mpvqcApplication
 
+    readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
+
     readonly property QtObject _: QtObject {
         id: _impl
 
-        readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
-        readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
+        readonly property string themeIdentifier: root.mpvqcSettings.themeIdentifier
+        readonly property string colorOption: root.mpvqcSettings.themeColorOption
 
-        readonly property string themeIdentifier: mpvqcSettings.themeIdentifier
-        readonly property string colorOption: mpvqcSettings.themeColorOption
+        readonly property var themeSummary: root.mpvqcThemesPyObject.getThemeSummary(themeIdentifier)
+        readonly property var themeColors: root.mpvqcThemesPyObject.getThemeColorOption(colorOption, themeIdentifier)
 
-        readonly property bool isDark: mpvqcThemesPyObject.getThemeSummary(themeIdentifier).isDark
-        readonly property int variant: isDark ? Material.Dark : Material.Light
+        readonly property int variant: themeSummary.isDark ? Material.Dark : Material.Light
 
-        readonly property var theme: mpvqcThemesPyObject.getThemeColorOption(colorOption, themeIdentifier)
+        property color background: themeColors.background
+        property color foreground: themeColors.foreground
 
-        property color background: theme.background
-        property color foreground: theme.foreground
+        property color rowHighlight: themeColors.rowHighlight
+        property color rowHighlightText: themeColors.rowHighlightText
+        property color control: themeColors.control
 
-        Behavior on background { ColorAnimation { duration: 150 }}
-        Behavior on foreground { ColorAnimation { duration: 150 }}
+        property color rowBase: themeColors.rowBase
+        property color rowBaseText: themeColors.rowBaseText
 
-        property color rowHighlight: theme.rowHighlight
-        property color rowHighlightText: theme.rowHighlightText
-        property color control: theme.control
+        property color rowBaseAlternate: themeColors.rowBaseAlternate
+        property color rowBaseAlternateText: themeColors.rowBaseAlternateText
 
-        Behavior on control { ColorAnimation { duration: 150 }}
-        Behavior on rowHighlight { ColorAnimation { duration: 150 }}
-        Behavior on rowHighlightText { ColorAnimation { duration: 150 }}
+        readonly property int colorChangeAnimationDuration: 150
 
-        property color rowBase: theme.rowBase
-        property color rowBaseText: theme.rowBaseText
+        Behavior on background { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
+        Behavior on foreground { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
 
-        Behavior on rowBase { ColorAnimation { duration: 150 }}
-        Behavior on rowBaseText { ColorAnimation { duration: 150 }}
+        Behavior on control { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
+        Behavior on rowHighlight { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
+        Behavior on rowHighlightText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
 
-        property color rowBaseAlternate: theme.rowBaseAlternate
-        property color rowBaseAlternateText: theme.rowBaseAlternateText
+        Behavior on rowBase { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
+        Behavior on rowBaseText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
 
-        Behavior on rowBaseAlternate { ColorAnimation { duration: 150 }}
-        Behavior on rowBaseAlternateText { ColorAnimation { duration: 150 }}
+        Behavior on rowBaseAlternate { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
+        Behavior on rowBaseAlternateText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
     }
 
-    readonly property alias isDark: _impl.isDark
     readonly property alias variant: _impl.variant
 
     readonly property alias background: _impl.background
@@ -83,11 +84,10 @@ QtObject {
     readonly property alias rowBaseAlternateText: _impl.rowBaseAlternateText
 
     function getBackground(isOdd: bool): color {
-        return isOdd ? root.rowBase : root.rowBaseAlternate
+        return isOdd ? root.rowBase : root.rowBaseAlternate;
     }
 
     function getForeground(isOdd: bool): color {
-        return isOdd ? root.rowBaseText : root.rowBaseAlternateText
+        return isOdd ? root.rowBaseText : root.rowBaseAlternateText;
     }
-
 }
