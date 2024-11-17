@@ -28,51 +28,82 @@ ListView {
     id: root
 
     required property var mpvqcApplication
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property int itemSize: 52
-    property int borderSize: 12
-    property var initialTheme: null
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
+
+    readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
+    readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
+
+    readonly property int itemSize: 52
+    readonly property int borderSize: 5
+
+    property var initialThemeIdentifier: null
 
     function reset(): void {
-        root.mpvqcSettings.theme = initialTheme
+        root.mpvqcSettings.themeIdentifier = initialThemeIdentifier
     }
 
-    boundsBehavior: Flickable.StopAtBounds
-    model: MpvqcThemeModel {}
-    clip: true
-    spacing: 8
-    height: itemSize
-    orientation: ListView.Horizontal
-
-    delegate: MpvqcCircle {
-        required property int theme
-        property bool selected: theme === root.mpvqcSettings.theme
-
-        width: root.itemSize
-        color: selected ? Material.foreground : 'transparent' //todo remove
-
-        function onItemClicked() {
-            root.mpvqcSettings.theme = theme
-        }
-
-        onClicked: {
-            onItemClicked()
-        }
-
-        MpvqcCircle {
-            width: parent.width - root.borderSize
-            color: Material.background // todo remove
-            Material.theme: parent.theme // todo remove
-            anchors.centerIn: parent
-
-            onClicked: {
-                parent.onItemClicked()
+    function selectInitialIndex(): void {
+        for (const [index, item] of model.entries()) {
+            if (item.name === root.currentThemeIdentifier) {
+                root.currentIndex = index
+                break
             }
         }
     }
 
+    model: mpvqcThemesPyObject.getThemeSummaries()
+    boundsBehavior: Flickable.StopAtBounds
+    orientation: ListView.Horizontal
+
+    clip: true
+    spacing: 8
+    height: itemSize
+
+    highlightMoveDuration: 150
+    highlightMoveVelocity: -1
+    highlightResizeDuration: 50
+    highlightResizeVelocity: -1
+
+    highlight: Rectangle {
+        width: root.itemSize
+        height: root.itemSize
+        color: {
+            const themeIdentifier = root.currentItem.name
+            const currentColorOption = root.currentThemeColorOption
+            root.mpvqcThemesPyObject.getThemeColorOption(currentColorOption, themeIdentifier).control
+        }
+        radius: Material.MediumScale
+
+        Behavior on color { ColorAnimation { duration: root.highlightMoveDuration }}
+    }
+
+    delegate: ItemDelegate {
+        required property string name
+        required property color preview
+        required property int index
+
+        width: root.itemSize
+        height: root.itemSize
+
+        background: Rectangle {
+            x: root.borderSize
+            y: root.borderSize
+            height: parent.height - 2 * root.borderSize
+            width: parent.width - 2 * root.borderSize
+            color: parent.preview
+            radius: Material.LargeScale
+        }
+
+        onClicked: {
+            root.currentIndex = index
+            root.mpvqcSettings.themeIdentifier = name
+        }
+    }
+
     Component.onCompleted: {
-        root.initialTheme = root.mpvqcSettings.theme
+        root.initialThemeIdentifier = root.currentThemeIdentifier
+        root.selectInitialIndex()
     }
 
 }

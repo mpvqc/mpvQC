@@ -149,22 +149,19 @@ QtObject {
     // Theme
 
     readonly property Settings _themeSettings: Settings {
-        property alias theme: root.theme
-        property string color: root.primary
-        property string colorLighter: root.accent
+        property alias themeIdentifier: root.themeIdentifier
+        property alias themeColorOption: root.themeColorOption
 
         category: 'Theme'
         location: root.settingsFile
-
-        Component.onCompleted: {
-            root.primary = color;
-            root.accent = colorLighter;
-        }
     }
 
-    property int theme: Material.Dark
-    property color accent: "#9FA8DA"
-    property color primary: "#3F51B5"
+    property string themeIdentifier: "Material You"
+    property int themeColorOption: 0
+
+    property int theme: Material.Light // todo remove
+    property color accent: "#9FA8DA" // todo remove
+    property color primary: "#3F51B5" // todo remove
 
     // Window Title
 

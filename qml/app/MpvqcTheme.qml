@@ -30,49 +30,40 @@ QtObject {
 
         readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
         readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
-        readonly property int _dark: Material.Dark
 
-        readonly property bool isDark: mpvqcSettings.theme === _dark
+        readonly property string themeIdentifier: mpvqcSettings.themeIdentifier
+        readonly property string colorOption: mpvqcSettings.themeColorOption
+
+        readonly property bool isDark: mpvqcThemesPyObject.getThemeSummary(themeIdentifier).isDark
         readonly property int variant: isDark ? Material.Dark : Material.Light
 
-        property var temp: mpvqcThemesPyObject.get_options_for_theme("Material You")[0]  // todo remove and read values from settings
+        readonly property var theme: mpvqcThemesPyObject.getThemeColorOption(colorOption, themeIdentifier)
 
-        property color background: temp.background
-        property color foreground: temp.foreground
+        property color background: theme.background
+        property color foreground: theme.foreground
 
         Behavior on background { ColorAnimation { duration: 150 }}
         Behavior on foreground { ColorAnimation { duration: 150 }}
 
-        property color rowHighlight: temp.rowHighlight
-        property color rowHighlightText: temp.rowHighlightText
-        property color control: temp.control
+        property color rowHighlight: theme.rowHighlight
+        property color rowHighlightText: theme.rowHighlightText
+        property color control: theme.control
 
         Behavior on control { ColorAnimation { duration: 150 }}
         Behavior on rowHighlight { ColorAnimation { duration: 150 }}
         Behavior on rowHighlightText { ColorAnimation { duration: 150 }}
 
-        property color rowBase: temp.rowBase
-        property color rowBaseText: temp.rowBaseText
+        property color rowBase: theme.rowBase
+        property color rowBaseText: theme.rowBaseText
 
         Behavior on rowBase { ColorAnimation { duration: 150 }}
         Behavior on rowBaseText { ColorAnimation { duration: 150 }}
 
-        property color rowBaseAlternate: temp.rowBaseAlternate
-        property color rowBaseAlternateText: temp.rowBaseAlternateText
+        property color rowBaseAlternate: theme.rowBaseAlternate
+        property color rowBaseAlternateText: theme.rowBaseAlternateText
 
         Behavior on rowBaseAlternate { ColorAnimation { duration: 150 }}
         Behavior on rowBaseAlternateText { ColorAnimation { duration: 150 }}
-
-        property var timer: Timer {
-            running: true; repeat: true; interval: 2000
-
-            property int maxThemes: 24
-            property int tt: 1
-
-            onTriggered: {
-                _impl.temp = mpvqcThemesPyObject.get_options_for_theme("Material You")[tt++ % maxThemes]
-            }
-        }
     }
 
     readonly property alias isDark: _impl.isDark

@@ -1,7 +1,7 @@
 schema-version = "v1"
 
 theme-name = "Material You"
-theme-variant = "dark"
+theme-variant = "light"
 theme-preview = "#f4f4e9"
 
 [[colors]]

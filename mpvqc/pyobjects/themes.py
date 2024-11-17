@@ -25,14 +25,23 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
+# noinspection PyPep8Naming
 @QmlElement
 class MpvqcThemesPyObject(QObject):
     _themes: ThemeService = inject.attr(ThemeService)
 
     @Slot(result=list)
-    def get_theme_summaries(self) -> list[dict]:
+    def getThemeSummaries(self) -> list[dict]:
         return self._themes.get_theme_summaries()
 
+    @Slot(str, result=dict)
+    def getThemeSummary(self, theme_identifier: str) -> dict:
+        return self._themes.get_theme_summary(theme_identifier)
+
     @Slot(str, result=list)
-    def get_options_for_theme(self, name: str) -> list[dict]:
-        return self._themes.get_options_for_theme(name)
+    def getThemeColorOptions(self, theme_identifier: str) -> list[dict]:
+        return self._themes.get_theme_colors(theme_identifier)
+
+    @Slot(int, str, result=dict)
+    def getThemeColorOption(self, color_option: int, theme_identifier: str):
+        return self._themes.get_theme_color(color_option, theme_identifier)

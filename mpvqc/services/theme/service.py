@@ -28,55 +28,80 @@ from .schema import Theme, ThemeColorSet
 
 
 class ThemeService:
+    THEME_FALLBACK = "Material You Dark"
+
     @staticmethod
     def get_theme_summaries() -> list[dict]:
-        summaries, _ = parse_themes()
-        return summaries
+        return [theme.overview() for theme in parse_themes().values()]
 
-    @staticmethod
-    def get_options_for_theme(name: str) -> list[dict]:
-        _, color_options = parse_themes()
-        return color_options.get(name, [])
+    def get_theme_summary(self, theme_identifier: str) -> dict:
+        themes = parse_themes()
+        theme = themes.get(theme_identifier) or themes[self.THEME_FALLBACK]
+        return theme.overview()
 
+    def get_theme_colors(self, theme_identifier: str) -> list[dict]:
+        themes = parse_themes()
+        theme = themes.get(theme_identifier) or themes[self.THEME_FALLBACK]
+        theme_colors = theme.colors
+        # noinspection PyTypeChecker
+        return [asdict(colors) for colors in theme_colors]
 
-@dataclass(frozen=True)
-class QmlThemeSummary:
-    name: str
-    isDark: bool
-    preview: QColor
+    def get_theme_color(self, color_option: int, theme_identifier: str) -> dict:
+        themes = parse_themes()
+        theme = themes.get(theme_identifier) or themes[self.THEME_FALLBACK]
+        theme_colors = theme.colors
+        # noinspection PyTypeChecker
+        return asdict(theme_colors[min(color_option, len(theme_colors) - 1)])
 
 
 @dataclass(frozen=True)
 class QmlThemeColors:
-    background: QColor
-    foreground: QColor
-    control: QColor
-    rowHighlight: QColor
-    rowHighlightText: QColor
-    rowBase: QColor
-    rowBaseText: QColor
-    rowBaseAlternate: QColor
-    rowBaseAlternateText: QColor
+    background: str
+    foreground: str
+    control: str
+    rowHighlight: str
+    rowHighlightText: str
+    rowBase: str
+    rowBaseText: str
+    rowBaseAlternate: str
+    rowBaseAlternateText: str
+
+
+@dataclass(frozen=True)
+class QmlTheme:
+    name: str
+    isDark: bool
+    preview: str
+    colors: list[QmlThemeColors]
+
+    def overview(self) -> dict:
+        return {
+            "name": self.name,
+            "isDark": self.isDark,
+            "preview": self.preview,
+        }
 
 
 @cache
-def parse_themes() -> tuple[list[dict], dict[str, list[dict]]]:
-    summaries: list[dict] = []
-    color_options: dict[str, list[dict]] = {}
-
+def parse_themes() -> dict[str, QmlTheme]:
     themes = parse_builtin_themes()
 
+    mapping = {}
+
     for theme in themes:
-        summary = map_to_summary(theme)
-        # noinspection PyTypeChecker
-        summaries.append(asdict(summary))
+        name = theme.name
+        is_dark = theme.is_dark
+        preview = theme.preview.name(QColor.NameFormat.HexRgb)
 
-        for color_set in theme.colors:
-            color_option = map_to_qml_color_set(color_set)
-            # noinspection PyTypeChecker
-            color_options.setdefault(theme.name, []).append(asdict(color_option))
+        colors = []
 
-    return summaries, color_options
+        for color in theme.colors:
+            option = map_to_qml_color_option(color)
+            colors.append(option)
+
+        mapping[name] = QmlTheme(name, is_dark, preview, colors)
+
+    return mapping
 
 
 def parse_builtin_themes() -> list[Theme]:
@@ -97,23 +122,15 @@ def parse_builtin_themes() -> list[Theme]:
     return themes
 
 
-def map_to_summary(theme: Theme) -> QmlThemeSummary:
-    return QmlThemeSummary(
-        name=theme.name,
-        isDark=theme.is_dark,
-        preview=theme.preview,
-    )
-
-
-def map_to_qml_color_set(colors: ThemeColorSet) -> QmlThemeColors:
+def map_to_qml_color_option(colors: ThemeColorSet) -> QmlThemeColors:
     return QmlThemeColors(
-        background=colors.background,
-        foreground=colors.foreground,
-        control=colors.control,
-        rowHighlight=colors.row_highlight,
-        rowHighlightText=colors.row_highlight_text,
-        rowBase=colors.row_base,
-        rowBaseText=colors.row_base_text,
-        rowBaseAlternate=colors.row_base_alternate,
-        rowBaseAlternateText=colors.row_base_alternate_text,
+        background=colors.background.name(QColor.NameFormat.HexRgb),
+        foreground=colors.foreground.name(QColor.NameFormat.HexRgb),
+        control=colors.control.name(QColor.NameFormat.HexRgb),
+        rowHighlight=colors.row_highlight.name(QColor.NameFormat.HexRgb),
+        rowHighlightText=colors.row_highlight_text.name(QColor.NameFormat.HexRgb),
+        rowBase=colors.row_base.name(QColor.NameFormat.HexRgb),
+        rowBaseText=colors.row_base_text.name(QColor.NameFormat.HexRgb),
+        rowBaseAlternate=colors.row_base_alternate.name(QColor.NameFormat.HexRgb),
+        rowBaseAlternateText=colors.row_base_alternate_text.name(QColor.NameFormat.HexRgb),
     )
