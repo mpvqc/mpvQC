@@ -28,58 +28,78 @@ GridView {
     id: root
 
     required property var mpvqcApplication
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
 
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    property int itemSize: 52
-    property int itemPadding: 8
-    property int borderSize: 12
-    property color initialAccent: null
-    property color initialPrimary: null
+    readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
+    readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
+    readonly property bool isDarkTheme: mpvqcThemesPyObject.getThemeSummary(currentThemeIdentifier).isDark
+
+    readonly property int itemSize: 52
+    readonly property int itemPadding: 8
+    readonly property int borderSize: 5
+
+    property var initialThemeColorOption: null
 
     function reset(): void {
-        root.mpvqcSettings.accent = initialAccent
-        root.mpvqcSettings.primary = initialPrimary
+        root.mpvqcSettings.themeColorOption = initialThemeColorOption
     }
 
+    onModelChanged: {
+        highlightMoveDuration = 0
+        currentIndex = mpvqcSettings.themeColorOption
+        highlightMoveDuration = 150
+    }
+
+    model: mpvqcThemesPyObject.getThemeColorOptions(currentThemeIdentifier)
     boundsBehavior: Flickable.StopAtBounds
-    model: MpvqcAccentColorModel {}
+
     clip: true
     height: (itemSize + itemPadding) * 4
     cellWidth: itemSize + itemPadding
     cellHeight: itemSize + itemPadding
 
-    delegate: MpvqcCircle {
-        required property color primary
-        required property color accent
-        property bool selected: primary === root.mpvqcSettings.primary
+    highlightMoveDuration: 150
+
+    highlight: Rectangle {
+        readonly property var colors: root.mpvqcThemesPyObject
+            .getThemeColorOption(root.currentThemeColorOption, root.currentThemeIdentifier)
 
         width: root.itemSize
-        color: selected ? Material.foreground : 'transparent' // todo remove
+        height: root.itemSize
+        color: root.isDarkTheme ? colors.foreground : colors.background
 
-        function onItemClicked() {
-            root.mpvqcSettings.accent = accent
-            root.mpvqcSettings.primary = primary
+        border.width: root.isDarkTheme ? 0 : 3
+        border.color: colors.rowHighlight
+        radius: Material.SmallScale
+
+        Behavior on color { ColorAnimation { duration: root.highlightMoveDuration }}
+    }
+
+    delegate: ItemDelegate {
+        required property color rowHighlight
+        required property int index
+
+        width: root.itemSize
+        height: root.itemSize
+
+        background: Rectangle {
+            x: root.borderSize
+            y: root.borderSize
+            height: parent.height - 2 * root.borderSize
+            width: parent.width - 2 * root.borderSize
+            color: parent.rowHighlight
+            radius: Material.LargeScale
         }
 
         onClicked: {
-            onItemClicked()
-        }
-
-        MpvqcCircle {
-            width: parent.width - root.borderSize
-            color: primary
-            Material.primary: primary // todo remove
-            anchors.centerIn: parent
-
-            onClicked: {
-                parent.onItemClicked()
-            }
+            root.currentIndex = index
+            root.mpvqcSettings.themeColorOption = index
         }
     }
 
     Component.onCompleted: {
-        root.initialAccent = root.mpvqcSettings.accent
-        root.initialPrimary = root.mpvqcSettings.primary
+        root.initialThemeColorOption = root.mpvqcSettings.themeColorOption
     }
 
 }
