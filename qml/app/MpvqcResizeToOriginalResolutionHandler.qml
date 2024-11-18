@@ -111,7 +111,7 @@ Item {
         target: root.mpvqcMpvPlayerPropertiesPyObject
 
         property var delayVideoResize: Timer{
-            interval: 100
+            interval: 150
 
             onTriggered: {
                 root.resizeVideo()

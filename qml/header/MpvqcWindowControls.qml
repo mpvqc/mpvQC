@@ -76,13 +76,7 @@ Item {
             width: 18
             height: 18
             source: "qrc:/data/icons/close_black_24dp.svg"
-            color: root.isWindows ? "white" : _closeButton.hovered ? root.mpvqcTheme.background : root.mpvqcTheme.foreground
-
-            Behavior on color {
-                ColorAnimation {
-                    duration: 150
-                }
-            }
+            color: root.isWindows && _closeButton.hovered ? "white" : _closeButton.hovered ? root.mpvqcTheme.background : root.mpvqcTheme.foreground
         }
 
         onClicked: {
