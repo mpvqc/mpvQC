@@ -27,28 +27,27 @@ Item {
     required property var mpvqcApplication
     required property bool rowSelected
     required property bool tableInEditMode
+    required property string searchQuery
+
+    required property color selectionColor
+    required property color backgroundColor
+    required property color selectedTextColor
+
     required property int index             // from model
     required property int time              // from model
     required property string commentType    // from model
     required property string comment        // from model
-    required property string searchQuery
 
     readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
-    readonly property bool isDarkTheme: Material.theme === Material.Dark
-    readonly property color baseColor: Material.background
-    readonly property color altColorDark: Qt.lighter(baseColor, 1.30)
-    readonly property color altColorLight: Qt.darker(baseColor, 1.10)
-    readonly property color backgroundColor: isDarkTheme
-        ? index % 2 === 1 ? baseColor : altColorDark
-        : index % 2 === 1 ? baseColor : altColorLight
-
-    property alias widthScrollBar: _spacerScrollBar.width
     property alias playButton: _playButton
     property alias timeLabel: _timeLabel
     property alias commentTypeLabel: _commentTypeLabel
     property alias commentLabel: _commentLabel
+
+    property alias scrollBarWidth: _spacerScrollBar.width
+    property alias scrollBarBackgroundColor: _spacerScrollBar.color
 
     readonly property var contextMenuFactory: Component
     {
@@ -205,6 +204,8 @@ Item {
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
             backgroundColor: root.backgroundColor
+            selectionColor: root.selectionColor
+            selectedTextColor: root.selectedTextColor
 
             onEdited: (newComment) => root.commentEdited(newComment)
 
@@ -216,8 +217,6 @@ Item {
         Rectangle {
             id: _spacerScrollBar
             height: root.height
-            width: root.widthScrollBar
-            color: root.Material.background
         }
     }
 

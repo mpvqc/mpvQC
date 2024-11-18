@@ -49,7 +49,7 @@ ColumnLayout {
         icon.height: 28
         icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
 
-        onClicked: {
+        onPressed: {
             root.upClicked()
         }
     }
@@ -61,7 +61,7 @@ ColumnLayout {
         icon.height: 28
         icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
 
-        onClicked: {
+        onPressed: {
             root.downClicked()
         }
     }
@@ -73,7 +73,7 @@ ColumnLayout {
         icon.height: 18
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
 
-        onClicked: {
+        onPressed: {
             root.editClicked()
         }
 
@@ -86,7 +86,7 @@ ColumnLayout {
         icon.height: 24
         icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 
-        onClicked: {
+        onPressed: {
             root.deleteClicked()
         }
     }

@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtQuick
 import QtTest
 
 
@@ -25,9 +26,15 @@ MpvqcInputControls {
 
     readonly property string badWord: 'bad word'
     readonly property string goodWord: 'good word'
-    readonly property string exampleError: `Text includes '${badWord}'`
+    readonly property string exampleError: `Text includes '${ badWord }'`
 
     focusTextFieldOnCompletion: false
+    mpvqcApplication: QtObject {
+        property var mpvqcTheme: QtObject
+        {
+            property color control: "purple"
+        }
+    }
 
     validateInput: (text) => {
         if (text.includes(badWord)) {
@@ -42,8 +49,12 @@ MpvqcInputControls {
         name: "MpvqcInputControls"
         when: windowShown
 
-        SignalSpy { id: acceptedSpy; target: objectUnderTest; signalName: 'accepted' }
-        SignalSpy { id: doneSpy; target: objectUnderTest; signalName: 'done' }
+        SignalSpy {
+            id: acceptedSpy; target: objectUnderTest; signalName: 'accepted'
+        }
+        SignalSpy {
+            id: doneSpy; target: objectUnderTest; signalName: 'done'
+        }
 
         function cleanup() {
             acceptedSpy.clear()

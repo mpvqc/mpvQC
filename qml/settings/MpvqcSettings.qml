@@ -86,7 +86,7 @@ QtObject {
         location: root.settingsFile
     }
 
-    property string nickname: root.mpvqcUtilityPyObject.getEnviornmentVariable('USERNAME') || root.mpvqcUtilityPyObject.getEnviornmentVariable('USER') || 'nickname'
+    property string nickname: root.mpvqcUtilityPyObject.getEnvironmentVariable('USERNAME') || root.mpvqcUtilityPyObject.getEnvironmentVariable('USER') || 'nickname'
     property bool writeHeaderDate: true
     property bool writeHeaderGenerator: true
     property bool writeHeaderNickname: false
@@ -149,22 +149,15 @@ QtObject {
     // Theme
 
     readonly property Settings _themeSettings: Settings {
-        property alias theme: root.theme
-        property string color: root.primary
-        property string colorLighter: root.accent
+        property alias themeIdentifier: root.themeIdentifier
+        property alias themeColorOption: root.themeColorOption
 
         category: 'Theme'
         location: root.settingsFile
-
-        Component.onCompleted: {
-            root.primary = color;
-            root.accent = colorLighter;
-        }
     }
 
-    property int theme: Material.Dark
-    property color accent: "#9FA8DA"
-    property color primary: "#3F51B5"
+    property string themeIdentifier: "Material You Dark"
+    property int themeColorOption: 16
 
     // Window Title
 

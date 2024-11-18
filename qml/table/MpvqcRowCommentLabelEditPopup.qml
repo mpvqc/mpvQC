@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Controls.Material
 
 
@@ -26,13 +25,17 @@ Popup {
     id: root
 
     required property var mpvqcDefaultTextValidator
-    required property var backgroundColor
     required property string currentComment
+
+    required property color backgroundColor
+    required property color selectionColor
+    required property color selectedTextColor
 
     property bool acceptValue: true
 
     signal edited(string newComment)
 
+    background: null
     visible: true
     dim: false
     modal: false
@@ -41,15 +44,13 @@ Popup {
     topPadding: 4
     bottomPadding: 4
 
-    background: Rectangle {
-        color: root.Material.primary
-    }
-
     contentItem: TextArea {
         id: _textField
 
         text: root.currentComment
         selectByMouse: true
+        selectionColor: root.selectionColor
+        selectedTextColor: root.selectedTextColor
         horizontalAlignment: Text.AlignLeft
         bottomPadding: root.bottomPadding
         topPadding: root.topPadding

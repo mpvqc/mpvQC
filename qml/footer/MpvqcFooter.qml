@@ -102,7 +102,7 @@ Item {
                     width: parent.width + 1
                     padding: 3
 
-                    onClicked: {
+                    onPressed: {
                         menu.open()
                     }
                 }

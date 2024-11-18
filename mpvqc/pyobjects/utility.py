@@ -31,8 +31,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming, PyMethodMayBeStatic
 @QmlElement
 class MpvqcUtilityPyObject(QObject):
-    """A collection of mostly unrelated utility functions"""
-
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
@@ -63,7 +61,7 @@ class MpvqcUtilityPyObject(QObject):
         self._clipboard.setText(text)
 
     @Slot(str, result=str or None)
-    def getEnviornmentVariable(self, key: str) -> str or None:
+    def getEnvironmentVariable(self, key: str) -> str or None:
         return environ.get(key) or None
 
     @Slot(float, result=str)

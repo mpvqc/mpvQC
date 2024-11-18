@@ -38,7 +38,7 @@ TextField {
 
     selectByMouse: true
     bottomPadding: topPadding
-    horizontalAlignment: mirrored ? Text.AlignRight : Text.AlignLeft
+    horizontalAlignment: Text.AlignLeft
 
     function _validate(): void {
         const error = validate(text.trim())

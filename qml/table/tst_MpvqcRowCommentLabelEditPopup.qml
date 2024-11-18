@@ -42,9 +42,12 @@ TestCase {
                 function replace_special_characters(text: string): string { return text}
             }
             currentComment: 'Current comment'
-            backgroundColor: 'transparent'
             exit: null
             enter: null
+
+            selectionColor: "orange"
+            backgroundColor: "orange"
+            selectedTextColor: "orange"
         }
     }
 

@@ -1,6 +1,6 @@
 # mpvQC
 #
-# Copyright (C) 2022 mpvQC developers
+# Copyright (C) 2024 mpvQC developers
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,16 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide6.QtCore import QByteArray
-
-
-class Role:
-    TIME = 1010
-    TYPE = 1020
-    COMMENT = 1030
-
-    MAPPING = {
-        TIME: QByteArray(b"time"),
-        TYPE: QByteArray(b"commentType"),
-        COMMENT: QByteArray(b"comment"),
-    }
+# ruff: noqa: F401
+from .schema import Theme
+from .service import ThemeService

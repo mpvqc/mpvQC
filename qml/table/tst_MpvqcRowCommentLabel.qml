@@ -42,8 +42,11 @@ TestCase {
             tableInEditMode: false
             comment: 'comment'
             searchQuery: 'query'
-            backgroundColor: 'transparent'
             focus: false
+
+            selectionColor: "orange"
+            backgroundColor: "orange"
+            selectedTextColor: "orange"
 
             mpvqcApplication: QtObject {
                 property var mpvqcLabelWidthCalculator: QtObject {

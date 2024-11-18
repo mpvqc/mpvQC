@@ -85,7 +85,7 @@ ColumnLayout {
         Layout.topMargin: 40
         Layout.fillWidth: true
 
-        onClicked: {
+        onPressed: {
             Qt.openUrlExternally(backupDirectory)
         }
 

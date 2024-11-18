@@ -41,7 +41,11 @@ TestCase {
             rowSelected: false
             tableInEditMode: false
             searchQuery: ''
-            widthScrollBar: 16
+            scrollBarWidth: 16
+
+            selectionColor: "orange"
+            backgroundColor: "orange"
+            selectedTextColor: "orange"
 
             mpvqcApplication: QtObject {
                 property var mpvqcLabelWidthCalculator: QtObject {

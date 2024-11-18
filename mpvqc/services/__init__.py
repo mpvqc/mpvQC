@@ -32,6 +32,7 @@ from .resource import ResourceService
 from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService
 from .settings import SettingsService
+from .theme import ThemeService
 from .type_mapper import TypeMapperService
 from .version_checker import VersionCheckerService
 from .video_selector import VideoSelectorService

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import pyobjects
 import settings
@@ -32,6 +32,7 @@ ApplicationWindow {
     readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
+    readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
@@ -44,15 +45,13 @@ ApplicationWindow {
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcPlayerFilesPyObject: MpvqcPlayerFilesPyObject {}
+    readonly property var mpvqcThemesPyObject: MpvqcThemesPyObject {}
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
     readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
-
-    property color primaryColor: mpvqcSettings.primary
-    property color accentColor: mpvqcSettings.accent
 
     function focusCommentTable() {
         root.mpvqcCommentTable.forceActiveFocus()
@@ -172,12 +171,10 @@ ApplicationWindow {
         root.focusCommentTable()
     }
 
-    Material.theme: mpvqcSettings.theme
-    Material.accent: mpvqcSettings.theme === Material.Dark ? accentColor : primaryColor
-    Material.primary: primaryColor
+    Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light
+    Material.accent: root.mpvqcTheme.control
 
-    Behavior on color { ColorAnimation { duration: 150 }}
-    Behavior on primaryColor { ColorAnimation { duration: 150 }}
-    Behavior on accentColor { ColorAnimation { duration: 150 }}
+    Material.background: root.mpvqcTheme.background
+    Material.foreground: root.mpvqcTheme.foreground
 
 }

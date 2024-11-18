@@ -19,17 +19,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material.impl
-
 
 Item {
     id: root
 
     required property var mpvqcApplication
 
-    property alias minimizeButton: _minimizeButton
-    property alias maximizeButton: _maximizeButton
-    property alias closeButton: _closeButton
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
+    readonly property bool isWindows: Qt.platform.os === 'windows'
+    readonly property alias minimizeButton: _minimizeButton
+    readonly property alias maximizeButton: _maximizeButton
+    readonly property alias closeButton: _closeButton
 
     ToolButton {
         id: _minimizeButton
@@ -42,7 +43,7 @@ Item {
         icon.source: "qrc:/data/icons/minimize_black_24dp.svg"
 
         onClicked: {
-            root.mpvqcApplication.showMinimized()
+            root.mpvqcApplication.showMinimized();
         }
     }
 
@@ -60,7 +61,7 @@ Item {
         icon.source: root.mpvqcApplication.maximized ? iconNormalize : iconMaximize
 
         onClicked: {
-            root.mpvqcApplication.toggleMaximized()
+            root.mpvqcApplication.toggleMaximized();
         }
     }
 
@@ -70,40 +71,24 @@ Item {
         height: root.height
         focusPolicy: Qt.NoFocus
         anchors.right: root.right
-        icon.width: 18
-        icon.height: 18
-        icon.source: "qrc:/data/icons/close_black_24dp.svg"
+
+        icon {
+            width: 18
+            height: 18
+            source: "qrc:/data/icons/close_black_24dp.svg"
+            color: root.isWindows && _closeButton.hovered ? "white" : _closeButton.hovered ? root.mpvqcTheme.background : root.mpvqcTheme.foreground
+        }
 
         onClicked: {
-            root.mpvqcApplication.close()
+            root.mpvqcApplication.close();
         }
 
-        // Customized from src/quickcontrols/material/ToolButton.qml
-        // We changed the color to use the primary color instead of a ripple color
-        background: Ripple {
-            implicitWidth: _closeButton.Material.touchTarget
-            implicitHeight: _closeButton.Material.touchTarget
-
-            readonly property bool square: _closeButton.contentItem.width <= _closeButton.contentItem.height
-
-            x: (_closeButton.width - width) / 2
-            y: (_closeButton.height - height) / 2
-            clip: !square
-            width: square ? _closeButton.height / 2 : _closeButton.width
-            height: square ? _closeButton.height / 2 : _closeButton.height
-            pressed: _closeButton.pressed
-            anchor: _closeButton
-            active: _closeButton.enabled && (_closeButton.down || _closeButton.visualFocus || _closeButton.hovered)
-
-            color: {
-                if (Qt.platform.os === 'windows') {
-                    return 'red'
-                } else {
-                    return _closeButton.Material.primary
-                }
-            }
+        Binding {
+            when: true
+            target: _closeButton.background
+            property: "color"
+            value: root.isWindows ? "red" : root.mpvqcTheme.control
+            restoreMode: Binding.RestoreNone
         }
-
     }
-
 }

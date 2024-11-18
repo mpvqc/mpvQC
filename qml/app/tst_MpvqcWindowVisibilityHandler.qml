@@ -17,12 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
+
+    readonly property int cNORMAL: 1
+    readonly property int cMAXIMIZED: 2
+    readonly property int cFULLSCREEN: 3
 
     width: 400
     height: 400
@@ -30,66 +35,95 @@ TestCase {
     when: windowShown
     name: 'MpvqcWindowVisibilityHandler'
 
-
-
-    Component { id: signalSpy; SignalSpy {} }
-
     Component {
         id: objectUnderTest
 
         MpvqcWindowVisibilityHandler {
-            readonly property int cNORMAL: 1
-            readonly property int cMAXIMIZED: 2
-            readonly property int cFULLSCREEN: 3
-            property int visibility: -1
+            id: __objectUnderTest
+
+            property int cVisibility: -1
 
             mpvqcApplication: QtObject {
                 property bool fullscreen: false
                 property bool maximized: false
                 property bool wasMaximizedBefore: false
-                function showNormal() { visibility = cNORMAL }
-                function showMaximized() { visibility = cMAXIMIZED }
-                function showFullScreen() { visibility = cFULLSCREEN }
+                function showNormal() {
+                    __objectUnderTest.cVisibility = testCase.cNORMAL;
+                }
+                function showMaximized() {
+                    __objectUnderTest.cVisibility = testCase.cMAXIMIZED;
+                }
+                function showFullScreen() {
+                    __objectUnderTest.cVisibility = testCase.cFULLSCREEN;
+                }
             }
         }
     }
 
-    function test_toggleMaximized() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        control.maximized = false
-        control.toggleMaximized()
-        compare(control.visibility, control.cMAXIMIZED)
-
-        control.maximized = true
-        control.toggleMaximized()
-        compare(control.visibility, control.cNORMAL)
+    function test_maximize_data() {
+        return [
+            {
+                tag: 'not max',
+                maximized: false,
+                wasMaximizedBefore: false,
+                expectedVisibility: testCase.cMAXIMIZED
+            },
+            {
+                tag: 'max',
+                maximized: true,
+                wasMaximizedBefore: false,
+                expectedVisibility: testCase.cNORMAL
+            },
+        ];
     }
 
-    function test_toggleFullScreen() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+    function test_maximize(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            maximized: data.maximized
+        });
+        verify(control);
 
-        control.fullscreen = false
-        control.wasMaximizedBefore = false
-        control.toggleFullScreen()
-        compare(control.visibility, control.cFULLSCREEN)
-
-        control.fullscreen = true
-        control.wasMaximizedBefore = false
-        control.toggleFullScreen()
-        compare(control.visibility, control.cNORMAL)
-
-        control.fullscreen = false
-        control.wasMaximizedBefore = true
-        control.toggleFullScreen()
-        compare(control.visibility, control.cFULLSCREEN)
-
-        control.fullscreen = true
-        control.wasMaximizedBefore = true
-        control.toggleFullScreen()
-        compare(control.visibility, control.cMAXIMIZED)
+        control.toggleMaximized();
+        compare(control.cVisibility, data.expectedVisibility);
     }
 
+    function test_toggleFullScreen_data() {
+        return [
+            {
+                tag: "no full, not max before -> full",
+                fullscreen: false,
+                wasMaximizedBefore: false,
+                expectedVisibility: testCase.cFULLSCREEN
+            },
+            {
+                tag: "no full, max before -> full",
+                fullscreen: false,
+                wasMaximizedBefore: true,
+                expectedVisibility: testCase.cFULLSCREEN
+            },
+            {
+                tag: "full, not max before -> normal",
+                fullscreen: true,
+                wasMaximizedBefore: false,
+                expectedVisibility: testCase.cNORMAL
+            },
+            {
+                tag: "full, max before -> max",
+                fullscreen: true,
+                wasMaximizedBefore: true,
+                expectedVisibility: testCase.cMAXIMIZED
+            },
+        ];
+    }
+
+    function test_toggleFullScreen(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            fullscreen: data.fullscreen
+        });
+        verify(control);
+
+        control.wasMaximizedBefore = data.wasMaximizedBefore;
+        control.toggleFullScreen();
+        compare(control.cVisibility, data.expectedVisibility);
+    }
 }

@@ -24,13 +24,12 @@ import QtQuick.Controls.Material
 ListView {
     id: root
 
+    required property var mpvqcApplication
     required property int itemHeight
 
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
     readonly property int defaultHighlightMoveDuration: 50
-    readonly property bool isDarkTheme: Material.theme === Material.Dark
-    readonly property color baseColor: 'transparent'
-    readonly property color altColorDark: Qt.lighter(Material.dialogColor, 1.12)
-    readonly property color altColorLight: Qt.darker(Material.dialogColor, 1.04)
 
     spacing: 0
     clip: true
@@ -45,7 +44,7 @@ ListView {
     highlight: Rectangle {
         width: parent?.width ?? 0
         height: parent?.height ?? 0
-        color: Material.primary
+        color: root.mpvqcTheme.rowHighlight
         radius: Material.ExtraSmallScale
     }
 
@@ -54,11 +53,15 @@ ListView {
 
         required property string modelData
         required property int index
-        readonly property bool rowSelected: root.currentIndex === index
 
-        readonly property color backgroundColor: root.isDarkTheme
-            ? index % 2 === 0 ? root.altColorDark : root.baseColor
-            : index % 2 === 0 ? root.altColorLight : root.baseColor
+        readonly property bool rowSelected: root.currentIndex === index
+        readonly property bool isOdd: index % 2 === 1
+
+        readonly property color foregroundColor: root.mpvqcTheme.getForeground(isOdd)
+        readonly property color backgroundColor: root.mpvqcTheme.getBackground(isOdd)
+
+        Material.foreground: rowSelected ? root.mpvqcTheme.rowHighlightText : foregroundColor
+        Material.background: backgroundColor
 
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: root.itemHeight
@@ -71,7 +74,7 @@ ListView {
             radius: Material.ExtraSmallScale
         }
 
-        onClicked: {
+        onPressed: {
             root.currentIndex = index
         }
 

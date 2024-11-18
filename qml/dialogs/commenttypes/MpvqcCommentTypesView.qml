@@ -71,6 +71,8 @@ Column {
     MpvqcInputComponent {
         id: _input
 
+        mpvqcApplication: root.mpvqcApplication
+
         width: root.width
         height: 100
         topPadding: 15
@@ -106,6 +108,8 @@ Column {
 
         MpvqcList {
             id: _listView
+
+            mpvqcApplication: root.mpvqcApplication
 
             itemHeight: _listViewControls.buttonHeight
             model: _controller.modelCopy

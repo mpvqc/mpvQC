@@ -18,14 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls.Material
 import QtTest
-
 
 TestCase {
     id: testCase
-
-    readonly property color initialColor: "#009688"
 
     name: "MpvqcColorView"
     when: windowShown
@@ -37,90 +33,84 @@ TestCase {
         id: objectUnderTest
 
         MpvqcColorView {
+            id: __objectUnderTest
+
             width: parent.width
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property color accent: "transparent"
-                    property color primary: testCase.initialColor
+                    property string themeIdentifier: "dark"
+                    property int themeColorOption: 0
                 }
-            }
+                property var mpvqcThemesPyObject: QtObject {
+                    function getThemeSummary(name: string): variant {
+                        return {
+                            "isDark": true
+                        };
+                    }
 
-            function findSelected(): variant {
-                for (let idx = 0; idx < this.count; idx++) {
-                    const item = this.itemAtIndex(idx)
-                    if (item.selected) return item
-                }
-                return null
-            }
-
-            function findItemWithColor(primary: color): variant {
-                for (let idx = 0; idx < this.count; idx++) {
-                    const item = this.itemAtIndex(idx)
-                    if (item.primary === primary) {
-                        return item
+                    function getThemeColorOption(option: int, name: string): variant {
+                        return __objectUnderTest.model[option];
                     }
                 }
-                return null
             }
+
+            model: [
+                {
+                    "foreground": "black",
+                    "background": "black",
+                    "rowHighlight": "black"
+                },
+                {
+                    "foreground": "grey",
+                    "background": "grey",
+                    "rowHighlight": "grey"
+                },
+                {
+                    "foreground": "white",
+                    "background": "white",
+                    "rowHighlight": "white"
+                }
+            ]
         }
     }
 
-    function test_colorFromSettingsSelected_data() {
+    function test_initialSelection_data() {
         return [
-            { tag: 'indigo', color: "#3f51b5" },
-            { tag: 'amber', color: "#ffc107" },
-        ]
+            {
+                tag: 1
+            },
+            {
+                tag: 2
+            },
+        ];
     }
 
-    function test_colorFromSettingsSelected(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        control.mpvqcApplication.mpvqcSettings.primary = data.color
-
-        const selected = control.findSelected()
-        verify(selected)
-
-        compare(selected.primary, data.color)
+    function test_initialSelection(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            'mpvqcSettings.themeColorOption': data.tag
+        });
+        verify(control);
+        compare(control.currentIndex, data.tag);
     }
 
-    function test_click_data() {
-        return [
-            { tag: 'cyan/teal', firstColor: "#00bcd4", secondColor: "#009688" },
-            { tag: 'purple/lime', firstColor: "#9c27b0", secondColor: "#cddc39" },
-        ]
+    function test_clickAndReset() {
+        const initialIndex = 1;
+        const temporaryIndex = 2;
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            'mpvqcSettings.themeColorOption': initialIndex
+        });
+        verify(control);
+        compare(control.currentIndex, initialIndex);
+
+        const selection = control.itemAtIndex(temporaryIndex);
+        verify(selection);
+
+        mouseClick(selection);
+        compare(control.mpvqcApplication.mpvqcSettings.themeColorOption, temporaryIndex);
+
+        control.reset();
+
+        compare(control.mpvqcApplication.mpvqcSettings.themeColorOption, initialIndex);
     }
-
-    function test_click(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        const selection1 = control.findItemWithColor(data.firstColor)
-        verify(selection1)
-        mouseClick(selection1)
-        compare(control.mpvqcApplication.mpvqcSettings.primary, data.firstColor)
-
-        const selection2 = control.findItemWithColor(data.secondColor)
-        verify(selection2)
-        mouseClick(selection2)
-        compare(control.mpvqcApplication.mpvqcSettings.primary, data.secondColor)
-
-        verify(selection1 !== selection2)
-    }
-
-    function test_reset() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        compare(control.mpvqcApplication.mpvqcSettings.primary, testCase.initialColor)
-
-        const selection = control.findItemWithColor("#673ab7")
-        verify(selection)
-        mouseClick(selection)
-        compare(control.mpvqcApplication.mpvqcSettings.primary, "#673ab7")
-
-        control.reset()
-        compare(control.mpvqcApplication.mpvqcSettings.primary, testCase.initialColor)
-    }
-
 }

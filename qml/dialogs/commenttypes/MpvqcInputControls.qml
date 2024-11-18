@@ -25,6 +25,10 @@ import QtQuick.Layouts
 Column {
     id: root
 
+    required property var mpvqcApplication
+
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
     readonly property alias textFieldHasFocus: _textField.activeFocus
 
     property alias textField: _textField
@@ -67,7 +71,7 @@ Column {
             icon.height: 20
             icon.source: "qrc:/data/icons/done_black_24dp.svg"
 
-            onClicked: {
+            onPressed: {
                 _textField.accepted()
             }
         }
@@ -79,7 +83,7 @@ Column {
             icon.height: 20
             icon.source: "qrc:/data/icons/close_black_24dp.svg"
 
-            onClicked: {
+            onPressed: {
                 _textField.rejected()
             }
         }
@@ -87,7 +91,7 @@ Column {
 
     Label {
         text: !_textField.error ? ' ' : _textField.error
-        color: Material.accent
+        color: root.mpvqcTheme.control
         horizontalAlignment: Text.AlignLeft
         width: root.width
         wrapMode: Label.WordWrap

@@ -37,9 +37,10 @@ ApplicationWindow {
     flags: Qt.FramelessWindowHint | Qt.Window
     visibility: Window.Windowed
 
-    Material.theme: appWindow.mpvqcSettings.theme
-    Material.accent: appWindow.mpvqcSettings.primary
-    Material.primary: appWindow.mpvqcSettings.primary
+    Material.theme: appWindow.Material.theme
+    Material.background: appWindow.Material.background
+    Material.foreground: appWindow.Material.foreground
+    Material.accent: appWindow.Material.accent
 
     onActiveFocusItemChanged: {
         if (activeFocusItem != null) {
