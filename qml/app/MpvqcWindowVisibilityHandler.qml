@@ -25,8 +25,8 @@ QtObject {
 
     required property var mpvqcApplication
 
-    property bool maximized: mpvqcApplication.visibility === Window.Maximized
-    property bool fullscreen: mpvqcApplication.visibility === Window.FullScreen
+    readonly property bool maximized: mpvqcApplication.visibility === Window.Maximized
+    readonly property bool fullscreen: mpvqcApplication.visibility === Window.FullScreen
 
     property bool wasMaximizedBefore: false
 
