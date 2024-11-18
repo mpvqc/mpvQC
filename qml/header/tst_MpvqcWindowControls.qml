@@ -17,61 +17,82 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick.Controls
+import QtQuick
 import QtTest
 
+TestCase {
+    id: testCase
 
-MpvqcWindowControls {
-    id: objectUnderTest
-
+    name: "MpvqcWindowControls"
+    when: windowShown
     width: 400
     height: 400
+    visible: true
 
-    property bool minimizeFuncCalled: false
-    property bool toggleMaximizedFuncCalled: false
-    property bool closeFuncCalled: false
+    Component {
+        id: objectUnderTest
 
-    mpvqcApplication: ApplicationWindow {
-        property alias maximized: objectUnderTest.toggleMaximizedFuncCalled
+        MpvqcWindowControls {
+            id: __objectUnderTest
 
-        function showMinimized() { objectUnderTest.minimizeFuncCalled = true }
-        function toggleMaximized() { objectUnderTest.toggleMaximizedFuncCalled = !objectUnderTest.toggleMaximizedFuncCalled }
-        function close() { objectUnderTest.closeFuncCalled = true }
+            property bool minimizeFuncCalled: false
+            property bool maximizeFuncCalled: false
+            property bool closeFuncCalled: false
+
+            mpvqcApplication: QtObject {
+                property bool maximized: false
+                function showMinimized() {
+                    __objectUnderTest.minimizeFuncCalled = true;
+                }
+                function toggleMaximized() {
+                    __objectUnderTest.maximizeFuncCalled = true;
+                }
+                function close() {
+                    __objectUnderTest.closeFuncCalled = true;
+                }
+            }
+        }
     }
 
-    TestCase {
-        name: "MpvqcWindowControls"
-        when: windowShown
+    function test_minimize() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        function cleanup() {
-            objectUnderTest.minimizeFuncCalled = false
-            objectUnderTest.toggleMaximizedFuncCalled = false
-            objectUnderTest.closeFuncCalled = false
-        }
-
-        function test_minimize() {
-            mouseClick(objectUnderTest.minimizeButton)
-            verify(objectUnderTest.minimizeFuncCalled)
-        }
-
-        function test_maximize_data() {
-            return [
-                { maximizedInitial: false, iconSubstring: 'open_in_full_black', tag: 'maximize' },
-                { maximizedInitial: true, iconSubstring: 'close_fullscreen_black', tag: 'minimize' },
-            ]
-        }
-
-        function test_maximize(data) {
-            objectUnderTest.mpvqcApplication.maximized = data.maximizedInitial
-            compare(objectUnderTest.mpvqcApplication.maximized, data.maximizedInitial)
-            verify(objectUnderTest.maximizeButton.icon.source.toString().includes(data.iconSubstring))
-        }
-
-        function test_close() {
-            mouseClick(objectUnderTest.closeButton)
-            verify(objectUnderTest.closeFuncCalled)
-        }
-
+        control.minimizeButton.clicked();
+        verify(control.minimizeFuncCalled);
     }
 
+    function test_maximize_data() {
+        return [
+            {
+                maximizedInitial: false,
+                iconSubstring: 'open_in_full_black',
+                tag: 'maximize'
+            },
+            {
+                maximizedInitial: true,
+                iconSubstring: 'close_fullscreen_black',
+                tag: 'minimize'
+            },
+        ];
+    }
+
+    function test_maximize(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            "mpvqcApplication.maximized": data.maximizedInitial
+        });
+        verify(control);
+        verify(control.maximizeButton.icon.source.toString().includes(data.iconSubstring));
+
+        control.maximizeButton.clicked();
+        verify(control.maximizeFuncCalled);
+    }
+
+    function test_close() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+
+        control.closeButton.clicked();
+        verify(control.closeFuncCalled);
+    }
 }

@@ -37,7 +37,7 @@ QtObject {
         readonly property var themeSummary: root.mpvqcThemesPyObject.getThemeSummary(themeIdentifier)
         readonly property var themeColors: root.mpvqcThemesPyObject.getThemeColorOption(colorOption, themeIdentifier)
 
-        readonly property int variant: themeSummary.isDark ? Material.Dark : Material.Light
+        readonly property bool isDark: themeSummary.isDark
 
         property color background: themeColors.background
         property color foreground: themeColors.foreground
@@ -68,7 +68,7 @@ QtObject {
         Behavior on rowBaseAlternateText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
     }
 
-    readonly property alias variant: _impl.variant
+    readonly property alias isDark: _impl.isDark
 
     readonly property alias background: _impl.background
     readonly property alias foreground: _impl.foreground

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 
 import pyobjects
 import settings
@@ -171,7 +171,7 @@ ApplicationWindow {
         root.focusCommentTable()
     }
 
-    Material.theme: root.mpvqcTheme.variant
+    Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light
     Material.accent: root.mpvqcTheme.control
 
     Material.background: root.mpvqcTheme.background
