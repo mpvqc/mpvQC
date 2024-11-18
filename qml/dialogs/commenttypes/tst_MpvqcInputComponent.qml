@@ -29,6 +29,12 @@ MpvqcInputComponent {
 
     validateNewCommentType: input => null
     validateEditingOfCommentType: (input, inputBeingEdited) => null
+    mpvqcApplication: QtObject {
+        property var mpvqcTheme: QtObject
+        {
+            property color control: "purple"
+        }
+    }
 
     TestCase {
         name: "MpvqcInputComponent"

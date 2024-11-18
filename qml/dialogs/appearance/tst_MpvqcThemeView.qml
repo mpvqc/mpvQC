@@ -18,14 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls.Material
 import QtTest
-
 
 TestCase {
     id: testCase
-
-    readonly property int initialTheme: Material.Dark
 
     name: "MpvqcThemeView"
     when: windowShown
@@ -38,75 +34,81 @@ TestCase {
 
         MpvqcThemeView {
             width: parent.width
+
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property int theme: testCase.initialTheme
+                    property string themeIdentifier: "dark"
+                    property int themeColorOption: 0
+                }
+                property var mpvqcThemesPyObject: QtObject {
+                    function getThemeSummary(name: string): variant {
+                        return {
+                            "isDark": !!name.includes("dark")
+                        };
+                    }
+
+                    function getThemeColorOption(option: int, name: string): variant {
+                        return {
+                            control: "blue"
+                        };
+                    }
                 }
             }
 
-            function findSelected() {
-                for (let idx = 0; idx < this.count; idx++) {
-                    const item = this.itemAtIndex(idx)
-                    if (item.selected) return item
+            model: [
+                {
+                    "name": "dark",
+                    "isDark": true,
+                    "preview": "black"
+                },
+                {
+                    "name": "light",
+                    "isDark": false,
+                    "preview": "white"
                 }
-                return null
-            }
-
-            function findItemWithTheme(theme) {
-                for (let idx = 0; idx < this.count; idx++) {
-                    const item = this.itemAtIndex(idx)
-                    if (item.theme === theme) return item
-                }
-                return null
-            }
+            ]
         }
     }
 
-    function test_themeFromSettingsSelected_data() {
+    function test_initialSelection_data() {
         return [
-            { tag: 'dark', color: Material.Dark },
-            { tag: 'light', color: Material.Light },
-        ]
+            {
+                tag: 'dark'
+            },
+            {
+                tag: 'light'
+            },
+        ];
     }
 
-    function test_themeFromSettingsSelected(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+    function test_initialSelection(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            currentThemeIdentifier: data.tag
+        });
+        verify(control);
 
-        control.mpvqcApplication.mpvqcSettings.theme = data.color
-
-        const selected = control.findSelected()
-        verify(selected)
-
-        compare(selected.theme, data.color)
+        const expected = control.model.findIndex(theme => theme["name"] === data.tag);
+        compare(control.currentIndex, expected);
     }
 
-    function test_click() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+    function test_clickAndReset() {
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            currentThemeIdentifier: "dark"
+        });
+        verify(control);
 
-        compare(control.mpvqcApplication.mpvqcSettings.theme, testCase.initialTheme)
+        const darkIndex = control.model.findIndex(theme => theme["name"] === "dark");
+        compare(control.currentIndex, darkIndex);
 
-        const selection = control.findItemWithTheme(Material.Light)
-        verify(selection)
-        mouseClick(selection)
-        compare(control.mpvqcApplication.mpvqcSettings.theme, Material.Light)
+        const lightIndex = control.model.findIndex(theme => theme["name"] === "light");
+        const selection = control.itemAtIndex(lightIndex);
+        verify(selection);
+
+        mouseClick(selection);
+        compare(control.mpvqcApplication.mpvqcSettings.themeIdentifier, "light");
+
+        control.reset();
+
+        compare(control.mpvqcApplication.mpvqcSettings.themeIdentifier, "dark");
     }
-
-    function test_reset() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        compare(control.mpvqcApplication.mpvqcSettings.theme, testCase.initialTheme)
-
-        const selection = control.findItemWithTheme(Material.Light)
-        verify(selection)
-        mouseClick(selection)
-        compare(control.mpvqcApplication.mpvqcSettings.theme, Material.Light)
-
-        control.reset()
-
-        compare(control.mpvqcApplication.mpvqcSettings.theme, testCase.initialTheme)
-    }
-
 }

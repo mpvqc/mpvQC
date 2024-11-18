@@ -33,6 +33,13 @@ Item {
 
         model: ['Type 0', 'Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5']
         itemHeight: 42
+
+        mpvqcApplication: QtObject {
+            property var mpvqcTheme: QtObject
+            {
+                property color control: "purple"
+            }
+        }
     }
 
     TestCase {
