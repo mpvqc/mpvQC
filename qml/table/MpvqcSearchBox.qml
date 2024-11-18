@@ -93,7 +93,7 @@ Popup {
 
             focus: false
             selectByMouse: true
-            horizontalAlignment: root.mirrored ? Text.AlignRight : Text.AlignLeft
+            horizontalAlignment: Text.AlignLeft
             validator: root.mpvqcDefaultTextValidatorPyObject
 
             Layout.fillWidth: true
