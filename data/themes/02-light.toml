@@ -171,27 +171,3 @@ control = "#291E30"
 row-highlight = "#321347"
 row-highlight-text = "#FFFFFF"
 row-base-alternate = "#E9E0E8"
-
-[[colors]]
-background = "#FFF0F0"
-foreground = "#524344"
-control = "#765658"
-row-highlight = "#8F4951"
-row-highlight-text = "#FFFFFF"
-row-base-alternate = "#F0DEDF"
-
-[[colors]]
-background = "#FFF0F0"
-foreground = "#4E3F40"
-control = "#583B3D"
-row-highlight = "#6D2F37"
-row-highlight-text = "#FFFFFF"
-row-base-alternate = "#F0DEDF"
-
-[[colors]]
-background = "#FFF0F0"
-foreground = "#2D2122"
-control = "#341B1E"
-row-highlight = "#440E18"
-row-highlight-text = "#FFFFFF"
-row-base-alternate = "#F0DEDF"
