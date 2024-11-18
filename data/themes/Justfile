@@ -33,10 +33,7 @@ generate-dark-colors DIRECTORY="~/Downloads":
 				}
 		 }
 		 | flatten
-		 | each { |row|
-			 $row
-			    | to toml
-		 }
+		 | each { |row| $row | to toml }
 		 | str join "\n[[colors]]\n"
 
 generate-light-colors DIRECTORY="~/Downloads":
@@ -56,8 +53,5 @@ generate-light-colors DIRECTORY="~/Downloads":
 				}
 		}
 		| flatten
-		| each { |row|
-			 $row
-			    | to toml
-		}
+		| each { |row| $row | to toml }
 		| str join "\n[[colors]]\n"

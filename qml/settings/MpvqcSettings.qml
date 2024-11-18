@@ -156,12 +156,8 @@ QtObject {
         location: root.settingsFile
     }
 
-    property string themeIdentifier: "Material You"
-    property int themeColorOption: 0
-
-    property int theme: Material.Light // todo remove
-    property color accent: "#9FA8DA" // todo remove
-    property color primary: "#3F51B5" // todo remove
+    property string themeIdentifier: "Material You Dark"
+    property int themeColorOption: 16
 
     // Window Title
 

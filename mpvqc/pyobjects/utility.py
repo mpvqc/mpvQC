@@ -22,12 +22,7 @@ from PySide6.QtCore import Property, QObject, QPoint, QUrl, Slot
 from PySide6.QtGui import QClipboard, QCursor
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import (
-    MimetypeProviderService,
-    ReverseTranslatorService,
-    TimeFormatterService,
-    TypeMapperService,
-)
+from mpvqc.services import MimetypeProviderService, ReverseTranslatorService, TimeFormatterService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -36,8 +31,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming, PyMethodMayBeStatic
 @QmlElement
 class MpvqcUtilityPyObject(QObject):
-    """A collection of mostly unrelated utility functions"""
-
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)

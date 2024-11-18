@@ -21,14 +21,6 @@ from PySide6.QtGui import QColor
 
 
 @dataclass(frozen=True)
-class Theme:
-    name: str
-    is_dark: bool
-    preview: QColor
-    colors: list["ThemeColorSet"]
-
-
-@dataclass(frozen=True)
 class ThemeColorSet:
     background: QColor
     foreground: QColor
@@ -39,6 +31,34 @@ class ThemeColorSet:
     row_base_text: QColor
     row_base_alternate: QColor
     row_base_alternate_text: QColor
+
+    def to_qml_notation(self) -> dict[str, str]:
+        return {
+            "background": self.background.name(QColor.NameFormat.HexRgb),
+            "foreground": self.foreground.name(QColor.NameFormat.HexRgb),
+            "control": self.control.name(QColor.NameFormat.HexRgb),
+            "rowHighlight": self.row_highlight.name(QColor.NameFormat.HexRgb),
+            "rowHighlightText": self.row_highlight_text.name(QColor.NameFormat.HexRgb),
+            "rowBase": self.row_base.name(QColor.NameFormat.HexRgb),
+            "rowBaseText": self.row_base_text.name(QColor.NameFormat.HexRgb),
+            "rowBaseAlternate": self.row_base_alternate.name(QColor.NameFormat.HexRgb),
+            "rowBaseAlternateText": self.row_base_alternate_text.name(QColor.NameFormat.HexRgb),
+        }
+
+
+@dataclass(frozen=True)
+class Theme:
+    name: str
+    is_dark: bool
+    preview: QColor
+    colors: list["ThemeColorSet"]
+
+    def to_qml_preview(self) -> dict:
+        return {
+            "name": self.name,
+            "isDark": self.is_dark,
+            "preview": self.preview,
+        }
 
 
 class ThemeParseError(Exception):
