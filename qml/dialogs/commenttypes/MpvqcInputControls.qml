@@ -71,7 +71,7 @@ Column {
             icon.height: 20
             icon.source: "qrc:/data/icons/done_black_24dp.svg"
 
-            onClicked: {
+            onPressed: {
                 _textField.accepted()
             }
         }
@@ -83,7 +83,7 @@ Column {
             icon.height: 20
             icon.source: "qrc:/data/icons/close_black_24dp.svg"
 
-            onClicked: {
+            onPressed: {
                 _textField.rejected()
             }
         }

@@ -74,7 +74,7 @@ ListView {
             radius: Material.ExtraSmallScale
         }
 
-        onClicked: {
+        onPressed: {
             root.currentIndex = index
         }
 
