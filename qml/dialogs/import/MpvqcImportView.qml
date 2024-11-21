@@ -23,7 +23,6 @@ import QtQuick.Layouts
 
 import settings
 
-
 ColumnLayout {
     id: root
 
@@ -36,7 +35,7 @@ ColumnLayout {
     property int currentImportPolicy: root.mpvqcSettings.importWhenVideoLinkedInDocument
 
     function accept() {
-        root.mpvqcSettings.importWhenVideoLinkedInDocument = currentImportPolicy
+        root.mpvqcSettings.importWhenVideoLinkedInDocument = currentImportPolicy;
     }
 
     RowLayout {
@@ -55,33 +54,31 @@ ColumnLayout {
 
             Layout.preferredWidth: 165
 
-            textRole: 'text'
-            valueRole: 'value'
+            textRole: "text"
+            valueRole: "value"
 
             model: [
                 {
                     text: qsTranslate("ImportSettingsDialog", "Always"),
-                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS,
+                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS
                 },
                 {
                     text: qsTranslate("ImportSettingsDialog", "Ask every time"),
-                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME,
+                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME
                 },
                 {
                     text: qsTranslate("ImportSettingsDialog", "Never"),
-                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER,
+                    value: MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER
                 }
             ]
 
             onActivated: value => {
-                root.currentImportPolicy = value
+                root.currentImportPolicy = value;
             }
 
             Component.onCompleted: {
-                currentIndex = indexOfValue(root.currentImportPolicy)
+                currentIndex = indexOfValue(root.currentImportPolicy);
             }
         }
-
     }
-
 }

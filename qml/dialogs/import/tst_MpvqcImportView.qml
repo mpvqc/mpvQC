@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -45,29 +44,29 @@ TestCase {
     }
 
     function test_accept() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, testCase.initialImportPolicy)
-        compare(control.currentImportPolicy, testCase.initialImportPolicy)
+        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, testCase.initialImportPolicy);
+        compare(control.currentImportPolicy, testCase.initialImportPolicy);
 
-        control.importPolicyComboBox.activated(0)
-        compare(control.currentImportPolicy, 0)
+        control.importPolicyComboBox.activated(0);
+        compare(control.currentImportPolicy, 0);
 
-        control.accept()
-        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, 0)
+        control.accept();
+        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, 0);
     }
 
     function test_reject() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, testCase.initialImportPolicy)
-        compare(control.currentImportPolicy, testCase.initialImportPolicy)
+        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, testCase.initialImportPolicy);
+        compare(control.currentImportPolicy, testCase.initialImportPolicy);
 
-        control.importPolicyComboBox.activated(0)
-        compare(control.currentImportPolicy, 0)
+        control.importPolicyComboBox.activated(0);
+        compare(control.currentImportPolicy, 0);
 
-        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, testCase.initialImportPolicy)
+        compare(control.mpvqcSettings.importWhenVideoLinkedInDocument, testCase.initialImportPolicy);
     }
 }
