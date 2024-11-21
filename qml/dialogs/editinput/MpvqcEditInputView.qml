@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 ColumnLayout {
     id: root
 
@@ -33,19 +32,19 @@ ColumnLayout {
     readonly property alias textArea: _textArea
 
     property var accept: () => {
-        _textArea.textDocument.save()
+        _textArea.textDocument.save();
     }
 
     property var reset: () => {
-        _textArea.text = mpvqcPlayerFilesPyObject.default_input_conf_content
+        _textArea.text = mpvqcPlayerFilesPyObject.default_input_conf_content;
     }
 
     Label {
         id: label
 
-        property string url: 'https://mpv.io/manual/master/#list-of-input-commands'
-        property string text1: qsTranslate("InputConfEditDialog", 'Changes to the input.conf are available after a restart.')
-        property string text2: qsTranslate("InputConfEditDialog", 'Learn more')
+        property string url: "https://mpv.io/manual/master/#list-of-input-commands"
+        property string text1: qsTranslate("InputConfEditDialog", "Changes to the input.conf are available after a restart.")
+        property string text2: qsTranslate("InputConfEditDialog", "Learn more")
 
         Layout.topMargin: 20
         Layout.fillWidth: true
@@ -54,10 +53,10 @@ ColumnLayout {
         font.pointSize: 11
         font.weight: Font.DemiBold
 
-        text: `${text1} <a href='${url}'>${text2}</a>.`
+        text: `${text1} <a href="${url}">${text2}</a>.`
 
-        onLinkActivated: (link) => {
-            Qt.openUrlExternally(link)
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
         }
 
         MouseArea {
@@ -96,10 +95,10 @@ ColumnLayout {
 
             background: null
             leftPadding: _scrollView.mirrored ? 22 : 0
-            font.family: 'Noto Sans Mono'
+            font.family: "Noto Sans Mono"
             font.pointSize: 11
 
-            textDocument.source: mpvqcPlayerFilesPyObject.input_conf_url
+            textDocument.source: root.mpvqcPlayerFilesPyObject.input_conf_url
         }
     }
 
@@ -108,5 +107,4 @@ ColumnLayout {
         color: root.mpvqcTheme.control
         Layout.fillWidth: true
     }
-
 }

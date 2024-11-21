@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcDialog {
     id: root
 
@@ -42,11 +41,10 @@ MpvqcDialog {
     }
 
     onAccepted: {
-        _editView.accept()
+        _editView.accept();
     }
 
     onReset: {
-        _editView.reset()
+        _editView.reset();
     }
-
 }
