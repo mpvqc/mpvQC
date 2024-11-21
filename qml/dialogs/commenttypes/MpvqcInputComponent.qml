@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick
+pragma ComponentBehavior: Bound
 
+import QtQuick
 
 Column {
     id: root
@@ -41,13 +42,13 @@ Column {
     signal edited(string input)
 
     function startEditing(text: string): void {
-        _loader.startEditMode()
-        _loader.setPlaceholder(text)
-        _loader.setText(text)
+        _loader.startEditMode();
+        _loader.setPlaceholder(text);
+        _loader.setText(text);
     }
 
     function stopEditing() {
-        _loader.stopEditMode()
+        _loader.stopEditMode();
     }
 
     Loader {
@@ -59,21 +60,20 @@ Column {
         sourceComponent: editing ? _edit : _add
 
         function startEditMode(): void {
-            editing = true
+            editing = true;
         }
 
         function stopEditMode(): void {
-            editing = false
+            editing = false;
         }
 
         function setText(text: string): void {
-            item.text = text
+            item.text = text;
         }
 
         function setPlaceholder(text: string): void {
-            item.placeholderText = text
+            item.placeholderText = text;
         }
-
     }
 
     Component {
@@ -109,5 +109,4 @@ Column {
             onDone: _loader.stopEditMode()
         }
     }
-
 }

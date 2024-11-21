@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-
 ColumnLayout {
     id: root
 
@@ -35,10 +34,10 @@ ColumnLayout {
     property alias editEnabled: _editButton.enabled
     property alias deleteEnabled: _deleteButton.enabled
 
-    signal upClicked()
-    signal downClicked()
-    signal editClicked()
-    signal deleteClicked()
+    signal upClicked
+    signal downClicked
+    signal editClicked
+    signal deleteClicked
 
     Layout.alignment: Qt.AlignTop
 
@@ -50,7 +49,7 @@ ColumnLayout {
         icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
 
         onPressed: {
-            root.upClicked()
+            root.upClicked();
         }
     }
 
@@ -62,7 +61,7 @@ ColumnLayout {
         icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
 
         onPressed: {
-            root.downClicked()
+            root.downClicked();
         }
     }
 
@@ -74,9 +73,8 @@ ColumnLayout {
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
 
         onPressed: {
-            root.editClicked()
+            root.editClicked();
         }
-
     }
 
     ToolButton {
@@ -87,8 +85,7 @@ ColumnLayout {
         icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 
         onPressed: {
-            root.deleteClicked()
+            root.deleteClicked();
         }
     }
-
 }

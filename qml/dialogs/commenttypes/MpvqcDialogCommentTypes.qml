@@ -21,7 +21,6 @@ import QtQuick.Controls.Material
 
 import shared
 
-
 MpvqcDialog {
     id: root
 
@@ -37,12 +36,11 @@ MpvqcDialog {
     }
 
     onAccepted: {
-        _view.visible = false
-        _view.acceptTemporaryState()
+        _view.visible = false;
+        _view.acceptTemporaryState();
     }
 
     onReset: {
-        _view.resetTemporaryEdits()
+        _view.resetTemporaryEdits();
     }
-
 }

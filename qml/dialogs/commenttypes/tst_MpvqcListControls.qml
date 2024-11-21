@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtTest
 
-
 MpvqcListControls {
     id: objectUnderTest
 
@@ -30,31 +29,62 @@ MpvqcListControls {
         name: "MpvqcListControls"
         when: windowShown
 
-        SignalSpy { id: upClickedSpy; target: objectUnderTest; signalName: 'upClicked' }
-        SignalSpy { id: downClickedSpy; target: objectUnderTest; signalName: 'downClicked' }
-        SignalSpy { id: editClickedSpy; target: objectUnderTest; signalName: 'editClicked' }
-        SignalSpy { id: deleteClickedSpy; target: objectUnderTest; signalName: 'deleteClicked' }
+        SignalSpy {
+            id: upClickedSpy
+            target: objectUnderTest
+            signalName: "upClicked"
+        }
+        SignalSpy {
+            id: downClickedSpy
+            target: objectUnderTest
+            signalName: "downClicked"
+        }
+        SignalSpy {
+            id: editClickedSpy
+            target: objectUnderTest
+            signalName: "editClicked"
+        }
+        SignalSpy {
+            id: deleteClickedSpy
+            target: objectUnderTest
+            signalName: "deleteClicked"
+        }
 
         function cleanup() {
-            upClickedSpy.clear()
-            downClickedSpy.clear()
-            editClickedSpy.clear()
-            deleteClickedSpy.clear()
+            upClickedSpy.clear();
+            downClickedSpy.clear();
+            editClickedSpy.clear();
+            deleteClickedSpy.clear();
         }
 
         function test_click_data() {
             return [
-                { tag: 'upButton', item: objectUnderTest.upButton, spy: upClickedSpy },
-                { tag: 'downButton', item: objectUnderTest.downButton, spy: downClickedSpy },
-                { tag: 'editButton', item: objectUnderTest.editButton, spy: editClickedSpy },
-                { tag: 'deleteButton', item: objectUnderTest.deleteButton, spy: deleteClickedSpy },
-            ]
+                {
+                    tag: "upButton",
+                    item: objectUnderTest.upButton,
+                    spy: upClickedSpy
+                },
+                {
+                    tag: "downButton",
+                    item: objectUnderTest.downButton,
+                    spy: downClickedSpy
+                },
+                {
+                    tag: "editButton",
+                    item: objectUnderTest.editButton,
+                    spy: editClickedSpy
+                },
+                {
+                    tag: "deleteButton",
+                    item: objectUnderTest.deleteButton,
+                    spy: deleteClickedSpy
+                },
+            ];
         }
 
         function test_click(data) {
-            mouseClick(data.item)
-            compare(data.spy.count, 1)
+            mouseClick(data.item);
+            compare(data.spy.count, 1);
         }
     }
-
 }

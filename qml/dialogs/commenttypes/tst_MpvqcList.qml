@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 Item {
     id: testHelper
 
@@ -31,12 +30,11 @@ Item {
         id: objectUnderTest
         anchors.fill: testHelper
 
-        model: ['Type 0', 'Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5']
+        model: ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5"]
         itemHeight: 42
 
         mpvqcApplication: QtObject {
-            property var mpvqcTheme: QtObject
-            {
+            property var mpvqcTheme: QtObject {
                 property color control: "purple"
             }
         }
@@ -47,31 +45,35 @@ Item {
         when: windowShown
 
         function cleanup() {
-            objectUnderTest.currentIndex = 0
+            objectUnderTest.currentIndex = 0;
         }
 
         function test_selection_data() {
             return [
-                { tag: 'row-3', index: 3 },
-                { tag: 'row-5', index: 5 },
-            ]
+                {
+                    tag: "row-3",
+                    index: 3
+                },
+                {
+                    tag: "row-5",
+                    index: 5
+                },
+            ];
         }
 
         function test_selection(data) {
-            ensureRenderedUntilItem(data.index + 1)
-            compare(objectUnderTest.currentIndex, 0)
+            ensureRenderedUntilItem(data.index + 1);
+            compare(objectUnderTest.currentIndex, 0);
 
-            const item = objectUnderTest.itemAtIndex(data.index)
-            mouseClick(item)
+            const item = objectUnderTest.itemAtIndex(data.index);
+            mouseClick(item);
 
-            compare(objectUnderTest.currentIndex, data.index)
+            compare(objectUnderTest.currentIndex, data.index);
         }
 
         function ensureRenderedUntilItem(index: int): void {
-            objectUnderTest.currentIndex = index
-            objectUnderTest.currentIndex = 0
+            objectUnderTest.currentIndex = index;
+            objectUnderTest.currentIndex = 0;
         }
-
     }
-
 }
