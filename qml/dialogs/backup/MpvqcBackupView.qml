@@ -23,7 +23,6 @@ import QtQuick.Layouts
 
 import shared
 
-
 ColumnLayout {
     id: root
 
@@ -41,8 +40,8 @@ ColumnLayout {
     property int currentBackupInterval: root.mpvqcSettings.backupInterval
 
     function accept() {
-        mpvqcSettings.backupEnabled = currentBackupEnabled
-        mpvqcSettings.backupInterval = currentBackupInterval
+        mpvqcSettings.backupEnabled = currentBackupEnabled;
+        mpvqcSettings.backupInterval = currentBackupInterval;
     }
 
     MpvqcSwitchRow {
@@ -50,11 +49,11 @@ ColumnLayout {
 
         label: qsTranslate("BackupDialog", "Backup Enabled")
         prefWidth: root.width
-        checked: currentBackupEnabled
+        checked: root.currentBackupEnabled
         Layout.topMargin: 20
 
         onToggled: state => {
-            root.currentBackupEnabled = state
+            root.currentBackupEnabled = state;
         }
     }
 
@@ -64,12 +63,12 @@ ColumnLayout {
         label: qsTranslate("BackupDialog", "Backup Interval")
         suffix: qsTranslate("BackupDialog", "Seconds")
         prefWidth: root.width
-        value: currentBackupInterval
+        value: root.currentBackupInterval
         valueFrom: 15
         valueTo: 5 * 60
 
         onValueModified: value => {
-            root.currentBackupInterval = value
+            root.currentBackupInterval = value;
         }
     }
 
@@ -86,15 +85,14 @@ ColumnLayout {
         Layout.fillWidth: true
 
         onPressed: {
-            Qt.openUrlExternally(backupDirectory)
+            Qt.openUrlExternally(backupDirectory);
         }
 
         ToolTip {
-            y: - _backupLocationOpenButton.height + 10
+            y: -_backupLocationOpenButton.height + 10
             delay: 500
             visible: _backupLocationOpenButton.hovered
             text: root.mpvqcUtilityPyObject.urlToAbsolutePath(_backupLocationOpenButton.backupDirectory)
         }
     }
-
 }

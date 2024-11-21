@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -40,11 +39,11 @@ TestCase {
                     property int backupInterval: 90
                 }
                 property var mpvqcApplicationPathsPyObject: QtObject {
-                    property url dir_backup: 'file:///hello.txt'
+                    property url dir_backup: "file:///hello.txt"
                 }
                 property var mpvqcUtilityPyObject: QtObject {
                     function urlToAbsolutePath(url) {
-                        return `${ url }-as-abs-path`
+                        return `${url}-as-abs-path`;
                     }
                 }
             }
@@ -52,37 +51,35 @@ TestCase {
     }
 
     function test_value_change() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        verifyTemporaryValues(control)
+        verifyTemporaryValues(control);
 
-        control.accept()
+        control.accept();
 
-        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, false)
-        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 91)
-
+        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, false);
+        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 91);
     }
 
     function verifyTemporaryValues(control) {
-        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, true)
-        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 90)
+        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, true);
+        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 90);
 
-        control.backupEnabledSwitch.checked = false
-        compare(control.currentBackupEnabled, false)
+        control.backupEnabledSwitch.checked = false;
+        compare(control.currentBackupEnabled, false);
 
-        control.backupIntervalSpinBox.increase()
-        compare(control.currentBackupInterval, 91)
+        control.backupIntervalSpinBox.increase();
+        compare(control.currentBackupInterval, 91);
     }
 
     function test_reset() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        verifyTemporaryValues(control)
+        verifyTemporaryValues(control);
 
-        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, true)
-        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 90)
+        compare(control.mpvqcApplication.mpvqcSettings.backupEnabled, true);
+        compare(control.mpvqcApplication.mpvqcSettings.backupInterval, 90);
     }
-
 }
