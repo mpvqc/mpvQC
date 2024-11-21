@@ -99,28 +99,6 @@ def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
     return True, win32con.WVR_REDRAW
 
 
-GetClientRect = ctypes.windll.user32.GetClientRect
-GetDC = ctypes.windll.user32.GetDC
-CreateSolidBrush = ctypes.windll.gdi32.CreateSolidBrush
-FillRect = ctypes.windll.user32.FillRect
-ReleaseDC = ctypes.windll.user32.ReleaseDC
-DeleteObject = ctypes.windll.gdi32.DeleteObject
-
-
-def handle_erase_background(hwnd) -> tuple[bool, int]:
-    rect = ctypes.wintypes.RECT()
-    GetClientRect(hwnd, ctypes.byref(rect))
-
-    hdc = GetDC(hwnd)
-    brush = CreateSolidBrush(0x00000000)
-
-    FillRect(hdc, ctypes.byref(rect), brush)
-
-    ReleaseDC(hwnd, hdc)
-    DeleteObject(brush)
-    return True, 0
-
-
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     """"""
 
@@ -160,7 +138,5 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
                 return handle_non_client_hit_test(hwnd, l_param)
             case win32con.WM_NCCALCSIZE if w_param:
                 return handle_non_client_calculate_size(hwnd, l_param)
-            case win32con.WM_ERASEBKGND:
-                return handle_erase_background(hwnd)
             case _:
                 return False, 0
