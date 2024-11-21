@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Window
 
-
 Item {
     id: root
 
@@ -37,12 +36,14 @@ Item {
     property int availableScreenWidth: Screen.width * 0.95
 
     function resizeVideo(): void {
-        if (!root.canResize()) { return }
+        if (!root.canResize()) {
+            return;
+        }
 
         if (splitView.orientation === Qt.Vertical) {
-            root.resizeVideoInVerticalSplitView()
+            root.resizeVideoInVerticalSplitView();
         } else {
-            root.resizeVideoInHorizontalSplitView()
+            root.resizeVideoInHorizontalSplitView();
         }
     }
 
@@ -50,79 +51,64 @@ Item {
         return !mpvqcApplication.fullscreen
             && !mpvqcApplication.maximized
             && mpvqcMpvPlayerPropertiesPyObject.video_loaded
-            && requestedVideoSizeFitsOnScreen()
+            && requestedVideoSizeFitsOnScreen();
     }
 
     function requestedVideoSizeFitsOnScreen(): bool {
-        const fitsWidth = videoWidth < availableScreenWidth
-        const fitsHeight = videoHeight < availableScreenHeight
-        return fitsWidth && fitsHeight
+        const fitsWidth = videoWidth < availableScreenWidth;
+        const fitsHeight = videoHeight < availableScreenHeight;
+        return fitsWidth && fitsHeight;
     }
 
     function resizeVideoInVerticalSplitView(): void {
-        const heightWithoutTable = windowBorder
-            + header.height
-            + videoHeight
-            + splitView.draggerHeight
-            + windowBorder
+        const heightWithoutTable = windowBorder + header.height + videoHeight + splitView.draggerHeight + windowBorder;
 
-        let newTableHeight = splitView.tableContainerHeight
+        let newTableHeight = splitView.tableContainerHeight;
         while (heightWithoutTable + newTableHeight > availableScreenHeight) {
-            newTableHeight -= 5
+            newTableHeight -= 5;
         }
 
-        const neededHeight = heightWithoutTable + newTableHeight
-        const neededWidth = videoWidth + 2 * windowBorder
+        const neededHeight = heightWithoutTable + newTableHeight;
+        const neededWidth = videoWidth + 2 * windowBorder;
 
-        mpvqcApplication.width = neededWidth
-        mpvqcApplication.height = neededHeight
+        mpvqcApplication.width = neededWidth;
+        mpvqcApplication.height = neededHeight;
 
-        splitView.setPreferredTableSize(videoWidth, newTableHeight)
+        splitView.setPreferredTableSize(videoWidth, newTableHeight);
     }
 
     function resizeVideoInHorizontalSplitView(): void {
-        const widthWithoutTable = windowBorder
-            + videoWidth
-            + splitView.draggerWidth
-            + windowBorder
+        const widthWithoutTable = windowBorder + videoWidth + splitView.draggerWidth + windowBorder;
 
-        let newTableWidth = splitView.tableContainerWidth
+        let newTableWidth = splitView.tableContainerWidth;
         while (widthWithoutTable + newTableWidth > availableScreenWidth) {
-            newTableWidth -= 5
+            newTableWidth -= 5;
         }
 
-        const neededHeight = windowBorder
-            + header.height
-            + videoHeight
-            + windowBorder
-        const neededWidth = windowBorder
-            + videoWidth
-            + splitView.draggerWidth
-            + newTableWidth
-            + windowBorder
+        const neededHeight = windowBorder + header.height + videoHeight + windowBorder;
+        const neededWidth = windowBorder + videoWidth + splitView.draggerWidth + newTableWidth + windowBorder;
 
-        mpvqcApplication.width = neededWidth
-        mpvqcApplication.height = neededHeight
+        mpvqcApplication.width = neededWidth;
+        mpvqcApplication.height = neededHeight;
 
-        splitView.setPreferredTableSize(newTableWidth, videoHeight)
+        splitView.setPreferredTableSize(newTableWidth, videoHeight);
     }
 
     Connections {
         target: root.mpvqcMpvPlayerPropertiesPyObject
 
-        property var delayVideoResize: Timer{
+        property var delayVideoResize: Timer {
             interval: 150
 
             onTriggered: {
-                root.resizeVideo()
+                root.resizeVideo();
             }
         }
 
         function onVideo_loaded_changed(loaded: bool) {
             if (loaded) {
-                delayVideoResize.start()
+                delayVideoResize.start();
             }
         }
     }
-
 }

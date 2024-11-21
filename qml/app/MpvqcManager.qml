@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 
 import dialogs
 import pyobjects
-
 
 MpvqcManagerPyObject {
     id: root
@@ -30,69 +31,63 @@ MpvqcManagerPyObject {
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
-    readonly property Timer backupTimer: Timer
-    {
+    readonly property Timer backupTimer: Timer {
         repeat: true
         interval: Math.max(15, root.mpvqcSettings.backupInterval) * 1000
         running: root.mpvqcSettings.backupEnabled && mpvqcCommentTable.count > 0
 
         onTriggered: {
-            root.backup_impl()
+            root.backup_impl();
         }
     }
 
-    property var mpvqcDialogExportDocumentFactory: Component
-    {
+    property var mpvqcDialogExportDocumentFactory: Component {
         MpvqcDialogExportDocument {}
     }
 
-    property var mpvqcMessageBoxVideoFoundFactory: Component
-    {
+    property var mpvqcMessageBoxVideoFoundFactory: Component {
         MpvqcMessageBoxVideoFound {
             mpvqcApplication: root.mpvqcApplication
         }
     }
 
-    property var mpvqcMessageBoxNewDocumentFactory: Component
-    {
+    property var mpvqcMessageBoxNewDocumentFactory: Component {
         MpvqcMessageBoxNewDocument {
             mpvqcApplication: root.mpvqcApplication
         }
     }
 
-    property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component
-    {
+    property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
         MpvqcMessageBoxDocumentNotCompatible {
             mpvqcApplication: root.mpvqcApplication
         }
     }
 
     function reset(): void {
-        root.reset_impl()
+        root.reset_impl();
     }
 
     function openDocuments(documents: list<url>): void {
-        root.open_documents_impl(documents)
+        root.open_documents_impl(documents);
     }
 
     function openVideo(video: url): void {
-        root.open_video_impl(video)
+        root.open_video_impl(video);
     }
 
     function openSubtitles(subtitles: list<url>): void {
-        root.open_subtitles_impl(subtitles)
+        root.open_subtitles_impl(subtitles);
     }
 
     function open(documents: list<url>, videos: list<url>, subtitles: list<url>): void {
-        root.open_impl(documents, videos, subtitles)
+        root.open_impl(documents, videos, subtitles);
     }
 
     function save(): void {
-        root.save_impl()
+        root.save_impl();
     }
 
     function saveAs(): void {
-        root.save_as_impl()
+        root.save_as_impl();
     }
-
 }

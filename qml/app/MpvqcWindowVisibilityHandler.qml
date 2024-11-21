@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 QtObject {
     id: root
 
@@ -32,33 +31,32 @@ QtObject {
 
     function toggleMaximized() {
         if (maximized) {
-            mpvqcApplication.showNormal()
+            mpvqcApplication.showNormal();
         } else {
-            mpvqcApplication.showMaximized()
+            mpvqcApplication.showMaximized();
         }
     }
 
     function toggleFullScreen() {
         if (fullscreen) {
-            disableFullScreen()
+            disableFullScreen();
         } else {
-            enableFullScreen()
+            enableFullScreen();
         }
     }
 
     function enableFullScreen() {
         if (!fullscreen) {
-            wasMaximizedBefore = maximized
-            mpvqcApplication.showFullScreen()
+            wasMaximizedBefore = maximized;
+            mpvqcApplication.showFullScreen();
         }
     }
 
     function disableFullScreen() {
         if (fullscreen && wasMaximizedBefore) {
-            mpvqcApplication.showMaximized()
+            mpvqcApplication.showMaximized();
         } else if (fullscreen) {
-            mpvqcApplication.showNormal()
+            mpvqcApplication.showNormal();
         }
     }
-
 }

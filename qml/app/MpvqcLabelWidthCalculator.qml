@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 Item {
     id: root
 
@@ -32,45 +31,47 @@ Item {
     property int timeLabelWidth
 
     function calculateWidthFor(texts, parent): int {
-        const textMetric = Qt.createQmlObject('import QtQuick; TextMetrics { font.family: "Noto Sans"; font.pointSize: 10 }', parent)
-        let width = 0
+        const textMetric = Qt.createQmlObject("import QtQuick; TextMetrics { font.family: 'Noto Sans'; font.pointSize: 10 }", parent);
+        let width = 0;
         for (const text of texts) {
-            textMetric.text = text
-            width = Math.max(width, textMetric.tightBoundingRect.width)
+            textMetric.text = text;
+            width = Math.max(width, textMetric.tightBoundingRect.width);
         }
-        textMetric.destroy()
-        return width
+        textMetric.destroy();
+        return width;
     }
 
     function _recalculateCommentTypesLabelWidth(): void {
-        const commentTypes = mpvqcSettings.commentTypes
-            .map(english => qsTranslate("CommentTypes", english))
-        root.commentTypesLabelWidth = calculateWidthFor(commentTypes, root)
+        const commentTypes = mpvqcSettings.commentTypes.map(english => qsTranslate("CommentTypes", english));
+        root.commentTypesLabelWidth = calculateWidthFor(commentTypes, root);
     }
 
     function _recalculateTimeLabelWidth(): void {
-        const hour = 60 * 60
-        const texts = []
+        const hour = 60 * 60;
+        const texts = [];
         for (let i = 0; i <= 9; i++) {
-            texts.push(duration >= hour ? `${i}${i}:${i}${i}:${i}${i}` : `${i}${i}:${i}${i}`)
+            texts.push(duration >= hour ? `${i}${i}:${i}${i}:${i}${i}` : `${i}${i}:${i}${i}`);
         }
-        root.timeLabelWidth = calculateWidthFor(texts, root)
+        root.timeLabelWidth = calculateWidthFor(texts, root);
     }
 
     onDurationChanged: {
-        _recalculateTimeLabelWidth()
+        _recalculateTimeLabelWidth();
     }
 
     Connections {
         target: root.mpvqcSettings
 
-        function onCommentTypesChanged() { root._recalculateCommentTypesLabelWidth() }
-        function onLanguageChanged() { root._recalculateCommentTypesLabelWidth() }
+        function onCommentTypesChanged() {
+            root._recalculateCommentTypesLabelWidth();
+        }
+        function onLanguageChanged() {
+            root._recalculateCommentTypesLabelWidth();
+        }
     }
 
     Component.onCompleted: {
-        _recalculateCommentTypesLabelWidth()
-        _recalculateTimeLabelWidth()
+        _recalculateCommentTypesLabelWidth();
+        _recalculateTimeLabelWidth();
     }
-
 }
