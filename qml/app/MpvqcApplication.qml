@@ -24,7 +24,6 @@ import pyobjects
 import settings
 import shared
 
-
 ApplicationWindow {
     id: root
 
@@ -35,7 +34,7 @@ ApplicationWindow {
     readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
-    readonly property alias mpvqcCommentTable: _content.mpvqcCommentTable
+    readonly property var mpvqcCommentTable: _content.mpvqcCommentTable
     readonly property alias playerArea: _content.playerArea
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
@@ -54,28 +53,28 @@ ApplicationWindow {
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
     function focusCommentTable() {
-        root.mpvqcCommentTable.forceActiveFocus()
+        root.mpvqcCommentTable.forceActiveFocus();
     }
 
     function toggleMaximized() {
-        mpvqcWindowVisibilityHandler.toggleMaximized()
+        mpvqcWindowVisibilityHandler.toggleMaximized();
     }
 
     function toggleFullScreen() {
-        mpvqcWindowVisibilityHandler.toggleFullScreen()
+        mpvqcWindowVisibilityHandler.toggleFullScreen();
     }
 
     function enableFullScreen() {
-        mpvqcWindowVisibilityHandler.enableFullScreen()
+        mpvqcWindowVisibilityHandler.enableFullScreen();
     }
 
     function disableFullScreen() {
-        mpvqcWindowVisibilityHandler.disableFullScreen()
+        mpvqcWindowVisibilityHandler.disableFullScreen();
     }
 
     onClosing: event => {
-        closeHandler.requestClose()
-        event.accepted = closeHandler.userConfirmedClose
+        closeHandler.requestClose();
+        event.accepted = closeHandler.userConfirmedClose;
     }
 
     MpvqcContent {
@@ -88,53 +87,53 @@ ApplicationWindow {
 
         Keys.onEscapePressed: {
             if (root.fullscreen) {
-                root.disableFullScreen()
+                root.disableFullScreen();
             }
         }
 
         Keys.onPressed: event => {
             if (event.key === Qt.Key_E) {
-                return _handleEPressed(event)
+                return _handleEPressed(event);
             }
             if (event.key === Qt.Key_F) {
-                return _handleFPressed(event)
+                return _handleFPressed(event);
             }
 
             if (_preventFromEverReachingUserDefinedCommands(event)) {
-                return
+                return;
             }
 
-            root.mpvqcMpvPlayerPyObject.handle_key_event(event.key, event.modifiers)
+            root.mpvqcMpvPlayerPyObject.handle_key_event(event.key, event.modifiers);
         }
 
         function _handleEPressed(event) {
             if (event.isAutoRepeat) {
-                return
+                return;
             }
 
-            const modifiers = event.modifiers
+            const modifiers = event.modifiers;
 
             if (modifiers === Qt.NoModifier) {
-                return root.mpvqcNewCommentMenu.popupMenu()
+                return root.mpvqcNewCommentMenu.popupMenu();
             }
         }
 
         function _handleFPressed(event) {
             if (event.isAutoRepeat) {
-                return
+                return;
             }
 
-            const modifiers = event.modifiers
+            const modifiers = event.modifiers;
 
             if (modifiers === Qt.NoModifier) {
-                return root.toggleFullScreen()
+                return root.toggleFullScreen();
             }
         }
 
         function _preventFromEverReachingUserDefinedCommands(event): bool {
-            const key = event.key
-            const noModifier = event.modifiers === Qt.NoModifier
-            const ctrlModifier = event.modifiers & Qt.ControlModifier
+            const key = event.key;
+            const noModifier = event.modifiers === Qt.NoModifier;
+            const ctrlModifier = event.modifiers & Qt.ControlModifier;
             return key === Qt.Key_Up
                 || key === Qt.Key_Down
                 || key === Qt.Key_Return && noModifier
@@ -144,8 +143,8 @@ ApplicationWindow {
                 || key === Qt.Key_F && ctrlModifier
                 || key === Qt.Key_C && ctrlModifier
                 || key === Qt.Key_Z && ctrlModifier
+                ;
         }
-
     }
 
     MouseArea {
@@ -154,8 +153,8 @@ ApplicationWindow {
         propagateComposedEvents: true
 
         onPressed: event => {
-            event.accepted = false
-            root.focusCommentTable()
+            event.accepted = false;
+            root.focusCommentTable();
         }
     }
 
@@ -167,8 +166,8 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        Qt.uiLanguage = mpvqcSettings.language
-        root.focusCommentTable()
+        Qt.uiLanguage = mpvqcSettings.language;
+        root.focusCommentTable();
     }
 
     Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light
@@ -176,5 +175,4 @@ ApplicationWindow {
 
     Material.background: root.mpvqcTheme.background
     Material.foreground: root.mpvqcTheme.foreground
-
 }

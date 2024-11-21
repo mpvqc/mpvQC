@@ -87,7 +87,7 @@ TestCase {
 
     function test_initialSelection(data) {
         const control = createTemporaryObject(objectUnderTest, testCase, {
-            'mpvqcSettings.themeColorOption': data.tag
+            "mpvqcSettings.themeColorOption": data.tag
         });
         verify(control);
         compare(control.currentIndex, data.tag);
@@ -98,7 +98,7 @@ TestCase {
         const temporaryIndex = 2;
 
         const control = createTemporaryObject(objectUnderTest, testCase, {
-            'mpvqcSettings.themeColorOption': initialIndex
+            "mpvqcSettings.themeColorOption": initialIndex
         });
         verify(control);
         compare(control.currentIndex, initialIndex);

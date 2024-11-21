@@ -19,13 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 Rectangle {
     property var fill: parent
 
     anchors.fill: fill
     z: 10
-    color: 'transparent'
-    border.color: 'black'
+    color: "transparent"
+    border.color: "black"
     border.width: 1
 }

@@ -45,7 +45,7 @@ Label {
     signal editingStarted()
     signal editingStopped()
 
-    textFormat: searchQuery ? Text.RichText : Text.PlainText
+    textFormat: searchQuery ? Text.StyledText : Text.PlainText
     wrapMode: Text.WordWrap
     horizontalAlignment: Text.AlignLeft
 

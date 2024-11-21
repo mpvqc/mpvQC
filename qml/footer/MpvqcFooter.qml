@@ -21,18 +21,17 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 Item {
     id: root
 
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property int mBottom: mpvqcApplication.maximized ? 2 : 0
+    
     readonly property bool horizontalLayout: mpvqcSettings.layoutOrientation === Qt.Horizontal
-    readonly property int mLeft: horizontalLayout
-        ? 6
-        : mpvqcApplication.maximized ? 2 : 0
+    
+    readonly property int customBottomMargin: mpvqcApplication.maximized ? 2 : 0
+    readonly property int customLeftMargin: 3
 
     property alias formattingOptionsButton: _formattingOptionsButton
 
@@ -53,14 +52,10 @@ Item {
         RowLayout {
             width: _content.width
 
-            Rectangle {
-                width: root.mLeft
-                color: 'transparent'
-            }
-
             MpvqcRowSelectionLabel {
                 mpvqcApplication: root.mpvqcApplication
-                Layout.bottomMargin: root.mBottom
+                Layout.bottomMargin: root.customBottomMargin
+                Layout.leftMargin: root.customLeftMargin
             }
 
             Item {
@@ -70,30 +65,29 @@ Item {
             MpvqcVideoPercentLabel {
                 mpvqcApplication: root.mpvqcApplication
                 horizontalAlignment: Text.AlignRight
-                Layout.bottomMargin: root.mBottom
+                Layout.bottomMargin: root.customBottomMargin
             }
 
             MpvqcVideoTimeLabel {
                 mpvqcApplication: root.mpvqcApplication
                 horizontalAlignment: Text.AlignRight
                 Layout.preferredWidth: width
-                Layout.bottomMargin: root.mBottom
+                Layout.bottomMargin: root.customBottomMargin
                 Layout.leftMargin: 12
             }
 
             Item {
-                height: 25
-                width: 25
-                Layout.bottomMargin: root.mBottom
+                Layout.minimumHeight: 25
+                Layout.minimumWidth: 25
+                Layout.bottomMargin: root.customBottomMargin
 
                 ToolButton {
                     id: _formattingOptionsButton
 
-                    property var menu: MpvqcFooterSettingsMenu
-                    {
+                    property var menu: MpvqcFooterSettingsMenu {
                         mpvqcApplication: root.mpvqcApplication
-                        y: -height
-                        transformOrigin: mirrored && !horizontalLayout ? Popup.BottomLeft : Popup.BottomRight
+                        y: -height // qmllint disable unqualified
+                        transformOrigin: _formattingOptionsButton.mirrored && !root.horizontalLayout ? Popup.BottomLeft : Popup.BottomRight
                     }
 
                     icon.source: "qrc:/data/icons/expand_more_black_24dp.svg"
@@ -103,12 +97,10 @@ Item {
                     padding: 3
 
                     onPressed: {
-                        menu.open()
+                        menu.open();
                     }
                 }
             }
-
         }
     }
-
 }

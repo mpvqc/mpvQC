@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 
 import dialogs
-
 
 Item {
     id: root
@@ -36,25 +37,23 @@ Item {
             mpvqcApplication: root.mpvqcApplication
 
             onAccepted: {
-                root._close()
+                root._close();
             }
-
         }
     }
 
     function requestClose() {
         if (canClose || userConfirmedClose) {
-            _close()
+            _close();
         } else {
-            quitDialog = quitDialogFactory.createObject(root)
-            quitDialog.closed.connect(quitDialog.destroy)
-            quitDialog.open()
+            quitDialog = quitDialogFactory.createObject(root);
+            quitDialog.closed.connect(quitDialog.destroy);
+            quitDialog.open();
         }
     }
 
     function _close() {
-        userConfirmedClose = true
-        mpvqcApplication.close()
+        userConfirmedClose = true;
+        mpvqcApplication.close();
     }
-
 }

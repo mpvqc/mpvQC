@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,36 +27,37 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcDialogImportDocuments'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcDialogImportDocuments"
 
     Component {
         id: objectUnderTest
 
         MpvqcDialogImportDocuments {
+            id: __objectUnderTest
+
             property bool openDocumentsCalled: false
 
             mpvqcApplication: QtObject {
                 property var mpvqcManager: QtObject {
-                    function openDocuments(files) { openDocumentsCalled = true }
+                    function openDocuments(files) {
+                        __objectUnderTest.openDocumentsCalled = true;
+                    }
                 }
                 property var mpvqcSettings: QtObject {
-                    property string lastDirectoryDocuments: 'initial directory'
+                    property string lastDirectoryDocuments: "initial directory"
                 }
             }
         }
     }
 
     function test_import() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.currentFolder = 'some directory'
-        control.accepted()
+        control.currentFolder = "some directory";
+        control.accepted();
 
-        verify(control.openDocumentsCalled)
-        verify(!control.mpvqcSettings.lastDirectoryDocuments.toString().includes('initial directory'))
+        verify(control.openDocumentsCalled);
+        verify(!control.mpvqcSettings.lastDirectoryDocuments.toString().includes("initial directory"));
     }
-
 }

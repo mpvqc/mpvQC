@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import header
 
-
 FocusScope {
     id: root
 
@@ -49,12 +48,12 @@ FocusScope {
         anchors.fill: parent
 
         background: Rectangle {
-            color: 'transparent'
+            color: "transparent"
         }
 
         header: MpvqcHeader {
             mpvqcApplication: root.mpvqcApplication
-            width: parent.width
+            width: _page.width
 
             onResizeVideoTriggered: _videoResizer.resizeVideo()
         }
@@ -71,11 +70,9 @@ FocusScope {
                 supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
 
                 onFilesDropped: (documents, videos, subtitles) => {
-                    root.mpvqcManager.open(documents, videos, subtitles)
+                    root.mpvqcManager.open(documents, videos, subtitles);
                 }
             }
         }
-
     }
-
 }

@@ -22,7 +22,6 @@ import QtQuick.Layouts
 
 import shared
 
-
 ColumnLayout {
     id: root
 
@@ -43,11 +42,11 @@ ColumnLayout {
     property bool currentWriteHeaderVideoPath: root.mpvqcSettings.writeHeaderVideoPath
 
     function accept() {
-        root.mpvqcSettings.nickname = currentNickname
-        root.mpvqcSettings.writeHeaderDate = currentWriteHeaderDate
-        root.mpvqcSettings.writeHeaderGenerator = currentWriteHeaderGenerator
-        root.mpvqcSettings.writeHeaderNickname = currentWriteHeaderNickname
-        root.mpvqcSettings.writeHeaderVideoPath = currentWriteHeaderVideoPath
+        root.mpvqcSettings.nickname = currentNickname;
+        root.mpvqcSettings.writeHeaderDate = currentWriteHeaderDate;
+        root.mpvqcSettings.writeHeaderGenerator = currentWriteHeaderGenerator;
+        root.mpvqcSettings.writeHeaderNickname = currentWriteHeaderNickname;
+        root.mpvqcSettings.writeHeaderVideoPath = currentWriteHeaderVideoPath;
     }
 
     MpvqcTextFieldRow {
@@ -62,7 +61,7 @@ ColumnLayout {
         Layout.topMargin: 20
 
         onTextChanged: text => {
-            root.currentNickname = text
+            root.currentNickname = text;
         }
     }
 
@@ -81,7 +80,7 @@ ColumnLayout {
         prefWidth: root.width
 
         onToggled: state => {
-            root.currentWriteHeaderDate = state
+            root.currentWriteHeaderDate = state;
         }
     }
 
@@ -94,7 +93,7 @@ ColumnLayout {
         prefWidth: root.width
 
         onToggled: state => {
-            root.currentWriteHeaderGenerator = state
+            root.currentWriteHeaderGenerator = state;
         }
     }
 
@@ -106,7 +105,7 @@ ColumnLayout {
         prefWidth: root.width
 
         onToggled: state => {
-            root.currentWriteHeaderNickname = state
+            root.currentWriteHeaderNickname = state;
         }
     }
 
@@ -118,8 +117,7 @@ ColumnLayout {
         prefWidth: root.width
 
         onToggled: state => {
-            root.currentWriteHeaderVideoPath = state
+            root.currentWriteHeaderVideoPath = state;
         }
     }
-
 }

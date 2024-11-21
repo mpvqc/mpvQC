@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 RowLayout {
     id: root
 
@@ -45,8 +44,7 @@ RowLayout {
         id: _switch
 
         onCheckedChanged: {
-            root.toggled(checked)
+            root.toggled(checked);
         }
     }
-
 }

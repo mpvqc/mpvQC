@@ -21,10 +21,8 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcMessageBox {
     title: qsTranslate("MessageBoxes", "Delete Comment")
     text: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
     standardButtons: Dialog.Yes | Dialog.Cancel
-
 }

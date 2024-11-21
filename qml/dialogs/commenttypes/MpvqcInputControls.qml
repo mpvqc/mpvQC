@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-
 Column {
     id: root
 
@@ -41,7 +40,7 @@ Column {
     property alias text: _textField.text
 
     signal accepted(string input)
-    signal done()
+    signal done
 
     height: Math.max(_textField.height, _acceptButton.height)
 
@@ -55,12 +54,12 @@ Column {
             Layout.fillWidth: true
             Layout.rightMargin: _acceptButton.leftPadding * 2
 
-            onAcceptedInput: (input) => {
-                root.accepted(input)
+            onAcceptedInput: input => {
+                root.accepted(input);
             }
 
             onEditingStopped: {
-                root.done()
+                root.done();
             }
         }
 
@@ -72,7 +71,7 @@ Column {
             icon.source: "qrc:/data/icons/done_black_24dp.svg"
 
             onPressed: {
-                _textField.accepted()
+                _textField.accepted();
             }
         }
 
@@ -84,18 +83,17 @@ Column {
             icon.source: "qrc:/data/icons/close_black_24dp.svg"
 
             onPressed: {
-                _textField.rejected()
+                _textField.rejected();
             }
         }
     }
 
     Label {
-        text: !_textField.error ? ' ' : _textField.error
+        text: !_textField.error ? " " : _textField.error
         color: root.mpvqcTheme.control
         horizontalAlignment: Text.AlignLeft
         width: root.width
         wrapMode: Label.WordWrap
         topPadding: 5
     }
-
 }

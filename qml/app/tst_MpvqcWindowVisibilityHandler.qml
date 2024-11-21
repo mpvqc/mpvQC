@@ -33,7 +33,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcWindowVisibilityHandler'
+    name: "MpvqcWindowVisibilityHandler"
 
     Component {
         id: objectUnderTest
@@ -63,13 +63,13 @@ TestCase {
     function test_maximize_data() {
         return [
             {
-                tag: 'not max',
+                tag: "not max",
                 maximized: false,
                 wasMaximizedBefore: false,
                 expectedVisibility: testCase.cMAXIMIZED
             },
             {
-                tag: 'max',
+                tag: "max",
                 maximized: true,
                 wasMaximizedBefore: false,
                 expectedVisibility: testCase.cNORMAL

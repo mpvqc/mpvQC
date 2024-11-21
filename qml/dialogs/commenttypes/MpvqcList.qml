@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls.Material
-
 
 ListView {
     id: root
@@ -75,7 +76,7 @@ ListView {
         }
 
         onPressed: {
-            root.currentIndex = index
+            root.currentIndex = index;
         }
 
         Label {
@@ -83,7 +84,7 @@ ListView {
             height: _delegate.height
             padding: 15
 
-            text: qsTranslate('CommentTypes', _delegate.modelData)
+            text: qsTranslate("CommentTypes", _delegate.modelData)
             elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
 
             horizontalAlignment: Text.AlignLeft
@@ -92,11 +93,11 @@ ListView {
     }
 
     function disableMovingHighlightRectangle(): void {
-        root.highlightMoveDuration = 0
+        root.highlightMoveDuration = 0;
     }
 
     function enableMovingHighlightRectangle(): void {
-        root.highlightMoveDuration = root.defaultHighlightMoveDuration
+        root.highlightMoveDuration = root.defaultHighlightMoveDuration;
     }
 
     ScrollBar.vertical: ScrollBar {
@@ -107,5 +108,4 @@ ListView {
 
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }
-
 }

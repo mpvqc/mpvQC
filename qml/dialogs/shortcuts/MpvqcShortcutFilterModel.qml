@@ -23,8 +23,6 @@ import QtQuick
 import QtQml.Models
 
 DelegateModel {
-    id: delegateModel
-
     property var filterAcceptsItem: item => true
 
     function update() {
@@ -59,6 +57,6 @@ DelegateModel {
     filterOnGroup: "visible"
 
     Component.onCompleted: {
-        _filterModel.update()
+        _filterModel.update();
     }
 }

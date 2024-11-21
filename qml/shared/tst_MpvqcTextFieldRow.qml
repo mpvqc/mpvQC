@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 Item {
     id: testHelper
 
@@ -34,33 +33,36 @@ Item {
 
         prefWidth: testHelper.width
 
-        onTextChanged: (text) => {
-            objectUnderTest.newText = text
+        onTextChanged: text => {
+            objectUnderTest.newText = text;
         }
 
         TestCase {
             name: "MpvqcTextFieldRow"
 
-            SignalSpy { id: textChangedSpy; target: objectUnderTest; signalName: 'textChanged' }
+            SignalSpy {
+                id: textChangedSpy
+                target: objectUnderTest
+                signalName: "textChanged"
+            }
 
             function init() {
-                objectUnderTest.newText = ''
-                textChangedSpy.clear()
+                objectUnderTest.newText = '';
+                textChangedSpy.clear();
             }
 
             function test_text() {
-                const firstText = 'abc'
-                const secondText = 'def'
+                const firstText = "abc";
+                const secondText = "def";
 
-                objectUnderTest.input = firstText
-                verify(objectUnderTest.newText, firstText)
-                compare(textChangedSpy.count, 1)
+                objectUnderTest.input = firstText;
+                verify(objectUnderTest.newText, firstText);
+                compare(textChangedSpy.count, 1);
 
-                objectUnderTest.input = secondText
-                verify(objectUnderTest.newText, secondText)
-                compare(textChangedSpy.count, 2)
+                objectUnderTest.input = secondText;
+                verify(objectUnderTest.newText, secondText);
+                compare(textChangedSpy.count, 2);
             }
         }
     }
-
 }

@@ -24,7 +24,6 @@ import footer
 import player
 import table
 
-
 FocusScope {
     id: root
 
@@ -58,13 +57,13 @@ FocusScope {
     ]
 
     function applySaneDefaultSplitViewSize() {
-        const prefHeight = _splitView.height * 0.4
-        const prefWidth = _splitView.width * 0.4
-        _tableContainer.setPreferredSizes(prefWidth, prefHeight)
+        const prefHeight = _splitView.height * 0.4;
+        const prefWidth = _splitView.width * 0.4;
+        _tableContainer.setPreferredSizes(prefWidth, prefHeight);
     }
 
     function setPreferredTableSize(width: int, height: int): void {
-        _tableContainer.setPreferredSizes(width, height)
+        _tableContainer.setPreferredSizes(width, height);
     }
 
     SplitView {
@@ -86,7 +85,7 @@ FocusScope {
                 id: _player
 
                 mpvqcApplication: root.mpvqcApplication
-                anchors.fill: parent
+                anchors.fill: parent // qmllint disable unqualified
             }
         }
 
@@ -97,8 +96,8 @@ FocusScope {
             SplitView.minimumWidth: 400
 
             function setPreferredSizes(width: int, height: int): void {
-                SplitView.preferredWidth = width
-                SplitView.preferredHeight = height
+                SplitView.preferredWidth = width;
+                SplitView.preferredHeight = height;
             }
 
             MpvqcTableWrapper {
@@ -106,49 +105,46 @@ FocusScope {
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true
-                width: parent.width
-                height: parent.height - _footer.height
+                width: _tableContainer.width
+                height: _tableContainer.height - _footer.height
             }
 
             MpvqcFooter {
                 id: _footer
 
                 mpvqcApplication: root.mpvqcApplication
-                width: parent.width
+                width: _tableContainer.width
             }
         }
-
     }
 
     Connections {
         target: root.mpvqcSettings
 
         function onLayoutOrientationChanged() {
-            _forceSplitViewLayoutRefresh()
-            root.applySaneDefaultSplitViewSize()
+            _forceSplitViewLayoutRefresh();
+            root.applySaneDefaultSplitViewSize();
         }
 
         function _forceSplitViewLayoutRefresh() {
-            const bottomElement = _splitView.takeItem(1)
-            _splitView.addItem(bottomElement)
+            const bottomElement = _splitView.takeItem(1);
+            _splitView.addItem(bottomElement);
         }
     }
 
     Connections {
         target: root.mpvqcCommentTable
-        readonly property int count: target.count
 
         function onCountChanged() {
             // we effectively force a redraw of the table here. if we don't do this and delete the last row
             // in the table, the table will not rerender completely and there might be color artifacts of the
             // alternating row colors
-            _footer.height += 1
-            _footer.height -= 1
+            _footer.height += 1;
+            _footer.height -= 1;
         }
     }
 
     Component.onCompleted: {
-        root.applySaneDefaultSplitViewSize()
+        root.applySaneDefaultSplitViewSize();
     }
-
 }

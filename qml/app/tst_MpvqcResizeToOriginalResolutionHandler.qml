@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -31,9 +30,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcResizeToOriginalResolutionHandler'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcResizeToOriginalResolutionHandler"
 
     Component {
         id: objectUnderTest
@@ -62,146 +59,146 @@ TestCase {
                 property int draggerWidth: 0
                 property int setWidth: 0
                 property int setHeight: 0
-                function setPreferredTableSize(width, height) { setWidth = width; setHeight = height }
+                function setPreferredTableSize(width, height) {
+                    setWidth = width;
+                    setHeight = height;
+                }
             }
         }
     }
 
     function test_canResize() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.mpvqcApplication.fullscreen = false
-        control.mpvqcApplication.maximized = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 0
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 0
-        control.availableScreenWidth = 2560
-        control.availableScreenHeight = 1440
-        verify(!control.canResize())
+        control.mpvqcApplication.fullscreen = false;
+        control.mpvqcApplication.maximized = false;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 0;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 0;
+        control.availableScreenWidth = 2560;
+        control.availableScreenHeight = 1440;
+        verify(!control.canResize());
 
-        control.mpvqcApplication.fullscreen = false
-        control.mpvqcApplication.maximized = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
-        control.availableScreenWidth = 2560
-        control.availableScreenHeight = 1440
-        verify(control.canResize())
+        control.mpvqcApplication.fullscreen = false;
+        control.mpvqcApplication.maximized = false;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720;
+        control.availableScreenWidth = 2560;
+        control.availableScreenHeight = 1440;
+        verify(control.canResize());
 
-        control.mpvqcApplication.fullscreen = true
-        control.mpvqcApplication.maximized = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
-        control.availableScreenWidth = 2560
-        control.availableScreenHeight = 1440
-        verify(!control.canResize())
+        control.mpvqcApplication.fullscreen = true;
+        control.mpvqcApplication.maximized = false;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720;
+        control.availableScreenWidth = 2560;
+        control.availableScreenHeight = 1440;
+        verify(!control.canResize());
 
-        control.mpvqcApplication.fullscreen = false
-        control.mpvqcApplication.maximized = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
-        control.availableScreenWidth = 2560
-        control.availableScreenHeight = 1440
-        verify(!control.canResize())
+        control.mpvqcApplication.fullscreen = false;
+        control.mpvqcApplication.maximized = true;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720;
+        control.availableScreenWidth = 2560;
+        control.availableScreenHeight = 1440;
+        verify(!control.canResize());
 
-        control.mpvqcApplication.fullscreen = false
-        control.mpvqcApplication.maximized = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
-        control.availableScreenWidth = 1368
-        control.availableScreenHeight = 768
-        verify(control.canResize())
+        control.mpvqcApplication.fullscreen = false;
+        control.mpvqcApplication.maximized = false;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720;
+        control.availableScreenWidth = 1368;
+        control.availableScreenHeight = 768;
+        verify(control.canResize());
 
-        control.mpvqcApplication.fullscreen = false
-        control.mpvqcApplication.maximized = false
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720
-        control.availableScreenWidth = 1280
-        control.availableScreenHeight = 720
-        verify(!control.canResize())
+        control.mpvqcApplication.fullscreen = false;
+        control.mpvqcApplication.maximized = false;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 1280;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 720;
+        control.availableScreenWidth = 1280;
+        control.availableScreenHeight = 720;
+        verify(!control.canResize());
     }
 
     function test_resizeVideoInVerticalSplitView() {
-        let control
+        let control;
 
-        control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.availableScreenWidth = 2560 * 0.95
-        control.availableScreenHeight = 1440 * 0.95
-        control.mpvqcApplication.width = 1280
-        control.mpvqcApplication.height = 720
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
-        control.splitView.draggerHeight = 6
-        control.splitView.tableContainerHeight = 200
-        control.resizeVideoInVerticalSplitView()
-        compare(control.mpvqcApplication.width, 866)
-        compare(control.mpvqcApplication.height, 738)
-        compare(control.splitView.setWidth, 854)
-        compare(control.splitView.setHeight, 200)
+        control.availableScreenWidth = 2560 * 0.95;
+        control.availableScreenHeight = 1440 * 0.95;
+        control.mpvqcApplication.width = 1280;
+        control.mpvqcApplication.height = 720;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480;
+        control.splitView.draggerHeight = 6;
+        control.splitView.tableContainerHeight = 200;
+        control.resizeVideoInVerticalSplitView();
+        compare(control.mpvqcApplication.width, 866);
+        compare(control.mpvqcApplication.height, 738);
+        compare(control.splitView.setWidth, 854);
+        compare(control.splitView.setHeight, 200);
 
+        control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        control.availableScreenWidth = 2560 * 0.95
-        control.availableScreenHeight = 1440 * 0.95
-        control.mpvqcApplication.width = 1280
-        control.mpvqcApplication.height = 1200
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
-        control.splitView.draggerHeight = 6
-        control.splitView.tableContainerHeight = 900
-        control.resizeVideoInVerticalSplitView()
-        compare(control.mpvqcApplication.width, 866)
-        compare(control.mpvqcApplication.height, 1368)
-        compare(control.splitView.setWidth, 854)
-        compare(control.splitView.setHeight, 830)
+        control.availableScreenWidth = 2560 * 0.95;
+        control.availableScreenHeight = 1440 * 0.95;
+        control.mpvqcApplication.width = 1280;
+        control.mpvqcApplication.height = 1200;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480;
+        control.splitView.draggerHeight = 6;
+        control.splitView.tableContainerHeight = 900;
+        control.resizeVideoInVerticalSplitView();
+        compare(control.mpvqcApplication.width, 866);
+        compare(control.mpvqcApplication.height, 1368);
+        compare(control.splitView.setWidth, 854);
+        compare(control.splitView.setHeight, 830);
     }
 
     function test_resizeVideoInHorizontalSplitView() {
-        let control
+        let control;
 
-        control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.availableScreenWidth = 2560 * 0.95
-        control.availableScreenHeight = 1440 * 0.95
-        control.mpvqcApplication.width = 1280
-        control.mpvqcApplication.height = 720
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
-        control.splitView.draggerWidth = 6
-        control.splitView.tableContainerWidth = 200
-        control.resizeVideoInHorizontalSplitView()
-        compare(control.mpvqcApplication.width, 1072)
-        compare(control.mpvqcApplication.height, 532)
-        compare(control.splitView.setWidth, 200)
-        compare(control.splitView.setHeight, 480)
+        control.availableScreenWidth = 2560 * 0.95;
+        control.availableScreenHeight = 1440 * 0.95;
+        control.mpvqcApplication.width = 1280;
+        control.mpvqcApplication.height = 720;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480;
+        control.splitView.draggerWidth = 6;
+        control.splitView.tableContainerWidth = 200;
+        control.resizeVideoInHorizontalSplitView();
+        compare(control.mpvqcApplication.width, 1072);
+        compare(control.mpvqcApplication.height, 532);
+        compare(control.splitView.setWidth, 200);
+        compare(control.splitView.setHeight, 480);
 
+        control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-
-        control.availableScreenWidth = 2560 * 0.95
-        control.availableScreenHeight = 1440 * 0.95
-        control.mpvqcApplication.width = 1280
-        control.mpvqcApplication.height = 1200
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480
-        control.splitView.draggerWidth = 6
-        control.splitView.tableContainerWidth = 900
-        control.resizeVideoInHorizontalSplitView()
-        compare(control.mpvqcApplication.width, 1772)
-        compare(control.mpvqcApplication.height, 532)
-        compare(control.splitView.setWidth, 900)
-        compare(control.splitView.setHeight, 480)
+        control.availableScreenWidth = 2560 * 0.95;
+        control.availableScreenHeight = 1440 * 0.95;
+        control.mpvqcApplication.width = 1280;
+        control.mpvqcApplication.height = 1200;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledWidth = 854;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.scaledHeight = 480;
+        control.splitView.draggerWidth = 6;
+        control.splitView.tableContainerWidth = 900;
+        control.resizeVideoInHorizontalSplitView();
+        compare(control.mpvqcApplication.width, 1772);
+        compare(control.mpvqcApplication.height, 532);
+        compare(control.splitView.setWidth, 900);
+        compare(control.splitView.setHeight, 480);
     }
-
 }

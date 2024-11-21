@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcMessageBox {
     title: qsTranslate("MessageBoxes", "Extended Exports")
 
@@ -35,8 +34,8 @@ MpvqcMessageBox {
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
 
-        onLinkActivated: (link) => {
-            Qt.openUrlExternally(link)
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
         }
 
         MouseArea {
@@ -46,5 +45,4 @@ MpvqcMessageBox {
             hoverEnabled: true
         }
     }
-
 }

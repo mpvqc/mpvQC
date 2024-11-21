@@ -20,83 +20,81 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
-
 TextField {
     id: root
 
     required property var validate // param: text -> return: error: string
     required property bool focusOnCompletion
 
-    readonly property bool hasText: text.trim() !== ''
-    readonly property bool hasError: error !== ''
+    readonly property bool hasText: text.trim() !== ""
+    readonly property bool hasError: error !== ""
     readonly property bool isValid: hasText && !hasError
 
-    property string error: ''
+    property string error: ""
 
     signal acceptedInput(string input)
-    signal editingStopped()
+    signal editingStopped
 
     selectByMouse: true
     bottomPadding: topPadding
     horizontalAlignment: Text.AlignLeft
 
     function _validate(): void {
-        const error = validate(text.trim())
+        const error = validate(text.trim());
         if (error) {
-            _setError(error)
+            _setError(error);
         } else {
-            _removeError()
+            _removeError();
         }
     }
 
     function _setError(message: string): void {
-        error = message
+        error = message;
     }
 
     function _removeError(): void {
-        error = ''
+        error = "";
     }
 
     function _removeText(): void {
-        text = ''
+        text = "";
     }
 
     function _removeFocus(): void {
-        focus = false
+        focus = false;
     }
 
     function rejected(): void {
-        _stopEditing()
+        _stopEditing();
     }
 
     function _stopEditing(): void {
-        _removeText()
-        _removeError()
-        _removeFocus()
-        editingStopped()
+        _removeText();
+        _removeError();
+        _removeFocus();
+        editingStopped();
     }
 
     onTextChanged: {
-        _validate()
+        _validate();
     }
 
     onAccepted: {
         if (isValid) {
-            acceptedInput(text.trim())
-            _stopEditing()
+            acceptedInput(text.trim());
+            _stopEditing();
         }
     }
 
     Component.onCompleted: {
         if (focusOnCompletion) {
-            forceActiveFocus()
+            forceActiveFocus();
         } else {
-            _removeFocus()
+            _removeFocus();
         }
     }
 
     Keys.onEscapePressed: {
-        _stopEditing()
+        _stopEditing();
     }
-
 }

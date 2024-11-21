@@ -19,11 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import shared
 
-
 MpvqcMessageBox {
     id: root
 
-    property int count
+    required property int count
 
     title: count === 1
         ? qsTranslate("MessageBoxes", "Document Not Compatible")

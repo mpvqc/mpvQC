@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 MpvqcVideoPercentLabel {
     id: objectUnderTest
 
@@ -42,30 +41,49 @@ MpvqcVideoPercentLabel {
         when: windowShown
 
         function init() {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage = false
-            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
+            objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage = false;
+            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false;
         }
 
         function test_text(data) {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage = true
-            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-            compare(objectUnderTest.text, '42%')
+            objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage = true;
+            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+            compare(objectUnderTest.text, '42%');
         }
 
         function test_visibility_data() {
             return [
-                { tag: 'visable', statusbarPercentage: true, video_loaded: true, expected: true },
-                { tag: 'disabled', statusbarPercentage: false, video_loaded: true, expected: false },
-                { tag: 'no-video', statusbarPercentage: true, video_loaded: false, expected: false },
-                { tag: 'neither', statusbarPercentage: false, video_loaded: false, expected: false },
-            ]
+                {
+                    tag: 'visable',
+                    statusbarPercentage: true,
+                    video_loaded: true,
+                    expected: true
+                },
+                {
+                    tag: 'disabled',
+                    statusbarPercentage: false,
+                    video_loaded: true,
+                    expected: false
+                },
+                {
+                    tag: 'no-video',
+                    statusbarPercentage: true,
+                    video_loaded: false,
+                    expected: false
+                },
+                {
+                    tag: 'neither',
+                    statusbarPercentage: false,
+                    video_loaded: false,
+                    expected: false
+                },
+            ];
         }
 
         function test_visibility(data) {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage = data.statusbarPercentage
-            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = data.video_loaded
-            compare(objectUnderTest.visible, data.expected)
+            objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage = data.statusbarPercentage;
+            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = data.video_loaded;
+            compare(objectUnderTest.visible, data.expected);
         }
     }
-
 }
