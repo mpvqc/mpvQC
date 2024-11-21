@@ -19,14 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick.Dialogs
 
-
 FileDialog {
-    id: root
-
     required property var mpvqcApplication
 
-    property var mpvqcManager: mpvqcApplication.mpvqcManager
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     title: qsTranslate("FileInteractionDialogs", "Open Video")
@@ -37,8 +34,7 @@ FileDialog {
     ]
 
     onAccepted: {
-        mpvqcSettings.lastDirectoryVideo = currentFolder
-        mpvqcManager.openVideo(currentFile)
+        mpvqcSettings.lastDirectoryVideo = currentFolder;
+        mpvqcManager.openVideo(currentFile);
     }
-
 }

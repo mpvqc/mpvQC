@@ -20,13 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
-    readonly property url currentFile: 'file:///hello.txt'
+    readonly property url currentFile: "file:///hello.txt"
 
-    name: "MpvqcDialogExportDocument2"
+    name: "MpvqcDialogExportDocument"
     when: windowShown
 
     Component {
@@ -36,18 +35,17 @@ TestCase {
             property url savedUrlInTest
 
             onSavePressed: fileUrl => {
-                this.savedUrlInTest = fileUrl
+                this.savedUrlInTest = fileUrl;
             }
         }
     }
 
     function test_save() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.currentFile = testCase.currentFile
-        control.accepted()
-        compare(control.savedUrlInTest, testCase.currentFile)
+        control.currentFile = testCase.currentFile;
+        control.accepted();
+        compare(control.savedUrlInTest, testCase.currentFile);
     }
-
 }

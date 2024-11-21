@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,37 +27,38 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcDialogImportSubtitles'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcDialogImportSubtitles"
 
     Component {
         id: objectUnderTest
 
         MpvqcDialogImportSubtitles {
+            id: __objectUnderTest
+
             property bool openSubtitlesCalled: false
 
             mpvqcApplication: QtObject {
                 property var mpvqcManager: QtObject {
-                    function openSubtitles(files) { openSubtitlesCalled = true }
+                    function openSubtitles(files) {
+                        __objectUnderTest.openSubtitlesCalled = true;
+                    }
                 }
                 property var mpvqcSettings: QtObject {
-                    property string lastDirectorySubtitles: 'initial directory'
+                    property string lastDirectorySubtitles: "initial directory"
                 }
-                property var supportedSubtitleFileExtensions: [ 'ass' ]
+                property var supportedSubtitleFileExtensions: ["ass"]
             }
         }
     }
 
     function test_import() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.currentFolder = 'some directory'
-        control.accepted()
+        control.currentFolder = "some directory";
+        control.accepted();
 
-        verify(control.openSubtitlesCalled)
-        verify(!control.mpvqcSettings.lastDirectorySubtitles.toString().includes('initial directory'))
+        verify(control.openSubtitlesCalled);
+        verify(!control.mpvqcSettings.lastDirectorySubtitles.toString().includes("initial directory"));
     }
-
 }

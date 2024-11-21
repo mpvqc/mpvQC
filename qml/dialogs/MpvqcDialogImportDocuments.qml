@@ -19,14 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick.Dialogs
 
-
 FileDialog {
-    id: root
-
     required property var mpvqcApplication
 
-    property var mpvqcManager: mpvqcApplication.mpvqcManager
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
     title: qsTranslate("FileInteractionDialogs", "Open QC Document(s)")
     currentFolder: mpvqcSettings.lastDirectoryDocuments
@@ -37,8 +34,7 @@ FileDialog {
     ]
 
     onAccepted: {
-        mpvqcSettings.lastDirectoryDocuments = currentFolder
-        mpvqcManager.openDocuments(selectedFiles)
+        mpvqcSettings.lastDirectoryDocuments = currentFolder;
+        mpvqcManager.openDocuments(selectedFiles);
     }
-
 }

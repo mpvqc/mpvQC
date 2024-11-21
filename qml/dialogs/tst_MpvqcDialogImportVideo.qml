@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,36 +27,37 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcDialogImportVideo'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcDialogImportVideo"
 
     Component {
         id: objectUnderTest
 
         MpvqcDialogImportVideo {
+            id: __objectUnderTest
+
             property bool openVideoCalled: false
 
             mpvqcApplication: QtObject {
                 property var mpvqcManager: QtObject {
-                    function openVideo(video) { openVideoCalled = true }
+                    function openVideo(video) {
+                        __objectUnderTest.openVideoCalled = true;
+                    }
                 }
                 property var mpvqcSettings: QtObject {
-                    property string lastDirectoryVideo: 'initial directory'
+                    property string lastDirectoryVideo: "initial directory"
                 }
             }
         }
     }
 
     function test_import() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.currentFolder = 'some directory'
-        control.accepted()
+        control.currentFolder = "some directory";
+        control.accepted();
 
-        verify(control.openVideoCalled)
-        verify(!control.mpvqcSettings.lastDirectoryVideo.toString().includes('initial directory'))
+        verify(control.openVideoCalled);
+        verify(!control.mpvqcSettings.lastDirectoryVideo.toString().includes("initial directory"));
     }
-
 }

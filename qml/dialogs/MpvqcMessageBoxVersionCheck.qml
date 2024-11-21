@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcMessageBox {
     id: root
 
@@ -36,8 +35,8 @@ MpvqcMessageBox {
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
 
-        onLinkActivated: (link) => {
-            Qt.openUrlExternally(link)
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
         }
 
         MouseArea {
@@ -49,16 +48,15 @@ MpvqcMessageBox {
     }
 
     Component.onCompleted: {
-        root.mpvqcVersionCheckerPyObject.check_for_new_version()
+        root.mpvqcVersionCheckerPyObject.check_for_new_version();
     }
 
     Connections {
         target: root.mpvqcVersionCheckerPyObject
 
         function onVersionChecked(title: string, text: string) {
-            root.title = title
-            root.contentItem.text = text
+            root.title = title;
+            root.contentItem.text = text;
         }
     }
-
 }
