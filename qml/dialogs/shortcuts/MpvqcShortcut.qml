@@ -24,20 +24,20 @@ import QtQuick.Layouts
 RowLayout {
     id: root
 
-    property alias label: _description.text
+    property alias shortcutLabel: _description.text
 
-    property alias button1: _button1.text
-    property alias button1Icon: _button1.icon.source
+    property alias shortcutButton1: _button1.text
+    property alias shortcutButton1Icon: _button1.icon.source
 
-    property alias button2: _button2.text
-    property alias button2Icon: _button2.icon.source
+    property alias shortcutButton2: _button2.text
+    property alias shortcutButton2Icon: _button2.icon.source
 
-    property alias button3: _button3.text
-    property alias button3Icon: _button3.icon.source
+    property alias shortcutButton3: _button3.text
+    property alias shortcutButton3Icon: _button3.icon.source
 
-    property bool isSeparateShortcut: false
+    property bool isMultiShortcut: false
     property int rightMargin: 0
-    property int scrollBarSpace: 0
+    property int scrollBarPadding: 0
 
     Label {
         id: _description
@@ -45,7 +45,7 @@ RowLayout {
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignLeft
 
-        Layout.maximumWidth: root.width - _buttons.width - root.scrollBarSpace
+        Layout.maximumWidth: root.width - _buttons.width - root.scrollBarPadding
     }
 
     Rectangle {
@@ -63,7 +63,7 @@ RowLayout {
         }
 
         Label {
-            text: root.isSeparateShortcut ? '/' : '+'
+            text: root.isMultiShortcut ? "/" : "+"
             height: _button2.hasContent ? parent.height : 0
             width: _button2.hasContent ? implicitWidth : 0
             visible: _button2.hasContent
@@ -75,7 +75,7 @@ RowLayout {
         }
 
         Label {
-            text: '+'
+            text: "+"
 
             height: _button3.hasContent ? parent.height : 0
             width: _button3.hasContent ? implicitWidth : 0
@@ -92,6 +92,4 @@ RowLayout {
         color: "transparent"
         Layout.preferredWidth: root.rightMargin
     }
-
-
 }

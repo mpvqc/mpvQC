@@ -18,10 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls.Material
 
 import shared
-
 
 MpvqcDialog {
     id: root
