@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 RowLayout {
     id: root
 
@@ -57,7 +56,7 @@ RowLayout {
             Layout.preferredWidth: root.spinBoxWidth
 
             onValueChanged: {
-                root.valueModified(value)
+                root.valueModified(value);
             }
         }
 
@@ -67,5 +66,4 @@ RowLayout {
             Layout.preferredWidth: root.spinBoxWidth
         }
     }
-
 }

@@ -28,9 +28,7 @@ MpvqcMpvFrameBufferObjectPyObject {
 
     required property var mpvqcApplication
 
-    property var menu: MpvqcNewCommentMenu {
-        mpvqcApplication: root.mpvqcApplication
-    }
+    readonly property var mpvqcNewCommentMenu: mpvqcApplication.mpvqcNewCommentMenu
 
     property point globalCoordinate: Qt.point(0, 0)
 
@@ -47,7 +45,7 @@ MpvqcMpvFrameBufferObjectPyObject {
         anchors.fill: root
 
         onRightMouseButtonPressed: {
-            root.menu.popupMenu()
+            root.mpvqcNewCommentMenu.popupMenu()
         }
     }
 

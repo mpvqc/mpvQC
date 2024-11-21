@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 
-
 Item {
     id: testHelper
 
@@ -33,24 +32,36 @@ Item {
         id: objectUnderTest1
         mpvqcApplication: testHelper.mpvqcApplication
 
-        Rectangle { property string title: 'title-1' }
+        Rectangle {
+            property string title: "title-1"
+        }
     }
 
     MpvqcDialog {
         id: objectUnderTest2
         mpvqcApplication: testHelper.mpvqcApplication
 
-        Rectangle { property string title: 'title-1' }
-        Rectangle { property string title: 'title-2' }
+        Rectangle {
+            property string title: "title-1"
+        }
+        Rectangle {
+            property string title: "title-2"
+        }
     }
 
     MpvqcDialog {
         id: objectUnderTest3
         mpvqcApplication: testHelper.mpvqcApplication
 
-        Rectangle { property string title: 'title-1' }
-        Rectangle { property string title: 'title-2' }
-        Rectangle { property string title: 'title-3' }
+        Rectangle {
+            property string title: "title-1"
+        }
+        Rectangle {
+            property string title: "title-2"
+        }
+        Rectangle {
+            property string title: "title-3"
+        }
     }
 
     TestCase {
@@ -58,16 +69,27 @@ Item {
 
         function test_children_data() {
             return [
-                { tag: '1x', expected: 1, testobject: objectUnderTest1 },
-                { tag: '2x', expected: 2, testobject: objectUnderTest2 },
-                { tag: '3x', expected: 3, testobject: objectUnderTest3 },
-            ]
+                {
+                    tag: "1x",
+                    expected: 1,
+                    testobject: objectUnderTest1
+                },
+                {
+                    tag: "2x",
+                    expected: 2,
+                    testobject: objectUnderTest2
+                },
+                {
+                    tag: "3x",
+                    expected: 3,
+                    testobject: objectUnderTest3
+                },
+            ];
         }
 
         function test_children(data) {
-            compare(data.testobject.bar.count, data.expected)
-            compare(data.testobject.stack.count, data.expected)
+            compare(data.testobject.bar.count, data.expected);
+            compare(data.testobject.stack.count, data.expected);
         }
     }
-
 }

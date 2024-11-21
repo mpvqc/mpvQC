@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-
 Label {
 
     font.weight: Font.DemiBold
@@ -28,5 +27,4 @@ Label {
     horizontalAlignment: Text.AlignHCenter
     topPadding: 15
     bottomPadding: 10
-
 }

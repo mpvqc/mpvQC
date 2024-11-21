@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 Item {
     id: testHelper
 
@@ -35,32 +34,35 @@ Item {
         prefWidth: testHelper.width
 
         onCheckedChanged: {
-            objectUnderTest.newChecked = checked
+            objectUnderTest.newChecked = checked;
         }
 
         TestCase {
             name: "MpvqcSwitchRow"
             when: windowShown
 
-            SignalSpy { id: toggledSpy; target: objectUnderTest; signalName: 'toggled' }
+            SignalSpy {
+                id: toggledSpy
+                target: objectUnderTest
+                signalName: "toggled"
+            }
 
             function init() {
-                objectUnderTest.newChecked = false
-                toggledSpy.clear()
+                objectUnderTest.newChecked = false;
+                toggledSpy.clear();
             }
 
             function test_toggle() {
-                verify(!objectUnderTest.checked)
+                verify(!objectUnderTest.checked);
 
-                mouseClick(objectUnderTest.toggle)
-                compare(toggledSpy.count, 1)
-                verify(objectUnderTest.checked)
+                mouseClick(objectUnderTest.toggle);
+                compare(toggledSpy.count, 1);
+                verify(objectUnderTest.checked);
 
-                mouseClick(objectUnderTest.toggle)
-                compare(toggledSpy.count, 2)
-                verify(!objectUnderTest.checked)
+                mouseClick(objectUnderTest.toggle);
+                compare(toggledSpy.count, 2);
+                verify(!objectUnderTest.checked);
             }
         }
     }
-
 }

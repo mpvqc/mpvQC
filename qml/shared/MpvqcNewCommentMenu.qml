@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
-
 
 MpvqcMenu {
     id: root
@@ -30,6 +31,7 @@ MpvqcMenu {
     readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+
     property string selectedCommentType: ''
 
     property alias repeater: _repeater
@@ -40,27 +42,27 @@ MpvqcMenu {
     z: 2
     exit: null
 
-	onAboutToShow: _positionMenu()
+    onAboutToShow: _positionMenu()
     onClosed: _addComment()
 
     function _positionMenu(): void {
-        const pos = parent.mapFromGlobal(mpvqcUtilityPyObject.cursorPosition)
-		x = root.mMirrored ? pos.x - root.width : pos.x
-		y = pos.y
+        const pos = parent.mapFromGlobal(mpvqcUtilityPyObject.cursorPosition);
+        x = root.mMirrored ? pos.x - root.width : pos.x;
+        y = pos.y;
     }
 
     function popupMenu(): void {
-        mpvqcMpvPlayerPyObject.pause()
-        popup()
+        mpvqcMpvPlayerPyObject.pause();
+        popup();
     }
 
     function _addComment(): void {
         // Instead of directly adding a comment in the MenuItem triggered signal handler,
         // we defer adding it until the popup closes. If we would directly add it,
-        // the menu's closing signals would interfere with the focus of the newly added comment.
+        // the menu"s closing signals would interfere with the focus of the newly added comment.
         if (selectedCommentType !== '') {
-            mpvqcCommentTable.addNewComment(selectedCommentType)
-            selectedCommentType = ''
+            mpvqcCommentTable.addNewComment(selectedCommentType);
+            selectedCommentType = '';
         }
     }
 
@@ -75,10 +77,9 @@ MpvqcMenu {
             text: qsTranslate("CommentTypes", modelData)
 
             onTriggered: {
-                mpvqcApplication.disableFullScreen()
-                root.selectedCommentType = modelData
+                root.mpvqcApplication.disableFullScreen();
+                root.selectedCommentType = modelData;
             }
         }
     }
-
 }

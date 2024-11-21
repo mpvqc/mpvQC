@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 Item {
     id: testHelper
 
@@ -37,33 +36,42 @@ Item {
 
         property int newValue: -1
 
-        onValueModified: (value) => {
-            objectUnderTest.newValue = value
+        onValueModified: value => {
+            objectUnderTest.newValue = value;
         }
 
         TestCase {
             name: "MpvqcSpinBoxRow"
             when: windowShown
 
-            SignalSpy { id: valueModifiedSpy; target: objectUnderTest; signalName: 'valueModified' }
+            SignalSpy {
+                id: valueModifiedSpy
+                target: objectUnderTest
+                signalName: "valueModified"
+            }
 
             function init() {
-                valueModifiedSpy.clear()
-                objectUnderTest.newValue = -1
+                valueModifiedSpy.clear();
+                objectUnderTest.newValue = -1;
             }
 
             function test_spinBox_data() {
                 return [
-                    { tag: 'increase', value: 31, exec: () => { objectUnderTest.spinBox.increase() }, },
-                ]
+                    {
+                        tag: "increase",
+                        value: 31,
+                        exec: () => {
+                            objectUnderTest.spinBox.increase();
+                        }
+                    },
+                ];
             }
 
             function test_spinBox(data) {
-                data.exec()
-                compare(objectUnderTest.newValue, data.value)
-                compare(valueModifiedSpy.count, 1)
+                data.exec();
+                compare(objectUnderTest.newValue, data.value);
+                compare(valueModifiedSpy.count, 1);
             }
         }
     }
-
 }

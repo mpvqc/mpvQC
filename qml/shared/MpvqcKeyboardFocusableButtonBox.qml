@@ -22,7 +22,6 @@ import QtQuick.Controls.Material
 
 /* Adapted from: qtdeclarative/src/quickcontrols/material/DialogButtonBox.qml */
 
-
 DialogButtonBox {
     id: root
 
@@ -40,29 +39,29 @@ DialogButtonBox {
         snapMode: ListView.SnapToItem
 
         onCurrentItemChanged: {
-            removeFocusFromAllItems()
-            applyVisualFocusToCurrentItem()
+            removeFocusFromAllItems();
+            applyVisualFocusToCurrentItem();
         }
 
         function removeFocusFromAllItems(): void {
             for (let i = 0; i < _listView.count; i++) {
-                _listView.model.get(i).down = false
+                _listView.model.get(i).down = false;
             }
         }
 
         function applyVisualFocusToCurrentItem(): void {
             if (currentItem) {
-                currentItem.down = true
+                currentItem.down = true;
             }
         }
 
         function focusRejectedButton(): void {
-            const button = standardButton(Dialog.Cancel) ?? standardButton(Dialog.No) ?? standardButton(Dialog.Close)
+            const button = root.standardButton(Dialog.Cancel) ?? root.standardButton(Dialog.No) ?? root.standardButton(Dialog.Close);
 
             if (button) {
                 for (let idx = 0; idx < _listView.count; idx++) {
                     if (_listView.model.get(idx) === button) {
-                        _listView.currentIndex = idx
+                        _listView.currentIndex = idx;
                     }
                 }
             }
@@ -70,14 +69,14 @@ DialogButtonBox {
     }
 
     Component.onCompleted: {
-        _listView.focusRejectedButton()
+        _listView.focusRejectedButton();
     }
 
     Shortcut {
         sequence: "return"
 
         onActivated: {
-            _listView.currentItem.clicked()
+            _listView.currentItem.clicked();
         }
     }
 
@@ -85,7 +84,7 @@ DialogButtonBox {
         sequence: "tab"
 
         onActivated: {
-            _listView.incrementCurrentIndex()
+            _listView.incrementCurrentIndex();
         }
     }
 
@@ -93,8 +92,7 @@ DialogButtonBox {
         sequence: "shift+tab"
 
         onActivated: {
-            _listView.decrementCurrentIndex()
+            _listView.decrementCurrentIndex();
         }
     }
-
 }

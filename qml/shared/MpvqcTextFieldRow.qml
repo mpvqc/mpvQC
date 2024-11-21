@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-
 RowLayout {
     id: root
 
@@ -51,8 +50,7 @@ RowLayout {
         horizontalAlignment: Text.AlignLeft
 
         onTextChanged: {
-            root.textChanged(text)
+            root.textChanged(text);
         }
     }
-
 }

@@ -20,9 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-import models
-
-
 TestCase {
     id: testCase
 
@@ -30,15 +27,13 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcNewCommentMenu'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcNewCommentMenu"
 
     Component {
         id: objectUnderTest
 
         MpvqcNewCommentMenu {
-            id: objectUnderTest
+            id: __objectUnderTest
 
             property bool disableFullScreenCalled: false
             property bool pauseCalled: false
@@ -49,57 +44,62 @@ TestCase {
 
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property var commentTypes: ['1', '2', '3']
+                    property var commentTypes: ["1", "2", "3"]
                 }
                 property var mpvqcMpvPlayerPyObject: QtObject {
-                    function pause() { objectUnderTest.pauseCalled = true }
+                    function pause() {
+                        __objectUnderTest.pauseCalled = true;
+                    }
                 }
                 property var mpvqcCommentTable: QtObject {
                     function addNewComment(commentType) {
-                        objectUnderTest.addNewCommentCalled = true
-                        addNewCommentCommentType = commentType
+                        __objectUnderTest.addNewCommentCalled = true;
+                        __objectUnderTest.addNewCommentCommentType = commentType;
                     }
                 }
                 property var mpvqcUtilityPyObject: QtObject {
                     property point cursorPosition: Qt.point(0, 0)
                 }
-                function disableFullScreen() { objectUnderTest.disableFullScreenCalled = true }
+                function disableFullScreen() {
+                    __objectUnderTest.disableFullScreenCalled = true;
+                }
             }
 
-            function popup() { popupCalled = true }
+            function popup() {
+                popupCalled = true;
+            }
         }
     }
 
     function test_popup() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        verify(!control.pauseCalled)
-        verify(!control.popupCalled)
+        verify(!control.pauseCalled);
+        verify(!control.popupCalled);
 
-        control.popupMenu()
+        control.popupMenu();
 
-        verify(control.pauseCalled)
-        verify(control.popupCalled)
+        verify(control.pauseCalled);
+        verify(control.popupCalled);
     }
 
     function test_click() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        verify(!control.disableFullScreenCalled)
-        verify(!control.addNewCommentCalled)
+        verify(!control.disableFullScreenCalled);
+        verify(!control.addNewCommentCalled);
 
-        const item = control.repeater.itemAt(0)
-        item.triggered()
-        control.closed()
+        const item = control.repeater.itemAt(0);
+        item.triggered();
+        control.closed();
 
-        verify(control.disableFullScreenCalled)
-        verify(control.addNewCommentCalled)
+        verify(control.disableFullScreenCalled);
+        verify(control.addNewCommentCalled);
 
-        const actual = control.addNewCommentCommentType
-        const expected = control.mpvqcApplication.mpvqcSettings.commentTypes[0]
-        compare(actual, expected)
+        const actual = control.addNewCommentCommentType;
+        const expected = control.mpvqcApplication.mpvqcSettings.commentTypes[0];
+        compare(actual, expected);
     }
-
 }
