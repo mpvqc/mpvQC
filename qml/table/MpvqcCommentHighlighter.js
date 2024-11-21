@@ -10,7 +10,7 @@ https://github.com/tc39/proposal-regex-escaping
  */
 function highlightComment(comment, highlightedText) {
     const re = new RegExp(RegExp.escape(highlightedText), "gi");
-    return comment.replace(re, '<span style="font-weight: 600"><u>$&</u></span>')
+    return comment.replace(re, '<b><u>$&</u></b>')
 }
 
 
