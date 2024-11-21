@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcDialog {
     id: root
 
@@ -64,8 +63,7 @@ MpvqcDialog {
     }
 
     onRejected: {
-        _themeView.reset()
-        _colorView.reset()
+        _themeView.reset();
+        _colorView.reset();
     }
-
 }

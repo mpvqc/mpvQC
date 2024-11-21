@@ -73,10 +73,10 @@ TestCase {
     function test_initialSelection_data() {
         return [
             {
-                tag: 'dark'
+                tag: "dark"
             },
             {
-                tag: 'light'
+                tag: "light"
             },
         ];
     }
