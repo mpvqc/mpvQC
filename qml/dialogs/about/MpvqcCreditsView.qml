@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
 import models
 import shared
-
 
 ScrollView {
     id: _root
@@ -32,12 +33,14 @@ ScrollView {
     contentWidth: parent.width
 
     Column {
+        id: _container
+        
         width: parent.width
 
         MpvqcHeader {
             //: Header for the section about people that contributed source code to the project
             text: qsTranslate("AboutDialog", "Development")
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: _container.width
         }
 
         Repeater {
@@ -45,6 +48,8 @@ ScrollView {
             width: parent.width
 
             Label {
+                required property string name
+
                 text: name
                 anchors.horizontalCenter: parent.horizontalCenter
             }
@@ -53,7 +58,7 @@ ScrollView {
         MpvqcHeader {
             //: Header for the section about people that contributed images, icons or other artwork to the project
             text: qsTranslate("AboutDialog", "Artwork")
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: _container.width
         }
 
         Repeater {
@@ -61,6 +66,8 @@ ScrollView {
             width: parent.width
 
             Label {
+                required property string name
+
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: name
             }
@@ -69,7 +76,7 @@ ScrollView {
         MpvqcHeader {
             //: Header for the section about people that contributed images, icons or other artwork to the project
             text: qsTranslate("AboutDialog", "Translation")
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: _container.width
         }
 
         Repeater {
@@ -77,6 +84,8 @@ ScrollView {
             width: parent.width
 
             RowLayout {
+                id: _delegate
+
                 visible: translator
                 spacing: 10
 
@@ -84,20 +93,18 @@ ScrollView {
                 required property string language
 
                 Label {
-                    text: translator
+                    text: _delegate.translator
                     horizontalAlignment: Text.AlignRight
                     Layout.preferredWidth: _root.width / 2
                 }
 
                 Label {
-                    text: qsTranslate("Languages", language)
+                    text: qsTranslate("Languages", _delegate.language)
                     font.italic: true
                     horizontalAlignment: Text.AlignLeft
                     Layout.preferredWidth: _root.width / 2
                 }
             }
         }
-
     }
-
 }

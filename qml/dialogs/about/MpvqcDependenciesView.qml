@@ -23,7 +23,6 @@ import QtQuick.Controls
 import models
 import shared
 
-
 ScrollView {
     id: root
 
@@ -35,31 +34,33 @@ ScrollView {
     contentWidth: parent.width
 
     Column {
+        id: _container
+
         width: parent.width
 
         MpvqcHeader {
-            text: 'mpv'
-            anchors.horizontalCenter: parent.horizontalCenter
+            text: "mpv"
+            width: _container.width
         }
 
         MpvqcDependency {
-            dependency: 'libmpv'
-            version: root.mpvqcMpvPlayerPropertiesPyObject.mpv_version.replace('mpv ', '')
-            url: "https://mpv.io/"
-            licence: "GPL-2.0+"
+            dependencyLicence: "GPL-2.0+"
+            dependencyName: "libmpv"
+            dependencyUrl: "https://mpv.io/"
+            dependencyVersion: root.mpvqcMpvPlayerPropertiesPyObject.mpv_version.replace("mpv ", "")
         }
 
         MpvqcDependency {
-            dependency: 'ffmpeg'
-            version: root.mpvqcMpvPlayerPropertiesPyObject.ffmpeg_version.replace('ffmpeg ', '')
-            url: "https://ffmpeg.org/"
-            licence: "GPL-2.0+"
+            dependencyLicence: "GPL-2.0+"
+            dependencyName: "ffmpeg"
+            dependencyUrl: "https://ffmpeg.org/"
+            dependencyVersion: root.mpvqcMpvPlayerPropertiesPyObject.ffmpeg_version.replace("ffmpeg ", "")
         }
 
         MpvqcHeader {
             //: Header for the section about code dependencies of the project
             text: qsTranslate("AboutDialog", "Libraries")
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: _container.width
         }
 
         Repeater {
@@ -67,32 +68,38 @@ ScrollView {
             width: parent.width
 
             MpvqcDependency {
+                required property string licence
+                required property string name
+                required property string os
+                required property string url
+                required property string version
+
+                dependencyLicence: licence
+                dependencyName: name
+                dependencyUrl: url
+                dependencyVersion: version
+
                 anchors.horizontalCenter: parent.horizontalCenter
-                dependency: model.name
-                visible: model.os.indexOf(Qt.platform.os) >= 0
-                version: model.version
-                licence: model.licence
-                url: model.url
+                visible: os.indexOf(Qt.platform.os) >= 0
             }
         }
 
         MpvqcHeader {
             //: Header for the section about other dependencies like fonts and icons
             text: qsTranslate("AboutDialog", "Other")
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: _container.width
         }
 
         MpvqcDependency {
-            dependency: 'Noto Sans'
-            url: "https://fonts.google.com/noto/specimen/Noto+Sans"
-            licence: "OFL"
+            dependencyLicence: "OFL"
+            dependencyName: "Noto Sans"
+            dependencyUrl: "https://fonts.google.com/noto/specimen/Noto+Sans"
         }
 
         MpvqcDependency {
-            dependency: 'material-design-icons'
-            url: "https://github.com/google/material-design-icons"
-            licence: "Apache-2.0"
+            dependencyLicence: "Apache-2.0"
+            dependencyName: "material-design-icons"
+            dependencyUrl: "https://github.com/google/material-design-icons"
         }
     }
-
 }

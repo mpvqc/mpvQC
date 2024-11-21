@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import shared
 
-
 Column {
     width: parent.width
     topPadding: 20
@@ -53,8 +52,8 @@ Column {
         text: `<a href="${mpvqcGitHubUrl}">${mpvqcGitHubUrl}</a>`
         anchors.horizontalCenter: parent.horizontalCenter
 
-        onLinkActivated: (link) => {
-            Qt.openUrlExternally(link)
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
         }
 
         MouseArea {
@@ -86,8 +85,8 @@ Column {
             //: This text is part of the software license description. Argument %1 will be the link to the license
             + qsTranslate("AboutDialog", "See the %1 for details.").arg(anchor)
 
-        onLinkActivated: (link) => {
-            Qt.openUrlExternally(link)
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
         }
 
         MouseArea {
@@ -103,5 +102,4 @@ Column {
             text: parent.hoveredLink
         }
     }
-
 }
