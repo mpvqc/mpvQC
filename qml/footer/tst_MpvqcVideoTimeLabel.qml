@@ -22,7 +22,6 @@ import QtTest
 
 import settings
 
-
 MpvqcVideoTimeLabel {
     id: objectUnderTest
 
@@ -40,11 +39,17 @@ MpvqcVideoTimeLabel {
             property real time_remaining: 10.0
         }
         property var mpvqcLabelWidthCalculator: QtObject {
-            function calculateWidthFor(items, parent) { return 42 }
+            function calculateWidthFor(items, parent) {
+                return 42;
+            }
         }
         property var mpvqcUtilityPyObject: QtObject {
-            function formatTimeToStringLong(seconds) { return 'formatted' }
-            function formatTimeToStringShort(seconds) { return 'formatted' }
+            function formatTimeToStringLong(seconds) {
+                return 'formatted';
+            }
+            function formatTimeToStringShort(seconds) {
+                return 'formatted';
+            }
         }
     }
 
@@ -53,51 +58,69 @@ MpvqcVideoTimeLabel {
         when: windowShown
 
         function init() {
-            objectUnderTest.mpvqcApplication.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY
-            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 0
+            objectUnderTest.mpvqcApplication.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY;
+            objectUnderTest.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 0;
         }
 
         function test_reformat_on_data() {
             return [
                 {
                     tag: 'timeFormatChanged',
-                    change: () => { objectUnderTest.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME },
+                    change: () => {
+                        objectUnderTest.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME;
+                    }
                 },
                 {
                     tag: 'durationChanged',
-                    change: () => { objectUnderTest.mpvqcMpvPlayerPropertiesPyObject.duration = 60 * 60 + 1 },
+                    change: () => {
+                        objectUnderTest.mpvqcMpvPlayerPropertiesPyObject.duration = 60 * 60 + 1;
+                    }
                 },
-            ]
+            ];
         }
 
         function test_reformat_on(data) {
-            objectUnderTest.width = 400
-            compare(objectUnderTest.width, 400)
+            objectUnderTest.width = 400;
+            compare(objectUnderTest.width, 400);
 
-            objectUnderTest.text = 'abc'
-            compare(objectUnderTest.width, 400)
+            objectUnderTest.text = 'abc';
+            compare(objectUnderTest.width, 400);
 
-            data.change()
-            compare(objectUnderTest.width, 42)
+            data.change();
+            compare(objectUnderTest.width, 42);
         }
 
         function test_format_data() {
             return [
-                { tag: 'default', expected: 'formatted/formatted', format: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME },
-                { tag: 'current', expected: 'formatted', format: MpvqcSettings.TimeFormat.CURRENT_TIME },
-                { tag: 'remaining', expected: '-formatted', format: MpvqcSettings.TimeFormat.REMAINING_TIME },
-                { tag: 'empty', expected: '', format: MpvqcSettings.TimeFormat.EMPTY },
-            ]
+                {
+                    tag: 'default',
+                    expected: 'formatted/formatted',
+                    format: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+                },
+                {
+                    tag: 'current',
+                    expected: 'formatted',
+                    format: MpvqcSettings.TimeFormat.CURRENT_TIME
+                },
+                {
+                    tag: 'remaining',
+                    expected: '-formatted',
+                    format: MpvqcSettings.TimeFormat.REMAINING_TIME
+                },
+                {
+                    tag: 'empty',
+                    expected: '',
+                    format: MpvqcSettings.TimeFormat.EMPTY
+                },
+            ];
         }
 
         function test_format(data) {
-            objectUnderTest.width = 400
-            objectUnderTest.text = ''
+            objectUnderTest.width = 400;
+            objectUnderTest.text = '';
 
-            objectUnderTest.timeFormat = data.format
-            compare(objectUnderTest.accordingToSetting(), data.expected)
+            objectUnderTest.timeFormat = data.format;
+            compare(objectUnderTest.accordingToSetting(), data.expected);
         }
-
     }
-
 }

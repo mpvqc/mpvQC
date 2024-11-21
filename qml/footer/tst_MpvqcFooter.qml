@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 MpvqcFooter {
     id: objectUnderTest
 
@@ -45,11 +44,14 @@ MpvqcFooter {
             property real time_remaining: 10.0
         }
         property var mpvqcLabelWidthCalculator: QtObject {
-            function calculateWidthFor(items, parent) {}
+            function calculateWidthFor(items, parent) {
+            }
         }
         property var mpvqcUtilityPyObject: QtObject {
-            function formatTimeToStringLong(seconds) {}
-            function formatTimeToStringShort(seconds) {}
+            function formatTimeToStringLong(seconds) {
+            }
+            function formatTimeToStringShort(seconds) {
+            }
         }
     }
 
@@ -58,21 +60,21 @@ MpvqcFooter {
         when: windowShown
 
         function init() {
-            _menuMock.openCalled = false
+            _menuMock.openCalled = false;
         }
 
         QtObject {
             id: _menuMock
             property bool openCalled: false
-            function open() { openCalled = true }
+            function open() {
+                openCalled = true;
+            }
         }
 
         function test_open_menu() {
-            objectUnderTest.formattingOptionsButton.menu = _menuMock
-            mouseClick(objectUnderTest.formattingOptionsButton)
-            verify(_menuMock.openCalled)
+            objectUnderTest.formattingOptionsButton.menu = _menuMock;
+            mouseClick(objectUnderTest.formattingOptionsButton);
+            verify(_menuMock.openCalled);
         }
-
     }
-
 }

@@ -22,7 +22,6 @@ import QtQuick.Controls
 import shared
 import settings
 
-
 MpvqcMenu {
     id: root
 
@@ -48,7 +47,7 @@ MpvqcMenu {
         checkable: true
 
         onTriggered: {
-            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME;
         }
     }
 
@@ -61,7 +60,7 @@ MpvqcMenu {
         checkable: true
 
         onTriggered: {
-            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME;
         }
     }
 
@@ -74,7 +73,7 @@ MpvqcMenu {
         checkable: true
 
         onTriggered: {
-            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.REMAINING_TIME
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.REMAINING_TIME;
         }
     }
 
@@ -87,7 +86,7 @@ MpvqcMenu {
         checkable: true
 
         onTriggered: {
-            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY
+            root.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY;
         }
     }
 
@@ -101,8 +100,7 @@ MpvqcMenu {
         checkable: true
 
         onTriggered: {
-            root.mpvqcSettings.statusbarPercentage = checked
+            root.mpvqcSettings.statusbarPercentage = checked;
         }
     }
-
 }

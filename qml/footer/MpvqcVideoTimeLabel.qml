@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import settings
 
-
 Label {
     id: root
 
@@ -41,17 +40,20 @@ Label {
 
     property int timeFormat: mpvqcSettings.timeFormat
 
-
     visible: mpvqcMpvPlayerPropertiesPyObject.video_loaded && timeFormat !== MpvqcSettings.TimeFormat.EMPTY
 
     text: accordingToSetting()
 
     function accordingToSetting(): string {
         switch (timeFormat) {
-            case MpvqcSettings.TimeFormat.CURRENT_TIME: return currentTime()
-            case MpvqcSettings.TimeFormat.REMAINING_TIME: return remainingTime()
-            case MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME: return currentTotalTime()
-            default: return ''
+        case MpvqcSettings.TimeFormat.CURRENT_TIME:
+            return currentTime();
+        case MpvqcSettings.TimeFormat.REMAINING_TIME:
+            return remainingTime();
+        case MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME:
+            return currentTotalTime();
+        default:
+            return '';
         }
     }
 
@@ -69,27 +71,28 @@ Label {
     }
 
     function currentTotalTime(): string {
-        let current; let total
+        let current;
+        let total;
         if (duration >= secondsPerHour) {
-            current = mpvqcUtilityPyObject.formatTimeToStringLong(timePos)
-            total = mpvqcUtilityPyObject.formatTimeToStringLong(duration)
+            current = mpvqcUtilityPyObject.formatTimeToStringLong(timePos);
+            total = mpvqcUtilityPyObject.formatTimeToStringLong(duration);
         } else {
-            current = mpvqcUtilityPyObject.formatTimeToStringShort(timePos)
-            total = mpvqcUtilityPyObject.formatTimeToStringShort(duration)
+            current = mpvqcUtilityPyObject.formatTimeToStringShort(timePos);
+            total = mpvqcUtilityPyObject.formatTimeToStringShort(duration);
         }
-        return `${current}/${total}`
+        return `${current}/${total}`;
     }
 
     function _recalculateWidth(): real {
-        const items = [root.text]
-        width = root.mpvqcLabelWidthCalculator.calculateWidthFor(items, root)
+        const items = [root.text];
+        width = root.mpvqcLabelWidthCalculator.calculateWidthFor(items, root);
     }
 
     Connections {
         target: root.mpvqcSettings
 
         function onTimeFormatChanged() {
-            root._recalculateWidth()
+            root._recalculateWidth();
         }
     }
 
@@ -97,8 +100,7 @@ Label {
         target: root.mpvqcMpvPlayerPropertiesPyObject
 
         function onDurationChanged() {
-            root._recalculateWidth()
+            root._recalculateWidth();
         }
     }
-
 }

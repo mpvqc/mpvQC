@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-
 Label {
     id: root
 
@@ -38,12 +37,11 @@ Label {
         target: root.mpvqcCommentTable
 
         function onCountChanged() {
-            root.total = root.mpvqcCommentTable.count
+            root.total = root.mpvqcCommentTable.count;
         }
 
         function onCurrentIndexChanged() {
-            root.currentIndex = root.mpvqcCommentTable.currentIndex
+            root.currentIndex = root.mpvqcCommentTable.currentIndex;
         }
     }
-
 }

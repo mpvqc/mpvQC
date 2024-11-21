@@ -22,7 +22,6 @@ import QtTest
 
 import settings
 
-
 Item {
     id: testHelper
 
@@ -45,46 +44,45 @@ Item {
         when: windowShown
 
         function init() {
-            const settings = objectUnderTest.mpvqcApplication.mpvqcSettings
-            settings.timeFormat = -1
-            settings.statusbarPercentage = false
-            objectUnderTest.open()
+            const settings = objectUnderTest.mpvqcApplication.mpvqcSettings;
+            settings.timeFormat = -1;
+            settings.statusbarPercentage = false;
+            objectUnderTest.open();
         }
 
         function test_selection_data() {
             return [
                 {
-                     tag: 'default',
-                     mouseTarget: objectUnderTest.defaultFormat,
-                     expected: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+                    tag: 'default',
+                    mouseTarget: objectUnderTest.defaultFormat,
+                    expected: MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
                 },
                 {
-                     tag: 'current',
-                     mouseTarget: objectUnderTest.currentTimeFormat,
-                     expected: MpvqcSettings.TimeFormat.CURRENT_TIME
+                    tag: 'current',
+                    mouseTarget: objectUnderTest.currentTimeFormat,
+                    expected: MpvqcSettings.TimeFormat.CURRENT_TIME
                 },
                 {
-                     tag: 'remaining',
-                     mouseTarget: objectUnderTest.remainingTimeFormat,
-                     expected: MpvqcSettings.TimeFormat.REMAINING_TIME
+                    tag: 'remaining',
+                    mouseTarget: objectUnderTest.remainingTimeFormat,
+                    expected: MpvqcSettings.TimeFormat.REMAINING_TIME
                 },
                 {
-                     tag: 'hide',
-                     mouseTarget: objectUnderTest.hideTimeFormat,
-                     expected: MpvqcSettings.TimeFormat.EMPTY
+                    tag: 'hide',
+                    mouseTarget: objectUnderTest.hideTimeFormat,
+                    expected: MpvqcSettings.TimeFormat.EMPTY
                 },
-            ]
+            ];
         }
 
         function test_selection(data) {
-            mouseClick(data.mouseTarget)
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.timeFormat, data.expected)
+            mouseClick(data.mouseTarget);
+            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.timeFormat, data.expected);
         }
 
         function test_percentage() {
-            objectUnderTest.percentage.trigger()
-            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage, true)
+            objectUnderTest.percentage.trigger();
+            compare(objectUnderTest.mpvqcApplication.mpvqcSettings.statusbarPercentage, true);
         }
     }
-
 }
