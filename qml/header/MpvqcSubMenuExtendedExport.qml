@@ -17,12 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
 import dialogs
 import shared
-
 
 MpvqcMenu {
     id: root
@@ -34,18 +35,15 @@ MpvqcMenu {
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property bool haveTemplates: _repeater.count > 0
 
-    readonly property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument
-    {
+    readonly property MpvqcDialogExportDocument exportDialog: MpvqcDialogExportDocument {
         property url template
 
-        onSavePressed: (documentUrl) => {
-            root.mpvqcExtendedDocumentExporterPyObject.export(template, documentUrl)
+        onSavePressed: documentUrl => {
+            root.mpvqcExtendedDocumentExporterPyObject.export(template, documentUrl);
         }
     }
 
-    property var exportErrorDialog
-    property var exportErrorDialogFactory: Component
-    {
+    readonly property var exportErrorDialogFactory: Component {
         MpvqcMessageBox {
             mpvqcApplication: root.mpvqcApplication
 
@@ -60,21 +58,20 @@ MpvqcMenu {
     icon.width: 24
 
     function openExportFileSelectionDialog(name: string, path: url): void {
-        root.exportDialog.selectedFile = root.mpvqcExtendedDocumentExporterPyObject.generate_file_path_proposal()
-        root.exportDialog.template = path
+        root.exportDialog.selectedFile = root.mpvqcExtendedDocumentExporterPyObject.generate_file_path_proposal();
+        root.exportDialog.template = path;
         //: %1 will be the name of the template used to export
-        root.exportDialog.title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name)
-        root.exportDialog.open()
+        root.exportDialog.title = qsTranslate("FileInteractionDialogs", "Export QC Document Using %1 Template").arg(name);
+        root.exportDialog.open();
     }
 
     function displayExportErrorDialog(message: string, lineNr: int): void {
-        root.exportErrorDialog = root.exportErrorDialogFactory.createObject(root)
-        root.exportErrorDialog.text = lineNr
-            //: %1 will be the line nr of the error, %2 will be the error message (probably in English)
-            ? qsTranslate("MessageBoxes", "Error at line %1: %2").arg(lineNr).arg(message)
-            : message
-        root.exportErrorDialog.closed.connect(root.exportErrorDialog.destroy)
-        root.exportErrorDialog.open()
+        const dialog = root.exportErrorDialogFactory.createObject(root);
+        dialog.text = lineNr ?
+        //: %1 will be the line nr of the error, %2 will be the error message (probably in English)
+        qsTranslate("MessageBoxes", "Error at line %1: %2").arg(lineNr).arg(message) : message;
+        dialog.closed.connect(dialog.destroy);
+        dialog.open();
     }
 
     Repeater {
@@ -90,7 +87,7 @@ MpvqcMenu {
             icon.width: 24
 
             onTriggered: {
-                root.openExportFileSelectionDialog(name, path)
+                root.openExportFileSelectionDialog(name, path);
             }
         }
     }
@@ -99,8 +96,7 @@ MpvqcMenu {
         target: root.mpvqcExtendedDocumentExporterPyObject
 
         function onExportErrorOccurred(message: string, lineNr: int): void {
-            root.displayExportErrorDialog(message, lineNr)
+            root.displayExportErrorDialog(message, lineNr);
         }
     }
-
 }

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 Item {
     id: testHelper
     width: 400
@@ -42,56 +41,72 @@ Item {
         name: "MpvqcSubMenuLanguage"
 
         function cleanup() {
-            Qt.uiLanguage = ''
-            testHelper.settingsLanguage = ''
+            Qt.uiLanguage = "";
+            testHelper.settingsLanguage = "";
         }
 
         function test_checked_data() {
             return [
-                { tag: 'en-US', qtUiLanguage: 'en-US' },
-                { tag: 'he-IL', qtUiLanguage: 'he-IL' },
-            ]
+                {
+                    tag: "en-US",
+                    qtUiLanguage: "en-US"
+                },
+                {
+                    tag: "he-IL",
+                    qtUiLanguage: "he-IL"
+                },
+            ];
         }
 
         function test_checked(data) {
-            Qt.uiLanguage = data.qtUiLanguage
-            const checkedItem = findCheckedItem()
-            verify(checkedItem)
-            compare(checkedItem.identifier, data.qtUiLanguage)
+            Qt.uiLanguage = data.qtUiLanguage;
+            const checkedItem = findCheckedItem();
+            verify(checkedItem);
+            compare(checkedItem.identifier, data.qtUiLanguage);
         }
 
         function findCheckedItem() {
-            for (let idx = 0, count = objectUnderTest.repeater.count; idx < count; idx++) {
-                const item = objectUnderTest.repeater.itemAt(idx)
-                if (item.checked) { return item }
+            const count = objectUnderTest.repeater.count;
+            for (let idx = 0; idx < count; idx++) {
+                const item = objectUnderTest.repeater.itemAt(idx);
+                if (item.checked) {
+                    return item;
+                }
             }
-            return null
+            return null;
         }
 
         function test_selectLanguage_data() {
             return [
-                { tag: 'de-DE', select: 'de-DE' },
-                { tag: 'it-IT', select: 'it-IT' },
-            ]
+                {
+                    tag: "de-DE",
+                    select: "de-DE"
+                },
+                {
+                    tag: "it-IT",
+                    select: "it-IT"
+                },
+            ];
         }
 
         function test_selectLanguage(data) {
-            const item = findItemWith(data.select)
-            item.timer.interval = 0
-            item.changeLanguage()
-            wait(10)
-            compare(testHelper.settingsLanguage, data.select)
-            compare(Qt.uiLanguage, data.select)
+            const item = findItemWith(data.select);
+            item.timer.interval = 0;
+            item.changeLanguage();
+            wait(10);
+            compare(testHelper.settingsLanguage, data.select);
+            compare(Qt.uiLanguage, data.select);
         }
 
         function findItemWith(identifier) {
-            for (let idx = 0, count = objectUnderTest.repeater.count; idx < count; idx++) {
-                const item = objectUnderTest.repeater.itemAt(idx)
-                if (item.identifier === identifier) { return item }
+            const count = objectUnderTest.repeater.count;
+            for (let idx = 0; idx < count; idx++) {
+                const item = objectUnderTest.repeater.itemAt(idx);
+                if (item.identifier === identifier) {
+                    return item;
+                }
             }
-            return null
+            return null;
         }
-
     }
-
 }

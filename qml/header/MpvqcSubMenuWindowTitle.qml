@@ -23,17 +23,16 @@ import QtQuick.Controls
 import shared
 import settings
 
-
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    property alias defaultFormat: _defaultFormat
-    property alias fileNameFormat: _fileNameFormat
-    property alias filePathFormat: _filePathFormat
+    readonly property alias defaultFormat: _defaultFormat
+    readonly property alias fileNameFormat: _fileNameFormat
+    readonly property alias filePathFormat: _filePathFormat
 
     title: qsTranslate("MainWindow", "Application Title")
     icon.source: "qrc:/data/icons/title_black_24dp.svg"
@@ -43,7 +42,7 @@ MpvqcMenu {
     MenuItem {
         id: _defaultFormat
 
-        property var selection: MpvqcSettings.WindowTitleFormat.DEFAULT
+        property var selection: MpvqcSettings.WindowTitleFormat.DEFAULT // qmllint disable unqualified
 
         text: qsTranslate("MainWindow", "Default Title")
         autoExclusive: true
@@ -51,14 +50,14 @@ MpvqcMenu {
         checked: root.mpvqcSettings.windowTitleFormat === selection
 
         onTriggered: {
-            root.mpvqcSettings.windowTitleFormat = selection
+            root.mpvqcSettings.windowTitleFormat = selection;
         }
     }
 
     MenuItem {
         id: _fileNameFormat
 
-        property var selection: MpvqcSettings.WindowTitleFormat.FILE_NAME
+        property var selection: MpvqcSettings.WindowTitleFormat.FILE_NAME  // qmllint disable unqualified
 
         text: qsTranslate("MainWindow", "Video File")
         autoExclusive: true
@@ -66,14 +65,14 @@ MpvqcMenu {
         checked: root.mpvqcSettings.windowTitleFormat === selection
 
         onTriggered: {
-            root.mpvqcSettings.windowTitleFormat = selection
+            root.mpvqcSettings.windowTitleFormat = selection;
         }
     }
 
     MenuItem {
         id: _filePathFormat
 
-        property var selection: MpvqcSettings.WindowTitleFormat.FILE_PATH
+        property var selection: MpvqcSettings.WindowTitleFormat.FILE_PATH // qmllint disable unqualified
 
         text: qsTranslate("MainWindow", "Video Path")
         autoExclusive: true
@@ -81,8 +80,7 @@ MpvqcMenu {
         checked: root.mpvqcSettings.windowTitleFormat === selection
 
         onTriggered: {
-            root.mpvqcSettings.windowTitleFormat = selection
+            root.mpvqcSettings.windowTitleFormat = selection;
         }
     }
-
 }

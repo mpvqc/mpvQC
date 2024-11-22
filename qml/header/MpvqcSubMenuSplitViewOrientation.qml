@@ -22,17 +22,17 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    property alias verticalLayout: _verticalLayout
-    property alias horizontalLayout: _horizontalLayout
-    property bool isVerticalLayout: mpvqcSettings.layoutOrientation === Qt.Vertical
+    readonly property bool isVerticalLayout: mpvqcSettings.layoutOrientation === Qt.Vertical
+
+    readonly property alias verticalLayout: _verticalLayout
+    readonly property alias horizontalLayout: _horizontalLayout
 
     title: qsTranslate("MainWindow", "Application Layout")
     icon.source: "qrc:/data/icons/vertical_split_black_24dp.svg"
@@ -48,7 +48,7 @@ MpvqcMenu {
         checked: root.isVerticalLayout
 
         onTriggered: {
-            root.mpvqcSettings.layoutOrientation = Qt.Vertical
+            root.mpvqcSettings.layoutOrientation = Qt.Vertical;
         }
     }
 
@@ -61,8 +61,7 @@ MpvqcMenu {
         checked: !root.isVerticalLayout
 
         onTriggered: {
-            root.mpvqcSettings.layoutOrientation = Qt.Horizontal
+            root.mpvqcSettings.layoutOrientation = Qt.Horizontal;
         }
     }
-
 }

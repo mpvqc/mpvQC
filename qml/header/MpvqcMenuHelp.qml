@@ -17,107 +17,102 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
 import dialogs
 import shared
 
-
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
-    property alias updateAction: _updateAction
-    property alias shortcutAction: _shortcutAction
-    property alias extendedExportsAction: _extendedExportsAction
-    property alias aboutAction: _aboutAction
+    readonly property alias updateAction: _updateAction
+    readonly property alias shortcutAction: _shortcutAction
+    readonly property alias extendedExportsAction: _extendedExportsAction
+    readonly property alias aboutAction: _aboutAction
+
+    readonly property var factoryMessageBoxVersionCheck: Component {
+        MpvqcMessageBoxVersionCheck {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogShortcuts: Component {
+        MpvqcDialogShortcuts {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryMessageBoxExtendedExports: Component {
+        MpvqcMessageBoxExtendedExport {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogAbout: Component {
+        MpvqcDialogAbout {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
 
     title: qsTranslate("MainWindow", "Help")
 
     Action {
         id: _updateAction
 
-        property var factory: Component
-        {
-            MpvqcMessageBoxVersionCheck {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Check for Updates...")
         icon.source: "qrc:/data/icons/update_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryMessageBoxVersionCheck.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
     Action {
         id: _shortcutAction
 
-        property var factory: Component
-        {
-            MpvqcDialogShortcuts {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
         icon.source: "qrc:/data/icons/shortcut_black_24dp.svg"
         shortcut: "?"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogShortcuts.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
-    MenuSeparator {
-    }
+    MenuSeparator {}
 
     Action {
         id: _extendedExportsAction
-
-        property var factory: Component
-        {
-            MpvqcMessageBoxExtendedExport {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
 
         text: qsTranslate("MainWindow", "Extended Exports...")
         icon.source: "qrc:/data/icons/upload_black_24dp.svg"
 
         onTriggered: {
-            const messageBox = factory.createObject(root)
-            messageBox.closed.connect(messageBox.destroy)
-            messageBox.open()
+            const messageBox = root.factoryMessageBoxExtendedExports.createObject(root);
+            messageBox.closed.connect(messageBox.destroy);
+            messageBox.open();
         }
     }
 
     Action {
         id: _aboutAction
 
-        property var factory: Component
-        {
-            MpvqcDialogAbout {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "About mpvQC...")
         icon.source: "qrc:/data/icons/info_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogAbout.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
-
 }

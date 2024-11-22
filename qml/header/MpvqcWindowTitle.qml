@@ -22,7 +22,6 @@ import QtQuick.Controls
 
 import settings
 
-
 Label {
     id: root
 
@@ -37,34 +36,33 @@ Label {
     readonly property string videoPath: mpvqcMpvPlayerPropertiesPyObject.path
     readonly property string videoName: mpvqcMpvPlayerPropertiesPyObject.filename
 
-    elide: LayoutMirroring.enabled ? Text.ElideRight: Text.ElideLeft
+    elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
     leftPadding: 25
     rightPadding: 25
 
     text: {
-        const title = getTitle()
+        const title = getTitle();
         if (root.saved) {
-            return title
+            return title;
         } else {
             //: %1 will be the title of the application (one of: mpvQC, file name, file path)
-            return qsTranslate("MainWindow", "%1 (unsaved)").arg(title)
+            return qsTranslate("MainWindow", "%1 (unsaved)").arg(title);
         }
     }
 
     function getTitle() {
-        const selection = root.mpvqcSettings.windowTitleFormat
+        const selection = root.mpvqcSettings.windowTitleFormat;
 
         if (!videoLoaded || selection === MpvqcSettings.WindowTitleFormat.DEFAULT) {
-            return Application.name
+            return Application.name;
         }
 
         if (selection === MpvqcSettings.WindowTitleFormat.FILE_NAME) {
-            return videoName
+            return videoName;
         } else {
-            return videoPath
+            return videoPath;
         }
     }
-
 }

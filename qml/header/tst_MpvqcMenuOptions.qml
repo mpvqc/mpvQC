@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls.Material
 import QtTest
-
 
 TestCase {
     id: testCase
@@ -29,17 +30,24 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcMenuOptions'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcMenuOptions"
 
     Component {
         id: dialogMock
 
         QtObject {
+            id: __dialogMock
+
+            signal closed
+
             property bool openCalled: false
-            signal closed()
-            function open() { openCalled = true }
+
+            function open(): void {
+                __dialogMock.openCalled = true;
+            }
+
+            function deleteLater(): void {
+            }
         }
     }
 
@@ -47,13 +55,23 @@ TestCase {
         id: factoryMock
 
         QtObject {
+            id: __factoryMock
+
             property bool createObjectCalled: false
-            property var dialog
-            function createObject() {
-                createObjectCalled = true
-                dialog = createTemporaryObject(dialogMock, testCase)
-                verify(dialog)
-                return dialog
+            property var control: undefined
+
+            function createObject(args) {
+                __factoryMock.createObjectCalled = true;
+
+                __factoryMock.control = testCase.createTemporaryObject(dialogMock, args);
+                testCase.verify(__factoryMock.control);
+
+                return __factoryMock.control;
+            }
+
+            function verify(): void {
+                testCase.verify(__factoryMock.createObjectCalled);
+                testCase.verify(__factoryMock.control.openCalled);
             }
         }
     }
@@ -68,7 +86,7 @@ TestCase {
                     property int backupInterval: 90
                     property int theme: Material.Dark
                     property int primary: Material.Teal
-                    property string nickname: 'nickname'
+                    property string nickname: "nickname"
                     property bool writeHeaderDate: false
                     property bool writeHeaderGenerator: false
                     property bool writeHeaderNickname: false
@@ -76,82 +94,102 @@ TestCase {
                 }
                 property var contentItem: Item {}
                 property var mpvqcApplicationPathsPyObject: QtObject {
-                    property url dir_backup: 'file:///hello.txt'
+                    property url dir_backup: "file:///hello.txt"
                 }
                 property var mpvqcUtilityPyObject: QtObject {
-                    function urlToAbsolutePath(url) { return `${url}-as-abs-path` }
+                    function urlToAbsolutePath(url) {
+                        return `${url}-as-abs-path`;
+                    }
                 }
             }
         }
     }
 
-    function test_clicks() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+    function test_openAppearanceSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
 
-        let factory
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogAppearance: factory
+        });
+        verify(control);
 
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.appearanceAction.factory = factory
-        control.appearanceAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
-
-
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.commentTypesAction.factory = factory
-        control.commentTypesAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
-
-
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.backupAction.factory = factory
-        control.backupAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
-
-
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.exportAction.factory = factory
-        control.exportAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
-
-
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.importAction.factory = factory
-        control.importAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
-
-
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.editMpvAction.factory = factory
-        control.editMpvAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
-
-
-        factory = createTemporaryObject(factoryMock, testCase)
-        verify(factory)
-
-        control.editInputAction.factory = factory
-        control.editInputAction.trigger()
-        verify(factory.createObjectCalled)
-        verify(factory.dialog.openCalled)
+        control.appearanceAction.trigger();
+        factory.verify();
     }
 
+    function test_openCommentTypeSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogCommentTypes: factory
+        });
+        verify(control);
+
+        control.commentTypesAction.trigger();
+        factory.verify();
+    }
+
+    function test_openBackupSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogBackupSettings: factory
+        });
+        verify(control);
+
+        control.backupAction.trigger();
+        factory.verify();
+    }
+
+    function test_openExportSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogExportSettings: factory
+        });
+        verify(control);
+
+        control.exportAction.trigger();
+        factory.verify();
+    }
+
+    function test_openImportSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogImportSettings: factory
+        });
+
+        control.importAction.trigger();
+        factory.verify();
+    }
+
+    function test_editMpvSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogEditMpvSettings: factory
+        });
+
+        control.editMpvAction.trigger();
+        factory.verify();
+    }
+
+    function test_editInputSettings(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogEditInputSettings: factory
+        });
+
+        control.editInputAction.trigger();
+        factory.verify();
+    }
 }

@@ -17,21 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
 import models
 import shared
 
-
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
-    property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    property alias repeater: _repeater
+    readonly property alias repeater: _repeater
 
     title: qsTranslate("MainWindow", "Language")
     icon.source: "qrc:/data/icons/language_black_24dp.svg"
@@ -53,8 +54,8 @@ MpvqcMenu {
                 interval: 125
 
                 onTriggered: {
-                    Qt.uiLanguage = item.identifier
-                    root.mpvqcSettings.language = item.identifier
+                    Qt.uiLanguage = item.identifier;
+                    root.mpvqcSettings.language = item.identifier;
                 }
             }
 
@@ -64,13 +65,12 @@ MpvqcMenu {
             checked: item.identifier === Qt.uiLanguage
 
             function changeLanguage() {
-                timer.start()
+                timer.start();
             }
 
             onTriggered: {
-                changeLanguage()
+                changeLanguage();
             }
         }
     }
-
 }

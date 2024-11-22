@@ -17,11 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
+import QtQuick
 import QtQuick.Controls
 
 import dialogs
 import shared
-
 
 MpvqcMenu {
     id: root
@@ -29,13 +31,17 @@ MpvqcMenu {
     required property var mpvqcApplication
     required property var extendedExportTemplateModel
 
-    property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
 
-    property alias resetAction: _resetAction
-    property alias openDocumentsAction: _openDocumentsAction
-    property alias saveAction: _saveAction
-    property alias saveAsAction: _saveAsAction
-    property alias quitAction: _quitAction
+    readonly property alias resetAction: _resetAction
+    readonly property alias openDocumentsAction: _openDocumentsAction
+    readonly property alias saveAction: _saveAction
+    readonly property alias saveAsAction: _saveAsAction
+    readonly property alias closeAction: _closeAction
+
+    readonly property var dialogImportDocuments: MpvqcDialogImportDocuments {
+        mpvqcApplication: root.mpvqcApplication
+    }
 
     title: qsTranslate("MainWindow", "File")
 
@@ -47,23 +53,19 @@ MpvqcMenu {
         icon.source: "qrc:/data/icons/inventory_black_24dp.svg"
 
         onTriggered: {
-            root.mpvqcManager.reset()
+            root.mpvqcManager.reset();
         }
     }
 
     Action {
         id: _openDocumentsAction
 
-        property var dialog: MpvqcDialogImportDocuments {
-            mpvqcApplication: root.mpvqcApplication
-        }
-
         text: qsTranslate("MainWindow", "Open QC Document(s)...")
         shortcut: "CTRL+O"
         icon.source: "qrc:/data/icons/file_open_black_24dp.svg"
 
         onTriggered: {
-            dialog.open()
+            root.dialogImportDocuments.open();
         }
     }
 
@@ -75,7 +77,7 @@ MpvqcMenu {
         icon.source: "qrc:/data/icons/save_black_24dp.svg"
 
         onTriggered: {
-            root.mpvqcManager.save()
+            root.mpvqcManager.save();
         }
     }
 
@@ -87,7 +89,7 @@ MpvqcMenu {
         icon.source: "qrc:/data/icons/save_as_black_24dp.svg"
 
         onTriggered: {
-            root.mpvqcManager.saveAs()
+            root.mpvqcManager.saveAs();
         }
     }
 
@@ -103,24 +105,23 @@ MpvqcMenu {
         enabled: haveTemplates
 
         onEnabledChanged: {
-            parent.enabled = enabled
-            parent.visible = enabled
-            parent.height = enabled ? parent.implicitHeight : 0
+            parent.enabled = enabled; // qmllint disable unqualified
+            parent.visible = enabled;
+            parent.height = enabled ? parent.implicitHeight : 0;
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {}
 
     Action {
-        id: _quitAction
+        id: _closeAction
 
         text: qsTranslate("MainWindow", "Exit mpvQC")
         shortcut: "CTRL+Q"
         icon.source: "qrc:/data/icons/exit_to_app_black_24dp.svg"
 
         onTriggered: {
-            root.mpvqcApplication.close()
+            root.mpvqcApplication.close();
         }
     }
-
 }

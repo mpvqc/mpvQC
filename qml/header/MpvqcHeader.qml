@@ -22,25 +22,33 @@ import QtQuick.Controls
 
 import pyobjects
 
-
 Item {
     id: root
 
     required property var mpvqcApplication
 
-    property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
 
-    signal resizeVideoTriggered()
+    signal resizeVideoTriggered
 
     height: menuBar.height
     visible: !mpvqcApplication.fullscreen
 
-    MpvqcWindowMoveHandler {
-        mpvqcApplication: root.mpvqcApplication
+    DragHandler {
+        target: null
+        grabPermissions: TapHandler.CanTakeOverFromAnything
+
+        onActiveChanged: {
+            if (active) {
+                root.mpvqcApplication.startSystemMove();
+            }
+        }
     }
 
-    MpvqcHeaderTapHandler {
-        mpvqcApplication: root.mpvqcApplication
+    TapHandler {
+        onDoubleTapped: {
+            root.mpvqcApplication.toggleMaximized();
+        }
     }
 
     Row {
@@ -50,9 +58,7 @@ Item {
         MenuBar {
             id: menuBar
 
-            background: Rectangle {
-                color: "transparent"
-            }
+            background: null
 
             MpvqcMenuFile {
                 mpvqcApplication: root.mpvqcApplication
@@ -66,7 +72,7 @@ Item {
             }
 
             MpvqcMenuOptions {
-               mpvqcApplication: root.mpvqcApplication
+                mpvqcApplication: root.mpvqcApplication
             }
 
             MpvqcMenuHelp {
@@ -86,5 +92,4 @@ Item {
             height: menuBar.height
         }
     }
-
 }

@@ -22,52 +22,51 @@ import QtQuick.Controls
 import dialogs
 import shared
 
-
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
-    property alias openVideoAction: _openVideoAction
-    property alias openSubtitlesAction: _openSubtitlesAction
-    property alias resizeToOriginalResolutionAction: _resizeToOriginalResolutionAction
+    readonly property alias openVideoAction: _openVideoAction
+    readonly property alias openSubtitlesAction: _openSubtitlesAction
+    readonly property alias resizeToOriginalResolutionAction: _resizeToOriginalResolutionAction
 
-    signal resizeVideoTriggered()
+    readonly property var dialogImportVideo: MpvqcDialogImportVideo {
+        mpvqcApplication: root.mpvqcApplication
+    }
+
+    readonly property var dialogImportSubtitles: MpvqcDialogImportSubtitles {
+        mpvqcApplication: root.mpvqcApplication
+    }
+
+    signal resizeVideoTriggered
 
     title: qsTranslate("MainWindow", "Video")
 
     Action {
         id: _openVideoAction
 
-        property var dialog: MpvqcDialogImportVideo {
-            mpvqcApplication: root.mpvqcApplication
-        }
-
         text: qsTranslate("MainWindow", "Open Video...")
         shortcut: "CTRL+Alt+O"
         icon.source: "qrc:/data/icons/movie_black_24dp.svg"
 
         onTriggered: {
-            dialog.open()
+            root.dialogImportVideo.open();
         }
     }
 
     Action {
         id: _openSubtitlesAction
 
-        property var dialog: MpvqcDialogImportSubtitles {
-            mpvqcApplication: root.mpvqcApplication
-        }
-
         text: qsTranslate("MainWindow", "Open Subtitle(s)...")
         icon.source: "qrc:/data/icons/subtitles_black_24dp.svg"
 
         onTriggered: {
-            dialog.open()
+            root.dialogImportSubtitles.open();
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {}
 
     Action {
         id: _resizeToOriginalResolutionAction
@@ -78,5 +77,4 @@ MpvqcMenu {
 
         onTriggered: root.resizeVideoTriggered()
     }
-
 }
