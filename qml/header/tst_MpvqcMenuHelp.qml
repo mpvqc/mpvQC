@@ -17,82 +17,128 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtTest
 
+TestCase {
+    id: testCase
 
-Item {
-    id: testHelper
+    name: "MpvqcMenuHelp"
+    when: windowShown
     width: 400
     height: 400
+    visible: true
 
-    property bool updateActionCalled: false
+    Component {
+        id: dialogMock
 
-    MpvqcMenuHelp {
-        id: objectUnderTest
+        QtObject {
+            id: __dialogMock
 
-        mpvqcApplication: QtObject {
-            property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
-                property string mpv_version: 'any-version'
-                property string ffmpeg_version: 'any-version'
+            signal closed
+
+            property bool openCalled: false
+
+            function open(): void {
+                __dialogMock.openCalled = true;
+            }
+
+            function deleteLater(): void {
             }
         }
     }
 
-    TestCase {
-        name: "MpvqcMenuHelp"
-        when: windowShown
-
-        function cleanup() {
-            _factoryMock.createObjectCalled = false
-            _dialogMock.openCalled = false
-
-            objectUnderTest.updateAction.factory = undefined
-            objectUnderTest.shortcutAction.factory = undefined
-            objectUnderTest.aboutAction.factory = undefined
-        }
+    Component {
+        id: factoryMock
 
         QtObject {
-            id: _factoryMock
+            id: __factoryMock
+
             property bool createObjectCalled: false
-            function createObject() { createObjectCalled = true; return _dialogMock }
-        }
+            property var control: undefined
 
-        QtObject {
-            id: _dialogMock
-            property bool openCalled: false
-            signal closed()
-            function open() { openCalled = true }
-        }
+            function createObject(args) {
+                __factoryMock.createObjectCalled = true;
 
-        function test_update() {
-            objectUnderTest.updateAction.factory = _factoryMock
-            objectUnderTest.updateAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
+                __factoryMock.control = testCase.createTemporaryObject(dialogMock, args);
+                testCase.verify(__factoryMock.control);
 
-        function test_shortcuts() {
-            objectUnderTest.shortcutAction.factory = _factoryMock
-            objectUnderTest.shortcutAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
+                return __factoryMock.control;
+            }
 
-        function test_extended_reports() {
-            objectUnderTest.extendedExportsAction.factory = _factoryMock
-            objectUnderTest.extendedExportsAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
+            function verify(): void {
+                testCase.verify(__factoryMock.createObjectCalled);
+                testCase.verify(__factoryMock.control.openCalled);
+            }
         }
-
-        function test_about() {
-            objectUnderTest.aboutAction.factory = _factoryMock
-            objectUnderTest.aboutAction.trigger()
-            verify(_factoryMock.createObjectCalled)
-            verify(_dialogMock.openCalled)
-        }
-
     }
 
+    Component {
+        id: objectUnderTest
+
+        MpvqcMenuHelp {
+            id: objectUnderTest
+
+            mpvqcApplication: QtObject {
+                property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
+                    property string mpv_version: "any-version"
+                    property string ffmpeg_version: "any-version"
+                }
+            }
+        }
+    }
+
+    function test_checkForUpdate(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryMessageBoxVersionCheck: factory
+        });
+        verify(control);
+
+        control.updateAction.trigger();
+        factory.verify();
+    }
+
+    function test_openShortcutDialog(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogShortcuts: factory
+        });
+        verify(control);
+
+        control.shortcutAction.trigger();
+        factory.verify();
+    }
+
+    function test_openExtendedExportMessageBox(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryMessageBoxExtendedExports: factory
+        });
+        verify(control);
+
+        control.extendedExportsAction.trigger();
+        factory.verify();
+    }
+
+    function test_openAboutDialog(): void {
+        const factory = createTemporaryObject(factoryMock, testCase);
+        verify(factory);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            factoryDialogAbout: factory
+        });
+        verify(control);
+
+        control.aboutAction.trigger();
+        factory.verify();
+    }
 }

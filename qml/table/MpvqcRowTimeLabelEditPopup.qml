@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-
 Popup {
     id: root
 
@@ -29,10 +28,10 @@ Popup {
 
     property bool acceptValue: true
 
-    property alias spinBox: _spinBox
+    readonly property alias spinBox: _spinBox
 
     signal edited(int newTime)
-    signal editingAborted()
+    signal editingAborted
     signal valueChanged(int newTemporaryValue)
 
     visible: true
@@ -49,22 +48,22 @@ Popup {
 
         onValueModified: {
             if (root.acceptValue) {
-                root.valueChanged(_spinBox.value)
+                root.valueChanged(_spinBox.value);
             }
         }
     }
 
     onAboutToHide: {
         if (acceptValue && root.time !== _spinBox.value) {
-            root.edited(_spinBox.value)
+            root.edited(_spinBox.value);
         } else {
-            root.editingAborted()
+            root.editingAborted();
         }
     }
 
     onActiveFocusChanged: {
         if (!activeFocus) {
-            root.close()
+            root.close();
         }
     }
 
@@ -72,37 +71,36 @@ Popup {
         sequence: "Esc"
 
         onActivated: {
-            root.acceptValue = false
-            root.close()
+            root.acceptValue = false;
+            root.close();
         }
     }
 
     Shortcut {
-        sequence: 'Left'
+        sequence: "Left"
 
         onActivated: _spinBox.decrementValue()
     }
 
     Shortcut {
-        sequence: 'Right'
+        sequence: "Right"
 
         onActivated: _spinBox.incrementValue()
     }
 
     Shortcut {
-        sequence: 'Up'
+        sequence: "Up"
 
         onActivated: _spinBox.incrementValue()
     }
 
     Shortcut {
-        sequence: 'Down'
+        sequence: "Down"
 
         onActivated: _spinBox.decrementValue()
     }
 
     Component.onCompleted: {
-        _spinBox.forceActiveFocus()
+        _spinBox.forceActiveFocus();
     }
-
 }

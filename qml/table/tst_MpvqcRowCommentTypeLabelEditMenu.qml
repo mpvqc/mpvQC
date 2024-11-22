@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,9 +27,12 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcRowCommentTypeLabelEditMenu'
+    name: "MpvqcRowCommentTypeLabelEditMenu"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
@@ -38,33 +40,49 @@ TestCase {
         MpvqcRowCommentTypeLabelEditMenu {
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property var commentTypes: ['1', '2', '3', '4', '5', '6', '7']
+                    property var commentTypes: ["1", "2", "3", "4", "5", "6", "7"]
                 }
             }
         }
     }
 
     function test_comment_type_known() {
-        const control = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: '1' })
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            currentCommentType: "1"
+        });
+        verify(control);
 
-        verify(!control.unknownCommentType.visible)
+        control.open();
+
+        verify(!control.unknownCommentType.visible);
     }
 
     function test_comment_type_unknown() {
-        const control = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: '-1' })
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            currentCommentType: "42"
+        });
+        verify(control);
 
-        verify(control.unknownCommentType.visible)
+        control.open();
+
+        verify(control.unknownCommentType.visible);
     }
 
     function test_clicked() {
-        const control = createTemporaryObject(objectUnderTest, testCase, { currentCommentType: '1' })
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            currentCommentType: "1"
+        });
+        verify(control);
 
-        const itemClickedSpy = signalSpy.createObject(null, {target: control, signalName: 'itemClicked'})
-        mouseClick(control.itemAt(0))
-        compare(itemClickedSpy.count, 1)
+        const itemClickedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "itemClicked"
+        });
+        verify(itemClickedSpy);
+
+        control.open();
+
+        mouseClick(control.itemAt(0));
+        compare(itemClickedSpy.count, 1);
     }
-
 }

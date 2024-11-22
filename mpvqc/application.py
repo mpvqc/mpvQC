@@ -71,17 +71,15 @@ class MpvqcApplication(QGuiApplication):
         identifier = self._engine.uiLanguage()
         locale = QLocale(identifier)
 
-        self._translator_qt.load(locale, "qtbase", "_",
-                                 QLibraryInfo.location(QLibraryInfo.LibraryPath.TranslationsPath))
+        self._translator_qt.load(
+            locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.LibraryPath.TranslationsPath)
+        )
         self._translator_mpvqc.load(f":/i18n/{identifier}.qm")
 
         self.installTranslator(self._translator_qt)
         self.installTranslator(self._translator_mpvqc)
 
         self.setLayoutDirection(locale.textDirection())
-
-    def set_up_imports(self):
-        self._engine.addImportPath(":/qml")
 
     def start_engine(self):
         if sys.platform == "win32":
@@ -90,9 +88,10 @@ class MpvqcApplication(QGuiApplication):
             url = QUrl.fromLocalFile(":/qt/qml/Main.qml")
         self._engine.load(url)
 
-    def verify(self):
+    def notify_ready(self):
         if not self._engine.rootObjects():
             sys.exit(-1)
+        self.application_ready.emit()
 
     def configure_frameless_window(self):
         """"""
@@ -125,6 +124,3 @@ class MpvqcApplication(QGuiApplication):
             init_windows_window_effects()
         else:
             init_linux_window_event_filter()
-
-    def notify_ready(self):
-        self.application_ready.emit()

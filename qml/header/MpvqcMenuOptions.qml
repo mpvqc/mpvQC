@@ -17,63 +17,94 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
 import dialogs
 import shared
 
-
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
-    property alias appearanceAction: _appearanceAction
-    property alias commentTypesAction: _commentTypesAction
-    property alias exportAction: _exportAction
-    property alias importAction: _importAction
-    property alias backupAction: _backupAction
-    property alias editMpvAction: _editMpvAction
-    property alias editInputAction: _editInputAction
+    readonly property alias appearanceAction: _appearanceAction
+    readonly property alias commentTypesAction: _commentTypesAction
+    readonly property alias backupAction: _backupAction
+    readonly property alias exportAction: _exportAction
+    readonly property alias importAction: _importAction
+    readonly property alias editMpvAction: _editMpvAction
+    readonly property alias editInputAction: _editInputAction
+
+    readonly property var factoryDialogAppearance: Component {
+        MpvqcDialogAppearance {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogCommentTypes: Component {
+        MpvqcDialogCommentTypes {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogBackupSettings: Component {
+        MpvqcDialogBackup {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogExportSettings: Component {
+        MpvqcDialogExport {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogImportSettings: Component {
+        MpvqcDialogImport {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogEditMpvSettings: Component {
+        MpvqcDialogEditMpv {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var factoryDialogEditInputSettings: Component {
+        MpvqcDialogEditInput {
+            mpvqcApplication: root.mpvqcApplication
+        }
+    }
 
     title: qsTranslate("MainWindow", "Options")
 
     Action {
         id: _appearanceAction
 
-        property var factory: Component {
-            MpvqcDialogAppearance {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Appearance...")
         icon.source: "qrc:/data/icons/palette_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogAppearance.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
     Action {
         id: _commentTypesAction
 
-        property var factory: Component {
-            MpvqcDialogCommentTypes {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Comment Type Settings...")
         icon.source: "qrc:/data/icons/comment_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogCommentTypes.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
@@ -85,109 +116,78 @@ MpvqcMenu {
         mpvqcApplication: root.mpvqcApplication
     }
 
-    MenuSeparator { }
+    MenuSeparator {}
 
     Action {
         id: _backupAction
-
-        property var factory: Component {
-            MpvqcDialogBackup {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
 
         text: qsTranslate("MainWindow", "Backup Settings...")
         icon.source: "qrc:/data/icons/settings_backup_restore_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogBackupSettings.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
     Action {
         id: _exportAction
 
-        property var factory: Component {
-            MpvqcDialogExport {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Export Settings...")
         icon.source: "qrc:/data/icons/upload_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogExportSettings.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
     Action {
         id: _importAction
 
-        property var factory: Component {
-            MpvqcDialogImport {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Import Settings...")
         icon.source: "qrc:/data/icons/download_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogImportSettings.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {}
 
     Action {
         id: _editMpvAction
-
-        property var factory: Component {
-            MpvqcDialogEditMpv {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
 
         text: qsTranslate("MainWindow", "Edit mpv.conf...")
         icon.source: "qrc:/data/icons/movie_edit_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogEditMpvSettings.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
     Action {
         id: _editInputAction
 
-        property var factory: Component {
-            MpvqcDialogEditInput {
-                mpvqcApplication: root.mpvqcApplication
-            }
-        }
-
         text: qsTranslate("MainWindow", "Edit input.conf...")
         icon.source: "qrc:/data/icons/keyboard_black_24dp.svg"
 
         onTriggered: {
-            const dialog = factory.createObject(root)
-            dialog.closed.connect(dialog.destroy)
-            dialog.open()
+            const dialog = root.factoryDialogEditInputSettings.createObject(root);
+            dialog.closed.connect(dialog.destroy);
+            dialog.open();
         }
     }
 
-    MenuSeparator { }
+    MenuSeparator {}
 
     MpvqcSubMenuLanguage {
         mpvqcApplication: root.mpvqcApplication
     }
-
 }

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,9 +27,12 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcRowCommentLabel'
+    name: "MpvqcRowCommentLabel"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
@@ -40,8 +42,8 @@ TestCase {
 
             rowSelected: false
             tableInEditMode: false
-            comment: 'comment'
-            searchQuery: 'query'
+            comment: "comment"
+            searchQuery: "query"
             focus: false
 
             selectionColor: "orange"
@@ -53,7 +55,9 @@ TestCase {
                     property int commentTypesLabelWidth: 120
                 }
                 property var mpvqcUtilityPyObject: QtObject {
-                    function formatTimeToStringLong(time) { return `${time}` }
+                    function formatTimeToStringLong(time) {
+                        return `${time}`;
+                    }
                 }
                 property var mpvqcDefaultTextValidatorPyObject: RegularExpressionValidator {
                     regularExpression: /[0-9A-Z]+/
@@ -64,64 +68,72 @@ TestCase {
     }
 
     function test_click() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
         // row-selection/edit-mode
-        control.rowSelected = true
-        control.tableInEditMode = true
-        verify(!control.focus)
-        mouseClick(control)
-        verify(control.focus)
+        control.rowSelected = true;
+        control.tableInEditMode = true;
+        verify(!control.focus);
+        mouseClick(control);
+        verify(control.focus);
 
         // row-selection/no-edit-mode
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'editingStarted'})
-        control.rowSelected = true
-        control.tableInEditMode = false
-        verify(!control.loader.sourceComponent)
-        compare(spy.count, 0)
-        mouseClick(control)
-        verify(control.loader.sourceComponent)
-        compare(spy.count, 1)
-        spy.clear()
+        let spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "editingStarted"
+        });
+        control.rowSelected = true;
+        control.tableInEditMode = false;
+        verify(!control.loader.sourceComponent);
+        compare(spy.count, 0);
+        mouseClick(control);
+        verify(control.loader.sourceComponent);
+        compare(spy.count, 1);
+        spy.clear();
     }
 
     function createControlInEditMode(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-        control.loader.asynchronous = false
-        control.delayEditingStoppedTimer.interval = 1
-        control.openPopup()
-        return control
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        control.loader.asynchronous = false;
+        control.delayEditingStoppedTimer.interval = 1;
+        control.openPopup();
+        return control;
     }
 
     function test_stopEditing() {
-        const control = createControlInEditMode()
+        const control = createControlInEditMode();
 
-        const popup = control.loader.item
-        verify(popup)
+        const popup = control.loader.item;
+        verify(popup);
 
-        const spy = signalSpy.createObject(control, {target: control, signalName: 'editingStopped'})
-        popup.close()
-        wait(25)
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "editingStopped"
+        });
+        popup.close();
+        wait(25);
 
-        verify(!control.loader.sourceComponent)
-        compare(spy.count, 1)
+        verify(!control.loader.sourceComponent);
+        compare(spy.count, 1);
     }
 
     function test_edit() {
-        const control = createControlInEditMode()
+        const control = createControlInEditMode();
 
-        const popup = control.loader.item
-        verify(popup)
+        const popup = control.loader.item;
+        verify(popup);
 
-        const spy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        popup.edited('New Comment')
-        wait(25)
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "edited"
+        });
+        popup.edited("New Comment");
+        wait(25);
 
-        verify(control.loader.sourceComponent)
-        compare(spy.count, 1)
-        compare(spy.signalArguments[0][0], 'New Comment')
+        verify(control.loader.sourceComponent);
+        compare(spy.count, 1);
+        compare(spy.signalArguments[0][0], "New Comment");
     }
-
 }

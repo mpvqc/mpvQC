@@ -66,13 +66,13 @@ TestCase {
         return [
             {
                 maximizedInitial: false,
-                iconSubstring: 'open_in_full_black',
-                tag: 'maximize'
+                iconSubstring: "open_in_full_black",
+                tag: "maximize"
             },
             {
                 maximizedInitial: true,
-                iconSubstring: 'close_fullscreen_black',
-                tag: 'minimize'
+                iconSubstring: "close_fullscreen_black",
+                tag: "minimize"
             },
         ];
     }

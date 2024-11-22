@@ -17,26 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick
-import QtQuick.Controls.Material
-
 import app
 
-
-MpvqcApplication {
-    width: 1280
-    height: 720
-
-    minimumWidth: 960
-    minimumHeight: 540
-
-    flags: Qt.FramelessWindowHint | Qt.Window
-    color: Material.background
-    visible: true
-
-    font.pointSize: 10
-    font.family: 'Noto Sans'
-
-    LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
-    LayoutMirroring.childrenInherit: true
-}
+MpvqcApplication {}

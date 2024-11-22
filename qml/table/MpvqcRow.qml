@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls.Material
-
 
 Item {
     id: root
@@ -49,8 +50,7 @@ Item {
     property alias scrollBarWidth: _spacerScrollBar.width
     property alias scrollBarBackgroundColor: _spacerScrollBar.color
 
-    readonly property var contextMenuFactory: Component
-    {
+    readonly property var contextMenuFactory: Component {
         MpvqcRowContextMenu {
             onCopyCommentClicked: root.copyCommentClicked()
 
@@ -63,13 +63,13 @@ Item {
     readonly property int leftAndRightPadding: 14
     readonly property int topAndBottomPadding: 13
 
-    signal pressed()
-    signal copyCommentClicked()
-    signal deleteCommentClicked()
-    signal playPressed()
+    signal pressed
+    signal copyCommentClicked
+    signal deleteCommentClicked
+    signal playPressed
 
-    signal editingStarted()
-    signal editingStopped()
+    signal editingStarted
+    signal editingStopped
 
     signal timeEdited(int newTime)
     signal commentTypeEdited(string newCommentType)
@@ -78,19 +78,19 @@ Item {
     height: Math.max(_commentLabel.height, _playButton.height)
 
     function startEditing(): void {
-        _commentLabel.startEditing()
+        _commentLabel.startEditing();
     }
 
     function createContextMenu() {
-        const contextMenu = contextMenuFactory.createObject(root)
-        contextMenu.closed.connect(contextMenu.destroy)
-        return contextMenu
+        const contextMenu = contextMenuFactory.createObject(root);
+        contextMenu.closed.connect(contextMenu.destroy);
+        return contextMenu;
     }
 
     function toClipboardContent(): string {
-        const time = mpvqcUtilityPyObject.formatTimeToStringLong(root.time)
-        const type = qsTranslate("CommentTypes", commentType)
-        return `[${time}] [${type}] ${comment}`.trim()
+        const time = mpvqcUtilityPyObject.formatTimeToStringLong(root.time);
+        const type = qsTranslate("CommentTypes", commentType);
+        return `[${time}] [${type}] ${comment}`.trim();
     }
 
     Rectangle {
@@ -117,14 +117,14 @@ Item {
         z: -1
 
         onPressed: {
-            root.pressed()
+            root.pressed();
 
-            const mirrored = LayoutMirroring.enabled
-            const contextMenu = root.createContextMenu()
-            contextMenu.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft
-            contextMenu.x = mirrored ? mouseX - contextMenu.width : mouseX
-            contextMenu.y = mouseY
-            contextMenu.open()
+            const mirrored = LayoutMirroring.enabled;
+            const contextMenu = root.createContextMenu();
+            contextMenu.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft;
+            contextMenu.x = mirrored ? mouseX - contextMenu.width : mouseX;
+            contextMenu.y = mouseY;
+            contextMenu.open();
         }
     }
 
@@ -156,7 +156,7 @@ Item {
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
 
-            onEdited: (newTime) => root.timeEdited(newTime)
+            onEdited: newTime => root.timeEdited(newTime)
 
             onEditingStarted: root.editingStarted()
 
@@ -178,7 +178,7 @@ Item {
             rowSelected: root.rowSelected
             tableInEditMode: root.tableInEditMode
 
-            onEdited: (newCommentType) => root.commentTypeEdited(newCommentType)
+            onEdited: newCommentType => root.commentTypeEdited(newCommentType)
 
             onEditingStarted: root.editingStarted()
 
@@ -188,11 +188,7 @@ Item {
         MpvqcRowCommentLabel {
             id: _commentLabel
 
-            width: root.width
-                - _playButton.width
-                - _timeLabel.width
-                - _commentTypeLabel.width
-                - _spacerScrollBar.width
+            width: root.width - _playButton.width - _timeLabel.width - _commentTypeLabel.width - _spacerScrollBar.width
             leftPadding: root.leftAndRightPadding
             rightPadding: root.leftAndRightPadding
             topPadding: root.topAndBottomPadding
@@ -207,7 +203,7 @@ Item {
             selectionColor: root.selectionColor
             selectedTextColor: root.selectedTextColor
 
-            onEdited: (newComment) => root.commentEdited(newComment)
+            onEdited: newComment => root.commentEdited(newComment)
 
             onEditingStarted: root.editingStarted()
 
@@ -219,5 +215,4 @@ Item {
             height: root.height
         }
     }
-
 }

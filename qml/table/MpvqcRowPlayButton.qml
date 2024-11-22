@@ -19,14 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick.Controls
 
-
 ToolButton {
     id: root
 
     required property bool tableInEditMode
 
-    signal buttonPressed()
-    signal playPressed()
+    signal buttonPressed
+    signal playPressed
 
     focusPolicy: Qt.NoFocus
     icon.source: "qrc:/data/icons/play_arrow_black_24dp.svg"
@@ -34,11 +33,10 @@ ToolButton {
     icon.height: 18
 
     onPressed: {
-        root.buttonPressed()
+        root.buttonPressed();
 
         if (!root.tableInEditMode) {
-            root.playPressed()
+            root.playPressed();
         }
     }
-
 }

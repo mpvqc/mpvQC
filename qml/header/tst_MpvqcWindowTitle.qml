@@ -22,7 +22,6 @@ import QtTest
 
 import settings
 
-
 TestCase {
     id: testCase
 
@@ -30,9 +29,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcWindowTitle'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcWindowTitle"
 
     Component {
         id: objectUnderTest
@@ -47,53 +44,52 @@ TestCase {
                 }
                 property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
                     property bool video_loaded: false
-                    property string filename: 'video-name'
-                    property string path: 'video-path'
+                    property string filename: "video-name"
+                    property string path: "video-path"
                 }
             }
         }
     }
 
     function test_title() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        Application.name = 'mpvQC'
+        Application.name = "mpvQC";
 
-        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.DEFAULT
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
-        compare(control.text, 'mpvQC')
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.DEFAULT;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false;
+        compare(control.text, "mpvQC");
 
-        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_NAME
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
-        compare(control.text, 'mpvQC')
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_NAME;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false;
+        compare(control.text, "mpvQC");
 
-        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_PATH
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false
-        compare(control.text, 'mpvQC')
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_PATH;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = false;
+        compare(control.text, "mpvQC");
 
-        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.DEFAULT
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        compare(control.text, 'mpvQC')
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.DEFAULT;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        compare(control.text, "mpvQC");
 
-        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_NAME
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        compare(control.text, 'video-name')
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_NAME;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        compare(control.text, "video-name");
 
-        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_PATH
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true
-        compare(control.text, 'video-path')
+        control.mpvqcApplication.mpvqcSettings.windowTitleFormat = MpvqcSettings.WindowTitleFormat.FILE_PATH;
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.video_loaded = true;
+        compare(control.text, "video-path");
     }
 
     function test_titleSuffix() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.mpvqcApplication.mpvqcManager.saved = true
-        verify(!control.text.endsWith('(unsaved)'))
+        control.mpvqcApplication.mpvqcManager.saved = true;
+        verify(!control.text.endsWith("(unsaved)"));
 
-        control.mpvqcApplication.mpvqcManager.saved = false
-        verify(control.text.endsWith('(unsaved)'))
+        control.mpvqcApplication.mpvqcManager.saved = false;
+        verify(control.text.endsWith("(unsaved)"));
     }
-
 }

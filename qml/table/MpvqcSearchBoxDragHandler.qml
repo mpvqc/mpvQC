@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 DragHandler {
     id: root
 
@@ -27,30 +26,27 @@ DragHandler {
     required property var searchBox
     required property int topBottomMargin
 
-    readonly property var dragStartAnimation: NumberAnimation
-    {
-        target: searchBox
+    readonly property NumberAnimation dragStartAnimation: NumberAnimation {
+        target: root.searchBox
         property: "scale"
         from: 1
         to: 1.0375
         duration: 75
     }
 
-    readonly property var dragEndAnimation: NumberAnimation
-    {
-        target: searchBox
+    readonly property NumberAnimation dragEndAnimation: NumberAnimation {
+        target: root.searchBox
         property: "scale"
         from: 1.0375
         to: 1
         duration: 75
     }
 
-    readonly property var _currentYBinding: Binding
-    {
+    readonly property Binding _currentYBinding: Binding {
         when: root.searchBox.visible
         target: root.searchBox
         property: "y"
-        value: currentY
+        value: root.currentY
     }
 
     readonly property int minimalY: topBottomMargin
@@ -62,34 +58,34 @@ DragHandler {
 
     function recalculateCurrentY(newPosition: int) {
         if (!root.active && stickToBottom) {
-            currentY = maximalY
-            return
+            currentY = maximalY;
+            return;
         }
 
         if (newPosition >= maximalY) {
-            currentY = maximalY
-            stickToBottom = true
+            currentY = maximalY;
+            stickToBottom = true;
             return;
         }
 
         if (newPosition >= minimalY) {
-            currentY = newPosition
-            stickToBottom = newPosition >= maximalY - 15
+            currentY = newPosition;
+            stickToBottom = newPosition >= maximalY - 15;
             return;
         }
 
-        currentY = topBottomMargin
-        stickToBottom = false
+        currentY = topBottomMargin;
+        stickToBottom = false;
     }
 
     function handleTransition(transition) {
         switch (transition) {
-            case PointerDevice.GrabExclusive:
-                dragStartAnimation.start()
-                break
-            case PointerDevice.UngrabExclusive:
-                dragEndAnimation.start()
-                break
+        case PointerDevice.GrabExclusive:
+            dragStartAnimation.start();
+            break;
+        case PointerDevice.UngrabExclusive:
+            dragEndAnimation.start();
+            break;
         }
     }
 
@@ -100,17 +96,17 @@ DragHandler {
     onGrabChanged: transition => root.handleTransition(transition)
 
     onActiveChanged: {
-        transistionStartedY = active ? searchBox.y : -1
+        transistionStartedY = active ? searchBox.y : -1;
     }
 
     onMaximalYChanged: {
-        if (maximalY <= 0) return
-        root.recalculateCurrentY(root.currentY)
+        if (maximalY <= 0)
+            return;
+        root.recalculateCurrentY(root.currentY);
     }
 
     yAxis.onActiveValueChanged: {
-        const possiblePosition = transistionStartedY + yAxis.activeValue
-        root.recalculateCurrentY(possiblePosition)
+        const possiblePosition = transistionStartedY + yAxis.activeValue;
+        root.recalculateCurrentY(possiblePosition);
     }
-
 }

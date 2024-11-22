@@ -54,7 +54,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "highlightIndexRequested"
         });
@@ -86,7 +86,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "highlightIndexRequested"
         });
@@ -109,7 +109,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "highlightIndexRequested"
         });
@@ -131,7 +131,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editClicked"
         });
@@ -154,7 +154,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "highlightIndexRequested"
         });
@@ -179,7 +179,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "acceptCopyRequested"
         });
@@ -193,7 +193,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "resetRequested"
         });

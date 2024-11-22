@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,17 +27,24 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcMenuVideo'
+    name: "MpvqcMenuVideo"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: dialogMock
 
         QtObject {
+            id: __dialogMock
+
             property bool openCalled: false
-            signal closed()
-            function open() { openCalled = true }
+
+            function open() {
+                __dialogMock.openCalled = true;
+            }
         }
     }
 
@@ -49,47 +55,51 @@ TestCase {
             mpvqcApplication: QtObject {
                 property var mpvqcManager: QtObject {}
                 property var mpvqcSettings: QtObject {
-                    property string lastDirectoryVideo: 'initial directory'
-                    property string lastDirectorySubtitles: 'initial directory'
+                    property string lastDirectoryVideo: "initial directory"
+                    property string lastDirectorySubtitles: "initial directory"
                 }
-                property var supportedSubtitleFileExtensions: [ 'ass' ]
+                property var supportedSubtitleFileExtensions: ["ass"]
             }
         }
     }
 
     function test_importVideo() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const dialog = createTemporaryObject(dialogMock, testCase);
+        verify(dialog);
 
-        const mock = createTemporaryObject(dialogMock, testCase)
-        verify(mock)
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            dialogImportVideo: dialog
+        });
+        verify(control);
 
-        control.openVideoAction.dialog = mock
-        control.openVideoAction.trigger()
-        verify(mock.openCalled)
+        control.openVideoAction.trigger();
+        verify(dialog.openCalled);
     }
 
     function test_importSubtitles() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const dialog = createTemporaryObject(dialogMock, testCase);
+        verify(dialog);
 
-        const mock = createTemporaryObject(dialogMock, testCase)
-        verify(mock)
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            dialogImportSubtitles: dialog
+        });
+        verify(control);
 
-        control.openSubtitlesAction.dialog = mock
-        control.openSubtitlesAction.trigger()
-        verify(mock.openCalled)
+        control.openSubtitlesAction.trigger();
+        verify(dialog.openCalled);
     }
 
     function test_resizeVideoToOriginalResolution() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const spy = signalSpy.createObject(null, {target: control, signalName: 'resizeVideoTriggered'})
-        verify(spy)
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "resizeVideoTriggered"
+        });
+        verify(spy);
 
-        control.resizeToOriginalResolutionAction.trigger()
-        compare(spy.count, 1)
+        control.resizeToOriginalResolutionAction.trigger();
+        compare(spy.count, 1);
     }
-
 }

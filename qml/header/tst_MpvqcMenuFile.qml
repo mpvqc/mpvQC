@@ -20,70 +20,108 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
+TestCase {
+    id: testCase
 
-Item {
-    id: testHelper
+    name: "MpvqcMenuFile"
     width: 400
     height: 400
+    visible: true
+    when: windowShown
 
-    property bool resetCalled: false
-    property bool saveCalled: false
-    property bool saveAsCalled: false
-    property bool closeCalled: false
-
-    MpvqcMenuFile {
-        id: objectUnderTest
-
-        mpvqcApplication: QtObject {
-            property var mpvqcManager: QtObject {
-                function reset() { testHelper.resetCalled = true }
-                function save() { testHelper.saveCalled = true }
-                function saveAs() { testHelper.saveAsCalled = true }
-            }
-            property var mpvqcSettings: QtObject {
-                property string lastDirectoryDocuments: 'initial directory'
-            }
-            function close() { testHelper.closeCalled = true }
-        }
-        extendedExportTemplateModel: []
-    }
-
-    TestCase {
-        name: "MpvqcMenuFile"
-        when: windowShown
-
-        function test_reset() {
-            objectUnderTest.resetAction.trigger()
-            verify(testHelper.resetCalled)
-        }
+    Component {
+        id: dialogMock
 
         QtObject {
-            id: _dialogMock
+            id: __dialogMock
+
             property bool openCalled: false
-            function open() { openCalled = true }
-        }
 
-        function test_import_documents() {
-            objectUnderTest.openDocumentsAction.dialog = _dialogMock
-            objectUnderTest.openDocumentsAction.trigger()
-            verify(_dialogMock.openCalled)
+            function open() {
+                __dialogMock.openCalled = true;
+            }
         }
-
-        function test_save() {
-            objectUnderTest.saveAction.trigger()
-            verify(testHelper.saveCalled)
-        }
-
-        function test_saveAs() {
-            objectUnderTest.saveAsAction.trigger()
-            verify(testHelper.saveAsCalled)
-        }
-
-        function close() {
-            objectUnderTest.quitAction.trigger()
-            verify(testHelper.closeCalled)
-        }
-
     }
 
+    Component {
+        id: objectUnderTest
+
+        MpvqcMenuFile {
+            id: __objectUnderTest
+
+            property bool resetCalled: false
+            property bool saveCalled: false
+            property bool saveAsCalled: false
+            property bool closeCalled: false
+
+            mpvqcApplication: QtObject {
+                property var mpvqcManager: QtObject {
+                    function reset() {
+                        __objectUnderTest.resetCalled = true;
+                    }
+
+                    function save() {
+                        __objectUnderTest.saveCalled = true;
+                    }
+
+                    function saveAs() {
+                        __objectUnderTest.saveAsCalled = true;
+                    }
+                }
+                property var mpvqcSettings: QtObject {
+                    property string lastDirectoryDocuments: "initial directory"
+                }
+
+                function close(): void {
+                    __objectUnderTest.closeCalled = true;
+                }
+            }
+            extendedExportTemplateModel: []
+        }
+    }
+
+    function test_reset() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+
+        control.resetAction.trigger();
+        verify(control.resetCalled);
+    }
+
+    function test_openDocuments() {
+        const dialog = createTemporaryObject(dialogMock, testCase);
+        verify(dialog);
+
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            "dialogImportDocuments": dialog
+        });
+        verify(control);
+
+        control.openDocumentsAction.trigger();
+        verify(dialog.openCalled);
+    }
+
+    function test_save() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+
+        control.saveAction.trigger();
+        verify(control.saveCalled);
+    }
+
+    function test_saveAs() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+
+        control.saveAsAction.trigger();
+        verify(control.saveAsCalled);
+    }
+
+    function test_close() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+
+        control.closeAction.trigger();
+        verify(control.closeCalled);
+    }
 }

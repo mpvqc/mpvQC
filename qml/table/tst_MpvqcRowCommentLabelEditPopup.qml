@@ -21,7 +21,6 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -29,9 +28,12 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcRowCommentLabelEditPopup'
+    name: "MpvqcRowCommentLabelEditPopup"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
@@ -39,9 +41,11 @@ TestCase {
         MpvqcRowCommentLabelEditPopup {
             mpvqcDefaultTextValidator: RegularExpressionValidator {
                 regularExpression: /[0-9A-Z]+/
-                function replace_special_characters(text: string): string { return text}
+                function replace_special_characters(text: string): string {
+                    return text;
+                }
             }
-            currentComment: 'Current comment'
+            currentComment: "Current comment"
             exit: null
             enter: null
 
@@ -58,66 +62,86 @@ TestCase {
     }
 
     function test_commentEditingSkipped() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        let editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
+        let editedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "edited"
+        });
+        verify(editedSpy);
 
-        let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
-        verify(closedSpy)
+        let closedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "closed"
+        });
+        verify(closedSpy);
 
-        control.contentItem.text = "changed"
-        keyPress(Qt.Key_Return)
+        control.contentItem.text = "changed";
+        keyPress(Qt.Key_Return);
 
-        compare(editedSpy.count, 1)
-        verify(closedSpy.count > 0)
+        compare(editedSpy.count, 1);
+        verify(closedSpy.count > 0);
     }
 
     function test_commentEditingAccepted() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        let editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
+        let editedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "edited"
+        });
+        verify(editedSpy);
 
-        let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
-        verify(closedSpy)
+        let closedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "closed"
+        });
+        verify(closedSpy);
 
-        keyPress(Qt.Key_Return)
+        keyPress(Qt.Key_Return);
 
-        compare(editedSpy.count, 0)
-        verify(closedSpy.count > 0)
+        compare(editedSpy.count, 0);
+        verify(closedSpy.count > 0);
     }
 
     function test_escapePressed() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        let editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
+        let editedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "edited"
+        });
+        verify(editedSpy);
 
-        let closedSpy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
-        verify(closedSpy)
+        let closedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "closed"
+        });
+        verify(closedSpy);
 
-        keyPress(Qt.Key_Escape)
+        keyPress(Qt.Key_Escape);
 
-        compare(editedSpy.count, 0)
-        verify(closedSpy.count > 0)
+        compare(editedSpy.count, 0);
+        verify(closedSpy.count > 0);
     }
 
     function test_clickedOutsideApplication() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const controlOther = createTemporaryObject(otherItem, testCase)
-        verify(controlOther)
+        const controlOther = createTemporaryObject(otherItem, testCase);
+        verify(controlOther);
 
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'closed'})
-        verify(spy)
+        let spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "closed"
+        });
+        verify(spy);
 
-        controlOther.forceActiveFocus()
-        compare(spy.count, 1)
+        controlOther.forceActiveFocus();
+        compare(spy.count, 1);
     }
-
 }

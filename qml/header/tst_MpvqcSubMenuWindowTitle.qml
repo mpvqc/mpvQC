@@ -22,7 +22,6 @@ import QtTest
 
 import settings
 
-
 TestCase {
     id: testCase
 
@@ -30,9 +29,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcSubMenuWindowTitle'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcSubMenuWindowTitle"
 
     Component {
         id: objectUnderTest
@@ -47,23 +44,22 @@ TestCase {
     }
 
     function test_selection() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.defaultFormat.triggered()
-        compare(control.mpvqcApplication.mpvqcSettings.windowTitleFormat, MpvqcSettings.WindowTitleFormat.DEFAULT)
-        verify(!control.fileNameFormat.checked)
-        verify(!control.filePathFormat.checked)
+        control.defaultFormat.triggered();
+        compare(control.mpvqcApplication.mpvqcSettings.windowTitleFormat, MpvqcSettings.WindowTitleFormat.DEFAULT);
+        verify(!control.fileNameFormat.checked);
+        verify(!control.filePathFormat.checked);
 
-        control.fileNameFormat.triggered()
-        compare(control.mpvqcApplication.mpvqcSettings.windowTitleFormat, MpvqcSettings.WindowTitleFormat.FILE_NAME)
-        verify(!control.defaultFormat.checked)
-        verify(!control.filePathFormat.checked)
+        control.fileNameFormat.triggered();
+        compare(control.mpvqcApplication.mpvqcSettings.windowTitleFormat, MpvqcSettings.WindowTitleFormat.FILE_NAME);
+        verify(!control.defaultFormat.checked);
+        verify(!control.filePathFormat.checked);
 
-        control.filePathFormat.triggered()
-        compare(control.mpvqcApplication.mpvqcSettings.windowTitleFormat, MpvqcSettings.WindowTitleFormat.FILE_PATH)
-        verify(!control.defaultFormat.checked)
-        verify(!control.fileNameFormat.checked)
+        control.filePathFormat.triggered();
+        compare(control.mpvqcApplication.mpvqcSettings.windowTitleFormat, MpvqcSettings.WindowTitleFormat.FILE_PATH);
+        verify(!control.defaultFormat.checked);
+        verify(!control.fileNameFormat.checked);
     }
-
 }

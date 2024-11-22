@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-
 
 Flickable {
     id: root
@@ -30,9 +31,7 @@ Flickable {
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
     readonly property bool horizontalOrientation: mpvqcSettings.layoutOrientation === Qt.Horizontal
-    readonly property var textAlignment: horizontalOrientation
-        ? Qt.AlignLeft
-        : Qt.AlignVCenter | Qt.AlignRight
+    readonly property var textAlignment: horizontalOrientation ? Qt.AlignLeft : Qt.AlignVCenter | Qt.AlignRight
 
     readonly property int columns: horizontalOrientation ? 1 : 2
 
@@ -74,7 +73,7 @@ Flickable {
             }
 
             Label {
-                text: '+'
+                text: "+"
             }
 
             MpvqcButtonRendered {
@@ -82,15 +81,13 @@ Flickable {
             }
 
             Label {
-                text: '+'
+                text: "+"
             }
 
             MpvqcButtonRendered {
-                text: 'O'
+                text: "O"
             }
-
         }
-
 
         MpvqcDescriptiveText {
             //: Keyboard shortcut - displayed when there are zero comments
@@ -100,7 +97,7 @@ Flickable {
         MpvqcButtonRendered {
             Layout.bottomMargin: root.shortcutBottomMargin
 
-            text: 'E'
+            text: "E"
         }
 
         MpvqcDescriptiveText {
@@ -109,9 +106,7 @@ Flickable {
         }
 
         MpvqcButtonRendered {
-            text: '?'
+            text: "?"
         }
-
     }
-
 }

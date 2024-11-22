@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
-
 
 Label {
     id: root
@@ -34,8 +35,7 @@ Label {
     readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
 
     property var popup: undefined
-    property var popupFactory: Component
-    {
+    readonly property var popupFactory: Component {
         MpvqcRowTimeLabelEditPopup {
             readonly property int additionalSpace: 7
 
@@ -49,57 +49,55 @@ Label {
 
             onClosed: root.editingStopped()
 
-            onEdited: (newTime) => root.edited(newTime)
+            onEdited: newTime => root.edited(newTime)
 
             onEditingAborted: root._jumpTo(root.time)
 
-            onValueChanged: (newTemporaryTime) => root._jumpTo(newTemporaryTime)
+            onValueChanged: newTemporaryTime => root._jumpTo(newTemporaryTime)
         }
     }
 
     signal edited(int newTime)
-
-    signal editingStarted()
-
-    signal editingStopped()
+    signal editingStarted
+    signal editingStopped
 
     horizontalAlignment: Text.AlignHCenter
 
     text: {
         if (mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
-            return mpvqcUtilityPyObject.formatTimeToStringLong(time)
+            return mpvqcUtilityPyObject.formatTimeToStringLong(time);
         } else {
-            return mpvqcUtilityPyObject.formatTimeToStringShort(time)
+            return mpvqcUtilityPyObject.formatTimeToStringShort(time);
         }
     }
 
     function _grabFocus(): void {
-        focus = true
+        focus = true;
     }
 
     function _startEditing(mouseX: int, mouseY: int): void {
-        editingStarted()
-        _pauseVideo()
-        _jumpTo(root.time)
-        openPopup(mouseX, mouseY)
+        editingStarted();
+        _pauseVideo();
+        _jumpTo(root.time);
+        openPopup(mouseX, mouseY);
     }
 
     function _pauseVideo(): void {
-        root.mpv.pause()
+        root.mpv.pause();
     }
 
     function _jumpTo(newTime: int): void {
-        root.mpv.jump_to(newTime)
+        root.mpv.jump_to(newTime);
     }
 
     function openPopup(mouseX: int, mouseY: int): void {
-        const mirrored = LayoutMirroring.enabled
-        popup = popupFactory.createObject(root)
-        popup.closed.connect(popup.destroy)
-        popup.y = mouseY
-        popup.x = mirrored ? mouseX - popup.width : mouseX
-        popup.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft
-        popup.open()
+        const mirrored = LayoutMirroring.enabled;
+        popup = popupFactory.createObject(root);
+        popup.closed.connect(popup.destroy);
+        popup.y = mouseY;
+        popup.x = mirrored ? mouseX - popup.width : mouseX;
+        popup.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft;
+        popup.open();
     }
 
     MouseArea {
@@ -108,11 +106,10 @@ Label {
 
         onPressed: {
             if (root.tableInEditMode) {
-                root._grabFocus()
+                root._grabFocus();
             } else {
-                root._startEditing(mouseX, mouseY)
+                root._startEditing(mouseX, mouseY);
             }
         }
     }
-
 }

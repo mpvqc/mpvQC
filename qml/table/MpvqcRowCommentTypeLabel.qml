@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
-
 
 Label {
     id: root
@@ -30,46 +31,45 @@ Label {
     required property bool tableInEditMode
 
     property var menu: undefined
-    property var menuFactory: Component
-    {
+    readonly property var menuFactory: Component {
         MpvqcRowCommentTypeLabelEditMenu {
             currentCommentType: root.commentType
             mpvqcApplication: root.mpvqcApplication
 
             onClosed: root.editingStopped()
 
-            onItemClicked: (newCommentType) => {
+            onItemClicked: newCommentType => {
                 if (root.commentType !== newCommentType) {
-                    root.edited(newCommentType)
+                    root.edited(newCommentType);
                 }
             }
         }
     }
 
     signal edited(string newCommentType)
-    signal editingStarted()
-    signal editingStopped()
+    signal editingStarted
+    signal editingStopped
 
     text: qsTranslate("CommentTypes", commentType)
     horizontalAlignment: Text.AlignLeft
 
     function _grabFocus(): void {
-        focus = true
+        focus = true;
     }
 
     function _startEditing(mouseX: int, mouseY: int): void {
-        editingStarted()
-        openMenu(mouseX, mouseY)
+        editingStarted();
+        openMenu(mouseX, mouseY);
     }
 
     function openMenu(mouseX: int, mouseY: int): void {
-        const mirrored = LayoutMirroring.enabled
-        menu = menuFactory.createObject(root)
-        menu.closed.connect(menu.destroy)
-        menu.y = mouseY
-        menu.x = mirrored ? mouseX - menu.width : mouseX
-        menu.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft
-        menu.open()
+        const mirrored = LayoutMirroring.enabled;
+        menu = menuFactory.createObject(root);
+        menu.closed.connect(menu.destroy);
+        menu.y = mouseY;
+        menu.x = mirrored ? mouseX - menu.width : mouseX;
+        menu.transformOrigin = mirrored ? Popup.TopRight : Popup.TopLeft;
+        menu.open();
     }
 
     MouseArea {
@@ -78,12 +78,11 @@ Label {
 
         onPressed: {
             if (root.tableInEditMode) {
-                root._grabFocus()
+                root._grabFocus();
             } else {
-                editingStarted()
-                openMenu(mouseX, mouseY)
+                root.editingStarted();
+                root.openMenu(mouseX, mouseY);
             }
         }
     }
-
 }

@@ -22,17 +22,16 @@ import QtQuick.Controls
 
 import shared
 
-
 MpvqcMenu {
     id: root
 
-    property alias copyItem: _copyItem
-    property alias deleteItem: _deleteItem
-    property alias editItem: _editItem
+    readonly property alias copyItem: _copyItem
+    readonly property alias deleteItem: _deleteItem
+    readonly property alias editItem: _editItem
 
-    signal copyCommentClicked()
-    signal deleteCommentClicked()
-    signal editCommentClicked()
+    signal copyCommentClicked
+    signal deleteCommentClicked
+    signal editCommentClicked
 
     modal: true
     dim: false
@@ -45,8 +44,8 @@ MpvqcMenu {
         icon.source: "qrc:/data/icons/edit_black_24dp.svg"
 
         onTriggered: {
-            root.exit = null
-            root.editCommentClicked()
+            root.exit = null;
+            root.editCommentClicked();
         }
     }
 
@@ -69,5 +68,4 @@ MpvqcMenu {
 
         onTriggered: root.deleteCommentClicked()
     }
-
 }

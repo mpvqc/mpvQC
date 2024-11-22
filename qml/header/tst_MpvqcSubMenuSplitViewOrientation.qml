@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,9 +27,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcSubMenuSplitViewOrientation'
-
-    Component { id: signalSpy; SignalSpy {} }
+    name: "MpvqcSubMenuSplitViewOrientation"
 
     Component {
         id: objectUnderTest
@@ -45,29 +42,28 @@ TestCase {
     }
 
     function test_layout() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        verify(control.verticalLayout.checked)
-        verify(!control.horizontalLayout.checked)
+        verify(control.verticalLayout.checked);
+        verify(!control.horizontalLayout.checked);
 
-        control.mpvqcApplication.mpvqcSettings.layoutOrientation = Qt.Horizontal
-        verify(!control.verticalLayout.checked)
-        verify(control.horizontalLayout.checked)
+        control.mpvqcApplication.mpvqcSettings.layoutOrientation = Qt.Horizontal;
+        verify(!control.verticalLayout.checked);
+        verify(control.horizontalLayout.checked);
 
-        control.mpvqcApplication.mpvqcSettings.layoutOrientation = 2
-        verify(control.verticalLayout.checked)
-        verify(!control.horizontalLayout.checked)
+        control.mpvqcApplication.mpvqcSettings.layoutOrientation = 2;
+        verify(control.verticalLayout.checked);
+        verify(!control.horizontalLayout.checked);
 
-        control.mpvqcApplication.mpvqcSettings.layoutOrientation = 1
-        verify(!control.verticalLayout.checked)
-        verify(control.horizontalLayout.checked)
+        control.mpvqcApplication.mpvqcSettings.layoutOrientation = 1;
+        verify(!control.verticalLayout.checked);
+        verify(control.horizontalLayout.checked);
 
-        control.verticalLayout.triggered()
-        compare(control.mpvqcApplication.mpvqcSettings.layoutOrientation, Qt.Vertical)
+        control.verticalLayout.triggered();
+        compare(control.mpvqcApplication.mpvqcSettings.layoutOrientation, Qt.Vertical);
 
-        control.horizontalLayout.triggered()
-        compare(control.mpvqcApplication.mpvqcSettings.layoutOrientation, Qt.Horizontal)
+        control.horizontalLayout.triggered();
+        compare(control.mpvqcApplication.mpvqcSettings.layoutOrientation, Qt.Horizontal);
     }
-
 }

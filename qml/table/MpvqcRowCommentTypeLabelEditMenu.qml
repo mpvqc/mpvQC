@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
 import shared
-
 
 MpvqcMenu {
     id: root
@@ -39,7 +40,6 @@ MpvqcMenu {
 
     signal itemClicked(string commentType)
 
-    visible: true
     dim: false
     modal: true
 
@@ -57,7 +57,7 @@ MpvqcMenu {
             checked: modelData === root.currentCommentType
 
             onTriggered: {
-                root.itemClicked(modelData)
+                root.itemClicked(modelData);
             }
         }
     }
@@ -79,8 +79,7 @@ MpvqcMenu {
         checked: visible
 
         onTriggered: {
-            root.itemClicked(root.currentCommentType)
+            root.itemClicked(root.currentCommentType);
         }
     }
-
 }

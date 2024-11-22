@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 QtObject {
     id: root
 
@@ -27,37 +26,36 @@ QtObject {
 
     property int currentResult: -1
     property int totalResults: -1
-    property string _lastQuery: ''
+    property string _lastQuery: ""
 
     signal highlightRequested(int rowIndex)
 
     function search(query: string): void {
-        _lastQuery = query
-        const includeCurrentRow = true
-        const topDown = true
-        _search(includeCurrentRow, topDown)
+        _lastQuery = query;
+        const includeCurrentRow = true;
+        const topDown = true;
+        _search(includeCurrentRow, topDown);
     }
 
     function requestNext(): void {
-        const includeCurrentRow = false
-        const topDown = true
-        _search(includeCurrentRow, topDown)
+        const includeCurrentRow = false;
+        const topDown = true;
+        _search(includeCurrentRow, topDown);
     }
 
     function requestPrevious(): void {
-        const includeCurrentRow = false
-        const topDown = false
-        _search(includeCurrentRow, topDown)
+        const includeCurrentRow = false;
+        const topDown = false;
+        _search(includeCurrentRow, topDown);
     }
 
     function _search(includeCurrentRow: bool, topDown: bool): void {
-        const result = root.searchFunc(_lastQuery, includeCurrentRow, topDown)
-        const nextIndex = result.nextIndex
+        const result = root.searchFunc(_lastQuery, includeCurrentRow, topDown);
+        const nextIndex = result.nextIndex;
         if (nextIndex >= 0) {
-            root.highlightRequested(nextIndex)
+            root.highlightRequested(nextIndex);
         }
-        root.currentResult = result.currentResult
-        root.totalResults = result.totalResults
+        root.currentResult = result.currentResult;
+        root.totalResults = result.totalResults;
     }
-
 }

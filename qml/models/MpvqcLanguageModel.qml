@@ -19,53 +19,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 ListModel {
     readonly property var languagesForTranslationTool: [
-        qsTranslate('Languages', 'English'),
-        qsTranslate('Languages', 'German'),
-        qsTranslate('Languages', 'Hebrew'),
-        qsTranslate('Languages', 'Italian'),
-        qsTranslate('Languages', 'Spanish'),
+        qsTranslate("Languages", "English"),
+        qsTranslate("Languages", "German"),
+        qsTranslate("Languages", "Hebrew"),
+        qsTranslate("Languages", "Italian"),
+        qsTranslate("Languages", "Spanish"),
     ]
 
     readonly property string systemLanguage: {
-        const uiLanguages = Qt.locale().uiLanguages
-        return _identifiers()
-            .find(language => uiLanguages.includes(language)) ?? 'en-US'
+        const uiLanguages = Qt.locale().uiLanguages;
+        return _identifiers().find(language => uiLanguages.includes(language)) ?? "en-US";
     }
 
     function _identifiers(): list<string> {
-        const marshalled = []
+        const marshalled = [];
         for (let i = 0; i < count; i++) {
-            marshalled.push(this.get(i).identifier)
+            marshalled.push(get(i).identifier);
         }
-        return marshalled
+        return marshalled;
     }
 
     ListElement {
-        language: 'German'
-        identifier: 'de-DE'
-        translator: 'Frechdachs'
+        language: "German"
+        identifier: "de-DE"
+        translator: "Frechdachs"
     }
     ListElement {
-        language: 'English'
-        identifier: 'en-US'
+        language: "English"
+        identifier: "en-US"
     }
     ListElement {
-        language: 'Spanish'
-        identifier: 'es-ES'
-        translator: 'RcUchiha'
+        language: "Spanish"
+        identifier: "es-ES"
+        translator: "RcUchiha"
     }
     ListElement {
-        language: 'Hebrew'
-        identifier: 'he-IL'
-        translator: 'cN3rd'
+        language: "Hebrew"
+        identifier: "he-IL"
+        translator: "cN3rd"
     }
     ListElement {
-        language: 'Italian'
-        identifier: 'it-IT'
-        translator: 'maddo'
+        language: "Italian"
+        identifier: "it-IT"
+        translator: "maddo"
     }
-
 }

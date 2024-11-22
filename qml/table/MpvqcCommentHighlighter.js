@@ -13,7 +13,6 @@ function highlightComment(comment, highlightedText) {
     return comment.replace(re, '<b><u>$&</u></b>')
 }
 
-
 // this is a direct translation to code of the spec
 if (!RegExp.escape) {
     RegExp.escape = (S) => {

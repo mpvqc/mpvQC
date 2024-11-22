@@ -19,41 +19,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 ListModel {
     ListElement {
-        name: 'inject'
-        url: 'https://github.com/ivankorobkov/python-inject'
-        licence: 'Apache-2.0'
-        version: '@@pypi-inject@@'
-        os: 'linux, windows'
+        name: "inject"
+        url: "https://github.com/ivankorobkov/python-inject"
+        licence: "Apache-2.0"
+        version: "@@pypi-inject@@"
+        os: "linux, windows"
     }
     ListElement {
-        name: 'jinja2'
-        url: 'https://github.com/pallets/jinja/'
-        licence: 'BSD-3-Clause'
-        version: '@@pypi-Jinja2@@'
-        os: 'linux, windows'
+        name: "jinja2"
+        url: "https://github.com/pallets/jinja/"
+        licence: "BSD-3-Clause"
+        version: "@@pypi-Jinja2@@"
+        os: "linux, windows"
     }
     ListElement {
-        name: 'python-mpv'
-        url: 'https://github.com/jaseg/python-mpv'
-        licence: 'GPL-3.0'
-        version: '@@pypi-mpv@@'
-        os: 'linux, windows'
+        name: "python-mpv"
+        url: "https://github.com/jaseg/python-mpv"
+        licence: "GPL-3.0"
+        version: "@@pypi-mpv@@"
+        os: "linux, windows"
     }
     ListElement {
-        name: 'PySide6'
-        url: 'https://wiki.qt.io/Qt_for_Python'
-        licence: 'LGPL-3.0'
-        version: '@@pypi-PySide6-Essentials@@'
-        os: 'linux, windows'
+        name: "PySide6"
+        url: "https://wiki.qt.io/Qt_for_Python"
+        licence: "LGPL-3.0"
+        version: "@@pypi-PySide6-Essentials@@"
+        os: "linux, windows"
     }
     ListElement {
-        name: 'pywin32'
-        url: 'https://github.com/mhammond/pywin32'
-        licence: 'PSF'
-        version: '@@pypi-pywin32@@'
-        os: 'windows'
+        name: "pywin32"
+        url: "https://github.com/mhammond/pywin32"
+        licence: "PSF"
+        version: "@@pypi-pywin32@@"
+        os: "windows"
+    }
+    ListElement {
+        name: "pytest"
+        url: "https://github.com/pytest-dev/pytest"
+        licence: "MIT"
+        version: "@@pypi-pytest@@"
+        os: "linux, windows"
     }
 }

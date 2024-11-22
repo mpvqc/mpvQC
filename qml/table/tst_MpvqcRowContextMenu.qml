@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,49 +27,64 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcMenuMore'
+    name: "MpvqcRowContextMenu"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
 
-        MpvqcRowContextMenu {
-            visible: true
-        }
+        MpvqcRowContextMenu {}
     }
 
     function test_editCommentClicked() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const spy = signalSpy.createObject(null, {target: control, signalName: 'editCommentClicked'})
-        verify(spy)
+        control.open();
 
-        mouseClick(control.editItem)
-        compare(spy.count, 1)
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "editCommentClicked"
+        });
+        verify(spy);
+
+        mouseClick(control.editItem);
+        compare(spy.count, 1);
     }
 
     function test_copyCommentClicked() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const spy = signalSpy.createObject(null, {target: control, signalName: 'copyCommentClicked'})
-        verify(spy)
+        control.open();
 
-        mouseClick(control.copyItem)
-        compare(spy.count, 1)
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "copyCommentClicked"
+        });
+        verify(spy);
+
+        mouseClick(control.copyItem);
+        compare(spy.count, 1);
     }
 
     function test_deleteCommentClicked() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const spy = signalSpy.createObject(null, {target: control, signalName: 'deleteCommentClicked'})
-        verify(spy)
+        control.open();
 
-        mouseClick(control.deleteItem)
-        compare(spy.count, 1)
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "deleteCommentClicked"
+        });
+        verify(spy);
+
+        mouseClick(control.deleteItem);
+        compare(spy.count, 1);
     }
-
 }

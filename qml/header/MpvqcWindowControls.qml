@@ -27,7 +27,10 @@ Item {
 
     readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
 
-    readonly property bool isWindows: Qt.platform.os === 'windows'
+    readonly property bool isWindows: Qt.platform.os === "windows"
+    readonly property url iconMaximize: "qrc:/data/icons/open_in_full_black_24dp.svg"
+    readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_black_24dp.svg"
+
     readonly property alias minimizeButton: _minimizeButton
     readonly property alias maximizeButton: _maximizeButton
     readonly property alias closeButton: _closeButton
@@ -50,15 +53,12 @@ Item {
     ToolButton {
         id: _maximizeButton
 
-        readonly property url iconMaximize: "qrc:/data/icons/open_in_full_black_24dp.svg"
-        readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_black_24dp.svg"
-
         height: root.height
         focusPolicy: Qt.NoFocus
         anchors.right: _closeButton.left
         icon.width: 18
         icon.height: 18
-        icon.source: root.mpvqcApplication.maximized ? iconNormalize : iconMaximize
+        icon.source: root.mpvqcApplication.maximized ? root.iconNormalize : root.iconMaximize
 
         onClicked: {
             root.mpvqcApplication.toggleMaximized();
