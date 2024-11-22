@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtCore
 import QtQuick
-import QtQuick.Controls.Material
 
 import models
 
@@ -40,7 +39,7 @@ QtObject {
         property alias enabled: root.backupEnabled
         property alias interval: root.backupInterval
 
-        category: 'Backup'
+        category: "Backup"
         location: root.settingsFile
     }
 
@@ -53,24 +52,24 @@ QtObject {
         property alias language: root.language
         property alias commentTypes: root.commentTypes
 
-        category: 'Common'
+        category: "Common"
         location: root.settingsFile
     }
     property string language: _languageModel.systemLanguage
     property list<string> commentTypes: root.getDefaultCommentTypes()
 
     function getDefaultCommentTypes(): list<string> {
-        return ['Translation', 'Spelling', 'Punctuation', 'Phrasing', 'Timing', 'Typeset', 'Note'];
+        return ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"];
     }
 
     readonly property list<string> forTranslationTool: [
-        qsTranslate('CommentTypes', 'Translation'),
-        qsTranslate('CommentTypes', 'Spelling'),
-        qsTranslate('CommentTypes', 'Punctuation'),
-        qsTranslate('CommentTypes', 'Phrasing'),
-        qsTranslate('CommentTypes', 'Timing'),
-        qsTranslate('CommentTypes', 'Typeset'),
-        qsTranslate('CommentTypes', 'Note'),
+        qsTranslate("CommentTypes", "Translation"),
+        qsTranslate("CommentTypes", "Spelling"),
+        qsTranslate("CommentTypes", "Punctuation"),
+        qsTranslate("CommentTypes", "Phrasing"),
+        qsTranslate("CommentTypes", "Timing"),
+        qsTranslate("CommentTypes", "Typeset"),
+        qsTranslate("CommentTypes", "Note"),
     ]
 
     // Export
@@ -82,11 +81,11 @@ QtObject {
         property alias writeHeaderNickname: root.writeHeaderNickname
         property alias writeHeaderVideoPath: root.writeHeaderVideoPath
 
-        category: 'Export'
+        category: "Export"
         location: root.settingsFile
     }
 
-    property string nickname: root.mpvqcUtilityPyObject.getEnvironmentVariable('USERNAME') || root.mpvqcUtilityPyObject.getEnvironmentVariable('USER') || 'nickname'
+    property string nickname: root.mpvqcUtilityPyObject.getEnvironmentVariable("USERNAME") || root.mpvqcUtilityPyObject.getEnvironmentVariable("USER") || "nickname"
     property bool writeHeaderDate: true
     property bool writeHeaderGenerator: true
     property bool writeHeaderNickname: false
@@ -105,7 +104,7 @@ QtObject {
         property alias statusbarPercentage: root.statusbarPercentage
         property alias timeFormat: root.timeFormat
 
-        category: 'StatusBar'
+        category: "StatusBar"
         location: root.settingsFile
     }
 
@@ -126,7 +125,7 @@ QtObject {
         property alias lastDirectorySubtitles: root.lastDirectorySubtitles
         property alias importWhenVideoLinkedInDocument: root.importWhenVideoLinkedInDocument
 
-        category: 'Import'
+        category: "Import"
         location: root.settingsFile
     }
 
@@ -140,7 +139,7 @@ QtObject {
     readonly property Settings _splitViewSettings: Settings {
         property alias layoutOrientation: root.layoutOrientation
 
-        category: 'SplitView'
+        category: "SplitView"
         location: root.settingsFile
     }
 
@@ -152,7 +151,7 @@ QtObject {
         property alias themeIdentifier: root.themeIdentifier
         property alias themeColorOption: root.themeColorOption
 
-        category: 'Theme'
+        category: "Theme"
         location: root.settingsFile
     }
 
@@ -170,7 +169,7 @@ QtObject {
     readonly property Settings _windowSettings: Settings {
         property alias titleFormat: root.windowTitleFormat
 
-        category: 'Window'
+        category: "Window"
         location: root.settingsFile
     }
 
