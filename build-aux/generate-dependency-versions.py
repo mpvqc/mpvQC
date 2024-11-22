@@ -105,7 +105,9 @@ class RequirementsUpdater:
                 version = f"{json.loads(text)['info']['version']}".strip()
                 resolved = self.ResolvedRequirement(name, version)
             else:
-                raise f"Cannot resolve version for dependency '{name}' with requirement: {requirement.requirement}"
+                raise RuntimeError(
+                    f"Cannot resolve version for dependency '{name}' with requirement: {requirement.requirement}"
+                )
             self._resolved_requirements.append(resolved)
 
     def replace_in_files(self, files: list[Path]):
