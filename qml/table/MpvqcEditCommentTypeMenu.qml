@@ -41,7 +41,6 @@ MpvqcMenu {
     x: root.mirrored ? openedAt.x - width : openedAt.x
     y: openedAt.y
 
-    dim: false
     modal: true
 
     function _handleTriggered(potentialNewCommentType: string): void {

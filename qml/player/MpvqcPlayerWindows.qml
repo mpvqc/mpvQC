@@ -26,15 +26,13 @@ import shared
 WindowContainer {
     id: root
 
+    required property var mpvqcApplication
+
+    readonly property var mpvqcNewCommentMenu: mpvqcApplication.mpvqcNewCommentMenu
+
     window: MpvWindowPyObject {
         flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput
         color: "black"
-    }
-
-    required property var mpvqcApplication
-
-    property var menu: MpvqcNewCommentMenu {
-        mpvqcApplication: root.mpvqcApplication
     }
 
     MpvqcPlayerMouseArea {
@@ -42,7 +40,7 @@ WindowContainer {
         anchors.fill: root
 
         onRightMouseButtonPressed: {
-            root.menu.popupMenu()
+            root.mpvqcNewCommentMenu.popupMenu()
         }
 
         onPressed: {
