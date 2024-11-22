@@ -71,7 +71,8 @@ class MpvqcApplication(QGuiApplication):
         identifier = self._engine.uiLanguage()
         locale = QLocale(identifier)
 
-        self._translator_qt.load(locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+        self._translator_qt.load(locale, "qtbase", "_",
+                                 QLibraryInfo.location(QLibraryInfo.LibraryPath.TranslationsPath))
         self._translator_mpvqc.load(f":/i18n/{identifier}.qm")
 
         self.installTranslator(self._translator_qt)
@@ -84,9 +85,9 @@ class MpvqcApplication(QGuiApplication):
 
     def start_engine(self):
         if sys.platform == "win32":
-            url = QUrl.fromLocalFile(":/qml/MainWindows.qml")
+            url = QUrl.fromLocalFile(":/qt/qml/MainWindows.qml")
         else:
-            url = QUrl.fromLocalFile(":/qml/Main.qml")
+            url = QUrl.fromLocalFile(":/qt/qml/Main.qml")
         self._engine.load(url)
 
     def verify(self):
