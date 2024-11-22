@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,9 +27,12 @@ TestCase {
     height: 60
     visible: true
     when: windowShown
-    name: 'MpvqcRowTimeLabelEditPopup'
+    name: "MpvqcRowTimeLabelEditPopup"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
@@ -50,7 +52,9 @@ TestCase {
                     property int duration: 0
                 }
                 property var mpvqcUtilityPyObject: QtObject {
-                    function formatTimeToStringLong(time) { return `${time}` }
+                    function formatTimeToStringLong(time) {
+                        return `${time}`;
+                    }
                 }
             }
         }
@@ -58,107 +62,151 @@ TestCase {
 
     function test_valueChanged_data() {
         return [
-            { tag: 'accepting', accept: true },
-            { tag: 'rejecting', accept: false },
-        ]
+            {
+                tag: "accepting",
+                accept: true
+            },
+            {
+                tag: "rejecting",
+                accept: false
+            },
+        ];
     }
 
     function test_valueChanged(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const valueChangedSpy = signalSpy.createObject(control, {target: control, signalName: 'valueChanged'})
-        verify(valueChangedSpy)
+        const valueChangedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "valueChanged"
+        });
+        verify(valueChangedSpy);
 
-        control.acceptValue = data.accept
-        control.spinBox.incrementValue()
+        control.acceptValue = data.accept;
+        control.spinBox.incrementValue();
 
-        compare(valueChangedSpy.count, data.accept ? 1 : 0)
+        compare(valueChangedSpy.count, data.accept ? 1 : 0);
     }
 
     function test_closeWithChange_data() {
-        return [{ tag: 'accepting', accept: true }, { tag: 'rejecting', accept: false }]
+        return [
+            {
+                tag: "accepting",
+                accept: true
+            },
+            {
+                tag: "rejecting",
+                accept: false
+            }
+        ];
     }
 
     function test_closeWithChange(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const editingAbortedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingAborted'})
-        verify(editingAbortedSpy)
+        const editingAbortedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "editingAborted"
+        });
+        verify(editingAbortedSpy);
 
-        const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
+        const editedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "edited"
+        });
+        verify(editedSpy);
 
-        control.acceptValue = data.accept
-        control.contentItem.value = 11
-        control.close()
+        control.acceptValue = data.accept;
+        control.contentItem.value = 11;
+        control.close();
 
-        compare(editedSpy.count, data.accept ? 1 : 0)
-        compare(editingAbortedSpy.count, data.accept ? 0 : 1)
+        compare(editedSpy.count, data.accept ? 1 : 0);
+        compare(editingAbortedSpy.count, data.accept ? 0 : 1);
 
-        verify(!control.visible)
+        verify(!control.visible);
     }
 
     function test_closeWithoutChange_data() {
-        return [{ tag: 'accepting', accept: true }, { tag: 'rejecting', accept: false }]
+        return [
+            {
+                tag: "accepting",
+                accept: true
+            },
+            {
+                tag: "rejecting",
+                accept: false
+            }
+        ];
     }
 
     function test_closeWithoutChange(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const editingAbortedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingAborted'})
-        verify(editingAbortedSpy)
+        const editingAbortedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "editingAborted"
+        });
+        verify(editingAbortedSpy);
 
-        const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
+        const editedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "edited"
+        });
+        verify(editedSpy);
 
-        control.acceptValue = data.accept
-        control.close()
+        control.acceptValue = data.accept;
+        control.close();
 
-        compare(editedSpy.count, 0)
-        compare(editingAbortedSpy.count, 1)
+        compare(editedSpy.count, 0);
+        compare(editingAbortedSpy.count, 1);
 
-        verify(!control.visible)
+        verify(!control.visible);
     }
 
     function test_pressEscape() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const editingAbortedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingAborted'})
-        verify(editingAbortedSpy)
+        const editingAbortedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "editingAborted"
+        });
+        verify(editingAbortedSpy);
 
-        const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
-        verify(editedSpy)
+        const editedSpy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "edited"
+        });
+        verify(editedSpy);
 
-        keyPress(Qt.Key_Escape)
+        keyPress(Qt.Key_Escape);
 
-        compare(editedSpy.count, 0)
-        compare(editingAbortedSpy.count, 1)
-        verify(!control.visible)
+        compare(editedSpy.count, 0);
+        compare(editingAbortedSpy.count, 1);
+        verify(!control.visible);
     }
 
     function test_pressArrowKeys() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.spinBox.value = 10
-        keyPress(Qt.Key_Left)
-        compare(control.spinBox.value, 9)
+        control.spinBox.value = 10;
+        keyPress(Qt.Key_Left);
+        compare(control.spinBox.value, 9);
 
-        control.spinBox.value = 10
-        keyPress(Qt.Key_Right)
-        compare(control.spinBox.value, 11)
+        control.spinBox.value = 10;
+        keyPress(Qt.Key_Right);
+        compare(control.spinBox.value, 11);
 
-        control.spinBox.value = 10
-        keyPress(Qt.Key_Up)
-        compare(control.spinBox.value, 11)
+        control.spinBox.value = 10;
+        keyPress(Qt.Key_Up);
+        compare(control.spinBox.value, 11);
 
-        control.spinBox.value = 10
-        keyPress(Qt.Key_Down)
-        compare(control.spinBox.value, 9)
+        control.spinBox.value = 10;
+        keyPress(Qt.Key_Down);
+        compare(control.spinBox.value, 9);
     }
-
 }

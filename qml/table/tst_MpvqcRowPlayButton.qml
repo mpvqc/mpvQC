@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,9 +27,12 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcRowPlayButton'
+    name: "MpvqcRowPlayButton"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
@@ -41,27 +43,32 @@ TestCase {
     }
 
     function test_click() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const buttonPressedSpy = signalSpy.createObject(null, {target: control, signalName: 'buttonPressed'})
-        verify(buttonPressedSpy)
+        const buttonPressedSpy = signalSpy.createObject(null, {
+            target: control,
+            signalName: "buttonPressed"
+        });
+        verify(buttonPressedSpy);
 
-        const playPressedSpy = signalSpy.createObject(null, {target: control, signalName: 'playPressed'})
-        verify(playPressedSpy)
+        const playPressedSpy = signalSpy.createObject(null, {
+            target: control,
+            signalName: "playPressed"
+        });
+        verify(playPressedSpy);
 
-        control.tableInEditMode = false
-        mouseClick(control)
-        compare(buttonPressedSpy.count, 1)
-        compare(playPressedSpy.count, 1)
+        control.tableInEditMode = false;
+        mouseClick(control);
+        compare(buttonPressedSpy.count, 1);
+        compare(playPressedSpy.count, 1);
 
-        buttonPressedSpy.clear()
-        playPressedSpy.clear()
+        buttonPressedSpy.clear();
+        playPressedSpy.clear();
 
-        control.tableInEditMode = true
-        mouseClick(control)
-        compare(buttonPressedSpy.count, 1)
-        compare(playPressedSpy.count, 0)
+        control.tableInEditMode = true;
+        mouseClick(control);
+        compare(buttonPressedSpy.count, 1);
+        compare(playPressedSpy.count, 0);
     }
-
 }

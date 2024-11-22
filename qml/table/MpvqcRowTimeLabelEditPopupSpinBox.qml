@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-
 SpinBox {
     id: root
 
@@ -30,15 +29,23 @@ SpinBox {
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var duration: mpvqcMpvPlayerPropertiesPyObject.duration
 
+    readonly property url next: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
+    readonly property url before: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
+
+    readonly property url downIcon: mirrored ? next : before
+    readonly property url upIcon: mirrored ? before : next
+
     from: 0
     to: duration > 0 ? duration : 24 * 60 * 60 - 1
-    bottomPadding: topPadding
 
-    textFromValue: (value) => {
+    bottomPadding: topPadding
+    background: null
+
+    textFromValue: value => {
         if (duration >= 60 * 60) {
-            return mpvqcUtilityPyObject.formatTimeToStringLong(value)
+            return mpvqcUtilityPyObject.formatTimeToStringLong(value);
         } else {
-            return mpvqcUtilityPyObject.formatTimeToStringShort(value)
+            return mpvqcUtilityPyObject.formatTimeToStringShort(value);
         }
     }
 
@@ -53,24 +60,21 @@ SpinBox {
             acceptedButtons: Qt.NoButton
             cursorShape: Qt.IBeamCursor
 
-            onWheel: (event) => {
+            onWheel: event => {
                 if (event.angleDelta.y > 0) {
-                    root.incrementValue()
+                    root.incrementValue();
                 } else {
-                    root.decrementValue()
+                    root.decrementValue();
                 }
             }
         }
     }
 
     down.indicator: ToolButton {
-        readonly property url next: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
-        readonly property url before: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
-
         x: root.mirrored ? root.width - width : 0
         height: root.height
         width: height
-        icon.source: root.mirrored ? next : before
+        icon.source: root.downIcon
         icon.width: 28
         icon.height: 28
 
@@ -78,31 +82,23 @@ SpinBox {
     }
 
     up.indicator: ToolButton {
-        readonly property url next: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
-        readonly property url before: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
-
         x: root.mirrored ? 0 : root.width - width
         height: root.height
         width: height
-        icon.source: root.mirrored ? before : next
+        icon.source: root.upIcon
         icon.width: 28
         icon.height: 28
 
         onPressed: root.incrementValue()
     }
 
-    background: Rectangle {
-        color: 'transparent'
-    }
-
     function decrementValue(): void {
-        decrease()
-        valueModified()
+        decrease();
+        valueModified();
     }
 
     function incrementValue(): void {
-        increase()
-        valueModified()
+        increase();
+        valueModified();
     }
-
 }

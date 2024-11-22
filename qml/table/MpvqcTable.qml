@@ -17,11 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls.Material
 
 import dialogs
-
+import shared
 
 ListView {
     id: root
@@ -39,8 +41,7 @@ ListView {
     property bool currentlyEditing: false
 
     property var deleteCommentMessageBox: null
-    property var deleteCommentMessageBoxFactory: Component
-    {
+    readonly property var deleteCommentMessageBoxFactory: Component {
         MpvqcMessageBoxDeleteComment {
             property int index
 
@@ -50,12 +51,11 @@ ListView {
         }
     }
 
-    readonly property Timer delayEnsureVisibleTimer: Timer
-    {
+    readonly property Timer delayEnsureVisibleTimer: Timer {
         interval: 0
 
         onTriggered: {
-            root._ensureVisible()
+            root._ensureVisible();
         }
     }
 
@@ -106,9 +106,9 @@ ListView {
         onHeightChanged: {
             if (rowSelected && tableInEditMode) {
                 if (index === root.count - 1) {
-                    root.delayEnsureVisibleTimer.restart()
+                    root.delayEnsureVisibleTimer.restart();
                 } else {
-                    root._ensureVisible()
+                    root._ensureVisible();
                 }
             }
         }
@@ -119,127 +119,131 @@ ListView {
 
         onDeleteCommentClicked: root._requestDeleteRow()
 
-        onEditingStarted: { root.currentlyEditing = true }
+        onEditingStarted: {
+            root.currentlyEditing = true;
+        }
 
-        onEditingStopped: { root.currentlyEditing = false }
+        onEditingStopped: {
+            root.currentlyEditing = false;
+        }
 
         onPlayPressed: root.mpv.jump_to(time)
 
-        onTimeEdited: (newTime) => root.model.update_time(index, newTime)
+        onTimeEdited: newTime => root.model.update_time(index, newTime)
 
-        onCommentTypeEdited: (newCommentType) => root.model.update_comment_type(index, newCommentType)
+        onCommentTypeEdited: newCommentType => root.model.update_comment_type(index, newCommentType)
 
-        onCommentEdited: (newComment) => root.model.update_comment(index, newComment)
+        onCommentEdited: newComment => root.model.update_comment(index, newComment)
     }
 
     function selectRow(index: int): void {
-        root.currentIndex = index
+        root.currentIndex = index;
     }
 
     function _requestDeleteRow(): void {
-        deleteCommentMessageBox = deleteCommentMessageBoxFactory.createObject(root)
-        deleteCommentMessageBox.index = root.currentIndex
-        deleteCommentMessageBox.closed.connect(deleteCommentMessageBox.destroy)
-        deleteCommentMessageBox.open()
+        deleteCommentMessageBox = deleteCommentMessageBoxFactory.createObject(root);
+        deleteCommentMessageBox.index = root.currentIndex;
+        deleteCommentMessageBox.closed.connect(deleteCommentMessageBox.destroy);
+        deleteCommentMessageBox.open();
     }
 
     function _copyCurrentCommentToClipboard() {
-        const text = root.currentItem.toClipboardContent()
-        root.mpvqcUtilityPyObject.copyToClipboard(text)
+        const text = root.currentItem.toClipboardContent();
+        root.mpvqcUtilityPyObject.copyToClipboard(text);
     }
 
     function startEditing(): void {
-        const index = root.currentIndex
-        const item = root.itemAtIndex(index)
+        const index = root.currentIndex;
+        const item = root.itemAtIndex(index);
         if (item) {
-            _ensureVisible()
-            item.startEditing()
+            _ensureVisible();
+            item.startEditing();
         }
     }
 
     function _ensureVisible(): void {
-        root.positionViewAtIndex(root.currentIndex, ListView.Contain)
+        root.positionViewAtIndex(root.currentIndex, ListView.Contain);
     }
 
     function addNewComment(commentType: string): void {
-        root.model.add_row(commentType)
+        root.model.add_row(commentType);
     }
 
     function _handleDeleteComment(event) {
         if (event.isAutoRepeat) {
-            return
+            return;
         }
 
         if (!root.mpvqcApplication.fullscreen && root.haveComments) {
-            return root._requestDeleteRow()
+            return root._requestDeleteRow();
         }
     }
 
     function _handleCPressed(event) {
         if (event.modifiers === Qt.ControlModifier) {
             if (event.isAutoRepeat) {
-                return
+                return;
             }
 
-            const haveComments = root.haveComments
-            const notEditing = !root.currentlyEditing
-            const notFullscreen = !root.mpvqcApplication.fullscreen
+            const haveComments = root.haveComments;
+            const notEditing = !root.currentlyEditing;
+            const notFullscreen = !root.mpvqcApplication.fullscreen;
 
             if (haveComments && notEditing && notFullscreen) {
-                return root._copyCurrentCommentToClipboard()
+                return root._copyCurrentCommentToClipboard();
             }
         }
-        event.accepted = false
+        event.accepted = false;
     }
 
     function _handleZPressed(event) {
-        const ctrlPressed = event.modifiers & Qt.ControlModifier
-        const shiftPressed = event.modifiers & Qt.ShiftModifier
+        const ctrlPressed = event.modifiers & Qt.ControlModifier;
+        const shiftPressed = event.modifiers & Qt.ShiftModifier;
 
         if (ctrlPressed && !event.isAutoRepeat) {
             if (shiftPressed) {
-                root.model.redo()
+                root.model.redo();
             } else {
-                root.model.undo()
+                root.model.undo();
             }
-            return
+            return;
         }
-        event.accepted = false
+        event.accepted = false;
     }
 
     function disableMovingHighlightRectangle(): void {
-        root.highlightMoveDuration = 0
+        root.highlightMoveDuration = 0;
     }
 
     function enableMovingHighlightRectangle(): void {
-        root.highlightMoveDuration = root.defaultHighlightMoveDuration
+        root.highlightMoveDuration = root.defaultHighlightMoveDuration;
     }
 
-    Keys.onReturnPressed: (event) => {
+    Keys.onReturnPressed: event => {
         if (event.isAutoRepeat) {
-            return
+            return;
         }
 
-        const haveComments = root.haveComments
-        const notEditing = !root.currentlyEditing
-        const notFullscreen = !root.mpvqcApplication.fullscreen
+        const haveComments = root.haveComments;
+        const notEditing = !root.currentlyEditing;
+        const notFullscreen = !root.mpvqcApplication.fullscreen;
 
         if (haveComments && notEditing && notFullscreen) {
-            return root.startEditing()
+            return root.startEditing();
         }
     }
 
     Keys.onPressed: event => {
         switch (event.key) {
-            case Qt.Key_Delete:
-            case Qt.Key_Backspace:
-                return _handleDeleteComment(event)
-            case Qt.Key_C:
-                return _handleCPressed(event)
-            case Qt.Key_Z:
-                return _handleZPressed(event)
-            default:
-                event.accepted = false
+        case Qt.Key_Delete:
+        case Qt.Key_Backspace:
+            return _handleDeleteComment(event);
+        case Qt.Key_C:
+            return _handleCPressed(event);
+        case Qt.Key_Z:
+            return _handleZPressed(event);
+        default:
+            event.accepted = false;
         }
     }
 
@@ -247,68 +251,67 @@ ListView {
         target: root.model
 
         function onCommentsImported(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
         function onCommentsImportedUndone(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
         function onCommentsClearedUndone(): void {
-            const lastIndex = root.count - 1
-            _quickSelect(lastIndex)
+            const lastIndex = root.count - 1;
+            _quickSelect(lastIndex);
         }
 
         function onNewCommentAddedInitially(index: int): void {
-            _quickSelect(index)
-            root.startEditing()
+            _quickSelect(index);
+            root.startEditing();
         }
 
         function onNewCommentAddedUndone(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
         function onNewCommentAddedRedone(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
         function onCommentRemovedUndone(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
         function onTimeUpdatedInitially(index: int): void {
-            root.selectRow(index)
+            root.selectRow(index);
         }
 
         function onTimeUpdatedUndone(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
         function onTimeUpdatedRedone(index: int): void {
-            _quickSelect(index)
+            _quickSelect(index);
         }
 
-        function onCommentTypeUpdated(index: int) {
-            _quickSelect(index)
+        function onCommentTypeUpdated(index: int): void {
+            _quickSelect(index);
         }
 
-        function onCommentTypeUpdatedUndone(index: int) {
-            _quickSelect(index)
+        function onCommentTypeUpdatedUndone(index: int): void {
+            _quickSelect(index);
         }
 
-        function onCommentUpdated(index: int) {
-            _quickSelect(index)
+        function onCommentUpdated(index: int): void {
+            _quickSelect(index);
         }
 
-        function onCommentUpdatedUndone(index: int) {
-            _quickSelect(index)
+        function onCommentUpdatedUndone(index: int): void {
+            _quickSelect(index);
         }
 
         function _quickSelect(index: int): void {
-            root.disableMovingHighlightRectangle()
-            root.selectRow(index)
-            root.enableMovingHighlightRectangle()
+            root.disableMovingHighlightRectangle();
+            root.selectRow(index);
+            root.enableMovingHighlightRectangle();
         }
     }
-
 }

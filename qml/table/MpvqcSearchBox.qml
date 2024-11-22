@@ -18,9 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
-
 
 Popup {
     id: root
@@ -30,7 +29,7 @@ Popup {
     required property bool applicationIsFullscreen
     required property var mpvqcDefaultTextValidatorPyObject
 
-    readonly property string searchQuery: searchQueryActive ? _textField.text : ''
+    readonly property string searchQuery: searchQueryActive ? _textField.text : ""
 
     readonly property int customMarginVertical: 30
     readonly property int customMarginTop: 10
@@ -38,8 +37,8 @@ Popup {
     readonly property var searchService: MpvqcSearchService {
         searchFunc: root.searchFunc
 
-        onHighlightRequested: (index) => {
-            root.highlightRequested(index)
+        onHighlightRequested: index => {
+            root.highlightRequested(index);
         }
     }
 
@@ -60,27 +59,27 @@ Popup {
     signal highlightRequested(int rowIndex)
 
     function showSearchBox() {
-        root.visible = true
-        root.searchQueryActive = true
+        root.visible = true;
+        root.searchQueryActive = true;
         _textField.selectAll();
-        _textField.forceActiveFocus()
+        _textField.forceActiveFocus();
     }
 
     function hideSearchBox() {
-        root.visible = false
-        root.searchQueryActive = false
+        root.visible = false;
+        root.searchQueryActive = false;
     }
 
     function _hideSearchBoxWithoutAnimation() {
-        const exitAnimation = root.exit
-        root.exit = null
-        hideSearchBox()
-        root.exit = exitAnimation
+        const exitAnimation = root.exit;
+        root.exit = null;
+        hideSearchBox();
+        root.exit = exitAnimation;
     }
 
     onApplicationIsFullscreenChanged: {
         if (root.applicationIsFullscreen) {
-            _hideSearchBoxWithoutAnimation()
+            _hideSearchBoxWithoutAnimation();
         }
     }
 
@@ -99,23 +98,23 @@ Popup {
             Layout.fillWidth: true
 
             onTextChanged: {
-                root.searchService.search(text)
+                root.searchService.search(text);
             }
 
             Component.onCompleted: {
-                background.fillColor = 'transparent'
-                background.outlineColor = 'transparent'
-                background.focusedOutlineColor = 'transparent'
+                background.fillColor = "transparent";
+                background.outlineColor = "transparent";
+                background.focusedOutlineColor = "transparent";
             }
 
-            Keys.onPressed: (event) => {
+            Keys.onPressed: event => {
                 if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier) {
                     if (event.isAutoRepeat) {
-                        return
+                        return;
                     }
-                    return root.showSearchBox()
+                    return root.showSearchBox();
                 }
-                event.accepted = false
+                event.accepted = false;
             }
         }
 
@@ -127,7 +126,7 @@ Popup {
             readonly property bool haveResults: totalResults > 0
             readonly property bool displayText: currentResult >= 0 && totalResults >= 0
 
-            text: displayText ? `${currentResult}/${totalResults}` : ''
+            text: displayText ? `${currentResult}/${totalResults}` : ""
             focusPolicy: Qt.NoFocus
             enabled: false
         }
@@ -161,7 +160,6 @@ Popup {
 
             onPressed: root.hideSearchBox()
         }
-
     }
 
     Shortcut {
@@ -198,5 +196,4 @@ Popup {
 
         onActivated: root.searchService.requestNext()
     }
-
 }

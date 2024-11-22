@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,16 +27,19 @@ TestCase {
     height: 60
     visible: true
     when: windowShown
-    name: 'MpvqcRowTimeLabelEditPopupSpinBox'
+    name: "MpvqcRowTimeLabelEditPopupSpinBox"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
 
         MpvqcRowTimeLabelEditPopupSpinBox {
-            width: testCase.width
-            height: testCase.height
+            width: 180
+            height: 60
 
             value: 10
 
@@ -46,72 +48,78 @@ TestCase {
                     property int duration: 0
                 }
                 property var mpvqcUtilityPyObject: QtObject {
-                    function formatTimeToStringShort(time) { return `${time}` }
-                    function formatTimeToStringLong(time) { return `${time}` }
+                    function formatTimeToStringShort(time) {
+                        return `${time}`;
+                    }
+                    function formatTimeToStringLong(time) {
+                        return `${time}`;
+                    }
                 }
             }
         }
     }
 
     function test_upperLimit() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 0
-        compare(control.to, 24 * 60 * 60 - 1)
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 0;
+        compare(control.to, 24 * 60 * 60 - 1);
 
-        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 42
-        compare(control.to, 42)
+        control.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject.duration = 42;
+        compare(control.to, 42);
     }
 
     function test_scroll() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const x = control.contentItem.width / 2
-        const y = control.contentItem.height / 2
-        const deltaX = 0
+        const x = control.contentItem.width / 2;
+        const y = control.contentItem.height / 2;
+        const deltaX = 0;
 
-        control.value = 10
-        mouseWheel(control.contentItem, x, y, deltaX, 1)
-        compare(control.value, 11)
+        control.value = 10;
+        mouseWheel(control.contentItem, x, y, deltaX, 1);
+        compare(control.value, 11);
 
-        control.value = 10
-        mouseWheel(control.contentItem, x, y, deltaX, -1)
-        compare(control.value, 9)
+        control.value = 10;
+        mouseWheel(control.contentItem, x, y, deltaX, -1);
+        compare(control.value, 9);
     }
 
     function test_click() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        control.value = 10
-        mouseClick(control.up.indicator)
-        compare(control.value, 11)
+        control.value = 10;
+        mouseClick(control.up.indicator);
+        compare(control.value, 11);
 
-        control.value = 10
-        mouseClick(control.down.indicator)
-        compare(control.value, 9)
+        control.value = 10;
+        mouseClick(control.down.indicator);
+        compare(control.value, 9);
     }
 
     function test_changeProgrammatically() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        const spy = signalSpy.createObject(control, {target: control, signalName: 'valueModified'})
-        verify(spy)
+        const spy = signalSpy.createObject(control, {
+            target: control,
+            signalName: "valueModified"
+        });
+        verify(spy);
 
-        spy.clear()
-        control.value = 10
-        control.incrementValue()
-        compare(control.value, 11)
-        compare(spy.count, 1)
+        spy.clear();
+        control.value = 10;
+        control.incrementValue();
+        compare(control.value, 11);
+        compare(spy.count, 1);
 
-        spy.clear()
-        control.value = 10
-        control.decrementValue()
-        compare(control.value, 9)
-        compare(spy.count, 1)
+        spy.clear();
+        control.value = 10;
+        control.decrementValue();
+        compare(control.value, 9);
+        compare(spy.count, 1);
     }
-
 }

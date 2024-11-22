@@ -21,7 +21,6 @@ import QtQuick
 
 import pyobjects
 
-
 FocusScope {
     id: root
 
@@ -65,32 +64,33 @@ FocusScope {
             mpvqcDefaultTextValidatorPyObject: root.mpvqcApplication.mpvqcDefaultTextValidatorPyObject
 
             searchFunc: (query, includeCurrentRow, topDown) => {
-                return _mpvqcTable.model.search(query, includeCurrentRow, topDown, _mpvqcTable.currentIndex)
+                return _mpvqcTable.model.search(query, includeCurrentRow, topDown, _mpvqcTable.currentIndex);
             }
 
-            onHighlightRequested: (index) => {
-                _mpvqcTable.selectRow(index)
+            onHighlightRequested: index => {
+                _mpvqcTable.selectRow(index);
             }
         }
 
-        Keys.onEscapePressed: (event) => {
+        Keys.onEscapePressed: event => {
             if (_mpvqcSearchBox.visible) {
-                return _mpvqcSearchBox.hideSearchBox()
+                return _mpvqcSearchBox.hideSearchBox();
             }
-            event.accepted = false
+            event.accepted = false;
         }
 
-        Keys.onPressed: (event) => {
-            if (event.key === Qt.Key_F
-                && event.modifiers === Qt.ControlModifier
-                && !root.mpvqcApplication.fullscreen
-                && !root.mpvqcCommentTable.currentlyEditing
-                && root.mpvqcCommentTable.haveComments
-            ) {
-                return _mpvqcSearchBox.showSearchBox()
+        Keys.onPressed: event => {
+            const displaySearchBox = event.key === Qt.Key_F // keep formatter happy
+            && event.modifiers === Qt.ControlModifier // keep formatter happy
+            && !root.mpvqcApplication.fullscreen  // keep formatter happy
+            && !root.mpvqcCommentTable.currentlyEditing // keep formatter happy
+            && root.mpvqcCommentTable.haveComments; // keep formatter happy
+
+            if (displaySearchBox) {
+                _mpvqcSearchBox.showSearchBox();
+                return;
             }
-            event.accepted = false
+            event.accepted = false;
         }
     }
-
 }

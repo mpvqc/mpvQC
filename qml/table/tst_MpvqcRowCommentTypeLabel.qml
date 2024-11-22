@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-
 TestCase {
     id: testCase
 
@@ -28,94 +27,89 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: 'MpvqcRowCommentTypeLabel'
+    name: "MpvqcRowCommentTypeLabel"
 
-    Component { id: signalSpy; SignalSpy {} }
+    Component {
+        id: signalSpy
+        SignalSpy {}
+    }
 
     Component {
         id: objectUnderTest
 
         MpvqcRowCommentTypeLabel {
-
-            commentType: 'comment type'
+            commentType: "comment type"
             rowSelected: false
             tableInEditMode: false
             focus: false
 
             mpvqcApplication: QtObject {
                 property var mpvqcSettings: QtObject {
-                    property var commentTypes: ListModel {
-                        ListElement {type: '1'}
-                        ListElement {type: '2'}
-                        ListElement {type: '3'}
-                        ListElement {type: '4'}
-                        ListElement {type: '5'}
-                        ListElement {type: '6'}
-                        ListElement {type: '7'}
-
-                        function items(): list<string> {
-                            const marshalled = []
-                            for (let i = 0; i < count; i++) {
-                                marshalled.push(this.get(i)?.type)
-                            }
-                            return marshalled
-                        }
-                    }
+                    property var commentTypes: ["1", "2", "3", "4", "5", "6", "7"]
                 }
             }
         }
     }
 
     function test_click() {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
         // row-selection/edit-mode
-        control.rowSelected = true
-        control.tableInEditMode = true
-        verify(!control.focus)
-        mouseClick(control)
-        verify(control.focus)
+        control.rowSelected = true;
+        control.tableInEditMode = true;
+        verify(!control.focus);
+        mouseClick(control);
+        verify(control.focus);
 
         // row-selection/no-edit-mode
-        let spy = signalSpy.createObject(control, {target: control, signalName: 'editingStarted'})
-        verify(spy)
-        control.rowSelected = true
-        control.tableInEditMode = false
-        compare(spy.count, 0)
-        mouseClick(control)
-        compare(spy.count, 1)
-        spy.clear()
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "editingStarted"
+        });
+        verify(spy);
+
+        control.rowSelected = true;
+        control.tableInEditMode = false;
+        compare(spy.count, 0);
+        mouseClick(control);
+        compare(spy.count, 1);
+        spy.clear();
     }
 
-    function createControlInEditMode(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase)
-        verify(control)
-        verify(!control.menu)
-        control.openMenu(0, 0)
-        verify(control.menu)
-        return control
+    function createControlInEditMode(): variant {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        verify(!control.menu);
+        control.openMenu(0, 0);
+        verify(control.menu);
+        return control;
     }
 
     function test_stopEdit() {
-        const control = createControlInEditMode()
+        const control = createControlInEditMode();
 
-        mouseClick(control)
-        const editingStoppedSpy = signalSpy.createObject(control, {target: control, signalName: 'editingStopped'})
+        mouseClick(control);
+        const editingStoppedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "editingStopped"
+        });
 
-        control.menu.closed()
-        compare(editingStoppedSpy.count, 1)
+        control.menu.closed();
+        compare(editingStoppedSpy.count, 1);
     }
 
     function test_edit() {
-        const control = createControlInEditMode()
+        const control = createControlInEditMode();
 
-        const editedSpy = signalSpy.createObject(control, {target: control, signalName: 'edited'})
+        const editedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "edited"
+        });
 
-        control.menu.itemClicked('newCommentType')
+        control.menu.itemClicked("newCommentType");
 
-        compare(editedSpy.count, 1)
-        compare(editedSpy.signalArguments[0][0], 'newCommentType')
+        compare(editedSpy.count, 1);
+        compare(editedSpy.signalArguments[0][0], "newCommentType");
     }
-
 }

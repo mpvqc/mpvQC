@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls.Material
 
-
 Popup {
     id: root
 
@@ -68,19 +67,20 @@ Popup {
     }
 
     onAboutToHide: {
-        if (!acceptValue) return
+        if (!acceptValue)
+            return;
 
-        const rawText = _textField.text.trim()
-        const sanitizedText = root.mpvqcDefaultTextValidator.replace_special_characters(rawText)
+        const rawText = _textField.text.trim();
+        const sanitizedText = root.mpvqcDefaultTextValidator.replace_special_characters(rawText);
 
         if (root.currentComment !== sanitizedText) {
-            root.edited(sanitizedText)
+            root.edited(sanitizedText);
         }
     }
 
     onActiveFocusChanged: {
         if (!activeFocus) {
-            root.close()
+            root.close();
         }
     }
 
@@ -88,14 +88,13 @@ Popup {
         sequence: "Esc"
 
         onActivated: {
-            root.acceptValue = false
-            root.close()
+            root.acceptValue = false;
+            root.close();
         }
     }
 
     Component.onCompleted: {
         _textField.selectAll();
-        _textField.forceActiveFocus()
+        _textField.forceActiveFocus();
     }
-
 }

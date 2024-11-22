@@ -17,16 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
 import "MpvqcCommentHighlighter.js" as CommentHighlighter
 
-
 Label {
     id: root
 
     required property var mpvqcApplication
+
     required property string comment
     required property string searchQuery
     required property bool rowSelected
@@ -36,50 +38,56 @@ Label {
     required property color selectionColor
     required property color selectedTextColor
 
-    property alias loader: _loader
+    readonly property alias loader: _loader
 
     readonly property var mpvqcDefaultTextValidatorPyObject: mpvqcApplication.mpvqcDefaultTextValidatorPyObject
-    readonly property Timer delayEditingStoppedTimer: Timer { interval: 150; onTriggered: root.editingStopped() }
+    readonly property Timer delayEditingStoppedTimer: Timer {
+        interval: 150
+        onTriggered: root.editingStopped()
+    }
 
     signal edited(string newComment)
-    signal editingStarted()
-    signal editingStopped()
+    signal editingStarted
+    signal editingStopped
 
     textFormat: searchQuery ? Text.StyledText : Text.PlainText
     wrapMode: Text.WordWrap
     horizontalAlignment: Text.AlignLeft
 
     text: {
-        if (_loader.item) return ''  // Avoid rendering text below the popup
-        if (searchQuery) return CommentHighlighter.highlightComment(comment, searchQuery)
-        return comment
+        if (_loader.item)
+            return "";  // Avoid rendering text below the popup
+        if (searchQuery)
+            return CommentHighlighter.highlightComment(comment, searchQuery);
+        return comment;
     }
 
     height: {
-        if (_loader.item) return _loader.item.contentItem.height + topPadding
-        return implicitHeight
+        if (_loader.item)
+            return _loader.item.contentItem.height + topPadding;
+        return implicitHeight;
     }
 
     function _grabFocus(): void {
-        focus = true
+        focus = true;
     }
 
     function startEditing(): void {
-        editingStarted()
-        openPopup()
+        editingStarted();
+        openPopup();
     }
 
     function openPopup(): void {
-        _loader.sourceComponent = _editComponent
+        _loader.sourceComponent = _editComponent;
     }
 
     function _stopEditing(): void {
-        _closePopup()
-        delayEditingStoppedTimer.restart()
+        _closePopup();
+        delayEditingStoppedTimer.restart();
     }
 
     function _closePopup(): void {
-        _loader.sourceComponent = undefined
+        _loader.sourceComponent = undefined;
     }
 
     MouseArea {
@@ -88,14 +96,16 @@ Label {
 
         onPressed: {
             if (root.tableInEditMode) {
-                root._grabFocus()
+                root._grabFocus();
             } else {
-                root.startEditing()
+                root.startEditing();
             }
         }
     }
 
-    Loader { id: _loader }
+    Loader {
+        id: _loader
+    }
 
     Component {
         id: _editComponent
@@ -114,8 +124,7 @@ Label {
 
             onClosed: root._stopEditing()
 
-            onEdited: (newComment) => root.edited(newComment)
+            onEdited: newComment => root.edited(newComment)
         }
     }
-
 }
