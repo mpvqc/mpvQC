@@ -16,33 +16,28 @@
 PYTHON_DIR := invocation_directory() + '/' + if os_family() == 'windows' { 'venv/Scripts' } else { 'venv/bin' }
 PYTHON := PYTHON_DIR + if os_family() == 'windows' { '/python.exe' } else { '/python3' }
 
-TOOL_CLI_LUPDATE := PYTHON_DIR + '/pyside6-lupdate'
 TOOL_CLI_LRELEASE := PYTHON_DIR + '/pyside6-lrelease'
+TOOL_CLI_LUPDATE := PYTHON_DIR + '/pyside6-lupdate'
 TOOL_CLI_RCC := PYTHON_DIR + '/pyside6-rcc'
-TOOL_CLI_QML_TESTRUNNER := 'qmltestrunner'
-TOOL_CLI_QML_LINTER := 'qmllint'
 
-export QT_QPA_PLATFORM := 'offscreen'
-export QT_QUICK_CONTROLS_STYLE := 'Material'
-export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
+TOOL_CLI_QML_LINTER := 'qmllint'
+TOOL_CLI_QML_TESTRUNNER := 'qmltestrunner'
 
 export QML_IMPORT_PATH := DIRECTORY_QML_TESTS
+export QT_QPA_PLATFORM := 'offscreen'
+export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
+export QT_QUICK_CONTROLS_STYLE := 'Material'
 
 #####       #####
 ##### Names #####
 #####       #####
 
-NAME_APPLICATION := 'mpvQC'
 NAME_DIRECTORY_BUILD := 'build'
 NAME_DIRECTORY_BUILD_HELPERS := 'build-aux'
-NAME_DIRECTORY_DATA := 'data'
-NAME_DIRECTORY_I18N := 'i18n'
 NAME_DIRECTORY_PY_SOURCES := 'mpvqc'
 NAME_DIRECTORY_PY_TESTS := 'test'
-NAME_DIRECTORY_QML_SOURCES := 'qml'
-NAME_DIRECTORY_QML_TESTS := 'qml'
-NAME_FILE_MAIN_ENTRY := 'main.py'
 NAME_FILE_GENERATED_RESOURCES := 'generated_resources.py'
+NAME_FILE_MAIN_ENTRY := 'main.py'
 
 #####                      #####
 ##### Existing Directories #####
@@ -50,12 +45,12 @@ NAME_FILE_GENERATED_RESOURCES := 'generated_resources.py'
 
 DIRECTORY_ROOT := invocation_directory()
 DIRECTORY_BUILD_HELPERS := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_BUILD_HELPERS
-DIRECTORY_DATA := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_DATA
-DIRECTORY_I18N := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_I18N
+DIRECTORY_DATA := DIRECTORY_ROOT + '/data'
+DIRECTORY_I18N := DIRECTORY_ROOT + '/i18n'
 DIRECTORY_PY_SOURCES := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_PY_SOURCES
 DIRECTORY_PY_TESTS := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_PY_TESTS
-DIRECTORY_QML_SOURCES := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_QML_SOURCES
-DIRECTORY_QML_TESTS := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_QML_TESTS
+DIRECTORY_QML_SOURCES := DIRECTORY_ROOT + '/qml'
+DIRECTORY_QML_TESTS := DIRECTORY_ROOT + '/qml'
 
 #####                #####
 ##### Existing Files #####
@@ -68,24 +63,27 @@ FILE_APP_ENTRY := DIRECTORY_ROOT + '/' + NAME_FILE_MAIN_ENTRY
 #####                       #####
 
 DIRECTORY_BUILD := DIRECTORY_ROOT + '/' + NAME_DIRECTORY_BUILD
-DIRECTORY_BUILD_QRC_QML := DIRECTORY_BUILD + '/qrc-' + NAME_DIRECTORY_QML_SOURCES
-DIRECTORY_BUILD_QRC_DATA := DIRECTORY_BUILD + '/qrc-' + NAME_DIRECTORY_DATA
-DIRECTORY_BUILD_QRC_I18N := DIRECTORY_BUILD + '/qrc-' + NAME_DIRECTORY_I18N
-DIRECTORY_BUILD_TRANSLATIONS := DIRECTORY_BUILD + '/translations'
-DIRECTORY_BUILD_RESOURCES := DIRECTORY_BUILD + '/resources'
-DIRECTORY_BUILD_RELEASE := DIRECTORY_BUILD + '/release'
 DIRECTORY_BUILD_PY := DIRECTORY_BUILD_RELEASE + '/' + NAME_DIRECTORY_PY_SOURCES
+
+#
+
+DIRECTORY_BUILD_QRC_DATA := DIRECTORY_BUILD + '/qrc-data'
+DIRECTORY_BUILD_QRC_I18N := DIRECTORY_BUILD + '/qrc-i18n'
+DIRECTORY_BUILD_QRC_QML := DIRECTORY_BUILD + '/qrc-qml'
+DIRECTORY_BUILD_RELEASE := DIRECTORY_BUILD + '/release'
+DIRECTORY_BUILD_RESOURCES := DIRECTORY_BUILD + '/resources'
+DIRECTORY_BUILD_TRANSLATIONS := DIRECTORY_BUILD + '/translations'
 
 #####                 #####
 ##### Generated Files #####
 #####                 #####
 
-FILE_BUILD_QRC_QML := DIRECTORY_BUILD_QRC_QML + '/' + NAME_DIRECTORY_QML_SOURCES + '.qrc'
-FILE_BUILD_QRC_DATA := DIRECTORY_BUILD_QRC_DATA + '/' + NAME_DIRECTORY_DATA + '.qrc'
-FILE_BUILD_QRC_I18N := DIRECTORY_BUILD_QRC_I18N + '/' + NAME_DIRECTORY_I18N + '.qrc'
-FILE_BUILD_QRC_I18N_JSON := DIRECTORY_BUILD_QRC_I18N + '/' + NAME_APPLICATION + '.json'
-FILE_BUILD_TRANSLATIONS_JSON := DIRECTORY_BUILD_TRANSLATIONS + '/' + NAME_APPLICATION + '.json'
+FILE_BUILD_QRC_DATA := DIRECTORY_BUILD_QRC_DATA + '/data.qrc'
+FILE_BUILD_QRC_I18N := DIRECTORY_BUILD_QRC_I18N + '/i18n.qrc'
+FILE_BUILD_QRC_I18N_JSON := DIRECTORY_BUILD_QRC_I18N + '/myapp.json'
+FILE_BUILD_QRC_QML := DIRECTORY_BUILD_QRC_QML + '/qml.qrc'
 FILE_BUILD_RESOURCES := DIRECTORY_BUILD_RESOURCES + '/' + NAME_FILE_GENERATED_RESOURCES
+FILE_BUILD_TRANSLATIONS_JSON := DIRECTORY_BUILD_TRANSLATIONS + '/myapp.json'
 FILE_PY_SOURCES_RESOURCES := DIRECTORY_PY_SOURCES + '/' + NAME_FILE_GENERATED_RESOURCES
 FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURCES
 
@@ -99,16 +97,15 @@ format:
 
 # Install dependencies into the virtual environment
 install-dependencies:
-	#!/usr/bin/env bash
-	if [[ -z "${VIRTUAL_ENV}" ]]; then
-	  echo "Please activate virtual environment first"
-	  exit 1
-	fi
-	python build-aux/generate-dependency-versions.py \
-	  --pyproject-file pyproject.toml \
-	  --optional-group dev \
-	  extract | xargs pip install
-
+    #!/usr/bin/env bash
+    if [[ -z "${VIRTUAL_ENV}" ]]; then
+      echo "Please activate virtual environment first"
+      exit 1
+    fi
+    python build-aux/generate-dependency-versions.py \
+      --pyproject-file pyproject.toml \
+      --optional-group dev \
+      extract | xargs pip install
 
 # Build full project into build/release
 [group('build')]
@@ -165,7 +162,7 @@ update-translations: _check-pyside-setup _clean-develop _prepare-translation-ext
     		-locations none \
     		-project {{ FILE_BUILD_TRANSLATIONS_JSON }}
     @cp -r \
-    	{{ DIRECTORY_BUILD_TRANSLATIONS }}/{{ NAME_DIRECTORY_I18N }}/*.ts \
+    	{{ DIRECTORY_BUILD_TRANSLATIONS }}/i18n/*.ts \
     	{{ DIRECTORY_I18N }}
 
 # Lint Python files
@@ -231,9 +228,9 @@ _compile-resources: _generate-qrc-data _generate-qrc-i18n _generate-qrc-qml
      	{{ DIRECTORY_BUILD_QRC_I18N }}/. \
      	{{ DIRECTORY_BUILD_RESOURCES }}
     @{{ TOOL_CLI_RCC }} \
-    	{{ DIRECTORY_BUILD_RESOURCES }}/{{ NAME_DIRECTORY_DATA }}.qrc \
-    	{{ DIRECTORY_BUILD_RESOURCES }}/{{ NAME_DIRECTORY_I18N }}.qrc \
-    	{{ DIRECTORY_BUILD_RESOURCES }}/{{ NAME_DIRECTORY_QML_SOURCES }}.qrc \
+    	{{ DIRECTORY_BUILD_RESOURCES }}/data.qrc \
+    	{{ DIRECTORY_BUILD_RESOURCES }}/i18n.qrc \
+    	{{ DIRECTORY_BUILD_RESOURCES }}/qml.qrc \
     	-o {{ FILE_BUILD_RESOURCES }}
 
 _generate-qrc-data:
@@ -245,9 +242,9 @@ _generate-qrc-data:
     	{{ DIRECTORY_DATA }} \
     	{{ DIRECTORY_BUILD_QRC_DATA }}
     @cd \
-    	{{ DIRECTORY_BUILD_QRC_DATA }}/{{ NAME_DIRECTORY_DATA }}; \
+    	{{ DIRECTORY_BUILD_QRC_DATA }}/data; \
     		{{ TOOL_CLI_RCC }} \
-    			--project | sed 's,<file>./,<file>{{ NAME_DIRECTORY_DATA }}/,' > {{ FILE_BUILD_QRC_DATA }}
+    			--project | sed 's,<file>./,<file>data/,' > {{ FILE_BUILD_QRC_DATA }}
 
 _generate-qrc-i18n:
     @rm -rf \
@@ -264,14 +261,14 @@ _generate-qrc-i18n:
     		{{ TOOL_CLI_LRELEASE }} \
     			-project {{ FILE_BUILD_QRC_I18N_JSON }}
     @cd \
-    	{{ DIRECTORY_BUILD_QRC_I18N }}/{{ NAME_DIRECTORY_I18N }}; \
+    	{{ DIRECTORY_BUILD_QRC_I18N }}/i18n; \
     		rm \
     			{{ FILE_BUILD_QRC_I18N_JSON }} \
     			*.ts
     @cd \
-    	{{ DIRECTORY_BUILD_QRC_I18N }}/{{ NAME_DIRECTORY_I18N }}; \
+    	{{ DIRECTORY_BUILD_QRC_I18N }}/i18n; \
     		{{ TOOL_CLI_RCC }} \
-    			--project | sed 's,<file>./,<file>{{ NAME_DIRECTORY_I18N }}/,' > {{ FILE_BUILD_QRC_I18N }}
+    			--project | sed 's,<file>./,<file>i18n/,' > {{ FILE_BUILD_QRC_I18N }}
 
 _generate-qrc-qml:
     @rm -rf \
@@ -281,10 +278,13 @@ _generate-qrc-qml:
     @cp -r \
     	{{ DIRECTORY_QML_SOURCES }} \
     	{{ DIRECTORY_BUILD_QRC_QML }}
+    @cd {{ DIRECTORY_BUILD_QRC_QML }}; \
+        mkdir qt && mv qml qt
     @cd \
-    	{{ DIRECTORY_BUILD_QRC_QML }}/{{ NAME_DIRECTORY_QML_SOURCES }}; \
-    		{{ TOOL_CLI_RCC }} \
-    			--project | sed 's,<file>./,<file>{{ NAME_DIRECTORY_QML_SOURCES }}/,' > {{ FILE_BUILD_QRC_QML }}
+        {{ DIRECTORY_BUILD_QRC_QML }}; \
+            {{ TOOL_CLI_RCC }} --project \
+                | sed 's,<file>./,<file>,' \
+                | grep -v "<file>qml.qrc</file>" > {{ FILE_BUILD_QRC_QML }}
 
 _prepare-translation-extractions:
     @rm -rf \

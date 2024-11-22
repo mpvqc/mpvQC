@@ -79,7 +79,6 @@ class StartUp:
         app.load_application_fonts()
         app.create_directories()
         app.set_up_signals()
-        app.set_up_imports()
         app.start_engine()
         app.verify()
         app.notify_ready()
