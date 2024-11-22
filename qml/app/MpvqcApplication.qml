@@ -72,6 +72,24 @@ ApplicationWindow {
         mpvqcWindowVisibilityHandler.disableFullScreen();
     }
 
+    width: 1280
+    height: 720
+
+    minimumWidth: 960
+    minimumHeight: 540
+
+    flags: Qt.FramelessWindowHint | Qt.Window
+    color: Material.background
+    visible: true
+
+    font {
+        pointSize: 10
+        family: 'Noto Sans'
+    }
+
+    LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
+    LayoutMirroring.childrenInherit: true
+
     onClosing: event => {
         closeHandler.requestClose();
         event.accepted = closeHandler.userConfirmedClose;
@@ -134,16 +152,7 @@ ApplicationWindow {
             const key = event.key;
             const noModifier = event.modifiers === Qt.NoModifier;
             const ctrlModifier = event.modifiers & Qt.ControlModifier;
-            return key === Qt.Key_Up
-                || key === Qt.Key_Down
-                || key === Qt.Key_Return && noModifier
-                || key === Qt.Key_Escape && noModifier
-                || key === Qt.Key_Delete && noModifier
-                || key === Qt.Key_Backspace && noModifier
-                || key === Qt.Key_F && ctrlModifier
-                || key === Qt.Key_C && ctrlModifier
-                || key === Qt.Key_Z && ctrlModifier
-                ;
+            return key === Qt.Key_Up || key === Qt.Key_Down || key === Qt.Key_Return && noModifier || key === Qt.Key_Escape && noModifier || key === Qt.Key_Delete && noModifier || key === Qt.Key_Backspace && noModifier || key === Qt.Key_F && ctrlModifier || key === Qt.Key_C && ctrlModifier || key === Qt.Key_Z && ctrlModifier;
         }
     }
 
