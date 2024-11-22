@@ -46,13 +46,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const buttonPressedSpy = signalSpy.createObject(null, {
+        const buttonPressedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "buttonPressed"
         });
         verify(buttonPressedSpy);
 
-        const playPressedSpy = signalSpy.createObject(null, {
+        const playPressedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "playPressed"
         });

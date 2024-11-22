@@ -104,7 +104,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "valueModified"
         });

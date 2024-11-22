@@ -74,7 +74,7 @@ TestCase {
         });
         verify(control);
 
-        const itemClickedSpy = signalSpy.createObject(control, {
+        const itemClickedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "itemClicked"
         });

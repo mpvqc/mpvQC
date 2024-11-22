@@ -93,7 +93,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(null, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "resizeVideoTriggered"
         });

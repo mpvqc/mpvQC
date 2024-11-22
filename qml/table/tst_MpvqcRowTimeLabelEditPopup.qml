@@ -77,7 +77,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const valueChangedSpy = signalSpy.createObject(control, {
+        const valueChangedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "valueChanged"
         });
@@ -106,13 +106,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const editingAbortedSpy = signalSpy.createObject(control, {
+        const editingAbortedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingAborted"
         });
         verify(editingAbortedSpy);
 
-        const editedSpy = signalSpy.createObject(control, {
+        const editedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });
@@ -145,13 +145,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const editingAbortedSpy = signalSpy.createObject(control, {
+        const editingAbortedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingAborted"
         });
         verify(editingAbortedSpy);
 
-        const editedSpy = signalSpy.createObject(control, {
+        const editedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });
@@ -170,13 +170,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const editingAbortedSpy = signalSpy.createObject(control, {
+        const editingAbortedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingAborted"
         });
         verify(editingAbortedSpy);
 
-        const editedSpy = signalSpy.createObject(control, {
+        const editedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });

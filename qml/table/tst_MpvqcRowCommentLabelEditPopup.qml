@@ -65,13 +65,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        let editedSpy = signalSpy.createObject(control, {
+        let editedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });
         verify(editedSpy);
 
-        let closedSpy = signalSpy.createObject(control, {
+        let closedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "closed"
         });
@@ -88,13 +88,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        let editedSpy = signalSpy.createObject(control, {
+        let editedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });
         verify(editedSpy);
 
-        let closedSpy = signalSpy.createObject(control, {
+        let closedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "closed"
         });
@@ -110,13 +110,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        let editedSpy = signalSpy.createObject(control, {
+        let editedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });
         verify(editedSpy);
 
-        let closedSpy = signalSpy.createObject(control, {
+        let closedSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "closed"
         });
@@ -135,7 +135,7 @@ TestCase {
         const controlOther = createTemporaryObject(otherItem, testCase);
         verify(controlOther);
 
-        let spy = signalSpy.createObject(control, {
+        let spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "closed"
         });

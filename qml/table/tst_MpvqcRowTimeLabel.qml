@@ -86,7 +86,7 @@ TestCase {
         verify(control.focus);
 
         // row-selection/no-edit-mode
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingStarted"
         });
@@ -119,7 +119,7 @@ TestCase {
         const control = createControlInEditMode();
         verify(control.popup);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingStopped"
         });
@@ -133,7 +133,7 @@ TestCase {
         const control = createControlInEditMode();
         verify(control.popup);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "edited"
         });

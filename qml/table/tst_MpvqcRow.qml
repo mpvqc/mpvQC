@@ -71,13 +71,13 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        let spy = signalSpy.createObject(control, {
+        let spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "pressed"
         });
         verify(spy);
 
-        let playPressed = signalSpy.createObject(control, {
+        let playPressed = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "playPressed"
         });
@@ -96,15 +96,15 @@ TestCase {
         control.commentType = "Phrasing";
         control.comment = "Old Comment";
 
-        const timeSpy = signalSpy.createObject(control, {
+        const timeSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "timeEdited"
         });
-        const typeSpy = signalSpy.createObject(control, {
+        const typeSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "commentTypeEdited"
         });
-        const commSpy = signalSpy.createObject(control, {
+        const commSpy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "commentEdited"
         });
@@ -136,7 +136,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingStarted"
         });
@@ -156,7 +156,7 @@ TestCase {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        const spy = signalSpy.createObject(control, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editingStopped"
         });

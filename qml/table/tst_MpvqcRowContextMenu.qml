@@ -46,7 +46,7 @@ TestCase {
 
         control.open();
 
-        const spy = signalSpy.createObject(null, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "editCommentClicked"
         });
@@ -62,7 +62,7 @@ TestCase {
 
         control.open();
 
-        const spy = signalSpy.createObject(null, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "copyCommentClicked"
         });
@@ -78,7 +78,7 @@ TestCase {
 
         control.open();
 
-        const spy = signalSpy.createObject(null, {
+        const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
             signalName: "deleteCommentClicked"
         });
