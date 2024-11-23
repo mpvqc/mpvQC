@@ -43,38 +43,38 @@ def test_get_summary(service):
 
 
 def test_get_theme_colors(service):
-    fallback_0_background = "#221919"
+    fallback_0_background = "#1A1110"
     colors = service.get_theme_colors("")
     assert len(colors) > 0
     assert colors[0]["background"].casefold() == fallback_0_background.casefold()
 
-    selected_0_background = "#FFF0F0"
+    selected_0_background = "#FFF0EE"
     colors = service.get_theme_colors("Material You")
     assert len(colors) > 0
     assert colors[0]["background"].casefold() == selected_0_background.casefold()
 
 
 def test_get_theme_color(service):
-    fallback_background = "#221919"
+    fallback_background = "#1A1110"
     color = service.get_theme_color(0, "")
     assert color["background"].casefold() == fallback_background.casefold()
 
-    fallback_background = "#231917"
+    fallback_background = "#151218"
     color = service.get_theme_color(3, "")
     assert color["background"].casefold() == fallback_background.casefold()
 
-    fallback_background = "#1E1A20"
+    fallback_background = "#19120C"
     color = service.get_theme_color(4000, "")
     assert color["background"].casefold() == fallback_background.casefold()
 
-    selected_background = "#FFF0F0"
+    selected_background = "#FFF0EE"
     color = service.get_theme_color(0, "Material You")
     assert color["background"].casefold() == selected_background.casefold()
 
-    selected_background = "#FFF1ED"
+    selected_background = "#F8F1FA"
     color = service.get_theme_color(3, "Material You")
     assert color["background"].casefold() == selected_background.casefold()
 
-    selected_background = "#FAF1F9"
+    selected_background = "#FFF1E7"
     color = service.get_theme_color(4000, "Material You")
     assert color["background"].casefold() == selected_background.casefold()

@@ -156,7 +156,7 @@ QtObject {
     }
 
     property string themeIdentifier: "Material You Dark"
-    property int themeColorOption: 16
+    property int themeColorOption: 4
 
     // Window Title
 
