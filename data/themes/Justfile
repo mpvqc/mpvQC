@@ -13,45 +13,65 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800" "#FF5722" "#795548" "#9E9E9E" "#607D8B"'
+
 _default:
-	@just --list
+    @just --list
 
-generate-dark-colors DIRECTORY="~/Downloads":
-	#!/usr/bin/env nu
-	cd {{ DIRECTORY }}
-		| ls -f -a *.json
-		| sort-by modified
-		| get name
-		| each { |themeFile|
-			open $themeFile
-				| get "schemes"
-				| get "dark" "dark-medium-contrast" "dark-high-contrast"
-				| each { |variant|
-					$variant
-						| select "surfaceContainerLow" "onSurfaceVariant" "primaryContainer" "inversePrimary" "onSurface" "surfaceContainerHigh"
-						| rename "background" "foreground" "control" "row-highlight" "row-highlight-text" "row-base-alternate"
-				}
-		 }
-		 | flatten
-		 | each { |row| $row | to toml }
-		 | str join "\n[[colors]]\n"
+# Print Material Dark palette
+[group('Material')]
+generate-dark-color-palette:
+    @python color-generator.py --dark {{ BASE_COLORS }}
 
-generate-light-colors DIRECTORY="~/Downloads":
-	#!/usr/bin/env nu
-	cd {{ DIRECTORY }}
-		| ls -f -a *.json
-		| sort-by modified
-		| get name
-		| each { |themeFile|
-			open $themeFile
-				| get "schemes"
-				| get "light" "light-medium-contrast" "light-high-contrast"
-				| each { |variant|
-					$variant
-						| select "surfaceContainerLow" "onSurfaceVariant" "secondary" "primary" "onPrimary" "surfaceContainerHighest"
-						| rename "background" "foreground" "control" "row-highlight" "row-highlight-text" "row-base-alternate"
-				}
-		}
-		| flatten
-		| each { |row| $row | to toml }
-		| str join "\n[[colors]]\n"
+# Print Material Light palette
+[group('Material')]
+generate-light-color-palette:
+    @python color-generator.py --contrast 0.0 {{ BASE_COLORS }}
+
+# Print dark mpvQC colors
+[group('mpvQC')]
+dark-mpvQC-colors:
+    #!/usr/bin/env nu
+    just generate-dark-color-palette |
+        from toml |
+        get colors |
+        each { |palette|
+            {
+                colors: [
+                    {
+                        "background": ($palette.surface),
+                        "foreground": ($palette.onSurfaceVariant),
+                        "control": ($palette.primary),
+                        "row-highlight": ($palette.inversePrimary),
+                        "row-highlight-text": ($palette.onSurface),
+                        "row-base": ($palette.surface),
+                    }
+                ]
+            }
+        } |
+        each { |row| $row | to toml } |
+        str join "\n"
+
+# Print light mpvQC colors
+[group('mpvQC')]
+light-mpvQC-colors:
+    #!/usr/bin/env nu
+    just generate-light-color-palette |
+        from toml |
+        get colors |
+        each { |palette|
+            {
+                colors: [
+                    {
+                        "background": ($palette.surfaceContainerLow),
+                        "foreground": ($palette.onSurfaceVariant),
+                        "control": ($palette.secondary),
+                        "row-highlight": ($palette.primary),
+                        "row-highlight-text": ($palette.onPrimary),
+                        "row-base": ($palette.surfaceContainerLow),
+                    }
+                ]
+            }
+        } |
+        each { |row| $row | to toml } |
+        str join "\n"
