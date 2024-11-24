@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import footer
-import player
-import table
+import "../footer"
+import "../player"
+import "../table2"
 
 FocusScope {
     id: root
@@ -31,7 +31,7 @@ FocusScope {
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
 
-    readonly property alias mpvqcCommentTable: _tableWrapper.mpvqcCommentTable
+    readonly property alias mpvqcCommentTable: _table.publicInterface
     readonly property alias playerContainer: _playerContainer
     readonly property alias tableContainer: _tableContainer
     readonly property alias playerArea: _player
@@ -100,8 +100,8 @@ FocusScope {
                 SplitView.preferredHeight = height;
             }
 
-            MpvqcTableWrapper {
-                id: _tableWrapper
+            MpvqcTable {
+                id: _table
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true
@@ -135,7 +135,7 @@ FocusScope {
     Connections {
         target: root.mpvqcCommentTable
 
-        function onCountChanged() {
+        function onCommentCountChanged() {
             // we effectively force a redraw of the table here. if we don't do this and delete the last row
             // in the table, the table will not rerender completely and there might be color artifacts of the
             // alternating row colors

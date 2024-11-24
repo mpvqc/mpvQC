@@ -27,21 +27,9 @@ Label {
 
     property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
-    property int currentIndex: -1
-    property int total: 0
+    property int currentIndex: root.mpvqcCommentTable.selectedCommentIndex
+    property int total: root.mpvqcCommentTable.commentCount
 
     text: (currentIndex + 1) + '/' + total
     visible: total
-
-    Connections {
-        target: root.mpvqcCommentTable
-
-        function onCountChanged() {
-            root.total = root.mpvqcCommentTable.count;
-        }
-
-        function onCurrentIndexChanged() {
-            root.currentIndex = root.mpvqcCommentTable.currentIndex;
-        }
-    }
 }

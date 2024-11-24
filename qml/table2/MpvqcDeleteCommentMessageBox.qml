@@ -19,10 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick.Controls
 
-import shared
+import "../shared"
 
 MpvqcMessageBox {
+    id: root
+
+    required property int commentIndex
+
+    signal deleteCommentConfirmed(index: int)
+
     title: qsTranslate("MessageBoxes", "Delete Comment")
     text: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
     standardButtons: Dialog.Yes | Dialog.Cancel
+
+    onAccepted: {
+        root.deleteCommentConfirmed(root.commentIndex);
+    }
 }

@@ -18,12 +18,12 @@
 from typing import Any
 
 import inject
-from PySide6.QtCore import Property, QModelIndex, Qt, Signal, Slot
-from PySide6.QtGui import QStandardItemModel
+from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Qt, Signal, Slot
+from PySide6.QtGui import QClipboard, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
-from mpvqc.services import PlayerService
+from mpvqc.services import PlayerService, TimeFormatterService
 
 from .roles import Role
 from .searcher import Searcher
@@ -47,6 +47,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
+    _time_formatter = inject.attr(TimeFormatterService)
 
     commentsImported = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
@@ -75,8 +76,10 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         return self._selected_row
 
     def set_selected_row(self, index: int) -> None:
-        self._selected_row = index
-        self._undo_stack.prevent_add_update_merge()
+        if self._selected_row != index:
+            self._selected_row = index
+            self.selectedRowChanged.emit(index)
+            self._undo_stack.prevent_add_update_merge()
 
     selectedRowChanged = Signal(int)
     selectedRow = Property(int, get_selected_row, set_selected_row, notify=selectedRowChanged)
@@ -87,6 +90,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.setSortRole(Role.TIME)
         self.setObjectName("mpvqcCommentModel")
 
+        self._clipboard = QClipboard()
+
         self._searcher = Searcher()
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
@@ -96,11 +101,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             return
 
         def on_after_undo(row: int):
-            self.invalidate_search()
+            self._invalidate_search()
             self.commentsImportedUndone.emit(row)
 
         def on_after_redo(index: QModelIndex):
-            self.invalidate_search()
+            self._invalidate_search()
             self.sort(0)
             self.commentsImported.emit(index.row())
 
@@ -116,11 +121,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
 
     def clear_comments(self) -> None:
         def on_after_undo():
-            self.invalidate_search()
+            self._invalidate_search()
             self.commentsClearedUndone.emit()
 
         def on_after_redo():
-            self.invalidate_search()
+            self._invalidate_search()
             self.commentsCleared.emit()
 
         self._undo_stack.push(
@@ -135,7 +140,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     def add_row(self, comment_type: str) -> None:
         def on_after_undo(row: int):
             self.newCommentAddedUndone.emit(row)
-            self.invalidate_search()
+            self._invalidate_search()
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
             self.sort(0)
@@ -143,7 +148,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             signal = self.newCommentAddedInitially if added_initially else self.newCommentAddedRedone
             signal.emit(index.row())
 
-            self.invalidate_search()
+            self._invalidate_search()
 
         command = AddAndUpdateCommentCommand(
             add_comment=AddComment(
@@ -162,11 +167,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         def on_after_undo(_row: int):
             self.sort(0)
             self.commentRemovedUndone.emit(_row)
-            self.invalidate_search()
+            self._invalidate_search()
 
         def on_after_redo():
             self.commentRemoved.emit()
-            self.invalidate_search()
+            self._invalidate_search()
 
         self._undo_stack.push(
             RemoveComment(
@@ -180,12 +185,12 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot(int, int)
     def update_time(self, row: int, new_time: int) -> None:
         def on_after_undo(_row: int):
-            self.invalidate_search()
+            self._invalidate_search()
             self.sort(0)
             self.timeUpdatedUndone.emit(_row)
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
-            self.invalidate_search()
+            self._invalidate_search()
             self.sort(0)
             signal = self.timeUpdatedInitially if added_initially else self.timeUpdatedRedone
             signal.emit(index.row())
@@ -221,11 +226,11 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     @Slot(int, str)
     def update_comment(self, row: int, comment: str) -> None:
         def on_after_undo(_row: int):
-            self.invalidate_search()
+            self._invalidate_search()
             self.commentUpdatedUndone.emit(_row)
 
         def on_after_redo(_row: int):
-            self.invalidate_search()
+            self._invalidate_search()
             self.commentUpdated.emit(_row)
 
         self._undo_stack.push(
@@ -264,6 +269,19 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         results = sorted(results)
         return list(map(lambda model_index: model_index.row(), results))
 
-    @Slot()
-    def invalidate_search(self) -> None:
+    def _invalidate_search(self) -> None:
         self._searcher.invalidate()
+
+    @Slot(int)
+    def copy_to_clipboard(self, row: int):
+        item = self.item(row, column=0)
+
+        time = item.data(Role.TIME)
+        time = self._time_formatter.format_time_to_string(int(time), long_format=True)
+
+        comment_type = f"{item.data(Role.TYPE)}"
+        comment_type = QCoreApplication.translate("CommentTypes", comment_type)
+
+        comment = f"{item.data(Role.COMMENT)}"
+
+        self._clipboard.setText(f"[{time}] [{comment_type}] {comment}")
