@@ -76,6 +76,7 @@ TestCase {
 
     readonly property int timeoutShort: 100
     readonly property int timeoutLong: 300
+    readonly property int timeoutLongCI: 750
 
     width: 600
     height: 400
@@ -401,7 +402,7 @@ TestCase {
         waitForRendering(control, timeoutShort);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         const btn = _clickHelper.onEditTimeMenuSeekBack(1);
         mouseClick(control, btn.x, btn.y);
@@ -417,7 +418,7 @@ TestCase {
         waitForRendering(control, timeoutShort);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         const btn = _clickHelper.onEditTimeMenuSeekForward(1);
         mouseClick(control, btn.x, btn.y);
@@ -433,14 +434,14 @@ TestCase {
         waitForRendering(control, timeoutShort);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(500);
+        wait(timeoutLongCI);
 
         const btn = _clickHelper.onEditTimeMenuSeekBack(1);
         mouseClick(control, btn.x, btn.y);
         tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 0);
 
         keyPress(Qt.Key_Escape);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 1);
         verify(!control.model.calledUpateTime);
@@ -453,16 +454,16 @@ TestCase {
 
         // test if editing aborted via escape
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         keyPress(Qt.Key_Escape);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         verify(!control.model.calledUpateCommentType);
 
         // test if editing has been successful
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         const btn = _clickHelper.onEditCommentTypeMenu(3, 1);
         mouseClick(control, btn.x, btn.y);
@@ -477,27 +478,27 @@ TestCase {
 
         // test if text has not changed
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         keyPress(Qt.Key_Return);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         verify(!control.model.calledUpateComment);
 
         // test if editing aborted via escape
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         keyPress("h");
         keyPress("i");
         keyPress(Qt.Key_Escape);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         verify(!control.model.calledUpateComment);
 
         // test if editing has been successful
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        wait(timeoutLong);
+        wait(timeoutLongCI);
 
         keyPress("h");
         keyPress("i");
