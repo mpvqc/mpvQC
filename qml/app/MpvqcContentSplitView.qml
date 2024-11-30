@@ -22,7 +22,7 @@ import QtQuick.Controls
 
 import "../footer"
 import "../player"
-import "../table2"
+import "../table"
 
 FocusScope {
     id: root
