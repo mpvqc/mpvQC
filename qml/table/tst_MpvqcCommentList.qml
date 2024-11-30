@@ -54,13 +54,13 @@ TestCase {
         }
 
         function onEditTimeMenuSeekBack(tableRow: int): point {
-            const xCoordinate = columnTime + 10;
+            const xCoordinate = columnTime + 20;
             const yCoordinate = rowHeight * tableRow;
             return Qt.point(xCoordinate, yCoordinate);
         }
 
         function onEditTimeMenuSeekForward(tableRow: int): point {
-            const xCoordinate = columnTime + 10 + 100;
+            const xCoordinate = columnTime + 110;
             const yCoordinate = rowHeight * tableRow;
             return Qt.point(xCoordinate, yCoordinate);
         }
