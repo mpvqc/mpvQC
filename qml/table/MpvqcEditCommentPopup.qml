@@ -1,7 +1,7 @@
 /*
 mpvQC
 
-Copyright (C) 2022 mpvQC developers
+Copyright (C) 2024 mpvQC developers
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,58 +23,69 @@ import QtQuick.Controls.Material
 Popup {
     id: root
 
-    required property var mpvqcDefaultTextValidator
+    required property int currentListIndex
     required property string currentComment
 
+    required property var sanitizeTextFunc
+
     required property color backgroundColor
-    required property color selectionColor
-    required property color selectedTextColor
+    required property color rowHighlightColor
+    required property color rowHighlightTextColor
 
     property bool acceptValue: true
 
-    signal edited(string newComment)
+    signal commentEdited(index: int, newComment: string)
+
+    width: root.parent.width
+
+    leftPadding: root.parent.leftPadding / 2 // qmllint disable
+    rightPadding: root.parent.rightPadding / 2 // qmllint disable
+    topPadding: root.parent.topPadding / 2 // qmllint disable
+    bottomPadding: root.parent.bottomPadding / 2 // qmllint disable
 
     background: null
-    visible: true
     dim: false
     modal: false
     enter: null
     exit: null
-    topPadding: 4
-    bottomPadding: 4
 
     contentItem: TextArea {
         id: _textField
 
         text: root.currentComment
-        selectByMouse: true
-        selectionColor: root.selectionColor
-        selectedTextColor: root.selectedTextColor
+        wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignLeft
+
+        focus: true
+        selectByMouse: true
+
         bottomPadding: root.bottomPadding
         topPadding: root.topPadding
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
-        focus: true
-        wrapMode: Text.WordWrap
+
+        selectionColor: root.rowHighlightColor
+        selectedTextColor: root.rowHighlightTextColor
 
         background: Rectangle {
             anchors.fill: parent
             color: root.backgroundColor
         }
 
-        Keys.onReturnPressed: root.close()
+        Keys.onReturnPressed: {
+            root.close();
+        }
     }
 
     onAboutToHide: {
         if (!acceptValue)
             return;
 
-        const rawText = _textField.text.trim();
-        const sanitizedText = root.mpvqcDefaultTextValidator.replace_special_characters(rawText);
+        const text = _textField.text.trim();
+        const sanitizedText = root.sanitizeTextFunc(text); // qmllint disable
 
         if (root.currentComment !== sanitizedText) {
-            root.edited(sanitizedText);
+            root.commentEdited(root.currentListIndex, sanitizedText);
         }
     }
 
@@ -82,6 +93,11 @@ Popup {
         if (!activeFocus) {
             root.close();
         }
+    }
+
+    onOpened: {
+        _textField.selectAll();
+        _textField.forceActiveFocus();
     }
 
     Shortcut {
@@ -93,8 +109,17 @@ Popup {
         }
     }
 
-    Component.onCompleted: {
-        _textField.selectAll();
-        _textField.forceActiveFocus();
+    Binding {
+        when: root.visible
+        target: root.parent
+        property: "text"
+        value: "" // don't display text below the editing popup
+    }
+
+    Binding {
+        when: root.visible
+        target: root.parent
+        property: "editorHeight"
+        value: root.height
     }
 }

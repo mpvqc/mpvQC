@@ -28,8 +28,8 @@ MpvqcRowSelectionLabel {
 
     mpvqcApplication: QtObject {
         property var mpvqcCommentTable: QtObject {
-            property int currentIndex: -1
-            property int count: 0
+            property int selectedCommentIndex: -1
+            property int commentCount: 0
         }
     }
 
@@ -38,17 +38,17 @@ MpvqcRowSelectionLabel {
         when: windowShown
 
         function cleanup() {
-            objectUnderTest.mpvqcApplication.mpvqcCommentTable.currentIndex = -1;
-            objectUnderTest.mpvqcApplication.mpvqcCommentTable.count = 0;
+            objectUnderTest.mpvqcApplication.mpvqcCommentTable.selectedCommentIndex = -1;
+            objectUnderTest.mpvqcApplication.mpvqcCommentTable.commentCount = 0;
         }
 
         function test_label() {
-            objectUnderTest.mpvqcApplication.mpvqcCommentTable.currentIndex = 0;
-            objectUnderTest.mpvqcApplication.mpvqcCommentTable.count = 1;
+            objectUnderTest.mpvqcApplication.mpvqcCommentTable.selectedCommentIndex = 0;
+            objectUnderTest.mpvqcApplication.mpvqcCommentTable.commentCount = 1;
             compare(objectUnderTest.text, '1/1');
 
-            objectUnderTest.mpvqcApplication.mpvqcCommentTable.currentIndex = 15;
-            objectUnderTest.mpvqcApplication.mpvqcCommentTable.count = 30;
+            objectUnderTest.mpvqcApplication.mpvqcCommentTable.selectedCommentIndex = 15;
+            objectUnderTest.mpvqcApplication.mpvqcCommentTable.commentCount = 30;
             compare(objectUnderTest.text, '16/30');
         }
     }

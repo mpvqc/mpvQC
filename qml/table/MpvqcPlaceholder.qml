@@ -23,90 +23,80 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Flickable {
+Item {
     id: root
 
-    required property var mpvqcApplication
+    required property bool horizontalLayout
 
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var textAlignment: horizontalLayout ? Qt.AlignLeft : Qt.AlignVCenter | Qt.AlignRight
 
-    readonly property bool horizontalOrientation: mpvqcSettings.layoutOrientation === Qt.Horizontal
-    readonly property var textAlignment: horizontalOrientation ? Qt.AlignLeft : Qt.AlignVCenter | Qt.AlignRight
-
-    readonly property int columns: horizontalOrientation ? 1 : 2
-
+    readonly property int shortcutBottomMargin: horizontalLayout ? spacing + 10 : 0
     readonly property int spacing: 30
-    readonly property int shortcutBottomMargin: horizontalOrientation ? spacing + 10 : 0
-    readonly property int columnSpacing: horizontalOrientation ? 0 : spacing
-
-    clip: true
-
-    component MpvqcDescriptiveText: Label {
-        Layout.alignment: root.textAlignment
-    }
-
-    component MpvqcButtonRendered: Button {
-        enabled: false
-        contentItem: Label {
-            text: parent.text
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-    }
 
     GridLayout {
-        anchors.centerIn: root.contentItem
-        columns: root.columns
-        columnSpacing: root.columnSpacing
+        anchors.centerIn: root
+        columns: root.horizontalLayout ? 1 : 2
+        columnSpacing: root.horizontalLayout ? 0 : root.spacing
         rowSpacing: 10
 
-        MpvqcDescriptiveText {
+        Label {
             //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Open Video")
+
+            Layout.alignment: root.textAlignment
         }
 
         RowLayout {
             Layout.bottomMargin: root.shortcutBottomMargin
 
-            MpvqcButtonRendered {
+            Button {
                 text: qsTranslate("KeyboardKeys", "Ctrl")
+                enabled: false
             }
 
             Label {
                 text: "+"
             }
 
-            MpvqcButtonRendered {
+            Button {
                 text: qsTranslate("KeyboardKeys", "Alt")
+                enabled: false
             }
 
             Label {
                 text: "+"
             }
 
-            MpvqcButtonRendered {
+            Button {
                 text: "O"
+                enabled: false
             }
         }
 
-        MpvqcDescriptiveText {
+        Label {
             //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Add Comment")
+
+            Layout.alignment: root.textAlignment
         }
 
-        MpvqcButtonRendered {
-            Layout.bottomMargin: root.shortcutBottomMargin
-
+        Button {
             text: "E"
+            enabled: false
+
+            Layout.bottomMargin: root.shortcutBottomMargin
         }
 
-        MpvqcDescriptiveText {
+        Label {
             //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Show Keyboard Shortcuts")
+
+            Layout.alignment: root.textAlignment
         }
 
-        MpvqcButtonRendered {
+        Button {
             text: "?"
+            enabled: false
         }
     }
 }

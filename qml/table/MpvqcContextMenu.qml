@@ -20,21 +20,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import shared
+import "../shared"
 
 MpvqcMenu {
     id: root
 
-    readonly property alias copyItem: _copyItem
-    readonly property alias deleteItem: _deleteItem
-    readonly property alias editItem: _editItem
+    required property int currentListIndex
+    required property point openedAt
 
-    signal copyCommentClicked
-    signal deleteCommentClicked
-    signal editCommentClicked
+    signal copyCommentClicked(index: int)
+    signal deleteCommentClicked(index: int)
+    signal editCommentClicked(index: int)
 
     modal: true
     dim: false
+
+    onAboutToShow: {
+        if (root.mMirrored) {
+            x = openedAt.x - width; // workaround rtl issue
+        }
+    }
 
     MenuItem {
         id: _editItem
@@ -45,7 +50,7 @@ MpvqcMenu {
 
         onTriggered: {
             root.exit = null;
-            root.editCommentClicked();
+            root.editCommentClicked(root.currentListIndex);
         }
     }
 
@@ -56,7 +61,7 @@ MpvqcMenu {
         text: qsTranslate("CommentTable", "Copy Comment")
         icon.source: "qrc:/data/icons/content_copy_black_24dp.svg"
 
-        onTriggered: root.copyCommentClicked()
+        onTriggered: root.copyCommentClicked(root.currentListIndex)
     }
 
     MenuItem {
@@ -66,6 +71,6 @@ MpvqcMenu {
         text: qsTranslate("CommentTable", "Delete Comment")
         icon.source: "qrc:/data/icons/delete_black_24dp.svg"
 
-        onTriggered: root.deleteCommentClicked()
+        onTriggered: root.deleteCommentClicked(root.currentListIndex)
     }
 }

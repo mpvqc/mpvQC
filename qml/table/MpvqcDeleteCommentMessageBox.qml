@@ -19,24 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick.Controls
 
-ToolButton {
+import "../shared"
+
+MpvqcMessageBox {
     id: root
 
-    required property bool tableInEditMode
+    required property int commentIndex
 
-    signal buttonPressed
-    signal playPressed
+    signal deleteCommentConfirmed(index: int)
 
-    focusPolicy: Qt.NoFocus
-    icon.source: "qrc:/data/icons/play_arrow_black_24dp.svg"
-    icon.width: 18
-    icon.height: 18
+    title: qsTranslate("MessageBoxes", "Delete Comment")
+    text: qsTranslate("MessageBoxes", "Do you really want to delete this comment?")
+    standardButtons: Dialog.Yes | Dialog.Cancel
 
-    onPressed: {
-        root.buttonPressed();
-
-        if (!root.tableInEditMode) {
-            root.playPressed();
-        }
+    onAccepted: {
+        root.deleteCommentConfirmed(root.commentIndex);
     }
 }

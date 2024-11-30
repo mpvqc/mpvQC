@@ -1,7 +1,7 @@
 /*
 mpvQC
 
-Copyright (C) 2022 mpvQC developers
+Copyright (C) 2024 mpvQC developers
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,298 +20,134 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
 
-import dialogs
-import shared
+import pyobjects
 
-ListView {
+Item {
     id: root
 
     required property var mpvqcApplication
-    required property string searchQuery
 
-    readonly property var mpv: mpvqcApplication.mpvqcMpvPlayerPyObject
-    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+    readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
 
-    readonly property bool haveComments: root.count > 0
-    readonly property int defaultHighlightMoveDuration: 50
+    readonly property var mpvqcDefaultTextValidatorPyObject: mpvqcApplication.mpvqcDefaultTextValidatorPyObject
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
-    property bool currentlyEditing: false
+    readonly property alias publicInterface: _publicInterface
 
-    property var deleteCommentMessageBox: null
-    readonly property var deleteCommentMessageBoxFactory: Component {
-        MpvqcMessageBoxDeleteComment {
-            property int index
+    state: _publicInterface.commentCount > 0 ? "showTable" : "showPlaceholder"
 
-            mpvqcApplication: root.mpvqcApplication
+    states: [
+        State {
+            name: "showTable"
 
-            onAccepted: root.model.remove_row(index)
-        }
-    }
+            PropertyChanges {
+                placeholder {
+                    height: 0
+                }
+                commentTable {
+                    height: root.height
+                }
+            }
+        },
+        State {
+            name: "showPlaceholder"
 
-    readonly property Timer delayEnsureVisibleTimer: Timer {
-        interval: 0
-
-        onTriggered: {
-            root._ensureVisible();
-        }
-    }
-
-    clip: true
-    focus: true
-    reuseItems: true
-    interactive: !currentlyEditing
-    boundsBehavior: Flickable.StopAtBounds
-    highlightMoveDuration: defaultHighlightMoveDuration
-    highlightMoveVelocity: -1
-    highlightResizeDuration: 50
-    highlightResizeVelocity: -1
-
-    highlight: Rectangle {
-        width: parent ? parent.width - _scrollBar.visibleWidth : 0
-        height: parent?.height ?? 0
-        color: root.mpvqcTheme.rowHighlight
-    }
-
-    ScrollBar.vertical: ScrollBar {
-        id: _scrollBar
-
-        readonly property var isShown: root.contentHeight > root.height
-        readonly property var visibleWidth: isShown ? width : 0
-
-        policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-    }
-
-    delegate: MpvqcRow {
-        readonly property bool isOdd: index % 2 === 1
-
-        backgroundColor: root.mpvqcTheme.getBackground(isOdd)
-        selectionColor: root.mpvqcTheme.rowHighlight
-        selectedTextColor: root.mpvqcTheme.rowHighlightText
-
-        Material.background: backgroundColor
-        Material.foreground: rowSelected ? root.mpvqcTheme.rowHighlightText : root.mpvqcTheme.foreground
-
-        mpvqcApplication: root.mpvqcApplication
-        rowSelected: root.currentIndex === index
-        tableInEditMode: root.currentlyEditing
-        width: parent ? root.width : 0
-        searchQuery: root.searchQuery
-
-        scrollBarWidth: _scrollBar.visibleWidth
-        scrollBarBackgroundColor: root.mpvqcTheme.background
-
-        onHeightChanged: {
-            if (rowSelected && tableInEditMode) {
-                if (index === root.count - 1) {
-                    root.delayEnsureVisibleTimer.restart();
-                } else {
-                    root._ensureVisible();
+            PropertyChanges {
+                commentTable {
+                    height: 0
+                }
+                placeholder {
+                    height: root.height
                 }
             }
         }
+    ]
 
-        onPressed: root.selectRow(index)
+    QtObject {
+        id: _impl
 
-        onCopyCommentClicked: root._copyCurrentCommentToClipboard()
-
-        onDeleteCommentClicked: root._requestDeleteRow()
-
-        onEditingStarted: {
-            root.currentlyEditing = true;
-        }
-
-        onEditingStopped: {
-            root.currentlyEditing = false;
-        }
-
-        onPlayPressed: root.mpv.jump_to(time)
-
-        onTimeEdited: newTime => root.model.update_time(index, newTime)
-
-        onCommentTypeEdited: newCommentType => root.model.update_comment_type(index, newCommentType)
-
-        onCommentEdited: newComment => root.model.update_comment(index, newComment)
-    }
-
-    function selectRow(index: int): void {
-        root.currentIndex = index;
-    }
-
-    function _requestDeleteRow(): void {
-        deleteCommentMessageBox = deleteCommentMessageBoxFactory.createObject(root);
-        deleteCommentMessageBox.index = root.currentIndex;
-        deleteCommentMessageBox.closed.connect(deleteCommentMessageBox.destroy);
-        deleteCommentMessageBox.open();
-    }
-
-    function _copyCurrentCommentToClipboard() {
-        const text = root.currentItem.toClipboardContent();
-        root.mpvqcUtilityPyObject.copyToClipboard(text);
-    }
-
-    function startEditing(): void {
-        const index = root.currentIndex;
-        const item = root.itemAtIndex(index);
-        if (item) {
-            _ensureVisible();
-            item.startEditing();
-        }
-    }
-
-    function _ensureVisible(): void {
-        root.positionViewAtIndex(root.currentIndex, ListView.Contain);
-    }
-
-    function addNewComment(commentType: string): void {
-        root.model.add_row(commentType);
-    }
-
-    function _handleDeleteComment(event) {
-        if (event.isAutoRepeat) {
-            return;
-        }
-
-        if (!root.mpvqcApplication.fullscreen && root.haveComments) {
-            return root._requestDeleteRow();
-        }
-    }
-
-    function _handleCPressed(event) {
-        if (event.modifiers === Qt.ControlModifier) {
-            if (event.isAutoRepeat) {
-                return;
-            }
-
-            const haveComments = root.haveComments;
-            const notEditing = !root.currentlyEditing;
-            const notFullscreen = !root.mpvqcApplication.fullscreen;
-
-            if (haveComments && notEditing && notFullscreen) {
-                return root._copyCurrentCommentToClipboard();
-            }
-        }
-        event.accepted = false;
-    }
-
-    function _handleZPressed(event) {
-        const ctrlPressed = event.modifiers & Qt.ControlModifier;
-        const shiftPressed = event.modifiers & Qt.ShiftModifier;
-
-        if (ctrlPressed && !event.isAutoRepeat) {
-            if (shiftPressed) {
-                root.model.redo();
+        function formatTime(time: int): string {
+            if (root.mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
+                return root.mpvqcUtilityPyObject.formatTimeToStringLong(time);
             } else {
-                root.model.undo();
+                return root.mpvqcUtilityPyObject.formatTimeToStringShort(time);
             }
-            return;
-        }
-        event.accepted = false;
-    }
-
-    function disableMovingHighlightRectangle(): void {
-        root.highlightMoveDuration = 0;
-    }
-
-    function enableMovingHighlightRectangle(): void {
-        root.highlightMoveDuration = root.defaultHighlightMoveDuration;
-    }
-
-    Keys.onReturnPressed: event => {
-        if (event.isAutoRepeat) {
-            return;
         }
 
-        const haveComments = root.haveComments;
-        const notEditing = !root.currentlyEditing;
-        const notFullscreen = !root.mpvqcApplication.fullscreen;
+        function sanitizeText(text: string): string {
+            return root.mpvqcDefaultTextValidatorPyObject.replace_special_characters(text);
+        }
 
-        if (haveComments && notEditing && notFullscreen) {
-            return root.startEditing();
+        function jumpToTime(time: int): void {
+            root.mpvqcMpvPlayerPyObject.jump_to(time);
+        }
+
+        function pauseVideo(): void {
+            root.mpvqcMpvPlayerPyObject.pause();
         }
     }
 
-    Keys.onPressed: event => {
-        switch (event.key) {
-        case Qt.Key_Delete:
-        case Qt.Key_Backspace:
-            return _handleDeleteComment(event);
-        case Qt.Key_C:
-            return _handleCPressed(event);
-        case Qt.Key_Z:
-            return _handleZPressed(event);
-        default:
-            event.accepted = false;
+    QtObject {
+        id: _publicInterface
+
+        readonly property int commentCount: commentTable.count
+        readonly property int selectedCommentIndex: commentTable.currentIndex
+
+        // readonly property bool currentlyEditing: false
+
+        function forceActiveFocus(): void {
+            commentTable.forceActiveFocus();
+        }
+
+        function addNewComment(commentType: string): void {
+            commentTable.model.add_row(commentType);
         }
     }
 
-    Connections {
-        target: root.model
+    MpvqcCommentList {
+        id: commentTable
 
-        function onCommentsImported(index: int): void {
-            _quickSelect(index);
-        }
+        width: root.width
+        visible: height > 0
 
-        function onCommentsImportedUndone(index: int): void {
-            _quickSelect(index);
-        }
+        model: MpvqcCommentModelPyObject {}
 
-        function onCommentsClearedUndone(): void {
-            const lastIndex = root.count - 1;
-            _quickSelect(lastIndex);
-        }
+        timeLabelWidth: root.mpvqcLabelWidthCalculator.timeLabelWidth
+        commentTypeLabelWidth: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth
 
-        function onNewCommentAddedInitially(index: int): void {
-            _quickSelect(index);
-            root.startEditing();
-        }
+        backgroundColor: root.mpvqcTheme.background
+        rowHighlightColor: root.mpvqcTheme.rowHighlight
+        rowHighlightTextColor: root.mpvqcTheme.rowHighlightText
+        rowBaseColor: root.mpvqcTheme.rowBase
+        rowBaseTextColor: root.mpvqcTheme.rowBaseText
+        rowAlternateBaseColor: root.mpvqcTheme.rowBaseAlternate
+        rowAlternateBaseTextColor: root.mpvqcTheme.rowBaseAlternateText
 
-        function onNewCommentAddedUndone(index: int): void {
-            _quickSelect(index);
-        }
+        timeFormatFunc: _impl.formatTime
+        sanitizeTextFunc: _impl.sanitizeText
+        jumpToTimeFunc: _impl.jumpToTime
+        pauseVideoFunc: _impl.pauseVideo
 
-        function onNewCommentAddedRedone(index: int): void {
-            _quickSelect(index);
-        }
+        defaultTextValidator: root.mpvqcDefaultTextValidatorPyObject
+        messageBoxParent: root.mpvqcApplication.contentItem
+        commentTypes: root.mpvqcSettings.commentTypes
 
-        function onCommentRemovedUndone(index: int): void {
-            _quickSelect(index);
-        }
+        videoDuration: root.mpvqcMpvPlayerPropertiesPyObject.duration
+        isCurrentlyFullScreen: root.mpvqcApplication.fullscreen
+    }
 
-        function onTimeUpdatedInitially(index: int): void {
-            root.selectRow(index);
-        }
+    MpvqcPlaceholder {
+        id: placeholder
 
-        function onTimeUpdatedUndone(index: int): void {
-            _quickSelect(index);
-        }
+        height: root.height
+        width: root.width
+        visible: height > 0
 
-        function onTimeUpdatedRedone(index: int): void {
-            _quickSelect(index);
-        }
-
-        function onCommentTypeUpdated(index: int): void {
-            _quickSelect(index);
-        }
-
-        function onCommentTypeUpdatedUndone(index: int): void {
-            _quickSelect(index);
-        }
-
-        function onCommentUpdated(index: int): void {
-            _quickSelect(index);
-        }
-
-        function onCommentUpdatedUndone(index: int): void {
-            _quickSelect(index);
-        }
-
-        function _quickSelect(index: int): void {
-            root.disableMovingHighlightRectangle();
-            root.selectRow(index);
-            root.enableMovingHighlightRectangle();
-        }
+        horizontalLayout: root.mpvqcSettings.layoutOrientation === Qt.Horizontal
     }
 }

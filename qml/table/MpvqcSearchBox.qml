@@ -24,62 +24,99 @@ import QtQuick.Layouts
 Popup {
     id: root
 
-    required property var searchFunc
-    required property int tableWidth
-    required property bool applicationIsFullscreen
-    required property var mpvqcDefaultTextValidatorPyObject
+    required property bool isApplicationFullScreen
 
-    readonly property string searchQuery: searchQueryActive ? _textField.text : ""
+    required property var searchQueryValidator
+    required property var performModelSearchFunc
 
-    readonly property int customMarginVertical: 30
-    readonly property int customMarginTop: 10
+    readonly property string searchQuery: _impl.searchQueryActive ? _impl.currentSearchQuery : ""
 
-    readonly property var searchService: MpvqcSearchService {
-        searchFunc: root.searchFunc
+    readonly property int topBottomMargin: 15
+    readonly property int leftRightMargin: 30
 
-        onHighlightRequested: index => {
-            root.highlightRequested(index);
-        }
-    }
+    signal highlightRequested(rowIndex: int)
 
-    property bool searchQueryActive: false
+    x: mirrored ? root.leftRightMargin : parent.width - width - root.leftRightMargin
+    y: parent.height - root.height - root.topBottomMargin
+    z: 1
 
     height: _textField.height + topPadding + bottomPadding
     width: 450
 
-    x: mirrored ? customMarginVertical : root.tableWidth - width - customMarginVertical
-    z: 1
-
     padding: 5
     closePolicy: Popup.NoAutoClose
-    transformOrigin: mirrored ? Popup.TopLeft : Popup.TopRight
 
     Material.roundedScale: Material.SmallScale
 
-    signal highlightRequested(int rowIndex)
-
-    function showSearchBox() {
-        root.visible = true;
-        root.searchQueryActive = true;
-        _textField.selectAll();
-        _textField.forceActiveFocus();
+    onAboutToShow: {
+        _impl.reactivateSearch();
     }
 
-    function hideSearchBox() {
-        root.visible = false;
-        root.searchQueryActive = false;
+    onIsApplicationFullScreenChanged: {
+        if (root.isApplicationFullScreen) {
+            _impl.hideSearchBoxQuickly();
+        }
     }
 
-    function _hideSearchBoxWithoutAnimation() {
-        const exitAnimation = root.exit;
-        root.exit = null;
-        hideSearchBox();
-        root.exit = exitAnimation;
-    }
+    QtObject {
+        id: _impl
 
-    onApplicationIsFullscreenChanged: {
-        if (root.applicationIsFullscreen) {
-            _hideSearchBoxWithoutAnimation();
+        property string currentSearchQuery: ""
+        property bool searchQueryActive: false
+
+        property int currentResult: -1
+        property int totalResults: -1
+
+        readonly property bool isDisplayText: currentResult >= 0 && totalResults >= 0
+        readonly property bool isHaveResults: totalResults > 1
+        readonly property string labelText: isDisplayText ? `${currentResult}/${totalResults}` : ""
+
+        function reactivateSearch(): void {
+            root.visible = true;
+            searchQueryActive = true;
+            _textField.selectAll();
+            _textField.forceActiveFocus();
+        }
+
+        function hideSearchBox(): void {
+            root.visible = false;
+            searchQueryActive = false;
+        }
+
+        function hideSearchBoxQuickly(): void {
+            const exitAnimation = root.exit;
+            root.exit = null;
+            hideSearchBox();
+            root.exit = exitAnimation;
+        }
+
+        function search(query: string): void {
+            currentSearchQuery = query;
+            const includeCurrentRow = true;
+            const topDown = true;
+            _search(includeCurrentRow, topDown);
+        }
+
+        function _search(includeCurrentRow: bool, topDown: bool): void {
+            const result = root.performModelSearchFunc(currentSearchQuery, includeCurrentRow, topDown); // qmllint disable
+            const nextIndex = result.nextIndex;
+            if (nextIndex >= 0) {
+                root.highlightRequested(nextIndex);
+            }
+            currentResult = result.currentResult;
+            totalResults = result.totalResults;
+        }
+
+        function requestNextSearchResult(): void {
+            const includeCurrentRow = false;
+            const topDown = true;
+            _search(includeCurrentRow, topDown);
+        }
+
+        function requestPreviousSearchResult(): void {
+            const includeCurrentRow = false;
+            const topDown = false;
+            _search(includeCurrentRow, topDown);
         }
     }
 
@@ -90,45 +127,27 @@ Popup {
         TextField {
             id: _textField
 
+            validator: root.searchQueryValidator
+
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
-            validator: root.mpvqcDefaultTextValidatorPyObject
 
             Layout.fillWidth: true
 
-            onTextChanged: {
-                root.searchService.search(text);
-            }
+            onTextChanged: _impl.search(text)
 
             Component.onCompleted: {
                 background.fillColor = "transparent";
                 background.outlineColor = "transparent";
                 background.focusedOutlineColor = "transparent";
             }
-
-            Keys.onPressed: event => {
-                if (event.key === Qt.Key_F && event.modifiers === Qt.ControlModifier) {
-                    if (event.isAutoRepeat) {
-                        return;
-                    }
-                    return root.showSearchBox();
-                }
-                event.accepted = false;
-            }
         }
 
         ToolButton {
-            id: _resultLabel
-
-            readonly property int currentResult: root.searchService.currentResult
-            readonly property int totalResults: root.searchService.totalResults
-            readonly property bool haveResults: totalResults > 0
-            readonly property bool displayText: currentResult >= 0 && totalResults >= 0
-
-            text: displayText ? `${currentResult}/${totalResults}` : ""
-            focusPolicy: Qt.NoFocus
             enabled: false
+            text: _impl.labelText
+            focusPolicy: Qt.NoFocus
         }
 
         ToolSeparator {
@@ -136,64 +155,156 @@ Popup {
         }
 
         ToolButton {
-            enabled: _resultLabel.haveResults
-            icon.source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
-            icon.width: 24
-            icon.height: 24
+            enabled: _impl.isHaveResults
+            focusPolicy: Qt.NoFocus
 
-            onPressed: root.searchService.requestPrevious()
+            icon {
+                source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
+                width: 24
+                height: 24
+            }
+
+            onPressed: _impl.requestPreviousSearchResult()
         }
 
         ToolButton {
-            enabled: _resultLabel.haveResults
-            icon.source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
-            icon.width: 24
-            icon.height: 24
+            enabled: _impl.isHaveResults
 
-            onPressed: root.searchService.requestNext()
+            icon {
+                source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
+                width: 24
+                height: 24
+            }
+
+            onPressed: _impl.requestNextSearchResult()
         }
 
         ToolButton {
-            icon.source: "qrc:/data/icons/close_black_24dp.svg"
-            icon.width: 18
-            icon.height: 18
+            icon {
+                source: "qrc:/data/icons/close_black_24dp.svg"
+                width: 18
+                height: 18
+            }
 
-            onPressed: root.hideSearchBox()
+            onPressed: _impl.hideSearchBox()
         }
     }
 
     Shortcut {
-        sequence: "return"
         enabled: root.visible && _textField.activeFocus
+        sequences: ["up", "shift+return"]
 
-        onActivated: root.searchService.requestNext()
+        onActivated: _impl.requestPreviousSearchResult()
     }
 
     Shortcut {
-        sequence: "shift+return"
         enabled: root.visible && _textField.activeFocus
+        sequences: ["down", "return"]
 
-        onActivated: root.searchService.requestPrevious()
+        onActivated: _impl.requestNextSearchResult()
     }
 
     Shortcut {
+        enabled: root.visible
+        sequence: "ctrl+f"
+        autoRepeat: false
+
+        onActivated: _impl.reactivateSearch()
+    }
+
+    Shortcut {
+        enabled: root.visible
         sequence: "esc"
-        enabled: _textField.activeFocus
+        autoRepeat: false
 
-        onActivated: root.hideSearchBox()
+        onActivated: _impl.hideSearchBox()
     }
 
-    Shortcut {
-        sequence: "up"
-        enabled: _textField.activeFocus
+    DragHandler {
+        id: _dragHandler
 
-        onActivated: root.searchService.requestPrevious()
+        readonly property NumberAnimation dragStartAnimation: NumberAnimation {
+            target: root
+            property: "scale"
+            from: 1
+            to: 1.0375
+            duration: 75
+        }
+
+        readonly property NumberAnimation dragEndAnimation: NumberAnimation {
+            target: root
+            property: "scale"
+            from: 1.0375
+            to: 1
+            duration: 75
+        }
+
+        readonly property int minimalY: root.topBottomMargin
+        readonly property int maximalY: root.parent.height - root.height - root.topBottomMargin
+        property int currentY: maximalY
+
+        property int transistionStartedY: -1
+        property bool stickToBottom: true
+
+        function recalculateCurrentY(newPosition: int) {
+            if (!_dragHandler.active && stickToBottom) {
+                currentY = maximalY;
+                return;
+            }
+
+            if (newPosition >= maximalY) {
+                currentY = maximalY;
+                stickToBottom = true;
+                return;
+            }
+
+            if (newPosition >= minimalY) {
+                currentY = newPosition;
+                stickToBottom = newPosition >= maximalY - 15;
+                return;
+            }
+
+            currentY = topBottomMargin;
+            stickToBottom = false;
+        }
+
+        dragThreshold: 0
+        target: null
+
+        xAxis.enabled: false
+        yAxis.enabled: true
+
+        onActiveChanged: {
+            transistionStartedY = _dragHandler.active ? root.y : -1;
+        }
+
+        onMaximalYChanged: {
+            if (maximalY <= 0)
+                return;
+            _dragHandler.recalculateCurrentY(currentY);
+        }
+
+        yAxis.onActiveValueChanged: {
+            const possiblePosition = transistionStartedY + yAxis.activeValue;
+            _dragHandler.recalculateCurrentY(possiblePosition);
+        }
+
+        onGrabChanged: transition => {
+            switch (transition) {
+            case PointerDevice.GrabExclusive:
+                dragStartAnimation.start();
+                break;
+            case PointerDevice.UngrabExclusive:
+                dragEndAnimation.start();
+                break;
+            }
+        }
     }
 
-    Shortcut {
-        sequence: "down"
-        enabled: _textField.activeFocus
-
-        onActivated: root.searchService.requestNext()
+    Binding {
+        when: root.visible
+        target: root
+        property: "y"
+        value: _dragHandler.currentY
     }
 }
