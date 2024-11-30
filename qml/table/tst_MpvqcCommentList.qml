@@ -433,7 +433,7 @@ TestCase {
         waitForRendering(control, timeoutShort);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(1000);
+        wait(500);
 
         const btn = _clickHelper.onEditTimeMenuSeekBack(1);
         mouseClick(control, btn.x, btn.y);
