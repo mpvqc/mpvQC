@@ -47,11 +47,30 @@ TestCase {
 
         function onContextMenuItem(index: int, tableRow: int): point {
             const contextMenuItemHeight = 34;
-
             const xCoordinate = testCase.width - 200 + 10;
             const yTableRow = (rowHeight / 2) + rowHeight * tableRow;
-            const yContextMenuItem = yTableRow + contextMenuItemHeight * index;
-            return Qt.point(xCoordinate, yContextMenuItem);
+            const yCoordinate = yTableRow + contextMenuItemHeight * index;
+            return Qt.point(xCoordinate, yCoordinate);
+        }
+
+        function onEditTimeMenuSeekBack(tableRow: int): point {
+            const xCoordinate = columnTime + 10;
+            const yCoordinate = rowHeight * tableRow;
+            return Qt.point(xCoordinate, yCoordinate);
+        }
+
+        function onEditTimeMenuSeekForward(tableRow: int): point {
+            const xCoordinate = columnTime + 10 + 100;
+            const yCoordinate = rowHeight * tableRow;
+            return Qt.point(xCoordinate, yCoordinate);
+        }
+
+        function onEditCommentTypeMenu(index: int, tableRow: int): point {
+            const contextMenuItemHeight = 34;
+            const xCoordinate = columnCommentType + 20;
+            const yTableRow = (rowHeight / 2) + rowHeight * (tableRow - 1);
+            const yCoordinate = yTableRow + contextMenuItemHeight * index;
+            return Qt.point(xCoordinate, yCoordinate);
         }
     }
 
@@ -104,6 +123,9 @@ TestCase {
             model: ListModel {
                 property bool calledCopyToClipboard: false
                 property bool calledRemoveRow: false
+                property bool calledUpateTime: false
+                property bool calledUpateCommentType: false
+                property bool calledUpateComment: false
 
                 property int selectedRow: -1
 
@@ -113,6 +135,18 @@ TestCase {
 
                 function remove_row(index: int): void {
                     calledRemoveRow = true;
+                }
+
+                function update_time(index: int, time: int): void {
+                    calledUpateTime = true;
+                }
+
+                function update_comment_type(index: int, commentType: string): void {
+                    calledUpateCommentType = true;
+                }
+
+                function update_comment(index: int, comment: string): void {
+                    calledUpateComment = true;
                 }
 
                 ListElement {
@@ -260,7 +294,7 @@ TestCase {
         compare(control.currentIndex, 0);
     }
 
-    function test_editComment_data() {
+    function test_editCommentTrigger_data() {
         return [
             {
                 tag: "via-context-menu",
@@ -280,7 +314,7 @@ TestCase {
         ];
     }
 
-    function test_editComment(data) {
+    function test_editCommentTrigger(data) {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
         waitForRendering(control, timeoutShort);
@@ -359,5 +393,115 @@ TestCase {
         keyPress(Qt.Key_Return);
 
         tryVerify(() => control.model.calledRemoveRow);
+    }
+
+    function test_editTimePrevious() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control, timeoutShort);
+
+        mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        const btn = _clickHelper.onEditTimeMenuSeekBack(1);
+        mouseClick(control, btn.x, btn.y);
+        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 0);
+
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        tryVerify(() => control.model.calledUpateTime);
+    }
+
+    function test_editTimeNext() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control, timeoutShort);
+
+        mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        const btn = _clickHelper.onEditTimeMenuSeekForward(1);
+        mouseClick(control, btn.x, btn.y);
+        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 2);
+
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        tryVerify(() => control.model.calledUpateTime);
+    }
+
+    function test_editTimeAborted() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control, timeoutShort);
+
+        mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        const btn = _clickHelper.onEditTimeMenuSeekBack(1);
+        mouseClick(control, btn.x, btn.y);
+        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 0);
+
+        keyPress(Qt.Key_Escape);
+        wait(timeoutShort);
+
+        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 1);
+        verify(!control.model.calledUpateTime);
+    }
+
+    function test_editCommentType(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control, timeoutShort);
+
+        // test if editing aborted via escape
+        mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        keyPress(Qt.Key_Escape);
+        wait(timeoutShort);
+
+        verify(!control.model.calledUpateCommentType);
+
+        // test if editing has been successful
+        mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        const btn = _clickHelper.onEditCommentTypeMenu(3, 1);
+        mouseClick(control, btn.x, btn.y);
+
+        tryVerify(() => control.model.calledUpateCommentType);
+    }
+
+    function test_editComment(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control, timeoutShort);
+
+        // test if text has not changed
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        keyPress(Qt.Key_Return);
+        wait(timeoutShort);
+
+        verify(!control.model.calledUpateComment);
+
+        // test if editing aborted via escape
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        keyPress("h");
+        keyPress("i");
+        keyPress(Qt.Key_Escape);
+        wait(timeoutShort);
+
+        verify(!control.model.calledUpateComment);
+
+        // test if editing has been successful
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        wait(timeoutShort);
+
+        keyPress("h");
+        keyPress("i");
+        keyPress(Qt.Key_Return);
+        tryVerify(() => control.model.calledUpateComment);
     }
 }

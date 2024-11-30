@@ -38,14 +38,11 @@ MpvqcMenu {
 
     signal commentTypeEdited(index: int, newCommentType: string)
 
+    x: root.mirrored ? openedAt.x - width : openedAt.x
+    y: openedAt.y
+
     dim: false
     modal: true
-
-    onAboutToShow: {
-        if (root.mMirrored) {
-            x = openedAt.x - width;  // workaround rtl issue
-        }
-    }
 
     function _handleTriggered(potentialNewCommentType: string): void {
         if (root.currentCommentType !== potentialNewCommentType) {

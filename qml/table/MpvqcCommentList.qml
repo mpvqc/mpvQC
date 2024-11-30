@@ -320,9 +320,7 @@ ListView {
                 currentListIndex: index,
                 videoDuration: root.videoDuration,
                 timeFormatFunc: root.timeFormatFunc,
-                openedAt: coordinates,
-                x: coordinates.x,
-                y: coordinates.y
+                openedAt: coordinates
             });
             active = true;
         }
@@ -333,9 +331,7 @@ ListView {
                 currentCommentType: currentCommentType,
                 currentListIndex: index,
                 commentTypes: root.commentTypes,
-                openedAt: coordinates,
-                x: coordinates.x,
-                y: coordinates.y
+                openedAt: coordinates
             });
             active = true;
         }
@@ -473,7 +469,7 @@ ListView {
     Loader {
         id: _searchBoxLoader
 
-        readonly property string searchQuery: item?.searchQuery ?? ""
+        readonly property string searchQuery: item?.searchQuery ?? "" // qmllint disable
 
         function showSearchBox(): void {
             if (active) {

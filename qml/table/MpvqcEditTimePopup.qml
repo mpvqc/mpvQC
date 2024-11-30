@@ -53,6 +53,9 @@ Popup {
         _spinBox.valueModified();
     }
 
+    x: root.mirrored ? openedAt.x - width : openedAt.x
+    y: openedAt.y
+
     visible: true
     dim: false
     modal: true
@@ -113,12 +116,6 @@ Popup {
             } else {
                 root.decrementValue();
             }
-        }
-    }
-
-    onAboutToShow: {
-        if (root.mirrored) {
-            x = openedAt.x - width; // workaround rtl issue
         }
     }
 
