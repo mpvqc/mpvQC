@@ -20,61 +20,120 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-MpvqcFooter {
-    id: objectUnderTest
+TestCase {
+    id: testCase
 
+    readonly property int timeoutLongCI: 750
+
+    when: windowShown
+    name: "MpvqcFooter"
+    visible: true
     width: 400
     height: 400
 
-    mpvqcApplication: QtObject {
-        property bool maximized: false
-        property var mpvqcSettings: QtObject {
-            property int timeFormat: -1
-            property bool statusbarPercentage: false
-        }
-        property var mpvqcCommentTable: QtObject {
-            property int currentIndex: -1
-            property int count: 0
-        }
-        property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
-            property bool video_loaded: false
-            property real percent_pos: 10.0
-            property real duration: 10.0
-            property real time_pos: 10.0
-            property real time_remaining: 10.0
-        }
-        property var mpvqcLabelWidthCalculator: QtObject {
-            function calculateWidthFor(items, parent) {
+    Component {
+        id: objectUnderTest
+
+        MpvqcFooter {
+            id: objectUnderTest
+
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
             }
-        }
-        property var mpvqcUtilityPyObject: QtObject {
-            function formatTimeToStringLong(seconds) {
-            }
-            function formatTimeToStringShort(seconds) {
+
+            mpvqcApplication: QtObject {
+                property bool maximized: false
+                property var mpvqcSettings: QtObject {
+                    property int timeFormat: -1
+                    property bool statusbarPercentage: false
+                }
+                property var mpvqcCommentTable: QtObject {
+                    property int selectedCommentIndex: 0
+                    property int commentCount: 10
+                }
+                property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
+                    property bool video_loaded: true
+                    property real percent_pos: 10.0
+                    property real duration: 10.0
+                    property real time_pos: 5
+                    property real time_remaining: 5
+                }
+                property var mpvqcLabelWidthCalculator: QtObject {
+                    function calculateWidthFor(items, parent) {
+                        return 200;
+                    }
+                }
+                property var mpvqcUtilityPyObject: QtObject {
+                    function formatTimeToStringLong(seconds) {
+                        return `time:${seconds}`;
+                    }
+                    function formatTimeToStringShort(seconds) {
+                        return `time:${seconds}`;
+                    }
+                }
             }
         }
     }
 
-    TestCase {
-        name: "MpvqcFooter"
-        when: windowShown
+    function test_toggle_percent(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
 
-        function init() {
-            _menuMock.openCalled = false;
-        }
+        mouseClick(testCase, 395, 395);
+        wait(timeoutLongCI);
 
-        QtObject {
-            id: _menuMock
-            property bool openCalled: false
-            function open() {
-                openCalled = true;
-            }
-        }
+        verify(!control.percentLabelText.visible);
 
-        function test_open_menu() {
-            objectUnderTest.formattingOptionsButton.menu = _menuMock;
-            mouseClick(objectUnderTest.formattingOptionsButton);
-            verify(_menuMock.openCalled);
-        }
+        mouseClick(testCase, 395, 360);
+        tryVerify(() => control.percentLabelText.visible);
+        compare(control.percentLabelText.text, "10%");
+    }
+
+    function test_timeMode_data(): list<var> {
+        return [
+            {
+                tag: "hide-time",
+                expected: "",
+                coordinates: Qt.point(395, 300)
+            },
+            {
+                tag: "remaining-time",
+                expected: "-time:5",
+                coordinates: Qt.point(395, 265)
+            },
+            {
+                tag: "current-time",
+                expected: "time:5",
+                coordinates: Qt.point(395, 220)
+            },
+            {
+                tag: "default",
+                expected: "time:5/time:10",
+                coordinates: Qt.point(395, 185)
+            },
+        ];
+    }
+
+    function test_timeMode(data): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
+
+        mouseClick(testCase, 395, 395);
+        wait(timeoutLongCI);
+
+        mouseClick(testCase, data.coordinates.x, data.coordinates.y);
+        tryCompare(control.videoTimeLabelText, "text", data.expected);
+    }
+
+    function test_rowSelection(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
+
+        compare(control.rowSelectionLabelText.text, "1/10");
     }
 }

@@ -46,13 +46,27 @@ FocusScope {
     states: [
         State {
             name: "fullscreen"
-            ParentChange { target: _player; parent: root }
-            PropertyChanges { _tableContainer { visible: false } }
+            ParentChange {
+                target: _player
+                parent: root
+            }
+            PropertyChanges {
+                _tableContainer {
+                    visible: false
+                }
+            }
         },
         State {
             name: "normal"
-            ParentChange { target: _player; parent: _playerContainer }
-            PropertyChanges { _tableContainer { visible: true } }
+            ParentChange {
+                target: _player
+                parent: _playerContainer
+            }
+            PropertyChanges {
+                _tableContainer {
+                    visible: true
+                }
+            }
         }
     ]
 
