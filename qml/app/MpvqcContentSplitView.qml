@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.Controls
 
-import "../footer2"
+import "../footer"
 import "../player"
 import "../table"
 
@@ -46,13 +46,27 @@ FocusScope {
     states: [
         State {
             name: "fullscreen"
-            ParentChange { target: _player; parent: root }
-            PropertyChanges { _tableContainer { visible: false } }
+            ParentChange {
+                target: _player
+                parent: root
+            }
+            PropertyChanges {
+                _tableContainer {
+                    visible: false
+                }
+            }
         },
         State {
             name: "normal"
-            ParentChange { target: _player; parent: _playerContainer }
-            PropertyChanges { _tableContainer { visible: true } }
+            ParentChange {
+                target: _player
+                parent: _playerContainer
+            }
+            PropertyChanges {
+                _tableContainer {
+                    visible: true
+                }
+            }
         }
     ]
 

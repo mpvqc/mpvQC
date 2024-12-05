@@ -1,7 +1,7 @@
 /*
 mpvQC
 
-Copyright (C) 2022 mpvQC developers
+Copyright (C) 2024 mpvQC developers
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,89 +18,105 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
+
+import "../settings"
 
 Item {
     id: root
 
     required property var mpvqcApplication
 
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    
-    readonly property bool horizontalLayout: mpvqcSettings.layoutOrientation === Qt.Horizontal
-    
-    readonly property int customBottomMargin: mpvqcApplication.maximized ? 2 : 0
-    readonly property int customLeftMargin: 3
+    readonly property alias rowSelectionLabelText: _content.rowSelectionLabel // for tests
+    readonly property alias percentLabelText: _content.percentLabel // for tests
+    readonly property alias videoTimeLabelText: _content.videoTimeLabel // for tests
 
-    property alias formattingOptionsButton: _formattingOptionsButton
+    height: 25
+    visible: !root.mpvqcApplication.fullscreen
 
-    height: _content.height
-    visible: !mpvqcApplication.fullscreen
+    QtObject {
+        id: _impl
 
-    Column {
-        id: _content
-        width: root.width
-        spacing: 0
+        readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
+        readonly property var mpvqcCommentTable: root.mpvqcApplication.mpvqcCommentTable
+        readonly property var mpvqcLabelWidthCalculator: root.mpvqcApplication.mpvqcLabelWidthCalculator
+        readonly property var mpvqcMpvPlayerPropertiesPyObject: root.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+        readonly property var mpvqcUtilityPyObject: root.mpvqcApplication.mpvqcUtilityPyObject
 
-        MenuSeparator {
-            topPadding: 1
-            bottomPadding: 1
-            width: root.width
+        function formatTime(time: int): string {
+            if (mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
+                return mpvqcUtilityPyObject.formatTimeToStringLong(time);
+            } else {
+                return mpvqcUtilityPyObject.formatTimeToStringShort(time);
+            }
         }
 
-        RowLayout {
-            width: _content.width
+        function recalculateVideoTimeLabelWidth(): real {
+            const items = [_content.determineTimeLabelText()];
+            _content.videoTimeLabelWidth = mpvqcLabelWidthCalculator.calculateWidthFor(items, root); // qmllint disable
+        }
+    }
 
-            MpvqcRowSelectionLabel {
-                mpvqcApplication: root.mpvqcApplication
-                Layout.bottomMargin: root.customBottomMargin
-                Layout.leftMargin: root.customLeftMargin
-            }
+    MpvqcFooterContent {
+        id: _content
 
-            Item {
-                Layout.fillWidth: true
-            }
+        anchors.fill: parent
 
-            MpvqcVideoPercentLabel {
-                mpvqcApplication: root.mpvqcApplication
-                horizontalAlignment: Text.AlignRight
-                Layout.bottomMargin: root.customBottomMargin
-            }
+        isApplicationMazimized: root.mpvqcApplication.maximized
 
-            MpvqcVideoTimeLabel {
-                mpvqcApplication: root.mpvqcApplication
-                horizontalAlignment: Text.AlignRight
-                Layout.preferredWidth: width
-                Layout.bottomMargin: root.customBottomMargin
-                Layout.leftMargin: 12
-            }
+        selectedCommentIndex: _impl.mpvqcCommentTable.selectedCommentIndex
+        totalCommentCount: _impl.mpvqcCommentTable.commentCount
 
-            Item {
-                Layout.minimumHeight: 25
-                Layout.minimumWidth: 25
-                Layout.bottomMargin: root.customBottomMargin
+        playerPercentPosition: _impl.mpvqcMpvPlayerPropertiesPyObject.percent_pos
+        playerDuration: _impl.mpvqcMpvPlayerPropertiesPyObject.duration
+        playerVideoLoaded: _impl.mpvqcMpvPlayerPropertiesPyObject.video_loaded
+        playerTimePosition: _impl.mpvqcMpvPlayerPropertiesPyObject.time_pos
+        playerTimeRemaining: _impl.mpvqcMpvPlayerPropertiesPyObject.time_remaining
 
-                ToolButton {
-                    id: _formattingOptionsButton
+        isStatusbarDisplayPercentage: _impl.mpvqcSettings.statusbarPercentage
 
-                    property var menu: MpvqcFooterSettingsMenu {
-                        mpvqcApplication: root.mpvqcApplication
-                        y: -height // qmllint disable unqualified
-                        transformOrigin: _formattingOptionsButton.mirrored && !root.horizontalLayout ? Popup.BottomLeft : Popup.BottomRight
-                    }
+        isTimeFormatCurrentTotalTime: _impl.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME
+        isTimeFormatCurrentTime: _impl.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.CURRENT_TIME
+        isTimeFormatRemainingTime: _impl.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.REMAINING_TIME
+        isTimeFormatEmpty: _impl.mpvqcSettings.timeFormat === MpvqcSettings.TimeFormat.EMPTY
 
-                    icon.source: "qrc:/data/icons/expand_more_black_24dp.svg"
-                    focusPolicy: Qt.NoFocus
-                    height: parent.height
-                    width: parent.width + 1
-                    padding: 3
+        formatTimeFunc: _impl.formatTime
 
-                    onPressed: {
-                        menu.open();
-                    }
-                }
-            }
+        videoTimeLabelWidth: 0
+
+        onCurrentTotalTimeSelected: {
+            _impl.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME;
+        }
+
+        onCurrentTimeSelected: {
+            _impl.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.CURRENT_TIME;
+        }
+
+        onRemainingTimeSelected: {
+            _impl.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.REMAINING_TIME;
+        }
+
+        onEmptyTimeSelected: {
+            _impl.mpvqcSettings.timeFormat = MpvqcSettings.TimeFormat.EMPTY;
+        }
+
+        onStatusBarPercentageToggled: {
+            _impl.mpvqcSettings.statusbarPercentage = !_impl.mpvqcSettings.statusbarPercentage;
+        }
+    }
+
+    Connections {
+        target: _impl.mpvqcSettings
+
+        function onTimeFormatChanged() {
+            _impl.recalculateVideoTimeLabelWidth();
+        }
+    }
+
+    Connections {
+        target: _impl.mpvqcMpvPlayerPropertiesPyObject
+
+        function onDurationChanged() {
+            _impl.recalculateVideoTimeLabelWidth();
         }
     }
 }
