@@ -26,6 +26,10 @@ Item {
 
     required property var mpvqcApplication
 
+    readonly property alias rowSelectionLabelText: _content.rowSelectionLabel // for tests
+    readonly property alias percentLabelText: _content.percentLabel // for tests
+    readonly property alias videoTimeLabelText: _content.videoTimeLabel // for tests
+
     height: 25
     visible: !root.mpvqcApplication.fullscreen
 
