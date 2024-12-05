@@ -24,7 +24,14 @@ import win32api
 import win32con
 
 from .c_structures import LPNCCALCSIZE_PARAMS
-from .utils import Taskbar, get_resize_border_thickness, get_window_size, is_fullscreen, is_maximized
+from .utils import (
+    Taskbar,
+    get_resize_border_thickness,
+    get_window_size,
+    is_fullscreen,
+    is_maximized,
+    prevent_window_resize_for,
+)
 
 RESIZE_BORDER_WIDTH = 6
 
@@ -92,38 +99,35 @@ def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
     return True, win32con.WVR_REDRAW
 
 
-GetClientRect = ctypes.windll.user32.GetClientRect
-GetDC = ctypes.windll.user32.GetDC
-CreateSolidBrush = ctypes.windll.gdi32.CreateSolidBrush
-FillRect = ctypes.windll.user32.FillRect
-ReleaseDC = ctypes.windll.user32.ReleaseDC
-DeleteObject = ctypes.windll.gdi32.DeleteObject
-
-
-def handle_erase_background(hwnd) -> tuple[bool, int]:
-    rect = ctypes.wintypes.RECT()
-    GetClientRect(hwnd, ctypes.byref(rect))
-
-    hdc = GetDC(hwnd)
-    brush = CreateSolidBrush(0x00000000)
-
-    FillRect(hdc, ctypes.byref(rect), brush)
-
-    ReleaseDC(hwnd, hdc)
-    DeleteObject(brush)
-    return True, 0
-
-
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     """"""
+
+    def __init__(self):
+        super().__init__()
+        self._top_lvl_hwnd = None
+        self._embedded_player_hwnd = None
+
+    def set_top_lvl_hwnd(self, hwnd):
+        self._top_lvl_hwnd = hwnd
+
+    def set_embedded_player_hwnd(self, hwnd):
+        self._embedded_player_hwnd = hwnd
 
     def nativeEventFilter(self, _, message):
         msg = ctypes.wintypes.MSG.from_address(message.__int__())
 
         hwnd = msg.hWnd
 
-        if not hwnd:
-            return False, 0
+        match hwnd:
+            case None:
+                return False, 0
+            case self._embedded_player_hwnd:
+                return False, 0
+            case self._top_lvl_hwnd:
+                pass
+            case _:
+                prevent_window_resize_for(hwnd)
+                return False, 0
 
         l_param = msg.lParam
         w_param = msg.wParam
@@ -134,7 +138,5 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
                 return handle_non_client_hit_test(hwnd, l_param)
             case win32con.WM_NCCALCSIZE if w_param:
                 return handle_non_client_calculate_size(hwnd, l_param)
-            case win32con.WM_ERASEBKGND:
-                return handle_erase_background(hwnd)
             case _:
                 return False, 0

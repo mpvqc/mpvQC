@@ -8,7 +8,7 @@ dependencies = [
     "inject>=5.2.1",
     "Jinja2>=3.1.4",
     "mpv>=1.0.7",
-    "PySide6-Essentials==6.7.3",
+    "PySide6-Essentials==6.8.1",
     "pywin32>=307; sys_platform == 'win32'",
 ]
 classifiers = [

@@ -18,31 +18,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
-import QtQuick.Controls
 
-Dialog {
+import pyobjects
+import shared
+
+
+WindowContainer {
     id: root
 
     required property var mpvqcApplication
 
-    property alias text: _content.text
+    readonly property var mpvqcNewCommentMenu: mpvqcApplication.mpvqcNewCommentMenu
 
-    popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
-    width: 420
-    z: 2
-    parent: mpvqcApplication.contentItem
-    standardButtons: Dialog.Ok
-    closePolicy: Popup.CloseOnEscape
-    anchors.centerIn: parent
-    dim: false
-
-    contentItem: Label {
-        id: _content
-
-        horizontalAlignment: Text.AlignLeft
-        wrapMode: Label.WordWrap
-        elide: Text.ElideLeft
+    window: MpvWindowPyObject {
+        flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput
+        color: "black"
     }
 
-    footer: MpvqcKeyboardFocusableButtonBox {}
+    MpvqcPlayerMouseArea {
+        mpvqcApplication: root.mpvqcApplication
+        anchors.fill: root
+
+        onRightMouseButtonPressed: {
+            root.mpvqcNewCommentMenu.popupMenu()
+        }
+
+        onPressed: {
+            root.mpvqcApplication.requestActivate()
+        }
+    }
+
 }
