@@ -149,6 +149,11 @@ ListView {
 
         readonly property alias searchQuery: _searchBoxLoader.searchQuery
 
+        readonly property Timer _ensureCommentVisibleTimer: Timer {
+            interval: 0
+            onTriggered: root.positionViewAtIndex(root.currentIndex, ListView.Contain)
+        }
+
         function select(index: int): void {
             root.currentIndex = index;
         }
@@ -181,6 +186,7 @@ ListView {
             const item = root.currentItem;
             const comment = item.comment; // qmllint disable
             const commentLabel = item.commentLabel;
+            root.positionViewAtIndex(index, ListView.Contain);
             _editLoader.startEditingComment(index, comment, commentLabel);
         }
 
@@ -210,6 +216,10 @@ ListView {
 
         function copyCommentToClipboard(index: int): void {
             root.model.copy_to_clipboard(index);
+        }
+
+        function ensureFullCommentEditingPopupVisible(): void {
+            _ensureCommentVisibleTimer.restart();
         }
 
         function performModelSearch(searchQuery: string, includeCurrentRow: bool, topDown: bool): var {
@@ -377,6 +387,10 @@ ListView {
 
             function onCommentEdited(index: int, newComment: string): void {
                 _impl.updateComment(index, newComment);
+            }
+
+            function onCommentEditPopupHeightChanged(): void {
+                _impl.ensureFullCommentEditingPopupVisible();
             }
 
             function onClosed(): void {

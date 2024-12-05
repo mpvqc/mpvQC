@@ -35,6 +35,7 @@ Popup {
     property bool acceptValue: true
 
     signal commentEdited(index: int, newComment: string)
+    signal commentEditPopupHeightChanged
 
     width: root.parent.width
 
@@ -89,15 +90,19 @@ Popup {
         }
     }
 
+    onOpened: {
+        _textField.selectAll();
+        _textField.forceActiveFocus();
+    }
+
     onActiveFocusChanged: {
         if (!activeFocus) {
             root.close();
         }
     }
 
-    onOpened: {
-        _textField.selectAll();
-        _textField.forceActiveFocus();
+    onHeightChanged: {
+        root.commentEditPopupHeightChanged();
     }
 
     Shortcut {
