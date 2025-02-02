@@ -50,4 +50,9 @@ Menu {
         return item instanceof MenuSeparator;
     }
 
+    // *********************************************************
+    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+    onAboutToShow: enableFakeModal();
+    onAboutToHide: disableFakeModal();
+    // *********************************************************
 }

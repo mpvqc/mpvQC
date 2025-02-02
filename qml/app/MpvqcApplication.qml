@@ -161,7 +161,12 @@ ApplicationWindow {
         propagateComposedEvents: true
 
         onPressed: event => {
-            event.accepted = false;
+            // *********************************************************
+            // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+            event.accepted = !!root.nativePopupOpen;
+            // *********************************************************
+
+            // event.accepted = false;
             root.focusCommentTable();
         }
     }
@@ -183,4 +188,25 @@ ApplicationWindow {
 
     Material.background: root.mpvqcTheme.background
     Material.foreground: root.mpvqcTheme.foreground
+
+    // *********************************************************
+    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+    property bool nativePopupOpen: false
+    property Timer modalFaker: Timer {
+        interval: 100
+        onTriggered: { root.nativePopupOpen = false; }
+    }
+
+    function enableFakeModal(): void {
+        if (Qt.platform.os === "windows") {
+            root.nativePopupOpen = true;
+        }
+    }
+
+    function disableFakeModal(): void {
+        if (Qt.platform.os === "windows") {
+            modalFaker.restart();
+        }
+    }
+    // *********************************************************
 }
