@@ -199,6 +199,7 @@ ApplicationWindow {
 
     function enableFakeModal(): void {
         if (Qt.platform.os === "windows") {
+            modalFaker.stop();
             root.nativePopupOpen = true;
         }
     }
