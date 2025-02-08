@@ -23,9 +23,9 @@ from mpvqc.models import Comment
 def assert_comments(expected: list[list[Any]], actual: list[dict[str, Any]]):
     assert len(expected) == len(actual)
     for c_e, c_a in zip(expected, actual):
-        print(f"{c_e[0]} == {c_a["time"]}, ", end="")
-        print(f"{c_e[1]} == {c_a["commentType"]}, ", end="")
-        print(f"{c_e[2]} == {c_a["comment"]}")
+        print(f"{c_e[0]} == {c_a['time']}, ", end="")
+        print(f"{c_e[1]} == {c_a['commentType']}, ", end="")
+        print(f"{c_e[2]} == {c_a['comment']}")
         assert c_e[0] == c_a["time"]
         assert c_e[1] == c_a["commentType"]
         assert c_e[2] == c_a["comment"]
