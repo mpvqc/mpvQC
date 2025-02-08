@@ -128,7 +128,7 @@ def test_render_service_video_path_video_name(make_mock, document_render_service
 
     make_mock(video=Path.home() / "video.mkv")
     expected = textwrap.dedent(f"""\
-        video_path: {Path.home() / 'video.mkv'}
+        video_path: {Path.home() / "video.mkv"}
         video_name: video.mkv
         """)
     actual = document_render_service.render(template)
@@ -176,7 +176,7 @@ def test_render_service_renders_partial_headers(make_mock, document_render_servi
         f"""\
         [FILE]
         nick      : ಠ_ಠ
-        path      : {Path('/path/to/video')}
+        path      : {Path("/path/to/video")}
 
         [DATA]
         # total lines: 0
@@ -223,7 +223,7 @@ def test_renderer_service_renders_backup(make_mock, document_render_service, res
 
     rendered = document_render_service.render(resource_service.backup_template)
 
-    assert f'path      : {Path("/path/to/video/ignore/user/setting")}' in rendered
+    assert f"path      : {Path('/path/to/video/ignore/user/setting')}" in rendered
     assert "[00:00:00] [Translation] My first comment" in rendered
     assert "[00:00:50] [Spelling] My second comment" in rendered
     assert "[00:01:40] [Phrasing] My third comment" in rendered
@@ -255,7 +255,7 @@ def test_backup_service_performs_backup(make_mock, zip_file, document_backup_ser
 
     filename, content = writestr_mock.call_args.args
     assert f"{datetime.now():%Y-%m-%d}" in filename
-    assert f'{Path("/path/to/nice/video")}' in content
+    assert f"{Path('/path/to/nice/video')}" in content
     assert "[00:00:00] [Frrrranky] Suuuuuuuper" in content
 
 

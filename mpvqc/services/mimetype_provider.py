@@ -32,12 +32,12 @@ class MimetypeProviderService:
             if mime_type.name().startswith("video/"):
                 patterns.update(mime_type.globPatterns())
 
-        return f" ({" ".join(sorted(patterns))})"
+        return f" ({' '.join(sorted(patterns))})"
 
     @cached_property
     def subtitle_file_glob_pattern(self):
         patterns = (f"*.{ext}" for ext in self.subtitle_file_extensions)
-        return f" ({" ".join(sorted(patterns))})"
+        return f" ({' '.join(sorted(patterns))})"
 
     @cached_property
     def subtitle_file_extensions(self) -> list[str]:

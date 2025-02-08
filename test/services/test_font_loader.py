@@ -50,6 +50,6 @@ def test_fonts_loaded(qt_app):
     loaded_font_families = QFontDatabase.families()
 
     for font_family in verifiable_font_families:
-        assert (
-            font_family in loaded_font_families
-        ), f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}"
+        assert font_family in loaded_font_families, (
+            f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}"
+        )
