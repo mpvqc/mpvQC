@@ -422,84 +422,84 @@
     </message>
     <message>
         <source>Default format</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardformat</translation>
     </message>
     <message>
         <source>Current time</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Zeit</translation>
     </message>
     <message>
         <source>Remaining time</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbleibende Zeit</translation>
     </message>
     <message>
         <source>Hide time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit ausblenden</translation>
     </message>
     <message>
         <source>Progress in percent</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschritt in Prozent</translation>
     </message>
     <message>
         <source>Keyboard Shortcuts...</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastaturkürzel ...</translation>
     </message>
     <message>
         <source>About mpvQC...</source>
-        <translation type="unfinished"></translation>
+        <translation>Über mpvQC ...</translation>
     </message>
     <message>
         <source>Appearance...</source>
-        <translation type="unfinished"></translation>
+        <translation>Erscheinungsbild ...</translation>
     </message>
     <message>
         <source>Comment Type Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentartyp-Einstellungen ...</translation>
     </message>
     <message>
         <source>Backup Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Backupeinstellungen ...</translation>
     </message>
     <message>
         <source>Export Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteinstellungen ...</translation>
     </message>
     <message>
         <source>Import Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeinstellungen ...</translation>
     </message>
     <message>
         <source>%1 (unsaved)</source>
         <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (ungespeichert)</translation>
     </message>
     <message>
         <source>Open Subtitle(s)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Untertitel öffnen ...</translation>
     </message>
     <message>
         <source>Export QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation>QC-Dokument exportieren</translation>
     </message>
     <message>
         <source>Application Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwendungslayout</translation>
     </message>
     <message>
         <source>Application Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwendungstitel</translation>
     </message>
     <message>
         <source>Extended Exports...</source>
-        <translation type="unfinished"></translation>
+        <translation>Weitere Exporte ...</translation>
     </message>
     <message>
         <source>Video Above Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Video oberhalb der Kommentare</translation>
     </message>
     <message>
         <source>Video Next to Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Video neben den Kommentaren</translation>
     </message>
 </context>
 <context>
