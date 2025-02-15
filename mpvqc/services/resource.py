@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import platform
 from functools import cache
 
 import inject
@@ -31,7 +32,11 @@ class ResourceService:
 
     @property
     def mpv_conf_content(self) -> str:
-        return self._read_from_resource(path=":/data/config/mpv.conf")
+        match platform.system():
+            case "Windows":
+                return self._read_from_resource(path=":/data/config/mpv-windows.conf")
+            case _:
+                return self._read_from_resource(path=":/data/config/mpv-linux.conf")
 
     @property
     def backup_template(self) -> str:
