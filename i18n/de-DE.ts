@@ -526,45 +526,45 @@
     </message>
     <message>
         <source>Delete Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar löschen</translation>
     </message>
     <message>
         <source>Do you really want to delete this comment?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie diesen Kommentar wirklich löschen?</translation>
     </message>
     <message>
         <source>Document Not Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokument nicht kompatibel</translation>
     </message>
     <message>
         <source>Documents Not Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokumente nicht kompatibel</translation>
     </message>
     <message>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportfehler</translation>
     </message>
     <message>
         <source>Error at line %1: %2</source>
         <extracomment>%1 will be the line nr of the error, %2 will be the error message (probably in English)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Zeile %1: %2</translation>
     </message>
     <message>
         <source>Extended Exports</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweiterte Exporte</translation>
     </message>
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
         <extracomment>%1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC&apos;s documentation about export templates</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>mpvQC ermöglicht die Anpassung von Exporten mithilfe der %1-Engine. Um zu beginnen, besuchen Sie %2.</translation>
     </message>
     <message>
         <source>Checking for Updates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Updates prüfen ...</translation>
     </message>
     <message>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>Wird geladen ...</translation>
     </message>
 </context>
 <context>
