@@ -44,7 +44,6 @@ ListModel {
     ListElement {
         language: "German"
         identifier: "de-DE"
-        translator: "Frechdachs"
     }
     ListElement {
         language: "English"
