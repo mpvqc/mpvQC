@@ -16,12 +16,12 @@
     <message>
         <source>Development</source>
         <extracomment>Header for the section about people that contributed source code to the project</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Entwicklung</translation>
     </message>
     <message>
         <source>Artwork</source>
         <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Artwork</translation>
     </message>
     <message>
         <source>Translation</source>
@@ -31,37 +31,37 @@
     <message>
         <source>Libraries</source>
         <extracomment>Header for the section about code dependencies of the project</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheken</translation>
     </message>
     <message>
         <source>Dependencies</source>
         <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Abhängigkeiten</translation>
     </message>
     <message>
         <source>Copyright © mpvQC Developers</source>
         <extracomment>This text is part of the software license description</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Copyright © mpvQC Developers</translation>
     </message>
     <message>
         <source>GNU General Public License, version 3 or later</source>
         <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>GNU General Public License, Version 3 oder später</translation>
     </message>
     <message>
         <source>This program comes with absolutely no warranty.</source>
         <extracomment>This text is part of the software license description</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Programm wird ohne jede Garantie bereitgestellt.</translation>
     </message>
     <message>
         <source>See the %1 for details.</source>
         <extracomment>This text is part of the software license description. Argument %1 will be the link to the license</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Siehe %1 für Details.</translation>
     </message>
     <message>
         <source>Other</source>
         <extracomment>Header for the section about other dependencies like fonts and icons</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sonstiges</translation>
     </message>
 </context>
 <context>
