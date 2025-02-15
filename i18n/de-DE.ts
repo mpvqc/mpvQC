@@ -107,32 +107,32 @@
     <message>
         <source>Edit Comment</source>
         <extracomment>Context menu on right click in comments table</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar bearbeiten</translation>
     </message>
     <message>
         <source>Copy Comment</source>
         <extracomment>Context menu on right click in comments table</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar kopieren</translation>
     </message>
     <message>
         <source>Delete Comment</source>
         <extracomment>Context menu on right click in comments table</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar löschen</translation>
     </message>
     <message>
         <source>Open Video</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Video öffnen</translation>
     </message>
     <message>
         <source>Add Comment</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar hinzufügen</translation>
     </message>
     <message>
         <source>Show Keyboard Shortcuts</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tastaturkürzel anzeigen</translation>
     </message>
 </context>
 <context>
