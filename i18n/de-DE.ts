@@ -757,7 +757,7 @@
     </message>
     <message>
         <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es ist eine neue Version von mpvQC verfügbar ({}). Besuchen Sie {} , um sie herunterzuladen.</translation>
     </message>
 </context>
 </TS>
