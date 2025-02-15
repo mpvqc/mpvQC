@@ -193,32 +193,32 @@
     <name>ExportSettingsDialog</name>
     <message>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteinstellungen</translation>
     </message>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>Nickname</translation>
     </message>
     <message>
         <source>Document Header</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokumentkopf</translation>
     </message>
     <message>
         <source>Write Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum schreiben</translation>
     </message>
     <message>
         <source>Write &apos;%1&apos;</source>
         <extracomment>%1 will be the application name. Most probably &apos;mpvQC&apos; :)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; schreiben</translation>
     </message>
     <message>
         <source>Write Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>Nickname schreiben</translation>
     </message>
     <message>
         <source>Write Video Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Videopfad schreiben</translation>
     </message>
 </context>
 <context>
