@@ -293,15 +293,15 @@
     <name>InputConfEditDialog</name>
     <message>
         <source>Edit input.conf</source>
-        <translation type="unfinished">input.conf editieren</translation>
+        <translation>input.conf bearbeiten</translation>
     </message>
     <message>
         <source>Changes to the input.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an der input.conf werden erst nach einem Neustart wirksam.</translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehr erfahren</translation>
     </message>
 </context>
 <context>
