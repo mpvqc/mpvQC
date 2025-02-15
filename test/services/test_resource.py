@@ -59,7 +59,7 @@ def test_resources(resource_service):
 def test_os_specific_resources(resource_service):
     with patch("platform.system", MagicMock(return_value="Windows")):
         assert resource_service.mpv_conf_content
-        assert "vo=gpu-next" in resource_service.mpv_conf_content.splitlines()
+        assert "vo=gpu" in resource_service.mpv_conf_content.splitlines()
 
     other_oses = ["Linux", "Darwin"]
 
