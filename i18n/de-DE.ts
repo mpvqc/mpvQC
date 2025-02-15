@@ -586,147 +586,147 @@
     <name>ShortcutsDialog</name>
     <message>
         <source>Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastaturkürzel</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
-        <translation type="unfinished">QC-Dokument(e) öffnen</translation>
+        <translation>QC-Dokument(e) öffnen</translation>
     </message>
     <message>
         <source>Cycle Through Audio Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch Audiotracks wechseln</translation>
     </message>
     <message>
         <source>New QC Document</source>
-        <translation type="unfinished">Neues QC-Dokument</translation>
+        <translation>Neues QC-Dokument</translation>
     </message>
     <message>
         <source>Save QC Document</source>
-        <translation type="unfinished">QC-Dokument speichern</translation>
+        <translation>QC-Dokument speichern</translation>
     </message>
     <message>
         <source>Save as new QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Als neues QC-Dokument speichern</translation>
     </message>
     <message>
         <source>Open Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Video öffnen</translation>
     </message>
     <message>
         <source>Resize Video to Original Resolution</source>
-        <translation type="unfinished">Video auf Originalgröße skalieren</translation>
+        <translation>Video auf Originalgröße skalieren</translation>
     </message>
     <message>
         <source>Add Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar hinzufügen</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentare</translation>
     </message>
     <message>
         <source>Edit Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar bearbeiten</translation>
     </message>
     <message>
         <source>Copy Comment to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar in die Zwischenablage kopieren</translation>
     </message>
     <message>
         <source>Delete Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar löschen</translation>
     </message>
     <message>
         <source>Previous Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorheriger Kommentar</translation>
     </message>
     <message>
         <source>Next Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächster Kommentar</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished">Video</translation>
+        <translation>Video</translation>
     </message>
     <message>
         <source>Toggle Fullscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Vollbild umschalten</translation>
     </message>
     <message>
         <source>Toggle Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe/Pause umschalten</translation>
     </message>
     <message>
         <source>Seek Backward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Sekunden zurückspringen</translation>
     </message>
     <message>
         <source>Seek Forward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Sekunden vorspringen</translation>
     </message>
     <message>
         <source>Seek Backward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>5 Sekunden bis zum Keyframe zurückspringen</translation>
     </message>
     <message>
         <source>Seek Forward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>5 Sekunden bis zum Keyframe vorspringen</translation>
     </message>
     <message>
         <source>Decrease Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Lautstärke verringern</translation>
     </message>
     <message>
         <source>Increase Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Lautstärke erhöhen</translation>
     </message>
     <message>
         <source>Toggle Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Ton ein-/ausschalten</translation>
     </message>
     <message>
         <source>Frame Step Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Bild zurück</translation>
     </message>
     <message>
         <source>Frame Step Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Bild vor</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch Untertitelspuren wechseln</translation>
     </message>
     <message>
         <source>Video Screenshot (Unscaled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video-Screenshot (ungeskaliert)</translation>
     </message>
     <message>
         <source>Video Screenshot (Scaled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video-Screenshot (skaliert)</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Render Modes</source>
-        <translation type="unfinished"></translation>
+        <translation>Untertitel-Darstellungsmodus durchschalten</translation>
     </message>
     <message>
         <source>Toggle Video Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Videostatistiken umschalten</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Beenden</translation>
     </message>
     <message>
         <source>Open Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche öffnen</translation>
     </message>
     <message>
         <source>Undo Previous Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Aktion rückgängig machen</translation>
     </message>
     <message>
         <source>Redo Previous Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Aktion wiederholen</translation>
     </message>
 </context>
 <context>
