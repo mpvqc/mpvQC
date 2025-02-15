@@ -83,19 +83,19 @@
     <name>BackupDialog</name>
     <message>
         <source>Backup Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Backup aktiviert</translation>
     </message>
     <message>
         <source>Backup Interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Backup-Intervall</translation>
     </message>
     <message>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekunden</translation>
     </message>
     <message>
         <source>Backup Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Backup-Speicherort</translation>
     </message>
     <message>
         <source>Backup Settings</source>
