@@ -270,23 +270,23 @@
     <name>ImportSettingsDialog</name>
     <message>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeinstellungen</translation>
     </message>
     <message>
         <source>Open video if found</source>
-        <translation type="unfinished"></translation>
+        <translation>Video automatisch öffnen, wenn vorhanden</translation>
     </message>
     <message>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>Immer</translation>
     </message>
     <message>
         <source>Ask every time</source>
-        <translation type="unfinished"></translation>
+        <translation>Jedes Mal nachfragen</translation>
     </message>
     <message>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie</translation>
     </message>
 </context>
 <context>
