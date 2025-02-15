@@ -571,15 +571,15 @@
     <name>MpvConfEditDialog</name>
     <message>
         <source>Edit mpv.conf</source>
-        <translation type="unfinished">mpv.conf editieren</translation>
+        <translation>mpv.conf bearbeiten</translation>
     </message>
     <message>
         <source>Changes to the mpv.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an der mpv.conf werden erst nach einem Neustart wirksam.</translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehr erfahren</translation>
     </message>
 </context>
 <context>
