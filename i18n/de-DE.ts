@@ -226,7 +226,7 @@
     <message>
         <source>untitled</source>
         <extracomment>Will be used in the file name proposal when saving a qc document when there&apos;s no video being loaded</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>unbenannt</translation>
     </message>
     <message>
         <source>Video files</source>
@@ -254,16 +254,16 @@
     </message>
     <message>
         <source>Open Subtitle(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Untertiteldateien öffnen</translation>
     </message>
     <message>
         <source>Open Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Video öffnen</translation>
     </message>
     <message>
         <source>Export QC Document Using %1 Template</source>
         <extracomment>%1 will be the name of the template used to export</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>QC-Dokument mit der Vorlage &apos;%1&apos; exportieren</translation>
     </message>
 </context>
 <context>
