@@ -170,23 +170,23 @@
     <name>CommentTypesDialog</name>
     <message>
         <source>A comment type must not be blank</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Kommentartyp darf nicht leer sein</translation>
     </message>
     <message>
         <source>Comment type already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Kommentartyp existiert bereits</translation>
     </message>
     <message>
         <source>Comment Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentartypen</translation>
     </message>
     <message>
         <source>New comment type</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuer Kommentartyp</translation>
     </message>
     <message>
         <source>Characters &apos;{}&apos; not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Zeichen &apos;{}&apos; sind nicht erlaubt</translation>
     </message>
 </context>
 <context>
