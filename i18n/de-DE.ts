@@ -308,19 +308,19 @@
     <name>KeyboardKeys</name>
     <message>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg</translation>
     </message>
     <message>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Umschalt</translation>
     </message>
     <message>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Löschen</translation>
+        <translation>Löschen</translation>
     </message>
 </context>
 <context>
