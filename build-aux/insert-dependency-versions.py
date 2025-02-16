@@ -31,16 +31,6 @@ class Requirement:
     version: str
 
 
-    """
-    # >>> parse_requirement("# something")
-
-    >>> parse_requirement("pyside6-essentials==6.8.2").identifier
-    'pyside6-essentials'
-
-    >>> parse_requirement("pyside6-essentials==6.8.2").version
-    '6.8.2'
-    """
-
 def parse_requirement(line: str) -> Requirement | None:
     """
     >>> parse_requirement("requests==2.25.1")
