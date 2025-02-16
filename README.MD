@@ -18,6 +18,7 @@ We use [uv](https://github.com/astral-sh/uv) and [just](https://github.com/casey
 $ just
 Available recipes:
     format                 # Format code
+    init                   # Initialize repository
 
     [build]
     build                  # Build full project into build/release

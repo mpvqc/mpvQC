@@ -88,6 +88,10 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
     uv run ruff check --fix
     uv run ruff format
 
+# Initialize repository
+@init:
+    uv sync
+
 # Build full project into build/release
 [group('build')]
 @build: _check-pyside-setup _clean-build _clean-develop _compile-resources
