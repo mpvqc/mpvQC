@@ -31,7 +31,7 @@ ListModel {
         name: "jinja2"
         url: "https://github.com/pallets/jinja/"
         licence: "BSD-3-Clause"
-        version: "@@pypi-Jinja2@@"
+        version: "@@pypi-jinja2@@"
         os: "linux, windows"
     }
     ListElement {
@@ -45,7 +45,7 @@ ListModel {
         name: "PySide6"
         url: "https://wiki.qt.io/Qt_for_Python"
         licence: "LGPL-3.0"
-        version: "@@pypi-PySide6-Essentials@@"
+        version: "@@pypi-pyside6-essentials@@"
         os: "linux, windows"
     }
     ListElement {

@@ -7,46 +7,38 @@ https://mpvqc.github.io
 
 # Development Setup
 
-This project assumes that a virtual environment is used:
+- **Install the following tools:**
 
-* [Guide for Linux](docs/dev-setup-linux.md)
-* [Guide for Windows](docs/dev-setup-windows.md)
+  - [uv](https://github.com/astral-sh/uv)
+  - [just](https://github.com/casey/just)
+  - **On Windows, also install:**
+    - [Python 3.12 or later](https://www.python.org/downloads/)
+    - [Git Bash](https://git-scm.com/downloads)
+    - **Make sure to use just from Git Bash**
 
-We use `just` (https://github.com/casey/just) to build our application.
+- **Ensure libmpv is in your path:**
 
-```shell
-$ just
-Available recipes:
-    format                 # Format code
-    install-dependencies   # Install dependencies into the virtual environment
+  - **Linux**: Install libmpv via your package manager
+  - **Windows**: Download [libmpv](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/), extract it and
+    place the `libmpv-*.dll` in the repository’s root folder
 
-    [build]
-    build                  # Build full project into build/release
-    build-develop          # Build and compile resources into source directory
-    clean                  # Remove ALL generated files
+- **Clone the repository**
 
-    [i18n]
-    add-translation locale # Add new language
-    update-translations    # Update *.ts files by traversing the source code
+- **Open a terminal** where you cloned the repository
 
-    [lint]
-    lint-python            # Lint Python files
-    lint-qml               # Lint QML files
+- **Initialize the environment:**
+  ```shell
+  just init
+  ```
 
-    [test]
-    test                   # Run Python and QML tests
-    test-python            # Run Python tests
-    test-qml               # Run QML tests
-```
+Run `just build-develop` every time you change files in the `data`, `i18n`, or `qml` directories.  
+This command compiles everything into a Python file and places it in the `mpvqc` folder,
+so the application picks it up on startup.
 
-Run `just build-develop` after each change in the `data`, `i18n`, or `qml` directories.
-This will *compile* everything into a Python file and move it into the `mpvqc` directory
-where it will be picked up on app start.
-
-If you're on Linux, and you're using PyCharm or something similar:
-Create a run configuration that runs the `build-develop` recipe before starting the application.
+**Tipp:** Configure your IDE to run the `build-develop` recipe before launching the app.
 
 # Internationalization
 
-If you want to help translating this application into other languages, checkout the [guide](docs/internationalization.md).
+If you want to help translating this application into other languages, checkout
+the [guide](docs/internationalization.md).
 Please feel free to open a new issue in case you need help.
