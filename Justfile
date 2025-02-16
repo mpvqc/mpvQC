@@ -206,10 +206,6 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
 
 @_check-pyside-setup:
     uv version
-    uv run pyside6-lupdate -version
-    uv run pyside6-lrelease -version
-    uv run pyside6-rcc -version
-    echo ''
 
 @_check-qml-setup:
     which {{ TOOL_CLI_QML_TESTRUNNER }}
