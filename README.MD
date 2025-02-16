@@ -17,26 +17,29 @@ We use [uv](https://github.com/astral-sh/uv) and [just](https://github.com/casey
 ```shell
 $ just
 Available recipes:
-    format                 # Format code
-    init                   # Initialize repository
+    format                                     # Format code
+    init                                       # Initialize repository
+
+    [CI]
+    insert-dependency-versions +UPDATE_INPLACE # Insert dependency versions
 
     [build]
-    build                  # Build full project into build/release
-    build-develop          # Build and compile resources into source directory
-    clean                  # Remove ALL generated files
+    build                                      # Build full project into build/release
+    build-develop                              # Build and compile resources into source directory
+    clean                                      # Remove ALL generated files
 
     [i18n]
-    add-translation locale # Add new language
-    update-translations    # Update *.ts files by traversing the source code
+    add-translation locale                     # Add new language
+    update-translations                        # Update *.ts files by traversing the source code
 
     [lint]
-    lint-python            # Lint Python files
-    lint-qml               # Lint QML files
+    lint-python                                # Lint Python files
+    lint-qml                                   # Lint QML files
 
     [test]
-    test                   # Run Python and QML tests
-    test-python            # Run Python tests
-    test-qml               # Run QML tests
+    test                                       # Run Python and QML tests
+    test-python                                # Run Python tests
+    test-qml                                   # Run QML tests
 ```
 
 Run `just build-develop` after each change in the `data`, `i18n`, or `qml` directories.
