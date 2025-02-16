@@ -37,6 +37,8 @@ jobs:
           python-version: "3.12"
       - name: Install just
         uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Run Build
         id: build_step
         run: |
@@ -97,27 +99,13 @@ jobs:
 
 
           echo "::group::Setup Virtual Environment"
-          execute python -m venv venv
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            execute source venv/bin/activate
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            execute source venv/Scripts/activate
-          else
-            echo "$RUNNER_OS not supported"
-            exit 1
-          fi
-          execute python -m pip install --upgrade pip
-          execute just install-dependencies
+          execute just init
           echo "::endgroup::"
 
 
           echo "::group::Set Dependency Versions"
-          DEPENDENCY_MODEL_PATH='qml/models/MpvqcLibraryModel.qml'
-          execute python build-aux/generate-dependency-versions.py \
-            --pyproject-file pyproject.toml \
-            --optional-group dev \
-            insert \
-            --update-inplace "$DEPENDENCY_MODEL_PATH"
+          DEPENDENCY_MODEL_PATH="qml/models/MpvqcLibraryModel.qml"
+          execute just insert-dependency-versions "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
           echo "::endgroup::"
 
@@ -178,6 +166,8 @@ jobs:
           python-version: "3.12"
       - name: Install just
         uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Remove Python sources
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -192,18 +182,13 @@ jobs:
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute python -m venv venv
-          execute source venv/Scripts/activate
-          execute python -m pip install --upgrade pip
-          execute just install-dependencies
-          execute python -m pip install nuitka
+          execute just init
+          execute uv pip install nuitka
       - name: Build Bundle
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute source venv/Scripts/activate
-
-          execute python.exe -m nuitka main.py \
+          execute uv run nuitka main.py \
             --assume-yes-for-downloads \
             --standalone \
             --deployment \
