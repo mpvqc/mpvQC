@@ -91,6 +91,8 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
 # Initialize repository
 @init:
     uv sync
+    echo "Created by command: just init" > portable
+    echo "Runs application in portable mode by storing all files in the <git-repo>/appdata directory" >> portable
 
 # Build full project into build/release
 [group('build')]
