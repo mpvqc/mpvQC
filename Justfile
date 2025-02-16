@@ -122,27 +122,27 @@ clean: _clean-build _clean-develop _clean-test
 
 # Add new language
 [group('i18n')]
-add-translation locale: _check-pyside-setup _prepare-translation-extractions
-    @cd {{ DIRECTORY_BUILD_TRANSLATIONS }}; \
-    	uv run pyside6-lupdate \
-    		-verbose \
-    		-source-language en_US \
-    		-target-language {{ locale }} \
-    		-ts {{ DIRECTORY_I18N }}/{{ locale }}.ts
-    @echo ''
-    @just update-translations
+@add-translation locale: _check-pyside-setup _prepare-translation-extractions
+    uv --directory "{{ DIRECTORY_BUILD_TRANSLATIONS }}" \
+        run pyside6-lupdate \
+            -verbose \
+            -source-language en_US \
+            -target-language {{ locale }} \
+            -ts {{ DIRECTORY_I18N }}/{{ locale }}.ts
+    echo ''
+    just update-translations
 
 # Update *.ts files by traversing the source code
 [group('i18n')]
-update-translations: _check-pyside-setup _clean-develop _prepare-translation-extractions
-    @# Traverses *.qml and *.py files to update translation files
-    @# Requires translations in .py:   QCoreApplication.translate("context", "string")
-    @# Requires translations in .qml:  qsTranslate("context", "string")
-    @cd {{ DIRECTORY_BUILD_TRANSLATIONS }}; \
-    	uv run pyside6-lupdate \
+@update-translations: _check-pyside-setup _clean-develop _prepare-translation-extractions
+    # Traverses *.qml and *.py files to update translation files
+    # Requires translations in .py:   QCoreApplication.translate("context", "string")
+    # Requires translations in .qml:  qsTranslate("context", "string")
+    uv --directory "{{ DIRECTORY_BUILD_TRANSLATIONS }}" \
+    	run pyside6-lupdate \
     		-locations none \
     		-project {{ FILE_BUILD_TRANSLATIONS_JSON }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}/i18n/*.ts \
     	{{ DIRECTORY_I18N }}
 
@@ -217,10 +217,9 @@ _generate-qrc-data:
     @cp -r \
     	{{ DIRECTORY_DATA }} \
     	{{ DIRECTORY_BUILD_QRC_DATA }}
-    @cd \
-    	{{ DIRECTORY_BUILD_QRC_DATA }}/data; \
-    		uv run pyside6-rcc \
-    			--project | sed 's,<file>./,<file>data/,' > {{ FILE_BUILD_QRC_DATA }}
+    uv --directory "{{ DIRECTORY_BUILD_QRC_DATA }}/data" \
+        run pyside6-rcc \
+            --project | sed 's,<file>./,<file>data/,' > {{ FILE_BUILD_QRC_DATA }}
 
 _generate-qrc-i18n:
     @rm -rf \
@@ -232,19 +231,17 @@ _generate-qrc-i18n:
     @{{ DIRECTORY_BUILD_HELPERS }}/generate-lupdate-project-file.py \
     	--relative-to {{ DIRECTORY_BUILD_QRC_I18N }} \
     	--out-file {{ FILE_BUILD_QRC_I18N_JSON }}
-    @cd \
-    	{{ DIRECTORY_BUILD_QRC_I18N }}; \
-    		uv run pyside6-lrelease \
-    			-project {{ FILE_BUILD_QRC_I18N_JSON }}
-    @cd \
+    uv --directory "{{ DIRECTORY_BUILD_QRC_I18N }}" \
+        run pyside6-lrelease \
+            -project {{ FILE_BUILD_QRC_I18N_JSON }}
+    cd \
     	{{ DIRECTORY_BUILD_QRC_I18N }}/i18n; \
     		rm \
     			{{ FILE_BUILD_QRC_I18N_JSON }} \
     			*.ts
-    @cd \
-    	{{ DIRECTORY_BUILD_QRC_I18N }}/i18n; \
-    		uv run pyside6-rcc \
-    			--project | sed 's,<file>./,<file>i18n/,' > {{ FILE_BUILD_QRC_I18N }}
+    uv --directory "{{ DIRECTORY_BUILD_QRC_I18N }}/i18n" \
+    	run pyside6-rcc \
+    		--project | sed 's,<file>./,<file>i18n/,' > {{ FILE_BUILD_QRC_I18N }}
 
 _generate-qrc-qml:
     @rm -rf \
@@ -256,11 +253,10 @@ _generate-qrc-qml:
     	{{ DIRECTORY_BUILD_QRC_QML }}
     @cd {{ DIRECTORY_BUILD_QRC_QML }}; \
         mkdir qt && mv qml qt
-    @cd \
-        {{ DIRECTORY_BUILD_QRC_QML }}; \
-            uv run pyside6-rcc --project \
-                | sed 's,<file>./,<file>,' \
-                | grep -v "<file>qml.qrc</file>" > {{ FILE_BUILD_QRC_QML }}
+    uv --directory "{{ DIRECTORY_BUILD_QRC_QML }}" \
+        run pyside6-rcc --project \
+            | sed 's,<file>./,<file>,' \
+            | grep -v "<file>qml.qrc</file>" > {{ FILE_BUILD_QRC_QML }}
 
 _prepare-translation-extractions:
     @rm -rf \
