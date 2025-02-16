@@ -13,13 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PYTHON_DIR := invocation_directory() + '/' + if os_family() == 'windows' { 'venv/Scripts' } else { 'venv/bin' }
-PYTHON := PYTHON_DIR + if os_family() == 'windows' { '/python.exe' } else { '/python3' }
-
-TOOL_CLI_LRELEASE := PYTHON_DIR + '/pyside6-lrelease'
-TOOL_CLI_LUPDATE := PYTHON_DIR + '/pyside6-lupdate'
-TOOL_CLI_RCC := PYTHON_DIR + '/pyside6-rcc'
-
 TOOL_CLI_QML_LINTER := 'qmllint'
 TOOL_CLI_QML_TESTRUNNER := 'qmltestrunner'
 
@@ -91,21 +84,9 @@ _default:
     @just --list
 
 # Format code
-format:
-    @{{ PYTHON }} -m ruff check --fix
-    @{{ PYTHON }} -m ruff format
-
-# Install dependencies into the virtual environment
-install-dependencies:
-    #!/usr/bin/env bash
-    if [[ -z "${VIRTUAL_ENV}" ]]; then
-      echo "Please activate virtual environment first"
-      exit 1
-    fi
-    python build-aux/generate-dependency-versions.py \
-      --pyproject-file pyproject.toml \
-      --optional-group dev \
-      extract | xargs pip install
+@format:
+    uv run ruff check --fix
+    uv run ruff format
 
 # Build full project into build/release
 [group('build')]
@@ -143,7 +124,7 @@ clean: _clean-build _clean-develop _clean-test
 [group('i18n')]
 add-translation locale: _check-pyside-setup _prepare-translation-extractions
     @cd {{ DIRECTORY_BUILD_TRANSLATIONS }}; \
-    	{{ TOOL_CLI_LUPDATE }} \
+    	uv run pyside6-lupdate \
     		-verbose \
     		-source-language en_US \
     		-target-language {{ locale }} \
@@ -158,17 +139,12 @@ update-translations: _check-pyside-setup _clean-develop _prepare-translation-ext
     @# Requires translations in .py:   QCoreApplication.translate("context", "string")
     @# Requires translations in .qml:  qsTranslate("context", "string")
     @cd {{ DIRECTORY_BUILD_TRANSLATIONS }}; \
-    	{{ TOOL_CLI_LUPDATE }} \
+    	uv run pyside6-lupdate \
     		-locations none \
     		-project {{ FILE_BUILD_TRANSLATIONS_JSON }}
     @cp -r \
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}/i18n/*.ts \
     	{{ DIRECTORY_I18N }}
-
-# Lint Python files
-[group('lint')]
-lint-python:
-    @{{ PYTHON }} -m ruff check
 
 # Lint QML files
 [group('lint')]
@@ -185,7 +161,7 @@ test-python: _check-pyside-setup _clean-test _compile-resources
     @cp \
       {{ FILE_BUILD_RESOURCES }} \
       {{ FILE_PY_TEST_RESOURCES }}
-    @{{ PYTHON }} -m pytest test
+    @uv run pytest test
 
 # Run QML tests
 [group('test')]
@@ -206,12 +182,12 @@ _clean-test:
     @rm -rf \
     	{{ FILE_PY_TEST_RESOURCES }}
 
-_check-pyside-setup:
-    @which {{ PYTHON }}
-    @which {{ TOOL_CLI_LUPDATE }}
-    @which {{ TOOL_CLI_LRELEASE }}
-    @which {{ TOOL_CLI_RCC }}
-    @echo ''
+@_check-pyside-setup:
+    uv version
+    uv run pyside6-lupdate -version
+    uv run pyside6-lrelease -version
+    uv run pyside6-rcc -version
+    echo ''
 
 _check-qml-setup:
     @which {{ TOOL_CLI_QML_TESTRUNNER }}
@@ -227,7 +203,7 @@ _compile-resources: _generate-qrc-data _generate-qrc-i18n _generate-qrc-qml
      	{{ DIRECTORY_BUILD_QRC_DATA }}/. \
      	{{ DIRECTORY_BUILD_QRC_I18N }}/. \
      	{{ DIRECTORY_BUILD_RESOURCES }}
-    @{{ TOOL_CLI_RCC }} \
+    @uv run pyside6-rcc \
     	{{ DIRECTORY_BUILD_RESOURCES }}/data.qrc \
     	{{ DIRECTORY_BUILD_RESOURCES }}/i18n.qrc \
     	{{ DIRECTORY_BUILD_RESOURCES }}/qml.qrc \
@@ -243,7 +219,7 @@ _generate-qrc-data:
     	{{ DIRECTORY_BUILD_QRC_DATA }}
     @cd \
     	{{ DIRECTORY_BUILD_QRC_DATA }}/data; \
-    		{{ TOOL_CLI_RCC }} \
+    		uv run pyside6-rcc \
     			--project | sed 's,<file>./,<file>data/,' > {{ FILE_BUILD_QRC_DATA }}
 
 _generate-qrc-i18n:
@@ -258,7 +234,7 @@ _generate-qrc-i18n:
     	--out-file {{ FILE_BUILD_QRC_I18N_JSON }}
     @cd \
     	{{ DIRECTORY_BUILD_QRC_I18N }}; \
-    		{{ TOOL_CLI_LRELEASE }} \
+    		uv run pyside6-lrelease \
     			-project {{ FILE_BUILD_QRC_I18N_JSON }}
     @cd \
     	{{ DIRECTORY_BUILD_QRC_I18N }}/i18n; \
@@ -267,7 +243,7 @@ _generate-qrc-i18n:
     			*.ts
     @cd \
     	{{ DIRECTORY_BUILD_QRC_I18N }}/i18n; \
-    		{{ TOOL_CLI_RCC }} \
+    		uv run pyside6-rcc \
     			--project | sed 's,<file>./,<file>i18n/,' > {{ FILE_BUILD_QRC_I18N }}
 
 _generate-qrc-qml:
@@ -282,7 +258,7 @@ _generate-qrc-qml:
         mkdir qt && mv qml qt
     @cd \
         {{ DIRECTORY_BUILD_QRC_QML }}; \
-            {{ TOOL_CLI_RCC }} --project \
+            uv run pyside6-rcc --project \
                 | sed 's,<file>./,<file>,' \
                 | grep -v "<file>qml.qrc</file>" > {{ FILE_BUILD_QRC_QML }}
 

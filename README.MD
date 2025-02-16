@@ -12,13 +12,12 @@ This project assumes that a virtual environment is used:
 * [Guide for Linux](docs/dev-setup-linux.md)
 * [Guide for Windows](docs/dev-setup-windows.md)
 
-We use `just` (https://github.com/casey/just) to build our application.
+We use [uv](https://github.com/astral-sh/uv) and [just](https://github.com/casey/just) to build our application.
 
 ```shell
 $ just
 Available recipes:
     format                 # Format code
-    install-dependencies   # Install dependencies into the virtual environment
 
     [build]
     build                  # Build full project into build/release
@@ -30,7 +29,6 @@ Available recipes:
     update-translations    # Update *.ts files by traversing the source code
 
     [lint]
-    lint-python            # Lint Python files
     lint-qml               # Lint QML files
 
     [test]

@@ -18,7 +18,7 @@ classifiers = [
     "Private :: Do Not Upload"
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest>=8.3.4",
     "ruff>=0.9.5",
