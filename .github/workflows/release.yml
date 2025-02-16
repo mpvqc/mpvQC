@@ -39,6 +39,8 @@ jobs:
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
       - name: Run Build
         id: build_step
         run: |
@@ -168,6 +170,8 @@ jobs:
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
       - name: Remove Python sources
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
