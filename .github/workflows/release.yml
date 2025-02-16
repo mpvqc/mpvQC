@@ -53,7 +53,6 @@ jobs:
           echo "::group::Download libmpv"
           if [ "$RUNNER_OS" == "Linux" ]; then
             execute sudo apt update -y
-            execute sudo apt upgrade -y
             execute sudo apt install -y libmpv2 patchelf libopengl0
           elif [ "$RUNNER_OS" == "Windows" ]; then
             ARTIFACT="$(basename "$LIBMPV_URL")"
