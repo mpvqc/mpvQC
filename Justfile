@@ -80,8 +80,8 @@ FILE_BUILD_TRANSLATIONS_JSON := DIRECTORY_BUILD_TRANSLATIONS + '/myapp.json'
 FILE_PY_SOURCES_RESOURCES := DIRECTORY_PY_SOURCES + '/' + NAME_FILE_GENERATED_RESOURCES
 FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURCES
 
-_default:
-    @just --list
+@_default:
+    just --list
 
 # Format code
 @format:
@@ -90,35 +90,35 @@ _default:
 
 # Build full project into build/release
 [group('build')]
-build: _check-pyside-setup _clean-build _clean-develop _compile-resources
-    @rm -rf \
+@build: _check-pyside-setup _clean-build _clean-develop _compile-resources
+    rm -rf \
     	{{ DIRECTORY_BUILD_PY }}
-    @mkdir -p \
+    mkdir -p \
     	{{ DIRECTORY_BUILD_PY }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_PY_SOURCES }}/. \
     	{{ DIRECTORY_BUILD_PY }}
-    @cp \
+    cp \
     	{{ FILE_BUILD_RESOURCES }} \
     	{{ DIRECTORY_BUILD_PY }}
-    @cp \
+    cp \
     	{{ FILE_APP_ENTRY }} \
     	{{ DIRECTORY_BUILD_RELEASE }}
-    @echo ''; \
+    echo ''; \
     	echo 'Please find the finished project in {{ DIRECTORY_BUILD_RELEASE }}'
 
 # Build and compile resources into source directory
 [group('build')]
-build-develop: _check-pyside-setup _clean-develop _compile-resources
-    @# Generates resources and copies them into the source directory
-    @# This allows to develop/debug the project normally
+@build-develop: _check-pyside-setup _clean-develop _compile-resources
+    # Generates resources and copies them into the source directory
+    # This allows to develop/debug the project normally
 
-    @cp \
+    cp \
     	{{ FILE_BUILD_RESOURCES }} {{ DIRECTORY_PY_SOURCES }}
 
 # Remove ALL generated files
 [group('build')]
-clean: _clean-build _clean-develop _clean-test
+@clean: _clean-build _clean-develop _clean-test
 
 # Add new language
 [group('i18n')]
@@ -146,40 +146,45 @@ clean: _clean-build _clean-develop _clean-test
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}/i18n/*.ts \
     	{{ DIRECTORY_I18N }}
 
+# Lint Python files
+[group('lint')]
+@lint-python:
+    uv run ruff check
+
 # Lint QML files
 [group('lint')]
-lint-qml: _check-qml-setup
-    @find {{ DIRECTORY_QML_TESTS }} -type f -name '*.qml' -exec {{ TOOL_CLI_QML_LINTER }} -I {{ DIRECTORY_QML_TESTS }} {} \;
+@lint-qml: _check-qml-setup
+    find {{ DIRECTORY_QML_TESTS }} -type f -name '*.qml' -exec {{ TOOL_CLI_QML_LINTER }} -I {{ DIRECTORY_QML_TESTS }} {} \;
 
 # Run Python and QML tests
 [group('test')]
-test: test-python test-qml
+@test: test-python test-qml
 
 # Run Python tests
 [group('test')]
-test-python: _check-pyside-setup _clean-test _compile-resources
-    @cp \
+@test-python: _check-pyside-setup _clean-test _compile-resources
+    cp \
       {{ FILE_BUILD_RESOURCES }} \
       {{ FILE_PY_TEST_RESOURCES }}
-    @uv run pytest test
+    uv run pytest test
 
 # Run QML tests
 [group('test')]
-test-qml: _check-qml-setup
+@test-qml: _check-qml-setup
     {{ TOOL_CLI_QML_TESTRUNNER }} \
       -silent \
       -input {{ DIRECTORY_QML_TESTS }}
 
-_clean-build:
-    @rm -rf \
+@_clean-build:
+    rm -rf \
     	{{ DIRECTORY_BUILD }}
 
-_clean-develop:
-    @rm -rf \
+@_clean-develop:
+    rm -rf \
     	{{ FILE_PY_SOURCES_RESOURCES }}
 
-_clean-test:
-    @rm -rf \
+@_clean-test:
+    rm -rf \
     	{{ FILE_PY_TEST_RESOURCES }}
 
 @_check-pyside-setup:
@@ -189,46 +194,46 @@ _clean-test:
     uv run pyside6-rcc -version
     echo ''
 
-_check-qml-setup:
-    @which {{ TOOL_CLI_QML_TESTRUNNER }}
-    @echo ''
+@_check-qml-setup:
+    which {{ TOOL_CLI_QML_TESTRUNNER }}
+    echo ''
 
-_compile-resources: _generate-qrc-data _generate-qrc-i18n _generate-qrc-qml
-    @rm -rf \
+@_compile-resources: _generate-qrc-data _generate-qrc-i18n _generate-qrc-qml
+    rm -rf \
     	{{ DIRECTORY_BUILD_RESOURCES }}
-    @mkdir -p \
+    mkdir -p \
      	{{ DIRECTORY_BUILD_RESOURCES }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_BUILD_QRC_QML }}/. \
      	{{ DIRECTORY_BUILD_QRC_DATA }}/. \
      	{{ DIRECTORY_BUILD_QRC_I18N }}/. \
      	{{ DIRECTORY_BUILD_RESOURCES }}
-    @uv run pyside6-rcc \
+    uv run pyside6-rcc \
     	{{ DIRECTORY_BUILD_RESOURCES }}/data.qrc \
     	{{ DIRECTORY_BUILD_RESOURCES }}/i18n.qrc \
     	{{ DIRECTORY_BUILD_RESOURCES }}/qml.qrc \
     	-o {{ FILE_BUILD_RESOURCES }}
 
-_generate-qrc-data:
-    @rm -rf \
+@_generate-qrc-data:
+    rm -rf \
     	{{ DIRECTORY_BUILD_QRC_DATA }}
-    @mkdir -p \
+    mkdir -p \
     	{{ DIRECTORY_BUILD_QRC_DATA }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_DATA }} \
     	{{ DIRECTORY_BUILD_QRC_DATA }}
     uv --directory "{{ DIRECTORY_BUILD_QRC_DATA }}/data" \
         run pyside6-rcc \
             --project | sed 's,<file>./,<file>data/,' > {{ FILE_BUILD_QRC_DATA }}
 
-_generate-qrc-i18n:
-    @rm -rf \
+@_generate-qrc-i18n:
+    rm -rf \
     	{{ DIRECTORY_BUILD_QRC_I18N }}
-    @mkdir -p \
+    mkdir -p \
     	{{ DIRECTORY_BUILD_QRC_I18N }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_I18N }} {{ DIRECTORY_BUILD_QRC_I18N }}
-    @{{ DIRECTORY_BUILD_HELPERS }}/generate-lupdate-project-file.py \
+    {{ DIRECTORY_BUILD_HELPERS }}/generate-lupdate-project-file.py \
     	--relative-to {{ DIRECTORY_BUILD_QRC_I18N }} \
     	--out-file {{ FILE_BUILD_QRC_I18N_JSON }}
     uv --directory "{{ DIRECTORY_BUILD_QRC_I18N }}" \
@@ -243,31 +248,31 @@ _generate-qrc-i18n:
     	run pyside6-rcc \
     		--project | sed 's,<file>./,<file>i18n/,' > {{ FILE_BUILD_QRC_I18N }}
 
-_generate-qrc-qml:
-    @rm -rf \
+@_generate-qrc-qml:
+    rm -rf \
     	{{ DIRECTORY_BUILD_QRC_QML }}
-    @mkdir -p \
+    mkdir -p \
     	{{ DIRECTORY_BUILD_QRC_QML }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_QML_SOURCES }} \
     	{{ DIRECTORY_BUILD_QRC_QML }}
-    @cd {{ DIRECTORY_BUILD_QRC_QML }}; \
+    cd {{ DIRECTORY_BUILD_QRC_QML }}; \
         mkdir qt && mv qml qt
     uv --directory "{{ DIRECTORY_BUILD_QRC_QML }}" \
         run pyside6-rcc --project \
             | sed 's,<file>./,<file>,' \
             | grep -v "<file>qml.qrc</file>" > {{ FILE_BUILD_QRC_QML }}
 
-_prepare-translation-extractions:
-    @rm -rf \
+@_prepare-translation-extractions:
+    rm -rf \
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}
-    @mkdir -p \
+    mkdir -p \
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}
-    @cp -r \
+    cp -r \
     	{{ DIRECTORY_I18N }} \
     	{{ DIRECTORY_PY_SOURCES }} \
     	{{ DIRECTORY_QML_SOURCES }} \
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}
-    @{{ DIRECTORY_BUILD_HELPERS }}/generate-lupdate-project-file.py \
+    {{ DIRECTORY_BUILD_HELPERS }}/generate-lupdate-project-file.py \
     	--relative-to {{ DIRECTORY_BUILD_TRANSLATIONS }} \
     	--out-file {{ FILE_BUILD_TRANSLATIONS_JSON }}

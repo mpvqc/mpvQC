@@ -29,6 +29,7 @@ Available recipes:
     update-translations    # Update *.ts files by traversing the source code
 
     [lint]
+    lint-python            # Lint Python files
     lint-qml               # Lint QML files
 
     [test]
