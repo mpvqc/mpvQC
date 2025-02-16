@@ -89,8 +89,8 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
     uv run ruff format
 
 # Initialize repository
-@init:
-    uv sync
+@init ARGS='--group dev':
+    uv sync {{ ARGS }}
     echo "Created by command: just init" > portable
     echo "Runs application in portable mode by storing all files in the <git-repo>/appdata directory" >> portable
 
