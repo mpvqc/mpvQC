@@ -86,6 +86,9 @@ TestCase {
                     property string mpv_version: "any-version"
                     property string ffmpeg_version: "any-version"
                 }
+                property var mpvqcUtilityPyObject: QtObject {
+                    function getEnvironmentVariable(name: string): string { return "some-value" }
+                }
             }
         }
     }
