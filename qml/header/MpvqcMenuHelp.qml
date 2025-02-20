@@ -22,18 +22,23 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 
-import dialogs
-import shared
+import "../dialogs"
+import "../shared"
 
 MpvqcMenu {
     id: root
 
     required property var mpvqcApplication
 
+    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+
     readonly property alias updateAction: _updateAction
     readonly property alias shortcutAction: _shortcutAction
     readonly property alias extendedExportsAction: _extendedExportsAction
     readonly property alias aboutAction: _aboutAction
+
+    readonly property bool isMpvqcDebugEnabled: mpvqcUtilityPyObject.getEnvironmentVariable("MPVQC_DEBUG")
+    readonly property bool isUpdateMenuItemEnabled: Qt.platform.os === "windows" || isMpvqcDebugEnabled
 
     readonly property var factoryMessageBoxVersionCheck: Component {
         MpvqcMessageBoxVersionCheck {
@@ -61,16 +66,21 @@ MpvqcMenu {
 
     title: qsTranslate("MainWindow", "Help")
 
-    Action {
-        id: _updateAction
+    MenuItem {
 
         text: qsTranslate("MainWindow", "Check for Updates...")
         icon.source: "qrc:/data/icons/update_black_24dp.svg"
+        visible: root.isUpdateMenuItemEnabled
+        height: visible ? implicitHeight : 0
 
-        onTriggered: {
-            const dialog = root.factoryMessageBoxVersionCheck.createObject(root);
-            dialog.closed.connect(dialog.destroy);
-            dialog.open();
+        action: Action {
+            id: _updateAction
+
+            onTriggered: {
+                const dialog = root.factoryMessageBoxVersionCheck.createObject(root);
+                dialog.closed.connect(dialog.destroy);
+                dialog.open();
+            }
         }
     }
 
