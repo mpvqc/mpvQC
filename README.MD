@@ -2,43 +2,46 @@
 
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
-A libmpv-based application for quick and easy creation of video file quality control reports.  
+A simple libmpv-based application for creating video file quality control reports.  
 https://mpvqc.github.io
 
-# Development Setup
+---
 
-- **Install the following tools:**
+## Development Setup
 
-  - [uv](https://github.com/astral-sh/uv)
-  - [just](https://github.com/casey/just)
-  - **On Windows, also install:**
-    - [Python 3.12 or later](https://www.python.org/downloads/)
-    - [Git Bash](https://git-scm.com/downloads)
-    - **Make sure to use just from Git Bash**
+1. **Install these tools**
 
-- **Ensure libmpv is in your path:**
+   - [Python 3.12 or later](https://www.python.org/downloads/)
+   - [uv](https://github.com/astral-sh/uv)
+   - [just](https://github.com/casey/just)
+   - **Windows users also need**
+     - [Git Bash](https://git-scm.com/downloads)
+     - Be sure to run `just` inside Git Bash
 
-  - **Linux**: Install libmpv via your package manager
-  - **Windows**: Download [libmpv](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/), extract it and
-    place the `libmpv-*.dll` in the repository’s root folder
+1. **Clone the repository**
 
-- **Clone the repository**
+1. **Open a terminal** where you cloned it
 
-- **Open a terminal** where you cloned the repository
+1. **Initialize the environment**:
+   ```shell
+   just init
+   ```
+1. **Add libmpv to your path**
 
-- **Initialize the environment:**
-  ```shell
-  just init
-  ```
+   - **Linux**: Install `libmpv` through your package manager
+   - **Windows**: Download [libmpv](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/), extract it, and place the `libmpv-*.dll` in the repository’s root folder
 
-Run `just build-develop` every time you change files in the `data`, `i18n`, or `qml` directories.  
-This command compiles everything into a Python file and places it in the `mpvqc` folder,
-so the application picks it up on startup.
+Whenever you change files in the `data`, `i18n`, or `qml` directories, run:
 
-**Tipp:** Configure your IDE to run the `build-develop` recipe before launching the app.
+```shell
+just build-develop
+```
 
-# Internationalization
+This compiles them into a Python file in the mpvqc folder, so the app recognizes them on startup.
 
-If you want to help translating this application into other languages, checkout
-the [guide](docs/internationalization.md).
-Please feel free to open a new issue in case you need help.
+**Tip:** Configure your IDE to run the `build-develop` before launching the application.
+
+## Internationalization
+
+If you want to translate this application into more languages, see the [internationalization guide](docs/internationalization.md).
+Feel free to open a new issue if you need further assistance.
