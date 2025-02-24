@@ -34,11 +34,8 @@ MpvqcMenu {
 
     modal: true
 
-    onAboutToShow: {
-        if (root.mMirrored) {
-            x = openedAt.x - width; // workaround rtl issue
-        }
-    }
+    x: root.mirrored ? openedAt.x - width : openedAt.x
+    y: openedAt.y
 
     MenuItem {
         id: _editItem
