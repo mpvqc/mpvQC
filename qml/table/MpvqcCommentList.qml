@@ -415,9 +415,7 @@ ListView {
         function openContextMenu(index: int, coordinates: point): void {
             setSource("MpvqcContextMenu.qml", {
                 currentListIndex: index,
-                openedAt: coordinates,
-                x: coordinates.x,
-                y: coordinates.y
+                openedAt: coordinates
             });
             active = true;
         }
