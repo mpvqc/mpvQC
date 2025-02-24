@@ -137,26 +137,14 @@ Popup {
     }
 
     Shortcut {
-        sequence: "Left"
+        sequences: ["left", "down"]
 
         onActivated: root.decrementValue()
     }
 
     Shortcut {
-        sequence: "Right"
+        sequences: ["right", "up"]
 
         onActivated: root.incrementValue()
-    }
-
-    Shortcut {
-        sequence: "Up"
-
-        onActivated: root.incrementValue()
-    }
-
-    Shortcut {
-        sequence: "Down"
-
-        onActivated: root.decrementValue()
     }
 }
