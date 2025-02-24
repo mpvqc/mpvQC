@@ -98,8 +98,6 @@ Item {
         readonly property int commentCount: commentTable.count
         readonly property int selectedCommentIndex: commentTable.currentIndex
 
-        // readonly property bool currentlyEditing: false
-
         function forceActiveFocus(): void {
             commentTable.forceActiveFocus();
         }
