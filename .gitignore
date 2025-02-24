@@ -533,7 +533,6 @@ generated_resources.py
 portable
 requirements.txt
 
-/com.github.mpvqc.mpvQC.yml
 /build.sh
 /test.sh
 /repo

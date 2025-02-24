@@ -32,12 +32,12 @@ With this, the Windows release process is complete. Additional steps are require
 
 The following instructions apply to the [mpvQC-flatpak](https://github.com/mpvqc/mpvQC-flatpak) repository.
 
-1. **Update the flatpak manifest** (`com.github.mpvqc.mpvQC.yml`):
+1. **Update the flatpak manifest** (`io.github.mpvqc.mpvQC.yml`):
     - Confirm the latest mpv and dependency versions and any specific build changes.
     - Update pypi dependencies using the `flatpak-pypi-checker.py` script.
     - Update mpvQC sources used in the build, linking to the `release-build-linux.zip` file in the release.
 
-2. **Update flatpak metadata** (`com.github.mpvqc.mpvQC.metainfo.xml`):
+2. **Update flatpak metadata** (`io.github.mpvqc.mpvQC.metainfo.xml`):
     - Add the latest changelog.
     - Update screenshots and other relevant metadata if needed.
 
