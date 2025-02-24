@@ -20,14 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 
 ListModel {
-    readonly property var languagesForTranslationTool: [
-        qsTranslate("Languages", "English"),
-        qsTranslate("Languages", "German"),
-        qsTranslate("Languages", "Hebrew"),
-        qsTranslate("Languages", "Italian"),
-        qsTranslate("Languages", "Spanish"),
-    ]
-
     readonly property string systemLanguage: {
         const uiLanguages = Qt.locale().uiLanguages;
         return _identifiers().find(language => uiLanguages.includes(language)) ?? "en-US";
@@ -42,25 +34,25 @@ ListModel {
     }
 
     ListElement {
-        language: "German"
+        language: QT_TRANSLATE_NOOP("Languages", "German")
         identifier: "de-DE"
     }
     ListElement {
-        language: "English"
+        language: QT_TRANSLATE_NOOP("Languages", "English")
         identifier: "en-US"
     }
     ListElement {
-        language: "Spanish"
+        language: QT_TRANSLATE_NOOP("Languages", "Spanish")
         identifier: "es-ES"
         translator: "RcUchiha"
     }
     ListElement {
-        language: "Hebrew"
+        language: QT_TRANSLATE_NOOP("Languages", "Hebrew")
         identifier: "he-IL"
         translator: "cN3rd"
     }
     ListElement {
-        language: "Italian"
+        language: QT_TRANSLATE_NOOP("Languages", "Italian")
         identifier: "it-IT"
         translator: "maddo"
     }

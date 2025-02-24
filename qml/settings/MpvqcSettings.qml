@@ -59,18 +59,16 @@ QtObject {
     property list<string> commentTypes: root.getDefaultCommentTypes()
 
     function getDefaultCommentTypes(): list<string> {
-        return ["Translation", "Spelling", "Punctuation", "Phrasing", "Timing", "Typeset", "Note"];
+        return [
+            QT_TRANSLATE_NOOP("CommentTypes", "Translation"),
+            QT_TRANSLATE_NOOP("CommentTypes", "Spelling"),
+            QT_TRANSLATE_NOOP("CommentTypes", "Punctuation"),
+            QT_TRANSLATE_NOOP("CommentTypes", "Phrasing"),
+            QT_TRANSLATE_NOOP("CommentTypes", "Timing"),
+            QT_TRANSLATE_NOOP("CommentTypes", "Typeset"),
+            QT_TRANSLATE_NOOP("CommentTypes", "Note"),
+        ]
     }
-
-    readonly property list<string> forTranslationTool: [
-        qsTranslate("CommentTypes", "Translation"),
-        qsTranslate("CommentTypes", "Spelling"),
-        qsTranslate("CommentTypes", "Punctuation"),
-        qsTranslate("CommentTypes", "Phrasing"),
-        qsTranslate("CommentTypes", "Timing"),
-        qsTranslate("CommentTypes", "Typeset"),
-        qsTranslate("CommentTypes", "Note"),
-    ]
 
     // Export
 
