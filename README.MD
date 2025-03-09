@@ -2,10 +2,10 @@
 
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
-A simple libmpv-based application for creating video file quality control reports.  
+A simple libmpv-based application for creating video file quality control reports.\
 https://mpvqc.github.io
 
----
+______________________________________________________________________
 
 ## Development Setup
 
@@ -18,15 +18,17 @@ https://mpvqc.github.io
      - [Git Bash](https://git-scm.com/downloads)
      - Be sure to run `just` inside Git Bash
 
-1. **Clone the repository**
+2. **Clone the repository**
 
-1. **Open a terminal** where you cloned it
+3. **Open a terminal** where you cloned it
 
-1. **Initialize the environment**:
+4. **Initialize the environment**:
+
    ```shell
    just init
    ```
-1. **Add libmpv to your path**
+
+5. **Add libmpv to your path**
 
    - **Linux**: Install `libmpv` through your package manager
    - **Windows**: Download [libmpv](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/), extract it, and place the `libmpv-*.dll` in the repository’s root folder
