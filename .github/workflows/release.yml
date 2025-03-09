@@ -49,7 +49,7 @@ jobs:
           function debug() { echo -e "\033[0;35m$*\033[0m"; }
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-
+          #
           echo "::group::Download libmpv"
           if [ "$RUNNER_OS" == "Linux" ]; then
             execute sudo apt update -y
@@ -68,12 +68,12 @@ jobs:
           fi
           echo "::endgroup::"
 
-
+          #
           echo "::group::Remove Qml Test Files"
           execute find . -type f -name 'tst_*' -delete
           echo "::endgroup::"
 
-
+          #
           echo "::group::Set Build Information"
           PLACEHOLDER_TAG=">>>tag<<<"
           PLACEHOLDER_COMMIT=">>>commit-id<<<"
@@ -98,31 +98,31 @@ jobs:
           execute cat "qml/dialogs/about/MpvqcAboutView.qml"
           echo "::endgroup::"
 
-
+          #
           echo "::group::Setup Virtual Environment"
           execute just init
           echo "::endgroup::"
 
-
+          #
           echo "::group::Set Dependency Versions"
           DEPENDENCY_MODEL_PATH="qml/models/MpvqcLibraryModel.qml"
           execute just insert-dependency-versions "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
           echo "::endgroup::"
 
-
+          #
           echo "::group::Lint Python"
           execute just lint-python
           echo "::endgroup::"
 
-
+          #
           echo "::group::Run Python Build"
           execute just test-python
           execute just clean
           execute just build
           echo "::endgroup::"
 
-
+          #
           RELEASE_NAME="release-build-${RUNNER_OS@L}"
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           debug "Uploading build/release as $RELEASE_NAME"
@@ -190,7 +190,7 @@ jobs:
       - name: Build Bundle
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-          
+
           execute source .venv/Scripts/activate
 
           execute python.exe -m nuitka main.py \
