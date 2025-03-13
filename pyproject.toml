@@ -6,10 +6,10 @@ requires-python = ">=3.11,<=3.13"
 readme = "README.MD"
 dependencies = [
     "inject>=5.2.1",
-    "Jinja2>=3.1.5",
+    "Jinja2>=3.1.6",
     "mpv>=1.0.7",
     "PySide6-Essentials==6.8.2",
-    "pywin32>=308; sys_platform == 'win32'",
+    "pywin32>=309; sys_platform == 'win32'",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",                           # 4 - Beta, 5 - Production/Stable
@@ -20,8 +20,8 @@ classifiers = [
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3.4",
-    "ruff>=0.9.5",
+    "pytest>=8.3.5",
+    "ruff>=0.10.0",
 ]
 
 [project.urls]
