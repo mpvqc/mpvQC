@@ -1,0 +1,67 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v1.9.4
+    hooks:
+      - id: biome-check
+        name: "format json"
+        files: "\\.(jsonc?)$"
+        args:
+          - "--bracket-spacing=true"
+          - "--indent-style=space"
+          - "--indent-width=4"
+          - "--line-ending=lf"
+          - "--line-width=120"
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
+        name: "format toml"
+        args:
+          - "--option"
+          - "align_comments=true"
+          - "--option"
+          - "allowed_blank_lines=1"
+          - "--option"
+          - "array_auto_collapse=false"
+          - "--option"
+          - "indent_string=    "
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.16.0
+    hooks:
+      - id: yamlfmt
+        name: "format yml"
+        args:
+          - "-formatter"
+          - "line_ending=lf"
+          - "-formatter"
+          - "retain_line_breaks_single=true"
+          - "-formatter"
+          - "scan_folded_as_literal=true"
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+        name: "format md"
+        exclude: ".github/"
+        args:
+          - "--number"
+          - "--wrap"
+          - "keep"
+          - "--end-of-line"
+          - "lf"
+        additional_dependencies:
+          - mdformat-gfm
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.0
+    hooks:
+      - id: ruff
+        name: "lint python"
+        args:
+          - "--fix"
+      - id: ruff-format
+        name: "format python"

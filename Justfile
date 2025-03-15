@@ -85,8 +85,7 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
 
 # Format code
 @format:
-    uv run ruff check --fix
-    uv run ruff format
+    uv run pre-commit run --all-files
 
 # Initialize repository
 @init ARGS='--group dev':

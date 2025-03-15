@@ -21,7 +21,7 @@ classifiers = [
 [dependency-groups]
 dev = [
     "pytest>=8.3.5",
-    "ruff>=0.10.0",
+    "pre-commit>=4.1.0",
 ]
 
 [project.urls]
