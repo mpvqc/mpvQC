@@ -91,7 +91,7 @@ ColumnLayout {
 
             delegate: MpvqcHeader {
                 required property string section
-                
+
                 text: section
                 width: _listView.itemWidth
             }
@@ -127,7 +127,7 @@ ColumnLayout {
 
             delegate: MpvqcShortcut {
                 required property var model
-                
+
                 shortcutLabel: model.label
                 shortcutButton1: model.button1
                 shortcutButton1Icon: model.button1Icon

@@ -34,7 +34,7 @@ ScrollView {
 
     Column {
         id: _container
-        
+
         width: parent.width
 
         MpvqcHeader {

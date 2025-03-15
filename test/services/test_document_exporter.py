@@ -135,10 +135,7 @@ def test_render_service_video_path_video_name(make_mock, document_render_service
     assert actual == expected
 
     make_mock(video=None)
-    expected = textwrap.dedent("""\
-        video_path: 
-        video_name: 
-        """)
+    expected = textwrap.dedent("""video_path: \nvideo_name: \n""")
     actual = document_render_service.render(template)
     assert actual == expected
 
