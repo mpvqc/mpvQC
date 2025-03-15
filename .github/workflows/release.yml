@@ -111,8 +111,8 @@ jobs:
           echo "::endgroup::"
 
           #
-          echo "::group::Lint Python"
-          execute just lint-python
+          echo "::group::Check Linting and Formatting"
+          execute just format
           echo "::endgroup::"
 
           #

@@ -151,11 +151,6 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
     	{{ DIRECTORY_BUILD_TRANSLATIONS }}/i18n/*.ts \
     	{{ DIRECTORY_I18N }}
 
-# Lint Python files
-[group('lint')]
-@lint-python:
-    uv run ruff check
-
 # Lint QML files
 [group('lint')]
 @lint-qml: _check-qml-setup
