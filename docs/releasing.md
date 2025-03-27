@@ -16,8 +16,8 @@ This guide is intended for mpvQC developers preparing a new release.
 
 1. **Tag a commit**: Tagging initiates a new CI build that generates three artifacts:
 
-   - `mpvQC-0.9.0-alpha-7fa34c9d-win-x86_64.zip`: This is the finalized Windows build, containing the project name
-     `mpvQC`, release version `0.9.0-alpha`, and git commit `7fa34c9d`.
+   - `mpvQC-0.9.0-beta-7fa34c9d-win-x86_64.zip`: This is the finalized Windows build, containing the project name
+     `mpvQC`, release version `0.9.0-beta`, and git commit `7fa34c9d`.
    - `release-build-linux.zip`: Compiled sources including resources for Linux.
    - `release-build-windows.zip`: Compiled sources including resources for Windows.
 
