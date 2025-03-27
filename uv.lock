@@ -126,6 +126,23 @@ wheels = [
 ]
 
 [[package]]
+name = "materialyoucolor"
+version = "2.0.10"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/83/b3/8835bacf50ea32bf000f9118f60da4c8e5febe80ab5929be18ce99a4baea/materialyoucolor-2.0.10.tar.gz", hash = "sha256:31b4d407b9a4fd4b54b30559b0d0313f6d6da1f9d19b75546ed65da52671ea76", size = 250103 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/eb/78d067df3948bd6a347677c10d35d89b6092916f78e0b98c51d47fd080f5/materialyoucolor-2.0.10-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:e9a4dd1e444a64ea54982be06314ce4611f3c38fdfae2c33cca7d106f6383288", size = 319432 },
+    { url = "https://files.pythonhosted.org/packages/29/b1/04424f2bd811fe7e803d8a21cc28e8b4f9dea8b07cbc948318d4b4de3dd8/materialyoucolor-2.0.10-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:144fdd9dca272fee60a1779ce35acf24830cd3bc33ff20982ecba4936cb5bf91", size = 208262 },
+    { url = "https://files.pythonhosted.org/packages/82/43/926ae82c04e5a5d02523f66e48af8021c0fdd8e01463a51e934137f7a5a0/materialyoucolor-2.0.10-cp311-cp311-win_amd64.whl", hash = "sha256:f126196a051673707297e86b8d0fbd90805a552dc3ac79e1d90442cc3fc877cb", size = 151620 },
+    { url = "https://files.pythonhosted.org/packages/69/e8/847974020cde0e09124d7fb51bf41aa92cc3a9cad83f83911e5d67c1d665/materialyoucolor-2.0.10-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:0fc0b43a684536270177b71bf509b247dab4ff816e49d1ac1b124fc1a32e082e", size = 318810 },
+    { url = "https://files.pythonhosted.org/packages/fa/67/2f3e70d707f86be3c541327693db5105622aa6aa1079d48ff90876d2e650/materialyoucolor-2.0.10-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:7fe5bbc63124c3ea2f5560ea4a5250af72fce9ab55d29925e6bac7c7ec65329d", size = 208373 },
+    { url = "https://files.pythonhosted.org/packages/ef/f2/1119e97e741b33717e26c494b4aa3c5ca57d770df4fa42707b698bfb7588/materialyoucolor-2.0.10-cp312-cp312-win_amd64.whl", hash = "sha256:aedc8596fd7583fd9e23f3e6d4f7b9defd7d5ef6e7889967814b9900c1e3d5b3", size = 151716 },
+    { url = "https://files.pythonhosted.org/packages/ef/49/c4517231ec21bdd91a301cb40fdf86c632a95b10d86bc3278bd5d619480c/materialyoucolor-2.0.10-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:71de9c581c8227c3010c61108a00af9a007c96f99358fdb0628626d0ade817d9", size = 318890 },
+    { url = "https://files.pythonhosted.org/packages/4d/62/807bea1db749dc45debc2afa51ea4b27f5a219fbe73f6458c2bae2a15427/materialyoucolor-2.0.10-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:978748eca7725d8b569cdecfd9f86a8e34bf946182f79a48b059c98a10f1a0de", size = 208339 },
+    { url = "https://files.pythonhosted.org/packages/2a/01/05075b959b228c5c99c80703b7c63532ac6ee49abdf8054077e70908d6e3/materialyoucolor-2.0.10-cp313-cp313-win_amd64.whl", hash = "sha256:2ffc8963a2f10d8acb6776e60e97f0e7929d3392eb282cf2bc63b8e56cd930b3", size = 151751 },
+]
+
+[[package]]
 name = "mpv"
 version = "1.0.7"
 source = { registry = "https://pypi.org/simple" }
@@ -148,6 +165,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "materialyoucolor" },
     { name = "pre-commit" },
     { name = "pytest" },
 ]
@@ -163,6 +181,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "materialyoucolor", specifier = ">=2.0.10" },
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "pytest", specifier = ">=8.3.5" },
 ]

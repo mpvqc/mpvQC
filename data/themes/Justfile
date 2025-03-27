@@ -13,26 +13,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800" "#FF5722" "#795548" "#9E9E9E" "#607D8B"'
+BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800"'
 
-_default:
-    @just --list
+@_default:
+    just --list
 
-# Print Material Dark palette
-[group('Material')]
-generate-dark-color-palette:
-    @python color-generator.py --dark {{ BASE_COLORS }}
-
-# Print Material Light palette
-[group('Material')]
-generate-light-color-palette:
-    @python color-generator.py --contrast 0.0 {{ BASE_COLORS }}
-
-# Print dark mpvQC colors
-[group('mpvQC')]
-dark-mpvQC-colors:
+print-dark-colors:
     #!/usr/bin/env nu
-    just generate-dark-color-palette |
+    uv run color-generator.py --dark {{ BASE_COLORS }} |
         from toml |
         get colors |
         each { |palette|
@@ -52,11 +40,9 @@ dark-mpvQC-colors:
         each { |row| $row | to toml } |
         str join "\n"
 
-# Print light mpvQC colors
-[group('mpvQC')]
-light-mpvQC-colors:
+print-light-colors:
     #!/usr/bin/env nu
-    just generate-light-color-palette |
+    uv run color-generator.py --contrast 0.0 {{ BASE_COLORS }} |
         from toml |
         get colors |
         each { |palette|

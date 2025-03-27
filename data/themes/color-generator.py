@@ -18,15 +18,10 @@ import re
 import sys
 from dataclasses import dataclass
 
-try:
-    from materialyoucolor.hct import Hct  # noqa
-    from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot  # noqa
-    from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynamicColors  # noqa
-    from materialyoucolor.scheme.dynamic_scheme import DynamicScheme  # noqa
-except ImportError:
-    print("Module 'materialyoucolor' not installed: https://pypi.org/project/materialyoucolor")
-    sys.exit(1)
-
+from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynamicColors
+from materialyoucolor.hct import Hct
+from materialyoucolor.scheme.dynamic_scheme import DynamicScheme
+from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
 
 HEX_PATTERN = re.compile(r"^#[A-Fa-f0-9]{6}$")
 
@@ -39,9 +34,23 @@ class Color:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Create Material You color palettes")
-    parser.add_argument("colors", nargs="+", type=str, help="Seed colors")
-    parser.add_argument("--dark", action="store_true", help="Dark palette, default: false")
-    parser.add_argument("--contrast", type=float, help="Contrast between 0 and 1, default: 1/3")
+    parser.add_argument(
+        "colors",
+        nargs="+",
+        type=str,
+        help="Seed colors",
+    )
+    parser.add_argument(
+        "--dark",
+        action="store_true",
+        help="Dark palette, default: false",
+    )
+    parser.add_argument(
+        "--contrast",
+        type=float,
+        help="Contrast between 0 and 1, default: 1/3",
+        default=1 / 3,
+    )
     run(parser.parse_args())
 
 
@@ -50,7 +59,7 @@ def run(args) -> None:
     validate_colors(colors)
 
     is_dark = args.dark
-    contrast = args.contrast if args.contrast is not None else (1 / 3)
+    contrast = args.contrast
 
     generate(colors, is_dark, contrast)
 
