@@ -2,7 +2,7 @@
 name = "mpvQC"
 version = "0.9.0-beta"
 description = "libmpv based application for quality control of videos"
-requires-python = ">=3.11,<=3.13"
+requires-python = ">=3.13"
 readme = "README.MD"
 dependencies = [
     "inject>=5.2.1",
@@ -14,7 +14,7 @@ dependencies = [
 classifiers = [
     "Development Status :: 4 - Beta",                           # 4 - Beta, 5 - Production/Stable
     "License :: OSI Approved :: GNU General Public License v3",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Private :: Do Not Upload",
 ]
 
@@ -32,7 +32,7 @@ Issues = "https://github.com/mpvqc/mpvQC/issues"
 
 [tool.ruff]
 line-length = 120
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.lint]
 extend-select = ["I"]

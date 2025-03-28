@@ -11,7 +11,7 @@ ______________________________________________________________________
 
 1. **Install these tools**
 
-   - [Python 3.12 or later](https://www.python.org/downloads/)
+   - [Python 3.13 or later](https://www.python.org/downloads/)
    - [uv](https://github.com/astral-sh/uv)
    - [just](https://github.com/casey/just)
    - **Windows users also need**
