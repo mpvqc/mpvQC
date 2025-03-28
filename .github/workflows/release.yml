@@ -210,6 +210,14 @@ jobs:
             --noinclude-qt-plugins=sqldrivers \
             --noinclude-qt-translations \
             --noinclude-dlls=opengl32sw.dll \
+            --noinclude-dlls=qt6quickcontrols2fluentwinui3styleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2fusion.dll \
+            --noinclude-dlls=qt6quickcontrols2fusionstyleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2imagine.dll \
+            --noinclude-dlls=qt6quickcontrols2imaginestyleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2universal.dll \
+            --noinclude-dlls=qt6quickcontrols2universalstyleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2windowsstyleimpl.dll \
             --noinclude-dlls=qt6designer.dll \
             --noinclude-dlls=qt6pdf.dll \
             --noinclude-dlls=qt6widgets.dll \
@@ -220,11 +228,12 @@ jobs:
             --noinclude-dlls=Qt6WebEngine* \
             --noinclude-data-files=PySide6/QtWidgets.pyd \
             --output-filename=mpvQC.exe
-      - name: Remove Redundant Binaries
+      - name: Remove Redundant Files
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute find deployment/main.dist -type f -name 'QtWidgets.pyd' -delete
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Controls/FluentWinUI3
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/VirtualKeyboard
       - name: Package libmpv
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
