@@ -31,7 +31,7 @@ ______________________________________________________________________
 5. **Add libmpv to your path**
 
    - **Linux**: Install `libmpv` through your package manager
-   - **Windows**: Download [libmpv](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/), extract it, and place the `libmpv-*.dll` in the repository’s root folder
+   - **Windows**: Download [libmpv (mpv-dev-x86_64)](https://github.com/shinchiro/mpv-winbuild-cmake/releases), extract it, and place the `libmpv-*.dll` in the repository’s root folder
 
 Whenever you change files in the `data`, `i18n`, or `qml` directories, run:
 
