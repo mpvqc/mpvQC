@@ -226,7 +226,6 @@ jobs:
             --noinclude-dlls=Qt6Sensors* \
             --noinclude-dlls=Qt6Test* \
             --noinclude-dlls=Qt6WebEngine* \
-            --noinclude-data-files=PySide6/QtWidgets.pyd \
             --output-filename=mpvQC.exe
       - name: Remove Redundant Files
         run: |
@@ -234,6 +233,9 @@ jobs:
 
           execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Controls/FluentWinUI3
           execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/VirtualKeyboard
+          execute rm -rf deployment/main.dist/PySide6/qt-plugins/{sqldrivers,styles,qmltooling,qmllint,designer}
+          execute rm -rf deployment/main.dist/PySide6/QtWidgets.pyd
+          execute rm -rf deployment/main.dist/qt6qmlcompiler.dll
       - name: Package libmpv
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
