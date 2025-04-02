@@ -180,6 +180,7 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
 @insert-dependency-versions +UPDATE_INPLACE:
     uv --offline export \
         --no-hashes \
+        --no-annotate \
         --output-file requirements.txt
     python build-aux/insert-dependency-versions.py \
         --requirements-txt requirements.txt \
