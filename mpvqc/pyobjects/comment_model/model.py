@@ -19,7 +19,7 @@ from typing import Any
 
 import inject
 from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Qt, Signal, Slot
-from PySide6.QtGui import QClipboard, QStandardItemModel
+from PySide6.QtGui import QGuiApplication, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import Comment
@@ -90,7 +90,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self.setSortRole(Role.TIME)
         self.setObjectName("mpvqcCommentModel")
 
-        self._clipboard = QClipboard()
+        self._clipboard = QGuiApplication.clipboard()
 
         self._searcher = Searcher()
         self._undo_stack = MpvqcUndoStack(self)

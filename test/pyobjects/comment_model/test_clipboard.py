@@ -23,7 +23,7 @@ from mpvqc.models import Comment
 
 @pytest.fixture(scope="session")
 def clipboard(qt_app) -> QClipboard:
-    return QClipboard()
+    return qt_app.clipboard()
 
 
 def test_copy_to_clipboard(make_model, clipboard):

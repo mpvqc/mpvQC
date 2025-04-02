@@ -19,7 +19,7 @@ from os import environ
 
 import inject
 from PySide6.QtCore import Property, QObject, QPoint, QUrl, Slot
-from PySide6.QtGui import QClipboard, QCursor
+from PySide6.QtGui import QCursor
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import MimetypeProviderService, ReverseTranslatorService, TimeFormatterService, TypeMapperService
@@ -36,10 +36,6 @@ class MpvqcUtilityPyObject(QObject):
     _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
     _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
 
-    def __init__(self):
-        super().__init__()
-        self._clipboard = QClipboard()
-
     @Property(QPoint, final=True)
     def cursorPosition(self) -> QPoint:
         return QCursor.pos()
@@ -55,10 +51,6 @@ class MpvqcUtilityPyObject(QObject):
     @Property(list, constant=True, final=True)
     def subtitleFileExtensions(self) -> list:
         return self._mimetype_provider.subtitle_file_extensions
-
-    @Slot(str)
-    def copyToClipboard(self, text: str) -> None:
-        self._clipboard.setText(text)
 
     @Slot(str, result=str or None)
     def getEnvironmentVariable(self, key: str) -> str or None:
