@@ -47,6 +47,8 @@ class PlayerService:
             "ytdl": "yes",
         }
 
+        self._mpv: MPV | None = None
+
     def init(self, win_id: int or None = None):
         if win_id is None:
             args = {"vo": "libmpv"}

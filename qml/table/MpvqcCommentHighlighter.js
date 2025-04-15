@@ -34,9 +34,7 @@ if (!RegExp.escape) {
             // Append c to cpList.
             cuList.push(c)
         }
-        //6. Let L be a String whose elements are, in order, the elements of cuList.
-        let L = cuList.join("")
-        // 7. Return L.
-        return L
+        // 7. Return a String whose elements are, in order, the elements of cuList.
+        return cuList.join("")
     }
 }
