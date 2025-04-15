@@ -136,7 +136,7 @@ class DocumentExportService:
             video_directory = str(video.parent)
             video_name = video.stem
         else:
-            video_directory = QStandardPaths.writableLocation(QStandardPaths.MoviesLocation)
+            video_directory = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
             video_name = QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
         if nickname := self._settings.nickname:

@@ -23,31 +23,31 @@ _ALPHANUMERICS = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜÀÁÂÃÇÉÈÊËÍ
 
 # Mappings Qt -> MPV
 _KEY_MAPPINGS = {
-    Qt.Key_PageUp: ("PGUP",),
-    Qt.Key_PageDown: ("PGDWN",),
-    Qt.Key_Play: ("PLAY",),
-    Qt.Key_Pause: ("PAUSE",),
-    Qt.Key_Stop: ("STOP",),
-    Qt.Key_Forward: ("FORWARD",),
-    Qt.Key_Back: ("REWIND",),
-    Qt.Key_MediaPlay: ("PLAY",),
-    Qt.Key_MediaStop: ("STOP",),
-    Qt.Key_MediaNext: ("NEXT",),
-    Qt.Key_MediaPrevious: ("PREV",),
-    Qt.Key_MediaPause: ("PAUSE",),
-    Qt.Key_MediaTogglePlayPause: ("PLAYPAUSE",),
-    Qt.Key_Home: ("HOME",),
-    Qt.Key_End: ("END",),
-    Qt.Key_Escape: ("ESC",),
-    Qt.Key_Left: ("LEFT",),
-    Qt.Key_Right: ("RIGHT",),
-    Qt.Key_Up: ("UP", True),
-    Qt.Key_Down: ("DOWN", True),
-    Qt.Key_Backspace: ("BACKSPACE", True),
-    Qt.Key_Return: ("ENTER", True),
-    Qt.Key_Enter: ("ENTER", True),
-    Qt.Key_Space: ("SPACE",),
-    Qt.Key_NumberSign: ("SHARP", False, True),
+    Qt.Key.Key_PageUp: ("PGUP",),
+    Qt.Key.Key_PageDown: ("PGDWN",),
+    Qt.Key.Key_Play: ("PLAY",),
+    Qt.Key.Key_Pause: ("PAUSE",),
+    Qt.Key.Key_Stop: ("STOP",),
+    Qt.Key.Key_Forward: ("FORWARD",),
+    Qt.Key.Key_Back: ("REWIND",),
+    Qt.Key.Key_MediaPlay: ("PLAY",),
+    Qt.Key.Key_MediaStop: ("STOP",),
+    Qt.Key.Key_MediaNext: ("NEXT",),
+    Qt.Key.Key_MediaPrevious: ("PREV",),
+    Qt.Key.Key_MediaPause: ("PAUSE",),
+    Qt.Key.Key_MediaTogglePlayPause: ("PLAYPAUSE",),
+    Qt.Key.Key_Home: ("HOME",),
+    Qt.Key.Key_End: ("END",),
+    Qt.Key.Key_Escape: ("ESC",),
+    Qt.Key.Key_Left: ("LEFT",),
+    Qt.Key.Key_Right: ("RIGHT",),
+    Qt.Key.Key_Up: ("UP", True),
+    Qt.Key.Key_Down: ("DOWN", True),
+    Qt.Key.Key_Backspace: ("BACKSPACE", True),
+    Qt.Key.Key_Return: ("ENTER", True),
+    Qt.Key.Key_Enter: ("ENTER", True),
+    Qt.Key.Key_Space: ("SPACE",),
+    Qt.Key.Key_NumberSign: ("SHARP", False, True),
 }
 
 
@@ -72,9 +72,9 @@ class KeyCommandGeneratorService:
 
     @staticmethod
     def _generate(modifiers, key_str, mod_required=False, is_char=False):
-        shift = "shift" if modifiers & Qt.ShiftModifier.value else ""
-        ctrl = "ctrl" if modifiers & Qt.ControlModifier.value else ""
-        alt = "alt" if modifiers & Qt.AltModifier.value else ""
+        shift = "shift" if modifiers & Qt.KeyboardModifier.ShiftModifier.value else ""
+        ctrl = "ctrl" if modifiers & Qt.KeyboardModifier.ControlModifier.value else ""
+        alt = "alt" if modifiers & Qt.KeyboardModifier.AltModifier.value else ""
 
         if mod_required and not (shift or ctrl or alt):
             return None

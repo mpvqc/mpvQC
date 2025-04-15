@@ -39,7 +39,7 @@ class ResourceReaderService:
         if not file.exists():
             raise FileNotFoundError(resource_path)
         try:
-            if not file.open(QIODevice.ReadOnly):
+            if not file.open(QIODevice.OpenModeFlag.ReadOnly):
                 raise ValueError(f"Can not open file to read: {resource_path}")
             return file.readAll().data().decode("utf-8")
         finally:

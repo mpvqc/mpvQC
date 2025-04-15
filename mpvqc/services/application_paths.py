@@ -51,9 +51,9 @@ class ApplicationPathsService:
     @staticmethod
     def _xdg_paths() -> "ApplicationPathsService.Paths":
         appname = QCoreApplication.applicationName()
-        config = QStandardPaths.writableLocation(QStandardPaths.ConfigLocation)
-        documents = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
-        pictures = QStandardPaths.writableLocation(QStandardPaths.PicturesLocation)
+        config = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.ConfigLocation)
+        documents = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+        pictures = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.PicturesLocation)
         return ApplicationPathsService.Paths(
             dir_backup=Path(documents) / appname / "backups",
             dir_config=Path(config) / appname,

@@ -264,7 +264,7 @@ class FilePathProposalTestSet:
 
 
 HOME = Path.home()
-MOVIES = Path(QStandardPaths.writableLocation(QStandardPaths.MoviesLocation))
+MOVIES = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation))
 
 
 @pytest.mark.parametrize(
