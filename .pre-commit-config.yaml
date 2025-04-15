@@ -57,7 +57,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.2
+    rev: v0.11.5
     hooks:
       - id: ruff
         name: "lint python"
