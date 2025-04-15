@@ -76,7 +76,7 @@ Item {
             width: 18
             height: 18
             source: "qrc:/data/icons/close_black_24dp.svg"
-            color: root.isWindows && _closeButton.hovered ? "white" : _closeButton.hovered ? root.mpvqcTheme.background : root.mpvqcTheme.foreground
+            color: root.isWindows && _closeButton.hovered ? "#FFFFFD" : _closeButton.hovered ? root.mpvqcTheme.background : root.mpvqcTheme.foreground
         }
 
         onClicked: {
@@ -87,7 +87,7 @@ Item {
             when: true
             target: _closeButton.background
             property: "color"
-            value: root.isWindows ? "red" : root.mpvqcTheme.control
+            value: root.isWindows ? "#C42C1E" : root.mpvqcTheme.control
             restoreMode: Binding.RestoreNone
         }
     }
