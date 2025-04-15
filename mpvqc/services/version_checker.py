@@ -60,6 +60,6 @@ class VersionCheckerService:
 
     @cache
     def _fetch_latest_version(self) -> str:
-        with urllib.request.urlopen(self.UPDATE_URL, timeout=5) as connection:
+        with urllib.request.urlopen(self.UPDATE_URL, timeout=5) as connection:  # noqa: S310
             text = connection.read().decode("utf-8").strip()
             return f"{json.loads(text)['latest']}".strip()

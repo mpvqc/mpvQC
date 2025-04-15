@@ -38,4 +38,12 @@ target-version = "py313"
 extend-select = [
     "I",  # Sort imports
     "UP", # Upgrade hints based on new language features
+    "S",  # Bandit security checks
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"test/**/*.py" = [ # https://github.com/astral-sh/ruff/issues/4368
+    "S101", # asserts allowed in tests...
+    "ARG",  # Unused function args -> fixtures nevertheless are functionally relevant...
+    "FBT",  # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
 ]

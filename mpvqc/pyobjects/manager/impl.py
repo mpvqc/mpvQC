@@ -69,7 +69,8 @@ class MpvqcManagerPyObject(QObject):
     def _on_application_ready(self):
         def bind_qml_property_with(name: str) -> QQmlComponent:
             qml_prop = self.property(name)
-            assert qml_prop, f"Could not find qml property with name '{name}'"
+            if not qml_prop:
+                raise ValueError(f"Could not find qml property with name '{name}'")
             return qml_prop
 
         # fmt: off

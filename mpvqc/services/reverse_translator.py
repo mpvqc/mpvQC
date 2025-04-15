@@ -36,8 +36,8 @@ class LookupTable:
         for entry_info in QDir(":/i18n").entryInfoList():
             identifier = entry_info.baseName()
             resource_path = entry_info.filePath()
-            assert self._translator.load(resource_path), f"Cannot load language: {identifier}"
-
+            if not self._translator.load(resource_path):
+                raise ValueError(f"Cannot load language: {identifier}")
             self._add_to_combined_lookup_table()
 
     @property

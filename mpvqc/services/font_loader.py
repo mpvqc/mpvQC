@@ -26,6 +26,7 @@ class FontLoaderService:
     def load_application_fonts():
         for entry_info in QDir(":/data/fonts").entryInfoList():
             resource_path = entry_info.filePath()
-            assert QFontDatabase.addApplicationFont(resource_path) >= 0, f"Cannot load font from {resource_path}"
+            if not QFontDatabase.addApplicationFont(resource_path) >= 0:
+                raise ValueError(f"Cannot load font from {resource_path}")
 
         QFont.insertSubstitution("Noto Sans", "Noto Sans Hebrew")

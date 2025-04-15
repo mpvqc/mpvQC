@@ -35,5 +35,5 @@ def test_find_object(qt_app):
     obj = qt_app.find_object(QObject, "button-click-me")
     assert obj
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         qt_app.find_object(QObject, "other-button-that-does-not-exist")
