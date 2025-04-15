@@ -17,7 +17,6 @@
 
 from collections.abc import Callable
 from pathlib import Path
-from typing import Optional
 from unittest.mock import MagicMock
 
 import inject
@@ -40,7 +39,7 @@ def service():
 
 @pytest.fixture(scope="module")
 def make_select_video(service):
-    selected_video: Optional[Path] = None
+    selected_video: Path | None = None
 
     def set_selected_video(video):
         nonlocal selected_video
@@ -135,7 +134,7 @@ def test_user_will_be_asked(service, make_select_video):
 
     #
 
-    selected_video: Optional[Path] = None
+    selected_video: Path | None = None
 
     def set_selected_video(video):
         nonlocal selected_video

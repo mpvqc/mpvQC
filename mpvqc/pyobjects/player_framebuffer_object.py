@@ -57,7 +57,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
 
     def __init__(self, parent):
-        super(Renderer, self).__init__()
+        super().__init__()
         self._parent = parent
         self._get_proc_address_resolver = MpvGlGetProcAddressFn(get_process_address)
         self._ctx = None

@@ -17,8 +17,8 @@
 
 
 import bisect
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 
 def report_result(next_idx: int, current_result: int, total_results: int):

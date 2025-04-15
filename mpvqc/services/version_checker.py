@@ -19,7 +19,6 @@ import json
 import urllib.error
 import urllib.request
 from functools import cache
-from typing import Tuple
 
 from PySide6.QtCore import QCoreApplication
 
@@ -32,7 +31,7 @@ class VersionCheckerService:
     def _current_version(self) -> str:
         return QCoreApplication.instance().applicationVersion()
 
-    def check_for_new_version(self) -> Tuple[str, str]:
+    def check_for_new_version(self) -> tuple[str, str]:
         # fmt: off
         try:
             latest_version = self._fetch_latest_version()

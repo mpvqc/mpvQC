@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from PySide6.QtCore import QPersistentModelIndex
 from PySide6.QtGui import QStandardItemModel, QUndoCommand, QUndoStack
@@ -148,7 +149,7 @@ class RemoveComment(QUndoCommand):
         self._on_after_undo = on_after_undo
         self._on_after_redo = on_after_redo
 
-        self._comment: Optional[dict[str, Any]] = None
+        self._comment: dict[str, Any] | None = None
 
     def undo(self):
         item = create_item_from(self._comment)
