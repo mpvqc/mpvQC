@@ -24,6 +24,78 @@ from mpvqc.services.theme.schema import Theme, ThemeColorSet, ThemeParseError
 from mpvqc.services.theme.utils import parse_color
 
 
+class V1ThemeParser:
+    def __init__(self, theme_data: dict):
+        self.theme_data = theme_data
+        self.theme_name = _parse_theme_name(theme_data)
+        self.is_dark = _parse_theme_variant(theme_data, self.theme_name)
+
+    def parse(self) -> Theme:
+        preview_color = self._get_color("theme-preview", throw_if_missing=False)
+        color_sets = self._parse_color_sets()
+        return Theme(name=self.theme_name, is_dark=self.is_dark, preview=preview_color, colors=color_sets)
+
+    def _get_color(self, prop: str, container=None, throw_if_missing=True) -> QColor | None:
+        color = self._get_property(prop, container, throw_if_missing=throw_if_missing)
+        if color is not None:
+            return parse_color(f"{color}")
+        return None
+
+    def _get_property(self, prop: str, container=None, is_list=False, throw_if_missing=True) -> Any:
+        value = (container or self.theme_data).get(prop)
+        if value is None and throw_if_missing:
+            msg = f"Property '{prop}' not found"
+            raise self._error(msg)
+        if is_list and not isinstance(value, list) and throw_if_missing:
+            msg = f"Property '{prop}' required to be a list"
+            raise self._error(msg)
+        return value
+
+    def _error(self, message: str) -> ThemeParseError:
+        return ThemeParseError(f"Cannot parse schema '{self.theme_name}'. {message}")
+
+    def _parse_color_sets(self) -> list[ThemeColorSet]:
+        return [self._parse_color_set(color_set) for color_set in self._get_property("colors", is_list=True)]
+
+    def _parse_color_set(self, color_set: dict) -> ThemeColorSet:
+        background = self._get_color("background", color_set)
+        foreground = self._get_color("foreground", color_set)
+        control = self._get_color("control", color_set)
+        row_highlight = self._get_color("row-highlight", color_set)
+
+        row_highlight_text = self._get_color("row-highlight-text", color_set, throw_if_missing=False)
+        row_highlight_text = row_highlight_text or foreground
+
+        row_base = self._get_color("row-base", color_set, throw_if_missing=False)
+        row_base = row_base or background
+
+        row_base_text = self._get_color("row-base-text", color_set, throw_if_missing=False)
+        row_base_text = row_base_text or foreground
+
+        match self._get_color("row-base-alternate", color_set, throw_if_missing=False):
+            case None if self.is_dark:
+                row_base_alternate = parse_color(f"Qt.lighter {row_base.name(QColor.NameFormat.HexRgb)} 1.3")
+            case None if not self.is_dark:
+                row_base_alternate = parse_color(f"Qt.darker {row_base.name(QColor.NameFormat.HexRgb)} 1.1")
+            case color_value:
+                row_base_alternate = color_value
+
+        row_base_alternate_text = self._get_color("row-base-alternate-text", color_set, throw_if_missing=False)
+        row_base_alternate_text = row_base_alternate_text or foreground
+
+        return ThemeColorSet(
+            background=background,
+            foreground=foreground,
+            control=control,
+            row_highlight=row_highlight,
+            row_highlight_text=row_highlight_text,
+            row_base=row_base,
+            row_base_text=row_base_text,
+            row_base_alternate=row_base_alternate,
+            row_base_alternate_text=row_base_alternate_text,
+        )
+
+
 def parse_theme(theme: str) -> Theme:
     try:
         data = tomllib.loads(theme)
@@ -32,90 +104,36 @@ def parse_theme(theme: str) -> Theme:
 
     match data.get("schema-version"):
         case "v1":
-            return _parse_v1_theme(data)
+            return V1ThemeParser(data).parse()
         case version:
-            raise ThemeParseError(f"Cannot parse schema version {version}")
+            msg = f"Cannot parse schema version {version}"
+            raise ThemeParseError(msg)
 
 
-def _parse_v1_theme(theme: dict) -> Theme:  # noqa: C901
-    match theme.get("theme-name"):
+def _parse_theme_name(theme_data: dict) -> str:
+    match theme_data.get("theme-name"):
         case None:
-            raise ThemeParseError("Cannot parse schema without 'theme-name' property")
+            msg = "Cannot parse schema without 'theme-name' property"
+            raise ThemeParseError(msg)
         case str(name) if name.strip() == "":
-            raise ThemeParseError("Cannot parse schema without 'theme-name' property")
+            msg = "Cannot parse schema without 'theme-name' property"
+            raise ThemeParseError(msg)
         case str(name):
-            theme_name = name.strip()
+            return name.strip()
         case other_value:
-            raise ThemeParseError(f"Cannot parse schema theme-name: {other_value}")
+            msg = f"Cannot parse schema theme-name: {other_value}"
+            raise ThemeParseError(msg)
 
-    def error(message: str) -> ThemeParseError:
-        return ThemeParseError(f"Cannot parse schema '{theme_name}'. {message}")
 
-    match theme.get("theme-variant"):
+def _parse_theme_variant(theme_data: dict, theme_name: str) -> bool:
+    match theme_data.get("theme-variant"):
         case str(v) if v.strip().lower() == "light":
-            is_dark = False
+            return False
         case str(v) if v.strip().lower() == "dark":
-            is_dark = True
+            return True
         case other_value:
-            raise error(f'Property theme-variant = "{other_value}" not supported. Allowed values: dark, light')
-
-    def get(prop: str, from_container=None, is_list=False, throw_if_missing=True) -> Any:
-        value = (from_container or theme).get(prop)
-        if value is None and throw_if_missing:
-            raise error(f"Property '{prop}' not found")
-        if is_list and not isinstance(value, list) and throw_if_missing:
-            raise error(f"Property '{prop}' required to be a list")
-        return value
-
-    def get_color(prop: str, from_container=None, throw_if_missing=True) -> QColor | None:
-        color = get(prop, from_container=from_container, throw_if_missing=throw_if_missing)
-        if color is not None:
-            return parse_color(f"{color}")
-        return None
-
-    preview_color = get_color("theme-preview")
-
-    color_sets = []
-
-    for color_set in get("colors", is_list=True):
-        background = get_color("background", from_container=color_set)
-        foreground = get_color("foreground", from_container=color_set)
-
-        control = get_color("control", from_container=color_set)
-        row_highlight = get_color("row-highlight", from_container=color_set)
-
-        row_highlight_text = get_color("row-highlight-text", from_container=color_set, throw_if_missing=False)
-        row_highlight_text = row_highlight_text or foreground
-
-        row_base = get_color("row-base", from_container=color_set, throw_if_missing=False)
-        row_base = row_base or background
-
-        row_base_text = get_color("row-base-text", from_container=color_set, throw_if_missing=False)
-        row_base_text = row_base_text or foreground
-
-        match get_color("row-base-alternate", from_container=color_set, throw_if_missing=False):
-            case None if is_dark:
-                row_base_alternate = parse_color(f"Qt.lighter {row_base.name(QColor.NameFormat.HexRgb)} 1.3")
-            case None if not is_dark:
-                row_base_alternate = parse_color(f"Qt.darker {row_base.name(QColor.NameFormat.HexRgb)} 1.1")
-            case color_value:
-                row_base_alternate = color_value
-
-        row_base_alternate_text = get_color("row-base-alternate-text", from_container=color_set, throw_if_missing=False)
-        row_base_alternate_text = row_base_alternate_text or foreground
-
-        color_sets.append(
-            ThemeColorSet(
-                background=background,
-                foreground=foreground,
-                control=control,
-                row_highlight=row_highlight,
-                row_highlight_text=row_highlight_text,
-                row_base=row_base,
-                row_base_text=row_base_text,
-                row_base_alternate=row_base_alternate,
-                row_base_alternate_text=row_base_alternate_text,
+            msg = (
+                f"Cannot parse schema '{theme_name}'. "
+                f'Property theme-variant = "{other_value}" not supported. Allowed values: dark, light'
             )
-        )
-
-    return Theme(name=theme_name, is_dark=is_dark, preview=preview_color, colors=color_sets)
+            raise ThemeParseError(msg)
