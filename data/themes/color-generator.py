@@ -65,10 +65,7 @@ def run(args) -> None:
 
 
 def validate_colors(colors: list[str]) -> None:
-    errors = []
-    for color in colors:
-        if not HEX_PATTERN.fullmatch(color):
-            errors.append(color)
+    errors = [color for color in colors if not HEX_PATTERN.fullmatch(color)]
     if errors:
         for color in errors:
             print(f"Invalid color: {color}")

@@ -52,7 +52,7 @@ class CommentTypeValidatorService:
         if self._contains_forbidden_characters(new_comment_type):
             return self._must_not_contain_forbidden_characters()
 
-        comment_types = existing_comment_types[:]
+        comment_types = existing_comment_types.copy()
         if (translated := self._reverse_translator.lookup(comment_type_being_edited)) in comment_types:
             comment_types.remove(translated)
         if self._already_exists(new_comment_type, comment_types):

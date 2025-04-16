@@ -114,7 +114,7 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
         self._embedded_player_hwnd = hwnd
 
     def nativeEventFilter(self, _, message):
-        msg = ctypes.wintypes.MSG.from_address(message.__int__())
+        msg = ctypes.wintypes.MSG.from_address(int(message))
 
         hwnd = msg.hWnd
 

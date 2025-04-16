@@ -132,8 +132,6 @@ def test_user_will_be_asked(service, make_select_video):
     )
     assert video_getter() == EXISTING_1
 
-    #
-
     selected_video: Path | None = None
 
     def set_selected_video(video):
@@ -150,8 +148,6 @@ def test_user_will_be_asked(service, make_select_video):
     )
     user_selection.createObject.return_value.accepted.emit()
     assert selected_video == EXISTING_3
-
-    #
 
     selected_video = None
     service.select_video_from(

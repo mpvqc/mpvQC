@@ -22,7 +22,7 @@ from PySide6.QtGui import QColor
 
 from mpvqc.services.theme.schema import ThemeParseError
 
-WHOLE_NUMBER = Decimal("0")
+WHOLE_NUMBER = Decimal(0)
 
 MULTI_WHITESPACE = re.compile(r"\s+")
 HEX_COLOR_RE = re.compile(r"^#(?=(?:.{3}|.{6})$)[a-f0-9]*$")

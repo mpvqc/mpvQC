@@ -25,7 +25,7 @@ from PySide6.QtGui import QGuiApplication
 def _detect_operating_system_zoom_factor() -> float:
     if sys.platform == "win32":
         return _figure_out_zoom_factor_on_windows()
-    else:  # noqa RET505
+    else:  # noqa: RET505
         return _figure_out_zoom_factor_on_linux()
 
 

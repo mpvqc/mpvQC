@@ -62,9 +62,27 @@ extend-select = [
     "ARG",  # flake8-unused-arguments
     "PTH",  # flake8-use-pathlib
 
+    "F",
+    "FLY",
     "I",    # Sort imports
+    "PERF",
+    "PGH",
+    "FURB",
+    "PL",
     "S",    # Bandit security checks
     "UP",   # Upgrade hints based on new language features
+]
+
+ignore = [
+    "PLC0415",
+    "PLC1901",
+    "PLR0904",
+    "PLR0911",
+    "PLR0913",
+    "PLR0914",
+    "PLR0917",
+    "PLR6301",
+    "PLW0108",
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
@@ -72,5 +90,7 @@ extend-select = [
     "S101", # asserts allowed in tests...
     "ARG",  # Unused function args -> fixtures nevertheless are functionally relevant...
     "FBT",  # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
-    "SLF",  # flake8-self
+    "SLF",
+    "PLR",
+    "PLR",
 ]

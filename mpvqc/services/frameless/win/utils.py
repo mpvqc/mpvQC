@@ -234,4 +234,3 @@ def prevent_window_resize_for(hwnd):
     style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
     style &= ~win32con.WS_THICKFRAME
     win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
-    return

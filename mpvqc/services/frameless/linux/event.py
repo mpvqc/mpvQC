@@ -47,13 +47,13 @@ class LinuxEventFilter(QObject):
             edges |= Qt.Edge.BottomEdge
 
         if event.type() == QEvent.Type.MouseMove and self._window.windowState() == Qt.WindowState.WindowNoState:
-            if edges in (Qt.Edge.LeftEdge | Qt.Edge.TopEdge, Qt.Edge.RightEdge | Qt.Edge.BottomEdge):
+            if edges in {Qt.Edge.LeftEdge | Qt.Edge.TopEdge, Qt.Edge.RightEdge | Qt.Edge.BottomEdge}:
                 self._app.setOverrideCursor(Qt.CursorShape.SizeFDiagCursor)
-            elif edges in (Qt.Edge.RightEdge | Qt.Edge.TopEdge, Qt.Edge.LeftEdge | Qt.Edge.BottomEdge):
+            elif edges in {Qt.Edge.RightEdge | Qt.Edge.TopEdge, Qt.Edge.LeftEdge | Qt.Edge.BottomEdge}:
                 self._app.setOverrideCursor(Qt.CursorShape.SizeBDiagCursor)
-            elif edges in (Qt.Edge.TopEdge, Qt.Edge.BottomEdge):
+            elif edges in {Qt.Edge.TopEdge, Qt.Edge.BottomEdge}:
                 self._app.setOverrideCursor(Qt.CursorShape.SizeVerCursor)
-            elif edges in (Qt.Edge.LeftEdge, Qt.Edge.RightEdge):
+            elif edges in {Qt.Edge.LeftEdge, Qt.Edge.RightEdge}:
                 self._app.setOverrideCursor(Qt.CursorShape.SizeHorCursor)
             else:
                 self._app.restoreOverrideCursor()

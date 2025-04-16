@@ -103,7 +103,7 @@ class PlayerService:
                 self._mpv.command("sub-add", subtitle, "select")
 
         def _cache():
-            self._cached_subtitles = self._cached_subtitles | set(subtitles)
+            self._cached_subtitles |= set(subtitles)
 
         if self.has_video:
             _load()
