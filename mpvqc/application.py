@@ -43,10 +43,12 @@ class MpvqcApplication(QGuiApplication):
     def find_object(self, object_type, name: str):
         root = self._engine.rootObjects()
         if not root:
-            raise ValueError("Cannot find root object in QQmlApplicationEngine")
+            msg = "Cannot find root object in QQmlApplicationEngine"
+            raise ValueError(msg)
         obj = root[0].findChild(object_type, name)
         if not obj:
-            raise ValueError(f"Cannot find {object_type} with name '{name}'")
+            msg = f"Cannot find {object_type} with name '{name}'"
+            raise ValueError(msg)
         return obj
 
     def set_window_icon(self):

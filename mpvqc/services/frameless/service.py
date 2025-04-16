@@ -56,4 +56,5 @@ class FramelessWindowService:
         elif sys.platform == "linux":
             configure_for_linux()
         else:
-            raise ValueError(f"Unsupported platform: {sys.platform}")
+            msg = f"Unsupported platform: {sys.platform}"
+            raise ValueError(msg)

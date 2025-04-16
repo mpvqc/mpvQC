@@ -37,7 +37,8 @@ class LookupTable:
             identifier = entry_info.baseName()
             resource_path = entry_info.filePath()
             if not self._translator.load(resource_path):
-                raise ValueError(f"Cannot load language: {identifier}")
+                msg = f"Cannot load language: {identifier}"
+                raise ValueError(msg)
             self._add_to_combined_lookup_table()
 
     @property

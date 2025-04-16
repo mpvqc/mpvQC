@@ -48,6 +48,7 @@ extend-select = [
     "UP",   # Upgrade – flags code that could use newer Python features
 
     # flake8
+    "EM",   # Error Messages – ensures proper string formatting in exception messages
     "C",    # Cyclomatic complexity (mccabe) – flags overly complex code
     "CPY",  # Copyright – checks for required copyright notices
     "DTZ",  # datetime-timezone – flags naive datetime usage

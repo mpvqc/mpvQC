@@ -40,7 +40,8 @@ def parse_color(_color_input: str) -> QColor:
         case ["qt.lighter", color, factor] if _is_hex(color) and _is_int_or_float(factor):
             return QColor(color).lighter(_adapted_factor(factor))
         case _:
-            raise ThemeParseError(f"Cannot parse color: {_color_input}")
+            msg = f"Cannot parse color: {_color_input}"
+            raise ThemeParseError(msg)
 
 
 def _is_hex(color: str) -> bool:
