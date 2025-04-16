@@ -15,10 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections.abc import Generator
+from importlib.util import find_spec
+from typing import Any
+
 import pytest
 
 from mpvqc.application import MpvqcApplication
 from mpvqc.services import TypeMapperService
+
+
+@pytest.fixture(scope="session", autouse=True)
+def check_generated_resources():
+    if find_spec("test.generated_resources") is None:
+        message = (
+            "Can not find resource module 'test.generated_resources'\n"
+            "To execute individual tests, please run 'just test-python' once before"
+        )
+        raise FileNotFoundError(message)
+    import test.generated_resources  # noqa: F401
 
 
 @pytest.fixture(scope="session")
@@ -27,7 +42,7 @@ def type_mapper() -> TypeMapperService:
 
 
 @pytest.fixture(scope="session")
-def qt_app() -> MpvqcApplication:
+def qt_app() -> Generator[MpvqcApplication, Any]:
     app = MpvqcApplication([])
     yield app
     app.shutdown()
