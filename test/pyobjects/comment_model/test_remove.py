@@ -28,7 +28,7 @@ DEFAULT_COMMENTS = (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(
@@ -117,7 +117,7 @@ def test_remove_comment_undo_redo_fires_signals(model, signal_helper):
 
     assert not signal_helper.has_logged("commentRemoved")
     assert signal_helper.has_logged("commentRemovedUndone")
-    assert 3 == signal_helper.logged_value("commentRemovedUndone")
+    assert signal_helper.logged_value("commentRemovedUndone") == 3
 
     signal_helper.reset()
     model.redo()

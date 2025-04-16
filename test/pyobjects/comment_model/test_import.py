@@ -28,7 +28,7 @@ DEFAULT_COMMENTS = [
 ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(
@@ -47,7 +47,7 @@ def test_import_comments(model):
     assert model.rowCount() == 6
 
     # Ensure even importing float time properties results in time being stored as int
-    assert 999 == model.comments()[-1]["time"]
+    assert model.comments()[-1]["time"] == 999
 
 
 def test_import_sorts_comments(make_model):
@@ -65,13 +65,13 @@ def test_import_sorts_comments(make_model):
     ]
 
     model.import_comments(comments)
-    assert ["Word 1", "Word 3", "Word 2", "Word 4"] == [c["comment"] for c in model.comments()]
+    assert [c["comment"] for c in model.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
 
     model.undo()
     assert not model.comments()
 
     model.redo()
-    assert ["Word 1", "Word 3", "Word 2", "Word 4"] == [c["comment"] for c in model.comments()]
+    assert [c["comment"] for c in model.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
 
 
 def test_import_comments_invalidates_search_results(model):
@@ -88,7 +88,7 @@ def test_import_comments_fires_signals(model, signal_helper):
     model.import_comments(DEFAULT_COMMENTS)
 
     assert signal_helper.has_logged("commentsImported")
-    assert 9 == signal_helper.logged_value("commentsImported")
+    assert signal_helper.logged_value("commentsImported") == 9
 
 
 def test_import_comments_undo_redo(model):
@@ -143,16 +143,16 @@ def test_import_comments_undo_redo_fires_signals(model, signal_helper):
     model.import_comments([comment])
 
     assert signal_helper.has_logged("commentsImported")
-    assert 5 == signal_helper.logged_value("commentsImported")
+    assert signal_helper.logged_value("commentsImported") == 5
 
     signal_helper.reset()
     model.undo()
 
     assert signal_helper.has_logged("commentsImportedUndone")
-    assert 3 == signal_helper.logged_value("commentsImportedUndone")
+    assert signal_helper.logged_value("commentsImportedUndone") == 3
 
     signal_helper.reset()
     model.redo()
 
     assert signal_helper.has_logged("commentsImported")
-    assert 5 == signal_helper.logged_value("commentsImported")
+    assert signal_helper.logged_value("commentsImported") == 5

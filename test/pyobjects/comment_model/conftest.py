@@ -46,7 +46,7 @@ class SignalHelper:
         self.signals_fired = {}
 
 
-@pytest.fixture()
+@pytest.fixture
 def signal_helper() -> SignalHelper:
     return SignalHelper()
 
@@ -55,7 +55,7 @@ def signal_helper() -> SignalHelper:
 def make_model() -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModelPyObject, Callable[[int], None]]]:
     def _make_model(
         set_comments: Iterable[Comment],
-        set_player_time: int | float = 0,
+        set_player_time: float = 0.0,
     ):
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()

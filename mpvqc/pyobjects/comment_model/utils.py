@@ -27,7 +27,7 @@ from .roles import Role
 
 def retrieve_comments_from(model: QStandardItemModel) -> list[dict[str, Any]]:
     comments = []
-    for row in range(0, model.rowCount()):
+    for row in range(model.rowCount()):
         item = model.item(row, column=0)
         comment = create_comment_from(item)
         comments.append(comment)

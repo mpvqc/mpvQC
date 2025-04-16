@@ -81,14 +81,14 @@ def test_subtitles_load_subtitles():
 
     assert mpv_mock.command.called
     loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
-    assert "loadfile" == loadfile
-    assert VIDEO == video
-    assert "replace" == replace
+    assert loadfile == "loadfile"
+    assert video == VIDEO
+    assert replace == "replace"
 
     sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
-    assert "sub-add" == sub_add
-    assert SUBTITLE == subtitle
-    assert "select" == select
+    assert sub_add == "sub-add"
+    assert subtitle == SUBTITLE
+    assert select == "select"
 
 
 def test_subtitles_empties_cache():

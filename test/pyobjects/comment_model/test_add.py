@@ -29,7 +29,7 @@ DEFAULT_COMMENTS = [
 ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(
@@ -46,7 +46,7 @@ def test_add_comment(model):
 
 
 @pytest.mark.parametrize(
-    "expected,test_input",
+    ("expected", "test_input"),
     [
         (0, 0.499999),
         (0, 0.500000),
@@ -156,7 +156,7 @@ def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     assert signal_helper.has_logged("newCommentAddedInitially")
     assert not signal_helper.has_logged("newCommentAddedUndone")
     assert not signal_helper.has_logged("newCommentAddedRedone")
-    assert 5 == signal_helper.logged_value("newCommentAddedInitially")
+    assert signal_helper.logged_value("newCommentAddedInitially") == 5
 
     signal_helper.reset()
     model.undo()
@@ -164,7 +164,7 @@ def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     assert not signal_helper.has_logged("newCommentAddedInitially")
     assert signal_helper.has_logged("newCommentAddedUndone")
     assert not signal_helper.has_logged("newCommentAddedRedone")
-    assert 3 == signal_helper.logged_value("newCommentAddedUndone")
+    assert signal_helper.logged_value("newCommentAddedUndone") == 3
 
     signal_helper.reset()
     model.redo()
@@ -172,4 +172,4 @@ def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
     assert not signal_helper.has_logged("newCommentAddedInitially")
     assert not signal_helper.has_logged("newCommentAddedUndone")
     assert signal_helper.has_logged("newCommentAddedRedone")
-    assert 5 == signal_helper.logged_value("newCommentAddedRedone")
+    assert signal_helper.logged_value("newCommentAddedRedone") == 5

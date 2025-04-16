@@ -69,7 +69,7 @@ class SearchHelper:
         self.select(index=8)
 
 
-@pytest.fixture()
+@pytest.fixture
 def search_helper(make_model) -> SearchHelper:
     # noinspection PyArgumentList
     model, _ = make_model(
@@ -82,41 +82,41 @@ def test_search_with_empty_query(search_helper):
     next_idx, current_result, total_results = search_helper.search(
         query="", include_current_row=True, top_down=True, selected_index=0
     )
-    assert -1 == next_idx
-    assert -1 == current_result
-    assert -1 == total_results
+    assert next_idx == -1
+    assert current_result == -1
+    assert total_results == -1
 
 
 def test_search_no_match(search_helper):
     next_idx, current_result, total_results = search_helper.search(
         query="Query", include_current_row=True, top_down=True, selected_index=0
     )
-    assert -1 == next_idx
-    assert 0 == current_result
-    assert 0 == total_results
+    assert next_idx == -1
+    assert current_result == 0
+    assert total_results == 0
 
 
 def test_search_match(search_helper):
     next_idx, current_result, total_results = search_helper.search(
         query="Word", include_current_row=True, top_down=True, selected_index=0
     )
-    assert 0 == next_idx
-    assert 1 == current_result
-    assert 7 == total_results
+    assert next_idx == 0
+    assert current_result == 1
+    assert total_results == 7
 
 
 def test_search_match_next(search_helper):
     search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
 
     next_idx, current_result, total_results = search_helper.next()
-    assert 1 == next_idx
-    assert 2 == current_result
-    assert 7 == total_results
+    assert next_idx == 1
+    assert current_result == 2
+    assert total_results == 7
 
     next_idx, current_result, total_results = search_helper.next()
-    assert 2 == next_idx
-    assert 3 == current_result
-    assert 7 == total_results
+    assert next_idx == 2
+    assert current_result == 3
+    assert total_results == 7
 
 
 def test_search_match_next_new_query(search_helper):
@@ -127,9 +127,9 @@ def test_search_match_next_new_query(search_helper):
     next_idx, current_result, total_results = search_helper.search(
         query="4", include_current_row=True, top_down=True, selected_index=0
     )
-    assert 3 == next_idx
-    assert 1 == current_result
-    assert 1 == total_results
+    assert next_idx == 3
+    assert current_result == 1
+    assert total_results == 1
 
 
 def test_search_match_next_after_import(search_helper):
@@ -139,23 +139,23 @@ def test_search_match_next_after_import(search_helper):
     search_helper.import_more_comments()
 
     next_idx, current_result, total_results = search_helper.next()
-    assert 9 == next_idx
-    assert 9 == current_result
-    assert 9 == total_results
+    assert next_idx == 9
+    assert current_result == 9
+    assert total_results == 9
 
 
 def test_search_match_previous(search_helper):
     search_helper.search(query="Word", include_current_row=True, top_down=True, selected_index=0)
 
     next_idx, current_result, total_results = search_helper.previous()
-    assert 7 == next_idx
-    assert 7 == current_result
-    assert 7 == total_results
+    assert next_idx == 7
+    assert current_result == 7
+    assert total_results == 7
 
     next_idx, current_result, total_results = search_helper.previous()
-    assert 5 == next_idx
-    assert 6 == current_result
-    assert 7 == total_results
+    assert next_idx == 5
+    assert current_result == 6
+    assert total_results == 7
 
 
 def test_search_match_previous_with_selection_change(search_helper):
@@ -165,9 +165,9 @@ def test_search_match_previous_with_selection_change(search_helper):
     search_helper.select(index=2)
 
     next_idx, current_result, total_results = search_helper.previous()
-    assert 1 == next_idx
-    assert 2 == current_result
-    assert 7 == total_results
+    assert next_idx == 1
+    assert current_result == 2
+    assert total_results == 7
 
 
 def test_search_match_previous_after_import(search_helper):
@@ -177,6 +177,6 @@ def test_search_match_previous_after_import(search_helper):
     search_helper.import_more_comments()
 
     next_idx, current_result, total_results = search_helper.previous()
-    assert 7 == next_idx
-    assert 7 == current_result
-    assert 9 == total_results
+    assert next_idx == 7
+    assert current_result == 7
+    assert total_results == 9

@@ -41,7 +41,7 @@ def mock_current_version(mock, *, version: str):
     mock.return_value.applicationVersion.return_value = version
 
 
-@pytest.fixture()
+@pytest.fixture
 def service() -> VersionCheckerService:
     return VersionCheckerService()
 
@@ -55,7 +55,7 @@ def test_version_checker_latest(service):
         mock_current_version(mock_app, version="0.1.0")
         actual_title, _ = service.check_for_new_version()
 
-    assert "👌" == actual_title
+    assert actual_title == "👌"
 
 
 def test_version_checker_new_version_available(service):
@@ -67,7 +67,7 @@ def test_version_checker_new_version_available(service):
         mock_current_version(mock_app, version="0.1.1")
         actual_title, _ = service.check_for_new_version()
 
-    assert "New Version Available" == actual_title
+    assert actual_title == "New Version Available"
 
 
 def test_version_checker_service_error(service):
@@ -77,7 +77,7 @@ def test_version_checker_service_error(service):
         mock_response(mock_request, error=error)
         actual_title, _ = service.check_for_new_version()
 
-    assert "Server Error" == actual_title
+    assert actual_title == "Server Error"
 
 
 def test_version_checker_url_error(service):
@@ -87,4 +87,4 @@ def test_version_checker_url_error(service):
         mock_response(mock_request, error=error)
         actual_title, _ = service.check_for_new_version()
 
-    assert "Server Not Reachable" == actual_title
+    assert actual_title == "Server Not Reachable"

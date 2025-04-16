@@ -67,8 +67,7 @@ class KeyCommandGeneratorService:
             except ValueError:
                 return None
 
-        if command:
-            return command
+        return command
 
     @staticmethod
     def _generate(modifiers, key_str, mod_required=False, is_char=False):

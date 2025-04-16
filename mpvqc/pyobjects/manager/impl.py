@@ -75,13 +75,13 @@ class MpvqcManagerPyObject(QObject):
 
         # fmt: off
         self.dialog_export_document_factory \
-            = bind_qml_property_with(name='mpvqcDialogExportDocumentFactory')
+            = bind_qml_property_with(name="mpvqcDialogExportDocumentFactory")
         self.message_box_video_found_factory \
-            = bind_qml_property_with(name='mpvqcMessageBoxVideoFoundFactory')
+            = bind_qml_property_with(name="mpvqcMessageBoxVideoFoundFactory")
         self.message_box_new_document_factory \
-            = bind_qml_property_with(name='mpvqcMessageBoxNewDocumentFactory')
+            = bind_qml_property_with(name="mpvqcMessageBoxNewDocumentFactory")
         self.message_box_document_not_compatible_factory \
-            = bind_qml_property_with(name='mpvqcMessageBoxDocumentNotCompatibleFactory')
+            = bind_qml_property_with(name="mpvqcMessageBoxDocumentNotCompatibleFactory")
         # fmt: on
 
         def on_comments_changed(*_):
@@ -160,7 +160,7 @@ class MpvqcManagerPyObject(QObject):
         self.open_impl(documents=[], videos=[], subtitles=subtitles)
 
     @Slot(list, list, list)
-    def open_impl(self, documents: list[QUrl], videos: list[QUrl], subtitles: list[QUrl]):
+    def open_impl(self, documents: list[QUrl], videos: list[QUrl], subtitles: list[QUrl]):  # noqa: C901
         documents = self._type_mapper.map_urls_to_path(documents)
         videos = self._type_mapper.map_urls_to_path(videos)
         subtitles = self._type_mapper.map_urls_to_path_strings(subtitles)

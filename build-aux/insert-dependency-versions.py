@@ -1,3 +1,4 @@
+# noqa: CPY001
 # MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining

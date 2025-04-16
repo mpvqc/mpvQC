@@ -33,8 +33,7 @@ def get_process_address(_, name):
     current_gl_context = QOpenGLContext.currentContext()
     if current_gl_context:
         return int(current_gl_context.getProcAddress(name))
-    else:
-        return 0
+    return 0
 
 
 @QmlElement

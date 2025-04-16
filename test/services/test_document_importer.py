@@ -104,8 +104,8 @@ def test_import_invalid_documents(service, make_document_mock):
 
     assert not result.valid_documents
     assert result.invalid_documents
-    assert "path-1" == getattr(result.invalid_documents[0], "mpvqc_name")
-    assert "path-2" == getattr(result.invalid_documents[1], "mpvqc_name")
+    assert getattr(result.invalid_documents[0], "mpvqc_name") == "path-1"
+    assert getattr(result.invalid_documents[1], "mpvqc_name") == "path-2"
 
 
 def test_import_valid_documents(service, make_document_mock, mocked_pathlib):
@@ -114,48 +114,48 @@ def test_import_valid_documents(service, make_document_mock, mocked_pathlib):
     assert not result.invalid_documents
     assert result.valid_documents
     assert result.existing_videos
-    assert "/home/luffy/Videos/an existing video with spaces.mp4" == mocked_pathlib.call_args[0][0]
-    assert 3 == len(result.comments)
+    assert mocked_pathlib.call_args[0][0] == "/home/luffy/Videos/an existing video with spaces.mp4"
+    assert len(result.comments) == 3
     comment = result.comments[0]
-    assert 1 == comment.time
-    assert "CommentType" == comment.comment_type
-    assert "Document 2 / Comment 1" == comment.comment
+    assert comment.time == 1
+    assert comment.comment_type == "CommentType"
+    assert comment.comment == "Document 2 / Comment 1"
     comment = result.comments[1]
-    assert 120 == comment.time
-    assert "CommentType" == comment.comment_type
-    assert "Document 2 / Comment 2" == comment.comment
+    assert comment.time == 120
+    assert comment.comment_type == "CommentType"
+    assert comment.comment == "Document 2 / Comment 2"
     comment = result.comments[2]
-    assert 10800 == comment.time
-    assert "CommentType" == comment.comment_type
-    assert "Document 2 / Comment 3" == comment.comment
+    assert comment.time == 10800
+    assert comment.comment_type == "CommentType"
+    assert comment.comment == "Document 2 / Comment 3"
 
     path_2 = make_document_mock("path-2", and_return_content=DOCUMENT_3)
     result = service.read([path_2])
     assert not result.invalid_documents
     assert result.valid_documents
     assert result.existing_videos
-    assert "C:\\Videos\\mpvQC\\an existing video with spaces on Windows.mp4" == mocked_pathlib.call_args[0][0]
-    assert 3 == len(result.comments)
+    assert mocked_pathlib.call_args[0][0] == "C:\\Videos\\mpvQC\\an existing video with spaces on Windows.mp4"
+    assert len(result.comments) == 3
     comment = result.comments[0]
-    assert 11 == comment.time
-    assert "A SPECIAL Comment-_-Type" == comment.comment_type
-    assert "Document 3 / Comment 1" == comment.comment
+    assert comment.time == 11
+    assert comment.comment_type == "A SPECIAL Comment-_-Type"
+    assert comment.comment == "Document 3 / Comment 1"
     comment = result.comments[1]
-    assert 1320 == comment.time
-    assert "YOOOOO-comment-type" == comment.comment_type
-    assert "Document 3 / Comment 2" == comment.comment
+    assert comment.time == 1320
+    assert comment.comment_type == "YOOOOO-comment-type"
+    assert comment.comment == "Document 3 / Comment 2"
     comment = result.comments[2]
-    assert 118800 == comment.time
-    assert "Phrasing" == comment.comment_type
-    assert "Document 3 / Comment 3" == comment.comment
+    assert comment.time == 118800
+    assert comment.comment_type == "Phrasing"
+    assert comment.comment == "Document 3 / Comment 3"
 
     path_3 = make_document_mock("path-3", and_return_content=DOCUMENT_4)
     result = service.read([path_3])
     assert not result.invalid_documents
     assert result.valid_documents
     assert not result.existing_videos
-    assert "/home/luffy/Videos/a not existing video with spaces.mp4" == mocked_pathlib.call_args[0][0]
-    assert 4 == len(result.comments)
+    assert mocked_pathlib.call_args[0][0] == "/home/luffy/Videos/a not existing video with spaces.mp4"
+    assert len(result.comments) == 4
 
 
 def test_import_multiple_documents(service, make_document_mock, mocked_pathlib):
@@ -166,8 +166,8 @@ def test_import_multiple_documents(service, make_document_mock, mocked_pathlib):
 
     result = service.read([path_1, path_2, path_3, path_4])
 
-    assert 1 == len(result.invalid_documents)
-    assert "path-1" == getattr(result.invalid_documents[0], "mpvqc_name")
-    assert 3 == len(result.valid_documents)
-    assert 2 == len(result.existing_videos)
-    assert 10 == len(result.comments)
+    assert len(result.invalid_documents) == 1
+    assert getattr(result.invalid_documents[0], "mpvqc_name") == "path-1"
+    assert len(result.valid_documents) == 3
+    assert len(result.existing_videos) == 2
+    assert len(result.comments) == 10

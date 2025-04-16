@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -98,16 +98,15 @@ class DocumentBackupService:
     def _video_name(self) -> str:
         if self._player.has_video:
             return Path(self._player.path).name
-        else:
-            #: Will be used in the file name proposal when saving a qc document when there's no video being loaded
-            return QCoreApplication.translate("FileInteractionDialogs", "untitled")
+        #: Will be used in the file name proposal when saving a qc document when there's no video being loaded
+        return QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
     @property
     def _content(self) -> str:
         return self._renderer.render(self._resources.backup_template)
 
     def backup(self) -> None:
-        now = datetime.now()
+        now = datetime.now(UTC)
 
         zip_name = f"{now:%Y-%m}.zip"
         zip_path = self._paths.dir_backup / zip_name
@@ -157,6 +156,7 @@ class DocumentExportService:
             return self.ExportError(e.message, line_nr=None)
 
         file.write_text(content, encoding="utf-8", newline="\n")
+        return None
 
     def save(self, file: Path) -> None:
         export_template = self._resources.default_export_template

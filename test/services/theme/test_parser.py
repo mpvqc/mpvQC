@@ -24,7 +24,7 @@ from mpvqc.services.theme.utils import parse_color
 
 
 def assert_colors(*colors):
-    colors = set(QColor(c).name(QColor.NameFormat.HexRgb) for c in colors)
+    colors = {QColor(c).name(QColor.NameFormat.HexRgb) for c in colors}
     assert len(colors) == 1
 
 
@@ -78,7 +78,7 @@ def _append(line: str) -> str:
 
 
 @pytest.mark.parametrize(
-    "old, new",
+    ("old", "new"),
     [
         ('schema-version = "v1"', 'schema-version = "v0"'),
         ('theme-name = "Nord Dark"', 'theme-name = ""'),
@@ -95,33 +95,33 @@ def _append(line: str) -> str:
     ],
 )
 def test_parse_errors(old, new):
+    twisted_theme = _replace(old, new)
     with pytest.raises(ThemeParseError):
-        twisted_theme = _replace(old, new)
         parse_theme(twisted_theme)
 
 
 def test_row_highlight_text():
     theme = parse_theme(VALID_THEME_V1_BASE)
-    assert "#d8dee9" == theme.colors[0].row_highlight_text
+    assert theme.colors[0].row_highlight_text == "#d8dee9"
 
     theme = parse_theme(_append('row-highlight-text = "#ff0000"'))
-    assert "#ff0000" == theme.colors[0].row_highlight_text
+    assert theme.colors[0].row_highlight_text == "#ff0000"
 
 
 def test_row_base():
     theme = parse_theme(VALID_THEME_V1_BASE)
-    assert "#2e3440" == theme.colors[0].row_base
+    assert theme.colors[0].row_base == "#2e3440"
 
     theme = parse_theme(_append('row-base = "#ff0000"'))
-    assert "#ff0000" == theme.colors[0].row_base
+    assert theme.colors[0].row_base == "#ff0000"
 
 
 def test_row_base_text():
     theme = parse_theme(VALID_THEME_V1_BASE)
-    assert "#d8dee9" == theme.colors[0].row_base_text
+    assert theme.colors[0].row_base_text == "#d8dee9"
 
     theme = parse_theme(_append('row-base-text = "#ff0000"'))
-    assert "#ff0000" == theme.colors[0].row_base_text
+    assert theme.colors[0].row_base_text == "#ff0000"
 
 
 def test_row_base_alternate():
@@ -140,12 +140,12 @@ def test_row_base_alternate():
     )
 
     theme = parse_theme(_append('row-base-alternate = "#ff0000"'))
-    assert "#ff0000" == theme.colors[0].row_base_alternate
+    assert theme.colors[0].row_base_alternate == "#ff0000"
 
 
 def test_row_base_alternate_text():
     theme = parse_theme(VALID_THEME_V1_BASE)
-    assert "#d8dee9" == theme.colors[0].row_base_alternate_text
+    assert theme.colors[0].row_base_alternate_text == "#d8dee9"
 
     theme = parse_theme(_append('row-base-alternate-text = "#ff0000"'))
-    assert "#ff0000" == theme.colors[0].row_base_alternate_text
+    assert theme.colors[0].row_base_alternate_text == "#ff0000"

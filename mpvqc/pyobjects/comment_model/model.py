@@ -267,7 +267,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         all_results = -1  # Search everything
         results = self.match(from_beginning, role, query, all_results, flags)
         results = sorted(results)
-        return list(map(lambda model_index: model_index.row(), results))
+        return [m_idx.row() for m_idx in results]
 
     def _invalidate_search(self) -> None:
         self._searcher.invalidate()

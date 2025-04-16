@@ -28,7 +28,7 @@ DEFAULT_COMMENTS = [
 ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(

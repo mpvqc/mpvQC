@@ -80,7 +80,7 @@ class DocumentImporterService:
         match = self._REGEX_PATH.match(line)
 
         if match is None:
-            return
+            return None
 
         return Path(match.group("path").strip())
 
@@ -88,7 +88,7 @@ class DocumentImporterService:
         match = self._REGEX_COMMENT.match(line.strip())
 
         if match is None:
-            return
+            return None
 
         time = match.group("time").strip()
         comment_type = match.group("type").strip()

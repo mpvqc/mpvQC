@@ -36,7 +36,6 @@ class CommentItem(QStandardItem):
 
         if this_time < that_time:
             return True
-        elif this_time > that_time:
+        if this_time > that_time:
             return False
-        else:
-            return self._id < other._id
+        return self._id < other._id

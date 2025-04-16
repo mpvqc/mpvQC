@@ -37,7 +37,7 @@ def parse_theme(theme: str) -> Theme:
             raise ThemeParseError(f"Cannot parse schema version {version}")
 
 
-def _parse_v1_theme(theme: dict) -> Theme:
+def _parse_v1_theme(theme: dict) -> Theme:  # noqa: C901
     match theme.get("theme-name"):
         case None:
             raise ThemeParseError("Cannot parse schema without 'theme-name' property")
@@ -71,6 +71,7 @@ def _parse_v1_theme(theme: dict) -> Theme:
         color = get(prop, from_container=from_container, throw_if_missing=throw_if_missing)
         if color is not None:
             return parse_color(f"{color}")
+        return None
 
     preview_color = get_color("theme-preview")
 

@@ -29,7 +29,7 @@ def service() -> KeyCommandGeneratorService:
 
 # noinspection PyUnresolvedReferences, PyTypeChecker
 @pytest.mark.parametrize(
-    "expected, key, modifiers",
+    ("expected", "key", "modifiers"),
     [
         (None, None, Qt.NoModifier),
         (None, None, Qt.ShiftModifier),
@@ -63,7 +63,6 @@ def service() -> KeyCommandGeneratorService:
         (".", Qt.Key_Period, Qt.NoModifier),
         (",", Qt.Key_Comma, Qt.NoModifier),
         ("9", Qt.Key_9, Qt.NoModifier),
-        ("0", Qt.Key_0, Qt.NoModifier),
         ("m", Qt.Key_M, Qt.NoModifier),
         ("j", Qt.Key_J, Qt.NoModifier),
         ("J", Qt.Key_J, Qt.ShiftModifier),

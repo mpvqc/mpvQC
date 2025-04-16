@@ -26,13 +26,13 @@ from mpvqc.services import ApplicationEnvironmentService, ApplicationPathsServic
 EXECUTING_DIRECTORY = Path.home()
 
 
-@pytest.fixture()
+@pytest.fixture
 def portable_service():
     _configure_injection(portable=True)
     return ApplicationPathsService()
 
 
-@pytest.fixture()
+@pytest.fixture
 def non_portable_service():
     _configure_injection(portable=False)
     return ApplicationPathsService()

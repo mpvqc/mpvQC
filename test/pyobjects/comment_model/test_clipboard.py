@@ -38,10 +38,10 @@ def test_copy_to_clipboard(make_model, clipboard):
     )
 
     model.copy_to_clipboard(0)
-    assert "[00:01:40] [Phrasing] Comment Content 1" == clipboard.text()
+    assert clipboard.text() == "[00:01:40] [Phrasing] Comment Content 1"
 
     model.copy_to_clipboard(1)
-    assert "[00:03:20] [Translation] Comment Content 2" == clipboard.text()
+    assert clipboard.text() == "[00:03:20] [Translation] Comment Content 2"
 
     model.copy_to_clipboard(2)
-    assert "[00:05:00] [Spelling] Comment Content 3" == clipboard.text()
+    assert clipboard.text() == "[00:05:00] [Spelling] Comment Content 3"

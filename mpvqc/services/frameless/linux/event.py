@@ -31,7 +31,7 @@ class LinuxEventFilter(QObject):
         self._window = window
         self._app = app
 
-    def eventFilter(self, obj, event):
+    def eventFilter(self, obj, event):  # noqa: C901
         if event.type() != QEvent.Type.MouseButtonPress and event.type() != QEvent.Type.MouseMove:
             return False
 

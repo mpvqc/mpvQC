@@ -37,10 +37,9 @@ class SettingsService:
         value = self._settings.value(key, False)
         if isinstance(value, bool):
             return value
-        elif isinstance(value, str):
+        if isinstance(value, str):
             return value.upper() == "TRUE"
-        else:
-            return False
+        return False
 
     def _str(self, key: str, default=""):
         return str(self._settings.value(key, default))

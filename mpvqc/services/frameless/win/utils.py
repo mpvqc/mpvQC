@@ -68,7 +68,7 @@ def is_composition_enabled():
 def get_monitor_info(hwnd, dw_flags):
     monitor = win32api.MonitorFromWindow(hwnd, dw_flags)
     if not monitor:
-        return
+        return None
 
     return win32api.GetMonitorInfo(monitor)
 
@@ -109,7 +109,7 @@ def get_dpi_for_window(hwnd, horizontal=True):
     win32gui.ReleaseDC(hwnd, hdc)
     if dpi_x > 0 and horizontal:
         return dpi_x
-    elif dpi_y > 0 and not horizontal:
+    if dpi_y > 0 and not horizontal:
         return dpi_y
 
     return 96
@@ -118,12 +118,13 @@ def get_dpi_for_window(hwnd, horizontal=True):
 def find_window(hwnd):
     windows = QGuiApplication.topLevelWindows()
     if not windows:
-        return
+        return None
 
     hwnd = int(hwnd)
     for window in windows:
         if window and int(window.winId()) == hwnd:
             return window
+    return None
 
 
 def is_greater_equal_win8_1():
@@ -233,4 +234,4 @@ def prevent_window_resize_for(hwnd):
     style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
     style &= ~win32con.WS_THICKFRAME
     win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
-    return None
+    return

@@ -17,7 +17,7 @@
 
 import textwrap
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -39,24 +39,24 @@ from mpvqc.services import (
 MODULE = "mpvqc.services.document_exporter"
 
 
-@pytest.fixture()
+@pytest.fixture
 def qt_app():
     with patch(f"{MODULE}.QCoreApplication.instance", return_value=MagicMock()) as mock:
         yield mock.return_value
 
 
-@pytest.fixture()
+@pytest.fixture
 def zip_file():
     with patch(f"{MODULE}.ZipFile", return_value=MagicMock()) as mock:
         yield mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def resource_service() -> ResourceService:
     return ResourceService()
 
 
-@pytest.fixture()
+@pytest.fixture
 def make_mock(qt_app):
     def _make_mock(
         video: Path or str or None = None,
@@ -92,7 +92,7 @@ def make_mock(qt_app):
     return _make_mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def document_renderer_service_mock() -> MagicMock:
     mock = MagicMock()
 
@@ -100,20 +100,20 @@ def document_renderer_service_mock() -> MagicMock:
         binder.bind(DocumentRenderService, mock)
 
     inject.configure(config, clear=True)
-    yield mock
+    return mock
 
 
-@pytest.fixture()
+@pytest.fixture
 def document_render_service() -> DocumentRenderService:
     return DocumentRenderService()
 
 
-@pytest.fixture()
+@pytest.fixture
 def document_backup_service() -> DocumentBackupService:
     return DocumentBackupService()
 
 
-@pytest.fixture()
+@pytest.fixture
 def document_exporter_service() -> DocumentExportService:
     return DocumentExportService()
 
@@ -143,7 +143,7 @@ def test_render_service_video_path_video_name(make_mock, document_render_service
 def test_render_service_renders_text_that_ends_with_newline(make_mock, document_render_service, resource_service):
     make_mock()
     actual = document_render_service.render(resource_service.default_export_template)
-    assert "\n" == actual[-1]
+    assert actual[-1] == "\n"
 
 
 def test_render_service_renders_no_headers(make_mock, document_render_service, resource_service):
@@ -234,7 +234,7 @@ def test_backup_service_archive_name(make_mock, zip_file, document_backup_servic
 
     assert zip_file.called
     zip_name = zip_file.call_args.args[0]
-    assert zip_name.name == f"{datetime.now():%Y-%m}.zip"
+    assert zip_name.name == f"{datetime.now(UTC):%Y-%m}.zip"
 
 
 def test_backup_service_performs_backup(make_mock, zip_file, document_backup_service):
@@ -251,7 +251,7 @@ def test_backup_service_performs_backup(make_mock, zip_file, document_backup_ser
     assert writestr_mock.called
 
     filename, content = writestr_mock.call_args.args
-    assert f"{datetime.now():%Y-%m-%d}" in filename
+    assert f"{datetime.now(UTC):%Y-%m-%d}" in filename
     assert f"{Path('/path/to/nice/video')}" in content
     assert "[00:00:00] [Frrrranky] Suuuuuuuper" in content
 
@@ -311,13 +311,13 @@ def test_document_exporter_exports(document_exporter_service, document_renderer_
     document_renderer_service_mock.render.side_effect = TemplateSyntaxError(message="error", lineno=42)
     error = document_exporter_service.export(file_mock, template_mock)
     assert error is not None
-    assert "error" == error.message
-    assert 42 == error.line_nr
+    assert error.message == "error"
+    assert error.line_nr == 42
 
     document_renderer_service_mock.render.side_effect = TemplateError(message="error #2")
     error = document_exporter_service.export(file_mock, template_mock)
     assert error is not None
-    assert "error #2" == error.message
+    assert error.message == "error #2"
     assert error.line_nr is None
 
 

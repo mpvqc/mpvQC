@@ -55,7 +55,7 @@ def test_settings_language(make_settings):
 
 
 @pytest.mark.parametrize(
-    "config, expected",
+    ("config", "expected"),
     [
         ({}, ""),
         ({"Export/nickname": ""}, ""),
@@ -70,7 +70,7 @@ def test_settings_string(make_settings, config, expected):
 
 
 @pytest.mark.parametrize(
-    "config, expected",
+    ("config", "expected"),
     [
         ({}, False),
         ({"Export/writeHeaderDate": ""}, False),
@@ -88,7 +88,7 @@ ENUM_VALUE = SettingsService.ImportWhenVideoLinkedInDocument
 
 
 @pytest.mark.parametrize(
-    "config, expected",
+    ("config", "expected"),
     [
         ({"Import/importWhenVideoLinkedInDocument": 0}, ENUM_VALUE.ALWAYS),
         ({"Import/importWhenVideoLinkedInDocument": 1}, ENUM_VALUE.ASK_EVERY_TIME),

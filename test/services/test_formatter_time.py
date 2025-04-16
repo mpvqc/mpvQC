@@ -26,7 +26,7 @@ def service():
 
 
 @pytest.mark.parametrize(
-    "expected, input_seconds",
+    ("expected", "input_seconds"),
     [
         ("00:00:00", 0),
         ("00:01:08", 68),
@@ -40,7 +40,7 @@ def test_format_time_to_string_long(service, expected, input_seconds):
 
 
 @pytest.mark.parametrize(
-    "expected, input_seconds",
+    ("expected", "input_seconds"),
     [
         ("00:00", 0),
         ("01:08", 68),

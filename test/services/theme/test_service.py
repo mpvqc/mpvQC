@@ -30,8 +30,8 @@ def test_get_theme_summaries_and_builtin_themes(service):
     assert len(summaries) > 0
 
     summaries = service.get_theme_summaries()
-    assert any("Material You" == summary["name"] for summary in summaries)
-    assert any("Material You Dark" == summary["name"] for summary in summaries)
+    assert any(summary["name"] == "Material You" for summary in summaries)
+    assert any(summary["name"] == "Material You Dark" for summary in summaries)
 
 
 def test_get_summary(service):

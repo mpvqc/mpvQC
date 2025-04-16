@@ -23,7 +23,7 @@ from mpvqc.services.theme.utils import parse_color
 
 
 @pytest.mark.parametrize(
-    "string, expected_hex",
+    ("string", "expected_hex"),
     [
         ("#2e3440", "#2e3440"),
         ("Qt.darker #bf616a 1.3", "#934b52"),

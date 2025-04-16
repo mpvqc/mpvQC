@@ -36,37 +36,37 @@ RANDOM_FILE = Path().home() / "Documents" / "my-doc.txt"
 RANDOM_VIDEO = Path().home() / "Video" / "my-video.mp4"
 
 
-@pytest.fixture()
+@pytest.fixture
 def comments_model_mock() -> MagicMock:
     return MagicMock()
 
 
-@pytest.fixture()
+@pytest.fixture
 def exporter_service_mock() -> MagicMock:
     return MagicMock()
 
 
-@pytest.fixture()
+@pytest.fixture
 def player_service_mock() -> MagicMock:
     return MagicMock()
 
 
-@pytest.fixture()
+@pytest.fixture
 def document_not_compatible_message_box() -> MagicMock:
     return MagicMock()
 
 
-@pytest.fixture()
+@pytest.fixture
 def confirm_reset_message_box() -> MockedMessageBox:
     return MockedMessageBox()
 
 
-@pytest.fixture()
+@pytest.fixture
 def export_document_dialog() -> MockedDialog:
     return MockedDialog()
 
 
-@pytest.fixture()
+@pytest.fixture
 def manager(
     confirm_reset_message_box,
     export_document_dialog,
@@ -107,7 +107,7 @@ def configure_inject(exporter_service_mock):
     inject.configure(config, clear=True, allow_override=True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def reconfigure_inject(
     player_service_mock,
     type_mapper,
@@ -189,7 +189,7 @@ def test_save_saved_state_with_document(
     assert not export_document_dialog.openCalled
     assert exporter_service_mock.save.called
     saved_path = exporter_service_mock.save.call_args[0][0]
-    assert RANDOM_FILE == saved_path
+    assert saved_path == RANDOM_FILE
 
 
 def test_save_unsaved_state_do_save(
@@ -208,9 +208,9 @@ def test_save_unsaved_state_do_save(
 
     assert exporter_service_mock.save.called
     saved_path = exporter_service_mock.save.call_args[0][0]
-    assert RANDOM_FILE == saved_path
+    assert saved_path == RANDOM_FILE
     assert manager.state.saved
-    assert RANDOM_FILE == manager.state.document
+    assert manager.state.document == RANDOM_FILE
 
 
 def test_save_unsaved_state_cancel_save(
@@ -276,7 +276,7 @@ def test_import_video(
     assert player_service_mock.open_video.called
     assert not manager.state.saved
     assert manager.state.document is None
-    assert RANDOM_VIDEO == manager.state.video
+    assert manager.state.video == RANDOM_VIDEO
 
 
 def test_import_subtitles(

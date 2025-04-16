@@ -28,7 +28,7 @@ DEFAULT_COMMENTS = (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(
@@ -40,7 +40,7 @@ def model(make_model):
 
 def test_clear_comments(model):
     model.clear_comments()
-    assert 0 == model.rowCount()
+    assert model.rowCount() == 0
 
 
 def test_clear_comments_invalidates_search_results(model):
@@ -66,7 +66,7 @@ def test_clear_comments_undo_redo(model):
 
     model.undo()
     assert model.rowCount() == 5
-    assert ["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"] == [c["comment"] for c in model.comments()]
+    assert [c["comment"] for c in model.comments()] == ["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"]
 
     model.redo()
     assert model.rowCount() == 0

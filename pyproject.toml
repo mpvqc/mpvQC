@@ -35,10 +35,36 @@ line-length = 120
 target-version = "py313"
 
 [tool.ruff.lint]
+preview = true
 extend-select = [
-    "I",  # Sort imports
-    "UP", # Upgrade hints based on new language features
-    "S",  # Bandit security checks
+    "C",    # flake8-comprehensions
+    "CPY",  # flake8-copyright
+    "DTZ",  # flake8-datetimez
+    "EXE",  # flake8-executable
+    "FA",   # flake8-future-annotations
+    "FIX",  # flake8-fixme
+    "G",    # flake8-logging-format
+    "ICN",  # flake8-import-conventions
+    "ISC",  # flake8-implicit-str-concat
+    "LOG",  # flake8-logging
+    "PIE",  # flake8-pie
+    "PYI",  # flake8-pyi
+    "PT",   # flake8-pytest-style
+    "Q",    # flake8-quotes
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+    "SLF",  # flake8-self
+    "SIM",  # flake8-simplify
+    "SLOT", # flake8-slots
+    "TID",  # flake8-tidy-imports
+    "TD",   # flake8-todos
+    "TC",   # flake8-type-checking
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+
+    "I",    # Sort imports
+    "S",    # Bandit security checks
+    "UP",   # Upgrade hints based on new language features
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
@@ -46,4 +72,5 @@ extend-select = [
     "S101", # asserts allowed in tests...
     "ARG",  # Unused function args -> fixtures nevertheless are functionally relevant...
     "FBT",  # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
+    "SLF",  # flake8-self
 ]

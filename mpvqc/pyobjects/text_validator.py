@@ -32,7 +32,7 @@ class MpvqcDefaultTextValidatorPyObject(QValidator):
     def replace_special_characters(self, string_to_replace) -> str:
         # fmt: off
         return string_to_replace \
-            .replace('\xad', '') \
-            .replace('\r', '') \
-            .replace('\n', '')
+            .replace("\xad", "") \
+            .replace("\r", "") \
+            .replace("\n", "")
         # fmt: on

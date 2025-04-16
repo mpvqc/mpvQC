@@ -23,12 +23,12 @@ import pytest
 from mpvqc.services import ApplicationPathsService, FileStartupService, ResourceService
 
 
-@pytest.fixture()
+@pytest.fixture
 def file_startup_service():
     return FileStartupService()
 
 
-@pytest.fixture()
+@pytest.fixture
 def application_paths_service_mock():
     return MagicMock()
 

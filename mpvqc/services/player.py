@@ -50,7 +50,7 @@ class PlayerService:
         self._mpv: MPV | None = None
 
     def init(self, win_id: int or None = None):
-        if win_id is None:
+        if win_id is None:  # noqa: SIM108
             args = {"vo": "libmpv"}
         else:
             args = {"wid": win_id}

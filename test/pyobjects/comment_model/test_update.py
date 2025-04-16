@@ -29,7 +29,7 @@ DEFAULT_COMMENTS = (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(
@@ -76,7 +76,7 @@ def test_update_time_fires_signals(model, signal_helper):
     assert signal_helper.has_logged("timeUpdatedInitially")
     assert not signal_helper.has_logged("timeUpdatedUndone")
     assert not signal_helper.has_logged("timeUpdatedRedone")
-    assert 1 == signal_helper.logged_value("timeUpdatedInitially")
+    assert signal_helper.logged_value("timeUpdatedInitially") == 1
 
     signal_helper.reset()
     model.undo()
@@ -91,7 +91,7 @@ def test_update_time_fires_signals(model, signal_helper):
     assert not signal_helper.has_logged("timeUpdatedInitially")
     assert not signal_helper.has_logged("timeUpdatedUndone")
     assert signal_helper.has_logged("timeUpdatedRedone")
-    assert 1 == signal_helper.logged_value("timeUpdatedRedone")
+    assert signal_helper.logged_value("timeUpdatedRedone") == 1
 
 
 def test_update_comment_type(model):
@@ -112,7 +112,7 @@ def test_update_comment_type_fires_signals(model, signal_helper):
     model.update_comment_type(row=0, comment_type="updated comment type")
     assert signal_helper.has_logged("commentTypeUpdated")
     assert not signal_helper.has_logged("commentTypeUpdatedUndone")
-    assert 0 == signal_helper.logged_value("commentTypeUpdated")
+    assert signal_helper.logged_value("commentTypeUpdated") == 0
 
     signal_helper.reset()
     model.undo()
@@ -120,7 +120,7 @@ def test_update_comment_type_fires_signals(model, signal_helper):
 
     assert not signal_helper.has_logged("commentTypeUpdated")
     assert signal_helper.has_logged("commentTypeUpdatedUndone")
-    assert 0 == signal_helper.logged_value("commentTypeUpdatedUndone")
+    assert signal_helper.logged_value("commentTypeUpdatedUndone") == 0
 
     signal_helper.reset()
     model.redo()
@@ -128,7 +128,7 @@ def test_update_comment_type_fires_signals(model, signal_helper):
 
     assert signal_helper.has_logged("commentTypeUpdated")
     assert not signal_helper.has_logged("commentTypeUpdatedUndone")
-    assert 0 == signal_helper.logged_value("commentTypeUpdated")
+    assert signal_helper.logged_value("commentTypeUpdated") == 0
 
 
 def test_update_comment(model):
@@ -163,7 +163,7 @@ def test_update_comment_fires_signals(model, signal_helper):
     model.update_comment(row=0, comment="new")
     assert signal_helper.has_logged("commentUpdated")
     assert not signal_helper.has_logged("commentUpdatedUndone")
-    assert 0 == signal_helper.logged_value("commentUpdated")
+    assert signal_helper.logged_value("commentUpdated") == 0
 
     signal_helper.reset()
     model.undo()
@@ -171,14 +171,14 @@ def test_update_comment_fires_signals(model, signal_helper):
 
     assert not signal_helper.has_logged("commentUpdated")
     assert signal_helper.has_logged("commentUpdatedUndone")
-    assert 0 == signal_helper.logged_value("commentUpdatedUndone")
+    assert signal_helper.logged_value("commentUpdatedUndone") == 0
 
     signal_helper.reset()
     model.redo()
 
     assert signal_helper.has_logged("commentUpdated")
     assert not signal_helper.has_logged("commentUpdatedUndone")
-    assert 0 == signal_helper.logged_value("commentUpdated")
+    assert signal_helper.logged_value("commentUpdated") == 0
 
 
 def test_update_comments_consecutively_undo_redo(make_model):

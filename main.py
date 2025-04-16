@@ -33,8 +33,8 @@ def _add_directory_to_path():
     import os
     import sys
 
-    os.environ["PATH"] = os.path.dirname(sys.argv[0]) + os.pathsep + os.environ["PATH"]
-    os.environ["PATH"] = os.path.dirname(__file__) + os.pathsep + os.environ["PATH"]
+    os.environ["PATH"] = os.path.dirname(sys.argv[0]) + os.pathsep + os.environ["PATH"]  # noqa: PTH120
+    os.environ["PATH"] = os.path.dirname(__file__) + os.pathsep + os.environ["PATH"]  # noqa: PTH120
 
 
 if __name__ == "__main__":

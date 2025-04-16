@@ -48,6 +48,6 @@ def test_read_from_errors(service):
     with (
         patch(f"{module}.QFile.exists", return_value=True),
         patch(f"{module}.QFile.open", return_value=False),
-        pytest.raises(ValueError),
+        pytest.raises(ValueError),  # noqa: PT011
     ):
         service.read_from("")

@@ -38,12 +38,12 @@ def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModelPyObje
 
 def test_no_templates():
     model = make_model(mocked_paths=())
-    assert 0 == model.rowCount()
+    assert model.rowCount() == 0
 
 
 def test_templates():
     model = make_model(mocked_paths=(Path.home(), Path.cwd()))
-    assert 2 == model.rowCount()
+    assert model.rowCount() == 2
 
 
 def test_templates_sorted():

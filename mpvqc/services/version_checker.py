@@ -45,7 +45,7 @@ class VersionCheckerService:
             return title, text
 
         if self._current_version != latest_version:
-            new_version = f'<i>{latest_version}</i>'
+            new_version = f"<i>{latest_version}</i>"
             home_url = f'<a href="{self.HOME_URL}">{self.HOME_URL}</a>'
 
             title = QCoreApplication.translate("VersionCheckDialog", "New Version Available")

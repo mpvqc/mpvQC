@@ -20,13 +20,13 @@ import pytest
 from mpvqc.services import ReverseTranslatorService
 
 
-@pytest.fixture()
+@pytest.fixture
 def service() -> ReverseTranslatorService:
     return ReverseTranslatorService()
 
 
 @pytest.mark.parametrize(
-    "expected, translated",
+    ("expected", "translated"),
     [
         ("Spelling", "Spelling"),
         ("Spelling", "Rechtschreibung"),

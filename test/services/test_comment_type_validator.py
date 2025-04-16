@@ -35,7 +35,7 @@ def configure_injections():
 
 
 @pytest.mark.parametrize(
-    "expected_error,new_comment_type,existing_comment_types",
+    ("expected_error", "new_comment_type", "existing_comment_types"),
     [
         ("A comment type must not be blank", None, []),
         ("A comment type must not be blank", "", []),
@@ -55,7 +55,7 @@ def test_validate_new_comment_type(
 
 
 @pytest.mark.parametrize(
-    "expected_error,new_comment_type,comment_type_being_edited,existing_comment_types",
+    ("expected_error", "new_comment_type", "comment_type_being_edited", "existing_comment_types"),
     [
         ("A comment type must not be blank", None, "blub", []),
         ("A comment type must not be blank", "", "blub", []),

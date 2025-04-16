@@ -81,7 +81,7 @@ class InitialState(ApplicationState):
         video = self.find_video(change)
         if change.exactly_one_document_imported:
             return OtherState(document=change.imported_document, video=video, saved=True)
-        else:
+        else:  # noqa RET505
             return OtherState(document=None, video=video, saved=False)
 
 
@@ -98,5 +98,5 @@ class OtherState(ApplicationState):
 
         if self.video and change.only_video_imported and imported_is_currently_loaded_video():
             return OtherState(document=self.document, video=self.video, saved=self.saved)
-        else:
+        else:  # noqa RET505
             return OtherState(document=None, video=self.find_video(change), saved=False)

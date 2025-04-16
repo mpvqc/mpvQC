@@ -20,7 +20,8 @@ from functools import cache
 import inject
 from PySide6.QtCore import QDir
 
-from ..resource_reader import ResourceReaderService
+from mpvqc.services.resource_reader import ResourceReaderService
+
 from .parser import parse_theme
 from .schema import Theme
 

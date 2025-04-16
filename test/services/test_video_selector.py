@@ -75,7 +75,7 @@ def mock_user_choice(choice: CHOICE):
 
 
 @pytest.mark.parametrize(
-    "videos_dropped, videos_from_documents, expected",
+    ("videos_dropped", "videos_from_documents", "expected"),
     [
         ([EXISTING_1], [], EXISTING_1),
         ([EXISTING_2, EXISTING_3, EXISTING_1], [], EXISTING_2),
@@ -90,7 +90,7 @@ def test_existing_video_dropped(make_select_video, expected, videos_dropped, vid
 
 
 @pytest.mark.parametrize(
-    "videos_dropped, videos_from_documents, expected",
+    ("videos_dropped", "videos_from_documents", "expected"),
     [
         ([EXISTING_1], [EXISTING_2], EXISTING_1),
         ([], [], None),
@@ -107,7 +107,7 @@ def test_user_never_wants_to_import_video(make_select_video, expected, videos_dr
 
 
 @pytest.mark.parametrize(
-    "videos_dropped, videos_from_documents, expected",
+    ("videos_dropped", "videos_from_documents", "expected"),
     [
         ([EXISTING_1], [], EXISTING_1),
         ([], [], None),
