@@ -1,0 +1,260 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '*'
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20250329/mpv-dev-x86_64-20250329-git-5ba7ee5.7z
+  LIBMPV_SHA1: c8bf354cfb4c1f5bcdb02d1e3ac967a35ada9301
+
+jobs:
+  matrix-build:
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.os }})
+    outputs:
+      artifact_app_name: ${{ steps.build_step.outputs.artifact_app_name }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+      - name: Run Build
+        id: build_step
+        run: |
+          set -euo pipefail
+
+          function debug() { echo -e "\033[0;35m$*\033[0m"; }
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          #
+          echo "::group::Download libmpv"
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            execute sudo apt update -y
+            execute sudo apt install -y libmpv2 patchelf libopengl0
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            ARTIFACT="$(basename "$LIBMPV_URL")"
+
+            execute curl -L -O "$LIBMPV_URL"
+            echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
+            echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
+            execute sha1sum --check "$ARTIFACT.sha1"
+            execute 7z x "$ARTIFACT"
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+          #
+          echo "::group::Remove Qml Test Files"
+          execute find . -type f -name 'tst_*' -delete
+          echo "::endgroup::"
+
+          #
+          echo "::group::Set Build Information"
+          PLACEHOLDER_TAG=">>>tag<<<"
+          PLACEHOLDER_COMMIT=">>>commit-id<<<"
+
+          CURRENT_TAG="$(git describe --tags --abbrev=0)"
+          debug "git tag: $CURRENT_TAG"
+
+          CURRENT_COMMIT="$(git rev-parse HEAD)"
+          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
+          debug "git commit: $CURRENT_COMMIT"
+
+          ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
+          debug "artifact name: $ARTIFACT_NAME"
+          echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "mpvqc/startup.py"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "mpvqc/startup.py"
+          execute cat "mpvqc/startup.py"
+
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qml/dialogs/about/MpvqcAboutView.qml"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qml/dialogs/about/MpvqcAboutView.qml"
+          execute cat "qml/dialogs/about/MpvqcAboutView.qml"
+          echo "::endgroup::"
+
+          #
+          echo "::group::Setup Virtual Environment"
+          execute just init
+          echo "::endgroup::"
+
+          #
+          echo "::group::Set Dependency Versions"
+          DEPENDENCY_MODEL_PATH="qml/models/MpvqcLibraryModel.qml"
+          execute just insert-dependency-versions "$DEPENDENCY_MODEL_PATH"
+          execute cat "$DEPENDENCY_MODEL_PATH"
+          echo "::endgroup::"
+
+          #
+          echo "::group::Check Linting and Formatting"
+          execute just format
+          echo "::endgroup::"
+
+          #
+          echo "::group::Run Python Build"
+          execute just test-python
+          execute just clean
+          execute just build
+          echo "::endgroup::"
+
+          #
+          RELEASE_NAME="release-build-${RUNNER_OS@L}"
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          debug "Uploading build/release as $RELEASE_NAME"
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build/release
+          name: ${{ steps.build_step.outputs.release_name }}
+
+  test_qml:
+    runs-on: ubuntu-latest
+    name: Test Qml
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Qt 6.9.*
+        uses: jurplel/install-qt-action@v4
+        with:
+          arch: linux_gcc_64
+          version: 6.9.*
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Execute Qml Tests
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute export QT_QPA_PLATFORM=offscreen
+          execute just test-qml
+
+  build_windows:
+    runs-on: windows-latest
+    name: Build Windows
+    needs:
+      - matrix-build
+      - test_qml
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+      - name: Remove Python sources
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute rm -rf mpvqc main.py
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-build-windows
+          path: .
+      - name: Setup Build Environment
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute just init '--no-group dev'
+          execute uv pip install nuitka
+      - name: Build Bundle
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute source .venv/Scripts/activate
+
+          execute python.exe -m nuitka main.py \
+            --assume-yes-for-downloads \
+            --standalone \
+            --deployment \
+            --enable-plugin=pyside6 \
+            --output-dir=deployment \
+            --include-data-files=LICENSE=LICENSE \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
+            --windows-console-mode=attach \
+            --windows-icon-from-ico=build-aux/icon.ico \
+            --include-qt-plugins=all \
+            --include-qt-plugins=qml \
+            --noinclude-qt-plugins=designer \
+            --noinclude-qt-plugins=multimedia \
+            --noinclude-qt-plugins=sqldrivers \
+            --noinclude-qt-translations \
+            --noinclude-dlls=opengl32sw.dll \
+            --noinclude-dlls=qt6quickcontrols2fluentwinui3styleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2fusion.dll \
+            --noinclude-dlls=qt6quickcontrols2fusionstyleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2imagine.dll \
+            --noinclude-dlls=qt6quickcontrols2imaginestyleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2universal.dll \
+            --noinclude-dlls=qt6quickcontrols2universalstyleimpl.dll \
+            --noinclude-dlls=qt6quickcontrols2windowsstyleimpl.dll \
+            --noinclude-dlls=qt6designer.dll \
+            --noinclude-dlls=qt6pdf.dll \
+            --noinclude-dlls=qt6widgets.dll \
+            --noinclude-dlls=Qt6Charts* \
+            --noinclude-dlls=Qt6Quick3D* \
+            --noinclude-dlls=Qt6Sensors* \
+            --noinclude-dlls=Qt6Test* \
+            --noinclude-dlls=Qt6WebEngine* \
+            --output-filename=mpvQC.exe
+      - name: Remove Redundant Files
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Controls/FluentWinUI3
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/VirtualKeyboard
+          execute rm -rf deployment/main.dist/PySide6/qt-plugins/{sqldrivers,styles,qmltooling,qmllint,designer}
+          execute rm -rf deployment/main.dist/PySide6/QtWidgets.pyd
+          execute rm -rf deployment/main.dist/qt6qmlcompiler.dll
+      - name: Package libmpv
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          ARTIFACT="$(basename "$LIBMPV_URL")"
+
+          execute curl -L -O "$LIBMPV_URL"
+          echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
+          echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
+          execute sha1sum --check "$ARTIFACT.sha1"
+          execute 7z x "$ARTIFACT"
+          execute mv libmpv-2.dll deployment/main.dist
+      - name: Make Application Portable
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute touch deployment/main.dist/portable
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
+          path: deployment/main.dist

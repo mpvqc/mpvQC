@@ -1,0 +1,125 @@
+schema-version = "v1"
+
+theme-name = "Material You"
+theme-variant = "light"
+theme-preview = "#f4f4e9"
+
+[[colors]]
+background = "#fff0ee"
+foreground = "#534341"
+control = "#775652"
+row-highlight = "#904a42"
+row-highlight-text = "#ffffff"
+row-base = "#fff0ee"
+
+[[colors]]
+background = "#fff0f1"
+foreground = "#524345"
+control = "#75565b"
+row-highlight = "#8e4957"
+row-highlight-text = "#ffffff"
+row-base = "#fff0f1"
+
+[[colors]]
+background = "#fcf0f7"
+foreground = "#4d444c"
+control = "#6b586b"
+row-highlight = "#7b4e7f"
+row-highlight-text = "#ffffff"
+row-base = "#fcf0f7"
+
+[[colors]]
+background = "#f8f1fa"
+foreground = "#49454e"
+control = "#635b70"
+row-highlight = "#68548e"
+row-highlight-text = "#ffffff"
+row-base = "#f8f1fa"
+
+[[colors]]
+background = "#f5f2fa"
+foreground = "#46464f"
+control = "#5b5d72"
+row-highlight = "#515b92"
+row-highlight-text = "#ffffff"
+row-base = "#f5f2fa"
+
+[[colors]]
+background = "#f2f3fa"
+foreground = "#43474e"
+control = "#535f70"
+row-highlight = "#36618e"
+row-highlight-text = "#ffffff"
+row-base = "#f2f3fa"
+
+[[colors]]
+background = "#f1f4f9"
+foreground = "#41474d"
+control = "#50606e"
+row-highlight = "#27638a"
+row-highlight-text = "#ffffff"
+row-base = "#f1f4f9"
+
+[[colors]]
+background = "#eff5f6"
+foreground = "#3f484a"
+control = "#4a6268"
+row-highlight = "#006876"
+row-highlight-text = "#ffffff"
+row-base = "#eff5f6"
+
+[[colors]]
+background = "#eff5f2"
+foreground = "#3f4947"
+control = "#4a635f"
+row-highlight = "#006a60"
+row-highlight-text = "#ffffff"
+row-base = "#eff5f2"
+
+[[colors]]
+background = "#f1f5ec"
+foreground = "#424940"
+control = "#52634f"
+row-highlight = "#3b6939"
+row-highlight-text = "#ffffff"
+row-base = "#f1f5ec"
+
+[[colors]]
+background = "#f3f4e9"
+foreground = "#44483d"
+control = "#576249"
+row-highlight = "#4b662c"
+row-highlight-text = "#ffffff"
+row-base = "#f3f4e9"
+
+[[colors]]
+background = "#f6f4e7"
+foreground = "#47483b"
+control = "#5e6044"
+row-highlight = "#5c631d"
+row-highlight-text = "#ffffff"
+row-base = "#f6f4e7"
+
+[[colors]]
+background = "#f9f3e5"
+foreground = "#4a473a"
+control = "#645f41"
+row-highlight = "#685f12"
+row-highlight-text = "#ffffff"
+row-base = "#f9f3e5"
+
+[[colors]]
+background = "#fcf2e5"
+foreground = "#4d4639"
+control = "#6b5d3f"
+row-highlight = "#775a0b"
+row-highlight-text = "#ffffff"
+row-base = "#fcf2e5"
+
+[[colors]]
+background = "#fff1e7"
+foreground = "#51453a"
+control = "#725a42"
+row-highlight = "#855318"
+row-highlight-text = "#ffffff"
+row-base = "#fff1e7"

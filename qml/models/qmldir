@@ -1,0 +1,5 @@
+module models
+MpvqcArtworkModel MpvqcArtworkModel.qml
+MpvqcLibraryModel MpvqcLibraryModel.qml
+MpvqcDeveloperModel MpvqcDeveloperModel.qml
+MpvqcLanguageModel MpvqcLanguageModel.qml

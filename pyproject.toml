@@ -1,0 +1,97 @@
+[project]
+name = "mpvQC"
+version = "0.9.0-beta"
+description = "libmpv based application for quality control of videos"
+requires-python = ">=3.13"
+readme = "README.MD"
+dependencies = [
+    "inject>=5.2.1",
+    "Jinja2>=3.1.6",
+    "mpv>=1.0.7",
+    "PySide6-Essentials==6.9.0",
+    "pywin32>=310; sys_platform == 'win32'",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",                           # 4 - Beta, 5 - Production/Stable
+    "License :: OSI Approved :: GNU General Public License v3",
+    "Programming Language :: Python :: 3.13",
+    "Private :: Do Not Upload",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pre-commit>=4.2.0",
+    "materialyoucolor>=2.0.10",
+]
+
+[project.urls]
+Homepage = "https://mpvqc.github.io"
+Repository = "https://github.com/mpvqc/mpvQC"
+Issues = "https://github.com/mpvqc/mpvQC/issues"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+preview = true
+extend-select = [
+    "F",    # Pyflakes – basic errors like unused imports, undefined names
+    "FLY",  # Flynt – suggests f-string conversion
+    "I",    # Isort – enforces import sorting
+    "PERF", # Performance – flags suboptimal code patterns
+    "PGH",  # Pygrep-hooks – enforces commit hook conventions (if any)
+    "FURB", # Refurb – style suggestions from the `refurb` tool
+    "PL",   # Pylint – a broad range of static analysis rules
+    "S",    # Bandit – security issues (e.g. eval, subprocess, etc.)
+    "UP",   # Upgrade – flags code that could use newer Python features
+
+    # flake8
+    "EM",   # Error Messages – ensures proper string formatting in exception messages
+    "C",    # Cyclomatic complexity (mccabe) – flags overly complex code
+    "CPY",  # Copyright – checks for required copyright notices
+    "DTZ",  # datetime-timezone – flags naive datetime usage
+    "EXE",  # Executable – checks for shebangs and file permissions
+    "FA",   # Future Annotations – flags issues with postponed evaluation of annotations
+    "FIX",  # Fixme – flags TODO, FIXME, and similar comments
+    "G",    # Logging – ensures proper usage of logging practices
+    "ICN",  # Import Conventions – checks for naming and import rules
+    "ISC",  # Implicit String Concatenation – disallows adjacent string literals without +
+    "LOG",  # Logging Format – flags improper logging string formatting
+    "PIE",  # Pie – miscellaneous Python code style improvements
+    "PYI",  # Pyi – rules for stub (`.pyi`) files
+    "PT",   # Pytest – checks for pytest best practices
+    "Q",    # Quotes – enforces consistent quote style
+    "RSE",  # Raise – flags incorrect `raise` statements
+    "RET",  # Return – flags redundant or inconsistent return statements
+    "SLF",  # Self – restricts access to private members
+    "SIM",  # Simplify – flags code that can be simplified
+    "SLOT", # Slots – enforces use of `__slots__` where appropriate
+    "TID",  # Tidiness – general code tidiness rules
+    "TD",   # TODO – flags TODO comments with optional enforcement
+    "TC",   # Type-checking – ensures proper usage of `TYPE_CHECKING` blocks
+    "ARG",  # Unused Arguments – flags unused function arguments
+    "PTH",  # Pathlib – encourages use of `pathlib` over `os.path`
+]
+
+ignore = [
+    "PLC0415", # `import` should be at top of file
+    "PLC1901", # Simplifiable string comparisons
+    "PLR0904", # Too many public methods
+    "PLR0911", # Too many return statements
+    "PLR0913", # Too many arguments
+    "PLR0914", # Too many local variables
+    "PLR0917", # Too many positional arguments
+    "PLR6301", # Method could be a function
+    "PLW0108", # Statement has no effect
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"test/**/*.py" = [ # Adjust rules for test files
+    "S101", # Allow `assert` in tests
+    "ARG",  # Ignore unused arguments (common in fixtures)
+    "FBT",  # Ignore boolean positional argument check (e.g. in parametrize)
+    "SLF",  # Ignore access to private members
+    "PLR",  # Ignore complexity/readability issues
+]

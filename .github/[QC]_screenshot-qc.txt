@@ -1,0 +1,8 @@
+[FILE]
+
+[DATA]
+[00:00:21] [Timing] Title fades in too soon
+[00:00:27] [Typeset] Font could be bigger
+[00:00:51] [Note]
+[00:01:17] [Spelling] here!
+# total lines: 4
