@@ -43,8 +43,8 @@ ListModel {
     }
     ListElement {
         language: QT_TRANSLATE_NOOP("Languages", "Spanish")
-        identifier: "es-ES"
-        translator: "RcUchiha"
+        identifier: "es-MX"
+        translator: "CiferrC"
     }
     ListElement {
         language: QT_TRANSLATE_NOOP("Languages", "Hebrew")

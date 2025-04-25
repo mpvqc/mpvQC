@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es_ES" sourcelanguage="en_US">
+<TS version="2.1" language="es_MX" sourcelanguage="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -16,90 +16,90 @@
     <message>
         <source>Development</source>
         <extracomment>Header for the section about people that contributed source code to the project</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desarrollo</translation>
     </message>
     <message>
         <source>Artwork</source>
         <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Diseño gráfico</translation>
     </message>
     <message>
         <source>Translation</source>
         <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translation type="unfinished">Traducción</translation>
+        <translation>Traducción</translation>
     </message>
     <message>
         <source>Libraries</source>
         <extracomment>Header for the section about code dependencies of the project</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Librerías</translation>
     </message>
     <message>
         <source>Dependencies</source>
         <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dependencias</translation>
     </message>
     <message>
         <source>Copyright © mpvQC Developers</source>
         <extracomment>This text is part of the software license description</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Copyright © Desarrolladores de mpvQC</translation>
     </message>
     <message>
         <source>GNU General Public License, version 3 or later</source>
         <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Licencia pública general GNU, versión 3 o posterior</translation>
     </message>
     <message>
         <source>This program comes with absolutely no warranty.</source>
         <extracomment>This text is part of the software license description</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Este programa no viene con ninguna garantía.</translation>
     </message>
     <message>
         <source>See the %1 for details.</source>
         <extracomment>This text is part of the software license description. Argument %1 will be the link to the license</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Consulte la %1 para más detalles.</translation>
     </message>
     <message>
         <source>Other</source>
         <extracomment>Header for the section about other dependencies like fonts and icons</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Otras</translation>
     </message>
 </context>
 <context>
     <name>AppearanceDialog</name>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Apariencia</translation>
     </message>
     <message>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color</translation>
     </message>
 </context>
 <context>
     <name>BackupDialog</name>
     <message>
         <source>Backup Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia de seguridad habilitada</translation>
     </message>
     <message>
         <source>Backup Interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo de copia de seguridad</translation>
     </message>
     <message>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Segundos</translation>
     </message>
     <message>
         <source>Backup Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicación de la copia de seguridad</translation>
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation>Preferencias de respaldo</translation>
+        <translation>Configuración de copia de seguridad</translation>
     </message>
 </context>
 <context>
@@ -107,32 +107,32 @@
     <message>
         <source>Edit Comment</source>
         <extracomment>Context menu on right click in comments table</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Editar comentario</translation>
     </message>
     <message>
         <source>Copy Comment</source>
         <extracomment>Context menu on right click in comments table</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Copiar comentario</translation>
     </message>
     <message>
         <source>Delete Comment</source>
         <extracomment>Context menu on right click in comments table</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Borrar comentario</translation>
     </message>
     <message>
         <source>Open Video</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Abrir video</translation>
     </message>
     <message>
         <source>Add Comment</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Añadir comentario</translation>
     </message>
     <message>
         <source>Show Keyboard Shortcuts</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar atajos de teclado</translation>
     </message>
 </context>
 <context>
@@ -170,55 +170,55 @@
     <name>CommentTypesDialog</name>
     <message>
         <source>A comment type must not be blank</source>
-        <translation type="unfinished"></translation>
+        <translation>Un tipo de comentario no debe estar en blanco</translation>
     </message>
     <message>
         <source>Comment type already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>El tipo de comentario ya existe</translation>
     </message>
     <message>
         <source>Comment Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipos de comentarios</translation>
     </message>
     <message>
         <source>New comment type</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo tipo de comentario</translation>
     </message>
     <message>
         <source>Characters &apos;{}&apos; not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Caracteres &apos;{}&apos; no permitidos</translation>
     </message>
 </context>
 <context>
     <name>ExportSettingsDialog</name>
     <message>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de exportación</translation>
     </message>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>Apodo</translation>
     </message>
     <message>
         <source>Document Header</source>
-        <translation type="unfinished"></translation>
+        <translation>Encabezado del documento</translation>
     </message>
     <message>
         <source>Write Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Escribir fecha</translation>
     </message>
     <message>
         <source>Write &apos;%1&apos;</source>
         <extracomment>%1 will be the application name. Most probably &apos;mpvQC&apos; :)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Escribir &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Write Nickname</source>
-        <translation type="unfinished"></translation>
+        <translation>Escribir apodo</translation>
     </message>
     <message>
         <source>Write Video Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Escribir ruta de video</translation>
     </message>
 </context>
 <context>
@@ -242,7 +242,7 @@
     </message>
     <message>
         <source>Open QC Document(s)</source>
-        <translation>Abrir Documento(s) de QC</translation>
+        <translation>Abrir documento(s) de QC</translation>
     </message>
     <message>
         <source>QC documents</source>
@@ -250,100 +250,100 @@
     </message>
     <message>
         <source>Save QC Document As</source>
-        <translation>Guardar Documento de QC Como</translation>
+        <translation>Guardar documento de QC como</translation>
     </message>
     <message>
         <source>Open Subtitle(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir subtítulo(s)</translation>
     </message>
     <message>
         <source>Open Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir video</translation>
     </message>
     <message>
         <source>Export QC Document Using %1 Template</source>
         <extracomment>%1 will be the name of the template used to export</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Exportar documento QC usando la plantilla %1</translation>
     </message>
 </context>
 <context>
     <name>ImportSettingsDialog</name>
     <message>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de importación</translation>
     </message>
     <message>
         <source>Open video if found</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir video si se encuentra</translation>
     </message>
     <message>
         <source>Always</source>
-        <translation type="unfinished"></translation>
+        <translation>Siempre</translation>
     </message>
     <message>
         <source>Ask every time</source>
-        <translation type="unfinished"></translation>
+        <translation>Preguntar cada vez</translation>
     </message>
     <message>
         <source>Never</source>
-        <translation type="unfinished"></translation>
+        <translation>Nunca</translation>
     </message>
 </context>
 <context>
     <name>InputConfEditDialog</name>
     <message>
         <source>Edit input.conf</source>
-        <translation type="unfinished">Editar input.conf</translation>
+        <translation>Editar input.conf</translation>
     </message>
     <message>
         <source>Changes to the input.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los cambios en input.conf están disponibles después de reiniciar.</translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation>Más información</translation>
     </message>
 </context>
 <context>
     <name>KeyboardKeys</name>
     <message>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Borrar</translation>
+        <translation>Borrar</translation>
     </message>
 </context>
 <context>
     <name>Languages</name>
     <message>
         <source>English</source>
-        <translation type="unfinished">Inglés</translation>
+        <translation>Inglés</translation>
     </message>
     <message>
         <source>German</source>
-        <translation type="unfinished">Alemán</translation>
+        <translation>Alemán</translation>
     </message>
     <message>
         <source>Hebrew</source>
-        <translation type="unfinished">Hebreo</translation>
+        <translation>Hebreo</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation type="unfinished">Italiano</translation>
+        <translation>Italiano</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation type="unfinished"></translation>
+        <translation>Español</translation>
     </message>
 </context>
 <context>
@@ -362,7 +362,7 @@
     </message>
     <message>
         <source>Language</source>
-        <translation>Lenguaje</translation>
+        <translation>Idioma</translation>
     </message>
     <message>
         <source>Help</source>
@@ -370,19 +370,19 @@
     </message>
     <message>
         <source>New QC Document</source>
-        <translation>Nuevo Documento de QC</translation>
+        <translation>Nuevo documento de QC</translation>
     </message>
     <message>
         <source>Open QC Document(s)...</source>
-        <translation>Abrir Documento(s) de QC...</translation>
+        <translation>Abrir documento(s) de QC...</translation>
     </message>
     <message>
         <source>Save QC Document</source>
-        <translation>Guardar Documento de QC</translation>
+        <translation>Guardar documento de QC</translation>
     </message>
     <message>
         <source>Save QC Document As...</source>
-        <translation>Guardar Documento de QC como...</translation>
+        <translation>Guardar documento de QC como...</translation>
     </message>
     <message>
         <source>Exit mpvQC</source>
@@ -390,27 +390,27 @@
     </message>
     <message>
         <source>Open Video...</source>
-        <translation>Abrir Video...</translation>
+        <translation>Abrir video...</translation>
     </message>
     <message>
         <source>Resize Video to Original Resolution</source>
-        <translation>Cambiar el Tamaño del Video a la Resolución Original</translation>
+        <translation>Cambiar el tamaño del video a la resolución original</translation>
     </message>
     <message>
         <source>Check for Updates...</source>
-        <translation>Buscar Actualizaciones...</translation>
+        <translation>Buscar actualizaciones...</translation>
     </message>
     <message>
         <source>Default Title</source>
-        <translation>Título Predeterminado</translation>
+        <translation>Título predeterminado</translation>
     </message>
     <message>
         <source>Video File</source>
-        <translation>Archivo de Video</translation>
+        <translation>Archivo de video</translation>
     </message>
     <message>
         <source>Video Path</source>
-        <translation>Ruta de Video</translation>
+        <translation>Ruta de video</translation>
     </message>
     <message>
         <source>Edit mpv.conf...</source>
@@ -422,103 +422,103 @@
     </message>
     <message>
         <source>Default format</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato predeterminado</translation>
     </message>
     <message>
         <source>Current time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo actual</translation>
     </message>
     <message>
         <source>Remaining time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo restante</translation>
     </message>
     <message>
         <source>Hide time</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocultar tiempo</translation>
     </message>
     <message>
         <source>Progress in percent</source>
-        <translation type="unfinished"></translation>
+        <translation>Progreso en porcentaje</translation>
     </message>
     <message>
         <source>Keyboard Shortcuts...</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajos de teclado...</translation>
     </message>
     <message>
         <source>About mpvQC...</source>
-        <translation type="unfinished"></translation>
+        <translation>Acerca de mpvQC...</translation>
     </message>
     <message>
         <source>Appearance...</source>
-        <translation type="unfinished"></translation>
+        <translation>Apariencia</translation>
     </message>
     <message>
         <source>Comment Type Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de tipos de comentarios...</translation>
     </message>
     <message>
         <source>Backup Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de copia de seguridad...</translation>
     </message>
     <message>
         <source>Export Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de exportación...</translation>
     </message>
     <message>
         <source>Import Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de importación...</translation>
     </message>
     <message>
         <source>%1 (unsaved)</source>
         <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (sin guardar)</translation>
     </message>
     <message>
         <source>Open Subtitle(s)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir subtítulo(s)</translation>
     </message>
     <message>
         <source>Export QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar documento de QC</translation>
     </message>
     <message>
         <source>Application Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Diseño de la aplicación</translation>
     </message>
     <message>
         <source>Application Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Título de la aplicación</translation>
     </message>
     <message>
         <source>Extended Exports...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportaciones avanzadas...</translation>
     </message>
     <message>
         <source>Video Above Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Video sobre los comentarios</translation>
     </message>
     <message>
         <source>Video Next to Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Video junto a los comentarios</translation>
     </message>
 </context>
 <context>
     <name>MessageBoxes</name>
     <message>
         <source>Do you really want to quit without saving your QC?</source>
-        <translation>¿Realmente quieres cerrar sin guardar tu QC?</translation>
+        <translation>¿Seguro que quieres cerrar sin guardar tu QC?</translation>
     </message>
     <message>
         <source>Unsaved Changes</source>
-        <translation>Cambios sin Guardar</translation>
+        <translation>Cambios sin guardar</translation>
     </message>
     <message>
         <source>Do you really want to create a new QC document without saving your QC?</source>
-        <translation>¿Realmente quieres crear un nuevo documento de QC sin guardar tu QC?</translation>
+        <translation>¿Seguro que quieres crear un nuevo documento de QC sin guardar tu QC?</translation>
     </message>
     <message>
         <source>Video Found</source>
-        <translation>Video Encontrado</translation>
+        <translation>Video encontrado</translation>
     </message>
     <message>
         <source>A video was found. Do you want to open it?</source>
@@ -526,222 +526,222 @@
     </message>
     <message>
         <source>Delete Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar comentario</translation>
     </message>
     <message>
         <source>Do you really want to delete this comment?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Seguro que quieres borrar este comentario?</translation>
     </message>
     <message>
         <source>Document Not Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Documento no compatible</translation>
     </message>
     <message>
         <source>Documents Not Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Documentos no compatibles</translation>
     </message>
     <message>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de exportación</translation>
     </message>
     <message>
         <source>Error at line %1: %2</source>
         <extracomment>%1 will be the line nr of the error, %2 will be the error message (probably in English)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error en la línea %1: %2</translation>
     </message>
     <message>
         <source>Extended Exports</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportaciones avanzadas</translation>
     </message>
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
         <extracomment>%1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC&apos;s documentation about export templates</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>mpvQC permite personalizar los reportes exportados usando el motor %1. Para comenzar, visita %2</translation>
     </message>
     <message>
         <source>Checking for Updates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar actualizaciones...</translation>
     </message>
     <message>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando...</translation>
     </message>
 </context>
 <context>
     <name>MpvConfEditDialog</name>
     <message>
         <source>Edit mpv.conf</source>
-        <translation type="unfinished">Editar mpv.conf</translation>
+        <translation>Editar mpv.conf</translation>
     </message>
     <message>
         <source>Changes to the mpv.conf are available after a restart.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los cambios en mpv.conf están disponibles después de reiniciar.</translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
+        <translation>Más información</translation>
     </message>
 </context>
 <context>
     <name>ShortcutsDialog</name>
     <message>
         <source>Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajos de teclado</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
-        <translation type="unfinished">Abrir Documento(s) de QC</translation>
+        <translation>Abrir documento(s) de QC</translation>
     </message>
     <message>
         <source>Cycle Through Audio Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar pista de audio</translation>
     </message>
     <message>
         <source>New QC Document</source>
-        <translation type="unfinished">Nuevo Documento de QC</translation>
+        <translation>Nuevo documento de QC</translation>
     </message>
     <message>
         <source>Save QC Document</source>
-        <translation type="unfinished">Guardar Documento de QC</translation>
+        <translation>Guardar documento de QC</translation>
     </message>
     <message>
         <source>Save as new QC Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar como nuevo documento de QC</translation>
     </message>
     <message>
         <source>Open Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir video</translation>
     </message>
     <message>
         <source>Resize Video to Original Resolution</source>
-        <translation type="unfinished">Cambiar el Tamaño del Video a la Resolución Original</translation>
+        <translation>Cambiar el tamaño del video a la resolución original</translation>
     </message>
     <message>
         <source>Add Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir comentario</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Comentarios</translation>
     </message>
     <message>
         <source>Edit Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar comentario</translation>
     </message>
     <message>
         <source>Copy Comment to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar comentario al portapapeles</translation>
     </message>
     <message>
         <source>Delete Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar comentario</translation>
     </message>
     <message>
         <source>Previous Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Comentario anterior</translation>
     </message>
     <message>
         <source>Next Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Comentario siguiente</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished">Video</translation>
+        <translation>Video</translation>
     </message>
     <message>
         <source>Toggle Fullscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar pantalla completa</translation>
     </message>
     <message>
         <source>Toggle Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducir/Pausar</translation>
     </message>
     <message>
         <source>Seek Backward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Retroceder 2 segundos</translation>
     </message>
     <message>
         <source>Seek Forward by 2 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Avanzar 2 segundos</translation>
     </message>
     <message>
         <source>Seek Backward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>Retroceder 5 segundos hasta el fotograma clave</translation>
     </message>
     <message>
         <source>Seek Forward by 5 Seconds to Keyframe</source>
-        <translation type="unfinished"></translation>
+        <translation>Avanzar 5 segundos hasta el fotograma clave</translation>
     </message>
     <message>
         <source>Decrease Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Bajar volumen</translation>
     </message>
     <message>
         <source>Increase Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>Subir volumen</translation>
     </message>
     <message>
         <source>Toggle Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenciar/Activar sonido</translation>
     </message>
     <message>
         <source>Frame Step Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Retroceder un fotograma</translation>
     </message>
     <message>
         <source>Frame Step Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Avanzar un fotograma</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar pista de subtítulos</translation>
     </message>
     <message>
         <source>Video Screenshot (Unscaled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Captura de pantalla del video (sin escalar)</translation>
     </message>
     <message>
         <source>Video Screenshot (Scaled)</source>
-        <translation type="unfinished"></translation>
+        <translation>Captura de pantalla del video (escalada)</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Render Modes</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar modo de renderizado de subtítulos</translation>
     </message>
     <message>
         <source>Toggle Video Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar/ocultar estadísticas del video</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Salir</translation>
     </message>
     <message>
         <source>Open Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir búsqueda</translation>
     </message>
     <message>
         <source>Undo Previous Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshacer acción anterior</translation>
     </message>
     <message>
         <source>Redo Previous Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Rehacer acción anterior</translation>
     </message>
 </context>
 <context>
     <name>VersionCheckDialog</name>
     <message>
         <source>New Version Available</source>
-        <translation>Nueva Versión Disponible</translation>
+        <translation>Nueva versión disponible</translation>
     </message>
     <message>
         <source>You are already using the most recent version of mpvQC!</source>
-        <translation>¡Ya está utilizando la versión más reciente de mpvQC!</translation>
+        <translation>¡Ya estás utilizando la versión más reciente de mpvQC!</translation>
     </message>
     <message>
         <source>Server Not Reachable</source>
-        <translation>Servidor No Localizado</translation>
+        <translation>Servidor no localizado</translation>
     </message>
     <message>
         <source>A connection to the server could not be established.</source>
@@ -749,15 +749,15 @@
     </message>
     <message>
         <source>Server Error</source>
-        <translation>Error del Servidor</translation>
+        <translation>Error del servidor</translation>
     </message>
     <message>
         <source>The server returned error code {}.</source>
-        <translation>El servidor devolvió el código de error {}.</translation>
+        <translation>El servidor arrojó el código de error {}.</translation>
     </message>
     <message>
         <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hay una nueva versión de mpvQC disponible ({}). Visita {} para descargarla.</translation>
     </message>
 </context>
 </TS>
