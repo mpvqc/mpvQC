@@ -33,7 +33,13 @@ ______________________________________________________________________
    - **Linux**: Install `libmpv` through your package manager
    - **Windows**: Download [libmpv (mpv-dev-x86_64)](https://github.com/shinchiro/mpv-winbuild-cmake/releases), extract it, and place the `libmpv-*.dll` in the repository’s root folder
 
-6. **Start the application:**
+6. **Compile Resources:**
+
+   ```shell
+   just build-develop
+   ```
+
+7. **Start the application:**
 
    ```shell
    uv run main.py
