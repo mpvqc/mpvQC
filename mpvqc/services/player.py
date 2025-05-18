@@ -49,7 +49,7 @@ class PlayerService:
 
         self._mpv: MPV | None = None
 
-    def init(self, win_id: int or None = None):
+    def init(self, win_id: int | None = None):
         if win_id is None:  # noqa: SIM108
             args = {"vo": "libmpv"}
         else:
@@ -70,7 +70,7 @@ class PlayerService:
         return self._mpv.ffmpeg_version
 
     @property
-    def path(self) -> str or None:
+    def path(self) -> str | None:
         return self._mpv.path
 
     @property

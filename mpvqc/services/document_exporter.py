@@ -128,7 +128,7 @@ class DocumentExportService:
     @dataclass
     class ExportError:
         message: str
-        line_nr: int or None
+        line_nr: int | None
 
     def generate_file_path_proposal(self) -> Path:
         if video := Path(self._player.path) if self._player.path else None:
@@ -145,7 +145,7 @@ class DocumentExportService:
 
         return Path(video_directory).joinpath(file_name).absolute()
 
-    def export(self, file: Path, template: Path) -> ExportError or None:
+    def export(self, file: Path, template: Path) -> ExportError | None:
         user_template = template.read_text(encoding="utf-8")
 
         try:

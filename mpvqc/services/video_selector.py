@@ -32,9 +32,9 @@ class VideoSelectorService:
         existing_videos_dropped: list[Path],
         existing_videos_from_documents: list[Path],
         video_found_dialog_factory: QQmlComponent,
-        on_video_selected: Callable[[Path or None], None],
+        on_video_selected: Callable[[Path | None], None],
     ):
-        def pick(video: Path or None):
+        def pick(video: Path | None):
             on_video_selected(video)
 
         if existing_videos_dropped:

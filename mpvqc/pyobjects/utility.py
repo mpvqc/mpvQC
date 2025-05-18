@@ -53,7 +53,7 @@ class MpvqcUtilityPyObject(QObject):
         return self._mimetype_provider.subtitle_file_extensions
 
     @Slot(str, result=str or None)
-    def getEnvironmentVariable(self, key: str) -> str or None:
+    def getEnvironmentVariable(self, key: str) -> str | None:
         return environ.get(key) or None
 
     @Slot(float, result=str)

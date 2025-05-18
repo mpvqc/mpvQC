@@ -27,7 +27,7 @@ from mpvqc.services import TypeMapperService
 @dataclass(frozen=True)
 class ImportChange:
     documents: list[Path]
-    video: Path or None
+    video: Path | None
 
     @property
     def only_video_imported(self) -> bool:
@@ -44,11 +44,11 @@ class ImportChange:
 
 @dataclass(frozen=True)
 class ApplicationState:
-    document: Path or None
-    video: Path or None
+    document: Path | None
+    video: Path | None
     saved: bool
 
-    def find_video(self, change: ImportChange) -> Path or None:
+    def find_video(self, change: ImportChange) -> Path | None:
         return change.video or self.video
 
     def handle_save(self, document: Path) -> "ApplicationState":
@@ -72,7 +72,7 @@ class InitialState(ApplicationState):
     saved = True
 
     @classmethod
-    def new(cls, video: Path or None = None):
+    def new(cls, video: Path | None = None):
         return cls(document=None, video=video, saved=True)
 
     def handle_import(self, change: ImportChange) -> ApplicationState:

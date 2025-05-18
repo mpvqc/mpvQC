@@ -28,7 +28,7 @@ class CommentTypeValidatorService:
 
     _forbidden_characters = re.compile(r"[\[\]]")
 
-    def validate_new_comment_type(self, new_comment_type: str, existing_comment_types: list[str]) -> str or None:
+    def validate_new_comment_type(self, new_comment_type: str, existing_comment_types: list[str]) -> str | None:
         if not new_comment_type:
             return self._must_not_be_blank()
         if self._contains_forbidden_characters(new_comment_type):

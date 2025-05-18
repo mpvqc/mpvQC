@@ -61,7 +61,7 @@ class DocumentImporterService:
 
         return self.DocumentImportResult(valid_documents, invalid_documents, existing_videos, all_comments)
 
-    def _parse(self, content: str) -> tuple[Path or None, list[Comment]]:
+    def _parse(self, content: str) -> tuple[Path | None, list[Comment]]:
         path = None
         comments = []
 
@@ -76,7 +76,7 @@ class DocumentImporterService:
 
         return path, comments
 
-    def _parse_path(self, line: str) -> Path or None:
+    def _parse_path(self, line: str) -> Path | None:
         match = self._REGEX_PATH.match(line)
 
         if match is None:
@@ -84,7 +84,7 @@ class DocumentImporterService:
 
         return Path(match.group("path").strip())
 
-    def _parse_comment(self, line: str) -> Comment or None:
+    def _parse_comment(self, line: str) -> Comment | None:
         match = self._REGEX_COMMENT.match(line.strip())
 
         if match is None:

@@ -114,7 +114,7 @@ def reconfigure_inject(
 ):
     def _reconfigure_inject(
         import_result: DocumentImporterService.DocumentImportResult,
-        pick_video: Path or None = None,
+        pick_video: Path | None = None,
     ):
         def on_video_selected(*_, **kwargs):
             kwargs["on_video_selected"](pick_video)

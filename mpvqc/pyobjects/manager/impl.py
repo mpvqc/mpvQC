@@ -168,7 +168,7 @@ class MpvqcManagerPyObject(QObject):
 
         document_import_result = self._importer.read(documents)
 
-        def on_video_selected(video: Path or None):
+        def on_video_selected(video: Path | None):
             state = self._state
             _load_new_comments()
             _load_new_video(video)
@@ -179,7 +179,7 @@ class MpvqcManagerPyObject(QObject):
         def _load_new_comments():
             self._comment_model.import_comments(document_import_result.comments)
 
-        def _load_new_video(video: Path or None):
+        def _load_new_video(video: Path | None):
             if video:
                 self._player.open_video(f"{video}")
 
@@ -187,7 +187,7 @@ class MpvqcManagerPyObject(QObject):
             if subtitles:
                 self._player.open_subtitles(subtitles)
 
-        def _update_state(state, video: Path or None):
+        def _update_state(state, video: Path | None):
             if video or document_import_result.valid_documents:
                 change = ImportChange(document_import_result.valid_documents, video)
                 self.state = state.handle_import(change)

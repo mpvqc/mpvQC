@@ -54,7 +54,7 @@ _KEY_MAPPINGS = {
 class KeyCommandGeneratorService:
     """"""
 
-    def generate_command(self, key: int, modifiers: int) -> str or None:
+    def generate_command(self, key: int, modifiers: int) -> str | None:
         if not key or modifiers is None:
             return None
 

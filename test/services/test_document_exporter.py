@@ -59,13 +59,13 @@ def resource_service() -> ResourceService:
 @pytest.fixture
 def make_mock(qt_app):
     def _make_mock(
-        video: Path or str or None = None,
-        nickname: str or None = None,
-        comments: list or None = None,
-        write_header_date: str or None = None,
-        write_header_generator: str or None = None,
-        write_header_video_path: str or None = None,
-        write_header_nickname: str or None = None,
+        video: Path | str | None = None,
+        nickname: str | None = None,
+        comments: list | None = None,
+        write_header_date: str | None = None,
+        write_header_generator: str | None = None,
+        write_header_video_path: str | None = None,
+        write_header_nickname: str | None = None,
     ):
         qt_app.find_object.return_value.comments.return_value = comments or []
 
@@ -258,8 +258,8 @@ def test_backup_service_performs_backup(make_mock, zip_file, document_backup_ser
 
 @dataclass
 class FilePathProposalTestSet:
-    video: Path or None
-    nickname: str or None
+    video: Path | None
+    nickname: str | None
     expected: Path
 
 
