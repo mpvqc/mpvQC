@@ -56,4 +56,9 @@ ListModel {
         identifier: "it-IT"
         translator: "maddo"
     }
+    ListElement {
+        language: QT_TRANSLATE_NOOP("Languages", "Portuguese")
+        identifier: "pt-PT"
+        translator: "Diogo_23"
+    }
 }
