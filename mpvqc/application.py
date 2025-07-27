@@ -19,25 +19,24 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QLibraryInfo, QLocale, QTranslator, QUrl, Signal
+from PySide6.QtCore import QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, FontLoaderService, FramelessWindowService
+from mpvqc.services import FileStartupService, FontLoaderService, FramelessWindowService, InternationalizationService
 
 
 class MpvqcApplication(QGuiApplication):
     _start_up: FileStartupService = inject.attr(FileStartupService)
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
     _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
+    _i18n: InternationalizationService = inject.attr(InternationalizationService)
 
     application_ready = Signal(name="applicationReady")
 
     def __init__(self, args):
         super().__init__(args)
         self._engine = QQmlApplicationEngine()
-        self._translator_mpvqc = QTranslator()
-        self._translator_qt = QTranslator()
 
     @cache
     def find_object(self, object_type, name: str):
@@ -70,21 +69,8 @@ class MpvqcApplication(QGuiApplication):
         del self._engine
 
     def _retranslate(self):
-        self.removeTranslator(self._translator_qt)
-        self.removeTranslator(self._translator_mpvqc)
-
-        identifier = self._engine.uiLanguage()
-        locale = QLocale(identifier)
-
-        self._translator_qt.load(
-            locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.LibraryPath.TranslationsPath)
-        )
-        self._translator_mpvqc.load(f":/i18n/{identifier}.qm")
-
-        self.installTranslator(self._translator_qt)
-        self.installTranslator(self._translator_mpvqc)
-
-        self.setLayoutDirection(locale.textDirection())
+        language_code = self._engine.uiLanguage()
+        self._i18n.retranslate(app=self, language_code=language_code)
 
     def start_engine(self):
         url = QUrl.fromLocalFile(":/qt/qml/Main.qml")
