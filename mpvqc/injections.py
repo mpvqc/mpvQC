@@ -31,6 +31,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.FileStartupService, lambda: s.FileStartupService())
     binder.bind_to_constructor(s.FontLoaderService, lambda: s.FontLoaderService())
     binder.bind_to_constructor(s.FramelessWindowService, lambda: s.FramelessWindowService())
+    binder.bind_to_constructor(s.InternationalizationService, lambda: s.InternationalizationService())
     binder.bind_to_constructor(s.KeyCommandGeneratorService, lambda: s.KeyCommandGeneratorService())
     binder.bind_to_constructor(s.MimetypeProviderService, lambda: s.MimetypeProviderService())
     binder.bind_to_constructor(s.OperatingSystemZoomDetectorService, lambda: s.OperatingSystemZoomDetectorService())
@@ -39,11 +40,11 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.ResourceService, lambda: s.ResourceService())
     binder.bind_to_constructor(s.ReverseTranslatorService, lambda: s.ReverseTranslatorService())
     binder.bind_to_constructor(s.SettingsService, lambda: s.SettingsService())
+    binder.bind_to_constructor(s.ThemeService, lambda: s.ThemeService())
     binder.bind_to_constructor(s.TimeFormatterService, lambda: s.TimeFormatterService())
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
     binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
     binder.bind_to_constructor(s.VideoSelectorService, lambda: s.VideoSelectorService())
-    binder.bind_to_constructor(s.ThemeService, lambda: s.ThemeService())
 
 
 def configure_injections():
