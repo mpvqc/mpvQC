@@ -475,7 +475,7 @@
     <message>
         <source>%1 (unsaved)</source>
         <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
-        <translation>%1 (sem título)</translation>
+        <translation>%1 (não guardado)</translation>
     </message>
     <message>
         <source>Open Subtitle(s)...</source>
@@ -495,7 +495,7 @@
     </message>
     <message>
         <source>Extended Exports...</source>
-        <translation>Exportações Avanzadas...</translation>
+        <translation>Exportações Avançadas...</translation>
     </message>
     <message>
         <source>Video Above Comments</source>
