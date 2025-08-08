@@ -17,61 +17,161 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls.Material
 
-import header
+import "../footer"
+import "../header"
+import "../player"
+import "../table"
 
-FocusScope {
+Page {
     id: root
 
     required property var mpvqcApplication
 
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
-    readonly property alias mpvqcCommentTable: _contentSplitView.mpvqcCommentTable
+    readonly property int minContainerHeight: 200
+    readonly property int minContainerWidth: 500
+    readonly property real defaultSplitRatio: 0.4
 
-    MpvqcResizeToOriginalResolutionHandler {
-        id: _videoResizer
+    readonly property alias mpvqcCommentTable: _table.publicInterface
 
+    readonly property var videoResizer: MpvqcResizeToOriginalResolutionHandler {
         mpvqcApplication: root.mpvqcApplication
-        header: _page.header
-        splitView: _contentSplitView
+        header: root.header
+        splitView: _splitView
     }
 
-    Page {
-        id: _page
+    anchors.fill: parent
 
-        anchors.fill: parent
+    background: Rectangle {
+        color: "transparent"
+    }
 
-        background: Rectangle {
-            color: "transparent"
+    header: MpvqcHeader {
+        mpvqcApplication: root.mpvqcApplication
+        width: root.width
+
+        onResizeVideoTriggered: root.videoResizer.resizeVideo()
+    }
+
+    function applySaneDefaultSplitViewSize(): void {
+        const prefHeight = _splitView.height * defaultSplitRatio;
+        const prefWidth = _splitView.width * defaultSplitRatio;
+        _tableContainer.setPreferredSizes(prefWidth, prefHeight);
+    }
+
+    SplitView {
+        id: _splitView
+
+        readonly property alias playerContainer: _playerContainer
+        readonly property alias tableContainer: _tableContainer
+
+        readonly property int tableContainerHeight: _tableContainer.height
+        readonly property int tableContainerWidth: _tableContainer.width
+        readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
+        readonly property int draggerWidth: _splitView.width - _playerContainer.width - tableContainerWidth
+
+        focus: true
+        anchors.fill: root.contentItem
+        orientation: root.mpvqcSettings.layoutOrientation
+
+        function setPreferredTableSize(width: int, height: int): void {
+            _tableContainer.setPreferredSizes(width, height);
         }
 
-        header: MpvqcHeader {
-            mpvqcApplication: root.mpvqcApplication
-            width: _page.width
+        Item {
+            id: _playerContainer
 
-            onResizeVideoTriggered: _videoResizer.resizeVideo()
-        }
+            SplitView.minimumHeight: root.minContainerHeight
+            SplitView.minimumWidth: root.minContainerWidth
+            SplitView.fillHeight: true
+            SplitView.fillWidth: true
 
-        MpvqcContentSplitView {
-            id: _contentSplitView
+            Component {
+                id: _linuxPlayer
 
-            mpvqcApplication: root.mpvqcApplication
-            focus: true
-            anchors.fill: _page.contentItem
-
-            MpvqcDragAndDropHandler {
-                anchors.fill: parent
-                supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
-
-                onFilesDropped: (documents, videos, subtitles) => {
-                    root.mpvqcManager.open(documents, videos, subtitles);
+                MpvqcPlayerLinux {
+                    mpvqcApplication: root.mpvqcApplication
+                    anchors.fill: parent
                 }
+            }
+
+            Component {
+                id: _windowsPlayer
+
+                MpvqcPlayerWindows {
+                    mpvqcApplication: root.mpvqcApplication
+                    anchors.fill: parent
+                }
+            }
+
+            Loader {
+                id: _playerLoader
+                anchors.fill: parent
+
+                sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
+            }
+        }
+
+        Column {
+            id: _tableContainer
+
+            visible: !root.mpvqcApplication.fullscreen
+
+            SplitView.minimumHeight: root.minContainerHeight
+            SplitView.minimumWidth: root.minContainerWidth
+
+            function setPreferredSizes(width: int, height: int): void {
+                SplitView.preferredWidth = width;
+                SplitView.preferredHeight = height;
+            }
+
+            MpvqcTable {
+                id: _table
+
+                mpvqcApplication: root.mpvqcApplication
+                focus: true
+                width: _tableContainer.width
+                height: _tableContainer.height - _footer.height
+            }
+
+            MpvqcFooter {
+                id: _footer
+
+                mpvqcApplication: root.mpvqcApplication
+                width: _tableContainer.width
             }
         }
     }
+
+    MpvqcDragAndDropHandler {
+        anchors.fill: _splitView
+        supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
+
+        onFilesDropped: (documents, videos, subtitles) => {
+            root.mpvqcManager.open(documents, videos, subtitles);
+        }
+    }
+
+    Connections {
+        target: root.mpvqcCommentTable
+
+        function onCommentCountChanged(): void {
+            // we effectively force a redraw of the table here. if we don't do this and delete the last row
+            // in the table, the table will not rerender completely and there might be color artifacts of the
+            // alternating row colors
+            _footer.height += 1;
+            _footer.height -= 1;
+        }
+    }
+
+    Component.onCompleted: root.applySaneDefaultSplitViewSize()
 }
