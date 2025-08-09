@@ -5,7 +5,7 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/biomejs/pre-commit
-    rev: v1.9.4
+    rev: v2.1.4
     hooks:
       - id: biome-check
         name: "format json"
@@ -31,7 +31,7 @@ repos:
           - "--option"
           - "indent_string=    "
   - repo: https://github.com/google/yamlfmt
-    rev: v0.16.0
+    rev: v0.17.2
     hooks:
       - id: yamlfmt
         name: "format yml"
@@ -57,7 +57,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
+    rev: v0.12.8
     hooks:
       - id: ruff
         name: "lint python"

@@ -44,7 +44,7 @@ def parse_requirement(line: str) -> Requirement | None:
     if line.startswith("#"):
         return None
 
-    name_version = line.split(";")[0].strip()
+    name_version = line.split(";", maxsplit=1)[0].strip()
     name, version = name_version.split("==")
 
     return Requirement(name.strip(), version.strip())
