@@ -102,6 +102,13 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
+        onAppWindowSizeRequested: (width, height) => {
+            if (width >= root.minimumWidth && height >= root.minimumHeight) {
+                root.width = width;
+                root.height = height;
+            }
+        }
+
         Keys.onEscapePressed: {
             if (root.fullscreen) {
                 root.disableFullScreen();
@@ -194,7 +201,9 @@ ApplicationWindow {
     property bool nativePopupOpen: false
     property Timer modalFaker: Timer {
         interval: 100
-        onTriggered: { root.nativePopupOpen = false; }
+        onTriggered: {
+            root.nativePopupOpen = false;
+        }
     }
 
     function enableFakeModal(): void {

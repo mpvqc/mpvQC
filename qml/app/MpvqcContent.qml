@@ -33,6 +33,7 @@ Page {
     required property var mpvqcApplication
 
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
@@ -43,11 +44,7 @@ Page {
 
     readonly property alias mpvqcCommentTable: _table.publicInterface
 
-    readonly property var videoResizer: MpvqcResizeToOriginalResolutionHandler {
-        mpvqcApplication: root.mpvqcApplication
-        header: root.header
-        splitView: _splitView
-    }
+    signal appWindowSizeRequested(width: int, height: int)
 
     anchors.fill: parent
 
@@ -59,7 +56,7 @@ Page {
         mpvqcApplication: root.mpvqcApplication
         width: root.width
 
-        onResizeVideoTriggered: root.videoResizer.resizeVideo()
+        onResizeVideoTriggered: _videoResizer.recalculateSizes()
     }
 
     function applySaneDefaultSplitViewSize(): void {
@@ -71,9 +68,6 @@ Page {
     SplitView {
         id: _splitView
 
-        readonly property alias playerContainer: _playerContainer
-        readonly property alias tableContainer: _tableContainer
-
         readonly property int tableContainerHeight: _tableContainer.height
         readonly property int tableContainerWidth: _tableContainer.width
         readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
@@ -82,10 +76,6 @@ Page {
         focus: true
         anchors.fill: root.contentItem
         orientation: root.mpvqcSettings.layoutOrientation
-
-        function setPreferredTableSize(width: int, height: int): void {
-            _tableContainer.setPreferredSizes(width, height);
-        }
 
         Item {
             id: _playerContainer
@@ -158,6 +148,33 @@ Page {
 
         onFilesDropped: (documents, videos, subtitles) => {
             root.mpvqcManager.open(documents, videos, subtitles);
+        }
+    }
+
+    MpvqcResizeHandler {
+        id: _videoResizer
+
+        headerHeight: root.header.height
+        appBorderSize: root.mpvqcApplication.windowBorder
+        videoWidth: root.mpvqcMpvPlayerPropertiesPyObject.scaledWidth
+        videoHeight: root.mpvqcMpvPlayerPropertiesPyObject.scaledHeight
+
+        isAppFullScreen: root.mpvqcApplication.fullscreen
+        isAppMaximized: root.mpvqcApplication.maximized
+        videoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
+
+        splitViewOrientation: _splitView.orientation
+        splitViewHandleWidth: _splitView.draggerWidth
+        splitViewHandleHeight: _splitView.draggerHeight
+        splitViewTableContainerWidth: _splitView.tableContainerWidth
+        splitViewTableContainerHeight: _splitView.tableContainerHeight
+
+        onAppWindowSizeRequested: (width, height) => {
+            root.appWindowSizeRequested(width, height);
+        }
+
+        onSplitViewTableSizeRequested: (width, height) => {
+            _tableContainer.setPreferredSizes(width, height);
         }
     }
 
