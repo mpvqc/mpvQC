@@ -62,10 +62,10 @@ def make_mock(qt_app):
         video: Path | str | None = None,
         nickname: str | None = None,
         comments: list | None = None,
-        write_header_date: str | None = None,
-        write_header_generator: str | None = None,
-        write_header_video_path: str | None = None,
-        write_header_nickname: str | None = None,
+        write_header_date: bool | None = None,
+        write_header_generator: bool | None = None,
+        write_header_video_path: bool | None = None,
+        write_header_nickname: bool | None = None,
     ):
         qt_app.find_object.return_value.comments.return_value = comments or []
 
