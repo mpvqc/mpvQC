@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtCore
 import QtQuick
 
-import models
+import "../models"
 
 QtObject {
     id: root

@@ -22,8 +22,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
-import dialogs
-import shared
+import "../dialogs"
+import "../shared"
 
 MpvqcMenu {
     id: root

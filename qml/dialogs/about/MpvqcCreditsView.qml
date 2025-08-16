@@ -23,8 +23,8 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import models
-import shared
+import "../../models"
+import "../../shared"
 
 ScrollView {
     id: _root

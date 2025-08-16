@@ -21,7 +21,7 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import settings
+import "../../settings"
 
 ColumnLayout {
     id: root

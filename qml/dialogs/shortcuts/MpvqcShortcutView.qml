@@ -23,7 +23,7 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import shared
+import "../../shared"
 
 ColumnLayout {
     id: root

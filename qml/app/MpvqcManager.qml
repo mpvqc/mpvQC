@@ -21,8 +21,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import dialogs
 import pyobjects
+
+import "../dialogs"
 
 MpvqcManagerPyObject {
     id: root

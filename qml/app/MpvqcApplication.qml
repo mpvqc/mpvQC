@@ -21,8 +21,9 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import pyobjects
-import settings
-import shared
+
+import "../settings"
+import "../shared"
 
 ApplicationWindow {
     id: root

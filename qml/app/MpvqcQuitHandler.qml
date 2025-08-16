@@ -21,7 +21,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import dialogs
+import "../dialogs"
 
 Item {
     id: root
