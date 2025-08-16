@@ -47,7 +47,7 @@ Column {
         _loader.setText(text);
     }
 
-    function stopEditing() {
+    function stopEditing(): void {
         _loader.stopEditMode();
     }
 

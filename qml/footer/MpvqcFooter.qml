@@ -107,7 +107,7 @@ Item {
     Connections {
         target: _impl.mpvqcSettings
 
-        function onTimeFormatChanged() {
+        function onTimeFormatChanged(): void {
             _impl.recalculateVideoTimeLabelWidth();
         }
     }
@@ -115,7 +115,7 @@ Item {
     Connections {
         target: _impl.mpvqcMpvPlayerPropertiesPyObject
 
-        function onDurationChanged() {
+        function onDurationChanged(): void {
             _impl.recalculateVideoTimeLabelWidth();
         }
     }

@@ -39,7 +39,7 @@ ColumnLayout {
     property bool currentBackupEnabled: root.mpvqcSettings.backupEnabled
     property int currentBackupInterval: root.mpvqcSettings.backupInterval
 
-    function accept() {
+    function accept(): void {
         mpvqcSettings.backupEnabled = currentBackupEnabled;
         mpvqcSettings.backupInterval = currentBackupInterval;
     }

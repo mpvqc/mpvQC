@@ -54,7 +54,7 @@ MpvqcMessageBox {
     Connections {
         target: root.mpvqcVersionCheckerPyObject
 
-        function onVersionChecked(title: string, text: string) {
+        function onVersionChecked(title: string, text: string): void {
             root.title = title;
             root.contentItem.text = text;
         }

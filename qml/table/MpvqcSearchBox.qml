@@ -246,7 +246,7 @@ Popup {
         property int transistionStartedY: -1
         property bool stickToBottom: true
 
-        function recalculateCurrentY(newPosition: int) {
+        function recalculateCurrentY(newPosition: int): void {
             if (!_dragHandler.active && stickToBottom) {
                 currentY = maximalY;
                 return;

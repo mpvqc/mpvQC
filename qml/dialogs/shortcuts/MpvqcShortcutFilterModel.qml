@@ -25,7 +25,7 @@ import QtQml.Models
 DelegateModel {
     property var filterAcceptsItem: item => true
 
-    function update() {
+    function update(): void {
         if (items.count > 0) {
             items.setGroups(0, items.count, "items");
         }

@@ -62,10 +62,11 @@ Item {
     Connections {
         target: root.mpvqcSettings
 
-        function onCommentTypesChanged() {
+        function onCommentTypesChanged(): void {
             root._recalculateCommentTypesLabelWidth();
         }
-        function onLanguageChanged() {
+
+        function onLanguageChanged(): void {
             root._recalculateCommentTypesLabelWidth();
         }
     }

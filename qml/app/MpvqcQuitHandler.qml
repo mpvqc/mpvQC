@@ -45,7 +45,7 @@ Item {
         }
     }
 
-    function requestClose() {
+    function requestClose(): void {
         if (canClose || userConfirmedClose) {
             _close();
         } else {
@@ -55,13 +55,13 @@ Item {
         }
     }
 
-    function _close() {
+    function _close(): void {
         userConfirmedClose = true;
         _workaroundNativeWindowInterfering()
         mpvqcApplication.close();
     }
 
-    function _workaroundNativeWindowInterfering() {
+    function _workaroundNativeWindowInterfering(): void {
         if (Qt.platform.os === "windows" && mpvqcManager.saved) {
             mpvqcMpvPlayerPyObject.terminate()
         }

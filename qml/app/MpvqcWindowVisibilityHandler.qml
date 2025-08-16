@@ -29,7 +29,7 @@ QtObject {
 
     property bool wasMaximizedBefore: false
 
-    function toggleMaximized() {
+    function toggleMaximized(): void {
         if (maximized) {
             mpvqcApplication.showNormal();
         } else {
@@ -37,7 +37,7 @@ QtObject {
         }
     }
 
-    function toggleFullScreen() {
+    function toggleFullScreen(): void {
         if (fullscreen) {
             disableFullScreen();
         } else {
@@ -45,14 +45,14 @@ QtObject {
         }
     }
 
-    function enableFullScreen() {
+    function enableFullScreen(): void {
         if (!fullscreen) {
             wasMaximizedBefore = maximized;
             mpvqcApplication.showFullScreen();
         }
     }
 
-    function disableFullScreen() {
+    function disableFullScreen(): void {
         if (fullscreen && wasMaximizedBefore) {
             mpvqcApplication.showMaximized();
         } else if (fullscreen) {

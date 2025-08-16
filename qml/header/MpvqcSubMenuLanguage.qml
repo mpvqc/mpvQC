@@ -64,7 +64,7 @@ MpvqcMenu {
             checkable: true
             checked: item.identifier === Qt.uiLanguage
 
-            function changeLanguage() {
+            function changeLanguage(): void {
                 timer.start();
             }
 

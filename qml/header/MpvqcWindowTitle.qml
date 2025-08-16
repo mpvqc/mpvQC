@@ -52,7 +52,7 @@ Label {
         }
     }
 
-    function getTitle() {
+    function getTitle(): string {
         const selection = root.mpvqcSettings.windowTitleFormat;
 
         if (!videoLoaded || selection === MpvqcSettings.WindowTitleFormat.DEFAULT) {

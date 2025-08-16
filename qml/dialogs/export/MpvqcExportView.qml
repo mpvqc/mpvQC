@@ -41,7 +41,7 @@ ColumnLayout {
     property bool currentWriteHeaderNickname: root.mpvqcSettings.writeHeaderNickname
     property bool currentWriteHeaderVideoPath: root.mpvqcSettings.writeHeaderVideoPath
 
-    function accept() {
+    function accept(): void {
         root.mpvqcSettings.nickname = currentNickname;
         root.mpvqcSettings.writeHeaderDate = currentWriteHeaderDate;
         root.mpvqcSettings.writeHeaderGenerator = currentWriteHeaderGenerator;

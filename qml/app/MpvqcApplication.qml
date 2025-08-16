@@ -51,23 +51,23 @@ ApplicationWindow {
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
-    function focusCommentTable() {
+    function focusCommentTable(): void {
         root.mpvqcCommentTable.forceActiveFocus();
     }
 
-    function toggleMaximized() {
+    function toggleMaximized(): void {
         mpvqcWindowVisibilityHandler.toggleMaximized();
     }
 
-    function toggleFullScreen() {
+    function toggleFullScreen(): void {
         mpvqcWindowVisibilityHandler.toggleFullScreen();
     }
 
-    function enableFullScreen() {
+    function enableFullScreen(): void {
         mpvqcWindowVisibilityHandler.enableFullScreen();
     }
 
-    function disableFullScreen() {
+    function disableFullScreen(): void {
         mpvqcWindowVisibilityHandler.disableFullScreen();
     }
 
@@ -130,7 +130,7 @@ ApplicationWindow {
             root.mpvqcMpvPlayerPyObject.handle_key_event(event.key, event.modifiers);
         }
 
-        function _handleEPressed(event) {
+        function _handleEPressed(event): void {
             if (event.isAutoRepeat) {
                 return;
             }
@@ -142,7 +142,7 @@ ApplicationWindow {
             }
         }
 
-        function _handleFPressed(event) {
+        function _handleFPressed(event): void {
             if (event.isAutoRepeat) {
                 return;
             }

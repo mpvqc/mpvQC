@@ -34,7 +34,7 @@ ColumnLayout {
 
     property int currentImportPolicy: root.mpvqcSettings.importWhenVideoLinkedInDocument
 
-    function accept() {
+    function accept(): void {
         root.mpvqcSettings.importWhenVideoLinkedInDocument = currentImportPolicy;
     }
 
