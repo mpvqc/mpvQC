@@ -38,12 +38,11 @@ WindowContainer {
         anchors.fill: root
 
         onRightMouseButtonPressed: {
-            root.mpvqcNewCommentMenu.popupMenu()
+            root.mpvqcNewCommentMenu.popupMenu();
         }
 
         onPressed: {
-            root.mpvqcApplication.requestActivate()
+            root.mpvqcApplication.requestActivate();
         }
     }
-
 }

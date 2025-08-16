@@ -45,7 +45,10 @@ MpvqcDialog {
                 width: parent.width
 
                 // workaround padding issue in rtl
-                Binding on x { when: root.mirrored; value: -8 }
+                Binding on x {
+                    when: root.mirrored
+                    value: -8
+                }
             }
 
             MpvqcHeader {

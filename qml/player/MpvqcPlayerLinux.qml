@@ -33,8 +33,7 @@ MpvqcMpvFrameBufferObjectPyObject {
         anchors.fill: root
 
         onRightMouseButtonPressed: {
-            root.mpvqcNewCommentMenu.popupMenu()
+            root.mpvqcNewCommentMenu.popupMenu();
         }
     }
-
 }

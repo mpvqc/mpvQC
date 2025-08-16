@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
-
 MouseArea {
     id: root
 
@@ -35,52 +34,51 @@ MouseArea {
         interval: 2000
 
         onTriggered: {
-            root.showCursor = false
+            root.showCursor = false;
         }
     }
 
-    signal rightMouseButtonPressed()
+    signal rightMouseButtonPressed
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
     cursorShape: !root.showCursor && mpvqcApplication.fullscreen ? Qt.BlankCursor : Qt.ArrowCursor
     hoverEnabled: true
 
-    onPositionChanged: (event) => {
-        root.showCursor = true
-        mpv.move_mouse(event.x, event.y)
+    onPositionChanged: event => {
+        root.showCursor = true;
+        mpv.move_mouse(event.x, event.y);
     }
 
-    onWheel: (event) => {
+    onWheel: event => {
         if (event.angleDelta.y > 0) {
-            mpv.scroll_up()
+            mpv.scroll_up();
         } else {
-            mpv.scroll_down()
+            mpv.scroll_down();
         }
     }
 
-    onPressed: (event) => {
-        const button = event.button
+    onPressed: event => {
+        const button = event.button;
         if (button === Qt.LeftButton) {
-            mpv.press_mouse_left()
+            mpv.press_mouse_left();
         } else if (button === Qt.MiddleButton) {
-            mpv.press_mouse_middle()
+            mpv.press_mouse_middle();
         } else if (button === Qt.RightButton) {
-            root.rightMouseButtonPressed()
+            root.rightMouseButtonPressed();
         }
     }
 
-    onReleased: (event) => {
-        const button = event.button
+    onReleased: event => {
+        const button = event.button;
         if (button === Qt.LeftButton) {
-            mpv.release_mouse_left()
+            mpv.release_mouse_left();
         }
     }
 
-    onDoubleClicked: (event) => {
-        const button = event.button
+    onDoubleClicked: event => {
+        const button = event.button;
         if (button === Qt.LeftButton) {
-            root.mpvqcApplication.toggleFullScreen()
+            root.mpvqcApplication.toggleFullScreen();
         }
     }
-
 }

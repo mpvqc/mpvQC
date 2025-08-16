@@ -57,14 +57,13 @@ Item {
 
     function _close(): void {
         userConfirmedClose = true;
-        _workaroundNativeWindowInterfering()
+        _workaroundNativeWindowInterfering();
         mpvqcApplication.close();
     }
 
     function _workaroundNativeWindowInterfering(): void {
         if (Qt.platform.os === "windows" && mpvqcManager.saved) {
-            mpvqcMpvPlayerPyObject.terminate()
+            mpvqcMpvPlayerPyObject.terminate();
         }
     }
-
 }
