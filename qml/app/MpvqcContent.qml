@@ -44,7 +44,11 @@ Page {
 
     readonly property alias mpvqcCommentTable: _table.publicInterface
 
+    signal addNewCommentMenuRequested
     signal appWindowSizeRequested(width: int, height: int)
+    signal customMpvCommandRequested(key: int, modifiers: int)
+    signal disableFullScreenRequested
+    signal toggleFullScreenRequested
 
     header: MpvqcHeader {
         mpvqcApplication: root.mpvqcApplication
@@ -129,6 +133,46 @@ Page {
                 width: _tableContainer.width
             }
         }
+    }
+
+    Keys.onEscapePressed: {
+        root.disableFullScreenRequested();
+    }
+
+    Keys.onPressed: event => {
+        const key = event.key;
+        const modifiers = event.modifiers;
+
+        const noModifier = modifiers === Qt.NoModifier;
+        const ctrlModifier = modifiers & Qt.ControlModifier;
+        const plainPress = !event.isAutoRepeat && noModifier;
+
+        if (key === Qt.Key_E && plainPress) {
+            root.addNewCommentMenuRequested();
+            return;
+        }
+
+        if (key === Qt.Key_F && plainPress) {
+            root.toggleFullScreenRequested();
+            return;
+        }
+
+        const preventReachingCustomUserCommands = //
+        key === Qt.Key_Up  //
+        || key === Qt.Key_Down //
+        || (key === Qt.Key_Return && noModifier) //
+        || (key === Qt.Key_Escape && noModifier) //
+        || (key === Qt.Key_Delete && noModifier) //
+        || (key === Qt.Key_Backspace && noModifier) //
+        || (key === Qt.Key_F && ctrlModifier) //
+        || (key === Qt.Key_C && ctrlModifier) //
+        || (key === Qt.Key_Z && ctrlModifier);
+
+        if (preventReachingCustomUserCommands) {
+            return;
+        }
+
+        root.customMpvCommandRequested(key, modifiers);
     }
 
     MpvqcFileDropArea {
