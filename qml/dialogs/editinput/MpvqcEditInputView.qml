@@ -31,12 +31,17 @@ ColumnLayout {
 
     readonly property alias textArea: _textArea
 
-    property var accept: () => {
+    signal accepted
+    signal reset
+
+    function acceptContent(): void {
         _textArea.textDocument.save();
+        root.accepted();
     }
 
-    property var reset: () => {
+    function restorePreviousContent(): void {
         _textArea.text = mpvqcPlayerFilesPyObject.default_input_conf_content;
+        root.reset();
     }
 
     Label {
@@ -75,9 +80,10 @@ ColumnLayout {
     }
 
     Rectangle {
-        height: 2
         color: root.mpvqcTheme.control
+
         Layout.topMargin: 20
+        Layout.preferredHeight: 2
         Layout.fillWidth: true
     }
 
@@ -103,8 +109,9 @@ ColumnLayout {
     }
 
     Rectangle {
-        height: 2
         color: root.mpvqcTheme.control
+
+        Layout.preferredHeight: 2
         Layout.fillWidth: true
     }
 }

@@ -30,6 +30,12 @@ TestCase {
     name: "MpvqcDialogEditInput"
 
     Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
         id: objectUnderTest
 
         MpvqcDialogEditInput {
@@ -44,27 +50,48 @@ TestCase {
     }
 
     function test_edit_accept() {
-        let acceptCalled = false;
-
-        const control = createTemporaryObject(objectUnderTest, testCase, {
-            "editView.accept": () => {
-                acceptCalled = true;
-            }
-        });
+        const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
+
+        const acceptedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control.editView,
+            signalName: "accepted"
+        });
+        verify(acceptedSpy);
+
+        const resetSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control.editView,
+            signalName: "reset"
+        });
+        verify(resetSpy);
 
         control.editView.textArea.text = "changed by user";
         control.accepted();
-        verify(acceptCalled);
+
+        compare(acceptedSpy.count, 1);
+        compare(resetSpy.count, 0);
     }
 
     function test_edit_reset() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
 
-        control.editView.textArea.text = "changed by user";
+        const acceptedSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control.editView,
+            signalName: "accepted"
+        });
+        verify(acceptedSpy);
 
+        const resetSpy = createTemporaryObject(signalSpy, testCase, {
+            target: control.editView,
+            signalName: "reset"
+        });
+        verify(resetSpy);
+
+        control.editView.textArea.text = "changed by user";
         control.reset();
-        compare(control.editView.textArea.text, "default");
+
+        compare(acceptedSpy.count, 0);
+        compare(resetSpy.count, 1);
     }
 }

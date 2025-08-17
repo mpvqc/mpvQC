@@ -79,8 +79,6 @@ TestCase {
         id: objectUnderTest
 
         MpvqcMenuHelp {
-            id: objectUnderTest
-
             mpvqcApplication: QtObject {
                 property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
                     property string mpv_version: "any-version"

@@ -39,7 +39,7 @@ Column {
     property alias placeholderText: _textField.placeholderText
     property alias text: _textField.text
 
-    signal accepted(string input)
+    signal accepted(input: string)
     signal done
 
     height: Math.max(_textField.height, _acceptButton.height)

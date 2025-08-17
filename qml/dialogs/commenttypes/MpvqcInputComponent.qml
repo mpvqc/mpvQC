@@ -36,10 +36,10 @@ Column {
 
     readonly property alias loader: _loader
     readonly property alias editing: _loader.editing
-    readonly property bool textFieldHasFocus: _loader.item.textFieldHasFocus
+    readonly property bool textFieldHasFocus: (_loader.item as MpvqcInputControls).textFieldHasFocus
 
-    signal added(string input)
-    signal edited(string input)
+    signal added(input: string)
+    signal edited(input: string)
 
     function startEditing(text: string): void {
         _loader.startEditMode();

@@ -264,7 +264,7 @@ Popup {
                 return;
             }
 
-            currentY = topBottomMargin;
+            currentY = root.topBottomMargin;
             stickToBottom = false;
         }
 

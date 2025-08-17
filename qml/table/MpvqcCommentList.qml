@@ -183,7 +183,7 @@ ListView {
 
         function startEditingComment(): void {
             const index = root.currentIndex;
-            const item = root.currentItem;
+            const item = root.currentItem as MpvqcCommentListDelegate;
             const comment = item.comment; // qmllint disable
             const commentLabel = item.commentLabel;
             root.positionViewAtIndex(index, ListView.Contain);

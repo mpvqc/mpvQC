@@ -22,7 +22,7 @@ import QtQuick.Controls.Material
 
 Menu {
 
-    readonly property bool mMirrored: count > 0 && itemAt(0).mirrored
+    readonly property bool mMirrored: count > 0 && (itemAt(0) as MenuItem).mirrored
 
     z: 2
     x: mMirrored ? -width + parent.width : 0
@@ -36,9 +36,9 @@ Menu {
         let result = 0;
         let padding = 0;
         for (let i = 0; i < count; ++i) {
-            let item = itemAt(i);
+            let item = itemAt(i) as MenuItem;
 
-            if (!isMenuSeparator(item)) {
+            if (item && !isMenuSeparator(item)) {
                 result = Math.max(item.contentItem.implicitWidth, result);
                 padding = Math.max(item.padding, padding);
             }
@@ -52,7 +52,12 @@ Menu {
 
     // *********************************************************
     // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-    onAboutToShow: enableFakeModal();
-    onAboutToHide: disableFakeModal();
+    onAboutToShow: {
+        enableFakeModal(); // qmllint disable
+    }
+
+    onAboutToHide: {
+        disableFakeModal(); // qmllint disable
+    }
     // *********************************************************
 }

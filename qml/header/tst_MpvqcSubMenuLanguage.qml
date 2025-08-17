@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls.Material
 import QtTest
 
 Item {
@@ -68,7 +69,7 @@ Item {
         function findCheckedItem() {
             const count = objectUnderTest.repeater.count;
             for (let idx = 0; idx < count; idx++) {
-                const item = objectUnderTest.repeater.itemAt(idx);
+                const item = objectUnderTest.repeater.itemAt(idx) as MenuItem;
                 if (item.checked) {
                     return item;
                 }
@@ -102,7 +103,7 @@ Item {
             const count = objectUnderTest.repeater.count;
             for (let idx = 0; idx < count; idx++) {
                 const item = objectUnderTest.repeater.itemAt(idx);
-                if (item.identifier === identifier) {
+                if (item.identifier === identifier) { // qmllint disable
                     return item;
                 }
             }
