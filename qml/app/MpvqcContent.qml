@@ -70,45 +70,40 @@ Page {
 
         readonly property int tableContainerHeight: _tableContainer.height
         readonly property int tableContainerWidth: _tableContainer.width
-        readonly property int draggerHeight: _splitView.height - _playerContainer.height - tableContainerHeight
-        readonly property int draggerWidth: _splitView.width - _playerContainer.width - tableContainerWidth
+        readonly property int draggerHeight: _splitView.height - _playerLoader.height - tableContainerHeight
+        readonly property int draggerWidth: _splitView.width - _playerLoader.width - tableContainerWidth
 
         focus: true
         anchors.fill: root.contentItem
         orientation: root.mpvqcSettings.layoutOrientation
 
-        Item {
-            id: _playerContainer
+        Component {
+            id: _linuxPlayer
+
+            MpvqcPlayerLinux {
+                mpvqcApplication: root.mpvqcApplication
+                anchors.fill: parent
+            }
+        }
+
+        Component {
+            id: _windowsPlayer
+
+            MpvqcPlayerWindows {
+                mpvqcApplication: root.mpvqcApplication
+                anchors.fill: parent
+            }
+        }
+
+        Loader {
+            id: _playerLoader
 
             SplitView.minimumHeight: root.minContainerHeight
             SplitView.minimumWidth: root.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            Component {
-                id: _linuxPlayer
-
-                MpvqcPlayerLinux {
-                    mpvqcApplication: root.mpvqcApplication
-                    anchors.fill: parent
-                }
-            }
-
-            Component {
-                id: _windowsPlayer
-
-                MpvqcPlayerWindows {
-                    mpvqcApplication: root.mpvqcApplication
-                    anchors.fill: parent
-                }
-            }
-
-            Loader {
-                id: _playerLoader
-                anchors.fill: parent
-
-                sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
-            }
+            sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
         }
 
         Column {
