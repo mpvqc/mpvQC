@@ -64,10 +64,11 @@ RowLayout {
 
         Label {
             text: root.isMultiShortcut ? "/" : "+"
-            height: _button2.hasContent ? parent.height : 0
-            width: _button2.hasContent ? implicitWidth : 0
             visible: _button2.hasContent
             verticalAlignment: Text.AlignVCenter
+
+            Layout.preferredHeight: _button2.hasContent ? parent.height : 0
+            Layout.preferredWidth: _button2.hasContent ? implicitWidth : 0
         }
 
         MpvqcShortcutButton {
@@ -77,10 +78,11 @@ RowLayout {
         Label {
             text: "+"
 
-            height: _button3.hasContent ? parent.height : 0
-            width: _button3.hasContent ? implicitWidth : 0
             visible: _button3.hasContent
             verticalAlignment: Text.AlignVCenter
+
+            Layout.preferredHeight: _button3.hasContent ? parent.height : 0
+            Layout.preferredWidth: _button3.hasContent ? implicitWidth : 0
         }
 
         MpvqcShortcutButton {

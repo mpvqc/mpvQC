@@ -86,7 +86,7 @@ MpvqcInputComponent {
 
         function test_signal(data) {
             objectUnderTest.loader.editing = data.editing;
-            objectUnderTest.loader.item.accepted(data.tag);
+            (objectUnderTest.loader.item as MpvqcInputControls).accepted(data.tag);
             compare(data.spy.count, 1);
         }
 
@@ -97,14 +97,14 @@ MpvqcInputComponent {
             objectUnderTest.startEditing(textToEdit);
 
             verify(objectUnderTest.loader.editing);
-            compare(objectUnderTest.loader.item.text, textToEdit);
+            compare((objectUnderTest.loader.item as MpvqcInputControls).text, textToEdit);
         }
 
         function test_editing_stopped_data() {
             return [
                 {
                     tag: "done",
-                    exec: () => objectUnderTest.loader.item.done()
+                    exec: () => (objectUnderTest.loader.item as MpvqcInputControls).done()
                 },
                 {
                     tag: "reset",

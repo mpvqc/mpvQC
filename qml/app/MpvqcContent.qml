@@ -46,12 +46,6 @@ Page {
 
     signal appWindowSizeRequested(width: int, height: int)
 
-    anchors.fill: parent
-
-    background: Rectangle {
-        color: "transparent"
-    }
-
     header: MpvqcHeader {
         mpvqcApplication: root.mpvqcApplication
         width: root.width

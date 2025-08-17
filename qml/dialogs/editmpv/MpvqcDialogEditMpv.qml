@@ -41,10 +41,10 @@ MpvqcDialog {
     }
 
     onAccepted: {
-        _editView.accept();
+        _editView.acceptContent();
     }
 
     onReset: {
-        _editView.reset();
+        _editView.restorePreviousContent();
     }
 }

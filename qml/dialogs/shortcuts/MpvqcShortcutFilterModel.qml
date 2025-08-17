@@ -25,6 +25,15 @@ import QtQml.Models
 DelegateModel {
     property var filterAcceptsItem: item => true
 
+    groups: DelegateModelGroup {
+        id: visibleItems
+
+        name: "visible"
+        includeByDefault: false
+    }
+
+    filterOnGroup: "visible"
+
     function update(): void {
         if (items.count > 0) {
             items.setGroups(0, items.count, "items");
@@ -47,16 +56,7 @@ DelegateModel {
         }
     }
 
-    groups: DelegateModelGroup {
-        id: visibleItems
-
-        name: "visible"
-        includeByDefault: false
-    }
-
-    filterOnGroup: "visible"
-
     Component.onCompleted: {
-        _filterModel.update();
+        update();
     }
 }
