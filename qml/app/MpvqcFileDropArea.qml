@@ -49,7 +49,11 @@ DropArea {
 
     function _open(urls): void {
         const decodedUrls = _decodeURIs(urls);
-        const { documents, videos, subtitles } = _splitByFileExtension(decodedUrls);
+        const {
+            documents,
+            videos,
+            subtitles
+        } = _splitByFileExtension(decodedUrls);
         filesDropped(documents, videos, subtitles);
     }
 
