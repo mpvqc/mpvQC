@@ -27,7 +27,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcDragAndDropHandler"
+    name: "MpvqcFileDropArea"
 
     Component {
         id: signalSpy
@@ -38,7 +38,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcDragAndDropHandler {
+        MpvqcFileDropArea {
             supportedSubtitleFileExtensions: ["ass"]
         }
     }

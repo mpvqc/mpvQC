@@ -131,7 +131,7 @@ Page {
         }
     }
 
-    MpvqcDragAndDropHandler {
+    MpvqcFileDropArea {
         anchors.fill: _splitView
         supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
 
