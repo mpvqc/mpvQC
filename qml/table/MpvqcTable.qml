@@ -37,36 +37,16 @@ Item {
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
-    readonly property alias publicInterface: _publicInterface
+    readonly property alias commentCount: commentTable.count
+    readonly property alias selectedCommentIndex: commentTable.currentIndex
 
-    state: _publicInterface.commentCount > 0 ? "showTable" : "showPlaceholder"
+    function forceActiveFocus(): void {
+        commentTable.forceActiveFocus();
+    }
 
-    states: [
-        State {
-            name: "showTable"
-
-            PropertyChanges {
-                placeholder {
-                    height: 0
-                }
-                commentTable {
-                    height: root.height
-                }
-            }
-        },
-        State {
-            name: "showPlaceholder"
-
-            PropertyChanges {
-                commentTable {
-                    height: 0
-                }
-                placeholder {
-                    height: root.height
-                }
-            }
-        }
-    ]
+    function addNewComment(commentType: string): void {
+        commentTable.model.add_row(commentType);
+    }
 
     QtObject {
         id: _impl
@@ -92,26 +72,12 @@ Item {
         }
     }
 
-    QtObject {
-        id: _publicInterface
-
-        readonly property int commentCount: commentTable.count
-        readonly property int selectedCommentIndex: commentTable.currentIndex
-
-        function forceActiveFocus(): void {
-            commentTable.forceActiveFocus();
-        }
-
-        function addNewComment(commentType: string): void {
-            commentTable.model.add_row(commentType);
-        }
-    }
-
     MpvqcCommentList {
         id: commentTable
 
         width: root.width
-        visible: height > 0
+        height: root.height
+        visible: root.commentCount > 0
 
         model: MpvqcCommentModelPyObject {}
 
@@ -142,9 +108,9 @@ Item {
     MpvqcPlaceholder {
         id: placeholder
 
-        height: root.height
         width: root.width
-        visible: height > 0
+        height: root.height
+        visible: root.commentCount === 0
 
         horizontalLayout: root.mpvqcSettings.layoutOrientation === Qt.Horizontal
     }
