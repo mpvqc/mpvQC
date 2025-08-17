@@ -24,8 +24,13 @@ Menu {
 
     readonly property bool mMirrored: count > 0 && (itemAt(0) as MenuItem).mirrored
 
+    /**
+     * Qt cannot reliably position menus in RTL layouts. Therefore, we need to work around this.
+     * Implementations of this menu need to configure if they want to manage positioning on their own.
+     */
+    property bool implementationManagesPositioning: false
+
     z: 2
-    x: mMirrored ? -width + parent.width : 0
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     dim: false
 
@@ -50,14 +55,25 @@ Menu {
         return item instanceof MenuSeparator;
     }
 
-    // *********************************************************
-    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+    function _positionMenu(): void {
+        if (mMirrored) {
+            x = -width + parent.width;
+        } else {
+            x = 0;
+        }
+    }
+
     onAboutToShow: {
+        // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
         enableFakeModal(); // qmllint disable
+
+        if (!implementationManagesPositioning) {
+            _positionMenu();
+        }
     }
 
     onAboutToHide: {
+        // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
         disableFakeModal(); // qmllint disable
     }
-    // *********************************************************
 }

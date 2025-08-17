@@ -41,6 +41,7 @@ MpvqcMenu {
     z: 2
     exit: null
 
+    implementationManagesPositioning: true
     onAboutToShow: _positionMenu()
     onClosed: _addComment()
 

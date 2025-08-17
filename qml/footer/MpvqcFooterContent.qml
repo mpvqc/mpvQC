@@ -187,6 +187,8 @@ Item {
         onLoaded: item.open() // qmllint disable
 
         sourceComponent: MpvqcMenu {
+            implementationManagesPositioning: true
+
             x: mMirrored ? _toolButtonContainer.x : _toolButtonContainer.x + _toolButtonContainer.width - width
             y: -height
 

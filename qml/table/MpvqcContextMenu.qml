@@ -33,6 +33,7 @@ MpvqcMenu {
     signal editCommentClicked(index: int)
 
     modal: true
+    implementationManagesPositioning: true
 
     x: root.mirrored ? openedAt.x - width : openedAt.x
     y: openedAt.y
