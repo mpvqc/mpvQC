@@ -42,7 +42,7 @@ Page {
     readonly property int minContainerWidth: 500
     readonly property real defaultSplitRatio: 0.4
 
-    readonly property alias mpvqcCommentTable: _table.publicInterface
+    readonly property alias mpvqcCommentTable: _mpvqcCommentTable
 
     signal addNewCommentMenuRequested
     signal appWindowSizeRequested(width: int, height: int)
@@ -118,7 +118,7 @@ Page {
             }
 
             MpvqcTable {
-                id: _table
+                id: _mpvqcCommentTable
 
                 mpvqcApplication: root.mpvqcApplication
                 focus: true
