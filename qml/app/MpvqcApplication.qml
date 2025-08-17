@@ -110,56 +110,22 @@ ApplicationWindow {
             }
         }
 
-        Keys.onEscapePressed: {
+        onDisableFullScreenRequested: {
             if (root.fullscreen) {
                 root.disableFullScreen();
             }
         }
 
-        Keys.onPressed: event => {
-            if (event.key === Qt.Key_E) {
-                return _handleEPressed(event);
-            }
-            if (event.key === Qt.Key_F) {
-                return _handleFPressed(event);
-            }
-
-            if (_preventFromEverReachingUserDefinedCommands(event)) {
-                return;
-            }
-
-            root.mpvqcMpvPlayerPyObject.handle_key_event(event.key, event.modifiers);
+        onToggleFullScreenRequested: {
+            root.toggleFullScreen();
         }
 
-        function _handleEPressed(event): void {
-            if (event.isAutoRepeat) {
-                return;
-            }
-
-            const modifiers = event.modifiers;
-
-            if (modifiers === Qt.NoModifier) {
-                return root.mpvqcNewCommentMenu.popupMenu();
-            }
+        onAddNewCommentMenuRequested: {
+            root.mpvqcNewCommentMenu.popupMenu();
         }
 
-        function _handleFPressed(event): void {
-            if (event.isAutoRepeat) {
-                return;
-            }
-
-            const modifiers = event.modifiers;
-
-            if (modifiers === Qt.NoModifier) {
-                return root.toggleFullScreen();
-            }
-        }
-
-        function _preventFromEverReachingUserDefinedCommands(event): bool {
-            const key = event.key;
-            const noModifier = event.modifiers === Qt.NoModifier;
-            const ctrlModifier = event.modifiers & Qt.ControlModifier;
-            return key === Qt.Key_Up || key === Qt.Key_Down || key === Qt.Key_Return && noModifier || key === Qt.Key_Escape && noModifier || key === Qt.Key_Delete && noModifier || key === Qt.Key_Backspace && noModifier || key === Qt.Key_F && ctrlModifier || key === Qt.Key_C && ctrlModifier || key === Qt.Key_Z && ctrlModifier;
+        onCustomMpvCommandRequested: (key, modifiers) => {
+            root.mpvqcMpvPlayerPyObject.handle_key_event(key, modifiers);
         }
     }
 
