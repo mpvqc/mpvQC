@@ -124,6 +124,14 @@ Page {
                 focus: true
                 width: _tableContainer.width
                 height: _tableContainer.height - _footer.height
+
+                onCommentCountChanged: {
+                    // we effectively force a redraw of the table here. if we don't do this and delete the last row
+                    // in the table, the table will not rerender completely and there might be color artifacts of the
+                    // alternating row colors
+                    _footer.height += 1;
+                    _footer.height -= 1;
+                }
             }
 
             MpvqcFooter {
@@ -208,18 +216,6 @@ Page {
 
         onSplitViewTableSizeRequested: (width, height) => {
             _tableContainer.setPreferredSizes(width, height);
-        }
-    }
-
-    Connections {
-        target: root.mpvqcCommentTable
-
-        function onCommentCountChanged(): void {
-            // we effectively force a redraw of the table here. if we don't do this and delete the last row
-            // in the table, the table will not rerender completely and there might be color artifacts of the
-            // alternating row colors
-            _footer.height += 1;
-            _footer.height -= 1;
         }
     }
 
