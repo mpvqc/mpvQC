@@ -37,6 +37,9 @@ TestCase {
         MpvqcFooter {
             id: objectUnderTest
 
+            selectedCommentIndex: 0
+            totalCommentCount: 10
+
             anchors {
                 left: parent.left
                 right: parent.right
@@ -48,10 +51,6 @@ TestCase {
                 property var mpvqcSettings: QtObject {
                     property int timeFormat: -1
                     property bool statusbarPercentage: false
-                }
-                property var mpvqcCommentTable: QtObject {
-                    property int selectedCommentIndex: 0
-                    property int commentCount: 10
                 }
                 property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
                     property bool video_loaded: true
