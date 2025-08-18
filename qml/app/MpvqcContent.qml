@@ -39,33 +39,108 @@ Page {
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
-    readonly property int minContainerHeight: 200
-    readonly property int minContainerWidth: 500
-    readonly property real defaultSplitRatio: 0.4
-
     readonly property alias mpvqcCommentTable: _mpvqcCommentTable
 
-    signal addNewCommentMenuRequested
+    signal appWindowActivateRequested
     signal appWindowSizeRequested(width: int, height: int)
-    signal customMpvCommandRequested(key: int, modifiers: int)
     signal disableFullScreenRequested
+    signal newCommentMenuRequested
     signal toggleFullScreenRequested
 
     header: MpvqcHeader {
         mpvqcApplication: root.mpvqcApplication
         width: root.width
 
-        onResizeVideoTriggered: _videoResizer.recalculateSizes()
+        onResizeVideoTriggered: {
+            _impl.resizeVideoToOriginalResolution();
+        }
     }
 
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }
 
-    function applySaneDefaultSplitViewSize(): void {
-        const prefHeight = _splitView.height * defaultSplitRatio;
-        const prefWidth = _splitView.width * defaultSplitRatio;
-        _tableContainer.setPreferredSizes(prefWidth, prefHeight);
+    QtObject {
+        id: _impl
+
+        readonly property int minContainerHeight: 200
+        readonly property int minContainerWidth: 500
+        readonly property real defaultSplitRatio: 0.4
+
+        function applySaneDefaultSplitViewSize(): void {
+            const prefHeight = _splitView.height * defaultSplitRatio;
+            const prefWidth = _splitView.width * defaultSplitRatio;
+            _tableContainer.setPreferredSizes(prefWidth, prefHeight);
+        }
+
+        function resizeVideoToOriginalResolution(): void {
+            _videoResizer.recalculateSizes();
+        }
+
+        function isPreventReachingMpvCustomCommand(key: int, modifiers: int): bool {
+            const noModifier = modifiers === Qt.NoModifier;
+            const ctrlModifier = modifiers & Qt.ControlModifier;
+
+            return key === Qt.Key_Up  //
+            || key === Qt.Key_Down //
+            || (key === Qt.Key_Return && noModifier) //
+            || (key === Qt.Key_Escape && noModifier) //
+            || (key === Qt.Key_Delete && noModifier) //
+            || (key === Qt.Key_Backspace && noModifier) //
+            || (key === Qt.Key_F && ctrlModifier) //
+            || (key === Qt.Key_C && ctrlModifier) //
+            || (key === Qt.Key_Z && ctrlModifier);
+        }
+
+        function handleMpvCustomCommand(key: int, modifiers: int): void {
+            root.mpvqcMpvPlayerPyObject.handle_key_event(key, modifiers);
+        }
+
+        function requestNewCommentMenu(): void {
+            root.newCommentMenuRequested();
+        }
+
+        function requestToggleFullScreen(): void {
+            root.toggleFullScreenRequested();
+        }
+
+        function requestDisableFullScreen(): void {
+            root.disableFullScreenRequested();
+        }
+
+        function requestResizeAppWindow(width: int, height: int): void {
+            root.appWindowSizeRequested(width, height);
+        }
+
+        function requestActivateAppWindow(): void {
+            root.appWindowActivateRequested();
+        }
+    }
+
+    Keys.onEscapePressed: {
+        _impl.requestDisableFullScreen();
+    }
+
+    Keys.onPressed: event => {
+        const key = event.key;
+        const modifiers = event.modifiers;
+        const plainPress = !event.isAutoRepeat && modifiers === Qt.NoModifier;
+
+        if (key === Qt.Key_E && plainPress) {
+            _impl.requestNewCommentMenu();
+            return;
+        }
+
+        if (key === Qt.Key_F && plainPress) {
+            _impl.requestToggleFullScreen();
+            return;
+        }
+
+        if (_impl.isPreventReachingMpvCustomCommand(key, modifiers)) {
+            return;
+        }
+
+        _impl.handleMpvCustomCommand(key, modifiers);
     }
 
     SplitView {
@@ -86,21 +161,21 @@ Page {
             mpvPlayer: root.mpvqcMpvPlayerPyObject
             isFullScreen: root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: root.minContainerHeight
-            SplitView.minimumWidth: root.minContainerWidth
+            SplitView.minimumHeight: _impl.minContainerHeight
+            SplitView.minimumWidth: _impl.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
             onAddNewCommentMenuRequested: {
-                root.addNewCommentMenuRequested();
+                _impl.requestNewCommentMenu();
             }
 
             onToggleFullScreenRequested: {
-                root.toggleFullScreenRequested();
+                _impl.requestToggleFullScreen();
             }
 
             onAppWindowActivateRequested: {
-                root.mpvqcApplication.requestActivate();
+                _impl.requestActivateAppWindow();
             }
         }
 
@@ -109,8 +184,8 @@ Page {
 
             visible: !root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: root.minContainerHeight
-            SplitView.minimumWidth: root.minContainerWidth
+            SplitView.minimumHeight: _impl.minContainerHeight
+            SplitView.minimumWidth: _impl.minContainerWidth
 
             function setPreferredSizes(width: int, height: int): void {
                 SplitView.preferredWidth = width;
@@ -147,43 +222,29 @@ Page {
     }
 
     Keys.onEscapePressed: {
-        root.disableFullScreenRequested();
+        _impl.requestDisableFullScreen();
     }
 
     Keys.onPressed: event => {
         const key = event.key;
         const modifiers = event.modifiers;
-
-        const noModifier = modifiers === Qt.NoModifier;
-        const ctrlModifier = modifiers & Qt.ControlModifier;
-        const plainPress = !event.isAutoRepeat && noModifier;
+        const plainPress = !event.isAutoRepeat && modifiers === Qt.NoModifier;
 
         if (key === Qt.Key_E && plainPress) {
-            root.addNewCommentMenuRequested();
+            _impl.requestNewCommentMenu();
             return;
         }
 
         if (key === Qt.Key_F && plainPress) {
-            root.toggleFullScreenRequested();
+            _impl.requestToggleFullScreen();
             return;
         }
 
-        const preventReachingCustomUserCommands = //
-        key === Qt.Key_Up  //
-        || key === Qt.Key_Down //
-        || (key === Qt.Key_Return && noModifier) //
-        || (key === Qt.Key_Escape && noModifier) //
-        || (key === Qt.Key_Delete && noModifier) //
-        || (key === Qt.Key_Backspace && noModifier) //
-        || (key === Qt.Key_F && ctrlModifier) //
-        || (key === Qt.Key_C && ctrlModifier) //
-        || (key === Qt.Key_Z && ctrlModifier);
-
-        if (preventReachingCustomUserCommands) {
+        if (_impl.preventReachingMpvCustomCommand(key, modifiers)) {
             return;
         }
 
-        root.customMpvCommandRequested(key, modifiers);
+        _impl.handleMpvCustomCommand(key, modifiers);
     }
 
     MpvqcFileDropArea {
@@ -214,7 +275,7 @@ Page {
         splitViewTableContainerHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
-            root.appWindowSizeRequested(width, height);
+            _impl.requestResizeAppWindow(width, height);
         }
 
         onSplitViewTableSizeRequested: (width, height) => {
@@ -222,5 +283,7 @@ Page {
         }
     }
 
-    Component.onCompleted: root.applySaneDefaultSplitViewSize()
+    Component.onCompleted: {
+        _impl.applySaneDefaultSplitViewSize();
+    }
 }
