@@ -41,7 +41,6 @@ Page {
 
     readonly property alias mpvqcCommentTable: _mpvqcCommentTable
 
-    signal appWindowActivateRequested
     signal appWindowSizeRequested(width: int, height: int)
     signal disableFullScreenRequested
     signal newCommentMenuRequested
@@ -111,10 +110,6 @@ Page {
         function requestResizeAppWindow(width: int, height: int): void {
             root.appWindowSizeRequested(width, height);
         }
-
-        function requestActivateAppWindow(): void {
-            root.appWindowActivateRequested();
-        }
     }
 
     Keys.onEscapePressed: {
@@ -172,10 +167,6 @@ Page {
 
             onToggleFullScreenRequested: {
                 _impl.requestToggleFullScreen();
-            }
-
-            onAppWindowActivateRequested: {
-                _impl.requestActivateAppWindow();
             }
         }
 
