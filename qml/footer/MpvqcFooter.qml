@@ -30,6 +30,9 @@ Item {
     readonly property alias percentLabelText: _content.percentLabel // for tests
     readonly property alias videoTimeLabelText: _content.videoTimeLabel // for tests
 
+    property alias selectedCommentIndex: _content.selectedCommentIndex
+    property alias totalCommentCount: _content.totalCommentCount
+
     height: 25
     visible: !root.mpvqcApplication.fullscreen
 
@@ -37,7 +40,6 @@ Item {
         id: _impl
 
         readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
-        readonly property var mpvqcCommentTable: root.mpvqcApplication.mpvqcCommentTable
         readonly property var mpvqcLabelWidthCalculator: root.mpvqcApplication.mpvqcLabelWidthCalculator
         readonly property var mpvqcMpvPlayerPropertiesPyObject: root.mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
         readonly property var mpvqcUtilityPyObject: root.mpvqcApplication.mpvqcUtilityPyObject
@@ -62,9 +64,6 @@ Item {
         anchors.fill: parent
 
         isApplicationMazimized: root.mpvqcApplication.maximized
-
-        selectedCommentIndex: _impl.mpvqcCommentTable.selectedCommentIndex
-        totalCommentCount: _impl.mpvqcCommentTable.commentCount
 
         playerPercentPosition: _impl.mpvqcMpvPlayerPropertiesPyObject.percent_pos
         playerDuration: _impl.mpvqcMpvPlayerPropertiesPyObject.duration

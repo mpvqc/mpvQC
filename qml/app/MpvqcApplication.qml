@@ -52,10 +52,6 @@ ApplicationWindow {
     readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
-    function focusCommentTable(): void {
-        root.mpvqcCommentTable.forceActiveFocus();
-    }
-
     function toggleMaximized(): void {
         mpvqcWindowVisibilityHandler.toggleMaximized();
     }
@@ -141,7 +137,7 @@ ApplicationWindow {
             // *********************************************************
 
             // event.accepted = false;
-            root.focusCommentTable();
+            _content.focusCommentTable();
         }
     }
 
@@ -154,7 +150,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         Qt.uiLanguage = mpvqcSettings.language;
-        root.focusCommentTable();
+        _content.focusCommentTable();
     }
 
     Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light

@@ -57,6 +57,10 @@ Page {
         onResizeVideoTriggered: _videoResizer.recalculateSizes()
     }
 
+    function focusCommentTable(): void {
+        _mpvqcCommentTable.forceActiveFocus();
+    }
+
     function applySaneDefaultSplitViewSize(): void {
         const prefHeight = _splitView.height * defaultSplitRatio;
         const prefWidth = _splitView.width * defaultSplitRatio;
@@ -139,6 +143,9 @@ Page {
 
                 mpvqcApplication: root.mpvqcApplication
                 width: _tableContainer.width
+
+                selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
+                totalCommentCount: _mpvqcCommentTable.commentCount
             }
         }
     }
