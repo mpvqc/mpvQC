@@ -33,6 +33,7 @@ Page {
     required property var mpvqcApplication
 
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
+    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
@@ -72,40 +73,35 @@ Page {
 
         readonly property int tableContainerHeight: _tableContainer.height
         readonly property int tableContainerWidth: _tableContainer.width
-        readonly property int draggerHeight: _splitView.height - _playerLoader.height - tableContainerHeight
-        readonly property int draggerWidth: _splitView.width - _playerLoader.width - tableContainerWidth
+        readonly property int draggerHeight: _splitView.height - _player.height - tableContainerHeight
+        readonly property int draggerWidth: _splitView.width - _player.width - tableContainerWidth
 
         focus: true
         anchors.fill: root.contentItem
         orientation: root.mpvqcSettings.layoutOrientation
 
-        Component {
-            id: _linuxPlayer
+        MpvqcPlayer {
+            id: _player
 
-            MpvqcPlayerLinux {
-                mpvqcApplication: root.mpvqcApplication
-                anchors.fill: parent
-            }
-        }
-
-        Component {
-            id: _windowsPlayer
-
-            MpvqcPlayerWindows {
-                mpvqcApplication: root.mpvqcApplication
-                anchors.fill: parent
-            }
-        }
-
-        Loader {
-            id: _playerLoader
+            mpvPlayer: root.mpvqcMpvPlayerPyObject
+            isFullScreen: root.mpvqcApplication.fullscreen
 
             SplitView.minimumHeight: root.minContainerHeight
             SplitView.minimumWidth: root.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
+            onAddNewCommentMenuRequested: {
+                root.addNewCommentMenuRequested();
+            }
+
+            onToggleFullScreenRequested: {
+                root.toggleFullScreenRequested();
+            }
+
+            onAppWindowActivateRequested: {
+                root.mpvqcApplication.requestActivate();
+            }
         }
 
         Column {
