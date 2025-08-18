@@ -221,32 +221,6 @@ Page {
         }
     }
 
-    Keys.onEscapePressed: {
-        _impl.requestDisableFullScreen();
-    }
-
-    Keys.onPressed: event => {
-        const key = event.key;
-        const modifiers = event.modifiers;
-        const plainPress = !event.isAutoRepeat && modifiers === Qt.NoModifier;
-
-        if (key === Qt.Key_E && plainPress) {
-            _impl.requestNewCommentMenu();
-            return;
-        }
-
-        if (key === Qt.Key_F && plainPress) {
-            _impl.requestToggleFullScreen();
-            return;
-        }
-
-        if (_impl.preventReachingMpvCustomCommand(key, modifiers)) {
-            return;
-        }
-
-        _impl.handleMpvCustomCommand(key, modifiers);
-    }
-
     MpvqcFileDropArea {
         anchors.fill: _splitView
         supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
