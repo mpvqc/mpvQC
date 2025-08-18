@@ -99,10 +99,6 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
-        onAppWindowActivateRequested: {
-            root.requestActivate();
-        }
-
         onAppWindowSizeRequested: (width, height) => {
             if (width >= root.minimumWidth && height >= root.minimumHeight) {
                 root.width = width;

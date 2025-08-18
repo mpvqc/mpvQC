@@ -27,13 +27,10 @@ Loader {
     required property var mpvPlayer
     required property bool isFullScreen
 
-    readonly property bool isWindows: Qt.platform.os === "windows"
-
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
-    signal appWindowActivateRequested
 
-    sourceComponent: isWindows ? _windowsPlayer : _linuxPlayer
+    sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
 
     MouseArea {
         id: _mouseArea
@@ -70,11 +67,6 @@ Loader {
         }
 
         onPressed: event => {
-            if (root.isWindows) {
-                // Work around Windows player eating up activate event
-                root.appWindowActivateRequested();
-            }
-
             const button = event.button;
             if (button === Qt.LeftButton) {
                 root.mpvPlayer.press_mouse_left();
