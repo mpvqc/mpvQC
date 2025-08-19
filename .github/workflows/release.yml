@@ -193,66 +193,80 @@ jobs:
 
           execute source .venv/Scripts/activate
 
+          echo "::group::Run Nuitka"
           execute python.exe -m nuitka main.py \
-            --assume-yes-for-downloads \
             --standalone \
+            --assume-yes-for-downloads \
             --deployment \
+            --static-libpython \
             --enable-plugin=pyside6 \
             --output-dir=deployment \
-            --include-data-files=LICENSE=LICENSE \
-            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
+            --output-filename=mpvQC.exe \
             --windows-console-mode=attach \
             --windows-icon-from-ico=build-aux/icon.ico \
-            --include-qt-plugins=all \
-            --include-qt-plugins=qml \
-            --noinclude-qt-plugins=designer \
-            --noinclude-qt-plugins=multimedia \
-            --noinclude-qt-plugins=sqldrivers \
+            --include-qt-plugins=qml,platforms \
+            --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles \
             --noinclude-qt-translations \
-            --noinclude-dlls=opengl32sw.dll \
-            --noinclude-dlls=qt6quickcontrols2fluentwinui3styleimpl.dll \
-            --noinclude-dlls=qt6quickcontrols2fusion.dll \
-            --noinclude-dlls=qt6quickcontrols2fusionstyleimpl.dll \
-            --noinclude-dlls=qt6quickcontrols2imagine.dll \
-            --noinclude-dlls=qt6quickcontrols2imaginestyleimpl.dll \
-            --noinclude-dlls=qt6quickcontrols2universal.dll \
-            --noinclude-dlls=qt6quickcontrols2universalstyleimpl.dll \
-            --noinclude-dlls=qt6quickcontrols2windowsstyleimpl.dll \
-            --noinclude-dlls=qt6designer.dll \
-            --noinclude-dlls=qt6pdf.dll \
-            --noinclude-dlls=qt6widgets.dll \
-            --noinclude-dlls=Qt6Charts* \
-            --noinclude-dlls=Qt6Quick3D* \
-            --noinclude-dlls=Qt6Sensors* \
-            --noinclude-dlls=Qt6Test* \
-            --noinclude-dlls=Qt6WebEngine* \
+            --include-data-files=LICENSE=LICENSE \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
+            --nofollow-import-to='PySide6.QtWidgets' \
+            --nofollow-import-to=tkinter,distutils,numpy.f2py \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/designer/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/FluentWinUI3/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/Fusion/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/Imagine/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/Universal/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/Windows/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/VirtualKeyboard/*' \
+            --noinclude-data-files='PySide6/qml/QtTest/*' \
+            --noinclude-data-files='PySide6/qml/QtWebEngine/*' \
+            --noinclude-data-files='PySide6/qt-plugins/styles/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Controls/FluentWinUI3/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Controls/Fusion/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Controls/Imagine/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Controls/Universal/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Controls/Windows/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Controls/designer/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/VirtualKeyboard/*' \
+            --noinclude-dlls='PySide6/qml/QtTest/*' \
+            --noinclude-dlls='PySide6/qml/QtWebEngine/*' \
+            --noinclude-dlls='PySide6/qt-plugins/styles/*' \
+            --noinclude-dlls='Qt6Charts*' \
+            --noinclude-dlls='Qt6DataVisualization*' \
+            --noinclude-dlls='Qt6Pdf*' \
+            --noinclude-dlls='Qt6Quick3D*' \
+            --noinclude-dlls='Qt6Sensors*' \
+            --noinclude-dlls='Qt6Test*' \
+            --noinclude-dlls='Qt6WebEngine*' \
+            --noinclude-dlls='opengl32sw.dll' \
+            --noinclude-dlls='qt6designer.dll' \
+            --noinclude-dlls='qt6pdf.dll' \
+            --noinclude-dlls='qt6qmlcompiler.dll' \
+            --noinclude-dlls='qt6quickcontrols2fluentwinui3style*.dll' \
+            --noinclude-dlls='qt6quickcontrols2fusion*.dll' \
+            --noinclude-dlls='qt6quickcontrols2imagine*.dll' \
+            --noinclude-dlls='qt6quickcontrols2universal*.dll' \
+            --noinclude-dlls='qt6quickcontrols2windows*.dll' \
+            --noinclude-dlls='qt6quickparticles.dll' \
+            --noinclude-dlls='qt6widgets.dll' \
             --output-filename=mpvQC.exe
-      - name: Remove Redundant Files
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          echo "::endgroup::"
 
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Controls/FluentWinUI3
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/VirtualKeyboard
-          execute rm -rf deployment/main.dist/PySide6/qt-plugins/{sqldrivers,styles,qmltooling,qmllint,designer}
-          execute rm -rf deployment/main.dist/PySide6/QtWidgets.pyd
-          execute rm -rf deployment/main.dist/qt6qmlcompiler.dll
-      - name: Package libmpv
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
+          #
+          echo "::group::Package libmpv"
           ARTIFACT="$(basename "$LIBMPV_URL")"
-
           execute curl -L -O "$LIBMPV_URL"
           echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
           echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
           execute sha1sum --check "$ARTIFACT.sha1"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
-      - name: Make Application Portable
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+          echo "::endgroup::"
 
+          #
+          echo "::group::Make Application Portable"
           execute touch deployment/main.dist/portable
+          echo "::endgroup::"
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
