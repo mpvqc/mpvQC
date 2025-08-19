@@ -198,7 +198,7 @@ jobs:
             --standalone \
             --assume-yes-for-downloads \
             --deployment \
-            --static-libpython \
+            --static-libpython=yes \
             --enable-plugin=pyside6 \
             --output-dir=deployment \
             --output-filename=mpvQC.exe \
