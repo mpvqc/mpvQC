@@ -23,14 +23,12 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../settings"
-import "../shared"
 
 ApplicationWindow {
     id: root
 
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
     readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
-    readonly property var mpvqcNewCommentMenu: MpvqcNewCommentMenu { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
@@ -114,10 +112,6 @@ ApplicationWindow {
 
         onToggleFullScreenRequested: {
             root.toggleFullScreen();
-        }
-
-        onNewCommentMenuRequested: {
-            root.mpvqcNewCommentMenu.popupMenu();
         }
     }
 

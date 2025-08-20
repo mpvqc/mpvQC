@@ -1,0 +1,64 @@
+/*
+mpvQC
+
+Copyright (C) 2025 mpvQC developers
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Controls.Material
+
+import "../shared"
+
+MpvqcMenu {
+    id: root
+
+    required property list<string> commentTypes
+
+    property var _deferToOnClose: () => {}
+
+    signal commentTypeChosen(commentType: string)
+
+    visible: false
+    modal: true
+    z: 2
+    exit: null
+
+    onClosed: {
+        visible = false;
+
+        // Instead of directly adding a comment in the MenuItem triggered signal handler,
+        // we defer adding it until the popup closes. If we would directly add it,
+        // the menu's closing signals would interfere with the focus of the newly added comment.
+        root._deferToOnClose(); // qmllint disable
+        root._deferToOnClose = () => {};
+    }
+
+    Repeater {
+        model: root.commentTypes
+
+        MenuItem {
+            required property string modelData
+
+            text: qsTranslate("CommentTypes", modelData)
+
+            onTriggered: {
+                root._deferToOnClose = () => root.commentTypeChosen(modelData);
+            }
+        }
+    }
+}

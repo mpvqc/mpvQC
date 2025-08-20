@@ -43,7 +43,6 @@ Page {
 
     signal appWindowSizeRequested(width: int, height: int)
     signal disableFullScreenRequested
-    signal newCommentMenuRequested
     signal toggleFullScreenRequested
 
     header: MpvqcHeader {
@@ -95,8 +94,16 @@ Page {
             root.mpvqcMpvPlayerPyObject.handle_key_event(key, modifiers);
         }
 
-        function requestNewCommentMenu(): void {
-            root.newCommentMenuRequested();
+        function pausePlayer(): void {
+            root.mpvqcMpvPlayerPyObject.pause();
+        }
+
+        function openNewCommentMenu(): void {
+            _commentMenu.popup();
+        }
+
+        function addNewEmptyComment(commentType: string): void {
+            _mpvqcCommentTable.addNewComment(commentType);
         }
 
         function requestToggleFullScreen(): void {
@@ -122,7 +129,7 @@ Page {
         const plainPress = !event.isAutoRepeat && modifiers === Qt.NoModifier;
 
         if (key === Qt.Key_E && plainPress) {
-            _impl.requestNewCommentMenu();
+            _impl.openNewCommentMenu();
             return;
         }
 
@@ -162,7 +169,7 @@ Page {
             SplitView.fillWidth: true
 
             onAddNewCommentMenuRequested: {
-                _impl.requestNewCommentMenu();
+                _impl.openNewCommentMenu();
             }
 
             onToggleFullScreenRequested: {
@@ -218,6 +225,30 @@ Page {
 
         onFilesDropped: (documents, videos, subtitles) => {
             root.mpvqcManager.open(documents, videos, subtitles);
+        }
+    }
+
+    MpvqcNewCommentMenu {
+        id: _commentMenu
+
+        commentTypes: root.mpvqcSettings.commentTypes
+
+        function _adjustPosition(): void {
+            const isMirrored = root.mpvqcApplication.LayoutMirroring.enabled;
+            const global = root.mpvqcUtilityPyObject.cursorPosition;
+            const local = _commentMenu.parent.mapFromGlobal(global);
+            _commentMenu.x = isMirrored ? local.x - width : local.x;
+            _commentMenu.y = local.y;
+        }
+
+        onAboutToShow: {
+            _adjustPosition();
+            _impl.pausePlayer();
+        }
+
+        onCommentTypeChosen: commentType => {
+            _impl.requestDisableFullScreen();
+            _impl.addNewEmptyComment(commentType);
         }
     }
 
