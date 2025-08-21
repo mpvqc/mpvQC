@@ -3,3 +3,5 @@ MpvqcArtworkModel MpvqcArtworkModel.qml
 MpvqcLibraryModel MpvqcLibraryModel.qml
 MpvqcDeveloperModel MpvqcDeveloperModel.qml
 MpvqcLanguageModel MpvqcLanguageModel.qml
+MpvqcThemeMaterialYouDark MpvqcThemeMaterialYouDark.qml
+MpvqcThemeMaterialYou MpvqcThemeMaterialYou.qml

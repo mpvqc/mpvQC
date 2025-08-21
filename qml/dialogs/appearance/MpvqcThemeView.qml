@@ -28,11 +28,10 @@ ListView {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
 
     readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
     readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
-    readonly property bool isDarkTheme: mpvqcThemesPyObject.getThemeSummary(currentThemeIdentifier).isDark
 
     readonly property int itemSize: 52
     readonly property int borderSize: 5
@@ -57,7 +56,7 @@ ListView {
         }
     }
 
-    model: mpvqcThemesPyObject.getThemeSummaries()
+    model: mpvqcTheme.availableThemes
     boundsBehavior: Flickable.StopAtBounds
     orientation: ListView.Horizontal
 
@@ -71,12 +70,9 @@ ListView {
     highlightResizeVelocity: -1
 
     highlight: Rectangle {
-        readonly property var colors: root.mpvqcThemesPyObject
-            .getThemeColorOption(root.currentThemeColorOption, root.currentThemeIdentifier)
-
         width: root.itemSize
         height: root.itemSize
-        color: colors.control
+        color: root.mpvqcTheme.control
         radius: Material.SmallScale
 
         Behavior on color {

@@ -28,11 +28,10 @@ GridView {
     required property var mpvqcApplication
 
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
 
     readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
     readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
-    readonly property bool isDarkTheme: mpvqcThemesPyObject.getThemeSummary(currentThemeIdentifier).isDark
 
     readonly property int defaultHighlightMoveDuration: 150
     readonly property int itemSize: 52
@@ -55,7 +54,7 @@ GridView {
         highlightMoveDuration = defaultHighlightMoveDuration;
     }
 
-    model: mpvqcThemesPyObject.getThemeColorOptions(currentThemeIdentifier)
+    model: mpvqcTheme.colors
     boundsBehavior: Flickable.StopAtBounds
 
     clip: true
@@ -66,17 +65,14 @@ GridView {
     highlightMoveDuration: 150
 
     highlight: Rectangle {
-        readonly property var colors: root.mpvqcThemesPyObject
-            .getThemeColorOption(root.currentThemeColorOption, root.currentThemeIdentifier)
-
         width: root.itemSize
         height: root.itemSize
-        color: root.isDarkTheme ? colors.foreground : colors.background
+        color: root.mpvqcTheme.isDark ? root.mpvqcTheme.foreground : root.mpvqcTheme.background
         radius: Material.SmallScale
 
         border {
-            width: root.isDarkTheme ? 0 : 2
-            color: colors.rowHighlight
+            width: root.mpvqcTheme.isDark ? 0 : 2
+            color: root.mpvqcTheme.rowHighlight
         }
 
         Behavior on color {

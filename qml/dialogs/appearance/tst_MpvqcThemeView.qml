@@ -40,19 +40,6 @@ TestCase {
                     property string themeIdentifier: "dark"
                     property int themeColorOption: 0
                 }
-                property var mpvqcThemesPyObject: QtObject {
-                    function getThemeSummary(name: string): variant {
-                        return {
-                            "isDark": !!name.includes("dark")
-                        };
-                    }
-
-                    function getThemeColorOption(option: int, name: string): variant {
-                        return {
-                            control: "blue"
-                        };
-                    }
-                }
             }
 
             model: [
