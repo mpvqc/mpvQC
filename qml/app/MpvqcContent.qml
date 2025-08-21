@@ -39,7 +39,7 @@ Page {
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
-    readonly property alias mpvqcCommentTable: _mpvqcCommentTable
+    readonly property int commentCount: _mpvqcCommentTable.commentCount
 
     signal appWindowSizeRequested(width: int, height: int)
     signal disableFullScreenRequested

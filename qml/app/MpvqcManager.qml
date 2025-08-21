@@ -29,13 +29,14 @@ MpvqcManagerPyObject {
     id: root
 
     required property var mpvqcApplication
+    required property int commentCount
+
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcCommentTable: mpvqcApplication.mpvqcCommentTable
 
     readonly property Timer backupTimer: Timer {
         repeat: true
         interval: Math.max(15, root.mpvqcSettings.backupInterval) * 1000
-        running: root.mpvqcSettings.backupEnabled && root.mpvqcCommentTable.commentCount > 0
+        running: root.mpvqcSettings.backupEnabled && root.commentCount > 0
 
         onTriggered: {
             root.backup_impl();

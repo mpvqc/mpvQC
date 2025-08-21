@@ -28,12 +28,14 @@ ApplicationWindow {
     id: root
 
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
-    readonly property var mpvqcManager: MpvqcManager { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
-
-    readonly property var mpvqcCommentTable: _content.mpvqcCommentTable
+    
+    readonly property var mpvqcManager: MpvqcManager {
+        mpvqcApplication: root
+        commentCount: _content.commentCount
+    }
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
