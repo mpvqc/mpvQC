@@ -31,7 +31,7 @@ ApplicationWindow {
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
     readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
-    
+
     readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root
         commentCount: _content.commentCount
@@ -74,14 +74,20 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 540
 
-    flags: Qt.FramelessWindowHint | Qt.Window
-    color: Material.background
-    visible: true
-
     font {
         pointSize: 10
         family: 'Noto Sans'
     }
+
+    flags: Qt.FramelessWindowHint | Qt.Window
+    color: Material.background
+    visible: true
+
+    Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light
+    Material.accent: root.mpvqcTheme.control
+
+    Material.background: root.mpvqcTheme.background
+    Material.foreground: root.mpvqcTheme.foreground
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
@@ -144,12 +150,6 @@ ApplicationWindow {
         Qt.uiLanguage = mpvqcSettings.language;
         _content.focusCommentTable();
     }
-
-    Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light
-    Material.accent: root.mpvqcTheme.control
-
-    Material.background: root.mpvqcTheme.background
-    Material.foreground: root.mpvqcTheme.foreground
 
     // *********************************************************
     // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
