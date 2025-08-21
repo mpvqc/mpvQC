@@ -29,12 +29,16 @@ ApplicationWindow {
 
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
     readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
-    readonly property var mpvqcTheme: MpvqcTheme { mpvqcApplication: root }
     readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
 
     readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root
         commentCount: _content.commentCount
+    }
+
+    readonly property var mpvqcTheme: MpvqcTheme {
+        themeIdentifier: root.mpvqcSettings.themeIdentifier
+        themeColorOption: root.mpvqcSettings.themeColorOption
     }
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
@@ -44,7 +48,6 @@ ApplicationWindow {
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcPlayerFilesPyObject: MpvqcPlayerFilesPyObject {}
-    readonly property var mpvqcThemesPyObject: MpvqcThemesPyObject {}
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 

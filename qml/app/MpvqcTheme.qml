@@ -19,53 +19,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import QtQuick
 
+import "../models"
+
 QtObject {
     id: root
 
-    required property var mpvqcApplication
+    required property string themeIdentifier
+    required property int themeColorOption
 
-    readonly property var mpvqcSettings: root.mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcThemesPyObject: root.mpvqcApplication.mpvqcThemesPyObject
+    readonly property MpvqcThemeMaterialYouDark materialYouDark: MpvqcThemeMaterialYouDark {}
+    readonly property MpvqcThemeMaterialYou materialYou: MpvqcThemeMaterialYou {}
 
-    readonly property QtObject _: QtObject {
-        id: _impl
+    readonly property var availableThemes: [
+        {
+            "name": materialYouDark.name,
+            "preview": materialYouDark.preview
+        },
+        {
+            "name": materialYou.name,
+            "preview": materialYou.preview
+        }
+    ]
 
-        readonly property string themeIdentifier: root.mpvqcSettings.themeIdentifier
-        readonly property string colorOption: root.mpvqcSettings.themeColorOption
+    readonly property int colorChangeAnimationDuration: 150
 
-        readonly property var themeSummary: root.mpvqcThemesPyObject.getThemeSummary(themeIdentifier)
-        readonly property var themeColors: root.mpvqcThemesPyObject.getThemeColorOption(colorOption, themeIdentifier)
-
-        readonly property bool isDark: themeSummary.isDark
-
-        property color background: themeColors.background
-        property color foreground: themeColors.foreground
-
-        property color rowHighlight: themeColors.rowHighlight
-        property color rowHighlightText: themeColors.rowHighlightText
-        property color control: themeColors.control
-
-        property color rowBase: themeColors.rowBase
-        property color rowBaseText: themeColors.rowBaseText
-
-        property color rowBaseAlternate: themeColors.rowBaseAlternate
-        property color rowBaseAlternateText: themeColors.rowBaseAlternateText
-
-        readonly property int colorChangeAnimationDuration: 150
-
-        Behavior on background { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-        Behavior on foreground { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-
-        Behavior on control { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-        Behavior on rowHighlight { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-        Behavior on rowHighlightText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-
-        Behavior on rowBase { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-        Behavior on rowBaseText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-
-        Behavior on rowBaseAlternate { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-        Behavior on rowBaseAlternateText { ColorAnimation { duration: _impl.colorChangeAnimationDuration } }
-    }
+    /* Return all color configurations for the currently configured theme */
+    readonly property alias colors: _impl.colors
 
     readonly property alias isDark: _impl.isDark
 
@@ -88,5 +67,106 @@ QtObject {
 
     function getForeground(isOdd: bool): color {
         return isOdd ? root.rowBaseText : root.rowBaseAlternateText;
+    }
+
+    onThemeIdentifierChanged: {
+        _impl.reconfigure();
+    }
+
+    onThemeColorOptionChanged: {
+        _impl.reconfigure();
+    }
+
+    Component.onCompleted: {
+        _impl.reconfigure();
+    }
+
+    readonly property QtObject _: QtObject {
+        id: _impl
+
+        readonly property bool isDark: colors.isDark
+
+        property var colors: root.materialYouDark
+        property var colorOption: colors.get(root.themeColorOption)
+
+        property color background: colorOption.background
+        property color foreground: colorOption.foreground
+
+        property color rowHighlight: colorOption.rowHighlight
+        property color rowHighlightText: colorOption.rowHighlightText
+        property color control: colorOption.control
+
+        property color rowBase: colorOption.rowBase
+        property color rowBaseText: colorOption.rowBaseText
+
+        property color rowBaseAlternate: colorOption.rowBaseAlternate
+        property color rowBaseAlternateText: colorOption.rowBaseAlternateText
+
+        function reconfigure(): void {
+            switch (root.themeIdentifier) {
+            case root.materialYou.name:
+                colors = root.materialYou;
+                break;
+            case root.materialYouDark.name:
+                colors = root.materialYouDark;
+                break;
+            default:
+                console.error("Unknown theme:", root.themeIdentifier);
+            }
+        }
+
+        Behavior on background {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on foreground {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on control {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on rowHighlight {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on rowHighlightText {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on rowBase {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on rowBaseText {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on rowBaseAlternate {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
+
+        Behavior on rowBaseAlternateText {
+            ColorAnimation {
+                duration: root.colorChangeAnimationDuration
+            }
+        }
     }
 }
