@@ -1,0 +1,25 @@
+# Copyright 2024
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800"'
+
+@_default:
+    just --list
+
+print-dark-colors:
+    uv run color-generator.py --dark {{ BASE_COLORS }}
+
+print-light-colors:
+    uv run color-generator.py --contrast 0.0 {{ BASE_COLORS }}
