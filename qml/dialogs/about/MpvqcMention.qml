@@ -18,12 +18,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
-ListModel {
-    ListElement {
-        name: "Elias Müller"
+RowLayout {
+    id: root
+
+    property string leftContent
+    property Item leftItem: Label
+    {
+        text: root.leftContent
+        horizontalAlignment: Text.AlignRight
+        Layout.preferredWidth: root.width / 2
     }
-    ListElement {
-        name: "Frechdachs"
+
+    property string rightContent
+    property Item rightItem: Label
+    {
+        text: root.rightContent
+        font.italic: true
+        horizontalAlignment: Text.AlignLeft
+        Layout.preferredWidth: root.width / 2
     }
+
+    children: [leftItem, rightItem]
+
+    height: Math.max(leftItem.height, rightItem.height)
+
+    visible: leftContent
+    spacing: 10
 }

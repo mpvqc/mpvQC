@@ -2,6 +2,7 @@ module shared
 
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
+MpvqcDialog2 MpvqcDialog2.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml

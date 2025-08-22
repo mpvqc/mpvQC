@@ -17,30 +17,44 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
 import "../../shared"
 
-MpvqcDialog {
+MpvqcDialog2 {
     id: root
 
-    MpvqcAboutView {
-        //: Title of a tab in the about dialog
-        property string title: qsTranslate("AboutDialog", "About")
+    readonly property int scrollBarWidth: 20
+    readonly property int workaroundRtlIssueRightMargin: root.mpvqcApplication.LayoutMirroring.enabled ? 20 : 0
 
-        width: root.width
-    }
+    contentHeight: Math.min(1080, mpvqcApplication.height * 0.60)
 
-    MpvqcCreditsView {
-        //: Title of a tab in the about dialog
-        property string title: qsTranslate("AboutDialog", "Credits")
+    contentItem: ScrollView {
+        readonly property bool isVerticalScollBarShown: contentHeight > root.height
 
-        width: root.width
-    }
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ScrollBar.vertical.policy: isVerticalScollBarShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
-    MpvqcDependenciesView {
-        //: Title of a tab in the about dialog
-        property string title: qsTranslate("AboutDialog", "Dependencies")
+        contentWidth: isVerticalScollBarShown ? root.contentWidth - root.scrollBarWidth : root.contentWidth
 
-        width: root.width
-        mpvqcApplication: root.mpvqcApplication
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.rightMargin: root.workaroundRtlIssueRightMargin
+
+            MpvqcAboutView {
+                Layout.fillWidth: true
+            }
+
+            MpvqcCreditsView {
+                Layout.fillWidth: true
+            }
+
+            MpvqcLibraryView {
+                Layout.fillWidth: true
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
     }
 }

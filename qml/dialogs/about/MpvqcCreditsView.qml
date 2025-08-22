@@ -20,91 +20,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
-import QtQuick.Layouts
 
 import "../../models"
 import "../../shared"
 
-ScrollView {
-    id: _root
+Column {
+    id: root
 
-    width: parent.width
-    contentWidth: parent.width
+    MpvqcHeader {
+        text: qsTranslate("AboutDialog", "Made by")
+        width: root.width
+    }
 
-    Column {
-        id: _container
-
+    Repeater {
+        model: MpvqcCreditsModel {}
         width: parent.width
 
-        MpvqcHeader {
-            //: Header for the section about people that contributed source code to the project
-            text: qsTranslate("AboutDialog", "Development")
-            width: _container.width
-        }
+        MpvqcMention {
+            required property string name
+            required property string contribution
 
-        Repeater {
-            model: MpvqcDeveloperModel {}
+            leftContent: name
+            rightContent: contribution
             width: parent.width
-
-            Label {
-                required property string name
-
-                text: name
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
         }
+    }
 
-        MpvqcHeader {
-            //: Header for the section about people that contributed images, icons or other artwork to the project
-            text: qsTranslate("AboutDialog", "Artwork")
-            width: _container.width
-        }
+    Item {
+        height: 10
+        width: root.width
+    }
 
-        Repeater {
-            model: MpvqcArtworkModel {}
+    Repeater {
+        model: MpvqcLanguageModel {}
+        width: parent.width
+
+        MpvqcMention {
+            required property string translator
+            required property string language
+
+            leftContent: translator
+            rightContent: language
             width: parent.width
-
-            Label {
-                required property string name
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: name
-            }
-        }
-
-        MpvqcHeader {
-            //: Header for the section about people that contributed images, icons or other artwork to the project
-            text: qsTranslate("AboutDialog", "Translation")
-            width: _container.width
-        }
-
-        Repeater {
-            model: MpvqcLanguageModel {}
-            width: parent.width
-
-            RowLayout {
-                id: _delegate
-
-                visible: translator
-                spacing: 10
-
-                required property string translator
-                required property string language
-
-                Label {
-                    text: _delegate.translator
-                    horizontalAlignment: Text.AlignRight
-                    Layout.preferredWidth: _root.width / 2
-                }
-
-                Label {
-                    text: qsTranslate("Languages", _delegate.language)
-                    font.italic: true
-                    horizontalAlignment: Text.AlignLeft
-                    Layout.preferredWidth: _root.width / 2
-                }
-            }
         }
     }
 }
