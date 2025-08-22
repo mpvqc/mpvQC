@@ -25,27 +25,13 @@ import QtQuick.Controls.Material
 ListView {
     id: root
 
-    required property var mpvqcApplication
-
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
-
-    readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
-    readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
+    required property var mpvqcTheme
+    required property string currentThemeIdentifier
 
     readonly property int itemSize: 52
     readonly property int borderSize: 5
 
-    property var initialThemeIdentifier: null
-
-    function reset(): void {
-        root.mpvqcSettings.themeIdentifier = initialThemeIdentifier;
-    }
-
-    Component.onCompleted: {
-        root.initialThemeIdentifier = root.currentThemeIdentifier;
-        root.selectInitialIndex();
-    }
+    signal themeIdentifierPressed(themeIdentifier: string)
 
     function selectInitialIndex(): void {
         for (const [index, item] of model.entries()) {
@@ -104,7 +90,7 @@ ListView {
         onPressed: {
             pressAnimation.restart();
             root.currentIndex = index;
-            root.mpvqcSettings.themeIdentifier = name;
+            root.themeIdentifierPressed(name);
         }
 
         SequentialAnimation {
@@ -146,5 +132,9 @@ ListView {
                 easing.type: Easing.InOutCubic
             }
         }
+    }
+
+    Component.onCompleted: {
+        root.selectInitialIndex();
     }
 }

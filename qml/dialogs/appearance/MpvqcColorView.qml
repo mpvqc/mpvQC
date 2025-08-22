@@ -25,32 +25,19 @@ import QtQuick.Controls.Material
 GridView {
     id: root
 
-    required property var mpvqcApplication
-
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
-
-    readonly property string currentThemeIdentifier: mpvqcSettings.themeIdentifier
-    readonly property int currentThemeColorOption: mpvqcSettings.themeColorOption
+    required property var mpvqcTheme
+    required property int currentThemeColorOption
 
     readonly property int defaultHighlightMoveDuration: 150
     readonly property int itemSize: 52
     readonly property int itemPadding: 8
     readonly property int borderSize: 5
 
-    property var initialThemeColorOption: null
-
-    function reset(): void {
-        root.mpvqcSettings.themeColorOption = initialThemeColorOption;
-    }
-
-    Component.onCompleted: {
-        root.initialThemeColorOption = root.mpvqcSettings.themeColorOption;
-    }
+    signal colorOptionPressed(option: int)
 
     onModelChanged: {
         highlightMoveDuration = 0;
-        currentIndex = mpvqcSettings.themeColorOption;
+        currentIndex = root.currentThemeColorOption;
         highlightMoveDuration = defaultHighlightMoveDuration;
     }
 
@@ -103,7 +90,7 @@ GridView {
         onPressed: {
             pressAnimation.restart();
             root.currentIndex = index;
-            root.mpvqcSettings.themeColorOption = index;
+            root.colorOptionPressed(index);
         }
 
         SequentialAnimation {

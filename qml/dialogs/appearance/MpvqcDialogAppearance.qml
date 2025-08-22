@@ -25,6 +25,38 @@ import "../../shared"
 MpvqcDialog {
     id: root
 
+    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
+
+    readonly property var _: QtObject {
+        id: _impl
+
+        property var initialThemeIdentifier: null
+        property var initialThemeColorOption: null
+
+        function init(): void {
+            initialThemeIdentifier = root.mpvqcSettings.themeIdentifier;
+            initialThemeColorOption = root.mpvqcSettings.themeColorOption;
+        }
+
+        function applyTheme(themeIdentifier: string): void {
+            root.mpvqcSettings.themeIdentifier = themeIdentifier;
+        }
+
+        function applyColorOption(themeColorOption: int): void {
+            root.mpvqcSettings.themeColorOption = themeColorOption;
+        }
+
+        function reset(): void {
+            root.mpvqcSettings.themeIdentifier = initialThemeIdentifier;
+            root.mpvqcSettings.themeColorOption = initialThemeColorOption;
+        }
+    }
+
+    onRejected: {
+        _impl.reset();
+    }
+
     ScrollView {
         property string title: qsTranslate("AppearanceDialog", "Appearance")
 
@@ -41,8 +73,14 @@ MpvqcDialog {
             MpvqcThemeView {
                 id: _themeView
 
-                mpvqcApplication: root.mpvqcApplication
                 width: parent.width
+
+                mpvqcTheme: root.mpvqcTheme
+                currentThemeIdentifier: root.mpvqcSettings.themeIdentifier
+
+                onThemeIdentifierPressed: themeIdentifier => {
+                    _impl.applyTheme(themeIdentifier);
+                }
 
                 // workaround padding issue in rtl
                 Binding on x {
@@ -59,14 +97,19 @@ MpvqcDialog {
             MpvqcColorView {
                 id: _colorView
 
-                mpvqcApplication: root.mpvqcApplication
                 width: parent.width
+
+                mpvqcTheme: root.mpvqcTheme
+                currentThemeColorOption: root.mpvqcSettings.themeColorOption
+
+                onColorOptionPressed: colorOption => {
+                    _impl.applyColorOption(colorOption);
+                }
             }
         }
     }
 
-    onRejected: {
-        _themeView.reset();
-        _colorView.reset();
+    Component.onCompleted: {
+        _impl.init();
     }
 }
