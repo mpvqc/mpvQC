@@ -87,49 +87,44 @@ GridView {
             radius: Material.LargeScale
         }
 
-        onPressed: {
-            pressAnimation.restart();
-            root.currentIndex = index;
-            root.colorOptionPressed(index);
-        }
-
-        SequentialAnimation {
-            id: pressAnimation
-
-            PropertyAnimation {
-                target: _delegate
-                property: "scale"
-                to: 1.1
+        Behavior on scale {
+            NumberAnimation {
                 duration: 125
                 easing.type: Easing.InOutQuad
             }
+        }
 
-            PropertyAnimation {
-                target: _delegate
-                property: "scale"
-                to: 1.0
-                duration: 125
-                easing.type: Easing.InOutQuad
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                _delegate.scale = 1.1;
+                root.currentIndex = _delegate.index;
+                root.colorOptionPressed(_delegate.index);
+            }
+            onReleased: {
+                _delegate.scale = 1.0;
+            }
+            onCanceled: {
+                _delegate.scale = 1.0;
             }
         }
     }
 
     populate: Transition {
-        SequentialAnimation {
+        ParallelAnimation {
             PropertyAnimation {
                 property: "opacity"
                 from: 0
                 to: 1
-                duration: 150
-                easing.type: Easing.InOutQuad
+                duration: 250
+                easing.type: Easing.OutCubic
             }
-
             PropertyAnimation {
                 property: "scale"
-                from: 0.95
+                from: 0.85
                 to: 1.0
-                duration: 150
-                easing.type: Easing.InOutCubic
+                duration: 250
+                easing.type: Easing.OutBack
             }
         }
     }
