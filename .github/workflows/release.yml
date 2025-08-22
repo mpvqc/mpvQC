@@ -105,7 +105,7 @@ jobs:
 
           #
           echo "::group::Set Dependency Versions"
-          DEPENDENCY_MODEL_PATH="qml/models/MpvqcLibraryModel.qml"
+          DEPENDENCY_MODEL_PATH="qml/dialogs/about/MpvqcLibraryModel.qml"
           execute just insert-dependency-versions "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
           echo "::endgroup::"

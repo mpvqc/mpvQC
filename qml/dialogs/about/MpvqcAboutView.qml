@@ -23,15 +23,14 @@ import QtQuick.Controls.Material
 import "../../shared"
 
 Column {
-    width: parent.width
     topPadding: 20
     spacing: 8
 
     Image {
         anchors.horizontalCenter: parent.horizontalCenter
         source: "qrc:/data/icon.svg"
-        sourceSize.width: 200
-        sourceSize.height: 200
+        sourceSize.width: 160
+        sourceSize.height: 160
         asynchronous: true
     }
 

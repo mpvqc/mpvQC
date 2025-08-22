@@ -21,6 +21,15 @@ import QtQuick
 
 ListModel {
     ListElement {
+        name: "Elias Müller"
+        contribution: "Development"
+    }
+    ListElement {
+        name: "Frechdachs"
+        contribution: "Development"
+    }
+    ListElement {
         name: "maleunam"
+        contribution: "Artwork"
     }
 }

@@ -5,8 +5,8 @@ Copyright (C) 2022 mpvQC developers
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either dependencyVersion 3 of the License, or
-(at your option) any later dependencyVersion.
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,25 +24,16 @@ import QtQuick.Layouts
 RowLayout {
     id: root
 
-    readonly property bool displayVersion: dependencyVersion !== ""
-    readonly property var columnOneWidth: displayVersion ? (root.width / 3) : (root.width / 2)
-    readonly property var columnTwoWidth: root.width / 7
-    readonly property var columnThreeWidth: displayVersion ? (root.width / 3) : (root.width / 2)
-
-    property string dependencyName
+    required property string dependencyName
     property string dependencyVersion: ""
     property string dependencyLicence: ""
     property string dependencyUrl: ""
 
-    width: parent.width
-    spacing: 24
-
-    Label {
-        text: `<a href="${root.dependencyUrl}">${root.dependencyName}</a>`
-
+    property Item leftItem: Label {
+        text: `<a href="${root.dependencyUrl}">${root.dependencyName}</a> ${root.dependencyVersion}`
         elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
         horizontalAlignment: Text.AlignRight
-        Layout.preferredWidth: root.columnOneWidth
+        Layout.preferredWidth: root.width / 2
 
         onLinkActivated: link => {
             Qt.openUrlExternally(link);
@@ -63,36 +54,13 @@ RowLayout {
         }
     }
 
-    Label {
-        id: _versionLabel
-
-        text: root.dependencyVersion
-        visible: text
-        elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
-        horizontalAlignment: Text.AlignLeft
-        Layout.preferredWidth: root.columnTwoWidth
-
-        MouseArea {
-            id: _mouseArea
-
-            enabled: _versionLabel.truncated
-            hoverEnabled: true
-            acceptedButtons: Qt.NoButton
-            anchors.fill: _versionLabel
-        }
-
-        ToolTip {
-            y: -_versionLabel.height - 15
-            delay: 500
-            visible: _mouseArea.containsMouse
-            text: root.dependencyVersion
-        }
-    }
-
-    Label {
+    property Item rightItem: Label {
         text: root.dependencyLicence
-        elide: LayoutMirroring.enabled ? Text.ElideLeft : Text.ElideRight
+        font.italic: true
         horizontalAlignment: Text.AlignLeft
-        Layout.preferredWidth: root.columnThreeWidth
+        Layout.preferredWidth: root.width / 2
     }
+
+    children: [leftItem, rightItem]
+    spacing: 10
 }
