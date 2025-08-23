@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QByteArray
+from PySide6.QtCore import Property, QByteArray, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
@@ -30,6 +30,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcExportTemplateModelPyObject(QStandardItemModel):
     _app_paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+
+    countChanged = Signal(int)
+
+    @Property(int, notify=countChanged)
+    def count(self) -> int:
+        return self.rowCount()
 
     def __init__(self):
         super().__init__()
