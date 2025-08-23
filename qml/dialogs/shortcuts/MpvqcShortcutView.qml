@@ -94,6 +94,8 @@ ColumnLayout {
 
                 text: section
                 width: _listView.itemWidth
+                font.pointSize: 14
+                horizontalAlignment: Text.AlignHCenter
             }
         }
 

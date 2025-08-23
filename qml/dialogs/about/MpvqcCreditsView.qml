@@ -30,6 +30,7 @@ Column {
     MpvqcHeader {
         text: qsTranslate("AboutDialog", "Made by")
         width: root.width
+        horizontalAlignment: Text.AlignHCenter
     }
 
     Repeater {

@@ -37,6 +37,7 @@ Column {
     MpvqcHeader {
         text: Qt.application.name
         anchors.horizontalCenter: parent.horizontalCenter
+        font.pointSize: 14
     }
 
     Label {
