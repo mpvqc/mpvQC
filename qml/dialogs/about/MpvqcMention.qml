@@ -25,16 +25,14 @@ RowLayout {
     id: root
 
     property string leftContent
-    property Item leftItem: Label
-    {
+    property Item leftItem: Label {
         text: root.leftContent
         horizontalAlignment: Text.AlignRight
         Layout.preferredWidth: root.width / 2
     }
 
     property string rightContent
-    property Item rightItem: Label
-    {
+    property Item rightItem: Label {
         text: root.rightContent
         font.italic: true
         horizontalAlignment: Text.AlignLeft
