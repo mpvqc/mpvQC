@@ -70,6 +70,8 @@ ColumnLayout {
         Layout.topMargin: 30
         Layout.bottomMargin: 10
         Layout.fillWidth: true
+        
+        horizontalAlignment: Text.AlignHCenter
     }
 
     MpvqcSwitchRow {

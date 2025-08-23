@@ -30,6 +30,7 @@ Column {
     MpvqcHeader {
         text: qsTranslate("AboutDialog", "Powered by")
         width: root.width
+        horizontalAlignment: Text.AlignHCenter
     }
 
     MpvqcMentionDependency {

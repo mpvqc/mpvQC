@@ -23,8 +23,7 @@ import QtQuick.Controls.Material
 Label {
 
     font.weight: Font.DemiBold
-    font.pointSize: 14
-    horizontalAlignment: Text.AlignHCenter
+    horizontalAlignment: Text.AlignLeft
     topPadding: 15
     bottomPadding: 10
 }
