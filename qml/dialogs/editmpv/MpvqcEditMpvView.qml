@@ -55,9 +55,6 @@ ColumnLayout {
         Layout.fillWidth: true
         horizontalAlignment: Text.AlignLeft
 
-        font.pointSize: 11
-        font.weight: Font.DemiBold
-
         text: `${text1} <a href="${url}">${text2}</a>.`
 
         onLinkActivated: link => {
@@ -83,7 +80,7 @@ ColumnLayout {
         color: root.mpvqcTheme.control
 
         Layout.topMargin: 20
-        Layout.preferredHeight: 2
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
     }
 
@@ -111,7 +108,7 @@ ColumnLayout {
     Rectangle {
         color: root.mpvqcTheme.control
 
-        Layout.preferredHeight: 2
+        Layout.preferredHeight: 1
         Layout.fillWidth: true
     }
 }

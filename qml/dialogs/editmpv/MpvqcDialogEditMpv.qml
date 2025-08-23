@@ -27,14 +27,14 @@ MpvqcDialog {
 
     property alias editView: _editView
 
+    title: qsTranslate("MpvConfEditDialog", "Edit mpv.conf")
+
     contentWidth: Math.min(1080, mpvqcApplication.width * 0.75)
     contentHeight: Math.min(1080, mpvqcApplication.height * 0.75)
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
-    MpvqcEditMpvView {
+    contentItem: MpvqcEditMpvView {
         id: _editView
-
-        property string title: qsTranslate("MpvConfEditDialog", "Edit mpv.conf")
 
         width: root.contentWidth
         mpvqcApplication: root.mpvqcApplication

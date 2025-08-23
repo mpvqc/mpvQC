@@ -53,13 +53,13 @@ MpvqcDialog {
         }
     }
 
+    title: qsTranslate("AppearanceDialog", "Appearance")
+
     onRejected: {
         _impl.reset();
     }
 
     ScrollView {
-        property string title: qsTranslate("AppearanceDialog", "Appearance")
-
         width: parent.width
 
         Column {

@@ -28,11 +28,6 @@ Dialog {
 
     required property var mpvqcApplication
 
-    property alias bar: _bar
-    property alias stack: _stack
-
-    default property alias content: _stack.children
-
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     anchors.centerIn: parent
     parent: mpvqcApplication.contentItem
@@ -44,31 +39,4 @@ Dialog {
     closePolicy: Popup.CloseOnEscape
     standardButtons: Dialog.Ok
 
-    contentItem: ColumnLayout {
-        id: _layout
-
-        TabBar {
-            id: _bar
-            contentWidth: _layout.width
-
-            Repeater {
-                model: root.content.length
-
-                delegate: TabButton {
-                    required property int index
-
-                    text: root.content[index].title
-                }
-            }
-        }
-
-        StackLayout {
-            id: _stack
-            currentIndex: _bar.currentIndex
-        }
-    }
-
-    onClosed: {
-        root.bar.currentIndex = 0;
-    }
 }

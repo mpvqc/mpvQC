@@ -24,12 +24,11 @@ import "../../shared"
 MpvqcDialog {
     id: root
 
+    title: qsTranslate("CommentTypesDialog", "Comment Types")
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
     MpvqcCommentTypesView {
         id: _view
-
-        property string title: qsTranslate("CommentTypesDialog", "Comment Types")
 
         mpvqcApplication: root.mpvqcApplication
         width: parent.width
