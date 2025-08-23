@@ -21,7 +21,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls.Material
-import QtQuick.Layouts
 
 Dialog {
     id: root
@@ -54,5 +53,4 @@ Dialog {
         value: null
         restoreMode: Binding.RestoreNone
     }
-
 }
