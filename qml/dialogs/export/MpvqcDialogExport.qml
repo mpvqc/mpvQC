@@ -22,10 +22,10 @@ import "../../shared"
 MpvqcDialog {
     id: root
 
+    title: qsTranslate("ExportSettingsDialog", "Export Settings")
+
     MpvqcExportView {
         id: _exportView
-
-        property string title: qsTranslate("ExportSettingsDialog", "Export Settings")
 
         width: root.width
         mpvqcApplication: root.mpvqcApplication

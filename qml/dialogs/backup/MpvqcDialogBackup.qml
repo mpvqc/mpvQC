@@ -22,10 +22,10 @@ import "../../shared"
 MpvqcDialog {
     id: root
 
+    title: qsTranslate("BackupDialog", "Backup Settings")
+
     MpvqcBackupView {
         id: _backupView
-
-        property string title: qsTranslate("BackupDialog", "Backup Settings")
 
         width: root.width
         mpvqcApplication: root.mpvqcApplication

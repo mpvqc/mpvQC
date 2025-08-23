@@ -22,12 +22,10 @@ import QtQuick
 import "../../shared"
 
 MpvqcDialog {
-    id: root
+    title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
 
     contentWidth: 500
     contentHeight: Math.min(1080, mpvqcApplication.height * 0.75)
 
-    MpvqcShortcutView {
-        property string title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
-    }
+    contentItem: MpvqcShortcutView {}
 }

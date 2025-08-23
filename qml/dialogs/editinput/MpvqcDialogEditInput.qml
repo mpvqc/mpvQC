@@ -27,14 +27,14 @@ MpvqcDialog {
 
     property alias editView: _editView
 
+    title: qsTranslate("InputConfEditDialog", "Edit input.conf")
+
     contentWidth: Math.min(1080, mpvqcApplication.width * 0.75)
     contentHeight: Math.min(1080, mpvqcApplication.height * 0.75)
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
-    MpvqcEditInputView {
+    contentItem: MpvqcEditInputView {
         id: _editView
-
-        property string title: qsTranslate("InputConfEditDialog", "Edit input.conf")
 
         width: root.contentWidth
         mpvqcApplication: root.mpvqcApplication
