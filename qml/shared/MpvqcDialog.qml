@@ -39,4 +39,20 @@ Dialog {
     closePolicy: Popup.CloseOnEscape
     standardButtons: Dialog.Ok
 
+    Binding {
+        when: Qt.platform.os === "windows"
+        target: root
+        property: "enter"
+        value: null
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: Qt.platform.os === "windows"
+        target: root
+        property: "exit"
+        value: null
+        restoreMode: Binding.RestoreNone
+    }
+
 }
