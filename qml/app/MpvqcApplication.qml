@@ -23,7 +23,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../settings"
-import "../header2"
+import "../header"
 
 ApplicationWindow {
     id: root
