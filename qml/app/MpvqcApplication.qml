@@ -22,25 +22,11 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../settings"
 import "../header"
+import "../settings"
 
 ApplicationWindow {
     id: root
-
-    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator { mpvqcApplication: root }
-    readonly property var mpvqcSettings: MpvqcSettings { mpvqcApplication: root }
-    readonly property var mpvqcWindowVisibilityHandler: MpvqcWindowVisibilityHandler { mpvqcApplication: root }
-
-    readonly property var mpvqcManager: MpvqcManager {
-        mpvqcApplication: root
-        commentCount: _content.commentCount
-    }
-
-    readonly property var mpvqcTheme: MpvqcTheme {
-        themeIdentifier: root.mpvqcSettings.themeIdentifier
-        themeColorOption: root.mpvqcSettings.themeColorOption
-    }
 
     readonly property var mpvqcApplicationPathsPyObject: MpvqcApplicationPathsPyObject {}
     readonly property var mpvqcCommentTypeValidatorPyObject: MpvqcCommentTypeValidatorPyObject {}
@@ -52,25 +38,27 @@ ApplicationWindow {
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
-    readonly property bool maximized: mpvqcWindowVisibilityHandler.maximized
-    readonly property bool fullscreen: mpvqcWindowVisibilityHandler.fullscreen
+    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator {
+        mpvqcApplication: root
+    }
+
+    readonly property var mpvqcSettings: MpvqcSettings {
+        mpvqcApplication: root
+    }
+
+    readonly property var mpvqcManager: MpvqcManager {
+        mpvqcApplication: root
+        commentCount: _content.commentCount
+    }
+
+    readonly property var mpvqcTheme: MpvqcTheme {
+        themeIdentifier: root.mpvqcSettings.themeIdentifier
+        themeColorOption: root.mpvqcSettings.themeColorOption
+    }
+
+    readonly property bool maximized: _windowVisibilityHandler.maximized
+    readonly property bool fullscreen: _windowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
-
-    function toggleMaximized(): void {
-        mpvqcWindowVisibilityHandler.toggleMaximized();
-    }
-
-    function toggleFullScreen(): void {
-        mpvqcWindowVisibilityHandler.toggleFullScreen();
-    }
-
-    function enableFullScreen(): void {
-        mpvqcWindowVisibilityHandler.enableFullScreen();
-    }
-
-    function disableFullScreen(): void {
-        mpvqcWindowVisibilityHandler.disableFullScreen();
-    }
 
     width: 1280
     height: 720
@@ -105,6 +93,8 @@ ApplicationWindow {
         id: _content
 
         mpvqcApplication: root
+        headerController: _headerController
+
         focus: true
         anchors.fill: parent
         anchors.margins: root.windowBorder
@@ -123,36 +113,13 @@ ApplicationWindow {
 
         onDisableFullScreenRequested: {
             if (root.fullscreen) {
-                root.disableFullScreen();
+                _windowVisibilityHandler.disableFullScreen();
             }
         }
 
         onToggleFullScreenRequested: {
-            root.toggleFullScreen();
+            _windowVisibilityHandler.toggleFullScreen();
         }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: undefined
-        propagateComposedEvents: true
-
-        onPressed: event => {
-            // *********************************************************
-            // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-            event.accepted = !!root.nativePopupOpen;
-            // *********************************************************
-
-            // event.accepted = false;
-            _content.focusCommentTable();
-        }
-    }
-
-    MpvqcQuitHandler {
-        id: closeHandler
-
-        mpvqcApplication: root
-        canClose: root.mpvqcManager.saved
     }
 
     MpvqcAppHeaderController {
@@ -183,12 +150,41 @@ ApplicationWindow {
         }
 
         onToggleMaximizeAppRequested: {
-            root.toggleMaximized();
+            _windowVisibilityHandler.toggleMaximized();
         }
 
         onCloseAppRequested: {
             root.close();
         }
+    }
+
+    MpvqcWindowVisibilityHandler {
+        id: _windowVisibilityHandler
+
+        mpvqcApplication: root
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: undefined
+        propagateComposedEvents: true
+
+        onPressed: event => {
+            // *********************************************************
+            // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+            event.accepted = !!root.nativePopupOpen;
+            // *********************************************************
+
+            // event.accepted = false;
+            _content.focusCommentTable();
+        }
+    }
+
+    MpvqcQuitHandler {
+        id: closeHandler
+
+        mpvqcApplication: root
+        canClose: root.mpvqcManager.saved
     }
 
     Binding {
