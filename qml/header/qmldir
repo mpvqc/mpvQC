@@ -1,3 +1,4 @@
 module header
 
-MpvqcHeader MpvqcHeader.qml
+MpvqcAppHeaderController MpvqcAppHeaderController.qml
+MpvqcAppHeaderView MpvqcAppHeaderView.qml
