@@ -4,41 +4,6 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>About</source>
-        <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation>Acerca</translation>
-    </message>
-    <message>
-        <source>Credits</source>
-        <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation>Créditos</translation>
-    </message>
-    <message>
-        <source>Development</source>
-        <extracomment>Header for the section about people that contributed source code to the project</extracomment>
-        <translation>Desenvolvimento</translation>
-    </message>
-    <message>
-        <source>Artwork</source>
-        <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translation>Design Gráfico</translation>
-    </message>
-    <message>
-        <source>Translation</source>
-        <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translation>Tradução</translation>
-    </message>
-    <message>
-        <source>Libraries</source>
-        <extracomment>Header for the section about code dependencies of the project</extracomment>
-        <translation>Bibliotecas</translation>
-    </message>
-    <message>
-        <source>Dependencies</source>
-        <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation>Dependências</translation>
-    </message>
-    <message>
         <source>Copyright © mpvQC Developers</source>
         <extracomment>This text is part of the software license description</extracomment>
         <translation>Copyright © Desenvolvedores do mpvQC</translation>
@@ -59,9 +24,12 @@
         <translation>Consultar a %1 para mais detalhes.</translation>
     </message>
     <message>
-        <source>Other</source>
-        <extracomment>Header for the section about other dependencies like fonts and icons</extracomment>
-        <translation>Outras</translation>
+        <source>Made by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powered by</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -260,11 +228,6 @@
         <source>Open Video</source>
         <translation>Abrir Vídeo</translation>
     </message>
-    <message>
-        <source>Export QC Document Using %1 Template</source>
-        <extracomment>%1 will be the name of the template used to export</extracomment>
-        <translation>Exportar Documento de CQ através do modelo %1</translation>
-    </message>
 </context>
 <context>
     <name>ImportSettingsDialog</name>
@@ -345,7 +308,7 @@
         <source>Spanish</source>
         <translation>Espanhol</translation>
     </message>
-	<message>
+    <message>
         <source>Portuguese</source>
         <translation>Português (Portugal)</translation>
     </message>
