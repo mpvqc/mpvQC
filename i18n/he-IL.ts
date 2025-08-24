@@ -4,43 +4,6 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>About</source>
-        <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation>אודות</translation>
-    </message>
-    <message>
-        <source>Credits</source>
-        <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation>קרדיטים</translation>
-    </message>
-    <message>
-        <source>Development</source>
-        <extracomment>Header for the section about people that contributed source code to the project</extracomment>
-        <translation>פיתוח</translation>
-    </message>
-    <message>
-        <source>Artwork</source>
-        <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translatorcomment>Currently, this refers to the mpvQC logo. Instead of a generic word such as &quot;איור&quot; we refer to it explicitly as the logo</translatorcomment>
-        <translation>עיצוב לוגו</translation>
-    </message>
-    <message>
-        <source>Translation</source>
-        <extracomment>Header for the section about people that contributed images, icons or other artwork to the project</extracomment>
-        <translation>תרגום</translation>
-    </message>
-    <message>
-        <source>Libraries</source>
-        <extracomment>Header for the section about code dependencies of the project</extracomment>
-        <translatorcomment>Deviates from english, emphasizing &quot;Third-party&quot;</translatorcomment>
-        <translation>ספריות צד-שלישי</translation>
-    </message>
-    <message>
-        <source>Dependencies</source>
-        <extracomment>Title of a tab in the about dialog</extracomment>
-        <translation>תלויות</translation>
-    </message>
-    <message>
         <source>Copyright © mpvQC Developers</source>
         <extracomment>This text is part of the software license description</extracomment>
         <translation>כל הזכויות שמורות © מפתחי mpvQC</translation>
@@ -62,9 +25,12 @@
         <translation>לפרטים נוספים, ראו את %1.</translation>
     </message>
     <message>
-        <source>Other</source>
-        <extracomment>Header for the section about other dependencies like fonts and icons</extracomment>
-        <translation>שונות</translation>
+        <source>Made by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powered by</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -268,11 +234,6 @@
         <source>Open Video</source>
         <translation>פתח וידאו</translation>
     </message>
-    <message>
-        <source>Export QC Document Using %1 Template</source>
-        <extracomment>%1 will be the name of the template used to export</extracomment>
-        <translation>ייצא כתוביות בעזרת התבנית %1</translation>
-    </message>
 </context>
 <context>
     <name>ImportSettingsDialog</name>
@@ -352,6 +313,10 @@
     <message>
         <source>Spanish</source>
         <translation>ספרדית</translation>
+    </message>
+    <message>
+        <source>Portuguese</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
