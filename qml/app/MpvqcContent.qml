@@ -457,6 +457,7 @@ Page {
             function onClosed(): void {
                 _dialogLoader.active = false;
                 _dialogLoader.source = "";
+                root.focusCommentTable();
                 console.log("Dialogs cleaned");
             }
         }
@@ -542,6 +543,7 @@ Page {
                 _fileDialogLoader.active = false;
                 _fileDialogLoader.source = "";
                 console.log("File Dialog cleaned");
+                root.focusCommentTable();
             }
         }
     }
@@ -594,6 +596,7 @@ Page {
                 _messageBoxLoader.active = false;
                 _messageBoxLoader.source = "";
                 console.log("Message boxes cleaned");
+                root.focusCommentTable();
             }
         }
     }
