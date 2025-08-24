@@ -25,11 +25,11 @@
     </message>
     <message>
         <source>Made by</source>
-        <translation type="unfinished"></translation>
+        <translation>Entwickelt von</translation>
     </message>
     <message>
         <source>Powered by</source>
-        <translation type="unfinished"></translation>
+        <translation>Basiert auf</translation>
     </message>
 </context>
 <context>
@@ -67,7 +67,7 @@
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation>Backupeinstellungen</translation>
+        <translation>Backup-Einstellungen</translation>
     </message>
 </context>
 <context>
@@ -100,7 +100,7 @@
     <message>
         <source>Show Keyboard Shortcuts</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation>Tastaturkürzel anzeigen</translation>
+        <translation>Tastenkürzel anzeigen</translation>
     </message>
 </context>
 <context>
@@ -161,7 +161,7 @@
     <name>ExportSettingsDialog</name>
     <message>
         <source>Export Settings</source>
-        <translation>Exporteinstellungen</translation>
+        <translation>Export-Einstellungen</translation>
     </message>
     <message>
         <source>Nickname</source>
@@ -218,7 +218,7 @@
     </message>
     <message>
         <source>Save QC Document As</source>
-        <translation>QC-Dokument speichern als</translation>
+        <translation>QC-Dokument speichern unter</translation>
     </message>
     <message>
         <source>Open Subtitle(s)</source>
@@ -233,7 +233,7 @@
     <name>ImportSettingsDialog</name>
     <message>
         <source>Import Settings</source>
-        <translation>Importeinstellungen</translation>
+        <translation>Import-Einstellungen</translation>
     </message>
     <message>
         <source>Open video if found</source>
@@ -310,7 +310,7 @@
     </message>
     <message>
         <source>Portuguese</source>
-        <translation type="unfinished"></translation>
+        <translation>Portugiesisch</translation>
     </message>
 </context>
 <context>
@@ -341,7 +341,7 @@
     </message>
     <message>
         <source>Open QC Document(s)...</source>
-        <translation>QC-Dokument(e) öffnen ...</translation>
+        <translation>QC-Dokument(e) öffnen …</translation>
     </message>
     <message>
         <source>Save QC Document</source>
@@ -349,7 +349,7 @@
     </message>
     <message>
         <source>Save QC Document As...</source>
-        <translation>QC-Dokument speichern als ...</translation>
+        <translation>QC-Dokument speichern unter …</translation>
     </message>
     <message>
         <source>Exit mpvQC</source>
@@ -357,7 +357,7 @@
     </message>
     <message>
         <source>Open Video...</source>
-        <translation>Videodatei öffnen ...</translation>
+        <translation>Videodatei öffnen …</translation>
     </message>
     <message>
         <source>Resize Video to Original Resolution</source>
@@ -365,7 +365,7 @@
     </message>
     <message>
         <source>Check for Updates...</source>
-        <translation>Auf Updates prüfen ...</translation>
+        <translation>Nach Updates suchen …</translation>
     </message>
     <message>
         <source>Default Title</source>
@@ -381,11 +381,11 @@
     </message>
     <message>
         <source>Edit mpv.conf...</source>
-        <translation>mpv.conf editieren ...</translation>
+        <translation>mpv.conf bearbeiten …</translation>
     </message>
     <message>
         <source>Edit input.conf...</source>
-        <translation>input.conf editieren ...</translation>
+        <translation>input.conf bearbeiten …</translation>
     </message>
     <message>
         <source>Default format</source>
@@ -409,31 +409,31 @@
     </message>
     <message>
         <source>Keyboard Shortcuts...</source>
-        <translation>Tastaturkürzel ...</translation>
+        <translation>Tastenkürzel …</translation>
     </message>
     <message>
         <source>About mpvQC...</source>
-        <translation>Über mpvQC ...</translation>
+        <translation>Über mpvQC …</translation>
     </message>
     <message>
         <source>Appearance...</source>
-        <translation>Erscheinungsbild ...</translation>
+        <translation>Erscheinungsbild …</translation>
     </message>
     <message>
         <source>Comment Type Settings...</source>
-        <translation>Kommentartyp-Einstellungen ...</translation>
+        <translation>Kommentartyp-Einstellungen …</translation>
     </message>
     <message>
         <source>Backup Settings...</source>
-        <translation>Backupeinstellungen ...</translation>
+        <translation>Backup-Einstellungen …</translation>
     </message>
     <message>
         <source>Export Settings...</source>
-        <translation>Exporteinstellungen ...</translation>
+        <translation>Export-Einstellungen …</translation>
     </message>
     <message>
         <source>Import Settings...</source>
-        <translation>Importeinstellungen ...</translation>
+        <translation>Import-Einstellungen …</translation>
     </message>
     <message>
         <source>%1 (unsaved)</source>
@@ -442,7 +442,7 @@
     </message>
     <message>
         <source>Open Subtitle(s)...</source>
-        <translation>Untertitel öffnen ...</translation>
+        <translation>Untertitel öffnen …</translation>
     </message>
     <message>
         <source>Export QC Document</source>
@@ -458,7 +458,7 @@
     </message>
     <message>
         <source>Extended Exports...</source>
-        <translation>Weitere Exporte ...</translation>
+        <translation>Weitere Exporte …</translation>
     </message>
     <message>
         <source>Video Above Comments</source>
@@ -523,15 +523,15 @@
     <message>
         <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
         <extracomment>%1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC&apos;s documentation about export templates</extracomment>
-        <translation>mpvQC ermöglicht die Anpassung von Exporten mithilfe der %1-Engine. Um zu beginnen, besuchen Sie %2.</translation>
+        <translation>mpvQC ermöglicht das Anpassen von Exporten mithilfe der %1-Engine. Um zu beginnen, besuchen Sie %2.</translation>
     </message>
     <message>
         <source>Checking for Updates...</source>
-        <translation>Auf Updates prüfen ...</translation>
+        <translation>Suche nach Updates …</translation>
     </message>
     <message>
         <source>Loading...</source>
-        <translation>Wird geladen ...</translation>
+        <translation>Wird geladen …</translation>
     </message>
 </context>
 <context>
@@ -553,7 +553,7 @@
     <name>ShortcutsDialog</name>
     <message>
         <source>Keyboard Shortcuts</source>
-        <translation>Tastaturkürzel</translation>
+        <translation>Tastenkürzel</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
