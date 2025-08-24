@@ -34,7 +34,7 @@ TestCase {
         MpvqcDialogExportDocument {
             property url savedUrlInTest
 
-            onSavePressed: fileUrl => {
+            onSavePressed: (_, fileUrl) => {
                 this.savedUrlInTest = fileUrl;
             }
         }

@@ -204,7 +204,7 @@ def test_save_unsaved_state_do_save(
 
     assert export_document_dialog.openCalled
 
-    export_document_dialog.savePressed.emit(type_mapper.map_path_to_url(RANDOM_FILE))
+    export_document_dialog.savePressed.emit(None, type_mapper.map_path_to_url(RANDOM_FILE))
 
     assert exporter_service_mock.save.called
     saved_path = exporter_service_mock.save.call_args[0][0]
