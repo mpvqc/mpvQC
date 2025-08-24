@@ -191,8 +191,14 @@ ApplicationWindow {
         }
     }
 
+    Binding {
+        target: Qt
+        property: "uiLanguage"
+        value: root.mpvqcSettings.language
+        restoreMode: Binding.RestoreNone
+    }
+
     Component.onCompleted: {
-        Qt.uiLanguage = root.mpvqcSettings.language;
         _content.focusCommentTable();
     }
 

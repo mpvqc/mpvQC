@@ -342,7 +342,6 @@ Page {
         }
 
         function onLanguageConfigured(updatedLanguageIdentifier: string): void {
-            Qt.uiLanguage = updatedLanguageIdentifier;
             root.mpvqcSettings.language = updatedLanguageIdentifier;
         }
 
@@ -444,7 +443,7 @@ Page {
         }
 
         onLoaded: item.open() // qmllint disable
-        
+
         onActiveChanged: {
             console.log("Dialog active changed", active);
         }
