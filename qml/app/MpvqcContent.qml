@@ -446,10 +446,6 @@ Page {
 
         onLoaded: item.open() // qmllint disable
 
-        onActiveChanged: {
-            console.log("Dialog active changed", active);
-        }
-
         Connections {
             enabled: _dialogLoader.item
             target: _dialogLoader.item
@@ -458,7 +454,6 @@ Page {
                 _dialogLoader.active = false;
                 _dialogLoader.source = "";
                 root.focusCommentTable();
-                console.log("Dialogs cleaned");
             }
         }
     }
@@ -505,10 +500,6 @@ Page {
 
         onLoaded: item.open() // qmllint disable
 
-        onActiveChanged: {
-            console.log("File Dialog active changed", active);
-        }
-
         Connections {
             enabled: _fileDialogLoader.item
             target: _fileDialogLoader.item
@@ -542,7 +533,6 @@ Page {
             onTriggered: {
                 _fileDialogLoader.active = false;
                 _fileDialogLoader.source = "";
-                console.log("File Dialog cleaned");
                 root.focusCommentTable();
             }
         }
@@ -584,10 +574,6 @@ Page {
 
         onLoaded: item.open() // qmllint disable
 
-        onActiveChanged: {
-            console.log("Message boxes active changed", active);
-        }
-
         Connections {
             enabled: _messageBoxLoader.item
             target: _messageBoxLoader.item
@@ -595,7 +581,6 @@ Page {
             function onClosed(): void {
                 _messageBoxLoader.active = false;
                 _messageBoxLoader.source = "";
-                console.log("Message boxes cleaned");
                 root.focusCommentTable();
             }
         }
