@@ -16,7 +16,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inject
-from PySide6.QtCore import QObject, QUrl, Signal, Slot
+from PySide6.QtCore import QObject, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import DocumentExportService, TypeMapperService
@@ -30,19 +30,17 @@ class MpvqcExtendedDocumentExporterPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
-    exportErrorOccurred = Signal(str, int or None)
-
     @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> QUrl:
         path = self._exporter.generate_file_path_proposal()
         return self._type_mapper.map_path_to_url(path)
 
-    @Slot(QUrl, QUrl)
-    def export(self, template_url: QUrl, file_url: QUrl):
+    @Slot(QUrl, QUrl, result=dict)
+    def export(self, template_url: QUrl, file_url: QUrl) -> dict:
         file = self._type_mapper.map_url_to_path(file_url)
         template = self._type_mapper.map_url_to_path(template_url)
 
-        error = self._exporter.export(file, template)
+        if error := self._exporter.export(file, template):
+            return {"errorMessage": error.message, "errorLine": error.line_nr}
 
-        if error:
-            self.exportErrorOccurred.emit(error.message, error.line_nr)
+        return {}

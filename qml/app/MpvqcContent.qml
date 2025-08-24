@@ -23,7 +23,6 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import "../footer"
-import "../header"
 import "../player"
 import "../table"
 
@@ -32,9 +31,10 @@ Page {
 
     required property var mpvqcApplication
 
+    readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
-    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
@@ -44,15 +44,6 @@ Page {
     signal appWindowSizeRequested(width: int, height: int)
     signal disableFullScreenRequested
     signal toggleFullScreenRequested
-
-    header: MpvqcHeader {
-        mpvqcApplication: root.mpvqcApplication
-        width: root.width
-
-        onResizeVideoTriggered: {
-            _impl.resizeVideoToOriginalResolution();
-        }
-    }
 
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
@@ -276,6 +267,333 @@ Page {
 
         onSplitViewTableSizeRequested: (width, height) => {
             _tableContainer.setPreferredSizes(width, height);
+        }
+    }
+
+    Connections {
+        target: root.header.controller // qmllint disable
+
+        function onResetAppStateRequested(): void {
+            root.mpvqcManager.reset();
+        }
+
+        function onOpenQcDocumentsRequested(): void {
+            _fileDialogLoader.openImportQcDocumentsDialog();
+        }
+
+        function onSaveQcDocumentsRequested(): void {
+            root.mpvqcManager.save();
+        }
+
+        function onSaveQcDocumentsAsRequested(): void {
+            root.mpvqcManager.saveAs();
+        }
+
+        function onExtendedExportRequested(name: string, path: url): void {
+            _fileDialogLoader.openExtendedDocumentExportDialog(path);
+        }
+
+        function onOpenVideoRequested(): void {
+            _fileDialogLoader.openImportVideoDialog();
+        }
+
+        function onOpenSubtitlesRequested(): void {
+            _fileDialogLoader.openImportSubtitlesDialog();
+        }
+
+        function onResizeVideoRequested(): void {
+            _impl.resizeVideoToOriginalResolution();
+        }
+
+        function onAppearanceDialogRequested(): void {
+            _dialogLoader.openAppearanceDialog();
+        }
+
+        function onCommentTypesDialogRequested(): void {
+            _dialogLoader.openCommentTypesDialog();
+        }
+
+        function onWindowTitleFormatConfigured(updatedValue): void {
+            root.mpvqcSettings.windowTitleFormat = updatedValue;
+        }
+
+        function onApplicationLayoutConfigured(updatedValue): void {
+            root.mpvqcSettings.layoutOrientation = updatedValue;
+        }
+
+        function onBackupSettingsDialogRequested(): void {
+            _dialogLoader.openBackupSettingsDialog();
+        }
+
+        function onExportSettingsDialogRequested(): void {
+            _dialogLoader.openExportSettingsDialog();
+        }
+
+        function onImportSettingsDialogRequested(): void {
+            _dialogLoader.openImportSettingsDialog();
+        }
+
+        function onEditMpvConfigDialogRequested(): void {
+            _dialogLoader.openEditMpvDialog();
+        }
+
+        function onEditInputConfigDialogRequested(): void {
+            _dialogLoader.openEditInputDialog();
+        }
+
+        function onLanguageConfigured(updatedLanguageIdentifier: string): void {
+            Qt.uiLanguage = updatedLanguageIdentifier;
+            root.mpvqcSettings.language = updatedLanguageIdentifier;
+        }
+
+        function onUpdateDialogRequested(): void {
+            _messageBoxLoader.openCheckForUpdateMessageBox();
+        }
+
+        function onKeyboardShortcutsDialogRequested(): void {
+            _dialogLoader.openShortcutsDialog();
+        }
+
+        function onExtendedExportDialogRequested(): void {
+            _messageBoxLoader.openExtendedExportsMessageBox();
+        }
+
+        function onAboutDialogRequested(): void {
+            _dialogLoader.openAboutDialog();
+        }
+    }
+
+    Loader {
+        id: _dialogLoader
+
+        readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcDialogAppearance.qml")
+        readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcDialogCommentTypes.qml")
+        readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/backup/MpvqcDialogBackup.qml")
+        readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcDialogExport.qml")
+        readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcDialogImport.qml")
+        readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/editinput/MpvqcDialogEditInput.qml")
+        readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/editmpv/MpvqcDialogEditMpv.qml")
+        readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcDialogShortcuts.qml")
+        readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcDialogAbout.qml")
+
+        asynchronous: true
+        active: false
+        visible: active
+
+        function openAppearanceDialog(): void {
+            setSource(appearanceDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openCommentTypesDialog(): void {
+            setSource(commentTypeDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openBackupSettingsDialog(): void {
+            setSource(backupSettingsDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openExportSettingsDialog(): void {
+            setSource(exportSettingsDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openImportSettingsDialog(): void {
+            setSource(importSettingsDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openEditMpvDialog(): void {
+            setSource(editMpvDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openEditInputDialog(): void {
+            setSource(editInputDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openShortcutsDialog(): void {
+            setSource(shortcutsDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openAboutDialog(): void {
+            setSource(aboutDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        onLoaded: item.open() // qmllint disable
+        
+        onActiveChanged: {
+            console.log("Dialog active changed", active);
+        }
+
+        Connections {
+            enabled: _dialogLoader.item
+            target: _dialogLoader.item
+
+            function onClosed(): void {
+                _dialogLoader.active = false;
+                _dialogLoader.source = "";
+                console.log("Dialogs cleaned");
+            }
+        }
+    }
+
+    Loader {
+        id: _fileDialogLoader
+
+        readonly property url importQcDocumentsDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportDocuments.qml")
+        readonly property url importVideoDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportVideo.qml")
+        readonly property url importSubtitlesDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportSubtitles.qml")
+        readonly property url exportQcDocumentDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogExportDocument.qml")
+
+        asynchronous: true
+        active: false
+        visible: active
+
+        function openImportQcDocumentsDialog(): void {
+            setSource(importQcDocumentsDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openExtendedDocumentExportDialog(exportTemplate: url): void {
+            setSource(exportQcDocumentDialog, {
+                exportTemplate: exportTemplate
+            });
+            active = true;
+        }
+
+        function openImportVideoDialog(): void {
+            setSource(importVideoDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openImportSubtitlesDialog(): void {
+            setSource(importSubtitlesDialog, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        onLoaded: item.open() // qmllint disable
+
+        onActiveChanged: {
+            console.log("File Dialog active changed", active);
+        }
+
+        Connections {
+            enabled: _fileDialogLoader.item
+            target: _fileDialogLoader.item
+            ignoreUnknownSignals: true
+
+            function onAccepted(): void {
+                _delayCleanupTimer.restart();
+            }
+
+            function onRejected(): void {
+                _delayCleanupTimer.restart();
+            }
+
+            function onSavePressed(exportTemplate: url, fileUrl: url): void {
+                const {
+                    errorLine,
+                    errorMessage
+                } = root.mpvqcExtendedDocumentExporterPyObject.export(exportTemplate, fileUrl);
+
+                if (errorMessage !== undefined) {
+                    _messageBoxLoader.openExtendedExportFailedMessageBox(errorMessage, errorLine);
+                }
+            }
+        }
+
+        Timer {
+            id: _delayCleanupTimer
+
+            interval: 250
+
+            onTriggered: {
+                _fileDialogLoader.active = false;
+                _fileDialogLoader.source = "";
+                console.log("File Dialog cleaned");
+            }
+        }
+    }
+
+    Loader {
+        id: _messageBoxLoader
+
+        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
+        readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExport.qml")
+        readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVersionCheck.qml")
+
+        asynchronous: true
+        active: false
+        visible: active
+
+        function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
+            setSource(messageBoxExtendedExportFailed, {
+                mpvqcApplication: root.mpvqcApplication,
+                errorMessage: message,
+                errorLine: lineNr
+            });
+            active = true;
+        }
+
+        function openCheckForUpdateMessageBox(): void {
+            setSource(messageBoxVersionCheck, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openExtendedExportsMessageBox(): void {
+            setSource(messageBoxExtendedExport, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        onLoaded: item.open() // qmllint disable
+
+        onActiveChanged: {
+            console.log("Message boxes active changed", active);
+        }
+
+        Connections {
+            enabled: _messageBoxLoader.item
+            target: _messageBoxLoader.item
+
+            function onClosed(): void {
+                _messageBoxLoader.active = false;
+                _messageBoxLoader.source = "";
+                console.log("Message boxes cleaned");
+            }
         }
     }
 

@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick.Dialogs
 
 FileDialog {
+    property url exportTemplate
+
     title: qsTranslate("FileInteractionDialogs", "Save QC Document As")
     fileMode: FileDialog.SaveFile
     defaultSuffix: "txt"
@@ -28,9 +30,9 @@ FileDialog {
         qsTranslate("FileInteractionDialogs", "All files") + " (*)",
     ]
 
-    signal savePressed(url fileUrl)
+    signal savePressed(template: url, fileUrl: url)
 
     onAccepted: {
-        savePressed(currentFile);
+        savePressed(exportTemplate, currentFile);
     }
 }

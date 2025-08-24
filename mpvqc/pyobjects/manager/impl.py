@@ -231,7 +231,7 @@ class MpvqcManagerPyObject(QObject):
         dialog = self.dialog_export_document_factory.createObject(None, properties)
         dialog.accepted.connect(dialog.deleteLater)
         dialog.rejected.connect(dialog.deleteLater)
-        dialog.savePressed.connect(lambda url: self._save(self._type_mapper.map_url_to_path(url)))
+        dialog.savePressed.connect(lambda _, url: self._save(self._type_mapper.map_url_to_path(url)))
         dialog.open()
 
     @Slot()
