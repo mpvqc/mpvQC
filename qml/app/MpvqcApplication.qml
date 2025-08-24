@@ -109,130 +109,8 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
-        readonly property var mpvqcAppHeaderController: MpvqcAppHeaderController {
-            mpvqcTheme: root.mpvqcTheme
-
-            isVisible: !root.fullscreen
-            isMaximized: root.maximized
-            isStateSaved: root.mpvqcManager.saved
-            isVideoLoaded: root.mpvqcMpvPlayerPropertiesPyObject.video_loaded
-            isDebugEnabled: root.mpvqcUtilityPyObject.getEnvironmentVariable("MPVQC_DEBUG")
-
-            applicationLayout: root.mpvqcSettings.layoutOrientation
-            windowTitleFormat: root.mpvqcSettings.windowTitleFormat
-
-            playerVideoName: root.mpvqcMpvPlayerPropertiesPyObject.filename
-            playerVideoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
-
-            extendedExportTemplatesModel: MpvqcExportTemplateModelPyObject {} // qmllint disable
-
-            onResetAppStateRequested: {
-                console.log("TODO: onResetAppStateRequested");
-            }
-
-            onOpenQcDocumentsRequested: {
-                console.log("TODO: onOpenQcDocumentsRequested");
-            }
-
-            onSaveQcDocumentsRequested: {
-                console.log("TODO: onSaveQcDocumentsRequested");
-            }
-
-            onSaveQcDocumentsAsRequested: {
-                console.log("TODO: onSaveQcDocumentsAsRequested");
-            }
-
-            onExtendedExportRequested: (name, path) => {
-                console.log("TODO: onExtendedExportRequested", name, path);
-            }
-
-            onOpenVideoRequested: {
-                console.log("TODO: onOpenVideoRequested");
-            }
-
-            onOpenSubtitlesRequested: {
-                console.log("TODO: onOpenSubtitlesRequested");
-            }
-
-            onResizeVideoRequested: {
-                console.log("TODO: onResizeVideoRequested");
-            }
-
-            onAppearanceDialogRequested: {
-                console.log("TODO: onAppearanceDialogRequested");
-            }
-
-            onCommentTypesDialogRequested: {
-                console.log("TODO: onCommentTypesDialogRequested");
-            }
-
-            onWindowTitleFormatConfigured: updatedValue => {
-                root.mpvqcSettings.windowTitleFormat = updatedValue;
-            }
-
-            onApplicationLayoutConfigured: updatedValue => {
-                root.mpvqcSettings.layoutOrientation = updatedValue;
-            }
-
-            onBackupSettingsDialogRequested: {
-                console.log("TODO: onBackupSettingsDialogRequested");
-            }
-
-            onExportSettingsDialogRequested: {
-                console.log("TODO: onExportSettingsDialogRequested");
-            }
-
-            onImportSettingsDialogRequested: {
-                console.log("TODO: onImportSettingsDialogRequested");
-            }
-
-            onEditMpvConfigDialogRequested: {
-                console.log("TODO: onEditMpvConfigDialogRequested");
-            }
-
-            onEditInputConfigDialogRequested: {
-                console.log("TODO: onEditInputConfigDialogRequested");
-            }
-
-            onLanguageConfigured: updatedLanguageIdentifier => {
-                root.mpvqcSettings.language = updatedLanguageIdentifier;
-            }
-
-            onUpdateDialogRequested: {
-                console.log("TODO: onUpdateDialogRequested");
-            }
-
-            onKeyboardShortcutsDialogRequested: {
-                console.log("TODO: onKeyboardShortcutsDialogRequested");
-            }
-
-            onExtendedExportDialogRequested: {
-                console.log("TODO: onExtendedExportDialogRequested");
-            }
-
-            onAboutDialogRequested: {
-                console.log("TODO: onAboutDialogRequested");
-            }
-
-            onWindowDragRequested: {
-                root.startSystemMove();
-            }
-
-            onMinimizeAppRequested: {
-                root.showMinimized();
-            }
-
-            onToggleMaximizeAppRequested: {
-                root.toggleMaximized();
-            }
-
-            onCloseAppRequested: {
-                root.close();
-            }
-        }
-
         header: MpvqcAppHeaderView {
-            controller: _content.mpvqcAppHeaderController
+            controller: _headerController
             width: root.width
         }
 
@@ -277,15 +155,44 @@ ApplicationWindow {
         canClose: root.mpvqcManager.saved
     }
 
-    Binding {
-        target: Qt
-        property: "uiLanguage"
-        value: root.mpvqcSettings.language
-        delayed: true
-        restoreMode: Binding.RestoreNone
+    MpvqcAppHeaderController {
+        id: _headerController
+
+        mpvqcTheme: root.mpvqcTheme
+
+        isVisible: !root.fullscreen
+        isMaximized: root.maximized
+        isStateSaved: root.mpvqcManager.saved
+        isVideoLoaded: root.mpvqcMpvPlayerPropertiesPyObject.video_loaded
+        isDebugEnabled: root.mpvqcUtilityPyObject.getEnvironmentVariable("MPVQC_DEBUG")
+
+        applicationLayout: root.mpvqcSettings.layoutOrientation
+        windowTitleFormat: root.mpvqcSettings.windowTitleFormat
+
+        playerVideoName: root.mpvqcMpvPlayerPropertiesPyObject.filename
+        playerVideoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
+
+        extendedExportTemplatesModel: MpvqcExportTemplateModelPyObject {} // qmllint disable
+
+        onWindowDragRequested: {
+            root.startSystemMove();
+        }
+
+        onMinimizeAppRequested: {
+            root.showMinimized();
+        }
+
+        onToggleMaximizeAppRequested: {
+            root.toggleMaximized();
+        }
+
+        onCloseAppRequested: {
+            root.close();
+        }
     }
 
     Component.onCompleted: {
+        Qt.uiLanguage = root.mpvqcSettings.language;
         _content.focusCommentTable();
     }
 
