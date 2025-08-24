@@ -88,10 +88,18 @@ FILE_PY_TEST_RESOURCES := DIRECTORY_PY_TESTS + '/' + NAME_FILE_GENERATED_RESOURC
     uv run pre-commit run --all-files
 
 # Initialize repository
-@init ARGS='--group dev':
+init ARGS='--group dev':
+    #!/usr/bin/env bash
     uv sync {{ ARGS }}
-    echo "Created by command: just init" > portable
-    echo "Runs application in portable mode by storing all files in the <git-repo>/appdata directory" >> portable
+
+    if [[ "{{ ARGS }}" == "--group dev" ]] then
+      echo "Created by command: just init" > portable
+      echo "Runs application in portable mode by storing all files in the <git-repo>/appdata directory" >> portable
+
+      mkdir -p appdata/export-templates
+      cp data/config/backup-template.jinja appdata/export-templates/export-working.jinja
+      echo '{{ '{{' }}' > appdata/export-templates/export-error.jinja
+    fi
 
 # Build full project into build/release
 [group('build')]
