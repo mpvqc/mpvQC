@@ -23,6 +23,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import "../footer"
+import "../header"
 import "../player"
 import "../table"
 
@@ -30,6 +31,7 @@ Page {
     id: root
 
     required property var mpvqcApplication
+    required property MpvqcAppHeaderController headerController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
@@ -271,7 +273,7 @@ Page {
     }
 
     Connections {
-        target: root.header.controller // qmllint disable
+        target: root.headerController
 
         function onResetAppStateRequested(): void {
             root.mpvqcManager.reset();
