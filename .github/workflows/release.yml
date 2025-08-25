@@ -12,8 +12,8 @@ defaults:
     shell: bash
 
 env:
-  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20250725/mpv-dev-x86_64-20250725-git-b47fd28.7z
-  LIBMPV_SHA1: 33102fba0394628145b5b587c09817386d8d5459
+  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20250825/mpv-dev-x86_64-20250825-git-9f153e2.7z
+  LIBMPV_SHA256: ed5421e6d92e571e80e6c0787b2f0d9bcfdc3c454b73a5977f2a118cbb7e9aea
 
 jobs:
   matrix-build:
@@ -21,7 +21,7 @@ jobs:
       matrix:
         os:
           - windows-latest
-          - ubuntu-24.04
+          - ubuntu-latest
     runs-on: ${{ matrix.os }}
     name: Build (${{ matrix.os }})
     outputs:
@@ -58,9 +58,9 @@ jobs:
             ARTIFACT="$(basename "$LIBMPV_URL")"
 
             execute curl -L -O "$LIBMPV_URL"
-            echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
-            echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
-            execute sha1sum --check "$ARTIFACT.sha1"
+            echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
+            echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
+            execute sha256sum --check "$ARTIFACT.sha256"
             execute 7z x "$ARTIFACT"
           else
             echo "$RUNNER_OS not supported"
@@ -157,7 +157,6 @@ jobs:
     name: Build Windows
     needs:
       - matrix-build
-      - test_qml
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -255,9 +254,9 @@ jobs:
           echo "::group::Package libmpv"
           ARTIFACT="$(basename "$LIBMPV_URL")"
           execute curl -L -O "$LIBMPV_URL"
-          echo -e "\033[0;34mecho -n $LIBMPV_SHA1 $ARTIFACT > $ARTIFACT.sha1\033[0m"
-          echo -n "$LIBMPV_SHA1 $ARTIFACT" > "$ARTIFACT.sha1"
-          execute sha1sum --check "$ARTIFACT.sha1"
+          echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
+          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
+          execute sha256sum --check "$ARTIFACT.sha256"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
           echo "::endgroup::"
