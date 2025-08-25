@@ -440,6 +440,7 @@ Page {
         function openShortcutsDialog(): void {
             setSource(shortcutsDialog, {
                 parent: root,
+                appHeight: root.mpvqcApplication.height,
                 mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
