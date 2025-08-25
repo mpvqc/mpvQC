@@ -24,10 +24,9 @@ MpvqcDialog {
 
     title: qsTranslate("ExportSettingsDialog", "Export Settings")
 
-    MpvqcExportView {
+    contentItem: MpvqcExportView {
         id: _exportView
 
-        width: root.width
         mpvqcApplication: root.mpvqcApplication
     }
 

@@ -122,4 +122,9 @@ ColumnLayout {
             root.currentWriteHeaderVideoPath = state;
         }
     }
+
+    Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+    }
 }

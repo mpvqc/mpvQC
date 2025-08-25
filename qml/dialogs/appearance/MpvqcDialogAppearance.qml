@@ -55,12 +55,7 @@ MpvqcDialog {
 
     title: qsTranslate("AppearanceDialog", "Appearance")
 
-    onRejected: {
-        _impl.reset();
-    }
-
-    ScrollView {
-        width: parent.width
+    contentItem: ScrollView {
 
         Column {
             width: parent.width
@@ -107,6 +102,10 @@ MpvqcDialog {
                 }
             }
         }
+    }
+
+    onRejected: {
+        _impl.reset();
     }
 
     Component.onCompleted: {

@@ -27,11 +27,10 @@ MpvqcDialog {
     title: qsTranslate("CommentTypesDialog", "Comment Types")
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
-    MpvqcCommentTypesView {
+    contentItem: MpvqcCommentTypesView {
         id: _view
 
         mpvqcApplication: root.mpvqcApplication
-        width: parent.width
     }
 
     onAccepted: {

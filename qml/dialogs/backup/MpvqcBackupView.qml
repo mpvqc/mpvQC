@@ -95,4 +95,9 @@ ColumnLayout {
             text: root.mpvqcUtilityPyObject.urlToAbsolutePath(_backupLocationOpenButton.backupDirectory)
         }
     }
+
+    Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+    }
 }

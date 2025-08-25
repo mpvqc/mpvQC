@@ -24,10 +24,9 @@ MpvqcDialog {
 
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
 
-    MpvqcImportView {
+    contentItem: MpvqcImportView {
         id: _importView
 
-        width: root.width
         mpvqcApplication: root.mpvqcApplication
     }
 
