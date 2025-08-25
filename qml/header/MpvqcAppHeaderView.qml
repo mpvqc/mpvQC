@@ -456,7 +456,7 @@ Item {
                         } else if (_closeButton.hovered) {
                             return root.controller.mpvqcTheme.background;
                         } else {
-                            root.controller.mpvqcTheme.foreground;
+                            return root.controller.mpvqcTheme.foreground;
                         }
                     }
                 }
