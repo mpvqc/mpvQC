@@ -24,8 +24,8 @@ import "../../shared"
 Column {
     id: root
 
-    required property var mpvqcApplication
-    property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
+    required property string libmpvVersion
+    required property string ffmpegVersion
 
     MpvqcHeader {
         text: qsTranslate("AboutDialog", "Powered by")
@@ -37,7 +37,7 @@ Column {
         dependencyLicence: "GPL-2.0+"
         dependencyName: "libmpv"
         dependencyUrl: "https://mpv.io/"
-        dependencyVersion: root.mpvqcMpvPlayerPropertiesPyObject.mpv_version.replace("mpv ", "")
+        dependencyVersion: root.libmpvVersion.replace("mpv ", "")
 
         width: root.width
     }
@@ -46,7 +46,7 @@ Column {
         dependencyLicence: "GPL-2.0+"
         dependencyName: "ffmpeg"
         dependencyUrl: "https://ffmpeg.org/"
-        dependencyVersion: root.mpvqcMpvPlayerPropertiesPyObject.ffmpeg_version.replace("ffmpeg ", "")
+        dependencyVersion: root.ffmpegVersion.replace("ffmpeg ", "")
 
         width: root.width
     }

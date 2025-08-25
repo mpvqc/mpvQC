@@ -29,7 +29,6 @@ Dialog {
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     anchors.centerIn: parent
-    parent: mpvqcApplication.contentItem
     contentWidth: 370
     contentHeight: 450
     modal: true

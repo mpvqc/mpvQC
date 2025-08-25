@@ -383,63 +383,76 @@ Page {
 
         function openAppearanceDialog(): void {
             setSource(appearanceDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openCommentTypesDialog(): void {
             setSource(commentTypeDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openBackupSettingsDialog(): void {
             setSource(backupSettingsDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openExportSettingsDialog(): void {
             setSource(exportSettingsDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openImportSettingsDialog(): void {
             setSource(importSettingsDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openEditMpvDialog(): void {
             setSource(editMpvDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openEditInputDialog(): void {
             setSource(editInputDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openShortcutsDialog(): void {
             setSource(shortcutsDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
 
         function openAboutDialog(): void {
             setSource(aboutDialog, {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root,
+                appHeight: root.mpvqcApplication.height,
+                isMirrored: LayoutMirroring.enabled,
+                libmpvVersion: root.mpvqcMpvPlayerPropertiesPyObject.mpv_version,
+                ffmpegVersion: root.mpvqcMpvPlayerPropertiesPyObject.ffmpeg_version,
+                mpvqcApplication: root.mpvqcApplication // todo remove once all parents are clean
             });
             active = true;
         }
@@ -455,6 +468,15 @@ Page {
                 _dialogLoader.source = "";
                 root.focusCommentTable();
             }
+        }
+
+        Binding {
+            // if loaded item has property appHeight -> forward app height to keep things responsive
+            when: _dialogLoader.item?.appHeight ?? false
+            target: _dialogLoader.item
+            property: "appHeight"
+            value: root.mpvqcApplication.height
+            restoreMode: Binding.RestoreNone
         }
     }
 

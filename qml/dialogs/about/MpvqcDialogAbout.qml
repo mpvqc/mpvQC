@@ -26,10 +26,15 @@ import "../../shared"
 MpvqcDialog {
     id: root
 
-    readonly property int scrollBarWidth: 20
-    readonly property int workaroundRtlIssueRightMargin: root.mpvqcApplication.LayoutMirroring.enabled ? 20 : 0
+    required property int appHeight
+    required property bool isMirrored
+    required property string libmpvVersion
+    required property string ffmpegVersion
 
-    contentHeight: Math.min(1080, mpvqcApplication.height * 0.6)
+    readonly property int scrollBarWidth: 20
+    readonly property int workaroundRtlIssueRightMargin: isMirrored ? 20 : 0
+
+    contentHeight: Math.min(1080, appHeight * 0.6)
 
     contentItem: ScrollView {
         readonly property bool isVerticalScollBarShown: contentHeight > root.height
@@ -52,8 +57,9 @@ MpvqcDialog {
             }
 
             MpvqcLibraryView {
+                libmpvVersion: root.libmpvVersion
+                ffmpegVersion: root.ffmpegVersion
                 Layout.fillWidth: true
-                mpvqcApplication: root.mpvqcApplication
             }
         }
     }
