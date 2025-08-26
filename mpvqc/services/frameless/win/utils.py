@@ -38,6 +38,16 @@ def get_window_size(hwnd) -> tuple[int, int, int, int]:
     return left, top, width, height
 
 
+def set_outer_window_size(hwnd, w, h):
+    """Hard-set the OUTER size (frame included)."""
+    SWP_NOMOVE = 0x0002
+    SWP_NOZORDER = 0x0004
+    SWP_NOACTIVATE = 0x0010
+
+    user32 = windll.user32
+    user32.SetWindowPos(hwnd, None, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE)
+
+
 def is_maximized(hwnd):
     window_placement = win32gui.GetWindowPlacement(hwnd)
     if not window_placement:

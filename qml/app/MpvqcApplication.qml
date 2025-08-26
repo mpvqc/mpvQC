@@ -60,6 +60,11 @@ ApplicationWindow {
     readonly property bool fullscreen: _windowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
 
+    readonly property var windowsFlags: Qt.CustomizeWindowHint | Qt.Window
+    readonly property var linuxFlags: Qt.FramelessWindowHint | Qt.Window
+
+    flags: Qt.platform.os === "windows" ? windowsFlags : linuxFlags
+
     width: 1280
     height: 720
 
@@ -71,7 +76,6 @@ ApplicationWindow {
         family: 'Noto Sans'
     }
 
-    flags: Qt.FramelessWindowHint | Qt.Window
     color: Material.background
     visible: true
 

@@ -46,10 +46,11 @@ class FramelessWindowService:
 
             app.installNativeEventFilter(self._event_filter)
 
-            from .win import configure_gwl_style, extend_frame_into_client_area
+            from .win import configure_gwl_style, extend_frame_into_client_area, set_outer_window_size
 
             extend_frame_into_client_area(hwnd_top_lvl)
             configure_gwl_style(hwnd_top_lvl)
+            set_outer_window_size(hwnd_top_lvl, 1280, 720)
 
         if sys.platform == "win32":
             configure_for_windows()
