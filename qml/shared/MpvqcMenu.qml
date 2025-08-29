@@ -21,6 +21,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 Menu {
+    id: root
 
     readonly property bool mMirrored: count > 0 && (itemAt(0) as MenuItem).mirrored
 
@@ -60,4 +61,20 @@ Menu {
         disableFakeModal(); // qmllint disable
     }
     // *********************************************************
+
+    Binding {
+        when: Qt.platform.os === "windows"
+        target: root
+        property: "enter"
+        value: null
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: Qt.platform.os === "windows"
+        target: root
+        property: "exit"
+        value: null
+        restoreMode: Binding.RestoreNone
+    }
 }
