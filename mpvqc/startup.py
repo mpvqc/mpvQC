@@ -23,7 +23,6 @@ def perform_startup():
     configure_dependency_injection()
     configure_environment_variables()
 
-    import_mpvqc_resources()
     import_mpvqc_bindings()
 
     start_application()
@@ -67,10 +66,6 @@ def configure_environment_variables():
 
     # Requirement for mpv
     os.environ["LC_NUMERIC"] = "C"
-
-
-def import_mpvqc_resources():
-    import mpvqc.generated_resources  # noqa: F401
 
 
 def import_mpvqc_bindings():

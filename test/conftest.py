@@ -27,13 +27,13 @@ from mpvqc.services import TypeMapperService
 
 @pytest.fixture(scope="session", autouse=True)
 def check_generated_resources():
-    if find_spec("test.generated_resources") is None:
+    if find_spec("test.rc_project") is None:
         message = (
-            "Can not find resource module 'test.generated_resources'\n"
+            "Can not find resource module 'test.rc_project'\n"
             "To execute individual tests, please run 'just test-python' once before"
         )
         raise FileNotFoundError(message)
-    import test.generated_resources  # noqa: F401
+    import test.rc_project  # noqa: F401
 
 
 @pytest.fixture(scope="session")

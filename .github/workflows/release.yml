@@ -93,9 +93,9 @@ jobs:
           execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "mpvqc/startup.py"
           execute cat "mpvqc/startup.py"
 
-          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qml/dialogs/about/MpvqcAboutView.qml"
-          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qml/dialogs/about/MpvqcAboutView.qml"
-          execute cat "qml/dialogs/about/MpvqcAboutView.qml"
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qt/qml/dialogs/about/MpvqcAboutView.qml"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qt/qml/dialogs/about/MpvqcAboutView.qml"
+          execute cat "qt/qml/dialogs/about/MpvqcAboutView.qml"
           echo "::endgroup::"
 
           #
@@ -105,7 +105,7 @@ jobs:
 
           #
           echo "::group::Set Dependency Versions"
-          DEPENDENCY_MODEL_PATH="qml/dialogs/about/MpvqcLibraryModel.qml"
+          DEPENDENCY_MODEL_PATH="qt/qml/dialogs/about/MpvqcLibraryModel.qml"
           execute just insert-dependency-versions "$DEPENDENCY_MODEL_PATH"
           execute cat "$DEPENDENCY_MODEL_PATH"
           echo "::endgroup::"

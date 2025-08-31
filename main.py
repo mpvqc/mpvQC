@@ -24,6 +24,7 @@ def main():
     if platform.system() == "Windows":
         _add_directory_to_path()
 
+    import rc_project  # noqa: F401
     from mpvqc.startup import perform_startup
 
     perform_startup()
