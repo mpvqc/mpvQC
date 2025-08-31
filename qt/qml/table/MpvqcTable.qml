@@ -36,15 +36,15 @@ Item {
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
-    readonly property alias commentCount: commentTable.count
-    readonly property alias selectedCommentIndex: commentTable.currentIndex
+    readonly property alias commentCount: _commentTable.count
+    readonly property alias selectedCommentIndex: _commentTable.currentIndex
 
     function forceActiveFocus(): void {
-        commentTable.forceActiveFocus();
+        _commentTable.forceActiveFocus();
     }
 
     function addNewComment(commentType: string): void {
-        commentTable.model.add_row(commentType);
+        _commentTable.model.add_row(commentType);
     }
 
     QtObject {
@@ -84,7 +84,7 @@ Item {
     }
 
     MpvqcCommentList {
-        id: commentTable
+        id: _commentTable
 
         width: root.width
         height: root.height
