@@ -507,6 +507,8 @@ ListView {
             performModelSearchFunc: _impl.performModelSearch
 
             onHighlightRequested: index => _impl.select(index)
+
+            onClosed: root.forceActiveFocus()
         }
     }
 
