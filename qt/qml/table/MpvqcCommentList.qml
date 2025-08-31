@@ -41,7 +41,6 @@ ListView {
     required property var jumpToTimeFunc
     required property var pauseVideoFunc
 
-    required property var defaultTextValidator
     required property var messageBoxParent
     required property list<string> commentTypes
 
@@ -504,7 +503,7 @@ ListView {
 
             isApplicationFullScreen: root.isCurrentlyFullScreen
 
-            searchQueryValidator: root.defaultTextValidator
+            sanitizeTextFunc: root.sanitizeTextFunc
             performModelSearchFunc: _impl.performModelSearch
 
             onHighlightRequested: index => _impl.select(index)

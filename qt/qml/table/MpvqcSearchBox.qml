@@ -26,8 +26,8 @@ Popup {
 
     required property bool isApplicationFullScreen
 
-    required property var searchQueryValidator
     required property var performModelSearchFunc
+    required property var sanitizeTextFunc
 
     readonly property string searchQuery: _impl.searchQueryActive ? _impl.currentSearchQuery : ""
 
@@ -127,15 +127,21 @@ Popup {
         TextField {
             id: _textField
 
-            validator: root.searchQueryValidator
-
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
 
             Layout.fillWidth: true
 
-            onTextChanged: _impl.search(text)
+            onTextChanged: {
+                const sanitized = root.sanitizeTextFunc(text); // qmllint disable
+                if (sanitized !== text) {
+                    text = sanitized;
+                    return;
+                } else {
+                    _impl.search(text);
+                }
+            }
 
             Component.onCompleted: {
                 background.fillColor = "transparent";

@@ -32,7 +32,6 @@ Item {
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
 
-    readonly property var mpvqcDefaultTextValidatorPyObject: mpvqcApplication.mpvqcDefaultTextValidatorPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
@@ -51,6 +50,14 @@ Item {
     QtObject {
         id: _impl
 
+        /*
+         * Replace some characters:
+         *  - soft hyphen (\xad); When copying from Duden they include these :|
+         *  - carriage return
+         *  - newline
+         */
+        readonly property var reForbidden: new RegExp('[\u00AD\r\n]', 'gi')
+
         function formatTime(time: int): string {
             if (root.mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
                 return root.mpvqcUtilityPyObject.formatTimeToStringLong(time);
@@ -60,7 +67,11 @@ Item {
         }
 
         function sanitizeText(text: string): string {
-            return root.mpvqcDefaultTextValidatorPyObject.replace_special_characters(text);
+            if (text.search(reForbidden) === -1) {
+                return text;
+            } else {
+                return text.replace(reForbidden, "");
+            }
         }
 
         function jumpToTime(time: int): void {
@@ -97,7 +108,6 @@ Item {
         jumpToTimeFunc: _impl.jumpToTime
         pauseVideoFunc: _impl.pauseVideo
 
-        defaultTextValidator: root.mpvqcDefaultTextValidatorPyObject
         messageBoxParent: root.mpvqcApplication.contentItem
         commentTypes: root.mpvqcSettings.commentTypes
 

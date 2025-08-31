@@ -190,7 +190,6 @@ files = [
     "mpvqc/pyobjects/player_framebuffer_object.py",
     "mpvqc/pyobjects/player_properties.py",
     "mpvqc/pyobjects/player_win_id.py",
-    "mpvqc/pyobjects/text_validator.py",
     "mpvqc/pyobjects/utility.py",
     "mpvqc/pyobjects/version_checker.py",
     "mpvqc/services/__init__.py",
