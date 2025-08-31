@@ -524,20 +524,21 @@ $RECYCLE.BIN/
 
 # Directories
 /.flatpak-builder
+/.qtcreator
 /appdata
 /build-dir
-/venv-runner
 /pyobjects
+/repo
+/venv-runner
 
 # Files
 *.pyproject
 *.qrc
-/test/rc_project.py
-/rc_project.py
-/project.json
-/portable
-/requirements.txt
-
 /build.sh
+/portable
+/project.json
+/pyproject.toml.user
+/rc_project.py
+/requirements.txt
 /test.sh
-/repo
+/test/rc_project.py
