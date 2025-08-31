@@ -35,8 +35,6 @@ TestCase {
         id: objectUnderTest
 
         MpvqcFooter {
-            id: objectUnderTest
-
             selectedCommentIndex: 0
             totalCommentCount: 10
 

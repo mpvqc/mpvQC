@@ -103,8 +103,8 @@ ListView {
     ScrollBar.vertical: ScrollBar {
         id: _scrollBar
 
-        readonly property var isShown: root.contentHeight > root.height
-        readonly property var visibleWidth: isShown ? width : 0
+        readonly property bool isShown: root.contentHeight > root.height
+        readonly property real visibleWidth: isShown ? width : 0
 
         policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }

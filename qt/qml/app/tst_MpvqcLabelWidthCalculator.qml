@@ -36,11 +36,11 @@ TestCase {
         id: testHelperMpvqcApplication
 
         property var mpvqcMpvPlayerPropertiesPyObject: QtObject {
-            property var duration: 0
+            property real duration: 0
         }
         property var mpvqcSettings: QtObject {
             property var commentTypes: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
-            property var language: "language"
+            property string language: "language"
         }
     }
 
