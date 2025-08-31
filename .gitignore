@@ -523,15 +523,20 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,qt,qtcreator,vscode,sublimetext,qml,linux,windows,macos,vim,emacs
 
 # Directories
-.flatpak-builder
-appdata
-build-dir
-venv-runner/
+/.flatpak-builder
+/appdata
+/build-dir
+/venv-runner
+/pyobjects
 
 # Files
-generated_resources.py
-portable
-requirements.txt
+*.pyproject
+*.qrc
+/test/rc_project.py
+/rc_project.py
+/project.json
+/portable
+/requirements.txt
 
 /build.sh
 /test.sh
