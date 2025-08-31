@@ -123,6 +123,11 @@ jobs:
           echo "::endgroup::"
 
           #
+          echo "::group::Remove __pycache__ Files"
+          execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
+          echo "::endgroup::"
+
+          #
           RELEASE_NAME="release-build-${RUNNER_OS@L}"
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           debug "Uploading build/release as $RELEASE_NAME"
