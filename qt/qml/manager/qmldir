@@ -1,0 +1,3 @@
+module manager
+
+singleton MpvqcStateStore MpvqcStateStore.qml
