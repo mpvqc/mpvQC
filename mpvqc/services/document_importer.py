@@ -26,42 +26,58 @@ from mpvqc.models import Comment
 from .reverse_translator import ReverseTranslatorService
 
 
+@dataclass(frozen=True)
+class ValidDocument:
+    path: Path
+    video_path: Path | None
+    video_exists: bool
+
+
+@dataclass(frozen=True)
+class DocumentImportResult:
+    valid_documents: list[ValidDocument]
+    invalid_documents: list[Path]
+    comments: list[Comment]
+
+
 class DocumentImporterService:
     _reverse_translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
 
     _REGEX_PATH = re.compile("^path\\s*?:(?P<path>.*)$")
     _REGEX_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
 
-    @dataclass
-    class DocumentImportResult:
-        valid_documents: list[Path]
-        invalid_documents: list[Path]
-        existing_videos: list[Path]
-        comments: list[Comment]
-
     def read(self, documents: list[Path]) -> DocumentImportResult:
-        valid_documents: list[Path] = []
+        valid_documents: list[ValidDocument] = []
         invalid_documents: list[Path] = []
-        existing_videos: list[Path] = []
-        all_comments: list[Comment] = []
+        comments: list[Comment] = []
 
         for document in documents:
             content = document.read_text(encoding="utf-8")
 
-            if content.startswith("[FILE]"):
-                valid_documents.append(document)
-            else:
-                invalid_documents.append(document)
+            if not content.startswith("[FILE]"):
+                invalid_documents.append(document.resolve())
                 continue
 
-            video, comments = self._parse(content)
-            if video is not None and video.is_file():
-                existing_videos.append(video)
-            all_comments.extend(comments)
+            valid_document, more_comments = self._parse_document(document, content)
+            valid_documents.append(valid_document)
+            comments.extend(more_comments)
 
-        return self.DocumentImportResult(valid_documents, invalid_documents, existing_videos, all_comments)
+        return DocumentImportResult(
+            valid_documents=valid_documents,
+            invalid_documents=invalid_documents,
+            comments=comments,
+        )
 
-    def _parse(self, content: str) -> tuple[Path | None, list[Comment]]:
+    def _parse_document(self, document_path: Path, content: str) -> tuple[ValidDocument, list[Comment]]:
+        video_path, comments = self._parse_document_content(content)
+        valid_document = ValidDocument(
+            path=document_path,
+            video_path=video_path,
+            video_exists=video_path is not None and video_path.is_file(),
+        )
+        return valid_document, comments
+
+    def _parse_document_content(self, content: str) -> tuple[Path | None, list[Comment]]:
         path = None
         comments = []
 
