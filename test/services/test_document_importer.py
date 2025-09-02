@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 import inject
 import pytest
 
-from mpvqc.services import DocumentImporterService, ReverseTranslatorService
+from mpvqc.services import DocumentImporter2Service, DocumentImporterService, ReverseTranslatorService
 
 DOCUMENT_1 = """\
 erroneous_document
@@ -69,13 +69,12 @@ def configure_inject():
     inject.configure(config, clear=True)
 
 
-@pytest.fixture(scope="module")
-def make_document_mock():
+@pytest.fixture
+def make_document_mock(tmp_path):
     def _make_document_mock(name, and_return_content):
-        mock = MagicMock()
-        mock.mpvqc_name = name
-        mock.read_text.return_value = and_return_content
-        return mock
+        file = tmp_path / f"{name}.txt"
+        file.write_text(and_return_content)
+        return file
 
     return _make_document_mock
 
@@ -96,6 +95,11 @@ def service() -> DocumentImporterService:
     return DocumentImporterService()
 
 
+@pytest.fixture(scope="module")
+def service2() -> DocumentImporter2Service:
+    return DocumentImporter2Service()
+
+
 def test_import_invalid_documents(service, make_document_mock):
     path_1 = make_document_mock("path-1", and_return_content=DOCUMENT_1)
     path_2 = make_document_mock("path-2", and_return_content=DOCUMENT_1)
@@ -104,8 +108,8 @@ def test_import_invalid_documents(service, make_document_mock):
 
     assert not result.valid_documents
     assert result.invalid_documents
-    assert getattr(result.invalid_documents[0], "mpvqc_name") == "path-1"
-    assert getattr(result.invalid_documents[1], "mpvqc_name") == "path-2"
+    assert "path-1" in f"{result.invalid_documents[0]}"
+    assert "path-2" in f"{result.invalid_documents[1]}"
 
 
 def test_import_valid_documents(service, make_document_mock, mocked_pathlib):
@@ -167,7 +171,19 @@ def test_import_multiple_documents(service, make_document_mock, mocked_pathlib):
     result = service.read([path_1, path_2, path_3, path_4])
 
     assert len(result.invalid_documents) == 1
-    assert getattr(result.invalid_documents[0], "mpvqc_name") == "path-1"
+    assert "path-1" in f"{result.invalid_documents[0]}"
     assert len(result.valid_documents) == 3
     assert len(result.existing_videos) == 2
     assert len(result.comments) == 10
+
+
+def test_import_invalid_documents2(service2, make_document_mock):
+    path_1 = make_document_mock("path-1", and_return_content=DOCUMENT_1)
+    path_2 = make_document_mock("path-2", and_return_content=DOCUMENT_1)
+
+    result = service2.read([path_1, path_2])
+
+    assert not result.valid_documents
+    assert result.invalid_documents
+    assert "path-1" in f"{result.invalid_documents[0]}"
+    assert "path-2" in f"{result.invalid_documents[1]}"
