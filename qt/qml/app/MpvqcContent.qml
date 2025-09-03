@@ -114,6 +114,10 @@ Page {
         function saveExtendedDocument(document: url, template: url): void {
             root.mpvqcExtendedDocumentExporterPyObject.export(document, template);
         }
+
+        function resetState(): void {
+            root.mpvqcManager.reset();
+        }
     }
 
     Keys.onEscapePressed: {
@@ -280,7 +284,11 @@ Page {
         target: root.headerController
 
         function onResetAppStateRequested(): void {
-            root.mpvqcManager.reset();
+            if (root.mpvqcManager.saved) {
+                _impl.resetState();
+            } else {
+                _messageBoxLoader.openNewDocumentMessageBox();
+            }
         }
 
         function onOpenQcDocumentsRequested(): void {
@@ -353,7 +361,7 @@ Page {
         }
 
         function onUpdateDialogRequested(): void {
-            _messageBoxLoader.openCheckForUpdateMessageBox();
+            _messageBoxLoader.openVersionCheckMessageBox();
         }
 
         function onKeyboardShortcutsDialogRequested(): void {
@@ -457,8 +465,9 @@ Page {
     Loader {
         id: _messageBoxLoader
 
-        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
         readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExport.qml")
+        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
+        readonly property url messageBoxNewDocument: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxNewDocument.qml")
         readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVersionCheck.qml")
 
         asynchronous: true
@@ -488,11 +497,29 @@ Page {
             active = true;
         }
 
+        function openVersionCheckMessageBox(): void {
+            setSource(messageBoxVersionCheck, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openNewDocumentMessageBox(): void {
+            setSource(messageBoxNewDocument, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
         onLoaded: item.open() // qmllint disable
 
         Connections {
             enabled: _messageBoxLoader.item
             target: _messageBoxLoader.item
+
+            function onResetDocumentConfirmedByUser(): void {
+                _impl.resetState();
+            }
 
             function onClosed(): void {
                 _messageBoxLoader.active = false;

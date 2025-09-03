@@ -36,4 +36,3 @@ from .reverse_translator import ReverseTranslatorService
 from .settings import SettingsService
 from .type_mapper import TypeMapperService
 from .version_checker import VersionCheckerService
-from .video_selector import VideoSelectorService

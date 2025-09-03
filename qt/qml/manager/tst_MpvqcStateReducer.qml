@@ -17,10 +17,11 @@
 
 import QtQuick
 import QtTest
-import "MpvqcStateManager.js" as SM
+
+import "MpvqcStateReducer.js" as StateReducer
 
 TestCase {
-    name: "MpvqcStateManager"
+    name: "MpvqcStateReducer"
 
     function makeChange(docs, vid) {
         return {
@@ -37,7 +38,7 @@ TestCase {
         return [
             {
                 tag: "fromInitial_setsDocument_savedTrue",
-                start: SM.initialState(null),
+                start: StateReducer.initialState(null),
                 event: {
                     type: "SAVE",
                     document: "/doc1"
@@ -72,7 +73,7 @@ TestCase {
     }
 
     function test_event_SAVE(data) {
-        const s = SM.reducer(data.start, data.event);
+        const s = StateReducer.reducer(data.start, data.event);
         compare(s.kind, data.expected.kind, data.tag);
         compare(s.document, data.expected.document, data.tag);
         compare(s.video, data.expected.video, data.tag);
@@ -87,7 +88,7 @@ TestCase {
         return [
             {
                 tag: "fromInitial_transitionsToOther_unsaved",
-                start: SM.initialState(null),
+                start: StateReducer.initialState(null),
                 event: {
                     type: "CHANGE"
                 },
@@ -138,7 +139,7 @@ TestCase {
     }
 
     function test_event_CHANGE(data) {
-        const s = SM.reducer(data.start, data.event);
+        const s = StateReducer.reducer(data.start, data.event);
         compare(s.kind, data.expected.kind, data.tag);
         compare(s.document, data.expected.document, data.tag);
         compare(s.video, data.expected.video, data.tag);
@@ -153,7 +154,7 @@ TestCase {
         return [
             {
                 tag: "fromInitial_staysInitial_keepsNulls_savedTrue",
-                start: SM.initialState(null),
+                start: StateReducer.initialState(null),
                 event: {
                     type: "RESET"
                 },
@@ -186,7 +187,7 @@ TestCase {
     }
 
     function test_event_RESET(data) {
-        const s = SM.reducer(data.start, data.event);
+        const s = StateReducer.reducer(data.start, data.event);
         compare(s.kind, data.expected.kind, data.tag);
         compare(s.document, data.expected.document, data.tag);
         compare(s.video, data.expected.video, data.tag);
@@ -201,7 +202,7 @@ TestCase {
         return [
             {
                 tag: "onlyVideo_staysInitial_updatesVideo_savedTrue",
-                start: SM.initialState(null),
+                start: StateReducer.initialState(null),
                 change: makeChange([], "/video1"),
                 expected: {
                     kind: "initial",
@@ -212,7 +213,7 @@ TestCase {
             },
             {
                 tag: "onlyVideo_replacesExistingInitialVideo",
-                start: SM.initialState("/video0"),
+                start: StateReducer.initialState("/video0"),
                 change: makeChange([], "/video1"),
                 expected: {
                     kind: "initial",
@@ -223,7 +224,7 @@ TestCase {
             },
             {
                 tag: "oneDocumentAndVideo_becomesOther_savedTrue",
-                start: SM.initialState("/video0"),
+                start: StateReducer.initialState("/video0"),
                 change: makeChange(["/doc1"], "/video1"),
                 expected: {
                     kind: "other",
@@ -234,7 +235,7 @@ TestCase {
             },
             {
                 tag: "multipleDocuments_noVideo_becomesOther_unsaved_keepsInitialVideo",
-                start: SM.initialState("/video0"),
+                start: StateReducer.initialState("/video0"),
                 change: makeChange(["/doc1", "/doc2"], null),
                 expected: {
                     kind: "other",
@@ -247,7 +248,7 @@ TestCase {
     }
 
     function test_event_IMPORT_fromInitial(data) {
-        const s = SM.reducer(data.start, {
+        const s = StateReducer.reducer(data.start, {
             type: "IMPORT",
             change: data.change
         });
@@ -331,7 +332,7 @@ TestCase {
     }
 
     function test_event_IMPORT_fromOther(data) {
-        const s = SM.reducer(data.start, {
+        const s = StateReducer.reducer(data.start, {
             type: "IMPORT",
             change: data.change
         });
@@ -349,7 +350,7 @@ TestCase {
         return [
             {
                 tag: "unknownEvent",
-                start: SM.initialState(null),
+                start: StateReducer.initialState(null),
                 event: {
                     type: "NOPE"
                 }
@@ -360,7 +361,7 @@ TestCase {
     function test_unknownEvent_throws(data) {
         let threw = false;
         try {
-            SM.reducer(data.start, data.event);
+            StateReducer.reducer(data.start, data.event);
         } catch (e) {
             threw = true;
         }
@@ -384,7 +385,7 @@ TestCase {
     function test_unknownStateKind_throws(data) {
         let threw = false;
         try {
-            SM.reducer(data.badState, {
+            StateReducer.reducer(data.badState, {
                 type: "IMPORT",
                 change: makeChange([], null)
             });

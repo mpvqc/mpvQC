@@ -23,6 +23,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../header"
+import "../manager"
 import "../settings"
 
 ApplicationWindow {
@@ -37,15 +38,13 @@ ApplicationWindow {
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
+    readonly property MpvqcManager mpvqcManager: MpvqcManager {}
+
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator {
         mpvqcApplication: root
     }
 
     readonly property var mpvqcSettings: MpvqcSettings {
-        mpvqcApplication: root
-    }
-
-    readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root
     }
 
