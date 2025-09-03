@@ -105,7 +105,8 @@ class MpvqcManagerBackendPyObject(QObject):
         self._comment_model.commentsCleared.connect(on_comments_cleared)
         self._comment_model.commentsClearedUndone.connect(on_comments_changed)
 
-        self._comment_model.commentsImported.connect(on_comments_changed)
+        # Initial import is an "import" rather than a "change"
+        self._comment_model.commentsImportedRedone.connect(on_comments_changed)
         self._comment_model.commentsImportedUndone.connect(on_comments_changed)
 
         self._comment_model.newCommentAddedInitially.connect(on_comments_changed)
