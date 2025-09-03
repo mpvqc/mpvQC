@@ -110,6 +110,10 @@ Page {
         function requestResizeAppWindow(width: int, height: int): void {
             root.appWindowSizeRequested(width, height);
         }
+
+        function resetState(): void {
+            root.mpvqcManager.reset();
+        }
     }
 
     Keys.onEscapePressed: {
@@ -276,7 +280,11 @@ Page {
         target: root.headerController
 
         function onResetAppStateRequested(): void {
-            root.mpvqcManager.reset();
+            if (root.mpvqcManager.saved) {
+                _impl.resetState();
+            } else {
+                _messageBoxLoader.openNewDocumentMessageBox();
+            }
         }
 
         function onOpenQcDocumentsRequested(): void {
@@ -348,7 +356,7 @@ Page {
         }
 
         function onUpdateDialogRequested(): void {
-            _messageBoxLoader.openCheckForUpdateMessageBox();
+            _messageBoxLoader.openVersionCheckMessageBox();
         }
 
         function onKeyboardShortcutsDialogRequested(): void {
@@ -356,7 +364,7 @@ Page {
         }
 
         function onExtendedExportDialogRequested(): void {
-            _messageBoxLoader.openExtendedExportsMessageBox();
+            _messageBoxLoader.openExtendedExportMessageBox();
         }
 
         function onAboutDialogRequested(): void {
@@ -541,13 +549,21 @@ Page {
     Loader {
         id: _messageBoxLoader
 
-        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
         readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExport.qml")
+        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
+        readonly property url messageBoxNewDocument: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxNewDocument.qml")
         readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVersionCheck.qml")
 
         asynchronous: true
         active: false
         visible: active
+
+        function openExtendedExportMessageBox(): void {
+            setSource(messageBoxExtendedExport, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
 
         function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
             setSource(messageBoxExtendedExportFailed, {
@@ -558,15 +574,15 @@ Page {
             active = true;
         }
 
-        function openCheckForUpdateMessageBox(): void {
-            setSource(messageBoxVersionCheck, {
+        function openNewDocumentMessageBox(): void {
+            setSource(messageBoxNewDocument, {
                 mpvqcApplication: root.mpvqcApplication
             });
             active = true;
         }
 
-        function openExtendedExportsMessageBox(): void {
-            setSource(messageBoxExtendedExport, {
+        function openVersionCheckMessageBox(): void {
+            setSource(messageBoxVersionCheck, {
                 mpvqcApplication: root.mpvqcApplication
             });
             active = true;
@@ -577,6 +593,10 @@ Page {
         Connections {
             enabled: _messageBoxLoader.item
             target: _messageBoxLoader.item
+
+            function onResetDocumentConfirmedByUser(): void {
+                _impl.resetState();
+            }
 
             function onClosed(): void {
                 _messageBoxLoader.active = false;

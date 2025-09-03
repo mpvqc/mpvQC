@@ -23,6 +23,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../header"
+import "../manager"
 import "../settings"
 
 ApplicationWindow {
@@ -37,17 +38,14 @@ ApplicationWindow {
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
+    readonly property MpvqcManager mpvqcManager: MpvqcManager {}
+
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator {
         mpvqcApplication: root
     }
 
     readonly property var mpvqcSettings: MpvqcSettings {
         mpvqcApplication: root
-    }
-
-    readonly property var mpvqcManager: MpvqcManager {
-        mpvqcApplication: root
-        commentCount: _content.commentCount
     }
 
     readonly property var mpvqcTheme: MpvqcTheme {
@@ -159,6 +157,13 @@ ApplicationWindow {
         onCloseAppRequested: {
             root.close();
         }
+    }
+
+    MpvqcBackupper {
+        backend: MpvqcBackupperBackendPyObject {} // qmllint disable
+        isHaveComments: _content.commentCount
+        isBackupEnabled: root.mpvqcSettings.backupEnabled
+        backupInterval: root.mpvqcSettings.backupInterval
     }
 
     MpvqcWindowVisibilityHandler {
