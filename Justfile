@@ -73,7 +73,7 @@ init ARGS='--group dev':
 # Lint QML files
 [group('lint')]
 @lint-qml: build-develop
-    pyside6-project qmllint
+    uv run pyside6-project qmllint
 
 # Run Python and QML tests
 [group('test')]
