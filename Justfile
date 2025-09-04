@@ -77,18 +77,24 @@ init ARGS='--group dev':
 
 # Run Python and QML tests
 [group('test')]
-@test: test-python test-qml
+@test: _prepare-tests (test-python 'no-prep') (test-qml 'no-prep')
 
 # Run Python tests
 [group('test')]
-@test-python: build-develop
-    rm -f test/rc_project.py
-    cp rc_project.py test/rc_project.py
+test-python SKIP_PREPARATION='false':
+    #!/usr/bin/env bash
+    if [[ "{{ SKIP_PREPARATION }}" == "false" ]] then
+      just _prepare-tests
+    fi
     uv run pytest build-aux test
 
 # Run QML tests
 [group('test')]
-@test-qml: build-develop
+test-qml SKIP_PREPARATION='false':
+    #!/usr/bin/env bash
+    if [[ "{{ SKIP_PREPARATION }}" == "false" ]] then
+      just _prepare-tests
+    fi
     uv run test/test_qml.py -silent -input qt/qml
 
 # Insert dependency versions
@@ -102,6 +108,10 @@ init ARGS='--group dev':
         --requirements-txt requirements.txt \
         --update-inplace {{ UPDATE_INPLACE }}
     rm requirements.txt
+
+@_prepare-tests: build-develop
+    rm -f test/rc_project.py
+    cp rc_project.py test/rc_project.py
 
 @_update_pyproject_file: _generate-qrc-file
     uv run python build-aux/update_pyproject_file.py \
