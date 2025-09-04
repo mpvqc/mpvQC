@@ -18,8 +18,6 @@ export QT_QPA_PLATFORM := 'offscreen'
 export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
 export QT_QUICK_CONTROLS_STYLE := 'Material'
 
-TOOL_CLI_QML_TESTRUNNER := 'qmltestrunner'
-
 @_default:
     just --list
 
@@ -90,8 +88,8 @@ init ARGS='--group dev':
 
 # Run QML tests
 [group('test')]
-@test-qml:
-    {{ TOOL_CLI_QML_TESTRUNNER }} -silent -input qt/qml
+@test-qml: build-develop
+    uv run test/test_qml.py -silent -input qt/qml
 
 # Insert dependency versions
 [group('CI')]
