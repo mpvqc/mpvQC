@@ -177,6 +177,7 @@ files = [
     "mpvqc/pyobjects/__init__.py",
     "mpvqc/pyobjects/application_paths.py",
     "mpvqc/pyobjects/backend_backupper.py",
+    "mpvqc/pyobjects/backend_manager.py",
     "mpvqc/pyobjects/comment_model/__init__.py",
     "mpvqc/pyobjects/comment_model/item.py",
     "mpvqc/pyobjects/comment_model/model.py",
