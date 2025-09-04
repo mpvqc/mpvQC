@@ -111,11 +111,6 @@ jobs:
           echo "::endgroup::"
 
           #
-          echo "::group::Check Linting and Formatting"
-          execute just format
-          echo "::endgroup::"
-
-          #
           echo "::group::Run Python Build"
           execute just test-python
           execute just clean
@@ -136,26 +131,6 @@ jobs:
         with:
           path: build/release
           name: ${{ steps.build_step.outputs.release_name }}
-
-  test_qml:
-    runs-on: ubuntu-latest
-    name: Test Qml
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-      - name: Install Qt 6.9.*
-        uses: jurplel/install-qt-action@v4
-        with:
-          arch: linux_gcc_64
-          version: 6.9.*
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Execute Qml Tests
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute export QT_QPA_PLATFORM=offscreen
-          execute just test-qml
 
   build_windows:
     runs-on: windows-latest
@@ -275,3 +250,49 @@ jobs:
         with:
           name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
           path: deployment/main.dist
+
+  test_qml:
+    runs-on: ubuntu-latest
+    name: Qml Tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+      - name: Install Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      - name: Install Dependencies
+        run: sudo apt install -y libegl1
+      - name: Initialize Project
+        run: just init
+      - name: Execute Qml Tests
+        run: just test-qml
+
+  verify_formatting:
+    runs-on: ubuntu-latest
+    name: Linting & Formatting
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+      - name: Install Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      - name: Initialize Project
+        run: just init
+      - name: Run Pre Commit Checks
+        run: just format
+      - name: Lint Qml
+        run: just lint-qml
