@@ -72,6 +72,8 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     commentUpdated = Signal(int)
     commentUpdatedUndone = Signal(int)
 
+    copiedToClipboard = Signal(str)  # param: content - for tests only
+
     def get_selected_row(self) -> int:
         return self._selected_row
 
@@ -96,6 +98,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
 
+    @Slot(list)
     def import_comments(self, comments: list[Comment]) -> None:
         if not comments:
             return
@@ -253,6 +256,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         if self._undo_stack.canRedo():
             self._undo_stack.redo()
 
+    @Slot(result=list)
     def comments(self) -> list[dict[str, Any]]:
         return retrieve_comments_from(self)
 
@@ -282,6 +286,7 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
         comment_type = f"{item.data(Role.TYPE)}"
         comment_type = QCoreApplication.translate("CommentTypes", comment_type)
 
-        comment = f"{item.data(Role.COMMENT)}"
+        content = f"[{time}] [{comment_type}] {item.data(Role.COMMENT)}"
 
-        self._clipboard.setText(f"[{time}] [{comment_type}] {comment}")
+        self._clipboard.setText(content)
+        self.copiedToClipboard.emit(content)
