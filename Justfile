@@ -95,7 +95,18 @@ test-qml SKIP_PREPARATION='false':
     if [[ "{{ SKIP_PREPARATION }}" == "false" ]] then
       just _prepare-tests
     fi
-    uv run test/test_qml.py -silent -input qt/qml
+    uv run python -c '
+    import sys, os
+    from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
+    from test.test_qml import MpvqcTestSetup
+
+    # Pass additional arguments to qmltestrunner:
+    sys.argv += ["-silent"]
+    sys.argv += ["-input", "qt/qml"]
+
+    ex = QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=sys.argv)
+    sys.exit(ex)
+    '
 
 # Insert dependency versions
 [group('CI')]

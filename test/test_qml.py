@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-
 from PySide6.QtCore import QObject, Slot
 from PySide6.QtQml import QQmlEngine
-from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
+
+from mpvqc import startup
 
 
 # noinspection PyPep8Naming
@@ -29,9 +28,9 @@ class MpvqcTestSetup(QObject):
 
     @Slot(QQmlEngine)
     def qmlEngineAvailable(self, _: QQmlEngine):
+        startup.configure_qt_application_data()
+        startup.configure_qt_settings()
+        startup.configure_dependency_injection()
+        startup.configure_environment_variables()
+        startup.import_mpvqc_bindings()
         import rc_project  # noqa: F401
-
-
-if __name__ == "__main__":
-    ex = QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, sys.argv)
-    sys.exit(ex)

@@ -47,4 +47,4 @@ def bindings(binder: inject.Binder):
 
 
 def configure_injections():
-    inject.configure(bindings, bind_in_runtime=False)
+    inject.configure(bindings, bind_in_runtime=False, clear=True)
