@@ -21,8 +21,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import pyobjects
-
 Item {
     id: root
 
@@ -89,8 +87,6 @@ Item {
         width: root.width
         height: root.height
         visible: root.commentCount > 0
-
-        model: MpvqcCommentModelPyObject {}
 
         timeLabelWidth: root.mpvqcLabelWidthCalculator.timeLabelWidth
         commentTypeLabelWidth: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth

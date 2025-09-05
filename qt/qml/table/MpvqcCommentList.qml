@@ -22,6 +22,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
+import pyobjects
+
 ListView {
     id: root
 
@@ -50,6 +52,10 @@ ListView {
     readonly property bool hasComments: root.count > 0
     readonly property bool isCurrentlyEditing: _editLoader.active
     readonly property bool isNotCurrentlyEditing: !isCurrentlyEditing
+
+    readonly property alias editLoader: _editLoader // for tests
+
+    model: MpvqcCommentModelPyObject {}
 
     clip: true
     focus: true

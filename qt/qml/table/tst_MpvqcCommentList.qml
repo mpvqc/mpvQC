@@ -22,6 +22,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import pyobjects
+
 TestCase {
     id: testCase
 
@@ -85,6 +87,12 @@ TestCase {
     name: "MpvqcCommentList"
 
     Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
         id: objectUnderTest
 
         MpvqcCommentList {
@@ -118,55 +126,34 @@ TestCase {
             videoDuration: 10
             isCurrentlyFullScreen: false
 
-            model: ListModel {
-                property bool calledCopyToClipboard: false
-                property bool calledRemoveRow: false
-                property bool calledUpateTime: false
-                property bool calledUpateCommentType: false
-                property bool calledUpateComment: false
+            Component.onCompleted: {
+                model.import_comments([
+                    {
+                        "time": 1,
+                        "commentType": "Comment Type 1",
+                        "comment": "Comment 1"
+                    },
+                    {
+                        "time": 2,
+                        "commentType": "Comment Type 2",
+                        "comment": "Comment 2"
+                    },
+                    {
+                        "time": 3,
+                        "commentType": "Comment Type 3",
+                        "comment": "Comment 3"
+                    },
+                    {
+                        "time": 4,
+                        "commentType": "Comment Type 4",
+                        "comment": "Comment 4"
+                    },
+                ]);
+                currentIndex = 0;
+            }
 
-                property int selectedRow: -1
-
-                function copy_to_clipboard(index: int): void {
-                    calledCopyToClipboard = true;
-                }
-
-                function remove_row(index: int): void {
-                    calledRemoveRow = true;
-                }
-
-                function update_time(index: int, time: int): void {
-                    calledUpateTime = true;
-                }
-
-                function update_comment_type(index: int, commentType: string): void {
-                    calledUpateCommentType = true;
-                }
-
-                function update_comment(index: int, comment: string): void {
-                    calledUpateComment = true;
-                }
-
-                ListElement {
-                    time: 1
-                    commentType: "Comment Type 1"
-                    comment: "Comment 1"
-                }
-                ListElement {
-                    time: 2
-                    commentType: "Comment Type 2"
-                    comment: "Comment 2"
-                }
-                ListElement {
-                    time: 3
-                    commentType: "Comment Type 3"
-                    comment: "Comment 3"
-                }
-                ListElement {
-                    time: 4
-                    commentType: "Comment Type 4"
-                    comment: "Comment 4"
-                }
+            function getItem(index: int, property: string): variant {
+                return model.comments()[index][property];
             }
         }
     }
@@ -350,10 +337,16 @@ TestCase {
         verify(control);
         waitForRendering(control, timeoutShort);
 
+        const spy = createTemporaryObject(signalSpy, control, {
+            target: control.model,
+            signalName: "copiedToClipboard"
+        });
+        verify(spy);
+
         data.exec(control);
         waitForRendering(control, timeoutShort);
 
-        tryVerify(() => control.model.calledCopyToClipboard);
+        tryVerify(() => spy.count === 1);
     }
 
     function test_deleteComment_data() {
@@ -390,7 +383,7 @@ TestCase {
         keyPress(Qt.Key_Tab);
         keyPress(Qt.Key_Return);
 
-        tryVerify(() => control.model.calledRemoveRow);
+        tryVerify(() => control.count === 3);
     }
 
     function test_editTimePrevious() {
@@ -398,15 +391,16 @@ TestCase {
         verify(control);
         waitForRendering(control, timeoutShort);
 
+        tryVerify(() => control.getItem(0, "time") === 1);
+
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
         wait(timeoutLongCI);
 
         const btn = _clickHelper.onEditTimeMenuSeekBack(1);
         mouseClick(control, btn.x, btn.y);
-        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 0);
-
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        tryVerify(() => control.model.calledUpateTime);
+
+        tryVerify(() => control.getItem(0, "time") === 0);
     }
 
     function test_editTimeNext() {
@@ -414,15 +408,16 @@ TestCase {
         verify(control);
         waitForRendering(control, timeoutShort);
 
+        tryVerify(() => control.getItem(0, "time") === 1);
+
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
         wait(timeoutLongCI);
 
         const btn = _clickHelper.onEditTimeMenuSeekForward(1);
         mouseClick(control, btn.x, btn.y);
-        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 2);
-
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        tryVerify(() => control.model.calledUpateTime);
+
+        tryVerify(() => control.getItem(0, "time") === 2);
     }
 
     function test_editTimeAborted() {
@@ -430,18 +425,27 @@ TestCase {
         verify(control);
         waitForRendering(control, timeoutShort);
 
+        tryVerify(() => control.getItem(0, "time") === 1);
+
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
         wait(timeoutLongCI);
 
+        const timeChangedSpy = createTemporaryObject(signalSpy, control, {
+            target: control.editLoader.item,
+            signalName: "timeTemporaryChanged"
+        });
+        verify(timeChangedSpy);
+
         const btn = _clickHelper.onEditTimeMenuSeekBack(1);
         mouseClick(control, btn.x, btn.y);
-        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 0);
+
+        tryCompare(timeChangedSpy, "count", 1);
+        tryVerify(() => timeChangedSpy.signalArguments[0][0] === 0);
 
         keyPress(Qt.Key_Escape);
         wait(timeoutLongCI);
 
-        tryVerify(() => control.calledJumpToTimeArgs[control.calledJumpToTimeArgs.length - 1] === 1);
-        verify(!control.model.calledUpateTime);
+        tryVerify(() => control.getItem(0, "time") === 1);
     }
 
     function test_editCommentType(): void {
@@ -456,7 +460,7 @@ TestCase {
         keyPress(Qt.Key_Escape);
         wait(timeoutLongCI);
 
-        verify(!control.model.calledUpateCommentType);
+        compare(control.getItem(0, "commentType"), "Comment Type 1");
 
         // test if editing has been successful
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
@@ -465,7 +469,7 @@ TestCase {
         const btn = _clickHelper.onEditCommentTypeMenu(3, 1);
         mouseClick(control, btn.x, btn.y);
 
-        tryVerify(() => control.model.calledUpateCommentType);
+        compare(control.getItem(0, "commentType"), "Comment Type 3");
     }
 
     function test_editComment(): void {
@@ -480,7 +484,7 @@ TestCase {
         keyPress(Qt.Key_Return);
         wait(timeoutLongCI);
 
-        verify(!control.model.calledUpateComment);
+        compare(control.getItem(0, "comment"), "Comment 1");
 
         // test if editing aborted via escape
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
@@ -491,7 +495,7 @@ TestCase {
         keyPress(Qt.Key_Escape);
         wait(timeoutLongCI);
 
-        verify(!control.model.calledUpateComment);
+        compare(control.getItem(0, "comment"), "Comment 1");
 
         // test if editing has been successful
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
@@ -500,6 +504,6 @@ TestCase {
         keyPress("h");
         keyPress("i");
         keyPress(Qt.Key_Return);
-        tryVerify(() => control.model.calledUpateComment);
+        compare(control.getItem(0, "comment"), "hi");
     }
 }
