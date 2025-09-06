@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
+import "../../app"
+
 TestCase {
     id: testCase
 
@@ -43,7 +45,11 @@ TestCase {
             mpvqcApplication: QtObject {
                 property var mpvqcPlayerFilesPyObject: QtObject {
                     property string default_input_conf_content: "default"
-                    property url input_conf_url: ""
+                    property url input_conf_url: Qt.resolvedUrl("")
+                }
+                property var mpvqcTheme: MpvqcTheme {
+                    themeColorOption: 4
+                    themeIdentifier: "Material You"
                 }
             }
         }
@@ -77,7 +83,7 @@ TestCase {
         verify(control);
 
         const acceptedSpy = createTemporaryObject(signalSpy, testCase, {
-            target: control.editView,
+            target: control.content,
             signalName: "accepted"
         });
         verify(acceptedSpy);

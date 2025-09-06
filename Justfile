@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export QML_IMPORT_PATH := 'qml'
 export QT_QPA_PLATFORM := 'offscreen'
 export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
 export QT_QUICK_CONTROLS_STYLE := 'Material'

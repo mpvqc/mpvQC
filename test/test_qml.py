@@ -23,9 +23,6 @@ from mpvqc import startup
 
 # noinspection PyPep8Naming
 class MpvqcTestSetup(QObject):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
     @Slot(QQmlEngine)
     def qmlEngineAvailable(self, _: QQmlEngine):
         startup.configure_qt_application_data()

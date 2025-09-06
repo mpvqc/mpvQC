@@ -20,60 +20,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtTest
 
-Item {
-    id: testHelper
+import "../../app"
 
-    width: 400
+TestCase {
+    id: testCase
+
+    width: 600
     height: 400
+    visible: true
+    when: windowShown
+    name: "MpvqcList"
 
-    MpvqcList {
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
         id: objectUnderTest
-        anchors.fill: testHelper
 
-        model: ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5"]
-        itemHeight: 42
+        MpvqcList {
+            anchors.fill: parent
 
-        mpvqcApplication: QtObject {
-            property var mpvqcTheme: QtObject {
-                property color control: "purple"
+            model: ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5"]
+            itemHeight: 42
+
+            mpvqcApplication: QtObject {
+                property var mpvqcTheme: MpvqcTheme {
+                    themeColorOption: 4
+                    themeIdentifier: "Material You"
+                }
             }
         }
     }
 
-    TestCase {
-        name: "MpvqcList"
-        when: windowShown
+    function test_selection_data() {
+        return [
+            {
+                tag: "row-3",
+                index: 3
+            },
+            {
+                tag: "row-5",
+                index: 5
+            },
+        ];
+    }
 
-        function cleanup() {
-            objectUnderTest.currentIndex = 0;
-        }
+    function test_selection(data) {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        function test_selection_data() {
-            return [
-                {
-                    tag: "row-3",
-                    index: 3
-                },
-                {
-                    tag: "row-5",
-                    index: 5
-                },
-            ];
-        }
+        compare(control.currentIndex, 0);
 
-        function test_selection(data) {
-            ensureRenderedUntilItem(data.index + 1);
-            compare(objectUnderTest.currentIndex, 0);
+        const item = control.itemAtIndex(data.index);
+        mouseClick(item);
 
-            const item = objectUnderTest.itemAtIndex(data.index);
-            mouseClick(item);
-
-            compare(objectUnderTest.currentIndex, data.index);
-        }
-
-        function ensureRenderedUntilItem(index: int): void {
-            objectUnderTest.currentIndex = index;
-            objectUnderTest.currentIndex = 0;
-        }
+        compare(control.currentIndex, data.index);
     }
 }

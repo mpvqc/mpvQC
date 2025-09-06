@@ -46,7 +46,9 @@ TestCase {
                 property var mpvqcSettings: QtObject {
                     property string lastDirectorySubtitles: "initial directory"
                 }
-                property var supportedSubtitleFileExtensions: ["ass"]
+                property var mpvqcUtilityPyObject: QtObject {
+                    property list<string> subtitleFileGlobPattern: []
+                }
             }
         }
     }
