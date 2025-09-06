@@ -33,6 +33,8 @@ Item {
     property alias selectedCommentIndex: _content.selectedCommentIndex
     property alias totalCommentCount: _content.totalCommentCount
 
+    readonly property alias content: _content // for tests
+
     height: 25
     visible: !root.mpvqcApplication.fullscreen
 

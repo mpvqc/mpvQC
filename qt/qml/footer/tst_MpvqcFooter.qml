@@ -80,7 +80,9 @@ TestCase {
         waitForRendering(control);
 
         mouseClick(testCase, 395, 395);
-        wait(timeoutLongCI);
+
+        tryCompare(control.content.loader, "status", Loader.Ready, timeoutLongCI);
+        tryVerify(() => control.content.loader.item?.opened, timeoutLongCI);
 
         verify(!control.percentLabelText.visible);
 
@@ -120,7 +122,9 @@ TestCase {
         waitForRendering(control);
 
         mouseClick(testCase, 395, 395);
-        wait(timeoutLongCI);
+
+        tryCompare(control.content.loader, "status", Loader.Ready, timeoutLongCI);
+        tryVerify(() => control.content.loader.item?.opened, timeoutLongCI);
 
         mouseClick(testCase, data.coordinates.x, data.coordinates.y);
         tryCompare(control.videoTimeLabelText, "text", data.expected);

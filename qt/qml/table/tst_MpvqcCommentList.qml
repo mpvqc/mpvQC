@@ -22,8 +22,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
-import pyobjects
-
 TestCase {
     id: testCase
 
@@ -75,10 +73,6 @@ TestCase {
             return Qt.point(xCoordinate, yCoordinate);
         }
     }
-
-    readonly property int timeoutShort: 100
-    readonly property int timeoutLong: 300
-    readonly property int timeoutLongCI: 750
 
     width: 600
     height: 400
@@ -158,6 +152,26 @@ TestCase {
         }
     }
 
+    function waitUntilEditControlOpened(control: MpvqcCommentList): void {
+        tryCompare(control.editLoader, "status", Loader.Ready);
+        tryVerify(() => control.editLoader.item?.opened);
+    }
+
+    function waitUntilEditControlClosed(control: MpvqcCommentList): void {
+        tryCompare(control.editLoader, "status", Loader.Ready);
+        tryVerify(() => control.editLoader.item?.closed);
+    }
+
+    function waitUntilContextMenuOpened(control: MpvqcCommentList): void {
+        tryCompare(control.contextMenuLoader, "status", Loader.Ready);
+        tryVerify(() => control.contextMenuLoader.item?.opened);
+    }
+
+    function waitUntilMessageBoxOpened(control: MpvqcCommentList): void {
+        tryCompare(control.messageBoxLoader, "status", Loader.Ready);
+        tryVerify(() => control.messageBoxLoader.item?.opened);
+    }
+
     function test_selectionWhileNotEditing_data(): list<var> {
         return [
             {
@@ -182,10 +196,10 @@ TestCase {
     function test_selectionWhileNotEditing(data): void {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         mouseClick(control, data.column, _clickHelper.row2Center);
-        tryVerify(() => control.isNotCurrentlyEditing, timeoutLong);
+        tryVerify(() => control.isNotCurrentlyEditing);
 
         compare(control.currentIndex, 1);
     }
@@ -240,42 +254,42 @@ TestCase {
     function test_selectionWhileEditingComment(data) {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         keyPress(Qt.Key_Return);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
         verify(control.isCurrentlyEditing);
 
         mouseClick(control, data.columnClicked, data.rowClicked);
-        tryVerify(() => control.isNotCurrentlyEditing, timeoutLong);
+        tryVerify(() => control.isNotCurrentlyEditing);
         compare(control.currentIndex, data.rowIndexExpected);
     }
 
     function test_selectionWhileEditingTime() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(timeoutShort);
+        waitUntilEditControlOpened(control);
         verify(control.isCurrentlyEditing);
 
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row2Center);
-        tryVerify(() => control.isNotCurrentlyEditing, timeoutLong);
+        tryVerify(() => control.isNotCurrentlyEditing);
         compare(control.currentIndex, 0);
     }
 
     function test_selectionWhileEditingCommentType() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
-        wait(timeoutShort);
+        waitUntilEditControlOpened(control);
         verify(control.isCurrentlyEditing);
 
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row2Center);
-        tryVerify(() => control.isNotCurrentlyEditing, timeoutLong);
+        tryVerify(() => control.isNotCurrentlyEditing);
         compare(control.currentIndex, 0);
     }
 
@@ -286,7 +300,7 @@ TestCase {
                 exec: control => {
                     const openCtxMenuCoords = _clickHelper.onContextMenuOpen(1);
                     mouseClick(control, openCtxMenuCoords.x, openCtxMenuCoords.y, Qt.RightButton);
-                    wait(timeoutLong);
+                    waitUntilContextMenuOpened(control);
 
                     const ctxMenuItemCoords = _clickHelper.onContextMenuItem(1, 1);
                     mouseClick(control, ctxMenuItemCoords.x, ctxMenuItemCoords.y);
@@ -302,7 +316,7 @@ TestCase {
     function test_editCommentTrigger(data) {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         verify(!control.isCurrentlyEditing);
         data.exec(control);
@@ -317,7 +331,7 @@ TestCase {
                 exec: control => {
                     const openCtxMenuCoords = _clickHelper.onContextMenuOpen(1);
                     mouseClick(control, openCtxMenuCoords.x, openCtxMenuCoords.y, Qt.RightButton);
-                    wait(timeoutLong);
+                    waitUntilContextMenuOpened(control);
 
                     const ctxMenuItemCoords = _clickHelper.onContextMenuItem(2, 1);
                     mouseClick(control, ctxMenuItemCoords.x, ctxMenuItemCoords.y);
@@ -335,7 +349,7 @@ TestCase {
     function test_copyToClipboard(data) {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         const spy = createTemporaryObject(signalSpy, control, {
             target: control.model,
@@ -344,7 +358,7 @@ TestCase {
         verify(spy);
 
         data.exec(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         tryVerify(() => spy.count === 1);
     }
@@ -356,7 +370,7 @@ TestCase {
                 exec: control => {
                     const openCtxMenuCoords = _clickHelper.onContextMenuOpen(1);
                     mouseClick(control, openCtxMenuCoords.x, openCtxMenuCoords.y, Qt.RightButton);
-                    wait(timeoutLong);
+                    waitUntilContextMenuOpened(control);
 
                     const ctxMenuItemCoords = _clickHelper.onContextMenuItem(3, 1);
                     mouseClick(control, ctxMenuItemCoords.x, ctxMenuItemCoords.y);
@@ -376,10 +390,10 @@ TestCase {
     function test_deleteComment(data) {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         data.exec(control);
-        wait(timeoutLong);
+        waitUntilMessageBoxOpened(control);
         keyPress(Qt.Key_Tab);
         keyPress(Qt.Key_Return);
 
@@ -389,12 +403,12 @@ TestCase {
     function test_editTimePrevious() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         tryVerify(() => control.getItem(0, "time") === 1);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(timeoutLongCI);
+        waitUntilEditControlOpened(control);
 
         const btn = _clickHelper.onEditTimeMenuSeekBack(1);
         mouseClick(control, btn.x, btn.y);
@@ -406,12 +420,12 @@ TestCase {
     function test_editTimeNext() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         tryVerify(() => control.getItem(0, "time") === 1);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(timeoutLongCI);
+        waitUntilEditControlOpened(control);
 
         const btn = _clickHelper.onEditTimeMenuSeekForward(1);
         mouseClick(control, btn.x, btn.y);
@@ -423,12 +437,12 @@ TestCase {
     function test_editTimeAborted() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
         tryVerify(() => control.getItem(0, "time") === 1);
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
-        wait(timeoutLongCI);
+        waitUntilEditControlOpened(control);
 
         const timeChangedSpy = createTemporaryObject(signalSpy, control, {
             target: control.editLoader.item,
@@ -443,28 +457,32 @@ TestCase {
         tryVerify(() => timeChangedSpy.signalArguments[0][0] === 0);
 
         keyPress(Qt.Key_Escape);
-        wait(timeoutLongCI);
+        waitUntilEditControlClosed(control);
 
         tryVerify(() => control.getItem(0, "time") === 1);
+    }
+
+    function test_editCommentTypeAborted(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
+
+        mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
+        waitUntilEditControlOpened(control);
+
+        keyPress(Qt.Key_Escape);
+        waitUntilEditControlClosed(control);
+
+        compare(control.getItem(0, "commentType"), "Comment Type 1");
     }
 
     function test_editCommentType(): void {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
-        // test if editing aborted via escape
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
-        wait(timeoutLongCI);
-
-        keyPress(Qt.Key_Escape);
-        wait(timeoutLongCI);
-
-        compare(control.getItem(0, "commentType"), "Comment Type 1");
-
-        // test if editing has been successful
-        mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
-        wait(timeoutLongCI);
+        waitUntilEditControlOpened(control);
 
         const btn = _clickHelper.onEditCommentTypeMenu(3, 1);
         mouseClick(control, btn.x, btn.y);
@@ -475,35 +493,46 @@ TestCase {
     function test_editComment(): void {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
-        waitForRendering(control, timeoutShort);
+        waitForRendering(control);
 
-        // test if text has not changed
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        wait(timeoutLongCI);
-
-        keyPress(Qt.Key_Return);
-        wait(timeoutLongCI);
-
-        compare(control.getItem(0, "comment"), "Comment 1");
-
-        // test if editing aborted via escape
-        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        wait(timeoutLongCI);
-
-        keyPress("h");
-        keyPress("i");
-        keyPress(Qt.Key_Escape);
-        wait(timeoutLongCI);
-
-        compare(control.getItem(0, "comment"), "Comment 1");
-
-        // test if editing has been successful
-        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
-        wait(timeoutLongCI);
+        waitUntilEditControlOpened(control);
 
         keyPress("h");
         keyPress("i");
         keyPress(Qt.Key_Return);
         compare(control.getItem(0, "comment"), "hi");
+    }
+
+    function test_editCommentAborted(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
+
+        compare(control.getItem(0, "comment"), "Comment 1");
+
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        waitUntilEditControlOpened(control);
+
+        keyPress("h");
+        keyPress("i");
+        keyPress(Qt.Key_Escape);
+        waitUntilEditControlClosed(control);
+        compare(control.getItem(0, "comment"), "Comment 1");
+    }
+
+    function test_editCommentConfirmUnchanged(): void {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
+
+        compare(control.getItem(0, "comment"), "Comment 1");
+
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        waitUntilEditControlOpened(control);
+
+        keyPress(Qt.Key_Return);
+        waitUntilEditControlClosed(control);
+        compare(control.getItem(0, "comment"), "Comment 1");
     }
 }

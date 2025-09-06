@@ -54,6 +54,8 @@ ListView {
     readonly property bool isNotCurrentlyEditing: !isCurrentlyEditing
 
     readonly property alias editLoader: _editLoader // for tests
+    readonly property alias contextMenuLoader: _contextMenuLoader // for tests
+    readonly property alias messageBoxLoader: _messageBoxLoader // for tests
 
     model: MpvqcCommentModelPyObject {}
 

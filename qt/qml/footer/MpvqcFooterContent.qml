@@ -56,6 +56,7 @@ Item {
     readonly property Label rowSelectionLabel: _rowSelectionLabelText // for tests
     readonly property Label percentLabel: _videoPercentLabel // for tests
     readonly property Label videoTimeLabel: _videoTimeLabel // for tests
+    readonly property alias loader: _contextMenuLoader // for tests
 
     signal currentTotalTimeSelected
     signal currentTimeSelected
