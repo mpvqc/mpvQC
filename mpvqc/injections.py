@@ -43,7 +43,6 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.TimeFormatterService, lambda: s.TimeFormatterService())
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
     binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
-    binder.bind_to_constructor(s.VideoSelectorService, lambda: s.VideoSelectorService())
 
 
 def configure_injections():
