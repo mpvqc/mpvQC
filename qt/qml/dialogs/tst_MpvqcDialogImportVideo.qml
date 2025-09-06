@@ -46,6 +46,9 @@ TestCase {
                 property var mpvqcSettings: QtObject {
                     property string lastDirectoryVideo: "initial directory"
                 }
+                property var mpvqcUtilityPyObject: QtObject {
+                    property list<string> videoFileGlobPattern: []
+                }
             }
         }
     }

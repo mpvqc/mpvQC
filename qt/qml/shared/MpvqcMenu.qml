@@ -24,10 +24,11 @@ Menu {
     id: root
 
     readonly property bool mMirrored: count > 0 && (itemAt(0) as MenuItem).mirrored
+    readonly property bool isWindows: Qt.platform.os === "windows"
 
     z: 2
     x: mMirrored ? -width + parent.width : 0
-    popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
+    popupType: isWindows ? Popup.Window : Popup.Item
     dim: false
 
     width: calculateMenuWidths()
@@ -54,16 +55,20 @@ Menu {
     // *********************************************************
     // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
     onAboutToShow: {
-        enableFakeModal(); // qmllint disable
+        if (isWindows) {
+            enableFakeModal(); // qmllint disable
+        }
     }
 
     onAboutToHide: {
-        disableFakeModal(); // qmllint disable
+        if (isWindows) {
+            disableFakeModal(); // qmllint disable
+        }
     }
     // *********************************************************
 
     Binding {
-        when: Qt.platform.os === "windows"
+        when: root.isWindows
         target: root
         property: "enter"
         value: null
@@ -71,7 +76,7 @@ Menu {
     }
 
     Binding {
-        when: Qt.platform.os === "windows"
+        when: root.isWindows
         target: root
         property: "exit"
         value: null
