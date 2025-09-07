@@ -165,7 +165,7 @@ class MpvqcManagerBackendPyObject(QObject):
             comment_model=self._comment_model,
             callback=self.imported.emit,
         )
-        QThreadPool().globalInstance().start(job)
+        QThreadPool.globalInstance().start(job)
 
     @Slot()
     def performReset(self) -> None:
@@ -173,7 +173,7 @@ class MpvqcManagerBackendPyObject(QObject):
             comment_model=self._comment_model,
             callback=self.reset.emit,
         )
-        QThreadPool().globalInstance().start(job)
+        QThreadPool.globalInstance().start(job)
 
     @Slot(QUrl)
     def performSave(self, document: QUrl) -> None:
@@ -181,4 +181,4 @@ class MpvqcManagerBackendPyObject(QObject):
             url=document,
             callback=self.saved.emit,
         )
-        QThreadPool().globalInstance().start(job)
+        QThreadPool.globalInstance().start(job)
