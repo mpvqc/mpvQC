@@ -27,6 +27,7 @@ MpvqcObject {
     id: root
 
     readonly property bool saved: _stateManager.state.saved
+    readonly property bool isHaveDocument: _stateManager.state.document !== null
 
     onSavedChanged: {
         console.warn("SAVED", saved);
@@ -52,8 +53,12 @@ MpvqcObject {
         _backend.performImport(documents, videos, subtitles);
     }
 
-    function save(): void {
-    // todo
+    function saveCurrent(): void {
+        _backend.performSave(_stateManager.state.document);
+    }
+
+    function save(document: url): void {
+        _backend.performSave(document);
     }
 
     MpvqcManagerBackendPyObject { //qmllint disable
@@ -64,6 +69,8 @@ MpvqcObject {
         // todo video selector
         // notify invalid documents
         }
+
+        onSaved: url => _stateManager.processSave(url)
 
         onChanged: _stateManager.processChange()
 
@@ -94,7 +101,7 @@ MpvqcObject {
         }
 
         function processSave(document: url): void {
-            console.log("processSave");
+            console.log("processSave", document);
             _dispatch({
                 type: "SAVE",
                 document: document

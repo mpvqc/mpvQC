@@ -118,6 +118,14 @@ Page {
         function resetState(): void {
             root.mpvqcManager.reset();
         }
+
+        function saveCurrentDocument(): void {
+            root.mpvqcManager.saveCurrent();
+        }
+
+        function saveNewDocument(document: url): void {
+            root.mpvqcManager.save(document);
+        }
     }
 
     Keys.onEscapePressed: {
@@ -296,11 +304,16 @@ Page {
         }
 
         function onSaveQcDocumentsRequested(): void {
-            root.mpvqcManager.save();
+            if (root.mpvqcManager.isHaveDocument) {
+                _impl.saveCurrentDocument();
+            } else {
+                onSaveQcDocumentsAsRequested();
+            }
         }
 
         function onSaveQcDocumentsAsRequested(): void {
-            root.mpvqcManager.saveAs();
+            const proposal = root.mpvqcUtilityPyObject.generate_file_path_proposal();
+            _fileDialogLoader.openExportQcDocumentDialog(proposal);
         }
 
         function onExtendedExportRequested(name: string, path: url): void {
@@ -406,6 +419,14 @@ Page {
             active = true;
         }
 
+        function openExportQcDocumentDialog(proposal: url): void {
+            setSource(exportQcDocumentDialog, {
+                isExtendedExport: false,
+                selectedFile: proposal
+            });
+            active = true;
+        }
+
         function openExtendedDocumentExportDialog(proposal: url, exportTemplate: url): void {
             setSource(exportQcDocumentDialog, {
                 isExtendedExport: true,
@@ -442,6 +463,10 @@ Page {
 
             function onRejected(): void {
                 _delayCleanupTimer.restart();
+            }
+
+            function onSavePressed(fileUrl: url): void {
+                _impl.saveNewDocument(fileUrl);
             }
 
             function onExtendedSavePressed(document: url, template: url): void {
@@ -483,7 +508,14 @@ Page {
             active = true;
         }
 
-        function openCheckForUpdateMessageBox(): void {
+        function openNewDocumentMessageBox(): void {
+            setSource(messageBoxNewDocument, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openVersionCheckMessageBox(): void {
             setSource(messageBoxVersionCheck, {
                 mpvqcApplication: root.mpvqcApplication
             });
@@ -492,13 +524,6 @@ Page {
 
         function openExtendedExportsMessageBox(): void {
             setSource(messageBoxExtendedExport, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openVersionCheckMessageBox(): void {
-            setSource(messageBoxVersionCheck, {
                 mpvqcApplication: root.mpvqcApplication
             });
             active = true;
@@ -516,6 +541,7 @@ Page {
         Connections {
             enabled: _messageBoxLoader.item
             target: _messageBoxLoader.item
+            ignoreUnknownSignals: true
 
             function onResetDocumentConfirmedByUser(): void {
                 _impl.resetState();
