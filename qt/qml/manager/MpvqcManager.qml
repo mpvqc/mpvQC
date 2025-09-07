@@ -33,7 +33,6 @@ MpvqcObject {
     }
 
     function reset(): void {
-        // todo check if unsaved changes -> ask or reset immediately
         _backend.performReset();
     }
 
@@ -57,17 +56,13 @@ MpvqcObject {
     // todo
     }
 
-    function saveAs(): void {
-    // todo
-    }
-
     MpvqcManagerBackendPyObject { //qmllint disable
         id: _backend
 
         onImported: delta => {
             console.log("onImported", JSON.stringify(delta));
-            // todo video selector
-            // notify invalid documents
+        // todo video selector
+        // notify invalid documents
         }
 
         onChanged: _stateManager.processChange()

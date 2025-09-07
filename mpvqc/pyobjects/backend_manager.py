@@ -25,6 +25,7 @@ from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
+    DocumentExportService,
     DocumentImporterService,
     TypeMapperService,
 )
@@ -35,7 +36,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-class ImportRunnable(QRunnable):
+class ImportJob(QRunnable):
     _importer: DocumentImporterService = inject.attr(DocumentImporterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
@@ -84,12 +85,41 @@ class ImportRunnable(QRunnable):
         return url.toString()
 
 
+class ResetJob(QRunnable):
+    def __init__(self, comment_model: MpvqcCommentModelPyObject, callback: Callable[[], None]):
+        super().__init__()
+        self._comment_model = comment_model
+        self._callback = callback
+
+    @Slot()
+    def run(self):
+        self._comment_model.clear_comments()
+        self._callback()
+
+
+class ExportJob(QRunnable):
+    _exporter: DocumentExportService = inject.attr(DocumentExportService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+
+    def __init__(self, url: QUrl, callback: Callable[[QUrl], None]):
+        super().__init__()
+        self._url = url
+        self._callback = callback
+
+    @Slot()
+    def run(self):
+        path = self._type_mapper.map_url_to_path(self._url)
+        self._exporter.save(path)
+        self._callback(self._url)
+
+
 # noinspection PyPep8Naming
 @QmlElement
 class MpvqcManagerBackendPyObject(QObject):
     imported = Signal(dict)
     changed = Signal()
     reset = Signal()
+    saved = Signal(QUrl)
 
     def __init__(self):
         super().__init__()
@@ -99,10 +129,6 @@ class MpvqcManagerBackendPyObject(QObject):
         def on_comments_changed(*_):
             self.changed.emit()
 
-        def on_comments_cleared(*_):
-            self.reset.emit()
-
-        self._comment_model.commentsCleared.connect(on_comments_cleared)
         self._comment_model.commentsClearedUndone.connect(on_comments_changed)
 
         # Initial import is an "import" rather than a "change"
@@ -130,9 +156,9 @@ class MpvqcManagerBackendPyObject(QObject):
     def _comment_model(self) -> MpvqcCommentModelPyObject:
         return QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel")
 
-    @Slot(list, list, list, result=dict)
+    @Slot(list, list, list)
     def performImport(self, documents: list[QUrl], videos: list[QUrl], subtitles: list[QUrl]) -> None:
-        job = ImportRunnable(
+        job = ImportJob(
             documents=documents,
             videos=videos,
             subtitles=subtitles,
@@ -143,4 +169,16 @@ class MpvqcManagerBackendPyObject(QObject):
 
     @Slot()
     def performReset(self) -> None:
-        self._comment_model.clear_comments()
+        job = ResetJob(
+            comment_model=self._comment_model,
+            callback=self.reset.emit,
+        )
+        QThreadPool().globalInstance().start(job)
+
+    @Slot(QUrl)
+    def performSave(self, document: QUrl) -> None:
+        job = ExportJob(
+            url=document,
+            callback=self.saved.emit,
+        )
+        QThreadPool().globalInstance().start(job)
