@@ -82,17 +82,16 @@ def test_import_comments_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_import_comments_fires_signals(model, signal_helper):
-    model.commentsImportedInitially.connect(lambda val: signal_helper.log("commentsImportedInitially", val))
+def test_import_comments_fires_signals(model, make_spy):
+    initially_spy = make_spy(model.commentsImportedInitially)
 
     model.import_comments(DEFAULT_COMMENTS)
 
-    assert signal_helper.has_logged("commentsImportedInitially")
-    assert signal_helper.logged_value("commentsImportedInitially") == 9
+    assert initially_spy.count() == 1
+    assert initially_spy.at(invocation=0, argument=0) == 9
 
 
 def test_import_comments_undo_redo(model):
-    # noinspection PyTypeChecker
     comments = [
         Comment(time=1, comment_type="commentType", comment="Undo Redo 1"),
         Comment(time=6, comment_type="commentType", comment="Undo Redo 2"),
@@ -134,32 +133,39 @@ def test_import_comments_undo_redo_invalidates_search(model):
     assert model._searcher._hits is None
 
 
-def test_import_comments_undo_redo_fires_signals(model, signal_helper):
-    model.commentsImportedInitially.connect(lambda val: signal_helper.log("commentsImportedInitially", val))
-    model.commentsImportedUndone.connect(lambda val: signal_helper.log("commentsImportedUndone", val))
-    model.commentsImportedRedone.connect(lambda val: signal_helper.log("commentsImportedRedone", val))
+def test_import_comments_undo_redo_fires_signals(model, make_spy):
+    initially_spy = make_spy(model.commentsImportedInitially)
+    undone_spy = make_spy(model.commentsImportedUndone)
+    redone_spy = make_spy(model.commentsImportedRedone)
+
     model.set_selected_row(3)
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     model.import_comments([comment])
 
-    assert signal_helper.has_logged("commentsImportedInitially")
-    assert signal_helper.logged_value("commentsImportedInitially") == 5
-    assert not signal_helper.has_logged("commentsImportedUndone")
-    assert not signal_helper.has_logged("commentsImportedRedone")
+    assert initially_spy.count() == 1
+    assert initially_spy.at(invocation=0, argument=0) == 5
+    assert undone_spy.count() == 0
+    assert redone_spy.count() == 0
 
-    signal_helper.reset()
+    initially_spy.reset()
+    undone_spy.reset()
+    redone_spy.reset()
+
     model.undo()
 
-    assert not signal_helper.has_logged("commentsImportedInitially")
-    assert signal_helper.has_logged("commentsImportedUndone")
-    assert signal_helper.logged_value("commentsImportedUndone") == 3
-    assert not signal_helper.has_logged("commentsImportedRedone")
+    assert initially_spy.count() == 0
+    assert undone_spy.count() == 1
+    assert undone_spy.at(invocation=0, argument=0) == 3
+    assert redone_spy.count() == 0
 
-    signal_helper.reset()
+    initially_spy.reset()
+    undone_spy.reset()
+    redone_spy.reset()
+
     model.redo()
 
-    assert not signal_helper.has_logged("commentsImportedInitially")
-    assert not signal_helper.has_logged("commentsImportedUndone")
-    assert signal_helper.has_logged("commentsImportedRedone")
-    assert signal_helper.logged_value("commentsImportedRedone") == 5
+    assert initially_spy.count() == 0
+    assert undone_spy.count() == 0
+    assert redone_spy.count() == 1
+    assert redone_spy.at(invocation=0, argument=0) == 5

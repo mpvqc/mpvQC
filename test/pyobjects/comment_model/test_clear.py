@@ -51,16 +51,17 @@ def test_clear_comments_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_clear_comments_fires_signals(model, signal_helper):
-    model.commentsCleared.connect(lambda: signal_helper.log("commentsCleared"))
+def test_clear_comments_fires_signals(model, make_spy):
+    cleared_spy = make_spy(model.commentsCleared)
 
     model.clear_comments()
 
-    assert signal_helper.has_logged("commentsCleared")
+    assert cleared_spy.count() == 1
 
 
 def test_clear_comments_undo_redo(model):
     assert model.rowCount() == 5
+
     model.clear_comments()
     assert model.rowCount() == 0
 
@@ -84,22 +85,24 @@ def test_clear_comments_undo_redo_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_clear_comments_undo_redo_fires_signals(model, signal_helper):
-    model.commentsCleared.connect(lambda: signal_helper.log("commentsCleared"))
-    model.commentsClearedUndone.connect(lambda: signal_helper.log("commentsClearedUndone"))
+def test_clear_comments_undo_redo_fires_signals(model, make_spy):
+    cleared_spy = make_spy(model.commentsCleared)
+    cleared_undone_spy = make_spy(model.commentsClearedUndone)
 
     model.clear_comments()
-    assert signal_helper.has_logged("commentsCleared")
-    assert not signal_helper.has_logged("commentsClearedUndone")
+    assert cleared_spy.count() == 1
+    assert cleared_undone_spy.count() == 0
 
-    signal_helper.reset()
+    cleared_spy.reset()
+    cleared_undone_spy.reset()
+
     model.undo()
+    assert cleared_spy.count() == 0
+    assert cleared_undone_spy.count() == 1
 
-    assert not signal_helper.has_logged("commentsCleared")
-    assert signal_helper.has_logged("commentsClearedUndone")
+    cleared_spy.reset()
+    cleared_undone_spy.reset()
 
-    signal_helper.reset()
     model.redo()
-
-    assert signal_helper.has_logged("commentsCleared")
-    assert not signal_helper.has_logged("commentsClearedUndone")
+    assert cleared_spy.count() == 1
+    assert cleared_undone_spy.count() == 0
