@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections.abc import Callable, Iterable
-from typing import Any
 from unittest.mock import MagicMock
 
 import inject
@@ -25,30 +24,6 @@ import pytest
 from mpvqc.models import Comment
 from mpvqc.pyobjects import MpvqcCommentModelPyObject
 from mpvqc.services import PlayerService
-
-
-class SignalHelper:
-    """Helper class to help with signal logging"""
-
-    def __init__(self):
-        self.signals_fired = {}
-
-    def log(self, signal_name: str, val=True):
-        self.signals_fired[signal_name] = val
-
-    def has_logged(self, signal_name: str) -> bool:
-        return signal_name in self.signals_fired
-
-    def logged_value(self, signal_name: str) -> Any:
-        return self.signals_fired[signal_name]
-
-    def reset(self):
-        self.signals_fired = {}
-
-
-@pytest.fixture
-def signal_helper() -> SignalHelper:
-    return SignalHelper()
 
 
 @pytest.fixture(scope="session")

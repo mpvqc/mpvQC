@@ -88,12 +88,17 @@ ignore = [
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"**/test_*.py" = [ # Adjust rules for test files
+"test/**" = [ # Adjust rules for test files
     "S101", # Allow `assert` in tests
     "ARG",  # Ignore unused arguments (common in fixtures)
     "FBT",  # Ignore boolean positional argument check (e.g. in parametrize)
     "SLF",  # Ignore access to private members
     "PLR",  # Ignore complexity/readability issues
+]
+
+"**/test_*.py" = [
+    # Adjust rules for test files
+    "S101", # Allow `assert` in tests
 ]
 
 [tool.ruff.lint.isort]
