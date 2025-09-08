@@ -86,12 +86,12 @@ def test_add_comment_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_add_comment_fires_signals(model, signal_helper):
-    model.newCommentAddedInitially.connect(lambda idx: signal_helper.log("newCommentAddedInitially", idx))
+def test_add_comment_fires_signals(model, make_spy):
+    added_initially_spy = make_spy(model.newCommentAddedInitially)
 
     model.add_row("comment type")
 
-    assert signal_helper.has_logged("newCommentAddedInitially")
+    assert added_initially_spy.count() == 1
 
 
 def test_add_comment_undo_redo(make_model):
@@ -144,32 +144,40 @@ def test_add_comment_undo_redo_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_add_comment_undo_redo_fires_signals(make_model, signal_helper):
+def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
-    model.newCommentAddedInitially.connect(lambda val: signal_helper.log("newCommentAddedInitially", val))
-    model.newCommentAddedRedone.connect(lambda val: signal_helper.log("newCommentAddedRedone", val))
-    model.newCommentAddedUndone.connect(lambda val: signal_helper.log("newCommentAddedUndone", val))
+
+    new_initially_spy = make_spy(model.newCommentAddedInitially)
+    new_undone_spy = make_spy(model.newCommentAddedUndone)
+    new_redone_spy = make_spy(model.newCommentAddedRedone)
+
     model.set_selected_row(3)
-
     model.add_row("undo redo comment type")
-    assert signal_helper.has_logged("newCommentAddedInitially")
-    assert not signal_helper.has_logged("newCommentAddedUndone")
-    assert not signal_helper.has_logged("newCommentAddedRedone")
-    assert signal_helper.logged_value("newCommentAddedInitially") == 5
 
-    signal_helper.reset()
+    assert new_initially_spy.count() == 1
+    assert new_initially_spy.at(invocation=0, argument=0) == 5
+    assert new_undone_spy.count() == 0
+    assert new_redone_spy.count() == 0
+
+    new_initially_spy.reset()
+    new_undone_spy.reset()
+    new_redone_spy.reset()
+
     model.undo()
 
-    assert not signal_helper.has_logged("newCommentAddedInitially")
-    assert signal_helper.has_logged("newCommentAddedUndone")
-    assert not signal_helper.has_logged("newCommentAddedRedone")
-    assert signal_helper.logged_value("newCommentAddedUndone") == 3
+    assert new_initially_spy.count() == 0
+    assert new_undone_spy.count() == 1
+    assert new_undone_spy.at(invocation=0, argument=0) == 3
+    assert new_redone_spy.count() == 0
 
-    signal_helper.reset()
+    new_initially_spy.reset()
+    new_undone_spy.reset()
+    new_redone_spy.reset()
+
     model.redo()
 
-    assert not signal_helper.has_logged("newCommentAddedInitially")
-    assert not signal_helper.has_logged("newCommentAddedUndone")
-    assert signal_helper.has_logged("newCommentAddedRedone")
-    assert signal_helper.logged_value("newCommentAddedRedone") == 5
+    assert new_initially_spy.count() == 0
+    assert new_undone_spy.count() == 0
+    assert new_redone_spy.count() == 1
+    assert new_redone_spy.at(invocation=0, argument=0) == 5

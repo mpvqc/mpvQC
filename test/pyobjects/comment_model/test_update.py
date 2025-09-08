@@ -67,31 +67,37 @@ def test_update_time_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_update_time_fires_signals(model, signal_helper):
-    model.timeUpdatedInitially.connect(lambda idx: signal_helper.log("timeUpdatedInitially", idx))
-    model.timeUpdatedUndone.connect(lambda idx: signal_helper.log("timeUpdatedUndone", idx))
-    model.timeUpdatedRedone.connect(lambda idx: signal_helper.log("timeUpdatedRedone", idx))
+def test_update_time_fires_signals(model, make_spy):
+    initially_spy = make_spy(model.timeUpdatedInitially)
+    undone_spy = make_spy(model.timeUpdatedUndone)
+    redone_spy = make_spy(model.timeUpdatedRedone)
 
     model.update_time(row=0, new_time=7)
-    assert signal_helper.has_logged("timeUpdatedInitially")
-    assert not signal_helper.has_logged("timeUpdatedUndone")
-    assert not signal_helper.has_logged("timeUpdatedRedone")
-    assert signal_helper.logged_value("timeUpdatedInitially") == 1
+    assert initially_spy.count() == 1
+    assert undone_spy.count() == 0
+    assert redone_spy.count() == 0
+    assert initially_spy.at(invocation=0, argument=0) == 1
 
-    signal_helper.reset()
+    initially_spy.reset()
+    undone_spy.reset()
+    redone_spy.reset()
+
     model.undo()
 
-    assert not signal_helper.has_logged("timeUpdatedInitially")
-    assert signal_helper.has_logged("timeUpdatedUndone")
-    assert not signal_helper.has_logged("timeUpdatedRedone")
+    assert initially_spy.count() == 0
+    assert undone_spy.count() == 1
+    assert redone_spy.count() == 0
 
-    signal_helper.reset()
+    initially_spy.reset()
+    undone_spy.reset()
+    redone_spy.reset()
+
     model.redo()
 
-    assert not signal_helper.has_logged("timeUpdatedInitially")
-    assert not signal_helper.has_logged("timeUpdatedUndone")
-    assert signal_helper.has_logged("timeUpdatedRedone")
-    assert signal_helper.logged_value("timeUpdatedRedone") == 1
+    assert initially_spy.count() == 0
+    assert undone_spy.count() == 0
+    assert redone_spy.count() == 1
+    assert redone_spy.at(invocation=0, argument=0) == 1
 
 
 def test_update_comment_type(model):
@@ -105,30 +111,34 @@ def test_update_comment_type(model):
     assert model.item(0, 0).data(Role.TYPE) == "updated comment type"
 
 
-def test_update_comment_type_fires_signals(model, signal_helper):
-    model.commentTypeUpdated.connect(lambda idx: signal_helper.log("commentTypeUpdated", idx))
-    model.commentTypeUpdatedUndone.connect(lambda idx: signal_helper.log("commentTypeUpdatedUndone", idx))
+def test_update_comment_type_fires_signals(model, make_spy):
+    updated_spy = make_spy(model.commentTypeUpdated)
+    undone_spy = make_spy(model.commentTypeUpdatedUndone)
 
     model.update_comment_type(row=0, comment_type="updated comment type")
-    assert signal_helper.has_logged("commentTypeUpdated")
-    assert not signal_helper.has_logged("commentTypeUpdatedUndone")
-    assert signal_helper.logged_value("commentTypeUpdated") == 0
+    assert updated_spy.count() == 1
+    assert updated_spy.at(invocation=0, argument=0) == 0
+    assert undone_spy.count() == 0
 
-    signal_helper.reset()
+    updated_spy.reset()
+    undone_spy.reset()
+
     model.undo()
     model.set_selected_row(3)
 
-    assert not signal_helper.has_logged("commentTypeUpdated")
-    assert signal_helper.has_logged("commentTypeUpdatedUndone")
-    assert signal_helper.logged_value("commentTypeUpdatedUndone") == 0
+    assert updated_spy.count() == 0
+    assert undone_spy.count() == 1
+    assert undone_spy.at(invocation=0, argument=0) == 0
 
-    signal_helper.reset()
+    updated_spy.reset()
+    undone_spy.reset()
+
     model.redo()
     model.set_selected_row(2)
 
-    assert signal_helper.has_logged("commentTypeUpdated")
-    assert not signal_helper.has_logged("commentTypeUpdatedUndone")
-    assert signal_helper.logged_value("commentTypeUpdated") == 0
+    assert updated_spy.count() == 1
+    assert undone_spy.count() == 0
+    assert updated_spy.at(invocation=0, argument=0) == 0
 
 
 def test_update_comment(model):
@@ -156,29 +166,33 @@ def test_update_comment_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_update_comment_fires_signals(model, signal_helper):
-    model.commentUpdated.connect(lambda idx: signal_helper.log("commentUpdated", idx))
-    model.commentUpdatedUndone.connect(lambda idx: signal_helper.log("commentUpdatedUndone", idx))
+def test_update_comment_fires_signals(model, make_spy):
+    updated_spy = make_spy(model.commentUpdated)
+    undone_spy = make_spy(model.commentUpdatedUndone)
 
     model.update_comment(row=0, comment="new")
-    assert signal_helper.has_logged("commentUpdated")
-    assert not signal_helper.has_logged("commentUpdatedUndone")
-    assert signal_helper.logged_value("commentUpdated") == 0
+    assert updated_spy.count() == 1
+    assert updated_spy.at(invocation=0, argument=0) == 0
+    assert undone_spy.count() == 0
 
-    signal_helper.reset()
+    updated_spy.reset()
+    undone_spy.reset()
+
     model.undo()
     model.set_selected_row(3)
 
-    assert not signal_helper.has_logged("commentUpdated")
-    assert signal_helper.has_logged("commentUpdatedUndone")
-    assert signal_helper.logged_value("commentUpdatedUndone") == 0
+    assert updated_spy.count() == 0
+    assert undone_spy.count() == 1
+    assert undone_spy.at(invocation=0, argument=0) == 0
 
-    signal_helper.reset()
+    updated_spy.reset()
+    undone_spy.reset()
+
     model.redo()
 
-    assert signal_helper.has_logged("commentUpdated")
-    assert not signal_helper.has_logged("commentUpdatedUndone")
-    assert signal_helper.logged_value("commentUpdated") == 0
+    assert updated_spy.count() == 1
+    assert undone_spy.count() == 0
+    assert updated_spy.at(invocation=0, argument=0) == 0
 
 
 def test_update_comments_consecutively_undo_redo(make_model):

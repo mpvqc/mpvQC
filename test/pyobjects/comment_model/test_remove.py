@@ -52,12 +52,12 @@ def test_remove_comment_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_remove_comment_fires_signals(model, signal_helper):
-    model.commentRemoved.connect(lambda: signal_helper.log("commentRemoved"))
+def test_remove_comment_fires_signals(model, make_spy):
+    removed_spy = make_spy(model.commentRemoved)
 
     model.remove_row(0)
 
-    assert signal_helper.has_logged("commentRemoved")
+    assert removed_spy.count() == 1
 
 
 def test_remove_comment_undo_redo(model):
@@ -103,24 +103,28 @@ def test_remove_comment_undo_redo_invalidates_search_results(model):
     assert model._searcher._hits is None
 
 
-def test_remove_comment_undo_redo_fires_signals(model, signal_helper):
-    model.commentRemoved.connect(lambda: signal_helper.log("commentRemoved"))
-    model.commentRemovedUndone.connect(lambda val: signal_helper.log("commentRemovedUndone", val))
+def test_remove_comment_undo_redo_fires_signals(model, make_spy):
+    removed_spy = make_spy(model.commentRemoved)
+    removed_undone_spy = make_spy(model.commentRemovedUndone)
 
     model.remove_row(3)
 
-    assert signal_helper.has_logged("commentRemoved")
-    assert not signal_helper.has_logged("commentRemovedUndone")
+    assert removed_spy.count() == 1
+    assert removed_undone_spy.count() == 0
 
-    signal_helper.reset()
+    removed_spy.reset()
+    removed_undone_spy.reset()
+
     model.undo()
 
-    assert not signal_helper.has_logged("commentRemoved")
-    assert signal_helper.has_logged("commentRemovedUndone")
-    assert signal_helper.logged_value("commentRemovedUndone") == 3
+    assert removed_spy.count() == 0
+    assert removed_undone_spy.count() == 1
+    assert removed_undone_spy.at(invocation=0, argument=0) == 3
 
-    signal_helper.reset()
+    removed_spy.reset()
+    removed_undone_spy.reset()
+
     model.redo()
 
-    assert signal_helper.has_logged("commentRemoved")
-    assert not signal_helper.has_logged("commentRemovedUndone")
+    assert removed_spy.count() == 1
+    assert removed_undone_spy.count() == 0
