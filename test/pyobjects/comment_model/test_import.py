@@ -83,12 +83,12 @@ def test_import_comments_invalidates_search_results(model):
 
 
 def test_import_comments_fires_signals(model, signal_helper):
-    model.commentsImported.connect(lambda val: signal_helper.log("commentsImported", val))
+    model.commentsImportedInitially.connect(lambda val: signal_helper.log("commentsImportedInitially", val))
 
     model.import_comments(DEFAULT_COMMENTS)
 
-    assert signal_helper.has_logged("commentsImported")
-    assert signal_helper.logged_value("commentsImported") == 9
+    assert signal_helper.has_logged("commentsImportedInitially")
+    assert signal_helper.logged_value("commentsImportedInitially") == 9
 
 
 def test_import_comments_undo_redo(model):
@@ -135,24 +135,31 @@ def test_import_comments_undo_redo_invalidates_search(model):
 
 
 def test_import_comments_undo_redo_fires_signals(model, signal_helper):
-    model.commentsImported.connect(lambda val: signal_helper.log("commentsImported", val))
+    model.commentsImportedInitially.connect(lambda val: signal_helper.log("commentsImportedInitially", val))
     model.commentsImportedUndone.connect(lambda val: signal_helper.log("commentsImportedUndone", val))
+    model.commentsImportedRedone.connect(lambda val: signal_helper.log("commentsImportedRedone", val))
     model.set_selected_row(3)
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     model.import_comments([comment])
 
-    assert signal_helper.has_logged("commentsImported")
-    assert signal_helper.logged_value("commentsImported") == 5
+    assert signal_helper.has_logged("commentsImportedInitially")
+    assert signal_helper.logged_value("commentsImportedInitially") == 5
+    assert not signal_helper.has_logged("commentsImportedUndone")
+    assert not signal_helper.has_logged("commentsImportedRedone")
 
     signal_helper.reset()
     model.undo()
 
+    assert not signal_helper.has_logged("commentsImportedInitially")
     assert signal_helper.has_logged("commentsImportedUndone")
     assert signal_helper.logged_value("commentsImportedUndone") == 3
+    assert not signal_helper.has_logged("commentsImportedRedone")
 
     signal_helper.reset()
     model.redo()
 
-    assert signal_helper.has_logged("commentsImported")
-    assert signal_helper.logged_value("commentsImported") == 5
+    assert not signal_helper.has_logged("commentsImportedInitially")
+    assert not signal_helper.has_logged("commentsImportedUndone")
+    assert signal_helper.has_logged("commentsImportedRedone")
+    assert signal_helper.logged_value("commentsImportedRedone") == 5

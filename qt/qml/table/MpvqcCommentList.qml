@@ -523,11 +523,15 @@ ListView {
     Connections {
         target: root.model
 
-        function onCommentsImported(index: int): void {
+        function onCommentsImportedInitially(index: int): void {
             _impl.selectQuickly(index);
         }
 
         function onCommentsImportedUndone(index: int): void {
+            _impl.selectQuickly(index);
+        }
+
+        function onCommentsImportedRedone(index: int): void {
             _impl.selectQuickly(index);
         }
 

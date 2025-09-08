@@ -49,8 +49,9 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
     _player = inject.attr(PlayerService)
     _time_formatter = inject.attr(TimeFormatterService)
 
-    commentsImported = Signal(int)  # param: row of last imported comment
+    commentsImportedInitially = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
+    commentsImportedRedone = Signal(int)  # param: row of last imported comment
 
     commentsCleared = Signal()
     commentsClearedUndone = Signal()
@@ -107,10 +108,12 @@ class MpvqcCommentModelPyObject(QStandardItemModel):
             self._invalidate_search()
             self.commentsImportedUndone.emit(row)
 
-        def on_after_redo(index: QModelIndex):
+        def on_after_redo(index: QModelIndex, added_initially: bool):
             self._invalidate_search()
             self.sort(0)
-            self.commentsImported.emit(index.row())
+
+            signal = self.commentsImportedInitially if added_initially else self.commentsImportedRedone
+            signal.emit(index.row())
 
         self._undo_stack.push(
             ImportComments(
