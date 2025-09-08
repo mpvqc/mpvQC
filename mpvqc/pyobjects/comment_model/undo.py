@@ -45,6 +45,7 @@ class ImportComments(QUndoCommand):
         self._on_after_redo = on_after_redo
         self._previously_selected_row = previously_selected_row
 
+        self._added_initially = True
         self._rows: list[int] = []
 
     def undo(self):
@@ -63,8 +64,10 @@ class ImportComments(QUndoCommand):
             model_index = QPersistentModelIndex(item.index())
             indices.append(model_index)
 
-        self._on_after_redo(model_index)
+        self._on_after_redo(model_index, self._added_initially)
         self._rows = [index.row() for index in indices]
+
+        self._added_initially = False
 
 
 class ClearComments(QUndoCommand):
