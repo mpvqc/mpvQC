@@ -17,6 +17,7 @@
 
 # ruff: noqa: F401
 from .application_paths import MpvqcApplicationPathsPyObject
+from .backend_backupper import MpvqcBackupperBackendPyObject
 from .comment_model import MpvqcCommentModelPyObject
 from .comment_type_validator import MpvqcCommentTypeValidatorPyObject
 from .export_template_model import MpvqcExportTemplateModelPyObject

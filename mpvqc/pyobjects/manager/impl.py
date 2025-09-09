@@ -25,7 +25,6 @@ from PySide6.QtQml import QmlElement, QQmlComponent
 
 from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject
 from mpvqc.services import (
-    DocumentBackupService,
     DocumentExportService,
     DocumentImporterService,
     PlayerService,
@@ -41,7 +40,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcManagerPyObject(QObject):
-    _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
     _importer: DocumentImporterService = inject.attr(DocumentImporterService)
     _player: PlayerService = inject.attr(PlayerService)
@@ -234,7 +232,3 @@ class MpvqcManagerPyObject(QObject):
         dialog.rejected.connect(dialog.deleteLater)
         dialog.savePressed.connect(lambda _, url: self._save(self._type_mapper.map_url_to_path(url)))
         dialog.open()
-
-    @Slot()
-    def backup_impl(self):
-        self._backupper.backup()
