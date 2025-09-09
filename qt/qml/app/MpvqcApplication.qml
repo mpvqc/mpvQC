@@ -38,7 +38,9 @@ ApplicationWindow {
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
-    readonly property MpvqcManager mpvqcManager: MpvqcManager {}
+    readonly property MpvqcManager mpvqcManager: MpvqcManager {
+        importWhenVideoLinkedInDocument: root.mpvqcSettings.importWhenVideoLinkedInDocument
+    }
 
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator {
         mpvqcApplication: root

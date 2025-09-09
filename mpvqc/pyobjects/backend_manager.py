@@ -27,6 +27,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
+    PlayerService,
     TypeMapperService,
 )
 
@@ -46,7 +47,7 @@ class ImportJob(QRunnable):
         videos: list[QUrl],
         subtitles: list[QUrl],
         comment_model: MpvqcCommentModelPyObject,
-        callback: Callable[[dict], None],
+        callback: Callable[[str], None],
     ):
         super().__init__()
         self._documents = documents
@@ -74,7 +75,7 @@ class ImportJob(QRunnable):
                     }
                     for document in result.valid_documents
                 ],
-                "documentsInvalid": [str(p) for p in result.invalid_documents],
+                "documentsInvalid": [self._fully_encoded(p) for p in result.invalid_documents],
                 "videos": [self._fully_encoded(p) for p in videos],
                 "subtitles": [self._fully_encoded(p) for p in subtitles],
             }
@@ -116,6 +117,9 @@ class ExportJob(QRunnable):
 # noinspection PyPep8Naming
 @QmlElement
 class MpvqcManagerBackendPyObject(QObject):
+    _player: PlayerService = inject.attr(PlayerService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+
     imported = Signal(dict)
     changed = Signal()
     reset = Signal()
@@ -182,3 +186,11 @@ class MpvqcManagerBackendPyObject(QObject):
             callback=self.saved.emit,
         )
         QThreadPool.globalInstance().start(job)
+
+    @Slot(str)
+    def openVideo(self, video: str) -> None:
+        self._player.open_video(video)
+
+    @Slot(list)
+    def openSubtitles(self, subtitles: list[str]) -> None:
+        self._player.open_subtitles(subtitles)

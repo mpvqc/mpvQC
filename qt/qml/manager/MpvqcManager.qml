@@ -20,17 +20,24 @@ import QtQuick
 import pyobjects
 
 import "../shared"
+import "../settings"
 
 import "MpvqcStateReducer.js" as MpvqcStateReducer
 
 MpvqcObject {
     id: root
 
+    required property int importWhenVideoLinkedInDocument
+
     readonly property bool saved: _stateManager.state.saved
     readonly property bool isHaveDocument: _stateManager.state.document !== null
 
+    signal linkedVideoFound(delta: var, video: string)
+    signal invalidDocumentsImported(documents: list<string>)
+
     onSavedChanged: {
         console.warn("SAVED", saved);
+        console.warn("SAVED _stateManager.state.document", _stateManager.state.document);
     }
 
     function reset(): void {
@@ -53,22 +60,39 @@ MpvqcObject {
         _backend.performImport(documents, videos, subtitles);
     }
 
+    function continueAfterVideoSelected(delta: var, video: string): void {
+        const videoUrl = video && video.toString() !== "" ? video.toString() : null;
+        console.log("Continue after Video Selected", typeof (videoUrl));
+        if (videoUrl) {
+            console.log("Video !== null -> openVideo", videoUrl);
+            _backend.openVideo(videoUrl);
+        }
+        if (delta.subtitles.length > 0) {
+            console.log("Subtitles about to open");
+            _backend.openSubtitles(delta.subtitles);
+        }
+        if (delta.documentsInvalid.length > 0) {
+            console.log("invalidDocumentsImported");
+            root.invalidDocumentsImported(delta.documentsInvalid);
+        }
+
+        const documents = delta.documentsValid.map(document => document.url);
+        _stateManager.processImport(documents, videoUrl);
+        console.log("Import done!", documents, videoUrl);
+    }
+
     function saveCurrent(): void {
         _backend.performSave(_stateManager.state.document);
     }
 
-    function save(document: url): void {
+    function save(document: string): void {
         _backend.performSave(document);
     }
 
     MpvqcManagerBackendPyObject { //qmllint disable
         id: _backend
 
-        onImported: delta => {
-            console.log("onImported", JSON.stringify(delta));
-        // todo video selector
-        // notify invalid documents
-        }
+        onImported: delta => _videoSelector.chooseVideoThenContinueWith(delta)
 
         onSaved: url => _stateManager.processSave(url)
 
@@ -82,13 +106,17 @@ MpvqcObject {
 
         property var state: MpvqcStateReducer.initialState(null)
 
-        function processImport(documents: list<url>, video: url): void {
-            console.log("processImport");
+        onStateChanged: {
+            console.log("State changed", JSON.stringify(state));
+        }
+
+        function processImport(documents: list<string>, video: string): void {
+            console.log("processImport", documents, video, video ?? null);
             _dispatch({
                 type: "IMPORT",
                 change: {
                     documents: documents,
-                    video: video
+                    video: video ?? null
                 }
             });
         }
@@ -116,18 +144,63 @@ MpvqcObject {
         }
 
         function _dispatch(event): void {
-            const next = MpvqcStateReducer.reducer(state, event, {
-                videoEquals: _videoEquals
-            });
+            const next = MpvqcStateReducer.reducer(state, event);
             if (next.kind !== state.kind || next.document !== state.document || next.video !== state.video || next.saved !== state.saved) {
                 state = next;
             }
         }
+    }
 
-        // todo remove? if not required
-        function _videoEquals(a: url, b: url): bool {
-            console.log("url a", typeof (a), a, "url b", typeof (b), b);
-            return a === b;
+    QtObject {
+        id: _videoSelector
+
+        /** @param {Delta} delta */
+        function chooseVideoThenContinueWith(delta): void {
+            console.log("chooseVideoThenContinueWith", JSON.stringify(delta), JSON.stringify(delta.videos));
+            if (delta.videos.length > 0) {
+                console.log("delta.videos.length > 0");
+                root.continueAfterVideoSelected(delta, delta.videos[0]);
+                return;
+            }
+            if (isNeverImportLinkedVideo()) {
+                console.log("isNeverImportLinkedVideo");
+                root.continueAfterVideoSelected(delta);
+                return;
+            }
+            const firstLinkedVideo = findFirstLinkedVideoIn(delta) ?? null;
+            if (firstLinkedVideo == null) {
+                console.log("firstLinkedVideo === null");
+                root.continueAfterVideoSelected(delta);
+                return;
+            }
+            if (isAlwaysImportLinkedVideo()) {
+                console.log("isAlwaysImportLinkedVideo");
+                root.continueAfterVideoSelected(delta, firstLinkedVideo);
+                return;
+            }
+            console.log("signal to user to decide");
+            root.linkedVideoFound(delta, firstLinkedVideo);
+        }
+
+        function isNeverImportLinkedVideo(): bool {
+            return root.importWhenVideoLinkedInDocument === MpvqcSettings.ImportWhenVideoLinkedInDocument.NEVER;
+        }
+
+        function isAlwaysImportLinkedVideo(): bool {
+            return root.importWhenVideoLinkedInDocument === MpvqcSettings.ImportWhenVideoLinkedInDocument.ALWAYS;
+        }
+
+        function findFirstLinkedVideoIn(delta: var): string {
+            if (delta.documentsValid.length > 0) {
+                for (const document of delta.documentsValid) {
+                    console.log("Check doc", document, JSON.stringify(document));
+                    if (document.videoExists) {
+                        console.log("document.videoExists");
+                        return document.videoUrl;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

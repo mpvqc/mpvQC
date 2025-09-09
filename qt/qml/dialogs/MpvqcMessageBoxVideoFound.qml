@@ -22,7 +22,23 @@ import QtQuick.Controls.Material
 import "../shared"
 
 MpvqcMessageBox {
+    id: root
+
+    required property var importState
+    required property string video
+
+    signal openFoundVideo(importState: var, video: string)
+    signal ignoreFoundVideo(importState: var)
+
     title: qsTranslate("MessageBoxes", "Video Found")
     text: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
     standardButtons: Dialog.Yes | Dialog.No
+
+    onAccepted: {
+        root.openFoundVideo(importState, video);
+    }
+
+    onRejected: {
+        root.ignoreFoundVideo(importState);
+    }
 }
