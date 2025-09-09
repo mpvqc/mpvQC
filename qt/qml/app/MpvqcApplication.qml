@@ -47,7 +47,6 @@ ApplicationWindow {
 
     readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root
-        commentCount: _content.commentCount
     }
 
     readonly property var mpvqcTheme: MpvqcTheme {
@@ -159,6 +158,13 @@ ApplicationWindow {
         onCloseAppRequested: {
             root.close();
         }
+    }
+
+    MpvqcBackupper {
+        backend: MpvqcBackupperBackendPyObject {} // qmllint disable
+        isHaveComments: _content.commentCount
+        isBackupEnabled: root.mpvqcSettings.backupEnabled
+        backupInterval: root.mpvqcSettings.backupInterval
     }
 
     MpvqcWindowVisibilityHandler {
