@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -106,16 +105,13 @@ class DocumentBackupService:
         return self._renderer.render(self._resources.backup_template)
 
     def backup(self) -> None:
-        now = datetime.now(UTC)
+        now = QDateTime.currentDateTime()
 
-        zip_name = f"{now:%Y-%m}.zip"
+        zip_name = f"{now.toString('yyyy-MM')}.zip"
         zip_path = self._paths.dir_backup / zip_name
-        zip_mode = "a" if zip_path.exists() else "w"
+        file_name = f"{now.toString('yyyy-MM-dd_HH-mm-ss')}_{self._video_name}.txt"
 
-        file_name = f"{now:%Y-%m-%d_%H-%M-%S}_{self._video_name}.txt"
-
-        # noinspection PyTypeChecker
-        with ZipFile(zip_path, mode=zip_mode, compression=ZIP_DEFLATED) as file:
+        with ZipFile(zip_path, mode="a" if zip_path.exists() else "w", compression=ZIP_DEFLATED) as file:
             file.writestr(file_name, self._content)
 
 
