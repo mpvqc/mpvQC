@@ -36,7 +36,6 @@ MpvqcDialog {
     contentItem: MpvqcEditInputView {
         id: _editView
 
-        width: root.contentWidth
         mpvqcApplication: root.mpvqcApplication
     }
 

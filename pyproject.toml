@@ -242,6 +242,7 @@ files = [
     "qt/qml/app/MpvqcTheme.qml",
     "qt/qml/app/MpvqcWindowVisibilityHandler.qml",
     "qt/qml/app/qmldir",
+    "qt/qml/app/tst_MpvqcContentDialogLoader.qml",
     "qt/qml/app/tst_MpvqcFileDropArea.qml",
     "qt/qml/app/tst_MpvqcLabelWidthCalculator.qml",
     "qt/qml/app/tst_MpvqcNewCommentMenu.qml",
