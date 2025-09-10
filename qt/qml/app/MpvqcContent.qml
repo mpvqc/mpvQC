@@ -364,97 +364,13 @@ Page {
         }
     }
 
-    Loader {
+    MpvqcContentDialogLoader {
         id: _dialogLoader
 
-        readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcDialogAppearance.qml")
-        readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcDialogCommentTypes.qml")
-        readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/backup/MpvqcDialogBackup.qml")
-        readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcDialogExport.qml")
-        readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcDialogImport.qml")
-        readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/editinput/MpvqcDialogEditInput.qml")
-        readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/editmpv/MpvqcDialogEditMpv.qml")
-        readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcDialogShortcuts.qml")
-        readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcDialogAbout.qml")
+        mpvqcApplication: root.mpvqcApplication
 
-        asynchronous: true
-        active: false
-        visible: active
-
-        function openAppearanceDialog(): void {
-            setSource(appearanceDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openCommentTypesDialog(): void {
-            setSource(commentTypeDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openBackupSettingsDialog(): void {
-            setSource(backupSettingsDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openExportSettingsDialog(): void {
-            setSource(exportSettingsDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openImportSettingsDialog(): void {
-            setSource(importSettingsDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openEditMpvDialog(): void {
-            setSource(editMpvDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openEditInputDialog(): void {
-            setSource(editInputDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openShortcutsDialog(): void {
-            setSource(shortcutsDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openAboutDialog(): void {
-            setSource(aboutDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        onLoaded: item.open() // qmllint disable
-
-        Connections {
-            enabled: _dialogLoader.item
-            target: _dialogLoader.item
-
-            function onClosed(): void {
-                _dialogLoader.active = false;
-                _dialogLoader.source = "";
-                root.focusCommentTable();
-            }
+        onDialogClosed: {
+            root.focusCommentTable();
         }
     }
 
