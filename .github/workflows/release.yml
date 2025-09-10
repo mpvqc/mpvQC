@@ -294,7 +294,7 @@ jobs:
           enable-cache: false
       - name: Initialize Project
         run: just init
-      - name: Run Pre Commit Checks
+      - name: Run Linter and Formatter
         run: just format
       - name: Lint Qml
         run: just lint-qml
