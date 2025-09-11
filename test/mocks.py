@@ -30,7 +30,7 @@ class MockedMessageBox(QObject):
 class MockedDialog(QObject):
     accepted = Signal()
     rejected = Signal()
-    savePressed = Signal(QUrl, QUrl)
+    savePressed = Signal(QUrl)
 
     def __init__(self):
         super().__init__()

@@ -22,7 +22,13 @@ from PySide6.QtCore import Property, QObject, QPoint, QUrl, Slot
 from PySide6.QtGui import QCursor
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import MimetypeProviderService, ReverseTranslatorService, TimeFormatterService, TypeMapperService
+from mpvqc.services import (
+    DocumentExportService,
+    MimetypeProviderService,
+    ReverseTranslatorService,
+    TimeFormatterService,
+    TypeMapperService,
+)
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -31,10 +37,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming, PyMethodMayBeStatic
 @QmlElement
 class MpvqcUtilityPyObject(QObject):
-    _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
-    _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
+    _exporter: DocumentExportService = inject.attr(DocumentExportService)
     _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
+    _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
+    _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     @Property(QPoint, final=True)
     def cursorPosition(self) -> QPoint:
@@ -71,3 +78,8 @@ class MpvqcUtilityPyObject(QObject):
     @Slot(str, result=str)
     def reverseLookupCommentType(self, non_english: str) -> str:
         return self._translator.lookup(non_english)
+
+    @Slot(result=QUrl)
+    def generate_file_path_proposal(self) -> QUrl:
+        path = self._exporter.generate_file_path_proposal()
+        return self._type_mapper.map_path_to_url(path)

@@ -31,7 +31,9 @@ MpvqcManagerPyObject {
     required property var mpvqcApplication
 
     property var mpvqcDialogExportDocumentFactory: Component {
-        MpvqcDialogExportDocument {}
+        MpvqcDialogExportDocument {
+            isExtendedExport: false
+        }
     }
 
     property var mpvqcMessageBoxVideoFoundFactory: Component {
