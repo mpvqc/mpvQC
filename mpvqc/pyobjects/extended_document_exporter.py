@@ -15,8 +15,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections.abc import Callable
+
 import inject
-from PySide6.QtCore import QObject, QUrl, Slot
+from PySide6.QtCore import QObject, QRunnable, QThreadPool, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import DocumentExportService, TypeMapperService
@@ -25,22 +27,34 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-@QmlElement
-class MpvqcExtendedDocumentExporterPyObject(QObject):
+class ExtendedExportJob(QRunnable):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
-    @Slot(result=QUrl)
-    def generate_file_path_proposal(self) -> QUrl:
-        path = self._exporter.generate_file_path_proposal()
-        return self._type_mapper.map_path_to_url(path)
+    def __init__(self, document: QUrl, template: QUrl, error_callback: Callable[[str, int], None]):
+        super().__init__()
+        self._document = document
+        self._template = template
+        self._error_callback = error_callback
 
-    @Slot(QUrl, QUrl, result=dict)
-    def export(self, template_url: QUrl, file_url: QUrl) -> dict:
-        file = self._type_mapper.map_url_to_path(file_url)
-        template = self._type_mapper.map_url_to_path(template_url)
+    @Slot()
+    def run(self):
+        document = self._type_mapper.map_url_to_path(self._document)
+        template = self._type_mapper.map_url_to_path(self._template)
 
-        if error := self._exporter.export(file, template):
-            return {"errorMessage": error.message, "errorLine": error.line_nr}
+        if error := self._exporter.export(document, template):
+            self._error_callback(error.message, error.line_nr)
 
-        return {}
+
+@QmlElement
+class MpvqcExtendedDocumentExporterPyObject(QObject):
+    errorOccurred = Signal(str, int)  # params: message, line nr
+
+    @Slot(QUrl, QUrl)
+    def export(self, document: QUrl, template: QUrl) -> None:
+        job = ExtendedExportJob(
+            document=document,
+            template=template,
+            error_callback=self.errorOccurred.emit,
+        )
+        QThreadPool.globalInstance().start(job)

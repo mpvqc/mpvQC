@@ -110,6 +110,10 @@ Page {
         function requestResizeAppWindow(width: int, height: int): void {
             root.appWindowSizeRequested(width, height);
         }
+
+        function saveExtendedDocument(document: url, template: url): void {
+            root.mpvqcExtendedDocumentExporterPyObject.export(document, template);
+        }
     }
 
     Keys.onEscapePressed: {
@@ -292,7 +296,8 @@ Page {
         }
 
         function onExtendedExportRequested(name: string, path: url): void {
-            _fileDialogLoader.openExtendedDocumentExportDialog(path);
+            const proposal = root.mpvqcUtilityPyObject.generate_file_path_proposal();
+            _fileDialogLoader.openExtendedDocumentExportDialog(proposal, path);
         }
 
         function onOpenVideoRequested(): void {
@@ -393,8 +398,10 @@ Page {
             active = true;
         }
 
-        function openExtendedDocumentExportDialog(exportTemplate: url): void {
+        function openExtendedDocumentExportDialog(proposal: url, exportTemplate: url): void {
             setSource(exportQcDocumentDialog, {
+                isExtendedExport: true,
+                selectedFile: proposal,
                 exportTemplate: exportTemplate
             });
             active = true;
@@ -429,15 +436,8 @@ Page {
                 _delayCleanupTimer.restart();
             }
 
-            function onSavePressed(exportTemplate: url, fileUrl: url): void {
-                const {
-                    errorLine,
-                    errorMessage
-                } = root.mpvqcExtendedDocumentExporterPyObject.export(exportTemplate, fileUrl);
-
-                if (errorMessage !== undefined) {
-                    _messageBoxLoader.openExtendedExportFailedMessageBox(errorMessage, errorLine);
-                }
+            function onExtendedSavePressed(document: url, template: url): void {
+                _impl.saveExtendedDocument(document, template);
             }
         }
 
@@ -499,6 +499,14 @@ Page {
                 _messageBoxLoader.source = "";
                 root.focusCommentTable();
             }
+        }
+    }
+
+    Connections {
+        target: root.mpvqcExtendedDocumentExporterPyObject
+
+        function onErrorOccurred(message: string, line: int): void {
+            _messageBoxLoader.openExtendedExportFailedMessageBox(message, line);
         }
     }
 
