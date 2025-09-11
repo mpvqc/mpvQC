@@ -46,4 +46,4 @@ class MpvqcVersionCheckerPyObject(QObject):
     @Slot()
     def check_for_new_version(self) -> None:
         check_runnable = VersionCheckRunnable(self.versionChecked.emit)
-        QThreadPool().globalInstance().start(check_runnable)
+        QThreadPool.globalInstance().start(check_runnable)

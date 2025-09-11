@@ -114,6 +114,18 @@ Page {
         function saveExtendedDocument(document: url, template: url): void {
             root.mpvqcExtendedDocumentExporterPyObject.export(document, template);
         }
+
+        function resetState(): void {
+            root.mpvqcManager.reset();
+        }
+
+        function saveCurrentDocument(): void {
+            root.mpvqcManager.saveCurrent();
+        }
+
+        function saveNewDocument(document: url): void {
+            root.mpvqcManager.save(document);
+        }
     }
 
     Keys.onEscapePressed: {
@@ -280,7 +292,11 @@ Page {
         target: root.headerController
 
         function onResetAppStateRequested(): void {
-            root.mpvqcManager.reset();
+            if (root.mpvqcManager.saved) {
+                _impl.resetState();
+            } else {
+                _messageBoxLoader.openNewDocumentMessageBox();
+            }
         }
 
         function onOpenQcDocumentsRequested(): void {
@@ -288,11 +304,16 @@ Page {
         }
 
         function onSaveQcDocumentsRequested(): void {
-            root.mpvqcManager.save();
+            if (root.mpvqcManager.isHaveDocument) {
+                _impl.saveCurrentDocument();
+            } else {
+                onSaveQcDocumentsAsRequested();
+            }
         }
 
         function onSaveQcDocumentsAsRequested(): void {
-            root.mpvqcManager.saveAs();
+            const proposal = root.mpvqcUtilityPyObject.generate_file_path_proposal();
+            _fileDialogLoader.openExportQcDocumentDialog(proposal);
         }
 
         function onExtendedExportRequested(name: string, path: url): void {
@@ -353,7 +374,7 @@ Page {
         }
 
         function onUpdateDialogRequested(): void {
-            _messageBoxLoader.openCheckForUpdateMessageBox();
+            _messageBoxLoader.openVersionCheckMessageBox();
         }
 
         function onKeyboardShortcutsDialogRequested(): void {
@@ -398,6 +419,14 @@ Page {
             active = true;
         }
 
+        function openExportQcDocumentDialog(proposal: url): void {
+            setSource(exportQcDocumentDialog, {
+                isExtendedExport: false,
+                selectedFile: proposal
+            });
+            active = true;
+        }
+
         function openExtendedDocumentExportDialog(proposal: url, exportTemplate: url): void {
             setSource(exportQcDocumentDialog, {
                 isExtendedExport: true,
@@ -436,6 +465,10 @@ Page {
                 _delayCleanupTimer.restart();
             }
 
+            function onSavePressed(fileUrl: url): void {
+                _impl.saveNewDocument(fileUrl);
+            }
+
             function onExtendedSavePressed(document: url, template: url): void {
                 _impl.saveExtendedDocument(document, template);
             }
@@ -457,26 +490,21 @@ Page {
     Loader {
         id: _messageBoxLoader
 
-        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
+        readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxDocumentNotCompatible.qml")
         readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExport.qml")
+        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
+        readonly property url messageBoxNewDocument: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxNewDocument.qml")
         readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVersionCheck.qml")
+        readonly property url messageBoxVideoFound: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVideoFound.qml")
 
         asynchronous: true
         active: false
         visible: active
 
-        function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
-            setSource(messageBoxExtendedExportFailed, {
+        function openDocumentNotCompatibleMessageBox(documents: list<string>): void {
+            setSource(messageBoxDocumentNotCompatible, {
                 mpvqcApplication: root.mpvqcApplication,
-                errorMessage: message,
-                errorLine: lineNr
-            });
-            active = true;
-        }
-
-        function openCheckForUpdateMessageBox(): void {
-            setSource(messageBoxVersionCheck, {
-                mpvqcApplication: root.mpvqcApplication
+                documents: documents
             });
             active = true;
         }
@@ -488,11 +516,58 @@ Page {
             active = true;
         }
 
+        function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
+            setSource(messageBoxExtendedExportFailed, {
+                mpvqcApplication: root.mpvqcApplication,
+                errorMessage: message,
+                errorLine: lineNr
+            });
+            active = true;
+        }
+
+        function openNewDocumentMessageBox(): void {
+            setSource(messageBoxNewDocument, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openVersionCheckMessageBox(): void {
+            setSource(messageBoxVersionCheck, {
+                mpvqcApplication: root.mpvqcApplication
+            });
+            active = true;
+        }
+
+        function openVideoFoundMessageBox(importState: var, video: string): void {
+            setSource(messageBoxVideoFound, {
+                mpvqcApplication: root.mpvqcApplication,
+                importState: importState,
+                video: video
+            });
+            active = true;
+        }
+
         onLoaded: item.open() // qmllint disable
 
         Connections {
             enabled: _messageBoxLoader.item
             target: _messageBoxLoader.item
+            ignoreUnknownSignals: true
+
+            function onResetDocumentConfirmedByUser(): void {
+                _impl.resetState();
+            }
+
+            function onOpenFoundVideo(importState: var, video: string): void {
+                console.log("onOpenFoundVideo", JSON.stringify(importState), JSON.stringify(video));
+                root.mpvqcManager.continueAfterVideoSelected(importState, video);
+            }
+
+            function onIgnoreFoundVideo(importState: var): void {
+                console.log("onIgnoreFoundVideo", JSON.stringify(importState));
+                root.mpvqcManager.continueAfterVideoSelected(importState, null);
+            }
 
             function onClosed(): void {
                 _messageBoxLoader.active = false;
@@ -507,6 +582,18 @@ Page {
 
         function onErrorOccurred(message: string, line: int): void {
             _messageBoxLoader.openExtendedExportFailedMessageBox(message, line);
+        }
+    }
+
+    Connections {
+        target: root.mpvqcManager
+
+        function onLinkedVideoFound(delta: var, video: string): void {
+            _messageBoxLoader.openVideoFoundMessageBox(delta, video);
+        }
+
+        function onInvalidDocumentsImported(documents: list<string>): void {
+            _messageBoxLoader.openDocumentNotCompatibleMessageBox(documents);
         }
     }
 
