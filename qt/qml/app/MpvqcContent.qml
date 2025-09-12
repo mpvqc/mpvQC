@@ -353,7 +353,7 @@ Page {
         }
 
         function onUpdateDialogRequested(): void {
-            _messageBoxLoader.openCheckForUpdateMessageBox();
+            _messageBoxLoader.openVersionCheckMessageBox();
         }
 
         function onKeyboardShortcutsDialogRequested(): void {
@@ -394,51 +394,13 @@ Page {
         }
     }
 
-    Loader {
+    MpvqcContentMessageBoxLoader {
         id: _messageBoxLoader
 
-        readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
-        readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExport.qml")
-        readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVersionCheck.qml")
+        mpvqcApplication: root.mpvqcApplication
 
-        asynchronous: true
-        active: false
-        visible: active
-
-        function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
-            setSource(messageBoxExtendedExportFailed, {
-                mpvqcApplication: root.mpvqcApplication,
-                errorMessage: message,
-                errorLine: lineNr
-            });
-            active = true;
-        }
-
-        function openCheckForUpdateMessageBox(): void {
-            setSource(messageBoxVersionCheck, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openExtendedExportsMessageBox(): void {
-            setSource(messageBoxExtendedExport, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        onLoaded: item.open() // qmllint disable
-
-        Connections {
-            enabled: _messageBoxLoader.item
-            target: _messageBoxLoader.item
-
-            function onClosed(): void {
-                _messageBoxLoader.active = false;
-                _messageBoxLoader.source = "";
-                root.focusCommentTable();
-            }
+        onMessageBoxClosed: {
+            root.focusCommentTable();
         }
     }
 
