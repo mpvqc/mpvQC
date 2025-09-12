@@ -22,10 +22,10 @@ import "../shared"
 MpvqcMessageBox {
     id: root
 
-    required property int count
+    property list<string> paths
 
-    title: count === 1
+    title: paths.length === 1
         ? qsTranslate("MessageBoxes", "Document Not Compatible")
         : qsTranslate("MessageBoxes", "Documents Not Compatible")
-
+    text: paths.join("\n")
 }

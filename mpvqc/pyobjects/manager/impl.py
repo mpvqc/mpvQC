@@ -81,6 +81,7 @@ class MpvqcManagerPyObject(QObject):
             = bind_qml_property_with(name="mpvqcMessageBoxNewDocumentFactory")
         self.message_box_document_not_compatible_factory \
             = bind_qml_property_with(name="mpvqcMessageBoxDocumentNotCompatibleFactory")
+
         # fmt: on
 
         def on_comments_changed(*_):
@@ -197,7 +198,7 @@ class MpvqcManagerPyObject(QObject):
             if not paths:
                 return
 
-            properties = {"count": len(paths), "text": "\n".join([p.name for p in paths])}
+            properties = {"paths": [p.name for p in paths]}
 
             message_box = self.message_box_document_not_compatible_factory.createObject(None, properties)
             message_box.closed.connect(message_box.deleteLater)
