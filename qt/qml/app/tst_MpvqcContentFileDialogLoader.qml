@@ -27,7 +27,7 @@ TestCase {
     height: 720
     visible: true
     when: windowShown
-    name: "MpvqcContentDialogLoader"
+    name: "MpvqcContentFileDialogLoader"
 
     Component {
         id: signalSpy
@@ -38,56 +38,21 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentDialogLoader {}
+        MpvqcContentFileDialogLoader {
+            cleanupDelay: 0
+        }
     }
 
     function makeControl(): Item {
         const control = createTemporaryObject(objectUnderTest, testCase, {
             mpvqcApplication: {
-                contentItem: testCase,
-                height: testCase.height,
-                width: testCase.width,
                 mpvqcSettings: {
-                    nickname: "nickname",
-                    writeHeaderDate: true,
-                    writeHeaderGenerator: true,
-                    writeHeaderNickname: true,
-                    writeHeaderVideoPath: true,
-                    importWhenVideoLinkedInDocument: 0,
-                    themeIdentifier: "Material You Dark",
-                    themeColorOption: 4,
-                    backupEnabled: false,
-                    backupInterval: 15,
-                    commentTypes: ["Comment Type"]
-                },
-                mpvqcTheme: {
-                    availableThemes: [
-                        {
-                            name: "name",
-                            preview: "blue"
-                        }
-                    ],
-                    control: "blue",
-                    rowHighlight: "blue",
-                    getForeground: arg => "blue",
-                    getBackground: arg => "blue"
-                },
-                mpvqcMpvPlayerPropertiesPyObject: {
-                    mpv_version: "",
-                    ffmpeg_version: ""
-                },
-                mpvqcApplicationPathsPyObject: {
-                    dir_backup: Qt.resolvedUrl("qmldir")
+                    lastDirectoryDocuments: Qt.resolvedUrl(""),
+                    lastDirectorySubtitles: Qt.resolvedUrl(""),
+                    lastDirectoryVideo: Qt.resolvedUrl("")
                 },
                 mpvqcUtilityPyObject: {
-                    urlToAbsolutePath: arg => ""
-                },
-                mpvqcPlayerFilesPyObject: {
-                    input_conf_url: Qt.resolvedUrl("qmldir"),
-                    mpv_conf_url: Qt.resolvedUrl("qmldir")
-                },
-                LayoutMirroring: {
-                    enabled: false
+                    subtitleFileGlobPattern: ""
                 }
             }
         });
@@ -97,7 +62,7 @@ TestCase {
 
     function waitUntilLoaded(control: Item): void {
         tryVerify(() => control.item);
-        waitForRendering(control.item?.contentItem);
+        tryVerify(() => control.item.visible);
     }
 
     function test_open_data() {
@@ -141,7 +106,7 @@ TestCase {
         });
         verify(spy);
 
-        control.openAboutDialog();
+        control.openImportQcDocumentsDialog();
         waitUntilLoaded(control);
         control.item.close();
 
