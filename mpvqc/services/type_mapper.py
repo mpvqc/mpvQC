@@ -48,5 +48,9 @@ class TypeMapperService:
         return f"{path.resolve()}"
 
     @staticmethod
+    def map_paths_to_str(paths: list[Path]) -> list[str]:
+        return list(map(TypeMapperService.map_path_to_str, paths))
+
+    @staticmethod
     def normalize_path_str(path: str) -> str:
         return f"{Path(path).resolve()}"

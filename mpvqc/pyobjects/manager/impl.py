@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 from functools import cached_property
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, QUrl, Signal, Slot
+from PySide6.QtCore import QCoreApplication, QObject, QUrl, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
@@ -31,8 +32,6 @@ from mpvqc.services import (
     TypeMapperService,
     VideoSelectorService,
 )
-
-from .state import ApplicationState, ImportChange, InitialState
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -46,23 +45,26 @@ class MpvqcManagerPyObject(QObject):
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
 
+    imported = Signal(str)  # json payload
+    changed = Signal()
+    resett = Signal()
+    savedd = Signal(str)
+
     def __init__(self):
         super().__init__()
         QCoreApplication.instance().application_ready.connect(lambda: self._on_application_ready())
-        self._state = InitialState.new()
-
-    @property
-    def state(self):
-        return self._state
-
-    @state.setter
-    def state(self, value: ApplicationState):
-        self._state = value
-        self.set_saved(value.saved)
 
     @cached_property
     def _comment_model(self) -> MpvqcCommentModelPyObject:
         return QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel")
+
+    @property
+    def document(self) -> str | None:
+        return self.property("_document")
+
+    @property
+    def is_saved(self) -> bool:
+        return bool(self.property("saved"))
 
     def _on_application_ready(self):
         def bind_qml_property_with(name: str) -> QQmlComponent:
@@ -85,10 +87,10 @@ class MpvqcManagerPyObject(QObject):
         # fmt: on
 
         def on_comments_changed(*_):
-            self.state = self.state.handle_change()
+            self.changed.emit()
 
         def on_comments_cleared(*_):
-            self.state = self.state.handle_reset()
+            self.resett.emit()
 
         self._comment_model.commentsCleared.connect(on_comments_cleared)
         self._comment_model.commentsClearedUndone.connect(on_comments_changed)
@@ -114,22 +116,6 @@ class MpvqcManagerPyObject(QObject):
         self._comment_model.commentUpdated.connect(on_comments_changed)
         self._comment_model.commentUpdatedUndone.connect(on_comments_changed)
 
-    # Qml Properties
-
-    def get_saved(self):
-        return self.state.saved
-
-    def set_saved(self, value: bool):
-        if value != self._saved:
-            self._saved = value
-            self.saved_changed.emit(value)
-
-    _saved = True
-    saved_changed = Signal(bool)
-    saved = Property(bool, get_saved, set_saved, notify=saved_changed)
-
-    # Qml Slots
-
     @Slot()
     def reset_impl(self):
         """ """
@@ -143,7 +129,7 @@ class MpvqcManagerPyObject(QObject):
         def _reset():
             self._comment_model.clear_comments()
 
-        if self.saved:
+        if self.is_saved:
             _reset()
         else:
             _ask_to_confirm_reset()
@@ -169,11 +155,10 @@ class MpvqcManagerPyObject(QObject):
         document_import_result = self._importer.read(documents)
 
         def on_video_selected(video: Path | None):
-            state = self._state
             _load_new_comments()
             _load_new_video(video)
             _load_new_subtitles()
-            _update_state(state, video)
+            _update_state(video)
             _display_erroneous_documents()
 
         def _load_new_comments():
@@ -187,10 +172,13 @@ class MpvqcManagerPyObject(QObject):
             if subtitles:
                 self._player.open_subtitles(subtitles)
 
-        def _update_state(state, video: Path | None):
+        def _update_state(video: Path | None):
             if video or document_import_result.valid_documents:
-                change = ImportChange(document_import_result.valid_documents, video)
-                self.state = state.handle_import(change)
+                payload = {
+                    "documents": self._type_mapper.map_paths_to_str(document_import_result.valid_documents),
+                    "video": self._type_mapper.map_path_to_str(video) if video else None,
+                }
+                self.imported.emit(json.dumps(payload))
 
         def _display_erroneous_documents():
             paths = document_import_result.invalid_documents
@@ -213,14 +201,14 @@ class MpvqcManagerPyObject(QObject):
 
     @Slot()
     def save_impl(self):
-        if document := self.state.document:
+        if document := self.document:
             self._save(document)
         else:
             self.save_as_impl()
 
-    def _save(self, path: Path):
-        self._exporter.save(path)
-        self.state = self.state.handle_save(path)
+    def _save(self, path: str):
+        self._exporter.save(Path(path))
+        self.savedd.emit(path)
 
     @Slot()
     def save_as_impl(self):
@@ -231,5 +219,5 @@ class MpvqcManagerPyObject(QObject):
         dialog = self.dialog_export_document_factory.createObject(None, properties)
         dialog.accepted.connect(dialog.deleteLater)
         dialog.rejected.connect(dialog.deleteLater)
-        dialog.savePressed.connect(lambda url: self._save(self._type_mapper.map_url_to_path(url)))
+        dialog.savePressed.connect(lambda url: self._save(self._type_mapper.map_url_to_path_string(url)))
         dialog.open()
