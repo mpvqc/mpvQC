@@ -189,7 +189,6 @@ files = [
     "mpvqc/pyobjects/extended_document_exporter.py",
     "mpvqc/pyobjects/manager/__init__.py",
     "mpvqc/pyobjects/manager/impl.py",
-    "mpvqc/pyobjects/manager/state.py",
     "mpvqc/pyobjects/player.py",
     "mpvqc/pyobjects/player_files.py",
     "mpvqc/pyobjects/player_framebuffer_object.py",
