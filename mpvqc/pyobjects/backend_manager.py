@@ -38,7 +38,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcManagerPyObject(QObject):
+class MpvqcManagerBackendPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
     _importer: DocumentImporterService = inject.attr(DocumentImporterService)
     _player: PlayerService = inject.attr(PlayerService)
@@ -47,8 +47,8 @@ class MpvqcManagerPyObject(QObject):
 
     imported = Signal(str)  # json payload
     changed = Signal()
-    resett = Signal()
-    savedd = Signal(str)
+    reset = Signal()
+    saved = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -90,7 +90,7 @@ class MpvqcManagerPyObject(QObject):
             self.changed.emit()
 
         def on_comments_cleared(*_):
-            self.resett.emit()
+            self.reset.emit()
 
         self._comment_model.commentsCleared.connect(on_comments_cleared)
         self._comment_model.commentsClearedUndone.connect(on_comments_changed)
@@ -208,7 +208,7 @@ class MpvqcManagerPyObject(QObject):
 
     def _save(self, path: str):
         self._exporter.save(Path(path))
-        self.savedd.emit(path)
+        self.saved.emit(path)
 
     @Slot()
     def save_as_impl(self):
