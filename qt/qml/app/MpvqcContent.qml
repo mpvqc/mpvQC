@@ -379,78 +379,18 @@ Page {
         }
     }
 
-    Loader {
+    MpvqcContentFileDialogLoader {
         id: _fileDialogLoader
 
-        readonly property url importQcDocumentsDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportDocuments.qml")
-        readonly property url importVideoDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportVideo.qml")
-        readonly property url importSubtitlesDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportSubtitles.qml")
-        readonly property url exportQcDocumentDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogExportDocument.qml")
+        mpvqcApplication: root.mpvqcApplication
+        cleanupDelay: 250
 
-        asynchronous: true
-        active: false
-        visible: active
-
-        function openImportQcDocumentsDialog(): void {
-            setSource(importQcDocumentsDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
+        onExtendedDocumentSaved: (document, template) => {
+            _impl.saveExtendedDocument(document, template);
         }
 
-        function openExtendedDocumentExportDialog(proposal: url, exportTemplate: url): void {
-            setSource(exportQcDocumentDialog, {
-                isExtendedExport: true,
-                selectedFile: proposal,
-                exportTemplate: exportTemplate
-            });
-            active = true;
-        }
-
-        function openImportVideoDialog(): void {
-            setSource(importVideoDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        function openImportSubtitlesDialog(): void {
-            setSource(importSubtitlesDialog, {
-                mpvqcApplication: root.mpvqcApplication
-            });
-            active = true;
-        }
-
-        onLoaded: item.open() // qmllint disable
-
-        Connections {
-            enabled: _fileDialogLoader.item
-            target: _fileDialogLoader.item
-            ignoreUnknownSignals: true
-
-            function onAccepted(): void {
-                _delayCleanupTimer.restart();
-            }
-
-            function onRejected(): void {
-                _delayCleanupTimer.restart();
-            }
-
-            function onExtendedSavePressed(document: url, template: url): void {
-                _impl.saveExtendedDocument(document, template);
-            }
-        }
-
-        Timer {
-            id: _delayCleanupTimer
-
-            interval: 250
-
-            onTriggered: {
-                _fileDialogLoader.active = false;
-                _fileDialogLoader.source = "";
-                root.focusCommentTable();
-            }
+        onDialogClosed: {
+            root.focusCommentTable();
         }
     }
 
