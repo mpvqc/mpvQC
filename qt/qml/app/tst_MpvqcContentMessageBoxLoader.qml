@@ -24,7 +24,8 @@ TestCase {
     id: testCase
 
     property var arguments: ({
-            openExtendedExportFailedMessageBox: ["message", 1]
+            openExtendedExportFailedMessageBox: ["message", 1],
+            openDocumentNotCompatibleMessageBox: [["doc1", "doc2"]]
         })
 
     width: 1280
@@ -69,7 +70,6 @@ TestCase {
     function waitUntilLoaded(control: Item): void {
         tryVerify(() => control.item);
         waitForRendering(control.item?.contentItem);
-        wait(500);
     }
 
     function test_open_data() {
