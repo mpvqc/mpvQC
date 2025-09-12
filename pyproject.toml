@@ -246,6 +246,7 @@ files = [
     "qt/qml/app/qmldir",
     "qt/qml/app/tst_MpvqcContentDialogLoader.qml",
     "qt/qml/app/tst_MpvqcContentFileDialogLoader.qml",
+    "qt/qml/app/tst_MpvqcContentMessageBoxLoader.qml",
     "qt/qml/app/tst_MpvqcFileDropArea.qml",
     "qt/qml/app/tst_MpvqcLabelWidthCalculator.qml",
     "qt/qml/app/tst_MpvqcNewCommentMenu.qml",
