@@ -21,7 +21,7 @@ from unittest.mock import MagicMock, patch
 import inject
 import pytest
 
-from mpvqc.pyobjects import MpvqcManagerPyObject
+from mpvqc.pyobjects import MpvqcManagerBackendPyObject
 from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
@@ -70,9 +70,9 @@ def manager(
     confirm_reset_message_box,
     export_document_dialog,
     document_not_compatible_message_box,
-) -> MpvqcManagerPyObject:
+) -> MpvqcManagerBackendPyObject:
     # noinspection PyCallingNonCallable
-    manager = MpvqcManagerPyObject()
+    manager = MpvqcManagerBackendPyObject()
 
     factory = MagicMock()
     factory.createObject.return_value = confirm_reset_message_box
@@ -93,7 +93,7 @@ def manager(
 
 @pytest.fixture(autouse=True)
 def qt_app(comments_model_mock):
-    with patch("mpvqc.pyobjects.manager.impl.QCoreApplication.instance", return_value=MagicMock()) as mock:
+    with patch("mpvqc.pyobjects.backend_manager.QCoreApplication.instance", return_value=MagicMock()) as mock:
         mock.return_value.find_object.return_value = comments_model_mock
         yield mock
 
@@ -197,7 +197,7 @@ def test_save_unsaved_state_do_save(
     type_mapper,
     make_spy,
 ):
-    saved_spy = make_spy(manager.savedd)
+    saved_spy = make_spy(manager.saved)
     manager.setProperty("saved", False)
 
     manager.save_impl()
@@ -218,7 +218,7 @@ def test_save_unsaved_state_cancel_save(
     exporter_service_mock,
     make_spy,
 ):
-    saved_spy = make_spy(manager.savedd)
+    saved_spy = make_spy(manager.saved)
     manager.setProperty("saved", False)
 
     manager.save_impl()

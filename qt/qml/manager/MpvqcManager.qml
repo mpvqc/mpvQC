@@ -22,77 +22,106 @@ import QtQuick
 import pyobjects
 
 import "../dialogs"
+import "../shared"
+
 import "MpvqcStateReducer.js" as MpvqcStateReducer
 
-MpvqcManagerPyObject {
+MpvqcObject {
     id: root
 
     required property var mpvqcApplication
 
-    readonly property var state: _stateManager.state
     readonly property bool saved: _stateManager.state.saved
-    readonly property string _document: _stateManager.state.document
 
-    property var mpvqcDialogExportDocumentFactory: Component {
-        MpvqcDialogExportDocument {
-            isExtendedExport: false
-        }
+    function reset(): void {
+        _backend.reset_impl();
     }
 
-    property var mpvqcMessageBoxVideoFoundFactory: Component {
-        MpvqcMessageBoxVideoFound {
-            mpvqcApplication: root.mpvqcApplication
-        }
+    function openDocuments(documents: list<url>): void {
+        _backend.open_documents_impl(documents);
     }
 
-    property var mpvqcMessageBoxNewDocumentFactory: Component {
-        MpvqcMessageBoxNewDocument {
-            mpvqcApplication: root.mpvqcApplication
-        }
+    function openVideo(video: url): void {
+        _backend.open_video_impl(video);
     }
 
-    property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
-        MpvqcMessageBoxDocumentNotCompatible {
-            mpvqcApplication: root.mpvqcApplication
-        }
+    function openSubtitles(subtitles: list<url>): void {
+        _backend.open_subtitles_impl(subtitles);
     }
 
-    readonly property var _1: Connections {
-        target: root
+    function open(documents: list<url>, videos: list<url>, subtitles: list<url>): void {
+        _backend.open_impl(documents, videos, subtitles);
+    }
 
-        function onImported(change) {
+    function save(): void {
+        _backend.save_impl();
+    }
+
+    function saveAs(): void {
+        _backend.save_as_impl();
+    }
+
+    MpvqcManagerBackendPyObject {
+        id: _backend
+
+        property var mpvqcDialogExportDocumentFactory: Component {
+            MpvqcDialogExportDocument {
+                isExtendedExport: false
+            }
+        }
+
+        property var mpvqcMessageBoxVideoFoundFactory: Component {
+            MpvqcMessageBoxVideoFound {
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
+
+        property var mpvqcMessageBoxNewDocumentFactory: Component {
+            MpvqcMessageBoxNewDocument {
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
+
+        property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
+            MpvqcMessageBoxDocumentNotCompatible {
+                mpvqcApplication: root.mpvqcApplication
+            }
+        }
+
+        readonly property bool saved: _stateManager.state.saved
+        readonly property string _document: _stateManager.state.document
+
+        onImported: change => {
             const delta = JSON.parse(change);
             _stateManager.processImport(delta.documents, delta.video);
         }
 
-        function onChanged() {
+        onChanged: {
             _stateManager.processChange();
         }
 
-        function onResett() {
+        onReset: {
             _stateManager.processReset();
         }
 
-        function onSavedd(document) {
+        onSaved: document => {
             _stateManager.processSave(document);
         }
     }
 
-    readonly property var _2: QtObject {
+    QtObject {
         id: _stateManager
 
         property var state: MpvqcStateReducer.initialState(null)
 
-        onStateChanged: {
-            console.log("State changed", JSON.stringify(state));
-        }
-
         function processImport(documents: list<string>, video: string): void {
+            // Python -> QML conversation is really mean :|
+            const isVideoFalsy = `${video}` === 'null' || `${video}` === 'undefined';
             _dispatch({
                 type: "IMPORT",
                 change: {
-                    documents: documents,
-                    video: video ?? null
+                    documents,
+                    video: isVideoFalsy ? null : video
                 }
             });
         }
@@ -103,16 +132,16 @@ MpvqcManagerPyObject {
             });
         }
 
-        function processSave(document: string): void {
-            _dispatch({
-                type: "SAVE",
-                document: document
-            });
-        }
-
         function processReset(): void {
             _dispatch({
                 type: "RESET"
+            });
+        }
+
+        function processSave(document: string): void {
+            _dispatch({
+                type: "SAVE",
+                document
             });
         }
 
@@ -122,33 +151,5 @@ MpvqcManagerPyObject {
                 state = next;
             }
         }
-    }
-
-    function reset(): void {
-        root.reset_impl();
-    }
-
-    function openDocuments(documents: list<url>): void {
-        root.open_documents_impl(documents);
-    }
-
-    function openVideo(video: url): void {
-        root.open_video_impl(video);
-    }
-
-    function openSubtitles(subtitles: list<url>): void {
-        root.open_subtitles_impl(subtitles);
-    }
-
-    function open(documents: list<url>, videos: list<url>, subtitles: list<url>): void {
-        root.open_impl(documents, videos, subtitles);
-    }
-
-    function save(): void {
-        root.save_impl();
-    }
-
-    function saveAs(): void {
-        root.save_as_impl();
     }
 }
