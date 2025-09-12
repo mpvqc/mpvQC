@@ -60,8 +60,14 @@ repos:
     rev: v0.12.8
     hooks:
       - id: ruff
-        name: "lint python"
+        name: "lint py"
         args:
           - "--fix"
       - id: ruff-format
-        name: "format python"
+        name: "format py"
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.2.2 # Use the sha / tag you want to point at
+    hooks:
+      - id: biome-check
+        name: "format js"
+        files: \.js$
