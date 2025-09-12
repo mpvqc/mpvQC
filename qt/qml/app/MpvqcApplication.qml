@@ -23,6 +23,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../header"
+import "../manager"
 import "../settings"
 
 ApplicationWindow {
