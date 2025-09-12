@@ -1,21 +1,19 @@
 /*
-mpvQC
-
-Copyright (C) 2024 mpvQC developers
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2025 mpvQC developers
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 pragma ComponentBehavior: Bound
 
@@ -24,11 +22,16 @@ import QtQuick
 import pyobjects
 
 import "../dialogs"
+import "MpvqcStateReducer.js" as MpvqcStateReducer
 
 MpvqcManagerPyObject {
     id: root
 
     required property var mpvqcApplication
+
+    readonly property var state: _stateManager.state
+    readonly property bool saved: _stateManager.state.saved
+    readonly property string _document: _stateManager.state.document
 
     property var mpvqcDialogExportDocumentFactory: Component {
         MpvqcDialogExportDocument {
@@ -51,6 +54,73 @@ MpvqcManagerPyObject {
     property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
         MpvqcMessageBoxDocumentNotCompatible {
             mpvqcApplication: root.mpvqcApplication
+        }
+    }
+
+    readonly property var _1: Connections {
+        target: root
+
+        function onImported(change) {
+            const delta = JSON.parse(change);
+            _stateManager.processImport(delta.documents, delta.video);
+        }
+
+        function onChanged() {
+            _stateManager.processChange();
+        }
+
+        function onResett() {
+            _stateManager.processReset();
+        }
+
+        function onSavedd(document) {
+            _stateManager.processSave(document);
+        }
+    }
+
+    readonly property var _2: QtObject {
+        id: _stateManager
+
+        property var state: MpvqcStateReducer.initialState(null)
+
+        onStateChanged: {
+            console.log("State changed", JSON.stringify(state));
+        }
+
+        function processImport(documents: list<string>, video: string): void {
+            _dispatch({
+                type: "IMPORT",
+                change: {
+                    documents: documents,
+                    video: video ?? null
+                }
+            });
+        }
+
+        function processChange(): void {
+            _dispatch({
+                type: "CHANGE"
+            });
+        }
+
+        function processSave(document: string): void {
+            _dispatch({
+                type: "SAVE",
+                document: document
+            });
+        }
+
+        function processReset(): void {
+            _dispatch({
+                type: "RESET"
+            });
+        }
+
+        function _dispatch(event): void {
+            const next = MpvqcStateReducer.reducer(state, event);
+            if (next.kind !== state.kind || next.document !== state.document || next.video !== state.video || next.saved !== state.saved) {
+                state = next;
+            }
         }
     }
 
