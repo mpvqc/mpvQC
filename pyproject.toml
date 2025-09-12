@@ -233,6 +233,7 @@ files = [
     "qt/qml/app/MpvqcBackupper.qml",
     "qt/qml/app/MpvqcContent.qml",
     "qt/qml/app/MpvqcContentDialogLoader.qml",
+    "qt/qml/app/MpvqcContentFileDialogLoader.qml",
     "qt/qml/app/MpvqcFileDropArea.qml",
     "qt/qml/app/MpvqcLabelWidthCalculator.qml",
     "qt/qml/app/MpvqcManager.qml",
