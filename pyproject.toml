@@ -321,6 +321,7 @@ files = [
     "qt/qml/header/MpvqcAppHeaderController.qml",
     "qt/qml/header/MpvqcAppHeaderView.qml",
     "qt/qml/header/qmldir",
+    "qt/qml/header/tst_MpvqcAppHeaderController.qml",
     "qt/qml/manager/MpvqcManager.qml",
     "qt/qml/manager/MpvqcStateReducer.js",
     "qt/qml/manager/MpvqcTypes.js",

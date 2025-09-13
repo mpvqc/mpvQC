@@ -113,6 +113,7 @@ ApplicationWindow {
         id: _headerController
 
         mpvqcTheme: root.mpvqcTheme
+        mpvqcSettings: root.mpvqcSettings
 
         isVisible: !root.fullscreen
         isMaximized: root.maximized

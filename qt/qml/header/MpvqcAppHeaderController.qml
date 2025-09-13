@@ -24,6 +24,7 @@ QtObject {
     id: root
 
     required property var mpvqcTheme
+    required property var mpvqcSettings
 
     required property bool isVisible
     required property bool isMaximized
@@ -145,11 +146,15 @@ QtObject {
     }
 
     function configureWindowTitleFormat(updatedValue: int): void {
-        root.windowTitleFormatConfigured(updatedValue);
+        mpvqcSettings.windowTitleFormat = updatedValue;
     }
 
     function configureApplicationLayout(updatedValue: int): void {
-        root.applicationLayoutConfigured(updatedValue);
+        mpvqcSettings.layoutOrientation = updatedValue;
+    }
+
+    function configureLanguage(updatedLanguageIdentifier: string): void {
+        mpvqcSettings.language = updatedLanguageIdentifier;
     }
 
     function requestOpenBackupSettingsDialog(): void {
@@ -170,10 +175,6 @@ QtObject {
 
     function requestOpenEditInputConfigDialog(): void {
         root.editInputConfigDialogRequested();
-    }
-
-    function configureLanguage(updatedLanguageIdentifier: string): void {
-        root.languageConfigured(updatedLanguageIdentifier);
     }
 
     function requestOpenCheckForUpdatesDialog(): void {
