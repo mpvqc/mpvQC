@@ -89,8 +89,8 @@ ApplicationWindow {
     LayoutMirroring.childrenInherit: true
 
     onClosing: event => {
-        closeHandler.requestClose();
-        event.accepted = closeHandler.userConfirmedClose;
+        _quitHandler.requestClose();
+        event.accepted = _quitHandler.userConfirmedClose;
     }
 
     MpvqcContent {
@@ -131,21 +131,13 @@ ApplicationWindow {
 
         extendedExportTemplatesModel: MpvqcExportTemplateModelPyObject {} // qmllint disable
 
-        onWindowDragRequested: {
-            root.startSystemMove();
-        }
+        onWindowDragRequested: root.startSystemMove()
 
-        onMinimizeAppRequested: {
-            root.showMinimized();
-        }
+        onMinimizeAppRequested: root.showMinimized()
 
-        onToggleMaximizeAppRequested: {
-            _windowVisibilityHandler.toggleMaximized();
-        }
+        onToggleMaximizeAppRequested: _windowVisibilityHandler.toggleMaximized()
 
-        onCloseAppRequested: {
-            root.close();
-        }
+        onCloseAppRequested: root.close()
     }
 
     MpvqcContentController {
@@ -194,6 +186,13 @@ ApplicationWindow {
         mpvqcApplication: root
     }
 
+    MpvqcQuitHandler {
+        id: _quitHandler
+
+        mpvqcApplication: root
+        canClose: root.mpvqcManager.saved
+    }
+
     MouseArea {
         anchors.fill: parent
         cursorShape: undefined
@@ -210,13 +209,6 @@ ApplicationWindow {
         }
     }
 
-    MpvqcQuitHandler {
-        id: closeHandler
-
-        mpvqcApplication: root
-        canClose: root.mpvqcManager.saved
-    }
-
     Binding {
         target: Qt
         property: "uiLanguage"
@@ -224,9 +216,7 @@ ApplicationWindow {
         restoreMode: Binding.RestoreNone
     }
 
-    Component.onCompleted: {
-        _content.focusCommentTable();
-    }
+    Component.onCompleted: _content.focusCommentTable()
 
     // *********************************************************
     // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows

@@ -177,6 +177,49 @@ Page {
         }
     }
 
+    MpvqcContentDialogLoader {
+        id: _dialogLoader
+
+        mpvqcApplication: root.mpvqcApplication
+
+        onDialogClosed: {
+            root.focusCommentTable();
+        }
+    }
+
+    MpvqcContentFileDialogLoader {
+        id: _fileDialogLoader
+
+        mpvqcApplication: root.mpvqcApplication
+        cleanupDelay: 250
+
+        onExtendedDocumentSaved: (document, template) => {
+            root.contentController.saveExtendedDocument(document, template);
+        }
+
+        onDialogClosed: {
+            root.focusCommentTable();
+        }
+    }
+
+    MpvqcContentMessageBoxLoader {
+        id: _messageBoxLoader
+
+        mpvqcApplication: root.mpvqcApplication
+
+        onMessageBoxClosed: {
+            root.focusCommentTable();
+        }
+    }
+
+    Connections {
+        target: root.mpvqcExtendedDocumentExporterPyObject
+
+        function onErrorOccurred(message: string, line: int): void {
+            _messageBoxLoader.openExtendedExportFailedMessageBox(message, line);
+        }
+    }
+
     Connections {
         target: root.headerController
 
@@ -271,49 +314,6 @@ Page {
 
         function onSplitViewTableSizeRequested(width: int, height: int): void {
             _tableContainer.setPreferredSizes(width, height);
-        }
-    }
-
-    MpvqcContentDialogLoader {
-        id: _dialogLoader
-
-        mpvqcApplication: root.mpvqcApplication
-
-        onDialogClosed: {
-            root.focusCommentTable();
-        }
-    }
-
-    MpvqcContentFileDialogLoader {
-        id: _fileDialogLoader
-
-        mpvqcApplication: root.mpvqcApplication
-        cleanupDelay: 250
-
-        onExtendedDocumentSaved: (document, template) => {
-            root.contentController.saveExtendedDocument(document, template);
-        }
-
-        onDialogClosed: {
-            root.focusCommentTable();
-        }
-    }
-
-    MpvqcContentMessageBoxLoader {
-        id: _messageBoxLoader
-
-        mpvqcApplication: root.mpvqcApplication
-
-        onMessageBoxClosed: {
-            root.focusCommentTable();
-        }
-    }
-
-    Connections {
-        target: root.mpvqcExtendedDocumentExporterPyObject
-
-        function onErrorOccurred(message: string, line: int): void {
-            _messageBoxLoader.openExtendedExportFailedMessageBox(message, line);
         }
     }
 
