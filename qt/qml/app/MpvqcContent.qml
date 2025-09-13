@@ -1,21 +1,19 @@
 /*
-mpvQC
-
-Copyright (C) 2022 mpvQC developers
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2022 mpvQC developers
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 pragma ComponentBehavior: Bound
 
@@ -34,7 +32,6 @@ Page {
     required property MpvqcAppHeaderController headerController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
-    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
@@ -51,96 +48,30 @@ Page {
         _mpvqcCommentTable.forceActiveFocus();
     }
 
-    QtObject {
-        id: _impl
+    MpvqcContentController {
+        id: _controller
 
-        readonly property int minContainerHeight: 200
-        readonly property int minContainerWidth: 500
-        readonly property real defaultSplitRatio: 0.4
+        mpvqcMpvPlayerPyObject: root.mpvqcMpvPlayerPyObject
+        mpvqcManager: root.mpvqcApplication.mpvqcManager
+        mpvqcExtendedDocumentExporterPyObject: root.mpvqcExtendedDocumentExporterPyObject
+        mpvqcSettings: root.mpvqcSettings
 
-        function applySaneDefaultSplitViewSize(): void {
-            const prefHeight = _splitView.height * defaultSplitRatio;
-            const prefWidth = _splitView.width * defaultSplitRatio;
-            _tableContainer.setPreferredSizes(prefWidth, prefHeight);
-        }
+        onToggleFullScreenRequested: root.toggleFullScreenRequested()
 
-        function resizeVideoToOriginalResolution(): void {
-            _videoResizer.recalculateSizes();
-        }
+        onDisableFullScreenRequested: root.disableFullScreenRequested()
 
-        function isPreventReachingMpvCustomCommand(key: int, modifiers: int): bool {
-            const noModifier = modifiers === Qt.NoModifier;
-            const ctrlModifier = modifiers & Qt.ControlModifier;
+        onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)
 
-            return key === Qt.Key_Up  //
-            || key === Qt.Key_Down //
-            || (key === Qt.Key_Return && noModifier) //
-            || (key === Qt.Key_Escape && noModifier) //
-            || (key === Qt.Key_Delete && noModifier) //
-            || (key === Qt.Key_Backspace && noModifier) //
-            || (key === Qt.Key_F && ctrlModifier) //
-            || (key === Qt.Key_C && ctrlModifier) //
-            || (key === Qt.Key_Z && ctrlModifier);
-        }
+        onOpenNewCommentMenuRequested: _commentMenu.popup()
 
-        function handleMpvCustomCommand(key: int, modifiers: int): void {
-            root.mpvqcMpvPlayerPyObject.handle_key_event(key, modifiers);
-        }
+        onAddNewCommentRequested: commentType => _mpvqcCommentTable.addNewComment(commentType)
 
-        function pausePlayer(): void {
-            root.mpvqcMpvPlayerPyObject.pause();
-        }
-
-        function openNewCommentMenu(): void {
-            _commentMenu.popup();
-        }
-
-        function addNewEmptyComment(commentType: string): void {
-            _mpvqcCommentTable.addNewComment(commentType);
-        }
-
-        function requestToggleFullScreen(): void {
-            root.toggleFullScreenRequested();
-        }
-
-        function requestDisableFullScreen(): void {
-            root.disableFullScreenRequested();
-        }
-
-        function requestResizeAppWindow(width: int, height: int): void {
-            root.appWindowSizeRequested(width, height);
-        }
-
-        function saveExtendedDocument(document: url, template: url): void {
-            root.mpvqcExtendedDocumentExporterPyObject.export(document, template);
-        }
+        onSplitViewTableSizeRequested: (width, height) => _tableContainer.setPreferredSizes(width, height)
     }
 
-    Keys.onEscapePressed: {
-        _impl.requestDisableFullScreen();
-    }
+    Keys.onEscapePressed: _controller.requestDisableFullScreen()
 
-    Keys.onPressed: event => {
-        const key = event.key;
-        const modifiers = event.modifiers;
-        const plainPress = !event.isAutoRepeat && modifiers === Qt.NoModifier;
-
-        if (key === Qt.Key_E && plainPress) {
-            _impl.openNewCommentMenu();
-            return;
-        }
-
-        if (key === Qt.Key_F && plainPress) {
-            _impl.requestToggleFullScreen();
-            return;
-        }
-
-        if (_impl.isPreventReachingMpvCustomCommand(key, modifiers)) {
-            return;
-        }
-
-        _impl.handleMpvCustomCommand(key, modifiers);
-    }
+    Keys.onPressed: event => _controller.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
 
     SplitView {
         id: _splitView
@@ -160,18 +91,14 @@ Page {
             mpvPlayer: root.mpvqcMpvPlayerPyObject
             isFullScreen: root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: _impl.minContainerHeight
-            SplitView.minimumWidth: _impl.minContainerWidth
+            SplitView.minimumHeight: _controller.minContainerHeight
+            SplitView.minimumWidth: _controller.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            onAddNewCommentMenuRequested: {
-                _impl.openNewCommentMenu();
-            }
+            onAddNewCommentMenuRequested: _controller.openNewCommentMenuRequested()
 
-            onToggleFullScreenRequested: {
-                _impl.requestToggleFullScreen();
-            }
+            onToggleFullScreenRequested: _controller.requestToggleFullScreen()
         }
 
         Column {
@@ -179,10 +106,10 @@ Page {
 
             visible: !root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: _impl.minContainerHeight
-            SplitView.minimumWidth: _impl.minContainerWidth
+            SplitView.minimumHeight: _controller.minContainerHeight
+            SplitView.minimumWidth: _controller.minContainerWidth
 
-            function setPreferredSizes(width: int, height: int): void {
+            function setPreferredSizes(width, height) {
                 SplitView.preferredWidth = width;
                 SplitView.preferredHeight = height;
             }
@@ -196,9 +123,7 @@ Page {
                 height: _tableContainer.height - _footer.height
 
                 onCommentCountChanged: {
-                    // we effectively force a redraw of the table here. if we don't do this and delete the last row
-                    // in the table, the table will not rerender completely and there might be color artifacts of the
-                    // alternating row colors
+                    // force a redraw to avoid leftover alternating row color artifacts
                     _footer.height += 1;
                     _footer.height -= 1;
                 }
@@ -221,7 +146,7 @@ Page {
         supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
 
         onFilesDropped: (documents, videos, subtitles) => {
-            root.mpvqcManager.open(documents, videos, subtitles);
+            _controller.openDroppedFiles(documents, videos, subtitles);
         }
     }
 
@@ -240,12 +165,12 @@ Page {
 
         onAboutToShow: {
             _adjustPosition();
-            _impl.pausePlayer();
+            _controller.pausePlayer();
         }
 
         onCommentTypeChosen: commentType => {
-            _impl.requestDisableFullScreen();
-            _impl.addNewEmptyComment(commentType);
+            _controller.requestDisableFullScreen();
+            _controller.addNewEmptyComment(commentType);
         }
     }
 
@@ -268,7 +193,7 @@ Page {
         splitViewTableContainerHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
-            _impl.requestResizeAppWindow(width, height);
+            _controller.requestResizeAppWindow(width, height);
         }
 
         onSplitViewTableSizeRequested: (width, height) => {
@@ -280,7 +205,7 @@ Page {
         target: root.headerController
 
         function onResetAppStateRequested(): void {
-            root.mpvqcManager.reset();
+            _controller.resetAppState();
         }
 
         function onOpenQcDocumentsRequested(): void {
@@ -288,11 +213,11 @@ Page {
         }
 
         function onSaveQcDocumentsRequested(): void {
-            root.mpvqcManager.save();
+            _controller.save();
         }
 
         function onSaveQcDocumentsAsRequested(): void {
-            root.mpvqcManager.saveAs();
+            _controller.saveAs();
         }
 
         function onExtendedExportRequested(name: string, path: url): void {
@@ -309,7 +234,7 @@ Page {
         }
 
         function onResizeVideoRequested(): void {
-            _impl.resizeVideoToOriginalResolution();
+            _videoResizer.recalculateSizes();
         }
 
         function onAppearanceDialogRequested(): void {
@@ -321,11 +246,11 @@ Page {
         }
 
         function onWindowTitleFormatConfigured(updatedValue): void {
-            root.mpvqcSettings.windowTitleFormat = updatedValue;
+            _controller.setWindowTitleFormat(updatedValue);
         }
 
         function onApplicationLayoutConfigured(updatedValue): void {
-            root.mpvqcSettings.layoutOrientation = updatedValue;
+            _controller.setApplicationLayout(updatedValue);
         }
 
         function onBackupSettingsDialogRequested(): void {
@@ -348,8 +273,8 @@ Page {
             _dialogLoader.openEditInputDialog();
         }
 
-        function onLanguageConfigured(updatedLanguageIdentifier: string): void {
-            root.mpvqcSettings.language = updatedLanguageIdentifier;
+        function onLanguageConfigured(updatedLanguageIdentifier): void {
+            _controller.setLanguage(updatedLanguageIdentifier);
         }
 
         function onUpdateDialogRequested(): void {
@@ -386,7 +311,7 @@ Page {
         cleanupDelay: 250
 
         onExtendedDocumentSaved: (document, template) => {
-            _impl.saveExtendedDocument(document, template);
+            _controller.saveExtendedDocument(document, template);
         }
 
         onDialogClosed: {
@@ -413,6 +338,7 @@ Page {
     }
 
     Component.onCompleted: {
-        _impl.applySaneDefaultSplitViewSize();
+        const preferred = _controller.preferredSplitSizes(_splitView.width, _splitView.height);
+        _tableContainer.setPreferredSizes(preferred.width, preferred.height);
     }
 }

@@ -46,12 +46,13 @@ class ExtendedExportJob(QRunnable):
             self._error_callback(error.message, error.line_nr)
 
 
+# noinspection PyPep8Naming
 @QmlElement
 class MpvqcExtendedDocumentExporterPyObject(QObject):
     errorOccurred = Signal(str, int)  # params: message, line nr
 
     @Slot(QUrl, QUrl)
-    def export(self, document: QUrl, template: QUrl) -> None:
+    def performExport(self, document: QUrl, template: QUrl) -> None:
         job = ExtendedExportJob(
             document=document,
             template=template,
