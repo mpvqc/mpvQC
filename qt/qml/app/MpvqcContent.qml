@@ -30,6 +30,7 @@ Page {
 
     required property var mpvqcApplication
     required property MpvqcAppHeaderController headerController
+    required property MpvqcContentController contentController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -40,38 +41,13 @@ Page {
 
     readonly property int commentCount: _mpvqcCommentTable.commentCount
 
-    signal appWindowSizeRequested(width: int, height: int)
-    signal disableFullScreenRequested
-    signal toggleFullScreenRequested
-
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }
 
-    MpvqcContentController {
-        id: _controller
+    Keys.onEscapePressed: root.contentController.requestDisableFullScreen()
 
-        mpvqcMpvPlayerPyObject: root.mpvqcMpvPlayerPyObject
-        mpvqcManager: root.mpvqcApplication.mpvqcManager
-        mpvqcExtendedDocumentExporterPyObject: root.mpvqcExtendedDocumentExporterPyObject
-        mpvqcSettings: root.mpvqcSettings
-
-        onToggleFullScreenRequested: root.toggleFullScreenRequested()
-
-        onDisableFullScreenRequested: root.disableFullScreenRequested()
-
-        onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)
-
-        onOpenNewCommentMenuRequested: _commentMenu.popup()
-
-        onAddNewCommentRequested: commentType => _mpvqcCommentTable.addNewComment(commentType)
-
-        onSplitViewTableSizeRequested: (width, height) => _tableContainer.setPreferredSizes(width, height)
-    }
-
-    Keys.onEscapePressed: _controller.requestDisableFullScreen()
-
-    Keys.onPressed: event => _controller.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
+    Keys.onPressed: event => root.contentController.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
 
     SplitView {
         id: _splitView
@@ -91,14 +67,14 @@ Page {
             mpvPlayer: root.mpvqcMpvPlayerPyObject
             isFullScreen: root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: _controller.minContainerHeight
-            SplitView.minimumWidth: _controller.minContainerWidth
+            SplitView.minimumHeight: root.contentController.minContainerHeight
+            SplitView.minimumWidth: root.contentController.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            onAddNewCommentMenuRequested: _controller.openNewCommentMenuRequested()
+            onAddNewCommentMenuRequested: root.contentController.openNewCommentMenuRequested()
 
-            onToggleFullScreenRequested: _controller.requestToggleFullScreen()
+            onToggleFullScreenRequested: root.contentController.requestToggleFullScreen()
         }
 
         Column {
@@ -106,8 +82,8 @@ Page {
 
             visible: !root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: _controller.minContainerHeight
-            SplitView.minimumWidth: _controller.minContainerWidth
+            SplitView.minimumHeight: root.contentController.minContainerHeight
+            SplitView.minimumWidth: root.contentController.minContainerWidth
 
             function setPreferredSizes(width, height) {
                 SplitView.preferredWidth = width;
@@ -146,7 +122,7 @@ Page {
         supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
 
         onFilesDropped: (documents, videos, subtitles) => {
-            _controller.openDroppedFiles(documents, videos, subtitles);
+            root.contentController.openDroppedFiles(documents, videos, subtitles);
         }
     }
 
@@ -165,12 +141,12 @@ Page {
 
         onAboutToShow: {
             _adjustPosition();
-            _controller.pausePlayer();
+            root.contentController.pausePlayer();
         }
 
         onCommentTypeChosen: commentType => {
-            _controller.requestDisableFullScreen();
-            _controller.addNewEmptyComment(commentType);
+            root.contentController.requestDisableFullScreen();
+            root.contentController.addNewEmptyComment(commentType);
         }
     }
 
@@ -193,7 +169,7 @@ Page {
         splitViewTableContainerHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
-            _controller.requestResizeAppWindow(width, height);
+            root.contentController.requestResizeAppWindow(width, height);
         }
 
         onSplitViewTableSizeRequested: (width, height) => {
@@ -205,7 +181,7 @@ Page {
         target: root.headerController
 
         function onResetAppStateRequested(): void {
-            _controller.resetAppState();
+            root.contentController.resetAppState();
         }
 
         function onOpenQcDocumentsRequested(): void {
@@ -213,11 +189,11 @@ Page {
         }
 
         function onSaveQcDocumentsRequested(): void {
-            _controller.save();
+            root.contentController.save();
         }
 
         function onSaveQcDocumentsAsRequested(): void {
-            _controller.saveAs();
+            root.contentController.saveAs();
         }
 
         function onExtendedExportRequested(name: string, path: url): void {
@@ -246,11 +222,11 @@ Page {
         }
 
         function onWindowTitleFormatConfigured(updatedValue): void {
-            _controller.setWindowTitleFormat(updatedValue);
+            root.contentController.setWindowTitleFormat(updatedValue);
         }
 
         function onApplicationLayoutConfigured(updatedValue): void {
-            _controller.setApplicationLayout(updatedValue);
+            root.contentController.setApplicationLayout(updatedValue);
         }
 
         function onBackupSettingsDialogRequested(): void {
@@ -274,7 +250,7 @@ Page {
         }
 
         function onLanguageConfigured(updatedLanguageIdentifier): void {
-            _controller.setLanguage(updatedLanguageIdentifier);
+            root.contentController.setLanguage(updatedLanguageIdentifier);
         }
 
         function onUpdateDialogRequested(): void {
@@ -291,6 +267,22 @@ Page {
 
         function onAboutDialogRequested(): void {
             _dialogLoader.openAboutDialog();
+        }
+    }
+
+    Connections {
+        target: root.contentController
+
+        function onOpenNewCommentMenuRequested(): void {
+            _commentMenu.popup();
+        }
+
+        function onAddNewCommentRequested(commentType: string): void {
+            _mpvqcCommentTable.addNewComment(commentType);
+        }
+
+        function onSplitViewTableSizeRequested(width: int, height: int): void {
+            _tableContainer.setPreferredSizes(width, height);
         }
     }
 
@@ -311,7 +303,7 @@ Page {
         cleanupDelay: 250
 
         onExtendedDocumentSaved: (document, template) => {
-            _controller.saveExtendedDocument(document, template);
+            root.contentController.saveExtendedDocument(document, template);
         }
 
         onDialogClosed: {
@@ -338,7 +330,7 @@ Page {
     }
 
     Component.onCompleted: {
-        const preferred = _controller.preferredSplitSizes(_splitView.width, _splitView.height);
+        const preferred = root.contentController.preferredSplitSizes(_splitView.width, _splitView.height);
         _tableContainer.setPreferredSizes(preferred.width, preferred.height);
     }
 }

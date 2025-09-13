@@ -97,6 +97,7 @@ ApplicationWindow {
 
         mpvqcApplication: root
         headerController: _headerController
+        contentController: _contentController
 
         focus: true
         anchors.fill: parent
@@ -105,23 +106,6 @@ ApplicationWindow {
         header: MpvqcAppHeaderView {
             controller: _headerController
             width: root.width
-        }
-
-        onAppWindowSizeRequested: (width, height) => {
-            if (width >= root.minimumWidth && height >= root.minimumHeight) {
-                root.width = width;
-                root.height = height;
-            }
-        }
-
-        onDisableFullScreenRequested: {
-            if (root.fullscreen) {
-                _windowVisibilityHandler.disableFullScreen();
-            }
-        }
-
-        onToggleFullScreenRequested: {
-            _windowVisibilityHandler.toggleFullScreen();
         }
     }
 
@@ -159,6 +143,26 @@ ApplicationWindow {
         onCloseAppRequested: {
             root.close();
         }
+    }
+
+    MpvqcContentController {
+        id: _contentController
+
+        mpvqcMpvPlayerPyObject: root.mpvqcMpvPlayerPyObject
+        mpvqcManager: root.mpvqcManager
+        mpvqcExtendedDocumentExporterPyObject: root.mpvqcExtendedDocumentExporterPyObject
+        mpvqcSettings: root.mpvqcSettings
+
+        onAppWindowSizeRequested: (width, height) => {
+            if (width >= root.minimumWidth && height >= root.minimumHeight) {
+                root.width = width;
+                root.height = height;
+            }
+        }
+
+        onDisableFullScreenRequested: _windowVisibilityHandler.disableFullScreen()
+
+        onToggleFullScreenRequested: _windowVisibilityHandler.toggleFullScreen()
     }
 
     MpvqcBackupper {
