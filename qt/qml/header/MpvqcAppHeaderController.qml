@@ -86,14 +86,11 @@ QtObject {
 
     signal appearanceDialogRequested
     signal commentTypesDialogRequested
-    signal windowTitleFormatConfigured(updatedValue: int)
-    signal applicationLayoutConfigured(updatedValue: int)
     signal backupSettingsDialogRequested
     signal exportSettingsDialogRequested
     signal importSettingsDialogRequested
     signal editMpvConfigDialogRequested
     signal editInputConfigDialogRequested
-    signal languageConfigured(updatedLanguageIdentifier: string)
 
     signal updateDialogRequested
     signal keyboardShortcutsDialogRequested

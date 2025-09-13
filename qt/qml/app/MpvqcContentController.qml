@@ -103,18 +103,6 @@ QtObject {
         mpvqcManager.saveAs();
     }
 
-    function setWindowTitleFormat(updatedValue): void {
-        mpvqcSettings.windowTitleFormat = updatedValue;
-    }
-
-    function setApplicationLayout(updatedValue): void {
-        mpvqcSettings.layoutOrientation = updatedValue;
-    }
-
-    function setLanguage(updatedLanguageIdentifier): void {
-        mpvqcSettings.language = updatedLanguageIdentifier;
-    }
-
     // --- Private helpers ---
 
     function _isPreventReachingMpvCustomCommand(key, modifiers): bool {
