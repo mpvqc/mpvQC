@@ -28,6 +28,8 @@ QtObject {
     readonly property int minContainerHeight: 200
     readonly property int minContainerWidth: 500
     readonly property real defaultSplitRatio: 0.4
+    readonly property int layoutOrientation: mpvqcSettings.layoutOrientation
+    readonly property list<string> commentTypes: mpvqcSettings.commentTypes
 
     // --- Intents: the View reacts to these ---
     signal appWindowSizeRequested(width: int, height: int)
