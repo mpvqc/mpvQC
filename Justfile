@@ -22,7 +22,7 @@ export QT_QUICK_CONTROLS_STYLE := 'Material'
 
 # Format code
 @format:
-    uv tool run prek run --all-files
+    uvx prek run --all-files
 
 # Initialize repository
 init ARGS='--group dev':
