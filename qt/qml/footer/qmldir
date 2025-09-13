@@ -1,3 +1,4 @@
 module footer
 
-MpvqcFooter MpvqcFooter.qml
+MpvqcFooterController MpvqcFooterController.qml
+MpvqcFooterView MpvqcFooterView.qml

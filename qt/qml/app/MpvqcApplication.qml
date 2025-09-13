@@ -22,6 +22,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "../footer"
 import "../header"
 import "../manager"
 import "../settings"
@@ -98,6 +99,7 @@ ApplicationWindow {
         mpvqcApplication: root
         headerController: _headerController
         contentController: _contentController
+        footerController: _footerController
 
         focus: true
         anchors.fill: parent
@@ -164,6 +166,19 @@ ApplicationWindow {
         onDisableFullScreenRequested: _windowVisibilityHandler.disableFullScreen()
 
         onToggleFullScreenRequested: _windowVisibilityHandler.toggleFullScreen()
+    }
+
+    MpvqcFooterController {
+        id: _footerController
+
+        mpvqcSettings: root.mpvqcSettings
+        mpvqcLabelWidthCalculator: root.mpvqcLabelWidthCalculator
+        mpvqcMpvPlayerPropertiesPyObject: root.mpvqcMpvPlayerPropertiesPyObject
+        mpvqcUtilityPyObject: root.mpvqcUtilityPyObject
+        labelWidthTarget: root.contentItem
+
+        isApplicationMazimized: root.maximized
+        isApplicationFullscreen: root.fullscreen
     }
 
     MpvqcBackupper {

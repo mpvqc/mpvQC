@@ -31,6 +31,7 @@ Page {
     required property var mpvqcApplication
     required property MpvqcAppHeaderController headerController
     required property MpvqcContentController contentController
+    required property MpvqcFooterController footerController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -104,10 +105,10 @@ Page {
                 }
             }
 
-            MpvqcFooter {
+            MpvqcFooterView {
                 id: _footer
 
-                mpvqcApplication: root.mpvqcApplication
+                controller: root.footerController
                 width: _tableContainer.width
 
                 selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
