@@ -318,32 +318,4 @@ TestCase {
         control.saveAs();
         compare(control.mpvqcManager.saveAsCount, 1);
     }
-
-    function test_setWindowTitleFormat() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        compare(control.mpvqcSettings.windowTitleFormat, "");
-        const v = "mpvQC — %FILENAME%";
-        control.setWindowTitleFormat(v);
-        compare(control.mpvqcSettings.windowTitleFormat, v);
-    }
-
-    function test_setApplicationLayout() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        compare(control.mpvqcSettings.layoutOrientation, Qt.Vertical);
-        control.setApplicationLayout(Qt.Horizontal);
-        compare(control.mpvqcSettings.layoutOrientation, Qt.Horizontal);
-    }
-
-    function test_setLanguage() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        compare(control.mpvqcSettings.language, "en");
-        control.setLanguage("de");
-        compare(control.mpvqcSettings.language, "de");
-    }
 }

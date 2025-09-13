@@ -221,14 +221,6 @@ Page {
             _dialogLoader.openCommentTypesDialog();
         }
 
-        function onWindowTitleFormatConfigured(updatedValue): void {
-            root.contentController.setWindowTitleFormat(updatedValue);
-        }
-
-        function onApplicationLayoutConfigured(updatedValue): void {
-            root.contentController.setApplicationLayout(updatedValue);
-        }
-
         function onBackupSettingsDialogRequested(): void {
             _dialogLoader.openBackupSettingsDialog();
         }
@@ -247,10 +239,6 @@ Page {
 
         function onEditInputConfigDialogRequested(): void {
             _dialogLoader.openEditInputDialog();
-        }
-
-        function onLanguageConfigured(updatedLanguageIdentifier): void {
-            root.contentController.setLanguage(updatedLanguageIdentifier);
         }
 
         function onUpdateDialogRequested(): void {
