@@ -35,7 +35,6 @@ Page {
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
@@ -59,7 +58,7 @@ Page {
 
         focus: true
         anchors.fill: root.contentItem
-        orientation: root.mpvqcSettings.layoutOrientation
+        orientation: root.contentController.layoutOrientation
 
         MpvqcPlayer {
             id: _player
@@ -129,7 +128,7 @@ Page {
     MpvqcNewCommentMenu {
         id: _commentMenu
 
-        commentTypes: root.mpvqcSettings.commentTypes
+        commentTypes: root.contentController.commentTypes
 
         function _adjustPosition(): void {
             const isMirrored = root.mpvqcApplication.LayoutMirroring.enabled;
