@@ -64,4 +64,4 @@ ______________________________________________________________________
 ## License
 
 By contributing to mpvQC, you agree that your contributions will be licensed under the same license that governs this
-project. See [LICENSE](LICENSE) for details.
+project. See [README.md](README.md) for details.

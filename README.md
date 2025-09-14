@@ -65,3 +65,15 @@ This compiles them into a Python file in the mpvqc folder, so the app recognizes
 
 If you want to translate this application into more languages, see the [internationalization guide](docs/internationalization.md).
 Feel free to open a new issue if you need further assistance.
+
+## Licenses
+
+This project uses multiple licenses for different parts:
+
+- **Our own source code**: [GNU GPL-3.0-or-later](LICENSES/GPL-3.0-or-later.txt)
+- **Build scripts and helper code**: [MIT](LICENSES/MIT.txt)
+- **Fonts (Noto Sans)**: [SIL Open Font License 1.1](LICENSES/OFL-1.1.txt)
+- **Icons (Google Material Icons/Symbols)**: [Apache-2.0](LICENSES/Apache-2.0.txt)
+
+Each source file usually contains an SPDX license header.
+If a file does not have a header, its licensing information can be found in our [REUSE.toml](REUSE.toml).
