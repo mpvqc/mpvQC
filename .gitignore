@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: MIT
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,qt,qtcreator,vscode,sublimetext,qml,linux,windows,macos,vim,emacs
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,qt,qtcreator,vscode,sublimetext,qml,linux,windows,macos,vim,emacs
 
@@ -534,6 +538,7 @@ $RECYCLE.BIN/
 # Files
 *.pyproject
 *.qrc
+*.license
 /build.sh
 /portable
 /project.json
