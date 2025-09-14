@@ -23,7 +23,7 @@ def service() -> ResourceReaderService:
     ],
 )
 def test_read_from(service, file_path):
-    assert service.read_from(file_path).startswith("<?xml ")
+    assert service.read_from(file_path).startswith("<!-- SPDX-FileCopyrightText: mpvQC developers -->")
 
 
 def test_read_from_errors(service):
