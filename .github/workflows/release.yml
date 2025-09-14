@@ -189,7 +189,7 @@ jobs:
             --include-qt-plugins=qml,platforms \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles \
             --noinclude-qt-translations \
-            --include-data-files=LICENSE=LICENSE \
+            --include-data-files=LICENSES/*.txt=LICENSES/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
             --nofollow-import-to='PySide6.QtWidgets' \
             --nofollow-import-to=tkinter,distutils,numpy.f2py \
