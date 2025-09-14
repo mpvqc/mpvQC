@@ -75,3 +75,8 @@ repos:
       - id: biome-check
         name: "format js"
         files: \.js$
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: v5.1.1
+    hooks:
+      - id: reuse-lint-file
+        name: "lint licenses"
