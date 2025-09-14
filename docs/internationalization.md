@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: mpvQC developers
+
+SPDX-License-Identifier: MIT
+-->
+
 # Adding Languages
 
 - Checkout repository

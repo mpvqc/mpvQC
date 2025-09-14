@@ -1,4 +1,9 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 module models
+
 MpvqcLanguageModel MpvqcLanguageModel.qml
 MpvqcThemeMaterialYouDark MpvqcThemeMaterialYouDark.qml
 MpvqcThemeMaterialYou MpvqcThemeMaterialYou.qml

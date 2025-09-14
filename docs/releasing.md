@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: mpvQC developers
+
+SPDX-License-Identifier: MIT
+-->
+
 # Building a New Release
 
 This guide is intended for mpvQC developers preparing a new release.

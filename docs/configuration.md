@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: mpvQC developers
+
+SPDX-License-Identifier: MIT
+-->
+
 # Configuring mpvQC
 
 mpvQC can be configured using the following environment variables:
