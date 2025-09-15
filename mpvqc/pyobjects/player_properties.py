@@ -32,8 +32,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     def __init__(self):
         super().__init__()
         self.setObjectName("mpvqcPlayerProperties")
-        self._mpv_version = ""
-        self._ffmpeg_version = ""
 
         self._path = ""
         self._filename = ""
@@ -47,10 +45,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
 
     def init(self):
         player = inject.instance(PlayerService)
-
-        self._mpv_version = player.mpv_version
-        self._ffmpeg_version = player.ffmpeg_version
-
         player.observe("path", self._on_player_path_changed)
         player.observe("filename", self._on_player_filename_changed)
         player.observe("duration", self._on_player_duration_changed)
@@ -65,14 +59,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
             self.scaledWidthChanged.emit(self._width / new_factor)
 
         self._zoom_detector_service.zoom_factor_changed.connect(on_zoom_factor_changed)
-
-    @Property(str, constant=True)
-    def mpv_version(self) -> str:
-        return self._mpv_version
-
-    @Property(str, constant=True)
-    def ffmpeg_version(self) -> str:
-        return self._ffmpeg_version
 
     @Property(bool, notify=video_loaded_changed)
     def video_loaded(self) -> bool:

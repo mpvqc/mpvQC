@@ -11,7 +11,7 @@ Loader {
 
     required property var mpvqcApplication
 
-    readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcDialogAbout.qml")
+    readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcAboutDialogView.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcDialogAppearance.qml")
     readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/backup/MpvqcDialogBackup.qml")
     readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcDialogCommentTypes.qml")
@@ -29,7 +29,7 @@ Loader {
 
     function openAboutDialog(): void {
         setSource(aboutDialog, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }
@@ -101,5 +101,21 @@ Loader {
             root.source = "";
             root.dialogClosed();
         }
+    }
+
+    Binding {
+        when: root.source === root.aboutDialog
+        target: root.item
+        property: "contentHeight"
+        value: Math.min(1080, root.mpvqcApplication.height * 0.65)
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.source === root.aboutDialog
+        target: root.item
+        property: "isMirrored"
+        value: root.mpvqcApplication.LayoutMirroring.enabled
+        restoreMode: Binding.RestoreNone
     }
 }
