@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 import inject
 import pytest
 from jinja2 import TemplateError, TemplateSyntaxError
-from PySide6.QtCore import QStandardPaths
+from PySide6.QtCore import QDateTime, QStandardPaths
 
 from mpvqc.services import (
     DocumentBackupService,
@@ -238,7 +238,7 @@ def test_backup_service_performs_backup(make_mock, zip_file, document_backup_ser
     assert writestr_mock.called
 
     filename, content = writestr_mock.call_args.args
-    assert f"{datetime.now(UTC):%Y-%m-%d}" in filename
+    assert f"{QDateTime.currentDateTime().toString('yyyy-MM-dd')}" in filename
     assert f"{Path('/path/to/nice/video')}" in content
     assert "[00:00:00] [Frrrranky] Suuuuuuuper" in content
 
