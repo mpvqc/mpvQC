@@ -50,11 +50,11 @@ class PlayerService:
 
     @property
     def mpv_version(self) -> str:
-        return self._mpv.mpv_version
+        return self._mpv.mpv_version if self._mpv else ""
 
     @property
     def ffmpeg_version(self) -> str:
-        return self._mpv.ffmpeg_version
+        return self._mpv.ffmpeg_version if self._mpv else ""
 
     @property
     def path(self) -> str | None:

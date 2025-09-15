@@ -59,10 +59,6 @@ TestCase {
                     getForeground: arg => "blue",
                     getBackground: arg => "blue"
                 },
-                mpvqcMpvPlayerPropertiesPyObject: {
-                    mpv_version: "",
-                    ffmpeg_version: ""
-                },
                 mpvqcApplicationPathsPyObject: {
                     dir_backup: Qt.resolvedUrl("qmldir")
                 },

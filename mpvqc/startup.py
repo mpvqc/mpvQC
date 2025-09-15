@@ -56,6 +56,7 @@ def configure_environment_variables():
 
 
 def import_mpvqc_bindings():
+    import mpvqc.controllers  # noqa: F401
     import mpvqc.pyobjects  # noqa: F401
 
 
