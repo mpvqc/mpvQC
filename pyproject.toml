@@ -350,6 +350,7 @@ files = [
     "qt/qml/shared/MpvqcSpinBoxRow.qml",
     "qt/qml/shared/MpvqcSwitchRow.qml",
     "qt/qml/shared/MpvqcTextFieldRow.qml",
+    "qt/qml/shared/MpvqcTooltip.qml",
     "qt/qml/shared/qmldir",
     "qt/qml/shared/tst_MpvqcMenu.qml",
     "qt/qml/shared/tst_MpvqcSpinBoxRow.qml",
