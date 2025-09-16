@@ -4,10 +4,6 @@
 
 module dialogs
 
-MpvqcDialogAbout about/MpvqcDialogAbout.qml
-
-MpvqcDialogAppearance appearance/MpvqcDialogAppearance.qml
-
 MpvqcDialogBackup backup/MpvqcDialogBackup.qml
 
 MpvqcDialogCommentTypes commenttypes/MpvqcDialogCommentTypes.qml
