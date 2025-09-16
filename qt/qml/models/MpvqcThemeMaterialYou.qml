@@ -5,10 +5,6 @@
 import QtQuick
 
 ListModel {
-    readonly property string name: "Material You"
-    readonly property color preview: "#f4f4e9"
-    readonly property bool isDark: false
-
     ListElement {
         background: "#fff0ee"
         foreground: "#534341"

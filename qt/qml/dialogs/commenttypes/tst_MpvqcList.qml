@@ -5,7 +5,7 @@
 import QtQuick
 import QtTest
 
-import "../../app"
+import "../../themes"
 
 TestCase {
     id: testCase
