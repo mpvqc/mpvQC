@@ -138,7 +138,7 @@ QtObject {
         location: root.settingsFile
     }
 
-    property string themeIdentifier: "Material You Dark"
+    property string themeIdentifier: "material-you-dark"
     property int themeColorOption: 4
 
     // Window Title

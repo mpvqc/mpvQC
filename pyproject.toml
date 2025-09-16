@@ -246,7 +246,6 @@ files = [
     "qt/qml/app/MpvqcNewCommentMenu.qml",
     "qt/qml/app/MpvqcQuitHandler.qml",
     "qt/qml/app/MpvqcResizeHandler.qml",
-    "qt/qml/app/MpvqcTheme.qml",
     "qt/qml/app/MpvqcWindowVisibilityHandler.qml",
     "qt/qml/app/qmldir",
     "qt/qml/app/tst_MpvqcContentController.qml",
@@ -367,4 +366,7 @@ files = [
     "qt/qml/table/MpvqcTable.qml",
     "qt/qml/table/qmldir",
     "qt/qml/table/tst_MpvqcCommentList.qml",
+    "qt/qml/themes/MpvqcTheme.qml",
+    "qt/qml/themes/MpvqcThemeRegistry.qml",
+    "qt/qml/themes/qmldir",
 ]

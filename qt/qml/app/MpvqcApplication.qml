@@ -11,6 +11,7 @@ import "../footer"
 import "../header"
 import "../manager"
 import "../settings"
+import "../themes"
 
 ApplicationWindow {
     id: root
