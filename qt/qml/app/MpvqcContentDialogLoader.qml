@@ -12,7 +12,7 @@ Loader {
     required property var mpvqcApplication
 
     readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcAboutDialogView.qml")
-    readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcDialogAppearance.qml")
+    readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcAppearanceDialogView.qml")
     readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/backup/MpvqcDialogBackup.qml")
     readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcDialogCommentTypes.qml")
     readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/editinput/MpvqcDialogEditInput.qml")
@@ -20,6 +20,9 @@ Loader {
     readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcDialogExport.qml")
     readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcDialogImport.qml")
     readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcDialogShortcuts.qml")
+
+    readonly property bool isNewDialogBase: root.item === aboutDialog //
+    || root.item === appearanceDialog
 
     signal dialogClosed
 
@@ -36,7 +39,9 @@ Loader {
 
     function openAppearanceDialog(): void {
         setSource(appearanceDialog, {
-            mpvqcApplication: root.mpvqcApplication
+            mpvqcSettings: root.mpvqcApplication.mpvqcSettings,
+            mpvqcTheme: root.mpvqcApplication.mpvqcTheme,
+            parent: root.parent
         });
         active = true;
     }
@@ -112,7 +117,7 @@ Loader {
     }
 
     Binding {
-        when: root.source === root.aboutDialog
+        when: root.isNewDialogBase
         target: root.item
         property: "isMirrored"
         value: root.mpvqcApplication.LayoutMirroring.enabled
