@@ -25,7 +25,10 @@ T.ToolTip {
 
     contentItem: Text {
         text: control.text
-        font: control.font
+        font {
+            pointSize: 10
+            family: 'Noto Sans'
+        }
         wrapMode: Text.Wrap
         color: control.Material.background
     }
