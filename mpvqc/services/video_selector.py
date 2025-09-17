@@ -42,14 +42,13 @@ class VideoSelectorService:
     @property
     def _user_never_wants_to_import_linked_video(self) -> bool:
         return (
-            self._settings.import_video_when_video_linked_in_document
-            == SettingsService.ImportWhenVideoLinkedInDocument.NEVER
+            self._settings.import_when_video_linked_in_document == SettingsService.ImportWhenVideoLinkedInDocument.NEVER
         )
 
     @property
     def _user_always_wants_to_import_linked_video(self) -> bool:
         return (
-            self._settings.import_video_when_video_linked_in_document
+            self._settings.import_when_video_linked_in_document
             == SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS
         )
 

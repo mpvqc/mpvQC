@@ -10,7 +10,6 @@ import pyobjects
 import "../footer"
 import "../header"
 import "../manager"
-import "../settings"
 import "../themes"
 
 ApplicationWindow {
@@ -29,9 +28,7 @@ ApplicationWindow {
         mpvqcApplication: root
     }
 
-    readonly property var mpvqcSettings: MpvqcSettings {
-        mpvqcApplication: root
-    }
+    readonly property var mpvqcSettings: MpvqcSettings {}
 
     readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root

@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import "../../settings"
+import pyobjects
 
 ColumnLayout {
     id: root

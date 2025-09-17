@@ -4,7 +4,8 @@
 
 import QtQuick
 
-import "../settings"
+import pyobjects
+
 import "../models"
 
 QtObject {

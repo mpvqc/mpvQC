@@ -52,8 +52,8 @@ def make_select_video(service):
 
 
 def mock_user_choice(choice: CHOICE):
-    mock = MagicMock()
-    mock.import_video_when_video_linked_in_document = choice
+    mock = MagicMock(spec_set=SettingsService)
+    mock.import_when_video_linked_in_document = choice
 
     def config(binder: inject.Binder):
         binder.bind(SettingsService, mock)

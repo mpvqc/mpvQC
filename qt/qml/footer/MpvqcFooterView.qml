@@ -8,7 +8,8 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Material
 
-import "../settings"
+import pyobjects
+
 import "../shared"
 
 Item {

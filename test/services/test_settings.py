@@ -3,86 +3,141 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 
 import inject
 import pytest
-from PySide6.QtCore import QSettings
 
-from mpvqc.services import ApplicationPathsService, SettingsService
+from mpvqc.services import ApplicationPathsService, SettingsService, TypeMapperService
 
 
-@pytest.fixture(scope="module")
-def make_settings():
-    settings_path = Path()
-    mock = MagicMock()
-    mock.file_settings = settings_path
+@pytest.fixture(autouse=True)
+def temp_settings_path(tmp_path):
+    settings_file = tmp_path / "test_settings.ini"
+    return str(settings_file)
+
+
+@pytest.fixture(autouse=True)
+def configure_injections(temp_settings_path):
+    def create_app_paths_mock():
+        mock_paths = Mock(spec_set=ApplicationPathsService)
+        mock_paths.file_settings = Path(temp_settings_path)
+        return mock_paths
 
     def config(binder: inject.Binder):
-        binder.bind(ApplicationPathsService, mock)
+        binder.bind_to_constructor(ApplicationPathsService, lambda: create_app_paths_mock())
+        binder.bind_to_constructor(TypeMapperService, lambda: TypeMapperService())
+        binder.bind_to_constructor(SettingsService, lambda: SettingsService())
 
     inject.configure(config, clear=True)
 
-    def _make_settings(values: dict[str, ...]) -> SettingsService:
-        q_settings = QSettings(f"{settings_path}", QSettings.Format.IniFormat)
-        q_settings.clear()
-        for key, value in values.items():
-            q_settings.setValue(key, value)
 
-        app_settings = SettingsService()
-        app_settings._settings = q_settings
-        return app_settings
-
-    return _make_settings
+@pytest.fixture
+def settings_service() -> SettingsService:
+    return SettingsService()
 
 
-def test_settings_language(make_settings):
-    settings = make_settings({})
-    assert settings.language == "en-US"
+def test_backup_enabled_default(settings_service):
+    assert settings_service.backup_enabled is True
 
 
-@pytest.mark.parametrize(
-    ("config", "expected"),
-    [
-        ({}, ""),
-        ({"Export/nickname": ""}, ""),
-        ({"Export/nickname": True}, "True"),
-        ({"Export/nickname": 1}, "1"),
-        ({"Export/nickname": "nick"}, "nick"),
-    ],
-)
-def test_settings_string(make_settings, config, expected):
-    settings = make_settings(config)
-    assert expected == settings.nickname
+def test_backup_enabled_set_and_get(settings_service):
+    settings_service.backup_enabled = False
+    assert settings_service.backup_enabled is False
+
+    settings_service.backup_enabled = True
+    assert settings_service.backup_enabled is True
 
 
-@pytest.mark.parametrize(
-    ("config", "expected"),
-    [
-        ({}, False),
-        ({"Export/writeHeaderDate": ""}, False),
-        ({"Export/writeHeaderDate": True}, True),
-        ({"Export/writeHeaderDate": 1}, False),
-        ({"Export/writeHeaderDate": "true"}, True),
-    ],
-)
-def test_settings_bool(make_settings, config, expected):
-    settings = make_settings(config)
-    assert expected == settings.writeHeaderDate
+def test_backup_enabled_signal_emission(settings_service, make_spy):
+    spy = make_spy(settings_service.backupEnabledChanged)
+
+    settings_service.backup_enabled = False
+    assert spy.count() == 1
+    assert spy.at(0, 0) is False
+
+    settings_service.backup_enabled = False
+    assert spy.count() == 1
 
 
-ENUM_VALUE = SettingsService.ImportWhenVideoLinkedInDocument
+def test_backup_enabled_persistence(settings_service, temp_settings_path):
+    settings_service.backup_enabled = False
+
+    new_service = SettingsService()
+    assert new_service.backup_enabled is False
 
 
-@pytest.mark.parametrize(
-    ("config", "expected"),
-    [
-        ({"Import/importWhenVideoLinkedInDocument": 0}, ENUM_VALUE.ALWAYS),
-        ({"Import/importWhenVideoLinkedInDocument": 1}, ENUM_VALUE.ASK_EVERY_TIME),
-        ({"Import/importWhenVideoLinkedInDocument": 2}, ENUM_VALUE.NEVER),
-        ({"Import/importWhenVideoLinkedInDocument": ENUM_VALUE.NEVER.value}, ENUM_VALUE.NEVER),
-    ],
-)
-def test_settings_enum(make_settings, config, expected):
-    settings = make_settings(config)
-    assert expected == settings.import_video_when_video_linked_in_document
+def test_theme_identifier_default(settings_service):
+    assert settings_service.theme_identifier == "material-you-dark"
+
+
+def test_theme_identifier_set_and_get(settings_service):
+    test_theme = "custom-theme"
+    settings_service.theme_identifier = test_theme
+    assert settings_service.theme_identifier == test_theme
+
+
+def test_theme_identifier_signal_emission(settings_service, make_spy):
+    spy = make_spy(settings_service.themeIdentifierChanged)
+
+    test_theme = "new-theme"
+    settings_service.theme_identifier = test_theme
+    assert spy.count() == 1
+    assert spy.at(0, 0) == test_theme
+
+    settings_service.theme_identifier = test_theme
+    assert spy.count() == 1
+
+
+def test_backup_interval_default(settings_service):
+    assert settings_service.backup_interval == 60
+
+
+def test_backup_interval_set_and_get(settings_service):
+    test_interval = 120
+    settings_service.backup_interval = test_interval
+    assert settings_service.backup_interval == test_interval
+
+
+def test_backup_interval_signal_emission(settings_service, make_spy):
+    spy = make_spy(settings_service.backupIntervalChanged)
+
+    test_interval = 90
+    settings_service.backup_interval = test_interval
+    assert spy.count() == 1
+    assert spy.at(0, 0) == test_interval
+
+    settings_service.backup_interval = test_interval
+    assert spy.count() == 1
+
+
+def test_time_format_default(settings_service):
+    assert settings_service.time_format == 3
+
+
+def test_time_format_set_and_get(settings_service):
+    test_format = 1
+    settings_service.time_format = test_format
+    assert settings_service.time_format == test_format
+
+
+def test_time_format_signal_emission(settings_service, make_spy):
+    spy = make_spy(settings_service.timeFormatChanged)
+
+    test_format = 2
+    settings_service.time_format = test_format
+    assert spy.count() == 1
+    assert spy.at(0, 0) == test_format
+
+    settings_service.time_format = test_format
+    assert spy.count() == 1
+
+
+def test_multiple_property_changes(settings_service):
+    settings_service.backup_interval = 30
+    settings_service.theme_identifier = "test-theme"
+    settings_service.time_format = 1
+
+    assert settings_service.backup_interval == 30
+    assert settings_service.theme_identifier == "test-theme"
+    assert settings_service.time_format == 1
