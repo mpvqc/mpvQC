@@ -56,16 +56,16 @@ def make_mock(qt_app):
     ):
         qt_app.find_object.return_value.comments.return_value = comments or []
 
-        player_mock = MagicMock()
+        player_mock = MagicMock(spec_set=PlayerService)
         player_mock.path = str(video) if video else None
         player_mock.has_video = bool(video)
 
-        settings_mock = MagicMock()
+        settings_mock = MagicMock(spec_set=SettingsService)
         settings_mock.nickname = nickname
-        settings_mock.writeHeaderDate = write_header_date
-        settings_mock.writeHeaderGenerator = write_header_generator
-        settings_mock.writeHeaderVideoPath = write_header_video_path
-        settings_mock.writeHeaderNickname = write_header_nickname
+        settings_mock.write_header_date = write_header_date
+        settings_mock.write_header_generator = write_header_generator
+        settings_mock.write_header_video_path = write_header_video_path
+        settings_mock.write_header_nickname = write_header_nickname
         settings_mock.language = "en-US"
 
         def config(binder: inject.Binder):

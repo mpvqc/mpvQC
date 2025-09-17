@@ -40,10 +40,10 @@ class DocumentRenderService:
 
     @property
     def _arguments(self) -> dict:
-        write_date = self._settings.writeHeaderDate
-        write_generator = self._settings.writeHeaderGenerator
-        write_video_path = self._settings.writeHeaderVideoPath
-        write_nickname = self._settings.writeHeaderNickname
+        write_date = self._settings.write_header_date
+        write_generator = self._settings.write_header_generator
+        write_video_path = self._settings.write_header_video_path
+        write_nickname = self._settings.write_header_nickname
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
         comments = QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()

@@ -5,7 +5,7 @@
 import QtQuick
 import QtTest
 
-import "../settings"
+import pyobjects
 
 TestCase {
     id: testCase

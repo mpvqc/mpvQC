@@ -15,5 +15,6 @@ from .player_files import MpvqcPlayerFilesPyObject
 from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .player_win_id import MpvWindowPyObject
+from .settings import MpvqcSettings
 from .utility import MpvqcUtilityPyObject
 from .version_checker import MpvqcVersionCheckerPyObject
