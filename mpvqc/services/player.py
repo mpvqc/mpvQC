@@ -6,16 +6,27 @@ from collections.abc import Iterable
 
 import inject
 from mpv import MPV
+from PySide6.QtCore import QObject, Signal
 
 from .application_paths import ApplicationPathsService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .type_mapper import TypeMapperService
 
 
-class PlayerService:
+class PlayerService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+
+    video_loaded_changed = Signal(bool)
+    path_changed = Signal(str)
+    filename_changed = Signal(str)
+    duration_changed = Signal(float)
+    percent_pos_changed = Signal(int)
+    time_pos_changed = Signal(int)
+    time_remaining_changed = Signal(int)
+    height_changed = Signal(int)
+    width_changed = Signal(int)
 
     def __init__(self, **properties):
         super().__init__(**properties)
@@ -44,6 +55,15 @@ class PlayerService:
 
         self._mpv = MPV(**dict(self._init_args, **args))
 
+        self.observe("duration", self._on_duration_changed)
+        self.observe("path", self._on_player_path_changed)
+        self.observe("filename", self._on_player_filename_changed)
+        self.observe("percent-pos", self._on_player_percent_pos_changed)
+        self.observe("time-pos", self._on_player_time_pos_changed)
+        self.observe("time-remaining", self._on_player_time_remaining_changed)
+        self.observe("height", self._on_player_height_changed)
+        self.observe("width", self._on_player_width_changed)
+
     @property
     def mpv(self) -> MPV:
         return self._mpv
@@ -58,7 +78,41 @@ class PlayerService:
 
     @property
     def path(self) -> str | None:
-        return self._mpv.path
+        return self._mpv.path if self._mpv else None
+
+    @property
+    def filename(self) -> str | None:
+        return self._mpv.filename if self._mpv else None
+
+    @property
+    def percent_pos(self) -> int | None:
+        if not self._mpv or self._mpv.percent_pos is None:
+            return None
+        return int(self._mpv.percent_pos)
+
+    @property
+    def time_pos(self) -> int | None:
+        if not self._mpv or self._mpv.time_pos is None:
+            return None
+        return int(self._mpv.time_pos)
+
+    @property
+    def time_remaining(self) -> int | None:
+        if not self._mpv or self._mpv.time_remaining is None:
+            return None
+        return int(self._mpv.time_remaining)
+
+    @property
+    def height(self) -> int | None:
+        return self._mpv.height if self._mpv else None
+
+    @property
+    def width(self) -> int | None:
+        return self._mpv.width if self._mpv else None
+
+    @property
+    def video_loaded(self) -> bool:
+        return self.path is not None
 
     @property
     def has_video(self) -> bool:
@@ -66,7 +120,42 @@ class PlayerService:
 
     @property
     def current_time(self) -> int:
-        return self._mpv.time_pos or 0
+        return self.time_pos or 0
+
+    @property
+    def duration(self) -> float:
+        return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
+
+    def _on_duration_changed(self, _, value: float) -> None:
+        if value:
+            self.duration_changed.emit(value)
+
+    def _on_player_path_changed(self, _, value: str) -> None:
+        self.path_changed.emit(value or "")
+        self.video_loaded_changed.emit(value is not None)
+
+    def _on_player_filename_changed(self, _, value: str) -> None:
+        self.filename_changed.emit(value or "")
+
+    def _on_player_percent_pos_changed(self, _, value: float) -> None:
+        if value is not None:
+            self.percent_pos_changed.emit(int(value))
+
+    def _on_player_time_pos_changed(self, _, value: float) -> None:
+        if value is not None:
+            self.time_pos_changed.emit(int(value))
+
+    def _on_player_time_remaining_changed(self, _, value: float) -> None:
+        if value is not None:
+            self.time_remaining_changed.emit(int(value))
+
+    def _on_player_height_changed(self, _, value: int) -> None:
+        if value is not None:
+            self.height_changed.emit(value)
+
+    def _on_player_width_changed(self, _, value: int) -> None:
+        if value is not None:
+            self.width_changed.emit(value)
 
     def move_mouse(self, x: int, y: int) -> None:
         zoom_factor = self._zoom_detector_service.zoom_factor

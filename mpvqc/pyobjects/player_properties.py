@@ -13,19 +13,20 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyPep8Naming
+# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcMpvPlayerPropertiesPyObject(QObject):
     _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _player: PlayerService = inject.attr(PlayerService)
 
-    video_loaded_changed = Signal(bool)
-    path_changed = Signal(str)
-    filename_changed = Signal(str)
-    duration_changed = Signal(float)
-    percent_pos_changed = Signal(int)
-    time_pos_changed = Signal(int)
-    time_remaining_changed = Signal(int)
+    videoLoadedChanged = Signal(bool)
+    pathChanged = Signal(str)
+    filenameChanged = Signal(str)
+    durationChanged = Signal(float)
+    percentPosChanged = Signal(int)
+    timePosChanged = Signal(int)
+    timeRemainingChanged = Signal(int)
     scaledHeightChanged = Signal(int)
     scaledWidthChanged = Signal(int)
 
@@ -33,118 +34,83 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         super().__init__()
         self.setObjectName("mpvqcPlayerProperties")
 
-        self._path = ""
-        self._filename = ""
-        self._height = 0
-        self._width = 0
-
-        self._duration = None
-        self._percent_pos = None
-        self._time_pos = None
-        self._time_remaining = None
-
     def init(self):
-        player = inject.instance(PlayerService)
-        player.observe("path", self._on_player_path_changed)
-        player.observe("filename", self._on_player_filename_changed)
-        player.observe("duration", self._on_player_duration_changed)
-        player.observe("percent-pos", self._on_player_percent_pos_changed)
-        player.observe("time-pos", self._on_player_time_pos_changed)
-        player.observe("time-remaining", self._on_player_time_remaining_changed)
-        player.observe("height", self._on_player_height_changed)
-        player.observe("width", self._on_player_width_changed)
+        self._player.video_loaded_changed.connect(self.videoLoadedChanged)
+        self._player.path_changed.connect(self._on_path_changed)
+        self._player.filename_changed.connect(self.filenameChanged)
+        self._player.duration_changed.connect(self.durationChanged)
+        self._player.percent_pos_changed.connect(self.percentPosChanged)
+        self._player.time_pos_changed.connect(self.timePosChanged)
+        self._player.time_remaining_changed.connect(self.timeRemainingChanged)
+        self._player.height_changed.connect(self._on_height_changed)
+        self._player.width_changed.connect(self._on_width_changed)
 
-        def on_zoom_factor_changed(new_factor):
-            self.scaledHeightChanged.emit(self._height / new_factor)
-            self.scaledWidthChanged.emit(self._width / new_factor)
+        self._zoom_detector_service.zoom_factor_changed.connect(self._on_zoom_factor_changed)
 
-        self._zoom_detector_service.zoom_factor_changed.connect(on_zoom_factor_changed)
-
-    @Property(bool, notify=video_loaded_changed)
+    @Property(bool, notify=videoLoadedChanged)
     def video_loaded(self) -> bool:
-        return bool(self._path)
+        return self._player.video_loaded
 
-    @Property(str, notify=path_changed)
+    @Property(str, notify=pathChanged)
     def path(self) -> str:
-        if self._path:
-            return self._type_mapper.normalize_path_str(self._path)
+        player_path = self._player.path
+        if player_path:
+            return self._type_mapper.normalize_path_str(player_path)
         return ""
 
-    def _on_player_path_changed(self, _, value: str):
-        if value and value != self._path:
-            self._path = value
-            self.path_changed.emit(value)
-        self.video_loaded_changed.emit(bool(value))
+    def _on_path_changed(self, value: str) -> None:
+        normalized_path = self._type_mapper.normalize_path_str(value) if value else ""
+        self.pathChanged.emit(normalized_path)
 
-    @Property(str, notify=filename_changed)
+    @Property(str, notify=filenameChanged)
     def filename(self) -> str:
-        return self._filename
+        return self._player.filename or ""
 
-    def _on_player_filename_changed(self, _, value: str):
-        if value and value != self._filename:
-            self._filename = value
-            self.filename_changed.emit(value)
+    @Property(float, notify=durationChanged)
+    def duration(self) -> float:
+        return self._player.duration
 
-    @Property(float, notify=duration_changed)
-    def duration(self):
-        return self._duration
+    @Property(int, notify=percentPosChanged)
+    def percent_pos(self) -> int:
+        return self._player.percent_pos or 0
 
-    def _on_player_duration_changed(self, _, value: float):
-        if value:
-            self._duration = value
-            self.duration_changed.emit(value)
+    @Property(int, notify=timePosChanged)
+    def time_pos(self) -> int:
+        return self._player.time_pos or 0
 
-    @Property(int, notify=percent_pos_changed)
-    def percent_pos(self):
-        return self._percent_pos
-
-    def _on_player_percent_pos_changed(self, _, value: float):
-        if value:
-            value = round(value)
-            if value != self._percent_pos:
-                self._percent_pos = value
-                self.percent_pos_changed.emit(value)
-
-    @Property(int, notify=time_pos_changed)
-    def time_pos(self):
-        return self._time_pos
-
-    def _on_player_time_pos_changed(self, _, value: float):
-        if value:
-            value = round(value)
-            if value != self._time_pos:
-                self._time_pos = value
-                self.time_pos_changed.emit(value)
-
-    @Property(int, notify=time_remaining_changed)
-    def time_remaining(self):
-        return self._time_remaining
-
-    def _on_player_time_remaining_changed(self, _, value: float):
-        if value:
-            value = round(value)
-            if value != self._time_remaining:
-                self._time_remaining = value
-                self.time_remaining_changed.emit(value)
+    @Property(int, notify=timeRemainingChanged)
+    def time_remaining(self) -> int:
+        return self._player.time_remaining or 0
 
     @Property(int, notify=scaledHeightChanged)
-    def scaledHeight(self):
-        return self._height / self._zoom_detector_service.zoom_factor if self._height else 0
+    def scaledHeight(self) -> int:
+        height = self._player.height
+        if height:
+            return int(height / self._zoom_detector_service.zoom_factor)
+        return 0
 
-    def _on_player_height_changed(self, _, value: float):
+    def _on_height_changed(self, value: int) -> None:
         if value:
-            value = round(value)
-            if value != self._height:
-                self._height = value
-                self.scaledHeightChanged.emit(value)
+            scaled_value = int(value / self._zoom_detector_service.zoom_factor)
+            self.scaledHeightChanged.emit(scaled_value)
 
     @Property(int, notify=scaledWidthChanged)
-    def scaledWidth(self):
-        return self._width / self._zoom_detector_service.zoom_factor if self._width else 0
+    def scaledWidth(self) -> int:
+        width = self._player.width
+        if width:
+            return int(width / self._zoom_detector_service.zoom_factor)
+        return 0
 
-    def _on_player_width_changed(self, _, value: float):
+    def _on_width_changed(self, value: int) -> None:
         if value:
-            value = round(value)
-            if value != self._width:
-                self._width = value
-                self.scaledWidthChanged.emit(value)
+            scaled_value = int(value / self._zoom_detector_service.zoom_factor)
+            self.scaledWidthChanged.emit(scaled_value)
+
+    def _on_zoom_factor_changed(self, new_factor: float) -> None:
+        height = self._player.height
+        width = self._player.width
+
+        if height:
+            self.scaledHeightChanged.emit(int(height / new_factor))
+        if width:
+            self.scaledWidthChanged.emit(int(width / new_factor))
