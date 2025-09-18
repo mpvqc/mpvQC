@@ -6,11 +6,14 @@ import QtQuick
 
 import "../../themes"
 
+import pyobjects
+
 QtObject {
-    required property var mpvqcSettings
     required property var mpvqcTheme
 
     // --- Exposed properties
+    readonly property var mpvqcSettings: MpvqcSettings
+
     readonly property var themeModel: MpvqcThemeRegistry.availableThemes()
     readonly property var colorModel: currentTheme?.model ?? []
     readonly property var currentTheme: MpvqcThemeRegistry.byId(mpvqcSettings.themeIdentifier)
