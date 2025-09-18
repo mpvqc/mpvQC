@@ -13,11 +13,9 @@ import "../../shared"
 MpvqcDialog2 {
     id: root
 
-    required property var mpvqcSettings
     required property var mpvqcTheme
 
     readonly property MpvqcAppearanceDialogController controller: MpvqcAppearanceDialogController {
-        mpvqcSettings: root.mpvqcSettings
         mpvqcTheme: root.mpvqcTheme
     }
 

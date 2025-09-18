@@ -39,7 +39,6 @@ Loader {
 
     function openAppearanceDialog(): void {
         setSource(appearanceDialog, {
-            mpvqcSettings: root.mpvqcApplication.mpvqcSettings,
             mpvqcTheme: root.mpvqcApplication.mpvqcTheme,
             parent: root.parent
         });
