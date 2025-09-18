@@ -11,8 +11,6 @@ import "../shared"
 MpvqcObject {
     id: root
 
-    required property Item labelWidthTarget
-
     required property var mpvqcSettings
     required property var mpvqcLabelWidthCalculator
     required property var mpvqcMpvPlayerPropertiesPyObject
@@ -59,7 +57,7 @@ MpvqcObject {
     function recalculateVideoTimeLabelWidth(): void {
         const text = determineTimeLabelText();
         const items = [text];
-        videoTimeLabelWidth = mpvqcLabelWidthCalculator.calculateWidthFor(items, labelWidthTarget);
+        videoTimeLabelWidth = mpvqcLabelWidthCalculator.calculateWidthFor(items);
     }
 
     function setTimeFormat(newFormat: int): void {

@@ -14,6 +14,7 @@ from .formatter_time import TimeFormatterService
 from .frameless import FramelessWindowService
 from .i18n import InternationalizationService
 from .key_command import KeyCommandGeneratorService
+from .label_width_calculator import LabelWidthCalculatorService
 from .mimetype_provider import MimetypeProviderService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .player import PlayerService

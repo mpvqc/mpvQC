@@ -20,6 +20,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.FramelessWindowService, lambda: s.FramelessWindowService())
     binder.bind_to_constructor(s.InternationalizationService, lambda: s.InternationalizationService())
     binder.bind_to_constructor(s.KeyCommandGeneratorService, lambda: s.KeyCommandGeneratorService())
+    binder.bind_to_constructor(s.LabelWidthCalculatorService, lambda: s.LabelWidthCalculatorService())
     binder.bind_to_constructor(s.MimetypeProviderService, lambda: s.MimetypeProviderService())
     binder.bind_to_constructor(s.OperatingSystemZoomDetectorService, lambda: s.OperatingSystemZoomDetectorService())
     binder.bind_to_constructor(s.PlayerService, lambda: s.PlayerService())

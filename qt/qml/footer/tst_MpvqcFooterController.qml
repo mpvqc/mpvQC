@@ -18,10 +18,6 @@ TestCase {
         MpvqcFooterController {
             isApplicationMazimized: false
             isApplicationFullscreen: false
-            labelWidthTarget: Rectangle {
-                width: 200
-                height: 20
-            }
             mpvqcSettings: QtObject {
                 property int timeFormat: MpvqcSettings.TimeFormat.CURRENT_TIME
                 property bool statusbarPercentage: true
