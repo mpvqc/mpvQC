@@ -24,10 +24,7 @@ ApplicationWindow {
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
     readonly property var mpvqcVersionCheckerPyObject: MpvqcVersionCheckerPyObject {}
 
-    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator {
-        mpvqcApplication: root
-    }
-
+    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
     readonly property var mpvqcSettings: MpvqcSettings
 
     readonly property var mpvqcManager: MpvqcManager {
@@ -150,7 +147,6 @@ ApplicationWindow {
         mpvqcLabelWidthCalculator: root.mpvqcLabelWidthCalculator
         mpvqcMpvPlayerPropertiesPyObject: root.mpvqcMpvPlayerPropertiesPyObject
         mpvqcUtilityPyObject: root.mpvqcUtilityPyObject
-        labelWidthTarget: root.contentItem
 
         isApplicationMazimized: root.maximized
         isApplicationFullscreen: root.fullscreen

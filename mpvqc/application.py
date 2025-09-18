@@ -10,7 +10,13 @@ from PySide6.QtCore import QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.services import FileStartupService, FontLoaderService, FramelessWindowService, InternationalizationService
+from mpvqc.services import (
+    FileStartupService,
+    FontLoaderService,
+    FramelessWindowService,
+    InternationalizationService,
+    SettingsService,
+)
 
 
 class MpvqcApplication(QGuiApplication):
@@ -18,6 +24,7 @@ class MpvqcApplication(QGuiApplication):
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
     _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
     _i18n: InternationalizationService = inject.attr(InternationalizationService)
+    _settings: SettingsService = inject.attr(SettingsService)
 
     application_ready = Signal(name="applicationReady")
 
@@ -51,6 +58,9 @@ class MpvqcApplication(QGuiApplication):
     def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
         self._engine.uiLanguageChanged.connect(self._retranslate)
+
+    def load_language(self):
+        self._engine.setUiLanguage(self._settings.language)
 
     def _on_quit(self) -> None:
         del self._engine

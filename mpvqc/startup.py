@@ -57,6 +57,7 @@ def configure_environment_variables():
 
 def import_mpvqc_bindings():
     import mpvqc.controllers  # noqa: F401
+    import mpvqc.helpers  # noqa: F401
     import mpvqc.pyobjects  # noqa: F401
 
 
@@ -71,6 +72,7 @@ def start_application():
     app.load_application_fonts()
     app.create_directories()
     app.set_up_signals()
+    app.load_language()
     app.start_engine()
     app.notify_ready()
     app.configure_frameless_window()

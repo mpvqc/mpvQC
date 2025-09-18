@@ -16,7 +16,7 @@ Column {
 
     function acceptTemporaryState(): void {
         _controller.acceptModelCopy();
-        mpvqcSettings.commentTypesChanged();
+        mpvqcSettings.commentTypesChanged(root.mpvqcSettings.commentTypes);
     }
 
     function resetTemporaryEdits(): void {
