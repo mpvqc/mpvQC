@@ -8,6 +8,7 @@ import inject
 from PySide6.QtCore import Property, QEnum, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.decorators import QmlSingletonInProductionOnly
 from mpvqc.services import SettingsService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -16,6 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
+@QmlSingletonInProductionOnly
 class MpvqcSettings(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
 

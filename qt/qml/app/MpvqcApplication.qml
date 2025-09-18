@@ -28,7 +28,7 @@ ApplicationWindow {
         mpvqcApplication: root
     }
 
-    readonly property var mpvqcSettings: MpvqcSettings {}
+    readonly property var mpvqcSettings: MpvqcSettings
 
     readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root

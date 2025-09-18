@@ -178,6 +178,7 @@ files = [
     "mpvqc/application.py",
     "mpvqc/controllers/__init__.py",
     "mpvqc/controllers/about_controller.py",
+    "mpvqc/decorators.py",
     "mpvqc/injections.py",
     "mpvqc/logging.py",
     "mpvqc/models.py",
