@@ -499,13 +499,12 @@
         <source>Do you really want to delete this comment?</source>
         <translation>Deseja eliminar este comentário?</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <source>Document Not Compatible</source>
-        <translation>Documento Incompatível</translation>
-    </message>
-    <message>
-        <source>Documents Not Compatible</source>
-        <translation>Documentos Incompatíveis</translation>
+        <translation>
+            <numerusform>Documento Incompatível</numerusform>
+            <numerusform>Documentos Incompatíveis</numerusform>
+        </translation>
     </message>
     <message>
         <source>Export Error</source>

@@ -9,8 +9,6 @@ MpvqcMessageBox {
 
     property list<string> paths
 
-    title: paths.length === 1
-        ? qsTranslate("MessageBoxes", "Document Not Compatible")
-        : qsTranslate("MessageBoxes", "Documents Not Compatible")
+    title: qsTranslate("MessageBoxes", "Document Not Compatible", "", paths.length)
     text: paths.join("\n")
 }
