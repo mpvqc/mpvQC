@@ -13,10 +13,7 @@ FileDialog {
 
     title: qsTranslate("FileInteractionDialogs", "Open Video")
     currentFolder: mpvqcSettings.lastDirectoryVideo
-    nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Video files") + mpvqcUtilityPyObject.videoFileGlobPattern,
-        qsTranslate("FileInteractionDialogs", "All files") + " (*)",
-    ]
+    nameFilters: [qsTranslate("FileInteractionDialogs", "Video files") + mpvqcUtilityPyObject.videoFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     onAccepted: {
         mpvqcSettings.lastDirectoryVideo = currentFolder;

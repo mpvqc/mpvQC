@@ -11,10 +11,7 @@ FileDialog {
     title: qsTranslate("FileInteractionDialogs", "Save QC Document As")
     fileMode: FileDialog.SaveFile
     defaultSuffix: "txt"
-    nameFilters: [
-        qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)",
-        qsTranslate("FileInteractionDialogs", "All files") + " (*)",
-    ]
+    nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     signal savePressed(fileUrl: url)
     signal extendedSavePressed(fileUrl: url, template: url)

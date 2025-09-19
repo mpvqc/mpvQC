@@ -14,10 +14,7 @@ FileDialog {
     title: qsTranslate("FileInteractionDialogs", "Open Subtitle(s)")
     currentFolder: mpvqcSettings.lastDirectorySubtitles
     fileMode: FileDialog.OpenFiles
-    nameFilters: [
-        qsTranslate("FileInteractionDialogs", "Subtitle files") + mpvqcUtilityPyObject.subtitleFileGlobPattern,
-        qsTranslate("FileInteractionDialogs", "All files") + " (*)",
-    ]
+    nameFilters: [qsTranslate("FileInteractionDialogs", "Subtitle files") + mpvqcUtilityPyObject.subtitleFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     onAccepted: {
         mpvqcSettings.lastDirectorySubtitles = currentFolder;
