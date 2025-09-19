@@ -169,6 +169,7 @@ files = [
     "data/icons/upload_black_24dp.svg",
     "data/icons/vertical_split_black_24dp.svg",
     "i18n/de-DE.ts",
+    "i18n/en-US.ts",
     "i18n/es-MX.ts",
     "i18n/he-IL.ts",
     "i18n/it-IT.ts",

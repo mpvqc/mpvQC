@@ -507,13 +507,12 @@
         <source>Do you really want to delete this comment?</source>
         <translation>האם ברצונך למחוק הערה זו?</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <source>Document Not Compatible</source>
-        <translation>המסמך אינו בפורמט המתאים</translation>
-    </message>
-    <message>
-        <source>Documents Not Compatible</source>
-        <translation>המסמכים אינם בפורמט המתאים</translation>
+        <translation>
+            <numerusform>המסמך אינו בפורמט המתאים</numerusform>
+            <numerusform>המסמכים אינם בפורמט המתאים</numerusform>
+        </translation>
     </message>
     <message>
         <source>Export Error</source>
