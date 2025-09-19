@@ -11,13 +11,24 @@ Column {
 
     required property var mpvqcApplication
 
-    required property var validateNewCommentType        // function with:
-                                                        //   param :  input
-                                                        //   return:  string or null | validation error if error exists
-    required property var validateEditingOfCommentType  // function with:
-                                                        //   param :  input
-                                                        //   param :  comment type being edited
-                                                        //   return:  string or null | validation error if error exists
+    /**
+     * Validate the creation of a new comment type.
+     *
+     * @function validateNewCommentType
+     * @param {any} input - The input value to validate.
+     * @returns {string|null} A validation error message if invalid, or `null` if valid.
+     */
+    required property var validateNewCommentType
+
+    /**
+     * Validate editing an existing comment type.
+     *
+     * @function validateEditingOfCommentType
+     * @param {any} input - The updated input value to validate.
+     * @param {any} currentType - The comment type that is being edited.
+     * @returns {string|null} A validation error message if invalid, or `null` if valid.
+     */
+    required property var validateEditingOfCommentType
 
     readonly property alias loader: _loader
     readonly property alias editing: _loader.editing

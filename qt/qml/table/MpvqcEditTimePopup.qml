@@ -55,7 +55,8 @@ Popup {
         from: 0
         to: root.videoDuration > 0 ? root.videoDuration : 24 * 60 * 60 - 1
 
-        textFromValue: value => root.timeFormatFunc(value) // qmllint disable
+        // qmllint disable
+        textFromValue: value => root.timeFormatFunc(value)
 
         bottomPadding: topPadding
         background: null

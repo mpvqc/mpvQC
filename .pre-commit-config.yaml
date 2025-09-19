@@ -69,6 +69,14 @@ repos:
           - "--fix"
       - id: ruff-format
         name: "format py"
+  - repo: https://github.com/tomas-krupa/qmlformat-hook.git
+    rev: 1.0.1
+    hooks:
+      - id: qmlformat
+        files: '.*\.qml$'
+        name: "format qml"
+        args:
+          - --newline=unix
   - repo: https://github.com/biomejs/pre-commit
     rev: v2.2.2 # Use the sha / tag you want to point at
     hooks:
