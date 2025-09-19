@@ -51,11 +51,11 @@
     <name>BackupDialog</name>
     <message>
         <source>Backup Enabled</source>
-        <translation>Backup aktiviert</translation>
+        <translation>Sicherungen aktiviert</translation>
     </message>
     <message>
         <source>Backup Interval</source>
-        <translation>Backup-Intervall</translation>
+        <translation>Sicherungsintervall</translation>
     </message>
     <message>
         <source>Seconds</source>
@@ -63,11 +63,11 @@
     </message>
     <message>
         <source>Backup Location</source>
-        <translation>Backup-Speicherort</translation>
+        <translation>Speicherort für Sicherung</translation>
     </message>
     <message>
         <source>Backup Settings</source>
-        <translation>Backup-Einstellungen</translation>
+        <translation>Sicherungseinstellungen</translation>
     </message>
 </context>
 <context>
@@ -100,7 +100,7 @@
     <message>
         <source>Show Keyboard Shortcuts</source>
         <extracomment>Keyboard shortcut - displayed when there are zero comments</extracomment>
-        <translation>Tastenkürzel anzeigen</translation>
+        <translation>Tastenkombinationen anzeigen</translation>
     </message>
 </context>
 <context>
@@ -409,7 +409,7 @@
     </message>
     <message>
         <source>Keyboard Shortcuts...</source>
-        <translation>Tastenkürzel …</translation>
+        <translation>Tastenkombinationen …</translation>
     </message>
     <message>
         <source>About mpvQC...</source>
@@ -425,7 +425,7 @@
     </message>
     <message>
         <source>Backup Settings...</source>
-        <translation>Backup-Einstellungen …</translation>
+        <translation>Sicherungseinstellungen …</translation>
     </message>
     <message>
         <source>Export Settings...</source>
@@ -458,7 +458,7 @@
     </message>
     <message>
         <source>Extended Exports...</source>
-        <translation>Weitere Exporte …</translation>
+        <translation>Erweiterte Exporte …</translation>
     </message>
     <message>
         <source>Video Above Comments</source>
@@ -552,7 +552,7 @@
     <name>ShortcutsDialog</name>
     <message>
         <source>Keyboard Shortcuts</source>
-        <translation>Tastenkürzel</translation>
+        <translation>Tastenkombinationen</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
