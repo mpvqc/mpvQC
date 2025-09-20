@@ -17,12 +17,6 @@ TestCase {
     name: "MpvqcList"
 
     Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
-    Component {
         id: objectUnderTest
 
         MpvqcList {
@@ -32,12 +26,20 @@ TestCase {
             itemHeight: 42
 
             mpvqcApplication: QtObject {
-                property var mpvqcTheme: MpvqcTheme {
-                    themeColorOption: 4
-                    themeIdentifier: "Material You"
-                }
+                property var mpvqcTheme: MpvqcTheme
             }
         }
+    }
+
+    function init() {
+        MpvqcTheme.mpvqcSettings = {
+            "themeIdentifier": "material-you",
+            "themeColorOption": 0
+        };
+    }
+
+    function cleanup() {
+        MpvqcTheme.mpvqcSettings = null;
     }
 
     function test_selection_data() {

@@ -26,14 +26,10 @@ ApplicationWindow {
 
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
     readonly property var mpvqcSettings: MpvqcSettings
+    readonly property var mpvqcTheme: MpvqcTheme
 
     readonly property var mpvqcManager: MpvqcManager {
         mpvqcApplication: root
-    }
-
-    readonly property var mpvqcTheme: MpvqcTheme {
-        themeIdentifier: root.mpvqcSettings.themeIdentifier
-        themeColorOption: root.mpvqcSettings.themeColorOption
     }
 
     readonly property bool maximized: _windowVisibilityHandler.maximized

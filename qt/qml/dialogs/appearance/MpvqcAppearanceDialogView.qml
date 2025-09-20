@@ -13,11 +13,7 @@ import "../../shared"
 MpvqcDialog2 {
     id: root
 
-    required property var mpvqcTheme
-
-    readonly property MpvqcAppearanceDialogController controller: MpvqcAppearanceDialogController {
-        mpvqcTheme: root.mpvqcTheme
-    }
+    readonly property MpvqcAppearanceDialogController controller: MpvqcAppearanceDialogController {}
 
     readonly property var dimensions: QtObject {
         readonly property int itemSize: 52

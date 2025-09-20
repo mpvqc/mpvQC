@@ -32,10 +32,7 @@ TestCase {
                     property string default_mpv_conf_content: "default"
                     property url mpv_conf_url: Qt.resolvedUrl("")
                 }
-                property var mpvqcTheme: MpvqcTheme {
-                    themeColorOption: 4
-                    themeIdentifier: "Material You"
-                }
+                property var mpvqcTheme: MpvqcTheme
             }
         }
     }

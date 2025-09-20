@@ -368,6 +368,5 @@ files = [
     "qt/qml/table/qmldir",
     "qt/qml/table/tst_MpvqcCommentList.qml",
     "qt/qml/themes/MpvqcTheme.qml",
-    "qt/qml/themes/MpvqcThemeRegistry.qml",
     "qt/qml/themes/qmldir",
 ]

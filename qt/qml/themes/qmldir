@@ -4,5 +4,4 @@
 
 module themes
 
-MpvqcTheme MpvqcTheme.qml
-singleton MpvqcThemeRegistry MpvqcThemeRegistry.qml
+singleton MpvqcTheme MpvqcTheme.qml
