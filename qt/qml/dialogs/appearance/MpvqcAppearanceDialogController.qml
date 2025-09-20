@@ -9,14 +9,15 @@ import "../../themes"
 import pyobjects
 
 QtObject {
-    required property var mpvqcTheme
 
-    // --- Exposed properties
+    // --- Exposed properties to overwrite in testing
+    readonly property var mpvqcTheme: MpvqcTheme
     readonly property var mpvqcSettings: MpvqcSettings
 
-    readonly property var themeModel: MpvqcThemeRegistry.availableThemes()
+    // --- Exposed properties
+    readonly property var themeModel: mpvqcTheme.registry.availableThemes()
     readonly property var colorModel: currentTheme?.model ?? []
-    readonly property var currentTheme: MpvqcThemeRegistry.byId(mpvqcSettings.themeIdentifier)
+    readonly property var currentTheme: mpvqcTheme.registry.byId(mpvqcSettings.themeIdentifier)
 
     readonly property int themeModelIndex: findThemeIndex(mpvqcSettings.themeIdentifier)
     readonly property int colorModelIndex: _colorModelIndex
