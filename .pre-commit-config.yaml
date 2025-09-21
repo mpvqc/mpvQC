@@ -4,22 +4,26 @@
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.1.4
+    rev: v2.2.4
     hooks:
       - id: biome-check
         name: "format json"
         files: "\\.(jsonc?)$"
-        args:
+        args: &BIOME_ARGS
           - "--bracket-spacing=true"
           - "--indent-style=space"
           - "--indent-width=4"
           - "--line-ending=lf"
           - "--line-width=120"
+      - id: biome-check
+        name: "format js"
+        files: "\\.js$"
+        args: *BIOME_ARGS
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
     hooks:
@@ -61,7 +65,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.8
+    rev: v0.13.1
     hooks:
       - id: ruff
         name: "lint py"
@@ -77,12 +81,6 @@ repos:
         name: "format qml"
         args:
           - --newline=unix
-  - repo: https://github.com/biomejs/pre-commit
-    rev: v2.2.2 # Use the sha / tag you want to point at
-    hooks:
-      - id: biome-check
-        name: "format js"
-        files: \.js$
   - repo: https://github.com/fsfe/reuse-tool
     rev: v5.1.1
     hooks:
