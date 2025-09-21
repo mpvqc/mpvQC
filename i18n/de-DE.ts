@@ -156,6 +156,11 @@
         <source>Characters &apos;{}&apos; not allowed</source>
         <translation>Die Zeichen &apos;{}&apos; sind nicht erlaubt</translation>
     </message>
+    <message>
+        <source>Edit &quot;%1&quot;</source>
+        <extracomment>%1 will be the comment type being edited</extracomment>
+        <translation>&quot;%1&quot; bearbeiten</translation>
+    </message>
 </context>
 <context>
     <name>ExportSettingsDialog</name>
