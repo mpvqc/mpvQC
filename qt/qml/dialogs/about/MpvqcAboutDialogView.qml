@@ -18,23 +18,25 @@ MpvqcDialog2 {
 
     readonly property MpvqcAboutDialogControllerPyObject controller: MpvqcAboutDialogControllerPyObject {}
 
-    readonly property url appUrl: "https://mpvqc.github.io"
-    readonly property url licenseUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
-
     readonly property string applicationName: Qt.application.name
     readonly property string applicationVersion: `${Qt.application.version} - >>>commit-id<<<`
-    readonly property string applicationWebsite: `<a href="${appUrl}">${appUrl}</a>`
 
     //: This text is part of the software license description. This is the name of the license being used.
     readonly property string licenseDescription: qsTranslate("AboutDialog", "GNU General Public License, version 3 or later")
-    readonly property string licenseWebsite: `<a href="${licenseUrl}">${licenseDescription}</a>`
-
     //: This text is part of the software license description
     readonly property string licenseText1: qsTranslate("AboutDialog", "This program comes with absolutely no warranty.")
     //: This text is part of the software license description. Argument %1 will be the link to the license
     readonly property string licenseText2: qsTranslate("AboutDialog", "See the %1 for details.").arg(root.licenseWebsite)
 
-    readonly property int scrollBarWidth: 20
+    readonly property QtObject urls: QtObject {
+        readonly property url app: "https://mpvqc.github.io"
+        readonly property url license: "https://www.gnu.org/licenses/gpl-3.0.html"
+    }
+
+    readonly property string applicationWebsite: `<a href="${urls.app}">${urls.app}</a>`
+    readonly property string licenseWebsite: `<a href="${urls.license}">${licenseDescription}</a>`
+
+    readonly property int rowSpacing: 10
 
     contentItem: ScrollView {
         readonly property bool isVerticalScollBarShown: contentHeight > root.contentHeight
@@ -42,7 +44,7 @@ MpvqcDialog2 {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: isVerticalScollBarShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
-        contentWidth: isVerticalScollBarShown ? root.contentWidth - root.scrollBarWidth : root.contentWidth
+        contentWidth: isVerticalScollBarShown ? root.contentWidth - 20 : root.contentWidth
 
         ColumnLayout {
             anchors.fill: parent
@@ -112,7 +114,7 @@ MpvqcDialog2 {
                 MpvqcTooltip {
                     y: -parent.height + 35
                     visible: (parent as Label).hoveredLink
-                    text: root.licenseUrl
+                    text: root.urls.license
                 }
             }
 
@@ -136,10 +138,7 @@ MpvqcDialog2 {
                 }
             }
 
-            Item {
-                Layout.preferredHeight: 6
-                Layout.fillWidth: true
-            }
+            MpvqcSpacer {}
 
             Repeater {
                 model: MpvqcLanguageModel {}
@@ -171,18 +170,15 @@ MpvqcDialog2 {
             }
 
             MpvqcTwoColumnDependencyRow {
-                dependencyLicence: "GPL-2.0+"
                 dependencyName: "ffmpeg"
                 dependencyUrl: "https://ffmpeg.org/"
+                dependencyLicence: "GPL-2.0+"
                 dependencyVersion: root.controller.ffmpegVersion
 
                 Layout.fillWidth: true
             }
 
-            Item {
-                Layout.preferredHeight: 6
-                Layout.fillWidth: true
-            }
+            MpvqcSpacer {}
 
             Repeater {
                 model: MpvqcLibraryModel {}
@@ -195,8 +191,8 @@ MpvqcDialog2 {
                     required property string version
 
                     dependencyName: name
-                    dependencyLicence: licence
                     dependencyUrl: url
+                    dependencyLicence: licence
                     dependencyVersion: version
                     visible: os.indexOf(Qt.platform.os) >= 0
 
@@ -204,10 +200,7 @@ MpvqcDialog2 {
                 }
             }
 
-            Item {
-                Layout.preferredHeight: 6
-                Layout.fillWidth: true
-            }
+            MpvqcSpacer {}
 
             MpvqcTwoColumnDependencyRow {
                 dependencyName: "Noto Sans"
@@ -227,13 +220,18 @@ MpvqcDialog2 {
         }
     }
 
+    component MpvqcSpacer: Item {
+        Layout.preferredHeight: 6
+        Layout.fillWidth: true
+    }
+
     component MpvqcTwoColumnRow: Row {
         property string leftText: ""
         property string rightText: ""
 
         height: Math.max(leftLabel.implicitHeight, rightLabel.implicitHeight)
         visible: leftText
-        spacing: 10
+        spacing: root.rowSpacing
 
         Label {
             id: leftLabel
@@ -255,12 +253,12 @@ MpvqcDialog2 {
         id: _row
 
         required property string dependencyName
-        property string dependencyVersion: ""
+
         property string dependencyLicence: ""
         property string dependencyUrl: ""
+        property string dependencyVersion: ""
 
-        spacing: 10
-
+        spacing: root.rowSpacing
         height: Math.max(leftLabel.implicitHeight, rightLabel.implicitHeight)
 
         Label {
