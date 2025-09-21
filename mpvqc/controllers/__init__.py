@@ -3,4 +3,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # ruff: noqa: F401
-from .about_controller import MpvqcAboutDialogControllerPyObject
+from .about_dialog import MpvqcAboutDialogControllerPyObject
+from .backup_dialog import MpvqcBackupDialogControllerPyObject
