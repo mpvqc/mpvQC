@@ -14,7 +14,7 @@ Loader {
     readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcAboutDialogView.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcAppearanceDialogView.qml")
     readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/backup/MpvqcBackupDialogView.qml")
-    readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcDialogCommentTypes.qml")
+    readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcCommentTypesDialogView.qml")
     readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/editinput/MpvqcDialogEditInput.qml")
     readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/editmpv/MpvqcDialogEditMpv.qml")
     readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcDialogExport.qml")
@@ -24,6 +24,7 @@ Loader {
     readonly property bool isNewDialogBase: root.item === aboutDialog //
     || root.item === appearanceDialog //
     || root.item === backupSettingsDialog //
+    || root.item === commentTypeDialog //
 
     signal dialogClosed
 
@@ -54,7 +55,7 @@ Loader {
 
     function openCommentTypesDialog(): void {
         setSource(commentTypeDialog, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }

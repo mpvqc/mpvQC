@@ -161,6 +161,11 @@
         <source>Characters &apos;{}&apos; not allowed</source>
         <translation>התווים &apos;{}&apos; אינם מורשים</translation>
     </message>
+    <message>
+        <source>Edit &quot;%1&quot;</source>
+        <extracomment>%1 will be the comment type being edited</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ExportSettingsDialog</name>
