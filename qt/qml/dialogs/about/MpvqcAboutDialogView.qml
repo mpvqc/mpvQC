@@ -38,6 +38,8 @@ MpvqcDialog2 {
 
     readonly property int rowSpacing: 10
 
+    contentHeight: MpvqcAboutDialogControllerPyObject.dialogHeight
+
     contentItem: ScrollView {
         readonly property bool isVerticalScollBarShown: contentHeight > root.contentHeight
 

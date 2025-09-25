@@ -109,14 +109,6 @@ Loader {
     }
 
     Binding {
-        when: root.source === root.aboutDialog
-        target: root.item
-        property: "contentHeight"
-        value: Math.min(1080, root.mpvqcApplication.height * 0.65)
-        restoreMode: Binding.RestoreNone
-    }
-
-    Binding {
         when: root.isNewDialogBase
         target: root.item
         property: "isMirrored"
