@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 from collections.abc import Callable
 
 from PySide6.QtCore import Property, QObject, Signal

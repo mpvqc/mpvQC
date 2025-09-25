@@ -7,7 +7,7 @@ from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtQml import QmlAttached, QmlElement
 
-from mpvqc.controllers._attachment_dialog_size import DialogDimensionsAttached
+from mpvqc.controllers._attached_dialog_dimensions import DialogDimensionsAttached
 from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "pyobjects"

@@ -178,7 +178,7 @@ files = [
     "mpvqc/__init__.py",
     "mpvqc/application.py",
     "mpvqc/controllers/__init__.py",
-    "mpvqc/controllers/_attachment_dialog_size.py",
+    "mpvqc/controllers/_attached_dialog_dimensions.py",
     "mpvqc/controllers/about_dialog.py",
     "mpvqc/controllers/backup_dialog.py",
     "mpvqc/controllers/comment_types_dialog.py",
