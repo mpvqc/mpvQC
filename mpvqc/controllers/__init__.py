@@ -6,3 +6,4 @@
 from .about_dialog import MpvqcAboutDialogControllerPyObject
 from .backup_dialog import MpvqcBackupDialogControllerPyObject
 from .comment_types_dialog import MpvqcCommentTypesDialogControllerPyObject
+from .edit_input_dialog import MpvqcEditInputDialogControllerPyObject
