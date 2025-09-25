@@ -58,14 +58,6 @@ class MpvqcUtilityPyObject(QObject):
     def formatTimeToStringShort(self, seconds: float) -> str:
         return self._time_formatter.format_time_to_string(seconds, long_format=False)
 
-    @Slot(QUrl, result=str)
-    def urlToAbsolutePath(self, url: QUrl) -> str:
-        return self._type_mapper.map_url_to_path_string(url)
-
-    @Slot(str, result=str)
-    def reverseLookupCommentType(self, non_english: str) -> str:
-        return self._translator.lookup(non_english)
-
     @Slot(result=QUrl)
     def generate_file_path_proposal(self) -> QUrl:
         path = self._exporter.generate_file_path_proposal()

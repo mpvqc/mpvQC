@@ -59,15 +59,8 @@ TestCase {
                     getForeground: arg => "blue",
                     getBackground: arg => "blue"
                 },
-                mpvqcApplicationPathsPyObject: {
-                    dir_backup: Qt.resolvedUrl("qmldir")
-                },
                 mpvqcUtilityPyObject: {
                     urlToAbsolutePath: arg => ""
-                },
-                mpvqcPlayerFilesPyObject: {
-                    input_conf_url: Qt.resolvedUrl("qmldir"),
-                    mpv_conf_url: Qt.resolvedUrl("qmldir")
                 },
                 LayoutMirroring: {
                     enabled: false
