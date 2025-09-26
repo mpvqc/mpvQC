@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcExportTemplateModelPyObject(QStandardItemModel):
+class MpvqcExportTemplateModel(QStandardItemModel):
     _app_paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 

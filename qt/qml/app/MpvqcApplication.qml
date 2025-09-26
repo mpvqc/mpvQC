@@ -102,7 +102,7 @@ ApplicationWindow {
         playerVideoName: root.mpvqcMpvPlayerPropertiesPyObject.filename
         playerVideoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
 
-        extendedExportTemplatesModel: MpvqcExportTemplateModelPyObject {} // qmllint disable
+        extendedExportTemplatesModel: MpvqcExportTemplateModel {} // qmllint disable
 
         onWindowDragRequested: root.startSystemMove()
 

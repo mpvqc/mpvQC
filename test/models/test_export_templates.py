@@ -7,11 +7,12 @@ from unittest.mock import MagicMock
 
 import inject
 
-from mpvqc.pyobjects.export_template_model import MpvqcExportTemplateModelPyObject, Role
+from mpvqc.models import MpvqcExportTemplateModel
+from mpvqc.models.export_templates import Role
 from mpvqc.services import ApplicationPathsService
 
 
-def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModelPyObject:
+def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModel:
     mock = MagicMock()
     mock.files_export_templates = mocked_paths
 
@@ -20,7 +21,7 @@ def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModelPyObje
 
     inject.configure(config, clear=True)
     # noinspection PyCallingNonCallable
-    return MpvqcExportTemplateModelPyObject()
+    return MpvqcExportTemplateModel()
 
 
 def test_no_templates():
