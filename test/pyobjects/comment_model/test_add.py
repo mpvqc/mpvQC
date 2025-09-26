@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 from mpvqc.pyobjects.comment_model.roles import Role
 
 DEFAULT_COMMENTS = [

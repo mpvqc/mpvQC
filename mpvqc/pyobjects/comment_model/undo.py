@@ -8,7 +8,7 @@ from typing import Any
 from PySide6.QtCore import QPersistentModelIndex
 from PySide6.QtGui import QStandardItemModel, QUndoCommand, QUndoStack
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 
 from .item import CommentItem
 from .roles import Role
