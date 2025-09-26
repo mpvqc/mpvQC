@@ -39,7 +39,7 @@ MpvqcDialog2 {
                 textRole: "text"
                 valueRole: "value"
 
-                model: root.controller.importOptionsModel
+                model: ImportOptionsModel {}
 
                 onActivated: value => {
                     root.controller.importWhenVideoLinkedInDocument = value;
