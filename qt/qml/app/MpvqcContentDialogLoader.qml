@@ -18,16 +18,10 @@ Loader {
     readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/editinput/MpvqcEditInputDialogView.qml")
     readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/editmpv/MpvqcEditMpvDialogView.qml")
     readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcExportSettingsDialogView.qml")
-    readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcDialogImport.qml")
+    readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcImportSettingsDialogView.qml")
     readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcDialogShortcuts.qml")
 
-    readonly property bool isNewDialogBase: root.item === aboutDialog //
-    || root.item === appearanceDialog //
-    || root.item === backupSettingsDialog //
-    || root.item === commentTypeDialog //
-    || root.item === editInputDialog //
-    || root.item === editMpvDialog //
-    || root.item === exportSettingsDialog //
+    readonly property bool isNewDialogBase: root.item !== shortcutsDialog
 
     signal dialogClosed
 
@@ -86,7 +80,7 @@ Loader {
 
     function openImportSettingsDialog(): void {
         setSource(importSettingsDialog, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }
