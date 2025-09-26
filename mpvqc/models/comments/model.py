@@ -32,7 +32,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcCommentModelPyObject(QStandardItemModel):
+class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
     _time_formatter = inject.attr(TimeFormatterService)
 

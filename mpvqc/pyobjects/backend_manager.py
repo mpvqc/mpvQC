@@ -11,7 +11,7 @@ from PySide6.QtCore import QCoreApplication, QObject, QUrl, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
-from mpvqc.pyobjects.comment_model import MpvqcCommentModelPyObject
+from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
@@ -42,7 +42,7 @@ class MpvqcManagerBackendPyObject(QObject):
         QCoreApplication.instance().application_ready.connect(lambda: self._on_application_ready())
 
     @cached_property
-    def _comment_model(self) -> MpvqcCommentModelPyObject:
+    def _comment_model(self) -> MpvqcCommentModel:
         return QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel")
 
     @property

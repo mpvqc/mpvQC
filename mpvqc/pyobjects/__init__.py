@@ -5,7 +5,6 @@
 # ruff: noqa: F401
 from .backend_backupper import MpvqcBackupperBackendPyObject
 from .backend_manager import MpvqcManagerBackendPyObject
-from .comment_model import MpvqcCommentModelPyObject
 from .export_template_model import MpvqcExportTemplateModelPyObject
 from .extended_document_exporter import MpvqcExtendedDocumentExporterPyObject
 from .player import MpvqcMpvPlayerPyObject

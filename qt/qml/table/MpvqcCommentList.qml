@@ -42,7 +42,7 @@ ListView {
     readonly property alias contextMenuLoader: _contextMenuLoader // for tests
     readonly property alias messageBoxLoader: _messageBoxLoader // for tests
 
-    model: MpvqcCommentModelPyObject {}
+    model: MpvqcCommentModel {}
 
     clip: true
     focus: true

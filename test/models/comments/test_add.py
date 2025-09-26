@@ -5,7 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.pyobjects.comment_model.roles import Role
+from mpvqc.models.comments.roles import Role
 
 DEFAULT_COMMENTS = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
