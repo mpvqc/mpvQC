@@ -3,10 +3,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from PySide6.QtCore import QAbstractListModel, QCoreApplication, QModelIndex, Qt
+from PySide6.QtQml import QmlElement
 
 from mpvqc.services import SettingsService
 
+QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_MAJOR_VERSION = 1
 
+
+@QmlElement
 class ImportOptionsModel(QAbstractListModel):
     """Model to display in the import settings dialog to let the user choose if found videos should be opened"""
 
