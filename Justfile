@@ -18,9 +18,18 @@ init ARGS='--group dev':
     #!/usr/bin/env bash
     uv sync {{ ARGS }}
 
-    if [[ "{{ ARGS }}" == "--group dev" ]] then
+    if [[ "{{ ARGS }}" == "--group dev" ]]; then
+      QMLLS_INI=".qmlls.ini"
+      echo "[General]" > "$QMLLS_INI"
+      echo "DisableDefaultImports=false" >> "$QMLLS_INI"
+      echo "no-cmake-calls=true" >> "$QMLLS_INI"
+      echo "importPaths={{ justfile_directory() }}/pyobjects" >> "$QMLLS_INI"
+      echo "buildDir={{ justfile_directory() }}" >> "$QMLLS_INI"
+      echo "just init: Created $QMLLS_INI ..."
+
       echo "Created by command: just init" > portable
       echo "Runs application in portable mode by storing all files in the <git-repo>/appdata directory" >> portable
+      echo "just init: Configured portable mode ..."
 
       mkdir -p appdata/export-templates
       cp data/config/backup-template.jinja appdata/export-templates/export-working.jinja
