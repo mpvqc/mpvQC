@@ -59,7 +59,7 @@ def import_mpvqc_bindings():
     import mpvqc.controllers  # noqa: F401
     import mpvqc.helpers  # noqa: F401
     import mpvqc.models  # noqa: F401
-    import mpvqc.pyobjects  # noqa: F401
+    import mpvqc.views  # noqa: F401
 
 
 def start_application():
