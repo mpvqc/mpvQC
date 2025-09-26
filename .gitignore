@@ -536,6 +536,7 @@ $RECYCLE.BIN/
 /venv-runner
 
 # Files
+/*.txt
 *.license
 *.pyproject
 *.qmlls.ini
