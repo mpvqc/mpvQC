@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtCore import QThreadPool
 
-from mpvqc.pyobjects import MpvqcBackupperBackendPyObject
+from mpvqc.helpers import MpvqcBackupperBackendPyObject
 from mpvqc.services import DocumentBackupService
 
 

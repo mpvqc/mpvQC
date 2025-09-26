@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 import inject
 import pytest
 
-from mpvqc.pyobjects import MpvqcManagerBackendPyObject
+from mpvqc.helpers import MpvqcManagerBackendPyObject
 from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
@@ -80,7 +80,7 @@ def manager(
 
 @pytest.fixture(autouse=True)
 def qt_app(comments_model_mock):
-    with patch("mpvqc.pyobjects.backend_manager.QCoreApplication.instance", return_value=MagicMock()) as mock:
+    with patch("mpvqc.helpers.backend_manager.QCoreApplication.instance", return_value=MagicMock()) as mock:
         mock.return_value.find_object.return_value = comments_model_mock
         yield mock
 
