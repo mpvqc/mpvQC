@@ -8,7 +8,6 @@ from unittest.mock import MagicMock
 import inject
 
 from mpvqc.models import MpvqcExportTemplateModel
-from mpvqc.models.export_templates import Role
 from mpvqc.services import ApplicationPathsService
 
 
@@ -37,18 +36,18 @@ def test_templates():
 def test_templates_sorted():
     model = make_model(
         mocked_paths=(
-            Path("/xy"),
-            Path("/z"),
-            Path("/a"),
-            Path("/b"),
+            Path("sub-path/xy"),
+            Path("sub-path/z"),
+            Path("sub-path/a"),
+            Path("sub-path/b"),
         )
     )
 
     expected = ["a", "b", "xy", "z"]
     actual = [
-        model.item(0, 0).data(Role.NAME),
-        model.item(1, 0).data(Role.NAME),
-        model.item(2, 0).data(Role.NAME),
-        model.item(3, 0).data(Role.NAME),
+        model.data(model.index(0), MpvqcExportTemplateModel.NameRole),
+        model.data(model.index(1), MpvqcExportTemplateModel.NameRole),
+        model.data(model.index(2), MpvqcExportTemplateModel.NameRole),
+        model.data(model.index(3), MpvqcExportTemplateModel.NameRole),
     ]
     assert actual == expected

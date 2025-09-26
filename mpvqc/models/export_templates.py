@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import operator
+
 import inject
-from PySide6.QtCore import Property, QByteArray, Signal
-from PySide6.QtGui import QStandardItem, QStandardItemModel
+from PySide6.QtCore import Property, QAbstractListModel, QModelIndex, Qt
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ApplicationPathsService, TypeMapperService
@@ -14,42 +15,49 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcExportTemplateModel(QStandardItemModel):
+class MpvqcExportTemplateModel(QAbstractListModel):
     _app_paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
-    countChanged = Signal(int)
+    NameRole = Qt.ItemDataRole.UserRole + 1
+    PathRole = Qt.ItemDataRole.UserRole + 2
 
-    @Property(int, notify=countChanged)
-    def count(self) -> int:
-        return self.rowCount()
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.setItemRoleNames(Role.MAPPING)
-        self.setSortRole(Role.NAME)
+        self._items = []
         self._initialize_model()
 
-    def _initialize_model(self):
+    def _initialize_model(self) -> None:
         for template in self._app_paths.files_export_templates:
             url = self._type_mapper.map_path_to_url(template)
+            self._items.append(
+                {
+                    "name": template.stem,
+                    "path": url,
+                }
+            )
 
-            item = QStandardItem()
-            item.setData(url, Role.PATH)
-            item.setData(template.stem, Role.NAME)
-            self.appendRow(item)
-        self.sort(0)
+        self._items.sort(key=operator.itemgetter("name"))
 
+    @Property(int, constant=True, final=True)
+    def count(self) -> int:
+        return len(self._items)
 
-class Role:
-    """
-    See: https://doc.qt.io/qt-6/qstandarditem.html#ItemType-enum
-    """
+    def rowCount(self, _: QModelIndex = QModelIndex()) -> int:
+        return len(self._items)
 
-    NAME = 1010
-    PATH = 1020
+    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole):
+        if not index.isValid() or index.row() >= len(self._items):
+            return None
 
-    MAPPING = {
-        NAME: QByteArray(b"name"),
-        PATH: QByteArray(b"path"),
-    }
+        item = self._items[index.row()]
+
+        if role == self.NameRole:
+            return item["name"]
+        if role == self.PathRole:
+            return item["path"]
+
+        return None
+
+    def roleNames(self) -> dict:
+        return {self.NameRole: b"name", self.PathRole: b"path"}
