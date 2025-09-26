@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 from mpvqc.pyobjects import MpvqcCommentModelPyObject
 from mpvqc.services import PlayerService
 

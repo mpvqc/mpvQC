@@ -6,7 +6,7 @@ from typing import Any
 
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 
 from .item import CommentItem
 from .roles import Role

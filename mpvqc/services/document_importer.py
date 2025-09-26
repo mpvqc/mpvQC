@@ -8,7 +8,7 @@ from pathlib import Path
 
 import inject
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 
 from .reverse_translator import ReverseTranslatorService
 

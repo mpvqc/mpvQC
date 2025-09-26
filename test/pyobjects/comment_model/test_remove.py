@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),

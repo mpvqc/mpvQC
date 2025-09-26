@@ -5,7 +5,7 @@
 import pytest
 from PySide6.QtGui import QClipboard
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 
 
 @pytest.fixture(scope="session")

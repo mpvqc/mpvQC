@@ -9,7 +9,7 @@ from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Qt, Signal, 
 from PySide6.QtGui import QGuiApplication, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
-from mpvqc.models import Comment
+from mpvqc.datamodels import Comment
 from mpvqc.services import PlayerService, TimeFormatterService
 
 from .roles import Role
