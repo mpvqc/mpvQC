@@ -3,12 +3,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import inject
 import pytest
+from PySide6.QtCore import QLocale
 
 from mpvqc.services import ApplicationPathsService, SettingsService, TypeMapperService
+from mpvqc.services.settings import get_default_language
 
 
 @pytest.fixture(autouse=True)
@@ -35,6 +37,34 @@ def configure_injections(temp_settings_path):
 @pytest.fixture
 def settings_service() -> SettingsService:
     return SettingsService()
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    get_default_language.cache_clear()
+    yield
+    get_default_language.cache_clear()
+
+
+@pytest.mark.parametrize(
+    ("locale_string", "expected"),
+    [
+        ("fr-FR", "fr-FR"),  # We have translations
+        ("sw-TZ", "en-US"),  # We don't have translations
+    ],
+)
+@patch("mpvqc.models.languages.LANGUAGES")
+def test_get_default_language(mock_languages, locale_string, expected):
+    class MockLanguage:
+        def __init__(self, identifier):
+            self.identifier = identifier
+
+    mock_languages.__iter__.return_value = [MockLanguage("fr-FR"), MockLanguage("en-US"), MockLanguage("de-DE")]
+    locale = QLocale(locale_string)
+
+    result = get_default_language(locale)
+
+    assert result == expected
 
 
 def test_backup_enabled_default(settings_service):

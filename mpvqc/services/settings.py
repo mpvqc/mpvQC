@@ -4,9 +4,10 @@
 
 import os
 from enum import IntEnum
+from functools import cache
 
 import inject
-from PySide6.QtCore import QT_TRANSLATE_NOOP, QObject, QSettings, QStandardPaths, Signal
+from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, Signal
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -22,6 +23,19 @@ def get_default_documents_location() -> str:
 
 def get_default_movie_location() -> str:
     return QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
+
+
+@cache
+def get_default_language(locale: QLocale = QLocale.system()) -> str:
+    system_languages = locale.uiLanguages()
+
+    from mpvqc.models.languages import LANGUAGES
+
+    for language in LANGUAGES:
+        if language.identifier in system_languages:
+            return language.identifier
+
+    return "en-US"
 
 
 # noinspection PyTypeChecker
@@ -108,7 +122,7 @@ class SettingsService(QObject):
 
     @property
     def language(self) -> str:
-        return self._settings.value("Common/language", "en-US", type=str)
+        return self._settings.value("Common/language", get_default_language(), type=str)
 
     @language.setter
     def language(self, value: str):
