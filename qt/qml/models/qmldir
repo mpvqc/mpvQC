@@ -5,7 +5,6 @@
 module models
 
 MpvqcCreditsModel MpvqcCreditsModel.qml
-MpvqcLanguageModel MpvqcLanguageModel.qml
 MpvqcLibraryModel.qml MpvqcLibraryModel.qml
 MpvqcThemeMaterialYou MpvqcThemeMaterialYou.qml
 MpvqcThemeMaterialYouDark MpvqcThemeMaterialYouDark.qml
