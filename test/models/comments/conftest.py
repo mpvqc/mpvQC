@@ -9,18 +9,18 @@ import inject
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.pyobjects import MpvqcCommentModelPyObject
+from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import PlayerService
 
 
 @pytest.fixture(scope="session")
-def make_model() -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModelPyObject, Callable[[int], None]]]:
+def make_model() -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModel, Callable[[int], None]]]:
     def _make_model(
         set_comments: Iterable[Comment],
         set_player_time: float = 0.0,
     ):
         # noinspection PyCallingNonCallable
-        model: MpvqcCommentModelPyObject = MpvqcCommentModelPyObject()
+        model: MpvqcCommentModel = MpvqcCommentModel()
         model.import_comments(list(set_comments))
 
         player_mock = MagicMock()
