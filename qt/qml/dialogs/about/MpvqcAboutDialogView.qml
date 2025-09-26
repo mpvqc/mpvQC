@@ -150,7 +150,7 @@ MpvqcDialog2 {
                     required property string language
 
                     leftText: translator
-                    rightText: language
+                    rightText: qsTranslate("Languages", language)
 
                     Layout.fillWidth: true
                 }
