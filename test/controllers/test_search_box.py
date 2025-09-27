@@ -100,6 +100,27 @@ def get_previous(controller) -> Callable[[], tuple[int, int, int]]:
     return _func
 
 
+def test_search_query_changed(controller, make_spy, search, get_next, get_previous):
+    spy = make_spy(controller.searchQueryChanged)
+
+    search("Query")
+    assert spy.count() == 1
+    assert spy.at(0, 0) == "Query"
+
+    get_next()
+    assert spy.count() == 1
+
+    get_previous()
+
+    assert spy.count() == 1
+    search("Query")
+
+    assert spy.count() == 1
+
+    search("Other Query")
+    assert spy.count() == 2
+
+
 def test_search_with_empty_query(search):
     next_idx, current, total = search("")
     assert (next_idx, current, total) == (-1, -1, -1)
