@@ -12,12 +12,12 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcDialogImportSubtitles"
+    name: "MpvqcImportSubtitlesFileDialog"
 
     Component {
         id: objectUnderTest
 
-        MpvqcDialogImportSubtitles {
+        MpvqcImportSubtitlesFileDialog {
             id: __objectUnderTest
 
             property bool openSubtitlesCalled: false

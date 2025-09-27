@@ -6,7 +6,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
-import "../dialogs"
+import "../messageboxes"
 
 Item {
     id: root
@@ -21,7 +21,7 @@ Item {
 
     property var quitDialog: null
     property var quitDialogFactory: Component {
-        MpvqcMessageBoxQuit {
+        MpvqcQuitMessageBox {
             mpvqcApplication: root.mpvqcApplication
 
             onAccepted: {

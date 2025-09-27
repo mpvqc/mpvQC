@@ -11,10 +11,10 @@ Loader {
 
     required property var mpvqcApplication
 
-    readonly property url importQcDocumentsDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportDocuments.qml")
-    readonly property url importVideoDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportVideo.qml")
-    readonly property url importSubtitlesDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogImportSubtitles.qml")
-    readonly property url exportQcDocumentDialog: Qt.resolvedUrl("../dialogs/MpvqcDialogExportDocument.qml")
+    readonly property url exportDocumentDialog: Qt.resolvedUrl("../filedialogs/MpvqcExportDocumentFileDialog.qml")
+    readonly property url importDocumentsDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportDocumentsFileDialog.qml")
+    readonly property url importSubtitlesDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportSubtitlesFileDialog.qml")
+    readonly property url importVideoDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportVideoFileDialog.qml")
 
     property alias cleanupDelay: _delayCleanupTimer.interval
 
@@ -26,15 +26,8 @@ Loader {
     active: false
     visible: active
 
-    function openImportQcDocumentsDialog(): void {
-        setSource(importQcDocumentsDialog, {
-            mpvqcApplication: root.mpvqcApplication
-        });
-        active = true;
-    }
-
     function openDocumentExportDialog(proposal: url): void {
-        setSource(exportQcDocumentDialog, {
+        setSource(exportDocumentDialog, {
             isExtendedExport: false,
             selectedFile: proposal
         });
@@ -42,7 +35,7 @@ Loader {
     }
 
     function openExtendedDocumentExportDialog(proposal: url, exportTemplate: url): void {
-        setSource(exportQcDocumentDialog, {
+        setSource(exportDocumentDialog, {
             isExtendedExport: true,
             selectedFile: proposal,
             exportTemplate: exportTemplate
@@ -50,8 +43,8 @@ Loader {
         active = true;
     }
 
-    function openImportVideoDialog(): void {
-        setSource(importVideoDialog, {
+    function openImportQcDocumentsDialog(): void {
+        setSource(importDocumentsDialog, {
             mpvqcApplication: root.mpvqcApplication
         });
         active = true;
@@ -59,6 +52,13 @@ Loader {
 
     function openImportSubtitlesDialog(): void {
         setSource(importSubtitlesDialog, {
+            mpvqcApplication: root.mpvqcApplication
+        });
+        active = true;
+    }
+
+    function openImportVideoDialog(): void {
+        setSource(importVideoDialog, {
             mpvqcApplication: root.mpvqcApplication
         });
         active = true;

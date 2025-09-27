@@ -8,7 +8,7 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import "../../shared"
+import "../shared"
 
 MpvqcDialog {
     id: root

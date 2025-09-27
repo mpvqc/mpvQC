@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module dialogs
+
+MpvqcDocumentNotCompatibleMessageBox MpvqcDocumentNotCompatibleMessageBox.qml
+MpvqcNewDocumentMessageBox MpvqcNewDocumentMessageBox.qml
+MpvqcQuitMessageBox MpvqcQuitMessageBox.qml
+MpvqcVideoFoundMessageBox MpvqcVideoFoundMessageBox.qml

@@ -11,15 +11,15 @@ Loader {
 
     required property var mpvqcApplication
 
-    readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/about/MpvqcAboutDialogView.qml")
-    readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/appearance/MpvqcAppearanceDialogView.qml")
-    readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/backup/MpvqcBackupDialogView.qml")
-    readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/commenttypes/MpvqcCommentTypesDialogView.qml")
-    readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/editinput/MpvqcEditInputDialogView.qml")
-    readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/editmpv/MpvqcEditMpvDialogView.qml")
-    readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcExportSettingsDialogView.qml")
-    readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcImportSettingsDialogView.qml")
-    readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcShortcutDialogView.qml")
+    readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/MpvqcAboutDialog.qml")
+    readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/MpvqcAppearanceDialog.qml")
+    readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/MpvqcBackupDialog.qml")
+    readonly property url commentTypeDialog: Qt.resolvedUrl("../dialogs/MpvqcCommentTypesDialog.qml")
+    readonly property url editInputDialog: Qt.resolvedUrl("../dialogs/MpvqcEditInputDialog.qml")
+    readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/MpvqcEditMpvDialog.qml")
+    readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/MpvqcExportSettingsDialog.qml")
+    readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/MpvqcImportSettingsDialog.qml")
+    readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/MpvqcShortcutDialog.qml")
 
     signal dialogClosed
 
