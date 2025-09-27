@@ -170,7 +170,7 @@
     </message>
     <message>
         <source>Nickname</source>
-        <translation>Apodo</translation>
+        <translation>Alias</translation>
     </message>
     <message>
         <source>Document Header</source>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <source>Write Nickname</source>
-        <translation>Escribir apodo</translation>
+        <translation>Escribir alias</translation>
     </message>
     <message>
         <source>Write Video Path</source>
