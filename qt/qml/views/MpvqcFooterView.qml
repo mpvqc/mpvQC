@@ -15,7 +15,7 @@ import "../shared"
 Item {
     id: root
 
-    required property MpvqcFooterController controller
+    required property MpvqcFooterViewController controller
 
     property int selectedCommentIndex: 0
     property int totalCommentCount: 0

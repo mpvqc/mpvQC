@@ -7,8 +7,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
-import "../footer"
-import "../header"
+import "../views"
 import "../player"
 import "../table"
 
@@ -16,9 +15,9 @@ Page {
     id: root
 
     required property var mpvqcApplication
-    required property MpvqcAppHeaderController headerController
+    required property MpvqcAppHeaderViewController headerController
     required property MpvqcContentController contentController
-    required property MpvqcFooterController footerController
+    required property MpvqcFooterViewController footerController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
