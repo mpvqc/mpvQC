@@ -18,8 +18,8 @@ MpvqcDialog {
     readonly property var mpvqcTheme: MpvqcTheme
 
     title: qsTranslate("MpvConfEditDialog", "Edit mpv.conf")
-    contentWidth: MpvqcEditMpvDialogControllerPyObject.dialogWidth
-    contentHeight: MpvqcEditMpvDialogControllerPyObject.dialogHeight
+    contentWidth: Math.min(1080, MpvqcWindowProperties.appWidth * 0.75)
+    contentHeight: Math.min(1080, MpvqcWindowProperties.appHeight * 0.70)
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
     onAccepted: _textArea.textDocument.save()
