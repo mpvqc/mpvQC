@@ -443,7 +443,7 @@ ListView {
         id: _messageBoxLoader
 
         function askToDeleteComment(index: int): void {
-            setSource("MpvqcDeleteCommentMessageBox.qml", {
+            setSource("../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
                 mpvqcApplication: null,
                 parent: root.messageBoxParent,
                 commentIndex: index
