@@ -10,7 +10,7 @@ import QtQuick.Layouts
 
 import "../../shared"
 
-MpvqcDialog2 {
+MpvqcDialog {
     id: root
 
     readonly property MpvqcAppearanceDialogController controller: MpvqcAppearanceDialogController {}

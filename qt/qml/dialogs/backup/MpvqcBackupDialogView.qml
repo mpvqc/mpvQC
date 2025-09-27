@@ -11,7 +11,7 @@ import pyobjects
 
 import "../../shared"
 
-MpvqcDialog2 {
+MpvqcDialog {
     id: root
 
     readonly property MpvqcBackupDialogControllerPyObject controller: MpvqcBackupDialogControllerPyObject {}

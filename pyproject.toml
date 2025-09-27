@@ -319,7 +319,6 @@ files = [
     "qt/qml/player/qmldir",
     "qt/qml/shared/MpvqcDebugRectangle.qml",
     "qt/qml/shared/MpvqcDialog.qml",
-    "qt/qml/shared/MpvqcDialog2.qml",
     "qt/qml/shared/MpvqcHeader.qml",
     "qt/qml/shared/MpvqcKeyboardFocusableButtonBox.qml",
     "qt/qml/shared/MpvqcMenu.qml",

@@ -11,7 +11,7 @@ import pyobjects
 import "../../shared"
 import "../../themes"
 
-MpvqcDialog2 {
+MpvqcDialog {
     id: root
 
     readonly property MpvqcExportSettingsDialogControllerPyObject controller: MpvqcExportSettingsDialogControllerPyObject {}
