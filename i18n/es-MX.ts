@@ -11,7 +11,7 @@
     <message>
         <source>GNU General Public License, version 3 or later</source>
         <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
-        <translation>Licencia pública general GNU, versión 3 o posterior</translation>
+        <translation>Licencia Pública General GNU, versión 3 o posterior</translation>
     </message>
     <message>
         <source>This program comes with absolutely no warranty.</source>
@@ -170,7 +170,7 @@
     </message>
     <message>
         <source>Nickname</source>
-        <translation>Apodo</translation>
+        <translation>Alias</translation>
     </message>
     <message>
         <source>Document Header</source>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <source>Write Nickname</source>
-        <translation>Escribir apodo</translation>
+        <translation>Escribir alias</translation>
     </message>
     <message>
         <source>Write Video Path</source>
