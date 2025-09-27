@@ -28,13 +28,11 @@ MpvqcDialog {
     //: This text is part of the software license description. Argument %1 will be the link to the license
     readonly property string licenseText2: qsTranslate("AboutDialog", "See the %1 for details.").arg(root.licenseWebsite)
 
-    readonly property QtObject urls: QtObject {
-        readonly property url app: "https://mpvqc.github.io"
-        readonly property url license: "https://www.gnu.org/licenses/gpl-3.0.html"
-    }
+    readonly property url appUrl: "https://mpvqc.github.io"
+    readonly property url licenseUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
 
-    readonly property string applicationWebsite: `<a href="${urls.app}">${urls.app}</a>`
-    readonly property string licenseWebsite: `<a href="${urls.license}">${licenseDescription}</a>`
+    readonly property string applicationWebsite: `<a href="${appUrl}">${appUrl}</a>`
+    readonly property string licenseWebsite: `<a href="${licenseUrl}">${licenseDescription}</a>`
 
     readonly property int rowSpacing: 10
 
@@ -116,7 +114,7 @@ MpvqcDialog {
                 MpvqcTooltip {
                     y: -parent.height + 35
                     visible: (parent as Label).hoveredLink
-                    text: root.urls.license
+                    text: root.licenseUrl
                 }
             }
 
