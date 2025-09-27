@@ -8,7 +8,6 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import "../views"
-import "../player"
 import "../table"
 
 Page {
@@ -21,7 +20,6 @@ Page {
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
@@ -47,11 +45,8 @@ Page {
         anchors.fill: root.contentItem
         orientation: root.contentController.layoutOrientation
 
-        MpvqcPlayer {
+        MpvqcPlayerView {
             id: _player
-
-            mpvPlayer: root.mpvqcMpvPlayerPyObject
-            isFullScreen: root.mpvqcApplication.fullscreen
 
             SplitView.minimumHeight: root.contentController.minContainerHeight
             SplitView.minimumWidth: root.contentController.minContainerWidth

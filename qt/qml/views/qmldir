@@ -8,3 +8,4 @@ MpvqcAppHeaderView MpvqcAppHeaderView.qml
 MpvqcAppHeaderViewController MpvqcAppHeaderViewController.qml
 MpvqcFooterView MpvqcFooterView.qml
 MpvqcFooterViewController MpvqcFooterViewController.qml
+MpvqcPlayerView MpvqcPlayerView.qml
