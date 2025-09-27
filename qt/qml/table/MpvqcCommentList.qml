@@ -9,6 +9,8 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "../views"
+
 ListView {
     id: root
 
@@ -485,7 +487,7 @@ ListView {
 
         onLoaded: item.open() // qmllint disable
 
-        sourceComponent: MpvqcSearchBox {
+        sourceComponent: MpvqcSearchBoxView {
             id: _searchBox
 
             parent: root
