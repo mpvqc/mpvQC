@@ -12,27 +12,24 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcDialogImportVideo"
+    name: "MpvqcImportDocumentsFileDialog"
 
     Component {
         id: objectUnderTest
 
-        MpvqcDialogImportVideo {
+        MpvqcImportDocumentsFileDialog {
             id: __objectUnderTest
 
-            property bool openVideoCalled: false
+            property bool openDocumentsCalled: false
 
             mpvqcApplication: QtObject {
                 property var mpvqcManager: QtObject {
-                    function openVideo(video) {
-                        __objectUnderTest.openVideoCalled = true;
+                    function openDocuments(files) {
+                        __objectUnderTest.openDocumentsCalled = true;
                     }
                 }
                 property var mpvqcSettings: QtObject {
-                    property string lastDirectoryVideo: "initial directory"
-                }
-                property var mpvqcUtilityPyObject: QtObject {
-                    property list<string> videoFileGlobPattern: []
+                    property string lastDirectoryDocuments: "initial directory"
                 }
             }
         }
@@ -45,7 +42,7 @@ TestCase {
         control.currentFolder = "some directory";
         control.accepted();
 
-        verify(control.openVideoCalled);
-        verify(!control.mpvqcSettings.lastDirectoryVideo.toString().includes("initial directory"));
+        verify(control.openDocumentsCalled);
+        verify(!control.mpvqcSettings.lastDirectoryDocuments.toString().includes("initial directory"));
     }
 }

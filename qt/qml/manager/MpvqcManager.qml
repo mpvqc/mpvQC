@@ -8,7 +8,8 @@ import QtQuick
 
 import pyobjects
 
-import "../dialogs"
+import "../filedialogs"
+import "../messageboxes"
 import "../shared"
 
 import "MpvqcStateReducer.js" as MpvqcStateReducer
@@ -52,25 +53,25 @@ MpvqcObject {
         id: _backend
 
         property var mpvqcDialogExportDocumentFactory: Component {
-            MpvqcDialogExportDocument {
+            MpvqcExportDocumentFileDialog {
                 isExtendedExport: false
             }
         }
 
         property var mpvqcMessageBoxVideoFoundFactory: Component {
-            MpvqcMessageBoxVideoFound {
+            MpvqcVideoFoundMessageBox {
                 mpvqcApplication: root.mpvqcApplication
             }
         }
 
         property var mpvqcMessageBoxNewDocumentFactory: Component {
-            MpvqcMessageBoxNewDocument {
+            MpvqcNewDocumentMessageBox {
                 mpvqcApplication: root.mpvqcApplication
             }
         }
 
         property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
-            MpvqcMessageBoxDocumentNotCompatible {
+            MpvqcDocumentNotCompatibleMessageBox {
                 mpvqcApplication: root.mpvqcApplication
             }
         }

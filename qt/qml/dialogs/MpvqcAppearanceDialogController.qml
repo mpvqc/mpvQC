@@ -4,7 +4,7 @@
 
 import QtQuick
 
-import "../../themes"
+import "../themes"
 
 import pyobjects
 

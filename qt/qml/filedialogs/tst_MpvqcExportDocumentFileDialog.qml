@@ -12,13 +12,13 @@ TestCase {
     readonly property url currentFile: "file:///currentFile.txt"
     readonly property url exportTemplate: "file:///exportTemplate.txt"
 
-    name: "MpvqcDialogExportDocument"
+    name: "MpvqcExportDocumentFileDialog"
     when: windowShown
 
     Component {
         id: objectUnderTest
 
-        MpvqcDialogExportDocument {}
+        MpvqcExportDocumentFileDialog {}
     }
 
     Component {
