@@ -11,8 +11,8 @@ import "../shared"
 Loader {
     id: root
 
-    required property var mpvPlayer
-    required property bool isFullScreen
+    readonly property MpvqcPlayerController controller: MpvqcPlayerController {}
+    readonly property bool isFullScreen: MpvqcWindowProperties.isFullscreen
 
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
@@ -42,23 +42,23 @@ Loader {
 
         onPositionChanged: event => {
             _mouseArea.showCursor = true;
-            root.mpvPlayer.move_mouse(event.x, event.y);
+            root.controller.moveMouse(event.x, event.y);
         }
 
         onWheel: event => {
             if (event.angleDelta.y > 0) {
-                root.mpvPlayer.scroll_up();
+                root.controller.scrollUp();
             } else {
-                root.mpvPlayer.scroll_down();
+                root.controller.scrollDown();
             }
         }
 
         onPressed: event => {
             const button = event.button;
             if (button === Qt.LeftButton) {
-                root.mpvPlayer.press_mouse_left();
+                root.controller.pressMouseLeft();
             } else if (button === Qt.MiddleButton) {
-                root.mpvPlayer.press_mouse_middle();
+                root.controller.pressMouseMiddle();
             } else if (button === Qt.RightButton) {
                 root.addNewCommentMenuRequested();
             }
@@ -66,7 +66,7 @@ Loader {
 
         onReleased: event => {
             if (event.button === Qt.LeftButton) {
-                root.mpvPlayer.release_mouse_left();
+                root.controller.releaseMouseLeft();
             }
         }
 

@@ -185,6 +185,7 @@ files = [
     "mpvqc/controllers/edit_mpv_dialog.py",
     "mpvqc/controllers/export_settings_dialog.py",
     "mpvqc/controllers/import_settings_dialog.py",
+    "mpvqc/controllers/player.py",
     "mpvqc/datamodels.py",
     "mpvqc/decorators.py",
     "mpvqc/helpers/__init__.py",
