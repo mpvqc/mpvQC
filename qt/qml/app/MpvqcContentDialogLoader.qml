@@ -19,9 +19,7 @@ Loader {
     readonly property url editMpvDialog: Qt.resolvedUrl("../dialogs/editmpv/MpvqcEditMpvDialogView.qml")
     readonly property url exportSettingsDialog: Qt.resolvedUrl("../dialogs/export/MpvqcExportSettingsDialogView.qml")
     readonly property url importSettingsDialog: Qt.resolvedUrl("../dialogs/import/MpvqcImportSettingsDialogView.qml")
-    readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcDialogShortcuts.qml")
-
-    readonly property bool isNewDialogBase: root.item !== shortcutsDialog
+    readonly property url shortcutsDialog: Qt.resolvedUrl("../dialogs/shortcuts/MpvqcShortcutDialogView.qml")
 
     signal dialogClosed
 
@@ -87,7 +85,7 @@ Loader {
 
     function openShortcutsDialog(): void {
         setSource(shortcutsDialog, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }
@@ -105,7 +103,6 @@ Loader {
     }
 
     Binding {
-        when: root.isNewDialogBase
         target: root.item
         property: "isMirrored"
         value: root.mpvqcApplication.LayoutMirroring.enabled
