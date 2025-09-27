@@ -8,8 +8,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import pyobjects
-
 import "../shared"
 import "../models"
 
@@ -19,7 +17,7 @@ MpvqcDialog {
     title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
 
     contentWidth: 500
-    contentHeight: MpvqcShortcutDialogController.dialogHeight
+    contentHeight: Math.min(720, MpvqcWindowProperties.appHeight * 0.65)
 
     contentItem: ColumnLayout {
         spacing: 0

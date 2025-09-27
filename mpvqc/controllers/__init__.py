@@ -10,4 +10,3 @@ from .edit_input_dialog import MpvqcEditInputDialogControllerPyObject
 from .edit_mpv_dialog import MpvqcEditMpvDialogControllerPyObject
 from .export_settings_dialog import MpvqcExportSettingsDialogControllerPyObject
 from .import_settings_dialog import MpvqcImportSettingsDialogControllerPyObject
-from .shortcut_dialog import MpvqcShortcutDialogController

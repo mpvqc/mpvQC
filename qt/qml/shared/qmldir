@@ -14,3 +14,5 @@ MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
 MpvqcTextFieldRow MpvqcTextFieldRow.qml
 MpvqcTooltip MpvqcTooltip.qml
+
+singleton MpvqcWindowProperties MpvqcWindowProperties.qml
