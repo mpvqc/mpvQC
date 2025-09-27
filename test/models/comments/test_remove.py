@@ -31,14 +31,6 @@ def test_remove_comment(model):
     assert model.rowCount() == 4
 
 
-def test_remove_comment_invalidates_search_results(model):
-    model._searcher._hits = ["result"]
-
-    model.remove_row(0)
-
-    assert model._searcher._hits is None
-
-
 def test_remove_comment_fires_signals(model, make_spy):
     removed_spy = make_spy(model.commentRemoved)
 
@@ -78,16 +70,17 @@ def test_remove_comment_undo_sorts_model(model):
     assert expected == [c["comment"] for c in model.comments()]
 
 
-def test_remove_comment_undo_redo_invalidates_search_results(model):
+def test_remove_comment_undo_redo_invalidates_search_results(model, make_spy):
+    spy = make_spy(model.searchInvalidated)
+
     model.remove_row(0)
+    assert spy.count() == 1
 
-    model._searcher._hits = ["result"]
     model.undo()
-    assert model._searcher._hits is None
+    assert spy.count() == 2
 
-    model._searcher._hits = ["result"]
     model.redo()
-    assert model._searcher._hits is None
+    assert spy.count() == 3
 
 
 def test_remove_comment_undo_redo_fires_signals(model, make_spy):
