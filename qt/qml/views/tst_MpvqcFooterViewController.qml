@@ -10,12 +10,12 @@ import pyobjects
 TestCase {
     id: testCase
     visible: false
-    name: "MpvqcFooterController"
+    name: "MpvqcFooterViewController"
 
     Component {
         id: objectUnderTest
 
-        MpvqcFooterController {
+        MpvqcFooterViewController {
             isApplicationMazimized: false
             isApplicationFullscreen: false
             mpvqcSettings: QtObject {

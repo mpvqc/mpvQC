@@ -9,7 +9,7 @@ TestCase {
     id: testCase
 
     visible: false
-    name: "MpvqcAppHeaderController"
+    name: "MpvqcAppHeaderViewController"
 
     Component {
         id: signalSpy
@@ -20,7 +20,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcAppHeaderController {
+        MpvqcAppHeaderViewController {
             mpvqcTheme: QtObject {}
             mpvqcSettings: QtObject {
                 property int layoutOrientation: Qt.Vertical

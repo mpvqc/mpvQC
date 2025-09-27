@@ -12,7 +12,7 @@ import "../shared"
 Item {
     id: root
 
-    required property MpvqcAppHeaderController controller
+    required property MpvqcAppHeaderViewController controller
 
     readonly property alias menuBarWidth: menuBar.width
     readonly property alias menuBarHeight: menuBar.height
