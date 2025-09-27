@@ -213,10 +213,6 @@ ListView {
         function ensureFullCommentEditingPopupVisible(): void {
             _ensureCommentVisibleTimer.restart();
         }
-
-        function performModelSearch(searchQuery: string, includeCurrentRow: bool, topDown: bool): var {
-            return root.model.search(searchQuery, includeCurrentRow, topDown, root.currentIndex);
-        }
     }
 
     Keys.onPressed: event => _keyEventHandler.handleKeyPress(event)
@@ -494,12 +490,12 @@ ListView {
 
             parent: root
 
-            isApplicationFullScreen: root.isCurrentlyFullScreen
+            controller: MpvqcSearchBoxController {
+                model: root.model
+                selectedIndex: root.currentIndex
 
-            sanitizeTextFunc: root.sanitizeTextFunc
-            performModelSearchFunc: _impl.performModelSearch
-
-            onHighlightRequested: index => _impl.select(index)
+                onHighlightRequested: index => _impl.select(index)
+            }
 
             onClosed: root.forceActiveFocus()
         }
