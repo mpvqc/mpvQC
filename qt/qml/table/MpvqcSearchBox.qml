@@ -6,15 +6,17 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import pyobjects
+
+import "../shared"
+
 Popup {
     id: root
 
-    required property bool isApplicationFullScreen
+    required property MpvqcSearchBoxController controller
 
-    required property var performModelSearchFunc
-    required property var sanitizeTextFunc
-
-    readonly property string searchQuery: _impl.searchQueryActive ? _impl.currentSearchQuery : ""
+    readonly property bool isApplicationFullScreen: MpvqcWindowProperties.isFullscreen
+    readonly property string searchQuery: _impl.searchActive ? controller.searchQuery : ""
 
     readonly property int topBottomMargin: 15
     readonly property int leftRightMargin: 30
@@ -46,26 +48,23 @@ Popup {
     QtObject {
         id: _impl
 
-        property string currentSearchQuery: ""
-        property bool searchQueryActive: false
+        property bool searchActive: false
 
-        property int currentResult: -1
-        property int totalResults: -1
+        readonly property int currentResult: root.controller.currentResult
+        readonly property int totalResults: root.controller.totalResults
 
-        readonly property bool isDisplayText: currentResult >= 0 && totalResults >= 0
-        readonly property bool isHaveResults: totalResults > 1
-        readonly property string labelText: isDisplayText ? `${currentResult}/${totalResults}` : ""
+        readonly property string labelText: currentResult >= 0 && totalResults >= 0 ? `${currentResult}/${totalResults}` : ""
 
         function reactivateSearch(): void {
             root.visible = true;
-            searchQueryActive = true;
+            searchActive = true;
             _textField.selectAll();
             _textField.forceActiveFocus();
         }
 
         function hideSearchBox(): void {
             root.visible = false;
-            searchQueryActive = false;
+            searchActive = false;
         }
 
         function hideSearchBoxQuickly(): void {
@@ -73,35 +72,6 @@ Popup {
             root.exit = null;
             hideSearchBox();
             root.exit = exitAnimation;
-        }
-
-        function search(query: string): void {
-            currentSearchQuery = query;
-            const includeCurrentRow = true;
-            const topDown = true;
-            _search(includeCurrentRow, topDown);
-        }
-
-        function _search(includeCurrentRow: bool, topDown: bool): void {
-            const result = root.performModelSearchFunc(currentSearchQuery, includeCurrentRow, topDown); // qmllint disable
-            const nextIndex = result.nextIndex;
-            if (nextIndex >= 0) {
-                root.highlightRequested(nextIndex);
-            }
-            currentResult = result.currentResult;
-            totalResults = result.totalResults;
-        }
-
-        function requestNextSearchResult(): void {
-            const includeCurrentRow = false;
-            const topDown = true;
-            _search(includeCurrentRow, topDown);
-        }
-
-        function requestPreviousSearchResult(): void {
-            const includeCurrentRow = false;
-            const topDown = false;
-            _search(includeCurrentRow, topDown);
         }
     }
 
@@ -112,6 +82,8 @@ Popup {
         TextField {
             id: _textField
 
+            readonly property var reForbidden: new RegExp('[\u00AD\r\n]', 'gi')
+
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
@@ -119,13 +91,20 @@ Popup {
             Layout.fillWidth: true
 
             onTextChanged: {
-                const sanitized = root.sanitizeTextFunc(text); // qmllint disable
+                const sanitized = sanitizeText(text);
                 if (sanitized !== text) {
                     text = sanitized;
                     return;
                 } else {
-                    _impl.search(text);
+                    root.controller.search(text);
                 }
+            }
+
+            function sanitizeText(text: string): string {
+                if (text.search(reForbidden) === -1) {
+                    return text;
+                }
+                return text.replace(reForbidden, "");
             }
 
             Component.onCompleted: {
@@ -146,7 +125,7 @@ Popup {
         }
 
         ToolButton {
-            enabled: _impl.isHaveResults
+            enabled: _impl.totalResults >= 2
             focusPolicy: Qt.NoFocus
 
             icon {
@@ -155,11 +134,11 @@ Popup {
                 height: 24
             }
 
-            onPressed: _impl.requestPreviousSearchResult()
+            onPressed: root.controller.selectPrevious()
         }
 
         ToolButton {
-            enabled: _impl.isHaveResults
+            enabled: _impl.totalResults >= 2
 
             icon {
                 source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
@@ -167,7 +146,7 @@ Popup {
                 height: 24
             }
 
-            onPressed: _impl.requestNextSearchResult()
+            onPressed: root.controller.selectNext()
         }
 
         ToolButton {
@@ -185,14 +164,14 @@ Popup {
         enabled: root.visible && _textField.activeFocus
         sequences: ["up", "shift+return"]
 
-        onActivated: _impl.requestPreviousSearchResult()
+        onActivated: root.controller.selectPrevious()
     }
 
     Shortcut {
         enabled: root.visible && _textField.activeFocus
         sequences: ["down", "return"]
 
-        onActivated: _impl.requestNextSearchResult()
+        onActivated: root.controller.selectNext()
     }
 
     Shortcut {

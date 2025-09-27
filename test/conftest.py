@@ -58,7 +58,7 @@ def type_mapper() -> TypeMapperService:
     return TypeMapperService()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def qt_app() -> Generator[MpvqcApplication, Any]:
     app = MpvqcApplication([])
     yield app
