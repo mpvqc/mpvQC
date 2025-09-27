@@ -65,14 +65,6 @@ def test_add_comment_sorts_model(make_model):
     assert custom_comment_type == actual
 
 
-def test_add_comment_invalidates_search_results(model):
-    model._searcher._hits = ["result"]
-
-    model.add_row("comment type")
-
-    assert model._searcher._hits is None
-
-
 def test_add_comment_fires_signals(model, make_spy):
     added_initially_spy = make_spy(model.newCommentAddedInitially)
 
@@ -119,16 +111,17 @@ def test_add_comment_undo_redo_sorts_model(make_model):
     assert expected == [ct["commentType"] for ct in model.comments()]
 
 
-def test_add_comment_undo_redo_invalidates_search_results(model):
+def test_add_comment_undo_redo_invalidates_search_results(model, make_spy):
+    spy = make_spy(model.searchInvalidated)
+
     model.add_row("undo redo comment type")
+    assert spy.count() == 1
 
-    model._searcher._hits = ["result"]
     model.undo()
-    assert model._searcher._hits is None
+    assert spy.count() == 2
 
-    model._searcher._hits = ["result"]
     model.redo()
-    assert model._searcher._hits is None
+    assert spy.count() == 3
 
 
 def test_add_comment_undo_redo_fires_signals(make_model, make_spy):

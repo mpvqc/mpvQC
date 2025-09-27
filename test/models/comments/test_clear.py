@@ -30,14 +30,6 @@ def test_clear_comments(model):
     assert model.rowCount() == 0
 
 
-def test_clear_comments_invalidates_search_results(model):
-    model._searcher._hits = ["result"]
-
-    model.clear_comments()
-
-    assert model._searcher._hits is None
-
-
 def test_clear_comments_fires_signals(model, make_spy):
     cleared_spy = make_spy(model.commentsCleared)
 
@@ -60,16 +52,17 @@ def test_clear_comments_undo_redo(model):
     assert model.rowCount() == 0
 
 
-def test_clear_comments_undo_redo_invalidates_search_results(model):
+def test_clear_comments_undo_redo_invalidates_search_results(model, make_spy):
+    spy = make_spy(model.searchInvalidated)
+
     model.clear_comments()
+    assert spy.count() == 1
 
-    model._searcher._hits = ["result"]
     model.undo()
-    assert model._searcher._hits is None
+    assert spy.count() == 2
 
-    model._searcher._hits = ["result"]
     model.redo()
-    assert model._searcher._hits is None
+    assert spy.count() == 3
 
 
 def test_clear_comments_undo_redo_fires_signals(model, make_spy):

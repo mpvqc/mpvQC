@@ -40,18 +40,17 @@ def test_update_time_sorts_model_again(model):
     assert model.item(1, 0).data(Role.COMMENT) == "Word 1"
 
 
-def test_update_time_invalidates_search_results(model):
-    model._searcher._hits = ["result"]
+def test_update_time_invalidates_search_results(model, make_spy):
+    spy = make_spy(model.searchInvalidated)
+
     model.update_time(row=0, new_time=7)
-    assert model._searcher._hits is None
+    assert spy.count() == 1
 
-    model._searcher._hits = ["result"]
     model.undo()
-    assert model._searcher._hits is None
+    assert spy.count() == 2
 
-    model._searcher._hits = ["result"]
     model.redo()
-    assert model._searcher._hits is None
+    assert spy.count() == 3
 
 
 def test_update_time_fires_signals(model, make_spy):
@@ -139,18 +138,17 @@ def test_update_comment(model):
     assert model.item(0, 0).data(Role.COMMENT) == "new comment"
 
 
-def test_update_comment_invalidates_search_results(model):
-    model._searcher._hits = ["result"]
+def test_update_comment_invalidates_search_results(model, make_spy):
+    spy = make_spy(model.searchInvalidated)
+
     model.update_comment(row=0, comment="new")
-    assert model._searcher._hits is None
+    assert spy.count() == 1
 
-    model._searcher._hits = ["result"]
     model.undo()
-    assert model._searcher._hits is None
+    assert spy.count() == 2
 
-    model._searcher._hits = ["result"]
     model.redo()
-    assert model._searcher._hits is None
+    assert spy.count() == 3
 
 
 def test_update_comment_fires_signals(model, make_spy):
