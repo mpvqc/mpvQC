@@ -7,14 +7,17 @@ import QtQuick
 ListModel {
     ListElement {
         name: "Elias Müller"
-        contribution: "Development"
+        //: This describes the contribution by a person
+        contribution: qsTranslate("AboutDialog", "Development")
     }
     ListElement {
         name: "Frechdachs"
-        contribution: "Development"
+        //: This describes the contribution by a person
+        contribution: qsTranslate("AboutDialog", "Development")
     }
     ListElement {
         name: "maleunam"
-        contribution: "Artwork"
+        //: This describes the contribution by a person
+        contribution: qsTranslate("AboutDialog", "Artwork")
     }
 }

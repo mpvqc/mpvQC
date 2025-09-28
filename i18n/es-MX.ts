@@ -31,6 +31,16 @@
         <source>Powered by</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Development</source>
+        <extracomment>This describes the contribution by a person</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Artwork</source>
+        <extracomment>This describes the contribution by a person</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AppearanceDialog</name>
