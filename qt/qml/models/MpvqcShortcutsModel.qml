@@ -81,7 +81,7 @@ ListModel {
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Comments")
         label: qsTranslate("ShortcutsDialog", "Edit Comment")
-        button1Icon: "qrc:/data/icons/keyboard_return_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/keyboard_return_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Comments")
@@ -92,19 +92,19 @@ ListModel {
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Comments")
         label: qsTranslate("ShortcutsDialog", "Delete Comment")
-        button1Icon: "qrc:/data/icons/keyboard_backspace_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/keyboard_backspace_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
         isSeparateShortcut: true
         button2: qsTranslate("KeyboardKeys", "Delete")
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Comments")
         label: qsTranslate("ShortcutsDialog", "Previous Comment")
-        button1Icon: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Comments")
         label: qsTranslate("ShortcutsDialog", "Next Comment")
-        button1Icon: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
@@ -114,29 +114,29 @@ ListModel {
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
         label: qsTranslate("ShortcutsDialog", "Toggle Play/Pause")
-        button1Icon: "qrc:/data/icons/space_bar_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/space_bar_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
         label: qsTranslate("ShortcutsDialog", "Seek Backward by 2 Seconds")
-        button1Icon: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/keyboard_arrow_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
         label: qsTranslate("ShortcutsDialog", "Seek Forward by 2 Seconds")
-        button1Icon: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
+        button1Icon: "qrc:/data/icons/keyboard_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
         label: qsTranslate("ShortcutsDialog", "Seek Backward by 5 Seconds to Keyframe")
         button1: qsTranslate("KeyboardKeys", "Shift")
-        button2Icon: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
+        button2Icon: "qrc:/data/icons/keyboard_arrow_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
         label: qsTranslate("ShortcutsDialog", "Seek Forward by 5 Seconds to Keyframe")
         button1: qsTranslate("KeyboardKeys", "Shift")
-        button2Icon: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
+        button2Icon: "qrc:/data/icons/keyboard_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")

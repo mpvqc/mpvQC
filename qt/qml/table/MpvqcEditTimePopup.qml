@@ -16,8 +16,8 @@ Popup {
     required property int videoDuration
     required property var timeFormatFunc
 
-    readonly property url iconNext: "qrc:/data/icons/keyboard_arrow_right_black_24dp.svg"
-    readonly property url iconBefore: "qrc:/data/icons/keyboard_arrow_left_black_24dp.svg"
+    readonly property url iconNext: "qrc:/data/icons/keyboard_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+    readonly property url iconBefore: "qrc:/data/icons/keyboard_arrow_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
     readonly property url downIcon: mirrored ? iconNext : iconBefore
     readonly property url upIcon: mirrored ? iconBefore : iconNext
@@ -66,8 +66,6 @@ Popup {
             height: _spinBox.height
             width: height
             icon.source: root.downIcon
-            icon.width: 28
-            icon.height: 28
 
             onPressed: root.decrementValue()
         }
@@ -77,8 +75,6 @@ Popup {
             height: _spinBox.height
             width: height
             icon.source: root.upIcon
-            icon.width: 28
-            icon.height: 28
 
             onPressed: root.incrementValue()
         }

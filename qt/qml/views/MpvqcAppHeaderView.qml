@@ -50,7 +50,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "New QC Document")
                     shortcut: "CTRL+N"
-                    icon.source: "qrc:/data/icons/inventory_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/inventory_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestResetAppState();
@@ -60,7 +60,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "Open QC Document(s)...")
                     shortcut: "CTRL+O"
-                    icon.source: "qrc:/data/icons/file_open_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/file_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenQcDocuments();
@@ -70,7 +70,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "Save QC Document")
                     shortcut: "CTRL+S"
-                    icon.source: "qrc:/data/icons/save_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestSaveQcDocument();
@@ -80,7 +80,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "Save QC Document As...")
                     shortcut: "CTRL+Shift+S"
-                    icon.source: "qrc:/data/icons/save_as_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/save_as_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestSaveQcDocumentAs();
@@ -94,9 +94,7 @@ Item {
 
                 MpvqcMenu {
                     title: qsTranslate("MainWindow", "Export QC Document")
-                    icon.source: "qrc:/data/icons/save_alt_black_24dp.svg"
-                    icon.height: 24
-                    icon.width: 24
+                    icon.source: "qrc:/data/icons/export_notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     enabled: root.controller.haveExtendedExportTemplates
 
@@ -115,9 +113,7 @@ Item {
                             required property url path
 
                             text: name
-                            icon.source: "qrc:/data/icons/notes_black_24dp.svg"
-                            icon.height: 24
-                            icon.width: 24
+                            icon.source: "qrc:/data/icons/notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                             onTriggered: {
                                 root.controller.requestSaveQcDocumentExtendedUsing(name, path);
@@ -131,7 +127,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "Exit mpvQC")
                     shortcut: "CTRL+Q"
-                    icon.source: "qrc:/data/icons/exit_to_app_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/exit_to_app_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestClose();
@@ -145,7 +141,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "Open Video...")
                     shortcut: "CTRL+Alt+O"
-                    icon.source: "qrc:/data/icons/movie_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/movie_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenVideo();
@@ -154,7 +150,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Open Subtitle(s)...")
-                    icon.source: "qrc:/data/icons/subtitles_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenSubtitles();
@@ -166,7 +162,7 @@ Item {
                 Action {
                     text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
                     shortcut: "CTRL+R"
-                    icon.source: "qrc:/data/icons/aspect_ratio_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestResizeVideo();
@@ -179,7 +175,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Appearance...")
-                    icon.source: "qrc:/data/icons/palette_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenAppearanceDialog();
@@ -188,7 +184,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Comment Type Settings...")
-                    icon.source: "qrc:/data/icons/comment_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/comment_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenCommentTypesDialog();
@@ -197,9 +193,7 @@ Item {
 
                 MpvqcMenu {
                     title: qsTranslate("MainWindow", "Application Title")
-                    icon.source: "qrc:/data/icons/title_black_24dp.svg"
-                    icon.height: 24
-                    icon.width: 24
+                    icon.source: "qrc:/data/icons/title_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     Repeater {
                         model: root.controller.windowTitleFormatModel
@@ -222,9 +216,7 @@ Item {
 
                 MpvqcMenu {
                     title: qsTranslate("MainWindow", "Application Layout")
-                    icon.source: "qrc:/data/icons/vertical_split_black_24dp.svg"
-                    icon.height: 24
-                    icon.width: 24
+                    icon.source: "qrc:/data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     Repeater {
                         model: root.controller.applicationLayoutModel
@@ -249,7 +241,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Backup Settings...")
-                    icon.source: "qrc:/data/icons/settings_backup_restore_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/settings_backup_restore_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenBackupSettingsDialog();
@@ -258,7 +250,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Export Settings...")
-                    icon.source: "qrc:/data/icons/upload_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenExportSettingsDialog();
@@ -267,7 +259,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Import Settings...")
-                    icon.source: "qrc:/data/icons/download_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenImportSettingsDialog();
@@ -278,7 +270,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Edit mpv.conf...")
-                    icon.source: "qrc:/data/icons/movie_edit_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/movie_edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenEditMpvConfigDialog();
@@ -287,7 +279,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Edit input.conf...")
-                    icon.source: "qrc:/data/icons/keyboard_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/keyboard_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenEditInputConfigDialog();
@@ -300,9 +292,7 @@ Item {
                     id: _languageMenu
 
                     title: qsTranslate("MainWindow", "Language")
-                    icon.source: "qrc:/data/icons/language_black_24dp.svg"
-                    icon.height: 24
-                    icon.width: 24
+                    icon.source: "qrc:/data/icons/language_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     property var _deferToOnClose: () => {}
 
@@ -337,7 +327,7 @@ Item {
                 MenuItem {
 
                     text: qsTranslate("MainWindow", "Check for Updates...")
-                    icon.source: "qrc:/data/icons/update_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     visible: root.controller.isUpdateMenuVisible
                     height: visible ? implicitHeight : 0
 
@@ -348,7 +338,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
-                    icon.source: "qrc:/data/icons/shortcut_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/keyboard_double_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     shortcut: "?"
 
                     onTriggered: {
@@ -360,7 +350,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "Extended Exports...")
-                    icon.source: "qrc:/data/icons/upload_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenExtendedExportsDialog();
@@ -369,7 +359,7 @@ Item {
 
                 Action {
                     text: qsTranslate("MainWindow", "About mpvQC...")
-                    icon.source: "qrc:/data/icons/info_black_24dp.svg"
+                    icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
                         root.controller.requestOpenAboutDialog();
@@ -399,9 +389,9 @@ Item {
                 height: root.height
                 focusPolicy: Qt.NoFocus
                 anchors.right: _maximizeButton.left
-                icon.width: 18
-                icon.height: 18
-                icon.source: "qrc:/data/icons/minimize_black_24dp.svg"
+                icon.width: 20
+                icon.height: 20
+                icon.source: "qrc:/data/icons/minimize_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 onClicked: {
                     root.controller.requestMinimize();
@@ -411,8 +401,8 @@ Item {
             ToolButton {
                 id: _maximizeButton
 
-                readonly property url iconMaximize: "qrc:/data/icons/open_in_full_black_24dp.svg"
-                readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_black_24dp.svg"
+                readonly property url iconMaximize: "qrc:/data/icons/open_in_full_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 height: root.height
                 focusPolicy: Qt.NoFocus
@@ -436,7 +426,7 @@ Item {
                 icon {
                     width: 18
                     height: 18
-                    source: "qrc:/data/icons/close_black_24dp.svg"
+                    source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     color: {
                         if (root.controller.isWindows && _closeButton.hovered) {
                             return "#FFFFFD";
