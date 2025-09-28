@@ -2,7 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
+import os
 from collections.abc import Callable
+
+
+def setup_mpvqc_logging() -> None:
+    logging.basicConfig(level=logging.WARNING, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+
+    mpvqc_loggers = logging.getLogger("mpvqc")
+    mpvqc_loggers.setLevel(logging.DEBUG if os.getenv("MPVQC_DEBUG", "") else logging.INFO)
 
 
 def qt_log_handler() -> Callable:
