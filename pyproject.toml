@@ -186,6 +186,7 @@ files = [
     "mpvqc/controllers/edit_input_dialog.py",
     "mpvqc/controllers/edit_mpv_dialog.py",
     "mpvqc/controllers/export_settings_dialog.py",
+    "mpvqc/controllers/footer.py",
     "mpvqc/controllers/import_settings_dialog.py",
     "mpvqc/controllers/player.py",
     "mpvqc/controllers/search_box.py",
@@ -344,10 +345,8 @@ files = [
     "qt/qml/views/MpvqcAppHeaderView.qml",
     "qt/qml/views/MpvqcAppHeaderViewController.qml",
     "qt/qml/views/MpvqcFooterView.qml",
-    "qt/qml/views/MpvqcFooterViewController.qml",
     "qt/qml/views/MpvqcPlayerView.qml",
     "qt/qml/views/MpvqcSearchBoxView.qml",
     "qt/qml/views/qmldir",
     "qt/qml/views/tst_MpvqcAppHeaderViewController.qml",
-    "qt/qml/views/tst_MpvqcFooterViewController.qml",
 ]

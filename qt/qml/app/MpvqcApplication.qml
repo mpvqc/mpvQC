@@ -71,7 +71,6 @@ ApplicationWindow {
         mpvqcApplication: root
         headerController: _headerController
         contentController: _contentController
-        footerController: _footerController
 
         focus: true
         anchors.fill: parent
@@ -130,18 +129,6 @@ ApplicationWindow {
         onDisableFullScreenRequested: _windowVisibilityHandler.disableFullScreen()
 
         onToggleFullScreenRequested: _windowVisibilityHandler.toggleFullScreen()
-    }
-
-    MpvqcFooterViewController {
-        id: _footerController
-
-        mpvqcSettings: root.mpvqcSettings
-        mpvqcLabelWidthCalculator: root.mpvqcLabelWidthCalculator
-        mpvqcMpvPlayerPropertiesPyObject: root.mpvqcMpvPlayerPropertiesPyObject
-        mpvqcUtilityPyObject: root.mpvqcUtilityPyObject
-
-        isApplicationMazimized: root.maximized
-        isApplicationFullscreen: root.fullscreen
     }
 
     MpvqcBackupper {

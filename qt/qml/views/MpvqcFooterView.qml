@@ -17,22 +17,19 @@ Item {
 
     required property MpvqcFooterViewController controller
 
-    property int selectedCommentIndex: 0
-    property int totalCommentCount: 0
-
     readonly property alias rowSelectionLabelText: _rowSelectionLabelText
     readonly property alias percentLabelText: _videoPercentLabel
     readonly property alias videoTimeLabelText: _videoTimeLabel
     readonly property alias loader: _contextMenuLoader
 
-    height: 25
-    visible: !controller.isApplicationFullscreen
+    readonly property int bottomMargin: MpvqcWindowProperties.isMaximized ? 2 : 0
+    readonly property int rightMargin: MpvqcWindowProperties.isMaximized ? 0 : 1
 
-    readonly property int bottomMargin: controller.isApplicationMazimized ? 2 : 0
-    readonly property int rightMargin: controller.isApplicationMazimized ? 0 : 1
+    height: 25
 
     MenuSeparator {
         id: _separator
+
         topPadding: 1
         bottomPadding: 1
         anchors {
@@ -43,7 +40,6 @@ Item {
     }
 
     RowLayout {
-        id: _row
         spacing: 0
         anchors {
             top: _separator.top
@@ -54,8 +50,9 @@ Item {
 
         Label {
             id: _rowSelectionLabelText
-            text: (root.selectedCommentIndex + 1) + "/" + root.totalCommentCount
-            visible: root.totalCommentCount > 0
+
+            text: root.controller.commentCountText
+            visible: root.controller.isCommentCountVisible
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: root.bottomMargin
             Layout.leftMargin: 3
@@ -67,8 +64,9 @@ Item {
 
         Label {
             id: _videoPercentLabel
-            text: `${root.controller.playerPercentPosition.toFixed(0)}%`
-            visible: root.controller.playerVideoLoaded && root.controller.isStatusbarDisplayPercentage
+
+            text: root.controller.videoPercentText
+            visible: root.controller.isVideoPercentVisible
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: root.bottomMargin
@@ -76,17 +74,19 @@ Item {
 
         Label {
             id: _videoTimeLabel
-            text: root.controller.determineTimeLabelText()
-            visible: root.controller.playerVideoLoaded && !root.controller.isTimeFormatEmpty
+
+            text: root.controller.timeText
+            visible: root.controller.isTimeTextVisible
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
-            Layout.preferredWidth: root.controller.videoTimeLabelWidth
+            Layout.preferredWidth: root.controller.timeWidth
             Layout.bottomMargin: root.bottomMargin
             Layout.leftMargin: 15
         }
 
         Item {
             id: _toolButtonContainer
+
             Layout.preferredHeight: 22
             Layout.preferredWidth: 22
             Layout.leftMargin: _toolButton.padding
@@ -94,6 +94,7 @@ Item {
 
             ToolButton {
                 id: _toolButton
+
                 icon.source: "qrc:/data/icons/arrow_drop_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 focusPolicy: Qt.NoFocus
                 padding: 2
@@ -129,48 +130,48 @@ Item {
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Default format")
-                checked: root.controller.isTimeFormatCurrentTotalTime
+                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.CURRENT_TOTAL_TIME
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.setTimeFormat(MpvqcSettings.TimeFormat.CURRENT_TOTAL_TIME)
+                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.CURRENT_TOTAL_TIME
             }
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Current time")
-                checked: root.controller.isTimeFormatCurrentTime
+                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.CURRENT_TIME
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.setTimeFormat(MpvqcSettings.TimeFormat.CURRENT_TIME)
+                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.CURRENT_TIME
             }
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Remaining time")
-                checked: root.controller.isTimeFormatRemainingTime
+                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.REMAINING_TIME
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.setTimeFormat(MpvqcSettings.TimeFormat.REMAINING_TIME)
+                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.REMAINING_TIME
             }
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Hide time")
-                checked: root.controller.isTimeFormatEmpty
+                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.EMPTY
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.setTimeFormat(MpvqcSettings.TimeFormat.EMPTY)
+                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.EMPTY
             }
 
             MenuSeparator {}
 
             Action {
                 text: qsTranslate("MainWindow", "Progress in percent")
-                checked: root.controller.isStatusbarDisplayPercentage
+                checked: root.controller.isVideoPercentVisible
                 checkable: true
 
-                onTriggered: root.controller.toggleStatusBarPercentage()
+                onTriggered: root.controller.toggleVideoPercentDisplay()
             }
         }
     }

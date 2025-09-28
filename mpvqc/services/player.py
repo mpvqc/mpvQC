@@ -88,7 +88,7 @@ class PlayerService(QObject):
     def percent_pos(self) -> int | None:
         if not self._mpv or self._mpv.percent_pos is None:
             return None
-        return int(self._mpv.percent_pos)
+        return int(self._mpv.percent_pos + 0.5)
 
     @property
     def time_pos(self) -> int | None:

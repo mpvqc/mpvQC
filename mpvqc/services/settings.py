@@ -43,6 +43,12 @@ class SettingsService(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
+    class TimeFormat(IntEnum):
+        EMPTY = 0
+        CURRENT_TIME = 1
+        REMAINING_TIME = 2
+        CURRENT_TOTAL_TIME = 3
+
     class ImportWhenVideoLinkedInDocument(IntEnum):
         ALWAYS = 0
         ASK_EVERY_TIME = 1
