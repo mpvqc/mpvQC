@@ -7,6 +7,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
+import pyobjects
+
 import "../views"
 import "../table"
 
@@ -16,7 +18,6 @@ Page {
     required property var mpvqcApplication
     required property MpvqcAppHeaderViewController headerController
     required property MpvqcContentController contentController
-    required property MpvqcFooterViewController footerController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -89,11 +90,12 @@ Page {
             MpvqcFooterView {
                 id: _footer
 
-                controller: root.footerController
-                width: _tableContainer.width
+                controller: MpvqcFooterViewController {
+                    selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
+                    totalCommentCount: _mpvqcCommentTable.commentCount
+                }
 
-                selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
-                totalCommentCount: _mpvqcCommentTable.commentCount
+                width: _tableContainer.width
             }
         }
     }
