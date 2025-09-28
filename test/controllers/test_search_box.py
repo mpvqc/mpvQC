@@ -71,30 +71,57 @@ def select(controller):
 
 
 @pytest.fixture
-def search(controller) -> Callable[[str], tuple[int, int, int]]:
+def search(controller) -> Callable[[str], tuple[str, bool, int]]:
     def _search(query):
+        next_index = -1
+
+        def track_highlight(idx):
+            nonlocal next_index
+            next_index = idx
+
+        controller.highlightRequested.connect(track_highlight)
         controller.search(query)
-        return controller.nextIndex, controller.currentResult, controller.totalResults
+        controller.highlightRequested.disconnect(track_highlight)
+
+        return controller.statusLabel, controller.hasMultipleResults, next_index
 
     # noinspection PyTypeChecker
     return _search
 
 
 @pytest.fixture
-def get_next(controller) -> Callable[[], tuple[int, int, int]]:
+def get_next(controller) -> Callable[[], tuple[str, bool, int]]:
     def _func():
+        next_index = -1
+
+        def track_highlight(idx):
+            nonlocal next_index
+            next_index = idx
+
+        controller.highlightRequested.connect(track_highlight)
         controller.selectNext()
-        return controller.nextIndex, controller.currentResult, controller.totalResults
+        controller.highlightRequested.disconnect(track_highlight)
+
+        return controller.statusLabel, controller.hasMultipleResults, next_index
 
     # noinspection PyTypeChecker
     return _func
 
 
 @pytest.fixture
-def get_previous(controller) -> Callable[[], tuple[int, int, int]]:
+def get_previous(controller) -> Callable[[], tuple[str, bool, int]]:
     def _func():
+        next_index = -1
+
+        def track_highlight(idx):
+            nonlocal next_index
+            next_index = idx
+
+        controller.highlightRequested.connect(track_highlight)
         controller.selectPrevious()
-        return controller.nextIndex, controller.currentResult, controller.totalResults
+        controller.highlightRequested.disconnect(track_highlight)
+
+        return controller.statusLabel, controller.hasMultipleResults, next_index
 
     # noinspection PyTypeChecker
     return _func
@@ -111,10 +138,9 @@ def test_search_query_changed(controller, make_spy, search, get_next, get_previo
     assert spy.count() == 1
 
     get_previous()
-
     assert spy.count() == 1
-    search("Query")
 
+    search("Query")
     assert spy.count() == 1
 
     search("Other Query")
@@ -122,167 +148,227 @@ def test_search_query_changed(controller, make_spy, search, get_next, get_previo
 
 
 def test_search_with_empty_query(search):
-    next_idx, current, total = search("")
-    assert (next_idx, current, total) == (-1, -1, -1)
+    status_label, has_multiple, next_idx = search("")
+    assert status_label == ""
+    assert not has_multiple
+    assert next_idx == -1
 
 
 def test_search_no_match(search):
-    next_idx, current, total = search("Query")
-    assert (next_idx, current, total) == (-1, 0, 0)
+    status_label, has_multiple, next_idx = search("Query")
+    assert status_label == "0/0"
+    assert not has_multiple
+    assert next_idx == -1
 
 
 def test_search_match(search, controller, make_spy):
-    next_index_changed = make_spy(controller.nextIndexChanged)
-    current_results_changed_spy = make_spy(controller.currentResultChanged)
-    total_results_changed_spy = make_spy(controller.totalResultsChanged)
+    status_label_spy = make_spy(controller.statusLabelChanged)
+    has_multiple_spy = make_spy(controller.hasMultipleResultsChanged)
+    highlight_spy = make_spy(controller.highlightRequested)
 
-    next_idx, current, total = search("Word")
+    status_label, has_multiple, next_idx = search("Word")
 
-    assert (next_idx, current, total) == (0, 1, 7)
+    assert status_label == "1/7"
+    assert has_multiple
+    assert next_idx == 0
 
-    assert next_index_changed.count() == 1
-    assert next_index_changed.at(0, 0) == 0
+    assert status_label_spy.count() == 1
+    assert status_label_spy.at(0, 0) == "1/7"
 
-    assert current_results_changed_spy.count() == 1
-    assert current_results_changed_spy.at(0, 0) == 1
+    assert has_multiple_spy.count() == 1
+    assert has_multiple_spy.at(0, 0) is True
 
-    assert total_results_changed_spy.count() == 1
-    assert total_results_changed_spy.at(0, 0) == 7
+    assert highlight_spy.count() >= 1
+    assert highlight_spy.at(0, 0) == 0
 
 
 def test_search_match_next(search, select, get_next):
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (1, 2, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "2/7"
+    assert has_multiple
+    assert idx == 1
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (2, 3, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "3/7"
+    assert has_multiple
+    assert idx == 2
 
 
 def test_search_match_next_new_query(search, select, get_next):
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (1, 2, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "2/7"
+    assert has_multiple
+    assert idx == 1
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (2, 3, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "3/7"
+    assert has_multiple
+    assert idx == 2
 
-    idx, current, total = search("4")
-    assert (idx, current, total) == (3, 1, 1)
+    status_label, has_multiple, idx = search("4")
+    assert status_label == "1/1"
+    assert not has_multiple
+    assert idx == 3
 
 
 def test_search_match_next_after_import(model, search, select, get_next):
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (1, 2, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "2/7"
+    assert has_multiple
+    assert idx == 1
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (2, 3, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "3/7"
+    assert has_multiple
+    assert idx == 2
 
     model.import_comments(EXTRA_COMMENTS)
     select(8)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (9, 9, 9)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "9/9"
+    assert has_multiple
+    assert idx == 9
 
 
 def test_search_match_previous(search, select, get_previous):
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (7, 7, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "7/7"
+    assert has_multiple
+    assert idx == 7
 
     select(idx)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (5, 6, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "6/7"
+    assert has_multiple
+    assert idx == 5
 
 
 def test_search_match_previous_with_selection_change(search, select, get_previous):
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (7, 7, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "7/7"
+    assert has_multiple
+    assert idx == 7
 
     select(idx)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (5, 6, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "6/7"
+    assert has_multiple
+    assert idx == 5
 
     select(index=2)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (1, 2, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "2/7"
+    assert has_multiple
+    assert idx == 1
 
 
 def test_search_match_previous_after_import(search, model, select, get_next, get_previous):
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (1, 2, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "2/7"
+    assert has_multiple
+    assert idx == 1
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (2, 3, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "3/7"
+    assert has_multiple
+    assert idx == 2
 
     model.import_comments(EXTRA_COMMENTS)
 
     select(index=8)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (7, 7, 9)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "7/9"
+    assert has_multiple
+    assert idx == 7
 
 
 def test_search_wrap_around(search, select, get_next, get_previous):
     select(index=6)
 
-    idx, current, total = search("Word")
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = search("Word")
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0
 
     select(idx)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (7, 7, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "7/7"
+    assert has_multiple
+    assert idx == 7
 
     select(idx)
 
-    idx, current, total = get_previous()
-    assert (idx, current, total) == (5, 6, 7)
+    status_label, has_multiple, idx = get_previous()
+    assert status_label == "6/7"
+    assert has_multiple
+    assert idx == 5
 
     select(index=5)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (7, 7, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "7/7"
+    assert has_multiple
+    assert idx == 7
 
     select(idx)
 
-    idx, current, total = get_next()
-    assert (idx, current, total) == (0, 1, 7)
+    status_label, has_multiple, idx = get_next()
+    assert status_label == "1/7"
+    assert has_multiple
+    assert idx == 0

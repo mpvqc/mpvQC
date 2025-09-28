@@ -160,6 +160,7 @@ files = [
     "data/icons/save_alt_black_24dp.svg",
     "data/icons/save_as_black_24dp.svg",
     "data/icons/save_black_24dp.svg",
+    "data/icons/search_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg",
     "data/icons/settings_backup_restore_black_24dp.svg",
     "data/icons/shortcut_black_24dp.svg",
     "data/icons/space_bar_black_24dp.svg",
