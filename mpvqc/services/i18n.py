@@ -2,28 +2,45 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from PySide6.QtCore import QLibraryInfo, QLocale, QTranslator
+import logging
+
+from PySide6.QtCore import QFile, QLibraryInfo, QLocale, QTranslator
 from PySide6.QtGui import QGuiApplication
+
+log = logging.getLogger(__name__)
 
 
 class InternationalizationService:
     def __init__(self):
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
+        self._translator_qt_overrides = QTranslator()
 
     def retranslate(self, app: QGuiApplication, language_code: str) -> None:
-        app.removeTranslator(self._translator_qt)
         app.removeTranslator(self._translator_mpvqc)
+        app.removeTranslator(self._translator_qt_overrides)
+        app.removeTranslator(self._translator_qt)
 
         locale: QLocale = create_locale_from(language_code)
+        log.debug("Loading translations for mpvQC translation %s, qt translations %s", language_code, locale.name())
 
-        self._translator_qt.load(
-            locale, "qtbase", "_", QLibraryInfo.location(QLibraryInfo.LibraryPath.TranslationsPath)
-        )
-        self._translator_mpvqc.load(f":/i18n/{language_code}.qm")
+        qt_translations_path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
 
-        app.installTranslator(self._translator_qt)
-        app.installTranslator(self._translator_mpvqc)
+        if not self._translator_qt.load(locale, "qtbase", "_", qt_translations_path):
+            log.warning("Qt base translations not found for %s", locale.name())
+        else:
+            app.installTranslator(self._translator_qt)
+
+        qt_overrides_path = f":/i18n/{language_code}-qt-overrides.qm"
+        if QFile.exists(qt_overrides_path) and self._translator_qt_overrides.load(qt_overrides_path):
+            app.installTranslator(self._translator_qt_overrides)
+            log.debug("Loaded Qt overrides for mpvQC translation %s", language_code)
+
+        mpvqc_path = f":/i18n/{language_code}.qm"
+        if not self._translator_mpvqc.load(mpvqc_path):
+            log.error("Failed to load app translations: %s", mpvqc_path)
+        else:
+            app.installTranslator(self._translator_mpvqc)
 
         app.setLayoutDirection(locale.textDirection())
 

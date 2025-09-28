@@ -171,6 +171,7 @@ files = [
     "data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg",
     "i18n/de-DE.ts",
     "i18n/en-US.ts",
+    "i18n/es-MX-qt-overrides.ts",
     "i18n/es-MX.ts",
     "i18n/he-IL.ts",
     "i18n/it-IT.ts",
