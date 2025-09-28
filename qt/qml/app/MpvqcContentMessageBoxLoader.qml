@@ -11,12 +11,12 @@ Loader {
 
     required property var mpvqcApplication
 
-    readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxDocumentNotCompatible.qml")
-    readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExport.qml")
-    readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxExtendedExportError.qml")
-    readonly property url messageBoxNewDocument: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxNewDocument.qml")
-    readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVersionCheck.qml")
-    readonly property url messageBoxVideoFound: Qt.resolvedUrl("../dialogs/MpvqcMessageBoxVideoFound.qml")
+    readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../messageboxes/MpvqcDocumentNotCompatibleMessageBox.qml")
+    readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportMessageBox.qml")
+    readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportErrorMessageBox.qml")
+    readonly property url messageBoxNewDocument: Qt.resolvedUrl("../messageboxes/MpvqcNewDocumentMessageBox.qml")
+    readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../messageboxes/MpvqcVersionCheckMessageBox.qml")
+    readonly property url messageBoxVideoFound: Qt.resolvedUrl("../messageboxes/MpvqcVideoFoundMessageBox.qml")
 
     signal messageBoxClosed
 

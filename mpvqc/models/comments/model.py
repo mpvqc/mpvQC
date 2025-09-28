@@ -5,7 +5,7 @@
 from typing import Any
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Qt, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
@@ -13,7 +13,6 @@ from mpvqc.datamodels import Comment
 from mpvqc.services import PlayerService, TimeFormatterService
 
 from .roles import Role
-from .searcher import Searcher
 from .undo import (
     AddAndUpdateCommentCommand,
     AddComment,
@@ -60,6 +59,7 @@ class MpvqcCommentModel(QStandardItemModel):
     commentUpdated = Signal(int)
     commentUpdatedUndone = Signal(int)
 
+    searchInvalidated = Signal()
     copiedToClipboard = Signal(str)  # param: content - for tests only
 
     def get_selected_row(self) -> int:
@@ -82,7 +82,6 @@ class MpvqcCommentModel(QStandardItemModel):
 
         self._clipboard = QGuiApplication.clipboard()
 
-        self._searcher = Searcher()
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
 
@@ -92,11 +91,11 @@ class MpvqcCommentModel(QStandardItemModel):
             return
 
         def on_after_undo(row: int):
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.commentsImportedUndone.emit(row)
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.sort(0)
 
             signal = self.commentsImportedInitially if added_initially else self.commentsImportedRedone
@@ -114,11 +113,11 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def clear_comments(self) -> None:
         def on_after_undo():
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.commentsClearedUndone.emit()
 
         def on_after_redo():
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.commentsCleared.emit()
 
         self._undo_stack.push(
@@ -133,7 +132,7 @@ class MpvqcCommentModel(QStandardItemModel):
     def add_row(self, comment_type: str) -> None:
         def on_after_undo(row: int):
             self.newCommentAddedUndone.emit(row)
-            self._invalidate_search()
+            self.searchInvalidated.emit()
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
             self.sort(0)
@@ -141,7 +140,7 @@ class MpvqcCommentModel(QStandardItemModel):
             signal = self.newCommentAddedInitially if added_initially else self.newCommentAddedRedone
             signal.emit(index.row())
 
-            self._invalidate_search()
+            self.searchInvalidated.emit()
 
         command = AddAndUpdateCommentCommand(
             add_comment=AddComment(
@@ -160,11 +159,11 @@ class MpvqcCommentModel(QStandardItemModel):
         def on_after_undo(_row: int):
             self.sort(0)
             self.commentRemovedUndone.emit(_row)
-            self._invalidate_search()
+            self.searchInvalidated.emit()
 
         def on_after_redo():
             self.commentRemoved.emit()
-            self._invalidate_search()
+            self.searchInvalidated.emit()
 
         self._undo_stack.push(
             RemoveComment(
@@ -178,12 +177,12 @@ class MpvqcCommentModel(QStandardItemModel):
     @Slot(int, int)
     def update_time(self, row: int, new_time: int) -> None:
         def on_after_undo(_row: int):
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.sort(0)
             self.timeUpdatedUndone.emit(_row)
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.sort(0)
             signal = self.timeUpdatedInitially if added_initially else self.timeUpdatedRedone
             signal.emit(index.row())
@@ -219,11 +218,11 @@ class MpvqcCommentModel(QStandardItemModel):
     @Slot(int, str)
     def update_comment(self, row: int, comment: str) -> None:
         def on_after_undo(_row: int):
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.commentUpdatedUndone.emit(_row)
 
         def on_after_redo(_row: int):
-            self._invalidate_search()
+            self.searchInvalidated.emit()
             self.commentUpdated.emit(_row)
 
         self._undo_stack.push(
@@ -249,22 +248,6 @@ class MpvqcCommentModel(QStandardItemModel):
     @Slot(result=list)
     def comments(self) -> list[dict[str, Any]]:
         return retrieve_comments_from(self)
-
-    @Slot(str, bool, bool, int, result=dict)
-    def search(self, query: str, include_current_row: bool, top_down: bool, selected_index: int) -> dict:
-        return self._searcher.search(query, include_current_row, top_down, selected_index, search_func=self._search)
-
-    def _search(self, query: str) -> list[int]:
-        from_beginning = self.index(0, 0)
-        role = Role.COMMENT
-        flags = Qt.MatchFlag.MatchContains | Qt.MatchFlag.MatchWrap
-        all_results = -1  # Search everything
-        results = self.match(from_beginning, role, query, all_results, flags)
-        results = sorted(results)
-        return [m_idx.row() for m_idx in results]
-
-    def _invalidate_search(self) -> None:
-        self._searcher.invalidate()
 
     @Slot(int)
     def copy_to_clipboard(self, row: int):

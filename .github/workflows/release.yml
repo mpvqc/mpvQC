@@ -97,9 +97,9 @@ jobs:
           execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "mpvqc/startup.py"
           execute cat "mpvqc/startup.py"
 
-          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qt/qml/dialogs/about/MpvqcAboutDialogView.qml"
-          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qt/qml/dialogs/about/MpvqcAboutDialogView.qml"
-          execute cat "qt/qml/dialogs/about/MpvqcAboutDialogView.qml"
+          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qt/qml/dialogs/MpvqcAboutDialog.qml"
+          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qt/qml/dialogs/MpvqcAboutDialog.qml"
+          execute cat "qt/qml/dialogs/MpvqcAboutDialog.qml"
           echo "::endgroup::"
 
           #

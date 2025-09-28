@@ -31,6 +31,16 @@
         <source>Powered by</source>
         <translation>Basiert auf</translation>
     </message>
+    <message>
+        <source>Development</source>
+        <extracomment>This describes the contribution by a person</extracomment>
+        <translation>Entwicklung</translation>
+    </message>
+    <message>
+        <source>Artwork</source>
+        <extracomment>This describes the contribution by a person</extracomment>
+        <translation>Grafik</translation>
+    </message>
 </context>
 <context>
     <name>AppearanceDialog</name>

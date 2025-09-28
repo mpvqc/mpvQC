@@ -12,3 +12,4 @@ from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .settings import MpvqcSettings
 from .utility import MpvqcUtilityPyObject
 from .version_checker import MpvqcVersionCheckerPyObject
+from .window_properties import MpvqcWindowPropertiesBackend

@@ -96,9 +96,7 @@ Item {
             id: _playButton
 
             focusPolicy: Qt.NoFocus
-            icon.source: "qrc:/data/icons/play_arrow_black_24dp.svg"
-            icon.width: 18
-            icon.height: 18
+            icon.source: "qrc:/data/icons/play_arrow_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
             onPressed: root.playButtonPressed()
         }

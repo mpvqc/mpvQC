@@ -6,7 +6,6 @@ module shared
 
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
-MpvqcDialog2 MpvqcDialog2.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
@@ -15,3 +14,5 @@ MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
 MpvqcTextFieldRow MpvqcTextFieldRow.qml
 MpvqcTooltip MpvqcTooltip.qml
+
+singleton MpvqcWindowProperties MpvqcWindowProperties.qml

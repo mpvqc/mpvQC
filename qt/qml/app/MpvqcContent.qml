@@ -7,22 +7,19 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
-import "../footer"
-import "../header"
-import "../player"
+import "../views"
 import "../table"
 
 Page {
     id: root
 
     required property var mpvqcApplication
-    required property MpvqcAppHeaderController headerController
+    required property MpvqcAppHeaderViewController headerController
     required property MpvqcContentController contentController
-    required property MpvqcFooterController footerController
+    required property MpvqcFooterViewController footerController
 
     readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
@@ -48,11 +45,8 @@ Page {
         anchors.fill: root.contentItem
         orientation: root.contentController.layoutOrientation
 
-        MpvqcPlayer {
+        MpvqcPlayerView {
             id: _player
-
-            mpvPlayer: root.mpvqcMpvPlayerPyObject
-            isFullScreen: root.mpvqcApplication.fullscreen
 
             SplitView.minimumHeight: root.contentController.minContainerHeight
             SplitView.minimumWidth: root.contentController.minContainerWidth

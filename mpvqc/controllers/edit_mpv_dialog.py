@@ -5,9 +5,8 @@
 import inject
 from PySide6.QtCore import Property, QObject, QUrl, Slot
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtQml import QmlAttached, QmlElement
+from PySide6.QtQml import QmlElement
 
-from mpvqc.controllers._attached_dialog_dimensions import DialogDimensionsAttached
 from mpvqc.services import ApplicationPathsService, ResourceService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -16,7 +15,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker,PyCallingNonCallable,PyArgumentList
 @QmlElement
-@QmlAttached(DialogDimensionsAttached)
 class MpvqcEditMpvDialogControllerPyObject(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _resources: ResourceService = inject.attr(ResourceService)
@@ -33,11 +31,3 @@ class MpvqcEditMpvDialogControllerPyObject(QObject):
     @Slot(QUrl)
     def openLink(self, link: QUrl) -> None:
         QDesktopServices.openUrl(link)
-
-    @staticmethod
-    def qmlAttachedProperties(_, parent) -> DialogDimensionsAttached:
-        return DialogDimensionsAttached(
-            calculate_width=lambda w: min(1080, w * 0.75),
-            calculate_height=lambda h: min(1080, h * 0.70),
-            parent=parent,
-        )

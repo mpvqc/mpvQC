@@ -7,8 +7,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../footer"
-import "../header"
+import "../views"
 import "../manager"
 import "../themes"
 
@@ -84,7 +83,7 @@ ApplicationWindow {
         }
     }
 
-    MpvqcAppHeaderController {
+    MpvqcAppHeaderViewController {
         id: _headerController
 
         mpvqcTheme: root.mpvqcTheme
@@ -133,7 +132,7 @@ ApplicationWindow {
         onToggleFullScreenRequested: _windowVisibilityHandler.toggleFullScreen()
     }
 
-    MpvqcFooterController {
+    MpvqcFooterViewController {
         id: _footerController
 
         mpvqcSettings: root.mpvqcSettings

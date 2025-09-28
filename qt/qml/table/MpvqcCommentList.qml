@@ -9,6 +9,8 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "../views"
+
 ListView {
     id: root
 
@@ -212,10 +214,6 @@ ListView {
 
         function ensureFullCommentEditingPopupVisible(): void {
             _ensureCommentVisibleTimer.restart();
-        }
-
-        function performModelSearch(searchQuery: string, includeCurrentRow: bool, topDown: bool): var {
-            return root.model.search(searchQuery, includeCurrentRow, topDown, root.currentIndex);
         }
     }
 
@@ -443,7 +441,7 @@ ListView {
         id: _messageBoxLoader
 
         function askToDeleteComment(index: int): void {
-            setSource("MpvqcDeleteCommentMessageBox.qml", {
+            setSource("../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
                 mpvqcApplication: null,
                 parent: root.messageBoxParent,
                 commentIndex: index
@@ -489,17 +487,17 @@ ListView {
 
         onLoaded: item.open() // qmllint disable
 
-        sourceComponent: MpvqcSearchBox {
+        sourceComponent: MpvqcSearchBoxView {
             id: _searchBox
 
             parent: root
 
-            isApplicationFullScreen: root.isCurrentlyFullScreen
+            controller: MpvqcSearchBoxController {
+                model: root.model
+                selectedIndex: root.currentIndex
 
-            sanitizeTextFunc: root.sanitizeTextFunc
-            performModelSearchFunc: _impl.performModelSearch
-
-            onHighlightRequested: index => _impl.select(index)
+                onHighlightRequested: index => _impl.select(index)
+            }
 
             onClosed: root.forceActiveFocus()
         }

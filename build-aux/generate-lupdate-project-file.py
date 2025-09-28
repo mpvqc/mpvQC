@@ -65,7 +65,11 @@ class ProjectFileGenerator:
 
     def generate_project_file(self, outfile: Path):
         files = [str(path) for path in self._files if path.suffix != self._extensions_translation]
-        translations = [str(path) for path in self._files if path.suffix == self._extensions_translation]
+        translations = [
+            str(path)
+            for path in self._files
+            if path.suffix == self._extensions_translation and "qt-overrides" not in path.name
+        ]
         structure = {
             "excluded": [],
             "includePaths": [],
