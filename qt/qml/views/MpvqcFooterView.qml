@@ -94,7 +94,7 @@ Item {
 
             ToolButton {
                 id: _toolButton
-                icon.source: "qrc:/data/icons/expand_more_black_24dp.svg"
+                icon.source: "qrc:/data/icons/arrow_drop_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 focusPolicy: Qt.NoFocus
                 padding: 2
                 height: parent.height

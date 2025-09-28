@@ -59,9 +59,7 @@ MpvqcDialog {
                 enabled: root.controller.isAcceptButtonEnabled
 
                 icon {
-                    width: 20
-                    height: 20
-                    source: "qrc:/data/icons/done_black_24dp.svg"
+                    source: "qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 }
 
                 onPressed: {
@@ -73,9 +71,7 @@ MpvqcDialog {
                 enabled: root.controller.isRejectButtonEnabled
 
                 icon {
-                    width: 20
-                    height: 20
-                    source: "qrc:/data/icons/close_black_24dp.svg"
+                    source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 }
 
                 onPressed: {
@@ -246,7 +242,7 @@ MpvqcDialog {
                     icon {
                         width: 28
                         height: 28
-                        source: "qrc:/data/icons/keyboard_arrow_up_black_24dp.svg"
+                        source: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     }
 
                     onPressed: {
@@ -261,7 +257,7 @@ MpvqcDialog {
                     icon {
                         width: 28
                         height: 28
-                        source: "qrc:/data/icons/keyboard_arrow_down_black_24dp.svg"
+                        source: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     }
 
                     onPressed: {
@@ -274,9 +270,7 @@ MpvqcDialog {
                     enabled: root.controller.isEditButtonEnabled
 
                     icon {
-                        width: 18
-                        height: 18
-                        source: "qrc:/data/icons/edit_black_24dp.svg"
+                        source: "qrc:/data/icons/edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     }
 
                     onPressed: {
@@ -288,9 +282,7 @@ MpvqcDialog {
                     enabled: root.controller.isDeleteButtonEnabled
 
                     icon {
-                        width: 24
-                        height: 24
-                        source: "qrc:/data/icons/delete_black_24dp.svg"
+                        source: "qrc:/data/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     }
 
                     onPressed: {
