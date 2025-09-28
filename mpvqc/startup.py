@@ -6,7 +6,7 @@
 def perform_startup():
     configure_qt_application_data()
     configure_qt_settings()
-    configure_qt_logging()
+    configure_logging()
     configure_dependency_injection()
     configure_environment_variables()
 
@@ -32,11 +32,12 @@ def configure_qt_settings():
     QSettings.setDefaultFormat(QSettings.Format.IniFormat)
 
 
-def configure_qt_logging():
+def configure_logging():
     from PySide6 import QtCore
 
-    from .logging import qt_log_handler
+    from .logging import qt_log_handler, setup_mpvqc_logging
 
+    setup_mpvqc_logging()
     QtCore.qInstallMessageHandler(qt_log_handler())
 
 
