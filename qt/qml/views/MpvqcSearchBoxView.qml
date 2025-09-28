@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
+import QtQuick.Controls.impl
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
@@ -52,23 +53,19 @@ Popup {
         }
     }
 
-    QtObject {
-        id: _searchInfo
-
-        readonly property int currentResult: root.controller.currentResult
-        readonly property int totalResults: root.controller.totalResults
-        readonly property bool hasMultipleResults: totalResults >= 2
-        readonly property string statusLabel: {
-            if (currentResult >= 0 && totalResults >= 0) {
-                return `${currentResult}/${totalResults}`;
-            }
-            return "";
-        }
-    }
-
     RowLayout {
         width: root.width - root.leftPadding - root.rightPadding
         spacing: 0
+
+        IconLabel {
+            Layout.leftMargin: 8
+            Layout.rightMargin: 8
+
+            icon {
+                source: "qrc:/data/icons/search_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                color: Material.hintTextColor
+            }
+        }
 
         TextField {
             id: _textField
@@ -100,10 +97,11 @@ Popup {
             }
         }
 
-        ToolButton {
-            enabled: false
-            text: _searchInfo.statusLabel
-            focusPolicy: Qt.NoFocus
+        Label {
+            text: root.controller.statusLabel
+            color: Material.hintTextColor
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
         }
 
         ToolSeparator {
@@ -111,7 +109,7 @@ Popup {
         }
 
         ToolButton {
-            enabled: _searchInfo.hasMultipleResults
+            enabled: root.controller.hasMultipleResults
             focusPolicy: Qt.NoFocus
 
             icon {
@@ -124,7 +122,7 @@ Popup {
         }
 
         ToolButton {
-            enabled: _searchInfo.hasMultipleResults
+            enabled: root.controller.hasMultipleResults
             focusPolicy: Qt.NoFocus
 
             icon {

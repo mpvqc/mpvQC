@@ -21,21 +21,21 @@ class MpvqcSearchBoxController(QObject):
     modelChanged = Signal(MpvqcCommentModel)
     selectedIndexChanged = Signal(int)
 
-    nextIndexChanged = Signal(int)
-    currentResultChanged = Signal(int)
-    totalResultsChanged = Signal(int)
     searchQueryChanged = Signal(str)
-
+    hasMultipleResultsChanged = Signal(bool)
+    statusLabelChanged = Signal(str)
     highlightRequested = Signal(int)
 
     def __init__(self):
         super().__init__()
         self._search_backend = SearchBackend()
 
-        self._next_index = -1
         self._current_result = -1
         self._total_results = -1
+
         self._search_query = ""
+        self._has_multiple_results = False
+        self._status_label = ""
 
         self._model: QAbstractItemModel | None = None
         self._selected_index: int = -1
@@ -67,71 +67,59 @@ class MpvqcSearchBoxController(QObject):
             self._selected_index = value
             self.selectedIndexChanged.emit(value)
 
-    @Property(int, notify=nextIndexChanged)
-    def nextIndex(self) -> int:
-        return self._next_index
-
-    def _set_next_index(self, value: int) -> None:
-        if self._next_index != value:
-            self._next_index = value
-            self.nextIndexChanged.emit(value)
-
-    @Property(int, notify=currentResultChanged)
-    def currentResult(self) -> int:
-        return self._current_result
-
-    def _set_current_result(self, value: int) -> None:
-        if self._current_result != value:
-            self._current_result = value
-            self.currentResultChanged.emit(value)
-
-    @Property(int, notify=totalResultsChanged)
-    def totalResults(self) -> int:
-        return self._total_results
-
-    def _set_total_results(self, value: int) -> None:
-        if self._total_results != value:
-            self._total_results = value
-            self.totalResultsChanged.emit(value)
-
     @Property(str, notify=searchQueryChanged)
     def searchQuery(self) -> str:
         return self._search_query
 
-    def _set_search_query(self, query: str) -> None:
+    @Property(bool, notify=hasMultipleResultsChanged)
+    def hasMultipleResults(self) -> bool:
+        return self._has_multiple_results
+
+    @Property(str, notify=statusLabelChanged)
+    def statusLabel(self) -> str:
+        return self._status_label
+
+    def _update_search_state(self, query: str, current: int, total: int) -> None:
         if self._search_query != query:
             self._search_query = query
             self.searchQueryChanged.emit(query)
 
+        self._current_result = current
+        self._total_results = total
+
+        has_multiple = total > 1
+        if self._has_multiple_results != has_multiple:
+            self._has_multiple_results = has_multiple
+            self.hasMultipleResultsChanged.emit(has_multiple)
+
+        label = f"{current}/{total}" if current >= 0 and total >= 0 else ""
+
+        if self._status_label != label:
+            self._status_label = label
+            self.statusLabelChanged.emit(label)
+
     @Slot(str)
     def search(self, query: str) -> None:
-        self._set_search_query(query)
-        self._search(include_current_row=True, top_down=True)
+        self._perform_search(query, include_current_row=True, top_down=True)
 
     @Slot()
     def selectNext(self) -> None:
-        self._search(include_current_row=False, top_down=True)
+        self._perform_search(self._search_query, include_current_row=False, top_down=True)
 
     @Slot()
     def selectPrevious(self) -> None:
-        self._search(include_current_row=False, top_down=False)
+        self._perform_search(self._search_query, include_current_row=False, top_down=False)
 
-    def _search(self, include_current_row: bool, top_down: bool) -> dict:
-        result = self._search_backend.search(
-            query=self._search_query,
+    def _perform_search(self, query: str, include_current_row: bool, top_down: bool) -> None:
+        next_index, current_result, total_results = self._search_backend.search(
+            query=query,
             include_current_row=include_current_row,
             top_down=top_down,
             selected_index=self._selected_index,
             search_func=self._search_func,
         )
 
-        next_index = result["nextIndex"]
-        current_result = result["currentResult"]
-        total_result = result["totalResults"]
-
-        self._set_next_index(next_index)
-        self._set_current_result(current_result)
-        self._set_total_results(total_result)
+        self._update_search_state(query, current_result, total_results)
 
         if next_index >= 0:
             self.highlightRequested.emit(next_index)
@@ -162,38 +150,36 @@ class SearchBackend:
         top_down: bool,
         selected_index: int,
         search_func: Callable[[str], list[int]],
-    ) -> dict:
+    ) -> tuple[int, int, int]:
+        """Perform a search and return a tuple of (next_index, current_result_number, total_results)."""
+
         if not query:
             self._query = ""
             self._hits = None
-            return {"nextIndex": -1, "currentResult": -1, "totalResults": -1}
+            return -1, -1, -1
 
-        # Check if we need new search results
         query_changed = self._query != query
         if query_changed or self._hits is None:
             self._query = query
             self._hits = search_func(query)
 
-        # No matches found
         if not self._hits:
-            return {"nextIndex": -1, "currentResult": 0, "totalResults": 0}
+            return -1, 0, 0
 
         total = len(self._hits)
 
-        # First result for new query
         if query_changed:
-            return {"nextIndex": self._hits[0], "currentResult": 1, "totalResults": total}
+            return self._hits[0], 1, total
 
-        # Find next/previous result
         if top_down:
             start = selected_index if include_current_row else selected_index + 1
             idx = bisect.bisect_left(self._hits, start)
             if idx >= total:
-                idx = 0  # Wrap to beginning
+                idx = 0
         else:
             end = selected_index if include_current_row else selected_index - 1
             idx = bisect.bisect_right(self._hits, end) - 1
             if idx < 0:
-                idx = total - 1  # Wrap to end
+                idx = total - 1
 
-        return {"nextIndex": self._hits[idx], "currentResult": idx + 1, "totalResults": total}
+        return self._hits[idx], idx + 1, total
