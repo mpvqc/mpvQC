@@ -5,7 +5,27 @@
 import pytest
 from PySide6.QtCore import QLocale
 
+from mpvqc.services import InternationalizationService
 from mpvqc.services.i18n import create_locale_from
+
+
+@pytest.fixture(scope="module")
+def service() -> InternationalizationService:
+    return InternationalizationService()
+
+
+@pytest.fixture(scope="module", autouse=True)
+def teardown(qt_app, service):
+    yield
+    service.retranslate(qt_app, QLocale.system().name())
+
+
+def test_translation_override_works(qt_app, service):
+    service.retranslate(qt_app, "es-ES")
+    assert qt_app.translate("QPlatformTheme", "Reset") == "Reinicializar"
+
+    service.retranslate(qt_app, "es-MX")
+    assert qt_app.translate("QPlatformTheme", "Reset") == "Restablecer"
 
 
 @pytest.mark.parametrize(
