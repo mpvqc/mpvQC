@@ -5,6 +5,8 @@
 import QtQuick
 import QtQuick.Controls.Material
 
+import "../themes"
+
 Menu {
     id: root
 
@@ -50,6 +52,18 @@ Menu {
             disableFakeModal(); // qmllint disable
         }
     }
+    // *********************************************************
+
+    // *********************************************************
+    // fixme: Workaround QTBUG-139603 to fix theme propagation bug
+    font {
+        pointSize: 10
+        family: 'Noto Sans'
+    }
+    Material.theme: MpvqcTheme.isDark ? Material.Dark : Material.Light
+    Material.accent: MpvqcTheme.control
+    Material.background: MpvqcTheme.background
+    Material.foreground: MpvqcTheme.foreground
     // *********************************************************
 
     Binding {

@@ -51,11 +51,11 @@ ApplicationWindow {
     color: Material.background
     visible: true
 
-    Material.theme: root.mpvqcTheme.isDark ? Material.Dark : Material.Light
-    Material.accent: root.mpvqcTheme.control
+    Material.theme: MpvqcTheme.isDark ? Material.Dark : Material.Light
+    Material.accent: MpvqcTheme.control
 
-    Material.background: root.mpvqcTheme.background
-    Material.foreground: root.mpvqcTheme.foreground
+    Material.background: MpvqcTheme.background
+    Material.foreground: MpvqcTheme.foreground
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
