@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Iterable
 
 import inject
-from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
+from PySide6.QtCore import Property, QObject, QTimer, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.decorators import QmlSingletonInProductionOnly
@@ -62,7 +61,3 @@ class MpvqcLabelWidthCalculator(QObject):
         new_width = self._width_service.calculate_time_width(self._player.duration)
         self._time_label_width = new_width
         self.timeLabelWidthChanged.emit(new_width)
-
-    @Slot(list, result=int)
-    def calculateWidthFor(self, labels: Iterable[str]) -> int:
-        return self._width_service.calculate_width_for(labels)

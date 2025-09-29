@@ -24,9 +24,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     pathChanged = Signal(str)
     filenameChanged = Signal(str)
     durationChanged = Signal(float)
-    percentPosChanged = Signal(int)
-    timePosChanged = Signal(int)
-    timeRemainingChanged = Signal(int)
     scaledHeightChanged = Signal(int)
     scaledWidthChanged = Signal(int)
 
@@ -39,9 +36,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self._player.path_changed.connect(self._on_path_changed)
         self._player.filename_changed.connect(self.filenameChanged)
         self._player.duration_changed.connect(self.durationChanged)
-        self._player.percent_pos_changed.connect(self.percentPosChanged)
-        self._player.time_pos_changed.connect(self.timePosChanged)
-        self._player.time_remaining_changed.connect(self.timeRemainingChanged)
         self._player.height_changed.connect(self._on_height_changed)
         self._player.width_changed.connect(self._on_width_changed)
 
@@ -69,18 +63,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     @Property(float, notify=durationChanged)
     def duration(self) -> float:
         return self._player.duration
-
-    @Property(int, notify=percentPosChanged)
-    def percent_pos(self) -> int:
-        return self._player.percent_pos or 0
-
-    @Property(int, notify=timePosChanged)
-    def time_pos(self) -> int:
-        return self._player.time_pos or 0
-
-    @Property(int, notify=timeRemainingChanged)
-    def time_remaining(self) -> int:
-        return self._player.time_remaining or 0
 
     @Property(int, notify=scaledHeightChanged)
     def scaledHeight(self) -> int:
