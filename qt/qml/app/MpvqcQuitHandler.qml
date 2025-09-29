@@ -22,7 +22,7 @@ Item {
     property var quitDialog: null
     property var quitDialogFactory: Component {
         MpvqcQuitMessageBox {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.mpvqcApplication.contentItem
 
             onAccepted: {
                 root._close();

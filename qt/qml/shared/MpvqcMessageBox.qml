@@ -8,14 +8,11 @@ import QtQuick.Controls.Material
 Dialog {
     id: root
 
-    required property var mpvqcApplication
-
     property alias text: _content.text
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     contentWidth: 420
     z: 2
-    parent: mpvqcApplication.contentItem
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: parent
@@ -27,6 +24,17 @@ Dialog {
         horizontalAlignment: Text.AlignLeft
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
+
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            hoverEnabled: true
+        }
     }
 
     footer: MpvqcKeyboardFocusableButtonBox {}

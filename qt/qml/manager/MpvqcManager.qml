@@ -60,19 +60,19 @@ MpvqcObject {
 
         property var mpvqcMessageBoxVideoFoundFactory: Component {
             MpvqcVideoFoundMessageBox {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root.mpvqcApplication.contentItem
             }
         }
 
         property var mpvqcMessageBoxNewDocumentFactory: Component {
             MpvqcNewDocumentMessageBox {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root.mpvqcApplication.contentItem
             }
         }
 
         property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
             MpvqcDocumentNotCompatibleMessageBox {
-                mpvqcApplication: root.mpvqcApplication
+                parent: root.mpvqcApplication.contentItem
             }
         }
 

@@ -318,7 +318,6 @@ files = [
     "qt/qml/shared/MpvqcKeyboardFocusableButtonBox.qml",
     "qt/qml/shared/MpvqcMenu.qml",
     "qt/qml/shared/MpvqcMessageBox.qml",
-    "qt/qml/shared/MpvqcMessageBox2.qml",
     "qt/qml/shared/MpvqcObject.qml",
     "qt/qml/shared/MpvqcSpinBoxRow.qml",
     "qt/qml/shared/MpvqcSwitchRow.qml",

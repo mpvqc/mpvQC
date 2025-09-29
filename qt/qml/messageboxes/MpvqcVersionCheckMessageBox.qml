@@ -9,7 +9,7 @@ import pyobjects
 
 import "../shared"
 
-MpvqcMessageBox2 {
+MpvqcMessageBox {
     property var controller: VersionCheckController {}
 
     title: controller.title || qsTranslate("MessageBoxes", "Checking for Updates...")
