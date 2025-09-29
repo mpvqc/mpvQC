@@ -25,21 +25,21 @@
     </message>
     <message>
         <source>Made by</source>
-        <translation type="unfinished"></translation>
+        <translation>Hecho por</translation>
     </message>
     <message>
         <source>Powered by</source>
-        <translation type="unfinished"></translation>
+        <translation>Impulsado por</translation>
     </message>
     <message>
         <source>Development</source>
         <extracomment>This describes the contribution by a person</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desarrollo</translation>
     </message>
     <message>
         <source>Artwork</source>
         <extracomment>This describes the contribution by a person</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Diseño gráfico</translation>
     </message>
 </context>
 <context>
@@ -169,7 +169,7 @@
     <message>
         <source>Edit &quot;%1&quot;</source>
         <extracomment>%1 will be the comment type being edited</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Editar &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -325,7 +325,7 @@
     </message>
     <message>
         <source>Portuguese</source>
-        <translation type="unfinished"></translation>
+        <translation>Portugués</translation>
     </message>
 </context>
 <context>
@@ -718,7 +718,7 @@
     </message>
     <message>
         <source>You are already using the most recent version of mpvQC!</source>
-        <translation>¡Ya estás utilizando la versión más reciente de mpvQC!</translation>
+        <translation>¡Ya estás usando la versión más reciente de mpvQC!</translation>
     </message>
     <message>
         <source>Server Not Reachable</source>
