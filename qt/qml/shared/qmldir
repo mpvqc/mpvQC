@@ -9,6 +9,7 @@ MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
+MpvqcMessageBox2 MpvqcMessageBox2.qml
 MpvqcObject MpvqcObject.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
