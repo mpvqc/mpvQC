@@ -9,8 +9,6 @@ import QtQuick
 Loader {
     id: root
 
-    required property var mpvqcApplication
-
     readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../messageboxes/MpvqcDocumentNotCompatibleMessageBox.qml")
     readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportMessageBox.qml")
     readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportErrorMessageBox.qml")
@@ -26,7 +24,7 @@ Loader {
 
     function openDocumentNotCompatibleMessageBox(documents: list<string>): void {
         setSource(messageBoxDocumentNotCompatible, {
-            mpvqcApplication: root.mpvqcApplication,
+            parent: root.parent,
             paths: documents
         });
         active = true;
@@ -34,14 +32,14 @@ Loader {
 
     function openExtendedExportsMessageBox(): void {
         setSource(messageBoxExtendedExport, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }
 
     function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
         setSource(messageBoxExtendedExportFailed, {
-            mpvqcApplication: root.mpvqcApplication,
+            parent: root.parent,
             errorMessage: message,
             errorLine: lineNr
         });
@@ -50,21 +48,21 @@ Loader {
 
     function openNewDocumentMessageBox(): void {
         setSource(messageBoxNewDocument, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }
 
     function openVersionCheckMessageBox(): void {
         setSource(messageBoxVersionCheck, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }
 
     function openVideoFoundMessageBox(): void {
         setSource(messageBoxVideoFound, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }

@@ -188,8 +188,6 @@ Page {
     MpvqcContentMessageBoxLoader {
         id: _messageBoxLoader
 
-        mpvqcApplication: root.mpvqcApplication
-
         onMessageBoxClosed: {
             root.focusCommentTable();
         }

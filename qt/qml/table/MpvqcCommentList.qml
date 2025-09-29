@@ -442,7 +442,6 @@ ListView {
 
         function askToDeleteComment(index: int): void {
             setSource("../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
-                mpvqcApplication: null,
                 parent: root.messageBoxParent,
                 commentIndex: index
             });
