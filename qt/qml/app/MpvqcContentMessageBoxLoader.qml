@@ -57,7 +57,7 @@ Loader {
 
     function openVersionCheckMessageBox(): void {
         setSource(messageBoxVersionCheck, {
-            mpvqcApplication: root.mpvqcApplication
+            parent: root.parent
         });
         active = true;
     }

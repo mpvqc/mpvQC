@@ -21,14 +21,6 @@ TestCase {
     when: windowShown
     name: "MpvqcContentMessageBoxLoader"
 
-    QtObject {
-        id: _mock
-
-        function check_for_new_version() { /* prevent warnings if theres no such function */
-        }
-        signal versionChecked(title: string, text: string) // prevent warnings if theres no such signal
-    }
-
     Component {
         id: signalSpy
 
@@ -46,8 +38,7 @@ TestCase {
             mpvqcApplication: {
                 contentItem: testCase,
                 height: testCase.height,
-                width: testCase.width,
-                mpvqcVersionCheckerPyObject: _mock
+                width: testCase.width
             }
         });
         verify(control);
@@ -75,18 +66,37 @@ TestCase {
             const core = name.slice(4, -10);
             const tag = core.charAt(0).toLowerCase() + core.slice(1);
 
-            rows.push({
+            const row = {
                 tag: tag,
                 methodName: name,
-                exec: control => {
+                exec: null
+            };
+
+            switch (name) {
+            case "openVersionCheckMessageBox":
+                row.exec = control => {
+                    control.setSource(control.messageBoxVersionCheck, {
+                        controller: {
+                            title: "title",
+                            text: "text"
+                        }
+                    });
+                    control.active = true;
+                };
+                break;
+            default:
+                row.exec = control => {
                     const args = testCase.arguments[name];
                     if (args) {
                         control[name](...testCase.arguments[name]);
                     } else {
                         control[name]();
                     }
-                }
-            });
+                };
+                break;
+            }
+
+            rows.push(row);
         }
 
         return rows;
