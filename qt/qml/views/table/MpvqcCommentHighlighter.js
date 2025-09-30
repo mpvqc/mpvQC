@@ -12,6 +12,7 @@ https://github.com/tc39/proposal-regex-escaping
  * @param highlightedText {string}
  * @returns {string}
  */
+// biome-ignore lint/correctness/noUnusedVariables: Used in QML
 function highlightComment(comment, highlightedText) {
     const re = new RegExp(RegExp.escape(highlightedText), "gi");
     return comment.replace(re, "<b><u>$&</u></b>");
