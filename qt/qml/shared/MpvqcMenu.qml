@@ -66,19 +66,4 @@ Menu {
     Material.foreground: MpvqcTheme.foreground
     // *********************************************************
 
-    Binding {
-        when: root.isWindows
-        target: root
-        property: "enter"
-        value: null
-        restoreMode: Binding.RestoreNone
-    }
-
-    Binding {
-        when: root.isWindows
-        target: root
-        property: "exit"
-        value: null
-        restoreMode: Binding.RestoreNone
-    }
 }
