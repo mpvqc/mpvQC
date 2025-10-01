@@ -11,6 +11,7 @@ readme = "README.MD"
 dependencies = [
     "inject>=5.3.0",
     "Jinja2>=3.1.6",
+    "loguru~=0.7.3",
     "mpv>=1.0.8",
     "PySide6-Essentials==6.9.1",
     "pywin32>=311; sys_platform == 'win32'",
