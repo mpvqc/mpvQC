@@ -12,14 +12,12 @@ import "../filedialogs"
 import "../messageboxes"
 import "../shared"
 
-import "MpvqcStateReducer.js" as MpvqcStateReducer
-
 MpvqcObject {
     id: root
 
     required property var mpvqcApplication
 
-    readonly property bool saved: _stateManager.state.saved
+    readonly property bool saved: _backend.saved
 
     function reset(): void {
         _backend.reset_impl();
@@ -73,70 +71,6 @@ MpvqcObject {
         property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
             MpvqcDocumentNotCompatibleMessageBox {
                 parent: root.mpvqcApplication.contentItem
-            }
-        }
-
-        readonly property bool saved: _stateManager.state.saved
-        readonly property string _document: _stateManager.state.document
-
-        onImported: change => {
-            const delta = JSON.parse(change);
-            _stateManager.processImport(delta.documents, delta.video);
-        }
-
-        onChanged: {
-            _stateManager.processChange();
-        }
-
-        onReset: {
-            _stateManager.processReset();
-        }
-
-        onSaved: document => {
-            _stateManager.processSave(document);
-        }
-    }
-
-    QtObject {
-        id: _stateManager
-
-        property var state: MpvqcStateReducer.initialState(null)
-
-        function processImport(documents: list<string>, video: string): void {
-            // Python -> QML conversation is really mean :|
-            const isVideoFalsy = `${video}` === 'null' || `${video}` === 'undefined';
-            _dispatch({
-                type: "IMPORT",
-                change: {
-                    documents,
-                    video: isVideoFalsy ? null : video
-                }
-            });
-        }
-
-        function processChange(): void {
-            _dispatch({
-                type: "CHANGE"
-            });
-        }
-
-        function processReset(): void {
-            _dispatch({
-                type: "RESET"
-            });
-        }
-
-        function processSave(document: string): void {
-            _dispatch({
-                type: "SAVE",
-                document
-            });
-        }
-
-        function _dispatch(event): void {
-            const next = MpvqcStateReducer.reducer(state, event);
-            if (next.kind !== state.kind || next.document !== state.document || next.video !== state.video || next.saved !== state.saved) {
-                state = next;
             }
         }
     }

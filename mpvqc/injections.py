@@ -28,6 +28,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.ResourceService, lambda: s.ResourceService())
     binder.bind_to_constructor(s.ReverseTranslatorService, lambda: s.ReverseTranslatorService())
     binder.bind_to_constructor(s.SettingsService, lambda: s.SettingsService())
+    binder.bind_to_constructor(s.StateService, lambda: s.StateService())
     binder.bind_to_constructor(s.TimeFormatterService, lambda: s.TimeFormatterService())
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
     binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
