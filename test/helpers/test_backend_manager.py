@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-
+from collections.abc import Callable
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -9,10 +9,12 @@ import inject
 import pytest
 
 from mpvqc.helpers import MpvqcManagerBackendPyObject
+from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
     PlayerService,
+    StateService,
     TypeMapperService,
     VideoSelectorService,
 )
@@ -24,17 +26,38 @@ RANDOM_VIDEO = Path().home() / "Video" / "my-video.mp4"
 
 @pytest.fixture
 def comments_model_mock() -> MagicMock:
-    return MagicMock()
+    return MagicMock(spec_set=MpvqcCommentModel)
 
 
 @pytest.fixture
 def exporter_service_mock() -> MagicMock:
-    return MagicMock()
+    return MagicMock(spec_set=DocumentExportService)
 
 
 @pytest.fixture
 def player_service_mock() -> MagicMock:
-    return MagicMock()
+    return MagicMock(spec_set=PlayerService)
+
+
+@pytest.fixture
+def state_service() -> StateService:
+    return StateService()
+
+
+@pytest.fixture
+def configure_state(state_service) -> Callable:
+    from mpvqc.services.state import ApplicationState
+
+    def _configure(**kwargs):
+        # noinspection PyProtectedMember
+        old = state_service._state
+        state_service._state = ApplicationState(
+            document=kwargs.get("document", old.document),
+            video=kwargs.get("video", old.video),
+            saved=bool(kwargs.get("saved", old.saved)),
+        )
+
+    return _configure
 
 
 @pytest.fixture
@@ -86,9 +109,10 @@ def qt_app(comments_model_mock):
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(exporter_service_mock):
+def configure_inject(exporter_service_mock, state_service):
     def config(binder: inject.Binder):
         binder.bind(DocumentExportService, exporter_service_mock)
+        binder.bind(StateService, state_service)
 
     inject.configure(config, clear=True, allow_override=True)
 
@@ -122,38 +146,42 @@ def reconfigure_inject(
     return _reconfigure_inject
 
 
-def test_reset_saved_state(manager, comments_model_mock):
-    manager.setProperty("saved", True)
-    assert manager.is_saved
+def test_reset_saved_state(manager, configure_state, comments_model_mock):
+    configure_state(saved=True)
+    assert manager.saved
 
     manager.reset_impl()
     assert comments_model_mock.clear_comments.called
+    assert manager.saved
 
 
-def test_reset_unsaved_state_do_reset(manager, comments_model_mock, confirm_reset_message_box):
-    manager.setProperty("saved", False)
+def test_reset_unsaved_state_do_reset(manager, configure_state, comments_model_mock, confirm_reset_message_box):
+    configure_state(saved=False)
 
     manager.reset_impl()
     confirm_reset_message_box.accepted.emit()
 
     assert comments_model_mock.clear_comments.called
+    assert manager.saved
 
 
-def test_reset_unsaved_state_cancel_reset(manager, comments_model_mock, confirm_reset_message_box):
-    manager.setProperty("saved", False)
+def test_reset_unsaved_state_cancel_reset(manager, configure_state, comments_model_mock, confirm_reset_message_box):
+    configure_state(saved=False)
 
     manager.reset_impl()
     confirm_reset_message_box.rejected.emit()
 
     assert not comments_model_mock.clear_comments.called
+    assert not manager.saved
 
 
 def test_save_saved_state_no_document_opens_dialog(
     manager,
+    configure_state,
     export_document_dialog,
     exporter_service_mock,
 ):
-    manager.setProperty("saved", True)
+    configure_state(saved=True)
 
     manager.save_impl()
 
@@ -163,11 +191,11 @@ def test_save_saved_state_no_document_opens_dialog(
 
 def test_save_saved_state_with_document(
     manager,
+    configure_state,
     export_document_dialog,
     exporter_service_mock,
 ):
-    manager.setProperty("saved", True)
-    manager.setProperty("_document", RANDOM_FILE)
+    configure_state(saved=True, document=RANDOM_FILE)
 
     manager.save_impl()
 
@@ -179,13 +207,14 @@ def test_save_saved_state_with_document(
 
 def test_save_unsaved_state_do_save(
     manager,
+    configure_state,
     export_document_dialog,
     exporter_service_mock,
     type_mapper,
     make_spy,
 ):
-    saved_spy = make_spy(manager.saved)
-    manager.setProperty("saved", False)
+    configure_state(saved=False)
+    saved_spy = make_spy(manager.savedChanged)
 
     manager.save_impl()
 
@@ -201,12 +230,13 @@ def test_save_unsaved_state_do_save(
 
 def test_save_unsaved_state_cancel_save(
     manager,
+    configure_state,
     export_document_dialog,
     exporter_service_mock,
     make_spy,
 ):
-    saved_spy = make_spy(manager.saved)
-    manager.setProperty("saved", False)
+    configure_state(saved=False)
+    saved_spy = make_spy(manager.savedChanged)
 
     manager.save_impl()
 
@@ -217,13 +247,11 @@ def test_save_unsaved_state_cancel_save(
 
 def test_import_document(
     reconfigure_inject,
+    configure_state,
     manager,
     type_mapper,
     comments_model_mock,
-    make_spy,
 ):
-    imported_spy = make_spy(manager.imported)
-
     reconfigure_inject(
         import_result=DocumentImporterService.DocumentImportResult(
             valid_documents=[RANDOM_FILE],
@@ -234,24 +262,21 @@ def test_import_document(
         pick_video=None,
     )
 
-    manager.setProperty("saved", True)
-    manager.setProperty("_document", Path.home())
+    configure_state(saved=True, document=Path.home())
 
     manager.open_documents_impl([type_mapper.map_path_to_url(RANDOM_FILE)])
 
     assert comments_model_mock.import_comments.called
-    assert imported_spy.count() == 1
 
 
 def test_import_video(
     reconfigure_inject,
+    configure_state,
     manager,
     type_mapper,
     player_service_mock,
     make_spy,
 ):
-    imported_spy = make_spy(manager.imported)
-
     reconfigure_inject(
         import_result=DocumentImporterService.DocumentImportResult(
             valid_documents=[],
@@ -262,13 +287,11 @@ def test_import_video(
         pick_video=RANDOM_VIDEO,
     )
 
-    manager.setProperty("saved", True)
-    manager.setProperty("_document", Path.home())
+    configure_state(saved=True, document=Path.home())
 
     manager.open_video_impl(type_mapper.map_path_to_url(RANDOM_VIDEO))
 
     assert player_service_mock.open_video.called
-    assert imported_spy.count() == 1
 
 
 def test_import_subtitles(

@@ -2,12 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import json
 from functools import cached_property
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import QCoreApplication, QObject, QUrl, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, QUrl, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
@@ -16,6 +15,7 @@ from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
     PlayerService,
+    StateService,
     TypeMapperService,
     VideoSelectorService,
 )
@@ -24,6 +24,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
+# noinspection PyTypeChecker
 @QmlElement
 class MpvqcManagerBackendPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
@@ -31,27 +32,27 @@ class MpvqcManagerBackendPyObject(QObject):
     _player: PlayerService = inject.attr(PlayerService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
+    _app_state: StateService = inject.attr(StateService)
 
-    imported = Signal(str)  # json payload
-    changed = Signal()
-    reset = Signal()
-    saved = Signal(str)
+    savedChanged = Signal(bool)
 
     def __init__(self):
         super().__init__()
         QCoreApplication.instance().application_ready.connect(lambda: self._on_application_ready())
+
+        self._app_state.saved_changed.connect(self.savedChanged)
+
+    @Property(bool, notify=savedChanged)
+    def saved(self) -> bool:
+        return self._app_state.saved
 
     @cached_property
     def _comment_model(self) -> MpvqcCommentModel:
         return QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel")
 
     @property
-    def document(self) -> str | None:
-        return self.property("_document")
-
-    @property
-    def is_saved(self) -> bool:
-        return bool(self.property("saved"))
+    def _document(self) -> Path | None:
+        return self._app_state.document
 
     def _on_application_ready(self):
         def bind_qml_property_with(name: str) -> QQmlComponent:
@@ -74,12 +75,8 @@ class MpvqcManagerBackendPyObject(QObject):
         # fmt: on
 
         def on_comments_changed(*_):
-            self.changed.emit()
+            self._app_state.change()
 
-        def on_comments_cleared(*_):
-            self.reset.emit()
-
-        self._comment_model.commentsCleared.connect(on_comments_cleared)
         self._comment_model.commentsClearedUndone.connect(on_comments_changed)
 
         # Signal 'commentsImportedInitially' is an "import" rather than a "change"
@@ -115,8 +112,9 @@ class MpvqcManagerBackendPyObject(QObject):
 
         def _reset():
             self._comment_model.clear_comments()
+            self._app_state.reset()
 
-        if self.is_saved:
+        if self.saved:
             _reset()
         else:
             _ask_to_confirm_reset()
@@ -161,11 +159,7 @@ class MpvqcManagerBackendPyObject(QObject):
 
         def _update_state(video: Path | None):
             if video or document_import_result.valid_documents:
-                payload = {
-                    "documents": self._type_mapper.map_paths_to_str(document_import_result.valid_documents),
-                    "video": self._type_mapper.map_path_to_str(video) if video else None,
-                }
-                self.imported.emit(json.dumps(payload))
+                self._app_state.import_documents(documents=document_import_result.valid_documents, video=video)
 
         def _display_erroneous_documents():
             paths = document_import_result.invalid_documents
@@ -188,14 +182,14 @@ class MpvqcManagerBackendPyObject(QObject):
 
     @Slot()
     def save_impl(self):
-        if document := self.document:
+        if document := self._document:
             self._save(document)
         else:
             self.save_as_impl()
 
-    def _save(self, path: str):
-        self._exporter.save(Path(path))
-        self.saved.emit(path)
+    def _save(self, document: Path):
+        self._exporter.save(document)
+        self._app_state.save(document)
 
     @Slot()
     def save_as_impl(self):
@@ -206,5 +200,5 @@ class MpvqcManagerBackendPyObject(QObject):
         dialog = self.dialog_export_document_factory.createObject(None, properties)
         dialog.accepted.connect(dialog.deleteLater)
         dialog.rejected.connect(dialog.deleteLater)
-        dialog.savePressed.connect(lambda url: self._save(self._type_mapper.map_url_to_path_string(url)))
+        dialog.savePressed.connect(lambda url: self._save(self._type_mapper.map_url_to_path(url)))
         dialog.open()
