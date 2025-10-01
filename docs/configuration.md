@@ -8,7 +8,24 @@ SPDX-License-Identifier: MIT
 
 mpvQC can be configured using the following environment variables:
 
-| **Name**                     | **Default Value** | **Operating System** | **Description**                                                                                                                                                                        |
-| ---------------------------- | ----------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `MPVQC_DEBUG`                | _No default_      | All                  | Enables debug mode, intended primarily for developers and testing.                                                                                                                     |
-| `MPVQC_VIDEO_SCALING_FACTOR` | `1.0`             | Linux                | Specifies the desktop scaling factor. Because Linux does not provide a universal method to retrieve fractional scaling from the desktop environment, Linux users must set it manually. |
+- **`MPVQC_DEBUG`**
+
+  - **Default Value:** not set
+  - **Operating System:** All
+  - **Description:** Enables debug mode for development and testing purposes.
+  - **Possible Values:** *not set* or *any value*
+
+- **`MPVQC_PLAYER_LOG`**
+
+  - **Default Value:** enabled if `MPVQC_DEBUG` set, disabled else
+  - **Operating System:** All
+  - **Description:** Enables mpv player logging
+  - **Possible Values:** *not set* or *any value*
+
+- **`MPVQC_VIDEO_SCALING_FACTOR`**
+
+  - **Default Value:** `1.0`
+  - **Operating System:** Linux only
+  - **Description:** Specifies the desktop scaling factor. Must be set manually on Linux due to the lack of a
+    universal method for retrieving fractional scaling from desktop environments.
+  - **Possible Values:** Any positive decimal number (e.g., `1.0`, `1.25`, `1.5`, `2.0`)

@@ -25,7 +25,38 @@ def configure_injections(type_mapper):
     inject.configure(config, clear=True)
 
 
-def create_mpv_and_player_service(has_video: bool = False) -> Generator[MagicMock, PlayerService]:
+def test_log_handler_set_when_mpvqc_debug_is_set(monkeypatch):
+    monkeypatch.setenv("MPVQC_DEBUG", "1")
+
+    from mpvqc.services.player import PlayerService
+
+    service = PlayerService()
+
+    assert "log_handler" in service._init_args
+
+
+def test_log_handler_set_when_mpvqc_player_log_is_set(monkeypatch):
+    monkeypatch.setenv("MPVQC_PLAYER_LOG", "1")
+
+    from mpvqc.services.player import PlayerService
+
+    service = PlayerService()
+
+    assert "log_handler" in service._init_args
+
+
+def test_log_handler_not_set_when_no_env_vars(monkeypatch):
+    monkeypatch.delenv("MPVQC_DEBUG", raising=False)
+    monkeypatch.delenv("MPVQC_PLAYER_LOG", raising=False)
+
+    from mpvqc.services.player import PlayerService
+
+    service = PlayerService()
+
+    assert "log_handler" not in service._init_args
+
+
+def _create_mpv_and_player_service(has_video: bool = False) -> Generator[MagicMock, PlayerService]:
     mpv_mock = MagicMock()
     mpv_mock.path = "video" if has_video else None
 
@@ -42,7 +73,7 @@ def create_mpv_and_player_service(has_video: bool = False) -> Generator[MagicMoc
 
 
 def test_subtitles_open_video_not_present():
-    mpv_mock, service = next(create_mpv_and_player_service(has_video=False))
+    mpv_mock, service = next(_create_mpv_and_player_service(has_video=False))
 
     service.open_subtitles(SUBTITLES)
 
@@ -51,7 +82,7 @@ def test_subtitles_open_video_not_present():
 
 
 def test_subtitles_open_video_present():
-    mpv_mock, service = next(create_mpv_and_player_service(has_video=True))
+    mpv_mock, service = next(_create_mpv_and_player_service(has_video=True))
 
     service.open_subtitles(SUBTITLES)
 
@@ -61,7 +92,7 @@ def test_subtitles_open_video_present():
 
 
 def test_subtitles_load_subtitles():
-    mpv_mock, service = next(create_mpv_and_player_service(has_video=False))
+    mpv_mock, service = next(_create_mpv_and_player_service(has_video=False))
 
     service.open_subtitles(SUBTITLES)
     service.open_video(VIDEO)
@@ -79,7 +110,7 @@ def test_subtitles_load_subtitles():
 
 
 def test_subtitles_empties_cache():
-    mpv_mock, service = next(create_mpv_and_player_service(has_video=False))
+    mpv_mock, service = next(_create_mpv_and_player_service(has_video=False))
 
     service.open_subtitles(SUBTITLES)
     service.open_video(VIDEO)

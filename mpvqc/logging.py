@@ -9,26 +9,42 @@ from collections.abc import Callable
 
 from loguru import logger
 
+MPVQC_LOG_FMT = (
+    "<green>{time:HH:mm:ss.SSSSS}</green> | "
+    "<level>{level: <8}</level> | "
+    "<cyan>{name}</cyan>:<cyan>{line}</cyan> | "
+    "<level>{message}</level>\n"
+)
+
+MPV_LOG_FMT = (
+    "<green>{time:HH:mm:ss.SSSSS}</green> | "
+    "<level>{level: <8}</level> | "
+    "{extra[mpv_level]} • "
+    "{extra[mpv_context]} • "
+    "<level>{message}</level>\n"
+)
+
 
 def setup_mpvqc_logging() -> None:
-    logging_format = (
-        "<green>{time:HH:mm:ss.SSSSS}</green> | "
-        "<level>{level: <8}</level> | "
-        "<cyan>{name}</cyan>:<cyan>{line}</cyan> | "
-        "<level>{message}</level>"
-    )
     logger.remove()
-    logger.add(sys.stdout, format=logging_format, level="DEBUG" if os.getenv("MPVQC_DEBUG", "") else "INFO")
+
+    def format_record(record):
+        match record["level"].name:
+            case "MPV":
+                return MPV_LOG_FMT
+            case _:
+                return MPVQC_LOG_FMT
+
+    logger.level("MPV", no=30, color="<magenta>")
+    logger.add(sys.stdout, format=format_record, level="DEBUG" if os.getenv("MPVQC_DEBUG", "") else "INFO")
 
 
 def qt_log_handler() -> Callable:
     from PySide6.QtCore import QtMsgType
 
     def identify_qml_log_line(record) -> None:
-        if (extra := record.get("extra")) and (override := extra["override"]) is not None:
-            record["name"] = override["name"]
-            record["line"] = override["line"]
-            record["message"] = override["message"]
+        if extra := record.get("extra"):
+            record.update(extra)
 
     patched_logger = logger.patch(identify_qml_log_line)
 
@@ -59,6 +75,6 @@ def qt_log_handler() -> Callable:
         else:
             override = {"name": "unknown", "line": "unknown", "message": message}
 
-        log_func("", override=override)
+        log_func("", **override)
 
     return handler

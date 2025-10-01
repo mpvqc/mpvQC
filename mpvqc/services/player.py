@@ -2,9 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 from collections.abc import Iterable
 
 import inject
+from loguru import logger
 from mpv import MPV
 from PySide6.QtCore import QObject, Signal
 
@@ -44,6 +46,14 @@ class PlayerService(QObject):
             "screenshot_directory": self._type_mapper.map_path_to_str(self._paths.dir_screenshots),
             "ytdl": "yes",
         }
+
+        if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
+
+            def player_logger(*args):
+                level, context, message = args
+                logger.log("MPV", message.strip(), mpv_level=level, mpv_context=context)
+
+            self._init_args["log_handler"] = player_logger
 
         self._mpv: MPV | None = None
 
