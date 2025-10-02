@@ -15,4 +15,5 @@ from .footer import MpvqcFooterViewController
 from .import_settings_dialog import MpvqcImportSettingsDialogControllerPyObject
 from .player import MpvqcPlayerController
 from .search_box import MpvqcSearchBoxController
+from .theme import MpvqcThemeViewModel
 from .version_check_message_box import VersionCheckController
