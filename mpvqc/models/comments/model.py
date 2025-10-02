@@ -30,6 +30,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
+# noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
 class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
@@ -62,17 +63,7 @@ class MpvqcCommentModel(QStandardItemModel):
     searchInvalidated = Signal()
     copiedToClipboard = Signal(str)  # param: content - for tests only
 
-    def get_selected_row(self) -> int:
-        return self._selected_row
-
-    def set_selected_row(self, index: int) -> None:
-        if self._selected_row != index:
-            self._selected_row = index
-            self.selectedRowChanged.emit(index)
-            self._undo_stack.prevent_add_update_merge()
-
     selectedRowChanged = Signal(int)
-    selectedRow = Property(int, get_selected_row, set_selected_row, notify=selectedRowChanged)
 
     def __init__(self):
         super().__init__()
@@ -84,6 +75,17 @@ class MpvqcCommentModel(QStandardItemModel):
 
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
+
+    @Property(int, notify=selectedRowChanged)
+    def selectedRow(self) -> int:
+        return self._selected_row
+
+    @selectedRow.setter
+    def selectedRow(self, index: int) -> None:
+        if self._selected_row != index:
+            self._selected_row = index
+            self.selectedRowChanged.emit(index)
+            self._undo_stack.prevent_add_update_merge()
 
     @Slot(list)
     def import_comments(self, comments: list[Comment]) -> None:
