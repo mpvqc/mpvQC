@@ -41,19 +41,11 @@ TestCase {
                     writeHeaderNickname: true,
                     writeHeaderVideoPath: true,
                     importWhenVideoLinkedInDocument: 0,
-                    themeIdentifier: "Material You Dark",
-                    themeColorOption: 4,
                     backupEnabled: false,
                     backupInterval: 15,
                     commentTypes: ["Comment Type"]
                 },
                 mpvqcTheme: {
-                    availableThemes: [
-                        {
-                            name: "name",
-                            preview: "blue"
-                        }
-                    ],
                     control: "blue",
                     rowHighlight: "blue",
                     getForeground: arg => "blue",

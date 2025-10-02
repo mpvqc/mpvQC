@@ -39,10 +39,6 @@ class MpvqcSettings(QObject):
     # SplitView
     layoutOrientationChanged = Signal(int)
 
-    # Theme
-    themeIdentifierChanged = Signal(str)
-    themeColorOptionChanged = Signal(int)
-
     # Window Title
     windowTitleFormatChanged = Signal(int)
 
@@ -56,8 +52,6 @@ class MpvqcSettings(QObject):
         self._settings.lastDirectoryDocumentsChanged.connect(self.lastDirectoryDocumentsChanged)
         self._settings.lastDirectorySubtitlesChanged.connect(self.lastDirectorySubtitlesChanged)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
-        self._settings.themeIdentifierChanged.connect(self.themeIdentifierChanged)
-        self._settings.themeColorOptionChanged.connect(self.themeColorOptionChanged)
         self._settings.windowTitleFormatChanged.connect(self.windowTitleFormatChanged)
 
     @Property(str, notify=languageChanged)
@@ -107,22 +101,6 @@ class MpvqcSettings(QObject):
     @layoutOrientation.setter
     def layoutOrientation(self, value: int):
         self._settings.layout_orientation = value
-
-    @Property(str, notify=themeIdentifierChanged)
-    def themeIdentifier(self) -> str:
-        return self._settings.theme_identifier
-
-    @themeIdentifier.setter
-    def themeIdentifier(self, value: str):
-        self._settings.theme_identifier = value
-
-    @Property(int, notify=themeColorOptionChanged)
-    def themeColorOption(self) -> int:
-        return self._settings.theme_color_option
-
-    @themeColorOption.setter
-    def themeColorOption(self, value: int):
-        self._settings.theme_color_option = value
 
     @Property(int, notify=windowTitleFormatChanged)
     def windowTitleFormat(self) -> int:

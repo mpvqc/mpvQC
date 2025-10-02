@@ -1,0 +1,348 @@
+[
+    {
+        "identifier": "material-you",
+        "name": "Material You",
+        "preview": "#f4f4e9",
+        "isDark": false,
+        "palettes": [
+            {
+                "background": "#fff0ee",
+                "foreground": "#534341",
+                "control": "#775652",
+                "rowHighlight": "#904a42",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#fff0ee",
+                "rowBaseText": "#534341",
+                "rowBaseAlternate": "#e8dad8",
+                "rowBaseAlternateText": "#534341"
+            },
+            {
+                "background": "#fff0f1",
+                "foreground": "#524345",
+                "control": "#75565b",
+                "rowHighlight": "#8e4957",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#fff0f1",
+                "rowBaseText": "#524345",
+                "rowBaseAlternate": "#e8dadb",
+                "rowBaseAlternateText": "#524345"
+            },
+            {
+                "background": "#fcf0f7",
+                "foreground": "#4d444c",
+                "control": "#6b586b",
+                "rowHighlight": "#7b4e7f",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#fcf0f7",
+                "rowBaseText": "#4d444c",
+                "rowBaseAlternate": "#e5dae1",
+                "rowBaseAlternateText": "#4d444c"
+            },
+            {
+                "background": "#f8f1fa",
+                "foreground": "#49454e",
+                "control": "#635b70",
+                "rowHighlight": "#68548e",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f8f1fa",
+                "rowBaseText": "#49454e",
+                "rowBaseAlternate": "#e1dbe3",
+                "rowBaseAlternateText": "#49454e"
+            },
+            {
+                "background": "#f5f2fa",
+                "foreground": "#46464f",
+                "control": "#5b5d72",
+                "rowHighlight": "#515b92",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f5f2fa",
+                "rowBaseText": "#46464f",
+                "rowBaseAlternate": "#dfdce3",
+                "rowBaseAlternateText": "#46464f"
+            },
+            {
+                "background": "#f2f3fa",
+                "foreground": "#43474e",
+                "control": "#535f70",
+                "rowHighlight": "#36618e",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f2f3fa",
+                "rowBaseText": "#43474e",
+                "rowBaseAlternate": "#dcdde3",
+                "rowBaseAlternateText": "#43474e"
+            },
+            {
+                "background": "#f1f4f9",
+                "foreground": "#41474d",
+                "control": "#50606e",
+                "rowHighlight": "#27638a",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f1f4f9",
+                "rowBaseText": "#41474d",
+                "rowBaseAlternate": "#dbdee2",
+                "rowBaseAlternateText": "#41474d"
+            },
+            {
+                "background": "#eff5f6",
+                "foreground": "#3f484a",
+                "control": "#4a6268",
+                "rowHighlight": "#006876",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#eff5f6",
+                "rowBaseText": "#3f484a",
+                "rowBaseAlternate": "#d9dfe0",
+                "rowBaseAlternateText": "#3f484a"
+            },
+            {
+                "background": "#eff5f2",
+                "foreground": "#3f4947",
+                "control": "#4a635f",
+                "rowHighlight": "#006a60",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#eff5f2",
+                "rowBaseText": "#3f4947",
+                "rowBaseAlternate": "#d9dfdc",
+                "rowBaseAlternateText": "#3f4947"
+            },
+            {
+                "background": "#f1f5ec",
+                "foreground": "#424940",
+                "control": "#52634f",
+                "rowHighlight": "#3b6939",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f1f5ec",
+                "rowBaseText": "#424940",
+                "rowBaseAlternate": "#dbdfd7",
+                "rowBaseAlternateText": "#424940"
+            },
+            {
+                "background": "#f3f4e9",
+                "foreground": "#44483d",
+                "control": "#576249",
+                "rowHighlight": "#4b662c",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f3f4e9",
+                "rowBaseText": "#44483d",
+                "rowBaseAlternate": "#ddded4",
+                "rowBaseAlternateText": "#44483d"
+            },
+            {
+                "background": "#f6f4e7",
+                "foreground": "#47483b",
+                "control": "#5e6044",
+                "rowHighlight": "#5c631d",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f6f4e7",
+                "rowBaseText": "#47483b",
+                "rowBaseAlternate": "#e0ded2",
+                "rowBaseAlternateText": "#47483b"
+            },
+            {
+                "background": "#f9f3e5",
+                "foreground": "#4a473a",
+                "control": "#645f41",
+                "rowHighlight": "#685f12",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#f9f3e5",
+                "rowBaseText": "#4a473a",
+                "rowBaseAlternate": "#e2ddd0",
+                "rowBaseAlternateText": "#4a473a"
+            },
+            {
+                "background": "#fcf2e5",
+                "foreground": "#4d4639",
+                "control": "#6b5d3f",
+                "rowHighlight": "#775a0b",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#fcf2e5",
+                "rowBaseText": "#4d4639",
+                "rowBaseAlternate": "#e5dcd0",
+                "rowBaseAlternateText": "#4d4639"
+            },
+            {
+                "background": "#fff1e7",
+                "foreground": "#51453a",
+                "control": "#725a42",
+                "rowHighlight": "#855318",
+                "rowHighlightText": "#ffffff",
+                "rowBase": "#fff1e7",
+                "rowBaseText": "#51453a",
+                "rowBaseAlternate": "#e8dbd2",
+                "rowBaseAlternateText": "#51453a"
+            }
+        ]
+    },
+    {
+        "identifier": "material-you-dark",
+        "name": "Material You Dark",
+        "preview": "#121212",
+        "isDark": true,
+        "palettes": [
+            {
+                "background": "#1a1110",
+                "foreground": "#dbc5c1",
+                "control": "#ffb8af",
+                "rowHighlight": "#7e3d34",
+                "rowHighlightText": "#fff7f6",
+                "rowBase": "#1a1110",
+                "rowBaseText": "#dbc5c1",
+                "rowBaseAlternate": "#221615",
+                "rowBaseAlternateText": "#dbc5c1"
+            },
+            {
+                "background": "#191112",
+                "foreground": "#dac5c6",
+                "control": "#ffb6c1",
+                "rowHighlight": "#7d3c48",
+                "rowHighlightText": "#fff7f7",
+                "rowBase": "#191112",
+                "rowBaseText": "#dac5c6",
+                "rowBaseAlternate": "#201617",
+                "rowBaseAlternateText": "#dac5c6"
+            },
+            {
+                "background": "#171216",
+                "foreground": "#d3c6cf",
+                "control": "#eeb8f0",
+                "rowHighlight": "#6c4070",
+                "rowHighlightText": "#fff7fa",
+                "rowBase": "#171216",
+                "rowBaseText": "#d3c6cf",
+                "rowBaseAlternate": "#1e171d",
+                "rowBaseAlternateText": "#d3c6cf"
+            },
+            {
+                "background": "#151218",
+                "foreground": "#cec7d2",
+                "control": "#d6bfff",
+                "rowHighlight": "#59467e",
+                "rowHighlightText": "#fef7ff",
+                "rowBase": "#151218",
+                "rowBaseText": "#cec7d2",
+                "rowBaseAlternate": "#1b171f",
+                "rowBaseAlternateText": "#cec7d2"
+            },
+            {
+                "background": "#121318",
+                "foreground": "#cac8d3",
+                "control": "#bec6ff",
+                "rowHighlight": "#434c83",
+                "rowHighlightText": "#fbf8ff",
+                "rowBase": "#121318",
+                "rowBaseText": "#cac8d3",
+                "rowBaseAlternate": "#17191f",
+                "rowBaseAlternateText": "#cac8d3"
+            },
+            {
+                "background": "#111418",
+                "foreground": "#c6cad2",
+                "control": "#a4cdff",
+                "rowHighlight": "#25527f",
+                "rowHighlightText": "#f8f9ff",
+                "rowBase": "#111418",
+                "rowBaseText": "#c6cad2",
+                "rowBaseAlternate": "#161a1f",
+                "rowBaseAlternateText": "#c6cad2"
+            },
+            {
+                "background": "#101417",
+                "foreground": "#c4cad1",
+                "control": "#99d0fb",
+                "rowHighlight": "#12557a",
+                "rowHighlightText": "#f6f9fe",
+                "rowBase": "#101417",
+                "rowBaseText": "#c4cad1",
+                "rowBaseAlternate": "#151a1e",
+                "rowBaseAlternateText": "#c4cad1"
+            },
+            {
+                "background": "#0e1416",
+                "foreground": "#c2cbce",
+                "control": "#86d6e6",
+                "rowHighlight": "#005865",
+                "rowHighlightText": "#f5fafc",
+                "rowBase": "#0e1416",
+                "rowBaseText": "#c2cbce",
+                "rowBaseAlternate": "#121a1d",
+                "rowBaseAlternateText": "#c2cbce"
+            },
+            {
+                "background": "#0e1513",
+                "foreground": "#c1ccc9",
+                "control": "#85d9cb",
+                "rowHighlight": "#005a52",
+                "rowHighlightText": "#f4fbf8",
+                "rowBase": "#0e1513",
+                "rowBaseText": "#c1ccc9",
+                "rowBaseAlternate": "#121b19",
+                "rowBaseAlternateText": "#c1ccc9"
+            },
+            {
+                "background": "#10140f",
+                "foreground": "#c5ccc0",
+                "control": "#a4d79d",
+                "rowHighlight": "#2d5a2c",
+                "rowHighlightText": "#f7faf1",
+                "rowBase": "#10140f",
+                "rowBaseText": "#c5ccc0",
+                "rowBaseAlternate": "#151a13",
+                "rowBaseAlternateText": "#c5ccc0"
+            },
+            {
+                "background": "#12140e",
+                "foreground": "#c8cbbd",
+                "control": "#b4d48d",
+                "rowHighlight": "#3d571f",
+                "rowHighlightText": "#f9faef",
+                "rowBase": "#12140e",
+                "rowBaseText": "#c8cbbd",
+                "rowBaseAlternate": "#171a12",
+                "rowBaseAlternateText": "#c8cbbd"
+            },
+            {
+                "background": "#13140c",
+                "foreground": "#cbcaba",
+                "control": "#c8d07d",
+                "rowHighlight": "#4e540e",
+                "rowHighlightText": "#fcf9ec",
+                "rowBase": "#13140c",
+                "rowBaseText": "#cbcaba",
+                "rowBaseAlternate": "#191a10",
+                "rowBaseAlternateText": "#cbcaba"
+            },
+            {
+                "background": "#15130c",
+                "foreground": "#cfcab8",
+                "control": "#d7cb74",
+                "rowHighlight": "#595102",
+                "rowHighlightText": "#fef9eb",
+                "rowBase": "#15130c",
+                "rowBaseText": "#cfcab8",
+                "rowBaseAlternate": "#1b1910",
+                "rowBaseAlternateText": "#cfcab8"
+            },
+            {
+                "background": "#17130b",
+                "foreground": "#d3c8b7",
+                "control": "#ecc46f",
+                "rowHighlight": "#674c00",
+                "rowHighlightText": "#fff8f1",
+                "rowBase": "#17130b",
+                "rowBaseText": "#d3c8b7",
+                "rowBaseAlternate": "#1e190e",
+                "rowBaseAlternateText": "#d3c8b7"
+            },
+            {
+                "background": "#19120c",
+                "foreground": "#d8c6b8",
+                "control": "#ffbc7a",
+                "rowHighlight": "#744509",
+                "rowHighlightText": "#fff8f4",
+                "rowBase": "#19120c",
+                "rowBaseText": "#d8c6b8",
+                "rowBaseAlternate": "#201710",
+                "rowBaseAlternateText": "#d8c6b8"
+            }
+        ]
+    }
+]
