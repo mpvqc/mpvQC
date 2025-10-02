@@ -51,12 +51,10 @@ def make_select_video(service):
     return _make_select_video
 
 
-def mock_user_choice(choice: CHOICE):
-    mock = MagicMock(spec_set=SettingsService)
-    mock.import_when_video_linked_in_document = choice
-
+@pytest.fixture(autouse=True)
+def configure_injections(settings_service):
     def config(binder: inject.Binder):
-        binder.bind(SettingsService, mock)
+        binder.bind(SettingsService, settings_service)
 
     inject.configure(config, clear=True)
 
@@ -84,8 +82,14 @@ def test_existing_video_dropped(make_select_video, expected, videos_dropped, vid
         ([], [EXISTING_2], None),
     ],
 )
-def test_user_never_wants_to_import_video(make_select_video, expected, videos_dropped, videos_from_documents):
-    mock_user_choice(CHOICE.NEVER)
+def test_user_never_wants_to_import_video(
+    settings_service,
+    make_select_video,
+    expected,
+    videos_dropped,
+    videos_from_documents,
+):
+    settings_service.import_when_video_linked_in_document = CHOICE.NEVER.value
     video_getter = make_select_video(
         existing_videos_dropped=videos_dropped,
         existing_videos_from_documents=videos_from_documents,
@@ -102,8 +106,14 @@ def test_user_never_wants_to_import_video(make_select_video, expected, videos_dr
         ([], [EXISTING_3], EXISTING_3),
     ],
 )
-def test_user_always_wants_to_import_video(make_select_video, expected, videos_dropped, videos_from_documents):
-    mock_user_choice(CHOICE.ALWAYS)
+def test_user_always_wants_to_import_video(
+    settings_service,
+    make_select_video,
+    expected,
+    videos_dropped,
+    videos_from_documents,
+):
+    settings_service.import_when_video_linked_in_document = CHOICE.ALWAYS.value
     video_getter = make_select_video(
         existing_videos_dropped=videos_dropped,
         existing_videos_from_documents=videos_from_documents,
@@ -111,8 +121,12 @@ def test_user_always_wants_to_import_video(make_select_video, expected, videos_d
     assert video_getter() == expected
 
 
-def test_user_will_be_asked(service, make_select_video):
-    mock_user_choice(CHOICE.ASK_EVERY_TIME)
+def test_user_will_be_asked(
+    service,
+    settings_service,
+    make_select_video,
+):
+    settings_service.import_when_video_linked_in_document = CHOICE.ASK_EVERY_TIME.value
     video_getter = make_select_video(
         existing_videos_dropped=[EXISTING_1],
         existing_videos_from_documents=[EXISTING_2],
