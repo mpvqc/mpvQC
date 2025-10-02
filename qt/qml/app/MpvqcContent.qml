@@ -24,8 +24,6 @@ Page {
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
-    readonly property int commentCount: _mpvqcCommentTable.commentCount
-
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }

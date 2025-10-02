@@ -5,6 +5,7 @@
 # ruff: noqa: F401
 from .about_dialog import MpvqcAboutDialogControllerPyObject
 from .backup_dialog import MpvqcBackupDialogControllerPyObject
+from .backup_timer import MpvqcBackupTimerController
 from .comment_types_dialog import MpvqcCommentTypesDialogControllerPyObject
 from .edit_input_dialog import MpvqcEditInputDialogControllerPyObject
 from .edit_mpv_dialog import MpvqcEditMpvDialogControllerPyObject

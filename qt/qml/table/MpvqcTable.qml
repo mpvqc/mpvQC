@@ -6,6 +6,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import pyobjects
+
 Item {
     id: root
 
@@ -71,7 +73,7 @@ Item {
 
         width: root.width
         height: root.height
-        visible: root.commentCount > 0
+        visible: count > 0
 
         timeLabelWidth: root.mpvqcLabelWidthCalculator.timeLabelWidth
         commentTypeLabelWidth: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth
@@ -97,12 +99,20 @@ Item {
     }
 
     MpvqcPlaceholder {
-        id: placeholder
-
         width: root.width
         height: root.height
         visible: root.commentCount === 0
 
         horizontalLayout: root.mpvqcSettings.layoutOrientation === Qt.Horizontal
+    }
+
+    Timer {
+        readonly property MpvqcBackupTimerController controller: MpvqcBackupTimerController {}
+
+        repeat: true
+        interval: controller.backupInterval
+        running: controller.backupEnabled && _commentTable.count > 0
+
+        onTriggered: controller.backup()
     }
 }

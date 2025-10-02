@@ -130,13 +130,6 @@ ApplicationWindow {
         onToggleFullScreenRequested: _windowVisibilityHandler.toggleFullScreen()
     }
 
-    MpvqcBackupper {
-        backend: MpvqcBackupperBackendPyObject {} // qmllint disable
-        isHaveComments: _content.commentCount
-        isBackupEnabled: root.mpvqcSettings.backupEnabled
-        backupInterval: root.mpvqcSettings.backupInterval
-    }
-
     MpvqcWindowVisibilityHandler {
         id: _windowVisibilityHandler
 
