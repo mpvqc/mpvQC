@@ -161,3 +161,14 @@ def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     assert new_undone_spy.count() == 0
     assert new_redone_spy.count() == 1
     assert new_redone_spy.at(invocation=0, argument=0) == 5
+
+
+def test_add_comment_state_changes(model, state_service_mock):
+    model.add_row("commentType")
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
+
+    model.redo()
+    assert state_service_mock.change.call_count == 3

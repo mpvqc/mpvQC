@@ -108,3 +108,11 @@ def test_remove_comment_undo_redo_fires_signals(model, make_spy):
 
     assert removed_spy.count() == 1
     assert removed_undone_spy.count() == 0
+
+
+def test_remove_comment_state_changes(model, state_service_mock):
+    model.remove_row(0)
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2

@@ -10,11 +10,18 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import PlayerService
+from mpvqc.services import PlayerService, StateService
 
 
-@pytest.fixture(scope="session")
-def make_model() -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModel, Callable[[int], None]]]:
+@pytest.fixture
+def state_service_mock():
+    return MagicMock(spec_set=StateService)
+
+
+@pytest.fixture
+def make_model(
+    state_service_mock,
+) -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModel, Callable[[int], None]]]:
     def _make_model(
         set_comments: Iterable[Comment],
         set_player_time: float = 0.0,
@@ -31,6 +38,7 @@ def make_model() -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommen
 
         def config(binder: inject.Binder):
             binder.bind(PlayerService, player_mock)
+            binder.bind(StateService, state_service_mock)
 
         inject.configure(config, clear=True)
 

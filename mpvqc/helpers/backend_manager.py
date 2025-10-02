@@ -71,34 +71,7 @@ class MpvqcManagerBackendPyObject(QObject):
             = bind_qml_property_with(name="mpvqcMessageBoxNewDocumentFactory")
         self.message_box_document_not_compatible_factory \
             = bind_qml_property_with(name="mpvqcMessageBoxDocumentNotCompatibleFactory")
-
         # fmt: on
-
-        def on_comments_changed(*_):
-            self._app_state.change()
-
-        self._comment_model.commentsClearedUndone.connect(on_comments_changed)
-
-        # Signal 'commentsImportedInitially' is an "import" rather than a "change"
-        self._comment_model.commentsImportedRedone.connect(on_comments_changed)
-        self._comment_model.commentsImportedUndone.connect(on_comments_changed)
-
-        self._comment_model.newCommentAddedInitially.connect(on_comments_changed)
-        self._comment_model.newCommentAddedUndone.connect(on_comments_changed)
-        self._comment_model.newCommentAddedRedone.connect(on_comments_changed)
-
-        self._comment_model.commentRemoved.connect(on_comments_changed)
-        self._comment_model.commentRemovedUndone.connect(on_comments_changed)
-
-        self._comment_model.timeUpdatedInitially.connect(on_comments_changed)
-        self._comment_model.timeUpdatedUndone.connect(on_comments_changed)
-        self._comment_model.timeUpdatedRedone.connect(on_comments_changed)
-
-        self._comment_model.commentTypeUpdated.connect(on_comments_changed)
-        self._comment_model.commentTypeUpdatedUndone.connect(on_comments_changed)
-
-        self._comment_model.commentUpdated.connect(on_comments_changed)
-        self._comment_model.commentUpdatedUndone.connect(on_comments_changed)
 
     @Slot()
     def reset_impl(self):

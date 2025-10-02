@@ -189,3 +189,30 @@ def test_update_comments_consecutively_undo_redo(make_model):
     model.undo()
 
     assert model.item(5, 0).data(Role.COMMENT) == "First"
+
+
+def test_update_time_state_changes(model, state_service_mock):
+    model.update_time(0, 100)
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
+
+    model.redo()
+    assert state_service_mock.change.call_count == 3
+
+
+def test_update_comment_type_state_changes(model, state_service_mock):
+    model.update_comment_type(0, "newType")
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
+
+
+def test_update_comment_state_changes(model, state_service_mock):
+    model.update_comment(0, "new comment")
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
