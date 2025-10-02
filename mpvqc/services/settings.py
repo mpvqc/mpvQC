@@ -89,10 +89,11 @@ class SettingsService(QObject):
     # Window Title
     windowTitleFormatChanged = Signal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, ini_file: str = None):
         super().__init__(parent)
-        path = self._type_mapper.map_path_to_str(self._paths.file_settings)
-        self._settings = QSettings(path, QSettings.Format.IniFormat)
+        if ini_file is None:
+            ini_file = self._type_mapper.map_path_to_str(self._paths.file_settings)
+        self._settings = QSettings(ini_file, QSettings.Format.IniFormat)
 
     @staticmethod
     def get_default_comment_types() -> list[str]:

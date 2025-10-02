@@ -50,7 +50,7 @@ class MpvqcFooterViewController(QObject):
         self._comment_count_text = ""
         self._is_comment_count_visible = False
         self._video_percent_text = ""
-        self._is_video_percent_visible = self._settings.statusbar_percentage
+        self._is_video_percent_visible = self._player.video_loaded and self._settings.statusbar_percentage
         self._time_text = ""
         self._is_time_text_visible = self._player.video_loaded and self._settings.time_format != self.TimeFormat.EMPTY
         self._time_width = 0

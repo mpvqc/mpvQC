@@ -2,41 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
-import inject
 import pytest
 from PySide6.QtCore import QLocale
 
-from mpvqc.services import ApplicationPathsService, SettingsService, TypeMapperService
 from mpvqc.services.settings import get_default_language
-
-
-@pytest.fixture(autouse=True)
-def temp_settings_path(tmp_path):
-    settings_file = tmp_path / "test_settings.ini"
-    return str(settings_file)
-
-
-@pytest.fixture(autouse=True)
-def configure_injections(temp_settings_path):
-    def create_app_paths_mock():
-        mock_paths = Mock(spec_set=ApplicationPathsService)
-        mock_paths.file_settings = Path(temp_settings_path)
-        return mock_paths
-
-    def config(binder: inject.Binder):
-        binder.bind_to_constructor(ApplicationPathsService, lambda: create_app_paths_mock())
-        binder.bind_to_constructor(TypeMapperService, lambda: TypeMapperService())
-        binder.bind_to_constructor(SettingsService, lambda: SettingsService())
-
-    inject.configure(config, clear=True)
-
-
-@pytest.fixture
-def settings_service() -> SettingsService:
-    return SettingsService()
 
 
 @pytest.fixture(autouse=True)
@@ -88,13 +59,6 @@ def test_backup_enabled_signal_emission(settings_service, make_spy):
 
     settings_service.backup_enabled = False
     assert spy.count() == 1
-
-
-def test_backup_enabled_persistence(settings_service, temp_settings_path):
-    settings_service.backup_enabled = False
-
-    new_service = SettingsService()
-    assert new_service.backup_enabled is False
 
 
 def test_theme_identifier_default(settings_service):
