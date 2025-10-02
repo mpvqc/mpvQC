@@ -5,18 +5,10 @@
 pragma Singleton
 
 import QtQuick
-
 import pyobjects
 
-import "../models"
-
 QtObject {
-    id: root
-
-    // Allow override in tests
-    property var mpvqcSettings: MpvqcSettings
-
-    readonly property bool isDark: _internal.isDark
+    readonly property bool isDark: _internal.viewModel.isDark
     readonly property alias background: _internal.background.value
     readonly property alias foreground: _internal.foreground.value
     readonly property alias control: _internal.control.value
@@ -45,102 +37,45 @@ QtObject {
         }
     }
 
-    property QtObject _internal1: QtObject {
+    property QtObject _: QtObject {
         id: _internal
 
-        readonly property string themeIdentifier: root.mpvqcSettings?.themeIdentifier ?? "material-you-dark"
-        readonly property int themeColorOption: root.mpvqcSettings?.themeColorOption ?? 4
-
-        readonly property var themeRecord: root.registry.byId(themeIdentifier)
-        readonly property var paletteModel: themeRecord?.model ?? null
-        readonly property int paletteCount: paletteModel?.count ?? 0
-        readonly property bool isDark: themeRecord?.isDark ?? false
-
-        readonly property int effectiveColorOption: {
-            if (paletteCount <= 0) {
-                return 0;
-            }
-            return Math.max(0, Math.min(themeColorOption, paletteCount - 1));
-        }
-
-        readonly property var currentPalette: {
-            return (paletteModel && paletteCount > 0) ? paletteModel.get(effectiveColorOption) : null;
-        }
+        readonly property var viewModel: MpvqcThemeViewModel {}
 
         readonly property AnimatedColor background: AnimatedColor {
-            value: _internal.currentPalette?.background ?? "transparent"
+            value: _internal.viewModel.background
         }
 
         readonly property AnimatedColor foreground: AnimatedColor {
-            value: _internal.currentPalette?.foreground ?? "transparent"
+            value: _internal.viewModel.foreground
         }
 
         readonly property AnimatedColor control: AnimatedColor {
-            value: _internal.currentPalette?.control ?? "transparent"
+            value: _internal.viewModel.control
         }
 
         readonly property AnimatedColor rowHighlight: AnimatedColor {
-            value: _internal.currentPalette?.rowHighlight ?? "transparent"
+            value: _internal.viewModel.rowHighlight
         }
 
         readonly property AnimatedColor rowHighlightText: AnimatedColor {
-            value: _internal.currentPalette?.rowHighlightText ?? "transparent"
+            value: _internal.viewModel.rowHighlightText
         }
 
         readonly property AnimatedColor rowBase: AnimatedColor {
-            value: _internal.currentPalette?.rowBase ?? "transparent"
+            value: _internal.viewModel.rowBase
         }
 
         readonly property AnimatedColor rowBaseText: AnimatedColor {
-            value: _internal.currentPalette?.rowBaseText ?? "transparent"
+            value: _internal.viewModel.rowBaseText
         }
 
         readonly property AnimatedColor rowBaseAlternate: AnimatedColor {
-            value: _internal.currentPalette?.rowBaseAlternate ?? "transparent"
+            value: _internal.viewModel.rowBaseAlternate
         }
 
         readonly property AnimatedColor rowBaseAlternateText: AnimatedColor {
-            value: _internal.currentPalette?.rowBaseAlternateText ?? "transparent"
-        }
-    }
-
-    readonly property QtObject registry: QtObject {
-        readonly property ListModel materialYouModel: MpvqcThemeMaterialYou {}
-        readonly property ListModel materialYouDarkModel: MpvqcThemeMaterialYouDark {}
-
-        readonly property var _themes: [
-            {
-                identifier: "material-you",
-                name: "Material You",
-                preview: "#f4f4e9",
-                isDark: false,
-                model: materialYouModel
-            },
-            {
-                identifier: "material-you-dark",
-                name: "Material You Dark",
-                preview: "#121212",
-                isDark: true,
-                model: materialYouDarkModel
-            }
-        ]
-
-        function byId(identifier: string): var {
-            for (let i = 0; i < _themes.length; ++i) {
-                if (_themes[i].identifier === identifier) {
-                    return _themes[i];
-                }
-            }
-            return _themes[0];
-        }
-
-        function availableThemes(): list<var> {
-            return _themes.map(t => ({
-                        identifier: t.identifier,
-                        name: t.name,
-                        preview: t.preview,
-                        isDark: t.isDark
-                    }));
+            value: _internal.viewModel.rowBaseAlternateText
         }
     }
 }
