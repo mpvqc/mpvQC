@@ -86,3 +86,11 @@ def test_clear_comments_undo_redo_fires_signals(model, make_spy):
     model.redo()
     assert cleared_spy.count() == 1
     assert cleared_undone_spy.count() == 0
+
+
+def test_clear_comments_state_changes(model, state_service_mock):
+    model.clear_comments()
+    assert state_service_mock.change.call_count == 0
+
+    model.undo()
+    assert state_service_mock.change.call_count == 1

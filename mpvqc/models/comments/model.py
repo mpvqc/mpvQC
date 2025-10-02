@@ -10,7 +10,7 @@ from PySide6.QtGui import QGuiApplication, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.datamodels import Comment
-from mpvqc.services import PlayerService, TimeFormatterService
+from mpvqc.services import PlayerService, StateService, TimeFormatterService
 
 from .roles import Role
 from .undo import (
@@ -35,6 +35,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
     _time_formatter = inject.attr(TimeFormatterService)
+    _state: StateService = inject.attr(StateService)
 
     commentsImportedInitially = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
@@ -65,6 +66,8 @@ class MpvqcCommentModel(QStandardItemModel):
 
     selectedRowChanged = Signal(int)
 
+    _commentsChanged = Signal()
+
     def __init__(self):
         super().__init__()
         self.setItemRoleNames(Role.MAPPING)
@@ -75,6 +78,23 @@ class MpvqcCommentModel(QStandardItemModel):
 
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
+
+        self.commentsClearedUndone.connect(self._commentsChanged)
+        self.commentsImportedRedone.connect(self._commentsChanged)
+        self.commentsImportedUndone.connect(self._commentsChanged)
+        self.newCommentAddedInitially.connect(self._commentsChanged)
+        self.newCommentAddedUndone.connect(self._commentsChanged)
+        self.newCommentAddedRedone.connect(self._commentsChanged)
+        self.commentRemoved.connect(self._commentsChanged)
+        self.commentRemovedUndone.connect(self._commentsChanged)
+        self.timeUpdatedInitially.connect(self._commentsChanged)
+        self.timeUpdatedUndone.connect(self._commentsChanged)
+        self.timeUpdatedRedone.connect(self._commentsChanged)
+        self.commentTypeUpdated.connect(self._commentsChanged)
+        self.commentTypeUpdatedUndone.connect(self._commentsChanged)
+        self.commentUpdated.connect(self._commentsChanged)
+        self.commentUpdatedUndone.connect(self._commentsChanged)
+        self._commentsChanged.connect(lambda: self._state.change())
 
     @Property(int, notify=selectedRowChanged)
     def selectedRow(self) -> int:
@@ -186,6 +206,7 @@ class MpvqcCommentModel(QStandardItemModel):
         def on_after_redo(index: QModelIndex, added_initially: bool):
             self.searchInvalidated.emit()
             self.sort(0)
+
             signal = self.timeUpdatedInitially if added_initially else self.timeUpdatedRedone
             signal.emit(index.row())
 
