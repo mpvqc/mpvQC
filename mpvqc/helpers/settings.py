@@ -22,21 +22,10 @@ class MpvqcSettings(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
 
     @QEnum
-    class TimeFormat(IntEnum):
-        EMPTY = 0
-        CURRENT_TIME = 1
-        REMAINING_TIME = 2
-        CURRENT_TOTAL_TIME = 3
-
-    @QEnum
     class WindowTitleFormat(IntEnum):
         DEFAULT = 0
         FILE_NAME = 1
         FILE_PATH = 2
-
-    # Backup
-    backupEnabledChanged = Signal(bool)
-    backupIntervalChanged = Signal(int)
 
     # Common
     languageChanged = Signal(str)
@@ -61,8 +50,6 @@ class MpvqcSettings(QObject):
         super().__init__(parent)
 
         # Connect settings service signals to our signals for QML
-        self._settings.backupEnabledChanged.connect(self.backupEnabledChanged)
-        self._settings.backupIntervalChanged.connect(self.backupIntervalChanged)
         self._settings.languageChanged.connect(self.languageChanged)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
         self._settings.lastDirectoryVideoChanged.connect(self.lastDirectoryVideoChanged)
@@ -72,22 +59,6 @@ class MpvqcSettings(QObject):
         self._settings.themeIdentifierChanged.connect(self.themeIdentifierChanged)
         self._settings.themeColorOptionChanged.connect(self.themeColorOptionChanged)
         self._settings.windowTitleFormatChanged.connect(self.windowTitleFormatChanged)
-
-    @Property(bool, notify=backupEnabledChanged)
-    def backupEnabled(self) -> bool:
-        return self._settings.backup_enabled
-
-    @backupEnabled.setter
-    def backupEnabled(self, value: bool):
-        self._settings.backup_enabled = value
-
-    @Property(int, notify=backupIntervalChanged)
-    def backupInterval(self) -> int:
-        return self._settings.backup_interval
-
-    @backupInterval.setter
-    def backupInterval(self, value: int):
-        self._settings.backup_interval = value
 
     @Property(str, notify=languageChanged)
     def language(self) -> str:
