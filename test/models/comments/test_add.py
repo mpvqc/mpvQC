@@ -132,7 +132,7 @@ def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     new_undone_spy = make_spy(model.newCommentAddedUndone)
     new_redone_spy = make_spy(model.newCommentAddedRedone)
 
-    model.set_selected_row(3)
+    model.selectedRow = 3
     model.add_row("undo redo comment type")
 
     assert new_initially_spy.count() == 1

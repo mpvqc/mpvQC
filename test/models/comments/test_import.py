@@ -117,7 +117,7 @@ def test_import_comments_undo_redo_fires_signals(model, make_spy):
     undone_spy = make_spy(model.commentsImportedUndone)
     redone_spy = make_spy(model.commentsImportedRedone)
 
-    model.set_selected_row(3)
+    model.selectedRow = 3
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     model.import_comments([comment])

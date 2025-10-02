@@ -110,7 +110,7 @@ def test_update_comment_type_fires_signals(model, make_spy):
     undone_spy.reset()
 
     model.undo()
-    model.set_selected_row(3)
+    model.selectedRow = 3
 
     assert updated_spy.count() == 0
     assert undone_spy.count() == 1
@@ -120,7 +120,7 @@ def test_update_comment_type_fires_signals(model, make_spy):
     undone_spy.reset()
 
     model.redo()
-    model.set_selected_row(2)
+    model.selectedRow = 3
 
     assert updated_spy.count() == 1
     assert undone_spy.count() == 0
@@ -164,7 +164,7 @@ def test_update_comment_fires_signals(model, make_spy):
     undone_spy.reset()
 
     model.undo()
-    model.set_selected_row(3)
+    model.selectedRow = 3
 
     assert updated_spy.count() == 0
     assert undone_spy.count() == 1

@@ -374,7 +374,7 @@ def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model)
         ],
     )
 
-    model.set_selected_row(0)
+    model.selectedRow = 0
     model.update_comment(1, "Word Added 1")
     assert_comments(
         actual=model.comments(),
