@@ -13,11 +13,9 @@ from PySide6.QtQml import QmlElement, QQmlComponent
 from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import (
     DocumentExportService,
-    DocumentImporterService,
-    PlayerService,
+    ImportExportWiringService,
     StateService,
     TypeMapperService,
-    VideoSelectorService,
 )
 
 QML_IMPORT_NAME = "pyobjects"
@@ -27,12 +25,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyTypeChecker
 @QmlElement
 class MpvqcManagerBackendPyObject(QObject):
-    _exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _importer: DocumentImporterService = inject.attr(DocumentImporterService)
-    _player: PlayerService = inject.attr(PlayerService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
-    _video_selector: VideoSelectorService = inject.attr(VideoSelectorService)
     _app_state: StateService = inject.attr(StateService)
+    _exporter: DocumentExportService = inject.attr(DocumentExportService)
+    _import_export: ImportExportWiringService = inject.attr(ImportExportWiringService)
+    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     savedChanged = Signal(bool)
 
@@ -65,12 +61,8 @@ class MpvqcManagerBackendPyObject(QObject):
         # fmt: off
         self.dialog_export_document_factory \
             = bind_qml_property_with(name="mpvqcDialogExportDocumentFactory")
-        self.message_box_video_found_factory \
-            = bind_qml_property_with(name="mpvqcMessageBoxVideoFoundFactory")
         self.message_box_new_document_factory \
             = bind_qml_property_with(name="mpvqcMessageBoxNewDocumentFactory")
-        self.message_box_document_not_compatible_factory \
-            = bind_qml_property_with(name="mpvqcMessageBoxDocumentNotCompatibleFactory")
         # fmt: on
 
     @Slot()
@@ -110,48 +102,7 @@ class MpvqcManagerBackendPyObject(QObject):
         videos = self._type_mapper.map_urls_to_path(videos)
         subtitles = self._type_mapper.map_urls_to_path_strings(subtitles)
 
-        document_import_result = self._importer.read(documents)
-
-        def on_video_selected(video: Path | None):
-            _load_new_comments()
-            _load_new_video(video)
-            _load_new_subtitles()
-            _update_state(video)
-            _display_erroneous_documents()
-
-        def _load_new_comments():
-            self._comment_model.import_comments(document_import_result.comments)
-
-        def _load_new_video(video: Path | None):
-            if video:
-                self._player.open_video(f"{video}")
-
-        def _load_new_subtitles():
-            if subtitles:
-                self._player.open_subtitles(subtitles)
-
-        def _update_state(video: Path | None):
-            if video or document_import_result.valid_documents:
-                self._app_state.import_documents(documents=document_import_result.valid_documents, video=video)
-
-        def _display_erroneous_documents():
-            paths = document_import_result.invalid_documents
-
-            if not paths:
-                return
-
-            properties = {"paths": [p.name for p in paths]}
-
-            message_box = self.message_box_document_not_compatible_factory.createObject(None, properties)
-            message_box.closed.connect(message_box.deleteLater)
-            message_box.open()
-
-        self._video_selector.select_video_from(
-            existing_videos_dropped=videos,
-            existing_videos_from_documents=document_import_result.existing_videos,
-            video_found_dialog_factory=self.message_box_video_found_factory,
-            on_video_selected=on_video_selected,
-        )
+        self._import_export.open(documents, videos, subtitles)
 
     @Slot()
     def save_impl(self):

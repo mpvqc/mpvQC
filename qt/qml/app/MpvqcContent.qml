@@ -99,11 +99,6 @@ Page {
 
     MpvqcFileDropArea {
         anchors.fill: _splitView
-        supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
-
-        onFilesDropped: (documents, videos, subtitles) => {
-            root.contentController.openDroppedFiles(documents, videos, subtitles);
-        }
     }
 
     MpvqcNewCommentMenu {

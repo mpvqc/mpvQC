@@ -64,10 +64,6 @@ QtObject {
         addNewCommentRequested(commentType);
     }
 
-    function openDroppedFiles(documents, videos, subtitles): void {
-        mpvqcManager.open(documents, videos, subtitles);
-    }
-
     function preferredSplitSizes(splitViewWidth, splitViewHeight) {
         return {
             width: Math.round(splitViewWidth * defaultSplitRatio),
