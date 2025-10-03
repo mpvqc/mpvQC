@@ -6,7 +6,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QUrl, Signal
+from PySide6.QtCore import Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -32,18 +32,6 @@ class MpvqcApplication(QGuiApplication):
         super().__init__(args)
         self._engine = QQmlApplicationEngine()
 
-    @cache
-    def find_object(self, object_type, name: str):
-        root = self._engine.rootObjects()
-        if not root:
-            msg = "Cannot find root object in QQmlApplicationEngine"
-            raise ValueError(msg)
-        obj = root[0].findChild(object_type, name)
-        if not obj:
-            msg = f"Cannot find {object_type} with name '{name}'"
-            raise ValueError(msg)
-        return obj
-
     def set_window_icon(self):
         icon = QIcon(":/data/icon.svg")
         self.setWindowIcon(icon)
@@ -57,10 +45,8 @@ class MpvqcApplication(QGuiApplication):
 
     def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
+        self._settings.languageChanged.connect(self._engine.setUiLanguage)
         self._engine.uiLanguageChanged.connect(self._retranslate)
-
-    def load_language(self):
-        self._engine.setUiLanguage(self._settings.language)
 
     def _on_quit(self) -> None:
         del self._engine
@@ -69,9 +55,11 @@ class MpvqcApplication(QGuiApplication):
         language_code = self._engine.uiLanguage()
         self._i18n.retranslate(app=self, language_code=language_code)
 
+    def load_language(self):
+        self._engine.setUiLanguage(self._settings.language)
+
     def start_engine(self):
-        url = QUrl.fromLocalFile(":/qt/qml/Main.qml")
-        self._engine.load(url)
+        self._engine.loadFromModule("app", "MpvqcApplication")
 
     def notify_ready(self):
         if not self._engine.rootObjects():
@@ -81,3 +69,15 @@ class MpvqcApplication(QGuiApplication):
     def configure_frameless_window(self):
         window = self.topLevelWindows()[0]
         self._frameless_window.configure_for(self, window)
+
+    @cache
+    def find_object(self, object_type, name: str):
+        root = self._engine.rootObjects()
+        if not root:
+            msg = "Cannot find root object in QQmlApplicationEngine"
+            raise ValueError(msg)
+        obj = root[0].findChild(object_type, name)
+        if not obj:
+            msg = f"Cannot find {object_type} with name '{name}'"
+            raise ValueError(msg)
+        return obj
