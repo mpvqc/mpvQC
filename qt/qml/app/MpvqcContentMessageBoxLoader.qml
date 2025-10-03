@@ -9,6 +9,8 @@ import QtQuick
 Loader {
     id: root
 
+    required property var mpvqcExtendedDocumentExporterPyObject
+
     readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../messageboxes/MpvqcDocumentNotCompatibleMessageBox.qml")
     readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportMessageBox.qml")
     readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportErrorMessageBox.qml")
@@ -77,6 +79,14 @@ Loader {
             root.active = false;
             root.source = "";
             root.messageBoxClosed();
+        }
+    }
+
+    Connections {
+        target: root.mpvqcExtendedDocumentExporterPyObject
+
+        function onErrorOccurred(message: string, line: int): void {
+            root.openExtendedExportFailedMessageBox(message, line);
         }
     }
 }

@@ -80,6 +80,35 @@ ApplicationWindow {
         }
     }
 
+    MpvqcContentDialogLoader {
+        id: _dialogLoader
+
+        isLayoutMirroringEnabled: Application.layoutDirection === Qt.RightToLeft
+
+        onDialogClosed: _content.focusCommentTable()
+    }
+
+    MpvqcContentFileDialogLoader {
+        id: _fileDialogLoader
+
+        mpvqcApplication: root
+        cleanupDelay: 250
+
+        onExtendedDocumentSaved: (document, template) => {
+            root.mpvqcExtendedDocumentExporterPyObject.performExport(document, template);
+        }
+
+        onDialogClosed: _content.focusCommentTable()
+    }
+
+    MpvqcContentMessageBoxLoader {
+        id: _messageBoxLoader
+
+        mpvqcExtendedDocumentExporterPyObject: root.mpvqcExtendedDocumentExporterPyObject
+
+        onMessageBoxClosed: _content.focusCommentTable()
+    }
+
     MouseArea {
         anchors.fill: parent
         cursorShape: undefined
@@ -116,6 +145,39 @@ ApplicationWindow {
 
         extendedExportTemplatesModel: MpvqcExportTemplateModel {}
 
+        onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
+
+        onExtendedExportRequested: (name, path) => {
+            const proposal = root.mpvqcUtilityPyObject.generate_file_path_proposal();
+            _fileDialogLoader.openExtendedDocumentExportDialog(proposal, path);
+        }
+
+        onOpenVideoRequested: _fileDialogLoader.openImportVideoDialog()
+
+        onOpenSubtitlesRequested: _fileDialogLoader.openImportSubtitlesDialog()
+
+        onAppearanceDialogRequested: _dialogLoader.openAppearanceDialog()
+
+        onCommentTypesDialogRequested: _dialogLoader.openCommentTypesDialog()
+
+        onBackupSettingsDialogRequested: _dialogLoader.openBackupSettingsDialog()
+
+        onExportSettingsDialogRequested: _dialogLoader.openExportSettingsDialog()
+
+        onImportSettingsDialogRequested: _dialogLoader.openImportSettingsDialog()
+
+        onEditMpvConfigDialogRequested: _dialogLoader.openEditMpvDialog()
+
+        onEditInputConfigDialogRequested: _dialogLoader.openEditInputDialog()
+
+        onKeyboardShortcutsDialogRequested: _dialogLoader.openShortcutsDialog()
+
+        onAboutDialogRequested: _dialogLoader.openAboutDialog()
+
+        onUpdateDialogRequested: _messageBoxLoader.openVersionCheckMessageBox()
+
+        onExtendedExportDialogRequested: _messageBoxLoader.openExtendedExportsMessageBox()
+
         onWindowDragRequested: root.startSystemMove()
 
         onMinimizeAppRequested: root.showMinimized()
@@ -130,7 +192,6 @@ ApplicationWindow {
 
         mpvqcMpvPlayerPyObject: root.mpvqcMpvPlayerPyObject
         mpvqcManager: root.mpvqcManager
-        mpvqcExtendedDocumentExporterPyObject: root.mpvqcExtendedDocumentExporterPyObject
         mpvqcSettings: root.mpvqcSettings
 
         onAppWindowSizeRequested: (width, height) => {

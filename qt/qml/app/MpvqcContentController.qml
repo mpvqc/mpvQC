@@ -8,7 +8,6 @@ QtObject {
 
     required property var mpvqcMpvPlayerPyObject
     required property var mpvqcManager
-    required property var mpvqcExtendedDocumentExporterPyObject
     required property var mpvqcSettings
 
     // --- Controller configuration / tiny UI-agnostic state ---
@@ -63,10 +62,6 @@ QtObject {
 
     function addNewEmptyComment(commentType): void {
         addNewCommentRequested(commentType);
-    }
-
-    function saveExtendedDocument(documentUrl, templateUrl): void {
-        mpvqcExtendedDocumentExporterPyObject.performExport(documentUrl, templateUrl);
     }
 
     function openDroppedFiles(documents, videos, subtitles): void {

@@ -9,7 +9,7 @@ import QtQuick
 Loader {
     id: root
 
-    required property var mpvqcApplication
+    required property bool isLayoutMirroringEnabled
 
     readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/MpvqcAboutDialog.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/MpvqcAppearanceDialog.qml")
@@ -105,7 +105,7 @@ Loader {
     Binding {
         target: root.item
         property: "isMirrored"
-        value: root.mpvqcApplication.LayoutMirroring.enabled
+        value: root.isLayoutMirroringEnabled
         restoreMode: Binding.RestoreNone
     }
 }
