@@ -4,19 +4,18 @@
 
 import QtQuick.Dialogs
 
-FileDialog {
-    required property var mpvqcApplication
+import pyobjects
 
-    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
+FileDialog {
+    readonly property MpvqcFileDialogViewModel viewModel: MpvqcFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open QC Document(s)")
-    currentFolder: mpvqcSettings.lastDirectoryDocuments
+    currentFolder: viewModel.lastDirectoryDocuments
     fileMode: FileDialog.OpenFiles
     nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     onAccepted: {
-        mpvqcSettings.lastDirectoryDocuments = currentFolder;
-        mpvqcManager.openDocuments(selectedFiles);
+        viewModel.lastDirectoryDocuments = currentFolder;
+        viewModel.openDocuments(selectedFiles);
     }
 }

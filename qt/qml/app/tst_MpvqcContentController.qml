@@ -227,23 +227,6 @@ TestCase {
         });
     }
 
-    function test_openDroppedFiles() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        const documents = ["file:///d1", "file:///d2"];
-        const videos = ["file:///v1"];
-        const subtitles = ["file:///s1", "file:///s2"];
-
-        compare(control.mpvqcManager.openCount, 0);
-        control.openDroppedFiles(documents, videos, subtitles);
-
-        compare(control.mpvqcManager.openCount, 1);
-        compare(control.mpvqcManager.lastOpenDocuments, documents);
-        compare(control.mpvqcManager.lastOpenVideos, videos);
-        compare(control.mpvqcManager.lastOpenSubtitles, subtitles);
-    }
-
     function test_preferredSplitSizes() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);

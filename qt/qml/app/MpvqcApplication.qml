@@ -91,9 +91,6 @@ ApplicationWindow {
     MpvqcContentFileDialogLoader {
         id: _fileDialogLoader
 
-        mpvqcApplication: root
-        cleanupDelay: 250
-
         onExtendedDocumentSaved: (document, template) => {
             root.mpvqcExtendedDocumentExporterPyObject.performExport(document, template);
         }

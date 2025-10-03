@@ -30,30 +30,6 @@ class MpvqcMpvPlayerPyObject(QObject):
     def jump_to(self, seconds: int) -> None:
         self._player.jump_to(seconds)
 
-    @Slot(int, int)
-    def move_mouse(self, x, y) -> None:
-        self._player.move_mouse(x, y)
-
-    @Slot()
-    def scroll_up(self) -> None:
-        self._player.scroll_up()
-
-    @Slot()
-    def scroll_down(self) -> None:
-        self._player.scroll_down()
-
-    @Slot()
-    def press_mouse_left(self) -> None:
-        self._player.press_mouse_left()
-
-    @Slot()
-    def press_mouse_middle(self) -> None:
-        self._player.press_mouse_middle()
-
-    @Slot()
-    def release_mouse_left(self) -> None:
-        self._player.release_mouse_left()
-
     @Slot()
     def terminate(self) -> None:
         self._player.terminate()

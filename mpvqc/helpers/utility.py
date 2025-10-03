@@ -11,8 +11,6 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
     DocumentExportService,
-    MimetypeProviderService,
-    ReverseTranslatorService,
     TimeFormatterService,
     TypeMapperService,
 )
@@ -25,26 +23,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcUtilityPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
-    _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     @Property(QPoint, final=True)
     def cursorPosition(self) -> QPoint:
         return QCursor.pos()
-
-    @Property(str, constant=True, final=True)
-    def videoFileGlobPattern(self) -> str:
-        return self._mimetype_provider.video_file_glob_pattern
-
-    @Property(str, constant=True, final=True)
-    def subtitleFileGlobPattern(self) -> str:
-        return self._mimetype_provider.subtitle_file_glob_pattern
-
-    @Property(list, constant=True, final=True)
-    def subtitleFileExtensions(self) -> list:
-        return self._mimetype_provider.subtitle_file_extensions
 
     @Slot(str, result=str)
     def getEnvironmentVariable(self, key: str) -> str | None:

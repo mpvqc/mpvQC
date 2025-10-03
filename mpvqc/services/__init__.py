@@ -13,6 +13,7 @@ from .font_loader import FontLoaderService
 from .formatter_time import TimeFormatterService
 from .frameless import FramelessWindowService
 from .i18n import InternationalizationService
+from .importer import ImporterService
 from .key_command import KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService
 from .mimetype_provider import MimetypeProviderService
@@ -23,6 +24,7 @@ from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService
 from .settings import SettingsService
 from .state import StateService
+from .subtitle_importer import SubtitleImporterService
 from .theme import ThemeService
 from .type_mapper import TypeMapperService
 from .version_checker import VersionCheckerService

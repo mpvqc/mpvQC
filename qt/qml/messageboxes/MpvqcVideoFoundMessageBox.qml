@@ -7,7 +7,15 @@ import QtQuick.Controls.Material
 import "../shared"
 
 MpvqcMessageBox {
+    required property string file
+    required property string trackingId
+
+    signal importDecisionMade(trackingId: string, openVideo: bool)
+
     title: qsTranslate("MessageBoxes", "Video Found")
-    text: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?")
+    text: qsTranslate("MessageBoxes", "A video was found. Do you want to open it?") + "\n\n" + file
     standardButtons: Dialog.Yes | Dialog.No
+
+    onAccepted: importDecisionMade(trackingId, true)
+    onRejected: importDecisionMade(trackingId, false)
 }

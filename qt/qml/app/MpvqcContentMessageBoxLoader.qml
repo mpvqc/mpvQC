@@ -6,8 +6,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import pyobjects
+
 Loader {
     id: root
+
+    readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
 
     required property var mpvqcExtendedDocumentExporterPyObject
 
@@ -24,10 +28,10 @@ Loader {
     active: false
     visible: active
 
-    function openDocumentNotCompatibleMessageBox(documents: list<string>): void {
+    function openDocumentNotCompatibleMessageBox(documents: list<var>): void {
         setSource(messageBoxDocumentNotCompatible, {
             parent: root.parent,
-            paths: documents
+            files: documents
         });
         active = true;
     }
@@ -62,9 +66,11 @@ Loader {
         active = true;
     }
 
-    function openVideoFoundMessageBox(): void {
+    function openVideoFoundMessageBox(trackingId: string, fileName: string): void {
         setSource(messageBoxVideoFound, {
-            parent: root.parent
+            parent: root.parent,
+            file: fileName,
+            trackingId: trackingId
         });
         active = true;
     }
@@ -74,11 +80,28 @@ Loader {
     Connections {
         enabled: root.item
         target: root.item
+        ignoreUnknownSignals: true
 
         function onClosed(): void {
             root.active = false;
             root.source = "";
             root.messageBoxClosed();
+        }
+
+        function onImportDecisionMade(trackingId: string, openVideo: bool): void {
+            root.viewModel.continueWithImport(trackingId, openVideo);
+        }
+    }
+
+    Connections {
+        target: root.viewModel
+
+        function onErroneousDocumentsImported(documents: list<var>): void {
+            root.openDocumentNotCompatibleMessageBox(documents);
+        }
+
+        function onAskUserDocumentVideoImport(trackingId: string, fileName: string): void {
+            root.openVideoFoundMessageBox(trackingId, fileName);
         }
     }
 

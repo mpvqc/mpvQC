@@ -9,14 +9,12 @@ import QtQuick
 Loader {
     id: root
 
-    required property var mpvqcApplication
-
     readonly property url exportDocumentDialog: Qt.resolvedUrl("../filedialogs/MpvqcExportDocumentFileDialog.qml")
     readonly property url importDocumentsDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportDocumentsFileDialog.qml")
     readonly property url importSubtitlesDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportSubtitlesFileDialog.qml")
     readonly property url importVideoDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportVideoFileDialog.qml")
 
-    property alias cleanupDelay: _delayCleanupTimer.interval
+    readonly property int cleanupDelay: 250
 
     signal dialogClosed
     signal documentSaved(document: url)
@@ -44,23 +42,17 @@ Loader {
     }
 
     function openImportQcDocumentsDialog(): void {
-        setSource(importDocumentsDialog, {
-            mpvqcApplication: root.mpvqcApplication
-        });
+        setSource(importDocumentsDialog);
         active = true;
     }
 
     function openImportSubtitlesDialog(): void {
-        setSource(importSubtitlesDialog, {
-            mpvqcApplication: root.mpvqcApplication
-        });
+        setSource(importSubtitlesDialog);
         active = true;
     }
 
     function openImportVideoDialog(): void {
-        setSource(importVideoDialog, {
-            mpvqcApplication: root.mpvqcApplication
-        });
+        setSource(importVideoDialog);
         active = true;
     }
 
@@ -90,6 +82,8 @@ Loader {
 
     Timer {
         id: _delayCleanupTimer
+
+        interval: root.cleanupDelay
 
         onTriggered: {
             root.active = false;
