@@ -54,6 +54,11 @@ class SettingsService(QObject):
         ASK_EVERY_TIME = 1
         NEVER = 2
 
+    class ImportWhenVideoLinkedInSubtitle(IntEnum):
+        ALWAYS = 0
+        ASK_EVERY_TIME = 1
+        NEVER = 2
+
     # Backup
     backupEnabledChanged = Signal(bool)
     backupIntervalChanged = Signal(int)
@@ -78,6 +83,7 @@ class SettingsService(QObject):
     lastDirectoryDocumentsChanged = Signal(str)
     lastDirectorySubtitlesChanged = Signal(str)
     importWhenVideoLinkedInDocumentChanged = Signal(int)
+    importWhenVideoLinkedInSubtitleChanged = Signal(int)
 
     # SplitView
     layoutOrientationChanged = Signal(int)
@@ -256,6 +262,16 @@ class SettingsService(QObject):
         if self.import_when_video_linked_in_document != value:
             self._settings.setValue("Import/importWhenVideoLinkedInDocument", value)
             self.importWhenVideoLinkedInDocumentChanged.emit(value)
+
+    @property
+    def import_when_video_linked_in_subtitle(self) -> int:
+        return self._settings.value("Import/importWhenVideoLinkedInSubtitle", 1, type=int)  # ASK_EVERY_TIME
+
+    @import_when_video_linked_in_subtitle.setter
+    def import_when_video_linked_in_subtitle(self, value: int):
+        if self.import_when_video_linked_in_subtitle != value:
+            self._settings.setValue("Import/importWhenVideoLinkedInSubtitle", value)
+            self.importWhenVideoLinkedInSubtitleChanged.emit(value)
 
     @property
     def layout_orientation(self) -> int:
