@@ -5,10 +5,8 @@
 import "../shared"
 
 MpvqcMessageBox {
-    id: root
+    required property list<string> files
 
-    property list<string> paths
-
-    title: qsTranslate("MessageBoxes", "Document Not Compatible", "", paths.length)
-    text: paths.join("\n")
+    title: qsTranslate("MessageBoxes", "Document Not Compatible", "", files.length)
+    text: files.join("\n")
 }

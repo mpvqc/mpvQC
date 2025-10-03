@@ -27,10 +27,10 @@ class MimetypeProviderService:
         return f" ({' '.join(sorted(patterns))})"
 
     @cached_property
-    def subtitle_file_extensions(self) -> list[str]:
+    def subtitle_file_extensions(self) -> set[str]:
         # fmt: off
-        return [
+        return {
             "aqt", "ass", "idx", "js", "jss", "mks", "rt", "scc", "smi",
             "srt", "ssa", "sub", "sup", "utf", "utf-8", "utf8", "vtt"
-        ]
+        }
         # fmt: on

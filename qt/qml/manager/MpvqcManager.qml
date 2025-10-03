@@ -35,10 +35,6 @@ MpvqcObject {
         _backend.open_subtitles_impl(subtitles);
     }
 
-    function open(documents: list<url>, videos: list<url>, subtitles: list<url>): void {
-        _backend.open_impl(documents, videos, subtitles);
-    }
-
     function save(): void {
         _backend.save_impl();
     }
@@ -56,20 +52,8 @@ MpvqcObject {
             }
         }
 
-        property var mpvqcMessageBoxVideoFoundFactory: Component {
-            MpvqcVideoFoundMessageBox {
-                parent: root.mpvqcApplication.contentItem
-            }
-        }
-
         property var mpvqcMessageBoxNewDocumentFactory: Component {
             MpvqcNewDocumentMessageBox {
-                parent: root.mpvqcApplication.contentItem
-            }
-        }
-
-        property var mpvqcMessageBoxDocumentNotCompatibleFactory: Component {
-            MpvqcDocumentNotCompatibleMessageBox {
                 parent: root.mpvqcApplication.contentItem
             }
         }
