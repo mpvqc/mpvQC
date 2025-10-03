@@ -31,11 +31,6 @@ class MpvqcSettings(QObject):
     languageChanged = Signal(str)
     commentTypesChanged = Signal(list)
 
-    # Import
-    lastDirectoryVideoChanged = Signal(str)
-    lastDirectoryDocumentsChanged = Signal(str)
-    lastDirectorySubtitlesChanged = Signal(str)
-
     # SplitView
     layoutOrientationChanged = Signal(int)
 
@@ -48,9 +43,6 @@ class MpvqcSettings(QObject):
         # Connect settings service signals to our signals for QML
         self._settings.languageChanged.connect(self.languageChanged)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
-        self._settings.lastDirectoryVideoChanged.connect(self.lastDirectoryVideoChanged)
-        self._settings.lastDirectoryDocumentsChanged.connect(self.lastDirectoryDocumentsChanged)
-        self._settings.lastDirectorySubtitlesChanged.connect(self.lastDirectorySubtitlesChanged)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
         self._settings.windowTitleFormatChanged.connect(self.windowTitleFormatChanged)
 
@@ -69,30 +61,6 @@ class MpvqcSettings(QObject):
     @commentTypes.setter
     def commentTypes(self, value: list[str]):
         self._settings.comment_types = value
-
-    @Property(str, notify=lastDirectoryVideoChanged)
-    def lastDirectoryVideo(self) -> str:
-        return self._settings.last_directory_video
-
-    @lastDirectoryVideo.setter
-    def lastDirectoryVideo(self, value: str):
-        self._settings.last_directory_video = value
-
-    @Property(str, notify=lastDirectoryDocumentsChanged)
-    def lastDirectoryDocuments(self) -> str:
-        return self._settings.last_directory_documents
-
-    @lastDirectoryDocuments.setter
-    def lastDirectoryDocuments(self, value: str):
-        self._settings.last_directory_documents = value
-
-    @Property(str, notify=lastDirectorySubtitlesChanged)
-    def lastDirectorySubtitles(self) -> str:
-        return self._settings.last_directory_subtitles
-
-    @lastDirectorySubtitles.setter
-    def lastDirectorySubtitles(self, value: str):
-        self._settings.last_directory_subtitles = value
 
     @Property(int, notify=layoutOrientationChanged)
     def layoutOrientation(self) -> int:

@@ -21,7 +21,6 @@ Page {
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
-    readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
 
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
@@ -99,11 +98,6 @@ Page {
 
     MpvqcFileDropArea {
         anchors.fill: _splitView
-        supportedSubtitleFileExtensions: root.supportedSubtitleFileExtensions
-
-        onFilesDropped: (documents, videos, subtitles) => {
-            root.contentController.openDroppedFiles(documents, videos, subtitles);
-        }
     }
 
     MpvqcNewCommentMenu {

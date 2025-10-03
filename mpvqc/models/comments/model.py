@@ -10,7 +10,7 @@ from PySide6.QtGui import QGuiApplication, QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.datamodels import Comment
-from mpvqc.services import PlayerService, StateService, TimeFormatterService
+from mpvqc.services import ImporterService, PlayerService, StateService, TimeFormatterService
 
 from .roles import Role
 from .undo import (
@@ -36,6 +36,7 @@ class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
     _time_formatter = inject.attr(TimeFormatterService)
     _state: StateService = inject.attr(StateService)
+    _importer: ImporterService = inject.attr(ImporterService)
 
     commentsImportedInitially = Signal(int)  # param: row of last imported comment
     commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
@@ -78,6 +79,8 @@ class MpvqcCommentModel(QStandardItemModel):
 
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
+
+        self._importer.comments_ready_for_import.connect(self.import_comments)
 
         self.commentsClearedUndone.connect(self._commentsChanged)
         self.commentsImportedRedone.connect(self._commentsChanged)

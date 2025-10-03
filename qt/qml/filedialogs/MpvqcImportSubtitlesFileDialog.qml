@@ -4,20 +4,18 @@
 
 import QtQuick.Dialogs
 
-FileDialog {
-    required property var mpvqcApplication
+import pyobjects
 
-    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+FileDialog {
+    readonly property MpvqcFileDialogViewModel viewModel: MpvqcFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open Subtitle(s)")
-    currentFolder: mpvqcSettings.lastDirectorySubtitles
+    currentFolder: viewModel.lastDirectorySubtitles
     fileMode: FileDialog.OpenFiles
-    nameFilters: [qsTranslate("FileInteractionDialogs", "Subtitle files") + mpvqcUtilityPyObject.subtitleFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
+    nameFilters: [qsTranslate("FileInteractionDialogs", "Subtitle files") + viewModel.subtitleFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     onAccepted: {
-        mpvqcSettings.lastDirectorySubtitles = currentFolder;
-        mpvqcManager.openSubtitles(selectedFiles);
+        viewModel.lastDirectorySubtitles = currentFolder;
+        viewModel.openSubtitles(selectedFiles);
     }
 }

@@ -25,23 +25,12 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentFileDialogLoader {
-            cleanupDelay: 0
-        }
+        MpvqcContentFileDialogLoader {}
     }
 
     function makeControl(): Item {
         const control = createTemporaryObject(objectUnderTest, testCase, {
-            mpvqcApplication: {
-                mpvqcSettings: {
-                    lastDirectoryDocuments: Qt.resolvedUrl(""),
-                    lastDirectorySubtitles: Qt.resolvedUrl(""),
-                    lastDirectoryVideo: Qt.resolvedUrl("")
-                },
-                mpvqcUtilityPyObject: {
-                    subtitleFileGlobPattern: ""
-                }
-            }
+            cleanupDelay: 0
         });
         verify(control);
         return control;
