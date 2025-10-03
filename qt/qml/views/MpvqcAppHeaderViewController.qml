@@ -6,8 +6,6 @@ import QtQuick
 
 import pyobjects
 
-import "../models"
-
 QtObject {
     id: root
 
