@@ -259,7 +259,6 @@ files = [
     "mpvqc/views/player_framebuffer_object.py",
     "mpvqc/views/player_win_id.py",
     "project.qrc",
-    "qt/qml/Main.qml",
     "qt/qml/app/MpvqcApplication.qml",
     "qt/qml/app/MpvqcContent.qml",
     "qt/qml/app/MpvqcContentController.qml",

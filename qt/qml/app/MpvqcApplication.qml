@@ -42,17 +42,16 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 540
 
+    visible: true
+    color: Material.background
+
     font {
         pointSize: 10
         family: 'Noto Sans'
     }
 
-    color: Material.background
-    visible: true
-
     Material.theme: MpvqcTheme.isDark ? Material.Dark : Material.Light
     Material.accent: MpvqcTheme.control
-
     Material.background: MpvqcTheme.background
     Material.foreground: MpvqcTheme.foreground
 
@@ -81,6 +80,22 @@ ApplicationWindow {
         }
     }
 
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: undefined
+        propagateComposedEvents: true
+
+        onPressed: event => {
+            // *********************************************************
+            // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+            event.accepted = !!root.nativePopupOpen;
+            // *********************************************************
+
+            // event.accepted = false;
+            _content.focusCommentTable();
+        }
+    }
+
     MpvqcAppHeaderViewController {
         id: _headerController
 
@@ -99,7 +114,7 @@ ApplicationWindow {
         playerVideoName: root.mpvqcMpvPlayerPropertiesPyObject.filename
         playerVideoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
 
-        extendedExportTemplatesModel: MpvqcExportTemplateModel {} // qmllint disable
+        extendedExportTemplatesModel: MpvqcExportTemplateModel {}
 
         onWindowDragRequested: root.startSystemMove()
 
@@ -141,29 +156,6 @@ ApplicationWindow {
 
         mpvqcApplication: root
         canClose: root.mpvqcManager.saved
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: undefined
-        propagateComposedEvents: true
-
-        onPressed: event => {
-            // *********************************************************
-            // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-            event.accepted = !!root.nativePopupOpen;
-            // *********************************************************
-
-            // event.accepted = false;
-            _content.focusCommentTable();
-        }
-    }
-
-    Binding {
-        target: Qt
-        property: "uiLanguage"
-        value: root.mpvqcSettings.language
-        restoreMode: Binding.RestoreNone
     }
 
     Component.onCompleted: _content.focusCommentTable()
