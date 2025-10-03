@@ -70,21 +70,11 @@ TestCase {
                 }
             }
 
-            mpvqcExtendedDocumentExporterPyObject: QtObject {
-                property int performExportCount: 0
-                property url lastDocumentUrl
-                property url lastTemplateUrl
-                function performExport(documentUrl, templateUrl) {
-                    performExportCount += 1;
-                    lastDocumentUrl = documentUrl;
-                    lastTemplateUrl = templateUrl;
-                }
-            }
-
             mpvqcSettings: QtObject {
                 property int layoutOrientation: Qt.Vertical
                 property string windowTitleFormat: ""
                 property string language: "en"
+                property list<string> commentTypes: ["Comment Type 1"]
             }
         }
     }
@@ -235,21 +225,6 @@ TestCase {
             compare(args.length, 1);
             compare(args[0], commentType);
         });
-    }
-
-    function test_saveExtendedDocument_calls_performExport() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        const doc = "file:///tmp/document.json";
-        const tpl = "file:///tmp/template.html";
-
-        compare(control.mpvqcExtendedDocumentExporterPyObject.performExportCount, 0);
-        control.saveExtendedDocument(doc, tpl);
-
-        compare(control.mpvqcExtendedDocumentExporterPyObject.performExportCount, 1);
-        compare(control.mpvqcExtendedDocumentExporterPyObject.lastDocumentUrl, doc);
-        compare(control.mpvqcExtendedDocumentExporterPyObject.lastTemplateUrl, tpl);
     }
 
     function test_openDroppedFiles() {

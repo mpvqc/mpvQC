@@ -30,17 +30,15 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentMessageBoxLoader {}
+        MpvqcContentMessageBoxLoader {
+            mpvqcExtendedDocumentExporterPyObject: QtObject {
+                signal errorOccurred(x: var, y: var)
+            }
+        }
     }
 
     function makeControl(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase, {
-            mpvqcApplication: {
-                contentItem: testCase,
-                height: testCase.height,
-                width: testCase.width
-            }
-        });
+        const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
         return control;
     }

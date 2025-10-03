@@ -25,40 +25,13 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentDialogLoader {}
+        MpvqcContentDialogLoader {
+            isLayoutMirroringEnabled: false
+        }
     }
 
     function makeControl(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase, {
-            mpvqcApplication: {
-                contentItem: testCase,
-                height: testCase.height,
-                width: testCase.width,
-                mpvqcSettings: {
-                    nickname: "nickname",
-                    writeHeaderDate: true,
-                    writeHeaderGenerator: true,
-                    writeHeaderNickname: true,
-                    writeHeaderVideoPath: true,
-                    importWhenVideoLinkedInDocument: 0,
-                    backupEnabled: false,
-                    backupInterval: 15,
-                    commentTypes: ["Comment Type"]
-                },
-                mpvqcTheme: {
-                    control: "blue",
-                    rowHighlight: "blue",
-                    getForeground: arg => "blue",
-                    getBackground: arg => "blue"
-                },
-                mpvqcUtilityPyObject: {
-                    urlToAbsolutePath: arg => ""
-                },
-                LayoutMirroring: {
-                    enabled: false
-                }
-            }
-        });
+        const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
         return control;
     }

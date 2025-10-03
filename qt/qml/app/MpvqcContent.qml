@@ -19,7 +19,6 @@ Page {
     required property MpvqcAppHeaderViewController headerController
     required property MpvqcContentController contentController
 
-    readonly property var mpvqcExtendedDocumentExporterPyObject: mpvqcApplication.mpvqcExtendedDocumentExporterPyObject
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
     readonly property var supportedSubtitleFileExtensions: mpvqcUtilityPyObject.subtitleFileExtensions
@@ -158,56 +157,11 @@ Page {
         }
     }
 
-    MpvqcContentDialogLoader {
-        id: _dialogLoader
-
-        mpvqcApplication: root.mpvqcApplication
-
-        onDialogClosed: {
-            root.focusCommentTable();
-        }
-    }
-
-    MpvqcContentFileDialogLoader {
-        id: _fileDialogLoader
-
-        mpvqcApplication: root.mpvqcApplication
-        cleanupDelay: 250
-
-        onExtendedDocumentSaved: (document, template) => {
-            root.contentController.saveExtendedDocument(document, template);
-        }
-
-        onDialogClosed: {
-            root.focusCommentTable();
-        }
-    }
-
-    MpvqcContentMessageBoxLoader {
-        id: _messageBoxLoader
-
-        onMessageBoxClosed: {
-            root.focusCommentTable();
-        }
-    }
-
-    Connections {
-        target: root.mpvqcExtendedDocumentExporterPyObject
-
-        function onErrorOccurred(message: string, line: int): void {
-            _messageBoxLoader.openExtendedExportFailedMessageBox(message, line);
-        }
-    }
-
     Connections {
         target: root.headerController
 
         function onResetAppStateRequested(): void {
             root.contentController.resetAppState();
-        }
-
-        function onOpenQcDocumentsRequested(): void {
-            _fileDialogLoader.openImportQcDocumentsDialog();
         }
 
         function onSaveQcDocumentsRequested(): void {
@@ -218,65 +172,8 @@ Page {
             root.contentController.saveAs();
         }
 
-        function onExtendedExportRequested(name: string, path: url): void {
-            const proposal = root.mpvqcUtilityPyObject.generate_file_path_proposal();
-            _fileDialogLoader.openExtendedDocumentExportDialog(proposal, path);
-        }
-
-        function onOpenVideoRequested(): void {
-            _fileDialogLoader.openImportVideoDialog();
-        }
-
-        function onOpenSubtitlesRequested(): void {
-            _fileDialogLoader.openImportSubtitlesDialog();
-        }
-
         function onResizeVideoRequested(): void {
             _videoResizer.recalculateSizes();
-        }
-
-        function onAppearanceDialogRequested(): void {
-            _dialogLoader.openAppearanceDialog();
-        }
-
-        function onCommentTypesDialogRequested(): void {
-            _dialogLoader.openCommentTypesDialog();
-        }
-
-        function onBackupSettingsDialogRequested(): void {
-            _dialogLoader.openBackupSettingsDialog();
-        }
-
-        function onExportSettingsDialogRequested(): void {
-            _dialogLoader.openExportSettingsDialog();
-        }
-
-        function onImportSettingsDialogRequested(): void {
-            _dialogLoader.openImportSettingsDialog();
-        }
-
-        function onEditMpvConfigDialogRequested(): void {
-            _dialogLoader.openEditMpvDialog();
-        }
-
-        function onEditInputConfigDialogRequested(): void {
-            _dialogLoader.openEditInputDialog();
-        }
-
-        function onUpdateDialogRequested(): void {
-            _messageBoxLoader.openVersionCheckMessageBox();
-        }
-
-        function onKeyboardShortcutsDialogRequested(): void {
-            _dialogLoader.openShortcutsDialog();
-        }
-
-        function onExtendedExportDialogRequested(): void {
-            _messageBoxLoader.openExtendedExportsMessageBox();
-        }
-
-        function onAboutDialogRequested(): void {
-            _dialogLoader.openAboutDialog();
         }
     }
 
