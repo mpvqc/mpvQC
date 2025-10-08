@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # ruff: noqa: F401
-from .backup_timer import MpvqcBackupTimerViewModel
+from .backup_timer import MpvqcBackupTimerController
 from .dialogs import (
     MpvqcAboutDialogViewModel,
     MpvqcAppearanceDialogViewModel,

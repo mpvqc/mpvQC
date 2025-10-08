@@ -22,7 +22,7 @@ class BackupJob(QRunnable):
 
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
-class MpvqcBackupTimerViewModel(QObject):
+class MpvqcBackupTimerController(QObject):
     _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
     _settings: SettingsService = inject.attr(SettingsService)
 
