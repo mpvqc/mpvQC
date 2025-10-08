@@ -7,10 +7,10 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.controllers import MpvqcSearchBoxViewModel
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import PlayerService
+from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
 DEFAULT_COMMENTS_SEARCH = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
