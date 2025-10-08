@@ -7,7 +7,7 @@ import QtQuick.Dialogs
 import pyobjects
 
 FileDialog {
-    readonly property MpvqcFileDialogViewModel viewModel: MpvqcFileDialogViewModel {}
+    readonly property MpvqcImportFileDialogViewModel viewModel: MpvqcImportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open Video")
     currentFolder: viewModel.lastDirectoryVideo

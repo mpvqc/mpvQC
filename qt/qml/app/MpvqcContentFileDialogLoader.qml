@@ -17,8 +17,6 @@ Loader {
     readonly property int cleanupDelay: 250
 
     signal dialogClosed
-    signal documentSaved(document: url)
-    signal extendedDocumentSaved(document: url, template: url)
 
     asynchronous: true
     active: false
@@ -26,16 +24,14 @@ Loader {
 
     function openDocumentExportDialog(proposal: url): void {
         setSource(exportDocumentDialog, {
-            isExtendedExport: false,
-            selectedFile: proposal
+            isExtendedExport: false
         });
         active = true;
     }
 
-    function openExtendedDocumentExportDialog(proposal: url, exportTemplate: url): void {
+    function openExtendedDocumentExportDialog(exportTemplate: url): void {
         setSource(exportDocumentDialog, {
             isExtendedExport: true,
-            selectedFile: proposal,
             exportTemplate: exportTemplate
         });
         active = true;
@@ -62,14 +58,6 @@ Loader {
         enabled: root.item
         target: root.item
         ignoreUnknownSignals: true
-
-        function onSavedPressed(document: url): void {
-            root.documentSaved(document);
-        }
-
-        function onExtendedSavePressed(document: url, template: url): void {
-            root.extendedDocumentSaved(document, template);
-        }
 
         function onAccepted(): void {
             _delayCleanupTimer.restart();

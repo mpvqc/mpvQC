@@ -11,7 +11,7 @@ MpvqcMessageBox {
     required property int errorLine
 
     title: qsTranslate("MessageBoxes", "Export Error")
-    text: errorLine ?
+    text: errorLine >= 0 ?
     //: %1 will be the line nr of the error, %2 will be the error message (probably in English)
     qsTranslate("MessageBoxes", "Error at line %1: %2").arg(errorLine).arg(errorMessage) : errorMessage
 

@@ -12,7 +12,7 @@ from .drop_area import MpvqcDropAreaViewModel
 from .edit_input_dialog import MpvqcEditInputDialogControllerPyObject
 from .edit_mpv_dialog import MpvqcEditMpvDialogControllerPyObject
 from .export_settings_dialog import MpvqcExportSettingsDialogControllerPyObject
-from .file_dialog import MpvqcFileDialogViewModel
+from .file_dialogs import MpvqcImportFileDialogViewModel
 from .footer import MpvqcFooterViewController
 from .import_settings_dialog import MpvqcImportSettingsDialogControllerPyObject
 from .message_box_loader import MpvqcMessageBoxLoaderViewModel

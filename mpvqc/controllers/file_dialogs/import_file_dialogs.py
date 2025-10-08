@@ -29,7 +29,7 @@ class ImportJob(QRunnable):
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcFileDialogViewModel(QObject):
+class MpvqcImportFileDialogViewModel(QObject):
     _importer: ImporterService = inject.attr(ImporterService)
     _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
     _settings: SettingsService = inject.attr(SettingsService)

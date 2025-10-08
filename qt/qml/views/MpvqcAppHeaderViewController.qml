@@ -64,7 +64,7 @@ QtObject {
     signal openQcDocumentsRequested
     signal saveQcDocumentsRequested
     signal saveQcDocumentsAsRequested
-    signal extendedExportRequested(name: string, path: url)
+    signal extendedExportRequested(exportTemplate: url)
 
     signal openVideoRequested
     signal openSubtitlesRequested
@@ -104,8 +104,8 @@ QtObject {
         root.saveQcDocumentsAsRequested();
     }
 
-    function requestSaveQcDocumentExtendedUsing(name: string, path: url): void {
-        root.extendedExportRequested(name, path);
+    function requestSaveQcDocumentExtendedUsing(name: string, exportTemplate: url): void {
+        root.extendedExportRequested(exportTemplate);
     }
 
     function requestOpenVideo(): void {

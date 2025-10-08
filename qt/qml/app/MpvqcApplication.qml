@@ -14,7 +14,6 @@ import "../themes"
 ApplicationWindow {
     id: root
 
-    readonly property var mpvqcExtendedDocumentExporterPyObject: MpvqcExtendedDocumentExporterPyObject {}
     readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
@@ -91,17 +90,11 @@ ApplicationWindow {
     MpvqcContentFileDialogLoader {
         id: _fileDialogLoader
 
-        onExtendedDocumentSaved: (document, template) => {
-            root.mpvqcExtendedDocumentExporterPyObject.performExport(document, template);
-        }
-
         onDialogClosed: _content.focusCommentTable()
     }
 
     MpvqcContentMessageBoxLoader {
         id: _messageBoxLoader
-
-        mpvqcExtendedDocumentExporterPyObject: root.mpvqcExtendedDocumentExporterPyObject
 
         onMessageBoxClosed: _content.focusCommentTable()
     }
@@ -144,10 +137,7 @@ ApplicationWindow {
 
         onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
 
-        onExtendedExportRequested: (name, path) => {
-            const proposal = root.mpvqcUtilityPyObject.generate_file_path_proposal();
-            _fileDialogLoader.openExtendedDocumentExportDialog(proposal, path);
-        }
+        onExtendedExportRequested: exportTemplate => _fileDialogLoader.openExtendedDocumentExportDialog(exportTemplate)
 
         onOpenVideoRequested: _fileDialogLoader.openImportVideoDialog()
 

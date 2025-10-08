@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ImporterService
+from mpvqc.services import DocumentExportService, ImporterService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -27,17 +27,20 @@ class ContinueImportJob(QRunnable):
 # noinspection PyPep8Naming
 @QmlElement
 class MpvqcMessageBoxLoaderViewModel(QObject):
-    _import_export: ImporterService = inject.attr(ImporterService)
+    _importer: ImporterService = inject.attr(ImporterService)
+    _document_exporter: DocumentExportService = inject.attr(DocumentExportService)
 
     erroneousDocumentsImported = Signal(list)
     askUserDocumentVideoImport = Signal(str, str)
     askUserSubtitleVideoImport = Signal(str, str)
+    exportErrorOccurred = Signal(str, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._import_export.erroneous_documents_imported.connect(self.erroneousDocumentsImported)
-        self._import_export.ask_user_document_video_import.connect(self.askUserDocumentVideoImport)
-        self._import_export.ask_user_subtitle_video_import.connect(self.askUserSubtitleVideoImport)
+        self._importer.erroneous_documents_imported.connect(self.erroneousDocumentsImported)
+        self._importer.ask_user_document_video_import.connect(self.askUserDocumentVideoImport)
+        self._importer.ask_user_subtitle_video_import.connect(self.askUserSubtitleVideoImport)
+        self._document_exporter.export_error_occurred.connect(self.exportErrorOccurred)
 
     @Slot(str, bool)
     def continueWithImport(self, import_id: str, user_accepted: bool):

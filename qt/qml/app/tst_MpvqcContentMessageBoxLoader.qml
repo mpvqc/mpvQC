@@ -30,11 +30,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentMessageBoxLoader {
-            mpvqcExtendedDocumentExporterPyObject: QtObject {
-                signal errorOccurred(x: var, y: var)
-            }
-        }
+        MpvqcContentMessageBoxLoader {}
     }
 
     function makeControl(): Item {
