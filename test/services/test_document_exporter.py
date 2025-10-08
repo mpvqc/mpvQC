@@ -284,27 +284,29 @@ def test_document_exporter_generates_file_path_proposals(case, make_mock, docume
     assert actual == case.expected
 
 
-def test_document_exporter_exports(document_exporter_service, document_renderer_service_mock):
+def test_document_exporter_exports(document_exporter_service, document_renderer_service_mock, make_spy):
+    error_spy = make_spy(document_exporter_service.export_error_occurred)
+
     template_mock = MagicMock()
     file_mock = MagicMock()
 
-    error = document_exporter_service.export(file_mock, template_mock)
-    assert error is None
+    document_exporter_service.export(file_mock, template_mock)
+    assert error_spy.count() == 0
     assert template_mock.read_text.called
     assert file_mock.write_text.called
     assert document_renderer_service_mock.render.called
 
     document_renderer_service_mock.render.side_effect = TemplateSyntaxError(message="error", lineno=42)
-    error = document_exporter_service.export(file_mock, template_mock)
-    assert error is not None
-    assert error.message == "error"
-    assert error.line_nr == 42
+    document_exporter_service.export(file_mock, template_mock)
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=0) == "error"
+    assert error_spy.at(invocation=0, argument=1) == 42
 
     document_renderer_service_mock.render.side_effect = TemplateError(message="error #2")
-    error = document_exporter_service.export(file_mock, template_mock)
-    assert error is not None
-    assert error.message == "error #2"
-    assert error.line_nr is None
+    document_exporter_service.export(file_mock, template_mock)
+    assert error_spy.count() == 2
+    assert error_spy.at(invocation=1, argument=0) == "error #2"
+    assert error_spy.at(invocation=1, argument=1) == -1
 
 
 def test_document_exporter_saves(document_exporter_service, document_renderer_service_mock):

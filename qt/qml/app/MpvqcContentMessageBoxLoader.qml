@@ -13,8 +13,6 @@ Loader {
 
     readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
 
-    required property var mpvqcExtendedDocumentExporterPyObject
-
     readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../messageboxes/MpvqcDocumentNotCompatibleMessageBox.qml")
     readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportMessageBox.qml")
     readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportErrorMessageBox.qml")
@@ -103,12 +101,8 @@ Loader {
         function onAskUserDocumentVideoImport(trackingId: string, fileName: string): void {
             root.openVideoFoundMessageBox(trackingId, fileName);
         }
-    }
 
-    Connections {
-        target: root.mpvqcExtendedDocumentExporterPyObject
-
-        function onErrorOccurred(message: string, line: int): void {
+        function onExportErrorOccurred(message: string, line: int): void {
             root.openExtendedExportFailedMessageBox(message, line);
         }
     }

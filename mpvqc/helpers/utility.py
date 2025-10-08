@@ -5,7 +5,7 @@
 from os import environ
 
 import inject
-from PySide6.QtCore import Property, QObject, QPoint, QUrl, Slot
+from PySide6.QtCore import Property, QObject, QPoint, Slot
 from PySide6.QtGui import QCursor
 from PySide6.QtQml import QmlElement
 
@@ -41,8 +41,3 @@ class MpvqcUtilityPyObject(QObject):
     @Slot(float, result=str)
     def formatTimeToStringShort(self, seconds: float) -> str:
         return self._time_formatter.format_time_to_string(seconds, long_format=False)
-
-    @Slot(result=QUrl)
-    def generate_file_path_proposal(self) -> QUrl:
-        path = self._exporter.generate_file_path_proposal()
-        return self._type_mapper.map_path_to_url(path)
