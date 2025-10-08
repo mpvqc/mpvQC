@@ -9,8 +9,6 @@ import QtQuick
 Loader {
     id: root
 
-    required property bool isLayoutMirroringEnabled
-
     readonly property url aboutDialog: Qt.resolvedUrl("../dialogs/MpvqcAboutDialog.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("../dialogs/MpvqcAppearanceDialog.qml")
     readonly property url backupSettingsDialog: Qt.resolvedUrl("../dialogs/MpvqcBackupDialog.qml")
@@ -100,12 +98,5 @@ Loader {
             root.source = "";
             root.dialogClosed();
         }
-    }
-
-    Binding {
-        target: root.item
-        property: "isMirrored"
-        value: root.isLayoutMirroringEnabled
-        restoreMode: Binding.RestoreNone
     }
 }
