@@ -16,7 +16,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcFooterViewModel(QObject):
+class MpvqcFooterViewController(QObject):
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
     _formatter: TimeFormatterService = inject.attr(TimeFormatterService)

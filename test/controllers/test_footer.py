@@ -5,14 +5,14 @@
 import inject
 import pytest
 
-from mpvqc.controllers.footer import MpvqcFooterViewModel
+from mpvqc.controllers.footer import MpvqcFooterViewController
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService, TimeFormatterService
 
 
 @pytest.fixture
 def controller():
     # noinspection PyCallingNonCallable
-    return MpvqcFooterViewModel()
+    return MpvqcFooterViewController()
 
 
 @pytest.fixture(autouse=True)
