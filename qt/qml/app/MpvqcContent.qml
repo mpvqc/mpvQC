@@ -86,7 +86,7 @@ Page {
             MpvqcFooterView {
                 id: _footer
 
-                controller: MpvqcFooterViewController {
+                viewModel: MpvqcFooterViewModel {
                     selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
                     totalCommentCount: _mpvqcCommentTable.commentCount
                 }
