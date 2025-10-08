@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
-class MpvqcExportSettingsDialogControllerPyObject(QObject):
+class MpvqcExportSettingsDialogViewModel(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
 
     nicknameChanged = Signal(str)

@@ -12,7 +12,7 @@ import "../shared"
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcExportSettingsDialogControllerPyObject controller: MpvqcExportSettingsDialogControllerPyObject {}
+    readonly property MpvqcExportSettingsDialogViewModel viewModel: MpvqcExportSettingsDialogViewModel {}
 
     title: qsTranslate("ExportSettingsDialog", "Export Settings")
 
@@ -23,14 +23,14 @@ MpvqcDialog {
             Layout.topMargin: 10
 
             label: qsTranslate("ExportSettingsDialog", "Nickname")
-            input: root.controller.temporaryNickname
+            input: root.viewModel.temporaryNickname
             spacing: 16
             fontWeight: Font.DemiBold
             prefWidth: root.contentWidth
             implicitTextFieldWidth: 150
 
             onTextChanged: text => {
-                root.controller.temporaryNickname = text;
+                root.viewModel.temporaryNickname = text;
             }
         }
 
@@ -45,42 +45,42 @@ MpvqcDialog {
 
         MpvqcSwitchRow {
             label: qsTranslate("ExportSettingsDialog", "Write Date")
-            checked: root.controller.temporaryWriteHeaderDate
+            checked: root.viewModel.temporaryWriteHeaderDate
             prefWidth: root.contentWidth
 
             onToggled: state => {
-                root.controller.temporaryWriteHeaderDate = state;
+                root.viewModel.temporaryWriteHeaderDate = state;
             }
         }
 
         MpvqcSwitchRow {
             //: %1 will be the application name. Most probably 'mpvQC' :)
             label: qsTranslate("ExportSettingsDialog", "Write '%1'").arg(Qt.application.name)
-            checked: root.controller.temporaryWriteHeaderGenerator
+            checked: root.viewModel.temporaryWriteHeaderGenerator
             prefWidth: root.contentWidth
 
             onToggled: state => {
-                root.controller.temporaryWriteHeaderGenerator = state;
+                root.viewModel.temporaryWriteHeaderGenerator = state;
             }
         }
 
         MpvqcSwitchRow {
             label: qsTranslate("ExportSettingsDialog", "Write Nickname")
-            checked: root.controller.temporaryWriteHeaderNickname
+            checked: root.viewModel.temporaryWriteHeaderNickname
             prefWidth: root.contentWidth
 
             onToggled: state => {
-                root.controller.temporaryWriteHeaderNickname = state;
+                root.viewModel.temporaryWriteHeaderNickname = state;
             }
         }
 
         MpvqcSwitchRow {
             label: qsTranslate("ExportSettingsDialog", "Write Video Path")
-            checked: root.controller.temporaryWriteHeaderVideoPath
+            checked: root.viewModel.temporaryWriteHeaderVideoPath
             prefWidth: root.contentWidth
 
             onToggled: state => {
-                root.controller.temporaryWriteHeaderVideoPath = state;
+                root.viewModel.temporaryWriteHeaderVideoPath = state;
             }
         }
 
@@ -90,5 +90,5 @@ MpvqcDialog {
         }
     }
 
-    onAccepted: root.controller.accept()
+    onAccepted: root.viewModel.accept()
 }
