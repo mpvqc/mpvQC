@@ -14,12 +14,10 @@ import "../shared"
 Popup {
     id: root
 
-    required property MpvqcSearchBoxViewModel viewModel
-
-    readonly property bool isApplicationFullScreen: MpvqcWindowProperties.isFullscreen
-    readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""
-
+    required property MpvqcSearchBoxController controller
     property bool searchActive: false
+    readonly property bool isApplicationFullScreen: MpvqcWindowProperties.isFullscreen
+    readonly property string searchQuery: searchActive ? controller.searchQuery : ""
 
     function closeWithoutAnimation(): void {
         const exitAnimation = exit;
@@ -88,7 +86,7 @@ Popup {
                 if (sanitized !== text) {
                     text = sanitized;
                 } else {
-                    root.viewModel.search(text);
+                    root.controller.search(text);
                 }
             }
 
@@ -100,7 +98,7 @@ Popup {
         }
 
         Label {
-            text: root.viewModel.statusLabel
+            text: root.controller.statusLabel
             color: Material.hintTextColor
             Layout.leftMargin: 4
             Layout.rightMargin: 4
@@ -111,25 +109,25 @@ Popup {
         }
 
         ToolButton {
-            enabled: root.viewModel.hasMultipleResults
+            enabled: root.controller.hasMultipleResults
             focusPolicy: Qt.NoFocus
 
             icon {
                 source: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
             }
 
-            onPressed: root.viewModel.selectPrevious()
+            onPressed: root.controller.selectPrevious()
         }
 
         ToolButton {
-            enabled: root.viewModel.hasMultipleResults
+            enabled: root.controller.hasMultipleResults
             focusPolicy: Qt.NoFocus
 
             icon {
                 source: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
             }
 
-            onPressed: root.viewModel.selectNext()
+            onPressed: root.controller.selectNext()
         }
 
         ToolButton {
@@ -146,13 +144,13 @@ Popup {
     Shortcut {
         enabled: root.visible && _textField.activeFocus
         sequences: ["up", "shift+return"]
-        onActivated: root.viewModel.selectPrevious()
+        onActivated: root.controller.selectPrevious()
     }
 
     Shortcut {
         enabled: root.visible && _textField.activeFocus
         sequences: ["down", "return"]
-        onActivated: root.viewModel.selectNext()
+        onActivated: root.controller.selectNext()
     }
 
     Shortcut {

@@ -17,7 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcSearchBoxViewModel(QObject):
+class MpvqcSearchBoxController(QObject):
     modelChanged = Signal(MpvqcCommentModel)
     selectedIndexChanged = Signal(int)
 

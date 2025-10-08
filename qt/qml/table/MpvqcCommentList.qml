@@ -491,7 +491,7 @@ ListView {
 
             parent: root
 
-            viewModel: MpvqcSearchBoxViewModel {
+            controller: MpvqcSearchBoxController {
                 model: root.model
                 selectedIndex: root.currentIndex
 

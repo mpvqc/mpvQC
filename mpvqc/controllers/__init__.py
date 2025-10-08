@@ -21,5 +21,5 @@ from .header import MpvqcAppHeaderViewModel
 from .message_box_loader import MpvqcMessageBoxLoaderViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel, MpvqcVersionCheckMessageBoxViewModel
 from .player import MpvqcPlayerViewModel
-from .search_box import MpvqcSearchBoxViewModel
+from .search_box import MpvqcSearchBoxController
 from .theme import MpvqcThemeViewModel
