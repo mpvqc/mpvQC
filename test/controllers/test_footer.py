@@ -4,37 +4,9 @@
 
 import inject
 import pytest
-from PySide6.QtCore import QObject, Signal
 
 from mpvqc.controllers.footer import MpvqcFooterViewController
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService, TimeFormatterService
-
-
-class PlayerMock(QObject):
-    time_pos_changed = Signal(int)
-    duration_changed = Signal(float)
-    percent_pos_changed = Signal(int)
-    video_loaded_changed = Signal(bool)
-    time_remaining_changed = Signal(int)
-
-    def __init__(self):
-        super().__init__()
-        self.video_loaded = False
-        self.duration = 0.0
-        self.time_pos = 0
-        self.time_remaining = 0
-        self.percent_pos = 0
-
-    def update(self, **kwargs):
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-
-        self.video_loaded_changed.emit(self.video_loaded)
-        self.duration_changed.emit(self.duration)
-        self.time_pos_changed.emit(self.time_pos)
-        self.time_remaining_changed.emit(self.time_remaining)
-        self.percent_pos_changed.emit(self.percent_pos)
 
 
 @pytest.fixture
@@ -43,15 +15,10 @@ def controller():
     return MpvqcFooterViewController()
 
 
-@pytest.fixture
-def player():
-    return PlayerMock()
-
-
 @pytest.fixture(autouse=True)
-def configure_inject(player, settings_service):
+def configure_inject(player_service_mock, settings_service):
     def config(binder: inject.Binder):
-        binder.bind(PlayerService, player)
+        binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
         binder.bind(TimeFormatterService, TimeFormatterService())
         binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())
@@ -86,13 +53,13 @@ def test_comment_count_display(controller, make_spy):
     assert visibility_spy.count() == 2
 
 
-def test_video_percent_display(controller, player, make_spy):
+def test_video_percent_display(controller, player_service_mock, make_spy):
     visibility_spy = make_spy(controller.isVideoPercentVisibleChanged)
     text_spy = make_spy(controller.videoPercentTextChanged)
 
     assert not controller.isVideoPercentVisible
 
-    player.update(video_loaded=True)
+    player_service_mock.update(video_loaded=True)
     assert controller.isVideoPercentVisible
     assert visibility_spy.count() == 1
 
@@ -100,7 +67,7 @@ def test_video_percent_display(controller, player, make_spy):
     assert not controller.isVideoPercentVisible
     assert visibility_spy.count() == 2
 
-    player.update(percent_pos=42)
+    player_service_mock.update(percent_pos=42)
     assert controller.videoPercentText == "42%"
     assert text_spy.count() > 0
 
@@ -112,55 +79,55 @@ def test_video_percent_display(controller, player, make_spy):
     assert not controller.isVideoPercentVisible
     assert visibility_spy.count() == 4
 
-    player.update(percent_pos=99)
+    player_service_mock.update(percent_pos=99)
     assert controller.videoPercentText == "99%"
     assert text_spy.at(invocation=text_spy.count() - 1, argument=0) == "99%"
 
 
-def test_time_format_display(controller, player, make_spy):
+def test_time_format_display(controller, player_service_mock, make_spy):
     text_spy = make_spy(controller.timeTextChanged)
     visibility_spy = make_spy(controller.isTimeTextVisibleChanged)
 
     assert not controller.isTimeTextVisible
 
-    player.update(video_loaded=True, duration=125, time_pos=65, time_remaining=60)
+    player_service_mock.update(video_loaded=True, duration=125, time_pos=65, time_remaining=60)
     assert controller.isTimeTextVisible
     assert controller.timeText == "01:05/02:05"
-    assert text_spy.count() == 1
+    assert text_spy.count() == 2
     assert visibility_spy.count() == 1
 
     controller.timeFormat = controller.TimeFormat.CURRENT_TIME.value
     assert controller.isTimeTextVisible
     assert controller.timeText == "01:05"
-    assert text_spy.count() == 2
+    assert text_spy.count() == 3
 
     controller.timeFormat = controller.TimeFormat.REMAINING_TIME.value
     assert controller.timeText == "-01:00"
-    assert text_spy.count() == 3
+    assert text_spy.count() == 4
 
     controller.timeFormat = controller.TimeFormat.EMPTY.value
     assert not controller.isTimeTextVisible
-    assert text_spy.count() == 4
+    assert text_spy.count() == 5
     assert visibility_spy.count() == 2
 
     controller.timeFormat = controller.TimeFormat.CURRENT_TOTAL_TIME.value
     assert controller.isTimeTextVisible
     assert controller.timeText == "01:05/02:05"
-    assert text_spy.count() == 5
+    assert text_spy.count() == 6
     assert visibility_spy.count() == 3
 
 
-def test_time_width_calculation(controller, player, make_spy):
+def test_time_width_calculation(controller, player_service_mock, make_spy):
     width_spy = make_spy(controller.timeWidthChanged)
 
     assert controller.timeWidth == 0
 
-    player.update(video_loaded=True, duration=125, time_pos=65, time_remaining=60)
+    player_service_mock.update(video_loaded=True, duration=125, time_pos=65, time_remaining=60)
     assert controller.timeWidth > 0
     initial_width = controller.timeWidth
     assert width_spy.count() == 1
 
-    player.update(duration=7200, time_pos=3661, time_remaining=3539)
+    player_service_mock.update(duration=7200, time_pos=3661, time_remaining=3539)
     assert controller.timeWidth > initial_width
     long_format_width = controller.timeWidth
     assert width_spy.count() == 2

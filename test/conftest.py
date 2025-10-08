@@ -7,11 +7,59 @@ from importlib.util import find_spec
 from typing import Any
 
 import pytest
-from PySide6.QtCore import QByteArray, SignalInstance
+from PySide6.QtCore import QByteArray, QCoreApplication, QObject, Signal, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
 from mpvqc.services import SettingsService, StateService, TypeMapperService
+
+
+class PlayerMock(QObject):
+    video_loaded_changed = Signal(bool)
+    path_changed = Signal(str)
+    filename_changed = Signal(str)
+    duration_changed = Signal(float)
+    percent_pos_changed = Signal(int)
+    time_pos_changed = Signal(int)
+    time_remaining_changed = Signal(int)
+
+    def __init__(self):
+        super().__init__()
+        self.video_loaded = False
+        self.path = None
+        self.filename = None
+        self.duration = 0.0
+        self.time_pos = 0
+        self.time_remaining = 0
+        self.percent_pos = 0
+
+    def update(self, **kwargs):  # noqa: C901
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                old_value = getattr(self, key)
+                if old_value != value:
+                    setattr(self, key, value)
+
+                    match key:
+                        case "video_loaded":
+                            self.video_loaded_changed.emit(value)
+                        case "path":
+                            self.path_changed.emit(value or "")
+                        case "filename":
+                            self.filename_changed.emit(value or "")
+                        case "duration":
+                            self.duration_changed.emit(value)
+                        case "time_pos":
+                            self.time_pos_changed.emit(value)
+                        case "time_remaining":
+                            self.time_remaining_changed.emit(value)
+                        case "percent_pos":
+                            self.percent_pos_changed.emit(value)
+
+
+@pytest.fixture
+def player_service_mock() -> PlayerMock:
+    return PlayerMock()
 
 
 class MySpy:
@@ -87,6 +135,7 @@ def settings_service(tmp_path, type_mapper):
 
 @pytest.fixture(scope="session", autouse=True)
 def qt_app() -> Generator[MpvqcApplication, Any]:
+    QCoreApplication.setApplicationName("TestApp")
     app = MpvqcApplication([])
     yield app
     app.shutdown()
