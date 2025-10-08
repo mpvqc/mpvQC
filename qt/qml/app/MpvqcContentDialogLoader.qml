@@ -26,65 +26,47 @@ Loader {
     visible: active
 
     function openAboutDialog(): void {
-        setSource(aboutDialog, {
-            parent: root.parent
-        });
+        setSource(aboutDialog);
         active = true;
     }
 
     function openAppearanceDialog(): void {
-        setSource(appearanceDialog, {
-            parent: root.parent
-        });
+        setSource(appearanceDialog);
         active = true;
     }
 
     function openBackupSettingsDialog(): void {
-        setSource(backupSettingsDialog, {
-            parent: root.parent
-        });
+        setSource(backupSettingsDialog);
         active = true;
     }
 
     function openCommentTypesDialog(): void {
-        setSource(commentTypeDialog, {
-            parent: root.parent
-        });
+        setSource(commentTypeDialog);
         active = true;
     }
 
     function openEditInputDialog(): void {
-        setSource(editInputDialog, {
-            parent: root.parent
-        });
+        setSource(editInputDialog);
         active = true;
     }
 
     function openEditMpvDialog(): void {
-        setSource(editMpvDialog, {
-            parent: root.parent
-        });
+        setSource(editMpvDialog);
         active = true;
     }
 
     function openExportSettingsDialog(): void {
-        setSource(exportSettingsDialog, {
-            parent: root.parent
-        });
+        setSource(exportSettingsDialog);
         active = true;
     }
 
     function openImportSettingsDialog(): void {
-        setSource(importSettingsDialog, {
-            parent: root.parent
-        });
+        setSource(importSettingsDialog);
         active = true;
     }
 
     function openShortcutsDialog(): void {
-        setSource(shortcutsDialog, {
-            parent: root.parent
-        });
+        setSource(shortcutsDialog);
         active = true;
     }
 
