@@ -16,7 +16,7 @@ Loader {
     readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../messageboxes/MpvqcDocumentNotCompatibleMessageBox.qml")
     readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportMessageBox.qml")
     readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../messageboxes/MpvqcExtendedExportErrorMessageBox.qml")
-    readonly property url messageBoxNewDocument: Qt.resolvedUrl("../messageboxes/MpvqcNewDocumentMessageBox.qml")
+    readonly property url messageBoxReset: Qt.resolvedUrl("../messageboxes/MpvqcResetMessageBox.qml")
     readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../messageboxes/MpvqcVersionCheckMessageBox.qml")
     readonly property url messageBoxVideoFound: Qt.resolvedUrl("../messageboxes/MpvqcVideoFoundMessageBox.qml")
 
@@ -50,8 +50,8 @@ Loader {
         active = true;
     }
 
-    function openNewDocumentMessageBox(): void {
-        setSource(messageBoxNewDocument, {
+    function openResetMessageBox(): void {
+        setSource(messageBoxReset, {
             parent: root.parent
         });
         active = true;

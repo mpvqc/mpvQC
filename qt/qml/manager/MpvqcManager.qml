@@ -15,13 +15,7 @@ import "../shared"
 MpvqcObject {
     id: root
 
-    required property var mpvqcApplication
-
     readonly property bool saved: _backend.saved
-
-    function reset(): void {
-        _backend.reset_impl();
-    }
 
     function save(): void {
         _backend.save_impl();
@@ -37,12 +31,6 @@ MpvqcObject {
         property var mpvqcDialogExportDocumentFactory: Component {
             MpvqcExportDocumentFileDialog {
                 isExtendedExport: false
-            }
-        }
-
-        property var mpvqcMessageBoxNewDocumentFactory: Component {
-            MpvqcNewDocumentMessageBox {
-                parent: root.mpvqcApplication.contentItem
             }
         }
     }

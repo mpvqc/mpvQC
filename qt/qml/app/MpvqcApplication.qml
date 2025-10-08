@@ -22,9 +22,7 @@ ApplicationWindow {
     readonly property var mpvqcSettings: MpvqcSettings
     readonly property var mpvqcTheme: MpvqcTheme
 
-    readonly property var mpvqcManager: MpvqcManager {
-        mpvqcApplication: root
-    }
+    readonly property var mpvqcManager: MpvqcManager {}
 
     readonly property bool maximized: _windowVisibilityHandler.maximized
     readonly property bool fullscreen: _windowVisibilityHandler.fullscreen
@@ -135,7 +133,13 @@ ApplicationWindow {
 
         extendedExportTemplatesModel: MpvqcExportTemplateModel {}
 
+        onConfirmResetRequested: _messageBoxLoader.openResetMessageBox()
+
         onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
+
+        onSaveQcDocumentsRequested: root.mpvqcManager.save()
+
+        onSaveQcDocumentsAsRequested: root.mpvqcManager.saveAs()
 
         onExtendedExportRequested: exportTemplate => _fileDialogLoader.openExtendedDocumentExportDialog(exportTemplate)
 

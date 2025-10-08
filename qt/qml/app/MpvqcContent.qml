@@ -154,18 +154,6 @@ Page {
     Connections {
         target: root.headerController
 
-        function onResetAppStateRequested(): void {
-            root.contentController.resetAppState();
-        }
-
-        function onSaveQcDocumentsRequested(): void {
-            root.contentController.save();
-        }
-
-        function onSaveQcDocumentsAsRequested(): void {
-            root.contentController.saveAs();
-        }
-
         function onResizeVideoRequested(): void {
             _videoResizer.recalculateSizes();
         }

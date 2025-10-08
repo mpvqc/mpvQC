@@ -4,7 +4,4 @@
 
 module dialogs
 
-MpvqcDocumentNotCompatibleMessageBox MpvqcDocumentNotCompatibleMessageBox.qml
-MpvqcNewDocumentMessageBox MpvqcNewDocumentMessageBox.qml
 MpvqcQuitMessageBox MpvqcQuitMessageBox.qml
-MpvqcVideoFoundMessageBox MpvqcVideoFoundMessageBox.qml
