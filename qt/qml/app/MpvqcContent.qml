@@ -16,7 +16,7 @@ Page {
     id: root
 
     required property var mpvqcApplication
-    required property MpvqcAppHeaderViewController headerController
+    required property MpvqcAppHeaderViewModel headerViewModel
     required property MpvqcContentController contentController
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -152,7 +152,7 @@ Page {
     }
 
     Connections {
-        target: root.headerController
+        target: root.headerViewModel
 
         function onResizeVideoRequested(): void {
             _videoResizer.recalculateSizes();

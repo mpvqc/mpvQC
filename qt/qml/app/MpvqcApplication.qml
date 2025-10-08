@@ -64,7 +64,7 @@ ApplicationWindow {
         id: _content
 
         mpvqcApplication: root
-        headerController: _headerController
+        headerViewModel: _headerViewModel
         contentController: _contentController
 
         focus: true
@@ -72,8 +72,9 @@ ApplicationWindow {
         anchors.margins: root.windowBorder
 
         header: MpvqcAppHeaderView {
-            controller: _headerController
+            viewModel: _headerViewModel
             width: root.width
+            visible: !root.fullscreen
         }
     }
 
@@ -113,25 +114,8 @@ ApplicationWindow {
         }
     }
 
-    MpvqcAppHeaderViewController {
-        id: _headerController
-
-        mpvqcTheme: root.mpvqcTheme
-        mpvqcSettings: root.mpvqcSettings
-
-        isVisible: !root.fullscreen
-        isMaximized: root.maximized
-        isStateSaved: root.mpvqcManager.saved
-        isVideoLoaded: root.mpvqcMpvPlayerPropertiesPyObject.video_loaded
-        isDebugEnabled: root.mpvqcUtilityPyObject.getEnvironmentVariable("MPVQC_DEBUG")
-
-        applicationLayout: root.mpvqcSettings.layoutOrientation
-        windowTitleFormat: root.mpvqcSettings.windowTitleFormat
-
-        playerVideoName: root.mpvqcMpvPlayerPropertiesPyObject.filename
-        playerVideoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
-
-        extendedExportTemplatesModel: MpvqcExportTemplateModel {}
+    MpvqcAppHeaderViewModel {
+        id: _headerViewModel
 
         onConfirmResetRequested: _messageBoxLoader.openResetMessageBox()
 
