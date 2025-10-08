@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtCore import QThreadPool
 
-from mpvqc.controllers import MpvqcBackupTimerController
+from mpvqc.controllers import MpvqcBackupTimerViewModel
 from mpvqc.services import DocumentBackupService, SettingsService
 
 
@@ -18,9 +18,9 @@ def backup_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def controller() -> MpvqcBackupTimerController:
+def controller() -> MpvqcBackupTimerViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcBackupTimerController()
+    return MpvqcBackupTimerViewModel()
 
 
 @pytest.fixture(autouse=True)
