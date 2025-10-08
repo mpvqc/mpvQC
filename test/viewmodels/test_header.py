@@ -37,7 +37,7 @@ def configure_inject(reset_service_mock, state_service, player_service_mock, set
 
 class WindowTitleTestCase(NamedTuple):
     saved: bool
-    window_title_format: int
+    window_title_format: MpvqcAppHeaderViewModel.WindowTitleFormat
     video_loaded: bool
     filename: str | None
     path: str | None

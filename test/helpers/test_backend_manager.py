@@ -45,8 +45,6 @@ def manager(
     factory.createObject.return_value = export_document_dialog
     manager.dialog_export_document_factory = factory
 
-    manager.message_box_video_found_factory = MagicMock()
-
     return manager
 
 

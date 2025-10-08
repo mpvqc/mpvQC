@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from email.message import Message
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
@@ -58,7 +59,7 @@ def test_version_checker_new_version_available(service):
 
 
 def test_version_checker_service_error(service):
-    error = HTTPError("https://example.com", 500, "Internal Error", {}, None)
+    error = HTTPError("https://example.com", 500, "Internal Error", Message(), None)
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, error=error)

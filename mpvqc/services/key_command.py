@@ -71,4 +71,4 @@ class KeyCommandGeneratorService:
                 key_str = key_str.lower()
             shift = None
 
-        return "+".join([key for key in [shift, ctrl, alt, key_str] if key])
+        return "+".join(key for key in [shift, ctrl, alt, key_str] if key)

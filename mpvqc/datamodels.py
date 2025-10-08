@@ -7,6 +7,6 @@ from dataclasses import dataclass
 
 @dataclass
 class Comment:
-    time: int
+    time: int | float
     comment_type: str
     comment: str

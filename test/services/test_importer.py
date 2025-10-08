@@ -75,7 +75,7 @@ def configure_inject(
 
 @pytest.fixture
 def configure_for_open(mock_doc_importer, mock_sub_importer, settings_service):
-    def setup(document_videos, subtitle_videos, doc_setting, sub_setting, comments: list[Comment] = None):
+    def setup(document_videos, subtitle_videos, doc_setting, sub_setting, comments: list[Comment] | None = None):
         settings_service.import_when_video_linked_in_document = doc_setting
         settings_service.import_when_video_linked_in_subtitle = sub_setting
 
@@ -106,7 +106,7 @@ def make_state():
             comments=comments or [],
         )
         subtitle_result = SubtitleImporterService.SubtitleImportResult(
-            subtitles=subtitles,
+            subtitles=subtitles or [],
             existing_videos=[],
         )
 
