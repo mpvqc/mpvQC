@@ -55,23 +55,23 @@ def model(make_model):
 
 
 @pytest.fixture
-def view_model(model) -> MpvqcSearchBoxViewModel:
+def controller(model) -> MpvqcSearchBoxViewModel:
     # noinspection PyCallingNonCallable
-    view_model = MpvqcSearchBoxViewModel()
-    view_model.model = model
-    return view_model
+    controller = MpvqcSearchBoxViewModel()
+    controller.model = model
+    return controller
 
 
 @pytest.fixture
-def select(view_model):
+def select(controller):
     def _select_index(index: int):
-        view_model.selectedIndex = index
+        controller.selectedIndex = index
 
     return _select_index
 
 
 @pytest.fixture
-def search(view_model) -> Callable[[str], tuple[str, bool, int]]:
+def search(controller) -> Callable[[str], tuple[str, bool, int]]:
     def _search(query):
         next_index = -1
 
@@ -79,18 +79,18 @@ def search(view_model) -> Callable[[str], tuple[str, bool, int]]:
             nonlocal next_index
             next_index = idx
 
-        view_model.highlightRequested.connect(track_highlight)
-        view_model.search(query)
-        view_model.highlightRequested.disconnect(track_highlight)
+        controller.highlightRequested.connect(track_highlight)
+        controller.search(query)
+        controller.highlightRequested.disconnect(track_highlight)
 
-        return view_model.statusLabel, view_model.hasMultipleResults, next_index
+        return controller.statusLabel, controller.hasMultipleResults, next_index
 
     # noinspection PyTypeChecker
     return _search
 
 
 @pytest.fixture
-def get_next(view_model) -> Callable[[], tuple[str, bool, int]]:
+def get_next(controller) -> Callable[[], tuple[str, bool, int]]:
     def _func():
         next_index = -1
 
@@ -98,18 +98,18 @@ def get_next(view_model) -> Callable[[], tuple[str, bool, int]]:
             nonlocal next_index
             next_index = idx
 
-        view_model.highlightRequested.connect(track_highlight)
-        view_model.selectNext()
-        view_model.highlightRequested.disconnect(track_highlight)
+        controller.highlightRequested.connect(track_highlight)
+        controller.selectNext()
+        controller.highlightRequested.disconnect(track_highlight)
 
-        return view_model.statusLabel, view_model.hasMultipleResults, next_index
+        return controller.statusLabel, controller.hasMultipleResults, next_index
 
     # noinspection PyTypeChecker
     return _func
 
 
 @pytest.fixture
-def get_previous(view_model) -> Callable[[], tuple[str, bool, int]]:
+def get_previous(controller) -> Callable[[], tuple[str, bool, int]]:
     def _func():
         next_index = -1
 
@@ -117,18 +117,18 @@ def get_previous(view_model) -> Callable[[], tuple[str, bool, int]]:
             nonlocal next_index
             next_index = idx
 
-        view_model.highlightRequested.connect(track_highlight)
-        view_model.selectPrevious()
-        view_model.highlightRequested.disconnect(track_highlight)
+        controller.highlightRequested.connect(track_highlight)
+        controller.selectPrevious()
+        controller.highlightRequested.disconnect(track_highlight)
 
-        return view_model.statusLabel, view_model.hasMultipleResults, next_index
+        return controller.statusLabel, controller.hasMultipleResults, next_index
 
     # noinspection PyTypeChecker
     return _func
 
 
-def test_search_query_changed(view_model, make_spy, search, get_next, get_previous):
-    spy = make_spy(view_model.searchQueryChanged)
+def test_search_query_changed(controller, make_spy, search, get_next, get_previous):
+    spy = make_spy(controller.searchQueryChanged)
 
     search("Query")
     assert spy.count() == 1
@@ -161,10 +161,10 @@ def test_search_no_match(search):
     assert next_idx == -1
 
 
-def test_search_match(search, view_model, make_spy):
-    status_label_spy = make_spy(view_model.statusLabelChanged)
-    has_multiple_spy = make_spy(view_model.hasMultipleResultsChanged)
-    highlight_spy = make_spy(view_model.highlightRequested)
+def test_search_match(search, controller, make_spy):
+    status_label_spy = make_spy(controller.statusLabelChanged)
+    has_multiple_spy = make_spy(controller.hasMultipleResultsChanged)
+    highlight_spy = make_spy(controller.highlightRequested)
 
     status_label, has_multiple, next_idx = search("Word")
 

@@ -70,7 +70,7 @@ TestCase {
             case "openVersionCheckMessageBox":
                 row.exec = control => {
                     control.setSource(control.messageBoxVersionCheck, {
-                        viewModel: {
+                        controller: {
                             title: "title",
                             text: "text"
                         }
