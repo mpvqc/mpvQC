@@ -5,8 +5,8 @@
 import inject
 import pytest
 
+from mpvqc.controllers.footer import MpvqcFooterViewModel
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService, TimeFormatterService
-from mpvqc.viewmodels.footer import MpvqcFooterViewModel
 
 
 @pytest.fixture

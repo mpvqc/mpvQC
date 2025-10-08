@@ -7,8 +7,8 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.controllers import MpvqcCommentTypesDialogViewModel
 from mpvqc.services import CommentTypeValidatorService, ReverseTranslatorService, SettingsService
-from mpvqc.viewmodels import MpvqcCommentTypesDialogViewModel
 
 
 @pytest.fixture

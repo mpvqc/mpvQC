@@ -9,8 +9,8 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.controllers import MpvqcAppHeaderViewModel
 from mpvqc.services import PlayerService, ResetService, SettingsService, StateService
-from mpvqc.viewmodels import MpvqcAppHeaderViewModel
 
 
 @pytest.fixture
