@@ -18,7 +18,7 @@ def backup_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def controller() -> MpvqcBackupTimerViewModel:
+def view_model() -> MpvqcBackupTimerViewModel:
     # noinspection PyCallingNonCallable
     return MpvqcBackupTimerViewModel()
 
@@ -32,7 +32,7 @@ def configure_injections(backup_service_mock, settings_service):
     inject.configure(config, clear=True)
 
 
-def test_backup_backend(controller, backup_service_mock):
-    controller.backup()
+def test_backup_backend(view_model, backup_service_mock):
+    view_model.backup()
     QThreadPool.globalInstance().waitForDone(100)
     assert backup_service_mock.backup.called
