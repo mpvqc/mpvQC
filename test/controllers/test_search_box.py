@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.controllers import MpvqcSearchBoxController
+from mpvqc.controllers import MpvqcSearchBoxViewModel
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import PlayerService
@@ -55,9 +55,9 @@ def model(make_model):
 
 
 @pytest.fixture
-def controller(model) -> MpvqcSearchBoxController:
+def controller(model) -> MpvqcSearchBoxViewModel:
     # noinspection PyCallingNonCallable
-    controller = MpvqcSearchBoxController()
+    controller = MpvqcSearchBoxViewModel()
     controller.model = model
     return controller
 
