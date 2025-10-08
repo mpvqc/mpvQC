@@ -13,7 +13,7 @@ Dialog {
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
-    anchors.centerIn: parent
+    anchors.centerIn: Overlay.overlay
     contentWidth: 370
     contentHeight: 450
     modal: true
