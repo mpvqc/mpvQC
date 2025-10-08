@@ -25,9 +25,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentDialogLoader {
-            isLayoutMirroringEnabled: false
-        }
+        MpvqcContentDialogLoader {}
     }
 
     function makeControl(): Item {

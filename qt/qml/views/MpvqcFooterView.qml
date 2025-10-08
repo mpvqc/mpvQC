@@ -122,9 +122,9 @@ Item {
         onLoaded: item.open() // qmllint disable
 
         sourceComponent: MpvqcMenu {
-            x: mMirrored ? _toolButtonContainer.x : _toolButtonContainer.x + _toolButtonContainer.width - width
+            x: isMirrored ? _toolButtonContainer.x : _toolButtonContainer.x + _toolButtonContainer.width - width
             y: -height
-            transformOrigin: mMirrored ? Popup.BottomLeft : Popup.BottomRight
+            transformOrigin: isMirrored ? Popup.BottomLeft : Popup.BottomRight
             modal: true
             dim: false
 

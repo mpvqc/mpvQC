@@ -10,11 +10,11 @@ import "../themes"
 Menu {
     id: root
 
-    readonly property bool mMirrored: count > 0 && (itemAt(0) as MenuItem).mirrored
+    readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
     readonly property bool isWindows: Qt.platform.os === "windows"
 
     z: 2
-    x: mMirrored ? -width + parent.width : 0
+    x: isMirrored ? -width + parent.width : 0
     popupType: isWindows ? Popup.Window : Popup.Item
     dim: false
 

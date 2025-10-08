@@ -10,7 +10,7 @@ import QtQuick.Controls.Material
 Dialog {
     id: root
 
-    property bool isMirrored: false
+    readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     anchors.centerIn: parent

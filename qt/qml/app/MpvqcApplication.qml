@@ -81,8 +81,6 @@ ApplicationWindow {
     MpvqcContentDialogLoader {
         id: _dialogLoader
 
-        isLayoutMirroringEnabled: Application.layoutDirection === Qt.RightToLeft
-
         onDialogClosed: _content.focusCommentTable()
     }
 
