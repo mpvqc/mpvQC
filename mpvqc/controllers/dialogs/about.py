@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker,PyCallingNonCallable,PyArgumentList
 @QmlElement
-class MpvqcAboutDialogControllerPyObject(QObject):
+class MpvqcAboutDialogViewModel(QObject):
     _player: PlayerService = inject.attr(PlayerService)
 
     @Property(str, constant=True, final=True)

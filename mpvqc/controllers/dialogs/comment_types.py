@@ -22,7 +22,7 @@ class TextFieldMode(Enum):
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcCommentTypesDialogControllerPyObject(QObject):
+class MpvqcCommentTypesDialogViewModel(QObject):
     _validator: CommentTypeValidatorService = inject.attr(CommentTypeValidatorService)
     _translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
     _settings: SettingsService = inject.attr(SettingsService)

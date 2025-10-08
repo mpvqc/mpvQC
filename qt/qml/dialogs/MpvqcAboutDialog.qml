@@ -16,7 +16,7 @@ import "../models"
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcAboutDialogControllerPyObject controller: MpvqcAboutDialogControllerPyObject {}
+    readonly property MpvqcAboutDialogViewModel viewModel: MpvqcAboutDialogViewModel {}
 
     readonly property string applicationName: Qt.application.name
     readonly property string applicationVersion: `${Qt.application.version} - >>>commit-id<<<`
@@ -78,7 +78,7 @@ MpvqcDialog {
 
                 Layout.alignment: Qt.AlignHCenter
 
-                onLinkActivated: link => root.controller.openLink(link)
+                onLinkActivated: link => root.viewModel.openLink(link)
 
                 MouseArea {
                     anchors.fill: parent
@@ -103,7 +103,7 @@ MpvqcDialog {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
 
-                onLinkActivated: link => root.controller.openLink(link)
+                onLinkActivated: link => root.viewModel.openLink(link)
 
                 MouseArea {
                     anchors.fill: parent
@@ -164,7 +164,7 @@ MpvqcDialog {
                 dependencyName: "libmpv"
                 dependencyUrl: "https://mpv.io/"
                 dependencyLicence: "GPL-2.0+"
-                dependencyVersion: root.controller.mpvVersion
+                dependencyVersion: root.viewModel.mpvVersion
 
                 Layout.fillWidth: true
             }
@@ -173,7 +173,7 @@ MpvqcDialog {
                 dependencyName: "ffmpeg"
                 dependencyUrl: "https://ffmpeg.org/"
                 dependencyLicence: "GPL-2.0+"
-                dependencyVersion: root.controller.ffmpegVersion
+                dependencyVersion: root.viewModel.ffmpegVersion
 
                 Layout.fillWidth: true
             }
@@ -269,7 +269,7 @@ MpvqcDialog {
             horizontalAlignment: Text.AlignRight
             width: _row.width / 2
 
-            onLinkActivated: link => root.controller.openLink(link)
+            onLinkActivated: link => root.viewModel.openLink(link)
 
             MouseArea {
                 anchors.fill: parent

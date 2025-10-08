@@ -15,18 +15,18 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker,PyCallingNonCallable,PyArgumentList
 @QmlElement
-class MpvqcEditInputDialogControllerPyObject(QObject):
+class MpvqcEditMpvDialogViewModel(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _resources: ResourceService = inject.attr(ResourceService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
     @Property(QUrl, constant=True, final=True)
-    def inputFileUrl(self) -> QUrl:
-        return self._type_mapper.map_path_to_url(self._paths.file_input_conf)
+    def mpvFileUrl(self) -> QUrl:
+        return self._type_mapper.map_path_to_url(self._paths.file_mpv_conf)
 
     @Property(str, constant=True, final=True)
-    def defaultInputConfiguration(self) -> str:
-        return self._resources.input_conf_content
+    def defaultMpvConfiguration(self) -> str:
+        return self._resources.mpv_conf_content
 
     @Slot(QUrl)
     def openLink(self, link: QUrl) -> None:

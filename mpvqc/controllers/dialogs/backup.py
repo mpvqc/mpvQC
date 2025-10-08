@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcBackupDialogControllerPyObject(QObject):
+class MpvqcBackupDialogViewModel(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _settings: SettingsService = inject.attr(SettingsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)

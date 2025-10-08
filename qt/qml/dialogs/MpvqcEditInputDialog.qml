@@ -16,7 +16,7 @@ import "../themes"
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcEditInputDialogControllerPyObject controller: MpvqcEditInputDialogControllerPyObject {}
+    readonly property MpvqcEditInputDialogViewModel viewModel: MpvqcEditInputDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme
 
     title: qsTranslate("InputConfEditDialog", "Edit input.conf")
@@ -26,7 +26,7 @@ MpvqcDialog {
 
     onAccepted: _textArea.textDocument.save()
 
-    onReset: _textArea.text = controller.defaultInputConfiguration
+    onReset: _textArea.text = viewModel.defaultInputConfiguration
 
     component Separator: Rectangle {
         property int topMargin: 0
@@ -53,7 +53,7 @@ MpvqcDialog {
             Layout.topMargin: 20
             Layout.fillWidth: true
 
-            onLinkActivated: link => root.controller.openLink(link)
+            onLinkActivated: link => root.viewModel.openLink(link)
 
             MouseArea {
                 anchors.fill: parent
@@ -94,7 +94,7 @@ MpvqcDialog {
                 font.family: "Noto Sans Mono"
                 font.pointSize: 11
                 leftPadding: _scrollView.mirrored && _scrollView.needsVerticalScroll ? 22 : 0
-                textDocument.source: root.controller.inputFileUrl
+                textDocument.source: root.viewModel.inputFileUrl
             }
         }
 

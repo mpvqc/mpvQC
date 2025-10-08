@@ -15,7 +15,7 @@ import "../shared"
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcBackupDialogControllerPyObject controller: MpvqcBackupDialogControllerPyObject {}
+    readonly property MpvqcBackupDialogViewModel viewModel: MpvqcBackupDialogViewModel {}
 
     readonly property int minBackupInterval: 15
     readonly property int maxBackupInterval: 5 * 60
@@ -29,10 +29,10 @@ MpvqcDialog {
 
             label: qsTranslate("BackupDialog", "Backup Enabled")
             prefWidth: parent.width
-            checked: root.controller.temporaryBackupEnabled
+            checked: root.viewModel.temporaryBackupEnabled
 
             onToggled: state => {
-                root.controller.temporaryBackupEnabled = state;
+                root.viewModel.temporaryBackupEnabled = state;
             }
         }
 
@@ -41,12 +41,12 @@ MpvqcDialog {
             suffix: qsTranslate("BackupDialog", "Seconds")
             prefWidth: parent.width
 
-            value: root.controller.temporaryBackupInterval
+            value: root.viewModel.temporaryBackupInterval
             valueFrom: root.minBackupInterval
             valueTo: root.maxBackupInterval
 
             onValueModified: value => {
-                root.controller.temporaryBackupInterval = value;
+                root.viewModel.temporaryBackupInterval = value;
             }
         }
 
@@ -57,13 +57,13 @@ MpvqcDialog {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 40
 
-            onPressed: root.controller.openBackupDirectory()
+            onPressed: root.viewModel.openBackupDirectory()
 
             MpvqcTooltip {
                 y: -parent.height + 10
                 z: 10
                 visible: (parent as Button).hovered
-                text: root.controller.backupDirectory
+                text: root.viewModel.backupDirectory
             }
         }
 
@@ -73,5 +73,5 @@ MpvqcDialog {
         }
     }
 
-    onAccepted: root.controller.accept()
+    onAccepted: root.viewModel.accept()
 }

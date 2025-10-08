@@ -13,7 +13,7 @@ import "../shared"
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcImportSettingsDialogControllerPyObject controller: MpvqcImportSettingsDialogControllerPyObject {}
+    readonly property MpvqcImportSettingsDialogViewModel viewModel: MpvqcImportSettingsDialogViewModel {}
 
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
 
@@ -41,11 +41,11 @@ MpvqcDialog {
                 model: ImportOptionsModel {}
 
                 onActivated: value => {
-                    root.controller.importWhenVideoLinkedInDocument = value;
+                    root.viewModel.importWhenVideoLinkedInDocument = value;
                 }
 
                 Component.onCompleted: {
-                    currentIndex = indexOfValue(root.controller.importWhenVideoLinkedInDocument);
+                    currentIndex = indexOfValue(root.viewModel.importWhenVideoLinkedInDocument);
                 }
             }
         }
@@ -56,5 +56,5 @@ MpvqcDialog {
         }
     }
 
-    onAccepted: root.controller.accept()
+    onAccepted: root.viewModel.accept()
 }

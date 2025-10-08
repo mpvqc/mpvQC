@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
-class MpvqcImportSettingsDialogControllerPyObject(QObject):
+class MpvqcImportSettingsDialogViewModel(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
 
     importWhenVideoLinkedInDocumentChanged = Signal(int)
