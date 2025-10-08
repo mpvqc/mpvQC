@@ -7,18 +7,21 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
+import pyobjects
+
 import "../shared"
+import "../models"
+import "../themes"
 
 Item {
     id: root
 
-    required property MpvqcAppHeaderViewController controller
+    required property MpvqcAppHeaderViewModel viewModel
 
     readonly property alias menuBarWidth: menuBar.width
     readonly property alias menuBarHeight: menuBar.height
 
     height: menuBarHeight
-    visible: controller.isVisible
 
     DragHandler {
         target: null
@@ -26,14 +29,14 @@ Item {
 
         onActiveChanged: {
             if (active) {
-                root.controller.requestWindowDrag();
+                root.viewModel.requestWindowDrag();
             }
         }
     }
 
     TapHandler {
         onDoubleTapped: {
-            root.controller.requestToggleMaximize();
+            root.viewModel.requestToggleMaximize();
         }
     }
 
@@ -53,7 +56,7 @@ Item {
                     icon.source: "qrc:/data/icons/inventory_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestResetAppState();
+                        root.viewModel.requestResetAppState();
                     }
                 }
 
@@ -63,7 +66,7 @@ Item {
                     icon.source: "qrc:/data/icons/file_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenQcDocuments();
+                        root.viewModel.requestOpenQcDocuments();
                     }
                 }
 
@@ -73,7 +76,7 @@ Item {
                     icon.source: "qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestSaveQcDocument();
+                        root.viewModel.requestSaveQcDocument();
                     }
                 }
 
@@ -83,12 +86,12 @@ Item {
                     icon.source: "qrc:/data/icons/save_as_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestSaveQcDocumentAs();
+                        root.viewModel.requestSaveQcDocumentAs();
                     }
                 }
 
                 MenuSeparator {
-                    visible: root.controller.haveExtendedExportTemplates
+                    visible: _extendedExportModel.count > 0
                     height: visible ? implicitHeight : 0
                 }
 
@@ -96,7 +99,7 @@ Item {
                     title: qsTranslate("MainWindow", "Export QC Document")
                     icon.source: "qrc:/data/icons/export_notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
-                    enabled: root.controller.haveExtendedExportTemplates
+                    enabled: _extendedExportModel.count > 0
 
                     onEnabledChanged: {
                         parent.enabled = enabled;
@@ -105,8 +108,9 @@ Item {
                     }
 
                     Repeater {
-                        id: _repeater
-                        model: root.controller.extendedExportTemplatesModel
+                        model: MpvqcExportTemplateModel {
+                            id: _extendedExportModel
+                        }
 
                         delegate: MenuItem {
                             required property string name
@@ -116,7 +120,7 @@ Item {
                             icon.source: "qrc:/data/icons/notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                             onTriggered: {
-                                root.controller.requestSaveQcDocumentExtendedUsing(name, path);
+                                root.viewModel.requestSaveQcDocumentExtendedUsing(name, path);
                             }
                         }
                     }
@@ -130,7 +134,7 @@ Item {
                     icon.source: "qrc:/data/icons/exit_to_app_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestClose();
+                        root.viewModel.requestClose();
                     }
                 }
             }
@@ -144,7 +148,7 @@ Item {
                     icon.source: "qrc:/data/icons/movie_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenVideo();
+                        root.viewModel.requestOpenVideo();
                     }
                 }
 
@@ -153,7 +157,7 @@ Item {
                     icon.source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenSubtitles();
+                        root.viewModel.requestOpenSubtitles();
                     }
                 }
 
@@ -165,7 +169,7 @@ Item {
                     icon.source: "qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestResizeVideo();
+                        root.viewModel.requestResizeVideo();
                     }
                 }
             }
@@ -178,7 +182,7 @@ Item {
                     icon.source: "qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenAppearanceDialog();
+                        root.viewModel.requestOpenAppearanceDialog();
                     }
                 }
 
@@ -187,7 +191,7 @@ Item {
                     icon.source: "qrc:/data/icons/comment_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenCommentTypesDialog();
+                        root.viewModel.requestOpenCommentTypesDialog();
                     }
                 }
 
@@ -196,7 +200,20 @@ Item {
                     icon.source: "qrc:/data/icons/title_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     Repeater {
-                        model: root.controller.windowTitleFormatModel
+                        model: [
+                            {
+                                "label": qsTranslate("MainWindow", "Default Title"),
+                                "value": MpvqcAppHeaderViewModel.WindowTitleFormat.DEFAULT
+                            },
+                            {
+                                "label": qsTranslate("MainWindow", "Video File"),
+                                "value": MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_NAME
+                            },
+                            {
+                                "label": qsTranslate("MainWindow", "Video Path"),
+                                "value": MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_PATH
+                            },
+                        ]
 
                         delegate: MenuItem {
                             required property string label
@@ -205,10 +222,10 @@ Item {
                             text: label
                             autoExclusive: true
                             checkable: true
-                            checked: root.controller.windowTitleFormat === value
+                            checked: root.viewModel.windowTitleFormat === value
 
                             onTriggered: {
-                                root.controller.configureWindowTitleFormat(value);
+                                root.viewModel.configureWindowTitleFormat(value);
                             }
                         }
                     }
@@ -219,7 +236,16 @@ Item {
                     icon.source: "qrc:/data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     Repeater {
-                        model: root.controller.applicationLayoutModel
+                        model: [
+                            {
+                                "label": qsTranslate("MainWindow", "Video Above Comments"),
+                                "value": Qt.Vertical
+                            },
+                            {
+                                "label": qsTranslate("MainWindow", "Video Next to Comments"),
+                                "value": Qt.Horizontal
+                            },
+                        ]
 
                         delegate: MenuItem {
                             required property string label
@@ -228,10 +254,10 @@ Item {
                             text: label
                             autoExclusive: true
                             checkable: true
-                            checked: root.controller.applicationLayout === value
+                            checked: root.viewModel.applicationLayout === value
 
                             onTriggered: {
-                                root.controller.configureApplicationLayout(value);
+                                root.viewModel.configureApplicationLayout(value);
                             }
                         }
                     }
@@ -244,7 +270,7 @@ Item {
                     icon.source: "qrc:/data/icons/settings_backup_restore_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenBackupSettingsDialog();
+                        root.viewModel.requestOpenBackupSettingsDialog();
                     }
                 }
 
@@ -253,7 +279,7 @@ Item {
                     icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenExportSettingsDialog();
+                        root.viewModel.requestOpenExportSettingsDialog();
                     }
                 }
 
@@ -262,7 +288,7 @@ Item {
                     icon.source: "qrc:/data/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenImportSettingsDialog();
+                        root.viewModel.requestOpenImportSettingsDialog();
                     }
                 }
 
@@ -273,7 +299,7 @@ Item {
                     icon.source: "qrc:/data/icons/movie_edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenEditMpvConfigDialog();
+                        root.viewModel.requestOpenEditMpvConfigDialog();
                     }
                 }
 
@@ -282,7 +308,7 @@ Item {
                     icon.source: "qrc:/data/icons/keyboard_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenEditInputConfigDialog();
+                        root.viewModel.requestOpenEditInputConfigDialog();
                     }
                 }
 
@@ -302,7 +328,7 @@ Item {
                     }
 
                     Repeater {
-                        model: root.controller.languageModel
+                        model: MpvqcLanguageModel {}
 
                         MenuItem {
                             required property string language
@@ -314,7 +340,7 @@ Item {
                             checked: identifier === Qt.uiLanguage
 
                             onTriggered: {
-                                _languageMenu._deferToOnClose = () => root.controller.configureLanguage(identifier);
+                                _languageMenu._deferToOnClose = () => root.viewModel.configureLanguage(identifier);
                             }
                         }
                     }
@@ -328,11 +354,11 @@ Item {
 
                     text: qsTranslate("MainWindow", "Check for Updates...")
                     icon.source: "qrc:/data/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-                    visible: root.controller.isUpdateMenuVisible
+                    visible: root.viewModel.isUpdateMenuVisible
                     height: visible ? implicitHeight : 0
 
                     onTriggered: {
-                        root.controller.requestOpenCheckForUpdatesDialog();
+                        root.viewModel.requestOpenCheckForUpdatesDialog();
                     }
                 }
 
@@ -342,7 +368,7 @@ Item {
                     shortcut: "?"
 
                     onTriggered: {
-                        root.controller.requestOpenKeyboardShortcutsDialog();
+                        root.viewModel.requestOpenKeyboardShortcutsDialog();
                     }
                 }
 
@@ -353,7 +379,7 @@ Item {
                     icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenExtendedExportsDialog();
+                        root.viewModel.requestOpenExtendedExportsDialog();
                     }
                 }
 
@@ -362,7 +388,7 @@ Item {
                     icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     onTriggered: {
-                        root.controller.requestOpenAboutDialog();
+                        root.viewModel.requestOpenAboutDialog();
                     }
                 }
             }
@@ -371,7 +397,7 @@ Item {
         Label {
             width: root.width - root.menuBarWidth * 2
             height: root.menuBarHeight
-            text: root.controller.windowTitle
+            text: root.viewModel.windowTitle
             elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -394,7 +420,7 @@ Item {
                 icon.source: "qrc:/data/icons/minimize_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 onClicked: {
-                    root.controller.requestMinimize();
+                    root.viewModel.requestMinimize();
                 }
             }
 
@@ -409,10 +435,10 @@ Item {
                 anchors.right: _closeButton.left
                 icon.width: 18
                 icon.height: 18
-                icon.source: root.controller.isMaximized ? iconNormalize : iconMaximize
+                icon.source: MpvqcWindowProperties.isMaximized ? iconNormalize : iconMaximize
 
                 onClicked: {
-                    root.controller.requestToggleMaximize();
+                    root.viewModel.requestToggleMaximize();
                 }
             }
 
@@ -428,25 +454,25 @@ Item {
                     height: 18
                     source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     color: {
-                        if (root.controller.isWindows && _closeButton.hovered) {
+                        if (root.viewModel.isWindows && _closeButton.hovered) {
                             return "#FFFFFD";
                         } else if (_closeButton.hovered) {
-                            return root.controller.mpvqcTheme.background;
+                            return MpvqcTheme.background;
                         } else {
-                            return root.controller.mpvqcTheme.foreground;
+                            return MpvqcTheme.foreground;
                         }
                     }
                 }
 
                 onClicked: {
-                    root.controller.requestClose();
+                    root.viewModel.requestClose();
                 }
 
                 Binding {
                     when: true
                     target: _closeButton.background
                     property: "color"
-                    value: root.controller.isWindows ? "#C42C1E" : root.controller.mpvqcTheme.control
+                    value: root.viewModel.isWindows ? "#C42C1E" : MpvqcTheme.control
                     restoreMode: Binding.RestoreNone
                 }
             }

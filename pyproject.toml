@@ -349,10 +349,8 @@ files = [
     "qt/qml/themes/MpvqcTheme.qml",
     "qt/qml/themes/qmldir",
     "qt/qml/views/MpvqcAppHeaderView.qml",
-    "qt/qml/views/MpvqcAppHeaderViewController.qml",
     "qt/qml/views/MpvqcFooterView.qml",
     "qt/qml/views/MpvqcPlayerView.qml",
     "qt/qml/views/MpvqcSearchBoxView.qml",
     "qt/qml/views/qmldir",
-    "qt/qml/views/tst_MpvqcAppHeaderViewController.qml",
 ]

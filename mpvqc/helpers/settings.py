@@ -28,31 +28,16 @@ class MpvqcSettings(QObject):
         FILE_PATH = 2
 
     # Common
-    languageChanged = Signal(str)
     commentTypesChanged = Signal(list)
 
     # SplitView
     layoutOrientationChanged = Signal(int)
 
-    # Window Title
-    windowTitleFormatChanged = Signal(int)
-
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        # Connect settings service signals to our signals for QML
-        self._settings.languageChanged.connect(self.languageChanged)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
-        self._settings.windowTitleFormatChanged.connect(self.windowTitleFormatChanged)
-
-    @Property(str, notify=languageChanged)
-    def language(self) -> str:
-        return self._settings.language
-
-    @language.setter
-    def language(self, value: str):
-        self._settings.language = value
 
     @Property(list, notify=commentTypesChanged)
     def commentTypes(self) -> list[str]:
@@ -69,11 +54,3 @@ class MpvqcSettings(QObject):
     @layoutOrientation.setter
     def layoutOrientation(self, value: int):
         self._settings.layout_orientation = value
-
-    @Property(int, notify=windowTitleFormatChanged)
-    def windowTitleFormat(self) -> int:
-        return self._settings.window_title_format
-
-    @windowTitleFormat.setter
-    def windowTitleFormat(self, value: int):
-        self._settings.window_title_format = value
