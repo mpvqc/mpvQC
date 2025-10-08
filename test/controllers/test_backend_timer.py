@@ -8,8 +8,8 @@ import inject
 import pytest
 from PySide6.QtCore import QThreadPool
 
-from mpvqc.controllers import MpvqcBackupTimerViewModel
 from mpvqc.services import DocumentBackupService, SettingsService
+from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 
 @pytest.fixture
