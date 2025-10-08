@@ -9,8 +9,8 @@ import pyobjects
 import "../shared"
 
 MpvqcMessageBox {
-    property var controller: VersionCheckController {}
+    property var viewModel: MpvqcVersionCheckMessageBoxViewModel {}
 
-    title: controller.title || qsTranslate("MessageBoxes", "Checking for Updates...")
-    text: controller.text || qsTranslate("MessageBoxes", "Loading...")
+    title: viewModel.title || qsTranslate("MessageBoxes", "Checking for Updates...")
+    text: viewModel.text || qsTranslate("MessageBoxes", "Loading...")
 }

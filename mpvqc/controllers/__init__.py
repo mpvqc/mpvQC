@@ -12,11 +12,12 @@ from .drop_area import MpvqcDropAreaViewModel
 from .edit_input_dialog import MpvqcEditInputDialogControllerPyObject
 from .edit_mpv_dialog import MpvqcEditMpvDialogControllerPyObject
 from .export_settings_dialog import MpvqcExportSettingsDialogControllerPyObject
-from .file_dialogs import MpvqcImportFileDialogViewModel
+from .file_dialogs import MpvqcExportFileDialogViewModel, MpvqcImportFileDialogViewModel
 from .footer import MpvqcFooterViewController
+from .header import MpvqcAppHeaderViewModel
 from .import_settings_dialog import MpvqcImportSettingsDialogControllerPyObject
 from .message_box_loader import MpvqcMessageBoxLoaderViewModel
+from .message_boxes import MpvqcResetMessageBoxViewModel, MpvqcVersionCheckMessageBoxViewModel
 from .player import MpvqcPlayerController
 from .search_box import MpvqcSearchBoxController
 from .theme import MpvqcThemeViewModel
-from .version_check_message_box import VersionCheckController

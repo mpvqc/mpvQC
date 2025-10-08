@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from importlib.util import find_spec
 from typing import Any
 
@@ -11,7 +11,7 @@ from PySide6.QtCore import QByteArray, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
-from mpvqc.services import SettingsService, TypeMapperService
+from mpvqc.services import SettingsService, StateService, TypeMapperService
 
 
 class MySpy:
@@ -58,17 +58,38 @@ def type_mapper() -> TypeMapperService:
     return TypeMapperService()
 
 
-@pytest.fixture(scope="session", autouse=True)
-def qt_app() -> Generator[MpvqcApplication, Any]:
-    app = MpvqcApplication([])
-    yield app
-    app.shutdown()
+@pytest.fixture
+def state_service() -> StateService:
+    return StateService()
+
+
+@pytest.fixture
+def configure_state(state_service) -> Callable:
+    from mpvqc.services.state import ApplicationState
+
+    def _configure(**kwargs):
+        # noinspection PyProtectedMember
+        old = state_service._state
+        state_service._state = ApplicationState(
+            document=kwargs.get("document", old.document),
+            video=kwargs.get("video", old.video),
+            saved=bool(kwargs.get("saved", old.saved)),
+        )
+
+    return _configure
 
 
 @pytest.fixture
 def settings_service(tmp_path, type_mapper):
     file = tmp_path / "test_settings.ini"
     return SettingsService(ini_file=type_mapper.map_path_to_str(file))
+
+
+@pytest.fixture(scope="session", autouse=True)
+def qt_app() -> Generator[MpvqcApplication, Any]:
+    app = MpvqcApplication([])
+    yield app
+    app.shutdown()
 
 
 @pytest.fixture(scope="session", autouse=True)

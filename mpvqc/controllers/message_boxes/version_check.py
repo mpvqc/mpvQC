@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyTypeChecker
 @QmlElement
-class VersionCheckController(QObject):
+class MpvqcVersionCheckMessageBoxViewModel(QObject):
     _checker: VersionCheckerService = inject.attr(VersionCheckerService)
 
     titleChanged = Signal()

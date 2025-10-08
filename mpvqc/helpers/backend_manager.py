@@ -2,15 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from functools import cached_property
 from pathlib import Path
 
 import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
-from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement, QQmlComponent
 
-from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import (
     DocumentExportService,
     StateService,
@@ -40,10 +37,6 @@ class MpvqcManagerBackendPyObject(QObject):
     def saved(self) -> bool:
         return self._app_state.saved
 
-    @cached_property
-    def _comment_model(self) -> MpvqcCommentModel:
-        return QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel")
-
     @property
     def _document(self) -> Path | None:
         return self._app_state.document
@@ -59,28 +52,7 @@ class MpvqcManagerBackendPyObject(QObject):
         # fmt: off
         self.dialog_export_document_factory \
             = bind_qml_property_with(name="mpvqcDialogExportDocumentFactory")
-        self.message_box_new_document_factory \
-            = bind_qml_property_with(name="mpvqcMessageBoxNewDocumentFactory")
         # fmt: on
-
-    @Slot()
-    def reset_impl(self):
-        """ """
-
-        def _ask_to_confirm_reset():
-            message_box = self.message_box_new_document_factory.createObject()
-            message_box.closed.connect(message_box.deleteLater)
-            message_box.accepted.connect(_reset)
-            message_box.open()
-
-        def _reset():
-            self._comment_model.clear_comments()
-            self._app_state.reset()
-
-        if self.saved:
-            _reset()
-        else:
-            _ask_to_confirm_reset()
 
     @Slot()
     def save_impl(self):

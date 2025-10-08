@@ -71,18 +71,6 @@ QtObject {
         };
     }
 
-    function resetAppState(): void {
-        mpvqcManager.reset();
-    }
-
-    function save(): void {
-        mpvqcManager.save();
-    }
-
-    function saveAs(): void {
-        mpvqcManager.saveAs();
-    }
-
     // --- Private helpers ---
 
     function _isPreventReachingMpvCustomCommand(key, modifiers): bool {

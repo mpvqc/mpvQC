@@ -6,7 +6,7 @@ import QtQuick
 
 import pyobjects
 
-QtObject {
+MpvqcAppHeaderViewModel {
     id: root
 
     required property var mpvqcTheme
@@ -60,7 +60,6 @@ QtObject {
 
     readonly property string windowTitle: _determineWindowTitle()
 
-    signal resetAppStateRequested
     signal openQcDocumentsRequested
     signal saveQcDocumentsRequested
     signal saveQcDocumentsAsRequested
@@ -87,10 +86,6 @@ QtObject {
     signal minimizeAppRequested
     signal toggleMaximizeAppRequested
     signal closeAppRequested
-
-    function requestResetAppState(): void {
-        root.resetAppStateRequested();
-    }
 
     function requestOpenQcDocuments(): void {
         root.openQcDocumentsRequested();

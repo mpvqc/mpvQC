@@ -59,15 +59,6 @@ TestCase {
                     lastOpenVideos = videos;
                     lastOpenSubtitles = subtitles;
                 }
-                function reset() {
-                    resetCount += 1;
-                }
-                function save() {
-                    saveCount += 1;
-                }
-                function saveAs() {
-                    saveAsCount += 1;
-                }
             }
 
             mpvqcSettings: QtObject {
@@ -234,32 +225,5 @@ TestCase {
         const r = control.preferredSplitSizes(1000, 800);
         compare(r.width, 400);
         compare(r.height, 320);
-    }
-
-    function test_resetAppState() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        compare(control.mpvqcManager.resetCount, 0);
-        control.resetAppState();
-        compare(control.mpvqcManager.resetCount, 1);
-    }
-
-    function test_save() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        compare(control.mpvqcManager.saveCount, 0);
-        control.save();
-        compare(control.mpvqcManager.saveCount, 1);
-    }
-
-    function test_saveAs() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-
-        compare(control.mpvqcManager.saveAsCount, 0);
-        control.saveAs();
-        compare(control.mpvqcManager.saveAsCount, 1);
     }
 }
