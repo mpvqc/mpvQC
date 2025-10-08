@@ -16,7 +16,7 @@ from .dialogs import (
 )
 from .drop_area import MpvqcDropAreaViewModel
 from .file_dialogs import MpvqcExportFileDialogViewModel, MpvqcImportFileDialogViewModel
-from .footer import MpvqcFooterViewController
+from .footer import MpvqcFooterViewModel
 from .header import MpvqcAppHeaderViewModel
 from .message_box_loader import MpvqcMessageBoxLoaderViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel, MpvqcVersionCheckMessageBoxViewModel

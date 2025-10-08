@@ -15,7 +15,7 @@ import "../shared"
 Item {
     id: root
 
-    required property MpvqcFooterViewController controller
+    required property MpvqcFooterViewModel viewModel
 
     readonly property alias rowSelectionLabelText: _rowSelectionLabelText
     readonly property alias percentLabelText: _videoPercentLabel
@@ -51,8 +51,8 @@ Item {
         Label {
             id: _rowSelectionLabelText
 
-            text: root.controller.commentCountText
-            visible: root.controller.isCommentCountVisible
+            text: root.viewModel.commentCountText
+            visible: root.viewModel.isCommentCountVisible
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: root.bottomMargin
             Layout.leftMargin: 3
@@ -65,8 +65,8 @@ Item {
         Label {
             id: _videoPercentLabel
 
-            text: root.controller.videoPercentText
-            visible: root.controller.isVideoPercentVisible
+            text: root.viewModel.videoPercentText
+            visible: root.viewModel.isVideoPercentVisible
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: root.bottomMargin
@@ -75,11 +75,11 @@ Item {
         Label {
             id: _videoTimeLabel
 
-            text: root.controller.timeText
-            visible: root.controller.isTimeTextVisible
+            text: root.viewModel.timeText
+            visible: root.viewModel.isTimeTextVisible
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
-            Layout.preferredWidth: root.controller.timeWidth
+            Layout.preferredWidth: root.viewModel.timeWidth
             Layout.bottomMargin: root.bottomMargin
             Layout.leftMargin: 15
         }
@@ -130,48 +130,48 @@ Item {
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Default format")
-                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.CURRENT_TOTAL_TIME
+                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.CURRENT_TOTAL_TIME
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.CURRENT_TOTAL_TIME
+                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.CURRENT_TOTAL_TIME
             }
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Current time")
-                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.CURRENT_TIME
+                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.CURRENT_TIME
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.CURRENT_TIME
+                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.CURRENT_TIME
             }
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Remaining time")
-                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.REMAINING_TIME
+                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.REMAINING_TIME
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.REMAINING_TIME
+                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.REMAINING_TIME
             }
 
             MenuItem {
                 text: qsTranslate("MainWindow", "Hide time")
-                checked: root.controller.timeFormat === MpvqcFooterViewController.TimeFormat.EMPTY
+                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.EMPTY
                 autoExclusive: true
                 checkable: true
 
-                onTriggered: root.controller.timeFormat = MpvqcFooterViewController.TimeFormat.EMPTY
+                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.EMPTY
             }
 
             MenuSeparator {}
 
             Action {
                 text: qsTranslate("MainWindow", "Progress in percent")
-                checked: root.controller.isVideoPercentVisible
+                checked: root.viewModel.isVideoPercentVisible
                 checkable: true
 
-                onTriggered: root.controller.toggleVideoPercentDisplay()
+                onTriggered: root.viewModel.toggleVideoPercentDisplay()
             }
         }
     }
