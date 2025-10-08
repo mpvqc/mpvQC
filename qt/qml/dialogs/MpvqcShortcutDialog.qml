@@ -4,6 +4,7 @@
 
 pragma ComponentBehavior: Bound
 
+import QtQml.Models
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
@@ -47,7 +48,6 @@ MpvqcDialog {
             readonly property int scrollBarSpaceRight2Left: LayoutMirroring.enabled ? scrollBarSpace : 0
 
             property string filterQuery: ""
-            property int itemWidth: -1
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -58,6 +58,23 @@ MpvqcDialog {
 
             model: _filterModel
 
+            delegate: ShortcutRow {
+                required property var model
+
+                shortcutLabel: model.label
+                shortcutButton1: model.button1
+                shortcutButton1Icon: model.button1Icon
+                shortcutButton2: model.button2
+                shortcutButton2Icon: model.button2Icon
+                shortcutButton3: model.button3
+                shortcutButton3Icon: model.button3Icon
+                isMultiShortcut: model.isSeparateShortcut
+                scrollBarPadding: _listView.scrollBarSpace
+
+                width: parent ? parent.width - _listView.scrollBarSpaceLeft2Right : 0
+                rightMargin: _listView.scrollBarSpaceRight2Left
+            }
+
             ScrollBar.vertical: ScrollBar {
                 id: _scrollBar
 
@@ -67,15 +84,7 @@ MpvqcDialog {
                 policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
             }
 
-            onCountChanged: {
-                if (itemWidth < 0 && count > 0) {
-                    itemWidth = itemAtIndex(0).width;
-                }
-            }
-
-            onFilterQueryChanged: {
-                _filterModel.update();
-            }
+            onFilterQueryChanged: _filterModel.invalidate()
 
             section {
                 property: "category"
@@ -84,93 +93,54 @@ MpvqcDialog {
                     required property string section
 
                     text: section
-                    width: _listView.itemWidth
+                    width: parent.width
                     font.pointSize: 14
                     horizontalAlignment: Text.AlignHCenter
                 }
             }
 
-            DelegateModel {
+            SortFilterProxyModel {
                 id: _filterModel
-
-                groups: DelegateModelGroup {
-                    id: _visibleItems
-
-                    name: "visible"
-                    includeByDefault: false
-                }
-
-                filterOnGroup: "visible"
-
-                function update(): void {
-                    if (items.count > 0) {
-                        items.setGroups(0, items.count, "items");
-                    }
-
-                    const visible = [];
-                    for (let i = 0; i < items.count; ++i) {
-                        const item = items.get(i);
-                        if (filterAcceptsItem(item.model)) {
-                            visible.push(item);
-                        }
-                    }
-
-                    for (let i = 0; i < visible.length; ++i) {
-                        const item = visible[i];
-                        item.inVisible = true;
-                        if (item.visibleIndex !== i) {
-                            _visibleItems.move(item.visibleIndex, i, 1);
-                        }
-                    }
-                }
-
-                function filterAcceptsItem(item): bool {
-                    const query = _listView.filterQuery;
-                    if (!query) {
-                        return true;
-                    }
-
-                    if (item.label.toLowerCase().includes(query)) {
-                        return true;
-                    }
-
-                    if (item.category.toLowerCase().includes(query)) {
-                        return true;
-                    }
-
-                    const buttons = [item.button1, item.button2, item.button3].filter(Boolean).map(text => text.toLowerCase());
-
-                    if (item.isSeparateShortcut) {
-                        return buttons.some(text => text.includes(query));
-                    }
-
-                    return buttons.join("+").includes(query);
-                }
 
                 model: MpvqcShortcutsModel {}
 
-                delegate: ShortcutRow {
-                    required property var model
+                filters: [
+                    FunctionFilter {
+                        function filter(item: FilterParams): bool {
+                            const query = _listView.filterQuery;
+                            if (!query) {
+                                return true;
+                            }
 
-                    shortcutLabel: model.label
-                    shortcutButton1: model.button1
-                    shortcutButton1Icon: model.button1Icon
-                    shortcutButton2: model.button2
-                    shortcutButton2Icon: model.button2Icon
-                    shortcutButton3: model.button3
-                    shortcutButton3Icon: model.button3Icon
-                    isMultiShortcut: model.isSeparateShortcut
-                    scrollBarPadding: _listView.scrollBarSpace
+                            if (item.label.toLowerCase().includes(query)) {
+                                return true;
+                            }
 
-                    width: parent ? parent.width - _listView.scrollBarSpaceLeft2Right : 0
-                    rightMargin: _listView.scrollBarSpaceRight2Left
-                }
+                            if (item.category.toLowerCase().includes(query)) {
+                                return true;
+                            }
 
-                Component.onCompleted: {
-                    update();
-                }
+                            const buttons = [item.button1, item.button2, item.button3].filter(Boolean).map(text => text.toLowerCase());
+
+                            if (item.isSeparateShortcut) {
+                                return buttons.some(text => text.includes(query));
+                            }
+
+                            return buttons.join("+").includes(query);
+                        }
+                    }
+                ]
             }
         }
+    }
+
+    component FilterParams: QtObject {
+        property string label
+        property string category
+        property string button1
+        property string button2
+        property string button3
+        property bool isSeparateShortcut
     }
 
     component ShortcutRow: RowLayout {
