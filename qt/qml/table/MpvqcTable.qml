@@ -107,12 +107,12 @@ Item {
     }
 
     Timer {
-        readonly property MpvqcBackupTimerController controller: MpvqcBackupTimerController {}
+        readonly property MpvqcBackupTimerViewModel viewModel: MpvqcBackupTimerViewModel {}
 
         repeat: true
-        interval: controller.backupInterval
-        running: controller.backupEnabled && _commentTable.count > 0
+        interval: viewModel.backupInterval
+        running: viewModel.backupEnabled && _commentTable.count > 0
 
-        onTriggered: controller.backup()
+        onTriggered: viewModel.backup()
     }
 }
