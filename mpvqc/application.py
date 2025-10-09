@@ -10,6 +10,7 @@ from PySide6.QtCore import QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
+from mpvqc.helpers import CloseEventFilter
 from mpvqc.services import (
     FileStartupService,
     FontLoaderService,
@@ -30,6 +31,7 @@ class MpvqcApplication(QGuiApplication):
 
     def __init__(self, args):
         super().__init__(args)
+        self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
 
     def set_window_icon(self):
@@ -67,9 +69,10 @@ class MpvqcApplication(QGuiApplication):
             sys.exit(-1)
         self.application_ready.emit()
 
-    def configure_frameless_window(self):
+    def configure_window(self):
         window = self.topLevelWindows()[0]
         self._frameless_window.configure_for(self, window)
+        window.installEventFilter(self._close_event_filter)
 
     @cache
     def find_object(self, object_type, name: str):

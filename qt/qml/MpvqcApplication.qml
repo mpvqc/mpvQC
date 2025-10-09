@@ -54,11 +54,6 @@ ApplicationWindow {
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    onClosing: event => {
-        _quitHandler.requestClose();
-        event.accepted = _quitHandler.userConfirmedClose;
-    }
-
     MpvqcContentView {
         id: _content
 
@@ -176,13 +171,6 @@ ApplicationWindow {
         id: _windowVisibilityHandler
 
         mpvqcApplication: root
-    }
-
-    MpvqcQuitHandler {
-        id: _quitHandler
-
-        mpvqcApplication: root
-        canClose: root.mpvqcManager.saved
     }
 
     Component.onCompleted: _content.focusCommentTable()

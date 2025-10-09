@@ -20,6 +20,7 @@ from .label_width_calculator import LabelWidthCalculatorService
 from .mimetype_provider import MimetypeProviderService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .player import PlayerService
+from .quit import QuitService
 from .resetter import ResetService
 from .resource import ResourceService
 from .resource_reader import ResourceReaderService
