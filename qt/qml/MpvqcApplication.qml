@@ -118,9 +118,7 @@ ApplicationWindow {
 
         onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
 
-        onSaveQcDocumentsRequested: root.mpvqcManager.save()
-
-        onSaveQcDocumentsAsRequested: root.mpvqcManager.saveAs()
+        onExportPathRequested: _fileDialogLoader.openDocumentExportDialog()
 
         onExtendedExportRequested: exportTemplate => _fileDialogLoader.openExtendedDocumentExportDialog(exportTemplate)
 

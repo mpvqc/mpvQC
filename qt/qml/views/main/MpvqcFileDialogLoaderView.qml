@@ -22,7 +22,7 @@ Loader {
     active: false
     visible: active
 
-    function openDocumentExportDialog(proposal: url): void {
+    function openDocumentExportDialog(): void {
         setSource(exportDocumentDialog, {
             isExtendedExport: false
         });
