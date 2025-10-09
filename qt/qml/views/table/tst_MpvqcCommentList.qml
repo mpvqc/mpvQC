@@ -99,7 +99,6 @@ TestCase {
             jumpToTimeFunc: time => calledJumpToTimeArgs.push(time)
             pauseVideoFunc: () => calledPauseVideoCounter++
 
-            messageBoxParent: testCase
             commentTypes: ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4"]
 
             videoDuration: 10
