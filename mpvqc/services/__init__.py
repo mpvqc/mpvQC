@@ -8,6 +8,7 @@ from .application_paths import ApplicationPathsService
 from .comment_type_validator import CommentTypeValidatorService
 from .document_exporter import DocumentBackupService, DocumentExportService, DocumentRenderService
 from .document_importer import DocumentImporterService
+from .exporter import ExportService
 from .file_startup import FileStartupService
 from .font_loader import FontLoaderService
 from .formatter_time import TimeFormatterService

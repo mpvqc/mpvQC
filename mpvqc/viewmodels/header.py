@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QEnum, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService, ResetService, SettingsService, StateService
+from mpvqc.services import ExportService, PlayerService, ResetService, SettingsService, StateService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -19,6 +19,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcHeaderViewModel(QObject):
+    _exporter: ExportService = inject.attr(ExportService)
     _state: StateService = inject.attr(StateService)
     _resetter: ResetService = inject.attr(ResetService)
     _player: PlayerService = inject.attr(PlayerService)
@@ -32,10 +33,9 @@ class MpvqcHeaderViewModel(QObject):
     QEnum(WindowTitleFormat)
 
     confirmResetRequested = Signal()
+    exportPathRequested = Signal()
 
     openQcDocumentsRequested = Signal()
-    saveQcDocumentsRequested = Signal()
-    saveQcDocumentsAsRequested = Signal()
     extendedExportRequested = Signal(QUrl)
 
     openVideoRequested = Signal()
@@ -121,11 +121,14 @@ class MpvqcHeaderViewModel(QObject):
 
     @Slot()
     def requestSaveQcDocument(self) -> None:
-        self.saveQcDocumentsRequested.emit()
+        if document := self._state.document:
+            self._exporter.save(document)
+        else:
+            self.requestSaveQcDocumentAs()
 
     @Slot()
     def requestSaveQcDocumentAs(self) -> None:
-        self.saveQcDocumentsAsRequested.emit()
+        self.exportPathRequested.emit()
 
     @Slot(str, QUrl)
     def requestSaveQcDocumentExtendedUsing(self, _: str, exportTemplate: QUrl) -> None:

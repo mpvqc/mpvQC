@@ -18,13 +18,11 @@ FileDialog {
     defaultSuffix: "txt"
     nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
-    signal savePressed(fileUrl: url)
-
     onAccepted: {
         if (isExtendedExport) {
             viewModel.export(currentFile, exportTemplate);
         } else {
-            savePressed(currentFile);
+            viewModel.save(currentFile);
         }
     }
 }

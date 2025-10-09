@@ -212,6 +212,7 @@ files = [
     "mpvqc/services/comment_type_validator.py",
     "mpvqc/services/document_exporter.py",
     "mpvqc/services/document_importer.py",
+    "mpvqc/services/exporter.py",
     "mpvqc/services/file_startup.py",
     "mpvqc/services/font_loader.py",
     "mpvqc/services/formatter_time.py",
