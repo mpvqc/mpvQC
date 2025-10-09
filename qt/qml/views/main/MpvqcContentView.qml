@@ -9,14 +9,14 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../views"
+import "../../utility"
 import "../table"
 
 Page {
     id: root
 
     required property var mpvqcApplication
-    required property MpvqcAppHeaderViewModel headerViewModel
+    required property MpvqcHeaderViewModel headerViewModel
     required property MpvqcContentViewModel contentViewModel
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
@@ -95,11 +95,11 @@ Page {
         }
     }
 
-    MpvqcFileDropArea {
+    MpvqcFileDropAreaView {
         anchors.fill: _splitView
     }
 
-    MpvqcNewCommentMenu {
+    MpvqcNewCommentMenuView {
         id: _commentMenu
 
         onCommentTypeChosen: commentType => {

@@ -6,7 +6,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../shared"
+import "../components"
 
 MpvqcMessageBox {
     property var viewModel: MpvqcResetMessageBoxViewModel {}

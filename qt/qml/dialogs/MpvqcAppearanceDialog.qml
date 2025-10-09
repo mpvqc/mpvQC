@@ -8,8 +8,8 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import "../shared"
-import "../themes"
+import "../components"
+import "../utility"
 
 import pyobjects
 

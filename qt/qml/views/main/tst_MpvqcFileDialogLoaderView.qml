@@ -14,7 +14,7 @@ TestCase {
     height: 720
     visible: true
     when: windowShown
-    name: "MpvqcContentDialogLoader"
+    name: "MpvqcFileDialogLoaderView"
 
     Component {
         id: signalSpy
@@ -25,18 +25,20 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentDialogLoader {}
+        MpvqcFileDialogLoaderView {}
     }
 
     function makeControl(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase);
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            cleanupDelay: 0
+        });
         verify(control);
         return control;
     }
 
     function waitUntilLoaded(control: Item): void {
         tryVerify(() => control.item);
-        waitForRendering(control.item?.contentItem);
+        tryVerify(() => control.item.visible);
     }
 
     function test_open_data() {
@@ -80,7 +82,7 @@ TestCase {
         });
         verify(spy);
 
-        control.openAboutDialog();
+        control.openImportQcDocumentsDialog();
         waitUntilLoaded(control);
         control.item.close();
 

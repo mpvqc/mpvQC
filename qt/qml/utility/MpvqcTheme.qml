@@ -5,6 +5,7 @@
 pragma Singleton
 
 import QtQuick
+
 import pyobjects
 
 QtObject {

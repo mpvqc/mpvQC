@@ -9,7 +9,7 @@ import QtQuick.Layouts
 
 import pyobjects
 
-import "../shared"
+import "../../utility"
 
 Popup {
     id: root

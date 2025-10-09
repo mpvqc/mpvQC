@@ -8,7 +8,7 @@ import QtQuick.Layouts
 
 import pyobjects
 
-import "../shared"
+import "../components"
 
 MpvqcDialog {
     id: root

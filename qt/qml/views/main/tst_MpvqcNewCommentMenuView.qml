@@ -12,7 +12,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcNewCommentMenu"
+    name: "MpvqcNewCommentMenuView"
 
     Component {
         id: signalSpy
@@ -30,13 +30,20 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcNewCommentMenu {
-            commentTypes: ["1", "ABC", "3", "4"]
-        }
+        MpvqcNewCommentMenuView {}
     }
 
+    readonly property var initProperties: ({
+            viewModel: {
+                commentTypes: ["1", "ABC", "3", "4"],
+                player: {
+                    pausePlayer: () => {}
+                }
+            }
+        })
+
     function test_select() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
+        const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
         verify(control);
 
         const spy = createTemporaryObject(signalSpy, testCase, {
@@ -56,7 +63,7 @@ TestCase {
     }
 
     function test_cancel() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
+        const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
         verify(control);
 
         const spy = createTemporaryObject(signalSpy, testCase, {

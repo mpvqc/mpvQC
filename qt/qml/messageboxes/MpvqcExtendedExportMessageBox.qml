@@ -4,7 +4,7 @@
 
 import QtQuick
 
-import "../shared"
+import "../components"
 
 MpvqcMessageBox {
     title: qsTranslate("MessageBoxes", "Extended Exports")

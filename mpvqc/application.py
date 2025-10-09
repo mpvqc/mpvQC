@@ -6,7 +6,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import Signal
+from PySide6.QtCore import QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -59,7 +59,8 @@ class MpvqcApplication(QGuiApplication):
         self._engine.setUiLanguage(self._settings.language)
 
     def start_engine(self):
-        self._engine.loadFromModule("app", "MpvqcApplication")
+        url = QUrl.fromLocalFile(":/qt/qml/MpvqcApplication.qml")
+        self._engine.load(url)
 
     def notify_ready(self):
         if not self._engine.rootObjects():

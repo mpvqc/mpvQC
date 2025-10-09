@@ -7,9 +7,8 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../views"
-import "../manager"
-import "../themes"
+import "utility"
+import "views/main"
 
 ApplicationWindow {
     id: root
@@ -60,7 +59,7 @@ ApplicationWindow {
         event.accepted = _quitHandler.userConfirmedClose;
     }
 
-    MpvqcContent {
+    MpvqcContentView {
         id: _content
 
         mpvqcApplication: root
@@ -71,26 +70,26 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: root.windowBorder
 
-        header: MpvqcAppHeaderView {
+        header: MpvqcHeaderView {
             viewModel: _headerViewModel
             width: root.width
             visible: !root.fullscreen
         }
     }
 
-    MpvqcContentDialogLoader {
+    MpvqcDialogLoaderView {
         id: _dialogLoader
 
         onDialogClosed: _content.focusCommentTable()
     }
 
-    MpvqcContentFileDialogLoader {
+    MpvqcFileDialogLoaderView {
         id: _fileDialogLoader
 
         onDialogClosed: _content.focusCommentTable()
     }
 
-    MpvqcContentMessageBoxLoader {
+    MpvqcMessageBoxLoaderView {
         id: _messageBoxLoader
 
         onMessageBoxClosed: _content.focusCommentTable()
@@ -112,7 +111,7 @@ ApplicationWindow {
         }
     }
 
-    MpvqcAppHeaderViewModel {
+    MpvqcHeaderViewModel {
         id: _headerViewModel
 
         onConfirmResetRequested: _messageBoxLoader.openResetMessageBox()
