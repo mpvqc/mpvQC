@@ -21,8 +21,6 @@ ApplicationWindow {
     readonly property var mpvqcSettings: MpvqcSettings
     readonly property var mpvqcTheme: MpvqcTheme
 
-    readonly property var mpvqcManager: MpvqcManager {}
-
     readonly property bool maximized: _windowVisibilityHandler.maximized
     readonly property bool fullscreen: _windowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
