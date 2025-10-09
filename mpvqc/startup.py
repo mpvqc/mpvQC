@@ -77,6 +77,6 @@ def start_application():
     app.load_language()
     app.start_engine()
     app.notify_ready()
-    app.configure_frameless_window()
+    app.configure_window()
 
     sys.exit(app.exec())

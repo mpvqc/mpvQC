@@ -5,7 +5,6 @@
 module utility
 
 MpvqcManager MpvqcManager.qml
-MpvqcQuitHandler MpvqcQuitHandler.qml
 MpvqcResizeHandler MpvqcResizeHandler.qml
 MpvqcWindowVisibilityHandler MpvqcWindowVisibilityHandler.qml
 

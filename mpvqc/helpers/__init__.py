@@ -4,6 +4,7 @@
 
 # ruff: noqa: F401
 from .backend_manager import MpvqcManagerBackendPyObject
+from .close import CloseEventFilter
 from .label_width_calculator import MpvqcLabelWidthCalculator
 from .player import MpvqcMpvPlayerPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
