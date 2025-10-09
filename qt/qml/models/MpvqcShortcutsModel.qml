@@ -115,6 +115,8 @@ ListModel {
         category: qsTranslate("ShortcutsDialog", "Video")
         label: qsTranslate("ShortcutsDialog", "Toggle Play/Pause")
         button1Icon: "qrc:/data/icons/space_bar_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+        isSeparateShortcut: true
+        button2: "P"
     }
     ListElement {
         category: qsTranslate("ShortcutsDialog", "Video")
