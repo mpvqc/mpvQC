@@ -25,12 +25,10 @@ class MpvqcContentViewModel(QObject):
     addNewCommentRequested = Signal(str)
 
     layoutOrientationChanged = Signal(int)
-    commentTypesChanged = Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
-        self._settings.commentTypesChanged.connect(self.commentTypesChanged)
 
     @Property(int, constant=True, final=True)
     def minContainerHeight(self) -> int:
@@ -47,14 +45,6 @@ class MpvqcContentViewModel(QObject):
     @Property(int, notify=layoutOrientationChanged)
     def layoutOrientation(self) -> int:
         return self._settings.layout_orientation
-
-    @Property(list, notify=commentTypesChanged)
-    def commentTypes(self) -> list[str]:
-        return self._settings.comment_types
-
-    @Slot()
-    def pausePlayer(self) -> None:
-        self._player.pause()
 
     @Slot()
     def requestDisableFullScreen(self) -> None:

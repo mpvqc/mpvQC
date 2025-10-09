@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import Property, QObject, QPoint, Slot
-from PySide6.QtGui import QCursor
+from PySide6.QtCore import QObject, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
@@ -23,10 +22,6 @@ class MpvqcUtilityPyObject(QObject):
     _exporter: DocumentExportService = inject.attr(DocumentExportService)
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
-
-    @Property(QPoint, final=True)
-    def cursorPosition(self) -> QPoint:
-        return QCursor.pos()
 
     @Slot(float, result=str)
     def formatTimeToStringLong(self, seconds: float) -> str:

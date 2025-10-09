@@ -20,7 +20,6 @@ Page {
     required property MpvqcContentViewModel contentViewModel
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
 
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
@@ -102,21 +101,6 @@ Page {
 
     MpvqcNewCommentMenu {
         id: _commentMenu
-
-        commentTypes: root.contentViewModel.commentTypes
-
-        function _adjustPosition(): void {
-            const isMirrored = root.mpvqcApplication.LayoutMirroring.enabled;
-            const global = root.mpvqcUtilityPyObject.cursorPosition;
-            const local = _commentMenu.parent.mapFromGlobal(global);
-            _commentMenu.x = isMirrored ? local.x - width : local.x;
-            _commentMenu.y = local.y;
-        }
-
-        onAboutToShow: {
-            _adjustPosition();
-            root.contentViewModel.pausePlayer();
-        }
 
         onCommentTypeChosen: commentType => {
             root.contentViewModel.requestDisableFullScreen();

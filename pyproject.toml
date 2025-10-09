@@ -264,6 +264,7 @@ files = [
     "mpvqc/viewmodels/message_boxes/__init__.py",
     "mpvqc/viewmodels/message_boxes/reset.py",
     "mpvqc/viewmodels/message_boxes/version_check.py",
+    "mpvqc/viewmodels/new_comment_menu.py",
     "mpvqc/viewmodels/player.py",
     "mpvqc/viewmodels/search_box.py",
     "mpvqc/viewmodels/theme.py",
