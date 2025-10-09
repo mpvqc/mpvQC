@@ -57,7 +57,7 @@ jobs:
           echo "::group::Download libmpv"
           if [ "$RUNNER_OS" == "Linux" ]; then
             execute sudo apt update -y
-            execute sudo apt install -y libegl1 libmpv2
+            execute sudo apt install -y libegl1 libmpv2 qt6-base-dev
           elif [ "$RUNNER_OS" == "Windows" ]; then
             ARTIFACT="$(basename "$LIBMPV_URL")"
 
@@ -274,7 +274,7 @@ jobs:
       - name: Update Packages
         run: sudo apt update -y
       - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
+        run: sudo apt install -y libegl1 libmpv2 qt6-base-dev
       - name: Initialize Project
         run: just init
       - name: Execute Qml Tests
@@ -296,6 +296,10 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: false
+      - name: Update Packages
+        run: sudo apt update -y
+      - name: Install Dependencies
+        run: sudo apt install -y qt6-base-dev
       - name: Initialize Project
         run: just init
       - name: Run Linter and Formatter
