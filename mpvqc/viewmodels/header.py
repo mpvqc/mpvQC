@@ -71,6 +71,7 @@ class MpvqcHeaderViewModel(QObject):
         self._settings.windowTitleFormatChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
         self._settings.windowTitleFormatChanged.connect(lambda v: self.windowTitleFormatChanged.emit(v))
         self._settings.layoutOrientationChanged.connect(lambda v: self.applicationLayoutChanged.emit(v))
+        self._settings.languageChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
         self._state.saved_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
 
     @Property(bool, constant=True, final=True)
