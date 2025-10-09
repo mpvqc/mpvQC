@@ -15,7 +15,7 @@ Dialog {
     z: 2
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
-    anchors.centerIn: parent
+    anchors.centerIn: Overlay.overlay
     dim: false
 
     contentItem: Label {

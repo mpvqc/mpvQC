@@ -28,7 +28,6 @@ ListView {
     required property var jumpToTimeFunc
     required property var pauseVideoFunc
 
-    required property var messageBoxParent
     required property list<string> commentTypes
 
     required property int videoDuration
@@ -440,7 +439,6 @@ ListView {
 
         function askToDeleteComment(index: int): void {
             setSource("../../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
-                parent: root.messageBoxParent,
                 commentIndex: index
             });
             active = true;

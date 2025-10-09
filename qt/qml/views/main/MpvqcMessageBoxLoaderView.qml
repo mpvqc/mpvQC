@@ -29,22 +29,18 @@ Loader {
 
     function openDocumentNotCompatibleMessageBox(documents: list<var>): void {
         setSource(messageBoxDocumentNotCompatible, {
-            parent: root.parent,
             files: documents
         });
         active = true;
     }
 
     function openExtendedExportsMessageBox(): void {
-        setSource(messageBoxExtendedExport, {
-            parent: root.parent
-        });
+        setSource(messageBoxExtendedExport);
         active = true;
     }
 
     function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
         setSource(messageBoxExtendedExportFailed, {
-            parent: root.parent,
             errorMessage: message,
             errorLine: lineNr
         });
@@ -52,29 +48,22 @@ Loader {
     }
 
     function openQuitMessageBox(): void {
-        setSource(messageBoxQuit, {
-            parent: root.parent
-        });
+        setSource(messageBoxQuit);
         active = true;
     }
 
     function openResetMessageBox(): void {
-        setSource(messageBoxReset, {
-            parent: root.parent
-        });
+        setSource(messageBoxReset);
         active = true;
     }
 
     function openVersionCheckMessageBox(): void {
-        setSource(messageBoxVersionCheck, {
-            parent: root.parent
-        });
+        setSource(messageBoxVersionCheck);
         active = true;
     }
 
     function openVideoFoundMessageBox(trackingId: string, fileName: string): void {
         setSource(messageBoxVideoFound, {
-            parent: root.parent,
             file: fileName,
             trackingId: trackingId
         });

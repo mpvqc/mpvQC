@@ -91,7 +91,6 @@ Item {
         jumpToTimeFunc: _impl.jumpToTime
         pauseVideoFunc: _impl.pauseVideo
 
-        messageBoxParent: root.mpvqcApplication.contentItem
         commentTypes: root.mpvqcSettings.commentTypes
 
         videoDuration: root.mpvqcMpvPlayerPropertiesPyObject.duration
