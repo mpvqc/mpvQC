@@ -39,9 +39,7 @@ _KEY_MAPPINGS = {
 
 
 class KeyCommandGeneratorService:
-    """"""
-
-    def generate_command(self, key: int, modifiers: int) -> str | None:
+    def generate_command(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> str | None:
         if not key or modifiers is None:
             return None
 
@@ -57,10 +55,10 @@ class KeyCommandGeneratorService:
         return command
 
     @staticmethod
-    def _generate(modifiers, key_str, mod_required=False, is_char=False):
-        shift = "shift" if modifiers & Qt.KeyboardModifier.ShiftModifier.value else ""
-        ctrl = "ctrl" if modifiers & Qt.KeyboardModifier.ControlModifier.value else ""
-        alt = "alt" if modifiers & Qt.KeyboardModifier.AltModifier.value else ""
+    def _generate(modifiers: Qt.KeyboardModifier, key_str, mod_required=False, is_char=False) -> str | None:
+        shift = "shift" if modifiers & Qt.KeyboardModifier.ShiftModifier else ""
+        ctrl = "ctrl" if modifiers & Qt.KeyboardModifier.ControlModifier else ""
+        alt = "alt" if modifiers & Qt.KeyboardModifier.AltModifier else ""
 
         if mod_required and not (shift or ctrl or alt):
             return None

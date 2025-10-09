@@ -21,11 +21,6 @@ class MpvqcMpvPlayerPyObject(QObject):
     def pause(self) -> None:
         self._player.pause()
 
-    @Slot(int, int)
-    def handle_key_event(self, key: int, modifiers: int):
-        if command := self._command_generator.generate_command(key, modifiers):
-            self._player.execute(command)
-
     @Slot(int)
     def jump_to(self, seconds: int) -> None:
         self._player.jump_to(seconds)

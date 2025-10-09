@@ -65,7 +65,7 @@ ApplicationWindow {
 
         mpvqcApplication: root
         headerViewModel: _headerViewModel
-        contentController: _contentController
+        contentViewModel: _contentViewModel
 
         focus: true
         anchors.fill: parent
@@ -162,12 +162,8 @@ ApplicationWindow {
         onCloseAppRequested: root.close()
     }
 
-    MpvqcContentController {
-        id: _contentController
-
-        mpvqcMpvPlayerPyObject: root.mpvqcMpvPlayerPyObject
-        mpvqcManager: root.mpvqcManager
-        mpvqcSettings: root.mpvqcSettings
+    MpvqcContentViewModel {
+        id: _contentViewModel
 
         onAppWindowSizeRequested: (width, height) => {
             if (width >= root.minimumWidth && height >= root.minimumHeight) {

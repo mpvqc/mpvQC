@@ -64,5 +64,5 @@ def service() -> KeyCommandGeneratorService:
 )
 def test_key_command(expected, key, modifiers, service):
     event = QKeyEvent(QEvent.Type.KeyPress, key.value if key else 0, modifiers)
-    command = service.generate_command(event.key(), event.modifiers().value)
+    command = service.generate_command(event.key(), event.modifiers())
     assert command == expected

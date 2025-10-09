@@ -11,14 +11,16 @@ from mpv import MPV
 from PySide6.QtCore import QObject, Signal
 
 from .application_paths import ApplicationPathsService
+from .key_command import KeyCommandGeneratorService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .type_mapper import TypeMapperService
 
 
 class PlayerService(QObject):
+    _command_generator: KeyCommandGeneratorService = inject.attr(KeyCommandGeneratorService)
     _paths = inject.attr(ApplicationPathsService)
-    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
 
     video_loaded_changed = Signal(bool)
     path_changed = Signal(str)
@@ -202,8 +204,9 @@ class PlayerService(QObject):
     def pause(self) -> None:
         self._mpv.pause = True
 
-    def execute(self, command) -> None:
-        self._mpv.command_async("keypress", command)
+    def handle_key_event(self, key: int, modifiers: int) -> None:
+        if command := self._command_generator.generate_command(key, modifiers):
+            self._mpv.command_async("keypress", command)
 
     def jump_to(self, seconds: int) -> None:
         self._mpv.command_async("seek", seconds, "absolute+exact")

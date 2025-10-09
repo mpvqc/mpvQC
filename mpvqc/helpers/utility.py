@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from os import environ
-
 import inject
 from PySide6.QtCore import Property, QObject, QPoint, Slot
 from PySide6.QtGui import QCursor
@@ -29,10 +27,6 @@ class MpvqcUtilityPyObject(QObject):
     @Property(QPoint, final=True)
     def cursorPosition(self) -> QPoint:
         return QCursor.pos()
-
-    @Slot(str, result=str)
-    def getEnvironmentVariable(self, key: str) -> str | None:
-        return environ.get(key) or None
 
     @Slot(float, result=str)
     def formatTimeToStringLong(self, seconds: float) -> str:

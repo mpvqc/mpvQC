@@ -2,10 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from enum import IntEnum
-
 import inject
-from PySide6.QtCore import Property, QEnum, QObject, Signal
+from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.decorators import QmlSingletonInProductionOnly
@@ -20,12 +18,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlSingletonInProductionOnly
 class MpvqcSettings(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
-
-    @QEnum
-    class WindowTitleFormat(IntEnum):
-        DEFAULT = 0
-        FILE_NAME = 1
-        FILE_PATH = 2
 
     # Common
     commentTypesChanged = Signal(list)

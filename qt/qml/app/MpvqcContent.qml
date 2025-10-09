@@ -17,7 +17,7 @@ Page {
 
     required property var mpvqcApplication
     required property MpvqcAppHeaderViewModel headerViewModel
-    required property MpvqcContentController contentController
+    required property MpvqcContentViewModel contentViewModel
 
     readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
     readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
@@ -26,9 +26,9 @@ Page {
         _mpvqcCommentTable.forceActiveFocus();
     }
 
-    Keys.onEscapePressed: root.contentController.requestDisableFullScreen()
+    Keys.onEscapePressed: root.contentViewModel.requestDisableFullScreen()
 
-    Keys.onPressed: event => root.contentController.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
+    Keys.onPressed: event => root.contentViewModel.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
 
     SplitView {
         id: _splitView
@@ -40,19 +40,19 @@ Page {
 
         focus: true
         anchors.fill: root.contentItem
-        orientation: root.contentController.layoutOrientation
+        orientation: root.contentViewModel.layoutOrientation
 
         MpvqcPlayerView {
             id: _player
 
-            SplitView.minimumHeight: root.contentController.minContainerHeight
-            SplitView.minimumWidth: root.contentController.minContainerWidth
+            SplitView.minimumHeight: root.contentViewModel.minContainerHeight
+            SplitView.minimumWidth: root.contentViewModel.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            onAddNewCommentMenuRequested: root.contentController.openNewCommentMenuRequested()
+            onAddNewCommentMenuRequested: root.contentViewModel.openNewCommentMenuRequested()
 
-            onToggleFullScreenRequested: root.contentController.requestToggleFullScreen()
+            onToggleFullScreenRequested: root.contentViewModel.requestToggleFullScreen()
         }
 
         Column {
@@ -60,8 +60,8 @@ Page {
 
             visible: !root.mpvqcApplication.fullscreen
 
-            SplitView.minimumHeight: root.contentController.minContainerHeight
-            SplitView.minimumWidth: root.contentController.minContainerWidth
+            SplitView.minimumHeight: root.contentViewModel.minContainerHeight
+            SplitView.minimumWidth: root.contentViewModel.minContainerWidth
 
             function setPreferredSizes(width, height) {
                 SplitView.preferredWidth = width;
@@ -103,7 +103,7 @@ Page {
     MpvqcNewCommentMenu {
         id: _commentMenu
 
-        commentTypes: root.contentController.commentTypes
+        commentTypes: root.contentViewModel.commentTypes
 
         function _adjustPosition(): void {
             const isMirrored = root.mpvqcApplication.LayoutMirroring.enabled;
@@ -115,12 +115,12 @@ Page {
 
         onAboutToShow: {
             _adjustPosition();
-            root.contentController.pausePlayer();
+            root.contentViewModel.pausePlayer();
         }
 
         onCommentTypeChosen: commentType => {
-            root.contentController.requestDisableFullScreen();
-            root.contentController.addNewEmptyComment(commentType);
+            root.contentViewModel.requestDisableFullScreen();
+            root.contentViewModel.addNewEmptyComment(commentType);
         }
     }
 
@@ -143,7 +143,7 @@ Page {
         splitViewTableContainerHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
-            root.contentController.requestResizeAppWindow(width, height);
+            root.contentViewModel.requestResizeAppWindow(width, height);
         }
 
         onSplitViewTableSizeRequested: (width, height) => {
@@ -160,7 +160,7 @@ Page {
     }
 
     Connections {
-        target: root.contentController
+        target: root.contentViewModel
 
         function onOpenNewCommentMenuRequested(): void {
             _commentMenu.popup();
@@ -169,14 +169,10 @@ Page {
         function onAddNewCommentRequested(commentType: string): void {
             _mpvqcCommentTable.addNewComment(commentType);
         }
-
-        function onSplitViewTableSizeRequested(width: int, height: int): void {
-            _tableContainer.setPreferredSizes(width, height);
-        }
     }
 
     Component.onCompleted: {
-        const preferred = root.contentController.preferredSplitSizes(_splitView.width, _splitView.height);
-        _tableContainer.setPreferredSizes(preferred.width, preferred.height);
+        const sizes = root.contentViewModel.calculatePreferredSplitSizes(_splitView.width, _splitView.height);
+        _tableContainer.setPreferredSizes(sizes.width, sizes.height);
     }
 }
