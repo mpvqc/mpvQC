@@ -9,8 +9,6 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../views"
-
 ListView {
     id: root
 
@@ -441,7 +439,7 @@ ListView {
         id: _messageBoxLoader
 
         function askToDeleteComment(index: int): void {
-            setSource("../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
+            setSource("../../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
                 parent: root.messageBoxParent,
                 commentIndex: index
             });

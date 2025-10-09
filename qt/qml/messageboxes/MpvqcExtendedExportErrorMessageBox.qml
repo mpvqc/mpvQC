@@ -4,7 +4,7 @@
 
 import QtQuick.Controls.Material
 
-import "../shared"
+import "../components"
 
 MpvqcMessageBox {
     required property string errorMessage

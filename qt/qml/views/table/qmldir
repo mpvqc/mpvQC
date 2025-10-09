@@ -2,6 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-module table
+module views.table
 
 MpvqcTable MpvqcTable.qml

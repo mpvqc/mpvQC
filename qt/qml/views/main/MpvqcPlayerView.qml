@@ -6,7 +6,7 @@ import QtQuick
 
 import pyobjects
 
-import "../shared"
+import "../../utility"
 
 Loader {
     id: root

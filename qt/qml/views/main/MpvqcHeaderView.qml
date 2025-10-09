@@ -9,14 +9,13 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../shared"
-import "../models"
-import "../themes"
+import "../../components"
+import "../../utility"
 
 Item {
     id: root
 
-    required property MpvqcAppHeaderViewModel viewModel
+    required property MpvqcHeaderViewModel viewModel
 
     readonly property alias menuBarWidth: menuBar.width
     readonly property alias menuBarHeight: menuBar.height
@@ -203,15 +202,15 @@ Item {
                         model: [
                             {
                                 "label": qsTranslate("MainWindow", "Default Title"),
-                                "value": MpvqcAppHeaderViewModel.WindowTitleFormat.DEFAULT
+                                "value": MpvqcHeaderViewModel.WindowTitleFormat.DEFAULT
                             },
                             {
                                 "label": qsTranslate("MainWindow", "Video File"),
-                                "value": MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_NAME
+                                "value": MpvqcHeaderViewModel.WindowTitleFormat.FILE_NAME
                             },
                             {
                                 "label": qsTranslate("MainWindow", "Video Path"),
-                                "value": MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_PATH
+                                "value": MpvqcHeaderViewModel.WindowTitleFormat.FILE_PATH
                             },
                         ]
 

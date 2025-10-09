@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import "../shared"
+import "../components"
 
 MpvqcMessageBox {
     required property list<string> files

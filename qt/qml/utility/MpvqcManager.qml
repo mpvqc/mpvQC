@@ -9,8 +9,7 @@ import QtQuick
 import pyobjects
 
 import "../filedialogs"
-import "../messageboxes"
-import "../shared"
+import "../components"
 
 MpvqcObject {
     id: root

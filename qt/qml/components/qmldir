@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-module shared
+module components
 
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
@@ -14,5 +14,3 @@ MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
 MpvqcTextFieldRow MpvqcTextFieldRow.qml
 MpvqcTooltip MpvqcTooltip.qml
-
-singleton MpvqcWindowProperties MpvqcWindowProperties.qml

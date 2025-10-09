@@ -10,7 +10,7 @@ import inject
 import pytest
 
 from mpvqc.services import PlayerService, ResetService, SettingsService, StateService
-from mpvqc.viewmodels import MpvqcAppHeaderViewModel
+from mpvqc.viewmodels import MpvqcHeaderViewModel
 
 
 @pytest.fixture
@@ -19,9 +19,9 @@ def reset_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def view_model() -> MpvqcAppHeaderViewModel:
+def view_model() -> MpvqcHeaderViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcAppHeaderViewModel()
+    return MpvqcHeaderViewModel()
 
 
 @pytest.fixture(autouse=True)
@@ -37,7 +37,7 @@ def configure_inject(reset_service_mock, state_service, player_service_mock, set
 
 class WindowTitleTestCase(NamedTuple):
     saved: bool
-    window_title_format: MpvqcAppHeaderViewModel.WindowTitleFormat
+    window_title_format: MpvqcHeaderViewModel.WindowTitleFormat
     video_loaded: bool
     filename: str | None
     path: str | None
@@ -49,7 +49,7 @@ class WindowTitleTestCase(NamedTuple):
     [
         WindowTitleTestCase(
             saved=True,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.DEFAULT,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.DEFAULT,
             video_loaded=False,
             filename=None,
             path=None,
@@ -57,7 +57,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=False,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.DEFAULT,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.DEFAULT,
             video_loaded=False,
             filename=None,
             path=None,
@@ -65,7 +65,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=True,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_NAME,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.FILE_NAME,
             video_loaded=True,
             filename="test_video.mp4",
             path=None,
@@ -73,7 +73,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=False,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_NAME,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.FILE_NAME,
             video_loaded=True,
             filename="test_video.mp4",
             path=None,
@@ -81,7 +81,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=True,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_PATH,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.FILE_PATH,
             video_loaded=True,
             filename=None,
             path=str(Path.home() / "test_video.mp4"),
@@ -89,7 +89,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=False,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_PATH,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.FILE_PATH,
             video_loaded=True,
             filename=None,
             path=str(Path.home() / "test_video.mp4"),
@@ -97,7 +97,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=True,
-            window_title_format=MpvqcAppHeaderViewModel.WindowTitleFormat.FILE_NAME,
+            window_title_format=MpvqcHeaderViewModel.WindowTitleFormat.FILE_NAME,
             video_loaded=False,
             filename=None,
             path=None,

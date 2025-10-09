@@ -19,7 +19,7 @@ TestCase {
     height: 720
     visible: true
     when: windowShown
-    name: "MpvqcContentMessageBoxLoader"
+    name: "MpvqcMessageBoxLoaderView"
 
     Component {
         id: signalSpy
@@ -30,7 +30,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcContentMessageBoxLoader {}
+        MpvqcMessageBoxLoaderView {}
     }
 
     function makeControl(): Item {

@@ -9,10 +9,10 @@ import QtQuick
 Loader {
     id: root
 
-    readonly property url exportDocumentDialog: Qt.resolvedUrl("../filedialogs/MpvqcExportDocumentFileDialog.qml")
-    readonly property url importDocumentsDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportDocumentsFileDialog.qml")
-    readonly property url importSubtitlesDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportSubtitlesFileDialog.qml")
-    readonly property url importVideoDialog: Qt.resolvedUrl("../filedialogs/MpvqcImportVideoFileDialog.qml")
+    readonly property url exportDocumentDialog: Qt.resolvedUrl("../../filedialogs/MpvqcExportDocumentFileDialog.qml")
+    readonly property url importDocumentsDialog: Qt.resolvedUrl("../../filedialogs/MpvqcImportDocumentsFileDialog.qml")
+    readonly property url importSubtitlesDialog: Qt.resolvedUrl("../../filedialogs/MpvqcImportSubtitlesFileDialog.qml")
+    readonly property url importVideoDialog: Qt.resolvedUrl("../../filedialogs/MpvqcImportVideoFileDialog.qml")
 
     readonly property int cleanupDelay: 250
 

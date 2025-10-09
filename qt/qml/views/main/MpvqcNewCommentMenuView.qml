@@ -9,12 +9,12 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../shared"
+import "../../components"
 
 MpvqcMenu {
     id: root
 
-    readonly property MpvqcNewCommentMenuViewModel viewModel: MpvqcNewCommentMenuViewModel {}
+    readonly property var viewModel: MpvqcNewCommentMenuViewModel {}
 
     property var _deferToOnClose: () => {}
 

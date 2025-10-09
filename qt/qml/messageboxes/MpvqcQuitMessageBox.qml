@@ -4,7 +4,7 @@
 
 import QtQuick.Controls.Material
 
-import "../shared"
+import "../components"
 
 MpvqcMessageBox {
     title: qsTranslate("MessageBoxes", "Unsaved Changes")

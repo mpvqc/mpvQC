@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 
-import "../themes"
+import "../utility"
 
 Menu {
     id: root
