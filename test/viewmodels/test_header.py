@@ -129,6 +129,27 @@ def test_window_title(
     assert view_model.windowTitle == test_case.expected
 
 
+def test_window_title_changed(
+    view_model,
+    configure_state,
+    player_service_mock,
+    settings_service,
+    make_spy,
+):
+    file = Path.home() / "test_video.mp4"
+    configure_state(saved=False)
+    player_service_mock.update(
+        video_loaded=True,
+        filename=file.name,
+        path=f"{file.resolve()}",
+    )
+
+    spy = make_spy(view_model.windowTitleChanged)
+
+    settings_service.language = "es-MX"
+    assert spy.count() == 1
+
+
 def test_request_reset_app_state(view_model, configure_state, reset_service_mock, make_spy):
     spy = make_spy(view_model.confirmResetRequested)
 
