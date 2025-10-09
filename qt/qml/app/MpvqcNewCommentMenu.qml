@@ -7,12 +7,14 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
+import pyobjects
+
 import "../shared"
 
 MpvqcMenu {
     id: root
 
-    required property list<string> commentTypes
+    readonly property MpvqcNewCommentMenuViewModel viewModel: MpvqcNewCommentMenuViewModel {}
 
     property var _deferToOnClose: () => {}
 
@@ -23,18 +25,27 @@ MpvqcMenu {
     z: 2
     exit: null
 
+    onAboutToShow: {
+        viewModel.pausePlayer();
+
+        const global = viewModel.cursorPosition();
+        const local = parent.mapFromGlobal(global);
+        x = isMirrored ? local.x - width : local.x;
+        y = local.y;
+    }
+
     onClosed: {
         visible = false;
 
         // Instead of directly adding a comment in the MenuItem triggered signal handler,
         // we defer adding it until the popup closes. If we would directly add it,
         // the menu's closing signals would interfere with the focus of the newly added comment.
-        root._deferToOnClose(); // qmllint disable
-        root._deferToOnClose = () => {};
+        _deferToOnClose(); // qmllint disable
+        _deferToOnClose = () => {};
     }
 
     Repeater {
-        model: root.commentTypes
+        model: root.viewModel.commentTypes
 
         MenuItem {
             required property string modelData
