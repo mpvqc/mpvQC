@@ -65,4 +65,19 @@ Menu {
     Material.foreground: MpvqcTheme.foreground
     // *********************************************************
 
+    Binding {
+        when: root.popupType === Popup.Window && root.contentItem
+        target: root.contentItem
+        property: "LayoutMirroring.enabled"
+        value: root.isMirrored
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.contentItem
+        target: root.contentItem
+        property: "LayoutMirroring.childrenInherit"
+        value: true
+        restoreMode: Binding.RestoreNone
+    }
 }

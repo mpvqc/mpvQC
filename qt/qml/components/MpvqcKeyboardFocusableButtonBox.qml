@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2017 The Qt Company Ltd.
 // SPDX-FileCopyrightText: mpvQC developers
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -9,6 +10,8 @@ import QtQuick.Controls.Material
 
 DialogButtonBox {
     id: root
+
+    readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
     visible: count > 0
 
@@ -80,4 +83,7 @@ DialogButtonBox {
             _listView.decrementCurrentIndex();
         }
     }
+
+    LayoutMirroring.enabled: isMirrored
+    LayoutMirroring.childrenInherit: true
 }

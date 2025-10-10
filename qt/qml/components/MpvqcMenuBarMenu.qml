@@ -6,8 +6,6 @@ import QtQuick
 import QtQuick.Controls.Material
 
 MpvqcMenu {
-    id: root
-
     exit: null
 
     onAboutToShow: {
