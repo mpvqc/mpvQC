@@ -23,7 +23,7 @@ Dialog {
     standardButtons: Dialog.Ok
 
     Binding {
-        when: Qt.platform.os === "windows"
+        when: root.popupType === Popup.Window
         target: root
         property: "enter"
         value: null
@@ -31,10 +31,58 @@ Dialog {
     }
 
     Binding {
-        when: Qt.platform.os === "windows"
+        when: root.popupType === Popup.Window
         target: root
         property: "exit"
         value: null
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.contentItem
+        target: root.contentItem
+        property: "LayoutMirroring.enabled"
+        value: root.isMirrored
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.contentItem
+        target: root.contentItem
+        property: "LayoutMirroring.childrenInherit"
+        value: true
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.footer
+        target: root.footer
+        property: "LayoutMirroring.enabled"
+        value: root.isMirrored
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.footer
+        target: root.footer
+        property: "LayoutMirroring.childrenInherit"
+        value: true
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.header
+        target: root.header
+        property: "LayoutMirroring.enabled"
+        value: root.isMirrored
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.header
+        target: root.header
+        property: "LayoutMirroring.childrenInherit"
+        value: true
         restoreMode: Binding.RestoreNone
     }
 }

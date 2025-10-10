@@ -8,6 +8,8 @@ import QtQuick.Controls.Material
 Dialog {
     id: root
 
+    readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
+
     property alias text: _content.text
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
@@ -40,7 +42,7 @@ Dialog {
     footer: MpvqcKeyboardFocusableButtonBox {}
 
     Binding {
-        when: Qt.platform.os === "windows"
+        when: root.popupType === Popup.Window
         target: root
         property: "enter"
         value: null
@@ -48,10 +50,26 @@ Dialog {
     }
 
     Binding {
-        when: Qt.platform.os === "windows"
+        when: root.popupType === Popup.Window
         target: root
         property: "exit"
         value: null
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.contentItem
+        target: root.contentItem
+        property: "LayoutMirroring.enabled"
+        value: root.isMirrored
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        when: root.popupType === Popup.Window && root.contentItem
+        target: root.contentItem
+        property: "LayoutMirroring.childrenInherit"
+        value: true
         restoreMode: Binding.RestoreNone
     }
 }
