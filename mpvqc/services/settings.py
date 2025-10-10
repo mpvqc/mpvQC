@@ -7,7 +7,7 @@ from enum import IntEnum
 from functools import cache
 
 import inject
-from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, Signal
+from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, QUrl, Signal
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -17,12 +17,14 @@ def get_default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
 
 
-def get_default_documents_location() -> str:
-    return QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+def get_default_documents_location() -> QUrl:
+    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+    return QUrl.fromLocalFile(location)
 
 
-def get_default_movie_location() -> str:
-    return QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
+def get_default_movie_location() -> QUrl:
+    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
+    return QUrl.fromLocalFile(location)
 
 
 @cache
@@ -79,9 +81,9 @@ class SettingsService(QObject):
     timeFormatChanged = Signal(int)
 
     # Import
-    lastDirectoryVideoChanged = Signal(str)
-    lastDirectoryDocumentsChanged = Signal(str)
-    lastDirectorySubtitlesChanged = Signal(str)
+    lastDirectoryVideoChanged = Signal(QUrl)
+    lastDirectoryDocumentsChanged = Signal(QUrl)
+    lastDirectorySubtitlesChanged = Signal(QUrl)
     importWhenVideoLinkedInDocumentChanged = Signal(int)
     importWhenVideoLinkedInSubtitleChanged = Signal(int)
 
@@ -224,31 +226,31 @@ class SettingsService(QObject):
             self.timeFormatChanged.emit(value)
 
     @property
-    def last_directory_video(self) -> str:
-        return self._settings.value("Import/lastDirectoryVideo", get_default_movie_location(), type=str)
+    def last_directory_video(self) -> QUrl:
+        return self._settings.value("Import/lastDirectoryVideo", get_default_movie_location(), type=QUrl)
 
     @last_directory_video.setter
-    def last_directory_video(self, value: str):
+    def last_directory_video(self, value: QUrl):
         if self.last_directory_video != value:
             self._settings.setValue("Import/lastDirectoryVideo", value)
             self.lastDirectoryVideoChanged.emit(value)
 
     @property
-    def last_directory_documents(self) -> str:
-        return self._settings.value("Import/lastDirectoryDocuments", get_default_documents_location(), type=str)
+    def last_directory_documents(self) -> QUrl:
+        return self._settings.value("Import/lastDirectoryDocuments", get_default_documents_location(), type=QUrl)
 
     @last_directory_documents.setter
-    def last_directory_documents(self, value: str):
+    def last_directory_documents(self, value: QUrl):
         if self.last_directory_documents != value:
             self._settings.setValue("Import/lastDirectoryDocuments", value)
             self.lastDirectoryDocumentsChanged.emit(value)
 
     @property
-    def last_directory_subtitles(self) -> str:
-        return self._settings.value("Import/lastDirectorySubtitles", get_default_documents_location(), type=str)
+    def last_directory_subtitles(self) -> QUrl:
+        return self._settings.value("Import/lastDirectorySubtitles", get_default_documents_location(), type=QUrl)
 
     @last_directory_subtitles.setter
-    def last_directory_subtitles(self, value: str):
+    def last_directory_subtitles(self, value: QUrl):
         if self.last_directory_subtitles != value:
             self._settings.setValue("Import/lastDirectorySubtitles", value)
             self.lastDirectorySubtitlesChanged.emit(value)

@@ -49,27 +49,27 @@ class MpvqcImportFileDialogViewModel(QObject):
 
     @Property(QUrl, notify=lastDirectoryVideoChanged)
     def lastDirectoryVideo(self) -> QUrl:
-        return QUrl.fromLocalFile(self._settings.last_directory_video)
+        return self._settings.last_directory_video
 
     @lastDirectoryVideo.setter
     def lastDirectoryVideo(self, value: QUrl) -> None:
-        self._settings.last_directory_video = self._type_mapper.map_url_to_path_string(value)
+        self._settings.last_directory_video = value
 
     @Property(QUrl, notify=lastDirectoryDocumentsChanged)
     def lastDirectoryDocuments(self) -> QUrl:
-        return QUrl.fromLocalFile(self._settings.last_directory_documents)
+        return self._settings.last_directory_documents
 
     @lastDirectoryDocuments.setter
     def lastDirectoryDocuments(self, value: QUrl) -> None:
-        self._settings.last_directory_documents = self._type_mapper.map_url_to_path_string(value)
+        self._settings.last_directory_documents = value
 
     @Property(QUrl, notify=lastDirectorySubtitlesChanged)
     def lastDirectorySubtitles(self) -> QUrl:
-        return QUrl.fromLocalFile(self._settings.last_directory_subtitles)
+        return self._settings.last_directory_subtitles
 
     @lastDirectorySubtitles.setter
     def lastDirectorySubtitles(self, value: QUrl) -> None:
-        self._settings.last_directory_subtitles = self._type_mapper.map_url_to_path_string(value)
+        self._settings.last_directory_subtitles = value
 
     @Slot(QUrl)
     def openVideo(self, url: QUrl) -> None:
