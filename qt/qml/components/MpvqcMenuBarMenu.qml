@@ -10,6 +10,5 @@ MpvqcMenu {
 
     onAboutToShow: {
         x = isMirrored ? -width + parent.width : 0;
-        transformOrigin = isMirrored ? Popup.TopRight : Popup.TopLeft;
     }
 }

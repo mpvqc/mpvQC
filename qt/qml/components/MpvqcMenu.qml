@@ -14,6 +14,7 @@ Menu {
     readonly property bool isWindows: Qt.platform.os === "windows"
 
     z: 2
+    transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
     popupType: isWindows ? Popup.Window : Popup.Item
     dim: false
 
