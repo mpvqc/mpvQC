@@ -280,6 +280,7 @@ files = [
     "qt/qml/components/MpvqcHeader.qml",
     "qt/qml/components/MpvqcKeyboardFocusableButtonBox.qml",
     "qt/qml/components/MpvqcMenu.qml",
+    "qt/qml/components/MpvqcMenuBarMenu.qml",
     "qt/qml/components/MpvqcMessageBox.qml",
     "qt/qml/components/MpvqcSpinBoxRow.qml",
     "qt/qml/components/MpvqcSwitchRow.qml",

@@ -46,7 +46,7 @@ Item {
         MenuBar {
             id: menuBar
 
-            MpvqcMenu {
+            MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "File")
 
                 Action {
@@ -94,7 +94,7 @@ Item {
                     height: visible ? implicitHeight : 0
                 }
 
-                MpvqcMenu {
+                MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Export QC Document")
                     icon.source: "qrc:/data/icons/export_notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
@@ -138,7 +138,7 @@ Item {
                 }
             }
 
-            MpvqcMenu {
+            MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "Video")
 
                 Action {
@@ -173,7 +173,7 @@ Item {
                 }
             }
 
-            MpvqcMenu {
+            MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "Options")
 
                 Action {
@@ -194,7 +194,7 @@ Item {
                     }
                 }
 
-                MpvqcMenu {
+                MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Application Title")
                     icon.source: "qrc:/data/icons/title_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
@@ -230,7 +230,7 @@ Item {
                     }
                 }
 
-                MpvqcMenu {
+                MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Application Layout")
                     icon.source: "qrc:/data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
@@ -313,7 +313,7 @@ Item {
 
                 MenuSeparator {}
 
-                MpvqcMenu {
+                MpvqcMenuBarMenu {
                     id: _languageMenu
 
                     title: qsTranslate("MainWindow", "Language")
@@ -346,7 +346,7 @@ Item {
                 }
             }
 
-            MpvqcMenu {
+            MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "Help")
 
                 MenuItem {
