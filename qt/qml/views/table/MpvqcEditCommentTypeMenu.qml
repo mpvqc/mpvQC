@@ -23,7 +23,6 @@ MpvqcMenu {
 
     signal commentTypeEdited(index: int, newCommentType: string)
 
-    x: root.mirrored ? openedAt.x - width : openedAt.x
     y: openedAt.y
 
     modal: true
@@ -51,6 +50,10 @@ MpvqcMenu {
             commentType: root.currentCommentType
         });
         root.addItem(menuItem);
+    }
+
+    onAboutToShow: {
+        x = root.isMirrored ? openedAt.x - width : openedAt.x;
     }
 
     Component.onCompleted: {

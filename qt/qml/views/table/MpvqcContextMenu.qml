@@ -21,8 +21,11 @@ MpvqcMenu {
 
     modal: true
 
-    x: root.mirrored ? openedAt.x - width : openedAt.x
     y: openedAt.y
+
+    onAboutToShow: {
+        x = root.isMirrored ? openedAt.x - width : openedAt.x;
+    }
 
     onClosed: {
         // Run the stored callback.

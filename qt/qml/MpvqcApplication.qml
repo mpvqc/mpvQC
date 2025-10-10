@@ -171,7 +171,17 @@ ApplicationWindow {
         mpvqcApplication: root
     }
 
-    Component.onCompleted: _content.focusCommentTable()
+    Timer {
+        // Work around window activation issue in Qt 6.10 on Windows
+        interval: Qt.platform.os === "windows" ? 500 : 0
+        running: true
+        onTriggered: {
+            if (Qt.platform.os === "windows") {
+                root.requestActivate();
+            }
+            _content.focusCommentTable();
+        }
+    }
 
     // *********************************************************
     // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
