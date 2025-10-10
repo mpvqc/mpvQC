@@ -38,6 +38,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.TimeFormatterService, lambda: s.TimeFormatterService())
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
     binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
+    binder.bind_to_constructor(s.WindowButtonsService, lambda: s.WindowButtonsService())
 
 
 def configure_injections():

@@ -17,6 +17,8 @@ Item {
 
     required property MpvqcHeaderViewModel viewModel
 
+    readonly property MpvqcWindowButtons windowButtons: MpvqcWindowButtons {}
+
     readonly property alias menuBarWidth: menuBar.width
     readonly property alias menuBarHeight: menuBar.height
 
@@ -338,6 +340,7 @@ Item {
             ToolButton {
                 id: _minimizeButton
 
+                visible: root.windowButtons.showMinimizeButton
                 height: root.height
                 focusPolicy: Qt.NoFocus
                 anchors.right: _maximizeButton.left
@@ -356,6 +359,7 @@ Item {
                 readonly property url iconMaximize: "qrc:/data/icons/open_in_full_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
+                visible: root.windowButtons.showMaximizeButton
                 height: root.height
                 focusPolicy: Qt.NoFocus
                 anchors.right: _closeButton.left
@@ -371,6 +375,7 @@ Item {
             ToolButton {
                 id: _closeButton
 
+                visible: root.windowButtons.showCloseButton
                 height: root.height
                 focusPolicy: Qt.NoFocus
                 anchors.right: parent.right

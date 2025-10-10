@@ -9,4 +9,5 @@ from .player import MpvqcMpvPlayerPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
 from .settings import MpvqcSettings
 from .utility import MpvqcUtilityPyObject
+from .window_buttons import MpvqcWindowButtons
 from .window_properties import MpvqcWindowPropertiesBackend
