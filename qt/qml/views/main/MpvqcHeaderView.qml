@@ -20,6 +20,11 @@ Item {
     readonly property alias menuBarWidth: menuBar.width
     readonly property alias menuBarHeight: menuBar.height
 
+    readonly property bool isShortcutEnabled: {
+        const item = root.Window.window?.activeFocusItem;
+        return !item || !(item instanceof TextField || item instanceof TextArea || item instanceof TextInput || item instanceof TextEdit);
+    }
+
     height: menuBarHeight
 
     DragHandler {
@@ -49,44 +54,28 @@ Item {
             MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "File")
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "New QC Document")
-                    shortcut: "CTRL+N"
                     icon.source: "qrc:/data/icons/inventory_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestResetAppState();
-                    }
+                    onTriggered: root.viewModel.requestResetAppState()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Open QC Document(s)...")
-                    shortcut: "CTRL+O"
                     icon.source: "qrc:/data/icons/file_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenQcDocuments();
-                    }
+                    onTriggered: root.viewModel.requestOpenQcDocuments()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Save QC Document")
-                    shortcut: "CTRL+S"
                     icon.source: "qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestSaveQcDocument();
-                    }
+                    onTriggered: root.viewModel.requestSaveQcDocument()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Save QC Document As...")
-                    shortcut: "CTRL+Shift+S"
                     icon.source: "qrc:/data/icons/save_as_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestSaveQcDocumentAs();
-                    }
+                    onTriggered: root.viewModel.requestSaveQcDocumentAs()
                 }
 
                 MenuSeparator {
@@ -117,81 +106,57 @@ Item {
 
                             text: name
                             icon.source: "qrc:/data/icons/notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                            onTriggered: {
-                                root.viewModel.requestSaveQcDocumentExtendedUsing(name, path);
-                            }
+                            onTriggered: root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
                         }
                     }
                 }
 
                 MenuSeparator {}
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Exit mpvQC")
-                    shortcut: "CTRL+Q"
                     icon.source: "qrc:/data/icons/exit_to_app_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestClose();
-                    }
+                    onTriggered: root.viewModel.requestClose()
                 }
             }
 
             MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "Video")
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Open Video...")
-                    shortcut: "CTRL+Alt+O"
                     icon.source: "qrc:/data/icons/movie_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenVideo();
-                    }
+                    onTriggered: root.viewModel.requestOpenVideo()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Open Subtitle(s)...")
                     icon.source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenSubtitles();
-                    }
+                    onTriggered: root.viewModel.requestOpenSubtitles()
                 }
 
                 MenuSeparator {}
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
-                    shortcut: "CTRL+R"
                     icon.source: "qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestResizeVideo();
-                    }
+                    onTriggered: root.viewModel.requestResizeVideo()
                 }
             }
 
             MpvqcMenuBarMenu {
                 title: qsTranslate("MainWindow", "Options")
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Appearance...")
                     icon.source: "qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenAppearanceDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenAppearanceDialog()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Comment Type Settings...")
                     icon.source: "qrc:/data/icons/comment_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenCommentTypesDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenCommentTypesDialog()
                 }
 
                 MpvqcMenuBarMenu {
@@ -222,10 +187,7 @@ Item {
                             autoExclusive: true
                             checkable: true
                             checked: root.viewModel.windowTitleFormat === value
-
-                            onTriggered: {
-                                root.viewModel.configureWindowTitleFormat(value);
-                            }
+                            onTriggered: root.viewModel.configureWindowTitleFormat(value)
                         }
                     }
                 }
@@ -254,61 +216,43 @@ Item {
                             autoExclusive: true
                             checkable: true
                             checked: root.viewModel.applicationLayout === value
-
-                            onTriggered: {
-                                root.viewModel.configureApplicationLayout(value);
-                            }
+                            onTriggered: root.viewModel.configureApplicationLayout(value)
                         }
                     }
                 }
 
                 MenuSeparator {}
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Backup Settings...")
                     icon.source: "qrc:/data/icons/settings_backup_restore_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenBackupSettingsDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenBackupSettingsDialog()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Export Settings...")
                     icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenExportSettingsDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenExportSettingsDialog()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Import Settings...")
                     icon.source: "qrc:/data/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenImportSettingsDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenImportSettingsDialog()
                 }
 
                 MenuSeparator {}
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Edit mpv.conf...")
                     icon.source: "qrc:/data/icons/movie_edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenEditMpvConfigDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenEditMpvConfigDialog()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Edit input.conf...")
                     icon.source: "qrc:/data/icons/keyboard_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenEditInputConfigDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenEditInputConfigDialog()
                 }
 
                 MenuSeparator {}
@@ -337,10 +281,7 @@ Item {
                             autoExclusive: true
                             checkable: true
                             checked: identifier === Qt.uiLanguage
-
-                            onTriggered: {
-                                _languageMenu._deferToOnClose = () => root.viewModel.configureLanguage(identifier);
-                            }
+                            onTriggered: _languageMenu._deferToOnClose = () => root.viewModel.configureLanguage(identifier)
                         }
                     }
                 }
@@ -350,45 +291,31 @@ Item {
                 title: qsTranslate("MainWindow", "Help")
 
                 MenuItem {
-
                     text: qsTranslate("MainWindow", "Check for Updates...")
                     icon.source: "qrc:/data/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     visible: root.viewModel.isUpdateMenuVisible
                     height: visible ? implicitHeight : 0
-
-                    onTriggered: {
-                        root.viewModel.requestOpenCheckForUpdatesDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenCheckForUpdatesDialog()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
                     icon.source: "qrc:/data/icons/keyboard_double_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-                    shortcut: "?"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenKeyboardShortcutsDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenKeyboardShortcutsDialog()
                 }
 
                 MenuSeparator {}
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "Extended Exports...")
                     icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenExtendedExportsDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenExtendedExportsDialog()
                 }
 
-                Action {
+                MenuItem {
                     text: qsTranslate("MainWindow", "About mpvQC...")
                     icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                    onTriggered: {
-                        root.viewModel.requestOpenAboutDialog();
-                    }
+                    onTriggered: root.viewModel.requestOpenAboutDialog()
                 }
             }
         }
@@ -476,5 +403,53 @@ Item {
                 }
             }
         }
+    }
+
+    Shortcut {
+        sequence: "CTRL+N"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestResetAppState()
+    }
+
+    Shortcut {
+        sequence: "CTRL+O"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestOpenQcDocuments()
+    }
+
+    Shortcut {
+        sequence: "CTRL+S"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestSaveQcDocument()
+    }
+
+    Shortcut {
+        sequence: "CTRL+Shift+S"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestSaveQcDocumentAs()
+    }
+
+    Shortcut {
+        sequence: "CTRL+Q"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestClose()
+    }
+
+    Shortcut {
+        sequence: "CTRL+Alt+O"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestOpenVideo()
+    }
+
+    Shortcut {
+        sequence: "CTRL+R"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestResizeVideo()
+    }
+
+    Shortcut {
+        sequence: "?"
+        enabled: root.isShortcutEnabled
+        onActivated: root.viewModel.requestOpenKeyboardShortcutsDialog()
     }
 }
