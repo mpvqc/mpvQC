@@ -136,6 +136,8 @@ Popup {
             focusPolicy: Qt.NoFocus
 
             icon {
+                width: 18
+                height: 18
                 source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
             }
 
