@@ -59,6 +59,8 @@ MpvqcDialog {
                 enabled: root.viewModel.isAcceptButtonEnabled
 
                 icon {
+                    width: 20
+                    height: 20
                     source: "qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 }
 
@@ -71,6 +73,8 @@ MpvqcDialog {
                 enabled: root.viewModel.isRejectButtonEnabled
 
                 icon {
+                    width: 20
+                    height: 20
                     source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 }
 
