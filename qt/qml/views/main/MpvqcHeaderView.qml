@@ -342,6 +342,7 @@ Item {
 
                 visible: root.windowButtons.showMinimizeButton
                 height: root.height
+                width: visible ? implicitWidth : 0
                 focusPolicy: Qt.NoFocus
                 anchors.right: _maximizeButton.left
                 icon.width: 20
@@ -361,6 +362,7 @@ Item {
 
                 visible: root.windowButtons.showMaximizeButton
                 height: root.height
+                width: visible ? implicitWidth : 0
                 focusPolicy: Qt.NoFocus
                 anchors.right: _closeButton.left
                 icon.width: 18
@@ -377,6 +379,7 @@ Item {
 
                 visible: root.windowButtons.showCloseButton
                 height: root.height
+                width: visible ? implicitWidth : 0
                 focusPolicy: Qt.NoFocus
                 anchors.right: parent.right
 

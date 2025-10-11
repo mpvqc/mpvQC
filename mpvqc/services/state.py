@@ -45,8 +45,8 @@ class StateService(QObject):
         new_state = reduce(self._state, RESET_ACTION)
         self._update_state(new_state)
 
-    def import_documents(self, documents: list[Path], video: Path | None) -> None:
-        change = ImportChange(documents, video)
+    def import_documents(self, documents: list[Path], video: Path | None, video_from_subtitle: bool) -> None:
+        change = ImportChange(documents, video, video_from_subtitle)
         new_state = reduce(self._state, ImportAction(change))
         self._update_state(new_state)
 
@@ -55,6 +55,7 @@ class StateService(QObject):
 class ImportChange:
     documents: list[Path]
     video: Path | None
+    video_from_subtitle: bool
 
     @property
     def only_video_imported(self) -> bool:
@@ -127,6 +128,8 @@ def _handle_import(state: ApplicationState, change: ImportChange) -> Application
         video = change.video or state.video
 
         if change.exactly_one_document_imported:
+            if change.video_from_subtitle:
+                return ApplicationState(None, video, saved=True)
             return ApplicationState(change.imported_document, video, saved=True)
 
         return ApplicationState(None, video, saved=False)

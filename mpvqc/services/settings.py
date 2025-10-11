@@ -51,12 +51,7 @@ class SettingsService(QObject):
         REMAINING_TIME = 2
         CURRENT_TOTAL_TIME = 3
 
-    class ImportWhenVideoLinkedInDocument(IntEnum):
-        ALWAYS = 0
-        ASK_EVERY_TIME = 1
-        NEVER = 2
-
-    class ImportWhenVideoLinkedInSubtitle(IntEnum):
+    class ImportFoundVideo(IntEnum):
         ALWAYS = 0
         ASK_EVERY_TIME = 1
         NEVER = 2
@@ -84,8 +79,7 @@ class SettingsService(QObject):
     lastDirectoryVideoChanged = Signal(QUrl)
     lastDirectoryDocumentsChanged = Signal(QUrl)
     lastDirectorySubtitlesChanged = Signal(QUrl)
-    importWhenVideoLinkedInDocumentChanged = Signal(int)
-    importWhenVideoLinkedInSubtitleChanged = Signal(int)
+    importFoundVideoChanged = Signal(int)
 
     # SplitView
     layoutOrientationChanged = Signal(int)
@@ -256,24 +250,14 @@ class SettingsService(QObject):
             self.lastDirectorySubtitlesChanged.emit(value)
 
     @property
-    def import_when_video_linked_in_document(self) -> int:
-        return self._settings.value("Import/importWhenVideoLinkedInDocument", 1, type=int)  # ASK_EVERY_TIME
+    def import_found_video(self) -> int:
+        return self._settings.value("Import/importFoundVideo", 1, type=int)  # ASK_EVERY_TIME
 
-    @import_when_video_linked_in_document.setter
-    def import_when_video_linked_in_document(self, value: int):
-        if self.import_when_video_linked_in_document != value:
-            self._settings.setValue("Import/importWhenVideoLinkedInDocument", value)
-            self.importWhenVideoLinkedInDocumentChanged.emit(value)
-
-    @property
-    def import_when_video_linked_in_subtitle(self) -> int:
-        return self._settings.value("Import/importWhenVideoLinkedInSubtitle", 1, type=int)  # ASK_EVERY_TIME
-
-    @import_when_video_linked_in_subtitle.setter
-    def import_when_video_linked_in_subtitle(self, value: int):
-        if self.import_when_video_linked_in_subtitle != value:
-            self._settings.setValue("Import/importWhenVideoLinkedInSubtitle", value)
-            self.importWhenVideoLinkedInSubtitleChanged.emit(value)
+    @import_found_video.setter
+    def import_found_video(self, value: int):
+        if self.import_found_video != value:
+            self._settings.setValue("Import/importFoundVideo", value)
+            self.importFoundVideoChanged.emit(value)
 
     @property
     def layout_orientation(self) -> int:

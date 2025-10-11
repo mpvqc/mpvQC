@@ -20,10 +20,7 @@ from mpvqc.services import (
     SubtitleImporterService,
     TypeMapperService,
 )
-from mpvqc.services.importer import ImportState
-
-DocumentImportSetting = SettingsService.ImportWhenVideoLinkedInDocument
-SubtitleImportSetting = SettingsService.ImportWhenVideoLinkedInSubtitle
+from mpvqc.services.importer import AskingAbout, ImportState
 
 
 @pytest.fixture
@@ -75,9 +72,8 @@ def configure_inject(
 
 @pytest.fixture
 def configure_for_open(mock_doc_importer, mock_sub_importer, settings_service):
-    def setup(document_videos, subtitle_videos, doc_setting, sub_setting, comments: list[Comment] | None = None):
-        settings_service.import_when_video_linked_in_document = doc_setting
-        settings_service.import_when_video_linked_in_subtitle = sub_setting
+    def setup(document_videos, subtitle_videos, import_setting, comments: list[Comment] | None = None):
+        settings_service.import_found_video = import_setting
 
         mock_doc_importer.read.return_value = DocumentImporterService.DocumentImportResult(
             valid_documents=[], invalid_documents=[], existing_videos=document_videos, comments=comments or []
@@ -98,6 +94,7 @@ def make_state():
         invalid_documents=None,
         subtitles=None,
         comments=None,
+        video_from_subtitle=None,
     ):
         document_result = DocumentImporterService.DocumentImportResult(
             valid_documents=valid_documents or [],
@@ -115,6 +112,7 @@ def make_state():
             imported_subtitles=subtitle_result,
             dropped_videos=[],
             selected_video=selected_video,
+            video_source=AskingAbout.SUBTITLE if video_from_subtitle else None,
         )
 
     return _make_state
@@ -130,8 +128,7 @@ class SynchronousTestCase(NamedTuple):
     dropped_videos: list[Path]
     document_videos: list[Path]
     subtitle_videos: list[Path]
-    doc_setting: int
-    sub_setting: int
+    import_setting: int
     expected_video: Path | None
 
 
@@ -143,35 +140,31 @@ class SynchronousTestCase(NamedTuple):
             dropped_videos=[Path("dropped_video")],
             document_videos=[Path("video_from_document")],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ALWAYS.value,
-            sub_setting=SubtitleImportSetting.ALWAYS.value,
+            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
             expected_video=Path("dropped_video"),
         ),
         SynchronousTestCase(
-            name="document_always",
+            name="document_wins",
             dropped_videos=[],
             document_videos=[Path("video_from_document")],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ALWAYS.value,
-            sub_setting=SubtitleImportSetting.ALWAYS.value,
+            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
             expected_video=Path("video_from_document"),
         ),
         SynchronousTestCase(
-            name="document_never_subtitle_always",
+            name="document_wins",
             dropped_videos=[],
-            document_videos=[Path("video_from_document")],
+            document_videos=[],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.NEVER.value,
-            sub_setting=SubtitleImportSetting.ALWAYS.value,
+            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
             expected_video=Path("video_from_subtitle"),
         ),
         SynchronousTestCase(
-            name="document_never_subtitle_never",
+            name="nothing",
             dropped_videos=[],
             document_videos=[Path("video_from_document")],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.NEVER.value,
-            sub_setting=SubtitleImportSetting.NEVER.value,
+            import_setting=SettingsService.ImportFoundVideo.NEVER.value,
             expected_video=None,
         ),
         SynchronousTestCase(
@@ -179,8 +172,7 @@ class SynchronousTestCase(NamedTuple):
             dropped_videos=[],
             document_videos=[],
             subtitle_videos=[],
-            doc_setting=DocumentImportSetting.ALWAYS.value,
-            sub_setting=SubtitleImportSetting.ALWAYS.value,
+            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
             expected_video=None,
         ),
     ],
@@ -193,7 +185,9 @@ def test_open_synchronous(
     test_case,
 ):
     configure_for_open(
-        test_case.document_videos, test_case.subtitle_videos, test_case.doc_setting, test_case.sub_setting
+        test_case.document_videos,
+        test_case.subtitle_videos,
+        test_case.import_setting,
     )
 
     service.open(documents=[], videos=test_case.dropped_videos, subtitles=[])
@@ -208,89 +202,65 @@ class UserInteractionTestCase(NamedTuple):
     name: str
     document_videos: list[Path]
     subtitle_videos: list[Path]
-    doc_setting: int
-    sub_setting: int
     user_accepts_doc: bool | None
     user_accepts_sub: bool | None
-    expected_video: Path | None
     should_ask_about_document: bool
     should_ask_about_subtitle: bool
+    expected_video: Path | None
 
 
 @pytest.mark.parametrize(
     "test_case",
     [
         UserInteractionTestCase(
-            name="doc_ask_accept",
+            name="accept_document",
             document_videos=[Path("video_from_document")],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ASK_EVERY_TIME.value,
-            sub_setting=SubtitleImportSetting.ALWAYS.value,
             user_accepts_doc=True,
             user_accepts_sub=None,
+            should_ask_about_document=True,
+            should_ask_about_subtitle=False,
             expected_video=Path("video_from_document"),
-            should_ask_about_document=True,
-            should_ask_about_subtitle=False,
         ),
         UserInteractionTestCase(
-            name="doc_ask_reject_sub_always",
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ASK_EVERY_TIME.value,
-            sub_setting=SubtitleImportSetting.ALWAYS.value,
-            user_accepts_doc=False,
-            user_accepts_sub=None,
-            expected_video=Path("video_from_subtitle"),
-            should_ask_about_document=True,
-            should_ask_about_subtitle=False,
-        ),
-        UserInteractionTestCase(
-            name="doc_ask_reject_sub_ask_accept",
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ASK_EVERY_TIME.value,
-            sub_setting=SubtitleImportSetting.ASK_EVERY_TIME.value,
-            user_accepts_doc=False,
-            user_accepts_sub=True,
-            expected_video=Path("video_from_subtitle"),
-            should_ask_about_document=True,
-            should_ask_about_subtitle=True,
-        ),
-        UserInteractionTestCase(
-            name="doc_ask_reject_sub_ask_reject",
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ASK_EVERY_TIME.value,
-            sub_setting=SubtitleImportSetting.ASK_EVERY_TIME.value,
-            user_accepts_doc=False,
-            user_accepts_sub=False,
-            expected_video=None,
-            should_ask_about_document=True,
-            should_ask_about_subtitle=True,
-        ),
-        UserInteractionTestCase(
-            name="no_doc_sub_ask_accept",
+            name="accept_subtitle",
             document_videos=[],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ALWAYS.value,
-            sub_setting=SubtitleImportSetting.ASK_EVERY_TIME.value,
             user_accepts_doc=None,
             user_accepts_sub=True,
-            expected_video=Path("video_from_subtitle"),
             should_ask_about_document=False,
             should_ask_about_subtitle=True,
+            expected_video=Path("video_from_subtitle"),
         ),
         UserInteractionTestCase(
-            name="no_doc_sub_ask_reject",
+            name="accept_subtitle_2",
+            document_videos=[Path("video_from_document")],
+            subtitle_videos=[Path("video_from_subtitle")],
+            user_accepts_doc=False,
+            user_accepts_sub=True,
+            should_ask_about_document=True,
+            should_ask_about_subtitle=True,
+            expected_video=Path("video_from_subtitle"),
+        ),
+        UserInteractionTestCase(
+            name="reject_document_reject_subtitle",
+            document_videos=[Path("video_from_document")],
+            subtitle_videos=[Path("video_from_subtitle")],
+            user_accepts_doc=False,
+            user_accepts_sub=False,
+            should_ask_about_document=True,
+            should_ask_about_subtitle=True,
+            expected_video=None,
+        ),
+        UserInteractionTestCase(
+            name="reject_subtitle",
             document_videos=[],
             subtitle_videos=[Path("video_from_subtitle")],
-            doc_setting=DocumentImportSetting.ALWAYS.value,
-            sub_setting=SubtitleImportSetting.ASK_EVERY_TIME.value,
             user_accepts_doc=None,
             user_accepts_sub=False,
-            expected_video=None,
             should_ask_about_document=False,
             should_ask_about_subtitle=True,
+            expected_video=None,
         ),
     ],
     ids=lambda tc: tc.name,
@@ -303,7 +273,9 @@ def test_open_with_user_interaction(
     test_case,
 ):
     configure_for_open(
-        test_case.document_videos, test_case.subtitle_videos, test_case.doc_setting, test_case.sub_setting
+        test_case.document_videos,
+        test_case.subtitle_videos,
+        import_setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
     )
 
     doc_spy = make_spy(service.ask_user_document_video_import)
@@ -339,8 +311,7 @@ def test_open_loads_comments(service, configure_for_open, make_spy):
     configure_for_open(
         document_videos=[],
         subtitle_videos=[],
-        doc_setting=DocumentImportSetting.ASK_EVERY_TIME.value,
-        sub_setting=SubtitleImportSetting.ASK_EVERY_TIME.value,
+        import_setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
         comments=[],
     )
 
@@ -350,8 +321,7 @@ def test_open_loads_comments(service, configure_for_open, make_spy):
     configure_for_open(
         document_videos=[],
         subtitle_videos=[],
-        doc_setting=DocumentImportSetting.ASK_EVERY_TIME.value,
-        sub_setting=SubtitleImportSetting.ASK_EVERY_TIME.value,
+        import_setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
         comments=[Comment(7, "comment type", "comment")],
     )
 
@@ -381,11 +351,30 @@ def test_continue_with_import_opens_subtitles_when_present(service, mock_player,
 def test_continue_with_import_imports_documents_when_video_present(service, mock_state, make_state):
     docs = [Path.home() / "doc.txt"]
     video_path = Path.home() / "video.mp4"
-    state = make_state(selected_video=video_path, valid_documents=docs)
 
+    state = make_state(
+        selected_video=video_path,
+        valid_documents=docs,
+        video_from_subtitle=False,
+    )
     service._continue_with_import(state)
+    mock_state.import_documents.assert_called_with(
+        documents=docs,
+        video=video_path.resolve(),
+        video_from_subtitle=False,
+    )
 
-    mock_state.import_documents.assert_called_once_with(documents=docs, video=video_path.resolve())
+    state = make_state(
+        selected_video=video_path,
+        valid_documents=docs,
+        video_from_subtitle=True,
+    )
+    service._continue_with_import(state)
+    mock_state.import_documents.assert_called_with(
+        documents=docs,
+        video=video_path.resolve(),
+        video_from_subtitle=True,
+    )
 
 
 def test_continue_with_import_imports_documents_when_only_documents(service, mock_state, make_state):
@@ -394,7 +383,7 @@ def test_continue_with_import_imports_documents_when_only_documents(service, moc
 
     service._continue_with_import(state)
 
-    mock_state.import_documents.assert_called_once_with(documents=docs, video=None)
+    mock_state.import_documents.assert_called_once_with(documents=docs, video=None, video_from_subtitle=False)
 
 
 def test_continue_with_import_emits_invalid_documents(service, make_spy, make_state):

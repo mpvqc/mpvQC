@@ -97,6 +97,9 @@ def test_subtitles_load_subtitles():
     service.open_subtitles(SUBTITLES)
     service.open_video(VIDEO)
 
+    # Simulate the path change event that triggers subtitle loading
+    service._on_player_path_changed(None, VIDEO)
+
     assert mpv_mock.command.called
     loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
     assert loadfile == "loadfile"
@@ -115,5 +118,30 @@ def test_subtitles_empties_cache():
     service.open_subtitles(SUBTITLES)
     service.open_video(VIDEO)
 
+    # Simulate the path change event that triggers subtitle loading
+    service._on_player_path_changed(None, VIDEO)
+
     assert SUBTITLE not in service._cached_subtitles
     assert not service._cached_subtitles
+
+
+def test_subtitles_cached_during_video_load():
+    mpv_mock, service = next(_create_mpv_and_player_service(has_video=True))
+
+    service.open_video(VIDEO)
+    service.open_subtitles(SUBTITLES)
+
+    assert mpv_mock.command.called
+    loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
+    assert loadfile == "loadfile"
+    assert video == VIDEO
+    assert replace == "replace"
+    assert SUBTITLE in service._cached_subtitles
+
+    service._on_player_path_changed(None, VIDEO)
+
+    sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
+    assert sub_add == "sub-add"
+    assert subtitle == SUBTITLE
+    assert select == "select"
+    assert SUBTITLE not in service._cached_subtitles

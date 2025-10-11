@@ -99,6 +99,10 @@ Loader {
             root.openVideoFoundMessageBox(trackingId, fileName);
         }
 
+        function onAskUserSubtitleVideoImport(trackingId: string, fileName: string): void {
+            root.openVideoFoundMessageBox(trackingId, fileName);
+        }
+
         function onExportErrorOccurred(message: string, line: int): void {
             root.openExtendedExportFailedMessageBox(message, line);
         }
