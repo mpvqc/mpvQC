@@ -35,6 +35,7 @@ class PlayerService(QObject):
     def __init__(self, **properties):
         super().__init__(**properties)
         self._cached_subtitles = set()
+        self._loading_video = False
 
         self._init_args = {
             "keep_open": "yes",
@@ -146,6 +147,15 @@ class PlayerService(QObject):
         self.path_changed.emit(value or "")
         self.video_loaded_changed.emit(value is not None)
 
+        if value is not None and self._loading_video:
+            self._loading_video = False
+            self._open_cached_subtitles()
+
+    def _open_cached_subtitles(self):
+        if self._cached_subtitles:
+            self.open_subtitles(self._cached_subtitles)
+            self._cached_subtitles.clear()
+
     def _on_player_filename_changed(self, _, value: str) -> None:
         self.filename_changed.emit(value or "")
 
@@ -176,14 +186,9 @@ class PlayerService(QObject):
         self._mpv.command_async("mouse", x, y)
 
     def open_video(self, video: str) -> None:
+        self._loading_video = True  # Set flag before loading
         self._mpv.command("loadfile", video, "replace")
-        self._open_cached_subtitles()
         self.play()
-
-    def _open_cached_subtitles(self):
-        if self._cached_subtitles:
-            self.open_subtitles(self._cached_subtitles)
-            self._cached_subtitles.clear()
 
     def open_subtitles(self, subtitles: Iterable[str]) -> None:
         def _load():
@@ -193,7 +198,7 @@ class PlayerService(QObject):
         def _cache():
             self._cached_subtitles |= set(subtitles)
 
-        if self.has_video:
+        if self.has_video and not self._loading_video:
             _load()
         else:
             _cache()
