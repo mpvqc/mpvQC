@@ -31,6 +31,7 @@ class ImportState:
     dropped_videos: list[Path]
     selected_video: Path | None = None
     asking_about: AskingAbout | None = None
+    video_source: AskingAbout | None = None
 
 
 class ImporterService(QObject):
@@ -135,8 +136,10 @@ class ImporterService(QObject):
         match (user_accepted, state.asking_about):
             case (True, AskingAbout.DOCUMENT):
                 state.selected_video = state.imported_documents.existing_videos[0]
+                state.video_source = AskingAbout.DOCUMENT
             case (True, AskingAbout.SUBTITLE):
                 state.selected_video = state.imported_subtitles.existing_videos[0]
+                state.video_source = AskingAbout.SUBTITLE
             case (False, AskingAbout.DOCUMENT) if state.imported_subtitles.existing_videos:
                 if not self._check_subtitle_video(state):
                     return
@@ -156,6 +159,7 @@ class ImporterService(QObject):
             self._state.import_documents(
                 documents=state.imported_documents.valid_documents,
                 video=imported_video,
+                video_from_subtitle=state.video_source == AskingAbout.SUBTITLE,
             )
 
         if invalid_documents := state.imported_documents.invalid_documents:

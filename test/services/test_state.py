@@ -88,7 +88,7 @@ IMPORT_CHANGE_TEST_CASES = [
 
 @pytest.mark.parametrize("case", IMPORT_CHANGE_TEST_CASES, ids=lambda case: case.name)
 def test_import_change(case: ImportChangeTestCase) -> None:
-    change = ImportChange(documents=case.documents, video=case.video)
+    change = ImportChange(documents=case.documents, video=case.video, video_from_subtitle=True)
     assert change.only_video_imported == case.expected_only_video
     assert change.exactly_one_document_imported == case.expected_exactly_one_doc
 
@@ -217,6 +217,9 @@ class ImportActionTestCase(NamedTuple):
     initial_saved: bool
     import_documents: list[Path]
     import_video: Path | None
+    video_from_subtitle: bool
+    expected_document: Path | None
+    expected_video: Path | None
     expected_document: Path | None
     expected_video: Path | None
     expected_saved: bool
@@ -230,6 +233,7 @@ IMPORT_ACTION_TEST_CASES = [
         initial_saved=True,
         import_documents=[],
         import_video=Path("video"),
+        video_from_subtitle=False,
         expected_document=None,
         expected_video=Path("video"),
         expected_saved=True,
@@ -241,18 +245,32 @@ IMPORT_ACTION_TEST_CASES = [
         initial_saved=True,
         import_documents=[],
         import_video=Path("video-imported"),
+        video_from_subtitle=False,
         expected_document=None,
         expected_video=Path("video-imported"),
         expected_saved=True,
     ),
     ImportActionTestCase(
-        name="from initial state: import one document with video",
+        name="from initial state: import one document with video from document",
         initial_document=None,
         initial_video=Path("video-initial"),
         initial_saved=True,
         import_documents=[Path("document")],
         import_video=Path("video-imported"),
+        video_from_subtitle=False,
         expected_document=Path("document"),
+        expected_video=Path("video-imported"),
+        expected_saved=True,
+    ),
+    ImportActionTestCase(
+        name="from initial state: import one document with video from subtitle",
+        initial_document=None,
+        initial_video=None,
+        initial_saved=True,
+        import_documents=[Path("document")],
+        import_video=Path("video-imported"),
+        video_from_subtitle=True,
+        expected_document=None,
         expected_video=Path("video-imported"),
         expected_saved=True,
     ),
@@ -263,8 +281,21 @@ IMPORT_ACTION_TEST_CASES = [
         initial_saved=True,
         import_documents=[Path("document1"), Path("document2")],
         import_video=None,
+        video_from_subtitle=False,
         expected_document=None,
         expected_video=Path("video-initial"),
+        expected_saved=False,
+    ),
+    ImportActionTestCase(
+        name="from initial state: import multiple documents with video from subtitle",
+        initial_document=None,
+        initial_video=None,
+        initial_saved=True,
+        import_documents=[Path("document1"), Path("document2")],
+        import_video=Path("video-imported"),
+        video_from_subtitle=True,
+        expected_document=None,
+        expected_video=Path("video-imported"),
         expected_saved=False,
     ),
     ImportActionTestCase(
@@ -274,17 +305,19 @@ IMPORT_ACTION_TEST_CASES = [
         initial_saved=True,
         import_documents=[],
         import_video=Path("video"),
+        video_from_subtitle=False,
         expected_document=None,
         expected_video=Path("video"),
         expected_saved=True,
     ),
     ImportActionTestCase(
-        name="from other state: import same video with document, should preserve document and saved state",
+        name="from other state: import same video with document, should preserve document",
         initial_document=Path("document"),
         initial_video=Path("video"),
         initial_saved=False,
         import_documents=[],
         import_video=Path("video"),
+        video_from_subtitle=False,
         expected_document=Path("document"),
         expected_video=Path("video"),
         expected_saved=False,
@@ -296,17 +329,31 @@ IMPORT_ACTION_TEST_CASES = [
         initial_saved=True,
         import_documents=[],
         import_video=Path("video-imported"),
+        video_from_subtitle=False,
         expected_document=None,
         expected_video=Path("video-imported"),
         expected_saved=False,
     ),
     ImportActionTestCase(
-        name="from other state: import document with different video, should reset",
+        name="from other state: import document with different video from document, should reset",
         initial_document=Path("document"),
         initial_video=Path("video-1"),
         initial_saved=True,
         import_documents=[Path("imported-document")],
         import_video=Path("video-2"),
+        video_from_subtitle=False,
+        expected_document=None,
+        expected_video=Path("video-2"),
+        expected_saved=False,
+    ),
+    ImportActionTestCase(
+        name="from other state: import document with different video from subtitle, should reset",
+        initial_document=Path("document"),
+        initial_video=Path("video-1"),
+        initial_saved=True,
+        import_documents=[Path("imported-document")],
+        import_video=Path("video-2"),
+        video_from_subtitle=True,
         expected_document=None,
         expected_video=Path("video-2"),
         expected_saved=False,
@@ -317,7 +364,11 @@ IMPORT_ACTION_TEST_CASES = [
 @pytest.mark.parametrize("case", IMPORT_ACTION_TEST_CASES, ids=lambda case: case.name)
 def test_reduce_import_action(case: ImportActionTestCase) -> None:
     state = ApplicationState(case.initial_document, case.initial_video, case.initial_saved)
-    change = ImportChange(documents=case.import_documents, video=case.import_video)
+    change = ImportChange(
+        documents=case.import_documents,
+        video=case.import_video,
+        video_from_subtitle=case.video_from_subtitle,
+    )
     state = reduce(state, ImportAction(change))
     assert case.expected_document == state.document
     assert case.expected_video == state.video

@@ -20,7 +20,7 @@ from mpvqc.services import (
     SubtitleImporterService,
     TypeMapperService,
 )
-from mpvqc.services.importer import ImportState
+from mpvqc.services.importer import AskingAbout, ImportState
 
 
 @pytest.fixture
@@ -94,6 +94,7 @@ def make_state():
         invalid_documents=None,
         subtitles=None,
         comments=None,
+        video_from_subtitle=None,
     ):
         document_result = DocumentImporterService.DocumentImportResult(
             valid_documents=valid_documents or [],
@@ -111,6 +112,7 @@ def make_state():
             imported_subtitles=subtitle_result,
             dropped_videos=[],
             selected_video=selected_video,
+            video_source=AskingAbout.SUBTITLE if video_from_subtitle else None,
         )
 
     return _make_state
@@ -349,11 +351,30 @@ def test_continue_with_import_opens_subtitles_when_present(service, mock_player,
 def test_continue_with_import_imports_documents_when_video_present(service, mock_state, make_state):
     docs = [Path.home() / "doc.txt"]
     video_path = Path.home() / "video.mp4"
-    state = make_state(selected_video=video_path, valid_documents=docs)
 
+    state = make_state(
+        selected_video=video_path,
+        valid_documents=docs,
+        video_from_subtitle=False,
+    )
     service._continue_with_import(state)
+    mock_state.import_documents.assert_called_with(
+        documents=docs,
+        video=video_path.resolve(),
+        video_from_subtitle=False,
+    )
 
-    mock_state.import_documents.assert_called_once_with(documents=docs, video=video_path.resolve())
+    state = make_state(
+        selected_video=video_path,
+        valid_documents=docs,
+        video_from_subtitle=True,
+    )
+    service._continue_with_import(state)
+    mock_state.import_documents.assert_called_with(
+        documents=docs,
+        video=video_path.resolve(),
+        video_from_subtitle=True,
+    )
 
 
 def test_continue_with_import_imports_documents_when_only_documents(service, mock_state, make_state):
@@ -362,7 +383,7 @@ def test_continue_with_import_imports_documents_when_only_documents(service, moc
 
     service._continue_with_import(state)
 
-    mock_state.import_documents.assert_called_once_with(documents=docs, video=None)
+    mock_state.import_documents.assert_called_once_with(documents=docs, video=None, video_from_subtitle=False)
 
 
 def test_continue_with_import_emits_invalid_documents(service, make_spy, make_state):
