@@ -41,11 +41,11 @@ MpvqcDialog {
                 model: ImportOptionsModel {}
 
                 onActivated: value => {
-                    root.viewModel.importWhenVideoLinkedInDocument = value;
+                    root.viewModel.importFoundVideo = value;
                 }
 
                 Component.onCompleted: {
-                    currentIndex = indexOfValue(root.viewModel.importWhenVideoLinkedInDocument);
+                    currentIndex = indexOfValue(root.viewModel.importFoundVideo);
                 }
             }
         }

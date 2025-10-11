@@ -18,9 +18,6 @@ from .state import StateService
 from .subtitle_importer import SubtitleImporterService
 from .type_mapper import TypeMapperService
 
-DocumentImportSetting = SettingsService.ImportWhenVideoLinkedInDocument
-SubtitleImportSetting = SettingsService.ImportWhenVideoLinkedInSubtitle
-
 
 class AskingAbout(Enum):
     DOCUMENT = "document"
@@ -84,17 +81,17 @@ class ImporterService(QObject):
             return True
 
         if state.imported_documents.existing_videos:
-            video_import_setting = self._settings.import_when_video_linked_in_document
+            import_setting = self._settings.import_found_video
 
-            match video_import_setting:
-                case DocumentImportSetting.ALWAYS.value:
+            match import_setting:
+                case SettingsService.ImportFoundVideo.ALWAYS.value:
                     state.selected_video = state.imported_documents.existing_videos[0]
                     return True
-                case DocumentImportSetting.NEVER.value if state.imported_subtitles.existing_videos:
+                case SettingsService.ImportFoundVideo.NEVER.value if state.imported_subtitles.existing_videos:
                     return self._check_subtitle_video(state)
-                case DocumentImportSetting.NEVER.value:
+                case SettingsService.ImportFoundVideo.NEVER.value:
                     return True
-                case DocumentImportSetting.ASK_EVERY_TIME.value:
+                case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
                     import_id = str(uuid4())
                     state.asking_about = AskingAbout.DOCUMENT
                     self._pending_imports[import_id] = state
@@ -110,22 +107,22 @@ class ImporterService(QObject):
 
     def _check_subtitle_video(self, state: ImportState) -> bool:
         """Returns True if import can continue immediately, False if waiting for user input."""
-        subtitle_import_setting = self._settings.import_when_video_linked_in_subtitle
+        import_setting = self._settings.import_found_video
 
-        match subtitle_import_setting:
-            case SubtitleImportSetting.ALWAYS.value:
+        match import_setting:
+            case SettingsService.ImportFoundVideo.ALWAYS.value:
                 state.selected_video = state.imported_subtitles.existing_videos[0]
                 return True
-            case SubtitleImportSetting.NEVER.value:
+            case SettingsService.ImportFoundVideo.NEVER.value:
                 return True
-            case SubtitleImportSetting.ASK_EVERY_TIME.value:
+            case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
                 import_id = str(uuid4())
                 state.asking_about = AskingAbout.SUBTITLE
                 self._pending_imports[import_id] = state
                 self.ask_user_subtitle_video_import.emit(import_id, state.imported_subtitles.existing_videos[0].name)
                 return False
             case _:
-                msg = f"Cannot handle subtitle import setting: {subtitle_import_setting}"
+                msg = f"Cannot handle subtitle import setting: {import_setting}"
                 raise ValueError(msg)
 
     def continue_video_determination(self, import_id: str, user_accepted: bool) -> None:
