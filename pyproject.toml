@@ -244,6 +244,7 @@ files = [
     "mpvqc/services/type_mapper.py",
     "mpvqc/services/version_checker.py",
     "mpvqc/services/window_buttons.py",
+    "mpvqc/services/window_properties.py",
     "mpvqc/startup.py",
     "mpvqc/viewmodels/__init__.py",
     "mpvqc/viewmodels/backup_timer.py",
