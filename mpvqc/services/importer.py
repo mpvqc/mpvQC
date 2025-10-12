@@ -26,9 +26,12 @@ class AskingAbout(Enum):
 
 @dataclass
 class ImportState:
-    imported_documents: DocumentImporterService.DocumentImportResult
-    imported_subtitles: SubtitleImporterService.SubtitleImportResult
+    document_video: Path | None
+    subtitle_video: Path | None
     dropped_videos: list[Path]
+    valid_documents: list[Path]
+    invalid_documents: list[Path]
+    subtitles: list[Path]
     selected_video: Path | None = None
     asking_about: AskingAbout | None = None
     video_source: AskingAbout | None = None
@@ -67,13 +70,26 @@ class ImporterService(QObject):
             self.comments_ready_for_import.emit(comments)
 
         state = ImportState(
-            imported_documents=imported_documents,
-            imported_subtitles=imported_subtitles,
+            document_video=self._get_importable_video(imported_documents.existing_videos),
+            subtitle_video=self._get_importable_video(imported_subtitles.existing_videos),
             dropped_videos=videos,
+            valid_documents=imported_documents.valid_documents,
+            invalid_documents=imported_documents.invalid_documents,
+            subtitles=imported_subtitles.subtitles,
         )
 
         if self._determine_video(state):
             self._continue_with_import(state)
+
+    def _get_importable_video(self, videos: list[Path]) -> Path | None:
+        if not videos:
+            return None
+
+        first_video = videos[0]
+        if self._player.is_video_loaded(first_video):
+            return None
+
+        return first_video
 
     def _determine_video(self, state: ImportState) -> bool:
         """Returns True if import can continue immediately, False if waiting for user input."""
@@ -81,14 +97,14 @@ class ImporterService(QObject):
             state.selected_video = state.dropped_videos[0]
             return True
 
-        if state.imported_documents.existing_videos:
+        if state.document_video:
             import_setting = self._settings.import_found_video
 
             match import_setting:
                 case SettingsService.ImportFoundVideo.ALWAYS.value:
-                    state.selected_video = state.imported_documents.existing_videos[0]
+                    state.selected_video = state.document_video
                     return True
-                case SettingsService.ImportFoundVideo.NEVER.value if state.imported_subtitles.existing_videos:
+                case SettingsService.ImportFoundVideo.NEVER.value if state.subtitle_video:
                     return self._check_subtitle_video(state)
                 case SettingsService.ImportFoundVideo.NEVER.value:
                     return True
@@ -96,12 +112,10 @@ class ImporterService(QObject):
                     import_id = str(uuid4())
                     state.asking_about = AskingAbout.DOCUMENT
                     self._pending_imports[import_id] = state
-                    self.ask_user_document_video_import.emit(
-                        import_id, state.imported_documents.existing_videos[0].name
-                    )
+                    self.ask_user_document_video_import.emit(import_id, state.document_video.name)
                     return False
 
-        if state.imported_subtitles.existing_videos:
+        if state.subtitle_video:
             return self._check_subtitle_video(state)
 
         return True
@@ -112,7 +126,7 @@ class ImporterService(QObject):
 
         match import_setting:
             case SettingsService.ImportFoundVideo.ALWAYS.value:
-                state.selected_video = state.imported_subtitles.existing_videos[0]
+                state.selected_video = state.subtitle_video
                 return True
             case SettingsService.ImportFoundVideo.NEVER.value:
                 return True
@@ -120,7 +134,7 @@ class ImporterService(QObject):
                 import_id = str(uuid4())
                 state.asking_about = AskingAbout.SUBTITLE
                 self._pending_imports[import_id] = state
-                self.ask_user_subtitle_video_import.emit(import_id, state.imported_subtitles.existing_videos[0].name)
+                self.ask_user_subtitle_video_import.emit(import_id, state.subtitle_video.name)
                 return False
             case _:
                 msg = f"Cannot handle subtitle import setting: {import_setting}"
@@ -135,12 +149,12 @@ class ImporterService(QObject):
 
         match (user_accepted, state.asking_about):
             case (True, AskingAbout.DOCUMENT):
-                state.selected_video = state.imported_documents.existing_videos[0]
+                state.selected_video = state.document_video
                 state.video_source = AskingAbout.DOCUMENT
             case (True, AskingAbout.SUBTITLE):
-                state.selected_video = state.imported_subtitles.existing_videos[0]
+                state.selected_video = state.subtitle_video
                 state.video_source = AskingAbout.SUBTITLE
-            case (False, AskingAbout.DOCUMENT) if state.imported_subtitles.existing_videos:
+            case (False, AskingAbout.DOCUMENT) if state.subtitle_video:
                 if not self._check_subtitle_video(state):
                     return
 
@@ -152,15 +166,15 @@ class ImporterService(QObject):
         if imported_video is not None:
             self._player.open_video(f"{imported_video}")
 
-        if subtitles := state.imported_subtitles.subtitles:
+        if subtitles := state.subtitles:
             self._player.open_subtitles(subtitles=self._type_mapper.map_paths_to_str(subtitles))
 
-        if imported_video is not None or state.imported_documents.valid_documents:
+        if imported_video is not None or state.valid_documents:
             self._state.import_documents(
-                documents=state.imported_documents.valid_documents,
+                documents=state.valid_documents,
                 video=imported_video,
                 video_from_subtitle=state.video_source == AskingAbout.SUBTITLE,
             )
 
-        if invalid_documents := state.imported_documents.invalid_documents:
+        if invalid_documents := state.invalid_documents:
             self.erroneous_documents_imported.emit([p.name for p in invalid_documents])
