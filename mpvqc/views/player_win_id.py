@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import QCoreApplication, QObject
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickWindow
 
@@ -26,7 +26,4 @@ class MpvWindowPyObject(QQuickWindow):
         q_app.application_ready.connect(lambda: self._on_application_ready())
 
     def _on_application_ready(self):
-        player_properties = QCoreApplication.instance().find_object(QObject, "mpvqcPlayerProperties")
-        player_properties.init()
-
         self._frameless_window.event_filter.set_embedded_player_hwnd(self.winId())

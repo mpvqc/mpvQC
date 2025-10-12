@@ -4,7 +4,7 @@
 
 import inject
 from mpv import MpvGlGetProcAddressFn, MpvRenderContext
-from PySide6.QtCore import QCoreApplication, QObject, QSize, Signal, Slot
+from PySide6.QtCore import QSize, Signal, Slot
 from PySide6.QtGui import QOpenGLContext
 from PySide6.QtOpenGL import QOpenGLFramebufferObject
 from PySide6.QtQml import QmlElement
@@ -56,9 +56,6 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
             player = inject.instance(PlayerService)
             player.init()
-
-            player_properties = QCoreApplication.instance().find_object(QObject, "mpvqcPlayerProperties")
-            player_properties.init()
 
             self._ctx = MpvRenderContext(
                 mpv=player.mpv,
