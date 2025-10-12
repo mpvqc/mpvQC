@@ -118,10 +118,12 @@ class MpvqcCommentModel(QStandardItemModel):
             return
 
         def on_after_undo(row: int):
+            self.layoutChanged.emit()
             self.searchInvalidated.emit()
             self.commentsImportedUndone.emit(row)
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
+            self.layoutChanged.emit()
             self.searchInvalidated.emit()
             self.sort(0)
 
@@ -140,10 +142,12 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def clear_comments(self) -> None:
         def on_after_undo():
+            self.layoutChanged.emit()
             self.searchInvalidated.emit()
             self.commentsClearedUndone.emit()
 
         def on_after_redo():
+            self.layoutChanged.emit()
             self.searchInvalidated.emit()
             self.commentsCleared.emit()
 
