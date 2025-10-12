@@ -112,19 +112,11 @@ Page {
         id: _videoResizer
 
         headerHeight: root.header.height
-        appBorderSize: root.mpvqcApplication.windowBorder
-        videoWidth: root.mpvqcMpvPlayerPropertiesPyObject.scaledWidth
-        videoHeight: root.mpvqcMpvPlayerPropertiesPyObject.scaledHeight
-
-        isAppFullScreen: root.mpvqcApplication.fullscreen
-        isAppMaximized: root.mpvqcApplication.maximized
-        videoPath: root.mpvqcMpvPlayerPropertiesPyObject.path
-
-        splitViewOrientation: _splitView.orientation
-        splitViewHandleWidth: _splitView.draggerWidth
-        splitViewHandleHeight: _splitView.draggerHeight
-        splitViewTableContainerWidth: _splitView.tableContainerWidth
-        splitViewTableContainerHeight: _splitView.tableContainerHeight
+        borderSize: root.mpvqcApplication.windowBorder
+        handleWidth: _splitView.draggerWidth
+        handleHeight: _splitView.draggerHeight
+        tableWidth: _splitView.tableContainerWidth
+        tableHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
             root.contentViewModel.requestResizeAppWindow(width, height);

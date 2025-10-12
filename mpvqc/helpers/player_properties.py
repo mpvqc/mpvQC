@@ -24,8 +24,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     pathChanged = Signal(str)
     filenameChanged = Signal(str)
     durationChanged = Signal(float)
-    scaledHeightChanged = Signal(int)
-    scaledWidthChanged = Signal(int)
 
     def __init__(self):
         super().__init__()
@@ -36,10 +34,6 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
         self._player.path_changed.connect(self._on_path_changed)
         self._player.filename_changed.connect(self.filenameChanged)
         self._player.duration_changed.connect(self.durationChanged)
-        self._player.height_changed.connect(self._on_height_changed)
-        self._player.width_changed.connect(self._on_width_changed)
-
-        self._zoom_detector_service.zoom_factor_changed.connect(self._on_zoom_factor_changed)
 
     @Property(bool, notify=videoLoadedChanged)
     def video_loaded(self) -> bool:
@@ -63,36 +57,3 @@ class MpvqcMpvPlayerPropertiesPyObject(QObject):
     @Property(float, notify=durationChanged)
     def duration(self) -> float:
         return self._player.duration
-
-    @Property(int, notify=scaledHeightChanged)
-    def scaledHeight(self) -> int:
-        height = self._player.height
-        if height:
-            return int(height / self._zoom_detector_service.zoom_factor)
-        return 0
-
-    def _on_height_changed(self, value: int) -> None:
-        if value:
-            scaled_value = int(value / self._zoom_detector_service.zoom_factor)
-            self.scaledHeightChanged.emit(scaled_value)
-
-    @Property(int, notify=scaledWidthChanged)
-    def scaledWidth(self) -> int:
-        width = self._player.width
-        if width:
-            return int(width / self._zoom_detector_service.zoom_factor)
-        return 0
-
-    def _on_width_changed(self, value: int) -> None:
-        if value:
-            scaled_value = int(value / self._zoom_detector_service.zoom_factor)
-            self.scaledWidthChanged.emit(scaled_value)
-
-    def _on_zoom_factor_changed(self, new_factor: float) -> None:
-        height = self._player.height
-        width = self._player.width
-
-        if height:
-            self.scaledHeightChanged.emit(int(height / new_factor))
-        if width:
-            self.scaledWidthChanged.emit(int(width / new_factor))

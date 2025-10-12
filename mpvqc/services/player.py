@@ -33,6 +33,8 @@ class PlayerService(QObject):
     height_changed = Signal(int)
     width_changed = Signal(int)
 
+    video_dimensions_changed = Signal(int, int)
+
     def __init__(self, **properties):
         super().__init__(**properties)
         self._cached_subtitles = set()
@@ -60,6 +62,13 @@ class PlayerService(QObject):
             self._init_args["log_handler"] = player_logger
 
         self._mpv: MPV | None = None
+
+        self._dimensions_coordinator = DualSignalCoordinator(
+            signal_a=self.width_changed,
+            signal_b=self.height_changed,
+            reset_signal=self.path_changed,
+        )
+        self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed.emit)
 
     def init(self, win_id: int | None = None):
         if win_id is None:  # noqa: SIM108
@@ -244,3 +253,39 @@ class PlayerService(QObject):
 
     def observe(self, property_name, handler):
         self._mpv.observe_property(property_name, handler)
+
+
+class DualSignalCoordinator(QObject):
+    both_ready = Signal(object, object)
+
+    def __init__(self, signal_a, signal_b, reset_signal=None):
+        super().__init__()
+        self._value_a = None
+        self._value_b = None
+        self._ready_a = False
+        self._ready_b = False
+
+        signal_a.connect(self._on_signal_a)
+        signal_b.connect(self._on_signal_b)
+
+        if reset_signal:
+            reset_signal.connect(self._reset)
+
+    def _on_signal_a(self, value):
+        self._value_a = value
+        self._ready_a = True
+        self._check_and_emit()
+
+    def _on_signal_b(self, value):
+        self._value_b = value
+        self._ready_b = True
+        self._check_and_emit()
+
+    def _check_and_emit(self):
+        if self._ready_a and self._ready_b and self._value_a and self._value_b:
+            self.both_ready.emit(self._value_a, self._value_b)
+            self._reset()
+
+    def _reset(self):
+        self._ready_a = False
+        self._ready_b = False

@@ -7,6 +7,7 @@ from .close import CloseEventFilter
 from .label_width_calculator import MpvqcLabelWidthCalculator
 from .player import MpvqcMpvPlayerPyObject
 from .player_properties import MpvqcMpvPlayerPropertiesPyObject
+from .resizer import MpvqcResizeHandler
 from .settings import MpvqcSettings
 from .utility import MpvqcUtilityPyObject
 from .window_buttons import MpvqcWindowButtons
