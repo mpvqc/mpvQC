@@ -80,7 +80,7 @@ class ClearComments(QUndoCommand):
 
     def redo(self):
         self._comments = retrieve_comments_from(self._model)
-        self._model.clear()
+        self._model.removeRows(0, self._model.rowCount())
         self._on_after_redo()
 
 
