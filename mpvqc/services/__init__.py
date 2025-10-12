@@ -32,3 +32,4 @@ from .theme import ThemeService
 from .type_mapper import TypeMapperService
 from .version_checker import VersionCheckerService
 from .window_buttons import WindowButtonsService
+from .window_properties import WindowPropertiesService
