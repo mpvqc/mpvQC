@@ -40,7 +40,9 @@ def mock_doc_exporter():
 
 @pytest.fixture
 def mock_player():
-    return Mock(spec_set=PlayerService)
+    player = Mock(spec_set=PlayerService)
+    player.is_video_loaded.return_value = False
+    return player
 
 
 @pytest.fixture
@@ -89,28 +91,21 @@ def configure_for_open(mock_doc_importer, mock_sub_importer, settings_service):
 @pytest.fixture
 def make_state():
     def _make_state(
+        document_video=None,
+        subtitle_video=None,
         selected_video=None,
         valid_documents=None,
         invalid_documents=None,
         subtitles=None,
-        comments=None,
         video_from_subtitle=None,
     ):
-        document_result = DocumentImporterService.DocumentImportResult(
+        return ImportState(
+            document_video=document_video,
+            subtitle_video=subtitle_video,
+            dropped_videos=[],
             valid_documents=valid_documents or [],
             invalid_documents=invalid_documents or [],
-            existing_videos=[],
-            comments=comments or [],
-        )
-        subtitle_result = SubtitleImporterService.SubtitleImportResult(
             subtitles=subtitles or [],
-            existing_videos=[],
-        )
-
-        return ImportState(
-            imported_documents=document_result,
-            imported_subtitles=subtitle_result,
-            dropped_videos=[],
             selected_video=selected_video,
             video_source=AskingAbout.SUBTITLE if video_from_subtitle else None,
         )
@@ -182,7 +177,7 @@ def test_open_synchronous(
     service,
     configure_for_open,
     mock_player,
-    test_case,
+    test_case: SynchronousTestCase,
 ):
     configure_for_open(
         test_case.document_videos,
@@ -270,7 +265,7 @@ def test_open_with_user_interaction(
     configure_for_open,
     mock_player,
     make_spy,
-    test_case,
+    test_case: UserInteractionTestCase,
 ):
     configure_for_open(
         test_case.document_videos,
@@ -394,3 +389,92 @@ def test_continue_with_import_emits_invalid_documents(service, make_spy, make_st
 
     assert spy.count() == 1
     assert spy.at(0, 0) == ["bad1.txt", "bad2.txt"]
+
+
+def test_get_importable_video_returns_none_when_list_empty(service):
+    result = service._get_importable_video([])
+    assert result is None
+
+
+def test_get_importable_video_returns_none_when_already_loaded(service, mock_player):
+    video = Path("movie.mp4")
+    mock_player.is_video_loaded.return_value = True
+
+    result = service._get_importable_video([video])
+
+    assert result is None
+    mock_player.is_video_loaded.assert_called_once_with(video)
+
+
+def test_get_importable_video_returns_first_video_when_not_loaded(service, mock_player):
+    video = Path("movie.mp4")
+    mock_player.is_video_loaded.return_value = False
+
+    result = service._get_importable_video([video, Path("other.mp4")])
+
+    assert result == video
+    mock_player.is_video_loaded.assert_called_once_with(video)
+
+
+class AlreadyLoadedTestCase(NamedTuple):
+    name: str
+    document_videos: list[Path]
+    subtitle_videos: list[Path]
+    is_video_loaded: bool
+    should_open_video: bool
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        AlreadyLoadedTestCase(
+            name="document_video_already_loaded",
+            document_videos=[Path("movie.mp4")],
+            subtitle_videos=[],
+            is_video_loaded=True,
+            should_open_video=False,
+        ),
+        AlreadyLoadedTestCase(
+            name="document_video_not_loaded",
+            document_videos=[Path("movie.mp4")],
+            subtitle_videos=[],
+            is_video_loaded=False,
+            should_open_video=True,
+        ),
+        AlreadyLoadedTestCase(
+            name="subtitle_video_already_loaded",
+            document_videos=[],
+            subtitle_videos=[Path("movie.mp4")],
+            is_video_loaded=True,
+            should_open_video=False,
+        ),
+        AlreadyLoadedTestCase(
+            name="subtitle_video_not_loaded",
+            document_videos=[],
+            subtitle_videos=[Path("movie.mp4")],
+            is_video_loaded=False,
+            should_open_video=True,
+        ),
+    ],
+    ids=lambda tc: tc.name,
+)
+def test_open_video_based_on_already_loaded(
+    service,
+    configure_for_open,
+    mock_player,
+    test_case: AlreadyLoadedTestCase,
+):
+    mock_player.is_video_loaded.return_value = test_case.is_video_loaded
+
+    configure_for_open(
+        test_case.document_videos,
+        test_case.subtitle_videos,
+        import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
+    )
+
+    service.open(documents=[], videos=[], subtitles=[])
+
+    if test_case.should_open_video:
+        mock_player.open_video.assert_called_once_with("movie.mp4")
+    else:
+        mock_player.open_video.assert_not_called()

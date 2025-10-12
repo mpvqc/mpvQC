@@ -4,6 +4,7 @@
 
 import os
 from collections.abc import Iterable
+from pathlib import Path
 
 import inject
 from loguru import logger
@@ -139,6 +140,13 @@ class PlayerService(QObject):
     def duration(self) -> float:
         return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
 
+    def is_video_loaded(self, video: Path) -> bool:
+        if (path := self.path) is not None:
+            current = self._type_mapper.map_path_to_str(Path(path))
+            to_check = self._type_mapper.map_path_to_str(video)
+            return current == to_check
+        return False
+
     def _on_duration_changed(self, _, value: float) -> None:
         if value:
             self.duration_changed.emit(value)
@@ -186,7 +194,7 @@ class PlayerService(QObject):
         self._mpv.command_async("mouse", x, y)
 
     def open_video(self, video: str) -> None:
-        self._loading_video = True  # Set flag before loading
+        self._loading_video = True
         self._mpv.command("loadfile", video, "replace")
         self.play()
 
