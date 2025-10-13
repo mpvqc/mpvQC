@@ -8,18 +8,18 @@ import QtQuick
 
 import pyobjects
 
+import "../../utility"
+
 Item {
     id: root
 
-    required property var mpvqcApplication
+    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
+    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
+    readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
 
-    readonly property var mpvqcLabelWidthCalculator: mpvqcApplication.mpvqcLabelWidthCalculator
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcTheme: mpvqcApplication.mpvqcTheme
-
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-    readonly property var mpvqcMpvPlayerPyObject: mpvqcApplication.mpvqcMpvPlayerPyObject
-    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
+    readonly property var mpvqcSettings: MpvqcSettings
+    readonly property var mpvqcTheme: MpvqcTheme
 
     readonly property alias commentCount: _commentTable.count
     readonly property alias selectedCommentIndex: _commentTable.currentIndex
@@ -94,7 +94,7 @@ Item {
         commentTypes: root.mpvqcSettings.commentTypes
 
         videoDuration: root.mpvqcMpvPlayerPropertiesPyObject.duration
-        isCurrentlyFullScreen: root.mpvqcApplication.fullscreen
+        isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
     }
 
     MpvqcPlaceholder {
