@@ -28,6 +28,7 @@ Item {
     }
 
     height: menuBarHeight
+    visible: !MpvqcWindowProperties.isFullscreen
 
     DragHandler {
         target: null

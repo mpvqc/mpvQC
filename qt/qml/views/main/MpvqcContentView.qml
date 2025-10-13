@@ -15,9 +15,9 @@ import "../table"
 Page {
     id: root
 
-    required property var mpvqcApplication
     required property MpvqcHeaderViewModel headerViewModel
     required property MpvqcContentViewModel contentViewModel
+    required property int windowBorder
 
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
@@ -55,7 +55,7 @@ Page {
         Column {
             id: _tableContainer
 
-            visible: !root.mpvqcApplication.fullscreen
+            visible: !MpvqcWindowProperties.isFullscreen
 
             SplitView.minimumHeight: root.contentViewModel.minContainerHeight
             SplitView.minimumWidth: root.contentViewModel.minContainerWidth
@@ -68,7 +68,6 @@ Page {
             MpvqcTable {
                 id: _mpvqcCommentTable
 
-                mpvqcApplication: root.mpvqcApplication
                 focus: true
                 width: _tableContainer.width
                 height: _tableContainer.height - _footer.height
@@ -110,7 +109,7 @@ Page {
         id: _videoResizer
 
         headerHeight: root.header.height
-        borderSize: root.mpvqcApplication.windowBorder
+        borderSize: root.windowBorder
         handleWidth: _splitView.draggerWidth
         handleHeight: _splitView.draggerHeight
         tableWidth: _splitView.tableContainerWidth

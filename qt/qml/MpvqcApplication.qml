@@ -13,14 +13,6 @@ import "views/main"
 ApplicationWindow {
     id: root
 
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
-    readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
-    readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
-
-    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
-    readonly property var mpvqcSettings: MpvqcSettings
-    readonly property var mpvqcTheme: MpvqcTheme
-
     readonly property bool maximized: _windowVisibilityHandler.maximized
     readonly property bool fullscreen: _windowVisibilityHandler.fullscreen
     readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
@@ -55,9 +47,9 @@ ApplicationWindow {
     MpvqcContentView {
         id: _content
 
-        mpvqcApplication: root
         headerViewModel: _headerViewModel
         contentViewModel: _contentViewModel
+        windowBorder: root.windowBorder
 
         focus: true
         anchors.fill: parent
@@ -66,7 +58,6 @@ ApplicationWindow {
         header: MpvqcHeaderView {
             viewModel: _headerViewModel
             width: root.width
-            visible: !root.fullscreen
         }
     }
 
