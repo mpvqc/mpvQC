@@ -19,8 +19,6 @@ Page {
     required property MpvqcHeaderViewModel headerViewModel
     required property MpvqcContentViewModel contentViewModel
 
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: mpvqcApplication.mpvqcMpvPlayerPropertiesPyObject
-
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }

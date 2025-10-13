@@ -78,14 +78,14 @@ class PlayerService(QObject):
 
         self._mpv = MPV(**dict(self._init_args, **args))
 
-        self.observe("duration", self._on_duration_changed)
-        self.observe("path", self._on_player_path_changed)
-        self.observe("filename", self._on_player_filename_changed)
-        self.observe("percent-pos", self._on_player_percent_pos_changed)
-        self.observe("time-pos", self._on_player_time_pos_changed)
-        self.observe("time-remaining", self._on_player_time_remaining_changed)
-        self.observe("height", self._on_player_height_changed)
-        self.observe("width", self._on_player_width_changed)
+        self._mpv.observe_property("duration", self._on_duration_changed)
+        self._mpv.observe_property("path", self._on_player_path_changed)
+        self._mpv.observe_property("filename", self._on_player_filename_changed)
+        self._mpv.observe_property("percent-pos", self._on_player_percent_pos_changed)
+        self._mpv.observe_property("time-pos", self._on_player_time_pos_changed)
+        self._mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
+        self._mpv.observe_property("height", self._on_player_height_changed)
+        self._mpv.observe_property("width", self._on_player_width_changed)
 
     @property
     def mpv(self) -> MPV:
@@ -250,9 +250,6 @@ class PlayerService(QObject):
 
     def terminate(self) -> None:
         self._mpv.terminate()
-
-    def observe(self, property_name, handler):
-        self._mpv.observe_property(property_name, handler)
 
 
 class DualSignalCoordinator(QObject):
