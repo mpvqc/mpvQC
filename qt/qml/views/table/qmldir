@@ -5,3 +5,4 @@
 module views.table
 
 MpvqcTable MpvqcTable.qml
+singleton MpvqcTableUtility MpvqcTableUtility.qml

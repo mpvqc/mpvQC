@@ -23,8 +23,6 @@ ListView {
     required property color rowAlternateBaseColor
     required property color rowAlternateBaseTextColor
 
-    required property var timeFormatFunc
-    required property var sanitizeTextFunc
     required property var jumpToTimeFunc
     required property var pauseVideoFunc
 
@@ -78,8 +76,6 @@ ListView {
 
         timeLabelWidth: root.timeLabelWidth
         commentTypeLabelWidth: root.commentTypeLabelWidth
-
-        timeFormatFunc: root.timeFormatFunc
 
         backgroundColor: isOdd ? root.rowBaseColor : root.rowAlternateBaseColor
         foregroundColor: isSelected ? root.rowHighlightTextColor : isOdd ? root.rowBaseTextColor : root.rowAlternateBaseTextColor
@@ -316,7 +312,6 @@ ListView {
                 currentTime: time,
                 currentListIndex: index,
                 videoDuration: root.videoDuration,
-                timeFormatFunc: root.timeFormatFunc,
                 openedAt: coordinates
             });
             active = true;
@@ -339,7 +334,6 @@ ListView {
                 parent: parentItem,
                 currentComment: currentComment,
                 currentListIndex: index,
-                sanitizeTextFunc: root.sanitizeTextFunc,
                 backgroundColor: index % 2 === 1 ? root.rowBaseColor : root.rowAlternateBaseColor,
                 rowHighlightColor: root.rowHighlightColor,
                 rowHighlightTextColor: root.rowHighlightTextColor
