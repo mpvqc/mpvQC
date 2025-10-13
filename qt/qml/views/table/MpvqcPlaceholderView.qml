@@ -8,13 +8,15 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import pyobjects
+
 Item {
     id: root
 
-    required property bool horizontalLayout
+    readonly property MpvqcPlaceholderViewModel viewModel: MpvqcPlaceholderViewModel {}
 
+    readonly property bool horizontalLayout: viewModel.layoutOrientation === Qt.Horizontal
     readonly property var textAlignment: horizontalLayout ? Qt.AlignLeft : Qt.AlignVCenter | Qt.AlignRight
-
     readonly property int shortcutBottomMargin: horizontalLayout ? spacing + 10 : 0
     readonly property int spacing: 30
 

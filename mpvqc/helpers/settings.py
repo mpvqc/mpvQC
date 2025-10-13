@@ -19,17 +19,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcSettings(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
 
-    # Common
     commentTypesChanged = Signal(list)
-
-    # SplitView
-    layoutOrientationChanged = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
-        self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
 
     @Property(list, notify=commentTypesChanged)
     def commentTypes(self) -> list[str]:
@@ -38,11 +32,3 @@ class MpvqcSettings(QObject):
     @commentTypes.setter
     def commentTypes(self, value: list[str]):
         self._settings.comment_types = value
-
-    @Property(int, notify=layoutOrientationChanged)
-    def layoutOrientation(self) -> int:
-        return self._settings.layout_orientation
-
-    @layoutOrientation.setter
-    def layoutOrientation(self, value: int):
-        self._settings.layout_orientation = value
