@@ -13,10 +13,6 @@ import "views/main"
 ApplicationWindow {
     id: root
 
-    readonly property bool maximized: _windowVisibilityHandler.maximized
-    readonly property bool fullscreen: _windowVisibilityHandler.fullscreen
-    readonly property int windowBorder: root.fullscreen || root.maximized ? 0 : 1
-
     readonly property int windowsFlags: Qt.CustomizeWindowHint | Qt.Window
     readonly property int linuxFlags: Qt.FramelessWindowHint | Qt.Window
 
@@ -49,11 +45,11 @@ ApplicationWindow {
 
         headerViewModel: _headerViewModel
         contentViewModel: _contentViewModel
-        windowBorder: root.windowBorder
+        windowBorder: MpvqcWindowProperties.isFullscreen || MpvqcWindowProperties.isMaximized ? 0 : 1
 
         focus: true
         anchors.fill: parent
-        anchors.margins: root.windowBorder
+        anchors.margins: windowBorder
 
         header: MpvqcHeaderView {
             viewModel: _headerViewModel
@@ -158,8 +154,6 @@ ApplicationWindow {
 
     MpvqcWindowVisibilityHandler {
         id: _windowVisibilityHandler
-
-        mpvqcApplication: root
     }
 
     Timer {
