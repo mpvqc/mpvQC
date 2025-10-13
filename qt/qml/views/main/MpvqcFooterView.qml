@@ -18,11 +18,6 @@ Item {
 
     required property MpvqcFooterViewModel viewModel
 
-    readonly property alias rowSelectionLabelText: _rowSelectionLabelText
-    readonly property alias percentLabelText: _videoPercentLabel
-    readonly property alias videoTimeLabelText: _videoTimeLabel
-    readonly property alias loader: _contextMenuLoader
-
     readonly property int bottomMargin: MpvqcWindowProperties.isMaximized ? 2 : 0
     readonly property int rightMargin: MpvqcWindowProperties.isMaximized ? 0 : 1
 
@@ -50,8 +45,6 @@ Item {
         }
 
         Label {
-            id: _rowSelectionLabelText
-
             text: root.viewModel.commentCountText
             visible: root.viewModel.isCommentCountVisible
             verticalAlignment: Text.AlignVCenter
@@ -64,8 +57,6 @@ Item {
         }
 
         Label {
-            id: _videoPercentLabel
-
             text: root.viewModel.videoPercentText
             visible: root.viewModel.isVideoPercentVisible
             horizontalAlignment: Text.AlignRight
@@ -74,8 +65,6 @@ Item {
         }
 
         Label {
-            id: _videoTimeLabel
-
             text: root.viewModel.timeText
             visible: root.viewModel.isTimeTextVisible
             horizontalAlignment: Text.AlignRight
@@ -120,6 +109,7 @@ Item {
         active: false
         asynchronous: true
         visible: active
+
         onLoaded: item.open() // qmllint disable
 
         sourceComponent: MpvqcMenu {
