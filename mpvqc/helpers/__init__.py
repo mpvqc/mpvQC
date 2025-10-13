@@ -12,3 +12,4 @@ from .settings import MpvqcSettings
 from .utility import MpvqcUtilityPyObject
 from .window_buttons import MpvqcWindowButtons
 from .window_properties import MpvqcWindowPropertiesBackend
+from .window_visibility import MpvqcWindowVisibilityHandler
