@@ -11,8 +11,6 @@ Popup {
     required property int currentListIndex
     required property string currentComment
 
-    required property var sanitizeTextFunc
-
     required property color backgroundColor
     required property color rowHighlightColor
     required property color rowHighlightTextColor
@@ -68,7 +66,7 @@ Popup {
             return;
 
         const text = _textField.text.trim();
-        const sanitizedText = root.sanitizeTextFunc(text); // qmllint disable
+        const sanitizedText = MpvqcTableUtility.sanitizeText(text);
 
         if (root.currentComment !== sanitizedText) {
             root.commentEdited(root.currentListIndex, sanitizedText);

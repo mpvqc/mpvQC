@@ -72,19 +72,13 @@ Popup {
         TextField {
             id: _textField
 
-            readonly property var forbiddenChars: /[\u00AD\r\n]/g
-
-            function sanitizeInput(input: string): string {
-                return input.replace(forbiddenChars, "");
-            }
-
             Layout.fillWidth: true
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
 
             onTextChanged: {
-                const sanitized = sanitizeInput(text);
+                const sanitized = MpvqcTableUtility.sanitizeText(text);
                 if (sanitized !== text) {
                     text = sanitized;
                 } else {

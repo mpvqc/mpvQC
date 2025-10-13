@@ -14,7 +14,6 @@ Popup {
     required property point openedAt
 
     required property int videoDuration
-    required property var timeFormatFunc
 
     readonly property url iconNext: "qrc:/data/icons/keyboard_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     readonly property url iconBefore: "qrc:/data/icons/keyboard_arrow_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
@@ -56,7 +55,7 @@ Popup {
         to: root.videoDuration > 0 ? root.videoDuration : 24 * 60 * 60 - 1
 
         // qmllint disable
-        textFromValue: value => root.timeFormatFunc(value)
+        textFromValue: value => MpvqcTableUtility.formatTime(value)
 
         bottomPadding: topPadding
         background: null

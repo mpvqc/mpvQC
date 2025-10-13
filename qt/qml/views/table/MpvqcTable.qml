@@ -13,10 +13,7 @@ import "../../utility"
 Item {
     id: root
 
-    readonly property var mpvqcMpvPlayerPropertiesPyObject: MpvqcMpvPlayerPropertiesPyObject {}
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
-    readonly property var mpvqcUtilityPyObject: MpvqcUtilityPyObject {}
-
     readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
     readonly property var mpvqcSettings: MpvqcSettings
     readonly property var mpvqcTheme: MpvqcTheme
@@ -34,30 +31,6 @@ Item {
 
     QtObject {
         id: _impl
-
-        /*
-         * Replace some characters:
-         *  - soft hyphen (\xad); When copying from Duden they include these :|
-         *  - carriage return
-         *  - newline
-         */
-        readonly property var reForbidden: new RegExp('[\u00AD\r\n]', 'gi')
-
-        function formatTime(time: int): string {
-            if (root.mpvqcMpvPlayerPropertiesPyObject.duration >= 60 * 60) {
-                return root.mpvqcUtilityPyObject.formatTimeToStringLong(time);
-            } else {
-                return root.mpvqcUtilityPyObject.formatTimeToStringShort(time);
-            }
-        }
-
-        function sanitizeText(text: string): string {
-            if (text.search(reForbidden) === -1) {
-                return text;
-            } else {
-                return text.replace(reForbidden, "");
-            }
-        }
 
         function jumpToTime(time: int): void {
             root.mpvqcMpvPlayerPyObject.jump_to(time);
@@ -86,14 +59,12 @@ Item {
         rowAlternateBaseColor: root.mpvqcTheme.rowBaseAlternate
         rowAlternateBaseTextColor: root.mpvqcTheme.rowBaseAlternateText
 
-        timeFormatFunc: _impl.formatTime
-        sanitizeTextFunc: _impl.sanitizeText
         jumpToTimeFunc: _impl.jumpToTime
         pauseVideoFunc: _impl.pauseVideo
 
         commentTypes: root.mpvqcSettings.commentTypes
 
-        videoDuration: root.mpvqcMpvPlayerPropertiesPyObject.duration
+        videoDuration: MpvqcTableUtility.duration
         isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
     }
 

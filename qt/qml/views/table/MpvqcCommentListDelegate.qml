@@ -5,8 +5,6 @@
 import QtQuick
 import QtQuick.Controls.Material
 
-import "MpvqcCommentHighlighter.js" as CommentHighlighter
-
 Item {
     id: root
 
@@ -17,8 +15,6 @@ Item {
 
     required property int timeLabelWidth
     required property int commentTypeLabelWidth
-
-    required property var timeFormatFunc
 
     required property color backgroundColor
     required property color foregroundColor
@@ -104,7 +100,7 @@ Item {
         Label {
             id: _timeLabel
 
-            text: root.timeFormatFunc(root.time) // qmllint disable
+            text: MpvqcTableUtility.formatTime(root.time)
             horizontalAlignment: Text.AlignHCenter
 
             width: root.timeLabelWidth + leftPadding + rightPadding
@@ -136,7 +132,7 @@ Item {
 
             property int editorHeight: -1 // will be manipulated from the popup above while editing
 
-            text: root.searchQuery ? CommentHighlighter.highlightComment(root.comment, root.searchQuery) : root.comment
+            text: root.searchQuery ? MpvqcTableUtility.highlightComment(root.comment, root.searchQuery) : root.comment
             textFormat: root.searchQuery ? Text.StyledText : Text.PlainText
 
             horizontalAlignment: Text.AlignLeft

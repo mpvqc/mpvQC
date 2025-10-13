@@ -94,8 +94,6 @@ TestCase {
             rowAlternateBaseColor: backgroundColor
             rowAlternateBaseTextColor: rowBaseTextColor
 
-            timeFormatFunc: time => `00:00:0${time}`
-            sanitizeTextFunc: text => text
             jumpToTimeFunc: time => calledJumpToTimeArgs.push(time)
             pauseVideoFunc: () => calledPauseVideoCounter++
 
