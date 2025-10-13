@@ -97,12 +97,10 @@ Item {
         isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
     }
 
-    MpvqcPlaceholder {
+    MpvqcPlaceholderView {
         width: root.width
         height: root.height
         visible: root.commentCount === 0
-
-        horizontalLayout: root.mpvqcSettings.layoutOrientation === Qt.Horizontal
     }
 
     Timer {
