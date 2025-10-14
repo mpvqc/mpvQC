@@ -27,6 +27,10 @@ Item {
     MpvqcCommentList {
         id: _commentTable
 
+        viewModel: MpvqcCommentTableViewModel {
+            model: MpvqcCommentModel {}
+        }
+
         width: root.width
         height: root.height
         visible: count > 0

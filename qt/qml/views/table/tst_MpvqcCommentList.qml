@@ -7,6 +7,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import pyobjects
+
 import "../../utility"
 
 TestCase {
@@ -84,6 +86,7 @@ TestCase {
 
             viewModel: QtObject {
                 property int videoDuration: 10
+                property var model: MpvqcCommentModel {}
                 function jumpToTime(time) {
                     calledJumpToTimeArgs.push(time);
                 }
@@ -329,7 +332,7 @@ TestCase {
         const control = makeControl();
 
         const spy = createTemporaryObject(signalSpy, control, {
-            target: control.model,
+            target: control.viewModel,
             signalName: "copiedToClipboard"
         });
         verify(spy);
