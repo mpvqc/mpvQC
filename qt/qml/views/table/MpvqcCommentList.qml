@@ -105,7 +105,7 @@ ListView {
         onRightMouseButtonPressed: coordinates => {
             if (root.isNotCurrentlyEditing) {
                 root.viewModel.select(index);
-                _impl.openContextMenu(index, coordinates);
+                root.viewModel.openContextMenu(index, coordinates);
             }
         }
     }
@@ -118,14 +118,6 @@ ListView {
         readonly property Timer _ensureCommentVisibleTimer: Timer {
             interval: 0
             onTriggered: root.positionViewAtIndex(root.currentIndex, ListView.Contain)
-        }
-
-        function openContextMenu(index: int, coordinates: point): void {
-            _contextMenuLoader.openContextMenu(index, coordinates);
-        }
-
-        function askToDeleteRow(index: int): void {
-            _messageBoxLoader.askToDeleteComment(index);
         }
 
         function ensureFullCommentEditingPopupVisible(): void {
@@ -141,7 +133,7 @@ ListView {
         currentIndex: root.currentIndex
 
         onEditCommentRequested: index => root.viewModel.startEditingComment(index)
-        onDeleteCommentRequested: index => _impl.askToDeleteRow(index)
+        onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
         onSearchRequested: _searchBoxLoader.showSearchBox()
         onUndoRequested: root.viewModel.undo()
@@ -265,7 +257,7 @@ ListView {
             }
 
             function onDeleteCommentClicked(index: int): void {
-                _impl.askToDeleteRow(index);
+                root.viewModel.askToDeleteRow(index);
             }
 
             function onEditCommentClicked(index: int): void {
@@ -380,6 +372,14 @@ ListView {
             const comment = item.comment; // qmllint disable
             const commentLabel = item.commentLabel;
             _editLoader.startEditingComment(index, comment, commentLabel);
+        }
+
+        function onContextMenuRequested(index: int, coordinates: point): void {
+            _contextMenuLoader.openContextMenu(index, coordinates);
+        }
+
+        function onDeleteCommentRequested(index: int): void {
+            _messageBoxLoader.askToDeleteComment(index);
         }
     }
 
