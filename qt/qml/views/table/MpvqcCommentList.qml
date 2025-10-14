@@ -24,7 +24,7 @@ ListView {
     readonly property int videoDuration: viewModel.videoDuration
 
     readonly property alias editLoader: _editLoader // for tests
-    readonly property alias contextMenuLoader: _contextMenuLoader // for tests
+    readonly property alias contextMenuLoader: _contextMenuView // for tests
     readonly property alias messageBoxLoader: _messageBoxLoader // for tests
 
     model: viewModel.model
@@ -232,42 +232,10 @@ ListView {
         }
     }
 
-    Loader {
-        id: _contextMenuLoader
+    MpvqcContextMenuView {
+        id: _contextMenuView
 
-        function openContextMenu(index: int, coordinates: point): void {
-            setSource("MpvqcContextMenu.qml", {
-                currentListIndex: index,
-                openedAt: coordinates
-            });
-            active = true;
-        }
-
-        active: false
-        asynchronous: true
-        visible: active
-
-        onLoaded: item.open() // qmllint disable
-
-        Connections {
-            target: _contextMenuLoader.item
-
-            function onCopyCommentClicked(index: int): void {
-                root.viewModel.copyToClipboard(index);
-            }
-
-            function onDeleteCommentClicked(index: int): void {
-                root.viewModel.askToDeleteRow(index);
-            }
-
-            function onEditCommentClicked(index: int): void {
-                root.viewModel.startEditingComment(index);
-            }
-
-            function onClosed(): void {
-                _contextMenuLoader.active = false;
-            }
-        }
+        viewModel: root.viewModel
     }
 
     Loader {
@@ -372,10 +340,6 @@ ListView {
             const comment = item.comment; // qmllint disable
             const commentLabel = item.commentLabel;
             _editLoader.startEditingComment(index, comment, commentLabel);
-        }
-
-        function onContextMenuRequested(index: int, coordinates: point): void {
-            _contextMenuLoader.openContextMenu(index, coordinates);
         }
 
         function onDeleteCommentRequested(index: int): void {

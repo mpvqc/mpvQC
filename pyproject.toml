@@ -343,7 +343,7 @@ files = [
     "qt/qml/views/table/MpvqcCommentList.qml",
     "qt/qml/views/table/MpvqcCommentListDelegate.qml",
     "qt/qml/views/table/MpvqcCommentListKeyHandler.qml",
-    "qt/qml/views/table/MpvqcContextMenu.qml",
+    "qt/qml/views/table/MpvqcContextMenuView.qml",
     "qt/qml/views/table/MpvqcEditCommentPopup.qml",
     "qt/qml/views/table/MpvqcEditCommentTypeMenu.qml",
     "qt/qml/views/table/MpvqcEditTimePopup.qml",
