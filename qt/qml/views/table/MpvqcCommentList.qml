@@ -14,7 +14,7 @@ import "../../utility"
 ListView {
     id: root
 
-    property var viewModel: MpvqcCommentTableViewModel {}
+    required property var viewModel
 
     readonly property bool hasComments: count > 0
     readonly property bool isCurrentlyEditing: _editLoader.active
@@ -27,7 +27,7 @@ ListView {
     readonly property alias contextMenuLoader: _contextMenuLoader // for tests
     readonly property alias messageBoxLoader: _messageBoxLoader // for tests
 
-    model: MpvqcCommentModel {}
+    model: viewModel.model
 
     clip: true
     focus: true
@@ -180,10 +180,6 @@ ListView {
             root.model.remove_row(index);
         }
 
-        function copyCommentToClipboard(index: int): void {
-            root.model.copy_to_clipboard(index);
-        }
-
         function ensureFullCommentEditingPopupVisible(): void {
             _ensureCommentVisibleTimer.restart();
         }
@@ -198,7 +194,7 @@ ListView {
 
         onEditCommentRequested: _impl.startEditingComment()
         onDeleteCommentRequested: index => _impl.askToDeleteRow(index)
-        onCopyCommentRequested: index => _impl.copyCommentToClipboard(index)
+        onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
         onSearchRequested: _searchBoxLoader.showSearchBox()
         onUndoRequested: root.model.undo()
         onRedoRequested: root.model.redo()
@@ -317,7 +313,7 @@ ListView {
             target: _contextMenuLoader.item
 
             function onCopyCommentClicked(index: int): void {
-                _impl.copyCommentToClipboard(index);
+                root.viewModel.copyToClipboard(index);
             }
 
             function onDeleteCommentClicked(index: int): void {
