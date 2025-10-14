@@ -93,11 +93,9 @@ test-qml SKIP_PREPARATION='false':
       just _prepare-tests
     fi
     uv run python -c '
-    import sys, os
+    import sys
     from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
     from test.test_qml import MpvqcTestSetup
-
-    os.environ["MPVQC_QML_TESTS"] = "true"
 
     # Pass additional arguments to qmltestrunner:
     sys.argv += ["-silent"]

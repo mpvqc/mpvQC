@@ -11,8 +11,7 @@ import pyobjects
 QtObject {
     readonly property MpvqcTableUtilityBackend backend: MpvqcTableUtilityBackend {}
 
-    readonly property int duration: backend.duration
-    readonly property bool useLongFormat: duration >= 3600
+    readonly property bool useLongFormat: backend.duration >= 3600
 
     function formatTime(inputSeconds: real): string {
         const hours = Math.floor(inputSeconds / 3600);

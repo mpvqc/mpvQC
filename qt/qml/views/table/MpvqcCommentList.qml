@@ -14,17 +14,14 @@ import "../../utility"
 ListView {
     id: root
 
-    required property var jumpToTimeFunc
-    required property var pauseVideoFunc
+    property var viewModel: MpvqcCommentTableViewModel {}
 
-    required property list<string> commentTypes
-
-    required property int videoDuration
-    required property bool isCurrentlyFullScreen
-
-    readonly property bool hasComments: root.count > 0
+    readonly property bool hasComments: count > 0
     readonly property bool isCurrentlyEditing: _editLoader.active
     readonly property bool isNotCurrentlyEditing: !isCurrentlyEditing
+    readonly property bool isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
+    readonly property list<string> commentTypes: viewModel.commentTypes
+    readonly property int videoDuration: viewModel.videoDuration
 
     readonly property alias editLoader: _editLoader // for tests
     readonly property alias contextMenuLoader: _contextMenuLoader // for tests
@@ -135,11 +132,11 @@ ListView {
         }
 
         function jumpToTime(time: int): void {
-            root.jumpToTimeFunc(time); // qmllint disable
+            root.viewModel.jumpToTime(time);
         }
 
         function pauseVideo(): void {
-            root.pauseVideoFunc(); // qmllint disable
+            root.viewModel.pauseVideo();
         }
 
         function startEditingTime(index: int, currentTime: int, coordinates: point): void {
