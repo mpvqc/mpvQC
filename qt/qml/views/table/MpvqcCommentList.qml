@@ -78,7 +78,7 @@ ListView {
             } else if (isSelected) {
                 root.viewModel.pauseVideo();
                 root.viewModel.jumpToTime(time);
-                _impl.startEditingTime(index, time, coordinates);
+                root.viewModel.startEditingTime(index, time, coordinates);
             } else {
                 root.viewModel.select(index);
             }
@@ -88,7 +88,7 @@ ListView {
             if (root.isCurrentlyEditing && isSelected) {
                 ;
             } else if (isSelected) {
-                _impl.startEditingCommentType(index, commentType, coordinates);
+                root.viewModel.startEditingCommentType(index, commentType, coordinates);
             } else {
                 root.viewModel.select(index);
             }
@@ -96,7 +96,7 @@ ListView {
 
         onCommentLabelPressed: {
             if (isSelected) {
-                _impl.startEditingComment();
+                root.viewModel.startEditingComment(index);
             } else {
                 root.viewModel.select(index);
             }
@@ -120,23 +120,6 @@ ListView {
             onTriggered: root.positionViewAtIndex(root.currentIndex, ListView.Contain)
         }
 
-        function startEditingTime(index: int, currentTime: int, coordinates: point): void {
-            _editLoader.startEditingTime(index, currentTime, coordinates);
-        }
-
-        function startEditingCommentType(index: int, currentCommentType: string, coordinates: point): void {
-            _editLoader.startEditingCommentType(index, currentCommentType, coordinates);
-        }
-
-        function startEditingComment(): void {
-            const index = root.currentIndex;
-            const item = root.currentItem as MpvqcCommentListDelegate;
-            const comment = item.comment; // qmllint disable
-            const commentLabel = item.commentLabel;
-            root.positionViewAtIndex(index, ListView.Contain);
-            _editLoader.startEditingComment(index, comment, commentLabel);
-        }
-
         function openContextMenu(index: int, coordinates: point): void {
             _contextMenuLoader.openContextMenu(index, coordinates);
         }
@@ -157,7 +140,7 @@ ListView {
         isEditing: root.isCurrentlyEditing
         currentIndex: root.currentIndex
 
-        onEditCommentRequested: _impl.startEditingComment()
+        onEditCommentRequested: index => root.viewModel.startEditingComment(index)
         onDeleteCommentRequested: index => _impl.askToDeleteRow(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
         onSearchRequested: _searchBoxLoader.showSearchBox()
@@ -286,7 +269,7 @@ ListView {
             }
 
             function onEditCommentClicked(index: int): void {
-                _impl.startEditingComment();
+                root.viewModel.startEditingComment(index);
             }
 
             function onClosed(): void {
@@ -375,12 +358,28 @@ ListView {
 
         function onRowEditRequested(index: int): void {
             onQuickSelectionRequested(index);
-            _impl.startEditingComment();
+            onCommentEditRequested(index);
         }
 
         function onLastRowSelected(): void {
             const lastIndex = root.count - 1;
             onQuickSelectionRequested(lastIndex);
+        }
+
+        function onTimeEditRequested(index: int, time: int, coordinates: point): void {
+            _editLoader.startEditingTime(index, time, coordinates);
+        }
+
+        function onCommentTypeEditRequested(index: int, commentType: string, coordinates: point): void {
+            _editLoader.startEditingCommentType(index, commentType, coordinates);
+        }
+
+        function onCommentEditRequested(index: int): void {
+            root.positionViewAtIndex(index, ListView.Contain);
+            const item = root.currentItem as MpvqcCommentListDelegate;
+            const comment = item.comment; // qmllint disable
+            const commentLabel = item.commentLabel;
+            _editLoader.startEditingComment(index, comment, commentLabel);
         }
     }
 
