@@ -19,7 +19,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyTypeChecker,PyPep8Naming
+# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcCommentTableViewModel(QObject):
     _player: PlayerService = inject.attr(PlayerService)
@@ -32,10 +32,10 @@ class MpvqcCommentTableViewModel(QObject):
 
     copiedToClipboard = Signal(str)
 
-    selectRowQuickly = Signal(int)
-    selectRow = Signal(int)
-    selectRowAndEdit = Signal(int)
-    selectLastRow = Signal()
+    rowQuickSelected = Signal(int)
+    rowSelected = Signal(int)
+    rowEditRequested = Signal(int)
+    lastRowSelected = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -64,27 +64,27 @@ class MpvqcCommentTableViewModel(QObject):
 
         self._model: MpvqcCommentModel = value
 
-        self._model.comments_imported_initial.connect(self.selectRowQuickly)
-        self._model.comments_imported_undo.connect(self.selectRowQuickly)
-        self._model.comments_imported_redo.connect(self.selectRowQuickly)
+        self._model.comments_imported_initial.connect(self.rowQuickSelected)
+        self._model.comments_imported_undo.connect(self.rowQuickSelected)
+        self._model.comments_imported_redo.connect(self.rowQuickSelected)
 
-        self._model.comments_cleared_undo.connect(self.selectLastRow)
+        self._model.comments_cleared_undo.connect(self.lastRowSelected)
 
-        self._model.comment_added_initial.connect(self.selectRowAndEdit)
-        self._model.comment_added_undo.connect(self.selectRowQuickly)
-        self._model.comment_added_redo.connect(self.selectRowQuickly)
+        self._model.comment_added_initial.connect(self.rowEditRequested)
+        self._model.comment_added_undo.connect(self.rowQuickSelected)
+        self._model.comment_added_redo.connect(self.rowQuickSelected)
 
-        self._model.comment_removed_undo.connect(self.selectRowQuickly)
+        self._model.comment_removed_undo.connect(self.rowQuickSelected)
 
-        self._model.time_updated_initial.connect(self.selectRow)
-        self._model.time_updated_undo.connect(self.selectRowQuickly)
-        self._model.time_updated_redo.connect(self.selectRowQuickly)
+        self._model.time_updated_initial.connect(self.rowSelected)
+        self._model.time_updated_undo.connect(self.rowQuickSelected)
+        self._model.time_updated_redo.connect(self.rowQuickSelected)
 
-        self._model.comment_type_updated_initial.connect(self.selectRowQuickly)
-        self._model.comment_type_updated_undo.connect(self.selectRowQuickly)
+        self._model.comment_type_updated_initial.connect(self.rowQuickSelected)
+        self._model.comment_type_updated_undo.connect(self.rowQuickSelected)
 
-        self._model.comment_updated_initial.connect(self.selectRowQuickly)
-        self._model.comment_updated_undo.connect(self.selectRowQuickly)
+        self._model.comment_updated_initial.connect(self.rowQuickSelected)
+        self._model.comment_updated_undo.connect(self.rowQuickSelected)
 
         self.modelChanged.emit()
 
