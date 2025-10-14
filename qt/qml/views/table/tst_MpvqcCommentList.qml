@@ -12,6 +12,8 @@ import "../../utility"
 TestCase {
     id: testCase
 
+    readonly property int timeout: 2000
+
     QtObject {
         id: _clickHelper
 
@@ -77,21 +79,23 @@ TestCase {
         id: objectUnderTest
 
         MpvqcCommentList {
-            id: __objectUnderTest
+            property list<int> calledJumpToTimeArgs: []
+            property int calledPauseVideoCounter: 0
+
+            viewModel: QtObject {
+                property int videoDuration: 10
+                function jumpToTime(time) {
+                    calledJumpToTimeArgs.push(time);
+                }
+                function pauseVideo() {
+                    calledPauseVideoCounter++;
+                }
+            }
 
             height: testCase.height
             width: testCase.width
 
-            property list<int> calledJumpToTimeArgs: []
-            property int calledPauseVideoCounter: 0
-
-            jumpToTimeFunc: time => calledJumpToTimeArgs.push(time)
-            pauseVideoFunc: () => calledPauseVideoCounter++
-
             commentTypes: ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4"]
-
-            videoDuration: 10
-            isCurrentlyFullScreen: false
 
             Component.onCompleted: {
                 model.import_comments([
@@ -127,26 +131,33 @@ TestCase {
 
     function initTestCase(): void {
         MpvqcLabelWidthCalculator.timeLabelWidth = 50;
-        MpvqcLabelWidthCalculator.commentTypeLabelWidth = 100;
+        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 100;
+    }
+
+    function makeControl(): var {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
+        waitForRendering(control);
+        return control;
     }
 
     function waitUntilEditControlOpened(control: MpvqcCommentList): void {
-        tryCompare(control.editLoader, "status", Loader.Ready);
+        tryCompare(control.editLoader, "status", Loader.Ready, testCase.timeout);
         tryVerify(() => control.editLoader.item?.opened);
     }
 
     function waitUntilEditControlClosed(control: MpvqcCommentList): void {
-        tryCompare(control.editLoader, "status", Loader.Ready);
+        tryCompare(control.editLoader, "status", Loader.Ready, testCase.timeout);
         tryVerify(() => control.editLoader.item?.closed);
     }
 
     function waitUntilContextMenuOpened(control: MpvqcCommentList): void {
-        tryCompare(control.contextMenuLoader, "status", Loader.Ready);
+        tryCompare(control.contextMenuLoader, "status", Loader.Ready, testCase.timeout);
         tryVerify(() => control.contextMenuLoader.item?.opened);
     }
 
     function waitUntilMessageBoxOpened(control: MpvqcCommentList): void {
-        tryCompare(control.messageBoxLoader, "status", Loader.Ready);
+        tryCompare(control.messageBoxLoader, "status", Loader.Ready, testCase.timeout);
         tryVerify(() => control.messageBoxLoader.item?.opened);
     }
 
@@ -172,9 +183,7 @@ TestCase {
     }
 
     function test_selectionWhileNotEditing(data): void {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         mouseClick(control, data.column, _clickHelper.row2Center);
         tryVerify(() => control.isNotCurrentlyEditing);
@@ -230,9 +239,7 @@ TestCase {
     }
 
     function test_selectionWhileEditingComment(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         keyPress(Qt.Key_Return);
         waitForRendering(control);
@@ -244,9 +251,7 @@ TestCase {
     }
 
     function test_selectionWhileEditingTime() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         mouseClick(control, _clickHelper.columnTime, _clickHelper.row1Center);
         waitUntilEditControlOpened(control);
@@ -258,9 +263,7 @@ TestCase {
     }
 
     function test_selectionWhileEditingCommentType() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
         waitUntilEditControlOpened(control);
@@ -292,9 +295,7 @@ TestCase {
     }
 
     function test_editCommentTrigger(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         verify(!control.isCurrentlyEditing);
         data.exec(control);
@@ -325,9 +326,7 @@ TestCase {
     }
 
     function test_copyToClipboard(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         const spy = createTemporaryObject(signalSpy, control, {
             target: control.model,
@@ -366,9 +365,7 @@ TestCase {
     }
 
     function test_deleteComment(data) {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         data.exec(control);
         waitUntilMessageBoxOpened(control);
@@ -379,9 +376,7 @@ TestCase {
     }
 
     function test_editTimePrevious() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         tryVerify(() => control.getItem(0, "time") === 1);
 
@@ -396,9 +391,7 @@ TestCase {
     }
 
     function test_editTimeNext() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         tryVerify(() => control.getItem(0, "time") === 1);
 
@@ -413,9 +406,7 @@ TestCase {
     }
 
     function test_editTimeAborted() {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         tryVerify(() => control.getItem(0, "time") === 1);
 
@@ -441,9 +432,7 @@ TestCase {
     }
 
     function test_editCommentTypeAborted(): void {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
         waitUntilEditControlOpened(control);
@@ -455,9 +444,7 @@ TestCase {
     }
 
     function test_editCommentType(): void {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         mouseClick(control, _clickHelper.columnCommentType, _clickHelper.row1Center);
         waitUntilEditControlOpened(control);
@@ -469,9 +456,7 @@ TestCase {
     }
 
     function test_editComment(): void {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
         waitUntilEditControlOpened(control);
@@ -483,9 +468,7 @@ TestCase {
     }
 
     function test_editCommentAborted(): void {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         compare(control.getItem(0, "comment"), "Comment 1");
 
@@ -500,9 +483,7 @@ TestCase {
     }
 
     function test_editCommentConfirmUnchanged(): void {
-        const control = createTemporaryObject(objectUnderTest, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = makeControl();
 
         compare(control.getItem(0, "comment"), "Comment 1");
 

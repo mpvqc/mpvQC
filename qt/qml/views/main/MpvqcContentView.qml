@@ -65,7 +65,7 @@ Page {
                 SplitView.preferredHeight = height;
             }
 
-            MpvqcTable {
+            MpvqcTableView {
                 id: _mpvqcCommentTable
 
                 focus: true
