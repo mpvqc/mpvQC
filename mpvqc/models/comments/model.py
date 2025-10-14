@@ -39,35 +39,35 @@ class MpvqcCommentModel(QStandardItemModel):
     _importer: ImporterService = inject.attr(ImporterService)
     _resetter: ResetService = inject.attr(ResetService)
 
-    commentsImportedInitially = Signal(int)  # param: row of last imported comment
-    commentsImportedUndone = Signal(int)  # param: row of previously selected comment before comments have been imported
-    commentsImportedRedone = Signal(int)  # param: row of last imported comment
-
-    commentsCleared = Signal()
-    commentsClearedUndone = Signal()
-
-    newCommentAddedInitially = Signal(int)  # param: row of new comment
-    newCommentAddedUndone = Signal(int)  # param: row of previously selected comment before comment has been added
-    newCommentAddedRedone = Signal(int)  # param: row of new redone comment
-
-    commentRemoved = Signal()
-    commentRemovedUndone = Signal(int)  # param: row of comment that has been added back to the model
-
-    timeUpdatedInitially = Signal(int)  # param: row index after time update
-    timeUpdatedUndone = Signal(int)  # param: row index after time update restore
-    timeUpdatedRedone = Signal(int)  # param: row index after time update
-
-    commentTypeUpdated = Signal(int)
-    commentTypeUpdatedUndone = Signal(int)
-
-    commentUpdated = Signal(int)
-    commentUpdatedUndone = Signal(int)
-
-    searchInvalidated = Signal()
-
     selectedRowChanged = Signal(int)
 
-    _commentsChanged = Signal()
+    comments_imported_initial = Signal(int)  # param: row of last imported comment
+    comments_imported_undo = Signal(int)  # param: row of previously selected comment before comments have been imported
+    comments_imported_redo = Signal(int)  # param: row of last imported comment
+
+    comments_cleared_initial = Signal()
+    comments_cleared_undo = Signal()
+
+    comment_added_initial = Signal(int)  # param: row of new comment
+    comment_added_undo = Signal(int)  # param: row of previously selected comment before comment has been added
+    comment_added_redo = Signal(int)  # param: row of new redone comment
+
+    comment_removed_initial = Signal()
+    comment_removed_undo = Signal(int)  # param: row of comment that has been added back to the model
+
+    time_updated_initial = Signal(int)  # param: row index after time update
+    time_updated_undo = Signal(int)  # param: row index after time update restore
+    time_updated_redo = Signal(int)  # param: row index after time update
+
+    comment_type_updated_initial = Signal(int)
+    comment_type_updated_undo = Signal(int)
+
+    comment_updated_initial = Signal(int)
+    comment_updated_undo = Signal(int)
+
+    search_invalidated = Signal()
+
+    _comments_changed = Signal()
 
     def __init__(self):
         super().__init__()
@@ -81,22 +81,22 @@ class MpvqcCommentModel(QStandardItemModel):
         self._resetter.perform_reset.connect(self.clear_comments)
         self._importer.comments_ready_for_import.connect(self.import_comments)
 
-        self.commentsClearedUndone.connect(self._commentsChanged)
-        self.commentsImportedRedone.connect(self._commentsChanged)
-        self.commentsImportedUndone.connect(self._commentsChanged)
-        self.newCommentAddedInitially.connect(self._commentsChanged)
-        self.newCommentAddedUndone.connect(self._commentsChanged)
-        self.newCommentAddedRedone.connect(self._commentsChanged)
-        self.commentRemoved.connect(self._commentsChanged)
-        self.commentRemovedUndone.connect(self._commentsChanged)
-        self.timeUpdatedInitially.connect(self._commentsChanged)
-        self.timeUpdatedUndone.connect(self._commentsChanged)
-        self.timeUpdatedRedone.connect(self._commentsChanged)
-        self.commentTypeUpdated.connect(self._commentsChanged)
-        self.commentTypeUpdatedUndone.connect(self._commentsChanged)
-        self.commentUpdated.connect(self._commentsChanged)
-        self.commentUpdatedUndone.connect(self._commentsChanged)
-        self._commentsChanged.connect(lambda: self._state.change())
+        self.comments_cleared_undo.connect(self._comments_changed)
+        self.comments_imported_redo.connect(self._comments_changed)
+        self.comments_imported_undo.connect(self._comments_changed)
+        self.comment_added_initial.connect(self._comments_changed)
+        self.comment_added_undo.connect(self._comments_changed)
+        self.comment_added_redo.connect(self._comments_changed)
+        self.comment_removed_initial.connect(self._comments_changed)
+        self.comment_removed_undo.connect(self._comments_changed)
+        self.time_updated_initial.connect(self._comments_changed)
+        self.time_updated_undo.connect(self._comments_changed)
+        self.time_updated_redo.connect(self._comments_changed)
+        self.comment_type_updated_initial.connect(self._comments_changed)
+        self.comment_type_updated_undo.connect(self._comments_changed)
+        self.comment_updated_initial.connect(self._comments_changed)
+        self.comment_updated_undo.connect(self._comments_changed)
+        self._comments_changed.connect(lambda: self._state.change())
 
     @Property(int, notify=selectedRowChanged)
     def selectedRow(self) -> int:
@@ -120,15 +120,15 @@ class MpvqcCommentModel(QStandardItemModel):
 
         def on_after_undo(row: int):
             self.layoutChanged.emit()
-            self.searchInvalidated.emit()
-            self.commentsImportedUndone.emit(row)
+            self.search_invalidated.emit()
+            self.comments_imported_undo.emit(row)
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
             self.layoutChanged.emit()
-            self.searchInvalidated.emit()
+            self.search_invalidated.emit()
             self.sort(0)
 
-            signal = self.commentsImportedInitially if added_initially else self.commentsImportedRedone
+            signal = self.comments_imported_initial if added_initially else self.comments_imported_redo
             signal.emit(index.row())
 
         self._undo_stack.push(
@@ -144,13 +144,13 @@ class MpvqcCommentModel(QStandardItemModel):
     def clear_comments(self) -> None:
         def on_after_undo():
             self.layoutChanged.emit()
-            self.searchInvalidated.emit()
-            self.commentsClearedUndone.emit()
+            self.search_invalidated.emit()
+            self.comments_cleared_undo.emit()
 
         def on_after_redo():
             self.layoutChanged.emit()
-            self.searchInvalidated.emit()
-            self.commentsCleared.emit()
+            self.search_invalidated.emit()
+            self.comments_cleared_initial.emit()
 
         self._undo_stack.push(
             ClearComments(
@@ -162,16 +162,16 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def add_row(self, comment_type: str) -> None:
         def on_after_undo(row: int):
-            self.newCommentAddedUndone.emit(row)
-            self.searchInvalidated.emit()
+            self.comment_added_undo.emit(row)
+            self.search_invalidated.emit()
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
             self.sort(0)
 
-            signal = self.newCommentAddedInitially if added_initially else self.newCommentAddedRedone
+            signal = self.comment_added_initial if added_initially else self.comment_added_redo
             signal.emit(index.row())
 
-            self.searchInvalidated.emit()
+            self.search_invalidated.emit()
 
         command = AddAndUpdateCommentCommand(
             add_comment=AddComment(
@@ -188,12 +188,12 @@ class MpvqcCommentModel(QStandardItemModel):
     def remove_row(self, row: int) -> None:
         def on_after_undo(_row: int):
             self.sort(0)
-            self.commentRemovedUndone.emit(_row)
-            self.searchInvalidated.emit()
+            self.comment_removed_undo.emit(_row)
+            self.search_invalidated.emit()
 
         def on_after_redo():
-            self.commentRemoved.emit()
-            self.searchInvalidated.emit()
+            self.comment_removed_initial.emit()
+            self.search_invalidated.emit()
 
         self._undo_stack.push(
             RemoveComment(
@@ -206,15 +206,15 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def update_time(self, row: int, new_time: int) -> None:
         def on_after_undo(_row: int):
-            self.searchInvalidated.emit()
+            self.search_invalidated.emit()
             self.sort(0)
-            self.timeUpdatedUndone.emit(_row)
+            self.time_updated_undo.emit(_row)
 
         def on_after_redo(index: QModelIndex, added_initially: bool):
-            self.searchInvalidated.emit()
+            self.search_invalidated.emit()
             self.sort(0)
 
-            signal = self.timeUpdatedInitially if added_initially else self.timeUpdatedRedone
+            signal = self.time_updated_initial if added_initially else self.time_updated_redo
             signal.emit(index.row())
 
         self._undo_stack.push(
@@ -229,10 +229,10 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def update_comment_type(self, row: int, comment_type: str) -> None:
         def on_after_undo(_row: int):
-            self.commentTypeUpdatedUndone.emit(_row)
+            self.comment_type_updated_undo.emit(_row)
 
         def on_after_redo(_row: int):
-            self.commentTypeUpdated.emit(_row)
+            self.comment_type_updated_initial.emit(_row)
 
         self._undo_stack.push(
             UpdateType(
@@ -246,12 +246,12 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def update_comment(self, row: int, comment: str) -> None:
         def on_after_undo(_row: int):
-            self.searchInvalidated.emit()
-            self.commentUpdatedUndone.emit(_row)
+            self.search_invalidated.emit()
+            self.comment_updated_undo.emit(_row)
 
         def on_after_redo(_row: int):
-            self.searchInvalidated.emit()
-            self.commentUpdated.emit(_row)
+            self.search_invalidated.emit()
+            self.comment_updated_initial.emit(_row)
 
         self._undo_stack.push(
             UpdateComment(

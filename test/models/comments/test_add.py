@@ -66,7 +66,7 @@ def test_add_comment_sorts_model(make_model):
 
 
 def test_add_comment_fires_signals(model, make_spy):
-    added_initially_spy = make_spy(model.newCommentAddedInitially)
+    added_initially_spy = make_spy(model.comment_added_initial)
 
     model.add_row("comment type")
 
@@ -112,7 +112,7 @@ def test_add_comment_undo_redo_sorts_model(make_model):
 
 
 def test_add_comment_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.add_row("undo redo comment type")
     assert spy.count() == 1
@@ -128,9 +128,9 @@ def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
 
-    new_initially_spy = make_spy(model.newCommentAddedInitially)
-    new_undone_spy = make_spy(model.newCommentAddedUndone)
-    new_redone_spy = make_spy(model.newCommentAddedRedone)
+    new_initially_spy = make_spy(model.comment_added_initial)
+    new_undone_spy = make_spy(model.comment_added_undo)
+    new_redone_spy = make_spy(model.comment_added_redo)
 
     model.selectedRow = 3
     model.add_row("undo redo comment type")

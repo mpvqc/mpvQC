@@ -31,7 +31,7 @@ def test_clear_comments(model):
 
 
 def test_clear_comments_fires_signals(model, make_spy):
-    cleared_spy = make_spy(model.commentsCleared)
+    cleared_spy = make_spy(model.comments_cleared_initial)
 
     model.clear_comments()
 
@@ -53,7 +53,7 @@ def test_clear_comments_undo_redo(model):
 
 
 def test_clear_comments_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.clear_comments()
     assert spy.count() == 1
@@ -66,8 +66,8 @@ def test_clear_comments_undo_redo_invalidates_search_results(model, make_spy):
 
 
 def test_clear_comments_undo_redo_fires_signals(model, make_spy):
-    cleared_spy = make_spy(model.commentsCleared)
-    cleared_undone_spy = make_spy(model.commentsClearedUndone)
+    cleared_spy = make_spy(model.comments_cleared_initial)
+    cleared_undone_spy = make_spy(model.comments_cleared_undo)
 
     model.clear_comments()
     assert cleared_spy.count() == 1
