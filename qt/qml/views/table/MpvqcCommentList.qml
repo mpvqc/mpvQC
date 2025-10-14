@@ -373,20 +373,20 @@ ListView {
     Connections {
         target: root.viewModel
 
-        function onSelectRowQuickly(index: int): void {
+        function onRowQuickSelected(index: int): void {
             _impl.selectQuickly(index);
         }
 
-        function onSelectRow(index: int): void {
+        function onRowSelected(index: int): void {
             _impl.select(index);
         }
 
-        function onSelectRowAndEdit(index: int): void {
+        function onRowEditRequested(index: int): void {
             _impl.selectQuickly(index);
             _impl.startEditingComment();
         }
 
-        function onSelectLastRow(): void {
+        function onLastRowSelected(): void {
             const lastIndex = root.count - 1;
             _impl.selectQuickly(lastIndex);
         }
