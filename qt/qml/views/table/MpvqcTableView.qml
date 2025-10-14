@@ -21,19 +21,19 @@ Item {
     }
 
     function addNewComment(commentType: string): void {
-        _commentTable.model.add_row(commentType);
+        _commentTable.viewModel.addRow(commentType);
     }
 
     MpvqcCommentList {
         id: _commentTable
 
-        viewModel: MpvqcCommentTableViewModel {
-            model: MpvqcCommentModel {}
-        }
-
         width: root.width
         height: root.height
         visible: count > 0
+
+        viewModel: MpvqcCommentTableViewModel {
+            model: MpvqcCommentModel {}
+        }
     }
 
     MpvqcPlaceholderView {

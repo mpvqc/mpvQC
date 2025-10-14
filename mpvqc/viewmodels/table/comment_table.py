@@ -71,3 +71,31 @@ class MpvqcCommentTableViewModel(QObject):
         content = self._model.get_clipboard_content(row)
         self._clipboard.setText(content)
         self.copiedToClipboard.emit(content)
+
+    @Slot(str)
+    def addRow(self, comment_type: str) -> None:
+        self._model.add_row(comment_type)
+
+    @Slot(int)
+    def removeRow(self, row: int) -> None:
+        self._model.remove_row(row)
+
+    @Slot(int, int)
+    def updateTime(self, row: int, new_time: int) -> None:
+        self._model.update_time(row, new_time)
+
+    @Slot(int, str)
+    def updateCommentType(self, row: int, comment_type: str) -> None:
+        self._model.update_comment_type(row, comment_type)
+
+    @Slot(int, str)
+    def updateComment(self, row: int, comment: str) -> None:
+        self._model.update_comment(row, comment)
+
+    @Slot()
+    def undo(self) -> None:
+        self._model.undo()
+
+    @Slot()
+    def redo(self) -> None:
+        self._model.redo()
