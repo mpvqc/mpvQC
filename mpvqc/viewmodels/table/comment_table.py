@@ -32,6 +32,11 @@ class MpvqcCommentTableViewModel(QObject):
 
     copiedToClipboard = Signal(str)
 
+    selectRowQuickly = Signal(int)
+    selectRow = Signal(int)
+    selectRowAndEdit = Signal(int)
+    selectLastRow = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
@@ -54,9 +59,34 @@ class MpvqcCommentTableViewModel(QObject):
 
     @model.setter
     def model(self, value: QAbstractItemModel) -> None:
-        if self._model != value:
-            self._model = value
-            self.modelChanged.emit()
+        if self._model == value:
+            return
+
+        self._model: MpvqcCommentModel = value
+
+        self._model.commentsImportedInitially.connect(self.selectRowQuickly)
+        self._model.commentsImportedUndone.connect(self.selectRowQuickly)
+        self._model.commentsImportedRedone.connect(self.selectRowQuickly)
+
+        self._model.commentsClearedUndone.connect(self.selectLastRow)
+
+        self._model.newCommentAddedInitially.connect(self.selectRowAndEdit)
+        self._model.newCommentAddedUndone.connect(self.selectRowQuickly)
+        self._model.newCommentAddedRedone.connect(self.selectRowQuickly)
+
+        self._model.commentRemovedUndone.connect(self.selectRowQuickly)
+
+        self._model.timeUpdatedInitially.connect(self.selectRow)
+        self._model.timeUpdatedUndone.connect(self.selectRowQuickly)
+        self._model.timeUpdatedRedone.connect(self.selectRowQuickly)
+
+        self._model.commentTypeUpdated.connect(self.selectRowQuickly)
+        self._model.commentTypeUpdatedUndone.connect(self.selectRowQuickly)
+
+        self._model.commentUpdated.connect(self.selectRowQuickly)
+        self._model.commentUpdatedUndone.connect(self.selectRowQuickly)
+
+        self.modelChanged.emit()
 
     @Slot(int)
     def jumpToTime(self, seconds: int) -> None:

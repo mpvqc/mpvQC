@@ -371,68 +371,24 @@ ListView {
     }
 
     Connections {
-        target: root.model
+        target: root.viewModel
 
-        function onCommentsImportedInitially(index: int): void {
+        function onSelectRowQuickly(index: int): void {
             _impl.selectQuickly(index);
         }
 
-        function onCommentsImportedUndone(index: int): void {
-            _impl.selectQuickly(index);
+        function onSelectRow(index: int): void {
+            _impl.select(index);
         }
 
-        function onCommentsImportedRedone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onCommentsClearedUndone(): void {
-            const lastIndex = root.count - 1;
-            _impl.selectQuickly(lastIndex);
-        }
-
-        function onNewCommentAddedInitially(index: int): void {
+        function onSelectRowAndEdit(index: int): void {
             _impl.selectQuickly(index);
             _impl.startEditingComment();
         }
 
-        function onNewCommentAddedUndone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onNewCommentAddedRedone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onCommentRemovedUndone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onTimeUpdatedInitially(index: int): void {
-            _impl.select(index);
-        }
-
-        function onTimeUpdatedUndone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onTimeUpdatedRedone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onCommentTypeUpdated(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onCommentTypeUpdatedUndone(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onCommentUpdated(index: int): void {
-            _impl.selectQuickly(index);
-        }
-
-        function onCommentUpdatedUndone(index: int): void {
-            _impl.selectQuickly(index);
+        function onSelectLastRow(): void {
+            const lastIndex = root.count - 1;
+            _impl.selectQuickly(lastIndex);
         }
     }
 
