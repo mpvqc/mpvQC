@@ -85,14 +85,6 @@ TestCase {
             property list<int> calledJumpToTimeArgs: []
             property int calledPauseVideoCounter: 0
 
-            backgroundColor: "#fff0ee"
-            rowHighlightColor: "#904a42"
-            rowHighlightTextColor: "#ffffff"
-            rowBaseColor: backgroundColor
-            rowBaseTextColor: "#534341"
-            rowAlternateBaseColor: backgroundColor
-            rowAlternateBaseTextColor: rowBaseTextColor
-
             jumpToTimeFunc: time => calledJumpToTimeArgs.push(time)
             pauseVideoFunc: () => calledPauseVideoCounter++
 

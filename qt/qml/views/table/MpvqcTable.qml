@@ -15,7 +15,6 @@ Item {
 
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
     readonly property var mpvqcSettings: MpvqcSettings
-    readonly property var mpvqcTheme: MpvqcTheme
 
     readonly property alias commentCount: _commentTable.count
     readonly property alias selectedCommentIndex: _commentTable.currentIndex
@@ -46,14 +45,6 @@ Item {
         width: root.width
         height: root.height
         visible: count > 0
-
-        backgroundColor: root.mpvqcTheme.background
-        rowHighlightColor: root.mpvqcTheme.rowHighlight
-        rowHighlightTextColor: root.mpvqcTheme.rowHighlightText
-        rowBaseColor: root.mpvqcTheme.rowBase
-        rowBaseTextColor: root.mpvqcTheme.rowBaseText
-        rowAlternateBaseColor: root.mpvqcTheme.rowBaseAlternate
-        rowAlternateBaseTextColor: root.mpvqcTheme.rowBaseAlternateText
 
         jumpToTimeFunc: _impl.jumpToTime
         pauseVideoFunc: _impl.pauseVideo

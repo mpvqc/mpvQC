@@ -5,15 +5,15 @@
 import QtQuick
 import QtQuick.Controls.Material
 
+import "../../utility"
+
 Popup {
     id: root
 
     required property int currentListIndex
     required property string currentComment
 
-    required property color backgroundColor
-    required property color rowHighlightColor
-    required property color rowHighlightTextColor
+    readonly property bool isOdd: currentListIndex % 2 === 1
 
     property bool acceptValue: true
 
@@ -48,12 +48,12 @@ Popup {
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
 
-        selectionColor: root.rowHighlightColor
-        selectedTextColor: root.rowHighlightTextColor
+        selectionColor: MpvqcTheme.rowHighlight
+        selectedTextColor: MpvqcTheme.rowHighlightText
 
         background: Rectangle {
             anchors.fill: parent
-            color: root.backgroundColor
+            color: MpvqcTheme.getBackground(root.isOdd)
         }
 
         Keys.onReturnPressed: {
