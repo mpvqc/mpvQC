@@ -15,16 +15,17 @@ Item {
     required property string commentType    // from model
     required property string comment        // from model
 
-    required property color backgroundColor
-    required property color foregroundColor
-
     required property ListView listView
     required property string searchQuery
 
-    readonly property alias commentLabel: _commentLabel
-
     property alias scrollBarWidth: _scrollBarSpacer.width
-    property alias scrollBarBackgroundColor: _scrollBarSpacer.color
+
+    readonly property bool isOdd: index % 2 === 1
+    readonly property color backgroundColor: MpvqcTheme.getBackground(isOdd)
+    readonly property color foregroundColor: ListView.isCurrentItem ? MpvqcTheme.rowHighlightText : MpvqcTheme.getForeground(isOdd)
+    property color _foregroundColor: foregroundColor // we need a non readonly property to animate this color
+
+    readonly property alias commentLabel: _commentLabel
 
     readonly property int horizontalItemPadding: 14
     readonly property int verticalItemPadding: 13
@@ -40,7 +41,7 @@ Item {
     height: Math.max(_commentLabel.height, _commentLabel.editorHeight, _playButton.height)
 
     Material.background: root.backgroundColor
-    Material.foreground: root.foregroundColor
+    Material.foreground: root._foregroundColor
 
     Rectangle {
         y: root.y
@@ -148,10 +149,11 @@ Item {
         Rectangle {
             id: _scrollBarSpacer
             height: root.height
+            color: MpvqcTheme.background
         }
     }
 
-    Behavior on foregroundColor {
+    Behavior on _foregroundColor {
         ColorAnimation {
             duration: 75
         }

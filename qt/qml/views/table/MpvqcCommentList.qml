@@ -9,16 +9,10 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "../../utility"
+
 ListView {
     id: root
-
-    required property color backgroundColor
-    required property color rowHighlightColor
-    required property color rowHighlightTextColor
-    required property color rowBaseColor
-    required property color rowBaseTextColor
-    required property color rowAlternateBaseColor
-    required property color rowAlternateBaseTextColor
 
     required property var jumpToTimeFunc
     required property var pauseVideoFunc
@@ -53,7 +47,7 @@ ListView {
     highlight: Rectangle {
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
-        color: root.rowHighlightColor
+        color: MpvqcTheme.rowHighlight
     }
 
     ScrollBar.vertical: ScrollBar {
@@ -66,19 +60,13 @@ ListView {
     }
 
     delegate: MpvqcCommentListDelegate {
-        readonly property bool isSelected: root.currentIndex === index
-        readonly property bool isOdd: index % 2 === 1
+        readonly property bool isSelected: ListView.isCurrentItem
 
         width: parent ? root.width : 0
 
-        backgroundColor: isOdd ? root.rowBaseColor : root.rowAlternateBaseColor
-        foregroundColor: isSelected ? root.rowHighlightTextColor : isOdd ? root.rowBaseTextColor : root.rowAlternateBaseTextColor
-
+        scrollBarWidth: _scrollBar.visibleWidth
         listView: root
         searchQuery: _impl.searchQuery
-
-        scrollBarWidth: _scrollBar.visibleWidth
-        scrollBarBackgroundColor: root.backgroundColor
 
         onPlayButtonPressed: {
             _impl.select(index);
@@ -327,10 +315,7 @@ ListView {
             setSource(editCommentPopup, {
                 parent: parentItem,
                 currentComment: currentComment,
-                currentListIndex: index,
-                backgroundColor: index % 2 === 1 ? root.rowBaseColor : root.rowAlternateBaseColor,
-                rowHighlightColor: root.rowHighlightColor,
-                rowHighlightTextColor: root.rowHighlightTextColor
+                currentListIndex: index
             });
             active = true;
         }
