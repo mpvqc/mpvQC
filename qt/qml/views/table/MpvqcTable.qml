@@ -14,7 +14,6 @@ Item {
     id: root
 
     readonly property var mpvqcMpvPlayerPyObject: MpvqcMpvPlayerPyObject {}
-    readonly property var mpvqcLabelWidthCalculator: MpvqcLabelWidthCalculator
     readonly property var mpvqcSettings: MpvqcSettings
     readonly property var mpvqcTheme: MpvqcTheme
 
@@ -47,9 +46,6 @@ Item {
         width: root.width
         height: root.height
         visible: count > 0
-
-        timeLabelWidth: root.mpvqcLabelWidthCalculator.timeLabelWidth
-        commentTypeLabelWidth: root.mpvqcLabelWidthCalculator.commentTypesLabelWidth
 
         backgroundColor: root.mpvqcTheme.background
         rowHighlightColor: root.mpvqcTheme.rowHighlight

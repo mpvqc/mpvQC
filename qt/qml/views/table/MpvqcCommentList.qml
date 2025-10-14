@@ -12,9 +12,6 @@ import pyobjects
 ListView {
     id: root
 
-    required property int timeLabelWidth
-    required property int commentTypeLabelWidth
-
     required property color backgroundColor
     required property color rowHighlightColor
     required property color rowHighlightTextColor
@@ -73,9 +70,6 @@ ListView {
         readonly property bool isOdd: index % 2 === 1
 
         width: parent ? root.width : 0
-
-        timeLabelWidth: root.timeLabelWidth
-        commentTypeLabelWidth: root.commentTypeLabelWidth
 
         backgroundColor: isOdd ? root.rowBaseColor : root.rowAlternateBaseColor
         foregroundColor: isSelected ? root.rowHighlightTextColor : isOdd ? root.rowBaseTextColor : root.rowAlternateBaseTextColor

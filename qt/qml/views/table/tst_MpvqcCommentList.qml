@@ -7,6 +7,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import "../../utility"
+
 TestCase {
     id: testCase
 
@@ -83,9 +85,6 @@ TestCase {
             property list<int> calledJumpToTimeArgs: []
             property int calledPauseVideoCounter: 0
 
-            timeLabelWidth: 50
-            commentTypeLabelWidth: 100
-
             backgroundColor: "#fff0ee"
             rowHighlightColor: "#904a42"
             rowHighlightTextColor: "#ffffff"
@@ -132,6 +131,11 @@ TestCase {
                 return model.comments()[index][property];
             }
         }
+    }
+
+    function initTestCase(): void {
+        MpvqcLabelWidthCalculator.timeLabelWidth = 50;
+        MpvqcLabelWidthCalculator.commentTypeLabelWidth = 100;
     }
 
     function waitUntilEditControlOpened(control: MpvqcCommentList): void {

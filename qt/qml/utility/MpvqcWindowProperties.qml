@@ -6,5 +6,5 @@ pragma Singleton
 
 import pyobjects
 
-// This wrapper is required since I could not get qml tests to work with @QmlSingletons :|
+// This wrapper is required since I could not get qml tests to work with @QmlSingletons
 MpvqcWindowPropertiesBackend {}
