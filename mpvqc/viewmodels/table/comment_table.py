@@ -41,6 +41,9 @@ class MpvqcCommentTableViewModel(QObject):
     commentTypeEditRequested = Signal(int, str, QPointF)
     commentEditRequested = Signal(int)
 
+    contextMenuRequested = Signal(int, QPointF)
+    deleteCommentRequested = Signal(int)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
@@ -111,6 +114,14 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(int)
     def startEditingComment(self, index: int) -> None:
         self.commentEditRequested.emit(index)
+
+    @Slot(int, QPointF)
+    def openContextMenu(self, index: int, coordinates: QPointF) -> None:
+        self.contextMenuRequested.emit(index, coordinates)
+
+    @Slot(int)
+    def askToDeleteRow(self, index: int) -> None:
+        self.deleteCommentRequested.emit(index)
 
     @Slot(int)
     def jumpToTime(self, seconds: int) -> None:
