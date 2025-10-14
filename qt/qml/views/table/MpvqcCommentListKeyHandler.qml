@@ -17,7 +17,7 @@ QtObject {
 
     readonly property bool isFullScreen: MpvqcWindowProperties.isFullscreen
 
-    signal editCommentRequested
+    signal editCommentRequested(index: int)
     signal deleteCommentRequested(index: int)
     signal copyCommentRequested(index: int)
     signal searchRequested
@@ -52,7 +52,7 @@ QtObject {
             return;
         }
         if (hasComments && !isEditing && !isFullScreen) {
-            root.editCommentRequested();
+            root.editCommentRequested(currentIndex);
         }
     }
 

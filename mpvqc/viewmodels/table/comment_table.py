@@ -5,7 +5,7 @@
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QAbstractItemModel, QObject, Signal, Slot
+from PySide6.QtCore import Property, QAbstractItemModel, QObject, QPointF, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
@@ -36,6 +36,10 @@ class MpvqcCommentTableViewModel(QObject):
     selectionRequested = Signal(int)
     rowEditRequested = Signal(int)
     lastRowSelected = Signal()
+
+    timeEditRequested = Signal(int, int, QPointF)
+    commentTypeEditRequested = Signal(int, str, QPointF)
+    commentEditRequested = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -95,6 +99,18 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(int)
     def selectQuickly(self, index: int) -> None:
         self.quickSelectionRequested.emit(index)
+
+    @Slot(int, int, QPointF)
+    def startEditingTime(self, index: int, time: int, coordinates: QPointF) -> None:
+        self.timeEditRequested.emit(index, time, coordinates)
+
+    @Slot(int, str, QPointF)
+    def startEditingCommentType(self, index: int, comment_type: str, coordinates: QPointF) -> None:
+        self.commentTypeEditRequested.emit(index, comment_type, coordinates)
+
+    @Slot(int)
+    def startEditingComment(self, index: int) -> None:
+        self.commentEditRequested.emit(index)
 
     @Slot(int)
     def jumpToTime(self, seconds: int) -> None:
