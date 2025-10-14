@@ -66,7 +66,7 @@ ListView {
         searchQuery: _impl.searchQuery
 
         onPlayButtonPressed: {
-            _impl.select(index);
+            root.viewModel.select(index);
             if (root.isNotCurrentlyEditing) {
                 root.viewModel.jumpToTime(time);
             }
@@ -80,7 +80,7 @@ ListView {
                 root.viewModel.jumpToTime(time);
                 _impl.startEditingTime(index, time, coordinates);
             } else {
-                _impl.select(index);
+                root.viewModel.select(index);
             }
         }
 
@@ -90,7 +90,7 @@ ListView {
             } else if (isSelected) {
                 _impl.startEditingCommentType(index, commentType, coordinates);
             } else {
-                _impl.select(index);
+                root.viewModel.select(index);
             }
         }
 
@@ -98,13 +98,13 @@ ListView {
             if (isSelected) {
                 _impl.startEditingComment();
             } else {
-                _impl.select(index);
+                root.viewModel.select(index);
             }
         }
 
         onRightMouseButtonPressed: coordinates => {
             if (root.isNotCurrentlyEditing) {
-                _impl.select(index);
+                root.viewModel.select(index);
                 _impl.openContextMenu(index, coordinates);
             }
         }
@@ -118,17 +118,6 @@ ListView {
         readonly property Timer _ensureCommentVisibleTimer: Timer {
             interval: 0
             onTriggered: root.positionViewAtIndex(root.currentIndex, ListView.Contain)
-        }
-
-        function select(index: int): void {
-            root.currentIndex = index;
-        }
-
-        function selectQuickly(index: int): void {
-            const duration = root.highlightMoveDuration;
-            root.highlightMoveDuration = 0;
-            root.currentIndex = index;
-            root.highlightMoveDuration = duration;
         }
 
         function startEditingTime(index: int, currentTime: int, coordinates: point): void {
@@ -363,7 +352,7 @@ ListView {
                 model: root.model
                 selectedIndex: root.currentIndex
 
-                onHighlightRequested: index => _impl.select(index)
+                onHighlightRequested: index => root.viewModel.select(index)
             }
 
             onClosed: root.forceActiveFocus()
@@ -373,22 +362,25 @@ ListView {
     Connections {
         target: root.viewModel
 
-        function onRowQuickSelected(index: int): void {
-            _impl.selectQuickly(index);
+        function onQuickSelectionRequested(index: int): void {
+            const duration = root.highlightMoveDuration;
+            root.highlightMoveDuration = 0;
+            root.currentIndex = index;
+            root.highlightMoveDuration = duration;
         }
 
-        function onRowSelected(index: int): void {
-            _impl.select(index);
+        function onSelectionRequested(index: int): void {
+            root.currentIndex = index;
         }
 
         function onRowEditRequested(index: int): void {
-            _impl.selectQuickly(index);
+            onQuickSelectionRequested(index);
             _impl.startEditingComment();
         }
 
         function onLastRowSelected(): void {
             const lastIndex = root.count - 1;
-            _impl.selectQuickly(lastIndex);
+            onQuickSelectionRequested(lastIndex);
         }
     }
 

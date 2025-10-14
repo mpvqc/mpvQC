@@ -32,8 +32,8 @@ class MpvqcCommentTableViewModel(QObject):
 
     copiedToClipboard = Signal(str)
 
-    rowQuickSelected = Signal(int)
-    rowSelected = Signal(int)
+    quickSelectionRequested = Signal(int)
+    selectionRequested = Signal(int)
     rowEditRequested = Signal(int)
     lastRowSelected = Signal()
 
@@ -64,29 +64,37 @@ class MpvqcCommentTableViewModel(QObject):
 
         self._model: MpvqcCommentModel = value
 
-        self._model.comments_imported_initial.connect(self.rowQuickSelected)
-        self._model.comments_imported_undo.connect(self.rowQuickSelected)
-        self._model.comments_imported_redo.connect(self.rowQuickSelected)
+        self._model.comments_imported_initial.connect(self.quickSelectionRequested)
+        self._model.comments_imported_undo.connect(self.quickSelectionRequested)
+        self._model.comments_imported_redo.connect(self.quickSelectionRequested)
 
         self._model.comments_cleared_undo.connect(self.lastRowSelected)
 
         self._model.comment_added_initial.connect(self.rowEditRequested)
-        self._model.comment_added_undo.connect(self.rowQuickSelected)
-        self._model.comment_added_redo.connect(self.rowQuickSelected)
+        self._model.comment_added_undo.connect(self.quickSelectionRequested)
+        self._model.comment_added_redo.connect(self.quickSelectionRequested)
 
-        self._model.comment_removed_undo.connect(self.rowQuickSelected)
+        self._model.comment_removed_undo.connect(self.quickSelectionRequested)
 
-        self._model.time_updated_initial.connect(self.rowSelected)
-        self._model.time_updated_undo.connect(self.rowQuickSelected)
-        self._model.time_updated_redo.connect(self.rowQuickSelected)
+        self._model.time_updated_initial.connect(self.selectionRequested)
+        self._model.time_updated_undo.connect(self.quickSelectionRequested)
+        self._model.time_updated_redo.connect(self.quickSelectionRequested)
 
-        self._model.comment_type_updated_initial.connect(self.rowQuickSelected)
-        self._model.comment_type_updated_undo.connect(self.rowQuickSelected)
+        self._model.comment_type_updated_initial.connect(self.quickSelectionRequested)
+        self._model.comment_type_updated_undo.connect(self.quickSelectionRequested)
 
-        self._model.comment_updated_initial.connect(self.rowQuickSelected)
-        self._model.comment_updated_undo.connect(self.rowQuickSelected)
+        self._model.comment_updated_initial.connect(self.quickSelectionRequested)
+        self._model.comment_updated_undo.connect(self.quickSelectionRequested)
 
         self.modelChanged.emit()
+
+    @Slot(int)
+    def select(self, index: int) -> None:
+        self.selectionRequested.emit(index)
+
+    @Slot(int)
+    def selectQuickly(self, index: int) -> None:
+        self.quickSelectionRequested.emit(index)
 
     @Slot(int)
     def jumpToTime(self, seconds: int) -> None:
