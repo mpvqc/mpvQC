@@ -81,17 +81,12 @@ TestCase {
         id: objectUnderTest
 
         MpvqcCommentList {
-            property list<int> calledJumpToTimeArgs: []
-            property int calledPauseVideoCounter: 0
-
-            viewModel: QtObject {
+            viewModel: MpvqcCommentTableViewModel {
+                model: MpvqcCommentModel {}
                 property int videoDuration: 10
-                property var model: MpvqcCommentModel {}
                 function jumpToTime(time) {
-                    calledJumpToTimeArgs.push(time);
                 }
                 function pauseVideo() {
-                    calledPauseVideoCounter++;
                 }
             }
 

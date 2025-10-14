@@ -68,7 +68,7 @@ ListView {
         onPlayButtonPressed: {
             _impl.select(index);
             if (root.isNotCurrentlyEditing) {
-                _impl.jumpToTime(time);
+                root.viewModel.jumpToTime(time);
             }
         }
 
@@ -76,8 +76,8 @@ ListView {
             if (root.isCurrentlyEditing && isSelected) {
                 ;
             } else if (isSelected) {
-                _impl.pauseVideo();
-                _impl.jumpToTime(time);
+                root.viewModel.pauseVideo();
+                root.viewModel.jumpToTime(time);
                 _impl.startEditingTime(index, time, coordinates);
             } else {
                 _impl.select(index);
@@ -131,14 +131,6 @@ ListView {
             root.highlightMoveDuration = duration;
         }
 
-        function jumpToTime(time: int): void {
-            root.viewModel.jumpToTime(time);
-        }
-
-        function pauseVideo(): void {
-            root.viewModel.pauseVideo();
-        }
-
         function startEditingTime(index: int, currentTime: int, coordinates: point): void {
             _editLoader.startEditingTime(index, currentTime, coordinates);
         }
@@ -156,28 +148,12 @@ ListView {
             _editLoader.startEditingComment(index, comment, commentLabel);
         }
 
-        function updateTime(index: int, newTime: int): void {
-            root.model.update_time(index, newTime);
-        }
-
-        function updateCommentType(index: int, newCommentType: string): void {
-            root.model.update_comment_type(index, newCommentType);
-        }
-
-        function updateComment(index: int, newComment: string): void {
-            root.model.update_comment(index, newComment);
-        }
-
         function openContextMenu(index: int, coordinates: point): void {
             _contextMenuLoader.openContextMenu(index, coordinates);
         }
 
         function askToDeleteRow(index: int): void {
             _messageBoxLoader.askToDeleteComment(index);
-        }
-
-        function removeRow(index: int): void {
-            root.model.remove_row(index);
         }
 
         function ensureFullCommentEditingPopupVisible(): void {
@@ -196,8 +172,8 @@ ListView {
         onDeleteCommentRequested: index => _impl.askToDeleteRow(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
         onSearchRequested: _searchBoxLoader.showSearchBox()
-        onUndoRequested: root.model.undo()
-        onRedoRequested: root.model.redo()
+        onUndoRequested: root.viewModel.undo()
+        onRedoRequested: root.viewModel.redo()
     }
 
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
@@ -253,23 +229,23 @@ ListView {
             ignoreUnknownSignals: true
 
             function onTimeTemporaryChanged(time: int): void {
-                _impl.jumpToTime(time);
+                root.viewModel.jumpToTime(time);
             }
 
             function onTimeEdited(index: int, newTime: int): void {
-                _impl.updateTime(index, newTime);
+                root.viewModel.updateTime(index, newTime);
             }
 
             function onTimeKept(oldTime: int): void {
-                _impl.jumpToTime(oldTime);
+                root.viewModel.jumpToTime(oldTime);
             }
 
             function onCommentTypeEdited(index: int, newCommentType: string): void {
-                _impl.updateCommentType(index, newCommentType);
+                root.viewModel.updateCommentType(index, newCommentType);
             }
 
             function onCommentEdited(index: int, newComment: string): void {
-                _impl.updateComment(index, newComment);
+                root.viewModel.updateComment(index, newComment);
             }
 
             function onCommentEditPopupHeightChanged(): void {
@@ -350,7 +326,7 @@ ListView {
             target: _messageBoxLoader.item
 
             function onDeleteCommentConfirmed(index: int): void {
-                _impl.removeRow(index);
+                root.viewModel.removeRow(index);
             }
 
             function onClosed(): void {
