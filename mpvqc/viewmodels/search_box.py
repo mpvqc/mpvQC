@@ -55,7 +55,7 @@ class MpvqcSearchBoxViewModel(QObject):
 
         self._model = model
         # noinspection PyUnresolvedReferences
-        self._search_invalidate_connection = model.searchInvalidated.connect(self._search_backend.invalidate)
+        self._search_invalidate_connection = model.search_invalidated.connect(self._search_backend.invalidate)
 
     @Property(int, notify=selectedIndexChanged)
     def selectedIndex(self) -> int:

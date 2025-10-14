@@ -64,27 +64,27 @@ class MpvqcCommentTableViewModel(QObject):
 
         self._model: MpvqcCommentModel = value
 
-        self._model.commentsImportedInitially.connect(self.selectRowQuickly)
-        self._model.commentsImportedUndone.connect(self.selectRowQuickly)
-        self._model.commentsImportedRedone.connect(self.selectRowQuickly)
+        self._model.comments_imported_initial.connect(self.selectRowQuickly)
+        self._model.comments_imported_undo.connect(self.selectRowQuickly)
+        self._model.comments_imported_redo.connect(self.selectRowQuickly)
 
-        self._model.commentsClearedUndone.connect(self.selectLastRow)
+        self._model.comments_cleared_undo.connect(self.selectLastRow)
 
-        self._model.newCommentAddedInitially.connect(self.selectRowAndEdit)
-        self._model.newCommentAddedUndone.connect(self.selectRowQuickly)
-        self._model.newCommentAddedRedone.connect(self.selectRowQuickly)
+        self._model.comment_added_initial.connect(self.selectRowAndEdit)
+        self._model.comment_added_undo.connect(self.selectRowQuickly)
+        self._model.comment_added_redo.connect(self.selectRowQuickly)
 
-        self._model.commentRemovedUndone.connect(self.selectRowQuickly)
+        self._model.comment_removed_undo.connect(self.selectRowQuickly)
 
-        self._model.timeUpdatedInitially.connect(self.selectRow)
-        self._model.timeUpdatedUndone.connect(self.selectRowQuickly)
-        self._model.timeUpdatedRedone.connect(self.selectRowQuickly)
+        self._model.time_updated_initial.connect(self.selectRow)
+        self._model.time_updated_undo.connect(self.selectRowQuickly)
+        self._model.time_updated_redo.connect(self.selectRowQuickly)
 
-        self._model.commentTypeUpdated.connect(self.selectRowQuickly)
-        self._model.commentTypeUpdatedUndone.connect(self.selectRowQuickly)
+        self._model.comment_type_updated_initial.connect(self.selectRowQuickly)
+        self._model.comment_type_updated_undo.connect(self.selectRowQuickly)
 
-        self._model.commentUpdated.connect(self.selectRowQuickly)
-        self._model.commentUpdatedUndone.connect(self.selectRowQuickly)
+        self._model.comment_updated_initial.connect(self.selectRowQuickly)
+        self._model.comment_updated_undo.connect(self.selectRowQuickly)
 
         self.modelChanged.emit()
 

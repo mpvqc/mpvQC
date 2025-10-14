@@ -32,7 +32,7 @@ def test_remove_comment(model):
 
 
 def test_remove_comment_fires_signals(model, make_spy):
-    removed_spy = make_spy(model.commentRemoved)
+    removed_spy = make_spy(model.comment_removed_initial)
 
     model.remove_row(0)
 
@@ -71,7 +71,7 @@ def test_remove_comment_undo_sorts_model(model):
 
 
 def test_remove_comment_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.remove_row(0)
     assert spy.count() == 1
@@ -84,8 +84,8 @@ def test_remove_comment_undo_redo_invalidates_search_results(model, make_spy):
 
 
 def test_remove_comment_undo_redo_fires_signals(model, make_spy):
-    removed_spy = make_spy(model.commentRemoved)
-    removed_undone_spy = make_spy(model.commentRemovedUndone)
+    removed_spy = make_spy(model.comment_removed_initial)
+    removed_undone_spy = make_spy(model.comment_removed_undo)
 
     model.remove_row(3)
 

@@ -62,7 +62,7 @@ def test_import_sorts_comments(make_model):
 
 
 def test_import_comments_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.commentsImportedInitially)
+    initially_spy = make_spy(model.comments_imported_initial)
 
     model.import_comments(DEFAULT_COMMENTS)
 
@@ -100,7 +100,7 @@ def test_import_comments_undo_redo(model):
 
 
 def test_import_comments_undo_redo_invalidates_search(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.import_comments([(Comment(time=99, comment_type="commentType", comment="Word 1"))])
     assert spy.count() == 1
@@ -113,9 +113,9 @@ def test_import_comments_undo_redo_invalidates_search(model, make_spy):
 
 
 def test_import_comments_undo_redo_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.commentsImportedInitially)
-    undone_spy = make_spy(model.commentsImportedUndone)
-    redone_spy = make_spy(model.commentsImportedRedone)
+    initially_spy = make_spy(model.comments_imported_initial)
+    undone_spy = make_spy(model.comments_imported_undo)
+    redone_spy = make_spy(model.comments_imported_redo)
 
     model.selectedRow = 3
 
