@@ -189,92 +189,22 @@ ListView {
         }
     }
 
-    Keys.onPressed: event => _keyEventHandler.handleKeyPress(event)
+    MpvqcCommentListKeyHandler {
+        id: _keyHandler
 
-    QtObject {
-        id: _keyEventHandler
+        hasComments: root.hasComments
+        isEditing: root.isCurrentlyEditing
+        currentIndex: root.currentIndex
 
-        readonly property bool isHaveComments: root.hasComments
-        readonly property bool isCurrentlyEditing: root.isCurrentlyEditing
-        readonly property bool isCurrentlyFullScreen: root.isCurrentlyFullScreen
-
-        function handleKeyPress(event: KeyEvent): void {
-            switch (event.key) {
-            case Qt.Key_Return:
-                _keyEventHandler._handleReturnKeyPressed(event);
-                break;
-            case Qt.Key_Delete:
-            case Qt.Key_Backspace:
-                _keyEventHandler._handleDeleteComment(event);
-                break;
-            case Qt.Key_C:
-                _keyEventHandler._handleCPressed(event);
-                break;
-            case Qt.Key_F:
-                _keyEventHandler._handleFPressed(event);
-                break;
-            case Qt.Key_Z:
-                _keyEventHandler._handleZPressed(event);
-                break;
-            default:
-                event.accepted = false;
-            }
-        }
-
-        function _handleReturnKeyPressed(event: KeyEvent): void {
-            if (event.isAutoRepeat) {
-                return;
-            }
-            if (isHaveComments && !isCurrentlyEditing && !isCurrentlyFullScreen) {
-                _impl.startEditingComment();
-            }
-        }
-
-        function _handleDeleteComment(event: KeyEvent): void {
-            if (event.isAutoRepeat) {
-                return;
-            }
-            if (isHaveComments && !isCurrentlyFullScreen) {
-                _impl.askToDeleteRow(root.currentIndex);
-            }
-        }
-
-        function _handleCPressed(event: KeyEvent): void {
-            const isCtrlPressed = event.modifiers === Qt.ControlModifier;
-            if (isCtrlPressed && !event.isAutoRepeat) {
-                if (isHaveComments && !isCurrentlyEditing && !isCurrentlyFullScreen) {
-                    _impl.copyCommentToClipboard(root.currentIndex);
-                    return;
-                }
-            }
-            event.accepted = false;
-        }
-
-        function _handleFPressed(event: KeyEvent): void {
-            const isCtrlPressed = event.modifiers === Qt.ControlModifier;
-            if (isCtrlPressed && !event.isAutoRepeat) {
-                if (isHaveComments && !isCurrentlyEditing && !isCurrentlyFullScreen) {
-                    _searchBoxLoader.showSearchBox();
-                    return;
-                }
-            }
-            event.accepted = false;
-        }
-
-        function _handleZPressed(event: KeyEvent): void {
-            const isCtrlPressed = event.modifiers & Qt.ControlModifier;
-            const isShiftPressed = event.modifiers & Qt.ShiftModifier;
-            if (isCtrlPressed && !event.isAutoRepeat) {
-                if (isShiftPressed) {
-                    root.model.redo();
-                } else {
-                    root.model.undo();
-                }
-                return;
-            }
-            event.accepted = false;
-        }
+        onEditCommentRequested: _impl.startEditingComment()
+        onDeleteCommentRequested: index => _impl.askToDeleteRow(index)
+        onCopyCommentRequested: index => _impl.copyCommentToClipboard(index)
+        onSearchRequested: _searchBoxLoader.showSearchBox()
+        onUndoRequested: root.model.undo()
+        onRedoRequested: root.model.redo()
     }
+
+    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
     Loader {
         id: _editLoader

@@ -342,6 +342,7 @@ files = [
     "qt/qml/views/qmldir",
     "qt/qml/views/table/MpvqcCommentList.qml",
     "qt/qml/views/table/MpvqcCommentListDelegate.qml",
+    "qt/qml/views/table/MpvqcCommentListKeyHandler.qml",
     "qt/qml/views/table/MpvqcContextMenu.qml",
     "qt/qml/views/table/MpvqcEditCommentPopup.qml",
     "qt/qml/views/table/MpvqcEditCommentTypeMenu.qml",

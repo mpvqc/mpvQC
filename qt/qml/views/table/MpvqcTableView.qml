@@ -35,7 +35,7 @@ Item {
     MpvqcPlaceholderView {
         width: root.width
         height: root.height
-        visible: _commentTable.commentCount === 0
+        visible: _commentTable.count === 0
     }
 
     Timer {
