@@ -7,7 +7,6 @@ import inject
 from PySide6.QtCore import Property, QObject, QTimer, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.decorators import QmlSingletonInProductionOnly
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -16,8 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-@QmlSingletonInProductionOnly
-class MpvqcLabelWidthCalculator(QObject):
+class MpvqcLabelWidthCalculatorBackend(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
     _player: PlayerService = inject.attr(PlayerService)
     _width_service: LabelWidthCalculatorService = inject.attr(LabelWidthCalculatorService)

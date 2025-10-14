@@ -5,6 +5,8 @@
 import QtQuick
 import QtQuick.Controls.Material
 
+import "../../utility"
+
 Item {
     id: root
 
@@ -12,9 +14,6 @@ Item {
     required property int time              // from model
     required property string commentType    // from model
     required property string comment        // from model
-
-    required property int timeLabelWidth
-    required property int commentTypeLabelWidth
 
     required property color backgroundColor
     required property color foregroundColor
@@ -103,7 +102,7 @@ Item {
             text: MpvqcTableUtility.formatTime(root.time)
             horizontalAlignment: Text.AlignHCenter
 
-            width: root.timeLabelWidth + leftPadding + rightPadding
+            width: MpvqcLabelWidthCalculator.timeLabelWidth + leftPadding + rightPadding
             height: root.height
 
             leftPadding: LayoutMirroring.enabled ? root.horizontalItemPadding : root.horizontalItemPadding * (2 / 3)
@@ -118,7 +117,7 @@ Item {
             text: qsTranslate("CommentTypes", root.commentType)
             horizontalAlignment: Text.AlignLeft
 
-            width: root.commentTypeLabelWidth + leftPadding + rightPadding
+            width: MpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding
             height: root.height
 
             leftPadding: root.horizontalItemPadding

@@ -323,6 +323,7 @@ files = [
     "qt/qml/models/MpvqcLibraryModel.qml",
     "qt/qml/models/MpvqcShortcutsModel.qml",
     "qt/qml/models/qmldir",
+    "qt/qml/utility/MpvqcLabelWidthCalculator.qml",
     "qt/qml/utility/MpvqcTheme.qml",
     "qt/qml/utility/MpvqcWindowProperties.qml",
     "qt/qml/utility/qmldir",
