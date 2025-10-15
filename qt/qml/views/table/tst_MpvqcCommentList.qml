@@ -84,6 +84,7 @@ TestCase {
             viewModel: MpvqcCommentTableViewModel {
                 model: MpvqcCommentModel {}
                 property int videoDuration: 10
+                property var commentTypes: ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4"]
                 function jumpToTime(time) {
                 }
                 function pauseVideo() {
@@ -92,8 +93,6 @@ TestCase {
 
             height: testCase.height
             width: testCase.width
-
-            commentTypes: ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4"]
 
             Component.onCompleted: {
                 model.import_comments([
