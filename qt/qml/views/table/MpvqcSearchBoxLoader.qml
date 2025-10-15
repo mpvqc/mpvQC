@@ -19,7 +19,7 @@ Loader {
 
     onLoaded: item.open() // qmllint disable
 
-    sourceComponent: MpvqcSearchBoxView {
+    sourceComponent: MpvqcSearchBoxPopup {
         parent: root.parent
         viewModel: root.searchBoxViewModel
         onClosed: root.closed()
