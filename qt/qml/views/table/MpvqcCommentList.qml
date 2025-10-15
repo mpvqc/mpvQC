@@ -22,8 +22,8 @@ ListView {
     readonly property bool isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
 
     readonly property alias editLoader: _editLoader // for tests
-    readonly property alias contextMenuLoader: _contextMenuView // for tests
-    readonly property alias messageBoxLoader: _messageBoxView // for tests
+    readonly property alias contextMenuLoader: _contextMenuLoader // for tests
+    readonly property alias messageBoxLoader: _messageBoxLoader // for tests
 
     readonly property string searchQuery: _searchBoxLoader.searchQuery
 
@@ -74,8 +74,10 @@ ListView {
 
         onTimeLabelPressed: coordinates => {
             if (root.isCurrentlyEditing && isSelected) {
-                ;
-            } else if (isSelected) {
+                return;
+            }
+
+            if (isSelected) {
                 root.viewModel.pauseVideo();
                 root.viewModel.jumpToTime(time);
                 root.viewModel.startEditingTime(index, time, coordinates);
@@ -86,8 +88,10 @@ ListView {
 
         onCommentTypeLabelPressed: coordinates => {
             if (root.isCurrentlyEditing && isSelected) {
-                ;
-            } else if (isSelected) {
+                return;
+            }
+
+            if (isSelected) {
                 root.viewModel.startEditingCommentType(index, commentType, coordinates);
             } else {
                 root.viewModel.select(index);
@@ -127,7 +131,7 @@ ListView {
 
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
-    MpvqcEditLoaderView {
+    MpvqcEditLoader {
         id: _editLoader
 
         viewModel: root.viewModel
@@ -138,20 +142,20 @@ ListView {
         }
     }
 
-    MpvqcContextMenuView {
-        id: _contextMenuView
+    MpvqcContextMenuLoader {
+        id: _contextMenuLoader
 
         viewModel: root.viewModel
     }
 
-    MpvqcMessageBoxView {
-        id: _messageBoxView
+    MpvqcMessageBoxLoader {
+        id: _messageBoxLoader
 
         viewModel: root.viewModel
         onClosed: root.forceActiveFocus()
     }
 
-    MpvqcSearchBoxLoaderView {
+    MpvqcSearchBoxLoader {
         id: _searchBoxLoader
 
         viewModel: root.viewModel
