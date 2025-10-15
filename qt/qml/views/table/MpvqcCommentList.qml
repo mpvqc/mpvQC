@@ -27,7 +27,7 @@ ListView {
     readonly property alias contextMenuLoader: _contextMenuView // for tests
     readonly property alias messageBoxLoader: _messageBoxView // for tests
 
-    readonly property string searchQuery: _searchBoxLoader.item?.searchQuery ?? ""
+    readonly property string searchQuery: _searchBoxLoader.searchQuery
 
     model: viewModel.model
 
@@ -122,7 +122,7 @@ ListView {
         onEditCommentRequested: index => root.viewModel.startEditingComment(index)
         onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
-        onSearchRequested: _searchBoxLoader.showSearchBox()
+        onSearchRequested: root.viewModel.showSearchBox()
         onUndoRequested: root.viewModel.undo()
         onRedoRequested: root.viewModel.redo()
     }
@@ -234,37 +234,16 @@ ListView {
         onClosed: root.forceActiveFocus()
     }
 
-    Loader {
+    MpvqcSearchBoxLoaderView {
         id: _searchBoxLoader
 
-        function showSearchBox(): void {
-            if (active) {
-                item.open(); // qmllint disable
-            } else {
-                active = true;
-            }
+        viewModel: root.viewModel
+        searchBoxViewModel: MpvqcSearchBoxViewModel {
+            model: root.model
+            selectedIndex: root.currentIndex
+            onHighlightRequested: index => root.viewModel.select(index)
         }
-
-        active: false
-        asynchronous: true
-        visible: active
-
-        onLoaded: item.open() // qmllint disable
-
-        sourceComponent: MpvqcSearchBoxView {
-            id: _searchBox
-
-            parent: root
-
-            viewModel: MpvqcSearchBoxViewModel {
-                model: root.model
-                selectedIndex: root.currentIndex
-
-                onHighlightRequested: index => root.viewModel.select(index)
-            }
-
-            onClosed: root.forceActiveFocus()
-        }
+        onClosed: root.forceActiveFocus()
     }
 
     Connections {
