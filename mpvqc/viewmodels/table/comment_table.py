@@ -41,6 +41,7 @@ class MpvqcCommentTableViewModel(QObject):
     commentTypeEditRequested = Signal(int, str, QPointF)
     commentEditRequested = Signal(int)
 
+    showSearchBoxRequested = Signal()
     contextMenuRequested = Signal(int, QPointF)
     deleteCommentRequested = Signal(int)
 
@@ -114,6 +115,10 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(int)
     def startEditingComment(self, index: int) -> None:
         self.commentEditRequested.emit(index)
+
+    @Slot()
+    def showSearchBox(self) -> None:
+        self.showSearchBoxRequested.emit()
 
     @Slot(int, QPointF)
     def openContextMenu(self, index: int, coordinates: QPointF) -> None:
