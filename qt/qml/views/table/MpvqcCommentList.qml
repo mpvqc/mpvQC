@@ -25,7 +25,7 @@ ListView {
 
     readonly property alias editLoader: _editLoader // for tests
     readonly property alias contextMenuLoader: _contextMenuView // for tests
-    readonly property alias messageBoxLoader: _messageBoxLoader // for tests
+    readonly property alias messageBoxLoader: _messageBoxView // for tests
 
     model: viewModel.model
 
@@ -238,33 +238,11 @@ ListView {
         viewModel: root.viewModel
     }
 
-    Loader {
-        id: _messageBoxLoader
+    MpvqcMessageBoxView {
+        id: _messageBoxView
 
-        function askToDeleteComment(index: int): void {
-            setSource("../../messageboxes/MpvqcDeleteCommentMessageBox.qml", {
-                commentIndex: index
-            });
-            active = true;
-        }
-
-        active: false
-        asynchronous: true
-        visible: active
-
-        onLoaded: item.open() // qmllint disable
-
-        Connections {
-            target: _messageBoxLoader.item
-
-            function onDeleteCommentConfirmed(index: int): void {
-                root.viewModel.removeRow(index);
-            }
-
-            function onClosed(): void {
-                _messageBoxLoader.active = false;
-            }
-        }
+        viewModel: root.viewModel
+        onClosed: root.forceActiveFocus()
     }
 
     Loader {
@@ -340,10 +318,6 @@ ListView {
             const comment = item.comment; // qmllint disable
             const commentLabel = item.commentLabel;
             _editLoader.startEditingComment(index, comment, commentLabel);
-        }
-
-        function onDeleteCommentRequested(index: int): void {
-            _messageBoxLoader.askToDeleteComment(index);
         }
     }
 
