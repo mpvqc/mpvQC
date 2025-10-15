@@ -37,6 +37,9 @@ Popup {
     padding: 5
 
     closePolicy: Popup.NoAutoClose
+
+    Material.background: MpvqcTheme.backgroundAlternate
+    Material.foreground: MpvqcTheme.foregroundAlternate
     Material.roundedScale: Material.SmallScale
 
     onAboutToShow: {
@@ -61,7 +64,7 @@ Popup {
 
         IconLabel {
             Layout.leftMargin: 8
-            Layout.rightMargin: 8
+            Layout.rightMargin: 4
 
             icon {
                 source: "qrc:/data/icons/search_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"

@@ -26,7 +26,9 @@ class Color:
 @dataclass(frozen=True)
 class MpvqcColorSet:
     background: str
+    backgroundAlternate: str
     foreground: str
+    foregroundAlternate: str
     control: str
     rowHighlight: str
     rowHighlightText: str
@@ -117,13 +119,15 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool):
             colors.append(
                 MpvqcColorSet(
                     background=palette["surface"],
+                    backgroundAlternate=palette["surfaceContainerHigh"],
                     foreground=palette["onSurfaceVariant"],
+                    foregroundAlternate=palette["onSurfaceVariant"],
                     control=palette["primary"],
                     rowHighlight=palette["inversePrimary"],
                     rowHighlightText=palette["onSurface"],
                     rowBase=palette["surface"],
                     rowBaseText=palette["onSurfaceVariant"],
-                    rowBaseAlternate=palette["surfaceContainerLowest"],
+                    rowBaseAlternate=palette["surfaceContainerLow"],
                     rowBaseAlternateText=palette["onSurfaceVariant"],
                 )
             )
@@ -131,7 +135,9 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool):
             colors.append(
                 MpvqcColorSet(
                     background=palette["surfaceContainerLow"],
+                    backgroundAlternate=palette["secondaryContainer"],
                     foreground=palette["onSurfaceVariant"],
+                    foregroundAlternate=palette["onSecondaryContainer"],
                     control=palette["secondary"],
                     rowHighlight=palette["primary"],
                     rowHighlightText=palette["onPrimary"],

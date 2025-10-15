@@ -19,14 +19,16 @@ class MpvqcThemePaletteModel(QAbstractListModel):
     _settings: SettingsService = inject.attr(SettingsService)
 
     BackgroundRole = Qt.ItemDataRole.UserRole + 1
-    ForegroundRole = Qt.ItemDataRole.UserRole + 2
-    ControlRole = Qt.ItemDataRole.UserRole + 3
-    RowHighlightRole = Qt.ItemDataRole.UserRole + 4
-    RowHighlightTextRole = Qt.ItemDataRole.UserRole + 5
-    RowBaseRole = Qt.ItemDataRole.UserRole + 6
-    RowBaseTextRole = Qt.ItemDataRole.UserRole + 7
-    RowBaseAlternateRole = Qt.ItemDataRole.UserRole + 8
-    RowBaseAlternateTextRole = Qt.ItemDataRole.UserRole + 9
+    BackgroundAlternateRole = Qt.ItemDataRole.UserRole + 2
+    ForegroundRole = Qt.ItemDataRole.UserRole + 3
+    ForegroundAlternateRole = Qt.ItemDataRole.UserRole + 4
+    ControlRole = Qt.ItemDataRole.UserRole + 5
+    RowHighlightRole = Qt.ItemDataRole.UserRole + 6
+    RowHighlightTextRole = Qt.ItemDataRole.UserRole + 7
+    RowBaseRole = Qt.ItemDataRole.UserRole + 8
+    RowBaseTextRole = Qt.ItemDataRole.UserRole + 9
+    RowBaseAlternateRole = Qt.ItemDataRole.UserRole + 10
+    RowBaseAlternateTextRole = Qt.ItemDataRole.UserRole + 11
 
     aboutToReset = Signal()
     resetDone = Signal()
@@ -59,8 +61,12 @@ class MpvqcThemePaletteModel(QAbstractListModel):
         match role:
             case self.BackgroundRole:
                 return palette["background"]
+            case self.BackgroundAlternateRole:
+                return palette["backgroundAlternate"]
             case self.ForegroundRole:
                 return palette["foreground"]
+            case self.ForegroundAlternateRole:
+                return palette["foregroundAlternate"]
             case self.ControlRole:
                 return palette["control"]
             case self.RowHighlightRole:
@@ -79,7 +85,9 @@ class MpvqcThemePaletteModel(QAbstractListModel):
     def roleNames(self):
         return {
             self.BackgroundRole: b"background",
+            self.BackgroundAlternateRole: b"backgroundAlternate",
             self.ForegroundRole: b"foreground",
+            self.ForegroundAlternateRole: b"foregroundAlternate",
             self.ControlRole: b"control",
             self.RowHighlightRole: b"rowHighlight",
             self.RowHighlightTextRole: b"rowHighlightText",

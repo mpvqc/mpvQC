@@ -39,8 +39,16 @@ class MpvqcThemeBackend(QObject):
         return self._get_current_color("background")
 
     @Property(str, notify=themeChanged)
+    def backgroundAlternate(self) -> str:
+        return self._get_current_color("backgroundAlternate")
+
+    @Property(str, notify=themeChanged)
     def foreground(self) -> str:
         return self._get_current_color("foreground")
+
+    @Property(str, notify=themeChanged)
+    def foregroundAlternate(self) -> str:
+        return self._get_current_color("foregroundAlternate")
 
     @Property(str, notify=themeChanged)
     def control(self) -> str:
