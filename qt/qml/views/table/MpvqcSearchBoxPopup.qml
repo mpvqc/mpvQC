@@ -200,15 +200,17 @@ Popup {
         yAxis.enabled: true
 
         onActiveChanged: {
-            dragStartY = active ? root.y : -1;
             if (active) {
+                dragStartY = root.y;
                 _dragScaleAnimation.from = 1;
                 _dragScaleAnimation.to = dragScaleFactor;
+                _dragScaleAnimation.start();
             } else {
+                dragStartY = -1;
                 _dragScaleAnimation.from = dragScaleFactor;
                 _dragScaleAnimation.to = 1;
+                _dragScaleAnimation.start();
             }
-            _dragScaleAnimation.start();
         }
 
         onMaxYChanged: {
@@ -241,5 +243,13 @@ Popup {
         target: root
         property: "y"
         value: _dragHandler.snapToBottom && !_dragHandler.active ? _dragHandler.maxY : _dragHandler.targetY
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        hoverEnabled: true
+        cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+        z: _dragHandler.active ? 1 : -1
     }
 }
