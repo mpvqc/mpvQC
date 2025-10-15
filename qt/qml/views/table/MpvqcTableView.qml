@@ -2,30 +2,26 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma ComponentBehavior: Bound
-
 import QtQuick
 
 import pyobjects
 
-import "../../utility"
-
 Item {
     id: root
 
-    readonly property alias commentCount: _commentTable.count
-    readonly property alias selectedCommentIndex: _commentTable.currentIndex
+    readonly property alias commentCount: _commentList.count
+    readonly property alias selectedCommentIndex: _commentList.currentIndex
 
     function forceActiveFocus(): void {
-        _commentTable.forceActiveFocus();
+        _commentList.forceActiveFocus();
     }
 
     function addNewComment(commentType: string): void {
-        _commentTable.viewModel.addRow(commentType);
+        _commentList.viewModel.addRow(commentType);
     }
 
     MpvqcCommentList {
-        id: _commentTable
+        id: _commentList
 
         width: root.width
         height: root.height
@@ -39,7 +35,7 @@ Item {
     MpvqcPlaceholderView {
         width: root.width
         height: root.height
-        visible: _commentTable.count === 0
+        visible: _commentList.count === 0
     }
 
     Timer {
@@ -47,7 +43,7 @@ Item {
 
         repeat: true
         interval: viewModel.backupInterval
-        running: viewModel.backupEnabled && _commentTable.count > 0
+        running: viewModel.backupEnabled && _commentList.count > 0
 
         onTriggered: viewModel.backup()
     }
