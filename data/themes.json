@@ -13,7 +13,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#fff0ee",
                 "rowBaseText": "#534341",
-                "rowBaseAlternate": "#e8dad8",
+                "rowBaseAlternate": "#f1dedc",
                 "rowBaseAlternateText": "#534341"
             },
             {
@@ -24,7 +24,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#fff0f1",
                 "rowBaseText": "#524345",
-                "rowBaseAlternate": "#e8dadb",
+                "rowBaseAlternate": "#f0dee0",
                 "rowBaseAlternateText": "#524345"
             },
             {
@@ -35,7 +35,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#fcf0f7",
                 "rowBaseText": "#4d444c",
-                "rowBaseAlternate": "#e5dae1",
+                "rowBaseAlternate": "#ebdfe6",
                 "rowBaseAlternateText": "#4d444c"
             },
             {
@@ -46,7 +46,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f8f1fa",
                 "rowBaseText": "#49454e",
-                "rowBaseAlternate": "#e1dbe3",
+                "rowBaseAlternate": "#e7e0e8",
                 "rowBaseAlternateText": "#49454e"
             },
             {
@@ -57,7 +57,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f5f2fa",
                 "rowBaseText": "#46464f",
-                "rowBaseAlternate": "#dfdce3",
+                "rowBaseAlternate": "#e4e1e9",
                 "rowBaseAlternateText": "#46464f"
             },
             {
@@ -68,7 +68,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f2f3fa",
                 "rowBaseText": "#43474e",
-                "rowBaseAlternate": "#dcdde3",
+                "rowBaseAlternate": "#e1e2e8",
                 "rowBaseAlternateText": "#43474e"
             },
             {
@@ -79,7 +79,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f1f4f9",
                 "rowBaseText": "#41474d",
-                "rowBaseAlternate": "#dbdee2",
+                "rowBaseAlternate": "#e0e3e8",
                 "rowBaseAlternateText": "#41474d"
             },
             {
@@ -90,7 +90,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#eff5f6",
                 "rowBaseText": "#3f484a",
-                "rowBaseAlternate": "#d9dfe0",
+                "rowBaseAlternate": "#dee3e5",
                 "rowBaseAlternateText": "#3f484a"
             },
             {
@@ -101,7 +101,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#eff5f2",
                 "rowBaseText": "#3f4947",
-                "rowBaseAlternate": "#d9dfdc",
+                "rowBaseAlternate": "#dde4e1",
                 "rowBaseAlternateText": "#3f4947"
             },
             {
@@ -112,7 +112,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f1f5ec",
                 "rowBaseText": "#424940",
-                "rowBaseAlternate": "#dbdfd7",
+                "rowBaseAlternate": "#e0e4db",
                 "rowBaseAlternateText": "#424940"
             },
             {
@@ -123,7 +123,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f3f4e9",
                 "rowBaseText": "#44483d",
-                "rowBaseAlternate": "#ddded4",
+                "rowBaseAlternate": "#e2e3d8",
                 "rowBaseAlternateText": "#44483d"
             },
             {
@@ -134,7 +134,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f6f4e7",
                 "rowBaseText": "#47483b",
-                "rowBaseAlternate": "#e0ded2",
+                "rowBaseAlternate": "#e5e3d6",
                 "rowBaseAlternateText": "#47483b"
             },
             {
@@ -145,7 +145,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#f9f3e5",
                 "rowBaseText": "#4a473a",
-                "rowBaseAlternate": "#e2ddd0",
+                "rowBaseAlternate": "#e7e2d5",
                 "rowBaseAlternateText": "#4a473a"
             },
             {
@@ -156,7 +156,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#fcf2e5",
                 "rowBaseText": "#4d4639",
-                "rowBaseAlternate": "#e5dcd0",
+                "rowBaseAlternate": "#ebe1d4",
                 "rowBaseAlternateText": "#4d4639"
             },
             {
@@ -167,7 +167,7 @@
                 "rowHighlightText": "#ffffff",
                 "rowBase": "#fff1e7",
                 "rowBaseText": "#51453a",
-                "rowBaseAlternate": "#e8dbd2",
+                "rowBaseAlternate": "#efe0d5",
                 "rowBaseAlternateText": "#51453a"
             }
         ]
@@ -186,7 +186,7 @@
                 "rowHighlightText": "#fff7f6",
                 "rowBase": "#1a1110",
                 "rowBaseText": "#dbc5c1",
-                "rowBaseAlternate": "#221615",
+                "rowBaseAlternate": "#100807",
                 "rowBaseAlternateText": "#dbc5c1"
             },
             {
@@ -197,7 +197,7 @@
                 "rowHighlightText": "#fff7f7",
                 "rowBase": "#191112",
                 "rowBaseText": "#dac5c6",
-                "rowBaseAlternate": "#201617",
+                "rowBaseAlternate": "#0f0809",
                 "rowBaseAlternateText": "#dac5c6"
             },
             {
@@ -208,7 +208,7 @@
                 "rowHighlightText": "#fff7fa",
                 "rowBase": "#171216",
                 "rowBaseText": "#d3c6cf",
-                "rowBaseAlternate": "#1e171d",
+                "rowBaseAlternate": "#0d080d",
                 "rowBaseAlternateText": "#d3c6cf"
             },
             {
@@ -219,7 +219,7 @@
                 "rowHighlightText": "#fef7ff",
                 "rowBase": "#151218",
                 "rowBaseText": "#cec7d2",
-                "rowBaseAlternate": "#1b171f",
+                "rowBaseAlternate": "#0b090e",
                 "rowBaseAlternateText": "#cec7d2"
             },
             {
@@ -230,7 +230,7 @@
                 "rowHighlightText": "#fbf8ff",
                 "rowBase": "#121318",
                 "rowBaseText": "#cac8d3",
-                "rowBaseAlternate": "#17191f",
+                "rowBaseAlternate": "#09090e",
                 "rowBaseAlternateText": "#cac8d3"
             },
             {
@@ -241,7 +241,7 @@
                 "rowHighlightText": "#f8f9ff",
                 "rowBase": "#111418",
                 "rowBaseText": "#c6cad2",
-                "rowBaseAlternate": "#161a1f",
+                "rowBaseAlternate": "#070a0e",
                 "rowBaseAlternateText": "#c6cad2"
             },
             {
@@ -252,7 +252,7 @@
                 "rowHighlightText": "#f6f9fe",
                 "rowBase": "#101417",
                 "rowBaseText": "#c4cad1",
-                "rowBaseAlternate": "#151a1e",
+                "rowBaseAlternate": "#070a0e",
                 "rowBaseAlternateText": "#c4cad1"
             },
             {
@@ -263,7 +263,7 @@
                 "rowHighlightText": "#f5fafc",
                 "rowBase": "#0e1416",
                 "rowBaseText": "#c2cbce",
-                "rowBaseAlternate": "#121a1d",
+                "rowBaseAlternate": "#060b0c",
                 "rowBaseAlternateText": "#c2cbce"
             },
             {
@@ -274,7 +274,7 @@
                 "rowHighlightText": "#f4fbf8",
                 "rowBase": "#0e1513",
                 "rowBaseText": "#c1ccc9",
-                "rowBaseAlternate": "#121b19",
+                "rowBaseAlternate": "#050b0a",
                 "rowBaseAlternateText": "#c1ccc9"
             },
             {
@@ -285,7 +285,7 @@
                 "rowHighlightText": "#f7faf1",
                 "rowBase": "#10140f",
                 "rowBaseText": "#c5ccc0",
-                "rowBaseAlternate": "#151a13",
+                "rowBaseAlternate": "#070b06",
                 "rowBaseAlternateText": "#c5ccc0"
             },
             {
@@ -296,7 +296,7 @@
                 "rowHighlightText": "#f9faef",
                 "rowBase": "#12140e",
                 "rowBaseText": "#c8cbbd",
-                "rowBaseAlternate": "#171a12",
+                "rowBaseAlternate": "#080b06",
                 "rowBaseAlternateText": "#c8cbbd"
             },
             {
@@ -307,7 +307,7 @@
                 "rowHighlightText": "#fcf9ec",
                 "rowBase": "#13140c",
                 "rowBaseText": "#cbcaba",
-                "rowBaseAlternate": "#191a10",
+                "rowBaseAlternate": "#0a0a05",
                 "rowBaseAlternateText": "#cbcaba"
             },
             {
@@ -318,7 +318,7 @@
                 "rowHighlightText": "#fef9eb",
                 "rowBase": "#15130c",
                 "rowBaseText": "#cfcab8",
-                "rowBaseAlternate": "#1b1910",
+                "rowBaseAlternate": "#0b0a04",
                 "rowBaseAlternateText": "#cfcab8"
             },
             {
@@ -329,7 +329,7 @@
                 "rowHighlightText": "#fff8f1",
                 "rowBase": "#17130b",
                 "rowBaseText": "#d3c8b7",
-                "rowBaseAlternate": "#1e190e",
+                "rowBaseAlternate": "#0d0904",
                 "rowBaseAlternateText": "#d3c8b7"
             },
             {
@@ -340,7 +340,7 @@
                 "rowHighlightText": "#fff8f4",
                 "rowBase": "#19120c",
                 "rowBaseText": "#d8c6b8",
-                "rowBaseAlternate": "#201710",
+                "rowBaseAlternate": "#0f0904",
                 "rowBaseAlternateText": "#d8c6b8"
             }
         ]
