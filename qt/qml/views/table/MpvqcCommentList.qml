@@ -20,8 +20,6 @@ ListView {
     readonly property bool isCurrentlyEditing: _editLoader.active
     readonly property bool isNotCurrentlyEditing: !isCurrentlyEditing
     readonly property bool isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
-    readonly property list<string> commentTypes: viewModel.commentTypes
-    readonly property int videoDuration: viewModel.videoDuration
 
     readonly property alias editLoader: _editLoader // for tests
     readonly property alias contextMenuLoader: _contextMenuView // for tests
@@ -129,95 +127,14 @@ ListView {
 
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
-    Loader {
+    MpvqcEditLoaderView {
         id: _editLoader
 
-        readonly property url editCommentTypeMenu: Qt.resolvedUrl("MpvqcEditCommentTypeMenu.qml")
-        readonly property url editCommentPopup: Qt.resolvedUrl("MpvqcEditCommentPopup.qml")
-        readonly property url editTimePopup: Qt.resolvedUrl("MpvqcEditTimePopup.qml")
-
-        readonly property bool isEditingComment: source === editCommentPopup
-
-        function startEditingTime(index: int, time: int, coordinates: point): void {
-            asynchronous = true;
-            setSource(editTimePopup, {
-                currentTime: time,
-                currentListIndex: index,
-                videoDuration: root.videoDuration,
-                openedAt: coordinates
+        viewModel: root.viewModel
+        onCommentEditPopupHeightChanged: {
+            Qt.callLater(() => {
+                root.positionViewAtIndex(root.currentIndex, ListView.Contain);
             });
-            active = true;
-        }
-
-        function startEditingCommentType(index: int, currentCommentType: string, coordinates: point): void {
-            asynchronous = true;
-            setSource(editCommentTypeMenu, {
-                currentCommentType: currentCommentType,
-                currentListIndex: index,
-                commentTypes: root.commentTypes,
-                openedAt: coordinates
-            });
-            active = true;
-        }
-
-        function startEditingComment(index: int, currentComment: string, parentItem): void {
-            asynchronous = false;
-            setSource(editCommentPopup, {
-                parent: parentItem,
-                currentComment: currentComment,
-                currentListIndex: index
-            });
-            active = true;
-        }
-
-        active: false
-        visible: active
-
-        onLoaded: item.open() // qmllint disable
-
-        Connections {
-            target: _editLoader.item
-            ignoreUnknownSignals: true
-
-            function onTimeTemporaryChanged(time: int): void {
-                root.viewModel.jumpToTime(time);
-            }
-
-            function onTimeEdited(index: int, newTime: int): void {
-                root.viewModel.updateTime(index, newTime);
-            }
-
-            function onTimeKept(oldTime: int): void {
-                root.viewModel.jumpToTime(oldTime);
-            }
-
-            function onCommentTypeEdited(index: int, newCommentType: string): void {
-                root.viewModel.updateCommentType(index, newCommentType);
-            }
-
-            function onCommentEdited(index: int, newComment: string): void {
-                root.viewModel.updateComment(index, newComment);
-            }
-
-            function onCommentEditPopupHeightChanged(): void {
-                Qt.callLater(() => {
-                    root.positionViewAtIndex(root.currentIndex, ListView.Contain);
-                });
-            }
-
-            function onClosed(): void {
-                _stopEditDelayTimer.restart();
-            }
-        }
-
-        Timer {
-            id: _stopEditDelayTimer
-
-            interval: _editLoader.isEditingComment ? 150 : 0
-
-            onTriggered: {
-                _editLoader.active = false;
-            }
         }
     }
 
@@ -268,14 +185,6 @@ ListView {
         function onLastRowSelected(): void {
             const lastIndex = root.count - 1;
             onQuickSelectionRequested(lastIndex);
-        }
-
-        function onTimeEditRequested(index: int, time: int, coordinates: point): void {
-            _editLoader.startEditingTime(index, time, coordinates);
-        }
-
-        function onCommentTypeEditRequested(index: int, commentType: string, coordinates: point): void {
-            _editLoader.startEditingCommentType(index, commentType, coordinates);
         }
 
         function onCommentEditRequested(index: int): void {

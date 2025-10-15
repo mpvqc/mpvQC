@@ -345,6 +345,7 @@ files = [
     "qt/qml/views/table/MpvqcContextMenuView.qml",
     "qt/qml/views/table/MpvqcEditCommentPopup.qml",
     "qt/qml/views/table/MpvqcEditCommentTypeMenu.qml",
+    "qt/qml/views/table/MpvqcEditLoaderView.qml",
     "qt/qml/views/table/MpvqcEditTimePopup.qml",
     "qt/qml/views/table/MpvqcMessageBoxView.qml",
     "qt/qml/views/table/MpvqcPlaceholderView.qml",
