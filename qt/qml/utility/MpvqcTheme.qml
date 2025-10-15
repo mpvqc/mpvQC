@@ -11,7 +11,9 @@ import pyobjects
 QtObject {
     readonly property bool isDark: _internal.backend.isDark
     readonly property alias background: _internal.background.value
+    readonly property alias backgroundAlternate: _internal.backgroundAlternate.value
     readonly property alias foreground: _internal.foreground.value
+    readonly property alias foregroundAlternate: _internal.foregroundAlternate.value
     readonly property alias control: _internal.control.value
     readonly property alias rowHighlight: _internal.rowHighlight.value
     readonly property alias rowHighlightText: _internal.rowHighlightText.value
@@ -47,8 +49,16 @@ QtObject {
             value: _internal.backend.background
         }
 
+        readonly property AnimatedColor backgroundAlternate: AnimatedColor {
+            value: _internal.backend.backgroundAlternate
+        }
+
         readonly property AnimatedColor foreground: AnimatedColor {
             value: _internal.backend.foreground
+        }
+
+        readonly property AnimatedColor foregroundAlternate: AnimatedColor {
+            value: _internal.backend.foregroundAlternate
         }
 
         readonly property AnimatedColor control: AnimatedColor {
