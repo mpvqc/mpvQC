@@ -27,6 +27,8 @@ ListView {
     readonly property alias contextMenuLoader: _contextMenuView // for tests
     readonly property alias messageBoxLoader: _messageBoxView // for tests
 
+    readonly property string searchQuery: _searchBoxLoader.item?.searchQuery ?? ""
+
     model: viewModel.model
 
     clip: true
@@ -60,10 +62,10 @@ ListView {
         readonly property bool isSelected: ListView.isCurrentItem
 
         width: parent ? root.width : 0
-
         scrollBarWidth: _scrollBar.visibleWidth
+
         listView: root
-        searchQuery: _impl.searchQuery
+        searchQuery: root.searchQuery
 
         onPlayButtonPressed: {
             root.viewModel.select(index);
@@ -107,21 +109,6 @@ ListView {
                 root.viewModel.select(index);
                 root.viewModel.openContextMenu(index, coordinates);
             }
-        }
-    }
-
-    QtObject {
-        id: _impl
-
-        readonly property alias searchQuery: _searchBoxLoader.searchQuery
-
-        readonly property Timer _ensureCommentVisibleTimer: Timer {
-            interval: 0
-            onTriggered: root.positionViewAtIndex(root.currentIndex, ListView.Contain)
-        }
-
-        function ensureFullCommentEditingPopupVisible(): void {
-            _ensureCommentVisibleTimer.restart();
         }
     }
 
@@ -213,7 +200,9 @@ ListView {
             }
 
             function onCommentEditPopupHeightChanged(): void {
-                _impl.ensureFullCommentEditingPopupVisible();
+                Qt.callLater(() => {
+                    root.positionViewAtIndex(root.currentIndex, ListView.Contain);
+                });
             }
 
             function onClosed(): void {
@@ -247,8 +236,6 @@ ListView {
 
     Loader {
         id: _searchBoxLoader
-
-        readonly property string searchQuery: item?.searchQuery ?? "" // qmllint disable
 
         function showSearchBox(): void {
             if (active) {
