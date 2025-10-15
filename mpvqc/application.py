@@ -10,7 +10,6 @@ from PySide6.QtCore import QUrl, Signal
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
-from mpvqc.helpers import CloseEventFilter
 from mpvqc.services import (
     FileStartupService,
     FontLoaderService,
@@ -18,6 +17,7 @@ from mpvqc.services import (
     InternationalizationService,
     SettingsService,
 )
+from mpvqc.utility import CloseEventFilter
 
 
 class MpvqcApplication(QGuiApplication):

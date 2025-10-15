@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcThemeViewModel(QObject):
+class MpvqcThemeBackend(QObject):
     _themes: ThemeService = inject.attr(ThemeService)
     _settings: SettingsService = inject.attr(SettingsService)
 

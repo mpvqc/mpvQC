@@ -5,3 +5,4 @@
 # ruff: noqa: F401
 from .comment_table import MpvqcCommentTableViewModel
 from .placeholder import MpvqcPlaceholderViewModel
+from .search_box import MpvqcSearchBoxViewModel
