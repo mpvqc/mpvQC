@@ -5,7 +5,6 @@
 import inject
 from loguru import logger
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
-from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import OperatingSystemZoomDetectorService, PlayerService, SettingsService, WindowPropertiesService
@@ -57,7 +56,7 @@ class MpvqcResizeHandler(QObject):
 
     @property
     def _available_screen_width(self) -> int:
-        screen = QGuiApplication.primaryScreen()
+        screen = self._window_properties_service.screen
         if not screen:
             logger.error("Primary screen is None - cannot determine available width")
             return 0
@@ -65,7 +64,7 @@ class MpvqcResizeHandler(QObject):
 
     @property
     def _available_screen_height(self) -> int:
-        screen = QGuiApplication.primaryScreen()
+        screen = self._window_properties_service.screen
         if not screen:
             logger.error("Primary screen is None - cannot determine available height")
             return 0

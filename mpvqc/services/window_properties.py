@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from PySide6.QtCore import QObject, Qt, Signal
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QScreen
 
 
 class WindowPropertiesService(QObject):
@@ -45,6 +45,10 @@ class WindowPropertiesService(QObject):
     @property
     def is_maximized(self) -> bool:
         return self._is_maximized
+
+    @property
+    def screen(self) -> QScreen:
+        return self._window.screen()
 
     def _on_width_changed(self, width: int) -> None:
         if width != self._width:
