@@ -19,7 +19,6 @@ ListView {
     readonly property bool hasComments: count > 0
     readonly property bool isCurrentlyEditing: _editLoader.active
     readonly property bool isNotCurrentlyEditing: !isCurrentlyEditing
-    readonly property bool isCurrentlyFullScreen: MpvqcWindowProperties.isFullscreen
 
     readonly property alias editLoader: _editLoader // for tests
     readonly property alias contextMenuLoader: _contextMenuLoader // for tests

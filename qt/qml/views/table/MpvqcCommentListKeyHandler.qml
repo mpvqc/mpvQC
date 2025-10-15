@@ -4,8 +4,6 @@
 
 import QtQuick
 
-import pyobjects
-
 import "../../utility"
 
 QtObject {
