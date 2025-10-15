@@ -6,7 +6,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.helpers.resizer import calculate_horizontal_layout_sizes, calculate_vertical_layout_sizes
+from mpvqc.utility.resizer import calculate_horizontal_layout_sizes, calculate_vertical_layout_sizes
 
 HEADER_HEIGHT = 40
 BORDER_SIZE = 6

@@ -9,7 +9,7 @@ import QtQuick
 import pyobjects
 
 QtObject {
-    readonly property bool isDark: _internal.viewModel.isDark
+    readonly property bool isDark: _internal.backend.isDark
     readonly property alias background: _internal.background.value
     readonly property alias foreground: _internal.foreground.value
     readonly property alias control: _internal.control.value
@@ -41,42 +41,42 @@ QtObject {
     property QtObject _: QtObject {
         id: _internal
 
-        readonly property var viewModel: MpvqcThemeViewModel {}
+        readonly property var backend: MpvqcThemeBackend {}
 
         readonly property AnimatedColor background: AnimatedColor {
-            value: _internal.viewModel.background
+            value: _internal.backend.background
         }
 
         readonly property AnimatedColor foreground: AnimatedColor {
-            value: _internal.viewModel.foreground
+            value: _internal.backend.foreground
         }
 
         readonly property AnimatedColor control: AnimatedColor {
-            value: _internal.viewModel.control
+            value: _internal.backend.control
         }
 
         readonly property AnimatedColor rowHighlight: AnimatedColor {
-            value: _internal.viewModel.rowHighlight
+            value: _internal.backend.rowHighlight
         }
 
         readonly property AnimatedColor rowHighlightText: AnimatedColor {
-            value: _internal.viewModel.rowHighlightText
+            value: _internal.backend.rowHighlightText
         }
 
         readonly property AnimatedColor rowBase: AnimatedColor {
-            value: _internal.viewModel.rowBase
+            value: _internal.backend.rowBase
         }
 
         readonly property AnimatedColor rowBaseText: AnimatedColor {
-            value: _internal.viewModel.rowBaseText
+            value: _internal.backend.rowBaseText
         }
 
         readonly property AnimatedColor rowBaseAlternate: AnimatedColor {
-            value: _internal.viewModel.rowBaseAlternate
+            value: _internal.backend.rowBaseAlternate
         }
 
         readonly property AnimatedColor rowBaseAlternateText: AnimatedColor {
-            value: _internal.viewModel.rowBaseAlternateText
+            value: _internal.backend.rowBaseAlternateText
         }
     }
 }

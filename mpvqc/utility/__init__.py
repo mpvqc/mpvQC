@@ -7,6 +7,7 @@ from .close import CloseEventFilter
 from .label_width_calculator import MpvqcLabelWidthCalculatorBackend
 from .resizer import MpvqcResizeHandler
 from .table_utility import MpvqcTableUtilityBackend
+from .theme import MpvqcThemeBackend
 from .window_buttons import MpvqcWindowButtons
 from .window_properties import MpvqcWindowPropertiesBackend
 from .window_visibility import MpvqcWindowVisibilityHandler

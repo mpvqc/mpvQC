@@ -23,6 +23,4 @@ from .message_box_loader import MpvqcMessageBoxLoaderViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel, MpvqcVersionCheckMessageBoxViewModel
 from .new_comment_menu import MpvqcNewCommentMenuViewModel
 from .player import MpvqcPlayerViewModel
-from .search_box import MpvqcSearchBoxViewModel
-from .table import MpvqcCommentTableViewModel, MpvqcPlaceholderViewModel
-from .theme import MpvqcThemeViewModel
+from .table import MpvqcCommentTableViewModel, MpvqcPlaceholderViewModel, MpvqcSearchBoxViewModel
