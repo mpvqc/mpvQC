@@ -4,6 +4,7 @@
 
 module utility
 
+singleton MpvqcConstants.qml MpvqcConstants.qml
 singleton MpvqcLabelWidthCalculator MpvqcLabelWidthCalculator.qml
 singleton MpvqcTheme MpvqcTheme.qml
 singleton MpvqcWindowUtility MpvqcWindowUtility.qml
