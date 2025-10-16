@@ -37,7 +37,7 @@ ListView {
 
     highlightMoveDuration: 50
     highlightMoveVelocity: -1
-    highlightResizeDuration: 50
+    highlightResizeDuration: isCurrentlyEditing ? 0 : 50
     highlightResizeVelocity: -1
 
     highlight: Rectangle {
@@ -134,10 +134,29 @@ ListView {
         id: _editLoader
 
         viewModel: root.viewModel
-        onCommentEditPopupHeightChanged: {
-            Qt.callLater(() => {
-                root.positionViewAtIndex(root.currentIndex, ListView.Contain);
-            });
+
+        function _shouldScrollToAccommodateGrowth(heightDelta: int): bool {
+            if (heightDelta <= 0) {
+                return false;
+            }
+
+            const currentItem = root.currentItem;
+            if (!currentItem) {
+                return false;
+            }
+
+            const itemY = currentItem.y - root.contentY;
+            const itemBottom = itemY + currentItem.height;
+            const newItemBottom = itemBottom + heightDelta;
+
+            // Only scroll if the new bottom would overflow the viewport
+            return newItemBottom > root.height;
+        }
+
+        onCommentEditPopupHeightChanged: heightDelta => {
+            if (_shouldScrollToAccommodateGrowth(heightDelta)) {
+                root.contentY += heightDelta;
+            }
         }
     }
 

@@ -15,10 +15,11 @@ Popup {
 
     readonly property bool isOdd: currentListIndex % 2 === 1
 
+    property int previousHeight: 0
     property bool acceptValue: true
 
     signal commentEdited(index: int, newComment: string)
-    signal commentEditPopupHeightChanged
+    signal commentEditPopupHeightChanged(heightDelta: int)
 
     width: root.parent.width
 
@@ -85,7 +86,12 @@ Popup {
     }
 
     onHeightChanged: {
-        root.commentEditPopupHeightChanged();
+        const heightDelta = root.height - root.previousHeight;
+        if (root.previousHeight > 0) {
+            // Skip first change (initialization)
+            root.commentEditPopupHeightChanged(heightDelta);
+        }
+        root.previousHeight = root.height;
     }
 
     Shortcut {

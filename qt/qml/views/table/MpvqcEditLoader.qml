@@ -15,7 +15,7 @@ Loader {
 
     readonly property bool isEditingComment: source === editCommentPopup
 
-    signal commentEditPopupHeightChanged
+    signal commentEditPopupHeightChanged(heightDelta: int)
 
     function _startEditingTime(index: int, time: int, coordinates: point): void {
         asynchronous = true;
@@ -90,8 +90,8 @@ Loader {
             root.viewModel.updateComment(index, newComment);
         }
 
-        function onCommentEditPopupHeightChanged(): void {
-            root.commentEditPopupHeightChanged();
+        function onCommentEditPopupHeightChanged(heightDelta: int): void {
+            root.commentEditPopupHeightChanged(heightDelta);
         }
 
         function onClosed(): void {
