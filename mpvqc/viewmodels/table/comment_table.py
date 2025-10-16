@@ -43,7 +43,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     showSearchBoxRequested = Signal()
     contextMenuRequested = Signal(int, QPointF)
-    deleteCommentRequested = Signal(int)
+    deleteCommentRequested = Signal(int, int, str, str)  # index, time, commentType, commentText
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -126,7 +126,8 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:
-        self.deleteCommentRequested.emit(index)
+        time, comment_type, comment = self._model.get_comment(index)
+        self.deleteCommentRequested.emit(index, time, comment_type, comment)
 
     @Slot(int)
     def jumpToTime(self, seconds: int) -> None:
