@@ -16,4 +16,18 @@ QtObject {
     readonly property int appHeight: windowPropertiesBackend.appHeight
     readonly property bool isFullscreen: windowPropertiesBackend.isFullscreen
     readonly property bool isMaximized: windowPropertiesBackend.isMaximized
+
+    /**
+     * Checks if local coordinates of an item are within the bottom region of the window.
+     * @param {Item} item - The item whose local coordinates to convert
+     * @param {real} localX - The x-coordinate relative to the item
+     * @param {real} localY - The y-coordinate relative to the item
+     * @param {int} pixels - The height of the bottom region in pixels
+     * @returns {bool} True if the coordinates are in the bottom region
+     */
+    function isInBottomRegion(item, localX: real, localY: real, pixels: int): bool {
+        const windowCoords = item.mapToItem(null, localX, localY);
+        const windowHeight = item.Window.window.height;
+        return windowCoords.y >= (windowHeight - pixels);
+    }
 }

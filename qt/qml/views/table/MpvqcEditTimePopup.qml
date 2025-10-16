@@ -5,15 +5,23 @@
 import QtQuick
 import QtQuick.Controls.Material
 
+import "../../utility"
+
 Popup {
     id: root
 
     required property int currentTime
     required property int currentListIndex
-
+    required property int videoDuration
     required property point openedAt
 
-    required property int videoDuration
+    readonly property bool isOpenedInBottomRegion: {
+        if (root.parent) {
+            const regionSize = height + MpvqcConstants.popupWindowEdgeMargin;
+            return MpvqcWindowUtility.isInBottomRegion(root.parent, openedAt.x, openedAt.y, regionSize);
+        }
+        return false;
+    }
 
     readonly property url iconNext: "qrc:/data/icons/keyboard_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
     readonly property url iconBefore: "qrc:/data/icons/keyboard_arrow_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
@@ -37,8 +45,9 @@ Popup {
         _spinBox.valueModified();
     }
 
-    x: root.mirrored ? openedAt.x - width : openedAt.x
-    y: openedAt.y
+    x: mirrored ? openedAt.x - width : openedAt.x
+    y: isOpenedInBottomRegion ? openedAt.y - height : openedAt.y
+    transformOrigin: isOpenedInBottomRegion ? (mirrored ? Popup.BottomRight : Popup.BottomLeft) : (mirrored ? Popup.TopRight : Popup.TopLeft)
 
     visible: true
     dim: false
@@ -54,7 +63,6 @@ Popup {
         from: 0
         to: root.videoDuration > 0 ? root.videoDuration : 24 * 60 * 60 - 1
 
-        // qmllint disable
         textFromValue: value => MpvqcTableUtility.formatTime(value)
 
         bottomPadding: topPadding
