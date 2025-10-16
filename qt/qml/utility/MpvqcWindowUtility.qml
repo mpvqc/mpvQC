@@ -30,4 +30,27 @@ QtObject {
         const windowHeight = item.Window.window.height;
         return windowCoords.y >= (windowHeight - pixels);
     }
+
+    /**
+     * Checks which window edges would be violated by positioning an item at the given coordinates.
+     * @param {Item} item - The item whose local coordinates to convert
+     * @param {real} localX - The x-coordinate relative to the item
+     * @param {real} localY - The y-coordinate relative to the item
+     * @param {real} width - The width of the element to be positioned
+     * @param {real} height - The height of the element to be positioned
+     * @param {int} margin - The margin/padding from window edges
+     * @returns {object} Object with boolean properties: bottom, top, right, left
+     */
+    function getEdgeViolations(item: Item, localX: real, localY: real, width: real, height: real, margin: int): var {
+        const windowCoords = item.mapToItem(null, localX, localY);
+        const windowHeight = item.Window.window.height;
+        const windowWidth = item.Window.window.width;
+
+        return {
+            bottom: windowCoords.y + height + margin >= windowHeight,
+            top: windowCoords.y - margin <= 0,
+            right: windowCoords.x + width + margin >= windowWidth,
+            left: windowCoords.x - margin <= 0
+        };
+    }
 }

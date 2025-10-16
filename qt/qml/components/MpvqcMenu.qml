@@ -8,7 +8,7 @@ import QtQuick.Controls.Material
 import "../utility"
 
 Menu {
-    id: root
+    id: root // todo check if it can be removed by using parent on its usages
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
     readonly property bool isWindows: Qt.platform.os === "windows"
