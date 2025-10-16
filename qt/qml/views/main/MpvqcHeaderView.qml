@@ -28,7 +28,7 @@ Item {
     }
 
     height: menuBarHeight
-    visible: !MpvqcWindowProperties.isFullscreen
+    visible: !MpvqcWindowUtility.isFullscreen
 
     DragHandler {
         target: null
@@ -368,7 +368,7 @@ Item {
                 anchors.right: _closeButton.left
                 icon.width: 18
                 icon.height: 18
-                icon.source: MpvqcWindowProperties.isMaximized ? iconNormalize : iconMaximize
+                icon.source: MpvqcWindowUtility.isMaximized ? iconNormalize : iconMaximize
 
                 onClicked: {
                     root.viewModel.requestToggleMaximize();

@@ -6,4 +6,4 @@ module utility
 
 singleton MpvqcLabelWidthCalculator MpvqcLabelWidthCalculator.qml
 singleton MpvqcTheme MpvqcTheme.qml
-singleton MpvqcWindowProperties MpvqcWindowProperties.qml
+singleton MpvqcWindowUtility MpvqcWindowUtility.qml

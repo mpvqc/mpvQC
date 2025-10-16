@@ -16,7 +16,7 @@ Popup {
 
     required property MpvqcSearchBoxViewModel viewModel
 
-    readonly property bool isApplicationFullScreen: MpvqcWindowProperties.isFullscreen
+    readonly property bool isApplicationFullScreen: MpvqcWindowUtility.isFullscreen
     readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""
 
     property bool searchActive: false

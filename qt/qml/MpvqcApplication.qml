@@ -45,7 +45,7 @@ ApplicationWindow {
 
         headerViewModel: _headerViewModel
         contentViewModel: _contentViewModel
-        windowBorder: MpvqcWindowProperties.isFullscreen || MpvqcWindowProperties.isMaximized ? 0 : 1
+        windowBorder: MpvqcWindowUtility.isFullscreen || MpvqcWindowUtility.isMaximized ? 0 : 1
 
         focus: true
         anchors.fill: parent

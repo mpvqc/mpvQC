@@ -19,7 +19,7 @@ MpvqcDialog {
     title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
 
     contentWidth: 500
-    contentHeight: Math.min(720, MpvqcWindowProperties.appHeight * 0.65)
+    contentHeight: Math.min(720, MpvqcWindowUtility.appHeight * 0.65)
 
     contentItem: ColumnLayout {
         spacing: 0

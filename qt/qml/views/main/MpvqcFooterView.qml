@@ -18,8 +18,8 @@ Item {
 
     required property MpvqcFooterViewModel viewModel
 
-    readonly property int bottomMargin: MpvqcWindowProperties.isMaximized ? 2 : 0
-    readonly property int rightMargin: MpvqcWindowProperties.isMaximized ? 0 : 1
+    readonly property int bottomMargin: MpvqcWindowUtility.isMaximized ? 2 : 0
+    readonly property int rightMargin: MpvqcWindowUtility.isMaximized ? 0 : 1
 
     height: 25
 

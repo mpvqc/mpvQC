@@ -13,7 +13,7 @@ QtObject {
     required property bool isEditing
     required property int currentIndex
 
-    readonly property bool isFullScreen: MpvqcWindowProperties.isFullscreen
+    readonly property bool isFullScreen: MpvqcWindowUtility.isFullscreen
 
     signal editCommentRequested(index: int)
     signal deleteCommentRequested(index: int)

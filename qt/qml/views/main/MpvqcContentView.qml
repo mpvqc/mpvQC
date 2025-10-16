@@ -55,7 +55,7 @@ Page {
         Column {
             id: _tableContainer
 
-            visible: !MpvqcWindowProperties.isFullscreen
+            visible: !MpvqcWindowUtility.isFullscreen
 
             SplitView.minimumHeight: root.contentViewModel.minContainerHeight
             SplitView.minimumWidth: root.contentViewModel.minContainerWidth
