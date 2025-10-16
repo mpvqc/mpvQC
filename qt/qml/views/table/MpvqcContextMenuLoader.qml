@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import "../../components"
+import "../../utility"
 
 Loader {
     id: root
@@ -31,6 +32,9 @@ Loader {
             id: _menu
 
             position: root.openedAt
+
+            Material.background: MpvqcTheme.backgroundAlternate
+            Material.foreground: MpvqcTheme.foregroundAlternate
 
             MenuItem {
                 //: Context menu on right click in comments table

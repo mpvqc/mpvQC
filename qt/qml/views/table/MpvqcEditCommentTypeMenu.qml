@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import "../../components"
+import "../../utility"
 
 MpvqcPositionedMenu {
     id: root
@@ -45,6 +46,9 @@ MpvqcPositionedMenu {
         });
         root.addItem(menuItem);
     }
+
+    Material.background: MpvqcTheme.backgroundAlternate
+    Material.foreground: MpvqcTheme.foregroundAlternate
 
     Component.onCompleted: {
         root._populateKnownItems();
