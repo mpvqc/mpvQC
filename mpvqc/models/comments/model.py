@@ -271,13 +271,15 @@ class MpvqcCommentModel(QStandardItemModel):
         if self._undo_stack.canRedo():
             self._undo_stack.redo()
 
-    def get_clipboard_content(self, row: int) -> str:
+    def get_comment(self, row: int) -> tuple[int, str, str]:
         item = self.item(row, column=0)
+        time = int(item.data(Role.TIME))
+        comment_type = item.data(Role.TYPE)
+        comment = item.data(Role.COMMENT)
+        return time, comment_type, comment
 
-        time = item.data(Role.TIME)
-        time = self._time_formatter.format_time_to_string(int(time), long_format=True)
-
-        comment_type = f"{item.data(Role.TYPE)}"
+    def get_clipboard_content(self, row: int) -> str:
+        time, comment_type, comment = self.get_comment(row)
+        time = self._time_formatter.format_time_to_string(time, long_format=True)
         comment_type = QCoreApplication.translate("CommentTypes", comment_type)
-
-        return f"[{time}] [{comment_type}] {item.data(Role.COMMENT)}"
+        return f"[{time}] [{comment_type}] {comment}"
