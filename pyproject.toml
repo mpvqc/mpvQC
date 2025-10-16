@@ -322,7 +322,7 @@ files = [
     "qt/qml/models/qmldir",
     "qt/qml/utility/MpvqcLabelWidthCalculator.qml",
     "qt/qml/utility/MpvqcTheme.qml",
-    "qt/qml/utility/MpvqcWindowProperties.qml",
+    "qt/qml/utility/MpvqcWindowUtility.qml",
     "qt/qml/utility/qmldir",
     "qt/qml/views/main/MpvqcContentView.qml",
     "qt/qml/views/main/MpvqcDialogLoaderView.qml",

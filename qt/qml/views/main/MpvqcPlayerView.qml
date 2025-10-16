@@ -12,7 +12,7 @@ Loader {
     id: root
 
     readonly property MpvqcPlayerViewModel viewModel: MpvqcPlayerViewModel {}
-    readonly property bool isFullScreen: MpvqcWindowProperties.isFullscreen
+    readonly property bool isFullScreen: MpvqcWindowUtility.isFullscreen
 
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
