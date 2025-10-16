@@ -10,7 +10,7 @@ Dialog {
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
-    property alias text: _content.text
+    property string text
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     contentWidth: 420
@@ -21,8 +21,7 @@ Dialog {
     dim: false
 
     contentItem: Label {
-        id: _content
-
+        text: root.text
         horizontalAlignment: Text.AlignLeft
         wrapMode: Label.WordWrap
         elide: Text.ElideLeft
