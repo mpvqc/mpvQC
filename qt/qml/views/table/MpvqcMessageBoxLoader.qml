@@ -60,7 +60,7 @@ Loader {
                     text: {
                         const hasComment = root.commentText.trim().length > 0;
                         const commentColor = hasComment ? MpvqcTheme.foreground : Material.hintTextColor;
-                        const commentContent = hasComment ? root.commentText : qsTranslate("MessageBoxes", "No text available");
+                        //: This is displayed as a fallback in the delete confirmation box when the actual comment is empty.
                         const noTextFallback = qsTranslate("MessageBoxes", "No text available");
                         const commentContent = hasComment ? root.commentText : noTextFallback;
 
