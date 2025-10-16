@@ -31,14 +31,14 @@ TestCase {
         readonly property int columnComment: testCase.width - 100
 
         function onContextMenuOpen(tableRow: int): point {
-            const xCoordinate = testCase.width - 200;
+            const xCoordinate = testCase.width - 250;
             const yCoordinate = row1Center + rowHeight * tableRow;
             return Qt.point(xCoordinate, yCoordinate);
         }
 
         function onContextMenuItem(index: int, tableRow: int): point {
             const contextMenuItemHeight = 34;
-            const xCoordinate = testCase.width - 200 + 10;
+            const xCoordinate = testCase.width - 250 + 10;
             const yTableRow = (rowHeight / 2) + rowHeight * tableRow;
             const yCoordinate = yTableRow + contextMenuItemHeight * index;
             return Qt.point(xCoordinate, yCoordinate);

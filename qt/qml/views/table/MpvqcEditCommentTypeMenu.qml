@@ -9,23 +9,17 @@ import QtQuick.Controls.Material
 
 import "../../components"
 
-MpvqcMenu {
+MpvqcPositionedMenu {
     id: root
 
     required property string currentCommentType
     required property int currentListIndex
-    required property point openedAt
-
     required property list<string> commentTypes
 
     readonly property bool isCommentTypeKnown: commentTypes.some(commentType => commentType === currentCommentType)
     readonly property bool isCommentTypeUnknown: !isCommentTypeKnown
 
     signal commentTypeEdited(index: int, newCommentType: string)
-
-    y: openedAt.y
-
-    modal: true
 
     function _handleTriggered(potentialNewCommentType: string): void {
         if (root.currentCommentType !== potentialNewCommentType) {
@@ -50,10 +44,6 @@ MpvqcMenu {
             commentType: root.currentCommentType
         });
         root.addItem(menuItem);
-    }
-
-    onAboutToShow: {
-        x = root.isMirrored ? openedAt.x - width : openedAt.x;
     }
 
     Component.onCompleted: {

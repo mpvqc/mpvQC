@@ -11,37 +11,28 @@ import pyobjects
 
 import "../../components"
 
-MpvqcMenu {
+MpvqcPositionedMenu {
     id: root
 
     readonly property var viewModel: MpvqcNewCommentMenuViewModel {}
 
-    property var _deferToOnClose: () => {}
+    function calculatePosition(): point {
+        const global = viewModel.cursorPosition();
+        return parent.mapFromGlobal(global);
+    }
 
     signal commentTypeChosen(commentType: string)
 
     visible: false
-    modal: true
     z: 2
     exit: null
 
     onAboutToShow: {
         viewModel.pausePlayer();
-
-        const global = viewModel.cursorPosition();
-        const local = parent.mapFromGlobal(global);
-        x = isMirrored ? local.x - width : local.x;
-        y = local.y;
     }
 
     onClosed: {
         visible = false;
-
-        // Instead of directly adding a comment in the MenuItem triggered signal handler,
-        // we defer adding it until the popup closes. If we would directly add it,
-        // the menu's closing signals would interfere with the focus of the newly added comment.
-        _deferToOnClose(); // qmllint disable
-        _deferToOnClose = () => {};
     }
 
     Repeater {
@@ -53,7 +44,7 @@ MpvqcMenu {
             text: qsTranslate("CommentTypes", modelData)
 
             onTriggered: {
-                root._deferToOnClose = () => root.commentTypeChosen(modelData);
+                root.deferToOnClose = () => root.commentTypeChosen(modelData);
             }
         }
     }
