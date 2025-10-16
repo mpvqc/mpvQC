@@ -27,26 +27,10 @@ Loader {
     Component {
         id: _contextMenuComponent
 
-        MpvqcMenu {
+        MpvqcPositionedMenu {
             id: _menu
 
-            property var _deferToOnClose: () => {}
-
-            modal: true
-
-            y: root.openedAt.y
-
-            onAboutToShow: {
-                x = _menu.isMirrored ? root.openedAt.x - width : root.openedAt.x;
-            }
-
-            onClosed: {
-                // Run the stored callback.
-                // Required for Windows as closing animation interferes with signal handling
-                _menu._deferToOnClose(); // qmllint disable
-                _menu._deferToOnClose = () => {};
-                root.active = false;
-            }
+            position: root.openedAt
 
             MenuItem {
                 //: Context menu on right click in comments table
@@ -55,7 +39,7 @@ Loader {
 
                 onTriggered: {
                     _menu.exit = null;
-                    _menu._deferToOnClose = () => root.viewModel.startEditingComment(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.viewModel.startEditingComment(root.currentListIndex);
                 }
             }
 
@@ -65,7 +49,7 @@ Loader {
                 icon.source: "qrc:/data/icons/content_copy_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 onTriggered: {
-                    _menu._deferToOnClose = () => root.viewModel.copyToClipboard(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.viewModel.copyToClipboard(root.currentListIndex);
                 }
             }
 
@@ -76,8 +60,12 @@ Loader {
 
                 onTriggered: {
                     _menu.exit = null;
-                    _menu._deferToOnClose = () => root.viewModel.askToDeleteRow(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.viewModel.askToDeleteRow(root.currentListIndex);
                 }
+            }
+
+            onClosed: {
+                root.active = false;
             }
         }
     }

@@ -34,7 +34,7 @@ Loader {
             currentCommentType: currentCommentType,
             currentListIndex: index,
             commentTypes: root.viewModel.commentTypes,
-            openedAt: coordinates
+            position: coordinates
         });
         active = true;
     }
