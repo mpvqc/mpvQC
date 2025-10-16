@@ -55,6 +55,9 @@ Popup {
     width: 155
     padding: 6
 
+    Material.background: MpvqcTheme.backgroundAlternate
+    Material.foreground: MpvqcTheme.foregroundAlternate
+
     contentItem: SpinBox {
         id: _spinBox
 

@@ -119,6 +119,9 @@ Item {
             modal: true
             dim: false
 
+            Material.background: MpvqcTheme.backgroundAlternate
+            Material.foreground: MpvqcTheme.foregroundAlternate
+
             MenuItem {
                 text: qsTranslate("MainWindow", "Default format")
                 checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.CURRENT_TOTAL_TIME

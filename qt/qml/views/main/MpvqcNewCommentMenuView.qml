@@ -10,6 +10,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../../components"
+import "../../utility"
 
 MpvqcPositionedMenu {
     id: root
@@ -26,6 +27,9 @@ MpvqcPositionedMenu {
     visible: false
     z: 2
     exit: null
+
+    Material.background: MpvqcTheme.backgroundAlternate
+    Material.foreground: MpvqcTheme.foregroundAlternate
 
     onAboutToShow: {
         viewModel.pausePlayer();
