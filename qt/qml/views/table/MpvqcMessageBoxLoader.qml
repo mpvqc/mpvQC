@@ -39,6 +39,8 @@ Loader {
             standardButtons: Dialog.Yes | Dialog.Cancel
 
             contentItem: ColumnLayout {
+                id: _unusedButNecessaryBecauseOfRtlLayoutInQt
+
                 spacing: 10
 
                 Label {
