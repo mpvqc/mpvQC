@@ -107,6 +107,7 @@ class MpvqcHeaderViewModel(QObject):
         if self._state.saved:
             return title
 
+        #: %1 will be the title of the application (one of: mpvQC, file name, file path)
         return QCoreApplication.translate("MainWindow", "%1 (unsaved)").replace("%1", title)
 
     @Slot()

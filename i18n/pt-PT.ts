@@ -514,6 +514,11 @@
         <source>Do you really want to delete this comment?</source>
         <translation>Deseja eliminar este comentário?</translation>
     </message>
+    <message>
+        <source>No text available</source>
+        <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
         <source>Document Not Compatible</source>
         <translation>

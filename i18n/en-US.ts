@@ -547,6 +547,11 @@
         <source>Do you really want to delete this comment?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No text available</source>
+        <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MpvConfEditDialog</name>
