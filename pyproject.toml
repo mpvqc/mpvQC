@@ -189,7 +189,6 @@ files = [
     "mpvqc/models/comments/item.py",
     "mpvqc/models/comments/model.py",
     "mpvqc/models/comments/roles.py",
-    "mpvqc/models/comments/searcher.py",
     "mpvqc/models/comments/undo.py",
     "mpvqc/models/comments/utils.py",
     "mpvqc/models/export_templates.py",
