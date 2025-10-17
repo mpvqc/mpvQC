@@ -6,7 +6,7 @@ import sys
 from functools import cache
 
 import inject
-from PySide6.QtCore import QUrl, Signal
+from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -26,8 +26,6 @@ class MpvqcApplication(QGuiApplication):
     _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
     _i18n: InternationalizationService = inject.attr(InternationalizationService)
     _settings: SettingsService = inject.attr(SettingsService)
-
-    application_ready = Signal(name="applicationReady")
 
     def __init__(self, args):
         super().__init__(args)
@@ -64,10 +62,8 @@ class MpvqcApplication(QGuiApplication):
         url = QUrl.fromLocalFile(":/qt/qml/MpvqcApplication.qml")
         self._engine.load(url)
 
-    def notify_ready(self):
         if not self._engine.rootObjects():
             sys.exit(-1)
-        self.application_ready.emit()
 
     def configure_window(self):
         window = self.topLevelWindows()[0]
