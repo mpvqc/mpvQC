@@ -2,50 +2,56 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys
+import platform
 
 from PySide6.QtGui import QGuiApplication, QWindow
 
 
 class FramelessWindowService:
-    _event_filter = None
+    """Service for managing frameless window behavior across different platforms."""
 
     def __init__(self):
-        if sys.platform == "win32":
-            from mpvqc.services.frameless.win import WindowsEventFilter
+        if platform.system() == "Windows":
+            self._initialize_windows_filter()
 
-            # We need a reference to this filter as soon as possible
-            # Needs to bound to a class variable, else garbage collector will clean up immediately
-            self._event_filter = WindowsEventFilter()
+    def _initialize_windows_filter(self) -> None:
+        from mpvqc.services.frameless.win import WindowsEventFilter
+
+        # We need a reference to this filter as soon as possible
+        # Needs to bound to a class variable, else garbage collector will clean up immediately
+        self._event_filter = WindowsEventFilter()
 
     @property
     def event_filter(self):
         return self._event_filter
 
-    def configure_for(self, app: QGuiApplication, top_lvl_window: QWindow):
-        def configure_for_linux():
-            from .linux import LinuxEventFilter
+    def configure_for(self, app: QGuiApplication, top_lvl_window: QWindow) -> None:
+        match platform.system():
+            case "Windows":
+                self._configure_for_windows(app, top_lvl_window)
+            case "Linux":
+                self._configure_for_linux(app, top_lvl_window)
+            case system:
+                msg = f"Cannot configure frameless window on platform: {system}"
+                raise ValueError(msg)
 
-            # Needs to bound to a class variable, else garbage collector will clean up immediately
-            self._event_filter = LinuxEventFilter(top_lvl_window, app)
-            app.installEventFilter(self._event_filter)
+    def _configure_for_windows(self, app: QGuiApplication, window: QWindow) -> None:
+        from mpvqc.services.frameless.win import (
+            configure_gwl_style,
+            extend_frame_into_client_area,
+            set_outer_window_size,
+        )
 
-        def configure_for_windows():
-            hwnd_top_lvl = top_lvl_window.winId()
-            self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
+        hwnd_top_lvl = window.winId()
+        self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
+        app.installNativeEventFilter(self._event_filter)
 
-            app.installNativeEventFilter(self._event_filter)
+        extend_frame_into_client_area(hwnd_top_lvl)
+        configure_gwl_style(hwnd_top_lvl)
+        set_outer_window_size(hwnd_top_lvl, 1280, 720)
 
-            from .win import configure_gwl_style, extend_frame_into_client_area, set_outer_window_size
+    def _configure_for_linux(self, app: QGuiApplication, window: QWindow) -> None:
+        from mpvqc.services.frameless.linux import LinuxEventFilter
 
-            extend_frame_into_client_area(hwnd_top_lvl)
-            configure_gwl_style(hwnd_top_lvl)
-            set_outer_window_size(hwnd_top_lvl, 1280, 720)
-
-        if sys.platform == "win32":
-            configure_for_windows()
-        elif sys.platform == "linux":
-            configure_for_linux()
-        else:
-            msg = f"Unsupported platform: {sys.platform}"
-            raise ValueError(msg)
+        self._event_filter = LinuxEventFilter(window, app)
+        app.installEventFilter(self._event_filter)
