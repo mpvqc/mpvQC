@@ -76,7 +76,6 @@ def start_application():
     app.set_up_signals()
     app.load_language()
     app.start_engine()
-    app.notify_ready()
     app.configure_window()
 
     sys.exit(app.exec())
