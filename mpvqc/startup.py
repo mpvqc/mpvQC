@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+import platform
 
 
 def perform_startup():
@@ -17,13 +18,15 @@ def perform_startup():
 
 def configure_qt_application_data():
     from PySide6.QtCore import QCoreApplication
-    from PySide6.QtQuickControls2 import QQuickStyle
 
     QCoreApplication.setApplicationName("mpvQC")
     QCoreApplication.setOrganizationName("mpvQC")
     QCoreApplication.setApplicationVersion(">>>tag<<<")
 
-    QQuickStyle.setStyle("Material")
+    if platform.system() == "Linux":
+        from PySide6.QtGui import QGuiApplication, Qt
+
+        QGuiApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
 
 
 def configure_qt_settings():

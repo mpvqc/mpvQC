@@ -93,4 +93,9 @@ Loader {
             }
         }
     }
+
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+    }
 }
