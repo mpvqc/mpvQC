@@ -17,6 +17,8 @@ def perform_startup():
 
 
 def configure_qt_application_data():
+    import platform
+
     from PySide6.QtCore import QCoreApplication
 
     from mpvqc.build import get_build_info
@@ -26,6 +28,11 @@ def configure_qt_application_data():
     QCoreApplication.setOrganizationName(app.organization)
     QCoreApplication.setOrganizationDomain(app.domain)
     QCoreApplication.setApplicationVersion(app.version)
+
+    if platform.system() == "Linux":
+        from PySide6.QtGui import QGuiApplication, Qt
+
+        QGuiApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
 
 
 def configure_qt_style():
