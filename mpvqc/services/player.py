@@ -149,6 +149,14 @@ class PlayerService(QObject):
     def duration(self) -> float:
         return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
 
+    @property
+    def is_paused(self) -> bool:
+        return not self.is_playing
+
+    @property
+    def is_playing(self) -> bool:
+        return not self._mpv.pause and not self._mpv.idle_active if self._mpv else False
+
     def is_video_loaded(self, video: Path) -> bool:
         if (path := self.path) is not None:
             current = self._type_mapper.map_path_to_str(Path(path))
