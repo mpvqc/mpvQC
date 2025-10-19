@@ -9,7 +9,7 @@ from pathlib import Path
 import inject
 from loguru import logger
 from mpv import MPV
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Qt, Signal
 
 from .application_paths import ApplicationPathsService
 from .key_command import KeyCommandGeneratorService
@@ -37,7 +37,14 @@ class PlayerService(QObject):
 
     def __init__(self, **properties):
         super().__init__(**properties)
-        self._cached_subtitles = set()
+
+        # Cache subtitles for two reasons:
+        # - User can open a subtitle before a video
+        # - We need to wait until mpv internally updated the video before adding subtitles to it
+        self._cached_subtitles: set[Path] = set()
+
+        # Flag indicating a video is loading.
+        # This is set to True for the time we start loading a video until mpv internally updates it's 'path' property
         self._loading_video = False
 
         self._init_args = {
@@ -143,6 +150,7 @@ class PlayerService(QObject):
 
     @property
     def current_time(self) -> int:
+        # noinspection PyTypeChecker
         return self.time_pos or 0
 
     @property
@@ -202,15 +210,16 @@ class PlayerService(QObject):
         y = int(y * zoom_factor)
         self._mpv.command_async("mouse", x, y)
 
-    def open_video(self, video: str) -> None:
+    def open_video(self, video: Path) -> None:
         self._loading_video = True
         self._mpv.command("loadfile", video, "replace")
         self.play()
 
-    def open_subtitles(self, subtitles: Iterable[str]) -> None:
+    def open_subtitles(self, subtitles: Iterable[Path]) -> None:
         def _load():
             for subtitle in subtitles:
-                self._mpv.command("sub-add", subtitle, "select")
+                path = self._type_mapper.map_path_to_str(subtitle)
+                self._mpv.command("sub-add", path, "select")
 
         def _cache():
             self._cached_subtitles |= set(subtitles)
@@ -226,7 +235,7 @@ class PlayerService(QObject):
     def pause(self) -> None:
         self._mpv.pause = True
 
-    def handle_key_event(self, key: int, modifiers: int) -> None:
+    def handle_key_event(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
         if command := self._command_generator.generate_command(key, modifiers):
             self._mpv.command_async("keypress", command)
 
