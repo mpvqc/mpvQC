@@ -190,7 +190,7 @@ def test_open_synchronous(
     if test_case.expected_video is None:
         mock_player.open_video.assert_not_called()
     else:
-        mock_player.open_video.assert_called_once_with(str(test_case.expected_video))
+        mock_player.open_video.assert_called_once_with(test_case.expected_video)
 
 
 class UserInteractionTestCase(NamedTuple):
@@ -297,7 +297,7 @@ def test_open_with_user_interaction(
     if test_case.expected_video is None:
         mock_player.open_video.assert_not_called()
     else:
-        mock_player.open_video.assert_called_once_with(str(test_case.expected_video))
+        mock_player.open_video.assert_called_once_with(test_case.expected_video)
 
 
 def test_open_loads_comments(service, configure_for_open, make_spy):
@@ -330,7 +330,7 @@ def test_continue_with_import_opens_video_when_selected(service, mock_player, ma
 
     service._continue_with_import(state)
 
-    mock_player.open_video.assert_called_once_with(str(video_path.resolve()))
+    mock_player.open_video.assert_called_once_with(video_path.resolve())
 
 
 def test_continue_with_import_opens_subtitles_when_present(service, mock_player, type_mapper, make_state):
@@ -339,8 +339,7 @@ def test_continue_with_import_opens_subtitles_when_present(service, mock_player,
 
     service._continue_with_import(state)
 
-    expected_subtitles = type_mapper.map_paths_to_str([subtitle_path])
-    mock_player.open_subtitles.assert_called_once_with(subtitles=expected_subtitles)
+    mock_player.open_subtitles.assert_called_once_with(subtitles=[subtitle_path])
 
 
 def test_continue_with_import_imports_documents_when_video_present(service, mock_state, make_state):
@@ -475,6 +474,6 @@ def test_open_video_based_on_already_loaded(
     service.open(documents=[], videos=[], subtitles=[])
 
     if test_case.should_open_video:
-        mock_player.open_video.assert_called_once_with("movie.mp4")
+        mock_player.open_video.assert_called_once_with(Path("movie.mp4"))
     else:
         mock_player.open_video.assert_not_called()

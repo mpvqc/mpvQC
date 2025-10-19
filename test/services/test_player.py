@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Generator
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import inject
@@ -10,8 +11,8 @@ import pytest
 
 from mpvqc.services import ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService, TypeMapperService
 
-VIDEO = "video"
-SUBTITLE = "test"
+VIDEO = Path.home() / "video.mp4"
+SUBTITLE = Path.home() / "subtitle"
 SUBTITLES = (SUBTITLE,)
 
 
@@ -108,7 +109,7 @@ def test_subtitles_load_subtitles():
 
     sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
     assert sub_add == "sub-add"
-    assert subtitle == SUBTITLE
+    assert Path(subtitle) == SUBTITLE
     assert select == "select"
 
 
@@ -142,6 +143,6 @@ def test_subtitles_cached_during_video_load():
 
     sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
     assert sub_add == "sub-add"
-    assert subtitle == SUBTITLE
+    assert Path(subtitle) == SUBTITLE
     assert select == "select"
     assert SUBTITLE not in service._cached_subtitles

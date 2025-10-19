@@ -164,10 +164,10 @@ class ImporterService(QObject):
         imported_video = state.selected_video
 
         if imported_video is not None:
-            self._player.open_video(f"{imported_video}")
+            self._player.open_video(imported_video)
 
         if subtitles := state.subtitles:
-            self._player.open_subtitles(subtitles=self._type_mapper.map_paths_to_str(subtitles))
+            self._player.open_subtitles(subtitles=subtitles)
 
         if imported_video is not None or state.valid_documents:
             self._state.import_documents(
