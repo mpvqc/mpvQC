@@ -6,58 +6,14 @@ from collections.abc import Generator
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import inject
-import pytest
-
-from mpvqc.services import ApplicationPathsService, OperatingSystemZoomDetectorService, PlayerService, TypeMapperService
+from mpvqc.services import PlayerService
 
 VIDEO = Path.home() / "video.mp4"
 SUBTITLE = Path.home() / "subtitle"
 SUBTITLES = (SUBTITLE,)
 
 
-@pytest.fixture(autouse=True, scope="module")
-def configure_injections(type_mapper):
-    def config(binder: inject.Binder):
-        binder.bind(TypeMapperService, type_mapper)
-        binder.bind(ApplicationPathsService, MagicMock())
-        binder.bind(OperatingSystemZoomDetectorService, MagicMock())
-
-    inject.configure(config, clear=True)
-
-
-def test_log_handler_set_when_mpvqc_debug_is_set(monkeypatch):
-    monkeypatch.setenv("MPVQC_DEBUG", "1")
-
-    from mpvqc.services.player import PlayerService
-
-    service = PlayerService()
-
-    assert "log_handler" in service._init_args
-
-
-def test_log_handler_set_when_mpvqc_player_log_is_set(monkeypatch):
-    monkeypatch.setenv("MPVQC_PLAYER_LOG", "1")
-
-    from mpvqc.services.player import PlayerService
-
-    service = PlayerService()
-
-    assert "log_handler" in service._init_args
-
-
-def test_log_handler_not_set_when_no_env_vars(monkeypatch):
-    monkeypatch.delenv("MPVQC_DEBUG", raising=False)
-    monkeypatch.delenv("MPVQC_PLAYER_LOG", raising=False)
-
-    from mpvqc.services.player import PlayerService
-
-    service = PlayerService()
-
-    assert "log_handler" not in service._init_args
-
-
-def _create_mpv_and_player_service(has_video: bool = False) -> Generator[MagicMock, PlayerService]:
+def _create_mpv_and_player_service(has_video: bool = False) -> Generator[tuple[MagicMock, PlayerService]]:
     mpv_mock = MagicMock()
     mpv_mock.path = "video" if has_video else None
 
@@ -98,8 +54,7 @@ def test_subtitles_load_subtitles():
     service.open_subtitles(SUBTITLES)
     service.open_video(VIDEO)
 
-    # Simulate the path change event that triggers subtitle loading
-    service._on_player_path_changed(None, VIDEO)
+    _simulate_path_changed_event(service)
 
     assert mpv_mock.command.called
     loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
@@ -119,8 +74,7 @@ def test_subtitles_empties_cache():
     service.open_subtitles(SUBTITLES)
     service.open_video(VIDEO)
 
-    # Simulate the path change event that triggers subtitle loading
-    service._on_player_path_changed(None, VIDEO)
+    _simulate_path_changed_event(service)
 
     assert SUBTITLE not in service._cached_subtitles
     assert not service._cached_subtitles
@@ -139,10 +93,15 @@ def test_subtitles_cached_during_video_load():
     assert replace == "replace"
     assert SUBTITLE in service._cached_subtitles
 
-    service._on_player_path_changed(None, VIDEO)
+    _simulate_path_changed_event(service)
 
     sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
     assert sub_add == "sub-add"
     assert Path(subtitle) == SUBTITLE
     assert select == "select"
     assert SUBTITLE not in service._cached_subtitles
+
+
+# noinspection PyProtectedMember
+def _simulate_path_changed_event(service: PlayerService):
+    service._on_player_path_changed(None, str(VIDEO))
