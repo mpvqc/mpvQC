@@ -159,6 +159,14 @@ class PlayerService(QObject):
         return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
 
     @property
+    def is_paused(self) -> bool:
+        return not self.is_playing
+
+    @property
+    def is_playing(self) -> bool:
+        return not self._mpv.pause and not self._mpv.idle_active if self._mpv else False
+
+    @property
     def _track_list(self) -> list["TrackListEntry"]:
         return [TrackListEntry.from_dict(e) for e in self._mpv.track_list] if self._mpv else []
 
