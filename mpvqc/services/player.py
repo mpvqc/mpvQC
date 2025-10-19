@@ -4,6 +4,7 @@
 
 import os
 from collections.abc import Iterable
+from dataclasses import dataclass
 from pathlib import Path
 
 import inject
@@ -157,12 +158,18 @@ class PlayerService(QObject):
     def duration(self) -> float:
         return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
 
-    def is_video_loaded(self, video: Path) -> bool:
-        if (path := self.path) is not None:
-            current = self._type_mapper.map_path_to_str(Path(path))
-            to_check = self._type_mapper.map_path_to_str(video)
-            return current == to_check
-        return False
+    @property
+    def _track_list(self) -> list["TrackListEntry"]:
+        return [TrackListEntry.from_dict(e) for e in self._mpv.track_list] if self._mpv else []
+
+    @property
+    def external_subtitles(self) -> list[Path]:
+        external = {
+            Path(entry.external_filename).resolve()
+            for entry in self._track_list
+            if entry.external and entry.type == "sub"
+        }
+        return sorted(external)
 
     def _on_duration_changed(self, _, value: float) -> None:
         if value:
@@ -214,6 +221,13 @@ class PlayerService(QObject):
         self._loading_video = True
         self._mpv.command("loadfile", video, "replace")
         self.play()
+
+    def is_video_loaded(self, video: Path) -> bool:
+        if (path := self.path) is not None:
+            current = self._type_mapper.map_path_to_str(Path(path))
+            to_check = self._type_mapper.map_path_to_str(video)
+            return current == to_check
+        return False
 
     def open_subtitles(self, subtitles: Iterable[Path]) -> None:
         def _load():
@@ -295,3 +309,18 @@ class DualSignalCoordinator(QObject):
     def _reset(self):
         self._ready_a = False
         self._ready_b = False
+
+
+@dataclass(frozen=True)
+class TrackListEntry:
+    type: str
+    external: bool
+    external_filename: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "TrackListEntry":
+        return cls(
+            type=data.get("type", ""),
+            external=data.get("external", False) == True,  # noqa: E712
+            external_filename=data.get("external-filename", ""),
+        )
