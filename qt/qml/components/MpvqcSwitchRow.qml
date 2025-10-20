@@ -11,18 +11,16 @@ RowLayout {
 
     property alias toggle: _switch
     property alias checked: _switch.checked
-    property alias label: _label.text
+    property alias label: _labelWithToolTip.text
+    property alias labelToolTip: _labelWithToolTip.toolTip
 
     signal toggled(checked: bool)
 
-    Label {
-        id: _label
+    MpvqcLabelWithToolTip {
+        id: _labelWithToolTip
 
         Layout.fillWidth: true
         Layout.preferredWidth: 0
-
-        horizontalAlignment: Text.AlignRight
-        wrapMode: Text.Wrap
     }
 
     Item {

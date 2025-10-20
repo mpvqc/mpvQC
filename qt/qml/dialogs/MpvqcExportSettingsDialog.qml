@@ -92,6 +92,8 @@ MpvqcDialog {
             Layout.fillWidth: true
 
             label: qsTranslate("ExportSettingsDialog", "Write Subtitle Paths")
+            //: Tooltip for the "Write Subtitle Paths" export setting.
+            labelToolTip: qsTranslate("ExportSettingsDialog", "Include paths of manually imported subtitle files in the document header")
             checked: root.viewModel.temporaryWriteHeaderSubtitles
 
             onToggled: state => {
