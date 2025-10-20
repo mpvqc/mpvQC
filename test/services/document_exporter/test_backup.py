@@ -15,7 +15,7 @@ from .conftest import MODULE
 
 
 @pytest.fixture
-def document_backup_service() -> DocumentBackupService:
+def service() -> DocumentBackupService:
     return DocumentBackupService()
 
 
@@ -25,17 +25,17 @@ def zip_file():
         yield mock
 
 
-def test_backup_service_archive_name(make_mock, zip_file, document_backup_service):
+def test_archive_name(make_mock, zip_file, service):
     make_mock()
 
-    document_backup_service.backup()
+    service.backup()
 
     assert zip_file.called
     zip_name = zip_file.call_args.args[0]
     assert zip_name.name == f"{datetime.now(UTC):%Y-%m}.zip"
 
 
-def test_backup_service_performs_backup(make_mock, zip_file, document_backup_service):
+def test_performs_backup(make_mock, zip_file, service):
     make_mock(
         video="/path/to/nice/video",
         comments=[
@@ -43,7 +43,7 @@ def test_backup_service_performs_backup(make_mock, zip_file, document_backup_ser
         ],
     )
 
-    document_backup_service.backup()
+    service.backup()
 
     writestr_mock = zip_file.return_value.__enter__.return_value.writestr
     assert writestr_mock.called
