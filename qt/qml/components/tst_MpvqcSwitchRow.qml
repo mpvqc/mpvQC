@@ -5,49 +5,45 @@
 import QtQuick
 import QtTest
 
-Item {
-    id: testHelper
+TestCase {
+    id: testCase
 
     width: 400
     height: 400
+    when: windowShown
+    name: "MpvqcSwitchRow"
+    visible: true
 
-    MpvqcSwitchRow {
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
         id: objectUnderTest
 
-        property bool newChecked: false
+        MpvqcSwitchRow {}
+    }
 
-        prefWidth: testHelper.width
+    function test_toggle() {
+        const control = createTemporaryObject(objectUnderTest, testCase);
+        verify(control);
 
-        onCheckedChanged: {
-            objectUnderTest.newChecked = checked;
-        }
+        const spy = createTemporaryObject(signalSpy, testCase, {
+            target: control,
+            signalName: "toggled"
+        });
+        verify(spy);
 
-        TestCase {
-            name: "MpvqcSwitchRow"
-            when: windowShown
+        verify(!control.checked);
 
-            SignalSpy {
-                id: toggledSpy
-                target: objectUnderTest
-                signalName: "toggled"
-            }
+        mouseClick(control.toggle);
+        compare(spy.count, 1);
+        verify(control.checked);
 
-            function init() {
-                objectUnderTest.newChecked = false;
-                toggledSpy.clear();
-            }
-
-            function test_toggle() {
-                verify(!objectUnderTest.checked);
-
-                mouseClick(objectUnderTest.toggle);
-                compare(toggledSpy.count, 1);
-                verify(objectUnderTest.checked);
-
-                mouseClick(objectUnderTest.toggle);
-                compare(toggledSpy.count, 2);
-                verify(!objectUnderTest.checked);
-            }
-        }
+        mouseClick(control.toggle);
+        compare(spy.count, 2);
+        verify(!control.checked);
     }
 }
