@@ -203,6 +203,15 @@
         <source>Write Video Path</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Write Subtitle Paths</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include paths of manually imported subtitle files in the document header</source>
+        <extracomment>Tooltip for the &quot;Write Subtitle Paths&quot; export setting.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FileInteractionDialogs</name>
