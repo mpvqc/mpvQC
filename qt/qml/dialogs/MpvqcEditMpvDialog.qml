@@ -63,12 +63,9 @@ MpvqcDialog {
                 hoverEnabled: true
             }
 
-            MpvqcTooltip {
-                y: _label.height + 5
-
-                text: _label.url
-                visible: _label.hoveredLink
-            }
+            ToolTip.delay: 350
+            ToolTip.text: url
+            ToolTip.visible: hoveredLink
         }
 
         Separator {

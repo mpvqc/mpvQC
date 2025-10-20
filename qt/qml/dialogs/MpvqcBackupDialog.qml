@@ -59,12 +59,9 @@ MpvqcDialog {
 
             onPressed: root.viewModel.openBackupDirectory()
 
-            MpvqcTooltip {
-                y: -parent.height + 10
-                z: 10
-                visible: (parent as Button).hovered
-                text: root.viewModel.backupDirectory
-            }
+            ToolTip.delay: 350
+            ToolTip.text: root.viewModel.backupDirectory
+            ToolTip.visible: hovered
         }
 
         Item {

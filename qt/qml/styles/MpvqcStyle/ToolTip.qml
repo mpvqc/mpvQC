@@ -11,7 +11,8 @@ T.ToolTip {
     id: control
 
     x: parent ? (parent.width - implicitWidth) / 2 : 0
-    y: -implicitHeight - 24
+    y: -implicitHeight - 16
+    z: 10
 
     implicitWidth: Math.min(380, Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding))
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding)

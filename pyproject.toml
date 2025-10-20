@@ -289,7 +289,6 @@ files = [
     "qt/qml/components/MpvqcSpinBoxRow.qml",
     "qt/qml/components/MpvqcSwitchRow.qml",
     "qt/qml/components/MpvqcTextFieldRow.qml",
-    "qt/qml/components/MpvqcTooltip.qml",
     "qt/qml/components/qmldir",
     "qt/qml/components/tst_MpvqcMenu.qml",
     "qt/qml/components/tst_MpvqcPositionedMenu.qml",

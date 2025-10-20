@@ -112,11 +112,9 @@ MpvqcDialog {
                     cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                 }
 
-                MpvqcTooltip {
-                    y: -parent.height + 35
-                    visible: (parent as Label).hoveredLink
-                    text: root.licenseUrl
-                }
+                ToolTip.delay: 350
+                ToolTip.text: root.licenseUrl
+                ToolTip.visible: hoveredLink
             }
 
             MpvqcHeader {
@@ -278,12 +276,9 @@ MpvqcDialog {
                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
 
-            MpvqcTooltip {
-                y: -parent.height - 15
-                z: 10
-                visible: leftLabel.hoveredLink
-                text: _row.dependencyUrl
-            }
+            ToolTip.delay: 350
+            ToolTip.text: _row.dependencyUrl
+            ToolTip.visible: hoveredLink
         }
 
         Label {
