@@ -84,6 +84,16 @@ MpvqcDialog {
             }
         }
 
+        MpvqcSwitchRow {
+            label: qsTranslate("ExportSettingsDialog", "Write Subtitle Paths")
+            checked: root.viewModel.temporaryWriteHeaderSubtitles
+            prefWidth: root.contentWidth
+
+            onToggled: state => {
+                root.viewModel.temporaryWriteHeaderSubtitles = state;
+            }
+        }
+
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
