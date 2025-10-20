@@ -70,6 +70,7 @@ class SettingsService(QObject):
     writeHeaderGeneratorChanged = Signal(bool)
     writeHeaderNicknameChanged = Signal(bool)
     writeHeaderVideoPathChanged = Signal(bool)
+    writeHeaderSubtitlesChanged = Signal(bool)
 
     # StatusBar
     statusbarPercentageChanged = Signal(bool)
@@ -198,6 +199,16 @@ class SettingsService(QObject):
         if self.write_header_video_path != value:
             self._settings.setValue("Export/writeHeaderVideoPath", value)
             self.writeHeaderVideoPathChanged.emit(value)
+
+    @property
+    def write_header_subtitles(self) -> bool:
+        return self._settings.value("Export/writeHeaderSubtitles", False, type=bool)
+
+    @write_header_subtitles.setter
+    def write_header_subtitles(self, value: bool) -> None:
+        if self.write_header_subtitles != value:
+            self._settings.setValue("Export/writeHeaderSubtitles", value)
+            self.writeHeaderSubtitlesChanged.emit(value)
 
     @property
     def statusbar_percentage(self) -> bool:
