@@ -9,27 +9,34 @@ import QtQuick.Layouts
 RowLayout {
     id: root
 
-    required property int prefWidth
-
     property alias toggle: _switch
     property alias checked: _switch.checked
     property alias label: _label.text
 
-    signal toggled(bool checked)
+    signal toggled(checked: bool)
 
     Label {
         id: _label
 
+        Layout.fillWidth: true
+        Layout.preferredWidth: 0
+
         horizontalAlignment: Text.AlignRight
         wrapMode: Text.Wrap
-        Layout.preferredWidth: root.prefWidth / 2
     }
 
-    Switch {
-        id: _switch
+    Item {
+        Layout.fillWidth: true
+        Layout.preferredWidth: 0
+        Layout.preferredHeight: _switch.height
 
-        onCheckedChanged: {
-            root.toggled(checked);
+        Switch {
+            id: _switch
+
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+
+            onCheckedChanged: root.toggled(checked)
         }
     }
 }

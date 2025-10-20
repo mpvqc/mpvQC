@@ -44,9 +44,10 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            Layout.fillWidth: true
+
             label: qsTranslate("ExportSettingsDialog", "Write Date")
             checked: root.viewModel.temporaryWriteHeaderDate
-            prefWidth: root.contentWidth
 
             onToggled: state => {
                 root.viewModel.temporaryWriteHeaderDate = state;
@@ -54,10 +55,11 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            Layout.fillWidth: true
+
             //: %1 will be the application name. Most probably 'mpvQC' :)
             label: qsTranslate("ExportSettingsDialog", "Write '%1'").arg(Qt.application.name)
             checked: root.viewModel.temporaryWriteHeaderGenerator
-            prefWidth: root.contentWidth
 
             onToggled: state => {
                 root.viewModel.temporaryWriteHeaderGenerator = state;
@@ -65,9 +67,10 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            Layout.fillWidth: true
+
             label: qsTranslate("ExportSettingsDialog", "Write Nickname")
             checked: root.viewModel.temporaryWriteHeaderNickname
-            prefWidth: root.contentWidth
 
             onToggled: state => {
                 root.viewModel.temporaryWriteHeaderNickname = state;
@@ -75,9 +78,10 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            Layout.fillWidth: true
+
             label: qsTranslate("ExportSettingsDialog", "Write Video Path")
             checked: root.viewModel.temporaryWriteHeaderVideoPath
-            prefWidth: root.contentWidth
 
             onToggled: state => {
                 root.viewModel.temporaryWriteHeaderVideoPath = state;
@@ -85,9 +89,10 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            Layout.fillWidth: true
+
             label: qsTranslate("ExportSettingsDialog", "Write Subtitle Paths")
             checked: root.viewModel.temporaryWriteHeaderSubtitles
-            prefWidth: root.contentWidth
 
             onToggled: state => {
                 root.viewModel.temporaryWriteHeaderSubtitles = state;

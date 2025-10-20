@@ -26,9 +26,9 @@ MpvqcDialog {
 
         MpvqcSwitchRow {
             Layout.topMargin: 20
+            Layout.fillWidth: true
 
             label: qsTranslate("BackupDialog", "Backup Enabled")
-            prefWidth: parent.width
             checked: root.viewModel.temporaryBackupEnabled
 
             onToggled: state => {
