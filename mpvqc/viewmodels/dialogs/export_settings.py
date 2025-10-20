@@ -22,6 +22,7 @@ class MpvqcExportSettingsDialogViewModel(QObject):
     writeHeaderGeneratorChanged = Signal(bool)
     writeHeaderNicknameChanged = Signal(bool)
     writeHeaderVideoPathChanged = Signal(bool)
+    writeHeaderSubtitlesChanged = Signal(bool)
 
     def __init__(self, /):
         super().__init__()
@@ -30,6 +31,7 @@ class MpvqcExportSettingsDialogViewModel(QObject):
         self._temp_write_header_generator = self._settings.write_header_generator
         self._temp_write_header_nickname = self._settings.write_header_nickname
         self._temp_write_header_video_path = self._settings.write_header_video_path
+        self._temp_write_header_subtitles = self._settings.write_header_subtitles
 
     @Property(str, notify=nicknameChanged)
     def temporaryNickname(self) -> str:
@@ -81,6 +83,16 @@ class MpvqcExportSettingsDialogViewModel(QObject):
             self._temp_write_header_video_path = value
             self.writeHeaderVideoPathChanged.emit(value)
 
+    @Property(bool, notify=writeHeaderSubtitlesChanged)
+    def temporaryWriteHeaderSubtitles(self) -> bool:
+        return self._temp_write_header_subtitles
+
+    @temporaryWriteHeaderSubtitles.setter
+    def temporaryWriteHeaderSubtitles(self, value: bool) -> None:
+        if self._temp_write_header_subtitles != value:
+            self._temp_write_header_subtitles = value
+            self.writeHeaderSubtitlesChanged.emit(value)
+
     @Slot()
     def accept(self) -> None:
         self._settings.nickname = self._temp_nickname
@@ -88,3 +100,4 @@ class MpvqcExportSettingsDialogViewModel(QObject):
         self._settings.write_header_generator = self._temp_write_header_generator
         self._settings.write_header_nickname = self._temp_write_header_nickname
         self._settings.write_header_video_path = self._temp_write_header_video_path
+        self._settings.write_header_subtitles = self._temp_write_header_subtitles
