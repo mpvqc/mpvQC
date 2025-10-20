@@ -25,23 +25,27 @@ def make_mock(qt_app, settings_service):
         video: Path | str | None = None,
         nickname: str | None = None,
         comments: list | None = None,
+        subtitles: list | None = None,
         write_header_date: bool = False,
         write_header_generator: bool = False,
-        write_header_video_path: bool = False,
         write_header_nickname: bool = False,
+        write_header_video_path: bool = False,
+        write_header_subtitles: bool = False,
     ):
         qt_app.find_object.return_value.comments.return_value = comments or []
 
         settings_service.nickname = nickname
         settings_service.write_header_date = write_header_date
         settings_service.write_header_generator = write_header_generator
-        settings_service.write_header_video_path = write_header_video_path
         settings_service.write_header_nickname = write_header_nickname
+        settings_service.write_header_video_path = write_header_video_path
+        settings_service.write_header_subtitles = write_header_subtitles
         settings_service.language = "en-US"
 
         player_mock = MagicMock(spec_set=PlayerService)
         player_mock.path = str(video) if video else None
         player_mock.has_video = bool(video)
+        player_mock.external_subtitles = subtitles or []
 
         def config(binder: inject.Binder):
             binder.bind(PlayerService, player_mock)

@@ -127,3 +127,70 @@ def test_renders_backup(make_mock, service, resource_service):
     assert "[00:00:50] [Spelling] My second comment" in rendered
     assert "[00:01:40] [Phrasing] My third comment" in rendered
     assert "# total lines: 3" in rendered
+
+
+def test_renders_no_subtitles(make_mock, service, resource_service):
+    subtitles = [Path.home() / "subtitle.ass"]
+    expected = textwrap.dedent(
+        """\
+        [FILE]
+
+        [DATA]
+        # total lines: 0
+        """
+    )
+
+    make_mock()
+    assert expected == service.render(resource_service.default_export_template)
+
+    make_mock(subtitles=subtitles)
+    assert expected == service.render(resource_service.default_export_template)
+
+    make_mock(write_header_subtitles=True)
+    assert expected == service.render(resource_service.default_export_template)
+
+    make_mock(write_header_subtitles=True, subtitles=subtitles)
+    assert expected != service.render(resource_service.default_export_template), (
+        "Documents should not match as subtitles should now be rendered"
+    )
+
+
+def test_renders_subtitles(make_mock, service, resource_service):
+    subtitle1 = Path.home() / "subtitle-1.ass"
+    subtitle2 = Path.home() / "subtitle-2.srt"
+
+    make_mock(
+        write_header_nickname=True,
+        nickname="ಠ_ಠ",
+        write_header_subtitles=False,
+        subtitles=[subtitle1, subtitle2],
+    )
+    expected = textwrap.dedent(
+        """\
+        [FILE]
+        nick      : ಠ_ಠ
+
+        [DATA]
+        # total lines: 0
+        """
+    )
+    assert expected == service.render(resource_service.default_export_template)
+
+    make_mock(
+        write_header_nickname=True,
+        nickname="ಠ_ಠ",
+        write_header_subtitles=True,
+        subtitles=[subtitle1, subtitle2],
+    )
+    expected = textwrap.dedent(
+        f"""\
+        [FILE]
+        nick      : ಠ_ಠ
+        subtitle  : {subtitle1}
+        subtitle  : {subtitle2}
+
+        [DATA]
+        # total lines: 0
+        """
+    )
+    assert expected == service.render(resource_service.default_export_template)
