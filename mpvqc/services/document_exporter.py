@@ -43,11 +43,13 @@ class DocumentRenderService:
         write_generator = self._settings.write_header_generator
         write_video_path = self._settings.write_header_video_path
         write_nickname = self._settings.write_header_nickname
+        write_subtitle_paths = self._settings.write_header_subtitles
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
         comments = QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
         generator = f"{QCoreApplication.applicationName()} {QCoreApplication.applicationVersion()}"
         nickname = self._settings.nickname
+        subtitles = [str(sub) for sub in self._player.external_subtitles]
 
         if self._player.has_video:
             video_path = f"{Path(self._player.path)}"
@@ -59,13 +61,15 @@ class DocumentRenderService:
         return {
             "write_date": write_date,
             "write_generator": write_generator,
-            "write_video_path": write_video_path,
             "write_nickname": write_nickname,
+            "write_video_path": write_video_path,
+            "write_subtitle_paths": write_subtitle_paths,
             "date": date,
             "generator": generator,
+            "nickname": nickname,
             "video_path": video_path,
             "video_name": video_name,
-            "nickname": nickname,
+            "subtitles": subtitles,
             "comments": comments,
         }
 
