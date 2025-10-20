@@ -5,15 +5,6 @@
 from PySide6.QtCore import QObject, QUrl, Signal
 
 
-class MockedMessageBox(QObject):
-    accepted = Signal()
-    rejected = Signal()
-    closed = Signal()
-
-    def open(self):
-        pass
-
-
 class MockedDialog(QObject):
     accepted = Signal()
     rejected = Signal()

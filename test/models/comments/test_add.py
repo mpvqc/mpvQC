@@ -66,7 +66,7 @@ def test_add_comment_sorts_model(make_model):
 
 
 def test_add_comment_fires_signals(model, make_spy):
-    added_initially_spy = make_spy(model.newCommentAddedInitially)
+    added_initially_spy = make_spy(model.comment_added_initial)
 
     model.add_row("comment type")
 
@@ -112,7 +112,7 @@ def test_add_comment_undo_redo_sorts_model(make_model):
 
 
 def test_add_comment_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.add_row("undo redo comment type")
     assert spy.count() == 1
@@ -128,11 +128,11 @@ def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
 
-    new_initially_spy = make_spy(model.newCommentAddedInitially)
-    new_undone_spy = make_spy(model.newCommentAddedUndone)
-    new_redone_spy = make_spy(model.newCommentAddedRedone)
+    new_initially_spy = make_spy(model.comment_added_initial)
+    new_undone_spy = make_spy(model.comment_added_undo)
+    new_redone_spy = make_spy(model.comment_added_redo)
 
-    model.set_selected_row(3)
+    model.selectedRow = 3
     model.add_row("undo redo comment type")
 
     assert new_initially_spy.count() == 1
@@ -161,3 +161,14 @@ def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     assert new_undone_spy.count() == 0
     assert new_redone_spy.count() == 1
     assert new_redone_spy.at(invocation=0, argument=0) == 5
+
+
+def test_add_comment_state_changes(model, state_service_mock):
+    model.add_row("commentType")
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
+
+    model.redo()
+    assert state_service_mock.change.call_count == 3

@@ -7,7 +7,7 @@ from enum import IntEnum
 from functools import cache
 
 import inject
-from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, Signal
+from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, QUrl, Signal
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -17,12 +17,14 @@ def get_default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
 
 
-def get_default_documents_location() -> str:
-    return QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+def get_default_documents_location() -> QUrl:
+    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+    return QUrl.fromLocalFile(location)
 
 
-def get_default_movie_location() -> str:
-    return QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
+def get_default_movie_location() -> QUrl:
+    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
+    return QUrl.fromLocalFile(location)
 
 
 @cache
@@ -43,7 +45,13 @@ class SettingsService(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
-    class ImportWhenVideoLinkedInDocument(IntEnum):
+    class TimeFormat(IntEnum):
+        EMPTY = 0
+        CURRENT_TIME = 1
+        REMAINING_TIME = 2
+        CURRENT_TOTAL_TIME = 3
+
+    class ImportFoundVideo(IntEnum):
         ALWAYS = 0
         ASK_EVERY_TIME = 1
         NEVER = 2
@@ -62,16 +70,17 @@ class SettingsService(QObject):
     writeHeaderGeneratorChanged = Signal(bool)
     writeHeaderNicknameChanged = Signal(bool)
     writeHeaderVideoPathChanged = Signal(bool)
+    writeHeaderSubtitlesChanged = Signal(bool)
 
     # StatusBar
     statusbarPercentageChanged = Signal(bool)
     timeFormatChanged = Signal(int)
 
     # Import
-    lastDirectoryVideoChanged = Signal(str)
-    lastDirectoryDocumentsChanged = Signal(str)
-    lastDirectorySubtitlesChanged = Signal(str)
-    importWhenVideoLinkedInDocumentChanged = Signal(int)
+    lastDirectoryVideoChanged = Signal(QUrl)
+    lastDirectoryDocumentsChanged = Signal(QUrl)
+    lastDirectorySubtitlesChanged = Signal(QUrl)
+    importFoundVideoChanged = Signal(int)
 
     # SplitView
     layoutOrientationChanged = Signal(int)
@@ -83,10 +92,11 @@ class SettingsService(QObject):
     # Window Title
     windowTitleFormatChanged = Signal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, ini_file: str = None):
         super().__init__(parent)
-        path = self._type_mapper.map_path_to_str(self._paths.file_settings)
-        self._settings = QSettings(path, QSettings.Format.IniFormat)
+        if ini_file is None:
+            ini_file = self._type_mapper.map_path_to_str(self._paths.file_settings)
+        self._settings = QSettings(ini_file, QSettings.Format.IniFormat)
 
     @staticmethod
     def get_default_comment_types() -> list[str]:
@@ -191,6 +201,16 @@ class SettingsService(QObject):
             self.writeHeaderVideoPathChanged.emit(value)
 
     @property
+    def write_header_subtitles(self) -> bool:
+        return self._settings.value("Export/writeHeaderSubtitles", False, type=bool)
+
+    @write_header_subtitles.setter
+    def write_header_subtitles(self, value: bool) -> None:
+        if self.write_header_subtitles != value:
+            self._settings.setValue("Export/writeHeaderSubtitles", value)
+            self.writeHeaderSubtitlesChanged.emit(value)
+
+    @property
     def statusbar_percentage(self) -> bool:
         return self._settings.value("StatusBar/statusbarPercentage", True, type=bool)
 
@@ -211,44 +231,44 @@ class SettingsService(QObject):
             self.timeFormatChanged.emit(value)
 
     @property
-    def last_directory_video(self) -> str:
-        return self._settings.value("Import/lastDirectoryVideo", get_default_movie_location(), type=str)
+    def last_directory_video(self) -> QUrl:
+        return self._settings.value("Import/lastDirectoryVideo", get_default_movie_location(), type=QUrl)
 
     @last_directory_video.setter
-    def last_directory_video(self, value: str):
+    def last_directory_video(self, value: QUrl):
         if self.last_directory_video != value:
             self._settings.setValue("Import/lastDirectoryVideo", value)
             self.lastDirectoryVideoChanged.emit(value)
 
     @property
-    def last_directory_documents(self) -> str:
-        return self._settings.value("Import/lastDirectoryDocuments", get_default_documents_location(), type=str)
+    def last_directory_documents(self) -> QUrl:
+        return self._settings.value("Import/lastDirectoryDocuments", get_default_documents_location(), type=QUrl)
 
     @last_directory_documents.setter
-    def last_directory_documents(self, value: str):
+    def last_directory_documents(self, value: QUrl):
         if self.last_directory_documents != value:
             self._settings.setValue("Import/lastDirectoryDocuments", value)
             self.lastDirectoryDocumentsChanged.emit(value)
 
     @property
-    def last_directory_subtitles(self) -> str:
-        return self._settings.value("Import/lastDirectorySubtitles", get_default_documents_location(), type=str)
+    def last_directory_subtitles(self) -> QUrl:
+        return self._settings.value("Import/lastDirectorySubtitles", get_default_documents_location(), type=QUrl)
 
     @last_directory_subtitles.setter
-    def last_directory_subtitles(self, value: str):
+    def last_directory_subtitles(self, value: QUrl):
         if self.last_directory_subtitles != value:
             self._settings.setValue("Import/lastDirectorySubtitles", value)
             self.lastDirectorySubtitlesChanged.emit(value)
 
     @property
-    def import_when_video_linked_in_document(self) -> int:
-        return self._settings.value("Import/importWhenVideoLinkedInDocument", 1, type=int)  # ASK_EVERY_TIME
+    def import_found_video(self) -> int:
+        return self._settings.value("Import/importFoundVideo", 1, type=int)  # ASK_EVERY_TIME
 
-    @import_when_video_linked_in_document.setter
-    def import_when_video_linked_in_document(self, value: int):
-        if self.import_when_video_linked_in_document != value:
-            self._settings.setValue("Import/importWhenVideoLinkedInDocument", value)
-            self.importWhenVideoLinkedInDocumentChanged.emit(value)
+    @import_found_video.setter
+    def import_found_video(self, value: int):
+        if self.import_found_video != value:
+            self._settings.setValue("Import/importFoundVideo", value)
+            self.importFoundVideoChanged.emit(value)
 
     @property
     def layout_orientation(self) -> int:

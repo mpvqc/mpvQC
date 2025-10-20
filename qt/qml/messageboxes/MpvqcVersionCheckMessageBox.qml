@@ -3,45 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
 
-import "../shared"
+import pyobjects
+
+import "../components"
 
 MpvqcMessageBox {
-    id: root
+    property var viewModel: MpvqcVersionCheckMessageBoxViewModel {}
 
-    readonly property var mpvqcVersionCheckerPyObject: mpvqcApplication.mpvqcVersionCheckerPyObject
-
-    title: qsTranslate("MessageBoxes", "Checking for Updates...")
-
-    contentItem: Label {
-        text: qsTranslate("MessageBoxes", "Loading...")
-        horizontalAlignment: Text.AlignLeft
-        wrapMode: Label.WordWrap
-        elide: Text.ElideLeft
-
-        onLinkActivated: link => {
-            Qt.openUrlExternally(link);
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
-        }
-    }
-
-    Component.onCompleted: {
-        root.mpvqcVersionCheckerPyObject.check_for_new_version();
-    }
-
-    Connections {
-        target: root.mpvqcVersionCheckerPyObject
-
-        function onVersionChecked(title: string, text: string): void {
-            root.title = title;
-            root.contentItem.text = text;
-        }
-    }
+    title: viewModel.title || qsTranslate("MessageBoxes", "Checking for Updates...")
+    text: viewModel.text || qsTranslate("MessageBoxes", "Loading...")
 }

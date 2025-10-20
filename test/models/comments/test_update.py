@@ -41,7 +41,7 @@ def test_update_time_sorts_model_again(model):
 
 
 def test_update_time_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.update_time(row=0, new_time=7)
     assert spy.count() == 1
@@ -54,9 +54,9 @@ def test_update_time_invalidates_search_results(model, make_spy):
 
 
 def test_update_time_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.timeUpdatedInitially)
-    undone_spy = make_spy(model.timeUpdatedUndone)
-    redone_spy = make_spy(model.timeUpdatedRedone)
+    initially_spy = make_spy(model.time_updated_initial)
+    undone_spy = make_spy(model.time_updated_undo)
+    redone_spy = make_spy(model.time_updated_redo)
 
     model.update_time(row=0, new_time=7)
     assert initially_spy.count() == 1
@@ -98,8 +98,8 @@ def test_update_comment_type(model):
 
 
 def test_update_comment_type_fires_signals(model, make_spy):
-    updated_spy = make_spy(model.commentTypeUpdated)
-    undone_spy = make_spy(model.commentTypeUpdatedUndone)
+    updated_spy = make_spy(model.comment_type_updated_initial)
+    undone_spy = make_spy(model.comment_type_updated_undo)
 
     model.update_comment_type(row=0, comment_type="updated comment type")
     assert updated_spy.count() == 1
@@ -110,7 +110,7 @@ def test_update_comment_type_fires_signals(model, make_spy):
     undone_spy.reset()
 
     model.undo()
-    model.set_selected_row(3)
+    model.selectedRow = 3
 
     assert updated_spy.count() == 0
     assert undone_spy.count() == 1
@@ -120,7 +120,7 @@ def test_update_comment_type_fires_signals(model, make_spy):
     undone_spy.reset()
 
     model.redo()
-    model.set_selected_row(2)
+    model.selectedRow = 3
 
     assert updated_spy.count() == 1
     assert undone_spy.count() == 0
@@ -139,7 +139,7 @@ def test_update_comment(model):
 
 
 def test_update_comment_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.update_comment(row=0, comment="new")
     assert spy.count() == 1
@@ -152,8 +152,8 @@ def test_update_comment_invalidates_search_results(model, make_spy):
 
 
 def test_update_comment_fires_signals(model, make_spy):
-    updated_spy = make_spy(model.commentUpdated)
-    undone_spy = make_spy(model.commentUpdatedUndone)
+    updated_spy = make_spy(model.comment_updated_initial)
+    undone_spy = make_spy(model.comment_updated_undo)
 
     model.update_comment(row=0, comment="new")
     assert updated_spy.count() == 1
@@ -164,7 +164,7 @@ def test_update_comment_fires_signals(model, make_spy):
     undone_spy.reset()
 
     model.undo()
-    model.set_selected_row(3)
+    model.selectedRow = 3
 
     assert updated_spy.count() == 0
     assert undone_spy.count() == 1
@@ -189,3 +189,30 @@ def test_update_comments_consecutively_undo_redo(make_model):
     model.undo()
 
     assert model.item(5, 0).data(Role.COMMENT) == "First"
+
+
+def test_update_time_state_changes(model, state_service_mock):
+    model.update_time(0, 100)
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
+
+    model.redo()
+    assert state_service_mock.change.call_count == 3
+
+
+def test_update_comment_type_state_changes(model, state_service_mock):
+    model.update_comment_type(0, "newType")
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2
+
+
+def test_update_comment_state_changes(model, state_service_mock):
+    model.update_comment(0, "new comment")
+    assert state_service_mock.change.call_count == 1
+
+    model.undo()
+    assert state_service_mock.change.call_count == 2

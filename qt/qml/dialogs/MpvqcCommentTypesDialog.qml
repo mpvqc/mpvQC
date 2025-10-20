@@ -10,24 +10,24 @@ import QtQuick.Layouts
 
 import pyobjects
 
-import "../shared"
-import "../themes"
+import "../components"
+import "../utility"
 
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcCommentTypesDialogControllerPyObject controller: MpvqcCommentTypesDialogControllerPyObject {}
+    readonly property MpvqcCommentTypesDialogViewModel viewModel: MpvqcCommentTypesDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme
 
     title: qsTranslate("CommentTypesDialog", "Comment Types")
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
     onAccepted: {
-        root.controller.accept();
+        root.viewModel.accept();
     }
 
     onReset: {
-        root.controller.reset();
+        root.viewModel.reset();
     }
 
     contentItem: ColumnLayout {
@@ -46,36 +46,40 @@ MpvqcDialog {
                 horizontalAlignment: Text.AlignLeft
                 placeholderText: qsTranslate("CommentTypesDialog", "New comment type")
 
-                onTextChanged: root.controller.onTextChanged(text)
+                onTextChanged: root.viewModel.onTextChanged(text)
 
-                onActiveFocusChanged: root.controller.onTextFieldFocusChanged(activeFocus)
+                onActiveFocusChanged: root.viewModel.onTextFieldFocusChanged(activeFocus)
 
-                onAccepted: root.controller.acceptInput()
+                onAccepted: root.viewModel.acceptInput()
 
-                Keys.onEscapePressed: root.controller.rejectInput()
+                Keys.onEscapePressed: root.viewModel.rejectInput()
             }
 
             ToolButton {
-                enabled: root.controller.isAcceptButtonEnabled
+                enabled: root.viewModel.isAcceptButtonEnabled
 
                 icon {
+                    width: 20
+                    height: 20
                     source: "qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 }
 
                 onPressed: {
-                    root.controller.acceptInput();
+                    root.viewModel.acceptInput();
                 }
             }
 
             ToolButton {
-                enabled: root.controller.isRejectButtonEnabled
+                enabled: root.viewModel.isRejectButtonEnabled
 
                 icon {
+                    width: 20
+                    height: 20
                     source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 }
 
                 onPressed: {
-                    root.controller.rejectInput();
+                    root.viewModel.rejectInput();
                 }
             }
         }
@@ -92,7 +96,7 @@ MpvqcDialog {
                 topPadding: 4
                 bottomPadding: 6
 
-                text: root.controller.validationError
+                text: root.viewModel.validationError
                 maximumLineCount: 3
                 color: root.mpvqcTheme.control
                 wrapMode: Label.WordWrap
@@ -118,8 +122,8 @@ MpvqcDialog {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                model: root.controller.temporaryCommentTypesModel
-                currentIndex: root.controller.selectedIndex
+                model: root.viewModel.temporaryCommentTypesModel
+                currentIndex: root.viewModel.selectedIndex
                 spacing: 0
                 clip: true
                 reuseItems: false // prevent artifacts from alternating row colors when deleting items
@@ -150,7 +154,7 @@ MpvqcDialog {
                     Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.rowHighlightText : foregroundColor
                     Material.background: backgroundColor
 
-                    onPressed: root.controller.selectItem(index)
+                    onPressed: root.viewModel.selectItem(index)
 
                     background: Rectangle {
                         parent: _delegate.parent
@@ -237,7 +241,7 @@ MpvqcDialog {
                 ToolButton {
                     id: _upButton
 
-                    enabled: root.controller.isMoveUpButtonEnabled
+                    enabled: root.viewModel.isMoveUpButtonEnabled
 
                     icon {
                         width: 28
@@ -247,12 +251,12 @@ MpvqcDialog {
 
                     onPressed: {
                         _listView.upMovement = true;
-                        root.controller.moveUp();
+                        root.viewModel.moveUp();
                     }
                 }
 
                 ToolButton {
-                    enabled: root.controller.isMoveDownButtonEnabled
+                    enabled: root.viewModel.isMoveDownButtonEnabled
 
                     icon {
                         width: 28
@@ -262,31 +266,31 @@ MpvqcDialog {
 
                     onPressed: {
                         _listView.upMovement = false;
-                        root.controller.moveDown();
+                        root.viewModel.moveDown();
                     }
                 }
 
                 ToolButton {
-                    enabled: root.controller.isEditButtonEnabled
+                    enabled: root.viewModel.isEditButtonEnabled
 
                     icon {
                         source: "qrc:/data/icons/edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     }
 
                     onPressed: {
-                        root.controller.startEdit();
+                        root.viewModel.startEdit();
                     }
                 }
 
                 ToolButton {
-                    enabled: root.controller.isDeleteButtonEnabled
+                    enabled: root.viewModel.isDeleteButtonEnabled
 
                     icon {
                         source: "qrc:/data/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     }
 
                     onPressed: {
-                        root.controller.deleteItem();
+                        root.viewModel.deleteItem();
                     }
                 }
             }
@@ -294,7 +298,7 @@ MpvqcDialog {
     }
 
     Connections {
-        target: root.controller
+        target: root.viewModel
 
         function onClearTextFieldRequested(): void {
             _textField.placeholderText = qsTranslate("CommentTypesDialog", "New comment type");

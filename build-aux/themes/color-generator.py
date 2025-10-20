@@ -3,19 +3,17 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import json
 import re
 import sys
-import textwrap
-from dataclasses import dataclass
-from decimal import ROUND_HALF_UP, Decimal
+from dataclasses import asdict, dataclass
+from pathlib import Path
 
 from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynamicColors
 from materialyoucolor.hct import Hct
 from materialyoucolor.scheme.dynamic_scheme import DynamicScheme
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
-from PySide6.QtGui import QColor
 
-WHOLE_NUMBER = Decimal(0)
 HEX_PATTERN = re.compile(r"^#[A-Fa-f0-9]{6}$")
 
 
@@ -28,7 +26,9 @@ class Color:
 @dataclass(frozen=True)
 class MpvqcColorSet:
     background: str
+    backgroundAlternate: str
     foreground: str
+    foregroundAlternate: str
     control: str
     rowHighlight: str
     rowHighlightText: str
@@ -87,7 +87,7 @@ def generate(colors: list[str], dark: bool, contrast: float) -> None:
         color_map[hex_color] = generate_palette_from(scheme)
 
     mpvqc_colors = map_to_mpvqc_colors(color_map, dark)
-    print_qml_list_elements(mpvqc_colors)
+    update_theme_file(mpvqc_colors, dark)
 
 
 def generate_palette_from(scheme: DynamicScheme) -> dict:
@@ -119,13 +119,15 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool):
             colors.append(
                 MpvqcColorSet(
                     background=palette["surface"],
+                    backgroundAlternate=palette["surfaceContainerHigh"],
                     foreground=palette["onSurfaceVariant"],
+                    foregroundAlternate=palette["onSurfaceVariant"],
                     control=palette["primary"],
                     rowHighlight=palette["inversePrimary"],
                     rowHighlightText=palette["onSurface"],
                     rowBase=palette["surface"],
                     rowBaseText=palette["onSurfaceVariant"],
-                    rowBaseAlternate=qt_lighter(palette["surface"], 1.3),
+                    rowBaseAlternate=palette["surfaceContainerLow"],
                     rowBaseAlternateText=palette["onSurfaceVariant"],
                 )
             )
@@ -133,49 +135,36 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool):
             colors.append(
                 MpvqcColorSet(
                     background=palette["surfaceContainerLow"],
+                    backgroundAlternate=palette["secondaryContainer"],
                     foreground=palette["onSurfaceVariant"],
+                    foregroundAlternate=palette["onSecondaryContainer"],
                     control=palette["secondary"],
                     rowHighlight=palette["primary"],
                     rowHighlightText=palette["onPrimary"],
                     rowBase=palette["surfaceContainerLow"],
                     rowBaseText=palette["onSurfaceVariant"],
-                    rowBaseAlternate=qt_darker(palette["surfaceContainerLow"], 1.1),
+                    rowBaseAlternate=palette["surfaceContainerHighest"],
                     rowBaseAlternateText=palette["onSurfaceVariant"],
                 )
             )
     return colors
 
 
-def qt_darker(color: str, factor: float) -> str:
-    decimal = Decimal(f"{factor * 100}").quantize(WHOLE_NUMBER, ROUND_HALF_UP)
-    adapted_factor = int(decimal)
-    hex_in = QColor(color).name(QColor.NameFormat.HexRgb)
-    return QColor(hex_in).darker(adapted_factor).name(QColor.NameFormat.HexRgb)
+def update_theme_file(colors: list[MpvqcColorSet], dark: bool) -> None:
+    path = Path() / ".." / ".." / "data" / "themes.json"
+    path = path.resolve()
 
+    with Path(path).open(encoding="utf-8") as f:
+        file = json.load(f)
 
-def qt_lighter(color: str, factor: float) -> str:
-    decimal = Decimal(f"{factor * 100}").quantize(WHOLE_NUMBER, ROUND_HALF_UP)
-    adapted_factor = int(decimal)
-    hex_in = QColor(color).name(QColor.NameFormat.HexRgb)
-    return QColor(hex_in).lighter(adapted_factor).name(QColor.NameFormat.HexRgb)
+    theme = "material-you-dark" if dark else "material-you"
 
+    for idx, item in enumerate(file):
+        if theme == item["identifier"]:
+            file[idx]["palettes"] = [asdict(c) for c in colors]
 
-def print_qml_list_elements(colors: list[MpvqcColorSet]) -> None:
-    for c in colors:
-        element = textwrap.dedent(f"""\
-            ListElement {{
-                background: "{c.background}"
-                foreground: "{c.foreground}"
-                control: "{c.control}"
-                rowHighlight: "{c.rowHighlight}"
-                rowHighlightText: "{c.rowHighlightText}"
-                rowBase: "{c.rowBase}"
-                rowBaseText: "{c.rowBaseText}"
-                rowBaseAlternate: "{c.rowBaseAlternate}"
-                rowBaseAlternateText: "{c.rowBaseAlternateText}"
-            }}""")
-
-        print(element)
+    with Path(path).open("w", encoding="utf-8") as f:
+        f.write(json.dumps(file, indent=4))
 
 
 if __name__ == "__main__":

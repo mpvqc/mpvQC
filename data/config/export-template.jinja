@@ -3,6 +3,9 @@
 {{ 'generator : ' + generator + '\n'  if write_generator  else '' -}}
 {{ 'nick      : ' + nickname + '\n'   if write_nickname   else '' -}}
 {{ 'path      : ' + video_path + '\n' if write_video_path else '' -}}
+{% for subtitle in subtitles if write_subtitle_paths -%}
+  subtitle  : {{ subtitle }}
+{% endfor -%}
 
 {{ '\n' }}[DATA]
 {% for comment in comments -%}

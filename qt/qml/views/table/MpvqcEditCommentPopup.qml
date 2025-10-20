@@ -1,0 +1,119 @@
+// SPDX-FileCopyrightText: mpvQC developers
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import QtQuick
+import QtQuick.Controls.Material
+
+import "../../utility"
+
+Popup {
+    id: root
+
+    required property int currentListIndex
+    required property string currentComment
+
+    readonly property bool isOdd: currentListIndex % 2 === 1
+
+    property int previousHeight: 0
+    property bool acceptValue: true
+
+    signal commentEdited(index: int, newComment: string)
+    signal commentEditPopupHeightChanged(heightDelta: int)
+
+    width: root.parent.width
+
+    leftPadding: root.parent.leftPadding / 2 // qmllint disable
+    rightPadding: root.parent.rightPadding / 2 // qmllint disable
+    topPadding: root.parent.topPadding / 2 // qmllint disable
+    bottomPadding: root.parent.bottomPadding / 2 // qmllint disable
+
+    background: null
+    dim: false
+    modal: false
+    enter: null
+    exit: null
+
+    contentItem: TextArea {
+        id: _textField
+
+        text: root.currentComment
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignLeft
+
+        focus: true
+        selectByMouse: true
+
+        bottomPadding: root.bottomPadding
+        topPadding: root.topPadding
+        leftPadding: root.leftPadding
+        rightPadding: root.rightPadding
+
+        selectionColor: MpvqcTheme.rowHighlight
+        selectedTextColor: MpvqcTheme.rowHighlightText
+
+        background: Rectangle {
+            anchors.fill: parent
+            color: MpvqcTheme.getBackground(root.isOdd)
+        }
+
+        Keys.onReturnPressed: {
+            root.close();
+        }
+    }
+
+    onAboutToHide: {
+        if (!acceptValue)
+            return;
+
+        const text = _textField.text.trim();
+        const sanitizedText = MpvqcTableUtility.sanitizeText(text);
+
+        if (root.currentComment !== sanitizedText) {
+            root.commentEdited(root.currentListIndex, sanitizedText);
+        }
+    }
+
+    onOpened: {
+        _textField.selectAll();
+        _textField.forceActiveFocus();
+    }
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            root.close();
+        }
+    }
+
+    onHeightChanged: {
+        const heightDelta = root.height - root.previousHeight;
+        if (root.previousHeight > 0) {
+            // Skip first change (initialization)
+            root.commentEditPopupHeightChanged(heightDelta);
+        }
+        root.previousHeight = root.height;
+    }
+
+    Shortcut {
+        sequence: "Esc"
+
+        onActivated: {
+            root.acceptValue = false;
+            root.close();
+        }
+    }
+
+    Binding {
+        when: root.visible
+        target: root.parent
+        property: "text"
+        value: "" // don't display text below the editing popup
+    }
+
+    Binding {
+        when: root.visible
+        target: root.parent
+        property: "editorHeight"
+        value: root.height
+    }
+}

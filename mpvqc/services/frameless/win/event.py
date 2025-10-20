@@ -1,4 +1,5 @@
-# Copyright 2023
+# SPDX-FileCopyrightText: zhiyiYo
+# SPDX-FileCopyrightText: Virace
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later

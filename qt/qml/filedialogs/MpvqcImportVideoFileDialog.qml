@@ -4,19 +4,17 @@
 
 import QtQuick.Dialogs
 
-FileDialog {
-    required property var mpvqcApplication
+import pyobjects
 
-    readonly property var mpvqcManager: mpvqcApplication.mpvqcManager
-    readonly property var mpvqcSettings: mpvqcApplication.mpvqcSettings
-    readonly property var mpvqcUtilityPyObject: mpvqcApplication.mpvqcUtilityPyObject
+FileDialog {
+    readonly property MpvqcImportFileDialogViewModel viewModel: MpvqcImportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open Video")
-    currentFolder: mpvqcSettings.lastDirectoryVideo
-    nameFilters: [qsTranslate("FileInteractionDialogs", "Video files") + mpvqcUtilityPyObject.videoFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
+    currentFolder: viewModel.lastDirectoryVideo
+    nameFilters: [qsTranslate("FileInteractionDialogs", "Video files") + viewModel.videoFileGlobPattern, qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     onAccepted: {
-        mpvqcSettings.lastDirectoryVideo = currentFolder;
-        mpvqcManager.openVideo(currentFile);
+        viewModel.lastDirectoryVideo = currentFolder;
+        viewModel.openVideo(currentFile);
     }
 }

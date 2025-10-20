@@ -20,6 +20,13 @@ ListModel {
         os: "linux, windows"
     }
     ListElement {
+        name: "loguru"
+        url: "https://github.com/Delgan/loguru"
+        licence: "MIT"
+        version: "@@pypi-loguru@@"
+        os: "linux, windows"
+    }
+    ListElement {
         name: "python-mpv"
         url: "https://github.com/jaseg/python-mpv"
         licence: "GPL-3.0"

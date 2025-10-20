@@ -8,12 +8,16 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import "../shared"
+import "../components"
+import "../utility"
+
+import pyobjects
 
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcAppearanceDialogController controller: MpvqcAppearanceDialogController {}
+    readonly property MpvqcAppearanceDialogViewModel viewModel: MpvqcAppearanceDialogViewModel {}
+    readonly property var mpvqcTheme: MpvqcTheme
 
     readonly property var dimensions: QtObject {
         readonly property int itemSize: 52
@@ -25,16 +29,10 @@ MpvqcDialog {
 
     readonly property var animations: QtObject {
         readonly property int highlightMoveDuration: 150
-        readonly property int highlightResizeDuration: 50
-        readonly property int colorAnimationDuration: 150
         readonly property int scaleAnimationDuration: 125
-        readonly property int populateDuration: 250
         readonly property real scalePressed: 1.1
         readonly property real scaleNormal: 1.0
-        readonly property real scaleFrom: 0.85
     }
-
-    readonly property int highlightMoveDuration: controller.suppressColorAnimation ? 0 : animations.highlightMoveDuration
 
     title: qsTranslate("AppearanceDialog", "Appearance")
 
@@ -106,25 +104,6 @@ MpvqcDialog {
         }
     }
 
-    component PopulateTransition: Transition {
-        ParallelAnimation {
-            PropertyAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: root.animations.populateDuration
-                easing.type: Easing.OutCubic
-            }
-            PropertyAnimation {
-                property: "scale"
-                from: root.animations.scaleFrom
-                to: root.animations.scaleNormal
-                duration: root.animations.populateDuration
-                easing.type: Easing.OutBack
-            }
-        }
-    }
-
     contentItem: ScrollView {
         contentWidth: root.contentWidth
 
@@ -141,8 +120,8 @@ MpvqcDialog {
                 Layout.preferredHeight: root.dimensions.itemSize
                 Layout.fillWidth: true
 
-                model: root.controller.themeModel
-                currentIndex: root.controller.themeModelIndex
+                model: MpvqcThemePreviewModel {}
+                currentIndex: root.viewModel.themeIndex
                 boundsBehavior: Flickable.StopAtBounds
                 orientation: ListView.Horizontal
                 clip: true
@@ -150,12 +129,10 @@ MpvqcDialog {
 
                 highlightMoveDuration: root.animations.highlightMoveDuration
                 highlightMoveVelocity: -1
-                highlightResizeDuration: root.animations.highlightResizeDuration
-                highlightResizeVelocity: -1
 
                 highlight: SelectionHighlight {
                     size: root.dimensions.itemSize
-                    highlightColor: root.controller.controlColor
+                    highlightColor: root.mpvqcTheme.control
                     borderWidth: 0
                     borderColor: "transparent"
                     moveDuration: root.animations.highlightMoveDuration
@@ -170,10 +147,8 @@ MpvqcDialog {
                     borderSize: root.dimensions.borderSize
                     displayColor: preview
 
-                    onSelected: root.controller.setTheme(identifier)
+                    onSelected: root.viewModel.setTheme(identifier)
                 }
-
-                populate: PopulateTransition {}
             }
 
             MpvqcHeader {
@@ -183,30 +158,34 @@ MpvqcDialog {
             }
 
             GridView {
+                id: _gridView
+
                 Layout.preferredHeight: {
                     const d = root.dimensions;
                     return (d.itemSize + d.itemPadding) * d.colorGridRows;
                 }
                 Layout.fillWidth: true
 
-                model: root.controller.colorModel
-                currentIndex: root.controller.colorModelIndex
+                model: MpvqcThemePaletteModel {
+                    onAboutToReset: _gridView.highlightMoveDuration = 0
+                    onResetDone: _gridView.highlightMoveDuration = root.animations.highlightMoveDuration
+                }
+
+                currentIndex: root.viewModel.colorIndex
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
 
                 cellWidth: root.dimensions.itemSize + root.dimensions.itemPadding
                 cellHeight: root.dimensions.itemSize + root.dimensions.itemPadding
 
-                highlightMoveDuration: root.highlightMoveDuration
-
-                onModelChanged: root.controller.restoreColorOptionIndexAfterModelChange()
+                highlightMoveDuration: root.animations.highlightMoveDuration
 
                 highlight: SelectionHighlight {
                     size: root.dimensions.itemSize
-                    highlightColor: root.controller.colorOptionHighlightColor
-                    borderWidth: root.controller.colorOptionHighlightBorderWidth
-                    borderColor: root.controller.colorOptionHighlightBorderColor
-                    moveDuration: root.highlightMoveDuration
+                    highlightColor: root.mpvqcTheme.isDark ? root.mpvqcTheme.foreground : root.mpvqcTheme.background
+                    borderWidth: root.mpvqcTheme.isDark ? 0 : 2
+                    borderColor: root.mpvqcTheme.rowHighlight
+                    moveDuration: root.animations.highlightMoveDuration
                 }
 
                 delegate: SelectionDelegate {
@@ -217,15 +196,11 @@ MpvqcDialog {
                     borderSize: root.dimensions.borderSize
                     displayColor: rowHighlight
 
-                    onSelected: idx => root.controller.setColorOption(idx)
+                    onSelected: idx => root.viewModel.setColorOption(idx)
                 }
-
-                populate: PopulateTransition {}
             }
         }
     }
 
-    onRejected: root.controller.reset()
-
-    Component.onCompleted: root.controller.init()
+    onRejected: root.viewModel.reject()
 }

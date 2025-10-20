@@ -23,15 +23,15 @@ class ImportOptionsModel(QAbstractListModel):
         self._items = [
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Always"),
-                "value": SettingsService.ImportWhenVideoLinkedInDocument.ALWAYS.value,
+                "value": SettingsService.ImportFoundVideo.ALWAYS.value,
             },
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Ask every time"),
-                "value": SettingsService.ImportWhenVideoLinkedInDocument.ASK_EVERY_TIME.value,
+                "value": SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
             },
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Never"),
-                "value": SettingsService.ImportWhenVideoLinkedInDocument.NEVER.value,
+                "value": SettingsService.ImportFoundVideo.NEVER.value,
             },
         ]
 

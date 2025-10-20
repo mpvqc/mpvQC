@@ -5,7 +5,19 @@
 version = 1
 
 [[annotations]]
+path = ".github/ISSUE_TEMPLATE/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
 path = "build-aux/icon.ico"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = "data/themes.json"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"

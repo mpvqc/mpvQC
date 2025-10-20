@@ -16,8 +16,8 @@ defaults:
     shell: bash
 
 env:
-  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20250825/mpv-dev-x86_64-20250825-git-9f153e2.7z
-  LIBMPV_SHA256: ed5421e6d92e571e80e6c0787b2f0d9bcfdc3c454b73a5977f2a118cbb7e9aea
+  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20251010/mpv-dev-x86_64-20251010-git-e70bb88.7z
+  LIBMPV_SHA256: c0b0206be071e856a220787fc15dcd692396952d37923d7d884b61a982715643
 
 jobs:
   matrix-build:
@@ -42,7 +42,7 @@ jobs:
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
       - name: Run Build
@@ -57,7 +57,7 @@ jobs:
           echo "::group::Download libmpv"
           if [ "$RUNNER_OS" == "Linux" ]; then
             execute sudo apt update -y
-            execute sudo apt install -y libegl1 libmpv2
+            execute sudo apt install -y libegl1 libmpv2 qt6-base-dev
           elif [ "$RUNNER_OS" == "Windows" ]; then
             ARTIFACT="$(basename "$LIBMPV_URL")"
 
@@ -151,7 +151,7 @@ jobs:
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
       - name: Remove Python sources
@@ -268,13 +268,13 @@ jobs:
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
       - name: Update Packages
         run: sudo apt update -y
       - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
+        run: sudo apt install -y libegl1 libmpv2 qt6-base-dev
       - name: Initialize Project
         run: just init
       - name: Execute Qml Tests
@@ -293,9 +293,13 @@ jobs:
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+      - name: Update Packages
+        run: sudo apt update -y
+      - name: Install Dependencies
+        run: sudo apt install -y qt6-base-dev
       - name: Initialize Project
         run: just init
       - name: Run Linter and Formatter

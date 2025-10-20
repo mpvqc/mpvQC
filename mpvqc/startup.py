@@ -5,6 +5,7 @@
 
 def perform_startup():
     configure_qt_application_data()
+    configure_qt_style()
     configure_qt_settings()
     configure_logging()
     configure_dependency_injection()
@@ -17,13 +18,17 @@ def perform_startup():
 
 def configure_qt_application_data():
     from PySide6.QtCore import QCoreApplication
-    from PySide6.QtQuickControls2 import QQuickStyle
 
     QCoreApplication.setApplicationName("mpvQC")
     QCoreApplication.setOrganizationName("mpvQC")
     QCoreApplication.setApplicationVersion(">>>tag<<<")
 
-    QQuickStyle.setStyle("Material")
+
+def configure_qt_style():
+    from PySide6.QtQuickControls2 import QQuickStyle
+
+    QQuickStyle.setStyle("MpvqcStyle")
+    QQuickStyle.setFallbackStyle("Material")
 
 
 def configure_qt_settings():
@@ -57,9 +62,9 @@ def configure_environment_variables():
 
 
 def import_mpvqc_bindings():
-    import mpvqc.controllers  # noqa: F401
-    import mpvqc.helpers  # noqa: F401
     import mpvqc.models  # noqa: F401
+    import mpvqc.utility  # noqa: F401
+    import mpvqc.viewmodels  # noqa: F401
     import mpvqc.views  # noqa: F401
 
 
@@ -76,7 +81,6 @@ def start_application():
     app.set_up_signals()
     app.load_language()
     app.start_engine()
-    app.notify_ready()
-    app.configure_frameless_window()
+    app.configure_window()
 
     sys.exit(app.exec())

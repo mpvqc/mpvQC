@@ -62,7 +62,7 @@ def test_import_sorts_comments(make_model):
 
 
 def test_import_comments_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.commentsImportedInitially)
+    initially_spy = make_spy(model.comments_imported_initial)
 
     model.import_comments(DEFAULT_COMMENTS)
 
@@ -100,7 +100,7 @@ def test_import_comments_undo_redo(model):
 
 
 def test_import_comments_undo_redo_invalidates_search(model, make_spy):
-    spy = make_spy(model.searchInvalidated)
+    spy = make_spy(model.search_invalidated)
 
     model.import_comments([(Comment(time=99, comment_type="commentType", comment="Word 1"))])
     assert spy.count() == 1
@@ -113,11 +113,11 @@ def test_import_comments_undo_redo_invalidates_search(model, make_spy):
 
 
 def test_import_comments_undo_redo_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.commentsImportedInitially)
-    undone_spy = make_spy(model.commentsImportedUndone)
-    redone_spy = make_spy(model.commentsImportedRedone)
+    initially_spy = make_spy(model.comments_imported_initial)
+    undone_spy = make_spy(model.comments_imported_undo)
+    redone_spy = make_spy(model.comments_imported_redo)
 
-    model.set_selected_row(3)
+    model.selectedRow = 3
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     model.import_comments([comment])
@@ -148,3 +148,14 @@ def test_import_comments_undo_redo_fires_signals(model, make_spy):
     assert undone_spy.count() == 0
     assert redone_spy.count() == 1
     assert redone_spy.at(invocation=0, argument=0) == 5
+
+
+def test_import_comments_state_changes(model, state_service_mock):
+    model.import_comments([Comment(time=25, comment_type="type", comment="test")])
+    assert state_service_mock.change.call_count == 0
+
+    model.undo()
+    assert state_service_mock.change.call_count == 1
+
+    model.redo()
+    assert state_service_mock.change.call_count == 2

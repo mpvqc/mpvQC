@@ -2,13 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import inject
 from jinja2 import BaseLoader, Environment, TemplateError, TemplateSyntaxError
-from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QStandardPaths
+from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QObject, QStandardPaths, Signal
 from PySide6.QtGui import QStandardItemModel
 
 from .application_paths import ApplicationPathsService
@@ -44,11 +43,13 @@ class DocumentRenderService:
         write_generator = self._settings.write_header_generator
         write_video_path = self._settings.write_header_video_path
         write_nickname = self._settings.write_header_nickname
+        write_subtitle_paths = self._settings.write_header_subtitles
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
         comments = QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
         generator = f"{QCoreApplication.applicationName()} {QCoreApplication.applicationVersion()}"
         nickname = self._settings.nickname
+        subtitles = [str(sub) for sub in self._player.external_subtitles]
 
         if self._player.has_video:
             video_path = f"{Path(self._player.path)}"
@@ -60,13 +61,15 @@ class DocumentRenderService:
         return {
             "write_date": write_date,
             "write_generator": write_generator,
-            "write_video_path": write_video_path,
             "write_nickname": write_nickname,
+            "write_video_path": write_video_path,
+            "write_subtitle_paths": write_subtitle_paths,
             "date": date,
             "generator": generator,
+            "nickname": nickname,
             "video_path": video_path,
             "video_name": video_name,
-            "nickname": nickname,
+            "subtitles": subtitles,
             "comments": comments,
         }
 
@@ -102,16 +105,13 @@ class DocumentBackupService:
             file.writestr(file_name, self._content)
 
 
-class DocumentExportService:
+class DocumentExportService(QObject):
     _player: PlayerService = inject.attr(PlayerService)
     _renderer: DocumentRenderService = inject.attr(DocumentRenderService)
     _settings: SettingsService = inject.attr(SettingsService)
     _resources: ResourceService = inject.attr(ResourceService)
 
-    @dataclass
-    class ExportError:
-        message: str
-        line_nr: int | None
+    export_error_occurred = Signal(str, int)
 
     def generate_file_path_proposal(self) -> Path:
         if video := Path(self._player.path) if self._player.path else None:
@@ -128,18 +128,16 @@ class DocumentExportService:
 
         return Path(video_directory).joinpath(file_name).absolute()
 
-    def export(self, file: Path, template: Path) -> ExportError | None:
+    def export(self, file: Path, template: Path) -> None:
         user_template = template.read_text(encoding="utf-8")
 
         try:
             content = self._renderer.render(user_template)
+            file.write_text(content, encoding="utf-8", newline="\n")
         except TemplateSyntaxError as e:
-            return self.ExportError(e.message, line_nr=e.lineno)
+            self.export_error_occurred.emit(e.message, e.lineno)
         except TemplateError as e:
-            return self.ExportError(e.message, line_nr=None)
-
-        file.write_text(content, encoding="utf-8", newline="\n")
-        return None
+            self.export_error_occurred.emit(e.message, -1)
 
     def save(self, file: Path) -> None:
         export_template = self._resources.default_export_template

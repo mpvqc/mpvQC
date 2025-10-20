@@ -10,23 +10,23 @@ import QtQuick.Layouts
 
 import pyobjects
 
-import "../shared"
-import "../themes"
+import "../components"
+import "../utility"
 
 MpvqcDialog {
     id: root
 
-    readonly property MpvqcEditMpvDialogControllerPyObject controller: MpvqcEditMpvDialogControllerPyObject {}
+    readonly property MpvqcEditMpvDialogViewModel viewModel: MpvqcEditMpvDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme
 
     title: qsTranslate("MpvConfEditDialog", "Edit mpv.conf")
-    contentWidth: Math.min(1080, MpvqcWindowProperties.appWidth * 0.75)
-    contentHeight: Math.min(1080, MpvqcWindowProperties.appHeight * 0.70)
+    contentWidth: Math.min(1080, MpvqcWindowUtility.appWidth * 0.75)
+    contentHeight: Math.min(1080, MpvqcWindowUtility.appHeight * 0.70)
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
     onAccepted: _textArea.textDocument.save()
 
-    onReset: _textArea.text = controller.defaultMpvConfiguration
+    onReset: _textArea.text = viewModel.defaultMpvConfiguration
 
     component Separator: Rectangle {
         property int topMargin: 0
@@ -53,7 +53,7 @@ MpvqcDialog {
             Layout.topMargin: 20
             Layout.fillWidth: true
 
-            onLinkActivated: link => root.controller.openLink(link)
+            onLinkActivated: link => root.viewModel.openLink(link)
 
             MouseArea {
                 anchors.fill: parent
@@ -63,12 +63,9 @@ MpvqcDialog {
                 hoverEnabled: true
             }
 
-            MpvqcTooltip {
-                y: _label.height + 5
-
-                text: _label.url
-                visible: _label.hoveredLink
-            }
+            ToolTip.delay: 350
+            ToolTip.text: url
+            ToolTip.visible: hoveredLink
         }
 
         Separator {
@@ -94,7 +91,7 @@ MpvqcDialog {
                 font.family: "Noto Sans Mono"
                 font.pointSize: 11
                 leftPadding: _scrollView.mirrored && _scrollView.needsVerticalScroll ? 22 : 0
-                textDocument.source: root.controller.mpvFileUrl
+                textDocument.source: root.viewModel.mpvFileUrl
             }
         }
 

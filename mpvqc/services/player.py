@@ -2,21 +2,27 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 from collections.abc import Iterable
+from dataclasses import dataclass
+from pathlib import Path
 
 import inject
+from loguru import logger
 from mpv import MPV
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Qt, Signal
 
 from .application_paths import ApplicationPathsService
+from .key_command import KeyCommandGeneratorService
 from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .type_mapper import TypeMapperService
 
 
 class PlayerService(QObject):
+    _command_generator: KeyCommandGeneratorService = inject.attr(KeyCommandGeneratorService)
     _paths = inject.attr(ApplicationPathsService)
-    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
 
     video_loaded_changed = Signal(bool)
     path_changed = Signal(str)
@@ -28,9 +34,19 @@ class PlayerService(QObject):
     height_changed = Signal(int)
     width_changed = Signal(int)
 
+    video_dimensions_changed = Signal(int, int)
+
     def __init__(self, **properties):
         super().__init__(**properties)
-        self._cached_subtitles = set()
+
+        # Cache subtitles for two reasons:
+        # - User can open a subtitle before a video
+        # - We need to wait until mpv internally updated the video before adding subtitles to it
+        self._cached_subtitles: set[Path] = set()
+
+        # Flag indicating a video is loading.
+        # This is set to True for the time we start loading a video until mpv internally updates it's 'path' property
+        self._loading_video = False
 
         self._init_args = {
             "keep_open": "yes",
@@ -45,7 +61,22 @@ class PlayerService(QObject):
             "ytdl": "yes",
         }
 
+        if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
+
+            def player_logger(*args):
+                level, context, message = args
+                logger.log("MPV", message.strip(), mpv_level=level, mpv_context=context)
+
+            self._init_args["log_handler"] = player_logger
+
         self._mpv: MPV | None = None
+
+        self._dimensions_coordinator = DualSignalCoordinator(
+            signal_a=self.width_changed,
+            signal_b=self.height_changed,
+            reset_signal=self.path_changed,
+        )
+        self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed.emit)
 
     def init(self, win_id: int | None = None):
         if win_id is None:  # noqa: SIM108
@@ -55,14 +86,14 @@ class PlayerService(QObject):
 
         self._mpv = MPV(**dict(self._init_args, **args))
 
-        self.observe("duration", self._on_duration_changed)
-        self.observe("path", self._on_player_path_changed)
-        self.observe("filename", self._on_player_filename_changed)
-        self.observe("percent-pos", self._on_player_percent_pos_changed)
-        self.observe("time-pos", self._on_player_time_pos_changed)
-        self.observe("time-remaining", self._on_player_time_remaining_changed)
-        self.observe("height", self._on_player_height_changed)
-        self.observe("width", self._on_player_width_changed)
+        self._mpv.observe_property("duration", self._on_duration_changed)
+        self._mpv.observe_property("path", self._on_player_path_changed)
+        self._mpv.observe_property("filename", self._on_player_filename_changed)
+        self._mpv.observe_property("percent-pos", self._on_player_percent_pos_changed)
+        self._mpv.observe_property("time-pos", self._on_player_time_pos_changed)
+        self._mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
+        self._mpv.observe_property("height", self._on_player_height_changed)
+        self._mpv.observe_property("width", self._on_player_width_changed)
 
     @property
     def mpv(self) -> MPV:
@@ -88,7 +119,7 @@ class PlayerService(QObject):
     def percent_pos(self) -> int | None:
         if not self._mpv or self._mpv.percent_pos is None:
             return None
-        return int(self._mpv.percent_pos)
+        return int(self._mpv.percent_pos + 0.5)
 
     @property
     def time_pos(self) -> int | None:
@@ -120,11 +151,25 @@ class PlayerService(QObject):
 
     @property
     def current_time(self) -> int:
+        # noinspection PyTypeChecker
         return self.time_pos or 0
 
     @property
     def duration(self) -> float:
         return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
+
+    @property
+    def _track_list(self) -> list["TrackListEntry"]:
+        return [TrackListEntry.from_dict(e) for e in self._mpv.track_list] if self._mpv else []
+
+    @property
+    def external_subtitles(self) -> list[Path]:
+        external = {
+            Path(entry.external_filename).resolve()
+            for entry in self._track_list
+            if entry.external and entry.type == "sub"
+        }
+        return sorted(external)
 
     def _on_duration_changed(self, _, value: float) -> None:
         if value:
@@ -133,6 +178,15 @@ class PlayerService(QObject):
     def _on_player_path_changed(self, _, value: str) -> None:
         self.path_changed.emit(value or "")
         self.video_loaded_changed.emit(value is not None)
+
+        if value is not None and self._loading_video:
+            self._loading_video = False
+            self._open_cached_subtitles()
+
+    def _open_cached_subtitles(self):
+        if self._cached_subtitles:
+            self.open_subtitles(self._cached_subtitles)
+            self._cached_subtitles.clear()
 
     def _on_player_filename_changed(self, _, value: str) -> None:
         self.filename_changed.emit(value or "")
@@ -163,25 +217,28 @@ class PlayerService(QObject):
         y = int(y * zoom_factor)
         self._mpv.command_async("mouse", x, y)
 
-    def open_video(self, video: str) -> None:
+    def open_video(self, video: Path) -> None:
+        self._loading_video = True
         self._mpv.command("loadfile", video, "replace")
-        self._open_cached_subtitles()
         self.play()
 
-    def _open_cached_subtitles(self):
-        if self._cached_subtitles:
-            self.open_subtitles(self._cached_subtitles)
-            self._cached_subtitles.clear()
+    def is_video_loaded(self, video: Path) -> bool:
+        if (path := self.path) is not None:
+            current = self._type_mapper.map_path_to_str(Path(path))
+            to_check = self._type_mapper.map_path_to_str(video)
+            return current == to_check
+        return False
 
-    def open_subtitles(self, subtitles: Iterable[str]) -> None:
+    def open_subtitles(self, subtitles: Iterable[Path]) -> None:
         def _load():
             for subtitle in subtitles:
-                self._mpv.command("sub-add", subtitle, "select")
+                path = self._type_mapper.map_path_to_str(subtitle)
+                self._mpv.command("sub-add", path, "select")
 
         def _cache():
             self._cached_subtitles |= set(subtitles)
 
-        if self.has_video:
+        if self.has_video and not self._loading_video:
             _load()
         else:
             _cache()
@@ -192,8 +249,9 @@ class PlayerService(QObject):
     def pause(self) -> None:
         self._mpv.pause = True
 
-    def execute(self, command) -> None:
-        self._mpv.command_async("keypress", command)
+    def handle_key_event(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
+        if command := self._command_generator.generate_command(key, modifiers):
+            self._mpv.command_async("keypress", command)
 
     def jump_to(self, seconds: int) -> None:
         self._mpv.command_async("seek", seconds, "absolute+exact")
@@ -216,5 +274,53 @@ class PlayerService(QObject):
     def terminate(self) -> None:
         self._mpv.terminate()
 
-    def observe(self, property_name, handler):
-        self._mpv.observe_property(property_name, handler)
+
+class DualSignalCoordinator(QObject):
+    both_ready = Signal(object, object)
+
+    def __init__(self, signal_a, signal_b, reset_signal=None):
+        super().__init__()
+        self._value_a = None
+        self._value_b = None
+        self._ready_a = False
+        self._ready_b = False
+
+        signal_a.connect(self._on_signal_a)
+        signal_b.connect(self._on_signal_b)
+
+        if reset_signal:
+            reset_signal.connect(self._reset)
+
+    def _on_signal_a(self, value):
+        self._value_a = value
+        self._ready_a = True
+        self._check_and_emit()
+
+    def _on_signal_b(self, value):
+        self._value_b = value
+        self._ready_b = True
+        self._check_and_emit()
+
+    def _check_and_emit(self):
+        if self._ready_a and self._ready_b and self._value_a and self._value_b:
+            self.both_ready.emit(self._value_a, self._value_b)
+            self._reset()
+
+    def _reset(self):
+        self._ready_a = False
+        self._ready_b = False
+
+
+@dataclass(frozen=True)
+class TrackListEntry:
+    type: str
+    external: bool
+    external_filename: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "TrackListEntry":
+        return cls(
+            type=data.get("type", ""),
+            external=data.get("external", False) == True,  # noqa: E712
+            external_filename=data.get("external-filename", ""),
+        )

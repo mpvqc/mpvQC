@@ -203,6 +203,15 @@
         <source>Write Video Path</source>
         <translation>Videopfad schreiben</translation>
     </message>
+    <message>
+        <source>Write Subtitle Paths</source>
+        <translation>Untertitelpfade schreiben</translation>
+    </message>
+    <message>
+        <source>Include paths of manually imported subtitle files in the document header</source>
+        <extracomment>Tooltip for the &quot;Write Subtitle Paths&quot; export setting.</extracomment>
+        <translation>Pfade von manuell importierten Untertiteldateien im Dokumentkopf vermerken</translation>
+    </message>
 </context>
 <context>
     <name>FileInteractionDialogs</name>
@@ -513,6 +522,11 @@
     <message>
         <source>Do you really want to delete this comment?</source>
         <translation>Möchten Sie diesen Kommentar wirklich löschen?</translation>
+    </message>
+    <message>
+        <source>No text available</source>
+        <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
+        <translation>Kein Text verfügbar</translation>
     </message>
     <message numerus="yes">
         <source>Document Not Compatible</source>

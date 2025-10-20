@@ -2,13 +2,18 @@
 #
 # SPDX-License-Identifier: MIT
 
+set fallback := true
+
 BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800"'
 
 @_default:
     just --list
 
-print-dark-colors:
+update: update-light-colors update-dark-colors
+	just format
+
+update-dark-colors:
     uv run color-generator.py --dark {{ BASE_COLORS }}
 
-print-light-colors:
+update-light-colors:
     uv run color-generator.py --contrast 0.0 {{ BASE_COLORS }}
