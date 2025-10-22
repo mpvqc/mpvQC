@@ -82,7 +82,7 @@ repos:
         args:
           - --newline=unix
   - repo: https://github.com/trin94/qml-import-sort
-    rev: v0.1.2
+    rev: v0.1.4
     hooks:
       - id: qmlimportsort
         name: "format qml imports"
