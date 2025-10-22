@@ -9,8 +9,8 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import "../../components"
-import "../../views/table"
 import "../../utility"
+import "../../views/table"
 
 Loader {
     id: root

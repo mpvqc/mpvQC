@@ -11,8 +11,8 @@ import QtQuick.Layouts
 import pyobjects
 
 import "../components"
-import "../utility"
 import "../models"
+import "../utility"
 
 MpvqcDialog {
     id: root

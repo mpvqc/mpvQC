@@ -9,8 +9,8 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import "../models"
 import "../components"
+import "../models"
 import "../utility"
 
 MpvqcDialog {

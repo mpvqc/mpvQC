@@ -81,6 +81,10 @@ repos:
         name: "format qml"
         args:
           - --newline=unix
+  - repo: https://github.com/trin94/qml-import-sort
+    rev: v0.1.0
+    hooks:
+      - id: qmlimportsort
   - repo: https://github.com/fsfe/reuse-tool
     rev: v6.1.2
     hooks:

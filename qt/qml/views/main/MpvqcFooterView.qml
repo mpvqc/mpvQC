@@ -5,8 +5,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import pyobjects
 

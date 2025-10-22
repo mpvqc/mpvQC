@@ -3,10 +3,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+// Adapted from: qtdeclarative/src/quickcontrols/material/DialogButtonBox.qml
+
 import QtQuick
 import QtQuick.Controls.Material
-
-/* Adapted from: qtdeclarative/src/quickcontrols/material/DialogButtonBox.qml */
 
 DialogButtonBox {
     id: root
