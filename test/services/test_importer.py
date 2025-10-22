@@ -78,7 +78,11 @@ def configure_for_open(mock_doc_importer, mock_sub_importer, settings_service):
         settings_service.import_found_video = import_setting
 
         mock_doc_importer.read.return_value = DocumentImporterService.DocumentImportResult(
-            valid_documents=[], invalid_documents=[], existing_videos=document_videos, comments=comments or []
+            valid_documents=[],
+            invalid_documents=[],
+            existing_videos=document_videos,
+            comments=comments or [],
+            existing_subtitles=[],
         )
         mock_sub_importer.read.return_value = SubtitleImporterService.SubtitleImportResult(
             subtitles=[],
