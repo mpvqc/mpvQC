@@ -10,6 +10,7 @@ import inject
 
 from mpvqc.datamodels import Comment
 
+from ._internal import Immutable
 from .reverse_translator import ReverseTranslatorService
 
 
@@ -27,6 +28,8 @@ class DocumentImporterService:
         existing_videos: list[Path] = field(default_factory=list)
         existing_subtitles: list[Path] = field(default_factory=list)
         comments: list[Comment] = field(default_factory=list)
+
+    NO_IMPORT = Immutable(DocumentImportResult())
 
     def read(self, documents: list[Path]) -> DocumentImportResult:
         result = self.DocumentImportResult()
