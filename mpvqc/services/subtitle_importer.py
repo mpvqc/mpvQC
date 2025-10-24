@@ -2,29 +2,30 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from loguru import logger
+
+from ._internal import Immutable
 
 
 class SubtitleImporterService:
     @dataclass
     class SubtitleImportResult:
-        subtitles: list[Path]
-        existing_videos: list[Path]
+        subtitles: list[Path] = field(default_factory=list)
+        existing_videos: list[Path] = field(default_factory=list)
+
+    NO_IMPORT = Immutable(SubtitleImportResult())
 
     def read(self, subtitles: list[Path]) -> SubtitleImportResult:
-        existing_videos = []
+        result = self.SubtitleImportResult(subtitles=subtitles)
 
         for subtitle in subtitles:
             if video := parse_video_from(subtitle):
-                existing_videos.append(video)  # noqa: PERF401
+                result.existing_videos.append(video)  # noqa: PERF401
 
-        return self.SubtitleImportResult(
-            subtitles=subtitles,
-            existing_videos=existing_videos,
-        )
+        return result
 
 
 def parse_video_from(subtitle: Path) -> Path | None:
