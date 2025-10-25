@@ -6,8 +6,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import pyobjects
+
 Loader {
     id: root
+
+    readonly property MpvqcDialogLoaderViewModel viewModel: MpvqcDialogLoaderViewModel {}
 
     readonly property url aboutDialog: Qt.resolvedUrl("../../dialogs/MpvqcAboutDialog.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("../../dialogs/MpvqcAppearanceDialog.qml")

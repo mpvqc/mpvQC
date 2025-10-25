@@ -3,13 +3,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import inject
 
 from mpvqc.datamodels import Comment
 
+from ._internal import Immutable
 from .reverse_translator import ReverseTranslatorService
 
 
@@ -17,39 +18,43 @@ class DocumentImporterService:
     _reverse_translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
 
     _REGEX_PATH = re.compile("^path\\s*?:(?P<path>.*)$")
+    _REGEX_SUBTITLE = re.compile("^subtitle\\s*?:(?P<subtitle>.*)$")
     _REGEX_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
 
     @dataclass
     class DocumentImportResult:
-        valid_documents: list[Path]
-        invalid_documents: list[Path]
-        existing_videos: list[Path]
-        comments: list[Comment]
+        valid_documents: list[Path] = field(default_factory=list)
+        invalid_documents: list[Path] = field(default_factory=list)
+        existing_videos: list[Path] = field(default_factory=list)
+        existing_subtitles: list[Path] = field(default_factory=list)
+        comments: list[Comment] = field(default_factory=list)
+
+    NO_IMPORT = Immutable(DocumentImportResult())
 
     def read(self, documents: list[Path]) -> DocumentImportResult:
-        valid_documents: list[Path] = []
-        invalid_documents: list[Path] = []
-        existing_videos: list[Path] = []
-        all_comments: list[Comment] = []
+        result = self.DocumentImportResult()
 
         for document in documents:
             content = document.read_text(encoding="utf-8")
 
             if content.startswith("[FILE]"):
-                valid_documents.append(document)
+                result.valid_documents.append(document)
             else:
-                invalid_documents.append(document)
+                result.invalid_documents.append(document)
                 continue
 
-            video, comments = self._parse(content)
+            video, subtitles, comments = self._parse(content)
             if video is not None and video.is_file():
-                existing_videos.append(video)
-            all_comments.extend(comments)
+                result.existing_videos.append(video)
 
-        return self.DocumentImportResult(valid_documents, invalid_documents, existing_videos, all_comments)
+            result.existing_subtitles.extend(s for s in subtitles if s.is_file())
+            result.comments.extend(comments)
 
-    def _parse(self, content: str) -> tuple[Path | None, list[Comment]]:
+        return result
+
+    def _parse(self, content: str) -> tuple[Path | None, list[Path], list[Comment]]:
         path = None
+        subtitles = []
         comments = []
 
         for line in content.splitlines(keepends=False):
@@ -58,10 +63,14 @@ class DocumentImporterService:
                 if path is not None:
                     continue
 
+            if subtitle := self._parse_subtitle(line):
+                subtitles.append(subtitle)
+                continue
+
             if comment := self._parse_comment(line):
                 comments.append(comment)
 
-        return path, comments
+        return path, subtitles, comments
 
     def _parse_path(self, line: str) -> Path | None:
         match = self._REGEX_PATH.match(line)
@@ -70,6 +79,14 @@ class DocumentImporterService:
             return None
 
         return Path(match.group("path").strip())
+
+    def _parse_subtitle(self, line: str) -> Path | None:
+        match = self._REGEX_SUBTITLE.match(line)
+
+        if match is None:
+            return None
+
+        return Path(match.group("subtitle").strip())
 
     def _parse_comment(self, line: str) -> Comment | None:
         match = self._REGEX_COMMENT.match(line.strip())

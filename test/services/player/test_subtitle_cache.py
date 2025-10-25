@@ -59,7 +59,7 @@ def test_subtitles_load_subtitles():
     assert mpv_mock.command.called
     loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
     assert loadfile == "loadfile"
-    assert video == VIDEO
+    assert video == str(VIDEO)
     assert replace == "replace"
 
     sub_add, subtitle, select = mpv_mock.command.call_args_list[1][0]
@@ -89,7 +89,7 @@ def test_subtitles_cached_during_video_load():
     assert mpv_mock.command.called
     loadfile, video, replace = mpv_mock.command.call_args_list[0][0]
     assert loadfile == "loadfile"
-    assert video == VIDEO
+    assert video == str(VIDEO)
     assert replace == "replace"
     assert SUBTITLE in service._cached_subtitles
 

@@ -219,7 +219,8 @@ class PlayerService(QObject):
 
     def open_video(self, video: Path) -> None:
         self._loading_video = True
-        self._mpv.command("loadfile", video, "replace")
+        path = self._type_mapper.map_path_to_str(video)
+        self._mpv.command("loadfile", path, "replace")
         self.play()
 
     def is_video_loaded(self, video: Path) -> bool:

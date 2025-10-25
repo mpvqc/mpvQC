@@ -14,7 +14,7 @@ from .font_loader import FontLoaderService
 from .formatter_time import TimeFormatterService
 from .frameless import FramelessWindowService
 from .i18n import InternationalizationService
-from .importer import ImporterService
+from .importer2 import ImporterService
 from .key_command import KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService
 from .mimetype_provider import MimetypeProviderService
