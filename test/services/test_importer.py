@@ -9,28 +9,30 @@ from unittest.mock import Mock
 import inject
 import pytest
 
-from mpvqc.datamodels import Comment
 from mpvqc.services import (
     DocumentExportService,
     DocumentImporterService,
-    ImporterService,
     PlayerService,
     SettingsService,
     StateService,
     SubtitleImporterService,
     TypeMapperService,
 )
-from mpvqc.services.importer import AskingAbout, ImportState
+from mpvqc.services.importer import ImporterService
 
 
 @pytest.fixture
 def mock_doc_importer():
-    return Mock(spec_set=DocumentImporterService)
+    mock = Mock(spec_set=DocumentImporterService)
+    mock.NO_IMPORT = DocumentImporterService.NO_IMPORT
+    return mock
 
 
 @pytest.fixture
 def mock_sub_importer():
-    return Mock(spec_set=SubtitleImporterService)
+    mock = Mock(spec_set=SubtitleImporterService)
+    mock.NO_IMPORT = SubtitleImporterService.NO_IMPORT
+    return mock
 
 
 @pytest.fixture
@@ -73,411 +75,879 @@ def configure_inject(
 
 
 @pytest.fixture
-def configure_for_open(mock_doc_importer, mock_sub_importer, settings_service):
-    def setup(document_videos, subtitle_videos, import_setting, comments: list[Comment] | None = None):
-        settings_service.import_found_video = import_setting
-
-        mock_doc_importer.read.return_value = DocumentImporterService.DocumentImportResult(
-            valid_documents=[],
-            invalid_documents=[],
-            existing_videos=document_videos,
-            comments=comments or [],
-            existing_subtitles=[],
-        )
-        mock_sub_importer.read.return_value = SubtitleImporterService.SubtitleImportResult(
-            subtitles=[],
-            existing_videos=subtitle_videos,
-        )
-
-    return setup
-
-
-@pytest.fixture
-def make_state():
-    def _make_state(
-        document_video=None,
-        subtitle_video=None,
-        selected_video=None,
-        valid_documents=None,
-        invalid_documents=None,
-        subtitles=None,
-        video_from_subtitle=None,
-    ):
-        return ImportState(
-            document_video=document_video,
-            subtitle_video=subtitle_video,
-            dropped_videos=[],
-            valid_documents=valid_documents or [],
-            invalid_documents=invalid_documents or [],
-            subtitles=subtitles or [],
-            selected_video=selected_video,
-            video_source=AskingAbout.SUBTITLE if video_from_subtitle else None,
-        )
-
-    return _make_state
-
-
-@pytest.fixture
 def service():
     return ImporterService()
 
 
-class SynchronousTestCase(NamedTuple):
-    name: str
-    dropped_videos: list[Path]
-    document_videos: list[Path]
-    subtitle_videos: list[Path]
-    import_setting: int
-    expected_video: Path | None
-
-
-@pytest.mark.parametrize(
-    "test_case",
-    [
-        SynchronousTestCase(
-            name="dropped_video_wins",
-            dropped_videos=[Path("dropped_video")],
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
-            expected_video=Path("dropped_video"),
-        ),
-        SynchronousTestCase(
-            name="document_wins",
-            dropped_videos=[],
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
-            expected_video=Path("video_from_document"),
-        ),
-        SynchronousTestCase(
-            name="document_wins",
-            dropped_videos=[],
-            document_videos=[],
-            subtitle_videos=[Path("video_from_subtitle")],
-            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
-            expected_video=Path("video_from_subtitle"),
-        ),
-        SynchronousTestCase(
-            name="nothing",
-            dropped_videos=[],
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            import_setting=SettingsService.ImportFoundVideo.NEVER.value,
-            expected_video=None,
-        ),
-        SynchronousTestCase(
-            name="no_videos",
-            dropped_videos=[],
-            document_videos=[],
-            subtitle_videos=[],
-            import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
-            expected_video=None,
-        ),
-    ],
-    ids=lambda tc: tc.name,
-)
-def test_open_synchronous(
+def test_example_1_single_explicit_video(
     service,
-    configure_for_open,
+    mock_doc_importer,
+    mock_sub_importer,
     mock_player,
-    test_case: SynchronousTestCase,
-):
-    configure_for_open(
-        test_case.document_videos,
-        test_case.subtitle_videos,
-        test_case.import_setting,
-    )
-
-    service.open(documents=[], videos=test_case.dropped_videos, subtitles=[])
-
-    if test_case.expected_video is None:
-        mock_player.open_video.assert_not_called()
-    else:
-        mock_player.open_video.assert_called_once_with(test_case.expected_video)
-
-
-class UserInteractionTestCase(NamedTuple):
-    name: str
-    document_videos: list[Path]
-    subtitle_videos: list[Path]
-    user_accepts_doc: bool | None
-    user_accepts_sub: bool | None
-    should_ask_about_document: bool
-    should_ask_about_subtitle: bool
-    expected_video: Path | None
-
-
-@pytest.mark.parametrize(
-    "test_case",
-    [
-        UserInteractionTestCase(
-            name="accept_document",
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            user_accepts_doc=True,
-            user_accepts_sub=None,
-            should_ask_about_document=True,
-            should_ask_about_subtitle=False,
-            expected_video=Path("video_from_document"),
-        ),
-        UserInteractionTestCase(
-            name="accept_subtitle",
-            document_videos=[],
-            subtitle_videos=[Path("video_from_subtitle")],
-            user_accepts_doc=None,
-            user_accepts_sub=True,
-            should_ask_about_document=False,
-            should_ask_about_subtitle=True,
-            expected_video=Path("video_from_subtitle"),
-        ),
-        UserInteractionTestCase(
-            name="accept_subtitle_2",
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            user_accepts_doc=False,
-            user_accepts_sub=True,
-            should_ask_about_document=True,
-            should_ask_about_subtitle=True,
-            expected_video=Path("video_from_subtitle"),
-        ),
-        UserInteractionTestCase(
-            name="reject_document_reject_subtitle",
-            document_videos=[Path("video_from_document")],
-            subtitle_videos=[Path("video_from_subtitle")],
-            user_accepts_doc=False,
-            user_accepts_sub=False,
-            should_ask_about_document=True,
-            should_ask_about_subtitle=True,
-            expected_video=None,
-        ),
-        UserInteractionTestCase(
-            name="reject_subtitle",
-            document_videos=[],
-            subtitle_videos=[Path("video_from_subtitle")],
-            user_accepts_doc=None,
-            user_accepts_sub=False,
-            should_ask_about_document=False,
-            should_ask_about_subtitle=True,
-            expected_video=None,
-        ),
-    ],
-    ids=lambda tc: tc.name,
-)
-def test_open_with_user_interaction(
-    service,
-    configure_for_open,
-    mock_player,
+    mock_state,
     make_spy,
-    test_case: UserInteractionTestCase,
 ):
-    configure_for_open(
-        test_case.document_videos,
-        test_case.subtitle_videos,
-        import_setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
-    )
-
-    doc_spy = make_spy(service.ask_user_document_video_import)
-    sub_spy = make_spy(service.ask_user_subtitle_video_import)
-
-    service.open(documents=[], videos=[], subtitles=[])
-
-    # Check and handle document video
-    assert doc_spy.count() == (1 if test_case.should_ask_about_document else 0)
-    if doc_spy.count() == 1:
-        import_id = doc_spy.at(0, 0)
-        video_name = doc_spy.at(0, 1)
-        assert video_name == test_case.document_videos[0].name
-        service.continue_video_determination(import_id, test_case.user_accepts_doc)
-
-    # Check and handle subtitle video (after document response)
-    assert sub_spy.count() == (1 if test_case.should_ask_about_subtitle else 0)
-    if sub_spy.count() == 1:
-        import_id = sub_spy.at(0, 0)
-        video_name = sub_spy.at(0, 1)
-        assert video_name == test_case.subtitle_videos[0].name
-        service.continue_video_determination(import_id, test_case.user_accepts_sub)
-
-    if test_case.expected_video is None:
-        mock_player.open_video.assert_not_called()
-    else:
-        mock_player.open_video.assert_called_once_with(test_case.expected_video)
-
-
-def test_open_loads_comments(service, configure_for_open, make_spy):
-    spy = make_spy(service.comments_ready_for_import)
-
-    configure_for_open(
-        document_videos=[],
-        subtitle_videos=[],
-        import_setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
-        comments=[],
-    )
-
-    service.open(documents=[], videos=[], subtitles=[])
-    assert spy.count() == 0
-
-    configure_for_open(
-        document_videos=[],
-        subtitle_videos=[],
-        import_setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
-        comments=[Comment(7, "comment type", "comment")],
-    )
-
-    service.open(documents=[], videos=[], subtitles=[])
-    assert spy.count() == 1
-
-
-def test_continue_with_import_opens_video_when_selected(service, mock_player, make_state):
-    video_path = Path.home() / "video.mp4"
-    state = make_state(selected_video=video_path)
-
-    service._continue_with_import(state)
-
-    mock_player.open_video.assert_called_once_with(video_path.resolve())
-
-
-def test_continue_with_import_opens_subtitles_when_present(service, mock_player, type_mapper, make_state):
-    subtitle_path = Path.home() / "sub.srt"
-    state = make_state(subtitles=[subtitle_path])
-
-    service._continue_with_import(state)
-
-    mock_player.open_subtitles.assert_called_once_with(subtitles=[subtitle_path])
-
-
-def test_continue_with_import_imports_documents_when_video_present(service, mock_state, make_state):
-    docs = [Path.home() / "doc.txt"]
-    video_path = Path.home() / "video.mp4"
-
-    state = make_state(
-        selected_video=video_path,
-        valid_documents=docs,
-        video_from_subtitle=False,
-    )
-    service._continue_with_import(state)
-    mock_state.import_documents.assert_called_with(
-        documents=docs,
-        video=video_path.resolve(),
-        video_from_subtitle=False,
-    )
-
-    state = make_state(
-        selected_video=video_path,
-        valid_documents=docs,
-        video_from_subtitle=True,
-    )
-    service._continue_with_import(state)
-    mock_state.import_documents.assert_called_with(
-        documents=docs,
-        video=video_path.resolve(),
-        video_from_subtitle=True,
-    )
-
-
-def test_continue_with_import_imports_documents_when_only_documents(service, mock_state, make_state):
-    docs = [Path("doc.txt")]
-    state = make_state(valid_documents=docs)
-
-    service._continue_with_import(state)
-
-    mock_state.import_documents.assert_called_once_with(documents=docs, video=None, video_from_subtitle=False)
-
-
-def test_continue_with_import_emits_invalid_documents(service, make_spy, make_state):
-    spy = make_spy(service.erroneous_documents_imported)
-    state = make_state(invalid_documents=[Path("bad1.txt"), Path("bad2.txt")])
-
-    service._continue_with_import(state)
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ["bad1.txt", "bad2.txt"]
-
-
-def test_get_importable_video_returns_none_when_list_empty(service):
-    result = service._get_importable_video([])
-    assert result is None
-
-
-def test_get_importable_video_returns_none_when_already_loaded(service, mock_player):
-    video = Path("movie.mp4")
-    mock_player.is_video_loaded.return_value = True
-
-    result = service._get_importable_video([video])
-
-    assert result is None
-    mock_player.is_video_loaded.assert_called_once_with(video)
-
-
-def test_get_importable_video_returns_first_video_when_not_loaded(service, mock_player):
-    video = Path("movie.mp4")
+    # Given
+    video = Path.home() / "video.mp4"
+    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
+    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
     mock_player.is_video_loaded.return_value = False
 
-    result = service._get_importable_video([video, Path("other.mp4")])
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
 
-    assert result == video
-    mock_player.is_video_loaded.assert_called_once_with(video)
+    # When
+    service.open(documents=[], videos=[video], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 0
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_called_once_with(video)
+    mock_state.import_documents.assert_called_once()
 
 
-class AlreadyLoadedTestCase(NamedTuple):
-    name: str
-    document_videos: list[Path]
-    subtitle_videos: list[Path]
-    is_video_loaded: bool
-    should_open_video: bool
+def test_example_2_single_document_no_video_references(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+
+    comment1 = Mock()
+    comment2 = Mock()
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[comment1, comment2],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[],
+        existing_subtitles=[],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
+    mock_player.is_video_loaded.return_value = False
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 1
+    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_not_called()
+    mock_state.import_documents.assert_called_once()
+
+
+class ParameterizedTestCase(NamedTuple):
+    setting: SettingsService.ImportFoundVideo
+    expect_ask_user_count: int
+    expect_comments_count: int
+    expect_video_opened_count: int
+    expect_state_updated_count: int
 
 
 @pytest.mark.parametrize(
     "test_case",
     [
-        AlreadyLoadedTestCase(
-            name="document_video_already_loaded",
-            document_videos=[Path("movie.mp4")],
-            subtitle_videos=[],
-            is_video_loaded=True,
-            should_open_video=False,
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            expect_ask_user_count=0,
+            expect_comments_count=1,
+            expect_video_opened_count=1,
+            expect_state_updated_count=1,
         ),
-        AlreadyLoadedTestCase(
-            name="document_video_not_loaded",
-            document_videos=[Path("movie.mp4")],
-            subtitle_videos=[],
-            is_video_loaded=False,
-            should_open_video=True,
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            expect_ask_user_count=1,
+            expect_comments_count=0,
+            expect_video_opened_count=0,
+            expect_state_updated_count=0,
         ),
-        AlreadyLoadedTestCase(
-            name="subtitle_video_already_loaded",
-            document_videos=[],
-            subtitle_videos=[Path("movie.mp4")],
-            is_video_loaded=True,
-            should_open_video=False,
-        ),
-        AlreadyLoadedTestCase(
-            name="subtitle_video_not_loaded",
-            document_videos=[],
-            subtitle_videos=[Path("movie.mp4")],
-            is_video_loaded=False,
-            should_open_video=True,
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.NEVER,
+            expect_ask_user_count=0,
+            expect_comments_count=1,
+            expect_video_opened_count=0,
+            expect_state_updated_count=1,
         ),
     ],
-    ids=lambda tc: tc.name,
+    ids=["setting_always", "setting_ask", "setting_never"],
 )
-def test_open_video_based_on_already_loaded(
+def test_single_document_one_video_not_loaded(
     service,
-    configure_for_open,
+    mock_doc_importer,
+    mock_sub_importer,
     mock_player,
-    test_case: AlreadyLoadedTestCase,
+    mock_state,
+    settings_service,
+    make_spy,
+    test_case: ParameterizedTestCase,
 ):
-    mock_player.is_video_loaded.return_value = test_case.is_video_loaded
+    # Given
+    document = Path.home() / "comments.txt"
+    video = Path.home() / "video.mp4"
 
-    configure_for_open(
-        test_case.document_videos,
-        test_case.subtitle_videos,
-        import_setting=SettingsService.ImportFoundVideo.ALWAYS.value,
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[Mock()],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[video],
+        existing_subtitles=[],
     )
 
-    service.open(documents=[], videos=[], subtitles=[])
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
+    mock_player.is_video_loaded.return_value = False
+    settings_service.import_found_video = test_case.setting.value
 
-    if test_case.should_open_video:
-        mock_player.open_video.assert_called_once_with(Path("movie.mp4"))
-    else:
-        mock_player.open_video.assert_not_called()
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == test_case.expect_ask_user_count
+    assert comments_spy.count() == test_case.expect_comments_count
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
+    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+
+
+def test_single_document_one_video_already_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    video = Path.home() / "video.mp4"
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[Mock()],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[video],
+        existing_subtitles=[],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
+    mock_player.is_video_loaded.return_value = True
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 1
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == 0
+    assert mock_state.import_documents.call_count == 1
+
+
+def test_single_document_multiple_videos(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    subtitle = Path.home() / "subs.srt"
+    video1 = Path.home() / "video1.mp4"
+    video2 = Path.home() / "video2.mp4"
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[Mock()],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[video1],
+        existing_subtitles=[subtitle],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle],
+        existing_videos=[video2],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 1
+    assert comments_spy.count() == 0
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == 0
+    assert mock_state.import_documents.call_count == 0
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            expect_ask_user_count=0,
+            expect_comments_count=1,
+            expect_video_opened_count=1,
+            expect_state_updated_count=1,
+        ),
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            expect_ask_user_count=1,
+            expect_comments_count=0,
+            expect_video_opened_count=0,
+            expect_state_updated_count=0,
+        ),
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.NEVER,
+            expect_ask_user_count=0,
+            expect_comments_count=1,
+            expect_video_opened_count=0,
+            expect_state_updated_count=1,
+        ),
+    ],
+    ids=["setting_always", "setting_ask", "setting_never"],
+)
+def test_single_document_video_from_subtitle_not_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    settings_service,
+    make_spy,
+    test_case: ParameterizedTestCase,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    subtitle = Path.home() / "subs.srt"
+    video = Path.home() / "video.mp4"
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[Mock()],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[],
+        existing_subtitles=[subtitle],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle],
+        existing_videos=[video],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+    settings_service.import_found_video = test_case.setting.value
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == test_case.expect_ask_user_count
+    assert comments_spy.count() == test_case.expect_comments_count
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
+    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            expect_ask_user_count=0,
+            expect_comments_count=1,
+            expect_video_opened_count=1,
+            expect_state_updated_count=1,
+        ),
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            expect_ask_user_count=1,
+            expect_comments_count=0,
+            expect_video_opened_count=0,
+            expect_state_updated_count=0,
+        ),
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.NEVER,
+            expect_ask_user_count=0,
+            expect_comments_count=1,
+            expect_video_opened_count=0,
+            expect_state_updated_count=1,
+        ),
+    ],
+    ids=["setting_always", "setting_ask", "setting_never"],
+)
+def test_single_document_video_and_subtitle_same_video_not_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    settings_service,
+    make_spy,
+    test_case: ParameterizedTestCase,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    subtitle = Path.home() / "subs.srt"
+    video = Path.home() / "video.mp4"
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[Mock()],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[video],
+        existing_subtitles=[subtitle],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle],
+        existing_videos=[video],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+    settings_service.import_found_video = test_case.setting.value
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == test_case.expect_ask_user_count
+    assert comments_spy.count() == test_case.expect_comments_count
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
+    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+
+    if test_case.expect_video_opened_count > 0:
+        mock_player.open_video.assert_called_once_with(video)
+        mock_player.open_subtitles.assert_called_once_with([subtitle])
+    elif test_case.expect_ask_user_count == 0:
+        mock_player.open_subtitles.assert_called_once_with([subtitle])
+
+
+def test_single_document_video_and_subtitle_same_video_already_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    subtitle = Path.home() / "subs.srt"
+    video = Path.home() / "video.mp4"
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[Mock()],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[video],
+        existing_subtitles=[subtitle],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle],
+        existing_videos=[video],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = True
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 1
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_not_called()
+    mock_player.open_subtitles.assert_called_once_with([subtitle])
+    mock_state.import_documents.assert_called_once()
+
+
+def test_multiple_documents_single_video_already_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document1 = Path.home() / "comments1.txt"
+    document2 = Path.home() / "comments2.txt"
+    subtitle1 = Path.home() / "subs1.srt"
+    subtitle2 = Path.home() / "subs2.srt"
+    video = Path.home() / "video.mp4"
+
+    comment1 = Mock()
+    comment2 = Mock()
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[comment1, comment2],
+        valid_documents=[document1, document2],
+        invalid_documents=[],
+        existing_videos=[video],
+        existing_subtitles=[subtitle1, subtitle2],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle1, subtitle2],
+        existing_videos=[video],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = True
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document1, document2], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 1
+    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == 0
+    mock_player.open_subtitles.assert_called_once_with([subtitle1, subtitle2])
+    assert mock_state.import_documents.call_count == 1
+
+
+def test_multiple_documents_video_not_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document1 = Path.home() / "comments1.txt"
+    document2 = Path.home() / "comments2.txt"
+    subtitle1 = Path.home() / "subs1.srt"
+    subtitle2 = Path.home() / "subs2.srt"
+    video1 = Path.home() / "video1.mp4"
+    video2 = Path.home() / "video2.mp4"
+    video3 = Path.home() / "video3.mp4"
+
+    comment1 = Mock()
+    comment2 = Mock()
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[comment1, comment2],
+        valid_documents=[document1, document2],
+        invalid_documents=[],
+        existing_videos=[video1],
+        existing_subtitles=[subtitle1, subtitle2],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle1, subtitle2],
+        existing_videos=[video2, video3],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document1, document2], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 1
+
+    # Verify ask_user signal contents
+    asked_videos = ask_user_spy.at(0, 0)
+    asked_subtitles = ask_user_spy.at(0, 1)
+    assert len(asked_videos) == 3
+    video_paths = [v.path for v in asked_videos]
+    assert set(video_paths) == {video1, video2, video3}
+    assert set(asked_subtitles) == {subtitle1, subtitle2}
+
+    assert comments_spy.count() == 0
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == 0
+    assert mock_state.import_documents.call_count == 0
+
+
+def test_document_and_explicit_video(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    video = Path.home() / "video.mp4"
+    subtitle = Path.home() / "subs.srt"
+
+    comment1 = Mock()
+    comment2 = Mock()
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[comment1, comment2],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[],
+        existing_subtitles=[subtitle],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle],
+        existing_videos=[],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[video], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 1
+    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_called_once_with(video)
+    mock_player.open_subtitles.assert_called_once_with([subtitle])
+    mock_state.import_documents.assert_called_once()
+
+
+def test_multiple_subtitles_same_video_already_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    subtitle1 = Path.home() / "subs1.srt"
+    subtitle2 = Path.home() / "subs2.srt"
+    video = Path.home() / "video.mp4"
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle1, subtitle2],
+        existing_videos=[video, video],
+    )
+
+    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = True
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[], videos=[], subtitles=[subtitle1, subtitle2])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 0
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_not_called()
+    mock_player.open_subtitles.assert_called_once_with([subtitle1, subtitle2])
+    mock_state.import_documents.assert_not_called()
+
+
+def test_multiple_subtitles_different_videos(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    subtitle1 = Path.home() / "subs1.srt"
+    subtitle2 = Path.home() / "subs2.srt"
+    video1 = Path.home() / "video1.mp4"
+    video2 = Path.home() / "video2.mp4"
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle1, subtitle2],
+        existing_videos=[video1, video2],
+    )
+
+    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[], videos=[], subtitles=[subtitle1, subtitle2])
+
+    # Then
+    assert ask_user_spy.count() == 1
+
+    # Verify ask_user signal contents
+    asked_videos = ask_user_spy.at(0, 0)
+    asked_subtitles = ask_user_spy.at(0, 1)
+    assert len(asked_videos) == 2
+    video_paths = [v.path for v in asked_videos]
+    assert set(video_paths) == {video1, video2}
+    assert set(asked_subtitles) == {subtitle1, subtitle2}
+
+    assert comments_spy.count() == 0
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_not_called()
+    mock_player.open_subtitles.assert_not_called()
+    mock_state.import_documents.assert_not_called()
+
+
+class ParameterizedTestCase(NamedTuple):
+    setting: SettingsService.ImportFoundVideo
+    expect_ask_user_count: int
+    expect_comments_count: int
+    expect_video_opened_count: int
+    expect_state_updated_count: int
+    expect_subtitles_opened_count: int = 0  # Add default for existing tests
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            expect_ask_user_count=0,
+            expect_comments_count=0,
+            expect_video_opened_count=1,
+            expect_state_updated_count=1,
+            expect_subtitles_opened_count=1,
+        ),
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            expect_ask_user_count=1,
+            expect_comments_count=0,
+            expect_video_opened_count=0,
+            expect_state_updated_count=0,
+            expect_subtitles_opened_count=0,
+        ),
+        ParameterizedTestCase(
+            setting=SettingsService.ImportFoundVideo.NEVER,
+            expect_ask_user_count=0,
+            expect_comments_count=0,
+            expect_video_opened_count=0,
+            expect_state_updated_count=0,
+            expect_subtitles_opened_count=1,
+        ),
+    ],
+    ids=["setting_always", "setting_ask", "setting_never"],
+)
+def test_subtitle_with_video_reference_not_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    settings_service,
+    make_spy,
+    test_case: ParameterizedTestCase,
+):
+    # Given
+    subtitle = Path.home() / "subs.srt"
+    video = Path.home() / "video.mp4"
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle],
+        existing_videos=[video],
+    )
+
+    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
+    mock_sub_importer.read.return_value = sub_result
+    mock_player.is_video_loaded.return_value = False
+    settings_service.import_found_video = test_case.setting.value
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[], videos=[], subtitles=[subtitle])
+
+    # Then
+    assert ask_user_spy.count() == test_case.expect_ask_user_count
+    assert comments_spy.count() == test_case.expect_comments_count
+    assert invalid_docs_spy.count() == 0
+
+    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
+    assert mock_player.open_subtitles.call_count == test_case.expect_subtitles_opened_count
+    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+
+
+def test_multiple_explicit_videos(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    video1 = Path.home() / "video1.mp4"
+    video2 = Path.home() / "video2.mp4"
+
+    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
+    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
+    mock_player.is_video_loaded.return_value = False
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[], videos=[video1, video2], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 1
+
+    # Verify ask_user signal contents
+    asked_videos = ask_user_spy.at(0, 0)
+    asked_subtitles = ask_user_spy.at(0, 1)
+    assert len(asked_videos) == 2
+    video_paths = [v.path for v in asked_videos]
+    assert set(video_paths) == {video1, video2}
+    assert asked_subtitles == []
+
+    assert comments_spy.count() == 0
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_not_called()
+    mock_player.open_subtitles.assert_not_called()
+    mock_state.import_documents.assert_not_called()
+
+
+def test_multiple_videos_one_already_loaded(
+    service,
+    mock_doc_importer,
+    mock_sub_importer,
+    mock_player,
+    mock_state,
+    make_spy,
+):
+    # Given
+    document = Path.home() / "comments.txt"
+    subtitle1 = Path.home() / "subs1.srt"
+    subtitle2 = Path.home() / "subs2.srt"
+    video1 = Path.home() / "video1.mp4"  # This one is already loaded
+    video2 = Path.home() / "video2.mp4"
+
+    comment1 = Mock()
+    comment2 = Mock()
+
+    doc_result = DocumentImporterService.DocumentImportResult(
+        comments=[comment1, comment2],
+        valid_documents=[document],
+        invalid_documents=[],
+        existing_videos=[],
+        existing_subtitles=[subtitle1, subtitle2],
+    )
+
+    sub_result = SubtitleImporterService.SubtitleImportResult(
+        subtitles=[subtitle1, subtitle2],
+        existing_videos=[video1, video2],
+    )
+
+    mock_doc_importer.read.return_value = doc_result
+    mock_sub_importer.read.return_value = sub_result
+
+    # video1 is already loaded
+    mock_player.is_video_loaded.side_effect = lambda path: path == video1
+
+    comments_spy = make_spy(service.comments_ready_for_import)
+    invalid_docs_spy = make_spy(service.erroneous_documents_imported)
+    ask_user_spy = make_spy(service.ask_user_what_to_import)
+
+    # When
+    service.open(documents=[document], videos=[], subtitles=[])
+
+    # Then
+    assert ask_user_spy.count() == 0
+    assert comments_spy.count() == 1
+    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert invalid_docs_spy.count() == 0
+
+    mock_player.open_video.assert_not_called()
+    mock_player.open_subtitles.assert_called_once_with([subtitle1, subtitle2])
+    mock_state.import_documents.assert_called_once()

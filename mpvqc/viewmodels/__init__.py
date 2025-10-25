@@ -5,6 +5,7 @@
 # ruff: noqa: F401
 from .backup_timer import MpvqcBackupTimerViewModel
 from .content import MpvqcContentViewModel
+from .dialog_loader import MpvqcDialogLoaderViewModel
 from .dialogs import (
     MpvqcAboutDialogViewModel,
     MpvqcAppearanceDialogViewModel,
