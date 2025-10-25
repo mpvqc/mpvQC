@@ -6,8 +6,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import pyobjects
+
 Loader {
     id: root
+
+    readonly property MpvqcDialogLoaderViewModel viewModel: MpvqcDialogLoaderViewModel {}
 
     readonly property url aboutDialog: Qt.resolvedUrl("../../dialogs/MpvqcAboutDialog.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("../../dialogs/MpvqcAppearanceDialog.qml")
@@ -17,6 +21,7 @@ Loader {
     readonly property url editMpvDialog: Qt.resolvedUrl("../../dialogs/MpvqcEditMpvDialog.qml")
     readonly property url exportSettingsDialog: Qt.resolvedUrl("../../dialogs/MpvqcExportSettingsDialog.qml")
     readonly property url importSettingsDialog: Qt.resolvedUrl("../../dialogs/MpvqcImportSettingsDialog.qml")
+    readonly property url importConfirmationDialog: Qt.resolvedUrl("../../dialogs/MpvqcImportConfirmationDialog.qml")
     readonly property url shortcutsDialog: Qt.resolvedUrl("../../dialogs/MpvqcShortcutDialog.qml")
 
     signal dialogClosed
@@ -65,6 +70,14 @@ Loader {
         active = true;
     }
 
+    function openImportConfirmationDialog(videosJson: string, subtitlesJson: string): void {
+        setSource(importConfirmationDialog, {
+            videosJson: videosJson,
+            subtitlesJson: subtitlesJson
+        });
+        active = true;
+    }
+
     function openShortcutsDialog(): void {
         setSource(shortcutsDialog);
         active = true;
@@ -74,11 +87,25 @@ Loader {
 
     Connections {
         target: root.item
+        ignoreUnknownSignals: true
 
         function onClosed(): void {
             root.active = false;
             root.source = "";
             root.dialogClosed();
+        }
+
+        function onImportConfirmed(selectedVideoPath: string, selectedSubtitlePaths: list<string>): void {
+            console.log("selectedVideoPath", selectedVideoPath);
+            console.log("selectedSubtitlePaths", selectedSubtitlePaths);
+        }
+    }
+
+    Connections {
+        target: root.viewModel
+
+        function onImportConfirmationDialogRequested(videosJson: string, subtitlesJson: string): void {
+            root.openImportConfirmationDialog(videosJson, subtitlesJson);
         }
     }
 }

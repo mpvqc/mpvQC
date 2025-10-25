@@ -19,7 +19,6 @@ Loader {
     readonly property url messageBoxQuit: Qt.resolvedUrl("../../messageboxes/MpvqcQuitMessageBox.qml")
     readonly property url messageBoxReset: Qt.resolvedUrl("../../messageboxes/MpvqcResetMessageBox.qml")
     readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../../messageboxes/MpvqcVersionCheckMessageBox.qml")
-    readonly property url messageBoxVideoFound: Qt.resolvedUrl("../../messageboxes/MpvqcVideoFoundMessageBox.qml")
 
     signal messageBoxClosed
 
@@ -62,14 +61,6 @@ Loader {
         active = true;
     }
 
-    function openVideoFoundMessageBox(trackingId: string, fileName: string): void {
-        setSource(messageBoxVideoFound, {
-            file: fileName,
-            trackingId: trackingId
-        });
-        active = true;
-    }
-
     onLoaded: item.open() // qmllint disable
 
     Connections {
@@ -93,14 +84,6 @@ Loader {
 
         function onErroneousDocumentsImported(documents: list<var>): void {
             root.openDocumentNotCompatibleMessageBox(documents);
-        }
-
-        function onAskUserDocumentVideoImport(trackingId: string, fileName: string): void {
-            root.openVideoFoundMessageBox(trackingId, fileName);
-        }
-
-        function onAskUserSubtitleVideoImport(trackingId: string, fileName: string): void {
-            root.openVideoFoundMessageBox(trackingId, fileName);
         }
 
         function onExportErrorOccurred(message: string, line: int): void {
