@@ -59,7 +59,7 @@ Item {
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "New QC Document")
-                    icon.source: "qrc:/data/icons/inventory_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.source: "qrc:/data/icons/draft_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                     onTriggered: root.viewModel.requestResetAppState()
                 }
 
@@ -88,7 +88,7 @@ Item {
 
                 MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Export QC Document")
-                    icon.source: "qrc:/data/icons/export_notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.source: "qrc:/data/icons/file_export_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                     enabled: _extendedExportModel.count > 0
 
