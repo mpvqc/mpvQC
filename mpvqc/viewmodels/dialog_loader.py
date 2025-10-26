@@ -1,11 +1,12 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 import json
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal, Slot
+from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.datamodels import VideoSource
@@ -13,24 +14,6 @@ from mpvqc.services import ImporterService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
-
-
-class ContinueImportJob(QRunnable):
-    _importer: ImporterService = inject.attr(ImporterService)
-
-    def __init__(self, import_id: str, user_accepted: bool):
-        super().__init__()
-        self._import_id = import_id
-        self._user_accepted = user_accepted
-
-    def run(self):
-        # self._importer.continue_video_determination(self._import_id, self._user_accepted)
-        raise NotImplementedError
-
-    @Slot(str, bool)
-    def continueWithImport(self, import_id: str, user_accepted: bool):
-        job = ContinueImportJob(import_id, user_accepted)
-        QThreadPool.globalInstance().start(job)
 
 
 # noinspection PyPep8Naming
@@ -54,9 +37,8 @@ class MpvqcDialogLoaderViewModel(QObject):
                 "filename": video.path.name,
                 "fromDocument": video.from_document,
                 "fromSubtitle": video.from_subtitle,
-                "checked": idx == 0,
             }
-            for idx, video in enumerate(videos_found)
+            for video in videos_found
         ]
 
         subtitles = [

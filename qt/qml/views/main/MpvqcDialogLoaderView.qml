@@ -96,8 +96,7 @@ Loader {
         }
 
         function onImportConfirmed(selectedVideoPath: string, selectedSubtitlePaths: list<string>): void {
-            console.log("selectedVideoPath", selectedVideoPath);
-            console.log("selectedSubtitlePaths", selectedSubtitlePaths);
+            root.viewModel.confirmImport(selectedVideoPath, selectedSubtitlePaths);
         }
     }
 
