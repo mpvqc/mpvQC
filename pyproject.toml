@@ -284,6 +284,7 @@ files = [
     "qt/qml/components/MpvqcDebugRectangle.qml",
     "qt/qml/components/MpvqcDialog.qml",
     "qt/qml/components/MpvqcHeader.qml",
+    "qt/qml/components/MpvqcIconLabel.qml",
     "qt/qml/components/MpvqcKeyboardFocusableButtonBox.qml",
     "qt/qml/components/MpvqcLabelWithToolTip.qml",
     "qt/qml/components/MpvqcMenu.qml",
