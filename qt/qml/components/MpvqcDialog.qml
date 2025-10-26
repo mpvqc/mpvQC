@@ -15,7 +15,6 @@ Dialog {
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     anchors.centerIn: Overlay.overlay
     contentWidth: 370
-    contentHeight: 450
     modal: true
     dim: false
     z: 2

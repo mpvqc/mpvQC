@@ -34,6 +34,8 @@ MpvqcDialog {
         readonly property real scaleNormal: 1.0
     }
 
+    contentHeight: 450
+
     title: qsTranslate("AppearanceDialog", "Appearance")
 
     component SelectionDelegate: ItemDelegate {
