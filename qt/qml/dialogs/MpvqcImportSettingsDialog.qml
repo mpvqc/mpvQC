@@ -15,6 +15,8 @@ MpvqcDialog {
 
     readonly property MpvqcImportSettingsDialogViewModel viewModel: MpvqcImportSettingsDialogViewModel {}
 
+    contentHeight: 450
+
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
 
     contentItem: ColumnLayout {

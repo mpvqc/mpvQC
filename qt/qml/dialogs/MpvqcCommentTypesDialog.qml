@@ -19,6 +19,8 @@ MpvqcDialog {
     readonly property MpvqcCommentTypesDialogViewModel viewModel: MpvqcCommentTypesDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme
 
+    contentHeight: 450
+
     title: qsTranslate("CommentTypesDialog", "Comment Types")
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
