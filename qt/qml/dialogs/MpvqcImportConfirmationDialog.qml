@@ -120,7 +120,7 @@ MpvqcDialog {
                         icon {
                             width: root.dimensions.iconSize
                             height: root.dimensions.iconSize
-                            source: "qrc:/data/icons/inventory_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                            source: "qrc:/data/icons/description_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                         }
 
                         opacity: 0.3
