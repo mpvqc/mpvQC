@@ -13,16 +13,16 @@ from mpv import MPV
 from PySide6.QtCore import QObject, Qt, Signal
 
 from .application_paths import ApplicationPathsService
+from .host_integration import HostIntegrationService
 from .key_command import KeyCommandGeneratorService
-from .operating_system_zoom_detector import OperatingSystemZoomDetectorService
 from .type_mapper import TypeMapperService
 
 
 class PlayerService(QObject):
     _command_generator: KeyCommandGeneratorService = inject.attr(KeyCommandGeneratorService)
+    _host_integration = inject.attr(HostIntegrationService)
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
-    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
 
     video_loaded_changed = Signal(bool)
     path_changed = Signal(str)
@@ -212,7 +212,7 @@ class PlayerService(QObject):
             self.width_changed.emit(value)
 
     def move_mouse(self, x: int, y: int) -> None:
-        zoom_factor = self._zoom_detector_service.zoom_factor
+        zoom_factor = self._host_integration.display_zoom_factor
         x = int(x * zoom_factor)
         y = int(y * zoom_factor)
         self._mpv.command_async("mouse", x, y)

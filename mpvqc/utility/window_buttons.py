@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QRunnable, QThreadPool, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import WindowButtonsService
+from mpvqc.services import HostIntegrationService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcWindowButtons(QObject):
-    _buttons: WindowButtonsService = inject.attr(WindowButtonsService)
+    _host_integration: HostIntegrationService = inject.attr(HostIntegrationService)
 
     showMinimizeButtonChanged = Signal(bool)
     showMaximizeButtonChanged = Signal(bool)
@@ -23,10 +23,10 @@ class MpvqcWindowButtons(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._preferences = self._buttons.defaults()
+        self._preferences = self._host_integration.DEFAULT_WINDOW_BUTTON_PREFERENCE
 
         def _detection_job():
-            preferences = self._buttons.detect()
+            preferences = self._host_integration.get_window_button_preference()
             self._on_detection_complete(preferences)
 
         job = QRunnable.create(_detection_job)
