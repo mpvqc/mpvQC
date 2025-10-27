@@ -19,12 +19,12 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.FileStartupService, lambda: s.FileStartupService())
     binder.bind_to_constructor(s.FontLoaderService, lambda: s.FontLoaderService())
     binder.bind_to_constructor(s.FramelessWindowService, lambda: s.FramelessWindowService())
+    binder.bind_to_constructor(s.HostIntegrationService, lambda: s.HostIntegrationService())
     binder.bind_to_constructor(s.ImporterService, lambda: s.ImporterService())
     binder.bind_to_constructor(s.InternationalizationService, lambda: s.InternationalizationService())
     binder.bind_to_constructor(s.KeyCommandGeneratorService, lambda: s.KeyCommandGeneratorService())
     binder.bind_to_constructor(s.LabelWidthCalculatorService, lambda: s.LabelWidthCalculatorService())
     binder.bind_to_constructor(s.MimetypeProviderService, lambda: s.MimetypeProviderService())
-    binder.bind_to_constructor(s.OperatingSystemZoomDetectorService, lambda: s.OperatingSystemZoomDetectorService())
     binder.bind_to_constructor(s.PlayerService, lambda: s.PlayerService())
     binder.bind_to_constructor(s.QuitService, lambda: s.QuitService())
     binder.bind_to_constructor(s.ResetService, lambda: s.ResetService())
@@ -38,7 +38,6 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.TimeFormatterService, lambda: s.TimeFormatterService())
     binder.bind_to_constructor(s.TypeMapperService, lambda: s.TypeMapperService())
     binder.bind_to_constructor(s.VersionCheckerService, lambda: s.VersionCheckerService())
-    binder.bind_to_constructor(s.WindowButtonsService, lambda: s.WindowButtonsService())
     binder.bind_to_constructor(s.WindowPropertiesService, lambda: s.WindowPropertiesService())
 
 
