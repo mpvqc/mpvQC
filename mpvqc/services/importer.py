@@ -80,9 +80,9 @@ class ResourceScanner:
         self._found_subtitles = list(dict.fromkeys(self._found_subtitles))
 
         if not self._explicit_video_provided:
-            self._found_videos.extend(self._collect_and_merge_videos())
+            self._found_videos.extend(self._collect_videos())
 
-    def _collect_and_merge_videos(self) -> list[VideoSource]:
+    def _collect_videos(self) -> list[VideoSource]:
         videos_from_documents = [
             VideoSource(path=video, from_document=True, from_subtitle=False)
             for video in self._document_import_result.existing_videos
@@ -99,19 +99,20 @@ class ResourceScanner:
         ]
 
         all_videos = videos_from_documents + videos_from_subtitles + videos_from_document_subtitles
+        return self._deduplicate_and_merge_video_sources(all_videos)
 
+    @staticmethod
+    def _deduplicate_and_merge_video_sources(videos: list[VideoSource]) -> list[VideoSource]:
         video_dict: dict[Path, VideoSource] = {}
-        for imported_video in all_videos:
-            if imported_video.path in video_dict:
-                existing = video_dict[imported_video.path]
-                video_dict[imported_video.path] = VideoSource(
-                    path=imported_video.path,
-                    from_document=existing.from_document or imported_video.from_document,
-                    from_subtitle=existing.from_subtitle or imported_video.from_subtitle,
+        for video in videos:
+            if existing := video_dict.get(video.path):
+                video_dict[video.path] = VideoSource(
+                    path=video.path,
+                    from_document=existing.from_document or video.from_document,
+                    from_subtitle=existing.from_subtitle or video.from_subtitle,
                 )
             else:
-                video_dict[imported_video.path] = imported_video
-
+                video_dict[video.path] = video
         return list(video_dict.values())
 
 
@@ -142,24 +143,29 @@ class ImporterService(QObject):
         scanner = ResourceScanner(documents, videos, subtitles)
         scanner.scan()
 
-        found_videos = scanner.found_videos
-
-        # Case 1: User provided videos directly (those take precedence)
         if scanner.explicit_video_provided:
-            if len(found_videos) == 1:
-                self.finalize_import(found_videos[0].path, scanner.found_subtitles, scanner)
-                return
-
-            self._ask_user_what_to_import(scanner, found_videos)
+            self._handle_explicit_video_import(scanner)
             return
 
-        # Case 2: No videos found during scan
-        if not found_videos:
+        if not scanner.found_videos:
             self.finalize_import(None, scanner.found_subtitles, scanner)
             return
 
-        # Case 3: Videos found during scan
-        if self._any_video_is_current_video_from(found_videos):
+        self._handle_found_videos(scanner)
+
+    def _handle_explicit_video_import(self, scanner: ResourceScanner) -> None:
+        found_videos = scanner.found_videos
+
+        if len(found_videos) == 1:
+            self.finalize_import(found_videos[0].path, scanner.found_subtitles, scanner)
+            return
+
+        self._ask_user_what_to_import(scanner)
+
+    def _handle_found_videos(self, scanner: ResourceScanner) -> None:
+        found_videos = scanner.found_videos
+
+        if self._should_skip_video_import_because_already_loaded(found_videos):
             self.finalize_import(None, scanner.found_subtitles, scanner)
             return
 
@@ -167,13 +173,9 @@ class ImporterService(QObject):
             self._apply_video_import_preference(scanner, found_videos[0])
             return
 
-        self._ask_user_what_to_import(scanner, found_videos)
+        self._ask_user_what_to_import(scanner)
 
-    def _ask_user_what_to_import(self, scanner: ResourceScanner, videos: list[VideoSource]) -> None:
-        self._pending_scanner = scanner
-        self.ask_user_what_to_import.emit(videos, scanner.found_subtitles)
-
-    def _any_video_is_current_video_from(self, found_videos: list[VideoSource]) -> bool:
+    def _should_skip_video_import_because_already_loaded(self, found_videos: list[VideoSource]) -> bool:
         return any(self._player.is_video_loaded(v.path) for v in found_videos)
 
     def _apply_video_import_preference(self, scanner: ResourceScanner, video: VideoSource) -> None:
@@ -183,12 +185,16 @@ class ImporterService(QObject):
             case SettingsService.ImportFoundVideo.ALWAYS.value:
                 self.finalize_import(video.path, scanner.found_subtitles, scanner)
             case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
-                self._ask_user_what_to_import(scanner, [video])
+                self._ask_user_what_to_import(scanner)
             case SettingsService.ImportFoundVideo.NEVER.value:
                 self.finalize_import(None, scanner.found_subtitles, scanner)
             case _:
                 msg = f"Unknown import_found_video setting: {setting}"
                 raise ValueError(msg)
+
+    def _ask_user_what_to_import(self, scanner: ResourceScanner) -> None:
+        self._pending_scanner = scanner
+        self.ask_user_what_to_import.emit(scanner.found_videos, scanner.found_subtitles)
 
     def finalize_import(
         self,
