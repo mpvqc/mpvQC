@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 from pathlib import Path
 
 import inject
-from loguru import logger
 from PySide6.QtCore import QObject, Signal
 
 from mpvqc.datamodels import Comment, VideoSource
@@ -19,6 +19,9 @@ from .type_mapper import TypeMapperService
 
 DocumentImportResult = DocumentImporterService.DocumentImportResult
 SubtitleImportResult = SubtitleImporterService.SubtitleImportResult
+
+
+logger = logging.getLogger(__name__)
 
 
 class ResourceScanner:

@@ -40,7 +40,7 @@ def configure_qt_settings():
 def configure_logging():
     from PySide6 import QtCore
 
-    from .logging import qt_log_handler, setup_mpvqc_logging
+    from .logging_utils import qt_log_handler, setup_mpvqc_logging
 
     setup_mpvqc_logging()
     QtCore.qInstallMessageHandler(qt_log_handler())

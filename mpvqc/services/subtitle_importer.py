@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from loguru import logger
-
 from ._internal import Immutable
+
+logger = logging.getLogger(__name__)
 
 
 class SubtitleImporterService:
@@ -34,7 +35,7 @@ def parse_video_from(subtitle: Path) -> Path | None:
             case ".ass" | ".ssa":
                 return parse_video_in_ass_ssa(subtitle)
     except Exception:
-        logger.exception("Failed to parse video path from subtitle file: {}", subtitle)
+        logger.exception("Failed to parse video path from subtitle file: %s", subtitle)
     return None
 
 

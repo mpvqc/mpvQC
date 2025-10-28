@@ -20,10 +20,10 @@ ListModel {
         os: "linux, windows"
     }
     ListElement {
-        name: "loguru"
-        url: "https://github.com/Delgan/loguru"
+        name: "python-colorlog"
+        url: "https://github.com/borntyping/python-colorlog"
         licence: "MIT"
-        version: "@@pypi-loguru@@"
+        version: "@@pypi-colorlog@@"
         os: "linux, windows"
     }
     ListElement {

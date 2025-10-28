@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 from functools import cached_property
-
-from loguru import logger
 
 try:
     # noinspection PyUnusedImports
@@ -13,6 +12,9 @@ try:
     QTDBUS_AVAILABLE = True
 except ImportError:
     QTDBUS_AVAILABLE = False
+
+
+logger = logging.getLogger(__name__)
 
 
 class SettingsPortal:
@@ -96,12 +98,12 @@ class SettingsPortal:
                 method_name = "ReadOne"
             else:
                 method_name = "Read"
-                logger.debug("Using deprecated Read() method (portal version: {})", portal_version)
+                logger.debug("Using deprecated Read() method (portal version: %s)", portal_version)
 
             reply = self._interface.call(method_name, namespace, key)
 
             if reply.type() == QDBusMessage.MessageType.ErrorMessage:
-                logger.debug("D-Bus error reading {} {}: {}", namespace, key, reply.errorMessage())
+                logger.debug("D-Bus error reading %s %s: %s", namespace, key, reply.errorMessage())
                 return None
 
             dbus_variant = reply.arguments()[0]
@@ -112,10 +114,10 @@ class SettingsPortal:
                 value = dbus_variant.variant().variant()
 
             if value is None:
-                logger.debug("Portal setting {} {} returned None", namespace, key)
+                logger.debug("Portal setting %s %s returned None", namespace, key)
                 return None
 
             return str(value)
         except Exception:
-            logger.exception("Exception reading portal setting {} {}", namespace, key)
+            logger.exception("Exception reading portal setting %s %s", namespace, key)
             return None

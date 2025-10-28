@@ -2,12 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
+
 import inject
-from loguru import logger
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import HostIntegrationService, PlayerService, SettingsService, WindowPropertiesService
+
+logger = logging.getLogger(__name__)
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
