@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.impl
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import pyobjects
 
+import "../../components"
 import "../../utility"
 
 Popup {
@@ -62,12 +62,14 @@ Popup {
         width: root.width - root.leftPadding - root.rightPadding
         spacing: 0
 
-        IconLabel {
+        MpvqcIconLabel {
             Layout.leftMargin: 8
             Layout.rightMargin: 4
 
             icon {
                 source: "qrc:/data/icons/search_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                height: 24
+                width: 24
                 color: Material.hintTextColor
             }
         }
