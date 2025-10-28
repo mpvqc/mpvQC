@@ -176,7 +176,6 @@ jobs:
 
           execute source .venv/Scripts/activate
 
-          echo "::group::Run Nuitka"
           execute python.exe -m nuitka main.py \
             --standalone \
             --assume-yes-for-downloads \
@@ -190,7 +189,12 @@ jobs:
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles \
             --noinclude-qt-translations \
             --include-data-files=LICENSES/*.txt=LICENSES/ \
-            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase*.qm=PySide6/translations/ \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_de.qm=PySide6/translations/ \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_en.qm=PySide6/translations/ \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_es.qm=PySide6/translations/ \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_he.qm=PySide6/translations/ \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_it.qm=PySide6/translations/ \
+            --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_pt_BR.qm=PySide6/translations/ \
             --nofollow-import-to='PySide6.QtWidgets' \
             --nofollow-import-to=tkinter,distutils,numpy.f2py \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/designer/*' \
@@ -232,10 +236,10 @@ jobs:
             --noinclude-dlls='qt6quickparticles.dll' \
             --noinclude-dlls='qt6widgets.dll' \
             --output-filename=mpvQC.exe
-          echo "::endgroup::"
+      - name: Package libmpv
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          #
-          echo "::group::Package libmpv"
           ARTIFACT="$(basename "$LIBMPV_URL")"
           execute curl -L -O "$LIBMPV_URL"
           echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
@@ -243,12 +247,77 @@ jobs:
           execute sha256sum --check "$ARTIFACT.sha256"
           execute 7z x "$ARTIFACT"
           execute mv libmpv-2.dll deployment/main.dist
-          echo "::endgroup::"
+      - name: Remove Unused Files
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          #
-          echo "::group::Make Application Portable"
+          echo "Removing unused QML modules..."
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Effects
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/LocalStorage
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/NativeStyle
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Particles
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Pdf
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Scene2D
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Scene3D
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Shapes
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Timeline
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/VectorImage
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/tooling
+          execute rm -rf deployment/main.dist/PySide6/qml/Qt
+          execute rm -rf deployment/main.dist/PySide6/qml/QtNetwork
+          execute rm -rf deployment/main.dist/PySide6/qml/QtCore
+          execute rm -rf deployment/main.dist/PySide6/qml/QtQml
+
+          echo "Removing unused image format plugins..."
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qgif.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qicns.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qjpeg.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qpdf.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qpng.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qtga.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qtiff.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qwbmp.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qwebp.dll
+
+          echo "Removing unused platform plugins..."
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/platforms/qdirect2d.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/platforms/qminimal.dll
+          execute rm -f deployment/main.dist/PySide6/qt-plugins/platforms/qoffscreen.dll
+
+          echo "Removing TLS plugins..."
+          execute rm -rf deployment/main.dist/PySide6/qt-plugins/tls
+
+          echo "Removing unused Qt.labs DLLs..."
+          execute rm -f deployment/main.dist/qt6labsanimation.dll
+          execute rm -f deployment/main.dist/qt6labsfolderlistmodel.dll
+          execute rm -f deployment/main.dist/qt6labsplatform.dll
+          execute rm -f deployment/main.dist/qt6labsqmlmodels.dll
+          execute rm -f deployment/main.dist/qt6labssettings.dll
+          execute rm -f deployment/main.dist/qt6labssharedimage.dll
+          execute rm -f deployment/main.dist/qt6labswavefrontmesh.dll
+
+          echo "Removing unused QtQml module DLLs..."
+          execute rm -f deployment/main.dist/qt6qmllocalstorage.dll
+          execute rm -f deployment/main.dist/qt6qmlnetwork.dll
+          execute rm -f deployment/main.dist/qt6qmlxmllistmodel.dll
+
+          echo "Removing unused QtQuick module DLLs..."
+          execute rm -f deployment/main.dist/qt6quickeffects.dll
+          execute rm -f deployment/main.dist/qt6quickshapes.dll
+          execute rm -f deployment/main.dist/qt6quicktest.dll
+          execute rm -f deployment/main.dist/qt6quicktimeline.dll
+          execute rm -f deployment/main.dist/qt6quicktimelineblendtrees.dll
+          execute rm -f deployment/main.dist/qt6quickvectorimage.dll
+          execute rm -f deployment/main.dist/qt6quickvectorimagegenerator.dll
+
+          echo "Removing other unused DLLs..."
+          execute rm -f deployment/main.dist/qt6dbus.dll
+          execute rm -f deployment/main.dist/qt6sql.dll
+      - name: Make Application Portable
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
           execute touch deployment/main.dist/portable
-          echo "::endgroup::"
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:
