@@ -117,7 +117,7 @@ jobs:
           #
           echo "::group::Run Python Build"
           execute just test-python
-          execute just clean
+          execute export MPVQC_COMPILE_QML=true
           execute just build
           echo "::endgroup::"
 

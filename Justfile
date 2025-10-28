@@ -52,9 +52,10 @@ init ARGS='--group dev':
 
 # Remove ALL generated files
 [group('build')]
-@clean: _update_pyproject_file
-    uv run pyside6-project clean
-    rm -rf build test/rc_project.py project.json project.qrc
+@clean:
+    find i18n -name "*.qm" -type f -delete
+    find qt/qml -name "*.qmlc" -type f -delete
+    rm -rf build pyobjects test/rc_project.py project.json project.qrc
 
 # Add language; pattern: language-region ISO 639-1, ISO 3166-1; example: fr-FR
 [group('i18n')]
@@ -131,7 +132,23 @@ test-qml SKIP_PREPARATION='false':
         --include-file main.py \
         --include-file project.qrc
 
-@_generate-qrc-file:
+_generate-qrc-file:
+    #!/usr/bin/env bash
+
+    if [[ "${MPVQC_COMPILE_QML}" == "true" ]]; then
+      echo "Compiling QML files to cache..."
+      find qt/qml -name "*.qml" -not -name "tst_*.qml" -type f | while read qml_file; do
+        qmlc_file="${qml_file}c"
+        echo "  Compiling $(basename "$qml_file")..."
+        uv run pyside6-qmlcachegen --only-bytecode "$qml_file" -o "$qmlc_file" || exit 1
+      done
+      echo "  Removing .aotstats files..."
+      find qt/qml -name "*.aotstats" -type f -delete
+      echo "QML compilation complete!"
+    else
+      echo "Skipping QML cache generation. Can be enabled by setting env var MPVQC_COMPILE_QML=true"
+    fi
+
     uv run python build-aux/generate-qrc-file.py \
         --relative-to . \
         --include-directory qt/qml \
