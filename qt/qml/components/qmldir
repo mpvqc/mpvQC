@@ -7,10 +7,11 @@ module components
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
+MpvqcIconLabel MpvqcIconLabel.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMenuBarMenu MpvqcMenuBarMenu.qml
-MpvqcPositionedMenu MpvqcPositionedMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
+MpvqcPositionedMenu MpvqcPositionedMenu.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
 MpvqcTextFieldRow MpvqcTextFieldRow.qml

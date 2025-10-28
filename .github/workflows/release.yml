@@ -131,7 +131,7 @@ jobs:
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           debug "Uploading build/release as $RELEASE_NAME"
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: build/release
           name: ${{ steps.build_step.outputs.release_name }}
@@ -160,7 +160,7 @@ jobs:
 
           execute rm -rf mpvqc main.py
       - name: Download Build Artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: release-build-windows
           path: .
@@ -250,7 +250,7 @@ jobs:
           execute touch deployment/main.dist/portable
           echo "::endgroup::"
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
           path: deployment/main.dist

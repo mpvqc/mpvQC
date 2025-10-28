@@ -7,7 +7,7 @@ from loguru import logger
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import OperatingSystemZoomDetectorService, PlayerService, SettingsService, WindowPropertiesService
+from mpvqc.services import HostIntegrationService, PlayerService, SettingsService, WindowPropertiesService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,10 +16,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcResizeHandler(QObject):
-    _zoom_detector_service = inject.attr(OperatingSystemZoomDetectorService)
+    _host_integration = inject.attr(HostIntegrationService)
     _player: PlayerService = inject.attr(PlayerService)
-    _window_properties_service: WindowPropertiesService = inject.attr(WindowPropertiesService)
     _settings_service: SettingsService = inject.attr(SettingsService)
+    _window_properties_service: WindowPropertiesService = inject.attr(WindowPropertiesService)
 
     headerHeightChanged = Signal(int)
     borderSizeChanged = Signal(int)
@@ -45,13 +45,13 @@ class MpvqcResizeHandler(QObject):
     @property
     def _scaled_height(self) -> int:
         if height := self._player.height:
-            return int(height / self._zoom_detector_service.zoom_factor)
+            return int(height / self._host_integration.display_zoom_factor)
         return 0
 
     @property
     def _scaled_width(self) -> int:
         if width := self._player.width:
-            return int(width / self._zoom_detector_service.zoom_factor)
+            return int(width / self._host_integration.display_zoom_factor)
         return 0
 
     @property

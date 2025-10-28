@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
-from uuid import uuid4
 
 import inject
 from loguru import logger
 from PySide6.QtCore import QObject, Signal
+
+from mpvqc.datamodels import Comment, VideoSource
 
 from .document_importer import DocumentImporterService
 from .player import PlayerService
@@ -18,23 +17,103 @@ from .state import StateService
 from .subtitle_importer import SubtitleImporterService
 from .type_mapper import TypeMapperService
 
-
-class AskingAbout(Enum):
-    DOCUMENT = "document"
-    SUBTITLE = "subtitle"
+DocumentImportResult = DocumentImporterService.DocumentImportResult
+SubtitleImportResult = SubtitleImporterService.SubtitleImportResult
 
 
-@dataclass
-class ImportState:
-    document_video: Path | None
-    subtitle_video: Path | None
-    dropped_videos: list[Path]
-    valid_documents: list[Path]
-    invalid_documents: list[Path]
-    subtitles: list[Path]
-    selected_video: Path | None = None
-    asking_about: AskingAbout | None = None
-    video_source: AskingAbout | None = None
+class ResourceScanner:
+    _doc_importer: DocumentImporterService = inject.attr(DocumentImporterService)
+    _sub_importer: SubtitleImporterService = inject.attr(SubtitleImporterService)
+
+    def __init__(self, documents: list[Path], videos: list[Path], subtitles: list[Path]):
+        self._document_paths = documents
+        self._subtitle_paths = subtitles
+
+        self._document_import_result: DocumentImportResult = self._doc_importer.NO_IMPORT
+        self._document_subtitles_import_result: SubtitleImportResult = self._sub_importer.NO_IMPORT
+        self._subtitle_import_result: SubtitleImportResult = self._sub_importer.NO_IMPORT
+
+        self._found_subtitles: list[Path] = []
+        self._found_videos: list[VideoSource] = [
+            VideoSource(path=video, from_document=False, from_subtitle=False) for video in videos
+        ]
+        self._explicit_video_provided = bool(videos)
+
+    @property
+    def explicit_video_provided(self) -> bool:
+        return self._explicit_video_provided
+
+    @property
+    def is_single_document_import(self) -> bool:
+        return len(self._document_paths) == 1 and not self._explicit_video_provided and not self._subtitle_paths
+
+    @property
+    def found_videos(self) -> list[VideoSource]:
+        return self._found_videos
+
+    @property
+    def found_subtitles(self) -> list[Path]:
+        return self._found_subtitles
+
+    @property
+    def comments(self) -> list[Comment]:
+        return self._document_import_result.comments
+
+    @property
+    def valid_documents(self) -> list[Path]:
+        return self._document_import_result.valid_documents
+
+    @property
+    def invalid_documents(self) -> list[Path]:
+        return self._document_import_result.invalid_documents
+
+    def scan(self):
+        if documents := self._document_paths:
+            self._document_import_result = self._doc_importer.read(documents)
+        if subtitles := self._document_import_result.existing_subtitles:
+            self._document_subtitles_import_result = self._sub_importer.read(subtitles)
+        if subtitles := self._subtitle_paths:
+            self._subtitle_import_result = self._sub_importer.read(subtitles)
+
+        self._found_subtitles.extend(self._subtitle_import_result.subtitles)
+        self._found_subtitles.extend(self._document_import_result.existing_subtitles)
+        self._found_subtitles = list(dict.fromkeys(self._found_subtitles))
+
+        if not self._explicit_video_provided:
+            self._found_videos.extend(self._collect_videos())
+
+    def _collect_videos(self) -> list[VideoSource]:
+        videos_from_documents = [
+            VideoSource(path=video, from_document=True, from_subtitle=False)
+            for video in self._document_import_result.existing_videos
+        ]
+
+        videos_from_subtitles = [
+            VideoSource(path=video, from_document=False, from_subtitle=True)
+            for video in self._subtitle_import_result.existing_videos
+        ]
+
+        videos_from_document_subtitles = [
+            VideoSource(path=video, from_document=False, from_subtitle=True)
+            for video in self._document_subtitles_import_result.existing_videos
+        ]
+
+        all_videos = videos_from_documents + videos_from_subtitles + videos_from_document_subtitles
+        return self._deduplicate_and_merge_video_sources(all_videos)
+
+    @staticmethod
+    def _deduplicate_and_merge_video_sources(videos: list[VideoSource]) -> list[VideoSource]:
+        video_dict: dict[Path, VideoSource] = {}
+        for video in videos:
+            if existing := video_dict.get(video.path):
+                video_dict[video.path] = VideoSource(
+                    path=video.path,
+                    from_document=existing.from_document or video.from_document,
+                    from_subtitle=existing.from_subtitle or video.from_subtitle,
+                )
+            else:
+                video_dict[video.path] = video
+        return list(video_dict.values())
 
 
 class ImporterService(QObject):
@@ -50,131 +129,107 @@ class ImporterService(QObject):
     # param: list[str] - list of file names that could not be processed
     erroneous_documents_imported = Signal(list)
 
-    # param 1: str - import ID (UUID)
-    # param 2: str - file name of the video from document to potentially import
-    ask_user_document_video_import = Signal(str, str)
+    # param 1: list[VideoSource] - found videos with source flags
+    # param 2: list[Path] - found subtitles
+    ask_user_what_to_import = Signal(list, list)
 
-    # param 1: str - import ID (UUID)
-    # param 2: str - file name of the video from subtitle to potentially import
-    ask_user_subtitle_video_import = Signal(str, str)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self._pending_imports: dict[str, ImportState] = {}
+    def __init__(self):
+        super().__init__()
+        self._pending_scanner: ResourceScanner | None = None
 
     def open(self, documents: list[Path], videos: list[Path], subtitles: list[Path]) -> None:
-        imported_documents = self._document_importer.read(documents)
-        imported_subtitles = self._subtitle_importer.read(subtitles)
+        self._pending_scanner = None
 
-        if comments := imported_documents.comments:
-            self.comments_ready_for_import.emit(comments)
+        scanner = ResourceScanner(documents, videos, subtitles)
+        scanner.scan()
 
-        state = ImportState(
-            document_video=self._get_importable_video(imported_documents.existing_videos),
-            subtitle_video=self._get_importable_video(imported_subtitles.existing_videos),
-            dropped_videos=videos,
-            valid_documents=imported_documents.valid_documents,
-            invalid_documents=imported_documents.invalid_documents,
-            subtitles=imported_subtitles.subtitles,
-        )
-
-        if self._determine_video(state):
-            self._continue_with_import(state)
-
-    def _get_importable_video(self, videos: list[Path]) -> Path | None:
-        if not videos:
-            return None
-
-        first_video = videos[0]
-        if self._player.is_video_loaded(first_video):
-            return None
-
-        return first_video
-
-    def _determine_video(self, state: ImportState) -> bool:
-        """Returns True if import can continue immediately, False if waiting for user input."""
-        if state.dropped_videos:
-            state.selected_video = state.dropped_videos[0]
-            return True
-
-        if state.document_video:
-            import_setting = self._settings.import_found_video
-
-            match import_setting:
-                case SettingsService.ImportFoundVideo.ALWAYS.value:
-                    state.selected_video = state.document_video
-                    return True
-                case SettingsService.ImportFoundVideo.NEVER.value if state.subtitle_video:
-                    return self._check_subtitle_video(state)
-                case SettingsService.ImportFoundVideo.NEVER.value:
-                    return True
-                case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
-                    import_id = str(uuid4())
-                    state.asking_about = AskingAbout.DOCUMENT
-                    self._pending_imports[import_id] = state
-                    self.ask_user_document_video_import.emit(import_id, state.document_video.name)
-                    return False
-
-        if state.subtitle_video:
-            return self._check_subtitle_video(state)
-
-        return True
-
-    def _check_subtitle_video(self, state: ImportState) -> bool:
-        """Returns True if import can continue immediately, False if waiting for user input."""
-        import_setting = self._settings.import_found_video
-
-        match import_setting:
-            case SettingsService.ImportFoundVideo.ALWAYS.value:
-                state.selected_video = state.subtitle_video
-                return True
-            case SettingsService.ImportFoundVideo.NEVER.value:
-                return True
-            case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
-                import_id = str(uuid4())
-                state.asking_about = AskingAbout.SUBTITLE
-                self._pending_imports[import_id] = state
-                self.ask_user_subtitle_video_import.emit(import_id, state.subtitle_video.name)
-                return False
-            case _:
-                msg = f"Cannot handle subtitle import setting: {import_setting}"
-                raise ValueError(msg)
-
-    def continue_video_determination(self, import_id: str, user_accepted: bool) -> None:
-        if import_id not in self._pending_imports:
-            logger.warning("No pending import state found for import_id: {}", import_id)
+        if scanner.explicit_video_provided:
+            self._handle_explicit_video_import(scanner)
             return
 
-        state = self._pending_imports.pop(import_id)
+        if not scanner.found_videos:
+            self.finalize_import(None, scanner.found_subtitles, scanner)
+            return
 
-        match (user_accepted, state.asking_about):
-            case (True, AskingAbout.DOCUMENT):
-                state.selected_video = state.document_video
-                state.video_source = AskingAbout.DOCUMENT
-            case (True, AskingAbout.SUBTITLE):
-                state.selected_video = state.subtitle_video
-                state.video_source = AskingAbout.SUBTITLE
-            case (False, AskingAbout.DOCUMENT) if state.subtitle_video:
-                if not self._check_subtitle_video(state):
-                    return
+        self._handle_found_videos(scanner)
 
-        self._continue_with_import(state)
+    def _handle_explicit_video_import(self, scanner: ResourceScanner) -> None:
+        found_videos = scanner.found_videos
 
-    def _continue_with_import(self, state: ImportState) -> None:
-        imported_video = state.selected_video
+        if len(found_videos) == 1:
+            self.finalize_import(found_videos[0].path, scanner.found_subtitles, scanner)
+            return
 
-        if imported_video is not None:
-            self._player.open_video(imported_video)
+        self._ask_user_what_to_import(scanner)
 
-        if subtitles := state.subtitles:
-            self._player.open_subtitles(subtitles=subtitles)
+    def _handle_found_videos(self, scanner: ResourceScanner) -> None:
+        found_videos = scanner.found_videos
 
-        if imported_video is not None or state.valid_documents:
+        if self._should_skip_video_import_because_already_loaded(found_videos):
+            self.finalize_import(None, scanner.found_subtitles, scanner)
+            return
+
+        if len(found_videos) == 1:
+            self._apply_video_import_preference(scanner, found_videos[0])
+            return
+
+        self._ask_user_what_to_import(scanner)
+
+    def _should_skip_video_import_because_already_loaded(self, found_videos: list[VideoSource]) -> bool:
+        return any(self._player.is_video_loaded(v.path) for v in found_videos)
+
+    def _apply_video_import_preference(self, scanner: ResourceScanner, video: VideoSource) -> None:
+        setting = self._settings.import_found_video
+
+        match setting:
+            case SettingsService.ImportFoundVideo.ALWAYS.value:
+                self.finalize_import(video.path, scanner.found_subtitles, scanner)
+            case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
+                self._ask_user_what_to_import(scanner)
+            case SettingsService.ImportFoundVideo.NEVER.value:
+                self.finalize_import(None, scanner.found_subtitles, scanner)
+            case _:
+                msg = f"Unknown import_found_video setting: {setting}"
+                raise ValueError(msg)
+
+    def _ask_user_what_to_import(self, scanner: ResourceScanner) -> None:
+        self._pending_scanner = scanner
+        self.ask_user_what_to_import.emit(scanner.found_videos, scanner.found_subtitles)
+
+    def finalize_import(
+        self,
+        video: Path | None,
+        subtitles: list[Path],
+        scanner: ResourceScanner | None = None,
+    ) -> None:
+        scanner = scanner or self._pending_scanner
+
+        if scanner is None:
+            logger.error("Cannot finalize import: no import state available")
+            return
+
+        if comments := scanner.comments:
+            self.comments_ready_for_import.emit(comments)
+
+        if video is not None:
+            self._player.open_video(video)
+
+        if subtitles:
+            self._player.open_subtitles(subtitles)
+
+        if video is not None or scanner.valid_documents:
             self._state.import_documents(
-                documents=state.valid_documents,
-                video=imported_video,
-                video_from_subtitle=state.video_source == AskingAbout.SUBTITLE,
+                documents=scanner.valid_documents,
+                video=video,
+                video_from_subtitle=self._is_video_from_subtitle_only(video, scanner.found_videos),
             )
 
-        if invalid_documents := state.invalid_documents:
+        if invalid_documents := scanner.invalid_documents:
             self.erroneous_documents_imported.emit([p.name for p in invalid_documents])
+
+    @staticmethod
+    def _is_video_from_subtitle_only(video: Path | None, videos: list[VideoSource]) -> bool:
+        return video is not None and any(
+            imported_video.path == video and not imported_video.from_document and imported_video.from_subtitle
+            for imported_video in videos
+        )

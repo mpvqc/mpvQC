@@ -254,6 +254,49 @@
     </message>
 </context>
 <context>
+    <name>ImportConfirmationDialog</name>
+    <message>
+        <source>Confirm Import</source>
+        <extracomment>Dialog title for confirming which videos and subtitles to import</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Videos</source>
+        <extracomment>Section header for video selection list</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip video</source>
+        <extracomment>Option to import without selecting any video</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From QC document</source>
+        <extracomment>Tooltip indicating the video file was referenced in one of the imported documents</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>From subtitle</source>
+        <extracomment>Tooltip indicating the video file was referenced in one of the imported subtitles</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Subtitles</source>
+        <extracomment>Section header for subtitle selection list</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <extracomment>Button to select all subtitles in the list</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deselect All</source>
+        <extracomment>Button to deselect all subtitles in the list</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ImportSettingsDialog</name>
     <message>
         <source>Import Settings</source>
