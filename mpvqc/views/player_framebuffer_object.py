@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from mpv import MpvGlGetProcAddressFn, MpvRenderContext
+
 from PySide6.QtCore import QSize, Signal, Slot
 from PySide6.QtGui import QOpenGLContext
 from PySide6.QtOpenGL import QOpenGLFramebufferObject
@@ -44,6 +44,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
     def __init__(self, parent):
         super().__init__()
+        from mpv import MpvGlGetProcAddressFn
+
         self._parent = parent
         self._get_proc_address_resolver = MpvGlGetProcAddressFn(get_process_address)
         self._ctx = None
@@ -56,6 +58,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
             player = inject.instance(PlayerService)
             player.init()
+
+            from mpv import MpvRenderContext
 
             self._ctx = MpvRenderContext(
                 mpv=player.mpv,
