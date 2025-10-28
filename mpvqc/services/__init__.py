@@ -13,7 +13,7 @@ from .file_startup import FileStartupService
 from .font_loader import FontLoaderService
 from .formatter_time import TimeFormatterService
 from .frameless import FramelessWindowService
-from .host_integration import HostIntegrationService
+from .host_integration import HostIntegrationService, WindowButtonPreference
 from .i18n import InternationalizationService
 from .importer import ImporterService
 from .key_command import KeyCommandGeneratorService
