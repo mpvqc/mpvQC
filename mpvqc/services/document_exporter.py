@@ -6,7 +6,6 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import inject
-from jinja2 import BaseLoader, Environment, TemplateError, TemplateSyntaxError
 from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QObject, QStandardPaths, Signal
 from PySide6.QtGui import QStandardItemModel
 
@@ -32,6 +31,8 @@ class DocumentRenderService:
             return QCoreApplication.translate("CommentTypes", comment_type)
 
     def __init__(self):
+        from jinja2 import BaseLoader, Environment
+
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)  # noqa: S701
         self._filters = self.Filters()
         self._env.filters["as_time"] = self._filters.as_time
@@ -129,6 +130,8 @@ class DocumentExportService(QObject):
         return Path(video_directory).joinpath(file_name).absolute()
 
     def export(self, file: Path, template: Path) -> None:
+        from jinja2 import TemplateError, TemplateSyntaxError
+
         user_template = template.read_text(encoding="utf-8")
 
         try:
