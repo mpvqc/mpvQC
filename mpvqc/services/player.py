@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 import os
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
 import inject
-from loguru import logger
 from mpv import MPV
 from PySide6.QtCore import QObject, Qt, Signal
 
@@ -16,6 +16,8 @@ from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
 from .key_command import KeyCommandGeneratorService
 from .type_mapper import TypeMapperService
+
+logger = logging.getLogger(__name__)
 
 
 class PlayerService(QObject):
@@ -62,10 +64,12 @@ class PlayerService(QObject):
         }
 
         if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
+            mpv_log_level = 20
 
             def player_logger(*args):
                 level, context, message = args
-                logger.log("MPV", message.strip(), mpv_level=level, mpv_context=context)
+                # noinspection PyUnresolvedReferences
+                logger.log(mpv_log_level, message.strip(), extra={"mpv_level": level, "mpv_context": context})
 
             self._init_args["log_handler"] = player_logger
 
