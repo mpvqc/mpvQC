@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
+import QtQuick.Controls.Material
 
 Loader {
     id: root
@@ -39,12 +40,16 @@ Loader {
         active = true;
     }
 
-    function startEditingComment(index: int, currentComment: string, parentItem): void {
+    function startEditingComment(index: int, currentComment: string, parentItem: Label): void {
         asynchronous = false;
         setSource(editCommentPopup, {
             parent: parentItem,
             currentComment: currentComment,
-            currentListIndex: index
+            currentListIndex: index,
+            leftPadding: parentItem.leftPadding / 2,
+            rightPadding: parentItem.rightPadding / 2,
+            topPadding: parentItem.topPadding / 2,
+            bottomPadding: parentItem.bottomPadding / 2
         });
         active = true;
     }
@@ -102,6 +107,7 @@ Loader {
     Timer {
         id: _stopEditDelayTimer
 
+        // Comment editing needs 150ms delay to allow signal handler to complete.
         interval: root.isEditingComment ? 150 : 0
 
         onTriggered: {

@@ -23,7 +23,7 @@ Item {
     readonly property bool isOdd: index % 2 === 1
     readonly property color backgroundColor: MpvqcTheme.getBackground(isOdd)
     readonly property color foregroundColor: ListView.isCurrentItem ? MpvqcTheme.rowHighlightText : MpvqcTheme.getForeground(isOdd)
-    property color _foregroundColor: foregroundColor // we need a non readonly property to animate this color
+    property color _foregroundColor: foregroundColor // we need a mutable property to animate this color
 
     readonly property alias commentLabel: _commentLabel
 
@@ -43,6 +43,9 @@ Item {
     Material.background: root.backgroundColor
     Material.foreground: root._foregroundColor
 
+    // Background is reparented to ListView parent to sit behind the highlight rectangle.
+    // This enables proper layering: backgrounds → highlight → delegate content,
+    // which is essential for alternating row colors with a moving highlight animation.
     Rectangle {
         y: root.y
         width: root.width

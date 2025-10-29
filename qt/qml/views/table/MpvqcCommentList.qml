@@ -135,6 +135,8 @@ ListView {
 
         viewModel: root.viewModel
 
+        // Determine if the list should scroll down to keep the expanding editor visible.
+        // Only scroll if the editor would grow beyond the visible viewport.
         function _shouldScrollToAccommodateGrowth(heightDelta: int): bool {
             if (heightDelta <= 0) {
                 return false;
@@ -212,7 +214,7 @@ ListView {
         function onCommentEditRequested(index: int): void {
             root.positionViewAtIndex(index, ListView.Contain);
             const item = root.currentItem as MpvqcCommentListDelegate;
-            const comment = item.comment; // qmllint disable
+            const comment = item.comment;
             const commentLabel = item.commentLabel;
             _editLoader.startEditingComment(index, comment, commentLabel);
         }

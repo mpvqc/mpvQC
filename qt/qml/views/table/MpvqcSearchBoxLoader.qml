@@ -12,14 +12,14 @@ Loader {
     required property var viewModel
     required property var searchBoxViewModel
 
-    readonly property string searchQuery: item?.searchQuery ?? ""
+    readonly property string searchQuery: (item as MpvqcSearchBoxPopup)?.searchQuery ?? ""
 
     signal closed
 
     active: false
     visible: active
 
-    onLoaded: item.open() // qmllint disable
+    onLoaded: (item as MpvqcSearchBoxPopup).open()
 
     sourceComponent: MpvqcSearchBoxPopup {
         parent: root.parent
@@ -32,7 +32,7 @@ Loader {
 
         function onShowSearchBoxRequested(): void {
             if (root.active) {
-                root.item.open(); // qmllint disable
+                (root.item as MpvqcSearchBoxPopup).open();
             } else {
                 root.active = true;
             }
