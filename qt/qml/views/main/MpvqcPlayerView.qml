@@ -14,10 +14,14 @@ Loader {
     readonly property MpvqcPlayerViewModel viewModel: MpvqcPlayerViewModel {}
     readonly property bool isFullScreen: MpvqcWindowUtility.isFullscreen
 
+    readonly property url windowsPlayer: Qt.resolvedUrl("qrc:/qt/qml/views/main/MpvqcPlayerWindows.qml")
+    readonly property url linuxPlayer: Qt.resolvedUrl("qrc:/qt/qml/views/main/MpvqcPlayerLinux.qml")
+
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
 
-    sourceComponent: Qt.platform.os === "windows" ? _windowsPlayer : _linuxPlayer
+    source: Qt.platform.os === "windows" ? windowsPlayer : linuxPlayer
+    asynchronous: true
 
     MouseArea {
         id: _mouseArea
@@ -77,20 +81,8 @@ Loader {
         }
     }
 
-    Component {
-        id: _linuxPlayer
-
-        MpvqcMpvFrameBufferObjectPyObject {}
-    }
-
-    Component {
-        id: _windowsPlayer
-
-        WindowContainer {
-            window: MpvWindowPyObject {
-                flags: Qt.FramelessWindowHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput
-                color: "black"
-            }
-        }
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
     }
 }

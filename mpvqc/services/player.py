@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import inject
-from mpv import MPV
 from PySide6.QtCore import QObject, Qt, Signal
 
 from .application_paths import ApplicationPathsService
@@ -73,7 +72,7 @@ class PlayerService(QObject):
 
             self._init_args["log_handler"] = player_logger
 
-        self._mpv: MPV | None = None
+        self._mpv = None
 
         self._dimensions_coordinator = DualSignalCoordinator(
             signal_a=self.width_changed,
@@ -88,6 +87,8 @@ class PlayerService(QObject):
         else:
             args = {"wid": win_id}
 
+        from mpv import MPV
+
         self._mpv = MPV(**dict(self._init_args, **args))
 
         self._mpv.observe_property("duration", self._on_duration_changed)
@@ -100,7 +101,7 @@ class PlayerService(QObject):
         self._mpv.observe_property("width", self._on_player_width_changed)
 
     @property
-    def mpv(self) -> MPV:
+    def mpv(self):
         return self._mpv
 
     @property
