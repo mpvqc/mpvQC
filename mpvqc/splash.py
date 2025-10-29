@@ -19,7 +19,7 @@ class SplashScreen:
 
     def show(self) -> None:
         self._splash_view = QQuickView()
-        self._splash_view.setFlags(Qt.WindowType.SplashScreen)
+        self._splash_view.setFlags(Qt.WindowType.SplashScreen | Qt.WindowType.FramelessWindowHint)
         self._splash_view.setSource(QUrl.fromLocalFile(":/qt/qml/MpvqcSplashScreen.qml"))
 
         # Center on screen
