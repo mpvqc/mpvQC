@@ -4,11 +4,6 @@
   <context>
     <name>AboutDialog</name>
     <message>
-      <source>Copyright © mpvQC Developers</source>
-      <extracomment>This text is part of the software license description</extracomment>
-      <translation type="unfinished">Copyright © mpvQC Developers</translation>
-    </message>
-    <message>
       <source>GNU General Public License, version 3 or later</source>
       <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
       <translation type="unfinished">GNU General Public License, version 3 or later</translation>
@@ -22,6 +17,11 @@
       <source>See the %1 for details.</source>
       <extracomment>This text is part of the software license description. Argument %1 will be the link to the license</extracomment>
       <translation type="unfinished">See the %1 for details.</translation>
+    </message>
+    <message>
+      <source>Copyright © mpvQC Developers</source>
+      <extracomment>This text is part of the software license description</extracomment>
+      <translation type="unfinished">Copyright © mpvQC Developers</translation>
     </message>
     <message>
       <source>Made by</source>
@@ -120,12 +120,12 @@
       <translation type="unfinished">Translation</translation>
     </message>
     <message>
-      <source>Punctuation</source>
-      <translation type="unfinished">Punctuation</translation>
-    </message>
-    <message>
       <source>Spelling</source>
       <translation type="unfinished">Spelling</translation>
+    </message>
+    <message>
+      <source>Punctuation</source>
+      <translation type="unfinished">Punctuation</translation>
     </message>
     <message>
       <source>Phrasing</source>
@@ -151,6 +151,10 @@
       <translation type="unfinished">A comment type must not be blank</translation>
     </message>
     <message>
+      <source>Characters &apos;{}&apos; not allowed</source>
+      <translation type="unfinished">Characters &apos;{}&apos; not allowed</translation>
+    </message>
+    <message>
       <source>Comment type already exists</source>
       <translation type="unfinished">Comment type already exists</translation>
     </message>
@@ -161,10 +165,6 @@
     <message>
       <source>New comment type</source>
       <translation type="unfinished">New comment type</translation>
-    </message>
-    <message>
-      <source>Characters &apos;{}&apos; not allowed</source>
-      <translation type="unfinished">Characters &apos;{}&apos; not allowed</translation>
     </message>
     <message>
       <source>Edit &quot;%1&quot;</source>
@@ -221,36 +221,36 @@
       <translation type="unfinished">untitled</translation>
     </message>
     <message>
-      <source>Video files</source>
-      <translation type="unfinished">Video files</translation>
-    </message>
-    <message>
-      <source>All files</source>
-      <translation type="unfinished">All files</translation>
-    </message>
-    <message>
-      <source>Subtitle files</source>
-      <translation type="unfinished">Subtitle files</translation>
-    </message>
-    <message>
-      <source>Open QC Document(s)</source>
-      <translation type="unfinished">Open QC Document(s)</translation>
+      <source>Save QC Document As</source>
+      <translation type="unfinished">Save QC Document As</translation>
     </message>
     <message>
       <source>QC documents</source>
       <translation type="unfinished">QC documents</translation>
     </message>
     <message>
-      <source>Save QC Document As</source>
-      <translation type="unfinished">Save QC Document As</translation>
+      <source>All files</source>
+      <translation type="unfinished">All files</translation>
+    </message>
+    <message>
+      <source>Open QC Document(s)</source>
+      <translation type="unfinished">Open QC Document(s)</translation>
     </message>
     <message>
       <source>Open Subtitle(s)</source>
       <translation type="unfinished">Open Subtitle(s)</translation>
     </message>
     <message>
+      <source>Subtitle files</source>
+      <translation type="unfinished">Subtitle files</translation>
+    </message>
+    <message>
       <source>Open Video</source>
       <translation type="unfinished">Open Video</translation>
+    </message>
+    <message>
+      <source>Video files</source>
+      <translation type="unfinished">Video files</translation>
     </message>
   </context>
   <context>
@@ -356,12 +356,16 @@
   <context>
     <name>Languages</name>
     <message>
+      <source>German</source>
+      <translation type="unfinished">German</translation>
+    </message>
+    <message>
       <source>English</source>
       <translation type="unfinished">English</translation>
     </message>
     <message>
-      <source>German</source>
-      <translation type="unfinished">German</translation>
+      <source>Spanish</source>
+      <translation type="unfinished">Spanish</translation>
     </message>
     <message>
       <source>Hebrew</source>
@@ -372,88 +376,12 @@
       <translation type="unfinished">Italian</translation>
     </message>
     <message>
-      <source>Spanish</source>
-      <translation type="unfinished">Spanish</translation>
-    </message>
-    <message>
       <source>Portuguese</source>
       <translation type="unfinished">Portuguese</translation>
     </message>
   </context>
   <context>
     <name>MainWindow</name>
-    <message>
-      <source>File</source>
-      <translation type="unfinished">File</translation>
-    </message>
-    <message>
-      <source>Video</source>
-      <translation type="unfinished">Video</translation>
-    </message>
-    <message>
-      <source>Options</source>
-      <translation type="unfinished">Options</translation>
-    </message>
-    <message>
-      <source>Language</source>
-      <translation type="unfinished">Language</translation>
-    </message>
-    <message>
-      <source>Help</source>
-      <translation type="unfinished">Help</translation>
-    </message>
-    <message>
-      <source>New QC Document</source>
-      <translation type="unfinished">New QC Document</translation>
-    </message>
-    <message>
-      <source>Open QC Document(s)...</source>
-      <translation type="unfinished">Open QC Document(s)...</translation>
-    </message>
-    <message>
-      <source>Save QC Document</source>
-      <translation type="unfinished">Save QC Document</translation>
-    </message>
-    <message>
-      <source>Save QC Document As...</source>
-      <translation type="unfinished">Save QC Document As...</translation>
-    </message>
-    <message>
-      <source>Exit mpvQC</source>
-      <translation type="unfinished">Exit mpvQC</translation>
-    </message>
-    <message>
-      <source>Open Video...</source>
-      <translation type="unfinished">Open Video...</translation>
-    </message>
-    <message>
-      <source>Resize Video to Original Resolution</source>
-      <translation type="unfinished">Resize Video to Original Resolution</translation>
-    </message>
-    <message>
-      <source>Check for Updates...</source>
-      <translation type="unfinished">Check for Updates...</translation>
-    </message>
-    <message>
-      <source>Default Title</source>
-      <translation type="unfinished">Default Title</translation>
-    </message>
-    <message>
-      <source>Video File</source>
-      <translation type="unfinished">Video File</translation>
-    </message>
-    <message>
-      <source>Video Path</source>
-      <translation type="unfinished">Video Path</translation>
-    </message>
-    <message>
-      <source>Edit mpv.conf...</source>
-      <translation type="unfinished">Edit mpv.conf...</translation>
-    </message>
-    <message>
-      <source>Edit input.conf...</source>
-      <translation type="unfinished">Edit input.conf...</translation>
-    </message>
     <message>
       <source>Default format</source>
       <translation type="unfinished">Default format</translation>
@@ -475,12 +403,77 @@
       <translation type="unfinished">Progress in percent</translation>
     </message>
     <message>
-      <source>Keyboard Shortcuts...</source>
-      <translation type="unfinished">Keyboard Shortcuts...</translation>
+      <source>Default Title</source>
+      <translation type="unfinished">Default Title</translation>
     </message>
     <message>
-      <source>About mpvQC...</source>
-      <translation type="unfinished">About mpvQC...</translation>
+      <source>Video File</source>
+      <translation type="unfinished">Video File</translation>
+    </message>
+    <message>
+      <source>Video Path</source>
+      <translation type="unfinished">Video Path</translation>
+    </message>
+    <message>
+      <source>Video Above Comments</source>
+      <translation type="unfinished">Video Above Comments</translation>
+    </message>
+    <message>
+      <source>Video Next to Comments</source>
+      <translation type="unfinished">Video Next to Comments</translation>
+    </message>
+    <message>
+      <source>%1 (unsaved)</source>
+      <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
+      <translation type="unfinished">%1 (unsaved)</translation>
+    </message>
+    <message>
+      <source>File</source>
+      <translation type="unfinished">File</translation>
+    </message>
+    <message>
+      <source>New QC Document</source>
+      <translation type="unfinished">New QC Document</translation>
+    </message>
+    <message>
+      <source>Open QC Document(s)...</source>
+      <translation type="unfinished">Open QC Document(s)...</translation>
+    </message>
+    <message>
+      <source>Save QC Document</source>
+      <translation type="unfinished">Save QC Document</translation>
+    </message>
+    <message>
+      <source>Save QC Document As...</source>
+      <translation type="unfinished">Save QC Document As...</translation>
+    </message>
+    <message>
+      <source>Export QC Document</source>
+      <translation type="unfinished">Export QC Document</translation>
+    </message>
+    <message>
+      <source>Exit mpvQC</source>
+      <translation type="unfinished">Exit mpvQC</translation>
+    </message>
+    <message>
+      <source>Video</source>
+      <translation type="unfinished">Video</translation>
+    </message>
+    <message>
+      <source>Open Video...</source>
+      <translation type="unfinished">Open Video...</translation>
+    </message>
+    <message>
+      <source>Open Subtitle(s)...</source>
+      <translation type="unfinished">Open Subtitle(s)...</translation>
+    </message>
+    <message>
+      <source>Resize Video to Original Resolution</source>
+      <translation type="unfinished">Resize Video to Original Resolution</translation>
+    </message>
+    <message>
+      <source>Options</source>
+      <translation type="unfinished">Options</translation>
     </message>
     <message>
       <source>Appearance...</source>
@@ -489,6 +482,14 @@
     <message>
       <source>Comment Type Settings...</source>
       <translation type="unfinished">Comment Type Settings...</translation>
+    </message>
+    <message>
+      <source>Application Title</source>
+      <translation type="unfinished">Application Title</translation>
+    </message>
+    <message>
+      <source>Application Layout</source>
+      <translation type="unfinished">Application Layout</translation>
     </message>
     <message>
       <source>Backup Settings...</source>
@@ -503,44 +504,64 @@
       <translation type="unfinished">Import Settings...</translation>
     </message>
     <message>
-      <source>%1 (unsaved)</source>
-      <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
-      <translation type="unfinished">%1 (unsaved)</translation>
+      <source>Edit mpv.conf...</source>
+      <translation type="unfinished">Edit mpv.conf...</translation>
     </message>
     <message>
-      <source>Open Subtitle(s)...</source>
-      <translation type="unfinished">Open Subtitle(s)...</translation>
+      <source>Edit input.conf...</source>
+      <translation type="unfinished">Edit input.conf...</translation>
     </message>
     <message>
-      <source>Export QC Document</source>
-      <translation type="unfinished">Export QC Document</translation>
+      <source>Language</source>
+      <translation type="unfinished">Language</translation>
     </message>
     <message>
-      <source>Application Layout</source>
-      <translation type="unfinished">Application Layout</translation>
+      <source>Help</source>
+      <translation type="unfinished">Help</translation>
     </message>
     <message>
-      <source>Application Title</source>
-      <translation type="unfinished">Application Title</translation>
+      <source>Check for Updates...</source>
+      <translation type="unfinished">Check for Updates...</translation>
+    </message>
+    <message>
+      <source>Keyboard Shortcuts...</source>
+      <translation type="unfinished">Keyboard Shortcuts...</translation>
     </message>
     <message>
       <source>Extended Exports...</source>
       <translation type="unfinished">Extended Exports...</translation>
     </message>
     <message>
-      <source>Video Above Comments</source>
-      <translation type="unfinished">Video Above Comments</translation>
-    </message>
-    <message>
-      <source>Video Next to Comments</source>
-      <translation type="unfinished">Video Next to Comments</translation>
+      <source>About mpvQC...</source>
+      <translation type="unfinished">About mpvQC...</translation>
     </message>
   </context>
   <context>
     <name>MessageBoxes</name>
+    <message numerus="yes">
+      <source>Document Not Compatible</source>
+      <translation type="unfinished">
+        <numerusform>Document Not Compatible</numerusform>
+        <numerusform>Document Not Compatible</numerusform>
+      </translation>
+    </message>
     <message>
-      <source>Do you really want to quit without saving your QC?</source>
-      <translation type="unfinished">Do you really want to quit without saving your QC?</translation>
+      <source>Extended Exports</source>
+      <translation type="unfinished">Extended Exports</translation>
+    </message>
+    <message>
+      <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
+      <extracomment>%1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC&apos;s documentation about export templates</extracomment>
+      <translation type="unfinished">mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</translation>
+    </message>
+    <message>
+      <source>Export Error</source>
+      <translation type="unfinished">Export Error</translation>
+    </message>
+    <message>
+      <source>Error at line %1: %2</source>
+      <extracomment>%1 will be the line nr of the error, %2 will be the error message (probably in English)</extracomment>
+      <translation type="unfinished">Error at line %1: %2</translation>
     </message>
     <message>
       <source>Unsaved Changes</source>
@@ -549,6 +570,18 @@
     <message>
       <source>Do you really want to create a new QC document without saving your QC?</source>
       <translation type="unfinished">Do you really want to create a new QC document without saving your QC?</translation>
+    </message>
+    <message>
+      <source>Do you really want to quit without saving your QC?</source>
+      <translation type="unfinished">Do you really want to quit without saving your QC?</translation>
+    </message>
+    <message>
+      <source>Checking for Updates...</source>
+      <translation type="unfinished">Checking for Updates...</translation>
+    </message>
+    <message>
+      <source>Loading...</source>
+      <translation type="unfinished">Loading...</translation>
     </message>
     <message>
       <source>Video Found</source>
@@ -570,39 +603,6 @@
       <source>No text available</source>
       <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
       <translation type="unfinished">No text available</translation>
-    </message>
-    <message numerus="yes">
-      <source>Document Not Compatible</source>
-      <translation type="unfinished">
-        <numerusform>Document Not Compatible</numerusform>
-        <numerusform>Document Not Compatible</numerusform>
-      </translation>
-    </message>
-    <message>
-      <source>Export Error</source>
-      <translation type="unfinished">Export Error</translation>
-    </message>
-    <message>
-      <source>Error at line %1: %2</source>
-      <extracomment>%1 will be the line nr of the error, %2 will be the error message (probably in English)</extracomment>
-      <translation type="unfinished">Error at line %1: %2</translation>
-    </message>
-    <message>
-      <source>Extended Exports</source>
-      <translation type="unfinished">Extended Exports</translation>
-    </message>
-    <message>
-      <source>mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</source>
-      <extracomment>%1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC&apos;s documentation about export templates</extracomment>
-      <translation type="unfinished">mpvQC allows for customizing report exports using the %1 engine. To begin, visit %2</translation>
-    </message>
-    <message>
-      <source>Checking for Updates...</source>
-      <translation type="unfinished">Checking for Updates...</translation>
-    </message>
-    <message>
-      <source>Loading...</source>
-      <translation type="unfinished">Loading...</translation>
     </message>
   </context>
   <context>
@@ -627,16 +627,12 @@
       <translation type="unfinished">Keyboard Shortcuts</translation>
     </message>
     <message>
-      <source>Open QC Document(s)</source>
-      <translation type="unfinished">Open QC Document(s)</translation>
-    </message>
-    <message>
-      <source>Cycle Through Audio Tracks</source>
-      <translation type="unfinished">Cycle Through Audio Tracks</translation>
-    </message>
-    <message>
       <source>New QC Document</source>
       <translation type="unfinished">New QC Document</translation>
+    </message>
+    <message>
+      <source>Open QC Document(s)</source>
+      <translation type="unfinished">Open QC Document(s)</translation>
     </message>
     <message>
       <source>Save QC Document</source>
@@ -657,6 +653,22 @@
     <message>
       <source>Add Comment</source>
       <translation type="unfinished">Add Comment</translation>
+    </message>
+    <message>
+      <source>Open Search</source>
+      <translation type="unfinished">Open Search</translation>
+    </message>
+    <message>
+      <source>Undo Previous Action</source>
+      <translation type="unfinished">Undo Previous Action</translation>
+    </message>
+    <message>
+      <source>Redo Previous Action</source>
+      <translation type="unfinished">Redo Previous Action</translation>
+    </message>
+    <message>
+      <source>Quit</source>
+      <translation type="unfinished">Quit</translation>
     </message>
     <message>
       <source>Comments</source>
@@ -735,6 +747,10 @@
       <translation type="unfinished">Cycle Through Subtitle Tracks</translation>
     </message>
     <message>
+      <source>Cycle Through Audio Tracks</source>
+      <translation type="unfinished">Cycle Through Audio Tracks</translation>
+    </message>
+    <message>
       <source>Video Screenshot (Unscaled)</source>
       <translation type="unfinished">Video Screenshot (Unscaled)</translation>
     </message>
@@ -750,32 +766,16 @@
       <source>Toggle Video Statistics</source>
       <translation type="unfinished">Toggle Video Statistics</translation>
     </message>
-    <message>
-      <source>Quit</source>
-      <translation type="unfinished">Quit</translation>
-    </message>
-    <message>
-      <source>Open Search</source>
-      <translation type="unfinished">Open Search</translation>
-    </message>
-    <message>
-      <source>Undo Previous Action</source>
-      <translation type="unfinished">Undo Previous Action</translation>
-    </message>
-    <message>
-      <source>Redo Previous Action</source>
-      <translation type="unfinished">Redo Previous Action</translation>
-    </message>
   </context>
   <context>
     <name>VersionCheckDialog</name>
     <message>
-      <source>New Version Available</source>
-      <translation type="unfinished">New Version Available</translation>
+      <source>Server Error</source>
+      <translation type="unfinished">Server Error</translation>
     </message>
     <message>
-      <source>You are already using the most recent version of mpvQC!</source>
-      <translation type="unfinished">You are already using the most recent version of mpvQC!</translation>
+      <source>The server returned error code {}.</source>
+      <translation type="unfinished">The server returned error code {}.</translation>
     </message>
     <message>
       <source>Server Not Reachable</source>
@@ -786,16 +786,16 @@
       <translation type="unfinished">A connection to the server could not be established.</translation>
     </message>
     <message>
-      <source>Server Error</source>
-      <translation type="unfinished">Server Error</translation>
-    </message>
-    <message>
-      <source>The server returned error code {}.</source>
-      <translation type="unfinished">The server returned error code {}.</translation>
+      <source>New Version Available</source>
+      <translation type="unfinished">New Version Available</translation>
     </message>
     <message>
       <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
       <translation type="unfinished">There is a new version of mpvQC available ({}). Visit {} to download it.</translation>
+    </message>
+    <message>
+      <source>You are already using the most recent version of mpvQC!</source>
+      <translation type="unfinished">You are already using the most recent version of mpvQC!</translation>
     </message>
   </context>
 </TS>
