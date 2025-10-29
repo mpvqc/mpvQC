@@ -31,7 +31,7 @@ def window_properties_service_mock():
 
 @pytest.fixture(autouse=True)
 def configure_inject(window_properties_service_mock, window_mock):
-    with patch("mpvqc.utility.window_visibility.QGuiApplication.topLevelWindows", return_value=[window_mock]):
+    with patch("mpvqc.utility.window_visibility.get_main_window", return_value=window_mock):
 
         def config(binder: inject.Binder):
             binder.bind(WindowPropertiesService, window_properties_service_mock)
@@ -41,9 +41,9 @@ def configure_inject(window_properties_service_mock, window_mock):
 
 @pytest.fixture
 def handler(window_properties_service_mock):
-    with patch("mpvqc.utility.window_visibility.QGuiApplication.topLevelWindows") as mock_windows:
+    with patch("mpvqc.utility.window_visibility.get_main_window") as mock_window:
         window = MagicMock()
-        mock_windows.return_value = [window]
+        mock_window.return_value = window
         # noinspection PyCallingNonCallable
         handler = MpvqcWindowVisibilityHandler()
         handler._window = window

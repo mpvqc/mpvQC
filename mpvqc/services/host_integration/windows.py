@@ -5,7 +5,8 @@
 import ctypes
 
 import win32api
-from PySide6.QtGui import QGuiApplication
+
+from mpvqc.utility import get_main_window
 
 from .types import DEFAULT_WINDOW_BUTTON_PREFERENCE, OsBackend, WindowButtonPreference
 
@@ -13,7 +14,7 @@ from .types import DEFAULT_WINDOW_BUTTON_PREFERENCE, OsBackend, WindowButtonPref
 class WindowsBackend(OsBackend):
     def get_display_zoom_factor(self) -> float:
         def current_monitor_handle():
-            hwnd = QGuiApplication.topLevelWindows()[0].winId()
+            hwnd = get_main_window().winId()
             return ctypes.windll.user32.MonitorFromWindow(ctypes.wintypes.HWND(hwnd), ctypes.wintypes.DWORD(2))
 
         def monitors_to_dpi_mapping() -> dict[int, int]:

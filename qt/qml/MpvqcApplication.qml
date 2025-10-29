@@ -16,6 +16,7 @@ ApplicationWindow {
     readonly property int windowsFlags: Qt.CustomizeWindowHint | Qt.Window
     readonly property int linuxFlags: Qt.FramelessWindowHint | Qt.Window
 
+    objectName: "MpvqcMainWindow"
     flags: Qt.platform.os === "windows" ? windowsFlags : linuxFlags
 
     width: 1280

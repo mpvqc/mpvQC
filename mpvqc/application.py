@@ -17,7 +17,8 @@ from mpvqc.services import (
     InternationalizationService,
     SettingsService,
 )
-from mpvqc.utility import CloseEventFilter
+from mpvqc.splash import SplashScreen
+from mpvqc.utility import CloseEventFilter, get_main_window
 
 
 class MpvqcApplication(QGuiApplication):
@@ -32,6 +33,10 @@ class MpvqcApplication(QGuiApplication):
         self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(":/qt/qml/styles")
+        self._splash_screen = SplashScreen(self)
+
+    def show_splash_screen(self):
+        self._splash_screen.show()
 
     def set_window_icon(self):
         icon = QIcon(":/data/icon.svg")
@@ -67,12 +72,15 @@ class MpvqcApplication(QGuiApplication):
             sys.exit(-1)
 
     def configure_window(self):
-        window = self.topLevelWindows()[0]
+        window = get_main_window()
         self._frameless_window.configure_for(self, window)
         window.installEventFilter(self._close_event_filter)
 
-    def make_visible(self):
-        self.topLevelWindows()[0].setVisible(True)
+    def show(self):
+        def show_main_window():
+            get_main_window().setVisible(True)
+
+        self._splash_screen.close(on_closed=show_main_window)
 
     @cache
     def find_object(self, object_type, name: str):
