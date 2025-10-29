@@ -399,6 +399,10 @@
       <translation type="unfinished">Language</translation>
     </message>
     <message>
+      <source>Help</source>
+      <translation type="unfinished">Help</translation>
+    </message>
+    <message>
       <source>New QC Document</source>
       <translation type="unfinished">New QC Document</translation>
     </message>
@@ -409,6 +413,10 @@
     <message>
       <source>Save QC Document</source>
       <translation type="unfinished">Save QC Document</translation>
+    </message>
+    <message>
+      <source>Save QC Document As...</source>
+      <translation type="unfinished">Save QC Document As...</translation>
     </message>
     <message>
       <source>Exit mpvQC</source>
@@ -439,6 +447,14 @@
       <translation type="unfinished">Video Path</translation>
     </message>
     <message>
+      <source>Edit mpv.conf...</source>
+      <translation type="unfinished">Edit mpv.conf...</translation>
+    </message>
+    <message>
+      <source>Edit input.conf...</source>
+      <translation type="unfinished">Edit input.conf...</translation>
+    </message>
+    <message>
       <source>Default format</source>
       <translation type="unfinished">Default format</translation>
     </message>
@@ -457,14 +473,6 @@
     <message>
       <source>Progress in percent</source>
       <translation type="unfinished">Progress in percent</translation>
-    </message>
-    <message>
-      <source>Save QC Document As...</source>
-      <translation type="unfinished">Save QC Document As...</translation>
-    </message>
-    <message>
-      <source>Help</source>
-      <translation type="unfinished">Help</translation>
     </message>
     <message>
       <source>Keyboard Shortcuts...</source>
@@ -493,14 +501,6 @@
     <message>
       <source>Import Settings...</source>
       <translation type="unfinished">Import Settings...</translation>
-    </message>
-    <message>
-      <source>Edit mpv.conf...</source>
-      <translation type="unfinished">Edit mpv.conf...</translation>
-    </message>
-    <message>
-      <source>Edit input.conf...</source>
-      <translation type="unfinished">Edit input.conf...</translation>
     </message>
     <message>
       <source>%1 (unsaved)</source>
@@ -772,12 +772,12 @@
   <context>
     <name>VersionCheckDialog</name>
     <message>
-      <source>Server Error</source>
-      <translation type="unfinished">Server Error</translation>
+      <source>New Version Available</source>
+      <translation type="unfinished">New Version Available</translation>
     </message>
     <message>
-      <source>The server returned error code {}.</source>
-      <translation type="unfinished">The server returned error code {}.</translation>
+      <source>You are already using the most recent version of mpvQC!</source>
+      <translation type="unfinished">You are already using the most recent version of mpvQC!</translation>
     </message>
     <message>
       <source>Server Not Reachable</source>
@@ -788,16 +788,16 @@
       <translation type="unfinished">A connection to the server could not be established.</translation>
     </message>
     <message>
-      <source>New Version Available</source>
-      <translation type="unfinished">New Version Available</translation>
+      <source>Server Error</source>
+      <translation type="unfinished">Server Error</translation>
+    </message>
+    <message>
+      <source>The server returned error code {}.</source>
+      <translation type="unfinished">The server returned error code {}.</translation>
     </message>
     <message>
       <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
       <translation type="unfinished">There is a new version of mpvQC available ({}). Visit {} to download it.</translation>
-    </message>
-    <message>
-      <source>You are already using the most recent version of mpvQC!</source>
-      <translation type="unfinished">You are already using the most recent version of mpvQC!</translation>
     </message>
   </context>
 </TS>
