@@ -24,7 +24,7 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 540
 
-    visible: true
+    visible: false
     color: Material.background
 
     font {
