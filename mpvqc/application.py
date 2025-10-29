@@ -71,6 +71,9 @@ class MpvqcApplication(QGuiApplication):
         self._frameless_window.configure_for(self, window)
         window.installEventFilter(self._close_event_filter)
 
+    def make_visible(self):
+        self.topLevelWindows()[0].setVisible(True)
+
     @cache
     def find_object(self, object_type, name: str):
         root = self._engine.rootObjects()

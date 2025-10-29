@@ -82,5 +82,6 @@ def start_application():
     app.load_language()
     app.start_engine()
     app.configure_window()
+    app.make_visible()
 
     sys.exit(app.exec())
