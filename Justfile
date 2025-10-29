@@ -55,7 +55,7 @@ init ARGS='--group dev':
 @clean:
     find i18n -name "*.qm" -type f -delete
     find qt/qml -name "*.qmlc" -type f -delete
-    rm -rf build pyobjects test/rc_project.py project.json project.qrc
+    rm -rf build pyobjects test/rc_project.py rc_project.py project.json project.qrc
 
 # Add language; pattern: language-region ISO 639-1, ISO 3166-1; example: fr-FR
 [group('i18n')]
