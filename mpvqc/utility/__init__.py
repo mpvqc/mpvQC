@@ -10,4 +10,5 @@ from .table_utility import MpvqcTableUtilityBackend
 from .theme import MpvqcThemeBackend
 from .window_buttons import MpvqcWindowButtons
 from .window_properties import MpvqcWindowPropertiesBackend
+from .window_utils import get_main_window
 from .window_visibility import MpvqcWindowVisibilityHandler

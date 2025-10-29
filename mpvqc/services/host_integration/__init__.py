@@ -20,8 +20,11 @@ class HostIntegrationService(QObject):
         self._impl = get_implementation()
 
         self._zoom_factor = None
+
+        from mpvqc.utility import get_main_window
+
         QGuiApplication.primaryScreen().virtualGeometryChanged.connect(self._invalidate_zoom_factor)
-        QGuiApplication.topLevelWindows()[0].screenChanged.connect(self._invalidate_zoom_factor)
+        get_main_window().screenChanged.connect(self._invalidate_zoom_factor)
 
     def _invalidate_zoom_factor(self, *_) -> None:
         if (zoom_factor := self._impl.get_display_zoom_factor()) != self._zoom_factor:

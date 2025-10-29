@@ -4,10 +4,11 @@
 
 import inject
 from PySide6.QtCore import QObject, Slot
-from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import WindowPropertiesService
+
+from .window_utils import get_main_window
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -20,7 +21,7 @@ class MpvqcWindowVisibilityHandler(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._window = QGuiApplication.topLevelWindows()[0]
+        self._window = get_main_window()
         self._was_maximized_before = False
 
     @Slot()

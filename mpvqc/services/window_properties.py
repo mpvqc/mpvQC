@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from PySide6.QtCore import QObject, Qt, Signal
-from PySide6.QtGui import QGuiApplication, QScreen
+from PySide6.QtGui import QScreen
 
 
 class WindowPropertiesService(QObject):
@@ -20,7 +20,9 @@ class WindowPropertiesService(QObject):
         self._is_fullscreen = False
         self._is_maximized = False
 
-        self._window = QGuiApplication.topLevelWindows()[0]
+        from mpvqc.utility import get_main_window
+
+        self._window = get_main_window()
 
         self._on_width_changed(self._window.width())
         self._on_height_changed(self._window.height())
