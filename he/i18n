@@ -21,7 +21,6 @@
     <message>
       <source>See the %1 for details.</source>
       <extracomment>This text is part of the software license description. Argument %1 will be the link to the license</extracomment>
-      <translatorcomment>Accuracy of the sentence is less important than its legibility</translatorcomment>
       <translation type="unfinished">See the %1 for details.</translation>
     </message>
     <message>
@@ -51,12 +50,10 @@
     </message>
     <message>
       <source>Theme</source>
-      <translatorcomment>Differs from English since in hebrew &quot;template&quot; and &quot;theme&quot; use pretty much the same word in this context. Plus, it&apos;s easier to understand what this refers to (white/dark mode).</translatorcomment>
       <translation type="unfinished">Theme</translation>
     </message>
     <message>
       <source>Color</source>
-      <translatorcomment>Changed TL to emphasize &quot;Accent color&quot;.</translatorcomment>
       <translation type="unfinished">Color</translation>
     </message>
   </context>
@@ -68,7 +65,6 @@
     </message>
     <message>
       <source>Backup Interval</source>
-      <translatorcomment>Interval/Frequencey are synonyms.</translatorcomment>
       <translation type="unfinished">Backup Interval</translation>
     </message>
     <message>
@@ -81,7 +77,6 @@
     </message>
     <message>
       <source>Backup Settings</source>
-      <translatorcomment>Deviates to emphasize &quot;automatic&quot; backups.</translatorcomment>
       <translation type="unfinished">Backup Settings</translation>
     </message>
   </context>
@@ -125,12 +120,12 @@
       <translation type="unfinished">Translation</translation>
     </message>
     <message>
-      <source>Spelling</source>
-      <translation type="unfinished">Spelling</translation>
-    </message>
-    <message>
       <source>Punctuation</source>
       <translation type="unfinished">Punctuation</translation>
+    </message>
+    <message>
+      <source>Spelling</source>
+      <translation type="unfinished">Spelling</translation>
     </message>
     <message>
       <source>Phrasing</source>
@@ -193,7 +188,6 @@
     </message>
     <message>
       <source>Write Date</source>
-      <translatorcomment>Deviates from original. (&quot;Date&quot; =&gt; &quot;Creation Time&quot;)</translatorcomment>
       <translation type="unfinished">Write Date</translation>
     </message>
     <message>
@@ -405,10 +399,6 @@
       <translation type="unfinished">Language</translation>
     </message>
     <message>
-      <source>Help</source>
-      <translation type="unfinished">Help</translation>
-    </message>
-    <message>
       <source>New QC Document</source>
       <translation type="unfinished">New QC Document</translation>
     </message>
@@ -419,10 +409,6 @@
     <message>
       <source>Save QC Document</source>
       <translation type="unfinished">Save QC Document</translation>
-    </message>
-    <message>
-      <source>Save QC Document As...</source>
-      <translation type="unfinished">Save QC Document As...</translation>
     </message>
     <message>
       <source>Exit mpvQC</source>
@@ -453,14 +439,6 @@
       <translation type="unfinished">Video Path</translation>
     </message>
     <message>
-      <source>Edit mpv.conf...</source>
-      <translation type="unfinished">Edit mpv.conf...</translation>
-    </message>
-    <message>
-      <source>Edit input.conf...</source>
-      <translation type="unfinished">Edit input.conf...</translation>
-    </message>
-    <message>
       <source>Default format</source>
       <translation type="unfinished">Default format</translation>
     </message>
@@ -479,6 +457,14 @@
     <message>
       <source>Progress in percent</source>
       <translation type="unfinished">Progress in percent</translation>
+    </message>
+    <message>
+      <source>Save QC Document As...</source>
+      <translation type="unfinished">Save QC Document As...</translation>
+    </message>
+    <message>
+      <source>Help</source>
+      <translation type="unfinished">Help</translation>
     </message>
     <message>
       <source>Keyboard Shortcuts...</source>
@@ -509,6 +495,14 @@
       <translation type="unfinished">Import Settings...</translation>
     </message>
     <message>
+      <source>Edit mpv.conf...</source>
+      <translation type="unfinished">Edit mpv.conf...</translation>
+    </message>
+    <message>
+      <source>Edit input.conf...</source>
+      <translation type="unfinished">Edit input.conf...</translation>
+    </message>
+    <message>
       <source>%1 (unsaved)</source>
       <extracomment>%1 will be the title of the application (one of: mpvQC, file name, file path)</extracomment>
       <translation type="unfinished">%1 (unsaved)</translation>
@@ -519,7 +513,6 @@
     </message>
     <message>
       <source>Export QC Document</source>
-      <translatorcomment>Emphasize the template</translatorcomment>
       <translation type="unfinished">Export QC Document</translation>
     </message>
     <message>
@@ -528,7 +521,6 @@
     </message>
     <message>
       <source>Application Title</source>
-      <translatorcomment>Deviates for legibility</translatorcomment>
       <translation type="unfinished">Application Title</translation>
     </message>
     <message>
@@ -547,12 +539,12 @@
   <context>
     <name>MessageBoxes</name>
     <message>
-      <source>Unsaved Changes</source>
-      <translation type="unfinished">Unsaved Changes</translation>
-    </message>
-    <message>
       <source>Do you really want to quit without saving your QC?</source>
       <translation type="unfinished">Do you really want to quit without saving your QC?</translation>
+    </message>
+    <message>
+      <source>Unsaved Changes</source>
+      <translation type="unfinished">Unsaved Changes</translation>
     </message>
     <message>
       <source>Do you really want to create a new QC document without saving your QC?</source>
@@ -599,7 +591,6 @@
     </message>
     <message>
       <source>Extended Exports</source>
-      <translatorcomment>Changed terminology for clairty</translatorcomment>
       <translation type="unfinished">Extended Exports</translation>
     </message>
     <message>
@@ -636,6 +627,10 @@
     <message>
       <source>Keyboard Shortcuts</source>
       <translation type="unfinished">Keyboard Shortcuts</translation>
+    </message>
+    <message>
+      <source>Open QC Document(s)</source>
+      <translation type="unfinished">Open QC Document(s)</translation>
     </message>
     <message>
       <source>Cycle Through Audio Tracks</source>
@@ -755,12 +750,7 @@
     </message>
     <message>
       <source>Toggle Video Statistics</source>
-      <translatorcomment>Matching hebrew youtube &quot;stats for geeks&quot; in hebrew</translatorcomment>
       <translation type="unfinished">Toggle Video Statistics</translation>
-    </message>
-    <message>
-      <source>Open QC Document(s)</source>
-      <translation type="unfinished">Open QC Document(s)</translation>
     </message>
     <message>
       <source>Quit</source>
@@ -782,14 +772,6 @@
   <context>
     <name>VersionCheckDialog</name>
     <message>
-      <source>New Version Available</source>
-      <translation type="unfinished">New Version Available</translation>
-    </message>
-    <message>
-      <source>You are already using the most recent version of mpvQC!</source>
-      <translation type="unfinished">You are already using the most recent version of mpvQC!</translation>
-    </message>
-    <message>
       <source>Server Error</source>
       <translation type="unfinished">Server Error</translation>
     </message>
@@ -806,8 +788,16 @@
       <translation type="unfinished">A connection to the server could not be established.</translation>
     </message>
     <message>
+      <source>New Version Available</source>
+      <translation type="unfinished">New Version Available</translation>
+    </message>
+    <message>
       <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
       <translation type="unfinished">There is a new version of mpvQC available ({}). Visit {} to download it.</translation>
+    </message>
+    <message>
+      <source>You are already using the most recent version of mpvQC!</source>
+      <translation type="unfinished">You are already using the most recent version of mpvQC!</translation>
     </message>
   </context>
 </TS>
