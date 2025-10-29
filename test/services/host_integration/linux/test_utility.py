@@ -6,15 +6,16 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mpvqc.services.host_integration.linux.gnome import GnomeDesktop
-from mpvqc.services.host_integration.types import OsBackend, WindowButtonPreference
+from mpvqc.services.host_integration import OsBackend
+from mpvqc.services.host_integration.linux import LinuxBackend
+from mpvqc.services.host_integration.types import WindowButtonPreference
 
 from .conftest import linux_only
 
 
 @pytest.fixture
 def settings_portal_mock():
-    with patch("mpvqc.services.host_integration.linux.gnome.SettingsPortal") as mock_class:
+    with patch("mpvqc.services.host_integration.linux.SettingsPortal") as mock_class:
         mock_instance = MagicMock()
         mock_class.return_value = mock_instance
         mock_instance.__enter__.return_value = mock_instance
@@ -22,8 +23,8 @@ def settings_portal_mock():
 
 
 @pytest.fixture(scope="session")
-def gnome():
-    return GnomeDesktop()
+def linux_backend():
+    return LinuxBackend()
 
 
 @linux_only
@@ -37,8 +38,8 @@ def gnome():
         ("MINIMIZE,MAXIMIZE,CLOSE", WindowButtonPreference(True, True, True)),
     ],
 )
-def test_gnome_parse_button_layout(gnome: OsBackend, settings_portal_mock, layout, expected):
+def test_gnome_parse_button_layout(linux_backend: OsBackend, settings_portal_mock, layout, expected):
     settings_portal_mock.read_one.return_value = layout
 
-    result = gnome.get_window_button_preference()
-    assert result == expected
+    preference = linux_backend.get_window_button_preference()
+    assert preference == expected

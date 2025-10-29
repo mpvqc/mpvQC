@@ -4,31 +4,37 @@
 
 import os
 
-from mpvqc.services.host_integration.types import OsBackend, WindowButtonPreference
+from mpvqc.services.host_integration.types import DEFAULT_WINDOW_BUTTON_PREFERENCE, OsBackend, WindowButtonPreference
+
+from .portals import SettingsPortal
 
 
 class LinuxBackend(OsBackend):
-    def __init__(self):
-        self._desktop_environment: OsBackend = get_desktop_environment()
-
     def get_display_zoom_factor(self) -> float:
-        return self._desktop_environment.get_display_zoom_factor()
+        # Assume that people who use linux are fine with setting it this way
+        # until there's an official way of figuring this out
+
+        default_factor = 1.0
+
+        try:
+            factor = os.getenv("MPVQC_VIDEO_SCALING_FACTOR", default_factor)
+            return float(factor)
+        except ValueError:
+            return default_factor
 
     def get_window_button_preference(self) -> WindowButtonPreference:
-        return self._desktop_environment.get_window_button_preference()
+        with SettingsPortal() as portal:
+            layout = portal.read_one("org.gnome.desktop.wm.preferences", "button-layout")
 
+        if layout is None:
+            return DEFAULT_WINDOW_BUTTON_PREFERENCE
 
-def get_desktop_environment() -> OsBackend:
-    desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").lower()
-    # fmt: off
-    match desktop:
-        case "gnome":
-            from .gnome import GnomeDesktop
-            return GnomeDesktop()
-        case _:
-            from .generic import GenericDesktop
-            return GenericDesktop()
-    # fmt: on
+        buttons = layout.lower()
+        return WindowButtonPreference(
+            minimize="minimize" in buttons,
+            maximize="maximize" in buttons,
+            close="close" in buttons,
+        )
 
 
 __all__ = [
