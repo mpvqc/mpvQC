@@ -9,7 +9,6 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import "../../components"
-import "../../views/table"
 import "../../utility"
 
 Loader {
@@ -29,7 +28,7 @@ Loader {
 
     sourceComponent: _messageBoxComponent
 
-    onLoaded: item.open() // qmllint disable
+    onLoaded: (item as MpvqcMessageBox).open()
 
     Component {
         id: _messageBoxComponent

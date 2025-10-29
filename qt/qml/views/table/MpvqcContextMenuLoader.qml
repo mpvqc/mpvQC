@@ -23,7 +23,7 @@ Loader {
 
     sourceComponent: _contextMenuComponent
 
-    onLoaded: item.open() // qmllint disable
+    onLoaded: (item as MpvqcPositionedMenu).open()
 
     Component {
         id: _contextMenuComponent

@@ -368,8 +368,6 @@ files = [
     "qt/qml/messageboxes/MpvqcResetMessageBox.qmlc",
     "qt/qml/messageboxes/MpvqcVersionCheckMessageBox.qml",
     "qt/qml/messageboxes/MpvqcVersionCheckMessageBox.qmlc",
-    "qt/qml/messageboxes/MpvqcVideoFoundMessageBox.qml",
-    "qt/qml/messageboxes/MpvqcVideoFoundMessageBox.qmlc",
     "qt/qml/messageboxes/qmldir",
     "qt/qml/models/MpvqcCreditsModel.qml",
     "qt/qml/models/MpvqcCreditsModel.qmlc",
