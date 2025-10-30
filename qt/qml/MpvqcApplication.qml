@@ -13,11 +13,12 @@ import "views/main"
 ApplicationWindow {
     id: root
 
+    readonly property bool isWindows: Qt.platform.os === "windows"
     readonly property int windowsFlags: Qt.CustomizeWindowHint | Qt.Window
     readonly property int linuxFlags: Qt.FramelessWindowHint | Qt.Window
 
     objectName: "MpvqcMainWindow"
-    flags: Qt.platform.os === "windows" ? windowsFlags : linuxFlags
+    flags: isWindows ? windowsFlags : linuxFlags
 
     width: 1280
     height: 720
@@ -83,11 +84,18 @@ ApplicationWindow {
 
         onPressed: event => {
             // *********************************************************
-            // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-            event.accepted = !!root.nativePopupOpen;
+            if (root.isWindows) {
+                // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+                const isAnyHeaderMenuOpened = _content.header.isAnyMenuVisible;
+                const isCommentMenuOpened = _content.commentMenu.visible;
+                const isModalFakerActive = !!root.nativePopupOpen;
+                // If any of the above is true => swallow mouse event
+                event.accepted = isAnyHeaderMenuOpened || isCommentMenuOpened || isModalFakerActive;
+            } else {
+                // fixme: Default after QTBUG-131786 is resolved
+                event.accepted = false;
+            }
             // *********************************************************
-
-            // event.accepted = false;
             _content.focusCommentTable();
         }
     }
