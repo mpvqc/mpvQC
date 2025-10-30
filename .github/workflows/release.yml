@@ -177,45 +177,80 @@ jobs:
           execute source .venv/Scripts/activate
 
           execute python.exe -m nuitka main.py \
-            --standalone \
             --assume-yes-for-downloads \
             --deployment \
             --enable-plugin=pyside6 \
-            --output-dir=deployment \
-            --output-filename=mpvQC.exe \
-            --windows-console-mode=attach \
-            --windows-icon-from-ico=build-aux/icon.ico \
-            --include-qt-plugins=qml,platforms \
-            --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles \
-            --noinclude-qt-translations \
-            --include-data-files=LICENSES/*.txt=LICENSES/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_de.qm=PySide6/translations/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_en.qm=PySide6/translations/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_es.qm=PySide6/translations/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_he.qm=PySide6/translations/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_it.qm=PySide6/translations/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_pt_BR.qm=PySide6/translations/ \
+            --include-data-files=LICENSES/*.txt=LICENSES/ \
+            --include-qt-plugins=qml,platforms \
             --nofollow-import-to='PySide6.QtWidgets' \
             --nofollow-import-to=tkinter,distutils,numpy.f2py \
-            --noinclude-data-files='PySide6/qml/QtQuick/Controls/designer/*' \
+            --noinclude-data-files='PySide6/qml/Qt/*' \
+            --noinclude-data-files='PySide6/qml/QtCore/*' \
+            --noinclude-data-files='PySide6/qml/QtNetwork/*' \
+            --noinclude-data-files='PySide6/qml/QtQml/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/FluentWinUI3/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/Fusion/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/Imagine/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/Universal/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/Windows/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Controls/designer/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Effects/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/LocalStorage/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/NativeStyle/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Particles/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Pdf/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Scene2D/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Scene3D/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Shapes/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/Timeline/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/VectorImage/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/VirtualKeyboard/*' \
+            --noinclude-data-files='PySide6/qml/QtQuick/tooling/*' \
             --noinclude-data-files='PySide6/qml/QtTest/*' \
             --noinclude-data-files='PySide6/qml/QtWebEngine/*' \
             --noinclude-data-files='PySide6/qt-plugins/styles/*' \
+            --noinclude-dlls='PySide6/qml/Qt/*' \
+            --noinclude-dlls='PySide6/qml/QtCore/*' \
+            --noinclude-dlls='PySide6/qml/QtNetwork/*' \
+            --noinclude-dlls='PySide6/qml/QtQml/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/FluentWinUI3/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/Fusion/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/Imagine/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/Universal/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/Windows/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/designer/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Effects/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/LocalStorage/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/NativeStyle/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Particles/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Pdf/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Scene2D/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Scene3D/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Shapes/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/Timeline/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/VectorImage/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/VirtualKeyboard/*' \
+            --noinclude-dlls='PySide6/qml/QtQuick/tooling/*' \
             --noinclude-dlls='PySide6/qml/QtTest/*' \
             --noinclude-dlls='PySide6/qml/QtWebEngine/*' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qgif.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qicns.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qjpeg.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qpdf.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qpng.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qtga.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qtiff.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qwbmp.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qwebp.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/platforms/qdirect2d.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/platforms/qminimal.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/platforms/qoffscreen.dll' \
             --noinclude-dlls='PySide6/qt-plugins/styles/*' \
             --noinclude-dlls='Qt6Charts*' \
             --noinclude-dlls='Qt6DataVisualization*' \
@@ -225,17 +260,47 @@ jobs:
             --noinclude-dlls='Qt6Test*' \
             --noinclude-dlls='Qt6WebEngine*' \
             --noinclude-dlls='opengl32sw.dll' \
+            --noinclude-dlls='qt6dbus.dll' \
             --noinclude-dlls='qt6designer.dll' \
+            --noinclude-dlls='qt6labsanimation.dll' \
+            --noinclude-dlls='qt6labsfolderlistmodel.dll' \
+            --noinclude-dlls='qt6labsplatform.dll' \
+            --noinclude-dlls='qt6labsqmlmodels.dll' \
+            --noinclude-dlls='qt6labssettings.dll' \
+            --noinclude-dlls='qt6labssharedimage.dll' \
+            --noinclude-dlls='qt6labswavefrontmesh.dll' \
             --noinclude-dlls='qt6pdf.dll' \
             --noinclude-dlls='qt6qmlcompiler.dll' \
+            --noinclude-dlls='qt6qmllocalstorage.dll' \
+            --noinclude-dlls='qt6qmlnetwork.dll' \
+            --noinclude-dlls='qt6qmlxmllistmodel.dll' \
             --noinclude-dlls='qt6quickcontrols2fluentwinui3style*.dll' \
             --noinclude-dlls='qt6quickcontrols2fusion*.dll' \
             --noinclude-dlls='qt6quickcontrols2imagine*.dll' \
             --noinclude-dlls='qt6quickcontrols2universal*.dll' \
             --noinclude-dlls='qt6quickcontrols2windows*.dll' \
+            --noinclude-dlls='qt6quickeffects.dll' \
             --noinclude-dlls='qt6quickparticles.dll' \
+            --noinclude-dlls='qt6quickshapes.dll' \
+            --noinclude-dlls='qt6quicktest.dll' \
+            --noinclude-dlls='qt6quicktimeline.dll' \
+            --noinclude-dlls='qt6quicktimelineblendtrees.dll' \
+            --noinclude-dlls='qt6quickvectorimage.dll' \
+            --noinclude-dlls='qt6quickvectorimagegenerator.dll' \
+            --noinclude-dlls='qt6sql.dll' \
             --noinclude-dlls='qt6widgets.dll' \
+            --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
+            --noinclude-qt-translations \
+            --onefile \
+            --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.matrix-build.outputs.artifact_app_name }} \
+            --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
+            --output-dir=deployment/mpvqc-onefile \
+            --windows-console-mode=attach \
+            --windows-icon-from-ico=build-aux/icon.ico \
             --output-filename=mpvQC.exe
+
+          execute mkdir -p deployment/mpvQC-distribution
+          execute mv deployment/mpvqc-onefile/mpvQC.exe deployment/mpvQC-distribution/mpvQC.exe
       - name: Package libmpv
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -246,83 +311,17 @@ jobs:
           echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
           execute sha256sum --check "$ARTIFACT.sha256"
           execute 7z x "$ARTIFACT"
-          execute mv libmpv-2.dll deployment/main.dist
-      - name: Remove Unused Files
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          echo "Removing unused QML modules..."
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Effects
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/LocalStorage
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/NativeStyle
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Particles
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Pdf
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Scene2D
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Scene3D
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Shapes
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/Timeline
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/VectorImage
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQuick/tooling
-          execute rm -rf deployment/main.dist/PySide6/qml/Qt
-          execute rm -rf deployment/main.dist/PySide6/qml/QtNetwork
-          execute rm -rf deployment/main.dist/PySide6/qml/QtCore
-          execute rm -rf deployment/main.dist/PySide6/qml/QtQml
-
-          echo "Removing unused image format plugins..."
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qgif.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qicns.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qjpeg.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qpdf.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qpng.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qtga.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qtiff.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qwbmp.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/imageformats/qwebp.dll
-
-          echo "Removing unused platform plugins..."
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/platforms/qdirect2d.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/platforms/qminimal.dll
-          execute rm -f deployment/main.dist/PySide6/qt-plugins/platforms/qoffscreen.dll
-
-          echo "Removing TLS plugins..."
-          execute rm -rf deployment/main.dist/PySide6/qt-plugins/tls
-
-          echo "Removing unused Qt.labs DLLs..."
-          execute rm -f deployment/main.dist/qt6labsanimation.dll
-          execute rm -f deployment/main.dist/qt6labsfolderlistmodel.dll
-          execute rm -f deployment/main.dist/qt6labsplatform.dll
-          execute rm -f deployment/main.dist/qt6labsqmlmodels.dll
-          execute rm -f deployment/main.dist/qt6labssettings.dll
-          execute rm -f deployment/main.dist/qt6labssharedimage.dll
-          execute rm -f deployment/main.dist/qt6labswavefrontmesh.dll
-
-          echo "Removing unused QtQml module DLLs..."
-          execute rm -f deployment/main.dist/qt6qmllocalstorage.dll
-          execute rm -f deployment/main.dist/qt6qmlnetwork.dll
-          execute rm -f deployment/main.dist/qt6qmlxmllistmodel.dll
-
-          echo "Removing unused QtQuick module DLLs..."
-          execute rm -f deployment/main.dist/qt6quickeffects.dll
-          execute rm -f deployment/main.dist/qt6quickshapes.dll
-          execute rm -f deployment/main.dist/qt6quicktest.dll
-          execute rm -f deployment/main.dist/qt6quicktimeline.dll
-          execute rm -f deployment/main.dist/qt6quicktimelineblendtrees.dll
-          execute rm -f deployment/main.dist/qt6quickvectorimage.dll
-          execute rm -f deployment/main.dist/qt6quickvectorimagegenerator.dll
-
-          echo "Removing other unused DLLs..."
-          execute rm -f deployment/main.dist/qt6dbus.dll
-          execute rm -f deployment/main.dist/qt6sql.dll
+          execute mv libmpv-2.dll deployment/mpvQC-distribution/
       - name: Make Application Portable
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          execute touch deployment/main.dist/portable
+          execute touch deployment/mpvQC-distribution/portable
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:
           name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
-          path: deployment/main.dist
+          path: deployment/mpvQC-distribution
 
   test_qml:
     runs-on: ubuntu-latest
