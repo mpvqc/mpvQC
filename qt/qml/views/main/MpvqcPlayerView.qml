@@ -38,7 +38,7 @@ Loader {
             }
         }
 
-        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton | Qt.BackButton | Qt.ForwardButton
         cursorShape: !_mouseArea.showCursor && root.isFullScreen ? Qt.BlankCursor : Qt.ArrowCursor
         hoverEnabled: true
 
@@ -58,13 +58,22 @@ Loader {
         }
 
         onPressed: event => {
-            const button = event.button;
-            if (button === Qt.LeftButton) {
+            switch (event.button) {
+            case Qt.LeftButton:
                 root.viewModel.pressMouseLeft();
-            } else if (button === Qt.MiddleButton) {
+                break;
+            case Qt.MiddleButton:
                 root.viewModel.pressMouseMiddle();
-            } else if (button === Qt.RightButton) {
+                break;
+            case Qt.RightButton:
                 root.addNewCommentMenuRequested();
+                break;
+            case Qt.BackButton:
+                root.viewModel.pressMouseBack();
+                break;
+            case Qt.ForwardButton:
+                root.viewModel.pressMouseForward();
+                break;
             }
         }
 
