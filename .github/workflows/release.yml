@@ -187,6 +187,7 @@ jobs:
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_it.qm=PySide6/translations/ \
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_pt_BR.qm=PySide6/translations/ \
             --include-data-files=LICENSES/*.txt=LICENSES/ \
+            --include-data-files=NOTICE.txt=NOTICE.txt \
             --include-qt-plugins=qml,platforms \
             --nofollow-import-to='PySide6.QtWidgets' \
             --nofollow-import-to=tkinter,distutils,numpy.f2py \
@@ -317,6 +318,12 @@ jobs:
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute touch deployment/mpvQC-distribution/portable
+      - name: Copy License Files to Distribution
+        run: |
+          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+
+          execute cp -r LICENSES deployment/mpvQC-distribution/
+          execute cp NOTICE.txt deployment/mpvQC-distribution/
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:

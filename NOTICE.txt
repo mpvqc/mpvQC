@@ -1,0 +1,125 @@
+mpvQC
+=====
+
+Copyright (C) mpvQC developers
+Licensed under GPL-3.0-or-later
+
+This software is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later version.
+
+Project: https://github.com/mpvqc/mpvQC
+
+
+mpvQC Components
+================
+
+Application Source Code
+  Description: Main application code and QML user interface
+  License: GPL-3.0-or-later
+  License File: GPL-3.0-or-later.txt
+
+Build Scripts and Helper Code
+  Description: Build automation, CI/CD scripts, and development utilities
+  License: MIT
+  License File: MIT.txt
+
+Noto Sans Font
+  Description: User interface font family
+  Homepage: https://fonts.google.com/noto/specimen/Noto+Sans
+  License: SIL Open Font License 1.1
+  License File: OFL-1.1.txt
+
+Google Material Icons and Symbols
+  Description: User interface icons
+  Homepage: https://fonts.google.com/icons
+  License: Apache-2.0
+  License File: Apache-2.0.txt
+
+
+Third-Party Components
+======================
+
+This software includes or depends on the following third-party components.
+Full license texts are available in the LICENSES directory.
+
+Python Dependencies
+-------------------
+
+inject
+  Description: Python dependency injection framework
+  Homepage: https://github.com/ivankorobkov/python-inject
+  License: Apache-2.0
+  License File: Apache-2.0.txt
+  Platforms: Linux, Windows
+
+Jinja2
+  Description: Template engine for Python
+  Homepage: https://github.com/pallets/jinja/
+  License: BSD-3-Clause
+  License File: BSD-3-Clause.txt
+  Platforms: Linux, Windows
+
+python-colorlog
+  Description: Colored terminal output for Python's logging module
+  Homepage: https://github.com/borntyping/python-colorlog
+  License: MIT
+  License File: MIT.txt
+  Platforms: Linux, Windows
+
+python-mpv
+  Description: Python interface to the mpv media player
+  Homepage: https://github.com/jaseg/python-mpv
+  License: GPL-3.0-or-later
+  License File: GPL-3.0-or-later.txt
+  Platforms: Linux, Windows
+
+PySide6
+  Description: Official Python bindings for Qt
+  Homepage: https://wiki.qt.io/Qt_for_Python
+  License: LGPL-3.0-or-later
+  License File: LGPL-3.0.txt
+  Platforms: Linux, Windows
+
+pywin32
+  Description: Python extensions for Microsoft Windows
+  Homepage: https://github.com/mhammond/pywin32
+  License: PSF (Python Software Foundation License)
+  License File: PSF-2.0.txt
+  Platforms: Windows only
+
+Bundled Libraries
+-----------------
+
+libmpv (libmpv-2.dll)
+  Description: mpv media player library
+  Homepage: https://mpv.io
+  License: GPL-3.0-or-later
+  License File: GPL-3.0-or-later.txt
+
+
+Additional Information
+======================
+
+For complete license texts, see the individual files in the LICENSES directory.
+
+For source code and contribution guidelines, visit:
+  https://github.com/mpvqc/mpvQC
+
+For bug reports and feature requests:
+  https://github.com/mpvqc/mpvQC/issues
+
+
+Acknowledgments
+===============
+
+This project would not be possible without the excellent work of all the
+upstream projects and their maintainers. We are grateful for their contributions
+to the open-source community.
+
+Special thanks to:
+  - The mpv project for the powerful media playback engine
+  - The Qt/PySide team for the excellent cross-platform framework
+  - Google for providing high-quality open-source fonts and icons
+  - All Python library maintainers for their invaluable tools
+  - All translators who have made mpvQC accessible to users worldwide

@@ -11,6 +11,12 @@ SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
+path = ".github/[QC]_screenshot-qc.txt"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
 path = "build-aux/icon.ico"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
@@ -53,10 +59,16 @@ SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = ".github/[QC]_screenshot-qc.txt"
+path = "NOTICE.txt"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "LICENSES/PSF-2.0.txt"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "PSF-2.0"
 
 [[annotations]]
 path = "uv.lock"
