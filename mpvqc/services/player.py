@@ -271,6 +271,12 @@ class PlayerService(QObject):
     def release_mouse_left(self) -> None:
         self._mpv.command_async("keyup", "MOUSE_BTN0")
 
+    def press_mouse_back(self) -> None:
+        self._mpv.command_async("keypress", "MOUSE_BTN5")
+
+    def press_mouse_forward(self) -> None:
+        self._mpv.command_async("keypress", "MOUSE_BTN6")
+
     def scroll_up(self) -> None:
         self._mpv.command_async("keypress", "MOUSE_BTN3")
 

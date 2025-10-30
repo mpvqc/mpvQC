@@ -40,3 +40,11 @@ class MpvqcPlayerViewModel(QObject):
     @Slot()
     def releaseMouseLeft(self) -> None:
         self._player.release_mouse_left()
+
+    @Slot()
+    def pressMouseBack(self) -> None:
+        self._player.press_mouse_back()
+
+    @Slot()
+    def pressMouseForward(self) -> None:
+        self._player.press_mouse_forward()
