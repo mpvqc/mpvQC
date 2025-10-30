@@ -2,8 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import sys
+import tempfile
 from functools import cache
+from pathlib import Path
 
 import inject
 from PySide6.QtCore import QUrl
@@ -17,7 +20,6 @@ from mpvqc.services import (
     InternationalizationService,
     SettingsService,
 )
-from mpvqc.splash import SplashScreen
 from mpvqc.utility import CloseEventFilter, get_main_window
 
 
@@ -33,10 +35,6 @@ class MpvqcApplication(QGuiApplication):
         self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(":/qt/qml/styles")
-        self._splash_screen = SplashScreen(self)
-
-    def show_splash_screen(self):
-        self._splash_screen.show()
 
     def set_window_icon(self):
         icon = QIcon(":/data/icon.svg")
@@ -77,10 +75,8 @@ class MpvqcApplication(QGuiApplication):
         window.installEventFilter(self._close_event_filter)
 
     def show(self):
-        def show_main_window():
-            get_main_window().setVisible(True)
-
-        self._splash_screen.close(on_closed=show_main_window)
+        remove_nuitka_splash_screen()
+        get_main_window().setVisible(True)
 
     @cache
     def find_object(self, object_type, name: str):
@@ -93,3 +89,14 @@ class MpvqcApplication(QGuiApplication):
             msg = f"Cannot find {object_type} with name '{name}'"
             raise ValueError(msg)
         return obj
+
+
+def remove_nuitka_splash_screen() -> None:
+    parent_pid = os.environ.get("NUITKA_ONEFILE_PARENT")
+    if parent_pid is None:
+        return
+
+    splash_filename = Path(tempfile.gettempdir()) / f"onefile_{parent_pid}_splash_feedback.tmp"
+
+    if splash_filename.exists():
+        splash_filename.unlink()

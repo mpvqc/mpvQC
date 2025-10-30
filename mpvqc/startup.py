@@ -75,8 +75,6 @@ def start_application():
 
     app = MpvqcApplication(sys.argv)
 
-    app.show_splash_screen()
-
     app.set_window_icon()
     app.load_application_fonts()
     app.create_directories()
