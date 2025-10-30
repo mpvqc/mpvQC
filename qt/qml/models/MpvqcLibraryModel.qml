@@ -43,7 +43,7 @@ ListModel {
     ListElement {
         name: "pywin32"
         url: "https://github.com/mhammond/pywin32"
-        licence: "PSF"
+        licence: "PSF-2.0"
         version: "@@pypi-pywin32@@"
         os: "windows"
     }

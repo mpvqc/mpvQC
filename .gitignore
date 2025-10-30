@@ -537,6 +537,7 @@ $RECYCLE.BIN/
 
 # Files
 /*.txt
+!NOTICE.txt
 *.license
 *.pyproject
 *.qmlls.ini
