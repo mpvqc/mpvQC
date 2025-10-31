@@ -27,6 +27,12 @@ Item {
         return !item || !(item instanceof TextField || item instanceof TextArea || item instanceof TextInput || item instanceof TextEdit);
     }
 
+    // *********************************************************
+    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
+    // Once bug is resolved, we can remove ids from the menus
+    readonly property bool isAnyMenuVisible: _fileMenu.visible || _videoMenu.visible || _optionsMenu.visible || _helpMenu.visible
+    // *********************************************************
+
     height: menuBarHeight
     visible: !MpvqcWindowUtility.isFullscreen
 
@@ -55,6 +61,8 @@ Item {
             id: menuBar
 
             MpvqcMenuBarMenu {
+                id: _fileMenu
+
                 title: qsTranslate("MainWindow", "File")
 
                 MenuItem {
@@ -124,6 +132,8 @@ Item {
             }
 
             MpvqcMenuBarMenu {
+                id: _videoMenu
+
                 title: qsTranslate("MainWindow", "Video")
 
                 MenuItem {
@@ -148,6 +158,8 @@ Item {
             }
 
             MpvqcMenuBarMenu {
+                id: _optionsMenu
+
                 title: qsTranslate("MainWindow", "Options")
 
                 MenuItem {
@@ -291,6 +303,8 @@ Item {
             }
 
             MpvqcMenuBarMenu {
+                id: _helpMenu
+
                 title: qsTranslate("MainWindow", "Help")
 
                 MenuItem {
