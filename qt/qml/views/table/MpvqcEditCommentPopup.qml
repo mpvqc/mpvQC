@@ -19,7 +19,7 @@ Popup {
     property bool acceptValue: true
 
     signal commentEdited(index: int, newComment: string)
-    signal commentEditPopupHeightChanged(heightDelta: int)
+    signal commentEditPopupHeightChanged(editorHeight: int, heightDelta: int)
 
     width: root.parent.width
 
@@ -84,7 +84,7 @@ Popup {
         const heightDelta = root.height - root.previousHeight;
         if (root.previousHeight > 0) {
             // Skip first change (initialization)
-            root.commentEditPopupHeightChanged(heightDelta);
+            root.commentEditPopupHeightChanged(root.height, heightDelta);
         }
         root.previousHeight = root.height;
     }
