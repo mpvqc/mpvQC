@@ -60,7 +60,7 @@ class ProjectFileUpdater:
         self._files = {p.relative_to(self._root_dir) for p in self._files}
 
     def sorted_files_as_str(self) -> list[str]:
-        return [str(p.as_posix()) for p in sorted(self._files)]
+        return [str(p.as_posix()) for p in sorted(self._files, key=lambda p: str(p).lower())]
 
     def update_pyproject_toml(self) -> None:
         pyproject_path = Path(self._FILENAME)
