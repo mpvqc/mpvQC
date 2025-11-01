@@ -92,7 +92,7 @@ class SettingsService(QObject):
     # Window Title
     windowTitleFormatChanged = Signal(int)
 
-    def __init__(self, parent=None, ini_file: str = None):
+    def __init__(self, parent=None, ini_file: str | None = None):
         super().__init__(parent)
         if ini_file is None:
             ini_file = self._type_mapper.map_path_to_str(self._paths.file_settings)

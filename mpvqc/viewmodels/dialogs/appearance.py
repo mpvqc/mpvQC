@@ -25,7 +25,7 @@ class MpvqcAppearanceDialogViewModel(QObject):
         super().__init__(parent)
         self._original_theme_identifier = self._settings.theme_identifier
         self._original_theme_color_option = self._settings.theme_color_option
-        self._theme_index = self._themes.index(self._settings.theme_identifier)
+        self._theme_index = self._themes.theme_index(self._settings.theme_identifier)
         self._color_index = self._settings.theme_color_option
 
     @Property(int, notify=themeIndexChanged)
@@ -47,10 +47,10 @@ class MpvqcAppearanceDialogViewModel(QObject):
             self.colorIndexChanged.emit(value)
 
     @Slot(str)
-    def setTheme(self, identifier: str) -> None:
-        new_index = self._themes.index(identifier)
+    def setTheme(self, theme_identifier: str) -> None:
+        new_index = self._themes.theme_index(theme_identifier)
         self._set_theme_index(new_index)
-        self._settings.theme_identifier = identifier
+        self._settings.theme_identifier = theme_identifier
 
     @Slot(int)
     def setColorOption(self, index: int) -> None:

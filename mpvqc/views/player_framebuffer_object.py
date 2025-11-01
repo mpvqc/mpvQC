@@ -2,14 +2,22 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import inject
 from PySide6.QtCore import QSize, Signal, Slot
 from PySide6.QtGui import QOpenGLContext
-from PySide6.QtOpenGL import QOpenGLFramebufferObject
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 
 from mpvqc.services import HostIntegrationService
+
+if TYPE_CHECKING:
+    from mpv import MpvRenderContext
+    from PySide6.QtOpenGL import QOpenGLFramebufferObject
+
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -43,27 +51,23 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
     def __init__(self, parent):
         super().__init__()
-        from mpv import MpvGlGetProcAddressFn
-
         self._parent = parent
-        self._get_proc_address_resolver = MpvGlGetProcAddressFn(get_process_address)
-        self._ctx = None
-
+        self._ctx: MpvRenderContext | None = None
         self._host_integration.display_zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
 
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
+            from mpv import MpvGlGetProcAddressFn, MpvRenderContext
+
             from mpvqc.services.player import PlayerService
 
             player = inject.instance(PlayerService)
             player.init()
 
-            from mpv import MpvRenderContext
-
             self._ctx = MpvRenderContext(
                 mpv=player.mpv,
                 api_type="opengl",
-                opengl_init_params={"get_proc_address": self._get_proc_address_resolver},
+                opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_process_address)},
             )
             self._ctx.update_cb = self._parent.sig_on_update.emit
 

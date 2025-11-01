@@ -23,7 +23,7 @@ class SettingsPortal:
 
     def __init__(self):
         self._connection_name = f"mpvqc-portal-{id(self)}"
-        self._connection = None
+        self._connection: QDBusConnection | None = None
         self._interface: QDBusInterface | None = None
 
     def __enter__(self):

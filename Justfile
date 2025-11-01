@@ -11,7 +11,7 @@ export QT_QUICK_CONTROLS_STYLE := 'Material'
 
 # Format code
 @format:
-    uvx prek run --all-files
+    uvx prek@0.2.12 run --all-files
 
 # Initialize repository
 init ARGS='--group dev':
@@ -67,6 +67,11 @@ init ARGS='--group dev':
 [group('i18n')]
 @update-translations: _update_pyproject_file _update_lupdate_project_file
     uv run pyside6-lupdate -locations none -project project.json
+
+# Lint Python files (type checker)
+[group('lint')]
+@lint-python:
+    uvx pyrefly@0.39.4 check --ignore missing-attribute
 
 # Lint QML files
 [group('lint')]

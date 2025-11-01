@@ -84,11 +84,11 @@ def qt_log_handler() -> Callable:
     def handler(message_type: QtMsgType, context, message):
         if context.file:
             logger_name = context.file.lstrip("file::/").replace("/", ".").rstrip(".qml")
-            line = context.line
+            line = int(context.line)
             msg = message
         elif message.startswith("file") and (match := logger_name_pattern.match(message)) is not None:
             logger_name = match.group(1).lstrip("/").replace("/", ".").rstrip(".qml")
-            line = match.group(2).split(":")[0]
+            line = int(match.group(2).split(":")[0].strip())
             msg = match.group(3)
         else:
             logger_name = "unknown"

@@ -44,7 +44,6 @@ def make_mock(qt_app, settings_service):
 
         player_mock = MagicMock(spec_set=PlayerService)
         player_mock.path = str(video) if video else None
-        player_mock.has_video = bool(video)
         player_mock.external_subtitles = subtitles or []
 
         def config(binder: inject.Binder):

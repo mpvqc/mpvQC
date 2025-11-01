@@ -2,14 +2,22 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import bisect
-from collections.abc import Callable
+from __future__ import annotations
 
-from PySide6.QtCore import Property, QAbstractItemModel, QObject, Qt, Signal, Slot
+import bisect
+from typing import TYPE_CHECKING
+
+from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import MpvqcCommentModel
 from mpvqc.models.comments.roles import Role
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from PySide6.QtCore import QMetaObject
+
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -37,21 +45,21 @@ class MpvqcSearchBoxViewModel(QObject):
         self._has_multiple_results = False
         self._status_label = ""
 
-        self._model: QAbstractItemModel | None = None
+        self._model: MpvqcCommentModel | None = None
         self._selected_index: int = -1
-        self._search_invalidate_connection = None
+        self._search_invalidate_connection: QMetaObject.Connection | None = None
 
     @Property(MpvqcCommentModel, notify=modelChanged)
     def model(self) -> MpvqcCommentModel:
         if self._model is None:
             raise ValueError
-        # noinspection PyTypeChecker
         return self._model
 
     @model.setter
     def model(self, model: MpvqcCommentModel) -> None:
         if self._search_invalidate_connection is not None and model is not None:
-            self._search_invalidate_connection.disconnect(self._model)
+            msg = "Changing the model later is not supported"
+            raise RuntimeError(msg)
 
         self._model = model
         # noinspection PyUnresolvedReferences

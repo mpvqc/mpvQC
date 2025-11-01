@@ -19,7 +19,7 @@ class HostIntegrationService(QObject):
         super().__init__()
         self._impl = get_implementation()
 
-        self._zoom_factor = None
+        self._zoom_factor: float | None = None
 
         from mpvqc.utility import get_main_window
 
@@ -35,7 +35,9 @@ class HostIntegrationService(QObject):
     def display_zoom_factor(self) -> float:
         if self._zoom_factor is None:
             self._invalidate_zoom_factor()
-        # noinspection PyTypeChecker
+        if self._zoom_factor is None:
+            msg = "No display zoom factor available"
+            raise ValueError(msg)
         return self._zoom_factor
 
     def get_window_button_preference(self) -> WindowButtonPreference:

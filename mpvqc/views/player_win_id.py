@@ -22,4 +22,4 @@ class MpvWindowPyObject(QQuickWindow):
         super().__init__()
         win_id = self.winId()
         self._player.init(win_id=win_id)
-        self._frameless_window.event_filter.set_embedded_player_hwnd(win_id)
+        self._frameless_window.set_embedded_player_hwnd(win_id)

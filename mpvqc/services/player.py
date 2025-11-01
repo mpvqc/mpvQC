@@ -2,11 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import logging
 import os
-from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import QObject, Qt, Signal
@@ -15,6 +17,13 @@ from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
 from .key_command import KeyCommandGeneratorService
 from .type_mapper import TypeMapperService
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+    from typing import Any
+
+    from mpv import MPV
+
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +58,7 @@ class PlayerService(QObject):
         # This is set to True for the time we start loading a video until mpv internally updates it's 'path' property
         self._loading_video = False
 
-        self._init_args = {
+        self._init_args: dict[str, Any] = {
             "keep_open": "yes",
             "idle": "yes",
             "osc": "yes",
@@ -67,12 +76,11 @@ class PlayerService(QObject):
 
             def player_logger(*args):
                 level, context, message = args
-                # noinspection PyUnresolvedReferences
                 logger.log(mpv_log_level, message.strip(), extra={"mpv_level": level, "mpv_context": context})
 
             self._init_args["log_handler"] = player_logger
 
-        self._mpv = None
+        self._mpv: MPV | None = None
 
         self._dimensions_coordinator = DualSignalCoordinator(
             signal_a=self.width_changed,
@@ -82,14 +90,12 @@ class PlayerService(QObject):
         self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed.emit)
 
     def init(self, win_id: int | None = None):
-        if win_id is None:  # noqa: SIM108
-            args = {"vo": "libmpv"}
-        else:
-            args = {"wid": win_id}
+        args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
+        merged_args = self._init_args | args
 
         from mpv import MPV
 
-        self._mpv = MPV(**dict(self._init_args, **args))
+        self._mpv = MPV(**merged_args)
 
         self._mpv.observe_property("duration", self._on_duration_changed)
         self._mpv.observe_property("path", self._on_player_path_changed)
@@ -101,57 +107,61 @@ class PlayerService(QObject):
         self._mpv.observe_property("width", self._on_player_width_changed)
 
     @property
-    def mpv(self):
+    def mpv(self) -> MPV | None:
         return self._mpv
+
+    def _get_mpv_attr(self, attr: str) -> Any | None:
+        if self._mpv is None:
+            return None
+        return getattr(self._mpv, attr, None)
 
     @property
     def mpv_version(self) -> str:
-        return self._mpv.mpv_version if self._mpv else ""
+        return self._get_mpv_attr("mpv_version") or ""
 
     @property
     def ffmpeg_version(self) -> str:
-        return self._mpv.ffmpeg_version if self._mpv else ""
+        return self._get_mpv_attr("ffmpeg_version") or ""
 
     @property
     def path(self) -> str | None:
-        return self._mpv.path if self._mpv else None
+        return self._get_mpv_attr("path")
 
     @property
     def filename(self) -> str | None:
-        return self._mpv.filename if self._mpv else None
+        return self._get_mpv_attr("filename")
 
     @property
     def percent_pos(self) -> int | None:
-        if not self._mpv or self._mpv.percent_pos is None:
+        percent: float | None = self._get_mpv_attr("percent_pos")
+        if percent is None:
             return None
-        return int(self._mpv.percent_pos + 0.5)
+        return int(percent + 0.5)
 
     @property
     def time_pos(self) -> int | None:
-        if not self._mpv or self._mpv.time_pos is None:
+        time: float | None = self._get_mpv_attr("time_pos")
+        if time is None:
             return None
-        return int(self._mpv.time_pos)
+        return int(time)
 
     @property
     def time_remaining(self) -> int | None:
-        if not self._mpv or self._mpv.time_remaining is None:
+        time: float | None = self._get_mpv_attr("time_remaining")
+        if time is None:
             return None
-        return int(self._mpv.time_remaining)
+        return int(time)
 
     @property
     def height(self) -> int | None:
-        return self._mpv.height if self._mpv else None
+        return self._get_mpv_attr("height")
 
     @property
     def width(self) -> int | None:
-        return self._mpv.width if self._mpv else None
+        return self._get_mpv_attr("width")
 
     @property
     def video_loaded(self) -> bool:
-        return self.path is not None
-
-    @property
-    def has_video(self) -> bool:
         return self.path is not None
 
     @property
@@ -161,11 +171,15 @@ class PlayerService(QObject):
 
     @property
     def duration(self) -> float:
-        return self._mpv.duration if self._mpv and self._mpv.duration else 0.0
+        return self._get_mpv_attr("duration") or 0.0
 
     @property
-    def _track_list(self) -> list["TrackListEntry"]:
-        return [TrackListEntry.from_dict(e) for e in self._mpv.track_list] if self._mpv else []
+    def _track_list(self) -> list[TrackListEntry]:
+        if self._mpv is None:
+            return []
+        # noinspection PyTypeChecker
+        track_list: list[dict[str, Any]] = self._get_mpv_attr("track_list")
+        return [TrackListEntry.from_dict(e) for e in track_list]
 
     @property
     def external_subtitles(self) -> list[Path]:
@@ -244,7 +258,7 @@ class PlayerService(QObject):
         def _cache():
             self._cached_subtitles |= set(subtitles)
 
-        if self.has_video and not self._loading_video:
+        if self.video_loaded and not self._loading_video:
             _load()
         else:
             _cache()
@@ -330,7 +344,7 @@ class TrackListEntry:
     external_filename: str
 
     @classmethod
-    def from_dict(cls, data: dict) -> "TrackListEntry":
+    def from_dict(cls, data: dict) -> TrackListEntry:
         return cls(
             type=data.get("type", ""),
             external=data.get("external", False) == True,  # noqa: E712

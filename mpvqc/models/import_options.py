@@ -2,10 +2,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from PySide6.QtCore import QAbstractListModel, QCoreApplication, QModelIndex, Qt
+from __future__ import annotations
+
+import typing
+
+from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import SettingsService
+
+if typing.TYPE_CHECKING:
+    from typing import Any
+
+    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
+
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -35,10 +45,10 @@ class ImportOptionsModel(QAbstractListModel):
             },
         ]
 
-    def rowCount(self, _=QModelIndex()) -> int:
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
         return len(self._items)
 
-    def data(self, index: QModelIndex, /, role: int = ...):
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
         if not index.isValid():
             return None
 
@@ -51,5 +61,8 @@ class ImportOptionsModel(QAbstractListModel):
 
         return None
 
-    def roleNames(self) -> dict:
-        return {self.TextRole: b"text", self.ValueRole: b"value"}
+    def roleNames(self) -> dict[int, QByteArray]:
+        return {
+            self.TextRole: QByteArray(b"text"),
+            self.ValueRole: QByteArray(b"value"),
+        }
