@@ -6,12 +6,11 @@ import json
 
 import inject
 
-from mpvqc.services import ResourceReaderService, SettingsService
+from mpvqc.services import ResourceReaderService
 
 
 class ThemeService:
     _resource_reader: ResourceReaderService = inject.attr(ResourceReaderService)
-    _settings: SettingsService = inject.attr(SettingsService)
 
     def __init__(self):
         resource = self._resource_reader.read_from(":/data/themes.json")
