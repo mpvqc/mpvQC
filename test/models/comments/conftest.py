@@ -41,7 +41,7 @@ def make_model(
 
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModel = MpvqcCommentModel()
-        model.import_comments(list(set_comments))
+        model.import_comments(tuple(set_comments))
 
         return model, set_time
 

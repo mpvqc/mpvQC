@@ -19,7 +19,7 @@ class ImportComments(QUndoCommand):
     def __init__(
         self,
         model: QStandardItemModel,
-        comments: list[Comment],
+        comments: tuple[Comment, ...],
         previously_selected_row: int,
         on_after_undo: Callable,
         on_after_redo: Callable,

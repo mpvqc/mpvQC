@@ -12,7 +12,7 @@ from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import PlayerService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
-DEFAULT_COMMENTS_SEARCH = [
+DEFAULT_COMMENTS_SEARCH = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
     Comment(time=1, comment_type="commentType", comment="Word 2"),
     Comment(time=2, comment_type="commentType", comment="Word 3"),
@@ -21,12 +21,12 @@ DEFAULT_COMMENTS_SEARCH = [
     Comment(time=5, comment_type="commentType", comment="Word 6"),
     Comment(time=6, comment_type="commentType", comment=""),
     Comment(time=9, comment_type="commentType", comment="Word 9"),
-]
+)
 
-EXTRA_COMMENTS = [
+EXTRA_COMMENTS = (
     Comment(time=7, comment_type="commentType", comment="Word 7"),
     Comment(time=8, comment_type="commentType", comment="Word 8"),
-]
+)
 
 
 @pytest.fixture(scope="session")
@@ -36,7 +36,7 @@ def make_model() -> Callable[[Iterable[Comment]], MpvqcCommentModel]:
     ):
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModel = MpvqcCommentModel()
-        model.import_comments(list(set_comments))
+        model.import_comments(tuple(set_comments))
 
         def config(binder: inject.Binder):
             binder.bind(PlayerService, MagicMock(spec_set=PlayerService))

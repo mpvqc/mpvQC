@@ -23,13 +23,13 @@ def test_undo_redo_combination(make_model):
     # noinspection PyArgumentList
     model, set_time = make_model(set_comments=[], set_player_time=0)
     model.import_comments(
-        [
+        (
             Comment(time=10, comment_type="type 1", comment="Word 1"),
             Comment(time=20, comment_type="type 2", comment="Word 2"),
             Comment(time=30, comment_type="type 3", comment="Word 3"),
             Comment(time=40, comment_type="type 4", comment="Word 4"),
             Comment(time=50, comment_type="type 5", comment="Word 5"),
-        ]
+        )
     )
 
     assert_comments(
@@ -228,11 +228,7 @@ def test_undo_redo_combination(make_model):
 def test_merge_add_and_update(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=[], set_player_time=25)
-    model.import_comments(
-        [
-            Comment(time=10, comment_type="type 1", comment="Word 1"),
-        ]
-    )
+    model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
         actual=model.comments(),
@@ -280,11 +276,7 @@ def test_merge_add_and_update(make_model):
 def test_merge_add_and_update_declined_because_of_other_command(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=[], set_player_time=25)
-    model.import_comments(
-        [
-            Comment(time=10, comment_type="type 1", comment="Word 1"),
-        ]
-    )
+    model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
         actual=model.comments(),
@@ -352,11 +344,7 @@ def test_merge_add_and_update_declined_because_of_other_command(make_model):
 def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=[], set_player_time=25)
-    model.import_comments(
-        [
-            Comment(time=10, comment_type="type 1", comment="Word 1"),
-        ]
-    )
+    model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
         actual=model.comments(),
