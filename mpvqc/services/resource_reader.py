@@ -6,8 +6,6 @@ from PySide6.QtCore import QFile, QIODevice
 
 
 class ResourceReaderService:
-    """"""
-
     def read_from(self, file_path: str) -> str:
         resource_path = self._make_resource_path_from(file_path)
         return self._read_from(resource_path)

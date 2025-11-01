@@ -7,8 +7,6 @@ from PySide6.QtGui import QFont, QFontDatabase
 
 
 class FontLoaderService:
-    """"""
-
     @staticmethod
     def load_application_fonts():
         for entry_info in QDir(":/data/fonts").entryInfoList():

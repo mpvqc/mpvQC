@@ -49,7 +49,6 @@ Popup {
     y: isOpenedInBottomRegion ? openedAt.y - height : openedAt.y
     transformOrigin: isOpenedInBottomRegion ? (mirrored ? Popup.BottomRight : Popup.BottomLeft) : (mirrored ? Popup.TopRight : Popup.TopLeft)
 
-    visible: true
     dim: false
     modal: true
     width: 155

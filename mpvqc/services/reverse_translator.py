@@ -8,8 +8,6 @@ from PySide6.QtCore import QDir, QTranslator
 
 
 class LookupTable:
-    """"""
-
     def __init__(self):
         self._combined_lookup_table: dict[str, str] = {}
 

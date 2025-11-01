@@ -26,7 +26,7 @@ class ApplicationPathsService:
         else:
             self._paths = self._xdg_paths()
 
-    def _paths_next_to_executable(self) -> "ApplicationPathsService.Paths":
+    def _paths_next_to_executable(self) -> Paths:
         dir_app = self._app.executing_directory
         return ApplicationPathsService.Paths(
             dir_backup=dir_app / "appdata" / "backups",
@@ -36,7 +36,7 @@ class ApplicationPathsService:
         )
 
     @staticmethod
-    def _xdg_paths() -> "ApplicationPathsService.Paths":
+    def _xdg_paths() -> Paths:
         appname = QCoreApplication.applicationName()
         config = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.ConfigLocation)
         documents = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)

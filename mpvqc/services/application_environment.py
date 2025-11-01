@@ -8,8 +8,6 @@ from pathlib import Path
 
 
 class ApplicationEnvironmentService:
-    """"""
-
     @cached_property
     def is_portable(self) -> bool:
         return self.executing_directory.joinpath("portable").is_file()
