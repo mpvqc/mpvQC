@@ -50,23 +50,23 @@ class ResourceScanner:
         return len(self._document_paths) == 1 and not self._explicit_video_provided and not self._subtitle_paths
 
     @property
-    def found_videos(self) -> list[VideoSource]:
-        return self._found_videos
+    def found_videos(self) -> tuple[VideoSource, ...]:
+        return tuple(self._found_videos)
 
     @property
-    def found_subtitles(self) -> list[Path]:
-        return self._found_subtitles
+    def found_subtitles(self) -> tuple[Path, ...]:
+        return tuple(self._found_subtitles)
 
     @property
-    def comments(self) -> list[Comment]:
+    def comments(self) -> tuple[Comment, ...]:
         return self._document_import_result.comments
 
     @property
-    def valid_documents(self) -> list[Path]:
+    def valid_documents(self) -> tuple[Path, ...]:
         return self._document_import_result.valid_documents
 
     @property
-    def invalid_documents(self) -> list[Path]:
+    def invalid_documents(self) -> tuple[Path, ...]:
         return self._document_import_result.invalid_documents
 
     def scan(self):
@@ -123,14 +123,14 @@ class ImporterService(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
     _state: StateService = inject.attr(StateService)
 
-    comments_ready_for_import = Signal(list)
+    comments_ready_for_import = Signal(tuple)
 
-    # param: list[str] - list of file names that could not be processed
-    erroneous_documents_imported = Signal(list)
+    # param: tuple[str, ...] - tuple of file names that could not be processed
+    erroneous_documents_imported = Signal(tuple)
 
-    # param 1: list[VideoSource] - found videos with source flags
-    # param 2: list[Path] - found subtitles
-    ask_user_what_to_import = Signal(list, list)
+    # param 1: tuple[VideoSource, ...] - found videos with source flags
+    # param 2: tuple[Path, ...] - found subtitles
+    ask_user_what_to_import = Signal(tuple, tuple)
 
     def __init__(self):
         super().__init__()
@@ -174,7 +174,7 @@ class ImporterService(QObject):
 
         self._ask_user_what_to_import(scanner)
 
-    def _should_skip_video_import_because_already_loaded(self, found_videos: list[VideoSource]) -> bool:
+    def _should_skip_video_import_because_already_loaded(self, found_videos: tuple[VideoSource, ...]) -> bool:
         return any(self._player.is_video_loaded(v.path) for v in found_videos)
 
     def _apply_video_import_preference(self, scanner: ResourceScanner, video: VideoSource) -> None:
@@ -198,7 +198,7 @@ class ImporterService(QObject):
     def finalize_import(
         self,
         video: Path | None,
-        subtitles: list[Path],
+        subtitles: tuple[Path, ...],
         scanner: ResourceScanner | None = None,
     ) -> None:
         scanner = scanner or self._pending_scanner
@@ -218,7 +218,7 @@ class ImporterService(QObject):
 
         if video is not None or scanner.valid_documents:
             self._state.import_documents(
-                documents=scanner.valid_documents,
+                documents=list(scanner.valid_documents),
                 video=video,
                 video_from_subtitle=self._is_video_from_subtitle_only(video, scanner.found_videos),
             )
@@ -227,7 +227,7 @@ class ImporterService(QObject):
             self.erroneous_documents_imported.emit([p.name for p in invalid_documents])
 
     @staticmethod
-    def _is_video_from_subtitle_only(video: Path | None, videos: list[VideoSource]) -> bool:
+    def _is_video_from_subtitle_only(video: Path | None, videos: tuple[VideoSource, ...]) -> bool:
         return video is not None and any(
             imported_video.path == video and not imported_video.from_document and imported_video.from_subtitle
             for imported_video in videos

@@ -113,11 +113,11 @@ def test_example_2_single_document_no_video_references(
     comment2 = Mock()
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[comment1, comment2],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[],
-        existing_subtitles=[],
+        comments=(comment1, comment2),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(),
+        existing_subtitles=(),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -134,7 +134,7 @@ def test_example_2_single_document_no_video_references(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
     mock_player.open_video.assert_not_called()
@@ -191,11 +191,11 @@ def test_single_document_one_video_not_loaded(
     video = Path.home() / "video.mp4"
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[Mock()],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[video],
-        existing_subtitles=[],
+        comments=(Mock(),),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(video,),
+        existing_subtitles=(),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -232,11 +232,11 @@ def test_single_document_one_video_already_loaded(
     video = Path.home() / "video.mp4"
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[Mock()],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[video],
-        existing_subtitles=[],
+        comments=(Mock(),),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(video,),
+        existing_subtitles=(),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -274,16 +274,16 @@ def test_single_document_multiple_videos(
     video2 = Path.home() / "video2.mp4"
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[Mock()],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[video1],
-        existing_subtitles=[subtitle],
+        comments=(Mock(),),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(video1,),
+        existing_subtitles=(subtitle,),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle],
-        existing_videos=[video2],
+        subtitles=(subtitle,),
+        existing_videos=(video2,),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -349,16 +349,16 @@ def test_single_document_video_from_subtitle_not_loaded(
     video = Path.home() / "video.mp4"
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[Mock()],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[],
-        existing_subtitles=[subtitle],
+        comments=(Mock(),),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(),
+        existing_subtitles=(subtitle,),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle],
-        existing_videos=[video],
+        subtitles=(subtitle,),
+        existing_videos=(video,),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -425,16 +425,16 @@ def test_single_document_video_and_subtitle_same_video_not_loaded(
     video = Path.home() / "video.mp4"
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[Mock()],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[video],
-        existing_subtitles=[subtitle],
+        comments=(Mock(),),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(video,),
+        existing_subtitles=(subtitle,),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle],
-        existing_videos=[video],
+        subtitles=(subtitle,),
+        existing_videos=(video,),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -459,9 +459,9 @@ def test_single_document_video_and_subtitle_same_video_not_loaded(
 
     if test_case.expect_video_opened_count > 0:
         mock_player.open_video.assert_called_once_with(video)
-        mock_player.open_subtitles.assert_called_once_with([subtitle])
+        mock_player.open_subtitles.assert_called_once_with((subtitle,))
     elif test_case.expect_ask_user_count == 0:
-        mock_player.open_subtitles.assert_called_once_with([subtitle])
+        mock_player.open_subtitles.assert_called_once_with((subtitle,))
 
 
 def test_single_document_video_and_subtitle_same_video_already_loaded(
@@ -478,16 +478,16 @@ def test_single_document_video_and_subtitle_same_video_already_loaded(
     video = Path.home() / "video.mp4"
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[Mock()],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[video],
-        existing_subtitles=[subtitle],
+        comments=(Mock(),),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(video,),
+        existing_subtitles=(subtitle,),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle],
-        existing_videos=[video],
+        subtitles=(subtitle,),
+        existing_videos=(video,),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -507,7 +507,7 @@ def test_single_document_video_and_subtitle_same_video_already_loaded(
     assert invalid_docs_spy.count() == 0
 
     mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_called_once_with([subtitle])
+    mock_player.open_subtitles.assert_called_once_with((subtitle,))
     mock_state.import_documents.assert_called_once()
 
 
@@ -530,16 +530,16 @@ def test_multiple_documents_single_video_already_loaded(
     comment2 = Mock()
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[comment1, comment2],
-        valid_documents=[document1, document2],
-        invalid_documents=[],
-        existing_videos=[video],
-        existing_subtitles=[subtitle1, subtitle2],
+        comments=(comment1, comment2),
+        valid_documents=(document1, document2),
+        invalid_documents=(),
+        existing_videos=(video,),
+        existing_subtitles=(subtitle1, subtitle2),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle1, subtitle2],
-        existing_videos=[video],
+        subtitles=(subtitle1, subtitle2),
+        existing_videos=(video,),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -556,11 +556,11 @@ def test_multiple_documents_single_video_already_loaded(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
     assert mock_player.open_video.call_count == 0
-    mock_player.open_subtitles.assert_called_once_with([subtitle1, subtitle2])
+    mock_player.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
     assert mock_state.import_documents.call_count == 1
 
 
@@ -585,16 +585,16 @@ def test_multiple_documents_video_not_loaded(
     comment2 = Mock()
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[comment1, comment2],
-        valid_documents=[document1, document2],
-        invalid_documents=[],
-        existing_videos=[video1],
-        existing_subtitles=[subtitle1, subtitle2],
+        comments=(comment1, comment2),
+        valid_documents=(document1, document2),
+        invalid_documents=(),
+        existing_videos=(video1,),
+        existing_subtitles=(subtitle1, subtitle2),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle1, subtitle2],
-        existing_videos=[video2, video3],
+        subtitles=(subtitle1, subtitle2),
+        existing_videos=(video2, video3),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -643,16 +643,16 @@ def test_document_and_explicit_video(
     comment2 = Mock()
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[comment1, comment2],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[],
-        existing_subtitles=[subtitle],
+        comments=(comment1, comment2),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(),
+        existing_subtitles=(subtitle,),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle],
-        existing_videos=[],
+        subtitles=(subtitle,),
+        existing_videos=(),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -669,11 +669,11 @@ def test_document_and_explicit_video(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
     mock_player.open_video.assert_called_once_with(video)
-    mock_player.open_subtitles.assert_called_once_with([subtitle])
+    mock_player.open_subtitles.assert_called_once_with((subtitle,))
     mock_state.import_documents.assert_called_once()
 
 
@@ -691,8 +691,8 @@ def test_multiple_subtitles_same_video_already_loaded(
     video = Path.home() / "video.mp4"
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle1, subtitle2],
-        existing_videos=[video, video],
+        subtitles=(subtitle1, subtitle2),
+        existing_videos=(video, video),
     )
 
     mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
@@ -712,7 +712,7 @@ def test_multiple_subtitles_same_video_already_loaded(
     assert invalid_docs_spy.count() == 0
 
     mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_called_once_with([subtitle1, subtitle2])
+    mock_player.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
     mock_state.import_documents.assert_not_called()
 
 
@@ -731,8 +731,8 @@ def test_multiple_subtitles_different_videos(
     video2 = Path.home() / "video2.mp4"
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle1, subtitle2],
-        existing_videos=[video1, video2],
+        subtitles=(subtitle1, subtitle2),
+        existing_videos=(video1, video2),
     )
 
     mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
@@ -819,8 +819,8 @@ def test_subtitle_with_video_reference_not_loaded(
     video = Path.home() / "video.mp4"
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle],
-        existing_videos=[video],
+        subtitles=(subtitle,),
+        existing_videos=(video,),
     )
 
     mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
@@ -877,7 +877,7 @@ def test_multiple_explicit_videos(
     assert len(asked_videos) == 2
     video_paths = [v.path for v in asked_videos]
     assert set(video_paths) == {video1, video2}
-    assert asked_subtitles == []
+    assert asked_subtitles == ()
 
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
@@ -906,16 +906,16 @@ def test_multiple_videos_one_already_loaded(
     comment2 = Mock()
 
     doc_result = DocumentImporterService.DocumentImportResult(
-        comments=[comment1, comment2],
-        valid_documents=[document],
-        invalid_documents=[],
-        existing_videos=[],
-        existing_subtitles=[subtitle1, subtitle2],
+        comments=(comment1, comment2),
+        valid_documents=(document,),
+        invalid_documents=(),
+        existing_videos=(),
+        existing_subtitles=(subtitle1, subtitle2),
     )
 
     sub_result = SubtitleImporterService.SubtitleImportResult(
-        subtitles=[subtitle1, subtitle2],
-        existing_videos=[video1, video2],
+        subtitles=(subtitle1, subtitle2),
+        existing_videos=(video1, video2),
     )
 
     mock_doc_importer.read.return_value = doc_result
@@ -934,9 +934,9 @@ def test_multiple_videos_one_already_loaded(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == [comment1, comment2]
+    assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
     mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_called_once_with([subtitle1, subtitle2])
+    mock_player.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
     mock_state.import_documents.assert_called_once()

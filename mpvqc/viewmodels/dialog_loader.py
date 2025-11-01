@@ -30,7 +30,11 @@ class MpvqcDialogLoaderViewModel(QObject):
         super().__init__()
         self._importer.ask_user_what_to_import.connect(self._ask_user_what_to_import)
 
-    def _ask_user_what_to_import(self, videos_found: list[VideoSource], subtitles_found: list[Path]):
+    def _ask_user_what_to_import(
+        self,
+        videos_found: tuple[VideoSource, ...],
+        subtitles_found: tuple[Path, ...],
+    ) -> None:
         videos = [
             {
                 "path": self._type_mapper.map_path_to_str(video.path),
@@ -55,5 +59,5 @@ class MpvqcDialogLoaderViewModel(QObject):
     @Slot(str, list)
     def confirmImport(self, video_path: str, subtitle_paths: list[str]):
         video = Path(video_path) if video_path else None
-        subtitles = [Path(p) for p in subtitle_paths]
+        subtitles = tuple(Path(p) for p in subtitle_paths)
         self._importer.finalize_import(video, subtitles)

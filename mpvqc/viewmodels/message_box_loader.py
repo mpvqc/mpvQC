@@ -26,5 +26,7 @@ class MpvqcMessageBoxLoaderViewModel(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._document_exporter.export_error_occurred.connect(self.exportErrorOccurred)
-        self._importer.erroneous_documents_imported.connect(self.erroneousDocumentsImported)
+        self._importer.erroneous_documents_imported.connect(
+            lambda docs: self.erroneousDocumentsImported.emit(list(docs))
+        )
         self._quit.confirmQuit.connect(self.confirmQuit)
