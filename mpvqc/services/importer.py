@@ -15,7 +15,6 @@ from .player import PlayerService
 from .settings import SettingsService
 from .state import StateService
 from .subtitle_importer import SubtitleImporterService
-from .type_mapper import TypeMapperService
 
 DocumentImportResult = DocumentImporterService.DocumentImportResult
 SubtitleImportResult = SubtitleImporterService.SubtitleImportResult
@@ -120,11 +119,8 @@ class ResourceScanner:
 
 
 class ImporterService(QObject):
-    _document_importer: DocumentImporterService = inject.attr(DocumentImporterService)
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
-    _subtitle_importer: SubtitleImporterService = inject.attr(SubtitleImporterService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
     _state: StateService = inject.attr(StateService)
 
     comments_ready_for_import = Signal(list)

@@ -9,7 +9,7 @@ from PySide6.QtCore import Property, QAbstractItemModel, QObject, QPointF, Signa
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService, SettingsService, TimeFormatterService
+from mpvqc.services import PlayerService, SettingsService
 
 if TYPE_CHECKING:
     from mpvqc.models import MpvqcCommentModel
@@ -24,7 +24,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentTableViewModel(QObject):
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
-    _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)

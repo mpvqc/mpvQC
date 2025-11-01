@@ -6,14 +6,13 @@ import inject
 import pytest
 from PySide6.QtGui import QColor
 
-from mpvqc.services import ResourceReaderService, SettingsService, ThemeService
+from mpvqc.services import ResourceReaderService, ThemeService
 
 
 @pytest.fixture
-def theme_service(settings_service):
+def theme_service():
     def configure(binder):
         binder.bind(ResourceReaderService, ResourceReaderService())
-        binder.bind(SettingsService, settings_service)
 
     inject.clear_and_configure(configure)
     service = ThemeService()

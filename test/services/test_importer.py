@@ -10,13 +10,11 @@ import inject
 import pytest
 
 from mpvqc.services import (
-    DocumentExportService,
     DocumentImporterService,
     PlayerService,
     SettingsService,
     StateService,
     SubtitleImporterService,
-    TypeMapperService,
 )
 from mpvqc.services.importer import ImporterService
 
@@ -36,11 +34,6 @@ def mock_sub_importer():
 
 
 @pytest.fixture
-def mock_doc_exporter():
-    return Mock(spec_set=DocumentExportService)
-
-
-@pytest.fixture
 def mock_player():
     player = Mock(spec_set=PlayerService)
     player.is_video_loaded.return_value = False
@@ -57,19 +50,15 @@ def configure_inject(
     settings_service,
     mock_doc_importer,
     mock_sub_importer,
-    mock_doc_exporter,
     mock_player,
     mock_state,
-    type_mapper,
 ):
     def config(binder: inject.Binder):
         binder.bind(SettingsService, settings_service)
         binder.bind(DocumentImporterService, mock_doc_importer)
         binder.bind(SubtitleImporterService, mock_sub_importer)
-        binder.bind(DocumentExportService, mock_doc_exporter)
         binder.bind(PlayerService, mock_player)
         binder.bind(StateService, mock_state)
-        binder.bind(TypeMapperService, type_mapper)
 
     inject.configure(config, clear=True)
 
