@@ -94,4 +94,9 @@ Loader {
         anchors.fill: parent
         color: "black"
     }
+
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+    }
 }
