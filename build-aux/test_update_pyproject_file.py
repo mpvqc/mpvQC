@@ -5,7 +5,7 @@
 import textwrap
 
 import pytest
-from update_pyproject_file import determine_new_pyproject_lines
+from update_pyproject_file import determine_new_pyproject_lines  # type: ignore[missing-import]
 
 
 def test_raises_tool_pyside6_project_missing():

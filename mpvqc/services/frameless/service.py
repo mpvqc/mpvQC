@@ -21,10 +21,6 @@ class FramelessWindowService:
         # Needs to bound to a class variable, else garbage collector will clean up immediately
         self._event_filter = WindowsEventFilter()
 
-    @property
-    def event_filter(self):
-        return self._event_filter
-
     def configure_for(self, app: QGuiApplication, top_lvl_window: QWindow) -> None:
         match platform.system():
             case "Windows":
@@ -55,3 +51,6 @@ class FramelessWindowService:
 
         self._event_filter = LinuxEventFilter(window, app)
         app.installEventFilter(self._event_filter)
+
+    def set_embedded_player_hwnd(self, win_id: int) -> None:
+        self._event_filter.set_embedded_player_hwnd(win_id)

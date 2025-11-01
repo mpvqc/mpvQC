@@ -2,11 +2,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+import typing
+
 import inject
-from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt, Signal
+from PySide6.QtCore import QAbstractListModel, QByteArray, Qt, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import SettingsService, ThemeService
+
+if typing.TYPE_CHECKING:
+    from typing import Any
+
+    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -49,10 +58,10 @@ class MpvqcThemePaletteModel(QAbstractListModel):
         self.endResetModel()
         self.resetDone.emit()
 
-    def rowCount(self, _=QModelIndex()):
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
         return len(self._themes.palette(self._theme_identifier))
 
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole):  # noqa: C901
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:  # noqa: C901
         theme = self._themes.palette(self._theme_identifier)
         if not index.isValid() or index.row() >= len(theme):
             return None
@@ -82,17 +91,17 @@ class MpvqcThemePaletteModel(QAbstractListModel):
             case self.RowBaseAlternateTextRole:
                 return palette["rowBaseAlternateText"]
 
-    def roleNames(self):
+    def roleNames(self) -> dict[int, QByteArray]:
         return {
-            self.BackgroundRole: b"background",
-            self.BackgroundAlternateRole: b"backgroundAlternate",
-            self.ForegroundRole: b"foreground",
-            self.ForegroundAlternateRole: b"foregroundAlternate",
-            self.ControlRole: b"control",
-            self.RowHighlightRole: b"rowHighlight",
-            self.RowHighlightTextRole: b"rowHighlightText",
-            self.RowBaseRole: b"rowBase",
-            self.RowBaseTextRole: b"rowBaseText",
-            self.RowBaseAlternateRole: b"rowBaseAlternate",
-            self.RowBaseAlternateTextRole: b"rowBaseAlternateText",
+            self.BackgroundRole: QByteArray(b"background"),
+            self.BackgroundAlternateRole: QByteArray(b"backgroundAlternate"),
+            self.ForegroundRole: QByteArray(b"foreground"),
+            self.ForegroundAlternateRole: QByteArray(b"foregroundAlternate"),
+            self.ControlRole: QByteArray(b"control"),
+            self.RowHighlightRole: QByteArray(b"rowHighlight"),
+            self.RowHighlightTextRole: QByteArray(b"rowHighlightText"),
+            self.RowBaseRole: QByteArray(b"rowBase"),
+            self.RowBaseTextRole: QByteArray(b"rowBaseText"),
+            self.RowBaseAlternateRole: QByteArray(b"rowBaseAlternate"),
+            self.RowBaseAlternateTextRole: QByteArray(b"rowBaseAlternateText"),
         }

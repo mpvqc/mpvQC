@@ -2,11 +2,21 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+import typing
+
 import inject
-from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt
+from PySide6.QtCore import QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ThemeService
+
+if typing.TYPE_CHECKING:
+    from typing import Any
+
+    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
+
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -21,10 +31,10 @@ class MpvqcThemePreviewModel(QAbstractListModel):
     PreviewRole = Qt.ItemDataRole.UserRole + 3
     IsDarkRole = Qt.ItemDataRole.UserRole + 4
 
-    def rowCount(self, _=QModelIndex()):
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
         return len(self._themes.previews)
 
-    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
         preview = self._themes.previews[index.row()]
 
         match role:
@@ -37,10 +47,10 @@ class MpvqcThemePreviewModel(QAbstractListModel):
             case self.IsDarkRole:
                 return preview["isDark"]
 
-    def roleNames(self):
+    def roleNames(self) -> dict[int, QByteArray]:
         return {
-            self.IdentifierRole: b"identifier",
-            self.NameRole: b"name",
-            self.PreviewRole: b"preview",
-            self.IsDarkRole: b"isDark",
+            self.IdentifierRole: QByteArray(b"identifier"),
+            self.NameRole: QByteArray(b"name"),
+            self.PreviewRole: QByteArray(b"preview"),
+            self.IsDarkRole: QByteArray(b"isDark"),
         }

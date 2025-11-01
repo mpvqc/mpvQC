@@ -28,7 +28,7 @@ def test_material_you_theme(theme_service):
     assert material_you["isDark"] is False
     assert len(material_you["palettes"]) == 15
 
-    assert theme_service.index("material-you") == 0
+    assert theme_service.theme_index("material-you") == 0
 
     palettes = theme_service.palette("material-you")
     assert len(palettes) == 15
@@ -42,7 +42,7 @@ def test_material_you_dark_theme(theme_service):
     assert material_you_dark["isDark"] is True
     assert len(material_you_dark["palettes"]) == 15
 
-    assert theme_service.index("material-you-dark") == 1
+    assert theme_service.theme_index("material-you-dark") == 1
 
     palettes = theme_service.palette("material-you-dark")
     assert len(palettes) == 15

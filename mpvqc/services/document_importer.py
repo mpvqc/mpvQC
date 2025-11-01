@@ -62,7 +62,7 @@ class DocumentImporterService:
         )
 
     def _parse(self, content: str) -> tuple[Path | None, list[Path], list[Comment]]:
-        path = None
+        path: Path | None = None
         subtitles = []
         comments = []
 

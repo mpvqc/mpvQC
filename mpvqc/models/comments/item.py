@@ -17,7 +17,10 @@ class CommentItem(QStandardItem):
         super().__init__()
         self._id = next(ID_COUNTER)
 
-    def __lt__(self, other: "CommentItem") -> bool:
+    def __lt__(self, other: QStandardItem) -> bool:
+        if not isinstance(other, CommentItem):
+            return False
+
         this_time = self.data(Role.TIME)
         that_time = other.data(Role.TIME)
 

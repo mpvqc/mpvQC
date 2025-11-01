@@ -2,10 +2,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+import typing
 from dataclasses import dataclass
 
-from PySide6.QtCore import QT_TRANSLATE_NOOP, QAbstractListModel, QByteArray, QModelIndex, Qt
+from PySide6.QtCore import QT_TRANSLATE_NOOP, QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
+
+if typing.TYPE_CHECKING:
+    from typing import Any
+
+    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
 
 @dataclass(frozen=True)
@@ -35,10 +43,10 @@ class MpvqcLanguageModel(QAbstractListModel):
     IdentifierRole = Qt.ItemDataRole.UserRole + 2
     TranslatorRole = Qt.ItemDataRole.UserRole + 3
 
-    def rowCount(self, _: QModelIndex = QModelIndex()) -> int:
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
         return len(LANGUAGES)
 
-    def data(self, index: QModelIndex, role: int = ...):
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
         if not index.isValid() or index.row() >= len(LANGUAGES):
             return None
 
@@ -53,7 +61,7 @@ class MpvqcLanguageModel(QAbstractListModel):
 
         return None
 
-    def roleNames(self) -> dict:
+    def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.LanguageRole: QByteArray(b"language"),
             self.IdentifierRole: QByteArray(b"identifier"),
