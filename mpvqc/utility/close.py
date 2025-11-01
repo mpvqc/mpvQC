@@ -11,7 +11,7 @@ from mpvqc.services import QuitService
 class CloseEventFilter(QObject):
     _quit: QuitService = inject.attr(QuitService)
 
-    def eventFilter(self, obj, event):
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         match event.type():
             case QEvent.Type.Close if self._quit.can_quit():
                 self._quit.shutdown()
