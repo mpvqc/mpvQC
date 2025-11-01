@@ -8,8 +8,6 @@ from PySide6.QtCore import QUrl
 
 
 class TypeMapperService:
-    """"""
-
     @staticmethod
     def map_urls_to_path(urls: list[QUrl]) -> list[Path]:
         return list(map(TypeMapperService.map_url_to_path, urls))

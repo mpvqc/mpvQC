@@ -18,7 +18,6 @@ class StateService(QObject):
         super().__init__(parent)
         self._state = ApplicationState(document=None, video=None, saved=True)
 
-    # noinspection PyTypeChecker
     @Property(bool, notify=saved_changed)
     def saved(self) -> bool:
         return self._state.saved

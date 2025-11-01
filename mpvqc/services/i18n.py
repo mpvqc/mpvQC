@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 import logging
 
 from PySide6.QtCore import QFile, QLibraryInfo, QLocale, QTranslator

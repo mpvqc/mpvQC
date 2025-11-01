@@ -13,11 +13,7 @@ class WindowButtonPreference:
     close: bool
 
 
-DEFAULT_WINDOW_BUTTON_PREFERENCE = WindowButtonPreference(
-    minimize=True,
-    maximize=True,
-    close=True,
-)
+DEFAULT_WINDOW_BUTTON_PREFERENCE = WindowButtonPreference(minimize=True, maximize=True, close=True)
 
 
 class OsBackend(ABC):

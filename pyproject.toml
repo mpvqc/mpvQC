@@ -243,7 +243,6 @@ files = [
     "mpvqc/services/type_mapper.py",
     "mpvqc/services/version_checker.py",
     "mpvqc/services/window_properties.py",
-    "mpvqc/splash.py",
     "mpvqc/startup.py",
     "mpvqc/utility/__init__.py",
     "mpvqc/utility/close.py",

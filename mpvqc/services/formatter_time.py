@@ -4,8 +4,6 @@
 
 
 class TimeFormatterService:
-    """"""
-
     @staticmethod
     def format_time_to_string(input_seconds: float, *, long_format: bool) -> str:
         hours, remainder = divmod(input_seconds, 3600)
