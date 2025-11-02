@@ -72,7 +72,7 @@ class PlayerService(QObject):
         }
 
         if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
-            mpv_log_level = 20
+            mpv_log_level = 25
 
             def player_logger(*args):
                 level, context, message = args

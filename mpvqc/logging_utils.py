@@ -10,8 +10,7 @@ from collections.abc import Callable
 
 import colorlog
 
-# Custom log level for MPV
-MPV_LEVEL = 20  # Between WARNING (30) and INFO (20)
+MPV_LEVEL = 25
 logging.addLevelName(MPV_LEVEL, "MPV")
 
 
