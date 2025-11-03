@@ -19,28 +19,33 @@ def state_service_mock():
 
 
 @pytest.fixture
+def player_service_mock():
+    return MagicMock(spec_set=PlayerService)
+
+
+@pytest.fixture(autouse=True)
+def configure_injections(common_bindings_with, state_service_mock, player_service_mock):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
+        binder.bind(PlayerService, player_service_mock)
+        binder.bind(ResetService, MagicMock(spec_set=ResetService))
+        binder.bind(StateService, state_service_mock)
+
+    common_bindings_with(custom_bindings)
+
+
+@pytest.fixture
 def make_model(
-    ubiquitous_bindings,
-    state_service_mock,
+    player_service_mock,
 ) -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModel, Callable[[int], None]]]:
     def _make_model(
         set_comments: Iterable[Comment],
         set_player_time: float = 0.0,
     ):
-        player_mock = MagicMock(spec_set=PlayerService)
-        player_mock.current_time = set_player_time
+        player_service_mock.current_time = set_player_time
 
         def set_time(value: int):
-            player_mock.current_time = value
-
-        def config(binder: inject.Binder):
-            binder.install(ubiquitous_bindings)
-            binder.bind(StateService, state_service_mock)
-            binder.bind(ResetService, MagicMock(spec_set=ResetService))
-            binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
-            binder.bind(PlayerService, player_mock)
-
-        inject.configure(config, bind_in_runtime=False, clear=True)
+            player_service_mock.current_time = value
 
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModel = MpvqcCommentModel()

@@ -15,6 +15,7 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     ResourceReaderService,
     ResourceService,
+    ReverseTranslatorService,
     SettingsService,
     StateService,
     TimeFormatterService,
@@ -160,12 +161,21 @@ def check_generated_resources():
     import test.rc_project  # noqa: F401
 
 
-@pytest.fixture
-def ubiquitous_bindings(settings_service):
-    def config(binder: inject.Binder):
-        binder.bind(TimeFormatterService, TimeFormatterService())
-        binder.bind(TypeMapperService, TypeMapperService())
-        binder.bind(ResourceReaderService, ResourceReaderService())
-        binder.bind(ResourceService, ResourceService())
+@pytest.fixture(scope="session")
+def common_bindings_with():
+    def _configure(*custom_configs):
+        def config(binder: inject.Binder):
+            # Common & shared services
+            binder.bind_to_constructor(ResourceReaderService, lambda: ResourceReaderService())
+            binder.bind_to_constructor(ResourceService, lambda: ResourceService())
+            binder.bind_to_constructor(ReverseTranslatorService, lambda: ReverseTranslatorService())
+            binder.bind_to_constructor(TimeFormatterService, lambda: TimeFormatterService())
+            binder.bind_to_constructor(TypeMapperService, lambda: TypeMapperService())
 
-    return config
+            # Custom services
+            for custom_config in custom_configs:
+                custom_config(binder)
+
+        inject.configure(config, allow_override=True, bind_in_runtime=False, clear=True)
+
+    return _configure

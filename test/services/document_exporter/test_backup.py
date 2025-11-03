@@ -25,9 +25,9 @@ def zip_file():
         yield mock
 
 
-def test_archive_name(make_mock, app_paths_mock, zip_file, service):
-    app_paths_mock.dir_backup = Path.home()
-    make_mock()
+def test_archive_name(configure_mocks, application_paths_service_mock, zip_file, service):
+    application_paths_service_mock.dir_backup = Path.home()
+    configure_mocks()
 
     service.backup()
 
@@ -36,13 +36,8 @@ def test_archive_name(make_mock, app_paths_mock, zip_file, service):
     assert zip_name.name == f"{datetime.now(UTC):%Y-%m}.zip"
 
 
-def test_performs_backup(make_mock, zip_file, service):
-    make_mock(
-        video="/path/to/nice/video",
-        comments=[
-            {"time": 0, "commentType": "Frrrranky", "comment": "Suuuuuuuper"},
-        ],
-    )
+def test_render_called(configure_mocks, document_render_service_mock, zip_file, service):
+    configure_mocks()
 
     service.backup()
 
@@ -51,5 +46,4 @@ def test_performs_backup(make_mock, zip_file, service):
 
     filename, content = writestr_mock.call_args.args
     assert f"{QDateTime.currentDateTime().toString('yyyy-MM-dd')}" in filename
-    assert f"{Path('/path/to/nice/video')}" in content
-    assert "[00:00:00] [Frrrranky] Suuuuuuuper" in content
+    document_render_service_mock.render.assert_called_once()

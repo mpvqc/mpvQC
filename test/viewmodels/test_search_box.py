@@ -30,18 +30,19 @@ EXTRA_COMMENTS = (
 )
 
 
+@pytest.fixture(autouse=True, scope="session")
+def configure_inject(common_bindings_with):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
+        binder.bind(PlayerService, MagicMock(spec_set=PlayerService))
+        binder.bind(ResetService, MagicMock(spec_set=ResetService))
+
+    common_bindings_with(custom_bindings)
+
+
 @pytest.fixture(scope="session")
 def make_model() -> Callable[[Iterable[Comment]], MpvqcCommentModel]:
-    def _make_model(
-        set_comments: Iterable[Comment],
-    ):
-        def config(binder: inject.Binder):
-            binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
-            binder.bind(PlayerService, MagicMock(spec_set=PlayerService))
-            binder.bind(ResetService, MagicMock(spec_set=ResetService))
-
-        inject.configure(config, bind_in_runtime=False, clear=True)
-
+    def _make_model(set_comments: Iterable[Comment]):
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModel = MpvqcCommentModel()
         model.import_comments(tuple(set_comments))

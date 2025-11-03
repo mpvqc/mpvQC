@@ -13,16 +13,22 @@ from mpvqc.services import ApplicationPathsService
 
 
 @pytest.fixture
-def make_model(ubiquitous_bindings):
+def application_paths_service_mock():
+    return MagicMock(spec_set=ApplicationPathsService)
+
+
+@pytest.fixture(autouse=True)
+def configure_injections(common_bindings_with, application_paths_service_mock):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(ApplicationPathsService, application_paths_service_mock)
+
+    common_bindings_with(custom_bindings)
+
+
+@pytest.fixture
+def make_model(application_paths_service_mock):
     def _make(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModel:
-        mock = MagicMock()
-        mock.files_export_templates = mocked_paths
-
-        def config(binder: inject.Binder):
-            binder.install(ubiquitous_bindings)
-            binder.bind(ApplicationPathsService, mock)
-
-        inject.configure(config, bind_in_runtime=False, clear=True)
+        application_paths_service_mock.files_export_templates = mocked_paths
         # noinspection PyCallingNonCallable
         return MpvqcExportTemplateModel()
 

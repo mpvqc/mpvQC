@@ -20,7 +20,7 @@ def view_model():
 
 
 @pytest.fixture
-def player_mock():
+def player_service_mock():
     return MagicMock(spec_set=PlayerService)
 
 
@@ -35,12 +35,12 @@ def toggle_fullscreen_spy(view_model, make_spy):
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(player_mock, settings_service):
-    def config(binder: inject.Binder):
-        binder.bind(PlayerService, player_mock)
+def configure_inject(common_bindings_with, player_service_mock, settings_service):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    common_bindings_with(custom_bindings)
 
 
 class KeyPressTestCase(NamedTuple):
@@ -115,7 +115,7 @@ class KeyPressTestCase(NamedTuple):
 )
 def test_on_key_pressed(
     view_model,
-    player_mock,
+    player_service_mock,
     open_comment_menu_spy,
     toggle_fullscreen_spy,
     test_case: KeyPressTestCase,
@@ -124,7 +124,7 @@ def test_on_key_pressed(
 
     assert open_comment_menu_spy.count() == test_case.expected_open_comment_menu_count
     assert toggle_fullscreen_spy.count() == test_case.expected_toggle_fullscreen_count
-    assert player_mock.handle_key_event.call_count == test_case.expected_player_call_count
+    assert player_service_mock.handle_key_event.call_count == test_case.expected_player_call_count
 
 
 class KeyPressBlockedTestCase(NamedTuple):
@@ -186,7 +186,7 @@ class KeyPressBlockedTestCase(NamedTuple):
 )
 def test_on_key_pressed_blocked_keys(
     view_model,
-    player_mock,
+    player_service_mock,
     open_comment_menu_spy,
     toggle_fullscreen_spy,
     test_case: KeyPressBlockedTestCase,
@@ -195,4 +195,4 @@ def test_on_key_pressed_blocked_keys(
 
     assert open_comment_menu_spy.count() == 0
     assert toggle_fullscreen_spy.count() == 0
-    assert player_mock.handle_key_event.call_count == 0
+    assert player_service_mock.handle_key_event.call_count == 0

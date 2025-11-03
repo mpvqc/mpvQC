@@ -14,36 +14,48 @@ EXECUTING_DIRECTORY = Path.home()
 
 
 @pytest.fixture
-def portable_service():
-    _configure_injection(portable=True)
-    return ApplicationPathsService()
+def application_environment_service_mock():
+    return MagicMock(spec_set=ApplicationEnvironmentService)
+
+
+@pytest.fixture(autouse=True)
+def configure_injections(
+    common_bindings_with,
+    application_environment_service_mock,
+):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(ApplicationEnvironmentService, application_environment_service_mock)
+
+    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
-def non_portable_service():
-    _configure_injection(portable=False)
-    return ApplicationPathsService()
+def configure_mocks(application_environment_service_mock):
+    def _configure(portable: bool):
+        application_environment_service_mock.is_portable = portable
+        application_environment_service_mock.executing_directory = EXECUTING_DIRECTORY
+
+    return _configure
 
 
-def _configure_injection(portable: bool):
-    mock = MagicMock()
-    mock.is_portable = portable
-    mock.executing_directory = EXECUTING_DIRECTORY
+def test_portable(configure_mocks):
+    configure_mocks(portable=True)
 
-    def config(binder: inject.Binder):
-        binder.bind(ApplicationEnvironmentService, mock)
+    service = ApplicationPathsService()
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    assert "appdata" in f"{service.dir_config}"
+    assert service.dir_backup == EXECUTING_DIRECTORY / "appdata" / "backups"
+    assert service.dir_config == EXECUTING_DIRECTORY / "appdata"
+    assert service.dir_screenshots == EXECUTING_DIRECTORY / "appdata" / "screenshots"
+    assert service.dir_export_templates == EXECUTING_DIRECTORY / "appdata" / "export-templates"
+    assert service.file_input_conf == EXECUTING_DIRECTORY / "appdata" / "input.conf"
+    assert service.file_mpv_conf == EXECUTING_DIRECTORY / "appdata" / "mpv.conf"
+    assert service.file_settings == EXECUTING_DIRECTORY / "appdata" / "settings.ini"
 
 
-def test_service(non_portable_service, portable_service):
-    assert "appdata" in f"{portable_service.dir_config}"
-    assert "appdata" not in f"{non_portable_service.dir_config}"
+def test_non_portable(configure_mocks):
+    configure_mocks(portable=False)
 
-    assert portable_service.dir_backup == EXECUTING_DIRECTORY / "appdata" / "backups"
-    assert portable_service.dir_config == EXECUTING_DIRECTORY / "appdata"
-    assert portable_service.dir_screenshots == EXECUTING_DIRECTORY / "appdata" / "screenshots"
-    assert portable_service.dir_export_templates == EXECUTING_DIRECTORY / "appdata" / "export-templates"
-    assert portable_service.file_input_conf == EXECUTING_DIRECTORY / "appdata" / "input.conf"
-    assert portable_service.file_mpv_conf == EXECUTING_DIRECTORY / "appdata" / "mpv.conf"
-    assert portable_service.file_settings == EXECUTING_DIRECTORY / "appdata" / "settings.ini"
+    service = ApplicationPathsService()
+
+    assert "appdata" not in f"{service.dir_config}"

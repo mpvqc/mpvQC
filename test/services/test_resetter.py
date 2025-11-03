@@ -16,11 +16,14 @@ def state_service_mock() -> MagicMock:
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(state_service_mock):
-    def config(binder: inject.Binder):
+def configure_injections(
+    common_bindings_with,
+    state_service_mock,
+):
+    def custom_bindings(binder: inject.Binder):
         binder.bind(StateService, state_service_mock)
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture(autouse=True)

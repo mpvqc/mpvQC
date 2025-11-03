@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import inject
 import pytest
 
-from mpvqc.services import DocumentImporterService, ReverseTranslatorService
+from mpvqc.services import DocumentImporterService
 
 DOCUMENT_INVALID = """\
 erroneous_document
@@ -47,11 +46,8 @@ path: {video_path}
 
 
 @pytest.fixture(autouse=True, scope="module")
-def configure_inject():
-    def config(binder: inject.Binder):
-        binder.bind(ReverseTranslatorService, ReverseTranslatorService())
-
-    inject.configure(config, bind_in_runtime=False, clear=True)
+def configure_inject(common_bindings_with):
+    common_bindings_with()
 
 
 @pytest.fixture(scope="session")

@@ -20,7 +20,7 @@ def resource_service() -> ResourceService:
     return ResourceService()
 
 
-def test_video_path_video_name(make_mock, service):
+def test_video_path_video_name(configure_mocks, service):
     template = textwrap.dedent(
         """\
         video_path: {{ video_path }}
@@ -28,7 +28,7 @@ def test_video_path_video_name(make_mock, service):
         """
     )
 
-    make_mock(video=Path.home() / "video.mkv")
+    configure_mocks(video=Path.home() / "video.mkv")
     expected = textwrap.dedent(f"""\
         video_path: {Path.home() / "video.mkv"}
         video_name: video.mkv
@@ -36,20 +36,20 @@ def test_video_path_video_name(make_mock, service):
     actual = service.render(template)
     assert actual == expected
 
-    make_mock(video=None)
+    configure_mocks(video=None)
     expected = textwrap.dedent("""video_path: \nvideo_name: \n""")
     actual = service.render(template)
     assert actual == expected
 
 
-def test_renders_text_that_ends_with_newline(make_mock, service, resource_service):
-    make_mock()
+def test_renders_text_that_ends_with_newline(configure_mocks, service, resource_service):
+    configure_mocks()
     actual = service.render(resource_service.default_export_template)
     assert actual[-1] == "\n"
 
 
-def test_renders_no_headers(make_mock, service, resource_service):
-    make_mock()
+def test_renders_no_headers(configure_mocks, service, resource_service):
+    configure_mocks()
 
     expected = textwrap.dedent(
         """\
@@ -63,8 +63,8 @@ def test_renders_no_headers(make_mock, service, resource_service):
     assert expected == actual
 
 
-def test_renders_partial_headers(make_mock, service, resource_service):
-    make_mock(
+def test_renders_partial_headers(configure_mocks, service, resource_service):
+    configure_mocks(
         write_header_video_path=True,
         video="/path/to/video",
         write_header_nickname=True,
@@ -85,8 +85,8 @@ def test_renders_partial_headers(make_mock, service, resource_service):
     assert expected == actual
 
 
-def test_renders_comments(make_mock, service, resource_service):
-    make_mock(
+def test_renders_comments(configure_mocks, service, resource_service):
+    configure_mocks(
         comments=[
             {"time": 0, "commentType": "Translation", "comment": "My first comment"},
             {"time": 50, "commentType": "Spelling", "comment": "My second comment"},
@@ -109,8 +109,8 @@ def test_renders_comments(make_mock, service, resource_service):
     assert expected == actual
 
 
-def test_renders_backup(make_mock, service, resource_service):
-    make_mock(
+def test_renders_backup(configure_mocks, service, resource_service):
+    configure_mocks(
         write_header_video_path=False,
         video="/path/to/video/ignore/user/setting",
         comments=[
@@ -129,7 +129,7 @@ def test_renders_backup(make_mock, service, resource_service):
     assert "# total lines: 3" in rendered
 
 
-def test_renders_no_subtitles(make_mock, service, resource_service):
+def test_renders_no_subtitles(configure_mocks, service, resource_service):
     subtitles = [Path.home() / "subtitle.ass"]
     expected = textwrap.dedent(
         """\
@@ -140,26 +140,26 @@ def test_renders_no_subtitles(make_mock, service, resource_service):
         """
     )
 
-    make_mock()
+    configure_mocks()
     assert expected == service.render(resource_service.default_export_template)
 
-    make_mock(subtitles=subtitles)
+    configure_mocks(subtitles=subtitles)
     assert expected == service.render(resource_service.default_export_template)
 
-    make_mock(write_header_subtitles=True)
+    configure_mocks(write_header_subtitles=True)
     assert expected == service.render(resource_service.default_export_template)
 
-    make_mock(write_header_subtitles=True, subtitles=subtitles)
+    configure_mocks(write_header_subtitles=True, subtitles=subtitles)
     assert expected != service.render(resource_service.default_export_template), (
         "Documents should not match as subtitles should now be rendered"
     )
 
 
-def test_renders_subtitles(make_mock, service, resource_service):
+def test_renders_subtitles(configure_mocks, service, resource_service):
     subtitle1 = Path.home() / "subtitle-1.ass"
     subtitle2 = Path.home() / "subtitle-2.srt"
 
-    make_mock(
+    configure_mocks(
         write_header_nickname=True,
         nickname="ಠ_ಠ",
         write_header_subtitles=False,
@@ -176,7 +176,7 @@ def test_renders_subtitles(make_mock, service, resource_service):
     )
     assert expected == service.render(resource_service.default_export_template)
 
-    make_mock(
+    configure_mocks(
         write_header_nickname=True,
         nickname="ಠ_ಠ",
         write_header_subtitles=True,

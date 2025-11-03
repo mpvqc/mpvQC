@@ -4,18 +4,14 @@
 
 from unittest.mock import MagicMock, patch
 
-import inject
 import pytest
 
-from mpvqc.services import ResourceReaderService, ResourceService
+from mpvqc.services import ResourceService
 
 
 @pytest.fixture(autouse=True, scope="module")
-def configure_injections():
-    def config(binder: inject.Binder):
-        binder.bind(ResourceReaderService, ResourceReaderService())
-
-    inject.configure(config, bind_in_runtime=False, clear=True)
+def configure_injections(common_bindings_with):
+    common_bindings_with()
 
 
 @pytest.fixture(scope="module")
