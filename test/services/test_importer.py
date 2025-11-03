@@ -60,7 +60,7 @@ def configure_inject(
         binder.bind(PlayerService, mock_player)
         binder.bind(StateService, mock_state)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.fixture

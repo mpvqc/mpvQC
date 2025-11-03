@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 from collections.abc import Callable, Iterable
 from unittest.mock import MagicMock
 
@@ -9,7 +10,7 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import PlayerService
+from mpvqc.services import ImporterService, PlayerService, ResetService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
 DEFAULT_COMMENTS_SEARCH = (
@@ -34,14 +35,16 @@ def make_model() -> Callable[[Iterable[Comment]], MpvqcCommentModel]:
     def _make_model(
         set_comments: Iterable[Comment],
     ):
+        def config(binder: inject.Binder):
+            binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
+            binder.bind(PlayerService, MagicMock(spec_set=PlayerService))
+            binder.bind(ResetService, MagicMock(spec_set=ResetService))
+
+        inject.configure(config, bind_in_runtime=False, clear=True)
+
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModel = MpvqcCommentModel()
         model.import_comments(tuple(set_comments))
-
-        def config(binder: inject.Binder):
-            binder.bind(PlayerService, MagicMock(spec_set=PlayerService))
-
-        inject.configure(config, clear=True)
 
         return model
 

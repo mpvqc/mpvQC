@@ -25,7 +25,8 @@ def zip_file():
         yield mock
 
 
-def test_archive_name(make_mock, zip_file, service):
+def test_archive_name(make_mock, app_paths_mock, zip_file, service):
+    app_paths_mock.dir_backup = Path.home()
     make_mock()
 
     service.backup()

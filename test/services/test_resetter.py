@@ -20,7 +20,7 @@ def configure_inject(state_service_mock):
     def config(binder: inject.Binder):
         binder.bind(StateService, state_service_mock)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.fixture(autouse=True)

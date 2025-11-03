@@ -10,7 +10,7 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import PlayerService, ResetService, StateService
+from mpvqc.services import ImporterService, PlayerService, ResetService, StateService
 
 
 @pytest.fixture
@@ -20,6 +20,7 @@ def state_service_mock():
 
 @pytest.fixture
 def make_model(
+    ubiquitous_bindings,
     state_service_mock,
 ) -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModel, Callable[[int], None]]]:
     def _make_model(
@@ -33,11 +34,13 @@ def make_model(
             player_mock.current_time = value
 
         def config(binder: inject.Binder):
+            binder.install(ubiquitous_bindings)
             binder.bind(StateService, state_service_mock)
             binder.bind(ResetService, MagicMock(spec_set=ResetService))
+            binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
             binder.bind(PlayerService, player_mock)
 
-        inject.configure(config, clear=True)
+        inject.configure(config, bind_in_runtime=False, clear=True)
 
         # noinspection PyCallingNonCallable
         model: MpvqcCommentModel = MpvqcCommentModel()

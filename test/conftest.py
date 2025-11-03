@@ -6,12 +6,20 @@ from collections.abc import Callable, Generator
 from importlib.util import find_spec
 from typing import Any
 
+import inject
 import pytest
 from PySide6.QtCore import QByteArray, QCoreApplication, QObject, Signal, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
-from mpvqc.services import SettingsService, StateService, TypeMapperService
+from mpvqc.services import (
+    ResourceReaderService,
+    ResourceService,
+    SettingsService,
+    StateService,
+    TimeFormatterService,
+    TypeMapperService,
+)
 
 
 class PlayerMock(QObject):
@@ -150,3 +158,14 @@ def check_generated_resources():
         )
         raise FileNotFoundError(message)
     import test.rc_project  # noqa: F401
+
+
+@pytest.fixture
+def ubiquitous_bindings(settings_service):
+    def config(binder: inject.Binder):
+        binder.bind(TimeFormatterService, TimeFormatterService())
+        binder.bind(TypeMapperService, TypeMapperService())
+        binder.bind(ResourceReaderService, ResourceReaderService())
+        binder.bind(ResourceService, ResourceService())
+
+    return config

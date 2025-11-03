@@ -26,7 +26,7 @@ def configure_inject(application_paths_service_mock):
         binder.bind(ApplicationPathsService, application_paths_service_mock)
         binder.bind(ResourceService, MagicMock())
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.mark.parametrize(

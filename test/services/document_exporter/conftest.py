@@ -8,7 +8,12 @@ from unittest.mock import MagicMock, patch
 import inject
 import pytest
 
-from mpvqc.services import PlayerService, ResourceReaderService, ResourceService, SettingsService
+from mpvqc.services import (
+    ApplicationPathsService,
+    DocumentRenderService,
+    PlayerService,
+    SettingsService,
+)
 
 MODULE = "mpvqc.services.document_exporter"
 
@@ -20,7 +25,12 @@ def qt_app():
 
 
 @pytest.fixture
-def make_mock(qt_app, settings_service):
+def app_paths_mock() -> MagicMock:
+    return MagicMock(spec_set=ApplicationPathsService)
+
+
+@pytest.fixture
+def make_mock(qt_app, ubiquitous_bindings, app_paths_mock, settings_service):
     def _make_mock(
         video: Path | str | None = None,
         nickname: str | None = None,
@@ -47,11 +57,12 @@ def make_mock(qt_app, settings_service):
         player_mock.external_subtitles = subtitles or []
 
         def config(binder: inject.Binder):
+            binder.install(ubiquitous_bindings)
+            binder.bind(ApplicationPathsService, app_paths_mock)
+            binder.bind(DocumentRenderService, DocumentRenderService())
             binder.bind(PlayerService, player_mock)
             binder.bind(SettingsService, settings_service)
-            binder.bind(ResourceReaderService, ResourceReaderService())
-            binder.bind(ResourceService, ResourceService())
 
-        inject.configure(config, clear=True)
+        inject.configure(config, bind_in_runtime=False, clear=True)
 
     return _make_mock

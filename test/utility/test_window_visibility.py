@@ -36,7 +36,7 @@ def configure_inject(window_properties_service_mock, window_mock):
         def config(binder: inject.Binder):
             binder.bind(WindowPropertiesService, window_properties_service_mock)
 
-        inject.configure(config, clear=True)
+        inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.fixture

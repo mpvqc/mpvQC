@@ -40,7 +40,7 @@ def configure_inject(player_mock, settings_service):
         binder.bind(PlayerService, player_mock)
         binder.bind(SettingsService, settings_service)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 class KeyPressTestCase(NamedTuple):

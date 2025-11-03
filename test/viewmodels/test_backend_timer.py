@@ -29,7 +29,7 @@ def configure_injections(backup_service_mock, settings_service):
         binder.bind(DocumentBackupService, backup_service_mock)
         binder.bind(SettingsService, settings_service)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 def test_backup_backend(view_model, backup_service_mock):
