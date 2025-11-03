@@ -158,7 +158,8 @@ Item {
 
     Behavior on _foregroundColor {
         ColorAnimation {
-            duration: 75
+            duration: root.listView.highlightMoveDuration
+            easing.type: Easing.Linear
         }
     }
 }
