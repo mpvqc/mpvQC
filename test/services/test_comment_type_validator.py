@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import inject
 import pytest
 
-from mpvqc.services import CommentTypeValidatorService, ReverseTranslatorService
+from mpvqc.services import CommentTypeValidatorService
 
 
 @pytest.fixture(scope="module")
@@ -14,11 +13,8 @@ def service() -> CommentTypeValidatorService:
 
 
 @pytest.fixture(autouse=True, scope="module")
-def configure_injections():
-    def config(binder: inject.Binder):
-        binder.bind(ReverseTranslatorService, ReverseTranslatorService())
-
-    inject.configure(config, bind_in_runtime=False, clear=True)
+def configure_injections(common_bindings_with):
+    common_bindings_with()
 
 
 @pytest.mark.parametrize(

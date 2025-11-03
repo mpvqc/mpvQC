@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import ApplicationPathsService, FileStartupService, ResourceService
+from mpvqc.services import ApplicationPathsService, FileStartupService
 
 
 @pytest.fixture
@@ -21,12 +21,11 @@ def application_paths_service_mock():
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(application_paths_service_mock):
-    def config(binder: inject.Binder):
+def configure_inject(common_bindings_with, application_paths_service_mock):
+    def custom_bindings(binder: inject.Binder):
         binder.bind(ApplicationPathsService, application_paths_service_mock)
-        binder.bind(ResourceService, MagicMock())
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    common_bindings_with(custom_bindings)
 
 
 @pytest.mark.parametrize(

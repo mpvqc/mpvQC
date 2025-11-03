@@ -22,7 +22,7 @@ def comment_types_reset():
 
 
 @pytest.fixture
-def mock_validator():
+def comment_type_validator_service_mock():
     mock = MagicMock(spec_set=CommentTypeValidatorService)
     mock.validate_new_comment_type.return_value = None
     mock.validate_editing_of_comment_type.return_value = None
@@ -30,12 +30,14 @@ def mock_validator():
 
 
 @pytest.fixture
-def mock_translator():
-    return MagicMock(spec_set=ReverseTranslatorService)
+def reverse_translator_service_mock():
+    mock = MagicMock(spec_set=ReverseTranslatorService)
+    mock.lookup.side_effect = lambda x: x  # Pass through by default
+    return mock
 
 
 @pytest.fixture
-def mock_settings(comment_types, comment_types_reset):
+def settings_service_mock(comment_types, comment_types_reset):
     mock = MagicMock(spec_set=SettingsService)
     mock.comment_types = comment_types.copy()
     mock.get_default_comment_types.return_value = comment_types_reset.copy()
@@ -43,14 +45,18 @@ def mock_settings(comment_types, comment_types_reset):
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(mock_validator, mock_translator, mock_settings):
-    def config(binder: inject.Binder):
-        mock_translator.lookup.side_effect = lambda x: x  # Pass through by default
-        binder.bind(CommentTypeValidatorService, mock_validator)
-        binder.bind(ReverseTranslatorService, mock_translator)
-        binder.bind(SettingsService, mock_settings)
+def configure_inject(
+    common_bindings_with,
+    comment_type_validator_service_mock,
+    reverse_translator_service_mock,
+    settings_service_mock,
+):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(CommentTypeValidatorService, comment_type_validator_service_mock)
+        binder.bind(ReverseTranslatorService, reverse_translator_service_mock)
+        binder.bind(SettingsService, settings_service_mock)
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
@@ -78,16 +84,9 @@ def test_initial_state(view_model, comment_types):
     assert view_model.isDeleteButtonEnabled
 
 
-def test_initial_state_single_item():
-    # Configure with single item
-    def config(binder: inject.Binder):
-        single_item = ["Only Item"]
-        mock_settings = MagicMock(spec_set=SettingsService)
-        mock_settings.comment_types = single_item
-        mock_settings.get_default_comment_types.return_value = single_item
-        binder.bind_to_constructor(SettingsService, lambda: mock_settings)
-
-    inject.configure(config, bind_in_runtime=False, clear=True)
+def test_initial_state_single_item(settings_service_mock):
+    settings_service_mock.comment_types = ["Only Item"]
+    settings_service_mock.get_default_comment_types.return_value = ["Only Item"]
 
     # noinspection PyCallingNonCallable
     view_model_override = MpvqcCommentTypesDialogViewModel()
@@ -160,8 +159,8 @@ def test_idle_to_editing_transition(view_model, make_spy):
     assert not view_model.isEditButtonEnabled
 
 
-def test_add_valid_comment_type(view_model, mock_validator, comment_types):
-    mock_validator.validate_new_comment_type.return_value = None  # No error
+def test_add_valid_comment_type(view_model, comment_type_validator_service_mock, comment_types):
+    comment_type_validator_service_mock.validate_new_comment_type.return_value = None  # No error
 
     # Enter adding mode and type
     view_model.onTextFieldFocusChanged(True)
@@ -184,9 +183,9 @@ def test_add_valid_comment_type(view_model, mock_validator, comment_types):
     assert view_model.textFieldContent == ""
 
 
-def test_add_with_validation_error(view_model, mock_validator, make_spy):
+def test_add_with_validation_error(view_model, comment_type_validator_service_mock, make_spy):
     validation_error_changed_spy = make_spy(view_model.validationErrorChanged)
-    mock_validator.validate_new_comment_type.return_value = "Duplicate name"
+    comment_type_validator_service_mock.validate_new_comment_type.return_value = "Duplicate name"
 
     view_model.onTextFieldFocusChanged(True)
     view_model.onTextChanged("Duplicate")
@@ -205,8 +204,8 @@ def test_add_with_validation_error(view_model, mock_validator, make_spy):
     assert view_model.temporaryCommentTypesModel.rowCount() == initial_count
 
 
-def test_add_empty_not_allowed(view_model, mock_validator):
-    mock_validator.validate_new_comment_type.return_value = None
+def test_add_empty_not_allowed(view_model, comment_type_validator_service_mock):
+    comment_type_validator_service_mock.validate_new_comment_type.return_value = None
 
     view_model.onTextFieldFocusChanged(True)
     view_model.onTextChanged("")
@@ -214,8 +213,8 @@ def test_add_empty_not_allowed(view_model, mock_validator):
     assert not view_model.isAcceptButtonEnabled
 
 
-def test_edit_comment_type(view_model, mock_validator, mock_translator):
-    mock_validator.validate_editing_of_comment_type.return_value = None
+def test_edit_comment_type(view_model, comment_type_validator_service_mock, reverse_translator_service_mock):
+    comment_type_validator_service_mock.validate_editing_of_comment_type.return_value = None
 
     view_model.selectItem(1)
     view_model.startEdit()
@@ -233,11 +232,11 @@ def test_edit_comment_type(view_model, mock_validator, mock_translator):
     assert updated_list[1] == "Modified Type"
 
     # Should call translator
-    mock_translator.lookup.assert_called_with("Modified Type")
+    reverse_translator_service_mock.lookup.assert_called_with("Modified Type")
 
 
-def test_edit_with_validation_error(view_model, mock_validator):
-    mock_validator.validate_editing_of_comment_type.return_value = "Invalid edit"
+def test_edit_with_validation_error(view_model, comment_type_validator_service_mock):
+    comment_type_validator_service_mock.validate_editing_of_comment_type.return_value = "Invalid edit"
 
     view_model.selectItem(2)
     view_model.startEdit()
@@ -372,7 +371,7 @@ def test_reset_to_defaults(view_model, comment_types_reset):
     assert not view_model.isAcceptButtonEnabled
 
 
-def test_accept_saves_to_settings(view_model, comment_types, mock_settings):
+def test_accept_saves_to_settings(view_model, comment_types, settings_service_mock):
     # Make changes
     view_model.onTextFieldFocusChanged(True)
     view_model.onTextChanged("New Type")
@@ -384,7 +383,7 @@ def test_accept_saves_to_settings(view_model, comment_types, mock_settings):
     view_model.accept()
 
     # Should save to settings
-    assert mock_settings.comment_types == modified_list == [*comment_types.copy(), "New Type"]
+    assert settings_service_mock.comment_types == modified_list == [*comment_types.copy(), "New Type"]
 
 
 def test_signals_on_selection_change(view_model, make_spy):
@@ -400,9 +399,9 @@ def test_signals_on_selection_change(view_model, make_spy):
     assert is_move_down_button_enabled_changed_spy.count() >= 0
 
 
-def test_validation_error_signal(view_model, mock_validator, make_spy):
+def test_validation_error_signal(view_model, comment_type_validator_service_mock, make_spy):
     validation_error_changed_spy = make_spy(view_model.validationErrorChanged)
-    mock_validator.validate_new_comment_type.return_value = "Error message"
+    comment_type_validator_service_mock.validate_new_comment_type.return_value = "Error message"
 
     view_model.onTextFieldFocusChanged(True)
     view_model.onTextChanged("Invalid")
@@ -411,7 +410,7 @@ def test_validation_error_signal(view_model, mock_validator, make_spy):
     assert validation_error_changed_spy.at(0, 0) == "Error message"
 
     # Clear error
-    mock_validator.validate_new_comment_type.return_value = None
+    comment_type_validator_service_mock.validate_new_comment_type.return_value = None
     view_model.onTextChanged("Valid")
 
     # Should emit with empty string
@@ -453,18 +452,18 @@ def test_operations_blocked_during_editing(view_model):
     assert view_model.selectedIndex == original_index
 
 
-def test_validation_only_after_typing(view_model, mock_validator):
-    mock_validator.validate_new_comment_type.return_value = "Error"
+def test_validation_only_after_typing(view_model, comment_type_validator_service_mock):
+    comment_type_validator_service_mock.validate_new_comment_type.return_value = "Error"
 
     view_model.onTextFieldFocusChanged(True)
 
     # No validation yet - user hasn't typed
     assert view_model.validationError == ""
-    mock_validator.validate_new_comment_type.assert_not_called()
+    comment_type_validator_service_mock.validate_new_comment_type.assert_not_called()
 
     # Now type something
     view_model.onTextChanged("x")
 
     # Now validation should occur
     assert view_model.validationError == "Error"
-    mock_validator.validate_new_comment_type.assert_called()
+    comment_type_validator_service_mock.validate_new_comment_type.assert_called()

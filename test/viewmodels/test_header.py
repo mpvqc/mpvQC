@@ -30,15 +30,22 @@ def view_model() -> MpvqcHeaderViewModel:
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(reset_service_mock, state_service, player_service_mock, settings_service, export_service_mock):
-    def config(binder: inject.Binder):
+def configure_inject(
+    common_bindings_with,
+    reset_service_mock,
+    state_service,
+    player_service_mock,
+    settings_service,
+    export_service_mock,
+):
+    def custom_bindings(binder: inject.Binder):
         binder.bind(StateService, state_service)
         binder.bind(ResetService, reset_service_mock)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
         binder.bind(ExportService, export_service_mock)
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    common_bindings_with(custom_bindings)
 
 
 class WindowTitleTestCase(NamedTuple):

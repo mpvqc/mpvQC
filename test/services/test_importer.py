@@ -20,47 +20,48 @@ from mpvqc.services.importer import ImporterService
 
 
 @pytest.fixture
-def mock_doc_importer():
+def document_importer_service_mock():
     mock = Mock(spec_set=DocumentImporterService)
     mock.NO_IMPORT = DocumentImporterService.NO_IMPORT
     return mock
 
 
 @pytest.fixture
-def mock_sub_importer():
+def subtitle_importer_service_mock():
     mock = Mock(spec_set=SubtitleImporterService)
     mock.NO_IMPORT = SubtitleImporterService.NO_IMPORT
     return mock
 
 
 @pytest.fixture
-def mock_player():
+def player_service_mock():
     player = Mock(spec_set=PlayerService)
     player.is_video_loaded.return_value = False
     return player
 
 
 @pytest.fixture
-def mock_state():
+def state_service_mock():
     return Mock(spec_set=StateService)
 
 
 @pytest.fixture(autouse=True)
 def configure_inject(
+    common_bindings_with,
     settings_service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
 ):
-    def config(binder: inject.Binder):
+    def custom_bindings(binder: inject.Binder):
         binder.bind(SettingsService, settings_service)
-        binder.bind(DocumentImporterService, mock_doc_importer)
-        binder.bind(SubtitleImporterService, mock_sub_importer)
-        binder.bind(PlayerService, mock_player)
-        binder.bind(StateService, mock_state)
+        binder.bind(DocumentImporterService, document_importer_service_mock)
+        binder.bind(SubtitleImporterService, subtitle_importer_service_mock)
+        binder.bind(PlayerService, player_service_mock)
+        binder.bind(StateService, state_service_mock)
 
-    inject.configure(config, bind_in_runtime=False, clear=True)
+    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
@@ -70,17 +71,17 @@ def service():
 
 def test_example_1_single_explicit_video(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
     video = Path.home() / "video.mp4"
-    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
-    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -94,16 +95,16 @@ def test_example_1_single_explicit_video(
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_called_once_with(video)
-    mock_state.import_documents.assert_called_once()
+    player_service_mock.open_video.assert_called_once_with(video)
+    state_service_mock.import_documents.assert_called_once()
 
 
 def test_example_2_single_document_no_video_references(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -120,9 +121,9 @@ def test_example_2_single_document_no_video_references(
         existing_subtitles=(),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -137,8 +138,8 @@ def test_example_2_single_document_no_video_references(
     assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_not_called()
-    mock_state.import_documents.assert_called_once()
+    player_service_mock.open_video.assert_not_called()
+    state_service_mock.import_documents.assert_called_once()
 
 
 class ParameterizedTestCase(NamedTuple):
@@ -178,10 +179,10 @@ class ParameterizedTestCase(NamedTuple):
 )
 def test_single_document_one_video_not_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     settings_service,
     make_spy,
     test_case: ParameterizedTestCase,
@@ -198,9 +199,9 @@ def test_single_document_one_video_not_loaded(
         existing_subtitles=(),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    player_service_mock.is_video_loaded.return_value = False
     settings_service.import_found_video = test_case.setting.value
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -215,16 +216,16 @@ def test_single_document_one_video_not_loaded(
     assert comments_spy.count() == test_case.expect_comments_count
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
-    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+    assert player_service_mock.open_video.call_count == test_case.expect_video_opened_count
+    assert state_service_mock.import_documents.call_count == test_case.expect_state_updated_count
 
 
 def test_single_document_one_video_already_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -239,9 +240,9 @@ def test_single_document_one_video_already_loaded(
         existing_subtitles=(),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
-    mock_player.is_video_loaded.return_value = True
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    player_service_mock.is_video_loaded.return_value = True
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -255,16 +256,16 @@ def test_single_document_one_video_already_loaded(
     assert comments_spy.count() == 1
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == 0
-    assert mock_state.import_documents.call_count == 1
+    assert player_service_mock.open_video.call_count == 0
+    assert state_service_mock.import_documents.call_count == 1
 
 
 def test_single_document_multiple_videos(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -286,9 +287,9 @@ def test_single_document_multiple_videos(
         existing_videos=(video2,),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -302,8 +303,8 @@ def test_single_document_multiple_videos(
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == 0
-    assert mock_state.import_documents.call_count == 0
+    assert player_service_mock.open_video.call_count == 0
+    assert state_service_mock.import_documents.call_count == 0
 
 
 @pytest.mark.parametrize(
@@ -335,10 +336,10 @@ def test_single_document_multiple_videos(
 )
 def test_single_document_video_from_subtitle_not_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     settings_service,
     make_spy,
     test_case: ParameterizedTestCase,
@@ -361,9 +362,9 @@ def test_single_document_video_from_subtitle_not_loaded(
         existing_videos=(video,),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
     settings_service.import_found_video = test_case.setting.value
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -378,8 +379,8 @@ def test_single_document_video_from_subtitle_not_loaded(
     assert comments_spy.count() == test_case.expect_comments_count
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
-    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+    assert player_service_mock.open_video.call_count == test_case.expect_video_opened_count
+    assert state_service_mock.import_documents.call_count == test_case.expect_state_updated_count
 
 
 @pytest.mark.parametrize(
@@ -411,10 +412,10 @@ def test_single_document_video_from_subtitle_not_loaded(
 )
 def test_single_document_video_and_subtitle_same_video_not_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     settings_service,
     make_spy,
     test_case: ParameterizedTestCase,
@@ -437,9 +438,9 @@ def test_single_document_video_and_subtitle_same_video_not_loaded(
         existing_videos=(video,),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
     settings_service.import_found_video = test_case.setting.value
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -454,22 +455,22 @@ def test_single_document_video_and_subtitle_same_video_not_loaded(
     assert comments_spy.count() == test_case.expect_comments_count
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
-    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+    assert player_service_mock.open_video.call_count == test_case.expect_video_opened_count
+    assert state_service_mock.import_documents.call_count == test_case.expect_state_updated_count
 
     if test_case.expect_video_opened_count > 0:
-        mock_player.open_video.assert_called_once_with(video)
-        mock_player.open_subtitles.assert_called_once_with((subtitle,))
+        player_service_mock.open_video.assert_called_once_with(video)
+        player_service_mock.open_subtitles.assert_called_once_with((subtitle,))
     elif test_case.expect_ask_user_count == 0:
-        mock_player.open_subtitles.assert_called_once_with((subtitle,))
+        player_service_mock.open_subtitles.assert_called_once_with((subtitle,))
 
 
 def test_single_document_video_and_subtitle_same_video_already_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -490,9 +491,9 @@ def test_single_document_video_and_subtitle_same_video_already_loaded(
         existing_videos=(video,),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = True
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = True
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -506,17 +507,17 @@ def test_single_document_video_and_subtitle_same_video_already_loaded(
     assert comments_spy.count() == 1
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_called_once_with((subtitle,))
-    mock_state.import_documents.assert_called_once()
+    player_service_mock.open_video.assert_not_called()
+    player_service_mock.open_subtitles.assert_called_once_with((subtitle,))
+    state_service_mock.import_documents.assert_called_once()
 
 
 def test_multiple_documents_single_video_already_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -542,9 +543,9 @@ def test_multiple_documents_single_video_already_loaded(
         existing_videos=(video,),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = True
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = True
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -559,17 +560,17 @@ def test_multiple_documents_single_video_already_loaded(
     assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == 0
-    mock_player.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
-    assert mock_state.import_documents.call_count == 1
+    assert player_service_mock.open_video.call_count == 0
+    player_service_mock.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
+    assert state_service_mock.import_documents.call_count == 1
 
 
 def test_multiple_documents_video_not_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -597,9 +598,9 @@ def test_multiple_documents_video_not_loaded(
         existing_videos=(video2, video3),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -622,16 +623,16 @@ def test_multiple_documents_video_not_loaded(
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == 0
-    assert mock_state.import_documents.call_count == 0
+    assert player_service_mock.open_video.call_count == 0
+    assert state_service_mock.import_documents.call_count == 0
 
 
 def test_document_and_explicit_video(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -655,9 +656,9 @@ def test_document_and_explicit_video(
         existing_videos=(),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -672,17 +673,17 @@ def test_document_and_explicit_video(
     assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_called_once_with(video)
-    mock_player.open_subtitles.assert_called_once_with((subtitle,))
-    mock_state.import_documents.assert_called_once()
+    player_service_mock.open_video.assert_called_once_with(video)
+    player_service_mock.open_subtitles.assert_called_once_with((subtitle,))
+    state_service_mock.import_documents.assert_called_once()
 
 
 def test_multiple_subtitles_same_video_already_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -695,9 +696,9 @@ def test_multiple_subtitles_same_video_already_loaded(
         existing_videos=(video, video),
     )
 
-    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = True
+    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = True
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -711,17 +712,17 @@ def test_multiple_subtitles_same_video_already_loaded(
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
-    mock_state.import_documents.assert_not_called()
+    player_service_mock.open_video.assert_not_called()
+    player_service_mock.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
+    state_service_mock.import_documents.assert_not_called()
 
 
 def test_multiple_subtitles_different_videos(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -735,9 +736,9 @@ def test_multiple_subtitles_different_videos(
         existing_videos=(video1, video2),
     )
 
-    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -760,9 +761,9 @@ def test_multiple_subtitles_different_videos(
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_not_called()
-    mock_state.import_documents.assert_not_called()
+    player_service_mock.open_video.assert_not_called()
+    player_service_mock.open_subtitles.assert_not_called()
+    state_service_mock.import_documents.assert_not_called()
 
 
 class ParameterizedTestCase(NamedTuple):
@@ -806,10 +807,10 @@ class ParameterizedTestCase(NamedTuple):
 )
 def test_subtitle_with_video_reference_not_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     settings_service,
     make_spy,
     test_case: ParameterizedTestCase,
@@ -823,9 +824,9 @@ def test_subtitle_with_video_reference_not_loaded(
         existing_videos=(video,),
     )
 
-    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
-    mock_sub_importer.read.return_value = sub_result
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = sub_result
+    player_service_mock.is_video_loaded.return_value = False
     settings_service.import_found_video = test_case.setting.value
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -840,26 +841,26 @@ def test_subtitle_with_video_reference_not_loaded(
     assert comments_spy.count() == test_case.expect_comments_count
     assert invalid_docs_spy.count() == 0
 
-    assert mock_player.open_video.call_count == test_case.expect_video_opened_count
-    assert mock_player.open_subtitles.call_count == test_case.expect_subtitles_opened_count
-    assert mock_state.import_documents.call_count == test_case.expect_state_updated_count
+    assert player_service_mock.open_video.call_count == test_case.expect_video_opened_count
+    assert player_service_mock.open_subtitles.call_count == test_case.expect_subtitles_opened_count
+    assert state_service_mock.import_documents.call_count == test_case.expect_state_updated_count
 
 
 def test_multiple_explicit_videos(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
     video1 = Path.home() / "video1.mp4"
     video2 = Path.home() / "video2.mp4"
 
-    mock_doc_importer.read.return_value = DocumentImporterService.NO_IMPORT
-    mock_sub_importer.read.return_value = SubtitleImporterService.NO_IMPORT
-    mock_player.is_video_loaded.return_value = False
+    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -882,17 +883,17 @@ def test_multiple_explicit_videos(
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_not_called()
-    mock_state.import_documents.assert_not_called()
+    player_service_mock.open_video.assert_not_called()
+    player_service_mock.open_subtitles.assert_not_called()
+    state_service_mock.import_documents.assert_not_called()
 
 
 def test_multiple_videos_one_already_loaded(
     service,
-    mock_doc_importer,
-    mock_sub_importer,
-    mock_player,
-    mock_state,
+    document_importer_service_mock,
+    subtitle_importer_service_mock,
+    player_service_mock,
+    state_service_mock,
     make_spy,
 ):
     # Given
@@ -918,11 +919,11 @@ def test_multiple_videos_one_already_loaded(
         existing_videos=(video1, video2),
     )
 
-    mock_doc_importer.read.return_value = doc_result
-    mock_sub_importer.read.return_value = sub_result
+    document_importer_service_mock.read.return_value = doc_result
+    subtitle_importer_service_mock.read.return_value = sub_result
 
     # video1 is already loaded
-    mock_player.is_video_loaded.side_effect = lambda path: path == video1
+    player_service_mock.is_video_loaded.side_effect = lambda path: path == video1
 
     comments_spy = make_spy(service.comments_ready_for_import)
     invalid_docs_spy = make_spy(service.erroneous_documents_imported)
@@ -937,6 +938,6 @@ def test_multiple_videos_one_already_loaded(
     assert comments_spy.at(0, 0) == (comment1, comment2)
     assert invalid_docs_spy.count() == 0
 
-    mock_player.open_video.assert_not_called()
-    mock_player.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
-    mock_state.import_documents.assert_called_once()
+    player_service_mock.open_video.assert_not_called()
+    player_service_mock.open_subtitles.assert_called_once_with((subtitle1, subtitle2))
+    state_service_mock.import_documents.assert_called_once()

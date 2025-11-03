@@ -9,45 +9,29 @@ import inject
 import pytest
 
 from mpvqc.services import WindowPropertiesService
-from mpvqc.utility.window_visibility import MpvqcWindowVisibilityHandler
+from mpvqc.utility import MpvqcWindowVisibilityHandler
 
 
-@pytest.fixture
-def window_mock():
-    mock = MagicMock()
-    mock.showNormal = MagicMock()
-    mock.showMaximized = MagicMock()
-    mock.showFullScreen = MagicMock()
-    return mock
+@pytest.fixture(autouse=True)
+def mock_main_window():
+    with patch("mpvqc.utility.window_visibility.get_main_window", return_value=MagicMock()):
+        yield
 
 
 @pytest.fixture
 def window_properties_service_mock():
-    mock = MagicMock(spec_set=WindowPropertiesService)
-    mock.is_fullscreen = False
-    mock.is_maximized = False
-    return mock
+    return MagicMock(spec_set=WindowPropertiesService)
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(window_properties_service_mock, window_mock):
-    with patch("mpvqc.utility.window_visibility.get_main_window", return_value=window_mock):
+def configure_injections(
+    common_bindings_with,
+    window_properties_service_mock,
+):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(WindowPropertiesService, window_properties_service_mock)
 
-        def config(binder: inject.Binder):
-            binder.bind(WindowPropertiesService, window_properties_service_mock)
-
-        inject.configure(config, bind_in_runtime=False, clear=True)
-
-
-@pytest.fixture
-def handler(window_properties_service_mock):
-    with patch("mpvqc.utility.window_visibility.get_main_window") as mock_window:
-        window = MagicMock()
-        mock_window.return_value = window
-        # noinspection PyCallingNonCallable
-        handler = MpvqcWindowVisibilityHandler()
-        handler._window = window
-        return handler
+    common_bindings_with(custom_bindings)
 
 
 class ToggleTestCase(NamedTuple):
@@ -92,7 +76,9 @@ class ToggleTestCase(NamedTuple):
     ],
     ids=lambda tc: tc.tag,
 )
-def test_toggle_fullscreen(handler, window_properties_service_mock, test_case: ToggleTestCase):
+def test_toggle_fullscreen(window_properties_service_mock, test_case: ToggleTestCase):
+    # noinspection PyCallingNonCallable
+    handler = MpvqcWindowVisibilityHandler()
     window_properties_service_mock.is_fullscreen = test_case.fullscreen
     window_properties_service_mock.is_maximized = test_case.maximized
     handler._was_maximized_before = test_case.was_maximized_before

@@ -5,10 +5,8 @@
 from pathlib import Path
 from typing import NamedTuple
 
-import inject
 import pytest
 
-from mpvqc.services import TypeMapperService
 from mpvqc.services.state import (
     CHANGE_ACTION,
     RESET_ACTION,
@@ -21,11 +19,8 @@ from mpvqc.services.state import (
 
 
 @pytest.fixture(autouse=True)
-def setup_inject(type_mapper):
-    def config(binder: inject.Binder):
-        binder.bind(TypeMapperService, type_mapper)
-
-    inject.configure(config, bind_in_runtime=False, clear=True)
+def configure_injections(common_bindings_with):
+    common_bindings_with()
 
 
 def initial_state(video: Path | None = None) -> ApplicationState:
