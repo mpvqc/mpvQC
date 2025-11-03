@@ -27,6 +27,6 @@ IconLabel {
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
         hoverEnabled: true
-        cursorShape: root.toolTipText ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: root.toolTipText ? Qt.PointingHandCursor : undefined
     }
 }
