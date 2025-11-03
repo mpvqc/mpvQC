@@ -15,7 +15,7 @@ def configure_injections():
     def config(binder: inject.Binder):
         binder.bind(ResourceReaderService, ResourceReaderService())
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.fixture(scope="module")

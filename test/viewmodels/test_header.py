@@ -38,7 +38,7 @@ def configure_inject(reset_service_mock, state_service, player_service_mock, set
         binder.bind(SettingsService, settings_service)
         binder.bind(ExportService, export_service_mock)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 class WindowTitleTestCase(NamedTuple):

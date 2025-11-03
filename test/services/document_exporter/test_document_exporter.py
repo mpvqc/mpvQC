@@ -15,13 +15,14 @@ from mpvqc.services import DocumentExportService, DocumentRenderService
 
 
 @pytest.fixture
-def document_renderer_service_mock() -> MagicMock:
+def document_renderer_service_mock(ubiquitous_bindings) -> MagicMock:
     mock = MagicMock()
 
     def config(binder: inject.Binder):
+        binder.install(ubiquitous_bindings)
         binder.bind(DocumentRenderService, mock)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
     return mock
 
 

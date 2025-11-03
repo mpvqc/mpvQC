@@ -25,7 +25,7 @@ def setup_inject(type_mapper):
     def config(binder: inject.Binder):
         binder.bind(TypeMapperService, type_mapper)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 def initial_state(video: Path | None = None) -> ApplicationState:

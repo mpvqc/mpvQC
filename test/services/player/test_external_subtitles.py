@@ -3,18 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from dataclasses import dataclass
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
-
-from mpvqc.services import PlayerService
-
-
-@pytest.fixture
-def player_service():
-    service = PlayerService()
-    service._mpv = MagicMock()
-    return service
 
 
 @dataclass

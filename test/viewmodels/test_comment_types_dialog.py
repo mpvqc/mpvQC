@@ -50,7 +50,7 @@ def configure_injections(mock_validator, mock_translator, mock_settings):
         binder.bind(ReverseTranslatorService, mock_translator)
         binder.bind(SettingsService, mock_settings)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.fixture
@@ -87,7 +87,7 @@ def test_initial_state_single_item():
         mock_settings.get_default_comment_types.return_value = single_item
         binder.bind_to_constructor(SettingsService, lambda: mock_settings)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
     # noinspection PyCallingNonCallable
     view_model_override = MpvqcCommentTypesDialogViewModel()

@@ -51,7 +51,7 @@ def configure_inject():
     def config(binder: inject.Binder):
         binder.bind(ReverseTranslatorService, ReverseTranslatorService())
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 @pytest.fixture(scope="session")

@@ -33,7 +33,7 @@ def _configure_injection(portable: bool):
     def config(binder: inject.Binder):
         binder.bind(ApplicationEnvironmentService, mock)
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 def test_service(non_portable_service, portable_service):

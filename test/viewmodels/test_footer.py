@@ -23,7 +23,7 @@ def configure_inject(player_service_mock, settings_service):
         binder.bind(TimeFormatterService, TimeFormatterService())
         binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())
 
-    inject.configure(config, clear=True)
+    inject.configure(config, bind_in_runtime=False, clear=True)
 
 
 def test_initial_state(view_model):

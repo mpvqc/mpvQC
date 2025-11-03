@@ -6,34 +6,40 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import inject
+import pytest
 
 from mpvqc.models import MpvqcExportTemplateModel
 from mpvqc.services import ApplicationPathsService
 
 
-def make_model(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModel:
-    mock = MagicMock()
-    mock.files_export_templates = mocked_paths
+@pytest.fixture
+def make_model(ubiquitous_bindings):
+    def _make(mocked_paths: tuple[Path, ...]) -> MpvqcExportTemplateModel:
+        mock = MagicMock()
+        mock.files_export_templates = mocked_paths
 
-    def config(binder: inject.Binder):
-        binder.bind(ApplicationPathsService, mock)
+        def config(binder: inject.Binder):
+            binder.install(ubiquitous_bindings)
+            binder.bind(ApplicationPathsService, mock)
 
-    inject.configure(config, clear=True)
-    # noinspection PyCallingNonCallable
-    return MpvqcExportTemplateModel()
+        inject.configure(config, bind_in_runtime=False, clear=True)
+        # noinspection PyCallingNonCallable
+        return MpvqcExportTemplateModel()
+
+    return _make
 
 
-def test_no_templates():
+def test_no_templates(make_model):
     model = make_model(mocked_paths=())
     assert model.rowCount() == 0
 
 
-def test_templates():
+def test_templates(make_model):
     model = make_model(mocked_paths=(Path.home(), Path.cwd()))
     assert model.rowCount() == 2
 
 
-def test_templates_sorted():
+def test_templates_sorted(make_model):
     model = make_model(
         mocked_paths=(
             Path("sub-path/xy"),
