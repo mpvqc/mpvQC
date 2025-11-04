@@ -2,10 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QFile, QLibraryInfo, QLocale, QTranslator
-from PySide6.QtGui import QGuiApplication
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QGuiApplication
 
 logger = logging.getLogger(__name__)
 

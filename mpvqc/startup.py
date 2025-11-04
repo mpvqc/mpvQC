@@ -79,7 +79,7 @@ def start_application():
     app.load_application_fonts()
     app.create_directories()
     app.set_up_signals()
-    app.load_language()
+    app.configure_i18n()
     app.start_engine()
     app.configure_window()
 
