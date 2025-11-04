@@ -142,7 +142,7 @@ def settings_service(tmp_path, type_mapper):
     return SettingsService(ini_file=type_mapper.map_path_to_str(file))
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture
 def qt_app() -> Generator[MpvqcApplication, Any]:
     QCoreApplication.setApplicationName("TestApp")
     app = MpvqcApplication([])

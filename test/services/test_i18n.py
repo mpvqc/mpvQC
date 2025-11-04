@@ -14,12 +14,6 @@ def service() -> InternationalizationService:
     return InternationalizationService()
 
 
-@pytest.fixture(scope="module", autouse=True)
-def teardown(qt_app, service):
-    yield
-    service.retranslate(qt_app, QLocale.system().name())
-
-
 def test_translation_override_works(qt_app, service):
     service.retranslate(qt_app, "es-ES")
     assert qt_app.translate("QPlatformTheme", "Reset") == "Reinicializar"

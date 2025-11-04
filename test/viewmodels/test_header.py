@@ -119,6 +119,7 @@ class WindowTitleTestCase(NamedTuple):
     ],
 )
 def test_window_title(
+    qt_app,
     view_model,
     configure_state,
     player_service_mock,

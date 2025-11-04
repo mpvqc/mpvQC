@@ -32,7 +32,7 @@ def configure_inject(common_bindings_with, backup_service_mock, settings_service
     common_bindings_with(custom_bindings)
 
 
-def test_backup_backend(view_model, backup_service_mock):
+def test_backup_backend(qt_app, view_model, backup_service_mock):
     view_model.backup()
     QThreadPool.globalInstance().waitForDone(100)
     assert backup_service_mock.backup.called
