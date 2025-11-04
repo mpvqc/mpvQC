@@ -49,18 +49,21 @@ class MpvqcApplication(QGuiApplication):
 
     def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
-        self._settings.languageChanged.connect(self._engine.setUiLanguage)
-        self._engine.uiLanguageChanged.connect(self._retranslate)
 
     def _on_quit(self) -> None:
         del self._engine
 
+    def configure_i18n(self):
+        language = self._settings.language
+        self._i18n.retranslate(app=self, language_code=language)
+        self._engine.setUiLanguage(language)
+
+        self._settings.languageChanged.connect(self._engine.setUiLanguage)
+        self._engine.uiLanguageChanged.connect(self._retranslate)
+
     def _retranslate(self):
         language_code = self._engine.uiLanguage()
         self._i18n.retranslate(app=self, language_code=language_code)
-
-    def load_language(self):
-        self._engine.setUiLanguage(self._settings.language)
 
     def start_engine(self):
         url = QUrl.fromLocalFile(":/qt/qml/MpvqcApplication.qml")
