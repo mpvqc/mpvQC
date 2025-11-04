@@ -7,7 +7,7 @@ from __future__ import annotations
 import typing
 
 import inject
-from PySide6.QtCore import QAbstractListModel, QByteArray, Qt, Signal
+from PySide6.QtCore import QAbstractListModel, QByteArray, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import SettingsService, ThemeService
@@ -51,6 +51,7 @@ class MpvqcThemePaletteModel(QAbstractListModel):
         self._theme_changed_connection = self._settings.themeIdentifierChanged.connect(self._set_theme_identifier)
         self.destroyed.connect(lambda: self._settings.themeIdentifierChanged.disconnect(self._theme_changed_connection))
 
+    @Slot(str)
     def _set_theme_identifier(self, theme_identifier: str) -> None:
         self._theme_identifier = theme_identifier
         self.aboutToReset.emit()

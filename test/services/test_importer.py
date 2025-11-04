@@ -135,7 +135,7 @@ def test_example_2_single_document_no_video_references(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == (comment1, comment2)
+    assert comments_spy.at(0, 0) == [comment1, comment2]
     assert invalid_docs_spy.count() == 0
 
     player_service_mock.open_video.assert_not_called()
@@ -557,7 +557,7 @@ def test_multiple_documents_single_video_already_loaded(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == (comment1, comment2)
+    assert comments_spy.at(0, 0) == [comment1, comment2]
     assert invalid_docs_spy.count() == 0
 
     assert player_service_mock.open_video.call_count == 0
@@ -670,7 +670,7 @@ def test_document_and_explicit_video(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == (comment1, comment2)
+    assert comments_spy.at(0, 0) == [comment1, comment2]
     assert invalid_docs_spy.count() == 0
 
     player_service_mock.open_video.assert_called_once_with(video)
@@ -878,7 +878,7 @@ def test_multiple_explicit_videos(
     assert len(asked_videos) == 2
     video_paths = [v.path for v in asked_videos]
     assert set(video_paths) == {video1, video2}
-    assert asked_subtitles == ()
+    assert asked_subtitles == []
 
     assert comments_spy.count() == 0
     assert invalid_docs_spy.count() == 0
@@ -935,7 +935,7 @@ def test_multiple_videos_one_already_loaded(
     # Then
     assert ask_user_spy.count() == 0
     assert comments_spy.count() == 1
-    assert comments_spy.at(0, 0) == (comment1, comment2)
+    assert comments_spy.at(0, 0) == [comment1, comment2]
     assert invalid_docs_spy.count() == 0
 
     player_service_mock.open_video.assert_not_called()

@@ -141,6 +141,7 @@ class MpvqcCommentModel(QStandardItemModel):
             )
         )
 
+    @Slot()
     def clear_comments(self) -> None:
         def on_after_undo():
             self.layoutChanged.emit()

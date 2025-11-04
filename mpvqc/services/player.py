@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QObject, Qt, Signal
+from PySide6.QtCore import QObject, Qt, Signal, SignalInstance, Slot
 
 from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
@@ -82,12 +82,12 @@ class PlayerService(QObject):
 
         self._mpv: MPV | None = None
 
-        self._dimensions_coordinator = DualSignalCoordinator(
-            signal_a=self.width_changed,
-            signal_b=self.height_changed,
+        self._dimensions_coordinator = DimensionsChangedCoordinator(
+            width_changed=self.width_changed,
+            height_changed=self.height_changed,
             reset_signal=self.path_changed,
         )
-        self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed.emit)
+        self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed)
 
     def init(self, win_id: int | None = None):
         args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
@@ -301,40 +301,41 @@ class PlayerService(QObject):
         self._mpv.terminate()
 
 
-class DualSignalCoordinator(QObject):
-    both_ready = Signal(object, object)
+class DimensionsChangedCoordinator(QObject):
+    both_ready = Signal(int, int)
 
-    def __init__(self, signal_a, signal_b, reset_signal=None):
+    def __init__(self, width_changed: SignalInstance, height_changed: SignalInstance, reset_signal: SignalInstance):
         super().__init__()
-        self._value_a = None
-        self._value_b = None
-        self._ready_a = False
-        self._ready_b = False
+        self._width = None
+        self._height = None
+        self._width_available = False
+        self._height_available = False
 
-        signal_a.connect(self._on_signal_a)
-        signal_b.connect(self._on_signal_b)
+        width_changed.connect(self._on_width_changed)
+        height_changed.connect(self._on_height_changed)
+        reset_signal.connect(self._reset)
 
-        if reset_signal:
-            reset_signal.connect(self._reset)
-
-    def _on_signal_a(self, value):
-        self._value_a = value
-        self._ready_a = True
+    @Slot(int)
+    def _on_width_changed(self, value):
+        self._width = value
+        self._width_available = True
         self._check_and_emit()
 
-    def _on_signal_b(self, value):
-        self._value_b = value
-        self._ready_b = True
+    @Slot(int)
+    def _on_height_changed(self, value):
+        self._height = value
+        self._height_available = True
         self._check_and_emit()
 
     def _check_and_emit(self):
-        if self._ready_a and self._ready_b and self._value_a and self._value_b:
-            self.both_ready.emit(self._value_a, self._value_b)
+        if self._width_available and self._height_available and self._width and self._height:
+            self.both_ready.emit(self._width, self._height)
             self._reset()
 
+    @Slot()
     def _reset(self):
-        self._ready_a = False
-        self._ready_b = False
+        self._width_available = False
+        self._height_available = False
 
 
 @dataclass(frozen=True)

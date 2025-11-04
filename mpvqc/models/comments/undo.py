@@ -5,7 +5,7 @@
 from collections.abc import Callable
 from typing import Any
 
-from PySide6.QtCore import QPersistentModelIndex
+from PySide6.QtCore import QPersistentModelIndex, Slot
 from PySide6.QtGui import QStandardItemModel, QUndoCommand, QUndoStack
 
 from mpvqc.datamodels import Comment
@@ -276,6 +276,10 @@ class MpvqcUndoStack(QUndoStack):
         self.indexChanged.connect(self.prevent_add_update_merge)
         self._last_add_command: AddAndUpdateCommentCommand | None = None
 
+    @Slot(int)
+    def prevent_add_update_merge(self, *_):
+        self._last_add_command = None
+
     def push(self, command: QUndoCommand):
         match command:
             case AddAndUpdateCommentCommand():
@@ -287,6 +291,3 @@ class MpvqcUndoStack(QUndoStack):
                 self.prevent_add_update_merge()
             case _:
                 super().push(command)
-
-    def prevent_add_update_merge(self, *_):
-        self._last_add_command = None

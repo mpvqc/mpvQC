@@ -30,6 +30,7 @@ class MpvqcDialogLoaderViewModel(QObject):
         super().__init__()
         self._importer.ask_user_what_to_import.connect(self._ask_user_what_to_import)
 
+    @Slot("QVariantList", "QVariantList")
     def _ask_user_what_to_import(
         self,
         videos_found: tuple[VideoSource, ...],

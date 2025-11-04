@@ -5,7 +5,7 @@
 import platform
 from dataclasses import dataclass
 
-from PySide6.QtCore import QEvent, QObject, Signal
+from PySide6.QtCore import QEvent, QObject, Signal, Slot
 
 
 @dataclass(frozen=True)
@@ -41,6 +41,7 @@ class HostIntegrationService(QObject):
         self._window = get_main_window()
         self._window.installEventFilter(self._zoom_factor_change_listener)
 
+    @Slot()
     def _invalidate_zoom_factor(self, *_) -> None:
         if (zoom_factor := get_display_zoom_factor()) != self._zoom_factor:
             self._zoom_factor = zoom_factor
