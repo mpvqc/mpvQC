@@ -36,31 +36,27 @@ class MpvqcApplication(QGuiApplication):
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(":/qt/qml/styles")
 
-    def set_window_icon(self):
+    def configure(self):
         icon = QIcon(":/data/icon.svg")
         self.setWindowIcon(icon)
 
-    def load_application_fonts(self):
         self._font_loader.load_application_fonts()
 
-    def create_directories(self):
         self._start_up.create_missing_directories()
         self._start_up.create_missing_files()
 
-    def set_up_signals(self):
         self.aboutToQuit.connect(self._on_quit)
 
-    @Slot()
-    def _on_quit(self) -> None:
-        del self._engine
-
-    def configure_i18n(self):
         language = self._settings.language
         self._i18n.retranslate(app=self, language_code=language)
         self._engine.setUiLanguage(language)
 
         self._settings.languageChanged.connect(self._on_language_changed)
         self._engine.uiLanguageChanged.connect(self._retranslate)
+
+    @Slot()
+    def _on_quit(self) -> None:
+        del self._engine
 
     @Slot(str)
     def _on_language_changed(self, language: str) -> None:
@@ -71,19 +67,17 @@ class MpvqcApplication(QGuiApplication):
         language_code = self._engine.uiLanguage()
         self._i18n.retranslate(app=self, language_code=language_code)
 
-    def start_engine(self):
+    def start(self):
         url = QUrl.fromLocalFile(":/qt/qml/MpvqcApplication.qml")
         self._engine.load(url)
 
         if not self._engine.rootObjects():
             sys.exit(-1)
 
-    def configure_window(self):
         window = get_main_window()
         self._frameless_window.configure_for(self, window)
         window.installEventFilter(self._close_event_filter)
 
-    def show(self):
         remove_nuitka_splash_screen()
         get_main_window().setVisible(True)
 

@@ -74,15 +74,7 @@ def start_application():
     from mpvqc.application import MpvqcApplication
 
     app = MpvqcApplication(sys.argv)
-
-    app.set_window_icon()
-    app.load_application_fonts()
-    app.create_directories()
-    app.set_up_signals()
-    app.configure_i18n()
-    app.start_engine()
-    app.configure_window()
-
-    app.show()
+    app.configure()
+    app.start()
 
     sys.exit(app.exec())

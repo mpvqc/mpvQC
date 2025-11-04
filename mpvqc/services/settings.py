@@ -28,7 +28,10 @@ def get_default_movie_location() -> QUrl:
 
 
 @cache
-def get_default_language(locale: QLocale = QLocale.system()) -> str:
+def get_default_language(locale: QLocale | None = None) -> str:
+    if locale is None:
+        locale = QLocale.system()
+
     system_languages = locale.uiLanguages()
 
     from mpvqc.models.languages import LANGUAGES

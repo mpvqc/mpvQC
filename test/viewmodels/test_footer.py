@@ -25,6 +25,11 @@ def configure_inject(common_bindings_with, player_service_mock, settings_service
     common_bindings_with(custom_bindings)
 
 
+@pytest.fixture(autouse=True)
+def qt_app_must_be_running(qt_app):
+    pass
+
+
 def test_initial_state(view_model):
     assert view_model.selectedCommentIndex == 0
     assert view_model.totalCommentCount == 0
