@@ -96,6 +96,7 @@ class MpvqcFooterViewModel(QObject):
     def commentCountText(self) -> str:
         return self._comment_count_text
 
+    @Slot()
     def _update_comment_count_text(self) -> None:
         new_text = f"{self._selected_comment_index + 1}/{self._total_comment_count}"
         if self._comment_count_text != new_text:
@@ -106,6 +107,7 @@ class MpvqcFooterViewModel(QObject):
     def isCommentCountVisible(self) -> bool:
         return self._is_comment_count_visible
 
+    @Slot()
     def _update_is_comment_count_visible(self) -> None:
         new_visibility = self._total_comment_count > 0
         if self._is_comment_count_visible != new_visibility:
@@ -116,6 +118,7 @@ class MpvqcFooterViewModel(QObject):
     def videoPercentText(self) -> str:
         return self._video_percent_text
 
+    @Slot(int)
     def _update_video_percent_text(self, percent: int) -> None:
         new_text = f"{percent}%"
         if self._video_percent_text != new_text:
@@ -126,6 +129,7 @@ class MpvqcFooterViewModel(QObject):
     def isVideoPercentVisible(self) -> bool:
         return self._is_video_percent_visible
 
+    @Slot()
     def _update_is_video_percent_visible(self) -> None:
         new_visibility = self._settings.statusbar_percentage and self._player.video_loaded
         if self._is_video_percent_visible != new_visibility:
@@ -144,6 +148,7 @@ class MpvqcFooterViewModel(QObject):
     def timeText(self) -> str:
         return self._time_text
 
+    @Slot()
     def _update_time_text(self) -> None:
         time_format = self._settings.time_format
         video_loaded = self._player.video_loaded
@@ -168,6 +173,7 @@ class MpvqcFooterViewModel(QObject):
     def isTimeTextVisible(self) -> bool:
         return self._is_time_text_visible
 
+    @Slot()
     def _update_is_time_text_visible(self) -> None:
         new_visibility = self._player.video_loaded and self._settings.time_format != self.TimeFormat.EMPTY
         if self._is_time_text_visible != new_visibility:
@@ -178,6 +184,7 @@ class MpvqcFooterViewModel(QObject):
     def timeWidth(self) -> int:
         return self._time_width
 
+    @Slot()
     def _update_time_width(self) -> None:
         new_width = 0 if not self._time_text else self._label_calculator.calculate_width_for([self._time_text])
 

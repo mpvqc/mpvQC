@@ -123,14 +123,15 @@ class ImporterService(QObject):
     _settings: SettingsService = inject.attr(SettingsService)
     _state: StateService = inject.attr(StateService)
 
-    comments_ready_for_import = Signal(tuple)
+    # note: we actually emit with tuples but this would fall back to dynamic slot registration
+    comments_ready_for_import = Signal(list)
 
     # param: tuple[str, ...] - tuple of file names that could not be processed
     erroneous_documents_imported = Signal(tuple)
 
     # param 1: tuple[VideoSource, ...] - found videos with source flags
     # param 2: tuple[Path, ...] - found subtitles
-    ask_user_what_to_import = Signal(tuple, tuple)
+    ask_user_what_to_import = Signal(list, list)
 
     def __init__(self):
         super().__init__()
