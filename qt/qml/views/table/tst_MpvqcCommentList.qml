@@ -144,8 +144,7 @@ TestCase {
     }
 
     function waitUntilEditControlClosed(control: MpvqcCommentList): void {
-        tryCompare(control.editLoader, "status", Loader.Ready, testCase.timeout);
-        tryVerify(() => control.editLoader.item?.closed);
+        tryVerify(() => !control.editLoader.item);
     }
 
     function waitUntilContextMenuOpened(control: MpvqcCommentList): void {
@@ -490,5 +489,39 @@ TestCase {
         keyPress(Qt.Key_Return);
         waitUntilEditControlClosed(control);
         compare(control.getItem(0, "comment"), "Comment 1");
+    }
+
+    function test_editCommentThenDoubleClickAnother(): void {
+        const control = makeControl();
+
+        // Start editing first comment
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        waitUntilEditControlOpened(control);
+
+        // Type some text
+        keyPress("h");
+        keyPress("i");
+
+        // Double-click on second comment
+        mouseDoubleClickSequence(control, _clickHelper.columnComment, _clickHelper.row2Center);
+        waitUntilEditControlOpened(control);
+
+        // Verify editing was successful
+        compare(control.getItem(0, "comment"), "hi");
+
+        wait(testCase.timeout);
+
+        // Verify editing is still active even after timeout
+        verify(control.isCurrentlyEditing);
+        verify(control.editLoader.item);
+        compare(control.currentIndex, 1);
+        // Verify content in editing mode is correct
+        compare(control.editLoader.item.textField.text, "Comment 2");
+        // Verify text below the editing popup is empty
+        compare(control.itemAtIndex(1).commentLabel.text, "");
+
+        mouseClick(control, _clickHelper.columnComment, _clickHelper.row1Center);
+        // Verify text is displayed again
+        tryCompare(control.itemAtIndex(1).commentLabel, "text", "Comment 2");
     }
 }

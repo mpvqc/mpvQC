@@ -15,6 +15,8 @@ Popup {
 
     readonly property bool isOdd: currentListIndex % 2 === 1
 
+    readonly property alias textField: _textField // for tests
+
     property int previousHeight: 0
     property bool acceptValue: true
 
