@@ -100,18 +100,16 @@ Loader {
         }
 
         function onClosed(): void {
-            _stopEditDelayTimer.restart();
-        }
-    }
-
-    Timer {
-        id: _stopEditDelayTimer
-
-        // Comment editing needs 150ms delay to allow signal handler to complete.
-        interval: root.isEditingComment ? 150 : 0
-
-        onTriggered: {
-            root.active = false;
+            // When closing without animation, focus loss triggers onClosed() before click handlers on delegates
+            // execute. Defer deactivation to allow click handlers to detect the editing state as a human would perceive
+            // it. In typical usage, this enables the sequence: editing → click other component → editor closes → new
+            // editor opens smoothly. The deferred check prevents deactivation during rapid editor transitions.
+            Qt.callLater(() => {
+                if (root.item && root.item.opened) {
+                    return;
+                }
+                root.active = false;
+            });
         }
     }
 }

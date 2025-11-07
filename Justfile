@@ -106,6 +106,7 @@ test-qml SKIP_PREPARATION='false':
     # Pass additional arguments to qmltestrunner:
     sys.argv += ["-silent"]
     sys.argv += ["-input", "qt/qml"]
+    # sys.argv += ["-eventdelay", "50"]  # Simulate slower systems
 
     ex = QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=sys.argv)
     sys.exit(ex)
