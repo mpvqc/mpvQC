@@ -6,11 +6,28 @@ from email.message import Message
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError, URLError
 
+import inject
 import pytest
 
-from mpvqc.services import VersionCheckerService
+from mpvqc.services import BuildInfoService, VersionCheckerService
 
 MODULE = "mpvqc.services.version_checker"
+
+
+@pytest.fixture
+def build_info_service_mock() -> MagicMock:
+    return MagicMock(spec_set=BuildInfoService)
+
+
+@pytest.fixture(autouse=True)
+def configure_inject(
+    common_bindings_with,
+    build_info_service_mock,
+):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(BuildInfoService, build_info_service_mock)
+
+    common_bindings_with(custom_bindings)
 
 
 def mock_response(mock, *, status=200, body="", error=None):
@@ -25,34 +42,26 @@ def mock_response(mock, *, status=200, body="", error=None):
     mock.return_value = context_manager_mock
 
 
-def mock_current_version(mock, *, version: str):
-    mock.return_value.applicationVersion.return_value = version
-
-
 @pytest.fixture
 def service() -> VersionCheckerService:
     return VersionCheckerService()
 
 
-def test_version_checker_latest(service):
-    with (
-        patch(f"{MODULE}.urllib.request.urlopen") as mock_request,
-        patch(f"{MODULE}.QCoreApplication.instance") as mock_app,
-    ):
+def test_version_checker_latest(service, build_info_service_mock):
+    build_info_service_mock.version = "0.1.0"
+
+    with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, body='{ "latest": "0.1.0" }')
-        mock_current_version(mock_app, version="0.1.0")
         actual_title, _ = service.check_for_new_version()
 
     assert actual_title == "👌"
 
 
-def test_version_checker_new_version_available(service):
-    with (
-        patch(f"{MODULE}.urllib.request.urlopen") as mock_request,
-        patch(f"{MODULE}.QCoreApplication.instance") as mock_app,
-    ):
+def test_version_checker_new_version_available(service, build_info_service_mock):
+    build_info_service_mock.version = "0.1.1"
+
+    with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, body='{ "latest": "0.1.0" }')
-        mock_current_version(mock_app, version="0.1.1")
         actual_title, _ = service.check_for_new_version()
 
     assert actual_title == "New Version Available"

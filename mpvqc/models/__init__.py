@@ -4,6 +4,7 @@
 
 # ruff: noqa: F401
 from .comments import MpvqcCommentModel
+from .dependencies import MpvqcDependencyModel
 from .export_templates import MpvqcExportTemplateModel
 from .import_options import ImportOptionsModel
 from .languages import MpvqcLanguageModel

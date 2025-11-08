@@ -19,15 +19,12 @@ MpvqcDialog {
 
     readonly property MpvqcAboutDialogViewModel viewModel: MpvqcAboutDialogViewModel {}
 
-    readonly property string applicationName: Qt.application.name
-    readonly property string applicationVersion: `${Qt.application.version} - >>>commit-id<<<`
-
     //: This text is part of the software license description. This is the name of the license being used.
     readonly property string licenseDescription: qsTranslate("AboutDialog", "GNU General Public License, version 3 or later")
     //: This text is part of the software license description
     readonly property string licenseText1: qsTranslate("AboutDialog", "This program comes with absolutely no warranty.")
     //: This text is part of the software license description. Argument %1 will be the link to the license
-    readonly property string licenseText2: qsTranslate("AboutDialog", "See the %1 for details.").arg(root.licenseWebsite)
+    readonly property string licenseText2: qsTranslate("AboutDialog", "See the %1 for details.").arg(licenseWebsite)
 
     readonly property url appUrl: "https://mpvqc.github.io"
     readonly property url licenseUrl: "https://www.gnu.org/licenses/gpl-3.0.html"
@@ -61,18 +58,43 @@ MpvqcDialog {
             }
 
             MpvqcHeader {
-                text: root.applicationName
+                text: root.viewModel.applicationName
                 font.pointSize: 14
 
                 Layout.alignment: Qt.AlignHCenter
             }
 
             Label {
-                text: root.applicationVersion
+                text: root.viewModel.applicationVersion
                 font.weight: Font.DemiBold
 
                 Layout.alignment: Qt.AlignHCenter
+
+                ToolButton {
+                    readonly property url beforeCopyIcon: "qrc:/data/icons/content_copy_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    readonly property url afterCopyIcon: "qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+
+                    anchors.left: parent.right
+                    anchors.leftMargin: 0
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    flat: true
+                    icon.source: beforeCopyIcon
+                    icon.width: 20
+                    icon.height: 20
+
+                    onClicked: {
+                        root.viewModel.copyVersionInfoToClipboard();
+                        icon.source = afterCopyIcon;
+                    }
+
+                    ToolTip.delay: 350
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTranslate("AboutDialog", "Copy version info to clipboard")
+                }
             }
+
+            MpvqcSpacer {}
 
             Label {
                 text: root.applicationWebsite
@@ -180,12 +202,11 @@ MpvqcDialog {
             MpvqcSpacer {}
 
             Repeater {
-                model: MpvqcLibraryModel {}
+                model: MpvqcDependencyModel {}
 
                 MpvqcTwoColumnDependencyRow {
                     required property string licence
                     required property string name
-                    required property string os
                     required property string url
                     required property string version
 
@@ -193,7 +214,6 @@ MpvqcDialog {
                     dependencyUrl: url
                     dependencyLicence: licence
                     dependencyVersion: version
-                    visible: os.indexOf(Qt.platform.os) >= 0
 
                     Layout.fillWidth: true
                 }
@@ -215,6 +235,16 @@ MpvqcDialog {
                 dependencyLicence: "Apache-2.0"
 
                 Layout.fillWidth: true
+            }
+
+            MpvqcSpacer {}
+
+            Label {
+                text: qsTranslate("AboutDialog", "Powered by Python %1").arg(root.viewModel.pythonVersion)
+                font.italic: true
+                opacity: 0.7
+
+                Layout.alignment: Qt.AlignHCenter
             }
         }
     }

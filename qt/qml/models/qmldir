@@ -5,5 +5,4 @@
 module models
 
 MpvqcCreditsModel MpvqcCreditsModel.qml
-MpvqcLibraryModel.qml MpvqcLibraryModel.qml
 MpvqcShortcutsModel MpvqcShortcutsModel.qml

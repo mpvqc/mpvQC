@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[application] # todo add CI validation and break build if something goes wrong
+name = "mpvQC"
+organization = "mpvQC"
+domain = "mpvqc.github.io"
+version = ">>>tag<<<"      # CI replaces this
+commit = ">>>commit-id<<<" # CI replaces this
+is_release = false         # CI replaces this
+
+[[dependency]]
+name = "inject"
+package = "inject"
+version = "5.3.0"                                     # Real version, updated by script
+url = "https://github.com/ivankorobkov/python-inject"
+licence = "Apache-2.0"
+platforms = ["linux", "win32"]                        # Match sys.platform values
+
+[[dependency]]
+name = "jinja2"
+package = "Jinja2"
+version = "3.1.6"
+url = "https://github.com/pallets/jinja/"
+licence = "BSD-3-Clause"
+platforms = ["linux", "win32"]
+
+[[dependency]]
+name = "python-colorlog"
+package = "colorlog"
+version = "6.10.1"
+url = "https://github.com/borntyping/python-colorlog"
+licence = "MIT"
+platforms = ["linux", "win32"]
+
+[[dependency]]
+name = "python-mpv"
+package = "mpv"
+version = "1.0.8"
+url = "https://github.com/jaseg/python-mpv"
+licence = "GPL-3.0"
+platforms = ["linux", "win32"]
+
+[[dependency]]
+name = "PySide6"
+package = "PySide6-Essentials"
+version = "6.10.0"
+url = "https://wiki.qt.io/Qt_for_Python"
+licence = "LGPL-3.0"
+platforms = ["linux", "win32"]
+
+[[dependency]]
+name = "pywin32"
+package = "pywin32"
+version = "311"
+url = "https://github.com/mhammond/pywin32"
+licence = "PSF-2.0"
+platforms = ["win32"]
+
+[[dev_dependency]]
+name = "pytest"
+package = "pytest"
+version = "9.0.0"
+url = "https://github.com/pytest-dev/pytest"
+licence = "MIT"
+platforms = ["linux", "win32"]

@@ -19,9 +19,13 @@ def perform_startup():
 def configure_qt_application_data():
     from PySide6.QtCore import QCoreApplication
 
-    QCoreApplication.setApplicationName("mpvQC")
-    QCoreApplication.setOrganizationName("mpvQC")
-    QCoreApplication.setApplicationVersion(">>>tag<<<")
+    from mpvqc.build import get_build_info
+
+    app = get_build_info().application
+    QCoreApplication.setApplicationName(app.name)
+    QCoreApplication.setOrganizationName(app.organization)
+    QCoreApplication.setOrganizationDomain(app.domain)
+    QCoreApplication.setApplicationVersion(app.version)
 
 
 def configure_qt_style():
@@ -40,7 +44,7 @@ def configure_qt_settings():
 def configure_logging():
     from PySide6 import QtCore
 
-    from .logging_utils import qt_log_handler, setup_mpvqc_logging
+    from mpvqc.logging_utils import qt_log_handler, setup_mpvqc_logging
 
     setup_mpvqc_logging()
     QtCore.qInstallMessageHandler(qt_log_handler())

@@ -85,6 +85,24 @@ def test_renders_partial_headers(configure_mocks, service, resource_service):
     assert expected == actual
 
 
+def test_renders_partial_headers_generator(configure_mocks, service, resource_service, build_info_service_mock):
+    build_info_service_mock.name = "Jon"
+    build_info_service_mock.version = "Snow"
+    configure_mocks(write_header_generator=True)
+
+    expected = textwrap.dedent(
+        """\
+        [FILE]
+        generator : Jon Snow
+
+        [DATA]
+        # total lines: 0
+        """
+    )
+    actual = service.render(resource_service.default_export_template)
+    assert expected == actual
+
+
 def test_renders_comments(configure_mocks, service, resource_service):
     configure_mocks(
         comments=[

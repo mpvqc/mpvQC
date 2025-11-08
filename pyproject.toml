@@ -25,7 +25,7 @@ classifiers = [
 
 [dependency-groups]
 dev = [
-    "pytest>=8.4.2",
+    "pytest>=9.0.0",
     "materialyoucolor>=2.0.10",
 ]
 
@@ -115,6 +115,7 @@ notice-rgx = "SPDX-FileCopyrightText: mpvQC developers"
 [tool.pyside6-project]
 files = [
     # WARNING! This list is auto updated by the just build helper
+    "data/build-info.toml",
     "data/config/backup-template.jinja",
     "data/config/export-template.jinja",
     "data/config/input.conf",
@@ -186,6 +187,7 @@ files = [
     "main.py",
     "mpvqc/__init__.py",
     "mpvqc/application.py",
+    "mpvqc/build.py",
     "mpvqc/datamodels.py",
     "mpvqc/injections.py",
     "mpvqc/logging_utils.py",
@@ -196,6 +198,7 @@ files = [
     "mpvqc/models/comments/roles.py",
     "mpvqc/models/comments/undo.py",
     "mpvqc/models/comments/utils.py",
+    "mpvqc/models/dependencies.py",
     "mpvqc/models/export_templates.py",
     "mpvqc/models/import_options.py",
     "mpvqc/models/languages.py",
@@ -204,6 +207,7 @@ files = [
     "mpvqc/services/__init__.py",
     "mpvqc/services/application_environment.py",
     "mpvqc/services/application_paths.py",
+    "mpvqc/services/build_info.py",
     "mpvqc/services/comment_type_validator.py",
     "mpvqc/services/document_exporter.py",
     "mpvqc/services/document_importer.py",
@@ -327,7 +331,6 @@ files = [
     "qt/qml/messageboxes/MpvqcVersionCheckMessageBox.qml",
     "qt/qml/messageboxes/qmldir",
     "qt/qml/models/MpvqcCreditsModel.qml",
-    "qt/qml/models/MpvqcLibraryModel.qml",
     "qt/qml/models/MpvqcShortcutsModel.qml",
     "qt/qml/models/qmldir",
     "qt/qml/MpvqcApplication.qml",

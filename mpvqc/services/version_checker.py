@@ -7,16 +7,17 @@ import urllib.error
 import urllib.request
 from functools import cache
 
+import inject
 from PySide6.QtCore import QCoreApplication
+
+from .build_info import BuildInfoService
 
 
 class VersionCheckerService:
+    _build_info: BuildInfoService = inject.attr(BuildInfoService)
+
     HOME_URL = "https://mpvqc.github.io"
     UPDATE_URL = f"{HOME_URL}/api/v1/public/version"
-
-    @property
-    def _current_version(self) -> str:
-        return QCoreApplication.instance().applicationVersion()
 
     def check_for_new_version(self) -> tuple[str, str]:
         # fmt: off
@@ -31,7 +32,7 @@ class VersionCheckerService:
             text = QCoreApplication.translate("VersionCheckDialog", "A connection to the server could not be established.")
             return title, text
 
-        if self._current_version != latest_version:
+        if self._build_info.version != latest_version:
             new_version = f"<i>{latest_version}</i>"
             home_url = f'<a href="{self.HOME_URL}">{self.HOME_URL}</a>'
 
