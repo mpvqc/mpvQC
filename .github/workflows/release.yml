@@ -79,9 +79,6 @@ jobs:
 
           #
           echo "::group::Set Build Information"
-          PLACEHOLDER_TAG=">>>tag<<<"
-          PLACEHOLDER_COMMIT=">>>commit-id<<<"
-
           CURRENT_TAG="$(git describe --tags --abbrev=0)"
           debug "git tag: $CURRENT_TAG"
 
@@ -89,29 +86,27 @@ jobs:
           CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
           debug "git commit: $CURRENT_COMMIT"
 
+          if [[ "${{ github.ref }}" =~ ^refs/tags/v ]]; then
+            IS_RELEASE="true"
+            debug "This is a release build (triggered by tag)"
+          else
+            IS_RELEASE="false"
+            debug "This is a development build"
+          fi
+
           ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
           debug "artifact name: $ARTIFACT_NAME"
           echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
-          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "mpvqc/startup.py"
-          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "mpvqc/startup.py"
-          execute cat "mpvqc/startup.py"
-
-          execute sed -i "s/$PLACEHOLDER_TAG/$CURRENT_TAG/g" "qt/qml/dialogs/MpvqcAboutDialog.qml"
-          execute sed -i "s/$PLACEHOLDER_COMMIT/$CURRENT_COMMIT/g" "qt/qml/dialogs/MpvqcAboutDialog.qml"
-          execute cat "qt/qml/dialogs/MpvqcAboutDialog.qml"
+          execute sed -i '1,13s/^version = .*/version = "'"$CURRENT_TAG"'"/' "data/build-info.toml"
+          execute sed -i '1,13s/^commit = .*/commit = "'"$CURRENT_COMMIT"'"/' "data/build-info.toml"
+          execute sed -i '1,13s/^is_release = .*/is_release = '"$IS_RELEASE"'/' "data/build-info.toml"
+          execute cat "data/build-info.toml"
           echo "::endgroup::"
 
           #
           echo "::group::Setup Virtual Environment"
           execute just init
-          echo "::endgroup::"
-
-          #
-          echo "::group::Set Dependency Versions"
-          DEPENDENCY_MODEL_PATH="qt/qml/models/MpvqcLibraryModel.qml"
-          execute just insert-dependency-versions "$DEPENDENCY_MODEL_PATH"
-          execute cat "$DEPENDENCY_MODEL_PATH"
           echo "::endgroup::"
 
           #

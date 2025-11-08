@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-[application] # todo add CI validation and break build if something goes wrong
+[application]
 name = "mpvQC"
 organization = "mpvQC"
 domain = "mpvqc.github.io"
