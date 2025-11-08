@@ -122,18 +122,6 @@ test-qml SKIP_PREPARATION='false':
 @update-translations: _update_pyproject_file _update_lupdate_project_file
     uv run pyside6-lupdate -locations none -project project.json
 
-# Insert dependency versions
-[group('CI')]
-@insert-dependency-versions +UPDATE_INPLACE:
-    uv --offline export \
-        --no-hashes \
-        --no-annotate \
-        --output-file requirements.txt
-    python build-aux/insert-dependency-versions.py \
-        --requirements-txt requirements.txt \
-        --update-inplace {{ UPDATE_INPLACE }}
-    rm requirements.txt
-
 @_prepare-tests: build-develop
     rm -f test/rc_project.py
     cp rc_project.py test/rc_project.py
