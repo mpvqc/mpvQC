@@ -24,11 +24,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Copy version info to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Made by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Powered by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powered by Python %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -548,14 +556,6 @@
     </message>
     <message>
         <source>Do you really want to create a new QC document without saving your QC?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A video was found. Do you want to open it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

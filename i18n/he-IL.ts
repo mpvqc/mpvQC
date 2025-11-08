@@ -25,11 +25,19 @@
         <translation>לפרטים נוספים, ראו את %1.</translation>
     </message>
     <message>
+        <source>Copy version info to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Made by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Powered by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powered by Python %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -560,11 +568,11 @@
     </message>
     <message>
         <source>Video Found</source>
-        <translation>וידאו נמצא</translation>
+        <translation type="vanished">וידאו נמצא</translation>
     </message>
     <message>
         <source>A video was found. Do you want to open it?</source>
-        <translation>קובץ וידאו נמצא. האם ברצונך לפתוח אותו?</translation>
+        <translation type="vanished">קובץ וידאו נמצא. האם ברצונך לפתוח אותו?</translation>
     </message>
     <message>
         <source>Delete Comment</source>
