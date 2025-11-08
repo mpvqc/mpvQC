@@ -10,6 +10,7 @@ from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QObject, QStand
 from PySide6.QtGui import QStandardItemModel
 
 from .application_paths import ApplicationPathsService
+from .build_info import BuildInfoService
 from .formatter_time import TimeFormatterService
 from .player import PlayerService
 from .resource import ResourceService
@@ -19,6 +20,7 @@ from .settings import SettingsService
 class DocumentRenderService:
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
+    _build_info: BuildInfoService = inject.attr(BuildInfoService)
 
     class Filters:
         _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
@@ -48,7 +50,7 @@ class DocumentRenderService:
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
         comments = QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
-        generator = f"{QCoreApplication.applicationName()} {QCoreApplication.applicationVersion()}"
+        generator = f"{self._build_info.name} {self._build_info.version}"
         nickname = self._settings.nickname
         subtitles = [str(sub) for sub in self._player.external_subtitles]
 

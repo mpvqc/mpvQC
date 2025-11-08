@@ -171,3 +171,40 @@ _generate-qrc-file:
         --include-file main.py \
         --include-file project.qrc \
         --out-file project.json
+
+# Update dependency versions in build-info.toml
+_update-dependency-versions:
+    #!/usr/bin/env bash
+    uv --offline export --no-hashes --no-annotate | uv run python -c '
+    import re, sys, tomllib
+    from pathlib import Path
+
+    # Parse versions from stdin
+    versions = {}
+    for line in sys.stdin:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            package_spec = line.split(";")[0].strip()
+            if "==" in package_spec:
+                package, version = package_spec.split("==", 1)
+                versions[package.lower()] = version
+
+    # Update build-info.toml
+    toml_path = Path() / "data" / "build-info.toml"
+    content = toml_path.read_text()
+
+    with toml_path.open("rb") as f:
+        data = tomllib.load(f)
+
+    for dep_list in ["dependency", "dev_dependency"]:
+        for dep in data[dep_list]:
+            package_key = dep["package"].lower()
+            if package_key in versions:
+                v = versions[package_key]
+                name_escaped = re.escape(dep["name"])
+                pattern = "(name = \"" + name_escaped + "\".*?version = )\"[^\"]*\""
+                replacement = r"\1" + "\"" + v + "\""
+                content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+
+    toml_path.write_text(content)
+    '

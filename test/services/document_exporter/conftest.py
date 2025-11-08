@@ -10,6 +10,7 @@ import pytest
 
 from mpvqc.services import (
     ApplicationPathsService,
+    BuildInfoService,
     DocumentRenderService,
     PlayerService,
     SettingsService,
@@ -30,6 +31,11 @@ def application_paths_service_mock() -> MagicMock:
 
 
 @pytest.fixture
+def build_info_service_mock() -> MagicMock:
+    return MagicMock(spec_set=BuildInfoService)
+
+
+@pytest.fixture
 def document_render_service_mock() -> MagicMock:
     return MagicMock(spec_set=DocumentRenderService)
 
@@ -43,12 +49,14 @@ def player_service_mock():
 def configure_injections(
     common_bindings_with,
     application_paths_service_mock,
+    build_info_service_mock,
     document_render_service_mock,
     player_service_mock,
     settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(ApplicationPathsService, application_paths_service_mock)
+        binder.bind(BuildInfoService, build_info_service_mock)
         binder.bind(DocumentRenderService, document_render_service_mock)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)

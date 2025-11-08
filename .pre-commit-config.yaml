@@ -39,7 +39,7 @@ repos:
           - "--option"
           - "indent_string=    "
   - repo: https://github.com/google/yamlfmt
-    rev: v0.17.2
+    rev: v0.20.0
     hooks:
       - id: yamlfmt
         name: "format yml"
@@ -51,7 +51,7 @@ repos:
           - "-formatter"
           - "scan_folded_as_literal=true"
   - repo: https://github.com/hukkin/mdformat
-    rev: 0.7.22
+    rev: 1.0.0
     hooks:
       - id: mdformat
         name: "format md"
@@ -65,7 +65,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.0
+    rev: v0.14.4
     hooks:
       - id: ruff
         name: "lint py"
@@ -74,7 +74,7 @@ repos:
       - id: ruff-format
         name: "format py"
   - repo: https://github.com/tomas-krupa/qmlformat-hook.git
-    rev: 1.0.1
+    rev: 1.2.0
     hooks:
       - id: qmlformat
         files: '.*\.qml$'
@@ -82,7 +82,7 @@ repos:
         args:
           - --newline=unix
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v6.1.2
+    rev: v6.2.0
     hooks:
       - id: reuse-lint-file
         name: "lint licenses"
