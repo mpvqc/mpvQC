@@ -6,14 +6,13 @@ export QT_QPA_PLATFORM := 'offscreen'
 export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
 export QT_QUICK_CONTROLS_STYLE := 'Material'
 
+alias fmt := format
+
 @_default:
-    just --list
+    just --list --unsorted
 
-# Format code
-@format:
-    uvx prek@0.2.12 run --all-files
-
-# Initialize repository
+# Install dependencies and configure basic stuff
+[group('dev')]
 init ARGS='--group dev':
     #!/usr/bin/env bash
     uv sync {{ ARGS }}
@@ -36,6 +35,19 @@ init ARGS='--group dev':
       echo '{{ '{{' }}' > appdata/export-templates/export-error.jinja
     fi
 
+[group('dev')]
+@format:
+    uvx prek@0.2.12 run --all-files
+
+[group('dev')]
+update-python-dependencies:
+    uv sync --upgrade
+    just _update-dependency-versions
+
+[group('dev')]
+update-git-hook-dependencies:
+    uvx prek@0.2.12 autoupdate
+
 # Build full project into build/release
 [group('build')]
 @build: clean
@@ -57,32 +69,10 @@ init ARGS='--group dev':
     find qt/qml -name "*.qmlc" -type f -delete
     rm -rf build pyobjects test/rc_project.py rc_project.py project.json project.qrc
 
-# Add language; pattern: language-region ISO 639-1, ISO 3166-1; example: fr-FR
-[group('i18n')]
-@add-translation locale: _update_pyproject_file
-    uv run pyside6-lupdate -source-language en-US -target-language {{ locale }} -ts i18n/{{ locale }}.ts
-    just update-translations
-
-# Update *.ts files by traversing the source code
-[group('i18n')]
-@update-translations: _update_pyproject_file _update_lupdate_project_file
-    uv run pyside6-lupdate -locations none -project project.json
-
-# Lint Python files (type checker)
-[group('lint')]
-@lint-python:
-    uvx pyrefly@0.39.4 check --ignore missing-attribute
-
-# Lint QML files
-[group('lint')]
-@lint-qml: build-develop
-    uv run pyside6-project qmllint
-
 # Run Python and QML tests
 [group('test')]
 @test: _prepare-tests (test-python 'no-prep') (test-qml 'no-prep')
 
-# Run Python tests
 [group('test')]
 test-python SKIP_PREPARATION='false':
     #!/usr/bin/env bash
@@ -91,7 +81,6 @@ test-python SKIP_PREPARATION='false':
     fi
     uv run pytest build-aux test
 
-# Run QML tests
 [group('test')]
 test-qml SKIP_PREPARATION='false':
     #!/usr/bin/env bash
@@ -111,6 +100,27 @@ test-qml SKIP_PREPARATION='false':
     ex = QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=sys.argv)
     sys.exit(ex)
     '
+
+# Lint Python files (type checker only)
+[group('lint')]
+@lint-python:
+    uvx pyrefly@0.39.4 check --ignore missing-attribute
+
+# Lint QML files
+[group('lint')]
+@lint-qml: build-develop
+    uv run pyside6-project qmllint
+
+# Add language 'LOCALE' e.g. 'fr-FR' (ISO 639-1, ISO 3166-1)
+[group('i18n')]
+@add-translation LOCALE: _update_pyproject_file
+    uv run pyside6-lupdate -source-language en-US -target-language {{ LOCALE }} -ts i18n/{{ LOCALE }}.ts
+    just update-translations
+
+# Update translation strings
+[group('i18n')]
+@update-translations: _update_pyproject_file _update_lupdate_project_file
+    uv run pyside6-lupdate -locations none -project project.json
 
 # Insert dependency versions
 [group('CI')]
