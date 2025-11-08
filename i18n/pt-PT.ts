@@ -24,11 +24,19 @@
         <translation>Consultar a %1 para mais detalhes.</translation>
     </message>
     <message>
+        <source>Copy version info to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Made by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Powered by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powered by Python %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -552,11 +560,11 @@
     </message>
     <message>
         <source>Video Found</source>
-        <translation>Vídeo Encontrado</translation>
+        <translation type="vanished">Vídeo Encontrado</translation>
     </message>
     <message>
         <source>A video was found. Do you want to open it?</source>
-        <translation>Foi encontrado um vídeo. Deseja abri-lo?</translation>
+        <translation type="vanished">Foi encontrado um vídeo. Deseja abri-lo?</translation>
     </message>
     <message>
         <source>Delete Comment</source>

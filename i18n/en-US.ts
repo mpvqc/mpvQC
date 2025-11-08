@@ -19,6 +19,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Copy version info to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Copyright © mpvQC Developers</source>
         <extracomment>This text is part of the software license description</extracomment>
         <translation type="unfinished"></translation>
@@ -29,6 +33,10 @@
     </message>
     <message>
         <source>Powered by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Powered by Python %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -581,14 +589,6 @@
     </message>
     <message>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A video was found. Do you want to open it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
