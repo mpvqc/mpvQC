@@ -57,7 +57,7 @@ Item {
         width: root.width
         spacing: 0
 
-        MenuBar {
+        MpvqcCollapsibleMenuBar {
             id: menuBar
 
             MpvqcMenuBarMenu {

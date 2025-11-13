@@ -77,7 +77,6 @@ repos:
     rev: 1.2.0
     hooks:
       - id: qmlformat
-        files: '.*\.qml$'
         name: "format qml"
         args:
           - --newline=unix
