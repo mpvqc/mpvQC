@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-export QT_QPA_PLATFORM := 'offscreen'
-export QT_QUICK_CONTROLS_MATERIAL_VARIANT := 'Dense'
-export QT_QUICK_CONTROLS_STYLE := 'Material'
+set dotenv-load := true
 
 alias fmt := format
 
