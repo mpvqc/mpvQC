@@ -89,9 +89,11 @@ class RenderState:
 
     def clear_fbos(self) -> None:
         if self._render_fbo is not None:
+            self._render_fbo.release()
             del self._render_fbo
             self._render_fbo = None
         if self._display_fbo is not None:
+            self._display_fbo.release()
             del self._display_fbo
             self._display_fbo = None
 
@@ -199,9 +201,14 @@ class MpvqcBackgroundRendererThread(QThread):
             logger.error("Failed to create OpenGL context for mpvqc renderer thread")
             return
 
-        self._gl_context.makeCurrent(self._surface)
-        self._render_loop()
-        self._gl_context.doneCurrent()
+        if not self._gl_context.makeCurrent(self._surface):
+            logger.error("Failed to make OpenGL context current on background thread")
+            return
+
+        try:
+            self._render_loop()
+        finally:
+            self._gl_context.doneCurrent()
 
     def _render_loop(self) -> None:
         while 1:
@@ -218,7 +225,7 @@ class MpvqcBackgroundRendererThread(QThread):
                 state.clear_render_request()
                 video_size = QSize(state.video_size)
 
-            if not should_render or not self._ctx:
+            if not should_render or not self._ctx or video_size.isEmpty():
                 continue
 
             with self.acquire() as (state, sync):
@@ -241,12 +248,17 @@ class MpvqcBackgroundRendererThread(QThread):
                     state.swap_fbos()
 
                 if old_render:
+                    old_render.release()
                     del old_render
                 if old_display:
+                    old_display.release()
                     del old_display
             else:
                 with self.acquire() as (state, sync):
-                    fbo_handle = int(state.render_fbo.handle())
+                    if fbo := state.render_fbo:
+                        fbo_handle = int(fbo.handle())
+                    else:
+                        continue
 
                 self._ctx.render(
                     flip_y=False,
