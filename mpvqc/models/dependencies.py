@@ -17,7 +17,7 @@ if typing.TYPE_CHECKING:
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 
-    from mpvqc.build_info import Dependency
+    from mpvqc.build import Dependency
 
 
 QML_IMPORT_NAME = "pyobjects"
@@ -42,10 +42,10 @@ class MpvqcDependencyModel(QAbstractListModel):
             *self._build_info.dev_dependencies,
         ]
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
         return len(self._all_dependencies)
 
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= len(self._all_dependencies):
             return None
 

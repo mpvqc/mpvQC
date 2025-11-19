@@ -25,7 +25,6 @@ if TYPE_CHECKING:
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -211,7 +210,7 @@ class MpvqcBackgroundRendererThread(QThread):
             self._gl_context.doneCurrent()
 
     def _render_loop(self) -> None:
-        while 1:
+        while True:
             with self.acquire() as (state, sync):
                 while not state.should_render:
                     if not state.rendering_active:
@@ -292,7 +291,7 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
 
     def __init__(self):
         super().__init__()
-        self._renderer = None
+        self._renderer: Renderer | None = None
         self.video_frame_ready.connect(self.do_update)
         self.destroyed.connect(lambda: self._on_destroyed())
 

@@ -43,10 +43,10 @@ class MpvqcLanguageModel(QAbstractListModel):
     IdentifierRole = Qt.ItemDataRole.UserRole + 2
     TranslatorRole = Qt.ItemDataRole.UserRole + 3
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
         return len(LANGUAGES)
 
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= len(LANGUAGES):
             return None
 

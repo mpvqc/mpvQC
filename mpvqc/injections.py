@@ -19,7 +19,7 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.ExportService, s.ExportService)
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)
-    binder.bind_to_constructor(s.FramelessWindowService, s.FramelessWindowService)
+    binder.bind_to_constructor(s.FramelessWindowService, s.get_frameless_window_service)
     binder.bind_to_constructor(s.HostIntegrationService, s.HostIntegrationService)
     binder.bind_to_constructor(s.ImporterService, s.ImporterService)
     binder.bind_to_constructor(s.InternationalizationService, s.InternationalizationService)

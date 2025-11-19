@@ -189,7 +189,9 @@ class PlayerService(QObject):
 
     @property
     def is_playing(self) -> bool:
-        return not self._mpv.pause and not self._mpv.idle_active if self._mpv else False
+        if mpv := self._mpv:
+            return not mpv.pause and not mpv.idle_active
+        return False
 
     @property
     def _track_list(self) -> list[TrackListEntry]:

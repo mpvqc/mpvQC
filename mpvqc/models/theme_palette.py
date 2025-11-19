@@ -59,10 +59,10 @@ class MpvqcThemePaletteModel(QAbstractListModel):
         self.endResetModel()
         self.resetDone.emit()
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
         return len(self._themes.palette(self._theme_identifier))
 
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:  # noqa: C901
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:  # noqa: C901
         theme = self._themes.palette(self._theme_identifier)
         if not index.isValid() or index.row() >= len(theme):
             return None
