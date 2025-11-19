@@ -50,10 +50,10 @@ class MpvqcExportTemplateModel(QAbstractListModel):
     def count(self) -> int:
         return len(self._items)
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex = ...) -> int:  # noqa: ARG002
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
         return len(self._items)
 
-    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = ...) -> Any:
+    def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= len(self._items):
             return None
 

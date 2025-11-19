@@ -38,11 +38,11 @@ class BuildInfoService:
         return self._build_info.application.is_release
 
     @property
-    def dependencies(self) -> tuple[Dependency]:
+    def dependencies(self) -> tuple[Dependency, ...]:
         return self._build_info.dependencies
 
     @property
-    def dev_dependencies(self) -> tuple[Dependency]:
+    def dev_dependencies(self) -> tuple[Dependency, ...]:
         return self._build_info.dev_dependencies
 
     @property
