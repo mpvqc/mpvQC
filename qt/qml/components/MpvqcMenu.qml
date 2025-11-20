@@ -54,18 +54,6 @@ Menu {
     }
     // *********************************************************
 
-    // *********************************************************
-    // fixme: Workaround QTBUG-139603 to fix theme propagation bug
-    font {
-        pointSize: 10
-        family: 'Noto Sans'
-    }
-    Material.theme: MpvqcTheme.isDark ? Material.Dark : Material.Light
-    Material.accent: MpvqcTheme.control
-    Material.background: MpvqcTheme.background
-    Material.foreground: MpvqcTheme.foreground
-    // *********************************************************
-
     Binding {
         when: root.popupType === Popup.Window && root.contentItem
         target: root.contentItem
