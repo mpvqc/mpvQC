@@ -5,8 +5,6 @@
 import QtQuick
 import QtQuick.Controls.Material
 
-import "../utility"
-
 Menu {
     id: root // todo check if it can be removed by using parent on its usages
 

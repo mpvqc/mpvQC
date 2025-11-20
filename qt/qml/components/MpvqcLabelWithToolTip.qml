@@ -6,8 +6,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import "../utility"
-
 RowLayout {
     id: root
 
@@ -26,8 +24,9 @@ RowLayout {
     }
 
     MpvqcIconLabel {
+        Layout.preferredWidth: visible ? implicitWidth : 0
+
         visible: root.toolTip
-        width: visible ? implicitWidth : 0
         opacity: 0.6
 
         toolTipText: root.toolTip

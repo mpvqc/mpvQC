@@ -155,12 +155,12 @@ ListView {
             return Math.max(0, overflow);
         }
 
-        onCommentEditPopupHeightChanged: (totalHeight, heightDelta) => {
+        onCommentEditPopupHeightChanged: (editorHeight, heightDelta) => {
             const scrollAmount = _calculateScrollAmount(heightDelta);
             if (scrollAmount > 0) {
                 // Force immediate layout update by setting the editor height explicitly
                 // This does not break the binding, but we can scroll to accommodate growth
-                root.currentItem.commentLabel.editorHeight = totalHeight;
+                root.currentItem.commentLabel.editorHeight = editorHeight;
                 root.contentY += scrollAmount;
             }
         }
