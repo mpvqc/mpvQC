@@ -329,7 +329,6 @@ files = [
     "qt/qml/messageboxes/MpvqcQuitMessageBox.qml",
     "qt/qml/messageboxes/MpvqcResetMessageBox.qml",
     "qt/qml/messageboxes/MpvqcVersionCheckMessageBox.qml",
-    "qt/qml/messageboxes/qmldir",
     "qt/qml/models/MpvqcCreditsModel.qml",
     "qt/qml/models/MpvqcShortcutsModel.qml",
     "qt/qml/models/qmldir",

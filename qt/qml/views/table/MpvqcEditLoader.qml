@@ -16,7 +16,7 @@ Loader {
 
     readonly property bool isEditingComment: source === editCommentPopup
 
-    signal commentEditPopupHeightChanged(heightDelta: int, totalHeight: int)
+    signal commentEditPopupHeightChanged(editorHeight: int, heightDelta: int)
 
     function _startEditingTime(index: int, time: int, coordinates: point): void {
         asynchronous = true;

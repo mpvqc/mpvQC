@@ -95,7 +95,7 @@ MpvqcDialog {
                     spacing: root.dimensions.rowSpacing
 
                     MpvqcIconLabel {
-                        icon.source: index === root.viewModel.selectedVideoIndex ? "qrc:/data/icons/select_check_box_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" : "qrc:/data/icons/select_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        icon.source: _delegate.index === root.viewModel.selectedVideoIndex ? "qrc:/data/icons/select_check_box_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" : "qrc:/data/icons/select_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                         icon {
                             width: root.dimensions.iconSize
                             height: root.dimensions.iconSize
