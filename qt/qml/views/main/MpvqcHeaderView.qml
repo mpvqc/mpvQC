@@ -68,24 +68,32 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "New QC Document")
                     icon.source: "qrc:/data/icons/draft_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestResetAppState()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Open QC Document(s)...")
                     icon.source: "qrc:/data/icons/file_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenQcDocuments()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Save QC Document")
                     icon.source: "qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestSaveQcDocument()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Save QC Document As...")
                     icon.source: "qrc:/data/icons/save_as_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestSaveQcDocumentAs()
                 }
 
@@ -97,6 +105,8 @@ Item {
                 MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Export QC Document")
                     icon.source: "qrc:/data/icons/file_export_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
 
                     enabled: _extendedExportModel.count > 0
 
@@ -117,6 +127,8 @@ Item {
 
                             text: name
                             icon.source: "qrc:/data/icons/notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                            icon.height: 24
+                            icon.width: 24
                             onTriggered: root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
                         }
                     }
@@ -127,6 +139,8 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Exit mpvQC")
                     icon.source: "qrc:/data/icons/exit_to_app_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestClose()
                 }
             }
@@ -139,12 +153,16 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Open Video...")
                     icon.source: "qrc:/data/icons/movie_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenVideo()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Open Subtitle(s)...")
                     icon.source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenSubtitles()
                 }
 
@@ -153,6 +171,8 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
                     icon.source: "qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestResizeVideo()
                 }
             }
@@ -165,18 +185,24 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Appearance...")
                     icon.source: "qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenAppearanceDialog()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Comment Type Settings...")
                     icon.source: "qrc:/data/icons/comment_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenCommentTypesDialog()
                 }
 
                 MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Application Title")
                     icon.source: "qrc:/data/icons/title_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
 
                     Repeater {
                         model: [
@@ -210,6 +236,8 @@ Item {
                 MpvqcMenuBarMenu {
                     title: qsTranslate("MainWindow", "Application Layout")
                     icon.source: "qrc:/data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
 
                     Repeater {
                         model: [
@@ -241,18 +269,24 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Backup Settings...")
                     icon.source: "qrc:/data/icons/settings_backup_restore_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenBackupSettingsDialog()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Export Settings...")
                     icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenExportSettingsDialog()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Import Settings...")
                     icon.source: "qrc:/data/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenImportSettingsDialog()
                 }
 
@@ -261,12 +295,16 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Edit mpv.conf...")
                     icon.source: "qrc:/data/icons/movie_edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenEditMpvConfigDialog()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "Edit input.conf...")
                     icon.source: "qrc:/data/icons/keyboard_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenEditInputConfigDialog()
                 }
 
@@ -277,6 +315,8 @@ Item {
 
                     title: qsTranslate("MainWindow", "Language")
                     icon.source: "qrc:/data/icons/language_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
 
                     property var _deferToOnClose: () => {}
 
@@ -310,6 +350,8 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Check for Updates...")
                     icon.source: "qrc:/data/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     visible: root.viewModel.isUpdateMenuVisible
                     height: visible ? implicitHeight : 0
                     onTriggered: root.viewModel.requestOpenCheckForUpdatesDialog()
@@ -318,6 +360,8 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
                     icon.source: "qrc:/data/icons/keyboard_double_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenKeyboardShortcutsDialog()
                 }
 
@@ -326,12 +370,16 @@ Item {
                 MenuItem {
                     text: qsTranslate("MainWindow", "Extended Exports...")
                     icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenExtendedExportsDialog()
                 }
 
                 MenuItem {
                     text: qsTranslate("MainWindow", "About mpvQC...")
                     icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.height: 24
+                    icon.width: 24
                     onTriggered: root.viewModel.requestOpenAboutDialog()
                 }
             }
