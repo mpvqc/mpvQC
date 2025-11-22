@@ -218,7 +218,7 @@
     <message>
         <source>Include paths of manually imported subtitle files in the document header</source>
         <extracomment>Tooltip for the &quot;Write Subtitle Paths&quot; export setting.</extracomment>
-        <translation>Pfade von manuell importierten Untertiteldateien im Dokumentkopf vermerken</translation>
+        <translation>Pfade manuell importierter Untertitel im Dokumentkopf einfügen</translation>
     </message>
 </context>
 <context>
