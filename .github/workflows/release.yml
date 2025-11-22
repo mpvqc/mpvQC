@@ -86,7 +86,7 @@ jobs:
           CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
           debug "git commit: $CURRENT_COMMIT"
 
-          if [[ "${{ github.ref }}" =~ ^refs/tags/v ]]; then
+          if [[ "${{ github.ref }}" =~ ^refs/tags/ ]]; then
             IS_RELEASE="true"
             debug "This is a release build (triggered by tag)"
           else
