@@ -17,7 +17,7 @@ SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = "build-aux/icon.ico"
+path = "build-aux/windows-icon.ico"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"

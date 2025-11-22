@@ -292,7 +292,7 @@ jobs:
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
             --windows-console-mode=attach \
-            --windows-icon-from-ico=build-aux/icon.ico \
+            --windows-icon-from-ico=build-aux/windows-icon.ico \
             --output-filename=mpvQC.exe
 
           execute mkdir -p deployment/mpvQC-distribution
