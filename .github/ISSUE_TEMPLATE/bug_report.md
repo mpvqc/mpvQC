@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 **Data**
 
 - OS: \[e.g. Windows or Linux\]
-- Version and commit id\[e.g. 0.9.0-beta - 0b3138ac\] (see `Help` → `About mpvQC`)
+- Version and commit id\[e.g. 0.9.0-beta2 - 0b3138ac\] (see `Help` → `About mpvQC`)
 
 **mpv.conf**
 
