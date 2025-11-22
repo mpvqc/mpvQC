@@ -13,6 +13,10 @@ https://mpvqc.github.io
 
 ______________________________________________________________________
 
+<img alt="Logo" src=".github/screenshot.png" width="960" height="858"/>
+
+______________________________________________________________________
+
 ## Development Setup
 
 1. **Install these tools**
@@ -59,7 +63,7 @@ just build-develop
 
 This compiles them into a Python file in the mpvqc folder, so the app recognizes them on startup.
 
-**Tip:** Configure your IDE to run the `build-develop` before launching the application.
+**Tip:** Configure your IDE to run the `build-develop` recipe before launching the application.
 
 ## Internationalization
 
