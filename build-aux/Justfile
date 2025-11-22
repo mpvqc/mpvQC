@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: MIT
+
+set fallback := true
+
+BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800"'
+
+@_default:
+    just --list --unsorted
+
+# Regenerate all color palettes
+[group('colors')]
+regenerate-colors: regenerate-light-colors regenerate-dark-colors
+    just format
+
+# Regenerate dark color palettes
+[group('colors')]
+regenerate-dark-colors:
+    uv run color-generator.py --dark {{ BASE_COLORS }}
+
+# Regenerate light color palettes
+[group('colors')]
+regenerate-light-colors:
+    uv run color-generator.py --contrast 0.0 {{ BASE_COLORS }}
+
+# Convert splash svg to png
+[group('splash')]
+generate-splash-png:
+    magick -background none -size 640x400 windows-splash.svg windows-splash.png

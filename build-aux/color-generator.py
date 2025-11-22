@@ -151,7 +151,7 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool):
 
 
 def update_theme_file(colors: list[MpvqcColorSet], dark: bool) -> None:
-    path = Path() / ".." / ".." / "data" / "themes.json"
+    path = Path() / ".." / "data" / "themes.json"
     path = path.resolve()
 
     with Path(path).open(encoding="utf-8") as f:
