@@ -286,13 +286,11 @@ class MpvqcBackgroundRendererThread(QThread):
 
 @QmlElement
 class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
-    video_frame_ready = Signal()
-    time_to_prepare_surface = Signal()
+    on_surface_ready = Signal()
 
     def __init__(self):
         super().__init__()
         self._renderer: Renderer | None = None
-        self.video_frame_ready.connect(self.do_update)
         self.destroyed.connect(lambda: self._on_destroyed())
 
     @Slot()
@@ -332,7 +330,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
         self._renderer_thread_started = False
 
-        self._parent.time_to_prepare_surface.connect(self._on_configure_surface)
+        self._parent.on_surface_ready.connect(self._on_configure_surface)
 
     @Slot()
     def _on_configure_surface(self) -> None:
@@ -343,28 +341,34 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
-            self.player.init()
-
-            from mpv import MpvRenderContext
-
-            self._ctx = MpvRenderContext(
-                mpv=self.player.mpv,
-                api_type="opengl",
-                opengl_init_params={"get_proc_address": self._get_proc_address_resolver},
-            )
-            self._ctx.update_cb = self._on_mpv_update
-
-            self._render_thread.prepare(self._ctx, QOpenGLContext.currentContext(), self._surface)
-            self._render_thread_ready = True
+            self._initialize_mpv_context()
 
         if self._video_size != size:
-            self._video_size = size
-            if self._render_thread_ready:
-                self._render_thread.update_size(size)
-                if self.player.is_paused:
-                    self._render_thread.request_render()
+            self._update_video_size(size)
 
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
+
+    def _initialize_mpv_context(self) -> None:
+        self.player.init()
+
+        from mpv import MpvRenderContext
+
+        self._ctx = MpvRenderContext(
+            mpv=self.player.mpv,
+            api_type="opengl",
+            opengl_init_params={"get_proc_address": self._get_proc_address_resolver},
+        )
+        self._ctx.update_cb = self._on_mpv_update
+
+        self._render_thread.prepare(self._ctx, QOpenGLContext.currentContext(), self._surface)
+        self._render_thread_ready = True
+
+    def _update_video_size(self, size: QSize):
+        self._video_size = size
+        if self._render_thread_ready:
+            self._render_thread.update_size(size)
+            if self.player.is_paused:
+                self._render_thread.request_render()
 
     def _on_mpv_update(self) -> None:
         if self._render_thread_ready:
@@ -372,7 +376,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
     def render(self) -> None:
         if not self._surface_ready:
-            self._parent.time_to_prepare_surface.emit()
+            self._parent.on_surface_ready.emit()
             return
 
         if not self._render_thread_ready:
@@ -393,6 +397,11 @@ class Renderer(QQuickFramebufferObject.Renderer):
             self._render_thread.stop()
             self._render_thread.cleanup()
             self._render_thread = None
+
+        if self._ctx:
+            self._ctx.free()
+            self._ctx = None
+
         if self._surface:
             del self._surface
             self._surface = None
