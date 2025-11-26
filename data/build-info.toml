@@ -27,14 +27,6 @@ licence = "BSD-3-Clause"
 platforms = ["linux", "win32"]
 
 [[dependency]]
-name = "python-colorlog"
-package = "colorlog"
-version = "6.10.1"
-url = "https://github.com/borntyping/python-colorlog"
-licence = "MIT"
-platforms = ["linux", "win32"]
-
-[[dependency]]
 name = "python-mpv"
 package = "mpv"
 version = "1.0.8"
