@@ -9,7 +9,6 @@ description = "libmpv based application for quality control of videos"
 requires-python = "~=3.13.0"
 readme = "README.MD"
 dependencies = [
-    "colorlog>=6.10.1",
     "inject>=5.3.0",
     "Jinja2>=3.1.6",
     "mpv>=1.0.8",
