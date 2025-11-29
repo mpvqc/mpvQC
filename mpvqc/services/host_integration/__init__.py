@@ -4,8 +4,11 @@
 
 from __future__ import annotations
 
+import logging
+import os
 import platform
 from dataclasses import dataclass
+from functools import cache
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
@@ -13,6 +16,8 @@ from PySide6.QtGui import QScreen
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QWindow
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -81,6 +86,12 @@ class HostIntegrationService(QObject):
             self._refresh_rate = refresh_rate
             self.refresh_rate_changed.emit(refresh_rate)
 
+    @property
+    def is_tiling_window_manager(self) -> bool:
+        if platform.system() != "Linux":
+            return False
+        return is_tiling_window_manager()
+
     def get_window_button_preference(self) -> WindowButtonPreference:
         match platform.system():
             case "Windows":
@@ -101,6 +112,33 @@ def get_refresh_rate() -> float:
     from mpvqc.utility import get_main_window
 
     return get_main_window().screen().refreshRate()
+
+
+@cache
+def is_tiling_window_manager() -> bool:
+    tiling_wms = {
+        "awesome",
+        "bspwm",
+        "dwm",
+        "herbstluftwm",
+        "hyprland",
+        "i3",
+        "niri",
+        "qtile",
+        "river",
+        "sway",
+        "wlroots",
+        "xmonad",
+    }
+
+    xdg_current_desktop = os.environ.get("XDG_CURRENT_DESKTOP", "")
+    desktops = {d.lower() for d in xdg_current_desktop.split(":")}
+    is_tiling_wm = bool(desktops & tiling_wms)
+
+    if is_tiling_wm:
+        logger.debug("Tiling window manager detected")
+
+    return is_tiling_wm
 
 
 def read_linux_window_button_preference() -> WindowButtonPreference:
