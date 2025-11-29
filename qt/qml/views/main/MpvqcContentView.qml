@@ -15,8 +15,7 @@ import "../table"
 Page {
     id: root
 
-    required property MpvqcHeaderViewModel headerViewModel
-    required property MpvqcContentViewModel contentViewModel
+    required property MpvqcContentViewModel viewModel
     required property int windowBorder
 
     // *********************************************************
@@ -28,9 +27,13 @@ Page {
         _mpvqcCommentTable.forceActiveFocus();
     }
 
-    Keys.onEscapePressed: root.contentViewModel.requestDisableFullScreen()
+    function resizeVideo(): void {
+        _videoResizer.recalculateSizes();
+    }
 
-    Keys.onPressed: event => root.contentViewModel.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
+    Keys.onEscapePressed: root.viewModel.requestDisableFullScreen()
+
+    Keys.onPressed: event => root.viewModel.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
 
     SplitView {
         id: _splitView
@@ -42,19 +45,19 @@ Page {
 
         focus: true
         anchors.fill: root.contentItem
-        orientation: root.contentViewModel.layoutOrientation
+        orientation: root.viewModel.layoutOrientation
 
         MpvqcPlayerView {
             id: _player
 
-            SplitView.minimumHeight: root.contentViewModel.minContainerHeight
-            SplitView.minimumWidth: root.contentViewModel.minContainerWidth
+            SplitView.minimumHeight: root.viewModel.minContainerHeight
+            SplitView.minimumWidth: root.viewModel.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            onAddNewCommentMenuRequested: root.contentViewModel.openNewCommentMenuRequested()
+            onAddNewCommentMenuRequested: root.viewModel.openNewCommentMenuRequested()
 
-            onToggleFullScreenRequested: root.contentViewModel.requestToggleFullScreen()
+            onToggleFullScreenRequested: root.viewModel.requestToggleFullScreen()
         }
 
         Column {
@@ -62,8 +65,8 @@ Page {
 
             visible: !MpvqcWindowUtility.isFullscreen
 
-            SplitView.minimumHeight: root.contentViewModel.minContainerHeight
-            SplitView.minimumWidth: root.contentViewModel.minContainerWidth
+            SplitView.minimumHeight: root.viewModel.minContainerHeight
+            SplitView.minimumWidth: root.viewModel.minContainerWidth
 
             function setPreferredSizes(width, height) {
                 SplitView.preferredWidth = width;
@@ -105,8 +108,8 @@ Page {
         id: _commentMenu
 
         onCommentTypeChosen: commentType => {
-            root.contentViewModel.requestDisableFullScreen();
-            root.contentViewModel.addNewEmptyComment(commentType);
+            root.viewModel.requestDisableFullScreen();
+            root.viewModel.addNewEmptyComment(commentType);
         }
     }
 
@@ -121,7 +124,7 @@ Page {
         tableHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
-            root.contentViewModel.requestResizeAppWindow(width, height);
+            root.viewModel.requestResizeAppWindow(width, height);
         }
 
         onSplitViewTableSizeRequested: (width, height) => {
@@ -130,15 +133,7 @@ Page {
     }
 
     Connections {
-        target: root.headerViewModel
-
-        function onResizeVideoRequested(): void {
-            _videoResizer.recalculateSizes();
-        }
-    }
-
-    Connections {
-        target: root.contentViewModel
+        target: root.viewModel
 
         function onOpenNewCommentMenuRequested(): void {
             _commentMenu.popup();
@@ -150,7 +145,7 @@ Page {
     }
 
     Component.onCompleted: {
-        const sizes = root.contentViewModel.calculatePreferredSplitSizes(_splitView.width, _splitView.height);
+        const sizes = root.viewModel.calculatePreferredSplitSizes(_splitView.width, _splitView.height);
         _tableContainer.setPreferredSizes(sizes.width, sizes.height);
     }
 }

@@ -7,10 +7,10 @@ import sys
 from enum import IntEnum
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QEnum, QObject, QUrl, Signal, Slot
+from PySide6.QtCore import Property, QEnum, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ExportService, PlayerService, ResetService, SettingsService, StateService
+from mpvqc.services import ExportService, ResetService, SettingsService, StateService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -18,11 +18,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcHeaderViewModel(QObject):
+class MpvqcMenuBarViewModel(QObject):
     _exporter: ExportService = inject.attr(ExportService)
     _state: StateService = inject.attr(StateService)
     _resetter: ResetService = inject.attr(ResetService)
-    _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
 
     class WindowTitleFormat(IntEnum):
@@ -54,33 +53,19 @@ class MpvqcHeaderViewModel(QObject):
     extendedExportDialogRequested = Signal()
     aboutDialogRequested = Signal()
 
-    windowDragRequested = Signal()
-    minimizeAppRequested = Signal()
-    toggleMaximizeAppRequested = Signal()
     closeAppRequested = Signal()
 
-    windowTitleChanged = Signal(str)
     windowTitleFormatChanged = Signal(int)
     applicationLayoutChanged = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._player.video_loaded_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._player.path_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._player.filename_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._settings.windowTitleFormatChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
         self._settings.windowTitleFormatChanged.connect(lambda v: self.windowTitleFormatChanged.emit(v))
         self._settings.layoutOrientationChanged.connect(lambda v: self.applicationLayoutChanged.emit(v))
-        self._settings.languageChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._state.saved_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-
-    @Property(bool, constant=True, final=True)
-    def isWindows(self) -> bool:
-        return sys.platform == "win32"
 
     @Property(bool, constant=True, final=True)
     def isUpdateMenuVisible(self) -> bool:
-        return bool(os.environ.get("MPVQC_DEBUG")) or self.isWindows
+        return bool(os.environ.get("MPVQC_DEBUG")) or sys.platform == "win32"
 
     @Property(int, notify=windowTitleFormatChanged)
     def windowTitleFormat(self) -> int:
@@ -89,26 +74,6 @@ class MpvqcHeaderViewModel(QObject):
     @Property(int, notify=applicationLayoutChanged)
     def applicationLayout(self) -> int:
         return self._settings.layout_orientation
-
-    @Property(str, notify=windowTitleChanged)
-    def windowTitle(self) -> str:
-        window_title_format = self._settings.window_title_format
-
-        if not self._player.video_loaded or window_title_format == self.WindowTitleFormat.DEFAULT:
-            title = QCoreApplication.applicationName()
-        elif window_title_format == self.WindowTitleFormat.FILE_NAME:
-            title = self._player.filename or ""
-        elif window_title_format == self.WindowTitleFormat.FILE_PATH:
-            title = self._player.path or ""
-        else:
-            msg = "Cannot determine window title: configuration not known"
-            raise ValueError(msg)
-
-        if self._state.saved:
-            return title
-
-        #: %1 will be the title of the application (one of: mpvQC, file name, file path)
-        return QCoreApplication.translate("MainWindow", "%1 (unsaved)").replace("%1", title)
 
     @Slot()
     def requestResetAppState(self) -> None:
@@ -191,18 +156,6 @@ class MpvqcHeaderViewModel(QObject):
     @Slot()
     def requestOpenAboutDialog(self) -> None:
         self.aboutDialogRequested.emit()
-
-    @Slot()
-    def requestWindowDrag(self) -> None:
-        self.windowDragRequested.emit()
-
-    @Slot()
-    def requestMinimize(self) -> None:
-        self.minimizeAppRequested.emit()
-
-    @Slot()
-    def requestToggleMaximize(self) -> None:
-        self.toggleMaximizeAppRequested.emit()
 
     @Slot()
     def requestClose(self) -> None:

@@ -19,7 +19,7 @@ from .dialogs import (
 from .drop_area import MpvqcDropAreaViewModel
 from .file_dialogs import MpvqcExportFileDialogViewModel, MpvqcImportFileDialogViewModel
 from .footer import MpvqcFooterViewModel
-from .header import MpvqcHeaderViewModel
+from .header import MpvqcHeaderViewModel, MpvqcMenuBarViewModel
 from .message_box_loader import MpvqcMessageBoxLoaderViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel, MpvqcVersionCheckMessageBoxViewModel
 from .new_comment_menu import MpvqcNewCommentMenuViewModel
