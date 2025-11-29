@@ -8,6 +8,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "utility"
+import "views/header"
 import "views/main"
 
 ApplicationWindow {
@@ -45,8 +46,7 @@ ApplicationWindow {
     MpvqcContentView {
         id: _content
 
-        headerViewModel: _headerViewModel
-        contentViewModel: _contentViewModel
+        viewModel: _contentViewModel
         windowBorder: MpvqcWindowUtility.isFullscreen || MpvqcWindowUtility.isMaximized ? 0 : 1
 
         focus: true
@@ -55,6 +55,7 @@ ApplicationWindow {
 
         header: MpvqcHeaderView {
             viewModel: _headerViewModel
+            menuBarViewModel: _menuBarViewModel
             width: root.width
         }
     }
@@ -103,6 +104,18 @@ ApplicationWindow {
     MpvqcHeaderViewModel {
         id: _headerViewModel
 
+        onWindowDragRequested: root.startSystemMove()
+
+        onMinimizeAppRequested: root.showMinimized()
+
+        onToggleMaximizeAppRequested: _windowVisibilityHandler.toggleMaximized()
+
+        onCloseAppRequested: root.close()
+    }
+
+    MpvqcMenuBarViewModel {
+        id: _menuBarViewModel
+
         onConfirmResetRequested: _messageBoxLoader.openResetMessageBox()
 
         onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
@@ -114,6 +127,8 @@ ApplicationWindow {
         onOpenVideoRequested: _fileDialogLoader.openImportVideoDialog()
 
         onOpenSubtitlesRequested: _fileDialogLoader.openImportSubtitlesDialog()
+
+        onResizeVideoRequested: _content.resizeVideo()
 
         onAppearanceDialogRequested: _dialogLoader.openAppearanceDialog()
 
@@ -136,12 +151,6 @@ ApplicationWindow {
         onUpdateDialogRequested: _messageBoxLoader.openVersionCheckMessageBox()
 
         onExtendedExportDialogRequested: _messageBoxLoader.openExtendedExportsMessageBox()
-
-        onWindowDragRequested: root.startSystemMove()
-
-        onMinimizeAppRequested: root.showMinimized()
-
-        onToggleMaximizeAppRequested: _windowVisibilityHandler.toggleMaximized()
 
         onCloseAppRequested: root.close()
     }

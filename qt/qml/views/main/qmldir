@@ -7,5 +7,4 @@ module views.main
 MpvqcContentView MpvqcContentView.qml
 MpvqcDialogLoaderView MpvqcDialogLoaderView.qml
 MpvqcFileDialogLoaderView MpvqcFileDialogLoaderView.qml
-MpvqcHeaderView MpvqcHeaderView.qml
 MpvqcMessageBoxLoaderView MpvqcMessageBoxLoaderView.qml
