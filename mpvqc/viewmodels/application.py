@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import WindowPropertiesService
+from mpvqc.services import HostIntegrationService, WindowPropertiesService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,6 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcApplicationViewModel(QObject):
+    _host_integration: HostIntegrationService = inject.attr(HostIntegrationService)
     _window_properties: WindowPropertiesService = inject.attr(WindowPropertiesService)
 
     windowBorderChanged = Signal(int)
@@ -26,6 +27,8 @@ class MpvqcApplicationViewModel(QObject):
         self._window_properties.is_maximized_changed.connect(lambda _: self._update_window_border())
 
     def _compute_window_border(self) -> int:
+        if self._host_integration.is_tiling_window_manager:
+            return 0
         if self._window_properties.is_fullscreen or self._window_properties.is_maximized:
             return 0
         return 1

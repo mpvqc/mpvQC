@@ -8,7 +8,7 @@ import logging
 import os
 import platform
 from dataclasses import dataclass
-from functools import cache
+from functools import cached_property
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
@@ -86,7 +86,7 @@ class HostIntegrationService(QObject):
             self._refresh_rate = refresh_rate
             self.refresh_rate_changed.emit(refresh_rate)
 
-    @property
+    @cached_property
     def is_tiling_window_manager(self) -> bool:
         if platform.system() != "Linux":
             return False
@@ -114,7 +114,6 @@ def get_refresh_rate() -> float:
     return get_main_window().screen().refreshRate()
 
 
-@cache
 def is_tiling_window_manager() -> bool:
     tiling_wms = {
         "awesome",
@@ -136,7 +135,7 @@ def is_tiling_window_manager() -> bool:
     is_tiling_wm = bool(desktops & tiling_wms)
 
     if is_tiling_wm:
-        logger.debug("Tiling window manager detected")
+        logger.debug("Running on tiling window manager")
 
     return is_tiling_wm
 
