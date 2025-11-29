@@ -14,6 +14,8 @@ import "views/main"
 ApplicationWindow {
     id: root
 
+    readonly property MpvqcApplicationViewModel viewModel: MpvqcApplicationViewModel {}
+
     readonly property bool isWindows: Qt.platform.os === "windows"
     readonly property int windowsFlags: Qt.CustomizeWindowHint | Qt.Window
     readonly property int linuxFlags: Qt.FramelessWindowHint | Qt.Window
@@ -47,7 +49,7 @@ ApplicationWindow {
         id: _content
 
         viewModel: _contentViewModel
-        windowBorder: MpvqcWindowUtility.isFullscreen || MpvqcWindowUtility.isMaximized ? 0 : 1
+        windowBorder: root.viewModel.windowBorder
 
         focus: true
         anchors.fill: parent

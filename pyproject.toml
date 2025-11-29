@@ -254,6 +254,7 @@ files = [
     "mpvqc/utility/window_utils.py",
     "mpvqc/utility/window_visibility.py",
     "mpvqc/viewmodels/__init__.py",
+    "mpvqc/viewmodels/application.py",
     "mpvqc/viewmodels/backup_timer.py",
     "mpvqc/viewmodels/content.py",
     "mpvqc/viewmodels/dialog_loader.py",
