@@ -58,6 +58,7 @@ ApplicationWindow {
         header: MpvqcHeaderView {
             viewModel: _headerViewModel
             menuBarViewModel: _menuBarViewModel
+            toolBarViewModel: _toolBarViewModel
             width: root.width
         }
     }
@@ -155,6 +156,12 @@ ApplicationWindow {
         onExtendedExportDialogRequested: _messageBoxLoader.openExtendedExportsMessageBox()
 
         onCloseAppRequested: root.close()
+    }
+
+    MpvqcToolBarViewModel {
+        id: _toolBarViewModel
+
+        onOpenNewCommentMenuRequested: _content.openNewCommentMenuOnCursor()
     }
 
     MpvqcContentViewModel {

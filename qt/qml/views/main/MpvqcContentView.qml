@@ -31,6 +31,10 @@ Page {
         _videoResizer.recalculateSizes();
     }
 
+    function openNewCommentMenuOnCursor(): void {
+        _commentMenu.popup();
+    }
+
     Keys.onEscapePressed: root.viewModel.requestDisableFullScreen()
 
     Keys.onPressed: event => root.viewModel.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
