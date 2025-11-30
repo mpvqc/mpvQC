@@ -776,6 +776,29 @@
     </message>
 </context>
 <context>
+    <name>ToolBar</name>
+    <message>
+        <source>Frame Step Backward (%1)</source>
+        <extracomment>Tooltip for &apos;Frame Step Backward&apos;, %1 will be the default shortcut button identifier</extracomment>
+        <translation>Ein Bild zurück (%1)</translation>
+    </message>
+    <message>
+        <source>Frame Step Forward (%1)</source>
+        <extracomment>Tooltip for &apos;Frame Step Forward&apos;, %1 will be the default shortcut button identifier</extracomment>
+        <translation>Ein Bild vor (%1)</translation>
+    </message>
+    <message>
+        <source>Cycle Subtitle Track (%1)</source>
+        <extracomment>Tooltip for &apos;Cycle Subtitle Track&apos;, %1 will be the default shortcut button identifier</extracomment>
+        <translation>Untertitelspur wechseln (%1)</translation>
+    </message>
+    <message>
+        <source>Cycle Audio Track (%1)</source>
+        <extracomment>Tooltip for &apos;Cycle Audio Track&apos;, %1 will be the default shortcut button identifier</extracomment>
+        <translation>Audiotrack wechseln (%1)</translation>
+    </message>
+</context>
+<context>
     <name>VersionCheckDialog</name>
     <message>
         <source>New Version Available</source>
