@@ -79,7 +79,7 @@ class MpvqcApplication(QGuiApplication):
         window.installEventFilter(self._close_event_filter)
 
         remove_nuitka_splash_screen()
-        get_main_window().setVisible(True)
+        window.setVisible(True)
 
     @cache
     def find_object(self, object_type, name: str):

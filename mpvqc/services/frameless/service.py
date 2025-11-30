@@ -8,6 +8,10 @@ import platform
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+import inject
+
+from ..host_integration import HostIntegrationService  # noqa: TID252
+
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
@@ -25,6 +29,8 @@ class FramelessWindowService(ABC):
 
 
 class WinImplementation(FramelessWindowService):
+    host_integration: HostIntegrationService = inject.attr(HostIntegrationService)
+
     def __init__(self):
         from mpvqc.services.frameless.win import WindowsEventFilter
 
@@ -43,7 +49,10 @@ class WinImplementation(FramelessWindowService):
 
         extend_frame_into_client_area(hwnd_top_lvl)
         configure_gwl_style(hwnd_top_lvl)
-        set_outer_window_size(hwnd_top_lvl, 1280, 720)
+
+        width = int(1280 * self.host_integration.display_zoom_factor)
+        height = int(720 * self.host_integration.display_zoom_factor)
+        set_outer_window_size(hwnd_top_lvl, width, height)
 
     def set_embedded_player_hwnd(self, win_id: int) -> None:
         self._event_filter.set_embedded_player_hwnd(win_id)
