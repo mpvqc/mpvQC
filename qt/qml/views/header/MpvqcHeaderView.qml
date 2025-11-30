@@ -6,6 +6,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import pyobjects
 
@@ -22,6 +23,10 @@ Item {
 
     readonly property alias menuBarWidth: _menuBar.width
     readonly property alias menuBarHeight: _menuBar.height
+
+    readonly property int minTitleSpacing: 32
+    readonly property int separatorMargin: 8
+    readonly property int leftContentWidth: menuBarWidth + _separator.width + _toolBar.width
 
     // *********************************************************
     // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
@@ -49,7 +54,7 @@ Item {
         }
     }
 
-    Row {
+    RowLayout {
         width: root.width
         spacing: 0
 
@@ -59,29 +64,52 @@ Item {
             viewModel: root.menuBarViewModel
         }
 
-        Label {
-            width: root.width - root.menuBarWidth * 2
+        ToolSeparator {
+            id: _separator
+
+            visible: _toolBar.anyButtonVisible
+
+            Layout.preferredHeight: 32
+        }
+
+        MpvqcToolBarView {
+            id: _toolBar
+
             height: root.menuBarHeight
-            text: root.viewModel.windowTitle
-            elide: LayoutMirroring.enabled ? Text.ElideRight : Text.ElideLeft
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            leftPadding: 25
-            rightPadding: 25
+
+            Layout.preferredWidth: width
         }
 
         Item {
-            width: root.menuBarWidth
-            height: root.menuBarHeight
+            id: _leftTitleSpacer
+
+            Layout.preferredWidth: Math.max(root.minTitleSpacing + 16, root.width / 2 - root.leftContentWidth - _title.implicitWidth / 2)
+            Layout.preferredHeight: root.menuBarHeight
+        }
+
+        Label {
+            id: _title
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: root.menuBarHeight
+            Layout.rightMargin: root.minTitleSpacing
+            text: root.viewModel.windowTitle
+            elide: Text.ElideLeft
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Row {
+            id: _windowButtons
+
+            Layout.preferredHeight: root.menuBarHeight
 
             ToolButton {
                 id: _minimizeButton
 
                 visible: root.windowButtons.showMinimizeButton
-                height: root.height
-                width: visible ? implicitWidth : 0
+                height: root.menuBarHeight
                 focusPolicy: Qt.NoFocus
-                anchors.right: _maximizeButton.left
                 icon.width: 20
                 icon.height: 20
                 icon.source: "qrc:/data/icons/minimize_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
@@ -98,10 +126,8 @@ Item {
                 readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 visible: root.windowButtons.showMaximizeButton
-                height: root.height
-                width: visible ? implicitWidth : 0
+                height: root.menuBarHeight
                 focusPolicy: Qt.NoFocus
-                anchors.right: _closeButton.left
                 icon.width: 18
                 icon.height: 18
                 icon.source: MpvqcWindowUtility.isMaximized ? iconNormalize : iconMaximize
@@ -115,10 +141,8 @@ Item {
                 id: _closeButton
 
                 visible: root.windowButtons.showCloseButton
-                height: root.height
-                width: visible ? implicitWidth : 0
+                height: root.menuBarHeight
                 focusPolicy: Qt.NoFocus
-                anchors.right: parent.right
 
                 icon {
                     width: 18

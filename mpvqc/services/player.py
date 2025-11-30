@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QObject, Qt, Signal, SignalInstance, Slot
+from PySide6.QtCore import QObject, Qt, Signal, SignalInstance, Slot, Property
 
 from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
@@ -42,10 +42,13 @@ class PlayerService(QObject):
     percent_pos_changed = Signal(int)
     time_pos_changed = Signal(int)
     time_remaining_changed = Signal(int)
+
     height_changed = Signal(int)
     width_changed = Signal(int)
-
     video_dimensions_changed = Signal(int, int)
+
+    audio_track_count_changed = Signal(int)
+    subtitle_track_count_changed = Signal(int)
 
     def __init__(self, **properties):
         super().__init__(**properties)
@@ -90,6 +93,9 @@ class PlayerService(QObject):
         )
         self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed)
 
+        self._cached_audio_track_count = 0
+        self._cached_subtitle_track_count = 0
+
     def init(self, win_id: int | None = None):
         args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
         merged_args = self._init_args | args
@@ -106,6 +112,7 @@ class PlayerService(QObject):
         self._mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
         self._mpv.observe_property("height", self._on_player_height_changed)
         self._mpv.observe_property("width", self._on_player_width_changed)
+        self._mpv.observe_property("track-list", self._on_track_list_changed)
 
         if sys.platform == "linux":
             self._host_integration.refresh_rate_changed.connect(self._on_refresh_rate_changed)
@@ -210,6 +217,14 @@ class PlayerService(QObject):
         }
         return sorted(external)
 
+    @Property(int, notify=audio_track_count_changed)
+    def audio_track_count(self) -> int:
+        return self._cached_audio_track_count
+
+    @Property(int, notify=subtitle_track_count_changed)
+    def subtitle_track_count(self) -> int:
+        return self._cached_subtitle_track_count
+
     def _on_duration_changed(self, _, value: float) -> None:
         if value:
             self.duration_changed.emit(value)
@@ -249,6 +264,20 @@ class PlayerService(QObject):
     def _on_player_width_changed(self, _, value: int) -> None:
         if value is not None:
             self.width_changed.emit(value)
+
+    def _on_track_list_changed(self, _, value) -> None:
+        if value is None:
+            return
+
+        audio_count = sum(1 for entry in self._track_list if entry.type == "audio")
+        if audio_count != self._cached_audio_track_count:
+            self._cached_audio_track_count = audio_count
+            self.audio_track_count_changed.emit(audio_count)
+
+        subtitle_count = sum(1 for entry in self._track_list if entry.type == "sub")
+        if subtitle_count != self._cached_subtitle_track_count:
+            self._cached_subtitle_track_count = subtitle_count
+            self.subtitle_track_count_changed.emit(subtitle_count)
 
     @Slot(float)
     def _on_refresh_rate_changed(self, new_refresh_rate: float) -> None:
@@ -325,6 +354,18 @@ class PlayerService(QObject):
 
     def scroll_down(self) -> None:
         self._mpv.command_async("keypress", "MOUSE_BTN4")
+
+    def frame_step_forward(self) -> None:
+        self._mpv.command_async("frame-step")
+
+    def frame_step_backward(self) -> None:
+        self._mpv.command_async("frame-back-step")
+
+    def cycle_subtitle_track(self) -> None:
+        self._mpv.command_async("osd-msg", "cycle", "sub")
+
+    def cycle_audio_track(self) -> None:
+        self._mpv.command_async("osd-msg", "cycle", "audio")
 
     def terminate(self) -> None:
         self._mpv.terminate()
