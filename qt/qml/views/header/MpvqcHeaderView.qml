@@ -10,7 +10,6 @@ import QtQuick.Layouts
 
 import pyobjects
 
-import "../../components"
 import "../../utility"
 
 Item {
@@ -75,8 +74,7 @@ Item {
         MpvqcToolBarView {
             id: _toolBar
 
-            height: root.menuBarHeight
-
+            Layout.preferredHeight: root.menuBarHeight
             Layout.preferredWidth: width
         }
 

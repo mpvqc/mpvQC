@@ -14,8 +14,7 @@ import pyobjects
 Item {
     id: root
 
-    required property MpvqcToolBarViewModel viewModel: MpvqcToolBarViewModel {}
-
+    readonly property MpvqcToolBarViewModel viewModel: MpvqcToolBarViewModel {}
     readonly property bool isWindows: Qt.platform.os === "windows"
 
     readonly property int groupSpacing: 12
