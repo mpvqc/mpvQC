@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QObject, Qt, Signal, SignalInstance, Slot, Property
+from PySide6.QtCore import Property, QObject, Qt, Signal, SignalInstance, Slot
 
 from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
@@ -225,11 +225,11 @@ class PlayerService(QObject):
     def subtitle_track_count(self) -> int:
         return self._cached_subtitle_track_count
 
-    def _on_duration_changed(self, _, value: float) -> None:
-        if value:
+    def _on_duration_changed(self, _, value: float | None) -> None:
+        if value is not None:
             self.duration_changed.emit(value)
 
-    def _on_player_path_changed(self, _, value: str) -> None:
+    def _on_player_path_changed(self, _, value: str | None) -> None:
         self.path_changed.emit(value or "")
         self.video_loaded_changed.emit(value is not None)
 
@@ -242,30 +242,30 @@ class PlayerService(QObject):
             self.open_subtitles(self._cached_subtitles)
             self._cached_subtitles.clear()
 
-    def _on_player_filename_changed(self, _, value: str) -> None:
+    def _on_player_filename_changed(self, _, value: str | None) -> None:
         self.filename_changed.emit(value or "")
 
-    def _on_player_percent_pos_changed(self, _, value: float) -> None:
+    def _on_player_percent_pos_changed(self, _, value: float | None) -> None:
         if value is not None:
             self.percent_pos_changed.emit(int(value))
 
-    def _on_player_time_pos_changed(self, _, value: float) -> None:
+    def _on_player_time_pos_changed(self, _, value: float | None) -> None:
         if value is not None:
             self.time_pos_changed.emit(int(value))
 
-    def _on_player_time_remaining_changed(self, _, value: float) -> None:
+    def _on_player_time_remaining_changed(self, _, value: float | None) -> None:
         if value is not None:
             self.time_remaining_changed.emit(int(value))
 
-    def _on_player_height_changed(self, _, value: int) -> None:
+    def _on_player_height_changed(self, _, value: int | None) -> None:
         if value is not None:
             self.height_changed.emit(value)
 
-    def _on_player_width_changed(self, _, value: int) -> None:
+    def _on_player_width_changed(self, _, value: int | None) -> None:
         if value is not None:
             self.width_changed.emit(value)
 
-    def _on_track_list_changed(self, _, value) -> None:
+    def _on_track_list_changed(self, _, value: Any | None) -> None:
         if value is None:
             return
 
