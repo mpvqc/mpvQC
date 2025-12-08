@@ -31,7 +31,8 @@ MpvqcDialog {
 
             focus: true
             selectByMouse: true
-            placeholderText: "Search"
+            //: Placeholder text for search entry
+            placeholderText: qsTranslate("ShortcutsDialog", "Search")
             horizontalAlignment: Text.AlignLeft
 
             onTextChanged: {

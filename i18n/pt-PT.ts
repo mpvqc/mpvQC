@@ -635,6 +635,11 @@
         <translation>Atalhos de Teclado</translation>
     </message>
     <message>
+        <source>Search</source>
+        <extracomment>Placeholder text for search entry</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Open QC Document(s)</source>
         <translation>Abrir Documento(s) de CQ</translation>
     </message>

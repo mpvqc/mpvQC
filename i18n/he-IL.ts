@@ -644,6 +644,11 @@
         <translation>קיצורי מקלדת</translation>
     </message>
     <message>
+        <source>Search</source>
+        <extracomment>Placeholder text for search entry</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cycle Through Audio Tracks</source>
         <translation>עבור בין טראקי שמע</translation>
     </message>
