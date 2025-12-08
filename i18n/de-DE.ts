@@ -635,6 +635,11 @@
         <translation>Tastenkombinationen</translation>
     </message>
     <message>
+        <source>Search</source>
+        <extracomment>Placeholder text for search entry</extracomment>
+        <translation>Suchen</translation>
+    </message>
+    <message>
         <source>Open QC Document(s)</source>
         <translation>QC-Dokument(e) öffnen</translation>
     </message>

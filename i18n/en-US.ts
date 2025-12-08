@@ -627,6 +627,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Search</source>
+        <extracomment>Placeholder text for search entry</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>New QC Document</source>
         <translation type="unfinished"></translation>
     </message>
