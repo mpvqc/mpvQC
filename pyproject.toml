@@ -291,7 +291,7 @@ files = [
     "mpvqc/viewmodels/table/placeholder.py",
     "mpvqc/viewmodels/table/search_box.py",
     "mpvqc/views/__init__.py",
-    "mpvqc/views/player_framebuffer_object_offscreen.py",
+    "mpvqc/views/player_framebuffer_object.py",
     "mpvqc/views/player_win_id.py",
     "project.qrc",
     "qt/qml/components/MpvqcDebugRectangle.qml",
