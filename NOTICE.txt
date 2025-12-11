@@ -60,13 +60,6 @@ Jinja2
   License File: BSD-3-Clause.txt
   Platforms: Linux, Windows
 
-python-colorlog
-  Description: Colored terminal output for Python's logging module
-  Homepage: https://github.com/borntyping/python-colorlog
-  License: MIT
-  License File: MIT.txt
-  Platforms: Linux, Windows
-
 python-mpv
   Description: Python interface to the mpv media player
   Homepage: https://github.com/jaseg/python-mpv
