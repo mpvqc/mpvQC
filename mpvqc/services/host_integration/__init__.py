@@ -9,13 +9,8 @@ import os
 import platform
 from dataclasses import dataclass
 from functools import cached_property
-from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
-from PySide6.QtGui import QScreen
-
-if TYPE_CHECKING:
-    from PySide6.QtGui import QWindow
 
 logger = logging.getLogger(__name__)
 
@@ -40,28 +35,18 @@ class HostIntegrationService(QObject):
     DEFAULT_WINDOW_BUTTON_PREFERENCE = WindowButtonPreference(minimize=True, maximize=True, close=True)
 
     display_zoom_factor_changed = Signal(float)
-    refresh_rate_changed = Signal(float)
 
     def __init__(self):
         super().__init__()
         self._zoom_factor = get_display_zoom_factor()
-        self._refresh_rate = get_refresh_rate()
 
         self._zoom_factor_change_listener = ZoomFactorChangeEventListener()
         self._zoom_factor_change_listener.device_pixel_ratio_changed.connect(self._invalidate_zoom_factor)
 
         from mpvqc.utility import get_main_window
 
-        self._window: QWindow = get_main_window()
+        self._window = get_main_window()
         self._window.installEventFilter(self._zoom_factor_change_listener)
-        self._window.screenChanged.connect(self._on_screen_changed)
-
-        self._screen: QScreen = self._window.screen()
-        self._screen.refreshRateChanged.connect(self._invalidate_refresh_rate)
-
-    @property
-    def display_zoom_factor(self) -> float:
-        return self._zoom_factor
 
     @Slot()
     def _invalidate_zoom_factor(self, *_) -> None:
@@ -70,21 +55,8 @@ class HostIntegrationService(QObject):
             self.display_zoom_factor_changed.emit(zoom_factor)
 
     @property
-    def refresh_rate(self) -> float:
-        return self._refresh_rate
-
-    @Slot(QScreen)
-    def _on_screen_changed(self, screen: QScreen) -> None:
-        self._screen.refreshRateChanged.disconnect(self._invalidate_refresh_rate)
-        self._screen = screen
-        self._screen.refreshRateChanged.connect(self._invalidate_refresh_rate)
-        self._invalidate_refresh_rate()
-
-    @Slot(float)
-    def _invalidate_refresh_rate(self, *_) -> None:
-        if (refresh_rate := get_refresh_rate()) != self._refresh_rate:
-            self._refresh_rate = refresh_rate
-            self.refresh_rate_changed.emit(refresh_rate)
+    def display_zoom_factor(self) -> float:
+        return self._zoom_factor
 
     @cached_property
     def is_tiling_window_manager(self) -> bool:
@@ -106,12 +78,6 @@ def get_display_zoom_factor() -> float:
     from mpvqc.utility import get_main_window
 
     return get_main_window().devicePixelRatio()
-
-
-def get_refresh_rate() -> float:
-    from mpvqc.utility import get_main_window
-
-    return get_main_window().screen().refreshRate()
 
 
 def is_tiling_window_manager() -> bool:

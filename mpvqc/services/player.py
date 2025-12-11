@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import logging
 import os
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -114,10 +113,6 @@ class PlayerService(QObject):
         self._mpv.observe_property("width", self._on_player_width_changed)
         self._mpv.observe_property("track-list", self._on_track_list_changed)
 
-        if sys.platform == "linux":
-            self._host_integration.refresh_rate_changed.connect(self._on_refresh_rate_changed)
-            self._on_refresh_rate_changed(self._host_integration.refresh_rate)
-
     @property
     def mpv(self) -> MPV | None:
         return self._mpv
@@ -126,11 +121,6 @@ class PlayerService(QObject):
         if self._mpv is None:
             return None
         return getattr(self._mpv, attr, None)
-
-    def _set_mpv_attr(self, attr: str, value: Any) -> None:
-        if self._mpv is None:
-            return
-        setattr(self._mpv, attr, value)
 
     @property
     def mpv_version(self) -> str:
@@ -278,15 +268,6 @@ class PlayerService(QObject):
         if subtitle_count != self._cached_subtitle_track_count:
             self._cached_subtitle_track_count = subtitle_count
             self.subtitle_track_count_changed.emit(subtitle_count)
-
-    @Slot(float)
-    def _on_refresh_rate_changed(self, new_refresh_rate: float) -> None:
-        if new_refresh_rate <= 0:
-            return
-
-        audio_delay = (1 / new_refresh_rate) / 2
-        logger.info("Setting mpv audio-delay to %.4f sec for %.2f Hz", audio_delay, new_refresh_rate)
-        self._set_mpv_attr("audio_delay", audio_delay)
 
     def move_mouse(self, x: int, y: int) -> None:
         zoom_factor = self._host_integration.display_zoom_factor
