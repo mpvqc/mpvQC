@@ -84,6 +84,6 @@
     <text x="50%" y="330" text-anchor="middle" font-family="Noto Sans" font-weight="bold"
      letter-spacing="2" fill="#cac8d3">
     <tspan x="50%" font-size="44">mpvQC</tspan>
-    <tspan x="50%" dy="32" font-size="24">0.9.0-beta2</tspan>
+    <tspan x="50%" dy="32" font-size="24">0.9.0-beta3</tspan>
 </text>
 </svg>

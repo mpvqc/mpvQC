@@ -53,7 +53,7 @@ platforms = ["win32"]
 [[dev_dependency]]
 name = "pytest"
 package = "pytest"
-version = "9.0.1"
+version = "9.0.2"
 url = "https://github.com/pytest-dev/pytest"
 licence = "MIT"
 platforms = ["linux", "win32"]
