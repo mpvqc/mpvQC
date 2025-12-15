@@ -126,7 +126,7 @@ jobs:
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           debug "Uploading build/release as $RELEASE_NAME"
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: build/release
           name: ${{ steps.build_step.outputs.release_name }}
@@ -320,7 +320,7 @@ jobs:
           execute cp -r LICENSES deployment/mpvQC-distribution/
           execute cp NOTICE.txt deployment/mpvQC-distribution/
       - name: Upload Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
           path: deployment/mpvQC-distribution
