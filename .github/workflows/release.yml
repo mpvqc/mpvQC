@@ -155,7 +155,7 @@ jobs:
 
           execute rm -rf mpvqc main.py
       - name: Download Build Artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: release-build-windows
           path: .
