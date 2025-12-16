@@ -25,7 +25,7 @@
     </message>
     <message>
         <source>Copy version info to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar la información de la versión al portapapeles</translation>
     </message>
     <message>
         <source>Made by</source>
@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Powered by Python %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impulsado por Python %1</translation>
     </message>
     <message>
         <source>Development</source>
@@ -238,7 +238,7 @@
     </message>
     <message>
         <source>Subtitle files</source>
-        <translation>Archivo de subtítulos</translation>
+        <translation>Archivos de subtítulos</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
@@ -577,7 +577,7 @@
     <message>
         <source>No text available</source>
         <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No hay texto disponible</translation>
     </message>
     <message numerus="yes">
         <source>Document Not Compatible</source>
@@ -637,7 +637,7 @@
     <message>
         <source>Search</source>
         <extracomment>Placeholder text for search entry</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Buscar</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
@@ -701,11 +701,11 @@
     </message>
     <message>
         <source>Toggle Fullscreen</source>
-        <translation>Alternar pantalla completa</translation>
+        <translation>Activar/desactivar pantalla completa</translation>
     </message>
     <message>
         <source>Toggle Play/Pause</source>
-        <translation>Reproducir/Pausar</translation>
+        <translation>Reproducir/pausar</translation>
     </message>
     <message>
         <source>Seek Backward by 2 Seconds</source>
@@ -733,7 +733,7 @@
     </message>
     <message>
         <source>Toggle Mute</source>
-        <translation>Silenciar/Activar sonido</translation>
+        <translation>Silenciar/activar sonido</translation>
     </message>
     <message>
         <source>Frame Step Backward</source>
@@ -785,22 +785,22 @@
     <message>
         <source>Frame Step Backward (%1)</source>
         <extracomment>Tooltip for &apos;Frame Step Backward&apos;, %1 will be the default shortcut button identifier</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Retroceder un fotograma (%1)</translation>
     </message>
     <message>
         <source>Frame Step Forward (%1)</source>
         <extracomment>Tooltip for &apos;Frame Step Forward&apos;, %1 will be the default shortcut button identifier</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Avanzar un fotograma (%1)</translation>
     </message>
     <message>
         <source>Cycle Subtitle Track (%1)</source>
         <extracomment>Tooltip for &apos;Cycle Subtitle Track&apos;, %1 will be the default shortcut button identifier</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar pista de subtítulos (%1)</translation>
     </message>
     <message>
         <source>Cycle Audio Track (%1)</source>
         <extracomment>Tooltip for &apos;Cycle Audio Track&apos;, %1 will be the default shortcut button identifier</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar pista de audio (%1)</translation>
     </message>
 </context>
 <context>
@@ -815,7 +815,7 @@
     </message>
     <message>
         <source>Server Not Reachable</source>
-        <translation>Servidor no localizado</translation>
+        <translation>Servidor inaccesible</translation>
     </message>
     <message>
         <source>A connection to the server could not be established.</source>
@@ -827,7 +827,7 @@
     </message>
     <message>
         <source>The server returned error code {}.</source>
-        <translation>El servidor arrojó el código de error {}.</translation>
+        <translation>El servidor devolvió el código de error {}.</translation>
     </message>
     <message>
         <source>There is a new version of mpvQC available ({}). Visit {} to download it.</source>
