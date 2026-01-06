@@ -39,7 +39,7 @@ repos:
           - "--option"
           - "indent_string=    "
   - repo: https://github.com/google/yamlfmt
-    rev: v0.20.0
+    rev: v0.21.0
     hooks:
       - id: yamlfmt
         name: "format yml"
@@ -65,7 +65,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.8
+    rev: v0.14.10
     hooks:
       - id: ruff
         name: "lint py"
