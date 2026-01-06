@@ -163,8 +163,7 @@ def update_theme_file(colors: list[MpvqcColorSet], dark: bool) -> None:
         if theme == item["identifier"]:
             file[idx]["palettes"] = [asdict(c) for c in colors]
 
-    with Path(path).open("w", encoding="utf-8") as f:
-        f.write(json.dumps(file, indent=4))
+    Path(path).write_text(json.dumps(file, indent=4), encoding="utf-8")
 
 
 if __name__ == "__main__":
