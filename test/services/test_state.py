@@ -215,8 +215,6 @@ class ImportActionTestCase(NamedTuple):
     video_from_subtitle: bool
     expected_document: Path | None
     expected_video: Path | None
-    expected_document: Path | None
-    expected_video: Path | None
     expected_saved: bool
 
 
