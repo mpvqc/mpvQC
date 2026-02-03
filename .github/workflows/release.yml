@@ -16,8 +16,8 @@ defaults:
     shell: bash
 
 env:
-  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20251211/mpv-dev-x86_64-20251211-git-95c7599.7z
-  LIBMPV_SHA256: 73a5b90628eb67040d7419abd3835348f8470180b00f434fbf70776abccbf914
+  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260203/mpv-dev-x86_64-20260203-git-db22a45.7z
+  LIBMPV_SHA256: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
 
 jobs:
   matrix-build:
