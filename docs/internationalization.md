@@ -10,18 +10,14 @@ SPDX-License-Identifier: MIT
 - Make sure development environment is set up correctly for your OS
 - Create a new translation file by running
   ```shell
-  just add-translation <locale>  # just add-translation fr_FR
+  just add-translation <locale>  # just add-translation fr-FR
   ```
 - New `<locale>.ts` file appears in the `i18n` directory
 - Translate the `ts` file using Qt Linguist 6:
   ```shell
-  pyside6-linguist i18n/<locale>.ts # pyside6-linguist i18n/fr_FR.ts
+  pyside6-linguist i18n/<locale>.ts  # pyside6-linguist i18n/fr-FR.ts
   ```
 - To test the translation:
-  - Make the application portable
-    ```shell
-    touch portable
-    ```
   - Run
     ```shell
     just build-develop
@@ -32,6 +28,15 @@ SPDX-License-Identifier: MIT
     [Common]
     language=<locale>
     ```
-  - Start the application
-- Add a new entry in the `qml/models/MpvqcLanguageModel.qml` file
+- Add a new `Language` entry to the `LANGUAGES` tuple in `mpvqc/models/languages.py`
 - Open a new pull request
+
+# Updating Translations
+
+When translatable strings in the source code change, update all existing `.ts` files by running:
+
+```shell
+just update-translations
+```
+
+This scans all QML and Python source files for translatable strings and updates the `.ts` files accordingly.
