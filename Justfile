@@ -77,6 +77,7 @@ test-python SKIP_PREPARATION='false':
     if [[ "{{ SKIP_PREPARATION }}" == "false" ]] then
       just _prepare-tests
     fi
+    export QT_QPA_PLATFORM=offscreen
     uv run pytest build-aux test
 
 [group('test')]
@@ -91,6 +92,7 @@ test-qml SKIP_PREPARATION='false':
     from test.prepare_qml import MpvqcTestSetup
 
     # Pass additional arguments to qmltestrunner:
+    sys.argv += ["-platform", "offscreen"]
     sys.argv += ["-silent"]
     sys.argv += ["-input", "qt/qml"]
     # sys.argv += ["-eventdelay", "50"]  # Simulate slower systems
