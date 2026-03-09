@@ -7,7 +7,7 @@ import inject
 import mpvqc.services as s
 
 
-def bindings(binder: inject.Binder):
+def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.ApplicationEnvironmentService, s.ApplicationEnvironmentService)
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
@@ -40,6 +40,19 @@ def bindings(binder: inject.Binder):
     binder.bind_to_constructor(s.TypeMapperService, s.TypeMapperService)
     binder.bind_to_constructor(s.VersionCheckerService, s.VersionCheckerService)
     binder.bind_to_constructor(s.WindowPropertiesService, s.WindowPropertiesService)
+    _bind_comment_model(binder)
+
+
+def _bind_comment_model(binder: inject.Binder) -> None:
+    from PySide6.QtCore import QCoreApplication
+    from PySide6.QtGui import QStandardItemModel
+
+    from mpvqc.models import MpvqcCommentModel
+
+    binder.bind_to_constructor(
+        MpvqcCommentModel,
+        lambda: QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel"),
+    )
 
 
 def configure_injections():
