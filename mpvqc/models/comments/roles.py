@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import ClassVar
+
 from PySide6.QtCore import QByteArray
 
 
@@ -10,7 +12,7 @@ class Role:
     TYPE = 1020
     COMMENT = 1030
 
-    MAPPING = {
+    MAPPING: ClassVar[dict[int, QByteArray]] = {
         TIME: QByteArray(b"time"),
         TYPE: QByteArray(b"commentType"),
         COMMENT: QByteArray(b"comment"),

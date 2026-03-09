@@ -92,8 +92,6 @@ def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
-    """"""
-
     def __init__(self):
         super().__init__()
         self._top_lvl_hwnd = None

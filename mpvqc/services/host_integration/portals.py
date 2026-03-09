@@ -68,7 +68,7 @@ class SettingsPortal:
             version = self._interface.property("version")
             if version is not None:
                 return int(version)
-        except Exception:
+        except (TypeError, ValueError):
             logger.debug("Could not determine Settings portal version")
 
         return 0

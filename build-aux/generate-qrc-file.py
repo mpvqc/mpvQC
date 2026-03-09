@@ -10,7 +10,8 @@ from pathlib import Path
 
 # noinspection DuplicatedCode
 class ArgumentValidator:
-    _errors = []
+    def __init__(self):
+        self._errors = []
 
     def validate_directory(self, directory: Path):
         if not directory.exists():
@@ -40,10 +41,9 @@ class ArgumentValidator:
 
 
 class QrcFileGenerator:
-    _files = []
-
     def __init__(self, root_dir: Path):
         self._root_dir = root_dir
+        self._files = []
 
     def add(self, directories: list[Path], files: list[Path]) -> None:
         for directory in directories:
