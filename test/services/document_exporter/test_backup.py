@@ -11,8 +11,6 @@ from PySide6.QtCore import QDateTime
 
 from mpvqc.services import DocumentBackupService
 
-from .conftest import MODULE
-
 
 @pytest.fixture
 def service() -> DocumentBackupService:
@@ -21,7 +19,7 @@ def service() -> DocumentBackupService:
 
 @pytest.fixture
 def zip_file():
-    with patch(f"{MODULE}.ZipFile", return_value=MagicMock()) as mock:
+    with patch("mpvqc.services.document_exporter.ZipFile", return_value=MagicMock()) as mock:
         yield mock
 
 

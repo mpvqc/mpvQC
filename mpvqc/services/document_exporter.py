@@ -7,7 +7,6 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import inject
 from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QObject, QStandardPaths, Signal
-from PySide6.QtGui import QStandardItemModel
 
 from .application_paths import ApplicationPathsService
 from .build_info import BuildInfoService
@@ -35,10 +34,13 @@ class DocumentRenderService:
     def __init__(self):
         from jinja2 import BaseLoader, Environment
 
+        from mpvqc.models import MpvqcCommentModel
+
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)  # noqa: S701
         self._filters = self.Filters()
         self._env.filters["as_time"] = self._filters.as_time
         self._env.filters["as_comment_type"] = self._filters.as_comment_type
+        self._comment_model = inject.instance(MpvqcCommentModel)
 
     @property
     def _arguments(self) -> dict:
@@ -49,7 +51,7 @@ class DocumentRenderService:
         write_subtitle_paths = self._settings.write_header_subtitles
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
-        comments = QCoreApplication.instance().find_object(QStandardItemModel, "mpvqcCommentModel").comments()
+        comments = self._comment_model.comments()
         generator = f"{self._build_info.name} {self._build_info.version}"
         nickname = self._settings.nickname
         subtitles = [str(sub) for sub in self._player.external_subtitles]
