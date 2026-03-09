@@ -7,7 +7,7 @@
         "palettes": [
             {
                 "background": "#fff0ee",
-                "backgroundAlternate": "#ffd3cd",
+                "backgroundAlternate": "#ffdad5",
                 "foreground": "#534341",
                 "foregroundAlternate": "#5d3f3b",
                 "control": "#775652",
@@ -20,7 +20,7 @@
             },
             {
                 "background": "#fff0f1",
-                "backgroundAlternate": "#ffd5da",
+                "backgroundAlternate": "#ffd9de",
                 "foreground": "#524345",
                 "foregroundAlternate": "#5c3f43",
                 "control": "#75565b",
@@ -33,7 +33,7 @@
             },
             {
                 "background": "#fcf0f7",
-                "backgroundAlternate": "#f1d8ee",
+                "backgroundAlternate": "#f4dbf1",
                 "foreground": "#4d444c",
                 "foregroundAlternate": "#534153",
                 "control": "#6b586b",
@@ -59,7 +59,7 @@
             },
             {
                 "background": "#f5f2fa",
-                "backgroundAlternate": "#dddef6",
+                "backgroundAlternate": "#e0e1f9",
                 "foreground": "#46464f",
                 "foregroundAlternate": "#434659",
                 "control": "#5b5d72",
@@ -72,7 +72,7 @@
             },
             {
                 "background": "#f2f3fa",
-                "backgroundAlternate": "#d4e1f5",
+                "backgroundAlternate": "#d7e3f7",
                 "foreground": "#43474e",
                 "foregroundAlternate": "#3b4858",
                 "control": "#535f70",
@@ -85,7 +85,7 @@
             },
             {
                 "background": "#f1f4f9",
-                "backgroundAlternate": "#d0e2f3",
+                "backgroundAlternate": "#d3e5f5",
                 "foreground": "#41474d",
                 "foregroundAlternate": "#384956",
                 "control": "#50606e",
@@ -150,7 +150,7 @@
             },
             {
                 "background": "#f6f4e7",
-                "backgroundAlternate": "#e1e2be",
+                "backgroundAlternate": "#e4e5c1",
                 "foreground": "#47483b",
                 "foregroundAlternate": "#46492e",
                 "control": "#5e6044",
@@ -163,7 +163,7 @@
             },
             {
                 "background": "#f9f3e5",
-                "backgroundAlternate": "#e8e0ba",
+                "backgroundAlternate": "#ebe3bd",
                 "foreground": "#4a473a",
                 "foregroundAlternate": "#4b472b",
                 "control": "#645f41",
@@ -176,7 +176,7 @@
             },
             {
                 "background": "#fcf2e5",
-                "backgroundAlternate": "#f2ddb8",
+                "backgroundAlternate": "#f5e0bb",
                 "foreground": "#4d4639",
                 "foregroundAlternate": "#52452a",
                 "control": "#6b5d3f",

@@ -9,9 +9,9 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from materialyoucolor.dynamiccolor.dynamic_scheme import DynamicScheme
 from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynamicColors
 from materialyoucolor.hct import Hct
-from materialyoucolor.scheme.dynamic_scheme import DynamicScheme
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
 
 HEX_PATTERN = re.compile(r"^#[A-Fa-f0-9]{6}$")
@@ -79,37 +79,30 @@ def validate_colors(colors: list[str]) -> None:
 
 
 def generate(colors: list[str], dark: bool, contrast: float) -> None:
+    spec_version = "2021"
     color_map = {}
 
     for hex_color in colors:
         hct = Hct.from_int(int("0xff" + hex_color[1:], 16))
-        scheme = SchemeTonalSpot(hct, dark, contrast)
-        color_map[hex_color] = generate_palette_from(scheme)
+        scheme = SchemeTonalSpot(hct, dark, contrast, spec_version=spec_version)
+        mdc = MaterialDynamicColors(spec=spec_version)
+        color_map[hex_color] = generate_palette_from(scheme, mdc)
 
     mpvqc_colors = map_to_mpvqc_colors(color_map, dark)
     update_theme_file(mpvqc_colors, dark)
 
 
-def generate_palette_from(scheme: DynamicScheme) -> dict:
-    colors = {}
+def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) -> dict[str, str]:
+    result = {}
 
-    for attribute in sorted(vars(MaterialDynamicColors).keys()):
-        attribute_value = getattr(MaterialDynamicColors, attribute)
+    for color in colors.all_colors:
+        color_name = color.name
+        r, g, b, _ = color.get_hct(scheme).to_rgba()
+        color_code = f"#{r:02x}{g:02x}{b:02x}"
 
-        is_color = hasattr(attribute_value, "get_hct")
-        is_palette_key_color = bool("_paletteKeyColor" in attribute)
+        result[color_name] = color_code
 
-        if is_color and not is_palette_key_color:
-            r, g, b, _ = attribute_value.get_hct(scheme).to_rgba()
-            color = Color(attribute, f"#{r:02x}{g:02x}{b:02x}")
-
-            if color.name in colors:
-                msg = f"Duplicate color name: {color.name}"
-                raise ValueError(msg)
-
-            colors[color.name] = color.value
-
-    return colors
+    return result
 
 
 def map_to_mpvqc_colors(color_map: dict, dark: bool):
