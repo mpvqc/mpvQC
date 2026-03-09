@@ -181,7 +181,7 @@ def test_update_comment_fires_signals(model, make_spy):
 
 
 def test_update_comments_consecutively_undo_redo(make_model):
-    model, set_time = make_model(DEFAULT_COMMENTS, 999)
+    model, _ = make_model(DEFAULT_COMMENTS, 999)
     model.add_row("comment-type")
 
     model.update_comment(row=5, comment="First")

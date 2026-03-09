@@ -42,6 +42,6 @@ def test_render_called(configure_mocks, document_render_service_mock, zip_file, 
     writestr_mock = zip_file.return_value.__enter__.return_value.writestr
     assert writestr_mock.called
 
-    filename, content = writestr_mock.call_args.args
+    filename, _ = writestr_mock.call_args.args
     assert f"{QDateTime.currentDateTime().toString('yyyy-MM-dd')}" in filename
     document_render_service_mock.render.assert_called_once()

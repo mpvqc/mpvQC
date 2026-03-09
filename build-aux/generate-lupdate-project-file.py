@@ -6,11 +6,13 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import ClassVar
 
 
 # noinspection DuplicatedCode
 class ArgumentValidator:
-    _errors = []
+    def __init__(self):
+        self._errors = []
 
     def validate_directory(self, directory: Path):
         if not directory.exists():
@@ -40,12 +42,12 @@ class ArgumentValidator:
 
 
 class ProjectFileGenerator:
-    _extensions_ignored = {".pyc", ".qm"}
+    _extensions_ignored: ClassVar[set[str]] = {".pyc", ".qm"}
     _extensions_translation = ".ts"
-    _files = []
 
     def __init__(self, root_dir: Path):
         self._root_dir = root_dir
+        self._files = []
 
     def add(self, directories: list[Path], files: list[Path]):
         for directory in directories:
