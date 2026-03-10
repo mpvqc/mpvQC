@@ -39,15 +39,15 @@ def test_get_default_language(mock_languages, locale_string, expected):
 
 
 def test_backup_enabled_default(settings_service):
-    assert settings_service.backup_enabled is True
+    assert settings_service.backup_enabled
 
 
 def test_backup_enabled_set_and_get(settings_service):
     settings_service.backup_enabled = False
-    assert settings_service.backup_enabled is False
+    assert not settings_service.backup_enabled
 
     settings_service.backup_enabled = True
-    assert settings_service.backup_enabled is True
+    assert settings_service.backup_enabled
 
 
 def test_backup_enabled_signal_emission(settings_service, make_spy):

@@ -116,6 +116,10 @@ def reduce(state: ApplicationState, action: Action) -> ApplicationState:
         case ImportAction(change):
             return _handle_import(state, change)
 
+        case _:
+            msg = f"Unknown action: {action}"
+            raise ValueError(msg)
+
 
 def _handle_import(state: ApplicationState, change: ImportChange) -> ApplicationState:
     is_initial_state = state.document is None and state.saved

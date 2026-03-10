@@ -314,6 +314,8 @@ class MpvqcCommentTypesDialogViewModel(QObject):
                 case TextFieldMode.EDITING if 0 <= self._selected_index < count:
                     original = self._get_item(self._selected_index)
                     error = self._validator.validate_editing_of_comment_type(content, original, temporary_comment_types)
+                case _:
+                    pass
 
         self._set_validation_error(error or "")
 

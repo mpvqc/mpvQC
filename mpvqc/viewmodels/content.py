@@ -91,6 +91,8 @@ class MpvqcContentViewModel(QObject):
                 return
             case Qt.Key.Key_Z if ctrl_modifier:
                 return
+            case _:
+                pass
 
         self._player.handle_key_event(key, modifiers)
 

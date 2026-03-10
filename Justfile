@@ -104,7 +104,7 @@ test-qml SKIP_PREPARATION='false':
 # Lint Python files (type checker only)
 [group('lint')]
 @lint-python *ARGS:
-    uvx pyrefly@0.42.1 check --ignore missing-attribute {{ ARGS }}
+    uvx pyrefly@0.55.0 check --ignore missing-attribute {{ ARGS }}
 
 # Lint QML files
 [group('lint')]
