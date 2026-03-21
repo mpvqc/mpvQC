@@ -291,6 +291,7 @@ jobs:
             --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.matrix-build.outputs.artifact_app_name }} \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
+            --include-windows-runtime-dlls=yes \
             --windows-console-mode=attach \
             --windows-icon-from-ico=build-aux/windows-icon.ico \
             --output-filename=mpvQC.exe
