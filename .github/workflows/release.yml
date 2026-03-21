@@ -184,6 +184,8 @@ jobs:
             --include-data-files=LICENSES/*.txt=LICENSES/ \
             --include-data-files=NOTICE.txt=NOTICE.txt \
             --include-qt-plugins=qml,platforms \
+            --include-windows-runtime-dlls=yes \
+            --mode=onefile \
             --nofollow-import-to='PySide6.QtWidgets' \
             --nofollow-import-to=tkinter,distutils,numpy.f2py \
             --noinclude-data-files='PySide6/qml/Qt/*' \
@@ -211,6 +213,8 @@ jobs:
             --noinclude-data-files='PySide6/qml/QtTest/*' \
             --noinclude-data-files='PySide6/qml/QtWebEngine/*' \
             --noinclude-data-files='PySide6/qt-plugins/styles/*' \
+            --noinclude-dlls='PySide6/QtDBus.pyd' \
+            --noinclude-dlls='PySide6/QtNetwork.pyd' \
             --noinclude-dlls='PySide6/qml/Qt/*' \
             --noinclude-dlls='PySide6/qml/QtCore/*' \
             --noinclude-dlls='PySide6/qml/QtNetwork/*' \
@@ -237,6 +241,7 @@ jobs:
             --noinclude-dlls='PySide6/qml/QtWebEngine/*' \
             --noinclude-dlls='PySide6/qt-plugins/imageformats/qgif.dll' \
             --noinclude-dlls='PySide6/qt-plugins/imageformats/qicns.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qico.dll' \
             --noinclude-dlls='PySide6/qt-plugins/imageformats/qjpeg.dll' \
             --noinclude-dlls='PySide6/qt-plugins/imageformats/qpdf.dll' \
             --noinclude-dlls='PySide6/qt-plugins/imageformats/qpng.dll' \
@@ -248,6 +253,9 @@ jobs:
             --noinclude-dlls='PySide6/qt-plugins/platforms/qminimal.dll' \
             --noinclude-dlls='PySide6/qt-plugins/platforms/qoffscreen.dll' \
             --noinclude-dlls='PySide6/qt-plugins/styles/*' \
+            --noinclude-dlls='PySide6/qt-plugins/tls/qcertonlybackend.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/tls/qopensslbackend.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/tls/qschannelbackend.dll' \
             --noinclude-dlls='Qt6Charts*' \
             --noinclude-dlls='Qt6DataVisualization*' \
             --noinclude-dlls='Qt6Pdf*' \
@@ -283,22 +291,14 @@ jobs:
             --noinclude-dlls='qt6quicktimelineblendtrees.dll' \
             --noinclude-dlls='qt6quickvectorimage.dll' \
             --noinclude-dlls='qt6quickvectorimagegenerator.dll' \
+            --noinclude-dlls='qt6quickvectorimagehelpers.dll' \
             --noinclude-dlls='qt6sql.dll' \
             --noinclude-dlls='qt6widgets.dll' \
-            --noinclude-dlls='qt6quickvectorimagehelpers.dll' \
-            --noinclude-dlls='PySide6/QtNetwork.pyd' \
-            --noinclude-dlls='PySide6/QtDBus.pyd' \
-            --noinclude-dlls='PySide6/qt-plugins/imageformats/qico.dll' \
-            --noinclude-dlls='PySide6/qt-plugins/tls/qcertonlybackend.dll' \
-            --noinclude-dlls='PySide6/qt-plugins/tls/qopensslbackend.dll' \
-            --noinclude-dlls='PySide6/qt-plugins/tls/qschannelbackend.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
-            --mode=onefile \
             --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.matrix-build.outputs.artifact_app_name }} \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
-            --include-windows-runtime-dlls=yes \
             --windows-console-mode=attach \
             --windows-icon-from-ico=build-aux/windows-icon.ico \
             --output-filename=mpvQC.exe
