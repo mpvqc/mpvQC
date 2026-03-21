@@ -164,7 +164,7 @@ jobs:
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
           execute just init '--no-group dev'
-          execute uv pip install nuitka
+          execute uv pip install "nuitka[onefile]"
       - name: Build Bundle
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
@@ -287,10 +287,11 @@ jobs:
             --noinclude-dlls='qt6widgets.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
-            --onefile \
+            --mode=onefile \
             --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.matrix-build.outputs.artifact_app_name }} \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
+            --include-windows-runtime-dlls=yes \
             --windows-console-mode=attach \
             --windows-icon-from-ico=build-aux/windows-icon.ico \
             --output-filename=mpvQC.exe
