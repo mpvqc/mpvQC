@@ -213,8 +213,6 @@ jobs:
             --noinclude-data-files='PySide6/qml/QtTest/*' \
             --noinclude-data-files='PySide6/qml/QtWebEngine/*' \
             --noinclude-data-files='PySide6/qt-plugins/styles/*' \
-            --noinclude-dlls='PySide6/QtDBus.pyd' \
-            --noinclude-dlls='PySide6/QtNetwork.pyd' \
             --noinclude-dlls='PySide6/qml/Qt/*' \
             --noinclude-dlls='PySide6/qml/QtCore/*' \
             --noinclude-dlls='PySide6/qml/QtNetwork/*' \
