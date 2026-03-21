@@ -285,6 +285,13 @@ jobs:
             --noinclude-dlls='qt6quickvectorimagegenerator.dll' \
             --noinclude-dlls='qt6sql.dll' \
             --noinclude-dlls='qt6widgets.dll' \
+            --noinclude-dlls='qt6quickvectorimagehelpers.dll' \
+            --noinclude-dlls='PySide6/QtNetwork.pyd' \
+            --noinclude-dlls='PySide6/QtDBus.pyd' \
+            --noinclude-dlls='PySide6/qt-plugins/imageformats/qico.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/tls/qcertonlybackend.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/tls/qopensslbackend.dll' \
+            --noinclude-dlls='PySide6/qt-plugins/tls/qschannelbackend.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
             --mode=onefile \
