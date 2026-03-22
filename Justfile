@@ -3,6 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 set dotenv-load := true
+set lazy        := true
+set unstable    := true
+
+GIT_TAG := `git describe --tags --abbrev=0`
+GIT_COMMIT := `git rev-parse HEAD | head -c 8`
 
 alias fmt := format
 
@@ -46,6 +51,26 @@ update-python-dependencies:
 update-git-hook-dependencies:
     uvx prek@0.2.17 autoupdate
 
+# Stamp version info into data/build-info.toml
+[group('build')]
+set-build-info:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if git describe --exact-match HEAD 2>/dev/null; then
+        IS_RELEASE="true"
+    else
+        IS_RELEASE="false"
+    fi
+    if [ -n "${FLATPAK_ID:-}" ]; then
+        VERSION="{{ GIT_TAG }}-flatpak"
+    else
+        VERSION="{{ GIT_TAG }}"
+    fi
+    sed -i "1,13s/^version = .*/version = \"$VERSION\"/" data/build-info.toml
+    sed -i "1,13s/^commit = .*/commit = \"{{ GIT_COMMIT }}\"/" data/build-info.toml
+    sed -i "1,13s/^is_release = .*/is_release = $IS_RELEASE/" data/build-info.toml
+    cat data/build-info.toml
+
 # Build full project into build/release
 [group('build')]
 @build: clean
@@ -66,6 +91,18 @@ update-git-hook-dependencies:
     find i18n -name "*.qm" -type f -delete
     find qt/qml -name "*.qmlc" -type f -delete
     rm -rf build pyobjects test/rc_project.py rc_project.py project.json project.qrc
+
+# Build release artifact (⚠️ modifies working tree)
+[group('ci')]
+build-release:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+    execute find . -type f -name 'tst_*' -delete
+    execute just set-build-info
+    execute export MPVQC_COMPILE_QML=true
+    execute just build
+    execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
 
 # Run Python and QML tests
 [group('test')]

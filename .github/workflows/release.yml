@@ -16,140 +16,186 @@ defaults:
     shell: bash
 
 env:
-  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260203/mpv-dev-x86_64-20260203-git-db22a45.7z
-  LIBMPV_SHA256: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
+  PYTHON_VERSION: "3.13"
 
 jobs:
-  matrix-build:
-    strategy:
-      matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-    runs-on: ${{ matrix.os }}
-    name: Build (${{ matrix.os }})
+  verify_formatting:
+    runs-on: ubuntu-latest
+    name: Lint & Format
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Update Packages
+        run: sudo apt update -y
+      - name: Initialize Project
+        run: just init
+      - name: Run Linter and Formatter
+        run: just format
+      - name: Lint Qml
+        run: just lint-qml
+
+  test_python_linux:
+    runs-on: ubuntu-latest
+    name: Test Python (Linux)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
+      - name: Initialize Project
+        run: just init
+      - name: Execute Python Tests
+        run: just test-python
+
+  test_python_windows:
+    runs-on: windows-latest
+    name: Test Python (Windows)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
+      - name: Initialize Project
+        run: just init
+      - name: Execute Python Tests
+        run: just test-python
+
+  test_qml:
+    runs-on: ubuntu-latest
+    name: Test QML
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
+      - name: Initialize Project
+        run: just init
+      - name: Execute Qml Tests
+        run: just test-qml
+
+  build_windows:
+    runs-on: windows-latest
+    name: Build Windows
     outputs:
-      artifact_app_name: ${{ steps.build_step.outputs.artifact_app_name }}
+      artifact_app_name: ${{ steps.artifact_name.outputs.artifact_app_name }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Install Python 3.13
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Run Build
-        id: build_step
+      - name: Initialize Project
+        run: just init '--no-group dev'
+      - name: Build
+        run: just build-release
+      - name: Set Artifact Name
+        id: artifact_name
         run: |
-          set -euo pipefail
-
-          function debug() { echo -e "\033[0;35m$*\033[0m"; }
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          #
-          echo "::group::Download libmpv"
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            execute sudo apt update -y
-            execute sudo apt install -y libegl1 libmpv2
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            ARTIFACT="$(basename "$LIBMPV_URL")"
-
-            execute curl -L -O "$LIBMPV_URL"
-            echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
-            echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-            execute sha256sum --check "$ARTIFACT.sha256"
-            execute 7z x "$ARTIFACT"
-          else
-            echo "$RUNNER_OS not supported"
-            exit 1
-          fi
-          echo "::endgroup::"
-
-          #
-          echo "::group::Remove Qml Test Files"
-          execute find . -type f -name 'tst_*' -delete
-          echo "::endgroup::"
-
-          #
-          echo "::group::Set Build Information"
-          CURRENT_TAG="$(git describe --tags --abbrev=0)"
-          debug "git tag: $CURRENT_TAG"
-
-          CURRENT_COMMIT="$(git rev-parse HEAD)"
-          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
-          debug "git commit: $CURRENT_COMMIT"
-
-          if [[ "${{ github.ref }}" =~ ^refs/tags/ ]]; then
-            IS_RELEASE="true"
-            debug "This is a release build (triggered by tag)"
-          else
-            IS_RELEASE="false"
-            debug "This is a development build"
-          fi
-
-          ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
-          debug "artifact name: $ARTIFACT_NAME"
+          ARTIFACT_NAME="mpvQC-$(just --evaluate GIT_TAG)-$(just --evaluate GIT_COMMIT)"
+          echo -e "\033[0;35m$ARTIFACT_NAME\033[0m"
           echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-
-          execute sed -i '1,13s/^version = .*/version = "'"$CURRENT_TAG"'"/' "data/build-info.toml"
-          execute sed -i '1,13s/^commit = .*/commit = "'"$CURRENT_COMMIT"'"/' "data/build-info.toml"
-          execute sed -i '1,13s/^is_release = .*/is_release = '"$IS_RELEASE"'/' "data/build-info.toml"
-          execute cat "data/build-info.toml"
-          echo "::endgroup::"
-
-          #
-          echo "::group::Setup Virtual Environment"
-          execute just init
-          echo "::endgroup::"
-
-          #
-          echo "::group::Run Python Build"
-          execute just test-python
-          execute export MPVQC_COMPILE_QML=true
-          execute just build
-          echo "::endgroup::"
-
-          #
-          echo "::group::Remove __pycache__ Files"
-          execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
-          echo "::endgroup::"
-
-          #
-          RELEASE_NAME="release-build-${RUNNER_OS@L}"
-          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
-          debug "Uploading build/release as $RELEASE_NAME"
-      - name: Upload Build Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
           path: build/release
-          name: ${{ steps.build_step.outputs.release_name }}
+          name: release-build-windows
 
-  build_windows:
-    runs-on: windows-latest
-    name: Build Windows
-    needs:
-      - matrix-build
+  build_linux:
+    runs-on: ubuntu-latest
+    name: Build Linux
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Install Python 3.13
+        with:
+          fetch-depth: 0
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Remove Python sources
+      - name: Initialize Project
+        run: just init '--no-group dev'
+      - name: Build
+        run: just build-release
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: build/release
+          name: release-build-linux
+
+  build_windows_bundle:
+    runs-on: windows-latest
+    name: Build Windows Bundle
+    needs:
+      - build_windows
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Remove Python Sources
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
@@ -294,7 +340,7 @@ jobs:
             --noinclude-dlls='qt6widgets.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
-            --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.matrix-build.outputs.artifact_app_name }} \
+            --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.build_windows.outputs.artifact_app_name }} \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
             --windows-console-mode=attach \
@@ -303,82 +349,19 @@ jobs:
 
           execute mkdir -p deployment/mpvQC-distribution
           execute mv deployment/mpvqc-onefile/mpvQC.exe deployment/mpvQC-distribution/mpvQC.exe
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
       - name: Package libmpv
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          ARTIFACT="$(basename "$LIBMPV_URL")"
-          execute curl -L -O "$LIBMPV_URL"
-          echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
-          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-          execute sha256sum --check "$ARTIFACT.sha256"
-          execute 7z x "$ARTIFACT"
-          execute mv libmpv-2.dll deployment/mpvQC-distribution/
+        run: mv libmpv-2.dll deployment/mpvQC-distribution/
       - name: Make Application Portable
         run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute touch deployment/mpvQC-distribution/portable
+          touch deployment/mpvQC-distribution/portable
       - name: Copy License Files to Distribution
         run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute cp -r LICENSES deployment/mpvQC-distribution/
-          execute cp NOTICE.txt deployment/mpvQC-distribution/
+          cp -r LICENSES deployment/mpvQC-distribution/
+          cp NOTICE.txt deployment/mpvQC-distribution/
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
+          name: ${{ needs.build_windows.outputs.artifact_app_name }}-win-x86_64
           path: deployment/mpvQC-distribution
-
-  test_qml:
-    runs-on: ubuntu-latest
-    name: Qml Tests
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-      - name: Install Python 3.13
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
-      - name: Initialize Project
-        run: just init
-      - name: Execute Qml Tests
-        run: just test-qml
-
-  verify_formatting:
-    runs-on: ubuntu-latest
-    name: Linting & Formatting
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-      - name: Install Python 3.13
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y
-      - name: Initialize Project
-        run: just init
-      - name: Run Linter and Formatter
-        run: just format
-      - name: Lint Qml
-        run: just lint-qml
