@@ -159,6 +159,34 @@ jobs:
           path: build/release
           name: release-build-windows
 
+  build_linux:
+    runs-on: ubuntu-latest
+    name: Build Linux
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Initialize Project
+        run: just init '--no-group dev'
+      - name: Build
+        run: bash build-aux/linux-build.sh
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: build/release
+          name: release-build-linux
+
   build_windows_bundle:
     runs-on: windows-latest
     name: Build Windows Bundle
