@@ -357,6 +357,34 @@ jobs:
       - name: Execute Python Tests
         run: just test-python
 
+  test_python_windows:
+    runs-on: windows-latest
+    name: Python Tests (Windows)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Download libmpv
+        run: |
+          ARTIFACT="$(basename "$LIBMPV_URL")"
+          curl -L -O "$LIBMPV_URL"
+          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
+          sha256sum --check "$ARTIFACT.sha256"
+          7z x "$ARTIFACT"
+      - name: Initialize Project
+        run: just init
+      - name: Execute Python Tests
+        run: just test-python
+
   test_qml:
     runs-on: ubuntu-latest
     name: Qml Tests
