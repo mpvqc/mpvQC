@@ -4,6 +4,9 @@
 
 set dotenv-load := true
 
+GIT_TAG := `git describe --tags --abbrev=0`
+GIT_COMMIT := `git rev-parse HEAD | head -c 8`
+
 alias fmt := format
 
 @_default:
@@ -45,6 +48,26 @@ update-python-dependencies:
 [group('dev')]
 update-git-hook-dependencies:
     uvx prek@0.2.17 autoupdate
+
+# Stamp version info into data/build-info.toml
+[group('build')]
+set-build-info:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if git describe --exact-match HEAD 2>/dev/null; then
+        IS_RELEASE="true"
+    else
+        IS_RELEASE="false"
+    fi
+    if [ -n "${FLATPAK_ID:-}" ]; then
+        VERSION="{{GIT_TAG}}-flatpak"
+    else
+        VERSION="{{GIT_TAG}}"
+    fi
+    sed -i "1,13s/^version = .*/version = \"$VERSION\"/" data/build-info.toml
+    sed -i "1,13s/^commit = .*/commit = \"{{GIT_COMMIT}}\"/" data/build-info.toml
+    sed -i "1,13s/^is_release = .*/is_release = $IS_RELEASE/" data/build-info.toml
+    cat data/build-info.toml
 
 # Build full project into build/release
 [group('build')]

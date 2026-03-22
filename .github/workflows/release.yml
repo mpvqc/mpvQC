@@ -143,7 +143,6 @@ jobs:
           function debug() { echo -e "\033[0;35m$*\033[0m"; }
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-
           #
           echo "::group::Remove Qml Test Files"
           execute find . -type f -name 'tst_*' -delete
@@ -151,29 +150,11 @@ jobs:
 
           #
           echo "::group::Set Build Information"
-          CURRENT_TAG="$(git describe --tags --abbrev=0)"
-          debug "git tag: $CURRENT_TAG"
-
-          CURRENT_COMMIT="$(git rev-parse HEAD)"
-          CURRENT_COMMIT="${CURRENT_COMMIT:0:8}"
-          debug "git commit: $CURRENT_COMMIT"
-
-          if [[ "${{ github.ref }}" =~ ^refs/tags/ ]]; then
-            IS_RELEASE="true"
-            debug "This is a release build (triggered by tag)"
-          else
-            IS_RELEASE="false"
-            debug "This is a development build"
-          fi
-
-          ARTIFACT_NAME="mpvQC-$CURRENT_TAG-$CURRENT_COMMIT"
+          ARTIFACT_NAME="mpvQC-$(just --evaluate GIT_TAG)-$(just --evaluate GIT_COMMIT)"
           debug "artifact name: $ARTIFACT_NAME"
           echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
-          execute sed -i '1,13s/^version = .*/version = "'"$CURRENT_TAG"'"/' "data/build-info.toml"
-          execute sed -i '1,13s/^commit = .*/commit = "'"$CURRENT_COMMIT"'"/' "data/build-info.toml"
-          execute sed -i '1,13s/^is_release = .*/is_release = '"$IS_RELEASE"'/' "data/build-info.toml"
-          execute cat "data/build-info.toml"
+          execute just set-build-info
           echo "::endgroup::"
 
           #
