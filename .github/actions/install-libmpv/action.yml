@@ -28,4 +28,7 @@ runs:
           echo -n "${{ inputs.sha256 }} $ARTIFACT" > "$ARTIFACT.sha256"
           sha256sum --check "$ARTIFACT.sha256"
           7z x "$ARTIFACT"
+        else
+          echo "Unsupported runner OS: $RUNNER_OS" >&2
+          exit 1
         fi
