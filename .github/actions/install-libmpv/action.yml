@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: MIT
+
+name: Install libmpv
+description: Installs libmpv - via apt on Linux, or by downloading and extracting on Windows
+
+inputs:
+  url:
+    description: URL to download libmpv from (Windows only)
+    default: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260203/mpv-dev-x86_64-20260203-git-db22a45.7z
+  sha256:
+    description: Expected SHA256 checksum (Windows only)
+    default: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
+
+runs:
+  using: composite
+  steps:
+    - name: Install libmpv
+      shell: bash
+      run: |
+        if [[ "$RUNNER_OS" == "Linux" ]]; then
+          sudo apt update -y
+          sudo apt install -y libegl1 libmpv2
+        elif [[ "$RUNNER_OS" == "Windows" ]]; then
+          ARTIFACT="$(basename "${{ inputs.url }}")"
+          curl -L -O "${{ inputs.url }}"
+          echo -n "${{ inputs.sha256 }} $ARTIFACT" > "$ARTIFACT.sha256"
+          sha256sum --check "$ARTIFACT.sha256"
+          7z x "$ARTIFACT"
+        fi

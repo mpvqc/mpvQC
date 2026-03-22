@@ -17,8 +17,6 @@ defaults:
 
 env:
   PYTHON_VERSION: "3.13"
-  LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260203/mpv-dev-x86_64-20260203-git-db22a45.7z
-  LIBMPV_SHA256: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
 
 jobs:
   verify_formatting:
@@ -64,10 +62,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
       - name: Initialize Project
         run: just init
       - name: Execute Python Tests
@@ -89,13 +85,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Download libmpv
-        run: |
-          ARTIFACT="$(basename "$LIBMPV_URL")"
-          curl -L -O "$LIBMPV_URL"
-          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-          sha256sum --check "$ARTIFACT.sha256"
-          7z x "$ARTIFACT"
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
       - name: Initialize Project
         run: just init
       - name: Execute Python Tests
@@ -117,10 +108,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
       - name: Initialize Project
         run: just init
       - name: Execute Qml Tests
@@ -146,6 +135,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
       - name: Run Build
         id: build_step
         run: |
@@ -154,16 +145,6 @@ jobs:
           function debug() { echo -e "\033[0;35m$*\033[0m"; }
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          #
-          echo "::group::Download libmpv"
-          ARTIFACT="$(basename "$LIBMPV_URL")"
-
-          execute curl -L -O "$LIBMPV_URL"
-          echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
-          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-          execute sha256sum --check "$ARTIFACT.sha256"
-          execute 7z x "$ARTIFACT"
-          echo "::endgroup::"
 
           #
           echo "::group::Remove Qml Test Files"
@@ -396,28 +377,17 @@ jobs:
 
           execute mkdir -p deployment/mpvQC-distribution
           execute mv deployment/mpvqc-onefile/mpvQC.exe deployment/mpvQC-distribution/mpvQC.exe
+      - name: Install libmpv
+        uses: ./.github/actions/install-libmpv
       - name: Package libmpv
-        run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          ARTIFACT="$(basename "$LIBMPV_URL")"
-          execute curl -L -O "$LIBMPV_URL"
-          echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
-          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-          execute sha256sum --check "$ARTIFACT.sha256"
-          execute 7z x "$ARTIFACT"
-          execute mv libmpv-2.dll deployment/mpvQC-distribution/
+        run: mv libmpv-2.dll deployment/mpvQC-distribution/
       - name: Make Application Portable
         run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute touch deployment/mpvQC-distribution/portable
+          touch deployment/mpvQC-distribution/portable
       - name: Copy License Files to Distribution
         run: |
-          function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-
-          execute cp -r LICENSES deployment/mpvQC-distribution/
-          execute cp NOTICE.txt deployment/mpvQC-distribution/
+          cp -r LICENSES deployment/mpvQC-distribution/
+          cp NOTICE.txt deployment/mpvQC-distribution/
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
