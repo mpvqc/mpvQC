@@ -51,16 +51,6 @@ update-python-dependencies:
 update-git-hook-dependencies:
     uvx prek@0.2.17 autoupdate
 
-# Build release artifact (CAREFUL: modifies working tree)
-[group('ci')]
-build-release:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    find . -type f -name 'tst_*' -delete
-    just set-build-info
-    MPVQC_COMPILE_QML=true just build
-    find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
-
 # Stamp version info into data/build-info.toml
 [group('build')]
 set-build-info:
@@ -72,12 +62,12 @@ set-build-info:
         IS_RELEASE="false"
     fi
     if [ -n "${FLATPAK_ID:-}" ]; then
-        VERSION="{{GIT_TAG}}-flatpak"
+        VERSION="{{ GIT_TAG }}-flatpak"
     else
-        VERSION="{{GIT_TAG}}"
+        VERSION="{{ GIT_TAG }}"
     fi
     sed -i "1,13s/^version = .*/version = \"$VERSION\"/" data/build-info.toml
-    sed -i "1,13s/^commit = .*/commit = \"{{GIT_COMMIT}}\"/" data/build-info.toml
+    sed -i "1,13s/^commit = .*/commit = \"{{ GIT_COMMIT }}\"/" data/build-info.toml
     sed -i "1,13s/^is_release = .*/is_release = $IS_RELEASE/" data/build-info.toml
     cat data/build-info.toml
 
@@ -101,6 +91,18 @@ set-build-info:
     find i18n -name "*.qm" -type f -delete
     find qt/qml -name "*.qmlc" -type f -delete
     rm -rf build pyobjects test/rc_project.py rc_project.py project.json project.qrc
+
+# Build release artifact (⚠️ modifies working tree)
+[group('ci')]
+build-release:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
+    execute find . -type f -name 'tst_*' -delete
+    execute just set-build-info
+    execute export MPVQC_COMPILE_QML=true
+    execute just build
+    execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
 
 # Run Python and QML tests
 [group('test')]
