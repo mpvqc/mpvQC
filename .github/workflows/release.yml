@@ -119,7 +119,7 @@ jobs:
     runs-on: windows-latest
     name: Build Windows
     outputs:
-      artifact_app_name: ${{ steps.build_step.outputs.artifact_app_name }}
+      artifact_app_name: ${{ steps.artifact_name.outputs.artifact_app_name }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -136,7 +136,6 @@ jobs:
         with:
           enable-cache: false
       - name: Run Build
-        id: build_step
         run: |
           set -euo pipefail
 
@@ -150,10 +149,6 @@ jobs:
 
           #
           echo "::group::Set Build Information"
-          ARTIFACT_NAME="mpvQC-$(just --evaluate GIT_TAG)-$(just --evaluate GIT_COMMIT)"
-          debug "artifact name: $ARTIFACT_NAME"
-          echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-
           execute just set-build-info
           echo "::endgroup::"
 
@@ -172,6 +167,12 @@ jobs:
           echo "::group::Remove __pycache__ Files"
           execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
           echo "::endgroup::"
+      - name: Set Artifact Name
+        id: artifact_name
+        run: |
+          ARTIFACT_NAME="mpvQC-$(just --evaluate GIT_TAG)-$(just --evaluate GIT_COMMIT)"
+          echo -e "\033[0;35m$ARTIFACT_NAME\033[0m"
+          echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v7
         with:
