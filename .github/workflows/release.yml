@@ -21,14 +21,9 @@ env:
   LIBMPV_SHA256: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
 
 jobs:
-  matrix-build:
-    strategy:
-      matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-    runs-on: ${{ matrix.os }}
-    name: Build (${{ matrix.os }})
+  build_windows:
+    runs-on: windows-latest
+    name: Build
     outputs:
       artifact_app_name: ${{ steps.build_step.outputs.artifact_app_name }}
     steps:
@@ -56,21 +51,13 @@ jobs:
 
           #
           echo "::group::Download libmpv"
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            execute sudo apt update -y
-            execute sudo apt install -y libegl1 libmpv2
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            ARTIFACT="$(basename "$LIBMPV_URL")"
+          ARTIFACT="$(basename "$LIBMPV_URL")"
 
-            execute curl -L -O "$LIBMPV_URL"
-            echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
-            echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-            execute sha256sum --check "$ARTIFACT.sha256"
-            execute 7z x "$ARTIFACT"
-          else
-            echo "$RUNNER_OS not supported"
-            exit 1
-          fi
+          execute curl -L -O "$LIBMPV_URL"
+          echo -e "\033[0;34mecho -n $LIBMPV_SHA256 $ARTIFACT > $ARTIFACT.sha256\033[0m"
+          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
+          execute sha256sum --check "$ARTIFACT.sha256"
+          execute 7z x "$ARTIFACT"
           echo "::endgroup::"
 
           #
@@ -123,7 +110,7 @@ jobs:
           echo "::endgroup::"
 
           #
-          RELEASE_NAME="release-build-${RUNNER_OS@L}"
+          RELEASE_NAME="release-build-windows"
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           debug "Uploading build/release as $RELEASE_NAME"
       - name: Upload Build Artifact
@@ -132,11 +119,11 @@ jobs:
           path: build/release
           name: ${{ steps.build_step.outputs.release_name }}
 
-  build_windows:
+  build_windows_deployable:
     runs-on: windows-latest
     name: Build Windows
     needs:
-      - matrix-build
+      - build_windows
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -295,7 +282,7 @@ jobs:
             --noinclude-dlls='qt6widgets.dll' \
             --noinclude-qt-plugins=designer,multimedia,sqldrivers,virtualkeyboard,styles,tls \
             --noinclude-qt-translations \
-            --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.matrix-build.outputs.artifact_app_name }} \
+            --onefile-tempdir-spec={CACHE_DIR}/mpvQC/${{ needs.build_windows.outputs.artifact_app_name }} \
             --onefile-windows-splash-screen-image=build-aux/windows-splash.png \
             --output-dir=deployment/mpvqc-onefile \
             --windows-console-mode=attach \
@@ -329,7 +316,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ needs.matrix-build.outputs.artifact_app_name }}-win-x86_64
+          name: ${{ needs.build_windows.outputs.artifact_app_name }}-win-x86_64
           path: deployment/mpvQC-distribution
 
   test_python_linux:
