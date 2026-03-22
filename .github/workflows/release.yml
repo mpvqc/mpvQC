@@ -128,7 +128,7 @@ jobs:
 
   build_windows:
     runs-on: windows-latest
-    name: Build
+    name: Build Windows
     outputs:
       artifact_app_name: ${{ steps.build_step.outputs.artifact_app_name }}
     steps:
@@ -224,9 +224,9 @@ jobs:
           path: build/release
           name: ${{ steps.build_step.outputs.release_name }}
 
-  build_windows_deployable:
+  build_windows_bundle:
     runs-on: windows-latest
-    name: Build Windows
+    name: Build Windows Bundle
     needs:
       - build_windows
     steps:
