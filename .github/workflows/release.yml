@@ -136,6 +136,8 @@ jobs:
         with:
           enable-cache: false
       - name: Run Build
+        env:
+          MPVQC_COMPILE_QML: "true"
         run: |
           set -euo pipefail
 
@@ -159,7 +161,6 @@ jobs:
 
           #
           echo "::group::Run Python Build"
-          execute export MPVQC_COMPILE_QML=true
           execute just build
           echo "::endgroup::"
 
