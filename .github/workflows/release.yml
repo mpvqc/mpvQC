@@ -21,6 +21,111 @@ env:
   LIBMPV_SHA256: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
 
 jobs:
+  verify_formatting:
+    runs-on: ubuntu-latest
+    name: Linting & Formatting
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Update Packages
+        run: sudo apt update -y
+      - name: Install Dependencies
+        run: sudo apt install -y
+      - name: Initialize Project
+        run: just init
+      - name: Run Linter and Formatter
+        run: just format
+      - name: Lint Qml
+        run: just lint-qml
+
+  test_python_linux:
+    runs-on: ubuntu-latest
+    name: Python Tests (Linux)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Update Packages
+        run: sudo apt update -y
+      - name: Install Dependencies
+        run: sudo apt install -y libegl1 libmpv2
+      - name: Initialize Project
+        run: just init
+      - name: Execute Python Tests
+        run: just test-python
+
+  test_python_windows:
+    runs-on: windows-latest
+    name: Python Tests (Windows)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Download libmpv
+        run: |
+          ARTIFACT="$(basename "$LIBMPV_URL")"
+          curl -L -O "$LIBMPV_URL"
+          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
+          sha256sum --check "$ARTIFACT.sha256"
+          7z x "$ARTIFACT"
+      - name: Initialize Project
+        run: just init
+      - name: Execute Python Tests
+        run: just test-python
+
+  test_qml:
+    runs-on: ubuntu-latest
+    name: Qml Tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install just
+        uses: taiki-e/install-action@just
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+      - name: Update Packages
+        run: sudo apt update -y
+      - name: Install Dependencies
+        run: sudo apt install -y libegl1 libmpv2
+      - name: Initialize Project
+        run: just init
+      - name: Execute Qml Tests
+        run: just test-qml
+
   build_windows:
     runs-on: windows-latest
     name: Build
@@ -318,108 +423,3 @@ jobs:
         with:
           name: ${{ needs.build_windows.outputs.artifact_app_name }}-win-x86_64
           path: deployment/mpvQC-distribution
-
-  test_python_linux:
-    runs-on: ubuntu-latest
-    name: Python Tests (Linux)
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-      - name: Install Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
-      - name: Initialize Project
-        run: just init
-      - name: Execute Python Tests
-        run: just test-python
-
-  test_python_windows:
-    runs-on: windows-latest
-    name: Python Tests (Windows)
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-      - name: Install Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-      - name: Download libmpv
-        run: |
-          ARTIFACT="$(basename "$LIBMPV_URL")"
-          curl -L -O "$LIBMPV_URL"
-          echo -n "$LIBMPV_SHA256 $ARTIFACT" > "$ARTIFACT.sha256"
-          sha256sum --check "$ARTIFACT.sha256"
-          7z x "$ARTIFACT"
-      - name: Initialize Project
-        run: just init
-      - name: Execute Python Tests
-        run: just test-python
-
-  test_qml:
-    runs-on: ubuntu-latest
-    name: Qml Tests
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-      - name: Install Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y libegl1 libmpv2
-      - name: Initialize Project
-        run: just init
-      - name: Execute Qml Tests
-        run: just test-qml
-
-  verify_formatting:
-    runs-on: ubuntu-latest
-    name: Linting & Formatting
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-      - name: Install Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install just
-        uses: taiki-e/install-action@just
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-      - name: Update Packages
-        run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y
-      - name: Initialize Project
-        run: just init
-      - name: Run Linter and Formatter
-        run: just format
-      - name: Lint Qml
-        run: just lint-qml
