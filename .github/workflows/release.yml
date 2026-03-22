@@ -141,33 +141,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          function debug() { echo -e "\033[0;35m$*\033[0m"; }
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
-          #
-          echo "::group::Remove Qml Test Files"
           execute find . -type f -name 'tst_*' -delete
-          echo "::endgroup::"
-
-          #
-          echo "::group::Set Build Information"
           execute just set-build-info
-          echo "::endgroup::"
-
-          #
-          echo "::group::Setup Virtual Environment"
-          execute just init
-          echo "::endgroup::"
-
-          #
-          echo "::group::Run Python Build"
+          execute just init '--no-group dev'
           execute just build
-          echo "::endgroup::"
-
-          #
-          echo "::group::Remove __pycache__ Files"
           execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
-          echo "::endgroup::"
       - name: Set Artifact Name
         id: artifact_name
         run: |
