@@ -37,8 +37,6 @@ jobs:
           enable-cache: false
       - name: Update Packages
         run: sudo apt update -y
-      - name: Install Dependencies
-        run: sudo apt install -y
       - name: Initialize Project
         run: just init
       - name: Run Linter and Formatter
