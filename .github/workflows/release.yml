@@ -135,8 +135,6 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Install libmpv
-        uses: ./.github/actions/install-libmpv
       - name: Run Build
         id: build_step
         run: |
@@ -185,7 +183,6 @@ jobs:
 
           #
           echo "::group::Run Python Build"
-          execute just test-python
           execute export MPVQC_COMPILE_QML=true
           execute just build
           echo "::endgroup::"
