@@ -172,16 +172,11 @@ jobs:
           echo "::group::Remove __pycache__ Files"
           execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
           echo "::endgroup::"
-
-          #
-          RELEASE_NAME="release-build-windows"
-          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
-          debug "Uploading build/release as $RELEASE_NAME"
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v7
         with:
           path: build/release
-          name: ${{ steps.build_step.outputs.release_name }}
+          name: release-build-windows
 
   build_windows_bundle:
     runs-on: windows-latest
