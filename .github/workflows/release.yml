@@ -21,7 +21,7 @@ env:
 jobs:
   verify_formatting:
     runs-on: ubuntu-latest
-    name: Linting & Formatting
+    name: Lint & Format
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -48,7 +48,7 @@ jobs:
 
   test_python_linux:
     runs-on: ubuntu-latest
-    name: Python Tests (Linux)
+    name: Test Python (Linux)
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -71,7 +71,7 @@ jobs:
 
   test_python_windows:
     runs-on: windows-latest
-    name: Python Tests (Windows)
+    name: Test Python (Windows)
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -94,7 +94,7 @@ jobs:
 
   test_qml:
     runs-on: ubuntu-latest
-    name: Qml Tests
+    name: Test QML
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
@@ -153,7 +153,7 @@ jobs:
           ARTIFACT_NAME="mpvQC-$(just --evaluate GIT_TAG)-$(just --evaluate GIT_COMMIT)"
           echo -e "\033[0;35m$ARTIFACT_NAME\033[0m"
           echo "artifact_app_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-      - name: Upload Build Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
           path: build/release
@@ -181,7 +181,7 @@ jobs:
         run: just init '--no-group dev'
       - name: Build
         run: bash build-aux/linux-build.sh
-      - name: Upload Build Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
           path: build/release
@@ -205,7 +205,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Remove Python sources
+      - name: Remove Python Sources
         run: |
           function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
 
