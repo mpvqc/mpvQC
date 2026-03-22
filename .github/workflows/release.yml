@@ -133,18 +133,10 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - name: Remove Qml Test Files
-        run: find . -type f -name 'tst_*' -delete
-      - name: Set Build Information
-        run: just set-build-info
       - name: Initialize Project
         run: just init '--no-group dev'
       - name: Build
-        env:
-          MPVQC_COMPILE_QML: "true"
-        run: just build
-      - name: Remove __pycache__ Files
-        run: find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
+        run: just build-release
       - name: Set Artifact Name
         id: artifact_name
         run: |
@@ -178,7 +170,7 @@ jobs:
       - name: Initialize Project
         run: just init '--no-group dev'
       - name: Build
-        run: bash build-aux/linux-build.sh
+        run: just build-release
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:

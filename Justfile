@@ -51,6 +51,16 @@ update-python-dependencies:
 update-git-hook-dependencies:
     uvx prek@0.2.17 autoupdate
 
+# Build release artifact (CAREFUL: modifies working tree)
+[group('ci')]
+build-release:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    find . -type f -name 'tst_*' -delete
+    just set-build-info
+    MPVQC_COMPILE_QML=true just build
+    find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
+
 # Stamp version info into data/build-info.toml
 [group('build')]
 set-build-info:
