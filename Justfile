@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 set dotenv-load := true
+set lazy        := true
+set unstable	:= true
 
 GIT_TAG := `git describe --tags --abbrev=0`
 GIT_COMMIT := `git rev-parse HEAD | head -c 8`
