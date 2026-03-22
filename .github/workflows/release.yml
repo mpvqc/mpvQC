@@ -16,6 +16,7 @@ defaults:
     shell: bash
 
 env:
+  PYTHON_VERSION: "3.13"
   LIBMPV_URL: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260203/mpv-dev-x86_64-20260203-git-db22a45.7z
   LIBMPV_SHA256: 55b8160373babe7bebf4faba66840ea4c248a9c0e3e5b4d6cf6bf8fca4681f7e
 
@@ -35,10 +36,10 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Install Python 3.13
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
@@ -139,10 +140,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Install Python 3.13
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
@@ -337,10 +338,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Install Python 3.13
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
@@ -362,10 +363,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Install Python 3.13
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
@@ -387,10 +388,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      - name: Install Python 3.13
+      - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install just
         uses: taiki-e/install-action@just
       - name: Install uv
