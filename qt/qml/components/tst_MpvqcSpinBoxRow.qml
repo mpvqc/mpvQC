@@ -46,7 +46,9 @@ Item {
                         tag: "increase",
                         value: 31,
                         exec: () => {
-                            objectUnderTest.spinBox.increase();
+                            // Workaround for QTBUG-145174: SpinBox.increase() is not a function in Qt 6.11
+                            const spinBox = objectUnderTest.spinBox;
+                            spinBox.value = Math.min(spinBox.to, spinBox.value + spinBox.stepSize);
                         }
                     },
                 ];
