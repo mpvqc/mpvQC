@@ -18,11 +18,6 @@ Page {
     required property MpvqcContentViewModel viewModel
     required property int windowBorder
 
-    // *********************************************************
-    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-    readonly property alias commentMenu: _commentMenu
-    // *********************************************************
-
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }
