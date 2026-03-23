@@ -13,74 +13,89 @@ DialogButtonBox {
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
+    property int _focusedIndex: 0
+
+    function _initFocus(): void {
+        for (let idx = 0; idx < count; idx++) {
+            const item = contentModel.get(idx);
+            if (!item)
+                continue;
+            const role = item.DialogButtonBox.buttonRole;
+            if (role === DialogButtonBox.RejectRole || role === DialogButtonBox.NoRole) {
+                _focusedIndex = idx;
+                _updateVisualFocus();
+                return;
+            }
+        }
+        _focusedIndex = 0;
+        _updateVisualFocus();
+    }
+
+    function _updateVisualFocus(): void {
+        for (let i = 0; i < count; i++) {
+            const item = contentModel.get(i);
+            if (item)
+                item.down = (i === _focusedIndex);
+        }
+    }
+
     visible: count > 0
 
     contentItem: ListView {
         id: _listView
 
-        focus: true
+        currentIndex: root._focusedIndex
         implicitWidth: contentWidth
         model: root.contentModel
         spacing: root.spacing
         orientation: ListView.Horizontal
         boundsBehavior: Flickable.StopAtBounds
         snapMode: ListView.SnapToItem
-
-        onCurrentItemChanged: {
-            removeFocusFromAllItems();
-            applyVisualFocusToCurrentItem();
-        }
-
-        function removeFocusFromAllItems(): void {
-            for (let i = 0; i < _listView.count; i++) {
-                _listView.model.get(i).down = false;
-            }
-        }
-
-        function applyVisualFocusToCurrentItem(): void {
-            if (currentItem) {
-                currentItem.down = true;
-            }
-        }
-
-        function focusRejectedButton(): void {
-            const button = root.standardButton(Dialog.Cancel) ?? root.standardButton(Dialog.No) ?? root.standardButton(Dialog.Close);
-
-            if (button) {
-                for (let idx = 0; idx < _listView.count; idx++) {
-                    if (_listView.model.get(idx) === button) {
-                        _listView.currentIndex = idx;
-                    }
-                }
-            }
-        }
     }
 
     Component.onCompleted: {
-        _listView.focusRejectedButton();
+        _initFocus();
     }
 
     Shortcut {
         sequence: "return"
-
         onActivated: {
-            _listView.currentItem.clicked();
+            const item = root.contentModel.get(root._focusedIndex);
+            if (item) {
+                item.clicked();
+            }
         }
     }
 
     Shortcut {
         sequence: "tab"
-
         onActivated: {
-            _listView.incrementCurrentIndex();
+            root._focusedIndex = (root._focusedIndex + 1) % root.count;
+            root._updateVisualFocus();
         }
     }
 
     Shortcut {
         sequence: "shift+tab"
-
         onActivated: {
-            _listView.decrementCurrentIndex();
+            root._focusedIndex = (root._focusedIndex - 1 + root.count) % root.count;
+            root._updateVisualFocus();
+        }
+    }
+
+    Shortcut {
+        sequence: "right"
+        onActivated: {
+            root._focusedIndex = (root._focusedIndex + (root.isMirrored ? -1 : 1) + root.count) % root.count;
+            root._updateVisualFocus();
+        }
+    }
+
+    Shortcut {
+        sequence: "left"
+        onActivated: {
+            root._focusedIndex = (root._focusedIndex + (root.isMirrored ? 1 : -1) + root.count) % root.count;
+            root._updateVisualFocus();
         }
     }
 
