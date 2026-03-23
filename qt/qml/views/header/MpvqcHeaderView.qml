@@ -27,12 +27,6 @@ Item {
     readonly property int separatorMargin: 8
     readonly property int leftContentWidth: menuBarWidth + _separator.width + _toolBar.width
 
-    // *********************************************************
-    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-    // Once bug is resolved, we can remove ids from the menus
-    readonly property alias isAnyMenuVisible: _menuBar.isAnyMenuVisible
-    // *********************************************************
-
     height: menuBarHeight
     visible: !MpvqcWindowUtility.isFullscreen
 

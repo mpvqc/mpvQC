@@ -86,19 +86,7 @@ ApplicationWindow {
         propagateComposedEvents: true
 
         onPressed: event => {
-            // *********************************************************
-            if (root.isWindows) {
-                // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-                const isAnyHeaderMenuOpened = _content.header.isAnyMenuVisible;
-                const isCommentMenuOpened = _content.commentMenu.visible;
-                const isModalFakerActive = !!root.nativePopupOpen;
-                // If any of the above is true => swallow mouse event
-                event.accepted = isAnyHeaderMenuOpened || isCommentMenuOpened || isModalFakerActive;
-            } else {
-                // fixme: Default after QTBUG-131786 is resolved
-                event.accepted = false;
-            }
-            // *********************************************************
+            event.accepted = false;
             _content.focusCommentTable();
         }
     }
@@ -187,29 +175,4 @@ ApplicationWindow {
             _content.focusCommentTable();
         }
     }
-
-    // *********************************************************
-    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-    property bool nativePopupOpen: false
-    property Timer modalFaker: Timer {
-        interval: 100
-        onTriggered: {
-            root.nativePopupOpen = false;
-        }
-    }
-
-    function enableFakeModal(): void {
-        if (Qt.platform.os === "windows") {
-            modalFaker.stop();
-            root.nativePopupOpen = true;
-        }
-    }
-
-    function disableFakeModal(): void {
-        if (Qt.platform.os === "windows") {
-            modalFaker.restart();
-        }
-    }
-
-    // *********************************************************
 }

@@ -37,21 +37,6 @@ Menu {
         return item instanceof MenuSeparator;
     }
 
-    // *********************************************************
-    // fixme: Workaround QTBUG-131786 to fake modal behavior on Windows
-    onAboutToShow: {
-        if (isWindows) {
-            enableFakeModal(); // qmllint disable
-        }
-    }
-
-    onAboutToHide: {
-        if (isWindows) {
-            disableFakeModal(); // qmllint disable
-        }
-    }
-    // *********************************************************
-
     Binding {
         when: root.popupType === Popup.Window && root.contentItem
         target: root.contentItem
