@@ -171,11 +171,6 @@ jobs:
         run: just init '--no-group dev'
       - name: Build
         run: just build-release
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          path: build/release
-          name: release-build-linux
 
   build_windows_bundle:
     runs-on: windows-latest
