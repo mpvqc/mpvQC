@@ -70,7 +70,7 @@ def test_version_checker_new_version_available(service, build_info_service_mock)
     build_info_service_mock.version = "0.1.1"
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
-        mock_response(mock_request, body='{ "latest": "0.1.0" }')
+        mock_response(mock_request, body='{ "latest": "0.1.2" }')
         actual_title, _ = service.check_for_new_version()
 
     assert actual_title == "New Version Available"
