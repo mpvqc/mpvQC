@@ -99,8 +99,11 @@ build-release:
     set -euo pipefail
     function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
     execute find . -type f -name 'tst_*' -delete
-    execute just set-build-info
     execute export MPVQC_COMPILE_QML=true
+    execute export UV_NO_PROJECT="1"
+    execute export UV_NO_SYNC="1"
+    execute export UV_OFFLINE="1"
+    execute just set-build-info
     execute just build
     execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
 
