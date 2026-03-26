@@ -100,7 +100,6 @@ build-release:
     function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
     execute find . -type f -name 'tst_*' -delete
     execute export MPVQC_COMPILE_QML=true
-    execute export UV_NO_PROJECT="1"
     execute export UV_NO_SYNC="1"
     execute export UV_OFFLINE="1"
     execute just set-build-info
