@@ -2,7 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Any
+from collections.abc import Iterator, Sequence
+from typing import TYPE_CHECKING, Any, cast
 
 import inject
 from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Signal, Slot
@@ -24,7 +25,9 @@ from .undo import (
     UpdateTime,
     UpdateType,
 )
-from .utils import retrieve_comments_from
+
+if TYPE_CHECKING:
+    from .item import CommentItem
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -111,10 +114,10 @@ class MpvqcCommentModel(QStandardItemModel):
 
     @Slot(result=list)
     def comments(self) -> list[dict[str, Any]]:
-        return retrieve_comments_from(self)
+        return [{"time": c.time, "commentType": c.comment_type, "comment": c.comment} for c in self.retrieve_comments()]
 
     @Slot(list)
-    def import_comments(self, comments: tuple[Comment, ...]) -> None:
+    def import_comments(self, comments: Sequence[dict[str, Any] | Comment]) -> None:
         if not comments:
             return
 
@@ -272,15 +275,15 @@ class MpvqcCommentModel(QStandardItemModel):
         if self._undo_stack.canRedo():
             self._undo_stack.redo()
 
-    def get_comment(self, row: int) -> tuple[int, str, str]:
-        item = self.item(row, column=0)
-        time = int(item.data(Role.TIME))
-        comment_type = item.data(Role.TYPE)
-        comment = item.data(Role.COMMENT)
-        return time, comment_type, comment
+    def comment_at(self, row: int) -> Comment:
+        return cast("CommentItem", self.item(row, column=0)).to_comment()
+
+    def retrieve_comments(self) -> Iterator[Comment]:
+        for row in range(self.rowCount()):
+            yield self.comment_at(row)
 
     def get_clipboard_content(self, row: int) -> str:
-        time, comment_type, comment = self.get_comment(row)
-        time = self._time_formatter.format_time_to_string(time, long_format=True)
-        comment_type = QCoreApplication.translate("CommentTypes", comment_type)
-        return f"[{time}] [{comment_type}] {comment}"
+        comment = self.comment_at(row)
+        time = self._time_formatter.format_time_to_string(comment.time, long_format=True)
+        comment_type = QCoreApplication.translate("CommentTypes", comment.comment_type)
+        return f"[{time}] [{comment_type}] {comment.comment}"
