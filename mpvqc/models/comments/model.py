@@ -6,12 +6,12 @@ from collections.abc import Iterator, Sequence
 from typing import TYPE_CHECKING, Any, cast
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QModelIndex, Signal, Slot
+from PySide6.QtCore import Property, QModelIndex, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.datamodels import Comment
-from mpvqc.services import ImporterService, PlayerService, ResetService, StateService, TimeFormatterService
+from mpvqc.services import ImporterService, PlayerService, ResetService, StateService
 
 from .roles import Role
 from .undo import (
@@ -37,7 +37,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
-    _time_formatter = inject.attr(TimeFormatterService)
     _state: StateService = inject.attr(StateService)
     _importer: ImporterService = inject.attr(ImporterService)
     _resetter: ResetService = inject.attr(ResetService)
@@ -281,9 +280,3 @@ class MpvqcCommentModel(QStandardItemModel):
     def retrieve_comments(self) -> Iterator[Comment]:
         for row in range(self.rowCount()):
             yield self.comment_at(row)
-
-    def get_clipboard_content(self, row: int) -> str:
-        comment = self.comment_at(row)
-        time = self._time_formatter.format_time_to_string(comment.time, long_format=True)
-        comment_type = QCoreApplication.translate("CommentTypes", comment.comment_type)
-        return f"[{time}] [{comment_type}] {comment.comment}"
