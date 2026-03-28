@@ -8,7 +8,6 @@ import inject
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import ImporterService, PlayerService, ResetService, SettingsService, StateService
 from mpvqc.viewmodels import MpvqcCommentTableViewModel
 
@@ -34,12 +33,8 @@ def qt_app_must_be_running(qt_app):
 def make_view_model():
     def _make(comments: list[Comment]):
         # noinspection PyCallingNonCallable
-        model = MpvqcCommentModel()
-        model.import_comments(tuple(comments))
-
-        # noinspection PyCallingNonCallable
         vm = MpvqcCommentTableViewModel()
-        vm.model = model
+        vm.model.import_comments(tuple(comments))
         return vm
 
     return _make

@@ -13,6 +13,7 @@ from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
+    CommentsService,
     ResourceReaderService,
     ResourceService,
     ReverseTranslatorService,
@@ -171,6 +172,7 @@ def common_bindings_with():
             binder.bind_to_constructor(ReverseTranslatorService, ReverseTranslatorService)
             binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)
             binder.bind_to_constructor(TypeMapperService, TypeMapperService)
+            binder.bind_to_constructor(CommentsService, CommentsService)
 
             # Custom services
             for custom_config in custom_configs:

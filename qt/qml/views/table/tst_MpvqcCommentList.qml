@@ -82,7 +82,6 @@ TestCase {
 
         MpvqcCommentList {
             viewModel: MpvqcCommentTableViewModel {
-                model: MpvqcCommentModel {}
                 property int videoDuration: 10
                 property var commentTypes: ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4"]
                 function jumpToTime(time) {

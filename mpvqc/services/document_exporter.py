@@ -10,6 +10,7 @@ from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QObject, QStand
 
 from .application_paths import ApplicationPathsService
 from .build_info import BuildInfoService
+from .comments import CommentsService
 from .formatter_time import TimeFormatterService
 from .player import PlayerService
 from .resource import ResourceService
@@ -20,6 +21,7 @@ class DocumentRenderService:
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
     _build_info: BuildInfoService = inject.attr(BuildInfoService)
+    _comments_service: CommentsService = inject.attr(CommentsService)
 
     class Filters:
         _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
@@ -34,13 +36,10 @@ class DocumentRenderService:
     def __init__(self):
         from jinja2 import BaseLoader, Environment
 
-        from mpvqc.models import MpvqcCommentModel
-
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)  # noqa: S701
         self._filters = self.Filters()
         self._env.filters["as_time"] = self._filters.as_time
         self._env.filters["as_comment_type"] = self._filters.as_comment_type
-        self._comment_model = inject.instance(MpvqcCommentModel)
 
     @property
     def _arguments(self) -> dict:
@@ -51,7 +50,7 @@ class DocumentRenderService:
         write_subtitle_paths = self._settings.write_header_subtitles
 
         date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
-        comments = self._comment_model.comments()
+        comments = self._comments_service.comments()
         generator = f"{self._build_info.name} {self._build_info.version}"
         nickname = self._settings.nickname
         subtitles = [str(sub) for sub in self._player.external_subtitles]
