@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import Property, QObject, QPointF, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, QPointF, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import PlayerService, SettingsService
+from mpvqc.services import PlayerService, SettingsService, TimeFormatterService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -19,6 +19,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentTableViewModel(QObject):
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
+    _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)
@@ -133,7 +134,10 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def copyToClipboard(self, row: int) -> None:
-        content = self._model.get_clipboard_content(row)
+        comment = self._model.comment_at(row)
+        time = self._time_formatter.format_time_to_string(comment.time, long_format=True)
+        comment_type = QCoreApplication.translate("CommentTypes", comment.comment_type)
+        content = f"[{time}] [{comment_type}] {comment.comment}"
         self._clipboard.setText(content)
         self.copiedToClipboard.emit(content)
 
