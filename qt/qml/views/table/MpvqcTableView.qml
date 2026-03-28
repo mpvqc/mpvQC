@@ -27,9 +27,7 @@ Item {
         height: root.height
         visible: count > 0
 
-        viewModel: MpvqcCommentTableViewModel {
-            model: MpvqcCommentModel {}
-        }
+        viewModel: MpvqcCommentTableViewModel {}
     }
 
     MpvqcPlaceholderView {

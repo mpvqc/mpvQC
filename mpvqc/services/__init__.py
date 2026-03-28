@@ -7,6 +7,7 @@ from .application_environment import ApplicationEnvironmentService
 from .application_paths import ApplicationPathsService
 from .build_info import BuildInfoService
 from .comment_type_validator import CommentTypeValidatorService
+from .comments import CommentsService
 from .document_exporter import DocumentBackupService, DocumentExportService, DocumentRenderService
 from .document_importer import DocumentImporterService
 from .exporter import ExportService

@@ -23,7 +23,6 @@ class MpvqcCommentTableViewModel(QObject):
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)
-    modelChanged = Signal()
 
     copiedToClipboard = Signal(str)
 
@@ -46,26 +45,9 @@ class MpvqcCommentTableViewModel(QObject):
         self._player.duration_changed.connect(self.videoDurationChanged)
 
         self._clipboard = QGuiApplication.clipboard()
-        self._model: MpvqcCommentModel | None = None
 
-    @Property(list, notify=commentTypesChanged)
-    def commentTypes(self) -> list[str]:
-        return self._settings.comment_types
-
-    @Property(float, notify=videoDurationChanged)
-    def videoDuration(self) -> float:
-        return self._player.duration
-
-    @Property(MpvqcCommentModel, notify=modelChanged)
-    def model(self) -> MpvqcCommentModel | None:
-        return self._model
-
-    @model.setter
-    def model(self, value: MpvqcCommentModel) -> None:
-        if self._model == value:
-            return
-
-        self._model = value
+        # noinspection PyCallingNonCallable
+        self._model: MpvqcCommentModel = MpvqcCommentModel(parent=self)
 
         self._model.comments_imported_initial.connect(self.quickSelectionRequested)
         self._model.comments_imported_undo.connect(self.quickSelectionRequested)
@@ -89,7 +71,17 @@ class MpvqcCommentTableViewModel(QObject):
         self._model.comment_updated_initial.connect(self.quickSelectionRequested)
         self._model.comment_updated_undo.connect(self.quickSelectionRequested)
 
-        self.modelChanged.emit()
+    @Property(list, notify=commentTypesChanged)
+    def commentTypes(self) -> list[str]:
+        return self._settings.comment_types
+
+    @Property(float, notify=videoDurationChanged)
+    def videoDuration(self) -> float:
+        return self._player.duration
+
+    @Property(MpvqcCommentModel, constant=True)
+    def model(self) -> MpvqcCommentModel:
+        return self._model
 
     @Slot(int)
     def select(self, index: int) -> None:

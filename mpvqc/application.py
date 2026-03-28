@@ -5,7 +5,6 @@
 import os
 import sys
 import tempfile
-from functools import cache
 from pathlib import Path
 
 import inject
@@ -80,22 +79,6 @@ class MpvqcApplication(QGuiApplication):
 
         remove_nuitka_splash_screen()
         window.setVisible(True)
-
-    def find_object[T](self, object_type: type[T], name: str) -> T:
-        return _find_object(self._engine, object_type, name)
-
-
-@cache
-def _find_object[T](engine: QQmlApplicationEngine, object_type: type[T], name: str) -> T:
-    root = engine.rootObjects()
-    if not root:
-        msg = "Cannot find root object in QQmlApplicationEngine"
-        raise ValueError(msg)
-    obj = root[0].findChild(object_type, name)
-    if not obj:
-        msg = f"Cannot find {object_type} with name '{name}'"
-        raise ValueError(msg)
-    return obj
 
 
 def remove_nuitka_splash_screen() -> None:

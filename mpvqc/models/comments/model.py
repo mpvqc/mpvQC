@@ -11,7 +11,7 @@ from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from mpvqc.datamodels import Comment
-from mpvqc.services import ImporterService, PlayerService, ResetService, StateService
+from mpvqc.services import CommentsService, ImporterService, PlayerService, ResetService, StateService
 
 from .roles import Role
 from .undo import (
@@ -40,6 +40,7 @@ class MpvqcCommentModel(QStandardItemModel):
     _state: StateService = inject.attr(StateService)
     _importer: ImporterService = inject.attr(ImporterService)
     _resetter: ResetService = inject.attr(ResetService)
+    _comments_service: CommentsService = inject.attr(CommentsService)
 
     selectedRowChanged = Signal(int)
 
@@ -71,11 +72,12 @@ class MpvqcCommentModel(QStandardItemModel):
 
     _comments_changed = Signal()
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
-        self.setObjectName("mpvqcCommentModel")
+
+        self._comments_service.register(self.comments)
 
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1

@@ -8,10 +8,10 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.models import MpvqcCommentModel
 from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
+    CommentsService,
     DocumentRenderService,
     PlayerService,
     SettingsService,
@@ -19,8 +19,8 @@ from mpvqc.services import (
 
 
 @pytest.fixture
-def comment_model_mock() -> MagicMock:
-    return MagicMock(spec_set=MpvqcCommentModel)
+def comments_service_mock() -> MagicMock:
+    return MagicMock(spec_set=CommentsService)
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def configure_injections(
     common_bindings_with,
     application_paths_service_mock,
     build_info_service_mock,
-    comment_model_mock,
+    comments_service_mock,
     document_render_service_mock,
     player_service_mock,
     settings_service,
@@ -56,7 +56,7 @@ def configure_injections(
     def custom_bindings(binder: inject.Binder):
         binder.bind(ApplicationPathsService, application_paths_service_mock)
         binder.bind(BuildInfoService, build_info_service_mock)
-        binder.bind(MpvqcCommentModel, comment_model_mock)
+        binder.bind(CommentsService, comments_service_mock)
         binder.bind(DocumentRenderService, document_render_service_mock)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
@@ -65,7 +65,7 @@ def configure_injections(
 
 
 @pytest.fixture
-def configure_mocks(qt_app, comment_model_mock, settings_service, player_service_mock):
+def configure_mocks(qt_app, comments_service_mock, settings_service, player_service_mock):
     def _make_mock(
         video: Path | str | None = None,
         nickname: str | None = None,
@@ -77,7 +77,7 @@ def configure_mocks(qt_app, comment_model_mock, settings_service, player_service
         write_header_video_path: bool = False,
         write_header_subtitles: bool = False,
     ):
-        comment_model_mock.comments.return_value = comments or []
+        comments_service_mock.comments.return_value = comments or []
 
         settings_service.nickname = nickname
         settings_service.write_header_date = write_header_date
