@@ -120,8 +120,8 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:
-        time, comment_type, comment = self._model.get_comment(index)
-        self.deleteCommentRequested.emit(index, time, comment_type, comment)
+        comment = self._model.comment_at(index)
+        self.deleteCommentRequested.emit(index, comment.time, comment.comment_type, comment.comment)
 
     @Slot(int)
     def jumpToTime(self, seconds: int) -> None:

@@ -2,24 +2,27 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from typing import Any
+from collections.abc import Callable, Sequence
+from typing import TYPE_CHECKING, Any
 
 from PySide6.QtCore import QPersistentModelIndex, Slot
-from PySide6.QtGui import QStandardItemModel, QUndoCommand, QUndoStack
+from PySide6.QtGui import QUndoCommand, QUndoStack
 
 from mpvqc.datamodels import Comment
 
 from .item import CommentItem
 from .roles import Role
-from .utils import create_comment_from, create_item_from, retrieve_comments_from
+from .utils import create_item_from
+
+if TYPE_CHECKING:
+    from .model import MpvqcCommentModel
 
 
 class ImportComments(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
-        comments: tuple[Comment, ...],
+        model: "MpvqcCommentModel",
+        comments: Sequence[dict[str, Any] | Comment],
         previously_selected_row: int,
         on_after_undo: Callable,
         on_after_redo: Callable,
@@ -59,7 +62,7 @@ class ImportComments(QUndoCommand):
 class ClearComments(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
+        model: "MpvqcCommentModel",
         on_after_undo: Callable,
         on_after_redo: Callable,
     ):
@@ -68,7 +71,7 @@ class ClearComments(QUndoCommand):
         self._on_after_undo = on_after_undo
         self._on_after_redo = on_after_redo
 
-        self._comments: list[dict[str, Any]] = []
+        self._comments: list[Comment] = []
 
     def undo(self):
         for comment in self._comments:
@@ -77,7 +80,7 @@ class ClearComments(QUndoCommand):
         self._on_after_undo()
 
     def redo(self):
-        self._comments = retrieve_comments_from(self._model)
+        self._comments = list(self._model.retrieve_comments())
         self._model.removeRows(0, self._model.rowCount())
         self._on_after_redo()
 
@@ -85,7 +88,7 @@ class ClearComments(QUndoCommand):
 class AddComment(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
+        model: "MpvqcCommentModel",
         comment_type: str,
         time: int,
         previously_selected_row: int,
@@ -110,9 +113,9 @@ class AddComment(QUndoCommand):
 
     def redo(self):
         item = CommentItem()
-        item.setData(self._time, Role.TIME)
-        item.setData(self._comment_type, Role.TYPE)
-        item.setData("", Role.COMMENT)
+        item.time = self._time
+        item.comment_type = self._comment_type
+        item.comment = ""
 
         self._model.appendRow(item)
         index = QPersistentModelIndex(item.index())
@@ -125,7 +128,7 @@ class AddComment(QUndoCommand):
 class RemoveComment(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
+        model: "MpvqcCommentModel",
         row: int,
         on_after_undo: Callable,
         on_after_redo: Callable,
@@ -136,7 +139,7 @@ class RemoveComment(QUndoCommand):
         self._on_after_undo = on_after_undo
         self._on_after_redo = on_after_redo
 
-        self._comment: dict[str, Any] | None = None
+        self._comment: Comment | None = None
 
     def undo(self):
         if (comment := self._comment) is not None:
@@ -145,8 +148,7 @@ class RemoveComment(QUndoCommand):
             self._on_after_undo(self._row)
 
     def redo(self):
-        item = self._model.item(self._row)
-        self._comment = create_comment_from(item)
+        self._comment = self._model.comment_at(self._row)
         self._model.removeRow(self._row)
         self._on_after_redo()
 
@@ -154,7 +156,7 @@ class RemoveComment(QUndoCommand):
 class UpdateTime(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
+        model: "MpvqcCommentModel",
         row: int,
         new_time: int,
         on_after_undo: Callable,
@@ -173,8 +175,8 @@ class UpdateTime(QUndoCommand):
 
     def undo(self):
         if (new_row := self._new_row) is not None:
-            item = self._model.item(new_row)
-            item.setData(self._old_time, Role.TIME)
+            index = self._model.index(new_row, 0)
+            self._model.setData(index, self._old_time, Role.TIME)
             self._on_after_undo(self._row)
 
     def redo(self):
@@ -190,7 +192,7 @@ class UpdateTime(QUndoCommand):
 class UpdateType(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
+        model: "MpvqcCommentModel",
         row: int,
         new_comment_type: str,
         on_after_undo: Callable,
@@ -221,7 +223,7 @@ class UpdateType(QUndoCommand):
 class UpdateComment(QUndoCommand):
     def __init__(
         self,
-        model: QStandardItemModel,
+        model: "MpvqcCommentModel",
         row: int,
         new_text: str,
         on_after_undo: Callable,
