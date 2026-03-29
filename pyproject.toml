@@ -35,6 +35,10 @@ Homepage = "https://mpvqc.github.io"
 Repository = "https://github.com/mpvqc/mpvQC"
 Issues = "https://github.com/mpvqc/mpvQC/issues"
 
+[tool.pyrefly]
+python-version = "3.13"
+ignore-missing-imports = ["win32api", "win32con", "win32gui", "win32print"]
+
 [tool.pyrefly.errors]
 missing-override-decorator = "error"
 
