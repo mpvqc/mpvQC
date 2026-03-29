@@ -18,7 +18,7 @@ TestCase {
         id: signalSpy
 
         SignalSpy {
-            function invocation(invocation: int): variant {
+            function invocation(invocation: int): var {
                 const inv = signalArguments[invocation];
                 return {
                     arg: index => inv[index]
