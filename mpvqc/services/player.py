@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 
     from mpv import MPV
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -101,20 +100,23 @@ class PlayerService(QObject):
 
         from mpv import MPV
 
-        self._mpv = MPV(**merged_args)
-
-        self._mpv.observe_property("duration", self._on_duration_changed)
-        self._mpv.observe_property("path", self._on_player_path_changed)
-        self._mpv.observe_property("filename", self._on_player_filename_changed)
-        self._mpv.observe_property("percent-pos", self._on_player_percent_pos_changed)
-        self._mpv.observe_property("time-pos", self._on_player_time_pos_changed)
-        self._mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
-        self._mpv.observe_property("height", self._on_player_height_changed)
-        self._mpv.observe_property("width", self._on_player_width_changed)
-        self._mpv.observe_property("track-list", self._on_track_list_changed)
+        _mpv = MPV(**merged_args)
+        _mpv.observe_property("duration", self._on_duration_changed)
+        _mpv.observe_property("path", self._on_player_path_changed)
+        _mpv.observe_property("filename", self._on_player_filename_changed)
+        _mpv.observe_property("percent-pos", self._on_player_percent_pos_changed)
+        _mpv.observe_property("time-pos", self._on_player_time_pos_changed)
+        _mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
+        _mpv.observe_property("height", self._on_player_height_changed)
+        _mpv.observe_property("width", self._on_player_width_changed)
+        _mpv.observe_property("track-list", self._on_track_list_changed)
+        self._mpv = _mpv
 
     @property
-    def mpv(self) -> MPV | None:
+    def mpv(self) -> MPV:
+        if self._mpv is None:
+            msg = "MPV player has not been initialized"
+            raise RuntimeError(msg)
         return self._mpv
 
     def _get_mpv_attr(self, attr: str) -> Any | None:
@@ -173,7 +175,6 @@ class PlayerService(QObject):
 
     @property
     def current_time(self) -> int:
-        # noinspection PyTypeChecker
         return self.time_pos or 0
 
     @property
@@ -194,8 +195,7 @@ class PlayerService(QObject):
     def _track_list(self) -> list[TrackListEntry]:
         if self._mpv is None:
             return []
-        # noinspection PyTypeChecker
-        track_list: list[dict[str, Any]] = self._get_mpv_attr("track_list")
+        track_list = self._get_mpv_attr("track_list") or []
         return [TrackListEntry.from_dict(e) for e in track_list]
 
     @property
@@ -273,12 +273,12 @@ class PlayerService(QObject):
         zoom_factor = self._host_integration.display_zoom_factor
         x = int(x * zoom_factor)
         y = int(y * zoom_factor)
-        self._mpv.command_async("mouse", x, y)
+        self.mpv.command_async("mouse", x, y)
 
     def open_video(self, video: Path) -> None:
         self._loading_video = True
         path = self._type_mapper.map_path_to_str(video)
-        self._mpv.command("loadfile", path, "replace")
+        self.mpv.command("loadfile", path, "replace")
         self.play()
 
     def is_video_loaded(self, video: Path) -> bool:
@@ -292,7 +292,7 @@ class PlayerService(QObject):
         def _load():
             for subtitle in subtitles:
                 path = self._type_mapper.map_path_to_str(subtitle)
-                self._mpv.command("sub-add", path, "select")
+                self.mpv.command("sub-add", path, "select")
 
         def _cache():
             self._cached_subtitles |= set(subtitles)
@@ -303,53 +303,53 @@ class PlayerService(QObject):
             _cache()
 
     def play(self) -> None:
-        self._mpv.pause = False
+        self.mpv.pause = False
 
     def pause(self) -> None:
-        self._mpv.pause = True
+        self.mpv.pause = True
 
     def handle_key_event(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
         if command := self._command_generator.generate_command(key, modifiers):
-            self._mpv.command_async("keypress", command)
+            self.mpv.command_async("keypress", command)
 
     def jump_to(self, seconds: int) -> None:
-        self._mpv.command_async("seek", seconds, "absolute+exact")
+        self.mpv.command_async("seek", seconds, "absolute+exact")
 
     def press_mouse_left(self) -> None:
-        self._mpv.command_async("keydown", "MOUSE_BTN0")
+        self.mpv.command_async("keydown", "MOUSE_BTN0")
 
     def press_mouse_middle(self) -> None:
-        self._mpv.command_async("keypress", "MOUSE_BTN1")
+        self.mpv.command_async("keypress", "MOUSE_BTN1")
 
     def release_mouse_left(self) -> None:
-        self._mpv.command_async("keyup", "MOUSE_BTN0")
+        self.mpv.command_async("keyup", "MOUSE_BTN0")
 
     def press_mouse_back(self) -> None:
-        self._mpv.command_async("keypress", "MOUSE_BTN5")
+        self.mpv.command_async("keypress", "MOUSE_BTN5")
 
     def press_mouse_forward(self) -> None:
-        self._mpv.command_async("keypress", "MOUSE_BTN6")
+        self.mpv.command_async("keypress", "MOUSE_BTN6")
 
     def scroll_up(self) -> None:
-        self._mpv.command_async("keypress", "MOUSE_BTN3")
+        self.mpv.command_async("keypress", "MOUSE_BTN3")
 
     def scroll_down(self) -> None:
-        self._mpv.command_async("keypress", "MOUSE_BTN4")
+        self.mpv.command_async("keypress", "MOUSE_BTN4")
 
     def frame_step_forward(self) -> None:
-        self._mpv.command_async("frame-step")
+        self.mpv.command_async("frame-step")
 
     def frame_step_backward(self) -> None:
-        self._mpv.command_async("frame-back-step")
+        self.mpv.command_async("frame-back-step")
 
     def cycle_subtitle_track(self) -> None:
-        self._mpv.command_async("osd-msg", "cycle", "sub")
+        self.mpv.command_async("osd-msg", "cycle", "sub")
 
     def cycle_audio_track(self) -> None:
-        self._mpv.command_async("osd-msg", "cycle", "audio")
+        self.mpv.command_async("osd-msg", "cycle", "audio")
 
     def terminate(self) -> None:
-        self._mpv.terminate()
+        self.mpv.terminate()
 
 
 class DimensionsChangedCoordinator(QObject):
