@@ -5,6 +5,7 @@
 import os
 from enum import IntEnum
 from functools import cache
+from typing import cast
 
 import inject
 from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, QUrl, Signal
@@ -43,7 +44,6 @@ def get_default_language(locale: QLocale | None = None) -> str:
     return "en-US"
 
 
-# noinspection PyTypeChecker
 class SettingsService(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
@@ -101,21 +101,25 @@ class SettingsService(QObject):
             ini_file = self._type_mapper.map_path_to_str(self._paths.file_settings)
         self._settings = QSettings(ini_file, QSettings.Format.IniFormat)
 
+    def _get[T](self, key: str, default: T, *, _type: type[T]) -> T:
+        # noinspection PyUnnecessaryCast
+        return cast("T", self._settings.value(key, default, type=_type))
+
     @staticmethod
     def get_default_comment_types() -> list[str]:
         return [
-            QT_TRANSLATE_NOOP("CommentTypes", "Translation"),
-            QT_TRANSLATE_NOOP("CommentTypes", "Spelling"),
-            QT_TRANSLATE_NOOP("CommentTypes", "Punctuation"),
-            QT_TRANSLATE_NOOP("CommentTypes", "Phrasing"),
-            QT_TRANSLATE_NOOP("CommentTypes", "Timing"),
-            QT_TRANSLATE_NOOP("CommentTypes", "Typeset"),
-            QT_TRANSLATE_NOOP("CommentTypes", "Note"),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Translation")),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Spelling")),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Punctuation")),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Phrasing")),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Timing")),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Typeset")),
+            str(QT_TRANSLATE_NOOP("CommentTypes", "Note")),
         ]
 
     @property
     def backup_enabled(self) -> bool:
-        return self._settings.value("Backup/enabled", True, type=bool)
+        return self._get("Backup/enabled", True, _type=bool)
 
     @backup_enabled.setter
     def backup_enabled(self, value: bool):
@@ -125,7 +129,7 @@ class SettingsService(QObject):
 
     @property
     def backup_interval(self) -> int:
-        return self._settings.value("Backup/interval", 60, type=int)
+        return self._get("Backup/interval", 60, _type=int)
 
     @backup_interval.setter
     def backup_interval(self, value: int):
@@ -135,7 +139,7 @@ class SettingsService(QObject):
 
     @property
     def language(self) -> str:
-        return self._settings.value("Common/language", get_default_language(), type=str)
+        return self._get("Common/language", get_default_language(), _type=str)
 
     @language.setter
     def language(self, value: str):
@@ -145,7 +149,7 @@ class SettingsService(QObject):
 
     @property
     def comment_types(self) -> list[str]:
-        return self._settings.value("Common/commentTypes", self.get_default_comment_types(), type=list)
+        return self._get("Common/commentTypes", self.get_default_comment_types(), _type=list)
 
     @comment_types.setter
     def comment_types(self, value: list[str]):
@@ -155,7 +159,7 @@ class SettingsService(QObject):
 
     @property
     def nickname(self) -> str:
-        return self._settings.value("Export/nickname", get_default_username(), type=str)
+        return self._get("Export/nickname", get_default_username(), _type=str)
 
     @nickname.setter
     def nickname(self, value: str):
@@ -165,7 +169,7 @@ class SettingsService(QObject):
 
     @property
     def write_header_date(self) -> bool:
-        return self._settings.value("Export/writeHeaderDate", True, type=bool)
+        return self._get("Export/writeHeaderDate", True, _type=bool)
 
     @write_header_date.setter
     def write_header_date(self, value: bool):
@@ -175,7 +179,7 @@ class SettingsService(QObject):
 
     @property
     def write_header_generator(self) -> bool:
-        return self._settings.value("Export/writeHeaderGenerator", True, type=bool)
+        return self._get("Export/writeHeaderGenerator", True, _type=bool)
 
     @write_header_generator.setter
     def write_header_generator(self, value: bool):
@@ -185,7 +189,7 @@ class SettingsService(QObject):
 
     @property
     def write_header_nickname(self) -> bool:
-        return self._settings.value("Export/writeHeaderNickname", False, type=bool)
+        return self._get("Export/writeHeaderNickname", False, _type=bool)
 
     @write_header_nickname.setter
     def write_header_nickname(self, value: bool):
@@ -195,7 +199,7 @@ class SettingsService(QObject):
 
     @property
     def write_header_video_path(self) -> bool:
-        return self._settings.value("Export/writeHeaderVideoPath", True, type=bool)
+        return self._get("Export/writeHeaderVideoPath", True, _type=bool)
 
     @write_header_video_path.setter
     def write_header_video_path(self, value: bool):
@@ -205,7 +209,7 @@ class SettingsService(QObject):
 
     @property
     def write_header_subtitles(self) -> bool:
-        return self._settings.value("Export/writeHeaderSubtitles", False, type=bool)
+        return self._get("Export/writeHeaderSubtitles", False, _type=bool)
 
     @write_header_subtitles.setter
     def write_header_subtitles(self, value: bool) -> None:
@@ -215,7 +219,7 @@ class SettingsService(QObject):
 
     @property
     def statusbar_percentage(self) -> bool:
-        return self._settings.value("StatusBar/statusbarPercentage", True, type=bool)
+        return self._get("StatusBar/statusbarPercentage", True, _type=bool)
 
     @statusbar_percentage.setter
     def statusbar_percentage(self, value: bool):
@@ -225,7 +229,7 @@ class SettingsService(QObject):
 
     @property
     def time_format(self) -> int:
-        return self._settings.value("StatusBar/timeFormat", 3, type=int)  # CURRENT_TOTAL_TIME
+        return self._get("StatusBar/timeFormat", 3, _type=int)  # CURRENT_TOTAL_TIME
 
     @time_format.setter
     def time_format(self, value: int):
@@ -235,7 +239,7 @@ class SettingsService(QObject):
 
     @property
     def last_directory_video(self) -> QUrl:
-        return self._settings.value("Import/lastDirectoryVideo", get_default_movie_location(), type=QUrl)
+        return self._get("Import/lastDirectoryVideo", get_default_movie_location(), _type=QUrl)
 
     @last_directory_video.setter
     def last_directory_video(self, value: QUrl):
@@ -245,7 +249,7 @@ class SettingsService(QObject):
 
     @property
     def last_directory_documents(self) -> QUrl:
-        return self._settings.value("Import/lastDirectoryDocuments", get_default_documents_location(), type=QUrl)
+        return self._get("Import/lastDirectoryDocuments", get_default_documents_location(), _type=QUrl)
 
     @last_directory_documents.setter
     def last_directory_documents(self, value: QUrl):
@@ -255,7 +259,7 @@ class SettingsService(QObject):
 
     @property
     def last_directory_subtitles(self) -> QUrl:
-        return self._settings.value("Import/lastDirectorySubtitles", get_default_documents_location(), type=QUrl)
+        return self._get("Import/lastDirectorySubtitles", get_default_documents_location(), _type=QUrl)
 
     @last_directory_subtitles.setter
     def last_directory_subtitles(self, value: QUrl):
@@ -265,7 +269,7 @@ class SettingsService(QObject):
 
     @property
     def import_found_video(self) -> int:
-        return self._settings.value("Import/importFoundVideo", 1, type=int)  # ASK_EVERY_TIME
+        return self._get("Import/importFoundVideo", 1, _type=int)  # ASK_EVERY_TIME
 
     @import_found_video.setter
     def import_found_video(self, value: int):
@@ -275,7 +279,7 @@ class SettingsService(QObject):
 
     @property
     def layout_orientation(self) -> int:
-        return self._settings.value("SplitView/layoutOrientation", 2, type=int)  # Qt.Vertical
+        return self._get("SplitView/layoutOrientation", 2, _type=int)  # Qt.Vertical
 
     @layout_orientation.setter
     def layout_orientation(self, value: int):
@@ -285,7 +289,7 @@ class SettingsService(QObject):
 
     @property
     def theme_identifier(self) -> str:
-        return self._settings.value("Theme/themeIdentifier", "material-you-dark", type=str)
+        return self._get("Theme/themeIdentifier", "material-you-dark", _type=str)
 
     @theme_identifier.setter
     def theme_identifier(self, value: str):
@@ -295,7 +299,7 @@ class SettingsService(QObject):
 
     @property
     def theme_color_option(self) -> int:
-        return self._settings.value("Theme/themeColorOption", 4, type=int)
+        return self._get("Theme/themeColorOption", 4, _type=int)
 
     @theme_color_option.setter
     def theme_color_option(self, value: int):
@@ -305,7 +309,7 @@ class SettingsService(QObject):
 
     @property
     def window_title_format(self) -> int:
-        return self._settings.value("Window/titleFormat", 0, type=int)
+        return self._get("Window/titleFormat", 0, _type=int)
 
     @window_title_format.setter
     def window_title_format(self, value: int):
