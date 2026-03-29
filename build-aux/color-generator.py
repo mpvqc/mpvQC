@@ -6,6 +6,7 @@ import argparse
 import json
 import re
 import sys
+from argparse import Namespace
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -60,7 +61,7 @@ def main() -> None:
     run(parser.parse_args())
 
 
-def run(args) -> None:
+def run(args: Namespace) -> None:
     colors = args.colors
     validate_colors(colors)
 

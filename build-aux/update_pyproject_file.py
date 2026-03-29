@@ -4,6 +4,7 @@
 
 import argparse
 import sys
+from argparse import Namespace
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -147,7 +148,7 @@ def main() -> None:
     run(parser.parse_args())
 
 
-def run(args) -> None:
+def run(args: Namespace) -> None:
     root_dir = Path(args.relative_to).absolute()
     directories = [Path(p).absolute() for p in args.include_directory]
     files = [Path(p).absolute() for p in args.include_file]

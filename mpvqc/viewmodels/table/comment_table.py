@@ -39,7 +39,7 @@ class MpvqcCommentTableViewModel(QObject):
     contextMenuRequested = Signal(int, QPointF)
     deleteCommentRequested = Signal(int, int, str, str)  # index, time, commentType, commentText
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
         self._player.duration_changed.connect(self.videoDurationChanged)

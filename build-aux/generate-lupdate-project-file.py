@@ -5,6 +5,7 @@
 import argparse
 import json
 import sys
+from argparse import Namespace
 from pathlib import Path
 from typing import ClassVar
 
@@ -102,7 +103,7 @@ def main() -> None:
 
 
 # noinspection DuplicatedCode
-def run(args) -> None:
+def run(args: Namespace) -> None:
     root_dir = Path(args.relative_to).absolute()
     out_file = Path(args.out_file)
     directories = [Path(path).absolute() for path in args.include_directory]
