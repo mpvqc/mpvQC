@@ -64,15 +64,20 @@ repos:
           - "lf"
         additional_dependencies:
           - mdformat-gfm
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.8
+  - repo: local
     hooks:
       - id: ruff
         name: "lint py"
+        language: system
+        entry: uv run ruff check
         args:
           - "--fix"
+        types_or: [python, pyi]
       - id: ruff-format
         name: "format py"
+        language: system
+        entry: uv run ruff format
+        types_or: [python, pyi]
   - repo: https://github.com/tomas-krupa/qmlformat-hook.git
     rev: 1.2.0
     hooks:
