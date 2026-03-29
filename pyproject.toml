@@ -24,8 +24,10 @@ classifiers = [
 
 [dependency-groups]
 dev = [
-    "pytest>=9.0.2",
     "materialyoucolor>=3.0.2",
+    "prek>=0.3.8",
+    "pyrefly>=0.58.0",
+    "pytest>=9.0.2",
 ]
 
 [project.urls]
