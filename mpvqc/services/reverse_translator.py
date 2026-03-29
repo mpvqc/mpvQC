@@ -2,9 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 from functools import cached_property
 
 from PySide6.QtCore import QDir, QTranslator
+
+logger = logging.getLogger(__name__)
 
 
 class LookupTable:
@@ -33,6 +36,10 @@ class LookupTable:
     def _add_to_combined_lookup_table(self) -> None:
         for english in self._default_comment_types:
             translated = self._translator.translate("CommentTypes", english)
+            if translated is None:
+                msg = f"Failed to translate comment type: {english!r}"
+                logger.error(msg)
+                raise ValueError(msg)
             self._combined_lookup_table[translated] = english
 
     def lookup(self, comment_type: str) -> str:
