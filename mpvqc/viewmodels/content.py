@@ -99,6 +99,8 @@ class MpvqcContentViewModel(QObject):
     @Slot(int, int, result=dict)
     def calculatePreferredSplitSizes(self, split_view_width: int, split_view_height: int) -> dict:
         return {
+            # pyrefly: ignore [unsupported-operation]
             "width": round(split_view_width * self.defaultSplitRatio),
+            # pyrefly: ignore [unsupported-operation]
             "height": round(split_view_height * self.defaultSplitRatio),
         }

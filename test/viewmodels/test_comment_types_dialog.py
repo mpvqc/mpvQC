@@ -91,6 +91,7 @@ def test_initial_state_single_item(settings_service_mock):
     # noinspection PyCallingNonCallable
     view_model_override = MpvqcCommentTypesDialogViewModel()
 
+    # pyrefly: ignore [missing-attribute]
     assert view_model_override.temporaryCommentTypesModel.rowCount() == 1
     assert not view_model_override.isDeleteButtonEnabled  # Can't delete last item
     assert not view_model_override.isMoveUpButtonEnabled

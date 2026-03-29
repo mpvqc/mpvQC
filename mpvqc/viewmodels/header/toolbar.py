@@ -34,24 +34,32 @@ class MpvqcToolBarViewModel(QObject):
         self._player.subtitle_track_count_changed.connect(self._on_subtitle_track_count_changed)
 
     def _should_show_cycle_audio(self) -> bool:
+        # pyrefly: ignore [unsupported-operation]
         return self._player.video_loaded and self._player.audio_track_count > 0
 
     def _should_show_cycle_subtitle(self) -> bool:
+        # pyrefly: ignore [unsupported-operation]
         return self._player.video_loaded and self._player.subtitle_track_count > 0
 
     @Slot(bool)
     def _on_video_loaded_changed(self, video_loaded: bool) -> None:
+        # pyrefly: ignore [bad-assignment]
         self.frameStepBackwardVisible = video_loaded
+        # pyrefly: ignore [bad-assignment]
         self.frameStepForwardVisible = video_loaded
+        # pyrefly: ignore [bad-assignment]
         self.cycleSubtitleTrackVisible = self._should_show_cycle_subtitle()
+        # pyrefly: ignore [bad-assignment]
         self.cycleAudioTrackVisible = self._should_show_cycle_audio()
 
     @Slot(int)
     def _on_audio_track_count_changed(self, _: int) -> None:
+        # pyrefly: ignore [bad-assignment]
         self.cycleAudioTrackVisible = self._should_show_cycle_audio()
 
     @Slot(int)
     def _on_subtitle_track_count_changed(self, _: int) -> None:
+        # pyrefly: ignore [bad-assignment]
         self.cycleSubtitleTrackVisible = self._should_show_cycle_subtitle()
 
     @Slot()
