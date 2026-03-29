@@ -119,7 +119,7 @@ TestCase {
                 currentIndex = 0;
             }
 
-            function getItem(index: int, property: string): variant {
+            function getItem(index: int, property: string): var {
                 return model.comments()[index][property];
             }
         }
