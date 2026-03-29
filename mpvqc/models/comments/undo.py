@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import typing
 from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -37,12 +38,14 @@ class ImportComments(QUndoCommand):
         self._added_initially = True
         self._rows: list[int] = []
 
+    @typing.override
     def undo(self):
         for row in sorted(self._rows, reverse=True):
             self._model.removeRow(row)
 
         self._on_after_undo(self._previously_selected_row)
 
+    @typing.override
     def redo(self):
         indices = []
         model_index = None
@@ -73,12 +76,14 @@ class ClearComments(QUndoCommand):
 
         self._comments: list[Comment] = []
 
+    @typing.override
     def undo(self):
         for comment in self._comments:
             item = create_item_from(comment)
             self._model.appendRow(item)
         self._on_after_undo()
 
+    @typing.override
     def redo(self):
         self._comments = list(self._model.retrieve_comments())
         self._model.removeRows(0, self._model.rowCount())
@@ -106,11 +111,13 @@ class AddComment(QUndoCommand):
         self._added_initially = True
         self._added_row: int | None = None
 
+    @typing.override
     def undo(self):
         if (added_row := self._added_row) is not None:
             self._model.removeRow(added_row)
             self._on_after_undo(self._previously_selected_row)
 
+    @typing.override
     def redo(self):
         item = CommentItem()
         item.time = self._time
@@ -141,12 +148,14 @@ class RemoveComment(QUndoCommand):
 
         self._comment: Comment | None = None
 
+    @typing.override
     def undo(self):
         if (comment := self._comment) is not None:
             item = create_item_from(comment)
             self._model.appendRow(item)
             self._on_after_undo(self._row)
 
+    @typing.override
     def redo(self):
         self._comment = self._model.comment_at(self._row)
         self._model.removeRow(self._row)
@@ -173,12 +182,14 @@ class UpdateTime(QUndoCommand):
         self._old_time: int | None = None
         self._new_row: int | None = None
 
+    @typing.override
     def undo(self):
         if (new_row := self._new_row) is not None:
             index = self._model.index(new_row, 0)
             self._model.setData(index, self._old_time, Role.TIME)
             self._on_after_undo(self._row)
 
+    @typing.override
     def redo(self):
         index = QPersistentModelIndex(self._model.index(self._row, 0))
         self._old_time = self._model.data(index, Role.TIME)
@@ -208,11 +219,13 @@ class UpdateType(QUndoCommand):
 
         self._old_comment_type: str | None = None
 
+    @typing.override
     def undo(self):
         index = self._model.index(self._row, 0)
         self._model.setData(index, self._old_comment_type, Role.TYPE)
         self._on_after_undo(self._row)
 
+    @typing.override
     def redo(self):
         index = self._model.index(self._row, 0)
         self._old_comment_type = self._model.data(index, Role.TYPE)
@@ -238,11 +251,13 @@ class UpdateComment(QUndoCommand):
 
         self._old_comment: str | None = None
 
+    @typing.override
     def undo(self):
         index = self._model.index(self._row, 0)
         self._model.setData(index, self._old_comment, Role.COMMENT)
         self._on_after_undo(self._row)
 
+    @typing.override
     def redo(self):
         index = self._model.index(self._row, 0)
         self._old_comment = self._model.data(index, Role.COMMENT)
@@ -261,11 +276,13 @@ class AddAndUpdateCommentCommand(QUndoCommand):
         self._update_comment = update_comment
         self._update_comment.redo()
 
+    @typing.override
     def undo(self):
         if self._update_comment is not None:
             self._update_comment.undo()
         self._add_comment.undo()
 
+    @typing.override
     def redo(self):
         self._add_comment.redo()
         if self._update_comment is not None:
@@ -282,6 +299,7 @@ class MpvqcUndoStack(QUndoStack):
     def prevent_add_update_merge(self, *_):
         self._last_add_command = None
 
+    @typing.override
     def push(self, command: QUndoCommand):
         match command:
             case AddAndUpdateCommentCommand():

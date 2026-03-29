@@ -42,9 +42,11 @@ class MpvqcDependencyModel(QAbstractListModel):
             *self._build_info.dev_dependencies,
         ]
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
+    @typing.override
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._all_dependencies)
 
+    @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= len(self._all_dependencies):
             return None
@@ -66,6 +68,7 @@ class MpvqcDependencyModel(QAbstractListModel):
                 msg = f"Cannot find data to return for: {type(role)} {role}"
                 raise ValueError(msg)
 
+    @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.NameRole: QByteArray(b"name"),

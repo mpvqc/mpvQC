@@ -31,9 +31,11 @@ class MpvqcThemePreviewModel(QAbstractListModel):
     PreviewRole = Qt.ItemDataRole.UserRole + 3
     IsDarkRole = Qt.ItemDataRole.UserRole + 4
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
+    @typing.override
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._themes.previews)
 
+    @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         preview = self._themes.previews[index.row()]
 
@@ -47,6 +49,7 @@ class MpvqcThemePreviewModel(QAbstractListModel):
             case self.IsDarkRole:
                 return preview["isDark"]
 
+    @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.IdentifierRole: QByteArray(b"identifier"),

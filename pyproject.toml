@@ -35,6 +35,9 @@ Homepage = "https://mpvqc.github.io"
 Repository = "https://github.com/mpvqc/mpvQC"
 Issues = "https://github.com/mpvqc/mpvQC/issues"
 
+[tool.pyrefly.errors]
+missing-override-decorator = "error"
+
 [tool.ruff]
 line-length = 120
 target-version = "py313"
@@ -213,6 +216,7 @@ files = [
     "mpvqc/services/application_paths.py",
     "mpvqc/services/build_info.py",
     "mpvqc/services/comment_type_validator.py",
+    "mpvqc/services/comments.py",
     "mpvqc/services/document_exporter.py",
     "mpvqc/services/document_importer.py",
     "mpvqc/services/exporter.py",

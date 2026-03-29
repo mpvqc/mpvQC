@@ -45,9 +45,11 @@ class ImportOptionsModel(QAbstractListModel):
             },
         ]
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
+    @typing.override
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._items)
 
+    @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid():
             return None
@@ -61,6 +63,7 @@ class ImportOptionsModel(QAbstractListModel):
 
         return None
 
+    @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.TextRole: QByteArray(b"text"),

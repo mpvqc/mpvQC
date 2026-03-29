@@ -4,6 +4,7 @@
 
 
 import itertools
+import typing
 
 from PySide6.QtGui import QStandardItem
 
@@ -46,19 +47,22 @@ class CommentItem(QStandardItem):
     def to_comment(self) -> Comment:
         return Comment(time=self.time, comment_type=self.comment_type, comment=self.comment)
 
+    @typing.override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CommentItem):
             return NotImplemented
         return self._id == other._id
 
+    @typing.override
     def __ne__(self, other: object) -> bool:
         if not isinstance(other, CommentItem):
             return NotImplemented
         return self._id != other._id
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return super().__hash__()
 
+    @typing.override
     def __lt__(self, other: object) -> bool:
         if not isinstance(other, CommentItem):
             return NotImplemented

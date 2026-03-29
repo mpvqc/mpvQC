@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import typing
+
 import inject
 from PySide6.QtCore import QEvent, QObject
 
@@ -11,6 +13,7 @@ from mpvqc.services import QuitService
 class CloseEventFilter(QObject):
     _quit: QuitService = inject.attr(QuitService)
 
+    @typing.override
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:
         match event.type():
             case QEvent.Type.Close if self._quit.can_quit():
