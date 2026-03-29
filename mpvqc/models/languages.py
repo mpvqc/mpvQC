@@ -23,14 +23,13 @@ class Language:
     translator: str | None = None
 
 
-# noinspection PyTypeChecker
 LANGUAGES = (
-    Language(language=QT_TRANSLATE_NOOP("Languages", "German"), identifier="de-DE"),
-    Language(language=QT_TRANSLATE_NOOP("Languages", "English"), identifier="en-US"),
-    Language(language=QT_TRANSLATE_NOOP("Languages", "Spanish"), identifier="es-MX", translator="CiferrC"),
-    Language(language=QT_TRANSLATE_NOOP("Languages", "Hebrew"), identifier="he-IL", translator="cN3rd"),
-    Language(language=QT_TRANSLATE_NOOP("Languages", "Italian"), identifier="it-IT", translator="maddo"),
-    Language(language=QT_TRANSLATE_NOOP("Languages", "Portuguese"), identifier="pt-PT", translator="Diogo_23"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "German")), identifier="de-DE"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "English")), identifier="en-US"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Spanish")), identifier="es-MX", translator="CiferrC"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Hebrew")), identifier="he-IL", translator="cN3rd"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Italian")), identifier="it-IT", translator="maddo"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Portuguese")), identifier="pt-PT", translator="Diogo_23"),
 )
 
 QML_IMPORT_NAME = "pyobjects"
