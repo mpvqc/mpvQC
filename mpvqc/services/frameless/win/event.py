@@ -79,7 +79,7 @@ def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
 
     if (maximized or fullscreen) and Taskbar.is_auto_hide():
         position = Taskbar.get_position(hwnd)
-        if position == Taskbar.LEFT:
+        if position == Taskbar.TOP:
             rect.top += Taskbar.AUTO_HIDE_THICKNESS
         elif position == Taskbar.BOTTOM:
             rect.bottom -= Taskbar.AUTO_HIDE_THICKNESS
