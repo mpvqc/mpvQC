@@ -10,5 +10,5 @@ class TimeFormatterService:
         minutes, seconds = divmod(remainder, 60)
         if long_format:
             return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
-        else:  # noqa: RET505
-            return f"{int(minutes):02d}:{int(seconds):02d}"
+
+        return f"{int(minutes):02d}:{int(seconds):02d}"
