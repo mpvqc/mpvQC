@@ -9,6 +9,7 @@ import sys
 from argparse import Namespace
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Literal
 
 from materialyoucolor.dynamiccolor.dynamic_scheme import DynamicScheme
 from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynamicColors
@@ -80,7 +81,7 @@ def validate_colors(colors: list[str]) -> None:
 
 
 def generate(colors: list[str], dark: bool, contrast: float) -> None:
-    spec_version = "2021"
+    spec_version: Literal["2021", "2025"] = "2021"
     color_map = {}
 
     for hex_color in colors:

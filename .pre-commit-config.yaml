@@ -64,23 +64,27 @@ repos:
           - "lf"
         additional_dependencies:
           - mdformat-gfm
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.8
+  - repo: local
     hooks:
       - id: ruff
         name: "lint py"
+        language: system
+        entry: uv run ruff check
         args:
           - "--fix"
+        types_or: [python, pyi]
       - id: ruff-format
         name: "format py"
-  - repo: https://github.com/tomas-krupa/qmlformat-hook.git
-    rev: 1.2.0
-    hooks:
+        language: system
+        entry: uv run ruff format
+        types_or: [python, pyi]
       - id: qmlformat
-        files: '.*\.qml$'
         name: "format qml"
+        language: system
+        entry: uv run pyside6-qmlformat --inplace
         args:
-          - --newline=unix
+          - "--newline=unix"
+        files: '.*\.qml$'
   - repo: https://github.com/fsfe/reuse-tool
     rev: v6.2.0
     hooks:
