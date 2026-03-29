@@ -90,7 +90,6 @@ extend-select = [
 ignore = [
     "E402",    # Module level import not at top of file
     "PLC0415", # `import` should be at top of file
-    "PLC1901", # Simplifiable string comparisons
     "PLR0904", # Too many public methods
     "PLR0911", # Too many return statements
     "PLR0913", # Too many arguments

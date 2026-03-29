@@ -153,7 +153,7 @@ def test_search_query_changed(view_model, make_spy, search, get_next, get_previo
 
 def test_search_with_empty_query(search):
     status_label, has_multiple, next_idx = search("")
-    assert status_label == ""
+    assert not status_label
     assert not has_multiple
     assert next_idx == -1
 
