@@ -78,14 +78,13 @@ repos:
         language: system
         entry: uv run ruff format
         types_or: [python, pyi]
-  - repo: https://github.com/tomas-krupa/qmlformat-hook.git
-    rev: 1.2.0
-    hooks:
       - id: qmlformat
-        files: '.*\.qml$'
         name: "format qml"
+        language: system
+        entry: uv run pyside6-qmlformat --inplace
         args:
-          - --newline=unix
+          - "--newline=unix"
+        files: '.*\.qml$'
   - repo: https://github.com/fsfe/reuse-tool
     rev: v6.2.0
     hooks:
