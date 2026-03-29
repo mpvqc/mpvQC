@@ -71,8 +71,8 @@ def test_initial_state(view_model, comment_types):
     assert view_model.temporaryCommentTypesModel.stringList() == comment_types
 
     # Initial properties
-    assert view_model.textFieldContent == ""
-    assert view_model.validationError == ""
+    assert not view_model.textFieldContent
+    assert not view_model.validationError
     assert view_model.selectedIndex == 0
 
     # Buttons should be in idle state
@@ -134,7 +134,7 @@ def test_adding_to_idle_via_reject(view_model, make_spy):
     assert not focus_text_field_requested_spy.at(0, 0)
 
     # Should return to idle state
-    assert view_model.textFieldContent == ""
+    assert not view_model.textFieldContent
     assert not view_model.isAcceptButtonEnabled
     assert not view_model.isRejectButtonEnabled
 
@@ -181,7 +181,7 @@ def test_add_valid_comment_type(view_model, comment_type_validator_service_mock,
     assert view_model.selectedIndex == len(comment_types)
 
     # Should return to idle
-    assert view_model.textFieldContent == ""
+    assert not view_model.textFieldContent
 
 
 def test_add_with_validation_error(view_model, comment_type_validator_service_mock, make_spy):
@@ -368,7 +368,7 @@ def test_reset_to_defaults(view_model, comment_types_reset):
     assert view_model.selectedIndex == 0
 
     # Should return to idle state
-    assert view_model.textFieldContent == ""
+    assert not view_model.textFieldContent
     assert not view_model.isAcceptButtonEnabled
 
 
@@ -416,7 +416,7 @@ def test_validation_error_signal(view_model, comment_type_validator_service_mock
 
     # Should emit with empty string
     assert validation_error_changed_spy.count() == 2
-    assert validation_error_changed_spy.at(1, 0) == ""
+    assert not validation_error_changed_spy.at(1, 0)
 
 
 def test_no_focus_change_in_idle(view_model, make_spy):
@@ -433,7 +433,7 @@ def test_text_change_in_idle_ignored(view_model):
     view_model.onTextChanged("Some text")
 
     # Should not update text field content in idle mode
-    assert view_model.textFieldContent == ""
+    assert not view_model.textFieldContent
 
 
 def test_operations_blocked_during_editing(view_model):
@@ -459,7 +459,7 @@ def test_validation_only_after_typing(view_model, comment_type_validator_service
     view_model.onTextFieldFocusChanged(True)
 
     # No validation yet - user hasn't typed
-    assert view_model.validationError == ""
+    assert not view_model.validationError
     comment_type_validator_service_mock.validate_new_comment_type.assert_not_called()
 
     # Now type something
