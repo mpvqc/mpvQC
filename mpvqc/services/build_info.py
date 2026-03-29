@@ -30,10 +30,6 @@ class BuildInfoService:
         return self._build_info.application.commit
 
     @property
-    def build_date(self) -> str:
-        return self._build_info.application.build_date
-
-    @property
     def is_release(self) -> bool:
         return self._build_info.application.is_release
 
