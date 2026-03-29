@@ -34,6 +34,7 @@ def make_view_model():
     def _make(comments: list[Comment]):
         # noinspection PyCallingNonCallable
         vm = MpvqcCommentTableViewModel()
+        # pyrefly: ignore [missing-attribute]
         vm.model.import_comments(tuple(comments))
         return vm
 

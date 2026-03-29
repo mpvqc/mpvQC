@@ -47,4 +47,5 @@ class MpvqcAboutDialogViewModel(QObject):
 
     @Slot()
     def copyVersionInfoToClipboard(self) -> None:
+        # pyrefly: ignore [bad-argument-type]
         QGuiApplication.clipboard().setText(self.applicationVersion)

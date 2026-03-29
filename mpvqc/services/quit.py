@@ -23,6 +23,7 @@ class QuitService(QObject):
 
     def can_quit(self) -> bool:
         # noinspection PyTypeChecker
+        # pyrefly: ignore [bad-return]
         return self._state.saved or self._quit_despite_unsaved_changes
 
     def request_quit(self) -> None:
