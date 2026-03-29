@@ -58,7 +58,7 @@ class MpvqcMenuBarViewModel(QObject):
     windowTitleFormatChanged = Signal(int)
     applicationLayoutChanged = Signal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._settings.windowTitleFormatChanged.connect(lambda v: self.windowTitleFormatChanged.emit(v))
         self._settings.layoutOrientationChanged.connect(lambda v: self.applicationLayoutChanged.emit(v))

@@ -19,12 +19,12 @@ class ImportJob(QRunnable):
     _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
 
-    def __init__(self, urls: list[QUrl]):
+    def __init__(self, urls: list[QUrl]) -> None:
         super().__init__()
         self._urls = urls
 
     @typing.override
-    def run(self):
+    def run(self) -> None:
         subtitle_extensions = [f".{ext}" for ext in self._mimetype_provider.subtitle_file_extensions]
 
         documents = []

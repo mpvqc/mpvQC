@@ -19,7 +19,7 @@ class MpvqcImportSettingsDialogViewModel(QObject):
 
     importFoundVideoChanged = Signal(int)
 
-    def __init__(self, /):
+    def __init__(self, /) -> None:
         super().__init__()
         self._temp_import_found_video = self._settings.import_found_video
 

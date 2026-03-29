@@ -21,7 +21,7 @@ class MpvqcNewCommentMenuViewModel(QObject):
 
     commentTypesChanged = Signal(list)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._settings.commentTypesChanged.connect(self.commentTypesChanged)
 

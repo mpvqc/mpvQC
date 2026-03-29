@@ -19,7 +19,7 @@ class MpvqcPlaceholderViewModel(QObject):
 
     layoutOrientationChanged = Signal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
 

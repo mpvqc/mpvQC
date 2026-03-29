@@ -28,7 +28,7 @@ class ImportOptionsModel(QAbstractListModel):
     TextRole = Qt.ItemDataRole.UserRole + 1
     ValueRole = Qt.ItemDataRole.UserRole + 2
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._items = [
             {

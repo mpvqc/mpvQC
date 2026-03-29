@@ -42,7 +42,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
     setTextFieldRequested = Signal(str)
     focusTextFieldRequested = Signal(bool)
 
-    def __init__(self, /, parent=None):
+    def __init__(self, /, parent=None) -> None:
         super().__init__(parent)
         self._model = QStringListModel(list(self._settings.comment_types), self)
 
@@ -166,7 +166,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._validate_and_update_input_buttons()
 
     @Slot()
-    def acceptInput(self):
+    def acceptInput(self) -> None:
         if not self._text_field_content or self._validation_error:
             return
 
@@ -178,7 +178,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._transition_to_idle()
 
     @Slot()
-    def rejectInput(self):
+    def rejectInput(self) -> None:
         self._transition_to_idle()
 
     @Slot(int)
@@ -188,7 +188,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
             self._update_list_control_buttons()
 
     @Slot()
-    def moveUp(self):
+    def moveUp(self) -> None:
         if not self._is_idle:
             return
         if not (0 < self._selected_index < self._model.rowCount()):
@@ -199,7 +199,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._update_list_control_buttons()
 
     @Slot()
-    def moveDown(self):
+    def moveDown(self) -> None:
         if not self._is_idle:
             return
         if not (0 <= self._selected_index < self._model.rowCount() - 1):
@@ -210,7 +210,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._update_list_control_buttons()
 
     @Slot()
-    def startEdit(self):
+    def startEdit(self) -> None:
         if not self._is_idle:
             return
         if not (0 <= self._selected_index < self._model.rowCount()):
@@ -219,7 +219,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._transition_to_editing()
 
     @Slot()
-    def deleteItem(self):
+    def deleteItem(self) -> None:
         if not self._is_idle:
             return
         model_count = self._model.rowCount()
@@ -236,7 +236,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._update_list_control_buttons()
 
     @Slot()
-    def reset(self):
+    def reset(self) -> None:
         initial_items = list(self._settings.get_default_comment_types())
         self._model.setStringList(initial_items)
 
@@ -244,17 +244,17 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._transition_to_idle()
 
     @Slot()
-    def accept(self):
+    def accept(self) -> None:
         self._settings.comment_types = self._model.stringList()
 
-    def _add_comment_type(self):
+    def _add_comment_type(self) -> None:
         position = self._model.rowCount()
         self._model.insertRow(position)
         index = self._model.index(position, 0)
         self._model.setData(index, self._text_field_content)
         self._set_selected_index(position)
 
-    def _edit_current_comment_type(self):
+    def _edit_current_comment_type(self) -> None:
         index = self._model.index(self._selected_index, 0)
         content = self._translator.lookup(self._text_field_content)
         self._model.setData(index, content)
@@ -270,7 +270,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         dest_index = to_index + 1 if to_index > from_index else to_index
         self._model.moveRow(QModelIndex(), from_index, QModelIndex(), dest_index)
 
-    def _transition_to_idle(self):
+    def _transition_to_idle(self) -> None:
         self._text_field_mode = TextFieldMode.IDLE
         self._text_field_content = ""
         self.clearTextFieldRequested.emit()
@@ -280,7 +280,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._set_is_reject_button_enabled(False)
         self._update_list_control_buttons()
 
-    def _transition_to_add(self):
+    def _transition_to_add(self) -> None:
         self._text_field_mode = TextFieldMode.ADDING
         self._text_field_content = ""
         self.clearTextFieldRequested.emit()
@@ -290,7 +290,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._set_is_reject_button_enabled(True)
         self._disable_list_controls()
 
-    def _transition_to_editing(self):
+    def _transition_to_editing(self) -> None:
         self._text_field_mode = TextFieldMode.EDITING
         self._has_typed_since_mode_change = True
         self._disable_list_controls()
@@ -300,7 +300,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self.setTextFieldRequested.emit(current_text)
         self.focusTextFieldRequested.emit(True)
 
-    def _validate_and_update_input_buttons(self):
+    def _validate_and_update_input_buttons(self) -> None:
         error = None
 
         if self._has_typed_since_mode_change:
@@ -327,7 +327,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
                 self._set_is_accept_button_enabled(False)
                 self._set_is_reject_button_enabled(False)
 
-    def _update_list_control_buttons(self):
+    def _update_list_control_buttons(self) -> None:
         if not self._is_idle:
             self._disable_list_controls()
             return
@@ -342,7 +342,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
         self._set_is_edit_button_enabled(has_selection)
         self._set_is_delete_button_enabled(has_selection and model_count > 1)
 
-    def _disable_list_controls(self):
+    def _disable_list_controls(self) -> None:
         self._set_is_move_up_button_enabled(False)
         self._set_is_move_down_button_enabled(False)
         self._set_is_edit_button_enabled(False)

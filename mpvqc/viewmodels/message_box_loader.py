@@ -23,7 +23,7 @@ class MpvqcMessageBoxLoaderViewModel(QObject):
     exportErrorOccurred = Signal(str, int)
     confirmQuit = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._document_exporter.export_error_occurred.connect(self.exportErrorOccurred)
         self._importer.erroneous_documents_imported.connect(

@@ -20,7 +20,7 @@ class ApplicationPathsService:
         dir_screenshots: Path
         dir_export_templates: Path
 
-    def __init__(self):
+    def __init__(self) -> None:
         if self._app.is_portable:
             self._paths = self._paths_next_to_executable()
         else:

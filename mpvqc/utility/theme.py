@@ -20,7 +20,7 @@ class MpvqcThemeBackend(QObject):
 
     themeChanged = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._settings.themeIdentifierChanged.connect(self.themeChanged)
         self._settings.themeColorOptionChanged.connect(self.themeChanged)

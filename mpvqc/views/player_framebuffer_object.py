@@ -24,7 +24,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-def get_process_address(_, name):
+def get_process_address(_, name) -> int:
     current_gl_context = QOpenGLContext.currentContext()
     if current_gl_context:
         return int(current_gl_context.getProcAddress(name))
@@ -35,12 +35,12 @@ def get_process_address(_, name):
 class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
     sig_on_update = Signal()
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.sig_on_update.connect(self.do_update)
 
     @Slot()
-    def do_update(self):
+    def do_update(self) -> None:
         self.update()
 
     @typing.override
@@ -51,7 +51,7 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
 class Renderer(QQuickFramebufferObject.Renderer):
     _host_integration = inject.attr(HostIntegrationService)
 
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__()
         self._parent = parent
         self._ctx: MpvRenderContext | None = None
@@ -77,7 +77,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
 
     @typing.override
-    def render(self):
+    def render(self) -> None:
         if self._ctx:
             factor: float = self._host_integration.display_zoom_factor
             rect = self._parent.size()

@@ -23,7 +23,7 @@ class MpvqcBackupDialogViewModel(QObject):
     temporaryBackupEnabledChanged = Signal(bool)
     temporaryBackupIntervalChanged = Signal(int)
 
-    def __init__(self, /, parent=None):
+    def __init__(self, /, parent=None) -> None:
         super().__init__(parent)
         self._temporary_backup_enabled = self._settings.backup_enabled
         self._temporary_backup_interval = self._settings.backup_interval
@@ -54,12 +54,12 @@ class MpvqcBackupDialogViewModel(QObject):
         return self._type_mapper.map_path_to_str(path)
 
     @Slot()
-    def openBackupDirectory(self):
+    def openBackupDirectory(self) -> None:
         path = self._paths.dir_backup
         url = self._type_mapper.map_path_to_url(path)
         QDesktopServices.openUrl(url)
 
     @Slot()
-    def accept(self):
+    def accept(self) -> None:
         self._settings.backup_enabled = self._temporary_backup_enabled
         self._settings.backup_interval = self._temporary_backup_interval

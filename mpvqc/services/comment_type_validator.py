@@ -15,7 +15,11 @@ class CommentTypeValidatorService:
 
     _forbidden_characters = re.compile(r"[\[\]]")
 
-    def validate_new_comment_type(self, new_comment_type: str, existing_comment_types: list[str]) -> str | None:
+    def validate_new_comment_type(
+        self,
+        new_comment_type: str,
+        existing_comment_types: list[str],
+    ) -> str | None:
         if not new_comment_type:
             return self._must_not_be_blank()
         if self._contains_forbidden_characters(new_comment_type):
@@ -27,13 +31,20 @@ class CommentTypeValidatorService:
     def _contains_forbidden_characters(self, new_comment_type: str) -> bool:
         return bool(self._forbidden_characters.search(new_comment_type))
 
-    def _already_exists(self, new_comment_type: str, existing_comment_types: list[str]):
+    def _already_exists(
+        self,
+        new_comment_type: str,
+        existing_comment_types: list[str],
+    ) -> bool:
         translated = self._reverse_translator.lookup(new_comment_type)
         return new_comment_type in existing_comment_types or translated in existing_comment_types
 
     def validate_editing_of_comment_type(
-        self, new_comment_type: str, comment_type_being_edited: str, existing_comment_types: list[str]
-    ):
+        self,
+        new_comment_type: str,
+        comment_type_being_edited: str,
+        existing_comment_types: list[str],
+    ) -> str | None:
         if not new_comment_type:
             return self._must_not_be_blank()
         if self._contains_forbidden_characters(new_comment_type):
@@ -48,13 +59,13 @@ class CommentTypeValidatorService:
         return None
 
     @staticmethod
-    def _must_not_be_blank():
+    def _must_not_be_blank() -> str:
         return QCoreApplication.translate("CommentTypesDialog", "A comment type must not be blank")
 
     @staticmethod
-    def _must_not_contain_forbidden_characters():
+    def _must_not_contain_forbidden_characters() -> str:
         return QCoreApplication.translate("CommentTypesDialog", "Characters '{}' not allowed").format("[]")
 
     @staticmethod
-    def _must_not_already_exist():
+    def _must_not_already_exist() -> str:
         return QCoreApplication.translate("CommentTypesDialog", "Comment type already exists")

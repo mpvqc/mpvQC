@@ -12,7 +12,7 @@ class WindowPropertiesService(QObject):
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
 
         self._width = 0

@@ -29,13 +29,13 @@ class MpvqcApplication(QGuiApplication):
     _i18n: InternationalizationService = inject.attr(InternationalizationService)
     _settings: SettingsService = inject.attr(SettingsService)
 
-    def __init__(self, args):
+    def __init__(self, args) -> None:
         super().__init__(args)
         self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(":/qt/qml/styles")
 
-    def configure(self):
+    def configure(self) -> None:
         icon = QIcon(":/data/icon.svg")
         self.setWindowIcon(icon)
 
@@ -62,11 +62,11 @@ class MpvqcApplication(QGuiApplication):
         self._engine.setUiLanguage(language)
 
     @Slot()
-    def _retranslate(self):
+    def _retranslate(self) -> None:
         language_code = self._engine.uiLanguage()
         self._i18n.retranslate(app=self, language_code=language_code)
 
-    def start(self):
+    def start(self) -> None:
         url = QUrl.fromLocalFile(":/qt/qml/MpvqcApplication.qml")
         self._engine.load(url)
 

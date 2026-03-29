@@ -105,7 +105,7 @@ def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) 
     return result
 
 
-def map_to_mpvqc_colors(color_map: dict, dark: bool):
+def map_to_mpvqc_colors(color_map: dict, dark: bool) -> list[MpvqcColorSet]:
     colors = []
     for palette in color_map.values():
         if dark:

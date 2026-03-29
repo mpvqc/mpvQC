@@ -93,19 +93,19 @@ def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._top_lvl_hwnd = None
         self._embedded_player_hwnd = None
 
-    def set_top_lvl_hwnd(self, hwnd):
+    def set_top_lvl_hwnd(self, hwnd) -> None:
         self._top_lvl_hwnd = hwnd
 
-    def set_embedded_player_hwnd(self, hwnd):
+    def set_embedded_player_hwnd(self, hwnd) -> None:
         self._embedded_player_hwnd = hwnd
 
     @typing.override
-    def nativeEventFilter(self, _, message):
+    def nativeEventFilter(self, _, message) -> tuple[bool, int]:
         msg = ctypes.wintypes.MSG.from_address(int(message))
 
         hwnd = msg.hWnd

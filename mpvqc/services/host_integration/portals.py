@@ -21,7 +21,7 @@ class SettingsPortal:
     """Context manager for reading from org.freedesktop.portal.Settings
     (https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Settings.html) via D-Bus."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._connection_name = f"mpvqc-portal-{id(self)}"
         self._connection: QDBusConnection | None = None
         self._interface: QDBusInterface | None = None
@@ -49,7 +49,7 @@ class SettingsPortal:
 
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         if self._connection is not None:
             QDBusConnection.disconnectFromBus(self._connection_name)
         return False

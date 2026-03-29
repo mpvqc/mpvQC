@@ -17,7 +17,7 @@ class QuitService(QObject):
 
     confirmQuit = Signal()
 
-    def __init__(self, /):
+    def __init__(self, /) -> None:
         super().__init__()
         self._quit_despite_unsaved_changes = False
 

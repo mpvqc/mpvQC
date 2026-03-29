@@ -12,7 +12,7 @@ from mpvqc.services import ResourceReaderService
 class ThemeService:
     _resource_reader: ResourceReaderService = inject.attr(ResourceReaderService)
 
-    def __init__(self):
+    def __init__(self) -> None:
         resource = self._resource_reader.read_from(":/data/themes.json")
         self._themes = json.loads(resource)
         self._id_to_theme: dict[str, dict] = {theme["identifier"]: theme for theme in self._themes}

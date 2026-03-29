@@ -18,14 +18,19 @@ QML_IMPORT_MAJOR_VERSION = 1
 class ImportJob(QRunnable):
     _importer: ImporterService = inject.attr(ImporterService)
 
-    def __init__(self, documents: list[Path], videos: list[Path], subtitles: list[Path]):
+    def __init__(
+        self,
+        documents: list[Path],
+        videos: list[Path],
+        subtitles: list[Path],
+    ) -> None:
         super().__init__()
         self._documents = documents
         self._videos = videos
         self._subtitles = subtitles
 
     @typing.override
-    def run(self):
+    def run(self) -> None:
         self._importer.open(self._documents, self._videos, self._subtitles)
 
 

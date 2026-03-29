@@ -108,7 +108,7 @@ def qt_log_handler() -> Callable:
 
     logger_name_pattern = re.compile(r"file::(.*?):(.*?):\s(.*?)$")
 
-    def handler(message_type: QtMsgType, context, message):
+    def handler(message_type: QtMsgType, context, message) -> None:
         if context.file:
             logger_name = context.file.removeprefix("file::/").replace("/", ".").rstrip(".qml")
             line = int(context.line)

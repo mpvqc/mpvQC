@@ -48,7 +48,7 @@ class PlayerService(QObject):
     audio_track_count_changed = Signal(int)
     subtitle_track_count_changed = Signal(int)
 
-    def __init__(self, **properties):
+    def __init__(self, **properties) -> None:
         super().__init__(**properties)
 
         # Cache subtitles for two reasons:
@@ -76,7 +76,7 @@ class PlayerService(QObject):
         if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
             mpv_log_level = 25
 
-            def player_logger(*args):
+            def player_logger(*args) -> None:
                 level, context, message = args
                 logger.log(mpv_log_level, message.strip(), extra={"mpv_level": level, "mpv_context": context})
 
@@ -94,7 +94,7 @@ class PlayerService(QObject):
         self._cached_audio_track_count = 0
         self._cached_subtitle_track_count = 0
 
-    def init(self, win_id: int | None = None):
+    def init(self, win_id: int | None = None) -> None:
         args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
         merged_args = self._init_args | args
 
@@ -227,7 +227,7 @@ class PlayerService(QObject):
             self._loading_video = False
             self._open_cached_subtitles()
 
-    def _open_cached_subtitles(self):
+    def _open_cached_subtitles(self) -> None:
         if self._cached_subtitles:
             self.open_subtitles(self._cached_subtitles)
             self._cached_subtitles.clear()
@@ -289,12 +289,12 @@ class PlayerService(QObject):
         return False
 
     def open_subtitles(self, subtitles: Iterable[Path]) -> None:
-        def _load():
+        def _load() -> None:
             for subtitle in subtitles:
                 path = self._type_mapper.map_path_to_str(subtitle)
                 self.mpv.command("sub-add", path, "select")
 
-        def _cache():
+        def _cache() -> None:
             self._cached_subtitles |= set(subtitles)
 
         if self.video_loaded and not self._loading_video:
@@ -355,7 +355,12 @@ class PlayerService(QObject):
 class DimensionsChangedCoordinator(QObject):
     both_ready = Signal(int, int)
 
-    def __init__(self, width_changed: SignalInstance, height_changed: SignalInstance, reset_signal: SignalInstance):
+    def __init__(
+        self,
+        width_changed: SignalInstance,
+        height_changed: SignalInstance,
+        reset_signal: SignalInstance,
+    ) -> None:
         super().__init__()
         self._width = None
         self._height = None
@@ -367,24 +372,24 @@ class DimensionsChangedCoordinator(QObject):
         reset_signal.connect(self._reset)
 
     @Slot(int)
-    def _on_width_changed(self, value):
+    def _on_width_changed(self, value) -> None:
         self._width = value
         self._width_available = True
         self._check_and_emit()
 
     @Slot(int)
-    def _on_height_changed(self, value):
+    def _on_height_changed(self, value) -> None:
         self._height = value
         self._height_available = True
         self._check_and_emit()
 
-    def _check_and_emit(self):
+    def _check_and_emit(self) -> None:
         if self._width_available and self._height_available and self._width and self._height:
             self.both_ready.emit(self._width, self._height)
             self._reset()
 
     @Slot()
-    def _reset(self):
+    def _reset(self) -> None:
         self._width_available = False
         self._height_available = False
 

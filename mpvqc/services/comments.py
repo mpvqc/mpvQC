@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class CommentsService:
-    def __init__(self):
+    def __init__(self) -> None:
         self._provider: Callable[[], list[dict[str, Any]]] | None = None
 
     def register(self, provider: Callable[[], list[dict[str, Any]]]) -> None:

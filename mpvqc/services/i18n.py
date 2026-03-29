@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class InternationalizationService:
-    def __init__(self):
+    def __init__(self) -> None:
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
         self._translator_qt_overrides = QTranslator()

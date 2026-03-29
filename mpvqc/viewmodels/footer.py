@@ -43,7 +43,7 @@ class MpvqcFooterViewModel(QObject):
     isTimeTextVisibleChanged = Signal(bool)
     timeWidthChanged = Signal(int)
 
-    def __init__(self, /, parent=None):
+    def __init__(self, /, parent=None) -> None:
         super().__init__(parent)
         self._selected_comment_index = 0
         self._total_comment_count = 0

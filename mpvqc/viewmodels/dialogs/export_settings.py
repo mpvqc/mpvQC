@@ -24,7 +24,7 @@ class MpvqcExportSettingsDialogViewModel(QObject):
     writeHeaderVideoPathChanged = Signal(bool)
     writeHeaderSubtitlesChanged = Signal(bool)
 
-    def __init__(self, /):
+    def __init__(self, /) -> None:
         super().__init__()
         self._temp_nickname = self._settings.nickname
         self._temp_write_header_date = self._settings.write_header_date

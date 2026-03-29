@@ -26,14 +26,14 @@ class DocumentRenderService:
     class Filters:
         _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
 
-        def as_time(self, seconds: int):
+        def as_time(self, seconds: int) -> str:
             return self._time_formatter.format_time_to_string(seconds, long_format=True)
 
         @staticmethod
-        def as_comment_type(comment_type: str):
+        def as_comment_type(comment_type: str) -> str:
             return QCoreApplication.translate("CommentTypes", comment_type)
 
-    def __init__(self):
+    def __init__(self) -> None:
         from jinja2 import BaseLoader, Environment
 
         self._env = Environment(loader=BaseLoader(), keep_trailing_newline=True)  # noqa: S701
@@ -78,7 +78,7 @@ class DocumentRenderService:
             "comments": comments,
         }
 
-    def render(self, template: str):
+    def render(self, template: str) -> str:
         return self._env.from_string(template).render(**self._arguments)
 
 

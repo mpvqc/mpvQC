@@ -14,7 +14,7 @@ from .type_mapper import TypeMapperService
 class StateService(QObject):
     saved_changed = Signal(bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._state = ApplicationState(document=None, video=None, saved=True)
 

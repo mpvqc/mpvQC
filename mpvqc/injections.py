@@ -43,5 +43,5 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.WindowPropertiesService, s.WindowPropertiesService)
 
 
-def configure_injections():
+def configure_injections() -> None:
     inject.configure(bindings, bind_in_runtime=False, clear=True)

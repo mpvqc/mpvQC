@@ -18,6 +18,6 @@ class MpvqcQuitMessageBoxViewModel(QObject):
     _quit: QuitService = inject.attr(QuitService)
 
     @Slot()
-    def quit(self):
+    def quit(self) -> None:
         self._quit.confirm_quit_despite_unsaved_changes()
         self._quit.shutdown()
