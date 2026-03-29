@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import ClassVar
 
 
-# noinspection DuplicatedCode
 class ArgumentValidator:
     def __init__(self) -> None:
         self._errors = []
@@ -84,7 +83,6 @@ class ProjectFileGenerator:
         outfile.write_text(data, encoding="utf-8")
 
 
-# noinspection DuplicatedCode
 def main() -> None:
     parser = argparse.ArgumentParser(description="Create a json project file")
     parser.add_argument("--relative-to", type=str, required=True, help="Root directory to look for files")
@@ -102,7 +100,6 @@ def main() -> None:
     run(parser.parse_args())
 
 
-# noinspection DuplicatedCode
 def run(args: Namespace) -> None:
     root_dir = Path(args.relative_to).absolute()
     out_file = Path(args.out_file)
