@@ -12,6 +12,7 @@ import ctypes
 from ctypes import Structure, byref, c_int, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
 from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
 from functools import lru_cache
+from typing import Any
 
 import win32api
 import win32con
@@ -40,7 +41,7 @@ def set_outer_window_size(hwnd, w, h) -> None:
     user32.SetWindowPos(hwnd, None, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE)
 
 
-def is_maximized(hwnd):
+def is_maximized(hwnd) -> bool:
     window_placement = win32gui.GetWindowPlacement(hwnd)
     if not window_placement:
         return False
@@ -67,7 +68,7 @@ def is_composition_enabled() -> bool:
     return bool(b_result.value)
 
 
-def get_monitor_info(hwnd, dw_flags):
+def get_monitor_info(hwnd, dw_flags) -> Any | None:
     monitor = win32api.MonitorFromWindow(hwnd, dw_flags)
     if not monitor:
         return None
@@ -75,7 +76,7 @@ def get_monitor_info(hwnd, dw_flags):
     return win32api.GetMonitorInfo(monitor)
 
 
-def get_resize_border_thickness(hwnd, horizontal=True):
+def get_resize_border_thickness(hwnd, horizontal=True) -> int:
     window = find_window(hwnd)
     if not window:
         return 0
@@ -90,7 +91,7 @@ def get_resize_border_thickness(hwnd, horizontal=True):
     return round(thickness * window.devicePixelRatio())
 
 
-def get_system_metrics(hwnd, index, horizontal):
+def get_system_metrics(hwnd, index, horizontal) -> Any:
     if not hasattr(windll.user32, "GetSystemMetricsForDpi"):
         return win32api.GetSystemMetrics(index)
 
@@ -98,7 +99,7 @@ def get_system_metrics(hwnd, index, horizontal):
     return windll.user32.GetSystemMetricsForDpi(index, dpi)
 
 
-def get_dpi_for_window(hwnd, horizontal=True):
+def get_dpi_for_window(hwnd, horizontal=True) -> int:
     if hasattr(windll.user32, "GetDpiForWindow"):
         return windll.user32.GetDpiForWindow(hwnd)
 

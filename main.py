@@ -3,7 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-def main():
+from typing import Never
+
+
+def main() -> Never:
     import platform
 
     if platform.system() == "Windows":
@@ -15,7 +18,7 @@ def main():
     perform_startup()
 
 
-def _add_directory_to_path():
+def _add_directory_to_path() -> None:
     import os
     import sys
 
