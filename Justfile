@@ -40,7 +40,7 @@ init ARGS='--group dev':
 
 [group('dev')]
 @format:
-    uvx prek@0.2.17 run --all-files
+    uvx prek@0.3.8 run --all-files
 
 [group('dev')]
 update-python-dependencies:
@@ -49,7 +49,7 @@ update-python-dependencies:
 
 [group('dev')]
 update-git-hook-dependencies:
-    uvx prek@0.2.17 autoupdate
+    uvx prek@0.3.8 autoupdate
 
 # Stamp version info into data/build-info.toml
 [group('build')]
@@ -143,7 +143,7 @@ test-qml SKIP_PREPARATION='false':
 # Lint Python files (type checker only)
 [group('lint')]
 @lint-python *ARGS:
-    uvx pyrefly@0.55.0 check --ignore missing-attribute {{ ARGS }}
+    uvx pyrefly@0.58.0 check --ignore missing-attribute {{ ARGS }}
 
 # Lint QML files
 [group('lint')]
