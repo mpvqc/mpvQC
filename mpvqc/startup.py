@@ -3,7 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-def perform_startup():
+from typing import Never
+
+
+def perform_startup() -> Never:
     configure_qt_application_data()
     configure_qt_style()
     configure_qt_settings()
@@ -72,7 +75,7 @@ def import_mpvqc_bindings() -> None:
     import mpvqc.views  # noqa: F401
 
 
-def start_application():
+def start_application() -> Never:
     import sys
 
     from mpvqc.application import MpvqcApplication

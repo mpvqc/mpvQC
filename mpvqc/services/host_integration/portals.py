@@ -4,6 +4,7 @@
 
 import logging
 from functools import cached_property
+from typing import Self
 
 try:
     # noinspection PyUnusedImports
@@ -26,14 +27,16 @@ class SettingsPortal:
         self._connection: QDBusConnection | None = None
         self._interface: QDBusInterface | None = None
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         if not QTDBUS_AVAILABLE:
             logger.debug("QtDBus not available, cannot read portal settings")
             return self
 
-        self._connection = QDBusConnection.connectToBus(QDBusConnection.BusType.SessionBus, self._connection_name)
+        self._connection = connection = QDBusConnection.connectToBus(
+            QDBusConnection.BusType.SessionBus, self._connection_name
+        )
 
-        if not self._connection.isConnected():
+        if not connection.isConnected():
             logger.warning("D-Bus session bus is not connected")
             return self
 
@@ -41,7 +44,7 @@ class SettingsPortal:
             "org.freedesktop.portal.Desktop",
             "/org/freedesktop/portal/desktop",
             "org.freedesktop.portal.Settings",
-            self._connection,
+            connection,
         )
 
         if not self._interface.isValid():  # type: ignore[union-attr]
