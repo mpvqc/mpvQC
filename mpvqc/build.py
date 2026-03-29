@@ -45,7 +45,7 @@ def get_build_info() -> BuildInfo:
         raise RuntimeError(msg)
 
     try:
-        content = file.readAll().data().decode("utf-8")
+        content = bytes(file.readAll().data()).decode("utf-8")
     finally:
         file.close()
 

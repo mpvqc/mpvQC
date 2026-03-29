@@ -27,7 +27,7 @@ class ResourceReaderService:
             if not file.open(QIODevice.OpenModeFlag.ReadOnly):
                 msg = f"Can not open file to read: {resource_path}"
                 raise ValueError(msg)
-            return file.readAll().data().decode("utf-8")
+            return bytes(file.readAll().data()).decode("utf-8")
         finally:
             if file.isOpen():
                 file.close()

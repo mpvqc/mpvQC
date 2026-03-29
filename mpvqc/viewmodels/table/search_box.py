@@ -52,7 +52,8 @@ class MpvqcSearchBoxViewModel(QObject):
     @Property(MpvqcCommentModel, notify=modelChanged)
     def model(self) -> MpvqcCommentModel:
         if self._model is None:
-            raise ValueError
+            msg = "Model has not been set"
+            raise ValueError(msg)
         return self._model
 
     @model.setter
@@ -132,8 +133,10 @@ class MpvqcSearchBoxViewModel(QObject):
         if next_index >= 0:
             self.highlightRequested.emit(next_index)
 
-    # noinspection PyUnresolvedReferences,PyTypeChecker
     def _search_func(self, query: str) -> list[int]:
+        if self._model is None:
+            msg = "Model has not been set"
+            raise ValueError(msg)
         from_beginning = self._model.index(0, 0)
         role = Role.COMMENT
         flags = Qt.MatchFlag.MatchContains | Qt.MatchFlag.MatchWrap

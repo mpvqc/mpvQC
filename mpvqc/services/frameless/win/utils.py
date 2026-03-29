@@ -202,7 +202,7 @@ class Taskbar:
         return cls.NO_POSITION
 
 
-dwmapi = ctypes.windll.dwmapi
+dwmapi = windll.dwmapi
 
 DwmExtendFrameIntoClientArea = dwmapi.DwmExtendFrameIntoClientArea
 DwmExtendFrameIntoClientArea.argtypes = [ctypes.wintypes.HWND, ctypes.POINTER(MARGINS)]
