@@ -40,14 +40,14 @@ class SettingsPortal:
             logger.warning("D-Bus session bus is not connected")
             return self
 
-        self._interface = QDBusInterface(
+        self._interface = interface = QDBusInterface(
             "org.freedesktop.portal.Desktop",
             "/org/freedesktop/portal/desktop",
             "org.freedesktop.portal.Settings",
             connection,
         )
 
-        if not self._interface.isValid():  # type: ignore[union-attr]
+        if not interface.isValid():
             logger.debug("D-Bus settings portal interface is not valid")
 
         return self
