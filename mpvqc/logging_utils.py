@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import typing
 from collections.abc import Callable
 from enum import StrEnum
 from typing import Final
@@ -45,6 +46,7 @@ class MpvqcFormatter(logging.Formatter):
         super().__init__()
         self._use_color = use_color()
 
+    @typing.override
     def format(self, record: logging.LogRecord) -> str:
         if self._use_color:
             color = LEVEL_COLORS.get(record.levelno, AnsiColor.RESET)

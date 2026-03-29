@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import typing
 from pathlib import Path
 
 import inject
@@ -23,6 +24,7 @@ class ImportJob(QRunnable):
         self._videos = videos
         self._subtitles = subtitles
 
+    @typing.override
     def run(self):
         self._importer.open(self._documents, self._videos, self._subtitles)
 

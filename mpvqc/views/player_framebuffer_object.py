@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import typing
 from typing import TYPE_CHECKING
 
 import inject
@@ -42,6 +43,7 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
     def do_update(self):
         self.update()
 
+    @typing.override
     def createRenderer(self) -> QQuickFramebufferObject.Renderer:
         return Renderer(self)
 
@@ -55,6 +57,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
         self._ctx: MpvRenderContext | None = None
         self._host_integration.display_zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
 
+    @typing.override
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
             from mpv import MpvGlGetProcAddressFn, MpvRenderContext
@@ -73,6 +76,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
 
+    @typing.override
     def render(self):
         if self._ctx:
             factor: float = self._host_integration.display_zoom_factor

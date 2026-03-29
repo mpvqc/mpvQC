@@ -59,9 +59,11 @@ class MpvqcThemePaletteModel(QAbstractListModel):
         self.endResetModel()
         self.resetDone.emit()
 
-    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: ARG002
+    @typing.override
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._themes.palette(self._theme_identifier))
 
+    @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:  # noqa: C901
         theme = self._themes.palette(self._theme_identifier)
         if not index.isValid() or index.row() >= len(theme):
@@ -92,6 +94,7 @@ class MpvqcThemePaletteModel(QAbstractListModel):
             case self.RowBaseAlternateTextRole:
                 return palette["rowBaseAlternateText"]
 
+    @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.BackgroundRole: QByteArray(b"background"),

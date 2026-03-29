@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import typing
+
 import inject
 from PySide6.QtCore import QObject, QRunnable, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
@@ -21,6 +23,7 @@ class ImportJob(QRunnable):
         super().__init__()
         self._urls = urls
 
+    @typing.override
     def run(self):
         subtitle_extensions = [f".{ext}" for ext in self._mimetype_provider.subtitle_file_extensions]
 

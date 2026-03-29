@@ -9,6 +9,7 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 import ctypes.wintypes
+import typing
 from ctypes import cast
 
 import PySide6.QtCore
@@ -103,6 +104,7 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     def set_embedded_player_hwnd(self, hwnd):
         self._embedded_player_hwnd = hwnd
 
+    @typing.override
     def nativeEventFilter(self, _, message):
         msg = ctypes.wintypes.MSG.from_address(int(message))
 

@@ -7,6 +7,7 @@ from __future__ import annotations
 import logging
 import os
 import platform
+import typing
 from dataclasses import dataclass
 from functools import cached_property
 
@@ -25,7 +26,8 @@ class WindowButtonPreference:
 class ZoomFactorChangeEventListener(QObject):
     device_pixel_ratio_changed = Signal()
 
-    def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: ARG002
+    @typing.override
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.Type.DevicePixelRatioChange:
             self.device_pixel_ratio_changed.emit()
         return False
