@@ -16,7 +16,7 @@ def perform_startup():
     start_application()
 
 
-def configure_qt_application_data():
+def configure_qt_application_data() -> None:
     from PySide6.QtCore import QCoreApplication
 
     from mpvqc.build import get_build_info
@@ -28,20 +28,20 @@ def configure_qt_application_data():
     QCoreApplication.setApplicationVersion(app.version)
 
 
-def configure_qt_style():
+def configure_qt_style() -> None:
     from PySide6.QtQuickControls2 import QQuickStyle
 
     QQuickStyle.setStyle("MpvqcStyle")
     QQuickStyle.setFallbackStyle("Material")
 
 
-def configure_qt_settings():
+def configure_qt_settings() -> None:
     from PySide6.QtCore import QSettings
 
     QSettings.setDefaultFormat(QSettings.Format.IniFormat)
 
 
-def configure_logging():
+def configure_logging() -> None:
     from PySide6 import QtCore
 
     from mpvqc.logging_utils import qt_log_handler, setup_mpvqc_logging
@@ -50,13 +50,13 @@ def configure_logging():
     QtCore.qInstallMessageHandler(qt_log_handler())
 
 
-def configure_dependency_injection():
+def configure_dependency_injection() -> None:
     from mpvqc.injections import configure_injections
 
     configure_injections()
 
 
-def configure_environment_variables():
+def configure_environment_variables() -> None:
     import os
 
     os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
@@ -65,7 +65,7 @@ def configure_environment_variables():
     os.environ["LC_NUMERIC"] = "C"
 
 
-def import_mpvqc_bindings():
+def import_mpvqc_bindings() -> None:
     import mpvqc.models  # noqa: F401
     import mpvqc.utility  # noqa: F401
     import mpvqc.viewmodels  # noqa: F401

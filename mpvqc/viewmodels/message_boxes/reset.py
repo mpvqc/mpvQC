@@ -18,5 +18,5 @@ class MpvqcResetMessageBoxViewModel(QObject):
     _resetter: ResetService = inject.attr(ResetService)
 
     @Slot()
-    def reset(self):
+    def reset(self) -> None:
         self._resetter.reset()

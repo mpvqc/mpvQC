@@ -18,7 +18,7 @@ class MpvqcTableUtilityBackend(QObject):
 
     durationChanged = Signal(float)
 
-    def __init__(self, /):
+    def __init__(self, /) -> None:
         super().__init__()
         self._player.duration_changed.connect(self.durationChanged)
 

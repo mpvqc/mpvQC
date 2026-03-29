@@ -34,7 +34,7 @@ class MpvqcResizeHandler(QObject):
     appWindowSizeRequested = Signal(int, int)
     splitViewTableSizeRequested = Signal(int, int)
 
-    def __init__(self, /):
+    def __init__(self, /) -> None:
         super().__init__()
         self._header_height = 0
         self._border_size = 0

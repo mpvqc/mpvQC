@@ -6,7 +6,7 @@ from mpvqc.build import Dependency, get_build_info
 
 
 class BuildInfoService:
-    def __init__(self):
+    def __init__(self) -> None:
         self._build_info = get_build_info()
 
     @property

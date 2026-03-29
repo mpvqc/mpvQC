@@ -72,7 +72,7 @@ class MpvqcCommentModel(QStandardItemModel):
 
     _comments_changed = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
@@ -122,12 +122,12 @@ class MpvqcCommentModel(QStandardItemModel):
         if not comments:
             return
 
-        def on_after_undo(row: int):
+        def on_after_undo(row: int) -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
             self.comments_imported_undo.emit(row)
 
-        def on_after_redo(index: QModelIndex, added_initially: bool):
+        def on_after_redo(index: QModelIndex, added_initially: bool) -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
             self.sort(0)
@@ -147,12 +147,12 @@ class MpvqcCommentModel(QStandardItemModel):
 
     @Slot()
     def clear_comments(self) -> None:
-        def on_after_undo():
+        def on_after_undo() -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
             self.comments_cleared_undo.emit()
 
-        def on_after_redo():
+        def on_after_redo() -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
             self.comments_cleared_initial.emit()
@@ -166,11 +166,11 @@ class MpvqcCommentModel(QStandardItemModel):
         )
 
     def add_row(self, comment_type: str) -> None:
-        def on_after_undo(row: int):
+        def on_after_undo(row: int) -> None:
             self.comment_added_undo.emit(row)
             self.search_invalidated.emit()
 
-        def on_after_redo(index: QModelIndex, added_initially: bool):
+        def on_after_redo(index: QModelIndex, added_initially: bool) -> None:
             self.sort(0)
 
             signal = self.comment_added_initial if added_initially else self.comment_added_redo
@@ -191,12 +191,12 @@ class MpvqcCommentModel(QStandardItemModel):
         self._undo_stack.push(command)
 
     def remove_row(self, row: int) -> None:
-        def on_after_undo(_row: int):
+        def on_after_undo(_row: int) -> None:
             self.sort(0)
             self.comment_removed_undo.emit(_row)
             self.search_invalidated.emit()
 
-        def on_after_redo():
+        def on_after_redo() -> None:
             self.comment_removed_initial.emit()
             self.search_invalidated.emit()
 
@@ -210,12 +210,12 @@ class MpvqcCommentModel(QStandardItemModel):
         )
 
     def update_time(self, row: int, new_time: int) -> None:
-        def on_after_undo(_row: int):
+        def on_after_undo(_row: int) -> None:
             self.search_invalidated.emit()
             self.sort(0)
             self.time_updated_undo.emit(_row)
 
-        def on_after_redo(index: QModelIndex, added_initially: bool):
+        def on_after_redo(index: QModelIndex, added_initially: bool) -> None:
             self.search_invalidated.emit()
             self.sort(0)
 
@@ -233,10 +233,10 @@ class MpvqcCommentModel(QStandardItemModel):
         )
 
     def update_comment_type(self, row: int, comment_type: str) -> None:
-        def on_after_undo(_row: int):
+        def on_after_undo(_row: int) -> None:
             self.comment_type_updated_undo.emit(_row)
 
-        def on_after_redo(_row: int):
+        def on_after_redo(_row: int) -> None:
             self.comment_type_updated_initial.emit(_row)
 
         self._undo_stack.push(
@@ -250,11 +250,11 @@ class MpvqcCommentModel(QStandardItemModel):
         )
 
     def update_comment(self, row: int, comment: str) -> None:
-        def on_after_undo(_row: int):
+        def on_after_undo(_row: int) -> None:
             self.search_invalidated.emit()
             self.comment_updated_undo.emit(_row)
 
-        def on_after_redo(_row: int):
+        def on_after_redo(_row: int) -> None:
             self.search_invalidated.emit()
             self.comment_updated_initial.emit(_row)
 

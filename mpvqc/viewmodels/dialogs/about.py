@@ -22,11 +22,11 @@ class MpvqcAboutDialogViewModel(QObject):
     _build_info: BuildInfoService = inject.attr(BuildInfoService)
 
     @Property(str, constant=True, final=True)
-    def applicationName(self):
+    def applicationName(self) -> str:
         return self._build_info.name
 
     @Property(str, constant=True, final=True)
-    def applicationVersion(self):
+    def applicationVersion(self) -> str:
         return self._build_info.combined_version_info
 
     @Property(str, constant=True, final=True)

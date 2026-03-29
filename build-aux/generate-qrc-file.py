@@ -10,30 +10,30 @@ from pathlib import Path
 
 # noinspection DuplicatedCode
 class ArgumentValidator:
-    def __init__(self):
+    def __init__(self) -> None:
         self._errors = []
 
-    def validate_directory(self, directory: Path):
+    def validate_directory(self, directory: Path) -> None:
         if not directory.exists():
             self._errors.append(f"Directory {directory} does not exist")
         elif not directory.is_dir():
             self._errors.append(f"Directory {directory} is not a directory")
 
-    def validate_directories(self, directories: list[Path]):
+    def validate_directories(self, directories: list[Path]) -> None:
         for directory in directories:
             self.validate_directory(directory)
 
-    def validate_files(self, files: list[Path]):
+    def validate_files(self, files: list[Path]) -> None:
         for file in files:
             self._validate_file(file)
 
-    def _validate_file(self, file: Path):
+    def _validate_file(self, file: Path) -> None:
         if not file.exists():
             self._errors.append(f"File {file} does not exist")
         elif not file.is_file():
             self._errors.append(f"File {file} is not a file")
 
-    def break_on_errors(self):
+    def break_on_errors(self) -> None:
         if errors := self._errors:
             for error in errors:
                 print(error, file=sys.stderr)
@@ -41,7 +41,7 @@ class ArgumentValidator:
 
 
 class QrcFileGenerator:
-    def __init__(self, root_dir: Path):
+    def __init__(self, root_dir: Path) -> None:
         self._root_dir = root_dir
         self._files = []
 
@@ -85,7 +85,7 @@ class QrcFileGenerator:
 
 
 # noinspection DuplicatedCode
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Create a qrc file")
     parser.add_argument("--relative-to", type=str, required=True, help="Root directory to look for files")
     parser.add_argument(
@@ -103,7 +103,7 @@ def main():
 
 
 # noinspection DuplicatedCode
-def run(args: argparse.Namespace):
+def run(args: argparse.Namespace) -> None:
     root_dir = Path(args.relative_to).absolute()
     out_file = Path(args.out_file)
     directories = [Path(path).absolute() for path in args.include_directory]

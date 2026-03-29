@@ -35,7 +35,7 @@ class MpvqcDependencyModel(QAbstractListModel):
     UrlRole = Qt.ItemDataRole.UserRole + 4
     LicenceRole = Qt.ItemDataRole.UserRole + 5
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._all_dependencies: list[Dependency] = [
             *self._build_info.dependencies,

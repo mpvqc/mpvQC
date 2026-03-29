@@ -38,7 +38,7 @@ class HostIntegrationService(QObject):
 
     display_zoom_factor_changed = Signal(float)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._zoom_factor = get_display_zoom_factor()
 

@@ -16,7 +16,7 @@ class ExportService:
     _state: StateService = inject.attr(StateService)
 
     def save(self, document: Path) -> None:
-        def _job():
+        def _job() -> None:
             self._document_exporter.save(document)
             self._state.save(document)
 

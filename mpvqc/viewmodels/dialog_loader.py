@@ -26,7 +26,7 @@ class MpvqcDialogLoaderViewModel(QObject):
     # param 2: JSON string of subtitles with path, filename
     importConfirmationDialogRequested = Signal(str, str)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._importer.ask_user_what_to_import.connect(self._ask_user_what_to_import)
 
@@ -58,7 +58,7 @@ class MpvqcDialogLoaderViewModel(QObject):
         self.importConfirmationDialogRequested.emit(json.dumps(videos), json.dumps(subtitles))
 
     @Slot(str, list)
-    def confirmImport(self, video_path: str, subtitle_paths: list[str]):
+    def confirmImport(self, video_path: str, subtitle_paths: list[str]) -> None:
         video = Path(video_path) if video_path else None
         subtitles = tuple(Path(p) for p in subtitle_paths)
         self._importer.finalize_import(video, subtitles)

@@ -16,7 +16,7 @@ ID_COUNTER = itertools.count()
 
 
 class CommentItem(QStandardItem):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._id = next(ID_COUNTER)
 

@@ -19,7 +19,7 @@ class BackupJob(QRunnable):
 
     @Slot()
     @typing.override
-    def run(self):
+    def run(self) -> None:
         self._backupper.backup()
 
 
@@ -31,7 +31,7 @@ class MpvqcBackupTimerViewModel(QObject):
     backupEnabledChanged = Signal(bool)
     backupIntervalChanged = Signal(int)
 
-    def __init__(self, /, parent=None):
+    def __init__(self, /, parent=None) -> None:
         super().__init__(parent)
 
         self._job = BackupJob()
@@ -49,5 +49,5 @@ class MpvqcBackupTimerViewModel(QObject):
         return max(self._settings.backup_interval * 1000, 15000)
 
     @Slot()
-    def backup(self):
+    def backup(self) -> None:
         QThreadPool.globalInstance().start(self._job)

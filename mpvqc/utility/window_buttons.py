@@ -21,11 +21,11 @@ class MpvqcWindowButtons(QObject):
     showMaximizeButtonChanged = Signal(bool)
     showCloseButtonChanged = Signal(bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._preference: WindowButtonPreference = self._host_integration.DEFAULT_WINDOW_BUTTON_PREFERENCE
 
-        def _detection_job():
+        def _detection_job() -> None:
             preferences = self._host_integration.get_window_button_preference()
             self._on_detection_complete(preferences)
 
@@ -44,7 +44,7 @@ class MpvqcWindowButtons(QObject):
     def showCloseButton(self) -> bool:
         return self._preference.close
 
-    def _on_detection_complete(self, new_preference: WindowButtonPreference):
+    def _on_detection_complete(self, new_preference: WindowButtonPreference) -> None:
         old_preference = self._preference
         self._preference = new_preference
 

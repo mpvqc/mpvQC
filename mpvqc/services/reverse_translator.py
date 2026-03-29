@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class LookupTable:
-    def __init__(self):
+    def __init__(self) -> None:
         self._combined_lookup_table: dict[str, str] = {}
 
         self._translator = QTranslator()
@@ -51,7 +51,7 @@ class ReverseTranslatorService:
     It provides comment type identifiers mpvQC internally uses for the comment type model"""
 
     @cached_property
-    def _lookup_table(self):
+    def _lookup_table(self) -> LookupTable:
         return LookupTable()
 
     def lookup(self, comment_type_in_current_language: str) -> str:

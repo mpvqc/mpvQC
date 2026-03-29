@@ -44,7 +44,7 @@ class MpvqcThemePaletteModel(QAbstractListModel):
 
     themeIdentifierChanged = Signal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self._theme_identifier = self._settings.theme_identifier
 

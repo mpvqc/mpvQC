@@ -8,7 +8,7 @@ from PySide6.QtGui import QFont, QFontDatabase
 
 class FontLoaderService:
     @staticmethod
-    def load_application_fonts():
+    def load_application_fonts() -> None:
         for entry_info in QDir(":/data/fonts").entryInfoList():
             resource_path = entry_info.filePath()
             if not QFontDatabase.addApplicationFont(resource_path) >= 0:

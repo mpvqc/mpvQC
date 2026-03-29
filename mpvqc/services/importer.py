@@ -27,7 +27,12 @@ class ResourceScanner:
     _doc_importer: DocumentImporterService = inject.attr(DocumentImporterService)
     _sub_importer: SubtitleImporterService = inject.attr(SubtitleImporterService)
 
-    def __init__(self, documents: list[Path], videos: list[Path], subtitles: list[Path]):
+    def __init__(
+        self,
+        documents: list[Path],
+        videos: list[Path],
+        subtitles: list[Path],
+    ) -> None:
         self._document_paths = documents
         self._subtitle_paths = subtitles
 
@@ -69,7 +74,7 @@ class ResourceScanner:
     def invalid_documents(self) -> tuple[Path, ...]:
         return self._document_import_result.invalid_documents
 
-    def scan(self):
+    def scan(self) -> None:
         if documents := self._document_paths:
             self._document_import_result = self._doc_importer.read(documents)
         if subtitles := self._document_import_result.existing_subtitles:
@@ -133,7 +138,7 @@ class ImporterService(QObject):
     # param 2: tuple[Path, ...] - found subtitles
     ask_user_what_to_import = Signal(list, list)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._pending_scanner: ResourceScanner | None = None
 

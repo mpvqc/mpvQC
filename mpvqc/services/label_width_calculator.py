@@ -9,7 +9,7 @@ from PySide6.QtGui import QFont, QFontMetricsF
 
 
 class LabelWidthCalculatorService:
-    def __init__(self):
+    def __init__(self) -> None:
         self._font_metrics = QFontMetricsF(QFont("Noto Sans", 10))
 
     def calculate_width_for(self, texts: Iterable[str]) -> int:

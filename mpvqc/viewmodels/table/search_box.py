@@ -34,7 +34,7 @@ class MpvqcSearchBoxViewModel(QObject):
     statusLabelChanged = Signal(str)
     highlightRequested = Signal(int)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._search_backend = SearchBackend()
 
@@ -147,11 +147,11 @@ class MpvqcSearchBoxViewModel(QObject):
 
 
 class SearchBackend:
-    def __init__(self):
+    def __init__(self) -> None:
         self._query = ""
         self._hits: list[int] | None = None
 
-    def invalidate(self):
+    def invalidate(self) -> None:
         self._hits = None
 
     def search(

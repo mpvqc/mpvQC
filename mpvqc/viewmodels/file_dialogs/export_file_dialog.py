@@ -27,7 +27,7 @@ class MpvqcExportFileDialogViewModel(QObject):
 
     @Slot(QUrl, QUrl)
     def export(self, document: QUrl, template: QUrl) -> None:
-        def _job():
+        def _job() -> None:
             self._document_exporter.export(
                 file=self._type_mapper.map_url_to_path(document),
                 template=self._type_mapper.map_url_to_path(template),

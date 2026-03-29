@@ -32,7 +32,7 @@ class FramelessWindowService(ABC):
 class WinImplementation(FramelessWindowService):
     host_integration: HostIntegrationService = inject.attr(HostIntegrationService)
 
-    def __init__(self):
+    def __init__(self) -> None:
         from mpvqc.services.frameless.win import WindowsEventFilter
 
         self._event_filter = WindowsEventFilter()

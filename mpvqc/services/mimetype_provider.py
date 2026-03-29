@@ -9,7 +9,7 @@ from PySide6.QtCore import QMimeDatabase
 
 class MimetypeProviderService:
     @cached_property
-    def video_file_glob_pattern(self):
+    def video_file_glob_pattern(self) -> str:
         patterns = set()
         patterns.add("*.avi")
         patterns.add("*.mkv")
@@ -22,7 +22,7 @@ class MimetypeProviderService:
         return f" ({' '.join(sorted(patterns))})"
 
     @cached_property
-    def subtitle_file_glob_pattern(self):
+    def subtitle_file_glob_pattern(self) -> str:
         patterns = (f"*.{ext}" for ext in self.subtitle_file_extensions)
         return f" ({' '.join(sorted(patterns))})"
 
