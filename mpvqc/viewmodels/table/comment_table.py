@@ -8,7 +8,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import PlayerService, SettingsService, TimeFormatterService
+from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,6 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcCommentTableViewModel(QObject):
+    _comments_service: CommentsService = inject.attr(CommentsService)
     _player: PlayerService = inject.attr(PlayerService)
     _settings: SettingsService = inject.attr(SettingsService)
     _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
@@ -48,6 +49,7 @@ class MpvqcCommentTableViewModel(QObject):
 
         # noinspection PyCallingNonCallable
         self._model: MpvqcCommentModel = MpvqcCommentModel(parent=self)
+        self._comments_service.initialize(self._model)
 
         self._model.comments_imported_initial.connect(self.quickSelectionRequested)
         self._model.comments_imported_undo.connect(self.quickSelectionRequested)
