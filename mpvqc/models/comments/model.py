@@ -77,7 +77,7 @@ class MpvqcCommentModel(QStandardItemModel):
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
 
-        self._comments_service.register(self.comments)
+        self._comments_service.initialize(self)
 
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
