@@ -3,19 +3,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from typing import NamedTuple
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import inject
 import pytest
 
-from mpvqc.services import WindowPropertiesService
+from mpvqc.services import MainWindowService, WindowPropertiesService
 from mpvqc.utility import MpvqcWindowVisibilityHandler
 
 
-@pytest.fixture(autouse=True)
-def mock_main_window():
-    with patch("mpvqc.utility.window_visibility.get_main_window", return_value=MagicMock()):
-        yield
+@pytest.fixture
+def mock_window():
+    return MagicMock()
 
 
 @pytest.fixture
@@ -27,9 +26,11 @@ def window_properties_service_mock():
 def configure_injections(
     common_bindings_with,
     window_properties_service_mock,
+    mock_window,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(WindowPropertiesService, window_properties_service_mock)
+        binder.bind(MainWindowService, MainWindowService(mock_window))
 
     common_bindings_with(custom_bindings)
 

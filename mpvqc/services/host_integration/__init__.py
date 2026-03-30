@@ -11,7 +11,10 @@ import typing
 from dataclasses import dataclass
 from functools import cached_property
 
+import inject
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
+
+from mpvqc.services.main_window import MainWindowService
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +37,8 @@ class ZoomFactorChangeEventListener(QObject):
 
 
 class HostIntegrationService(QObject):
+    _main_window: MainWindowService = inject.attr(MainWindowService)
+
     DEFAULT_WINDOW_BUTTON_PREFERENCE = WindowButtonPreference(minimize=True, maximize=True, close=True)
 
     display_zoom_factor_changed = Signal(float)
@@ -45,9 +50,7 @@ class HostIntegrationService(QObject):
         self._zoom_factor_change_listener = ZoomFactorChangeEventListener()
         self._zoom_factor_change_listener.device_pixel_ratio_changed.connect(self._invalidate_zoom_factor)
 
-        from mpvqc.utility import get_main_window
-
-        self._window = get_main_window()
+        self._window = self._main_window.window
         self._window.installEventFilter(self._zoom_factor_change_listener)
 
     @Slot()
@@ -77,9 +80,8 @@ class HostIntegrationService(QObject):
 
 
 def get_display_zoom_factor() -> float:
-    from mpvqc.utility import get_main_window
-
-    return get_main_window().devicePixelRatio()
+    service = inject.instance(MainWindowService)
+    return service.window.devicePixelRatio()
 
 
 def is_tiling_window_manager() -> bool:

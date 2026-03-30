@@ -20,6 +20,7 @@ from .i18n import InternationalizationService
 from .importer import ImporterService
 from .key_command import KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService
+from .main_window import MainWindowService
 from .mimetype_provider import MimetypeProviderService
 from .player import PlayerService
 from .quit import QuitService

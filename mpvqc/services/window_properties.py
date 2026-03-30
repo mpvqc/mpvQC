@@ -2,11 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 from PySide6.QtGui import QScreen
 
+from .main_window import MainWindowService
+
 
 class WindowPropertiesService(QObject):
+    _main_window: MainWindowService = inject.attr(MainWindowService)
+
     width_changed = Signal(int)
     height_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
@@ -20,9 +25,7 @@ class WindowPropertiesService(QObject):
         self._is_fullscreen = False
         self._is_maximized = False
 
-        from mpvqc.utility import get_main_window
-
-        self._window = get_main_window()
+        self._window = self._main_window.window
 
         self._on_width_changed(self._window.width())
         self._on_height_changed(self._window.height())

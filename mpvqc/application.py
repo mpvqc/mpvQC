@@ -17,9 +17,10 @@ from mpvqc.services import (
     FontLoaderService,
     FramelessWindowService,
     InternationalizationService,
+    MainWindowService,
     SettingsService,
 )
-from mpvqc.utility import CloseEventFilter, get_main_window
+from mpvqc.utility import CloseEventFilter
 
 
 class MpvqcApplication(QGuiApplication):
@@ -27,6 +28,7 @@ class MpvqcApplication(QGuiApplication):
     _font_loader: FontLoaderService = inject.attr(FontLoaderService)
     _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
     _i18n: InternationalizationService = inject.attr(InternationalizationService)
+    _main_window: MainWindowService = inject.attr(MainWindowService)
     _settings: SettingsService = inject.attr(SettingsService)
 
     def __init__(self, args) -> None:
@@ -73,7 +75,7 @@ class MpvqcApplication(QGuiApplication):
         if not self._engine.rootObjects():
             sys.exit(-1)
 
-        window = get_main_window()
+        window = self._main_window.window
         self._frameless_window.configure_for(self, window)
         window.installEventFilter(self._close_event_filter)
 
