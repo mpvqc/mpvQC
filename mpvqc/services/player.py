@@ -404,6 +404,6 @@ class TrackListEntry:
     def from_dict(cls, data: dict) -> TrackListEntry:
         return cls(
             type=data.get("type", ""),
-            external=data.get("external", False) == True,
+            external=data.get("external", False),
             external_filename=data.get("external-filename", ""),
         )
