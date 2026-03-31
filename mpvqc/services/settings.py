@@ -44,6 +44,18 @@ def get_default_language(locale: QLocale | None = None) -> str:
     return "en-US"
 
 
+def get_default_comment_types() -> list[str]:
+    return [
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Translation")),
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Spelling")),
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Punctuation")),
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Phrasing")),
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Timing")),
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Typeset")),
+        str(QT_TRANSLATE_NOOP("CommentTypes", "Note")),
+    ]
+
+
 class SettingsService(QObject):
     _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
     _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
@@ -112,15 +124,7 @@ class SettingsService(QObject):
 
     @staticmethod
     def get_default_comment_types() -> list[str]:
-        return [
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Translation")),
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Spelling")),
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Punctuation")),
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Phrasing")),
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Timing")),
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Typeset")),
-            str(QT_TRANSLATE_NOOP("CommentTypes", "Note")),
-        ]
+        return get_default_comment_types()
 
     @property
     def backup_enabled(self) -> bool:
