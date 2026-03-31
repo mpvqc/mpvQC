@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import logging
-from collections.abc import Iterable
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -18,7 +18,7 @@ class SubtitleImporterService:
 
     NO_IMPORT = SubtitleImportResult()
 
-    def read(self, subtitles: Iterable[Path]) -> SubtitleImportResult:
+    def read(self, subtitles: Sequence[Path]) -> SubtitleImportResult:
         existing_vids = []
 
         for subtitle in subtitles:
