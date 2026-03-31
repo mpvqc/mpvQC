@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -40,13 +40,13 @@ def test_resources(resource_service):
 
 
 def test_os_specific_resources(resource_service):
-    with patch("platform.system", MagicMock(return_value="Windows")):
+    with patch("sys.platform", "win32"):
         assert resource_service.mpv_conf_content
         assert "vo=gpu" in resource_service.mpv_conf_content.splitlines()
 
-    other_oses = ["Linux", "Darwin"]
+    other_platforms = ["linux", "darwin"]
 
-    for os in other_oses:
-        with patch("platform.system", MagicMock(return_value=os)):
+    for platform in other_platforms:
+        with patch("sys.platform", platform):
             assert resource_service.mpv_conf_content
             assert not any(line.startswith("vo=") for line in resource_service.mpv_conf_content.splitlines())

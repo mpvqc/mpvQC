@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import platform
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -10,7 +10,7 @@ import pytest
 from mpvqc.services import WindowButtonPreference
 from mpvqc.services.host_integration import read_linux_window_button_preference
 
-linux_only = pytest.mark.skipif(platform.system() != "Linux", reason="Requires Linux")
+linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Requires Linux")
 
 
 @pytest.fixture

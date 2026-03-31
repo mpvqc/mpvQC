@@ -7,9 +7,9 @@ from typing import Never
 
 
 def main() -> Never:
-    import platform
+    import sys
 
-    if platform.system() == "Windows":
+    if sys.platform == "win32":
         _add_directory_to_path()
 
     import rc_project  # noqa: F401

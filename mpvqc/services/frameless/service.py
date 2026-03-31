@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import platform
+import sys
 import typing
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -75,10 +75,10 @@ class LinuxImplementation(FramelessWindowService):
 
 
 def get_frameless_window_service() -> FramelessWindowService:
-    match platform.system():
-        case "Windows":
+    match sys.platform:
+        case "win32":
             return WinImplementation()
-        case "Linux":
+        case "linux":
             return LinuxImplementation()
         case system:
             msg = f"Cannot configure frameless window on platform: {system}"

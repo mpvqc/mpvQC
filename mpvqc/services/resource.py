@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import platform
+import sys
 from functools import cache
 
 import inject
@@ -22,8 +22,8 @@ class ResourceService:
 
     @property
     def mpv_conf_content(self) -> str:
-        match platform.system():
-            case "Windows":
+        match sys.platform:
+            case "win32":
                 return _read_from_resource(path=":/data/config/mpv-windows.conf")
             case _:
                 return _read_from_resource(path=":/data/config/mpv-linux.conf")
