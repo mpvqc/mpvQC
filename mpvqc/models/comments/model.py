@@ -179,7 +179,7 @@ class MpvqcCommentModel(QStandardItemModel):
             add_comment=AddComment(
                 model=self,
                 comment_type=comment_type,
-                time=round(self._player.current_time),
+                time=self._player.current_time,
                 previously_selected_row=self._selected_row,
                 on_after_undo=on_after_undo,
                 on_after_redo=on_after_redo,

@@ -25,8 +25,8 @@ class CommentItem(QStandardItem):
         return self.data(Role.TIME)
 
     @time.setter
-    def time(self, value: float) -> None:
-        self.setData(int(value), Role.TIME)
+    def time(self, value: int) -> None:
+        self.setData(value, Role.TIME)
 
     @property
     def comment_type(self) -> str:

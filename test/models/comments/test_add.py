@@ -32,27 +32,6 @@ def test_add_comment(model):
     assert model.rowCount() == 6
 
 
-@pytest.mark.parametrize(
-    ("expected", "test_input"),
-    [
-        (0, 0.499999),
-        (0, 0.500000),
-        (1, 0.500001),
-        (1, 1.499999),
-        (2, 1.500001),
-    ],
-)
-def test_add_comment_rounds_time(make_model, expected, test_input):
-    # noinspection PyArgumentList
-    model, _ = make_model(set_comments=[], set_player_time=test_input)
-
-    model.add_row("comment type")
-
-    item = model.item(0, 0)
-    actual = item.data(Role.TIME)
-    assert expected == actual
-
-
 def test_add_comment_sorts_model(make_model):
     custom_comment_type = "my custom comment type"
     # noinspection PyArgumentList
