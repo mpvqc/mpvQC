@@ -74,7 +74,7 @@ class KeyCommandGeneratorService:
 
         key_str = mapping.key_str
         if mapping.is_char:
-            if key_str not in _ALPHANUMERICS and sys.platform.startswith("win32"):
+            if key_str not in _ALPHANUMERICS and sys.platform == "win32":
                 ctrl = None
                 alt = None
             if not shift and key_str in _ALPHANUMERICS:

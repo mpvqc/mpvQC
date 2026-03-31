@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import logging
 import os
-import platform
+import sys
 import typing
 from dataclasses import dataclass
 from functools import cached_property
@@ -65,18 +65,14 @@ class HostIntegrationService(QObject):
 
     @cached_property
     def is_tiling_window_manager(self) -> bool:
-        if platform.system() != "Linux":
+        if sys.platform != "linux":
             return False
         return is_tiling_window_manager()
 
     def get_window_button_preference(self) -> WindowButtonPreference:
-        match platform.system():
-            case "Windows":
-                return self.DEFAULT_WINDOW_BUTTON_PREFERENCE
-            case "Linux":
-                return read_linux_window_button_preference()
-            case _:
-                raise NotImplementedError
+        if sys.platform == "linux":
+            return read_linux_window_button_preference()
+        return self.DEFAULT_WINDOW_BUTTON_PREFERENCE
 
 
 def get_display_zoom_factor() -> float:
