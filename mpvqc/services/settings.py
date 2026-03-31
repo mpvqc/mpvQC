@@ -8,7 +8,7 @@ from functools import cache
 from typing import cast
 
 import inject
-from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, QUrl, Signal
+from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, QUrl, Signal, SignalInstance
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -105,6 +105,11 @@ class SettingsService(QObject):
         # noinspection PyUnnecessaryCast
         return cast("T", self._settings.value(key, default, type=_type))
 
+    def _set[T](self, key: str, current_value: T, new_value: T, signal: SignalInstance) -> None:
+        if current_value != new_value:
+            self._settings.setValue(key, new_value)
+            signal.emit(new_value)
+
     @staticmethod
     def get_default_comment_types() -> list[str]:
         return [
@@ -123,9 +128,7 @@ class SettingsService(QObject):
 
     @backup_enabled.setter
     def backup_enabled(self, value: bool) -> None:
-        if self.backup_enabled != value:
-            self._settings.setValue("Backup/enabled", value)
-            self.backupEnabledChanged.emit(value)
+        self._set("Backup/enabled", self.backup_enabled, value, self.backupEnabledChanged)
 
     @property
     def backup_interval(self) -> int:
@@ -133,9 +136,7 @@ class SettingsService(QObject):
 
     @backup_interval.setter
     def backup_interval(self, value: int) -> None:
-        if self.backup_interval != value:
-            self._settings.setValue("Backup/interval", value)
-            self.backupIntervalChanged.emit(value)
+        self._set("Backup/interval", self.backup_interval, value, self.backupIntervalChanged)
 
     @property
     def language(self) -> str:
@@ -143,9 +144,7 @@ class SettingsService(QObject):
 
     @language.setter
     def language(self, value: str) -> None:
-        if self.language != value:
-            self._settings.setValue("Common/language", value)
-            self.languageChanged.emit(value)
+        self._set("Common/language", self.language, value, self.languageChanged)
 
     @property
     def comment_types(self) -> list[str]:
@@ -153,9 +152,7 @@ class SettingsService(QObject):
 
     @comment_types.setter
     def comment_types(self, value: list[str]) -> None:
-        if self.comment_types != value:
-            self._settings.setValue("Common/commentTypes", value)
-            self.commentTypesChanged.emit(value)
+        self._set("Common/commentTypes", self.comment_types, value, self.commentTypesChanged)
 
     @property
     def nickname(self) -> str:
@@ -163,9 +160,7 @@ class SettingsService(QObject):
 
     @nickname.setter
     def nickname(self, value: str) -> None:
-        if self.nickname != value:
-            self._settings.setValue("Export/nickname", value)
-            self.nicknameChanged.emit(value)
+        self._set("Export/nickname", self.nickname, value, self.nicknameChanged)
 
     @property
     def write_header_date(self) -> bool:
@@ -173,9 +168,7 @@ class SettingsService(QObject):
 
     @write_header_date.setter
     def write_header_date(self, value: bool) -> None:
-        if self.write_header_date != value:
-            self._settings.setValue("Export/writeHeaderDate", value)
-            self.writeHeaderDateChanged.emit(value)
+        self._set("Export/writeHeaderDate", self.write_header_date, value, self.writeHeaderDateChanged)
 
     @property
     def write_header_generator(self) -> bool:
@@ -183,9 +176,7 @@ class SettingsService(QObject):
 
     @write_header_generator.setter
     def write_header_generator(self, value: bool) -> None:
-        if self.write_header_generator != value:
-            self._settings.setValue("Export/writeHeaderGenerator", value)
-            self.writeHeaderGeneratorChanged.emit(value)
+        self._set("Export/writeHeaderGenerator", self.write_header_generator, value, self.writeHeaderGeneratorChanged)
 
     @property
     def write_header_nickname(self) -> bool:
@@ -193,9 +184,7 @@ class SettingsService(QObject):
 
     @write_header_nickname.setter
     def write_header_nickname(self, value: bool) -> None:
-        if self.write_header_nickname != value:
-            self._settings.setValue("Export/writeHeaderNickname", value)
-            self.writeHeaderNicknameChanged.emit(value)
+        self._set("Export/writeHeaderNickname", self.write_header_nickname, value, self.writeHeaderNicknameChanged)
 
     @property
     def write_header_video_path(self) -> bool:
@@ -203,9 +192,7 @@ class SettingsService(QObject):
 
     @write_header_video_path.setter
     def write_header_video_path(self, value: bool) -> None:
-        if self.write_header_video_path != value:
-            self._settings.setValue("Export/writeHeaderVideoPath", value)
-            self.writeHeaderVideoPathChanged.emit(value)
+        self._set("Export/writeHeaderVideoPath", self.write_header_video_path, value, self.writeHeaderVideoPathChanged)
 
     @property
     def write_header_subtitles(self) -> bool:
@@ -213,9 +200,7 @@ class SettingsService(QObject):
 
     @write_header_subtitles.setter
     def write_header_subtitles(self, value: bool) -> None:
-        if self.write_header_subtitles != value:
-            self._settings.setValue("Export/writeHeaderSubtitles", value)
-            self.writeHeaderSubtitlesChanged.emit(value)
+        self._set("Export/writeHeaderSubtitles", self.write_header_subtitles, value, self.writeHeaderSubtitlesChanged)
 
     @property
     def statusbar_percentage(self) -> bool:
@@ -223,9 +208,7 @@ class SettingsService(QObject):
 
     @statusbar_percentage.setter
     def statusbar_percentage(self, value: bool) -> None:
-        if self.statusbar_percentage != value:
-            self._settings.setValue("StatusBar/statusbarPercentage", value)
-            self.statusbarPercentageChanged.emit(value)
+        self._set("StatusBar/statusbarPercentage", self.statusbar_percentage, value, self.statusbarPercentageChanged)
 
     @property
     def time_format(self) -> int:
@@ -233,9 +216,7 @@ class SettingsService(QObject):
 
     @time_format.setter
     def time_format(self, value: int) -> None:
-        if self.time_format != value:
-            self._settings.setValue("StatusBar/timeFormat", value)
-            self.timeFormatChanged.emit(value)
+        self._set("StatusBar/timeFormat", self.time_format, value, self.timeFormatChanged)
 
     @property
     def last_directory_video(self) -> QUrl:
@@ -243,9 +224,7 @@ class SettingsService(QObject):
 
     @last_directory_video.setter
     def last_directory_video(self, value: QUrl) -> None:
-        if self.last_directory_video != value:
-            self._settings.setValue("Import/lastDirectoryVideo", value)
-            self.lastDirectoryVideoChanged.emit(value)
+        self._set("Import/lastDirectoryVideo", self.last_directory_video, value, self.lastDirectoryVideoChanged)
 
     @property
     def last_directory_documents(self) -> QUrl:
@@ -253,9 +232,9 @@ class SettingsService(QObject):
 
     @last_directory_documents.setter
     def last_directory_documents(self, value: QUrl) -> None:
-        if self.last_directory_documents != value:
-            self._settings.setValue("Import/lastDirectoryDocuments", value)
-            self.lastDirectoryDocumentsChanged.emit(value)
+        self._set(
+            "Import/lastDirectoryDocuments", self.last_directory_documents, value, self.lastDirectoryDocumentsChanged
+        )
 
     @property
     def last_directory_subtitles(self) -> QUrl:
@@ -263,9 +242,9 @@ class SettingsService(QObject):
 
     @last_directory_subtitles.setter
     def last_directory_subtitles(self, value: QUrl) -> None:
-        if self.last_directory_subtitles != value:
-            self._settings.setValue("Import/lastDirectorySubtitles", value)
-            self.lastDirectorySubtitlesChanged.emit(value)
+        self._set(
+            "Import/lastDirectorySubtitles", self.last_directory_subtitles, value, self.lastDirectorySubtitlesChanged
+        )
 
     @property
     def import_found_video(self) -> int:
@@ -273,9 +252,7 @@ class SettingsService(QObject):
 
     @import_found_video.setter
     def import_found_video(self, value: int) -> None:
-        if self.import_found_video != value:
-            self._settings.setValue("Import/importFoundVideo", value)
-            self.importFoundVideoChanged.emit(value)
+        self._set("Import/importFoundVideo", self.import_found_video, value, self.importFoundVideoChanged)
 
     @property
     def layout_orientation(self) -> int:
@@ -283,9 +260,7 @@ class SettingsService(QObject):
 
     @layout_orientation.setter
     def layout_orientation(self, value: int) -> None:
-        if self.layout_orientation != value:
-            self._settings.setValue("SplitView/layoutOrientation", value)
-            self.layoutOrientationChanged.emit(value)
+        self._set("SplitView/layoutOrientation", self.layout_orientation, value, self.layoutOrientationChanged)
 
     @property
     def theme_identifier(self) -> str:
@@ -293,9 +268,7 @@ class SettingsService(QObject):
 
     @theme_identifier.setter
     def theme_identifier(self, value: str) -> None:
-        if self.theme_identifier != value:
-            self._settings.setValue("Theme/themeIdentifier", value)
-            self.themeIdentifierChanged.emit(value)
+        self._set("Theme/themeIdentifier", self.theme_identifier, value, self.themeIdentifierChanged)
 
     @property
     def theme_color_option(self) -> int:
@@ -303,9 +276,7 @@ class SettingsService(QObject):
 
     @theme_color_option.setter
     def theme_color_option(self, value: int) -> None:
-        if self.theme_color_option != value:
-            self._settings.setValue("Theme/themeColorOption", value)
-            self.themeColorOptionChanged.emit(value)
+        self._set("Theme/themeColorOption", self.theme_color_option, value, self.themeColorOptionChanged)
 
     @property
     def window_title_format(self) -> int:
@@ -313,6 +284,4 @@ class SettingsService(QObject):
 
     @window_title_format.setter
     def window_title_format(self, value: int) -> None:
-        if self.window_title_format != value:
-            self._settings.setValue("Window/titleFormat", value)
-            self.windowTitleFormatChanged.emit(value)
+        self._set("Window/titleFormat", self.window_title_format, value, self.windowTitleFormatChanged)
