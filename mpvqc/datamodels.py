@@ -8,7 +8,7 @@ from pathlib import Path
 
 @dataclass
 class Comment:
-    time: int | float
+    time: int
     comment_type: str
     comment: str
 

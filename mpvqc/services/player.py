@@ -152,14 +152,14 @@ class PlayerService(QObject):
         time: float | None = self._get_mpv_attr("time_pos")
         if time is None:
             return None
-        return int(time)
+        return int(time + 0.5)
 
     @property
     def time_remaining(self) -> int | None:
         time: float | None = self._get_mpv_attr("time_remaining")
         if time is None:
             return None
-        return int(time)
+        return int(time + 0.5)
 
     @property
     def height(self) -> int | None:
@@ -237,15 +237,15 @@ class PlayerService(QObject):
 
     def _on_player_percent_pos_changed(self, _, value: float | None) -> None:
         if value is not None:
-            self.percent_pos_changed.emit(int(value))
+            self.percent_pos_changed.emit(int(value + 0.5))
 
     def _on_player_time_pos_changed(self, _, value: float | None) -> None:
         if value is not None:
-            self.time_pos_changed.emit(int(value))
+            self.time_pos_changed.emit(int(value + 0.5))
 
     def _on_player_time_remaining_changed(self, _, value: float | None) -> None:
         if value is not None:
-            self.time_remaining_changed.emit(int(value))
+            self.time_remaining_changed.emit(int(value + 0.5))
 
     def _on_player_height_changed(self, _, value: int | None) -> None:
         if value is not None:

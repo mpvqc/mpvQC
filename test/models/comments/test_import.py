@@ -26,14 +26,11 @@ def model(make_model):
 
 
 def test_import_comments(model):
-    # noinspection PyTypeChecker
-    comment = Comment(time=999.99, comment_type="commentType", comment="Word 1")
+    comment = Comment(time=999, comment_type="commentType", comment="Word 1")
 
     assert model.rowCount() == 5
     model.import_comments((comment,))
     assert model.rowCount() == 6
-
-    # Ensure even importing float time properties results in time being stored as int
     assert model.comments()[-1]["time"] == 999
 
 

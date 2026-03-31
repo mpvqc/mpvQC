@@ -37,10 +37,10 @@ def configure_injections(common_bindings_with, state_service_mock, player_servic
 @pytest.fixture
 def make_model(
     player_service_mock,
-) -> Callable[[Iterable[Comment], int | float], tuple[MpvqcCommentModel, Callable[[int], None]]]:
+) -> Callable[[Iterable[Comment], int], tuple[MpvqcCommentModel, Callable[[int], None]]]:
     def _make_model(
         set_comments: Iterable[Comment],
-        set_player_time: float = 0.0,
+        set_player_time: int = 0,
     ):
         player_service_mock.current_time = set_player_time
 
