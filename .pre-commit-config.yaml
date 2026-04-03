@@ -8,22 +8,22 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-        #  - repo: https://github.com/biomejs/pre-commit
-        #    rev: v2.2.5
-        #    hooks:
-        #      - id: biome-check
-        #        name: "format json"
-        #        files: "\\.(jsonc?)$"
-        #        args: &BIOME_ARGS
-        #          - "--bracket-spacing=true"
-        #          - "--indent-style=space"
-        #          - "--indent-width=4"
-        #          - "--line-ending=lf"
-        #          - "--line-width=120"
-        #      - id: biome-check
-        #        name: "format js"
-        #        files: "\\.js$"
-        #        args: *BIOME_ARGS
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.4.10
+    hooks:
+      - id: biome-check
+        name: "format json"
+        files: "\\.(jsonc?)$"
+        args: &BIOME_ARGS
+          - "--bracket-spacing=true"
+          - "--indent-style=space"
+          - "--indent-width=4"
+          - "--line-ending=lf"
+          - "--line-width=120"
+      - id: biome-check
+        name: "format js"
+        files: "\\.js$"
+        args: *BIOME_ARGS
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
     hooks:
@@ -77,6 +77,8 @@ repos:
     rev: 1.2.0
     hooks:
       - id: qmlformat
+        additional_dependencies:
+          - PySide6-Essentials==6.11.0
         files: '.*\.qml$'
         name: "format qml"
         args:
