@@ -9,6 +9,7 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 import ctypes
+import ctypes.wintypes
 from ctypes import Structure, byref, c_int, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
 from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
 from functools import lru_cache
