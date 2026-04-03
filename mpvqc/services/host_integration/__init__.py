@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from functools import cached_property
 
 import inject
-from PySide6.QtCore import QEvent, QObject, Signal, Slot
+from PySide6.QtCore import QEvent, QObject, Signal
 
 from mpvqc.services.main_window import MainWindowService
 
@@ -26,16 +26,6 @@ class WindowButtonPreference:
     close: bool
 
 
-class ZoomFactorChangeEventListener(QObject):
-    device_pixel_ratio_changed = Signal()
-
-    @typing.override
-    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        if event.type() == QEvent.Type.DevicePixelRatioChange:
-            self.device_pixel_ratio_changed.emit()
-        return False
-
-
 class HostIntegrationService(QObject):
     _main_window: MainWindowService = inject.attr(MainWindowService)
 
@@ -46,15 +36,16 @@ class HostIntegrationService(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._zoom_factor = self._main_window.display_zoom_factor
-
-        self._zoom_factor_change_listener = ZoomFactorChangeEventListener()
-        self._zoom_factor_change_listener.device_pixel_ratio_changed.connect(self._invalidate_zoom_factor)
-
         self._window = self._main_window.window
-        self._window.installEventFilter(self._zoom_factor_change_listener)
+        self._window.installEventFilter(self)
 
-    @Slot()
-    def _invalidate_zoom_factor(self, *_) -> None:
+    @typing.override
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.Type.DevicePixelRatioChange:
+            self._invalidate_zoom_factor()
+        return False
+
+    def _invalidate_zoom_factor(self) -> None:
         if (zoom_factor := self._main_window.display_zoom_factor) != self._zoom_factor:
             self._zoom_factor = zoom_factor
             self.display_zoom_factor_changed.emit(zoom_factor)
