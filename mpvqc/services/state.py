@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import Property, QObject, Signal
+from PySide6.QtCore import Property, QObject, Signal, Slot
 
 
 class StateService(QObject):
@@ -33,6 +33,7 @@ class StateService(QObject):
         new_state = reduce(self._state, SaveAction(document))
         self._update_state(new_state)
 
+    @Slot()
     def change(self) -> None:
         new_state = reduce(self._state, CHANGE_ACTION)
         self._update_state(new_state)
