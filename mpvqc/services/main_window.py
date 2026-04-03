@@ -16,6 +16,10 @@ class MainWindowService:
             return window
         return self._window
 
+    @property
+    def display_zoom_factor(self) -> float:
+        return self.window.devicePixelRatio()
+
     @staticmethod
     def _find_window() -> QWindow:
         for window in QGuiApplication.topLevelWindows():
