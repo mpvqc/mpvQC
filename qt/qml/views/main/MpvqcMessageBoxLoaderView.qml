@@ -66,16 +66,11 @@ Loader {
     Connections {
         enabled: root.item
         target: root.item
-        ignoreUnknownSignals: true
 
         function onClosed(): void {
             root.active = false;
             root.source = "";
             root.messageBoxClosed();
-        }
-
-        function onImportDecisionMade(trackingId: string, openVideo: bool): void {
-            root.viewModel.continueWithImport(trackingId, openVideo);
         }
     }
 

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import inject
 
-from mpvqc.services import ResourceService
+from .resource import ResourceService
 
 
 @dataclass(frozen=True)

@@ -40,9 +40,8 @@ class MpvqcLabelWidthCalculatorBackend(QObject):
     def commentTypesLabelWidth(self) -> int:
         return self._comment_type_label_width
 
-    @Slot(str)
-    @Slot("QVariantList")
-    def _schedule_comment_types_label_width_update(self, *_) -> None:
+    @Slot()
+    def _schedule_comment_types_label_width_update(self) -> None:
         QTimer.singleShot(0, self._update_comment_types_label_width)
 
     def _update_comment_types_label_width(self) -> None:
@@ -54,8 +53,8 @@ class MpvqcLabelWidthCalculatorBackend(QObject):
     def timeLabelWidth(self) -> int:
         return self._time_label_width
 
-    @Slot(float)
-    def _schedule_update_time_label_width_update(self, *_) -> None:
+    @Slot()
+    def _schedule_update_time_label_width_update(self) -> None:
         QTimer.singleShot(0, self._update_time_label_width)
 
     def _update_time_label_width(self) -> None:
