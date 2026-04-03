@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyTypeChecker
 @QmlElement
 class MpvqcResetMessageBoxViewModel(QObject):
-    _resetter: ResetService = inject.attr(ResetService)
+    _resetter = inject.attr(ResetService)
 
     @Slot()
     def reset(self) -> None:

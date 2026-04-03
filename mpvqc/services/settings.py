@@ -57,8 +57,8 @@ def get_default_comment_types() -> list[str]:
 
 
 class SettingsService(QObject):
-    _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _paths = inject.attr(ApplicationPathsService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     class TimeFormat(IntEnum):
         EMPTY = 0

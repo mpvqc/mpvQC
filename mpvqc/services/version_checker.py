@@ -24,7 +24,7 @@ def _fetch_latest_version() -> str:
 
 
 class VersionCheckerService:
-    _build_info: BuildInfoService = inject.attr(BuildInfoService)
+    _build_info = inject.attr(BuildInfoService)
 
     def check_for_new_version(self) -> tuple[str, str]:
         # fmt: off

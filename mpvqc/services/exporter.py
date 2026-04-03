@@ -12,8 +12,8 @@ from .state import StateService
 
 
 class ExportService:
-    _document_exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _state: StateService = inject.attr(StateService)
+    _document_exporter = inject.attr(DocumentExportService)
+    _state = inject.attr(StateService)
 
     def save(self, document: Path) -> None:
         def _job() -> None:

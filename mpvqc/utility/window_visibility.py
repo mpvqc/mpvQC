@@ -15,8 +15,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcWindowVisibilityHandler(QObject):
-    _window_properties_service: WindowPropertiesService = inject.attr(WindowPropertiesService)
-    _main_window: MainWindowService = inject.attr(MainWindowService)
+    _window_properties_service = inject.attr(WindowPropertiesService)
+    _main_window = inject.attr(MainWindowService)
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)

@@ -20,9 +20,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcResizeHandler(QObject):
     _host_integration = inject.attr(HostIntegrationService)
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings_service: SettingsService = inject.attr(SettingsService)
-    _window_properties_service: WindowPropertiesService = inject.attr(WindowPropertiesService)
+    _player = inject.attr(PlayerService)
+    _settings_service = inject.attr(SettingsService)
+    _window_properties_service = inject.attr(WindowPropertiesService)
 
     headerHeightChanged = Signal(int)
     borderSizeChanged = Signal(int)

@@ -24,12 +24,12 @@ from mpvqc.utility import CloseEventFilter
 
 
 class MpvqcApplication(QGuiApplication):
-    _start_up: FileStartupService = inject.attr(FileStartupService)
-    _font_loader: FontLoaderService = inject.attr(FontLoaderService)
-    _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
-    _i18n: InternationalizationService = inject.attr(InternationalizationService)
-    _main_window: MainWindowService = inject.attr(MainWindowService)
-    _settings: SettingsService = inject.attr(SettingsService)
+    _start_up = inject.attr(FileStartupService)
+    _font_loader = inject.attr(FontLoaderService)
+    _frameless_window = inject.attr(FramelessWindowService)
+    _i18n = inject.attr(InternationalizationService)
+    _main_window = inject.attr(MainWindowService)
+    _settings = inject.attr(SettingsService)
 
     def __init__(self, args) -> None:
         super().__init__(args)

@@ -27,7 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcDependencyModel(QAbstractListModel):
-    _build_info: BuildInfoService = inject.attr(BuildInfoService)
+    _build_info = inject.attr(BuildInfoService)
 
     NameRole = Qt.ItemDataRole.UserRole + 1
     PackageRole = Qt.ItemDataRole.UserRole + 2

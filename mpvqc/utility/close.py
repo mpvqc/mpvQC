@@ -11,7 +11,7 @@ from mpvqc.services import QuitService
 
 
 class CloseEventFilter(QObject):
-    _quit: QuitService = inject.attr(QuitService)
+    _quit = inject.attr(QuitService)
 
     @typing.override
     def eventFilter(self, obj: QObject, event: QEvent) -> bool:

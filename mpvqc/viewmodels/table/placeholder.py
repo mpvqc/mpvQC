@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
 class MpvqcPlaceholderViewModel(QObject):
-    _settings: SettingsService = inject.attr(SettingsService)
+    _settings = inject.attr(SettingsService)
 
     layoutOrientationChanged = Signal(int)
 

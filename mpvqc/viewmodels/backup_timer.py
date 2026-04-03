@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 class BackupJob(QRunnable):
-    _backupper: DocumentBackupService = inject.attr(DocumentBackupService)
+    _backupper = inject.attr(DocumentBackupService)
 
     @Slot()
     @typing.override
@@ -26,7 +26,7 @@ class BackupJob(QRunnable):
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
 class MpvqcBackupTimerViewModel(QObject):
-    _settings: SettingsService = inject.attr(SettingsService)
+    _settings = inject.attr(SettingsService)
 
     backupEnabledChanged = Signal(bool)
     backupIntervalChanged = Signal(int)

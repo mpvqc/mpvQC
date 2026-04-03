@@ -15,8 +15,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcApplicationViewModel(QObject):
-    _host_integration: HostIntegrationService = inject.attr(HostIntegrationService)
-    _window_properties: WindowPropertiesService = inject.attr(WindowPropertiesService)
+    _host_integration = inject.attr(HostIntegrationService)
+    _window_properties = inject.attr(WindowPropertiesService)
 
     windowBorderChanged = Signal(int)
 

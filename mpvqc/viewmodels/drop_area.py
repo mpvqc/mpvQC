@@ -15,9 +15,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 class ImportJob(QRunnable):
-    _importer: ImporterService = inject.attr(ImporterService)
-    _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _importer = inject.attr(ImporterService)
+    _mimetype_provider = inject.attr(MimetypeProviderService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     def __init__(self, urls: list[QUrl]) -> None:
         super().__init__()

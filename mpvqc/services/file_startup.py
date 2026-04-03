@@ -11,8 +11,8 @@ from .resource import ResourceService
 
 
 class FileStartupService:
-    _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
-    _resources: ResourceService = inject.attr(ResourceService)
+    _paths = inject.attr(ApplicationPathsService)
+    _resources = inject.attr(ResourceService)
 
     def create_missing_directories(self) -> None:
         self._paths.dir_config.mkdir(exist_ok=True, parents=True)

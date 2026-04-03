@@ -24,8 +24,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
 class MpvqcThemePaletteModel(QAbstractListModel):
-    _themes: ThemeService = inject.attr(ThemeService)
-    _settings: SettingsService = inject.attr(SettingsService)
+    _themes = inject.attr(ThemeService)
+    _settings = inject.attr(SettingsService)
 
     BackgroundRole = Qt.ItemDataRole.UserRole + 1
     BackgroundAlternateRole = Qt.ItemDataRole.UserRole + 2

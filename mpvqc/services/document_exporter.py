@@ -18,13 +18,13 @@ from .settings import SettingsService
 
 
 class DocumentRenderService:
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _build_info: BuildInfoService = inject.attr(BuildInfoService)
-    _comments_service: CommentsService = inject.attr(CommentsService)
+    _player = inject.attr(PlayerService)
+    _settings = inject.attr(SettingsService)
+    _build_info = inject.attr(BuildInfoService)
+    _comments_service = inject.attr(CommentsService)
 
     class Filters:
-        _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
+        _time_formatter = inject.attr(TimeFormatterService)
 
         def as_time(self, seconds: int) -> str:
             return self._time_formatter.format_time_to_string(seconds, long_format=True)
@@ -83,10 +83,10 @@ class DocumentRenderService:
 
 
 class DocumentBackupService:
-    _paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
-    _player: PlayerService = inject.attr(PlayerService)
-    _renderer: DocumentRenderService = inject.attr(DocumentRenderService)
-    _resources: ResourceService = inject.attr(ResourceService)
+    _paths = inject.attr(ApplicationPathsService)
+    _player = inject.attr(PlayerService)
+    _renderer = inject.attr(DocumentRenderService)
+    _resources = inject.attr(ResourceService)
 
     @property
     def _video_name(self) -> str:
@@ -111,10 +111,10 @@ class DocumentBackupService:
 
 
 class DocumentExportService(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
-    _renderer: DocumentRenderService = inject.attr(DocumentRenderService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _resources: ResourceService = inject.attr(ResourceService)
+    _player = inject.attr(PlayerService)
+    _renderer = inject.attr(DocumentRenderService)
+    _settings = inject.attr(SettingsService)
+    _resources = inject.attr(ResourceService)
 
     export_error_occurred = Signal(str, int)
 

@@ -19,9 +19,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcHeaderViewModel(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _state: StateService = inject.attr(StateService)
+    _player = inject.attr(PlayerService)
+    _settings = inject.attr(SettingsService)
+    _state = inject.attr(StateService)
 
     windowTitleChanged = Signal(str)
 

@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 class PlayerService(QObject):
-    _command_generator: KeyCommandGeneratorService = inject.attr(KeyCommandGeneratorService)
+    _command_generator = inject.attr(KeyCommandGeneratorService)
     _host_integration = inject.attr(HostIntegrationService)
     _paths = inject.attr(ApplicationPathsService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     video_loaded_changed = Signal(bool)
     path_changed = Signal(str)

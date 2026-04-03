@@ -16,9 +16,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcExportFileDialogViewModel(QObject):
-    _exporter: ExportService = inject.attr(ExportService)
-    _document_exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _exporter = inject.attr(ExportService)
+    _document_exporter = inject.attr(DocumentExportService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     @Property(QUrl, constant=True, final=True)
     def filenameProposal(self) -> QUrl:

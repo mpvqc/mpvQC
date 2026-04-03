@@ -16,7 +16,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 class ImportJob(QRunnable):
-    _importer: ImporterService = inject.attr(ImporterService)
+    _importer = inject.attr(ImporterService)
 
     def __init__(
         self,
@@ -37,9 +37,9 @@ class ImportJob(QRunnable):
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcImportFileDialogViewModel(QObject):
-    _mimetype_provider: MimetypeProviderService = inject.attr(MimetypeProviderService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _mimetype_provider = inject.attr(MimetypeProviderService)
+    _settings = inject.attr(SettingsService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     lastDirectoryVideoChanged = Signal(QUrl)
     lastDirectoryDocumentsChanged = Signal(QUrl)
