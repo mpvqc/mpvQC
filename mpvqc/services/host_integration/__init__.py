@@ -45,7 +45,7 @@ class HostIntegrationService(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._zoom_factor = get_display_zoom_factor()
+        self._zoom_factor = self._main_window.display_zoom_factor
 
         self._zoom_factor_change_listener = ZoomFactorChangeEventListener()
         self._zoom_factor_change_listener.device_pixel_ratio_changed.connect(self._invalidate_zoom_factor)
@@ -55,7 +55,7 @@ class HostIntegrationService(QObject):
 
     @Slot()
     def _invalidate_zoom_factor(self, *_) -> None:
-        if (zoom_factor := get_display_zoom_factor()) != self._zoom_factor:
+        if (zoom_factor := self._main_window.display_zoom_factor) != self._zoom_factor:
             self._zoom_factor = zoom_factor
             self.display_zoom_factor_changed.emit(zoom_factor)
 
@@ -73,11 +73,6 @@ class HostIntegrationService(QObject):
         if sys.platform == "linux":
             return read_linux_window_button_preference()
         return self.DEFAULT_WINDOW_BUTTON_PREFERENCE
-
-
-def get_display_zoom_factor() -> float:
-    service = inject.instance(MainWindowService)
-    return service.window.devicePixelRatio()
 
 
 def is_tiling_window_manager() -> bool:
