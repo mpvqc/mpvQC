@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QObject, Qt, Signal, SignalInstance, Slot
+from PySide6.QtCore import Property, QObject, Qt, Signal
 
 from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
@@ -19,7 +19,7 @@ from .key_command import KeyCommandGeneratorService
 from .type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
     from typing import Any
 
     from mpv import MPV
@@ -84,12 +84,7 @@ class PlayerService(QObject):
 
         self._mpv: MPV | None = None
 
-        self._dimensions_coordinator = DimensionsChangedCoordinator(
-            width_changed=self.width_changed,
-            height_changed=self.height_changed,
-            reset_signal=self.path_changed,
-        )
-        self._dimensions_coordinator.both_ready.connect(self.video_dimensions_changed)
+        self._dimensions_coordinator = _DimensionsCoordinator(on_both_ready=self.video_dimensions_changed.emit)
 
         self._cached_audio_track_count = 0
         self._cached_subtitle_track_count = 0
@@ -220,6 +215,7 @@ class PlayerService(QObject):
             self.duration_changed.emit(value)
 
     def _on_player_path_changed(self, _, value: str | None) -> None:
+        self._dimensions_coordinator.reset()
         self.path_changed.emit(value or "")
         self.video_loaded_changed.emit(value is not None)
 
@@ -250,10 +246,12 @@ class PlayerService(QObject):
     def _on_player_height_changed(self, _, value: int | None) -> None:
         if value is not None:
             self.height_changed.emit(value)
+            self._dimensions_coordinator.on_height(value)
 
     def _on_player_width_changed(self, _, value: int | None) -> None:
         if value is not None:
             self.width_changed.emit(value)
+            self._dimensions_coordinator.on_width(value)
 
     def _on_track_list_changed(self, _, value: Any | None) -> None:
         if value is None:
@@ -352,46 +350,28 @@ class PlayerService(QObject):
         self.mpv.terminate()
 
 
-class DimensionsChangedCoordinator(QObject):
-    both_ready = Signal(int, int)
+class _DimensionsCoordinator:
+    def __init__(self, on_both_ready: Callable[[int, int], None]) -> None:
+        self._on_both_ready = on_both_ready
+        self._pending_width: int | None = None
+        self._pending_height: int | None = None
 
-    def __init__(
-        self,
-        width_changed: SignalInstance,
-        height_changed: SignalInstance,
-        reset_signal: SignalInstance,
-    ) -> None:
-        super().__init__()
-        self._width = None
-        self._height = None
-        self._width_available = False
-        self._height_available = False
+    def on_width(self, value: int) -> None:
+        self._pending_width = value
+        self._check()
 
-        width_changed.connect(self._on_width_changed)
-        height_changed.connect(self._on_height_changed)
-        reset_signal.connect(self._reset)
+    def on_height(self, value: int) -> None:
+        self._pending_height = value
+        self._check()
 
-    @Slot(int)
-    def _on_width_changed(self, value) -> None:
-        self._width = value
-        self._width_available = True
-        self._check_and_emit()
+    def reset(self) -> None:
+        self._pending_width = None
+        self._pending_height = None
 
-    @Slot(int)
-    def _on_height_changed(self, value) -> None:
-        self._height = value
-        self._height_available = True
-        self._check_and_emit()
-
-    def _check_and_emit(self) -> None:
-        if self._width_available and self._height_available and self._width and self._height:
-            self.both_ready.emit(self._width, self._height)
-            self._reset()
-
-    @Slot()
-    def _reset(self) -> None:
-        self._width_available = False
-        self._height_available = False
+    def _check(self) -> None:
+        if self._pending_width and self._pending_height:
+            self._on_both_ready(self._pending_width, self._pending_height)
+            self.reset()
 
 
 @dataclass(frozen=True)
