@@ -17,10 +17,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcCommentTableViewModel(QObject):
-    _comments_service: CommentsService = inject.attr(CommentsService)
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _time_formatter: TimeFormatterService = inject.attr(TimeFormatterService)
+    _comments_service = inject.attr(CommentsService)
+    _player = inject.attr(PlayerService)
+    _settings = inject.attr(SettingsService)
+    _time_formatter = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)

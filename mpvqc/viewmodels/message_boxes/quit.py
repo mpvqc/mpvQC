@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyTypeChecker
 @QmlElement
 class MpvqcQuitMessageBoxViewModel(QObject):
-    _quit: QuitService = inject.attr(QuitService)
+    _quit = inject.attr(QuitService)
 
     @Slot()
     def quit(self) -> None:

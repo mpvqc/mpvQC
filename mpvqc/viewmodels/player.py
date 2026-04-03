@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming
 @QmlElement
 class MpvqcPlayerViewModel(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
+    _player = inject.attr(PlayerService)
 
     @Slot(int, int)
     def moveMouse(self, x, y) -> None:

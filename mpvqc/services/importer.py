@@ -35,8 +35,8 @@ class ScanResult:
 
 
 class ResourceScanner:
-    _doc_importer: DocumentImporterService = inject.attr(DocumentImporterService)
-    _sub_importer: SubtitleImporterService = inject.attr(SubtitleImporterService)
+    _doc_importer = inject.attr(DocumentImporterService)
+    _sub_importer = inject.attr(SubtitleImporterService)
 
     def scan(
         self,
@@ -121,9 +121,9 @@ class ResourceScanner:
 
 
 class ImporterService(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _state: StateService = inject.attr(StateService)
+    _player = inject.attr(PlayerService)
+    _settings = inject.attr(SettingsService)
+    _state = inject.attr(StateService)
 
     # note: we actually emit with tuples but this would fall back to dynamic slot registration
     comments_ready_for_import = Signal(list)

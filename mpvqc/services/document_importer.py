@@ -14,7 +14,7 @@ from .reverse_translator import ReverseTranslatorService
 
 
 class DocumentImporterService:
-    _reverse_translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
+    _reverse_translator = inject.attr(ReverseTranslatorService)
 
     _REGEX_PATH = re.compile("^path\\s*?:(?P<path>.*)$")
     _REGEX_SUBTITLE = re.compile("^subtitle\\s*?:(?P<subtitle>.*)$")

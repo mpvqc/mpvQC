@@ -15,8 +15,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcContentViewModel(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings: SettingsService = inject.attr(SettingsService)
+    _player = inject.attr(PlayerService)
+    _settings = inject.attr(SettingsService)
 
     appWindowSizeRequested = Signal(int, int)
     disableFullScreenRequested = Signal()

@@ -19,10 +19,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcMenuBarViewModel(QObject):
-    _exporter: ExportService = inject.attr(ExportService)
-    _state: StateService = inject.attr(StateService)
-    _resetter: ResetService = inject.attr(ResetService)
-    _settings: SettingsService = inject.attr(SettingsService)
+    _exporter = inject.attr(ExportService)
+    _state = inject.attr(StateService)
+    _resetter = inject.attr(ResetService)
+    _settings = inject.attr(SettingsService)
 
     class WindowTitleFormat(IntEnum):
         DEFAULT = 0

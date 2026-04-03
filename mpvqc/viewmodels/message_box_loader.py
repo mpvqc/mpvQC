@@ -15,9 +15,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming
 @QmlElement
 class MpvqcMessageBoxLoaderViewModel(QObject):
-    _document_exporter: DocumentExportService = inject.attr(DocumentExportService)
-    _importer: ImporterService = inject.attr(ImporterService)
-    _quit: QuitService = inject.attr(QuitService)
+    _document_exporter = inject.attr(DocumentExportService)
+    _importer = inject.attr(ImporterService)
+    _quit = inject.attr(QuitService)
 
     erroneousDocumentsImported = Signal(list)
     exportErrorOccurred = Signal(str, int)

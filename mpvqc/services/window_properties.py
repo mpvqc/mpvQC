@@ -10,7 +10,7 @@ from .main_window import MainWindowService
 
 
 class WindowPropertiesService(QObject):
-    _main_window: MainWindowService = inject.attr(MainWindowService)
+    _main_window = inject.attr(MainWindowService)
 
     width_changed = Signal(int)
     height_changed = Signal(int)

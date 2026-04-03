@@ -17,10 +17,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcFooterViewModel(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
-    _settings: SettingsService = inject.attr(SettingsService)
-    _formatter: TimeFormatterService = inject.attr(TimeFormatterService)
-    _label_calculator: LabelWidthCalculatorService = inject.attr(LabelWidthCalculatorService)
+    _player = inject.attr(PlayerService)
+    _settings = inject.attr(SettingsService)
+    _formatter = inject.attr(TimeFormatterService)
+    _label_calculator = inject.attr(LabelWidthCalculatorService)
 
     SECONDS_PER_HOUR = 3600
 

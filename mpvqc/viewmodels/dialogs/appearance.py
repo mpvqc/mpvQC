@@ -15,8 +15,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcAppearanceDialogViewModel(QObject):
-    _themes: ThemeService = inject.attr(ThemeService)
-    _settings: SettingsService = inject.attr(SettingsService)
+    _themes = inject.attr(ThemeService)
+    _settings = inject.attr(SettingsService)
 
     themeIndexChanged = Signal(int)
     colorIndexChanged = Signal(int)

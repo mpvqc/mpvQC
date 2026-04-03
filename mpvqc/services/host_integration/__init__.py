@@ -27,7 +27,7 @@ class WindowButtonPreference:
 
 
 class HostIntegrationService(QObject):
-    _main_window: MainWindowService = inject.attr(MainWindowService)
+    _main_window = inject.attr(MainWindowService)
 
     DEFAULT_WINDOW_BUTTON_PREFERENCE = WindowButtonPreference(minimize=True, maximize=True, close=True)
 

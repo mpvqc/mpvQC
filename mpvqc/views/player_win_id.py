@@ -16,8 +16,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyUnresolvedReferences
 @QmlElement
 class MpvWindowPyObject(QWindow):
-    _player: PlayerService = inject.attr(PlayerService)
-    _frameless_window: FramelessWindowService = inject.attr(FramelessWindowService)
+    _player = inject.attr(PlayerService)
+    _frameless_window = inject.attr(FramelessWindowService)
 
     def __init__(self) -> None:
         super().__init__()

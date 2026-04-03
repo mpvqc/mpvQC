@@ -18,8 +18,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker,PyCallingNonCallable,PyArgumentList
 @QmlElement
 class MpvqcAboutDialogViewModel(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
-    _build_info: BuildInfoService = inject.attr(BuildInfoService)
+    _player = inject.attr(PlayerService)
+    _build_info = inject.attr(BuildInfoService)
 
     @Property(str, constant=True, final=True)
     def applicationName(self) -> str:

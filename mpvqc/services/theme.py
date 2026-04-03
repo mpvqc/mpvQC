@@ -10,7 +10,7 @@ from mpvqc.services import ResourceService
 
 
 class ThemeService:
-    _resource: ResourceService = inject.attr(ResourceService)
+    _resource = inject.attr(ResourceService)
 
     def __init__(self) -> None:
         resource = self._resource.themes_json

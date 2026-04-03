@@ -9,7 +9,7 @@ from .state import StateService
 
 
 class ResetService(QObject):
-    _app_state: StateService = inject.attr(StateService)
+    _app_state = inject.attr(StateService)
 
     perform_reset = Signal()
 

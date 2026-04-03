@@ -37,9 +37,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
-    _state: StateService = inject.attr(StateService)
-    _importer: ImporterService = inject.attr(ImporterService)
-    _resetter: ResetService = inject.attr(ResetService)
+    _state = inject.attr(StateService)
+    _importer = inject.attr(ImporterService)
+    _resetter = inject.attr(ResetService)
 
     selectedRowChanged = Signal(int)
 

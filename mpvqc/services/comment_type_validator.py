@@ -11,7 +11,7 @@ from .reverse_translator import ReverseTranslatorService
 
 
 class CommentTypeValidatorService:
-    _reverse_translator: ReverseTranslatorService = inject.attr(ReverseTranslatorService)
+    _reverse_translator = inject.attr(ReverseTranslatorService)
 
     _forbidden_characters = re.compile(r"[\[\]]")
 

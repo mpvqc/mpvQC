@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcWindowPropertiesBackend(QObject):
-    _window_properties_service: WindowPropertiesService = inject.attr(WindowPropertiesService)
+    _window_properties_service = inject.attr(WindowPropertiesService)
 
     appWidthChanged = Signal(int)
     appHeightChanged = Signal(int)

@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcToolBarViewModel(QObject):
-    _player: PlayerService = inject.attr(PlayerService)
+    _player = inject.attr(PlayerService)
 
     frameStepBackwardVisibleChanged = Signal(bool)
     frameStepForwardVisibleChanged = Signal(bool)

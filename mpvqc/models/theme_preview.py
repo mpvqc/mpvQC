@@ -24,7 +24,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcThemePreviewModel(QAbstractListModel):
-    _themes: ThemeService = inject.attr(ThemeService)
+    _themes = inject.attr(ThemeService)
 
     IdentifierRole = Qt.ItemDataRole.UserRole + 1
     NameRole = Qt.ItemDataRole.UserRole + 2

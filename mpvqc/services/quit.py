@@ -12,8 +12,8 @@ from .state import StateService
 
 
 class QuitService(QObject):
-    _state: StateService = inject.attr(StateService)
-    _player: PlayerService = inject.attr(PlayerService)
+    _state = inject.attr(StateService)
+    _player = inject.attr(PlayerService)
 
     confirmQuit = Signal()
 

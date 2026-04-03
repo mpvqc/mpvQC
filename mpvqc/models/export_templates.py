@@ -25,8 +25,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcExportTemplateModel(QAbstractListModel):
-    _app_paths: ApplicationPathsService = inject.attr(ApplicationPathsService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _app_paths = inject.attr(ApplicationPathsService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     NameRole = Qt.ItemDataRole.UserRole + 1
     PathRole = Qt.ItemDataRole.UserRole + 2

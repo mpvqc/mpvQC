@@ -19,8 +19,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming
 @QmlElement
 class MpvqcDialogLoaderViewModel(QObject):
-    _importer: ImporterService = inject.attr(ImporterService)
-    _type_mapper: TypeMapperService = inject.attr(TypeMapperService)
+    _importer = inject.attr(ImporterService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     # param 1: JSON string of videos with path, filename, fromDocument, fromSubtitle
     # param 2: JSON string of subtitles with path, filename

@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcWindowButtons(QObject):
-    _host_integration: HostIntegrationService = inject.attr(HostIntegrationService)
+    _host_integration = inject.attr(HostIntegrationService)
 
     showMinimizeButtonChanged = Signal(bool)
     showMaximizeButtonChanged = Signal(bool)
