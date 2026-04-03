@@ -26,7 +26,6 @@ from .player import PlayerService
 from .quit import QuitService
 from .resetter import ResetService
 from .resource import ResourceService
-from .resource_reader import ResourceReaderService
 from .reverse_translator import ReverseTranslatorService
 from .settings import SettingsService
 from .state import StateService

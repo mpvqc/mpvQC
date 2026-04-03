@@ -31,7 +31,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.PlayerService, s.PlayerService)
     binder.bind_to_constructor(s.QuitService, s.QuitService)
     binder.bind_to_constructor(s.ResetService, s.ResetService)
-    binder.bind_to_constructor(s.ResourceReaderService, s.ResourceReaderService)
     binder.bind_to_constructor(s.ResourceService, s.ResourceService)
     binder.bind_to_constructor(s.ReverseTranslatorService, s.ReverseTranslatorService)
     binder.bind_to_constructor(s.SettingsService, s.SettingsService)
