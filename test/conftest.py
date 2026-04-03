@@ -166,11 +166,12 @@ def common_bindings_with():
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
             # Common & shared services
+            binder.bind_to_constructor(CommentsService, CommentsService)
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(ReverseTranslatorService, ReverseTranslatorService)
+            binder.bind_to_constructor(StateService, StateService)
             binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)
             binder.bind_to_constructor(TypeMapperService, TypeMapperService)
-            binder.bind_to_constructor(CommentsService, CommentsService)
 
             # Custom services
             for custom_config in custom_configs:

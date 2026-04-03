@@ -69,8 +69,6 @@ class MpvqcCommentModel(QStandardItemModel):
 
     search_invalidated = Signal()
 
-    _comments_changed = Signal()
-
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setItemRoleNames(Role.MAPPING)
@@ -82,22 +80,21 @@ class MpvqcCommentModel(QStandardItemModel):
         self._resetter.perform_reset.connect(self.clear_comments)
         self._importer.comments_ready_for_import.connect(self.import_comments)
 
-        self.comments_cleared_undo.connect(self._comments_changed)
-        self.comments_imported_redo.connect(self._comments_changed)
-        self.comments_imported_undo.connect(self._comments_changed)
-        self.comment_added_initial.connect(self._comments_changed)
-        self.comment_added_undo.connect(self._comments_changed)
-        self.comment_added_redo.connect(self._comments_changed)
-        self.comment_removed_initial.connect(self._comments_changed)
-        self.comment_removed_undo.connect(self._comments_changed)
-        self.time_updated_initial.connect(self._comments_changed)
-        self.time_updated_undo.connect(self._comments_changed)
-        self.time_updated_redo.connect(self._comments_changed)
-        self.comment_type_updated_initial.connect(self._comments_changed)
-        self.comment_type_updated_undo.connect(self._comments_changed)
-        self.comment_updated_initial.connect(self._comments_changed)
-        self.comment_updated_undo.connect(self._comments_changed)
-        self._comments_changed.connect(lambda: self._state.change())
+        self.comments_cleared_undo.connect(self._state.change)
+        self.comments_imported_redo.connect(self._state.change)
+        self.comments_imported_undo.connect(self._state.change)
+        self.comment_added_initial.connect(self._state.change)
+        self.comment_added_undo.connect(self._state.change)
+        self.comment_added_redo.connect(self._state.change)
+        self.comment_removed_initial.connect(self._state.change)
+        self.comment_removed_undo.connect(self._state.change)
+        self.time_updated_initial.connect(self._state.change)
+        self.time_updated_undo.connect(self._state.change)
+        self.time_updated_redo.connect(self._state.change)
+        self.comment_type_updated_initial.connect(self._state.change)
+        self.comment_type_updated_undo.connect(self._state.change)
+        self.comment_updated_initial.connect(self._state.change)
+        self.comment_updated_undo.connect(self._state.change)
 
     @Property(int, notify=selectedRowChanged)
     def selectedRow(self) -> int:
