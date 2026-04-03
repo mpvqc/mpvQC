@@ -5,10 +5,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-import inject
 from PySide6.QtCore import Property, QObject, Signal
-
-from .type_mapper import TypeMapperService
 
 
 class StateService(QObject):
@@ -147,8 +144,4 @@ def _handle_import(state: ApplicationState, change: ImportChange) -> Application
 def _is_same_video(current_video: Path | None, imported_video: Path | None) -> bool:
     if current_video is None or imported_video is None:
         return False
-
-    mapper: TypeMapperService = inject.instance(TypeMapperService)
-    current = mapper.map_path_to_str(current_video)
-    imported = mapper.map_path_to_str(imported_video)
-    return current == imported
+    return current_video.resolve() == imported_video.resolve()
