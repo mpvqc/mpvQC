@@ -61,38 +61,38 @@ class MpvqcThemePaletteModel(QAbstractListModel):
 
     @typing.override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
-        return len(self._themes.palette(self._theme_identifier))
+        return self._themes.theme(self._theme_identifier).palette_count
 
     @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:  # noqa: C901
-        theme = self._themes.palette(self._theme_identifier)
-        if not index.isValid() or index.row() >= len(theme):
+        if not index.isValid() or index.row() >= self.rowCount():
             return None
-        palette = theme[index.row()]
+
+        palette = self._themes.palette_at(self._theme_identifier, index.row())
 
         match role:
             case self.BackgroundRole:
-                return palette["background"]
+                return palette.background
             case self.BackgroundAlternateRole:
-                return palette["backgroundAlternate"]
+                return palette.background_alternate
             case self.ForegroundRole:
-                return palette["foreground"]
+                return palette.foreground
             case self.ForegroundAlternateRole:
-                return palette["foregroundAlternate"]
+                return palette.foreground_alternate
             case self.ControlRole:
-                return palette["control"]
+                return palette.control
             case self.RowHighlightRole:
-                return palette["rowHighlight"]
+                return palette.row_highlight
             case self.RowHighlightTextRole:
-                return palette["rowHighlightText"]
+                return palette.row_highlight_text
             case self.RowBaseRole:
-                return palette["rowBase"]
+                return palette.row_base
             case self.RowBaseTextRole:
-                return palette["rowBaseText"]
+                return palette.row_base_text
             case self.RowBaseAlternateRole:
-                return palette["rowBaseAlternate"]
+                return palette.row_base_alternate
             case self.RowBaseAlternateTextRole:
-                return palette["rowBaseAlternateText"]
+                return palette.row_base_alternate_text
 
     @typing.override
     def roleNames(self) -> dict[int, QByteArray]:

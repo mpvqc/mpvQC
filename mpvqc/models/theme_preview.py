@@ -41,13 +41,13 @@ class MpvqcThemePreviewModel(QAbstractListModel):
 
         match role:
             case self.IdentifierRole:
-                return preview["identifier"]
+                return preview.identifier
             case self.NameRole | Qt.ItemDataRole.DisplayRole:
-                return preview["name"]
+                return preview.name
             case self.PreviewRole:
-                return preview["preview"]
+                return preview.preview
             case self.IsDarkRole:
-                return preview["isDark"]
+                return preview.is_dark
 
     @typing.override
     def roleNames(self) -> dict[int, QByteArray]:

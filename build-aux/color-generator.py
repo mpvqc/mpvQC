@@ -28,16 +28,16 @@ class Color:
 @dataclass(frozen=True)
 class MpvqcColorSet:
     background: str
-    backgroundAlternate: str
+    background_alternate: str
     foreground: str
-    foregroundAlternate: str
+    foreground_alternate: str
     control: str
-    rowHighlight: str
-    rowHighlightText: str
-    rowBase: str
-    rowBaseText: str
-    rowBaseAlternate: str
-    rowBaseAlternateText: str
+    row_highlight: str
+    row_highlight_text: str
+    row_base: str
+    row_base_text: str
+    row_base_alternate: str
+    row_base_alternate_text: str
 
 
 def main() -> None:
@@ -114,32 +114,32 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool) -> list[MpvqcColorSet]:
             colors.append(
                 MpvqcColorSet(
                     background=palette["surface"],
-                    backgroundAlternate=palette["surfaceContainerHigh"],
+                    background_alternate=palette["surfaceContainerHigh"],
                     foreground=palette["onSurfaceVariant"],
-                    foregroundAlternate=palette["onSurfaceVariant"],
+                    foreground_alternate=palette["onSurfaceVariant"],
                     control=palette["primary"],
-                    rowHighlight=palette["inversePrimary"],
-                    rowHighlightText=palette["onSurface"],
-                    rowBase=palette["surface"],
-                    rowBaseText=palette["onSurfaceVariant"],
-                    rowBaseAlternate=palette["surfaceContainerLow"],
-                    rowBaseAlternateText=palette["onSurfaceVariant"],
+                    row_highlight=palette["inversePrimary"],
+                    row_highlight_text=palette["onSurface"],
+                    row_base=palette["surface"],
+                    row_base_text=palette["onSurfaceVariant"],
+                    row_base_alternate=palette["surfaceContainerLow"],
+                    row_base_alternate_text=palette["onSurfaceVariant"],
                 )
             )
         else:
             colors.append(
                 MpvqcColorSet(
                     background=palette["surfaceContainerLow"],
-                    backgroundAlternate=palette["secondaryContainer"],
+                    background_alternate=palette["secondaryContainer"],
                     foreground=palette["onSurfaceVariant"],
-                    foregroundAlternate=palette["onSecondaryContainer"],
+                    foreground_alternate=palette["onSecondaryContainer"],
                     control=palette["secondary"],
-                    rowHighlight=palette["primary"],
-                    rowHighlightText=palette["onPrimary"],
-                    rowBase=palette["surfaceContainerLow"],
-                    rowBaseText=palette["onSurfaceVariant"],
-                    rowBaseAlternate=palette["surfaceContainerHighest"],
-                    rowBaseAlternateText=palette["onSurfaceVariant"],
+                    row_highlight=palette["primary"],
+                    row_highlight_text=palette["onPrimary"],
+                    row_base=palette["surfaceContainerLow"],
+                    row_base_text=palette["onSurfaceVariant"],
+                    row_base_alternate=palette["surfaceContainerHighest"],
+                    row_base_alternate_text=palette["onSurfaceVariant"],
                 )
             )
     return colors
