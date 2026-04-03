@@ -33,11 +33,11 @@ def get_process_address(_, name) -> int:
 
 @QmlElement
 class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
-    sig_on_update = Signal()
+    update_requested = Signal()
 
     def __init__(self) -> None:
         super().__init__()
-        self.sig_on_update.connect(self.do_update)
+        self.update_requested.connect(self.do_update)
 
     @Slot()
     def do_update(self) -> None:
@@ -52,11 +52,11 @@ class Renderer(QQuickFramebufferObject.Renderer):
     _host_integration = inject.attr(HostIntegrationService)
     _player = inject.attr(PlayerService)
 
-    def __init__(self, parent) -> None:
+    def __init__(self, parent: MpvqcMpvFrameBufferObjectPyObject) -> None:
         super().__init__()
         self._parent = parent
         self._ctx: MpvRenderContext | None = None
-        self._host_integration.display_zoom_factor_changed.connect(lambda _: self._parent.sig_on_update.emit())
+        self._host_integration.display_zoom_factor_changed.connect(lambda _: self._parent.update_requested.emit())
 
     @typing.override
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
@@ -69,7 +69,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
                 api_type="opengl",
                 opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_process_address)},
             )
-            self._ctx.update_cb = self._parent.sig_on_update.emit
+            self._ctx.update_cb = self._parent.update_requested.emit
 
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
 
