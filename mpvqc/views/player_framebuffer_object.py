@@ -13,7 +13,7 @@ from PySide6.QtGui import QOpenGLContext
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 
-from mpvqc.services import HostIntegrationService
+from mpvqc.services import HostIntegrationService, PlayerService
 
 if TYPE_CHECKING:
     from mpv import MpvRenderContext
@@ -50,6 +50,7 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
 
 class Renderer(QQuickFramebufferObject.Renderer):
     _host_integration = inject.attr(HostIntegrationService)
+    _player = inject.attr(PlayerService)
 
     def __init__(self, parent) -> None:
         super().__init__()
@@ -62,13 +63,9 @@ class Renderer(QQuickFramebufferObject.Renderer):
         if self._ctx is None:
             from mpv import MpvGlGetProcAddressFn, MpvRenderContext
 
-            from mpvqc.services.player import PlayerService
-
-            player = inject.instance(PlayerService)
-            player.init()
-
+            self._player.init()
             self._ctx = MpvRenderContext(
-                mpv=player.mpv,
+                mpv=self._player.mpv,
                 api_type="opengl",
                 opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_process_address)},
             )
