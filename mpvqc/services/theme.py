@@ -6,14 +6,14 @@ import json
 
 import inject
 
-from mpvqc.services import ResourceReaderService
+from mpvqc.services import ResourceService
 
 
 class ThemeService:
-    _resource_reader: ResourceReaderService = inject.attr(ResourceReaderService)
+    _resource: ResourceService = inject.attr(ResourceService)
 
     def __init__(self) -> None:
-        resource = self._resource_reader.read_from(":/data/themes.json")
+        resource = self._resource.themes_json
         self._themes = json.loads(resource)
         self._id_to_theme: dict[str, dict] = {theme["identifier"]: theme for theme in self._themes}
         self._id_to_index: dict[str, int] = {theme["identifier"]: idx for idx, theme in enumerate(self._themes)}

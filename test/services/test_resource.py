@@ -2,19 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from unittest.mock import patch
-
 import pytest
 
 from mpvqc.services import ResourceService
 
 
-@pytest.fixture(autouse=True, scope="module")
-def configure_injections(common_bindings_with):
-    common_bindings_with()
-
-
-@pytest.fixture(scope="module")
+@pytest.fixture
 def resource_service() -> ResourceService:
     return ResourceService()
 
@@ -39,14 +32,12 @@ def test_resources(resource_service):
     assert "comment['comment'] | trim" in export_template
 
 
-def test_os_specific_resources(resource_service):
-    with patch("sys.platform", "win32"):
-        assert resource_service.mpv_conf_content
-        assert "vo=gpu" in resource_service.mpv_conf_content.splitlines()
+def test_mpv_conf_windows(resource_service, monkeypatch):
+    monkeypatch.setattr("sys.platform", "win32")
+    assert "vo=gpu" in resource_service.mpv_conf_content.splitlines()
 
-    other_platforms = ["linux", "darwin"]
 
-    for platform in other_platforms:
-        with patch("sys.platform", platform):
-            assert resource_service.mpv_conf_content
-            assert not any(line.startswith("vo=") for line in resource_service.mpv_conf_content.splitlines())
+@pytest.mark.parametrize("platform", ["linux", "darwin"])
+def test_mpv_conf_non_windows(resource_service, monkeypatch, platform):
+    monkeypatch.setattr("sys.platform", platform)
+    assert not any(line.startswith("vo=") for line in resource_service.mpv_conf_content.splitlines())

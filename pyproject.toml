@@ -248,7 +248,6 @@ files = [
     "mpvqc/services/quit.py",
     "mpvqc/services/resetter.py",
     "mpvqc/services/resource.py",
-    "mpvqc/services/resource_reader.py",
     "mpvqc/services/reverse_translator.py",
     "mpvqc/services/settings.py",
     "mpvqc/services/state.py",
