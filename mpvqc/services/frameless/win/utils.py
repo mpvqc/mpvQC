@@ -8,9 +8,7 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-import ctypes
-import ctypes.wintypes
-from ctypes import Structure, byref, c_int, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
+from ctypes import POINTER, Structure, byref, c_int, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
 from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
 from functools import lru_cache
 from typing import Any
@@ -207,7 +205,7 @@ class Taskbar:
 dwmapi = windll.dwmapi
 
 DwmExtendFrameIntoClientArea = dwmapi.DwmExtendFrameIntoClientArea
-DwmExtendFrameIntoClientArea.argtypes = [ctypes.wintypes.HWND, ctypes.POINTER(MARGINS)]
+DwmExtendFrameIntoClientArea.argtypes = [HWND, POINTER(MARGINS)]
 DwmExtendFrameIntoClientArea.restype = LONG
 
 
@@ -215,7 +213,7 @@ def extend_frame_into_client_area(hwnd) -> None:
     """Enables drop shadow if 'configure_gwl_style' gets called as well for the same hwnd"""
 
     margins = MARGINS(-1, -1, -1, -1)
-    DwmExtendFrameIntoClientArea(hwnd, ctypes.byref(margins))
+    DwmExtendFrameIntoClientArea(hwnd, byref(margins))
 
 
 def configure_gwl_style(hwnd) -> None:
