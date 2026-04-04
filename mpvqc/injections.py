@@ -8,7 +8,6 @@ import mpvqc.services as s
 
 
 def bindings(binder: inject.Binder) -> None:
-    binder.bind_to_constructor(s.ApplicationEnvironmentService, s.ApplicationEnvironmentService)
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
     binder.bind_to_constructor(s.CommentsService, s.CommentsService)

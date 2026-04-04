@@ -217,7 +217,6 @@ files = [
     "mpvqc/models/theme_palette.py",
     "mpvqc/models/theme_preview.py",
     "mpvqc/services/__init__.py",
-    "mpvqc/services/application_environment.py",
     "mpvqc/services/application_paths.py",
     "mpvqc/services/build_info.py",
     "mpvqc/services/comment_type_validator.py",

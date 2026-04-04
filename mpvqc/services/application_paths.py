@@ -2,67 +2,82 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import sys
+from dataclasses import dataclass
 from pathlib import Path
-from typing import NamedTuple
 
-import inject
 from PySide6.QtCore import QCoreApplication, QStandardPaths
 
-from .application_environment import ApplicationEnvironmentService
+
+class ApplicationEnvironment:
+    def __init__(self, executing_directory: Path | None = None) -> None:
+        self._executing_directory = executing_directory or Path(sys.argv[0]).parent
+
+    @property
+    def is_portable(self) -> bool:
+        return self._executing_directory.joinpath("portable").is_file()
+
+    @property
+    def executing_directory(self) -> Path:
+        return self._executing_directory
+
+
+@dataclass(frozen=True)
+class _Directories:
+    backup: Path
+    config: Path
+    screenshots: Path
+    export_templates: Path
+
+
+def _portable_directories(executing_directory: Path) -> _Directories:
+    return _Directories(
+        backup=executing_directory / "appdata" / "backups",
+        config=executing_directory / "appdata",
+        screenshots=executing_directory / "appdata" / "screenshots",
+        export_templates=executing_directory / "appdata" / "export-templates",
+    )
+
+
+def _xdg_directories() -> _Directories:
+    appname = QCoreApplication.applicationName()
+    config = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.ConfigLocation)
+    documents = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+    pictures = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.PicturesLocation)
+    return _Directories(
+        backup=Path(documents) / appname / "backups",
+        config=Path(config) / appname,
+        screenshots=Path(pictures) / appname,
+        export_templates=Path(config) / appname / "export-templates",
+    )
+
+
+def _resolve_directories(app: ApplicationEnvironment) -> _Directories:
+    if app.is_portable:
+        return _portable_directories(app.executing_directory)
+    return _xdg_directories()
 
 
 class ApplicationPathsService:
-    _app = inject.attr(ApplicationEnvironmentService)
-
-    class Paths(NamedTuple):
-        dir_backup: Path
-        dir_config: Path
-        dir_screenshots: Path
-        dir_export_templates: Path
-
-    def __init__(self) -> None:
-        if self._app.is_portable:
-            self._paths = self._paths_next_to_executable()
-        else:
-            self._paths = self._xdg_paths()
-
-    def _paths_next_to_executable(self) -> Paths:
-        dir_app = self._app.executing_directory
-        return ApplicationPathsService.Paths(
-            dir_backup=dir_app / "appdata" / "backups",
-            dir_config=dir_app / "appdata",
-            dir_screenshots=dir_app / "appdata" / "screenshots",
-            dir_export_templates=dir_app / "appdata" / "export-templates",
-        )
-
-    @staticmethod
-    def _xdg_paths() -> Paths:
-        appname = QCoreApplication.applicationName()
-        config = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.ConfigLocation)
-        documents = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
-        pictures = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.PicturesLocation)
-        return ApplicationPathsService.Paths(
-            dir_backup=Path(documents) / appname / "backups",
-            dir_config=Path(config) / appname,
-            dir_screenshots=Path(pictures) / appname,
-            dir_export_templates=Path(config) / appname / "export-templates",
-        )
+    def __init__(self, app_environment: ApplicationEnvironment | None = None) -> None:
+        app = ApplicationEnvironment() if app_environment is None else app_environment
+        self._dirs = _resolve_directories(app)
 
     @property
     def dir_backup(self) -> Path:
-        return self._paths.dir_backup
+        return self._dirs.backup
 
     @property
     def dir_config(self) -> Path:
-        return self._paths.dir_config
+        return self._dirs.config
 
     @property
     def dir_screenshots(self) -> Path:
-        return self._paths.dir_screenshots
+        return self._dirs.screenshots
 
     @property
     def dir_export_templates(self) -> Path:
-        return self._paths.dir_export_templates
+        return self._dirs.export_templates
 
     @property
     def file_input_conf(self) -> Path:
