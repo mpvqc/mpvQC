@@ -15,11 +15,9 @@ class ResourceService:
 
     @cached_property
     def mpv_conf_content(self) -> str:
-        match sys.platform:
-            case "win32":
-                return _read_resource(":/data/config/mpv-windows.conf")
-            case _:
-                return _read_resource(":/data/config/mpv-linux.conf")
+        if sys.platform == "win32":
+            return _read_resource(":/data/config/mpv-windows.conf")
+        return _read_resource(":/data/config/mpv-linux.conf")
 
     @cached_property
     def themes_json(self) -> str:

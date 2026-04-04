@@ -94,6 +94,8 @@ class MpvqcThemePaletteModel(QAbstractListModel):
             case self.RowBaseAlternateTextRole:
                 return palette.row_base_alternate_text
 
+        return None
+
     @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {

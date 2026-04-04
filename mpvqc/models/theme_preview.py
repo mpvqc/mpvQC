@@ -49,6 +49,8 @@ class MpvqcThemePreviewModel(QAbstractListModel):
             case self.IsDarkRole:
                 return preview.is_dark
 
+        return None
+
     @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
