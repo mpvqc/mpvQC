@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
-from .comment_table import MpvqcCommentTableViewModel
-from .placeholder import MpvqcPlaceholderViewModel
-from .search_box import MpvqcSearchBoxViewModel
+from .comment_table import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
+from .placeholder import MpvqcPlaceholderViewModel as MpvqcPlaceholderViewModel
+from .search_box import MpvqcSearchBoxViewModel as MpvqcSearchBoxViewModel

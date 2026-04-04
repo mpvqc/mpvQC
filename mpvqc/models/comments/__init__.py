@@ -2,5 +2,4 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
-from .model import MpvqcCommentModel
+from .model import MpvqcCommentModel as MpvqcCommentModel

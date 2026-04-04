@@ -2,11 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
-from .comments import MpvqcCommentModel
-from .dependencies import MpvqcDependencyModel
-from .export_templates import MpvqcExportTemplateModel
-from .import_options import ImportOptionsModel
-from .languages import MpvqcLanguageModel
-from .theme_palette import MpvqcThemePaletteModel
-from .theme_preview import MpvqcThemePreviewModel
+from .comments import MpvqcCommentModel as MpvqcCommentModel
+from .dependencies import MpvqcDependencyModel as MpvqcDependencyModel
+from .export_templates import MpvqcExportTemplateModel as MpvqcExportTemplateModel
+from .import_options import ImportOptionsModel as ImportOptionsModel
+from .languages import MpvqcLanguageModel as MpvqcLanguageModel
+from .theme_palette import MpvqcThemePaletteModel as MpvqcThemePaletteModel
+from .theme_preview import MpvqcThemePreviewModel as MpvqcThemePreviewModel

@@ -2,5 +2,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
-from .service import HostIntegrationService, WindowButtonPreference
+from .service import HostIntegrationService as HostIntegrationService
+from .service import WindowButtonPreference as WindowButtonPreference
