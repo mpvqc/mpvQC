@@ -51,11 +51,10 @@ class InternationalizationService:
 
 
 def create_locale_from(language_code: str) -> QLocale:
-    match language_code:
-        case "pt-PT":
-            # As of Qt6.9 there aren't any official pt-PT translations available:
-            # https://code.qt.io/cgit/qt/qttranslations.git/tree/translations
-            # However, there are Brazilian Portuguese translations available
-            return QLocale("pt-BR")
-        case _:
-            return QLocale(language_code)
+    if language_code == "pt-PT":
+        # As of Qt6.9 there aren't any official qtbase pt-PT translations available:
+        # https://code.qt.io/cgit/qt/qttranslations.git/tree/translations
+        # However, there are Brazilian Portuguese translations available
+        return QLocale("pt-BR")
+
+    return QLocale(language_code)

@@ -80,6 +80,6 @@ def get_frameless_window_service() -> FramelessWindowService:
             return WinImplementation()
         case "linux":
             return LinuxImplementation()
-        case system:
-            msg = f"Cannot configure frameless window on platform: {system}"
-            raise ValueError(msg)
+
+    msg = f"Cannot configure frameless window on platform: {sys.platform}"
+    raise ValueError(msg)

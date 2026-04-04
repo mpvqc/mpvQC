@@ -64,9 +64,8 @@ class MpvqcDependencyModel(QAbstractListModel):
                 return dependency.url
             case self.LicenceRole:
                 return dependency.licence
-            case _:
-                msg = f"Cannot find data to return for: {type(role)} {role}"
-                raise ValueError(msg)
+
+        return None
 
     @typing.override
     def roleNames(self) -> dict[int, QByteArray]:

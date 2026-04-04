@@ -26,5 +26,4 @@ class CloseEventFilter(QObject):
                 event.ignore()
                 return True
 
-            case _:
-                return super().eventFilter(obj, event)
+        return super().eventFilter(obj, event)
