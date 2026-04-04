@@ -56,10 +56,11 @@ class ImportOptionsModel(QAbstractListModel):
 
         item = self._items[index.row()]
 
-        if role == self.TextRole:
-            return item["text"]
-        if role == self.ValueRole:
-            return item["value"]
+        match role:
+            case self.TextRole:
+                return item["text"]
+            case self.ValueRole:
+                return item["value"]
 
         return None
 

@@ -61,10 +61,11 @@ class MpvqcExportTemplateModel(QAbstractListModel):
 
         item = self._items[index.row()]
 
-        if role == self.NameRole:
-            return item["name"]
-        if role == self.PathRole:
-            return item["path"]
+        match role:
+            case self.NameRole:
+                return item["name"]
+            case self.PathRole:
+                return item["path"]
 
         return None
 

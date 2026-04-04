@@ -53,12 +53,13 @@ class MpvqcLanguageModel(QAbstractListModel):
 
         language = LANGUAGES[index.row()]
 
-        if role == self.LanguageRole:
-            return language.language
-        if role == self.IdentifierRole:
-            return language.identifier
-        if role == self.TranslatorRole:
-            return language.translator
+        match role:
+            case self.LanguageRole:
+                return language.language
+            case self.IdentifierRole:
+                return language.identifier
+            case self.TranslatorRole:
+                return language.translator
 
         return None
 
