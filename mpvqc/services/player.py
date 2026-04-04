@@ -95,17 +95,17 @@ class PlayerService(QObject):
 
         from mpv import MPV
 
-        _mpv = MPV(**merged_args)
-        _mpv.observe_property("duration", self._on_duration_changed)
-        _mpv.observe_property("path", self._on_player_path_changed)
-        _mpv.observe_property("filename", self._on_player_filename_changed)
-        _mpv.observe_property("percent-pos", self._on_player_percent_pos_changed)
-        _mpv.observe_property("time-pos", self._on_player_time_pos_changed)
-        _mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
-        _mpv.observe_property("height", self._on_player_height_changed)
-        _mpv.observe_property("width", self._on_player_width_changed)
-        _mpv.observe_property("track-list", self._on_track_list_changed)
-        self._mpv = _mpv
+        mpv = MPV(**merged_args)
+        mpv.observe_property("duration", self._on_duration_changed)
+        mpv.observe_property("path", self._on_player_path_changed)
+        mpv.observe_property("filename", self._on_player_filename_changed)
+        mpv.observe_property("percent-pos", self._on_player_percent_pos_changed)
+        mpv.observe_property("time-pos", self._on_player_time_pos_changed)
+        mpv.observe_property("time-remaining", self._on_player_time_remaining_changed)
+        mpv.observe_property("height", self._on_player_height_changed)
+        mpv.observe_property("width", self._on_player_width_changed)
+        mpv.observe_property("track-list", self._on_track_list_changed)
+        self._mpv = mpv
 
     @property
     def mpv(self) -> MPV:

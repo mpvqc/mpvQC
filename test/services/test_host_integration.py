@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from mpvqc.services import WindowButtonPreference
-from mpvqc.services.host_integration import read_linux_window_button_preference
+from mpvqc.services.host_integration.service import read_linux_window_button_preference
 
 linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Requires Linux")
 

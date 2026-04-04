@@ -58,7 +58,7 @@ def is_fullscreen(hwnd) -> bool:
         return False
 
     monitor_rect = monitor_info["Monitor"]
-    return all(i == j for i, j in zip(win_rect, monitor_rect))
+    return all(i == j for i, j in zip(win_rect, monitor_rect))  # noqa:B905
 
 
 def is_composition_enabled() -> bool:

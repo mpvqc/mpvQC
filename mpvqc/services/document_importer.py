@@ -16,8 +16,8 @@ from .reverse_translator import ReverseTranslatorService
 class DocumentImporterService:
     _reverse_translator = inject.attr(ReverseTranslatorService)
 
-    _REGEX_PATH = re.compile("^path\\s*?:(?P<path>.*)$")
-    _REGEX_SUBTITLE = re.compile("^subtitle\\s*?:(?P<subtitle>.*)$")
+    _REGEX_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")
+    _REGEX_SUBTITLE = re.compile(r"^subtitle\s*?:(?P<subtitle>.*)$")
     _REGEX_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
 
     @dataclass(frozen=True)

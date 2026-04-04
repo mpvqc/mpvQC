@@ -10,21 +10,21 @@ from update_pyproject_file import determine_new_pyproject_lines  # type: ignore[
 
 def test_raises_tool_pyside6_project_missing():
     lines = []
-    with pytest.raises(KeyError, match='.*Could not find "\\[tool.pyside6-project\\]".*'):
+    with pytest.raises(KeyError, match=r'.*Could not find "\[tool\.pyside6-project\]".*'):
         determine_new_pyproject_lines(lines, [])
 
     lines = ["#[tool.pyside6-project]"]
-    with pytest.raises(KeyError, match='.*Could not find "\\[tool.pyside6-project\\]".*'):
+    with pytest.raises(KeyError, match=r'.*Could not find "\[tool\.pyside6-project\]".*'):
         determine_new_pyproject_lines(lines, [])
 
 
 def test_raises_tool_pyside6_project_files_missing():
     lines = ["[tool.pyside6-project]"]
-    with pytest.raises(KeyError, match='.*Could not find "files" in "\\[tool.pyside6-project\\]".*'):
+    with pytest.raises(KeyError, match=r'.*Could not find "files" in "\[tool\.pyside6-project\]".*'):
         determine_new_pyproject_lines(lines, [])
 
     lines = ["[tool.pyside6-project]", "#files = []"]
-    with pytest.raises(KeyError, match='.*Could not find "files" in "\\[tool.pyside6-project\\]".*'):
+    with pytest.raises(KeyError, match=r'.*Could not find "files" in "\[tool\.pyside6-project\]".*'):
         determine_new_pyproject_lines(lines, [])
 
 
