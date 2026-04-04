@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # ruff: noqa: F401
-from .application_environment import ApplicationEnvironmentService
 from .application_paths import ApplicationPathsService
 from .build_info import BuildInfoService
 from .comment_type_validator import CommentTypeValidatorService
