@@ -4,5 +4,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
-from .service import FramelessWindowService, get_frameless_window_service
+from .service import FramelessWindowService as FramelessWindowService
+from .service import get_frameless_window_service as get_frameless_window_service

@@ -8,6 +8,7 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-# ruff: noqa: F401
-from .event import WindowsEventFilter
-from .utils import configure_gwl_style, extend_frame_into_client_area, set_outer_window_size
+from .event import WindowsEventFilter as WindowsEventFilter
+from .utils import configure_gwl_style as configure_gwl_style
+from .utils import extend_frame_into_client_area as extend_frame_into_client_area
+from .utils import set_outer_window_size as set_outer_window_size

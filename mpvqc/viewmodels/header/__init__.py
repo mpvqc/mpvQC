@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
 
-from .header import MpvqcHeaderViewModel
-from .menu_bar import MpvqcMenuBarViewModel
-from .toolbar import MpvqcToolBarViewModel
+from .header import MpvqcHeaderViewModel as MpvqcHeaderViewModel
+from .menu_bar import MpvqcMenuBarViewModel as MpvqcMenuBarViewModel
+from .toolbar import MpvqcToolBarViewModel as MpvqcToolBarViewModel

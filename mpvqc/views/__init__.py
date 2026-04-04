@@ -2,6 +2,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# ruff: noqa: F401
-from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject
-from .player_win_id import MpvWindowPyObject
+from .player_framebuffer_object import MpvqcMpvFrameBufferObjectPyObject as MpvqcMpvFrameBufferObjectPyObject
+from .player_win_id import MpvWindowPyObject as MpvWindowPyObject
