@@ -20,7 +20,6 @@ from .type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-    from typing import Any
 
     from mpv import MPV
 
@@ -60,7 +59,7 @@ class PlayerService(QObject):
         # This is set to True for the time we start loading a video until mpv internally updates it's 'path' property
         self._loading_video = False
 
-        self._init_args: dict[str, Any] = {
+        self._init_args: dict = {
             "keep_open": "yes",
             "idle": "yes",
             "osc": "yes",
@@ -76,9 +75,8 @@ class PlayerService(QObject):
         if os.getenv("MPVQC_DEBUG") or os.getenv("MPVQC_PLAYER_LOG"):
             mpv_log_level = 25
 
-            def player_logger(*args) -> None:
-                level, context, message = args
-                logger.log(mpv_log_level, message.strip(), extra={"mpv_level": level, "mpv_context": context})
+            def player_logger(level: str, context: str, message: str) -> None:
+                logger.log(mpv_log_level, message.rstrip(), extra={"mpv_level": level, "mpv_context": context})
 
             self._init_args["log_handler"] = player_logger
 
@@ -114,7 +112,7 @@ class PlayerService(QObject):
             raise RuntimeError(msg)
         return self._mpv
 
-    def _get_mpv_attr(self, attr: str) -> Any | None:
+    def _get_mpv_attr[T](self, attr: str) -> T | None:
         if self._mpv is None:
             return None
         return getattr(self._mpv, attr, None)
@@ -190,7 +188,7 @@ class PlayerService(QObject):
     def _track_list(self) -> list[TrackListEntry]:
         if self._mpv is None:
             return []
-        track_list = self._get_mpv_attr("track_list") or []
+        track_list: list[dict] = self._get_mpv_attr("track_list") or []
         return [TrackListEntry.from_dict(e) for e in track_list]
 
     @property
@@ -210,11 +208,11 @@ class PlayerService(QObject):
     def subtitle_track_count(self) -> int:
         return self._cached_subtitle_track_count
 
-    def _on_duration_changed(self, _, value: float | None) -> None:
+    def _on_duration_changed(self, _: str, value: float | None) -> None:
         if value is not None:
             self.duration_changed.emit(value)
 
-    def _on_player_path_changed(self, _, value: str | None) -> None:
+    def _on_player_path_changed(self, _: str, value: str | None) -> None:
         self._dimensions_coordinator.reset()
         self.path_changed.emit(value or "")
         self.video_loaded_changed.emit(value is not None)
@@ -228,32 +226,32 @@ class PlayerService(QObject):
             self.open_subtitles(self._cached_subtitles)
             self._cached_subtitles.clear()
 
-    def _on_player_filename_changed(self, _, value: str | None) -> None:
+    def _on_player_filename_changed(self, _: str, value: str | None) -> None:
         self.filename_changed.emit(value or "")
 
-    def _on_player_percent_pos_changed(self, _, value: float | None) -> None:
+    def _on_player_percent_pos_changed(self, _: str, value: float | None) -> None:
         if value is not None:
             self.percent_pos_changed.emit(int(value + 0.5))
 
-    def _on_player_time_pos_changed(self, _, value: float | None) -> None:
+    def _on_player_time_pos_changed(self, _: str, value: float | None) -> None:
         if value is not None:
             self.time_pos_changed.emit(int(value + 0.5))
 
-    def _on_player_time_remaining_changed(self, _, value: float | None) -> None:
+    def _on_player_time_remaining_changed(self, _: str, value: float | None) -> None:
         if value is not None:
             self.time_remaining_changed.emit(int(value + 0.5))
 
-    def _on_player_height_changed(self, _, value: int | None) -> None:
+    def _on_player_height_changed(self, _: str, value: int | None) -> None:
         if value is not None:
             self.height_changed.emit(value)
             self._dimensions_coordinator.on_height(value)
 
-    def _on_player_width_changed(self, _, value: int | None) -> None:
+    def _on_player_width_changed(self, _: str, value: int | None) -> None:
         if value is not None:
             self.width_changed.emit(value)
             self._dimensions_coordinator.on_width(value)
 
-    def _on_track_list_changed(self, _, value: Any | None) -> None:
+    def _on_track_list_changed(self, _: str, value: list[dict] | None) -> None:
         if value is None:
             return
 
