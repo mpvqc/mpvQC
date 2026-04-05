@@ -16,6 +16,8 @@ from PySide6.QtQuick import QQuickFramebufferObject
 from mpvqc.services import HostIntegrationService, PlayerService
 
 if TYPE_CHECKING:
+    from types import NoneType
+
     from mpv import MpvRenderContext
     from PySide6.QtOpenGL import QOpenGLFramebufferObject
 
@@ -24,7 +26,7 @@ QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-def get_process_address(_, name) -> int:
+def get_process_address(_: NoneType, name: bytes) -> int:
     current_gl_context = QOpenGLContext.currentContext()
     if current_gl_context:
         return int(current_gl_context.getProcAddress(name))
