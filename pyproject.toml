@@ -62,7 +62,7 @@ extend-select = [
 
     # flake8
     "A",    # Builtins – flags variable/argument names that shadow Python builtins
-    "ANN",  # Annotations – checks for missing return type annotations
+    "ANN",  # Annotations – checks for missing type annotations on arguments and return types
     "ARG",  # Unused Arguments – flags unused function arguments
     "B",    # Bugbear – finds common bugs and design problems (mutable defaults, missing raise-from, etc.)
     "C",    # Cyclomatic complexity (mccabe) – flags overly complex code
