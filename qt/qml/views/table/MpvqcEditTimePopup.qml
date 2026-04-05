@@ -73,6 +73,8 @@ Popup {
         background: null
 
         down.indicator: ToolButton {
+            objectName: "decrementButton"
+
             x: root.mirrored ? _spinBox.width - width : 0
             height: _spinBox.height
             width: height
@@ -82,6 +84,8 @@ Popup {
         }
 
         up.indicator: ToolButton {
+            objectName: "incrementButton"
+
             x: root.mirrored ? 0 : _spinBox.width - width
             height: _spinBox.height
             width: height
