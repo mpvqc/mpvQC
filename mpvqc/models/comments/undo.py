@@ -2,27 +2,33 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import typing
-from collections.abc import Callable, Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QPersistentModelIndex, Slot
 from PySide6.QtGui import QUndoCommand, QUndoStack
-
-from mpvqc.datamodels import Comment
 
 from .item import CommentItem
 from .roles import Role
 from .utils import create_item_from
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
+    from typing import Any
+
+    from PySide6.QtCore import QObject
+
+    from mpvqc.datamodels import Comment
+
     from .model import MpvqcCommentModel
 
 
 class ImportComments(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         comments: Sequence[dict[str, Any] | Comment],
         previously_selected_row: int,
         on_after_undo: Callable,
@@ -65,7 +71,7 @@ class ImportComments(QUndoCommand):
 class ClearComments(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         on_after_undo: Callable,
         on_after_redo: Callable,
     ) -> None:
@@ -93,7 +99,7 @@ class ClearComments(QUndoCommand):
 class AddComment(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         comment_type: str,
         time: int,
         previously_selected_row: int,
@@ -135,7 +141,7 @@ class AddComment(QUndoCommand):
 class RemoveComment(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         row: int,
         on_after_undo: Callable,
         on_after_redo: Callable,
@@ -165,7 +171,7 @@ class RemoveComment(QUndoCommand):
 class UpdateTime(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         row: int,
         new_time: int,
         on_after_undo: Callable,
@@ -203,7 +209,7 @@ class UpdateTime(QUndoCommand):
 class UpdateType(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         row: int,
         new_comment_type: str,
         on_after_undo: Callable,
@@ -236,7 +242,7 @@ class UpdateType(QUndoCommand):
 class UpdateComment(QUndoCommand):
     def __init__(
         self,
-        model: "MpvqcCommentModel",
+        model: MpvqcCommentModel,
         row: int,
         new_text: str,
         on_after_undo: Callable,
@@ -290,13 +296,13 @@ class AddAndUpdateCommentCommand(QUndoCommand):
 
 
 class MpvqcUndoStack(QUndoStack):
-    def __init__(self, parent) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self.indexChanged.connect(self.prevent_add_update_merge)
         self._last_add_command: AddAndUpdateCommentCommand | None = None
 
-    @Slot(int)
-    def prevent_add_update_merge(self, *_) -> None:
+    @Slot()
+    def prevent_add_update_merge(self) -> None:
         self._last_add_command = None
 
     @typing.override

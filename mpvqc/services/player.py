@@ -47,8 +47,8 @@ class PlayerService(QObject):
     audio_track_count_changed = Signal(int)
     subtitle_track_count_changed = Signal(int)
 
-    def __init__(self, **properties) -> None:
-        super().__init__(**properties)
+    def __init__(self) -> None:
+        super().__init__()
 
         # Cache subtitles for two reasons:
         # - User can open a subtitle before a video

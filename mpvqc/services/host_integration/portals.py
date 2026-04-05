@@ -2,9 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import logging
+import typing
 from functools import cached_property
 from typing import Self
+
+if typing.TYPE_CHECKING:
+    from types import TracebackType
 
 try:
     # noinspection PyUnusedImports
@@ -52,7 +58,12 @@ class SettingsPortal:
 
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+    def __exit__(
+        self,
+        _exc_type: type[BaseException] | None,
+        _exc_val: BaseException | None,
+        _exc_tb: TracebackType | None,
+    ) -> bool:
         if self._connection is not None:
             QDBusConnection.disconnectFromBus(self._connection_name)
         return False

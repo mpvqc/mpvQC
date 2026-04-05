@@ -62,7 +62,7 @@ extend-select = [
 
     # flake8
     "A",    # Builtins – flags variable/argument names that shadow Python builtins
-    "ANN2", # Annotations – checks for missing return type annotations
+    "ANN",  # Annotations – checks for missing return type annotations
     "ARG",  # Unused Arguments – flags unused function arguments
     "B",    # Bugbear – finds common bugs and design problems (mutable defaults, missing raise-from, etc.)
     "C",    # Cyclomatic complexity (mccabe) – flags overly complex code
@@ -110,6 +110,10 @@ ignore = [
 "build-aux/**" = [
     "T20", # Allow print() in build/dev scripts
     "INP", # build-aux is not a package
+]
+
+"mpvqc/services/frameless/win/**" = [
+    "ANN", # Ignore missing type annotations in Windows-specific code
 ]
 
 "test/**" = [ # Adjust rules for test files
