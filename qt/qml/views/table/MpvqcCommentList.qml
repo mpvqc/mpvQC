@@ -166,6 +166,32 @@ ListView {
         }
     }
 
+    // *** *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***
+    // Workaround for QTBUG-145585: On Windows, Popup.Window menus do not respect
+    // the modal property, allowing clicks to pass through to underlying items.
+    // This item lives in the window overlay layer (above all delegates) and
+    // intercepts every click while a menu is open, closing it and swallowing the
+    // event so nothing underneath reacts. Only menus are affected; plain Popup
+    // items (time editor, message boxes, dialogs) are not covered here.
+    Item {
+        parent: Overlay.overlay
+        anchors.fill: parent
+        visible: Qt.platform.os === "windows" && (_editLoader.isEditingCommentType || _contextMenuLoader.active)
+
+        MouseArea {
+            anchors.fill: parent
+            onPressed: event => {
+                event.accepted = true;
+                if (_editLoader.isEditingCommentType && _editLoader.item) {
+                    _editLoader.item.close();
+                } else if (_contextMenuLoader.active && _contextMenuLoader.item) {
+                    _contextMenuLoader.item.close();
+                }
+            }
+        }
+    }
+    // *** *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***
+
     MpvqcContextMenuLoader {
         id: _contextMenuLoader
 
