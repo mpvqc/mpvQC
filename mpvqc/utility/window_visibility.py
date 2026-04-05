@@ -18,7 +18,7 @@ class MpvqcWindowVisibilityHandler(QObject):
     _window_properties_service = inject.attr(WindowPropertiesService)
     _main_window = inject.attr(MainWindowService)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._window = self._main_window.window
         self._was_maximized_before = False

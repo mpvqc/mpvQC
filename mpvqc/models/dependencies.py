@@ -15,7 +15,7 @@ from mpvqc.services import BuildInfoService
 if typing.TYPE_CHECKING:
     from typing import Any
 
-    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
+    from PySide6.QtCore import QModelIndex, QObject, QPersistentModelIndex
 
     from mpvqc.build import Dependency
 
@@ -35,7 +35,7 @@ class MpvqcDependencyModel(QAbstractListModel):
     UrlRole = Qt.ItemDataRole.UserRole + 4
     LicenceRole = Qt.ItemDataRole.UserRole + 5
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._all_dependencies: list[Dependency] = [
             *self._build_info.dependencies,

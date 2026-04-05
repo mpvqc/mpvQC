@@ -20,7 +20,7 @@ class MpvqcApplicationViewModel(QObject):
 
     windowBorderChanged = Signal(int)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._window_border = self._compute_window_border()
         self._window_properties.is_fullscreen_changed.connect(lambda _: self._update_window_border())

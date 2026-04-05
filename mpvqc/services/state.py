@@ -11,7 +11,7 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 class StateService(QObject):
     saved_changed = Signal(bool)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._state = ApplicationState(document=None, video=None, saved=True)
 

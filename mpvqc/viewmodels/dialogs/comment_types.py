@@ -42,7 +42,7 @@ class MpvqcCommentTypesDialogViewModel(QObject):
     setTextFieldRequested = Signal(str)
     focusTextFieldRequested = Signal(bool)
 
-    def __init__(self, /, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._model = QStringListModel(list(self._settings.comment_types), self)
 

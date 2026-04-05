@@ -20,7 +20,7 @@ class MpvqcVersionCheckMessageBoxViewModel(QObject):
     titleChanged = Signal()
     textChanged = Signal()
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._title = ""
         self._text = ""

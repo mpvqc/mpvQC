@@ -18,7 +18,7 @@ class MpvqcPlayerViewModel(QObject):
     _player = inject.attr(PlayerService)
 
     @Slot(int, int)
-    def moveMouse(self, x, y) -> None:
+    def moveMouse(self, x: int, y: int) -> None:
         self._player.move_mouse(x, y)
 
     @Slot()

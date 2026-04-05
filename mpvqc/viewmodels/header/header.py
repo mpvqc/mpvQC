@@ -30,7 +30,7 @@ class MpvqcHeaderViewModel(QObject):
     toggleMaximizeAppRequested = Signal()
     closeAppRequested = Signal()
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._player.video_loaded_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
         self._player.path_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
