@@ -93,6 +93,7 @@ Item {
 
         ToolButton {
             id: _playButton
+            objectName: "playButton"
 
             focusPolicy: Qt.NoFocus
             icon.source: "qrc:/data/icons/play_arrow_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
@@ -102,6 +103,7 @@ Item {
 
         Label {
             id: _timeLabel
+            objectName: "timeLabel"
 
             text: MpvqcTableUtility.formatTime(root.time)
             horizontalAlignment: Text.AlignHCenter
@@ -117,6 +119,7 @@ Item {
 
         Label {
             id: _commentTypeLabel
+            objectName: "commentTypeLabel"
 
             text: qsTranslate("CommentTypes", root.commentType)
             horizontalAlignment: Text.AlignLeft
@@ -132,6 +135,7 @@ Item {
 
         Label {
             id: _commentLabel
+            objectName: "commentLabel"
 
             property int editorHeight: -1 // will be manipulated from the popup above while editing
 
