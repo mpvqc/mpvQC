@@ -84,6 +84,10 @@ TestCase {
 
         control.openImportQcDocumentsDialog();
         waitUntilLoaded(control);
+        if (Qt.platform.os === "windows") {
+            // We run into crashs on Windows if we close the dialog immediately after it has been opened.
+            wait(1000);
+        }
         control.item.close();
 
         tryVerify(() => !control.item, 1000);
