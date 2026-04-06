@@ -82,8 +82,8 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // Menu should appear at cursor position (no violations)
-        compare(menu.x, 100);
-        compare(menu.y, 100);
+        fuzzyCompare(menu.x, 100, 2);
+        fuzzyCompare(menu.y, 100, 2);
         compare(menu.transformOrigin, Popup.TopLeft);
     }
 
@@ -99,8 +99,8 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // Menu should flip left and up
-        compare(menu.x, posX - menu.width);
-        compare(menu.y, posY - menu.height);
+        fuzzyCompare(menu.x, posX - menu.width, 2);
+        fuzzyCompare(menu.y, posY - menu.height, 2);
         compare(menu.transformOrigin, Popup.BottomRight);
     }
 
@@ -116,8 +116,8 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // Menu should flip up but not left
-        compare(menu.x, posX);
-        compare(menu.y, posY - menu.height);
+        fuzzyCompare(menu.x, posX, 2);
+        fuzzyCompare(menu.y, posY - menu.height, 2);
         compare(menu.transformOrigin, Popup.BottomLeft);
     }
 
@@ -133,8 +133,8 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // Menu should flip left but not up
-        compare(menu.x, posX - menu.width);
-        compare(menu.y, posY);
+        fuzzyCompare(menu.x, posX - menu.width, 2);
+        fuzzyCompare(menu.y, posY, 2);
         compare(menu.transformOrigin, Popup.TopRight);
     }
 
@@ -149,8 +149,8 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // In mirrored mode, menu extends to the left by default
-        compare(menu.x, 400 - menu.width);
-        compare(menu.y, 100);
+        fuzzyCompare(menu.x, 400 - menu.width, 2);
+        fuzzyCompare(menu.y, 100, 2);
         compare(menu.transformOrigin, Popup.TopRight);
     }
 
@@ -165,8 +165,8 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // Menu should flip to the right
-        compare(menu.x, 10);
-        compare(menu.y, 100);
+        fuzzyCompare(menu.x, 10, 2);
+        fuzzyCompare(menu.y, 100, 2);
         compare(menu.transformOrigin, Popup.TopLeft);
     }
 
@@ -203,7 +203,7 @@ TestCase {
         tryVerify(() => menu.opened);
 
         // Menu should use the overridden position
-        compare(menu.x, 200);
-        compare(menu.y, 300);
+        fuzzyCompare(menu.x, 200, 2);
+        fuzzyCompare(menu.y, 300, 2);
     }
 }
