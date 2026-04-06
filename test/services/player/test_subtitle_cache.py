@@ -105,4 +105,4 @@ def test_subtitles_cached_during_video_load(mpv_mock, player_service):
 
 # noinspection PyProtectedMember
 def _simulate_path_changed_event(player_service: PlayerService):
-    player_service._on_player_path_changed(None, str(VIDEO))
+    player_service._on_player_path_changed("path", str(VIDEO))

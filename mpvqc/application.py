@@ -2,10 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import os
 import sys
 import tempfile
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import QUrl, Slot
@@ -22,6 +25,9 @@ from mpvqc.services import (
 )
 from mpvqc.utility import CloseEventFilter
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
@@ -31,8 +37,8 @@ class MpvqcApplication(QGuiApplication):
     _main_window = inject.attr(MainWindowService)
     _settings = inject.attr(SettingsService)
 
-    def __init__(self, args) -> None:
-        super().__init__(args)
+    def __init__(self, arguments: Sequence[str]) -> None:
+        super().__init__(arguments)
         self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
         self._engine.addImportPath(":/qt/qml/styles")

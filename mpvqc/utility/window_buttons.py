@@ -21,7 +21,7 @@ class MpvqcWindowButtons(QObject):
     showMaximizeButtonChanged = Signal(bool)
     showCloseButtonChanged = Signal(bool)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._preference: WindowButtonPreference = self._host_integration.DEFAULT_WINDOW_BUTTON_PREFERENCE
 

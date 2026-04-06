@@ -2,14 +2,22 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import logging
 import os
 import re
 import sys
 import typing
-from collections.abc import Callable
 from enum import StrEnum
-from typing import Final
+from typing import TYPE_CHECKING, Final
+
+from PySide6.QtCore import QtMsgType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from PySide6.QtCore import QMessageLogContext
 
 MPV_LEVEL: Final[int] = 25
 logging.addLevelName(MPV_LEVEL, "MPV")
@@ -95,8 +103,7 @@ def setup_mpvqc_logging() -> None:
             logging.getLogger(name).setLevel(logging.WARNING)
 
 
-def qt_log_handler() -> Callable:
-    from PySide6.QtCore import QtMsgType
+def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
 
     levels: Final[dict[QtMsgType, int]] = {
         QtMsgType.QtDebugMsg: logging.DEBUG,
@@ -108,15 +115,17 @@ def qt_log_handler() -> Callable:
 
     logger_name_pattern = re.compile(r"file::(.*?):(.*?):\s(.*?)$")
 
-    def handler(message_type: QtMsgType, context, message) -> None:
-        if context.file:
-            logger_name = context.file.removeprefix("file::/").replace("/", ".").rstrip(".qml")
-            line = int(context.line)
+    def handler(message_type: QtMsgType, context: QMessageLogContext, message: str) -> None:
+        file = str(context.file) if context.file else None
+
+        if file:
+            logger_name = file.removeprefix("file::/").replace("/", ".").rstrip(".qml")
+            line = context.line if isinstance(context.line, int) else 0
             msg = message
         elif message.startswith("file") and (match := logger_name_pattern.match(message)):
             logger_name = match.group(1).lstrip("/").replace("/", ".").rstrip(".qml")
             line = int(match.group(2).split(":")[0].strip())
-            msg = match.group(3)
+            msg = str(match.group(3))
         else:
             logger_name = "unknown"
             line = 0

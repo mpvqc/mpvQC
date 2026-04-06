@@ -2,7 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Iterator, Sequence
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, cast
 
 import inject
@@ -10,7 +11,6 @@ from PySide6.QtCore import Property, QModelIndex, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
-from mpvqc.datamodels import Comment
 from mpvqc.services import ImporterService, PlayerService, ResetService, StateService
 
 from .roles import Role
@@ -27,6 +27,12 @@ from .undo import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
+
+    from PySide6.QtCore import QObject
+
+    from mpvqc.datamodels import Comment
+
     from .item import CommentItem
 
 QML_IMPORT_NAME = "pyobjects"
@@ -69,7 +75,7 @@ class MpvqcCommentModel(QStandardItemModel):
 
     search_invalidated = Signal()
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)

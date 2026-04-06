@@ -23,7 +23,7 @@ class MpvqcBackupDialogViewModel(QObject):
     temporaryBackupEnabledChanged = Signal(bool)
     temporaryBackupIntervalChanged = Signal(int)
 
-    def __init__(self, /, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._temporary_backup_enabled = self._settings.backup_enabled
         self._temporary_backup_interval = self._settings.backup_interval

@@ -23,7 +23,7 @@ class MpvqcWindowPropertiesBackend(QObject):
     isFullscreenChanged = Signal(bool)
     isMaximizedChanged = Signal(bool)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._window_properties_service.width_changed.connect(self.appWidthChanged.emit)
         self._window_properties_service.height_changed.connect(self.appHeightChanged.emit)

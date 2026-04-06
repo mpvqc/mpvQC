@@ -23,7 +23,7 @@ class MpvqcLabelWidthCalculatorBackend(QObject):
     commentTypesLabelWidthChanged = Signal(int)
     timeLabelWidthChanged = Signal(int)
 
-    def __init__(self, /, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
 
         self._comment_type_label_width = 0

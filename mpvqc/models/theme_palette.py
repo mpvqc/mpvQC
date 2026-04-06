@@ -15,7 +15,7 @@ from mpvqc.services import SettingsService, ThemeService
 if typing.TYPE_CHECKING:
     from typing import Any
 
-    from PySide6.QtCore import QModelIndex, QPersistentModelIndex
+    from PySide6.QtCore import QModelIndex, QObject, QPersistentModelIndex
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -44,7 +44,7 @@ class MpvqcThemePaletteModel(QAbstractListModel):
 
     themeIdentifierChanged = Signal(str)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._theme_identifier = self._settings.theme_identifier
 

@@ -107,11 +107,10 @@ class SettingsService(QObject):
     # Window Title
     windowTitleFormatChanged = Signal(int)
 
-    def __init__(self, parent=None, ini_file: str | None = None) -> None:
+    def __init__(self, parent: QObject | None = None, ini_file: str | None = None) -> None:
         super().__init__(parent)
-        if ini_file is None:
-            ini_file = self._type_mapper.map_path_to_str(self._paths.file_settings)
-        self._settings = QSettings(ini_file, QSettings.Format.IniFormat)
+        file = ini_file if ini_file is not None else self._type_mapper.map_path_to_str(self._paths.file_settings)
+        self._settings = QSettings(file, QSettings.Format.IniFormat)
 
     def _get[T](self, key: str, default: T, *, _type: type[T]) -> T:
         # noinspection PyUnnecessaryCast
