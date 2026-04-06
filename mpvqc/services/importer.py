@@ -3,13 +3,20 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import inject
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.datamodels import Comment, VideoSource
+from mpvqc.datamodels import (
+    NO_DOCUMENT_IMPORT,
+    NO_SUBTITLE_IMPORT,
+    Comment,
+    DocumentImportResult,
+    SubtitleImportResult,
+    VideoSource,
+)
 
 from .document_importer import DocumentImporterService
 from .player import PlayerService
@@ -17,21 +24,17 @@ from .settings import SettingsService
 from .state import StateService
 from .subtitle_importer import SubtitleImporterService
 
-DocumentImportResult = DocumentImporterService.DocumentImportResult
-SubtitleImportResult = SubtitleImporterService.SubtitleImportResult
-
-
 logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
 class ScanResult:
     explicit_video_provided: bool
-    found_videos: tuple[VideoSource, ...] = field(default_factory=tuple)
-    found_subtitles: tuple[Path, ...] = field(default_factory=tuple)
-    comments: tuple[Comment, ...] = field(default_factory=tuple)
-    valid_documents: tuple[Path, ...] = field(default_factory=tuple)
-    invalid_documents: tuple[Path, ...] = field(default_factory=tuple)
+    found_videos: tuple[VideoSource, ...]
+    found_subtitles: tuple[Path, ...]
+    comments: tuple[Comment, ...]
+    valid_documents: tuple[Path, ...]
+    invalid_documents: tuple[Path, ...]
 
 
 class ResourceScanner:
@@ -46,9 +49,9 @@ class ResourceScanner:
     ) -> ScanResult:
         explicit_video_provided = bool(videos)
 
-        document_result = self._doc_importer.NO_IMPORT
-        doc_subtitles_result = self._sub_importer.NO_IMPORT
-        subtitle_result = self._sub_importer.NO_IMPORT
+        document_result = NO_DOCUMENT_IMPORT
+        doc_subtitles_result = NO_SUBTITLE_IMPORT
+        subtitle_result = NO_SUBTITLE_IMPORT
 
         if documents:
             document_result = self._doc_importer.read(documents)
@@ -70,7 +73,7 @@ class ResourceScanner:
         if explicit_video_provided:
             found_videos = tuple(VideoSource(path=v, from_document=False, from_subtitle=False) for v in videos)
         else:
-            found_videos = tuple(self._collect_videos(document_result, subtitle_result, doc_subtitles_result))
+            found_videos = self._collect_videos(document_result, subtitle_result, doc_subtitles_result)
 
         return ScanResult(
             explicit_video_provided=explicit_video_provided,
@@ -86,7 +89,7 @@ class ResourceScanner:
         document_result: DocumentImportResult,
         subtitle_result: SubtitleImportResult,
         doc_subtitles_result: SubtitleImportResult,
-    ) -> list[VideoSource]:
+    ) -> tuple[VideoSource, ...]:
         videos_from_documents = [
             VideoSource(path=video, from_document=True, from_subtitle=False)
             for video in document_result.existing_videos
@@ -106,7 +109,7 @@ class ResourceScanner:
         return self._deduplicate_and_merge_video_sources(all_videos)
 
     @staticmethod
-    def _deduplicate_and_merge_video_sources(videos: list[VideoSource]) -> list[VideoSource]:
+    def _deduplicate_and_merge_video_sources(videos: list[VideoSource]) -> tuple[VideoSource, ...]:
         video_dict: dict[Path, VideoSource] = {}
         for video in videos:
             if existing := video_dict.get(video.path):
@@ -117,7 +120,7 @@ class ResourceScanner:
                 )
             else:
                 video_dict[video.path] = video
-        return list(video_dict.values())
+        return tuple(video_dict.values())
 
 
 class ImporterService(QObject):
