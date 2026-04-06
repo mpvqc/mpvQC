@@ -14,13 +14,14 @@ Loader {
     readonly property MpvqcPlayerViewModel viewModel: MpvqcPlayerViewModel {}
     readonly property bool isFullScreen: MpvqcWindowUtility.isFullscreen
 
+    readonly property bool isWindows: Qt.platform.os === "windows"
     readonly property url windowsPlayer: Qt.resolvedUrl("qrc:/qt/qml/views/main/MpvqcPlayerWindows.qml")
     readonly property url linuxPlayer: Qt.resolvedUrl("qrc:/qt/qml/views/main/MpvqcPlayerLinux.qml")
 
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
 
-    source: Qt.platform.os === "windows" ? windowsPlayer : linuxPlayer
+    source: isWindows ? windowsPlayer : linuxPlayer
     asynchronous: true
 
     MouseArea {
@@ -58,6 +59,10 @@ Loader {
         }
 
         onPressed: event => {
+            if (root.isWindows && !Window.window.active) {
+                Window.window.requestActivate();
+            }
+
             switch (event.button) {
             case Qt.LeftButton:
                 root.viewModel.pressMouseLeft();
