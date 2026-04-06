@@ -9,6 +9,7 @@ from unittest.mock import Mock
 import inject
 import pytest
 
+from mpvqc.datamodels import NO_DOCUMENT_IMPORT, NO_SUBTITLE_IMPORT, DocumentImportResult, SubtitleImportResult
 from mpvqc.services import (
     DocumentImporterService,
     PlayerService,
@@ -21,16 +22,12 @@ from mpvqc.services.importer import ImporterService
 
 @pytest.fixture
 def document_importer_service_mock():
-    mock = Mock(spec_set=DocumentImporterService)
-    mock.NO_IMPORT = DocumentImporterService.NO_IMPORT
-    return mock
+    return Mock(spec_set=DocumentImporterService)
 
 
 @pytest.fixture
 def subtitle_importer_service_mock():
-    mock = Mock(spec_set=SubtitleImporterService)
-    mock.NO_IMPORT = SubtitleImporterService.NO_IMPORT
-    return mock
+    return Mock(spec_set=SubtitleImporterService)
 
 
 @pytest.fixture
@@ -79,8 +76,8 @@ def test_example_1_single_explicit_video(
 ):
     # Given
     video = Path.home() / "video.mp4"
-    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
-    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    document_importer_service_mock.read.return_value = NO_DOCUMENT_IMPORT
+    subtitle_importer_service_mock.read.return_value = NO_SUBTITLE_IMPORT
     player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -113,7 +110,7 @@ def test_example_2_single_document_no_video_references(
     comment1 = Mock()
     comment2 = Mock()
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(comment1, comment2),
         valid_documents=(document,),
         invalid_documents=(),
@@ -122,7 +119,7 @@ def test_example_2_single_document_no_video_references(
     )
 
     document_importer_service_mock.read.return_value = doc_result
-    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = NO_SUBTITLE_IMPORT
     player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -191,7 +188,7 @@ def test_single_document_one_video_not_loaded(
     document = Path.home() / "comments.txt"
     video = Path.home() / "video.mp4"
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(Mock(),),
         valid_documents=(document,),
         invalid_documents=(),
@@ -200,7 +197,7 @@ def test_single_document_one_video_not_loaded(
     )
 
     document_importer_service_mock.read.return_value = doc_result
-    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = NO_SUBTITLE_IMPORT
     player_service_mock.is_video_loaded.return_value = False
     settings_service.import_found_video = test_case.setting.value
 
@@ -232,7 +229,7 @@ def test_single_document_one_video_already_loaded(
     document = Path.home() / "comments.txt"
     video = Path.home() / "video.mp4"
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(Mock(),),
         valid_documents=(document,),
         invalid_documents=(),
@@ -241,7 +238,7 @@ def test_single_document_one_video_already_loaded(
     )
 
     document_importer_service_mock.read.return_value = doc_result
-    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    subtitle_importer_service_mock.read.return_value = NO_SUBTITLE_IMPORT
     player_service_mock.is_video_loaded.return_value = True
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -274,7 +271,7 @@ def test_single_document_multiple_videos(
     video1 = Path.home() / "video1.mp4"
     video2 = Path.home() / "video2.mp4"
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(Mock(),),
         valid_documents=(document,),
         invalid_documents=(),
@@ -282,7 +279,7 @@ def test_single_document_multiple_videos(
         existing_subtitles=(subtitle,),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle,),
         existing_videos=(video2,),
     )
@@ -349,7 +346,7 @@ def test_single_document_video_from_subtitle_not_loaded(
     subtitle = Path.home() / "subs.srt"
     video = Path.home() / "video.mp4"
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(Mock(),),
         valid_documents=(document,),
         invalid_documents=(),
@@ -357,7 +354,7 @@ def test_single_document_video_from_subtitle_not_loaded(
         existing_subtitles=(subtitle,),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle,),
         existing_videos=(video,),
     )
@@ -425,7 +422,7 @@ def test_single_document_video_and_subtitle_same_video_not_loaded(
     subtitle = Path.home() / "subs.srt"
     video = Path.home() / "video.mp4"
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(Mock(),),
         valid_documents=(document,),
         invalid_documents=(),
@@ -433,7 +430,7 @@ def test_single_document_video_and_subtitle_same_video_not_loaded(
         existing_subtitles=(subtitle,),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle,),
         existing_videos=(video,),
     )
@@ -478,7 +475,7 @@ def test_single_document_video_and_subtitle_same_video_already_loaded(
     subtitle = Path.home() / "subs.srt"
     video = Path.home() / "video.mp4"
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(Mock(),),
         valid_documents=(document,),
         invalid_documents=(),
@@ -486,7 +483,7 @@ def test_single_document_video_and_subtitle_same_video_already_loaded(
         existing_subtitles=(subtitle,),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle,),
         existing_videos=(video,),
     )
@@ -530,7 +527,7 @@ def test_multiple_documents_single_video_already_loaded(
     comment1 = Mock()
     comment2 = Mock()
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(comment1, comment2),
         valid_documents=(document1, document2),
         invalid_documents=(),
@@ -538,7 +535,7 @@ def test_multiple_documents_single_video_already_loaded(
         existing_subtitles=(subtitle1, subtitle2),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle1, subtitle2),
         existing_videos=(video,),
     )
@@ -585,7 +582,7 @@ def test_multiple_documents_video_not_loaded(
     comment1 = Mock()
     comment2 = Mock()
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(comment1, comment2),
         valid_documents=(document1, document2),
         invalid_documents=(),
@@ -593,7 +590,7 @@ def test_multiple_documents_video_not_loaded(
         existing_subtitles=(subtitle1, subtitle2),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle1, subtitle2),
         existing_videos=(video2, video3),
     )
@@ -643,7 +640,7 @@ def test_document_and_explicit_video(
     comment1 = Mock()
     comment2 = Mock()
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(comment1, comment2),
         valid_documents=(document,),
         invalid_documents=(),
@@ -651,7 +648,7 @@ def test_document_and_explicit_video(
         existing_subtitles=(subtitle,),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle,),
         existing_videos=(),
     )
@@ -691,12 +688,12 @@ def test_multiple_subtitles_same_video_already_loaded(
     subtitle2 = Path.home() / "subs2.srt"
     video = Path.home() / "video.mp4"
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle1, subtitle2),
         existing_videos=(video, video),
     )
 
-    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    document_importer_service_mock.read.return_value = NO_DOCUMENT_IMPORT
     subtitle_importer_service_mock.read.return_value = sub_result
     player_service_mock.is_video_loaded.return_value = True
 
@@ -731,12 +728,12 @@ def test_multiple_subtitles_different_videos(
     video1 = Path.home() / "video1.mp4"
     video2 = Path.home() / "video2.mp4"
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle1, subtitle2),
         existing_videos=(video1, video2),
     )
 
-    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    document_importer_service_mock.read.return_value = NO_DOCUMENT_IMPORT
     subtitle_importer_service_mock.read.return_value = sub_result
     player_service_mock.is_video_loaded.return_value = False
 
@@ -819,12 +816,12 @@ def test_subtitle_with_video_reference_not_loaded(
     subtitle = Path.home() / "subs.srt"
     video = Path.home() / "video.mp4"
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle,),
         existing_videos=(video,),
     )
 
-    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
+    document_importer_service_mock.read.return_value = NO_DOCUMENT_IMPORT
     subtitle_importer_service_mock.read.return_value = sub_result
     player_service_mock.is_video_loaded.return_value = False
     settings_service.import_found_video = test_case.setting.value
@@ -858,8 +855,8 @@ def test_multiple_explicit_videos(
     video1 = Path.home() / "video1.mp4"
     video2 = Path.home() / "video2.mp4"
 
-    document_importer_service_mock.read.return_value = DocumentImporterService.NO_IMPORT
-    subtitle_importer_service_mock.read.return_value = SubtitleImporterService.NO_IMPORT
+    document_importer_service_mock.read.return_value = NO_DOCUMENT_IMPORT
+    subtitle_importer_service_mock.read.return_value = NO_SUBTITLE_IMPORT
     player_service_mock.is_video_loaded.return_value = False
 
     comments_spy = make_spy(service.comments_ready_for_import)
@@ -906,7 +903,7 @@ def test_multiple_videos_one_already_loaded(
     comment1 = Mock()
     comment2 = Mock()
 
-    doc_result = DocumentImporterService.DocumentImportResult(
+    doc_result = DocumentImportResult(
         comments=(comment1, comment2),
         valid_documents=(document,),
         invalid_documents=(),
@@ -914,7 +911,7 @@ def test_multiple_videos_one_already_loaded(
         existing_subtitles=(subtitle1, subtitle2),
     )
 
-    sub_result = SubtitleImporterService.SubtitleImportResult(
+    sub_result = SubtitleImportResult(
         subtitles=(subtitle1, subtitle2),
         existing_videos=(video1, video2),
     )

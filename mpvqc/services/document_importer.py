@@ -3,12 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import re
-from dataclasses import dataclass, field
 from pathlib import Path
 
 import inject
 
-from mpvqc.datamodels import Comment
+from mpvqc.datamodels import Comment, DocumentImportResult
 
 from .reverse_translator import ReverseTranslatorService
 
@@ -19,16 +18,6 @@ class DocumentImporterService:
     _REGEX_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")
     _REGEX_SUBTITLE = re.compile(r"^subtitle\s*?:(?P<subtitle>.*)$")
     _REGEX_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
-
-    @dataclass(frozen=True)
-    class DocumentImportResult:
-        valid_documents: tuple[Path, ...] = field(default_factory=tuple)
-        invalid_documents: tuple[Path, ...] = field(default_factory=tuple)
-        existing_videos: tuple[Path, ...] = field(default_factory=tuple)
-        existing_subtitles: tuple[Path, ...] = field(default_factory=tuple)
-        comments: tuple[Comment, ...] = field(default_factory=tuple)
-
-    NO_IMPORT = DocumentImportResult()
 
     def read(self, documents: list[Path]) -> DocumentImportResult:
         valid_docs = []
@@ -53,7 +42,7 @@ class DocumentImporterService:
             existing_subs.extend(s for s in subtitles if s.is_file())
             all_comments.extend(comments)
 
-        return self.DocumentImportResult(
+        return DocumentImportResult(
             valid_documents=tuple(valid_docs),
             invalid_documents=tuple(invalid_docs),
             existing_videos=tuple(existing_vids),
