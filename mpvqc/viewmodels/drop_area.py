@@ -25,7 +25,7 @@ class ImportJob(QRunnable):
 
     @typing.override
     def run(self) -> None:
-        subtitle_extensions = [f".{ext}" for ext in self._mimetype_provider.subtitle_file_extensions]
+        subtitle_extensions = [f".{ext}" for ext in self._mimetype_provider.SUBTITLE_FILE_EXTENSIONS]
 
         documents = []
         subtitles = []

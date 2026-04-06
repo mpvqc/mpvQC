@@ -2,12 +2,25 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QMimeDatabase
 
+if TYPE_CHECKING:
+    from typing import Final
+
 
 class MimetypeProviderService:
+    # fmt: off
+    SUBTITLE_FILE_EXTENSIONS: Final[frozenset[str]] = frozenset({
+        "aqt", "ass", "idx", "js", "jss", "mks", "rt", "scc", "smi",
+        "srt", "ssa", "sub", "sup", "utf", "utf-8", "utf8", "vtt"
+    })
+    # fmt: on
+
     @cached_property
     def video_file_glob_pattern(self) -> str:
         patterns = set()
@@ -23,14 +36,5 @@ class MimetypeProviderService:
 
     @cached_property
     def subtitle_file_glob_pattern(self) -> str:
-        patterns = (f"*.{ext}" for ext in self.subtitle_file_extensions)
+        patterns = (f"*.{ext}" for ext in self.SUBTITLE_FILE_EXTENSIONS)
         return f" ({' '.join(sorted(patterns))})"
-
-    @cached_property
-    def subtitle_file_extensions(self) -> set[str]:
-        # fmt: off
-        return {
-            "aqt", "ass", "idx", "js", "jss", "mks", "rt", "scc", "smi",
-            "srt", "ssa", "sub", "sup", "utf", "utf-8", "utf8", "vtt"
-        }
-        # fmt: on
