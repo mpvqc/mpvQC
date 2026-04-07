@@ -16,12 +16,12 @@ class CommentsService:
     def __init__(self) -> None:
         self._provider: CommentsProvider | None = None
 
-    def initialize(self, provider: CommentsProvider) -> None:
+    def register(self, provider: CommentsProvider) -> None:
         logger.debug("Registering comments provider: %s", provider)
         self._provider = provider
 
     def comments(self) -> list[dict[str, Any]]:
         if self._provider is None:
-            msg = "CommentsService: provider has not been initialized"
+            msg = "CommentsService: provider has not been registered"
             raise RuntimeError(msg)
         return self._provider.comments()
