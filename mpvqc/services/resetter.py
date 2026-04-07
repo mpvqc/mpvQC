@@ -3,16 +3,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import QObject, Signal
 
+from .comments import CommentsService
 from .state import StateService
 
 
-class ResetService(QObject):
+class ResetService:
     _app_state = inject.attr(StateService)
-
-    perform_reset = Signal()
+    _comments = inject.attr(CommentsService)
 
     def reset(self) -> None:
-        self.perform_reset.emit()
+        self._comments.reset()
         self._app_state.reset()
