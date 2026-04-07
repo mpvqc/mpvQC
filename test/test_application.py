@@ -52,7 +52,6 @@ def test_application_configured(
     file_startup_service_mock,
     font_loader_service_mock,
     internationalization_service_mock,
-    settings_service,
 ):
     qt_app.configure()
 

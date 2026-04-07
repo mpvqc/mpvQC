@@ -3,14 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Callable, Iterable
-from unittest.mock import MagicMock
 
-import inject
 import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import PlayerService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
 DEFAULT_COMMENTS_SEARCH = (
@@ -28,14 +25,6 @@ EXTRA_COMMENTS = (
     Comment(time=7, comment_type="commentType", comment="Word 7"),
     Comment(time=8, comment_type="commentType", comment="Word 8"),
 )
-
-
-@pytest.fixture(autouse=True, scope="session")
-def configure_inject(common_bindings_with):
-    def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, MagicMock(spec_set=PlayerService))
-
-    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture(scope="session")

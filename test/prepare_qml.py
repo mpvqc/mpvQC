@@ -11,6 +11,7 @@ from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import WindowPropertiesService
 
 
+# noinspection PyPep8Naming
 class MpvqcTestSetup(QObject):
     @Slot(QQmlEngine)
     def qmlEngineAvailable(self, _: QQmlEngine):
