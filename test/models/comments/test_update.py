@@ -20,11 +20,7 @@ DEFAULT_COMMENTS = (
 @pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(
-        set_comments=DEFAULT_COMMENTS,
-        set_player_time=0,
-    )
-    return model
+    return make_model(set_comments=DEFAULT_COMMENTS)
 
 
 def test_update_time_sorts_model_again(model):
@@ -147,8 +143,8 @@ def test_update_comment_fires_signals(model, make_spy):
 
 
 def test_update_comments_consecutively_undo_redo(make_model):
-    model, _ = make_model(DEFAULT_COMMENTS, 999)
-    model.add_row("comment-type")
+    model = make_model(DEFAULT_COMMENTS)
+    model.add_row(999, "comment-type")
 
     model.update_comment(row=5, comment="First")
     model.update_comment(row=5, comment="First - Second")
