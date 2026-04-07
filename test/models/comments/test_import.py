@@ -19,11 +19,7 @@ DEFAULT_COMMENTS = (
 @pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(
-        set_comments=DEFAULT_COMMENTS,
-        set_player_time=0,
-    )
-    return model
+    return make_model(set_comments=DEFAULT_COMMENTS)
 
 
 def test_import_comments(model):
@@ -37,10 +33,7 @@ def test_import_comments(model):
 
 def test_import_sorts_comments(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(
-        set_comments=[],
-        set_player_time=0,
-    )
+    model = make_model(set_comments=[])
 
     comments = (
         Comment(time=1, comment_type="commentType", comment="Word 1"),

@@ -6,12 +6,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, cast
 
-import inject
 from PySide6.QtCore import Property, QModelIndex, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
-
-from mpvqc.services import PlayerService
 
 from .mutation import AnimatedSelection, LastRowSelection, NoViewAction, QuickSelection, RowAddEdit
 from .roles import Role
@@ -43,8 +40,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
 class MpvqcCommentModel(QStandardItemModel):
-    _player = inject.attr(PlayerService)
-
     selectedRowChanged = Signal(int)
 
     mutated = Signal(object)
@@ -120,7 +115,7 @@ class MpvqcCommentModel(QStandardItemModel):
             )
         )
 
-    def add_row(self, comment_type: str) -> None:
+    def add_row(self, time: int, comment_type: str) -> None:
         def on_after_undo(row: int) -> None:
             self.mutated.emit(QuickSelection(row=row))
             self.search_invalidated.emit()
@@ -135,7 +130,7 @@ class MpvqcCommentModel(QStandardItemModel):
             add_comment=AddComment(
                 model=self,
                 comment_type=comment_type,
-                time=self._player.current_time,
+                time=time,
                 previously_selected_row=self._selected_row,
                 on_after_undo=on_after_undo,
                 on_after_redo=on_after_redo,

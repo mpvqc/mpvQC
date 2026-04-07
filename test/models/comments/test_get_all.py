@@ -18,11 +18,7 @@ DEFAULT_COMMENTS = [
 @pytest.fixture
 def model(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(
-        set_comments=DEFAULT_COMMENTS,
-        set_player_time=0,
-    )
-    return model
+    return make_model(set_comments=DEFAULT_COMMENTS)
 
 
 def test_get_all_comments(model):

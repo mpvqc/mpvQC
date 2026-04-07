@@ -17,7 +17,7 @@ def assert_comments(expected: list[list[Any]], actual: list[dict[str, Any]]):
 
 def test_undo_redo_combination(make_model):
     # noinspection PyArgumentList
-    model, set_time = make_model(set_comments=[], set_player_time=0)
+    model = make_model(set_comments=[])
     model.import_comments(
         (
             Comment(time=10, comment_type="type 1", comment="Word 1"),
@@ -39,8 +39,7 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    set_time(25)
-    model.add_row("added 1")
+    model.add_row(25, "added 1")
     assert_comments(
         actual=model.comments(),
         expected=[
@@ -165,8 +164,7 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    set_time(55)
-    model.add_row("added 2")
+    model.add_row(55, "added 2")
     assert_comments(
         actual=model.comments(),
         expected=[
@@ -223,7 +221,7 @@ def test_undo_redo_combination(make_model):
 
 def test_merge_add_and_update(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(set_comments=[], set_player_time=25)
+    model = make_model(set_comments=[])
     model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
@@ -233,7 +231,7 @@ def test_merge_add_and_update(make_model):
         ],
     )
 
-    model.add_row("added 1")
+    model.add_row(25, "added 1")
     assert_comments(
         actual=model.comments(),
         expected=[
@@ -271,7 +269,7 @@ def test_merge_add_and_update(make_model):
 
 def test_merge_add_and_update_declined_because_of_other_command(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(set_comments=[], set_player_time=25)
+    model = make_model(set_comments=[])
     model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
@@ -281,7 +279,7 @@ def test_merge_add_and_update_declined_because_of_other_command(make_model):
         ],
     )
 
-    model.add_row("added 1")
+    model.add_row(25, "added 1")
     assert_comments(
         actual=model.comments(),
         expected=[
@@ -339,7 +337,7 @@ def test_merge_add_and_update_declined_because_of_other_command(make_model):
 
 def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model):
     # noinspection PyArgumentList
-    model, _ = make_model(set_comments=[], set_player_time=25)
+    model = make_model(set_comments=[])
     model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
@@ -349,7 +347,7 @@ def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model)
         ],
     )
 
-    model.add_row("added 1")
+    model.add_row(25, "added 1")
     assert_comments(
         actual=model.comments(),
         expected=[
