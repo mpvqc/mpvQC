@@ -47,9 +47,9 @@ def make_view_model():
     return _make
 
 
-def test_initializes_comments_service_on_construction(make_view_model, comments_service_mock):
+def test_registers_comments_service_on_construction(make_view_model, comments_service_mock):
     vm = make_view_model(comments=[])
-    comments_service_mock.initialize.assert_called_once_with(vm.model)
+    comments_service_mock.register.assert_called_once_with(vm.model)
 
 
 def test_copy_to_clipboard(make_view_model, make_spy):

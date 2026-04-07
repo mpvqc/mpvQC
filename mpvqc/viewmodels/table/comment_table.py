@@ -49,7 +49,7 @@ class MpvqcCommentTableViewModel(QObject):
 
         # noinspection PyCallingNonCallable
         self._model: MpvqcCommentModel = MpvqcCommentModel(parent=self)
-        self._comments_service.initialize(self._model)
+        self._comments_service.register(self._model)
 
         self._model.comments_imported_initial.connect(self.quickSelectionRequested)
         self._model.comments_imported_undo.connect(self.quickSelectionRequested)
