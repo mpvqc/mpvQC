@@ -198,9 +198,7 @@ def calculate_vertical_layout_sizes(
 ) -> tuple[int, int, int, int]:
     height_without_table = 2 * border_size + header_height + video_height + handle_height
 
-    new_table_height = table_height
-    while height_without_table + new_table_height > available_height:
-        new_table_height -= 5
+    new_table_height = max(0, min(table_height, available_height - height_without_table))
 
     window_width = video_width + 2 * border_size
     window_height = height_without_table + new_table_height
@@ -220,9 +218,7 @@ def calculate_horizontal_layout_sizes(
 ) -> tuple[int, int, int, int]:
     width_without_table = 2 * border_size + video_width + handle_width
 
-    new_table_width = table_width
-    while width_without_table + new_table_width > available_width:
-        new_table_width -= 5
+    new_table_width = max(0, min(table_width, available_width - width_without_table))
 
     window_width = 2 * border_size + video_width + handle_width + new_table_width
     window_height = 2 * border_size + header_height + video_height
