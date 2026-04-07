@@ -83,11 +83,3 @@ def test_clear_comments_undo_redo_fires_signals(model, make_spy):
     model.redo()
     assert spy.count() == 1
     assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=False)
-
-
-def test_clear_comments_state_changes(model, state_service_mock):
-    model.clear_comments()
-    assert state_service_mock.change.call_count == 0
-
-    model.undo()
-    assert state_service_mock.change.call_count == 1

@@ -17,12 +17,23 @@ def comments_service_mock():
     return MagicMock(spec_set=CommentsService)
 
 
+@pytest.fixture
+def state_service_mock():
+    return MagicMock(spec_set=StateService)
+
+
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, player_service_mock, settings_service, comments_service_mock):
+def configure_inject(
+    common_bindings_with,
+    player_service_mock,
+    settings_service,
+    comments_service_mock,
+    state_service_mock,
+):
     def custom_bindings(binder: inject.Binder):
         binder.bind(CommentsService, comments_service_mock)
         binder.bind(PlayerService, player_service_mock)
-        binder.bind(StateService, MagicMock(spec_set=StateService))
+        binder.bind(StateService, state_service_mock)
         binder.bind(SettingsService, settings_service)
 
     common_bindings_with(custom_bindings)
@@ -48,6 +59,15 @@ def make_view_model():
 def test_registers_comments_service_on_construction(make_view_model, comments_service_mock):
     vm = make_view_model(comments=[])
     comments_service_mock.register.assert_called_once_with(vm.model)
+
+
+def test_state_changes_on_mutation(make_view_model, state_service_mock):
+    vm = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
+    vm.removeRow(0)
+    assert state_service_mock.change.call_count == 1
+
+    vm.undo()
+    assert state_service_mock.change.call_count == 2
 
 
 def test_copy_to_clipboard(make_view_model, make_spy):

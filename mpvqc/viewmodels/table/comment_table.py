@@ -18,7 +18,7 @@ from mpvqc.models.comments.mutation import (
     QuickSelection,
     RowAddEdit,
 )
-from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
+from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService, TimeFormatterService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -30,6 +30,7 @@ class MpvqcCommentTableViewModel(QObject):
     _comments_service = inject.attr(CommentsService)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
+    _state = inject.attr(StateService)
     _time_formatter = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)
@@ -64,6 +65,9 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(object)
     def _on_mutated(self, mutation: ModelMutation) -> None:
+        if mutation.marks_unsaved:
+            self._state.change()
+
         match mutation:
             case QuickSelection(row=row):
                 self.quickSelectionRequested.emit(row)
