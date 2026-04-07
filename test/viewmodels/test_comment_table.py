@@ -8,7 +8,7 @@ import inject
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.services import CommentsService, ImporterService, PlayerService, SettingsService, StateService
+from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService
 from mpvqc.viewmodels import MpvqcCommentTableViewModel
 
 
@@ -21,7 +21,6 @@ def comments_service_mock():
 def configure_inject(common_bindings_with, player_service_mock, settings_service, comments_service_mock):
     def custom_bindings(binder: inject.Binder):
         binder.bind(CommentsService, comments_service_mock)
-        binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
         binder.bind(PlayerService, player_service_mock)
         binder.bind(StateService, MagicMock(spec_set=StateService))
         binder.bind(SettingsService, settings_service)

@@ -10,7 +10,7 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import ImporterService, PlayerService, StateService
+from mpvqc.services import PlayerService, StateService
 
 
 @pytest.fixture
@@ -26,7 +26,6 @@ def player_service_mock():
 @pytest.fixture(autouse=True)
 def configure_injections(common_bindings_with, state_service_mock, player_service_mock):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
         binder.bind(PlayerService, player_service_mock)
         binder.bind(StateService, state_service_mock)
 

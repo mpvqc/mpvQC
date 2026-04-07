@@ -18,6 +18,7 @@ from mpvqc.datamodels import (
     VideoSource,
 )
 
+from .comments import CommentsService
 from .document_importer import DocumentImporterService
 from .player import PlayerService
 from .settings import SettingsService
@@ -127,9 +128,7 @@ class ImporterService(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
     _state = inject.attr(StateService)
-
-    # note: we actually emit with tuples but this would fall back to dynamic slot registration
-    comments_ready_for_import = Signal(list)
+    _comments = inject.attr(CommentsService)
 
     # param: tuple[str, ...] - tuple of file names that could not be processed
     erroneous_documents_imported = Signal(tuple)
@@ -214,7 +213,7 @@ class ImporterService(QObject):
             return
 
         if comments := result.comments:
-            self.comments_ready_for_import.emit(comments)
+            self._comments.import_comments(comments)
 
         if video is not None:
             self._player.open_video(video)
