@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import typing
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from PySide6.QtCore import QPersistentModelIndex, Slot
 from PySide6.QtGui import QUndoCommand, QUndoStack
@@ -190,16 +190,17 @@ class UpdateTime(QUndoCommand):
 
     @typing.override
     def undo(self) -> None:
-        if (new_row := self._new_row) is not None:
-            index = self._model.index(new_row, 0)
-            self._model.setData(index, self._old_time, Role.TIME)
+        if (new_row := self._new_row) is not None and (old_time := self._old_time) is not None:
+            item = cast("CommentItem", self._model.item(new_row, 0))
+            item.time = old_time
             self._on_after_undo(self._row)
 
     @typing.override
     def redo(self) -> None:
-        index = QPersistentModelIndex(self._model.index(self._row, 0))
-        self._old_time = self._model.data(index, Role.TIME)
-        self._model.setData(index, self._new_time, Role.TIME)
+        item = cast("CommentItem", self._model.item(self._row, 0))
+        index = QPersistentModelIndex(item.index())
+        self._old_time = item.time
+        item.time = self._new_time
         self._on_after_redo(index, self._added_initially)
 
         self._added_initially = False
