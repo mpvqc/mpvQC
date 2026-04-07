@@ -63,6 +63,7 @@ class MpvqcCommentModel(QStandardItemModel):
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
 
+        self.selectedRowChanged.connect(self._undo_stack.prevent_add_update_merge)
         self._resetter.perform_reset.connect(self.clear_comments)
         self._importer.comments_ready_for_import.connect(self.import_comments)
 
@@ -80,7 +81,6 @@ class MpvqcCommentModel(QStandardItemModel):
         if self._selected_row != index:
             self._selected_row = index
             self.selectedRowChanged.emit(index)
-            self._undo_stack.prevent_add_update_merge()
 
     @Slot(result=list)
     def comments(self) -> list[dict[str, Any]]:
