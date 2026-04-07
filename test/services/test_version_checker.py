@@ -30,15 +30,6 @@ def configure_inject(
     common_bindings_with(custom_bindings)
 
 
-@pytest.fixture(autouse=True)
-def clear_cache():
-    from mpvqc.services.version_checker import _fetch_latest_version  # noqa: PLC2701
-
-    _fetch_latest_version.cache_clear()
-    yield
-    _fetch_latest_version.cache_clear()
-
-
 def mock_response(mock, *, status=200, body="", error=None):
     if error:
         mock.side_effect = error
