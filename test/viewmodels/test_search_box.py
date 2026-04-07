@@ -10,7 +10,7 @@ import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
-from mpvqc.services import ImporterService, PlayerService, ResetService
+from mpvqc.services import ImporterService, PlayerService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
 DEFAULT_COMMENTS_SEARCH = (
@@ -35,7 +35,6 @@ def configure_inject(common_bindings_with):
     def custom_bindings(binder: inject.Binder):
         binder.bind(ImporterService, MagicMock(spec_set=ImporterService))
         binder.bind(PlayerService, MagicMock(spec_set=PlayerService))
-        binder.bind(ResetService, MagicMock(spec_set=ResetService))
 
     common_bindings_with(custom_bindings)
 

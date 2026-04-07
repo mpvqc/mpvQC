@@ -11,7 +11,7 @@ from PySide6.QtCore import Property, QModelIndex, Signal, Slot
 from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ImporterService, PlayerService, ResetService, StateService
+from mpvqc.services import ImporterService, PlayerService, StateService
 
 from .mutation import AnimatedSelection, LastRowSelection, ModelMutation, NoViewAction, QuickSelection, RowAddEdit
 from .roles import Role
@@ -46,7 +46,6 @@ class MpvqcCommentModel(QStandardItemModel):
     _player = inject.attr(PlayerService)
     _state = inject.attr(StateService)
     _importer = inject.attr(ImporterService)
-    _resetter = inject.attr(ResetService)
 
     selectedRowChanged = Signal(int)
 
@@ -64,7 +63,6 @@ class MpvqcCommentModel(QStandardItemModel):
         self._selected_row = -1
 
         self.selectedRowChanged.connect(self._undo_stack.prevent_add_update_merge)
-        self._resetter.perform_reset.connect(self.clear_comments)
         self._importer.comments_ready_for_import.connect(self.import_comments)
 
     @Slot(object)
