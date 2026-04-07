@@ -63,14 +63,8 @@ class Renderer(QQuickFramebufferObject.Renderer):
     @typing.override
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
-            from mpv import MpvGlGetProcAddressFn, MpvRenderContext
-
             self._player.init()
-            self._ctx = MpvRenderContext(
-                mpv=self._player.mpv,
-                api_type="opengl",
-                opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_process_address)},
-            )
+            self._ctx = self._player.create_render_context(get_proc_address=get_process_address)
             self._ctx.update_cb = self._parent.update_requested.emit
 
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
