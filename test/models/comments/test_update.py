@@ -5,6 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
+from mpvqc.models.comments.mutation import AnimatedSelection, QuickSelection
 from mpvqc.models.comments.roles import Role
 
 DEFAULT_COMMENTS = (
@@ -54,36 +55,21 @@ def test_update_time_invalidates_search_results(model, make_spy):
 
 
 def test_update_time_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.time_updated_initial)
-    undone_spy = make_spy(model.time_updated_undo)
-    redone_spy = make_spy(model.time_updated_redo)
+    spy = make_spy(model.mutated)
 
     model.update_time(row=0, new_time=7)
-    assert initially_spy.count() == 1
-    assert undone_spy.count() == 0
-    assert redone_spy.count() == 0
-    assert initially_spy.at(invocation=0, argument=0) == 1
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == AnimatedSelection(row=1)
 
-    initially_spy.reset()
-    undone_spy.reset()
-    redone_spy.reset()
-
+    spy.reset()
     model.undo()
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=0)
 
-    assert initially_spy.count() == 0
-    assert undone_spy.count() == 1
-    assert redone_spy.count() == 0
-
-    initially_spy.reset()
-    undone_spy.reset()
-    redone_spy.reset()
-
+    spy.reset()
     model.redo()
-
-    assert initially_spy.count() == 0
-    assert undone_spy.count() == 0
-    assert redone_spy.count() == 1
-    assert redone_spy.at(invocation=0, argument=0) == 1
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=1)
 
 
 def test_update_comment_type(model):
@@ -98,33 +84,23 @@ def test_update_comment_type(model):
 
 
 def test_update_comment_type_fires_signals(model, make_spy):
-    updated_spy = make_spy(model.comment_type_updated_initial)
-    undone_spy = make_spy(model.comment_type_updated_undo)
+    spy = make_spy(model.mutated)
 
     model.update_comment_type(row=0, comment_type="updated comment type")
-    assert updated_spy.count() == 1
-    assert updated_spy.at(invocation=0, argument=0) == 0
-    assert undone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=0)
 
-    updated_spy.reset()
-    undone_spy.reset()
-
+    spy.reset()
     model.undo()
     model.selectedRow = 3
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=0)
 
-    assert updated_spy.count() == 0
-    assert undone_spy.count() == 1
-    assert undone_spy.at(invocation=0, argument=0) == 0
-
-    updated_spy.reset()
-    undone_spy.reset()
-
+    spy.reset()
     model.redo()
     model.selectedRow = 3
-
-    assert updated_spy.count() == 1
-    assert undone_spy.count() == 0
-    assert updated_spy.at(invocation=0, argument=0) == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=0)
 
 
 def test_update_comment(model):
@@ -152,32 +128,22 @@ def test_update_comment_invalidates_search_results(model, make_spy):
 
 
 def test_update_comment_fires_signals(model, make_spy):
-    updated_spy = make_spy(model.comment_updated_initial)
-    undone_spy = make_spy(model.comment_updated_undo)
+    spy = make_spy(model.mutated)
 
-    model.update_comment(row=0, comment="new")
-    assert updated_spy.count() == 1
-    assert updated_spy.at(invocation=0, argument=0) == 0
-    assert undone_spy.count() == 0
+    model.update_comment(row=1, comment="new")
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=1)
 
-    updated_spy.reset()
-    undone_spy.reset()
-
+    spy.reset()
     model.undo()
     model.selectedRow = 3
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=1)
 
-    assert updated_spy.count() == 0
-    assert undone_spy.count() == 1
-    assert undone_spy.at(invocation=0, argument=0) == 0
-
-    updated_spy.reset()
-    undone_spy.reset()
-
+    spy.reset()
     model.redo()
-
-    assert updated_spy.count() == 1
-    assert undone_spy.count() == 0
-    assert updated_spy.at(invocation=0, argument=0) == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=1)
 
 
 def test_update_comments_consecutively_undo_redo(make_model):

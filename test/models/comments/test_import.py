@@ -5,6 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
+from mpvqc.models.comments.mutation import QuickSelection
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -59,12 +60,12 @@ def test_import_sorts_comments(make_model):
 
 
 def test_import_comments_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.comments_imported_initial)
+    spy = make_spy(model.mutated)
 
     model.import_comments(DEFAULT_COMMENTS)
 
-    assert initially_spy.count() == 1
-    assert initially_spy.at(invocation=0, argument=0) == 9
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=9, marks_unsaved=False)
 
 
 def test_import_comments_undo_redo(model):
@@ -110,41 +111,27 @@ def test_import_comments_undo_redo_invalidates_search(model, make_spy):
 
 
 def test_import_comments_undo_redo_fires_signals(model, make_spy):
-    initially_spy = make_spy(model.comments_imported_initial)
-    undone_spy = make_spy(model.comments_imported_undo)
-    redone_spy = make_spy(model.comments_imported_redo)
+    spy = make_spy(model.mutated)
 
     model.selectedRow = 3
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     model.import_comments((comment,))
 
-    assert initially_spy.count() == 1
-    assert initially_spy.at(invocation=0, argument=0) == 5
-    assert undone_spy.count() == 0
-    assert redone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=5, marks_unsaved=False)
 
-    initially_spy.reset()
-    undone_spy.reset()
-    redone_spy.reset()
-
+    spy.reset()
     model.undo()
 
-    assert initially_spy.count() == 0
-    assert undone_spy.count() == 1
-    assert undone_spy.at(invocation=0, argument=0) == 3
-    assert redone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=3)
 
-    initially_spy.reset()
-    undone_spy.reset()
-    redone_spy.reset()
-
+    spy.reset()
     model.redo()
 
-    assert initially_spy.count() == 0
-    assert undone_spy.count() == 0
-    assert redone_spy.count() == 1
-    assert redone_spy.at(invocation=0, argument=0) == 5
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=5)
 
 
 def test_import_comments_state_changes(model, state_service_mock):

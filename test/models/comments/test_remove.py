@@ -5,6 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
+from mpvqc.models.comments.mutation import NoViewAction, QuickSelection
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -32,11 +33,12 @@ def test_remove_comment(model):
 
 
 def test_remove_comment_fires_signals(model, make_spy):
-    removed_spy = make_spy(model.comment_removed_initial)
+    spy = make_spy(model.mutated)
 
     model.remove_row(0)
 
-    assert removed_spy.count() == 1
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=True)
 
 
 def test_remove_comment_undo_redo(model):
@@ -84,30 +86,24 @@ def test_remove_comment_undo_redo_invalidates_search_results(model, make_spy):
 
 
 def test_remove_comment_undo_redo_fires_signals(model, make_spy):
-    removed_spy = make_spy(model.comment_removed_initial)
-    removed_undone_spy = make_spy(model.comment_removed_undo)
+    spy = make_spy(model.mutated)
 
     model.remove_row(3)
 
-    assert removed_spy.count() == 1
-    assert removed_undone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=True)
 
-    removed_spy.reset()
-    removed_undone_spy.reset()
-
+    spy.reset()
     model.undo()
 
-    assert removed_spy.count() == 0
-    assert removed_undone_spy.count() == 1
-    assert removed_undone_spy.at(invocation=0, argument=0) == 3
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=3)
 
-    removed_spy.reset()
-    removed_undone_spy.reset()
-
+    spy.reset()
     model.redo()
 
-    assert removed_spy.count() == 1
-    assert removed_undone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=True)
 
 
 def test_remove_comment_state_changes(model, state_service_mock):

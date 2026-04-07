@@ -5,6 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
+from mpvqc.models.comments.mutation import QuickSelection, RowAddEdit
 from mpvqc.models.comments.roles import Role
 
 DEFAULT_COMMENTS = [
@@ -45,11 +46,12 @@ def test_add_comment_sorts_model(make_model):
 
 
 def test_add_comment_fires_signals(model, make_spy):
-    added_initially_spy = make_spy(model.comment_added_initial)
+    spy = make_spy(model.mutated)
 
     model.add_row("comment type")
 
-    assert added_initially_spy.count() == 1
+    assert spy.count() == 1
+    assert isinstance(spy.at(invocation=0, argument=0), RowAddEdit)
 
 
 def test_add_comment_undo_redo(make_model):
@@ -107,39 +109,25 @@ def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     # noinspection PyArgumentList
     model, _ = make_model(set_comments=DEFAULT_COMMENTS, set_player_time=99)
 
-    new_initially_spy = make_spy(model.comment_added_initial)
-    new_undone_spy = make_spy(model.comment_added_undo)
-    new_redone_spy = make_spy(model.comment_added_redo)
+    spy = make_spy(model.mutated)
 
     model.selectedRow = 3
     model.add_row("undo redo comment type")
 
-    assert new_initially_spy.count() == 1
-    assert new_initially_spy.at(invocation=0, argument=0) == 5
-    assert new_undone_spy.count() == 0
-    assert new_redone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == RowAddEdit(row=5)
 
-    new_initially_spy.reset()
-    new_undone_spy.reset()
-    new_redone_spy.reset()
-
+    spy.reset()
     model.undo()
 
-    assert new_initially_spy.count() == 0
-    assert new_undone_spy.count() == 1
-    assert new_undone_spy.at(invocation=0, argument=0) == 3
-    assert new_redone_spy.count() == 0
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=3)
 
-    new_initially_spy.reset()
-    new_undone_spy.reset()
-    new_redone_spy.reset()
-
+    spy.reset()
     model.redo()
 
-    assert new_initially_spy.count() == 0
-    assert new_undone_spy.count() == 0
-    assert new_redone_spy.count() == 1
-    assert new_redone_spy.at(invocation=0, argument=0) == 5
+    assert spy.count() == 1
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=5)
 
 
 def test_add_comment_state_changes(model, state_service_mock):

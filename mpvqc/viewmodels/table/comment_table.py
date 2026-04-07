@@ -2,12 +2,22 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import assert_never
+
 import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, QPointF, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import MpvqcCommentModel
+from mpvqc.models.comments.mutation import (
+    AnimatedSelection,
+    LastRowSelection,
+    ModelMutation,
+    NoViewAction,
+    QuickSelection,
+    RowAddEdit,
+)
 from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
 
 QML_IMPORT_NAME = "pyobjects"
@@ -49,29 +59,24 @@ class MpvqcCommentTableViewModel(QObject):
 
         # noinspection PyCallingNonCallable
         self._model: MpvqcCommentModel = MpvqcCommentModel(parent=self)
+        self._model.mutated.connect(self._on_mutated)
         self._comments_service.register(self._model)
 
-        self._model.comments_imported_initial.connect(self.quickSelectionRequested)
-        self._model.comments_imported_undo.connect(self.quickSelectionRequested)
-        self._model.comments_imported_redo.connect(self.quickSelectionRequested)
-
-        self._model.comments_cleared_undo.connect(self.lastRowSelected)
-
-        self._model.comment_added_initial.connect(self.rowEditRequested)
-        self._model.comment_added_undo.connect(self.quickSelectionRequested)
-        self._model.comment_added_redo.connect(self.quickSelectionRequested)
-
-        self._model.comment_removed_undo.connect(self.quickSelectionRequested)
-
-        self._model.time_updated_initial.connect(self.selectionRequested)
-        self._model.time_updated_undo.connect(self.quickSelectionRequested)
-        self._model.time_updated_redo.connect(self.quickSelectionRequested)
-
-        self._model.comment_type_updated_initial.connect(self.quickSelectionRequested)
-        self._model.comment_type_updated_undo.connect(self.quickSelectionRequested)
-
-        self._model.comment_updated_initial.connect(self.quickSelectionRequested)
-        self._model.comment_updated_undo.connect(self.quickSelectionRequested)
+    @Slot(object)
+    def _on_mutated(self, mutation: ModelMutation) -> None:
+        match mutation:
+            case QuickSelection(row=row):
+                self.quickSelectionRequested.emit(row)
+            case AnimatedSelection(row=row):
+                self.selectionRequested.emit(row)
+            case RowAddEdit(row=row):
+                self.rowEditRequested.emit(row)
+            case LastRowSelection():
+                self.lastRowSelected.emit()
+            case NoViewAction():
+                pass
+            case _ as unreachable:
+                assert_never(unreachable)
 
     @Property(list, notify=commentTypesChanged)
     def commentTypes(self) -> list[str]:

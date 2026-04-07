@@ -224,6 +224,7 @@ files = [
     "mpvqc/models/comments/__init__.py",
     "mpvqc/models/comments/item.py",
     "mpvqc/models/comments/model.py",
+    "mpvqc/models/comments/mutation.py",
     "mpvqc/models/comments/roles.py",
     "mpvqc/models/comments/undo.py",
     "mpvqc/models/comments/utils.py",
