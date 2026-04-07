@@ -2,10 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass
-from pathlib import Path
+from __future__ import annotations
 
-from PySide6.QtCore import Property, QObject, Signal, Slot
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, assert_never
+
+from PySide6.QtCore import Property, QObject, Signal
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class StateService(QObject):
@@ -23,7 +28,7 @@ class StateService(QObject):
     def document(self) -> Path | None:
         return self._state.document
 
-    def _update_state(self, new_state: "ApplicationState") -> None:
+    def _update_state(self, new_state: ApplicationState) -> None:
         old_saved = self._state.saved
         self._state = new_state
         if old_saved != self._state.saved:
@@ -33,7 +38,6 @@ class StateService(QObject):
         new_state = reduce(self._state, SaveAction(document))
         self._update_state(new_state)
 
-    @Slot()
     def change(self) -> None:
         new_state = reduce(self._state, CHANGE_ACTION)
         self._update_state(new_state)
@@ -114,8 +118,8 @@ def reduce(state: ApplicationState, action: Action) -> ApplicationState:
         case ImportAction(change):
             return _handle_import(state, change)
 
-    msg = f"Unknown action: {action}"
-    raise ValueError(msg)
+        case _ as unreachable:
+            assert_never(unreachable)
 
 
 def _handle_import(state: ApplicationState, change: ImportChange) -> ApplicationState:

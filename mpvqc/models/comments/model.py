@@ -13,6 +13,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ImporterService, PlayerService, ResetService, StateService
 
+from .mutation import AnimatedSelection, LastRowSelection, ModelMutation, NoViewAction, QuickSelection, RowAddEdit
 from .roles import Role
 from .undo import (
     AddAndUpdateCommentCommand,
@@ -49,30 +50,7 @@ class MpvqcCommentModel(QStandardItemModel):
 
     selectedRowChanged = Signal(int)
 
-    comments_imported_initial = Signal(int)  # param: row of last imported comment
-    comments_imported_undo = Signal(int)  # param: row of previously selected comment before comments have been imported
-    comments_imported_redo = Signal(int)  # param: row of last imported comment
-
-    comments_cleared_initial = Signal()
-    comments_cleared_undo = Signal()
-
-    comment_added_initial = Signal(int)  # param: row of new comment
-    comment_added_undo = Signal(int)  # param: row of previously selected comment before comment has been added
-    comment_added_redo = Signal(int)  # param: row of new redone comment
-
-    comment_removed_initial = Signal()
-    comment_removed_undo = Signal(int)  # param: row of comment that has been added back to the model
-
-    time_updated_initial = Signal(int)  # param: row index after time update
-    time_updated_undo = Signal(int)  # param: row index after time update restore
-    time_updated_redo = Signal(int)  # param: row index after time update
-
-    comment_type_updated_initial = Signal(int)
-    comment_type_updated_undo = Signal(int)
-
-    comment_updated_initial = Signal(int)
-    comment_updated_undo = Signal(int)
-
+    mutated = Signal(object)
     search_invalidated = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
@@ -80,27 +58,18 @@ class MpvqcCommentModel(QStandardItemModel):
         self.setItemRoleNames(Role.MAPPING)
         self.setSortRole(Role.TIME)
 
+        self.mutated.connect(self._on_mutated)
+
         self._undo_stack = MpvqcUndoStack(self)
         self._selected_row = -1
 
         self._resetter.perform_reset.connect(self.clear_comments)
         self._importer.comments_ready_for_import.connect(self.import_comments)
 
-        self.comments_cleared_undo.connect(self._state.change)
-        self.comments_imported_redo.connect(self._state.change)
-        self.comments_imported_undo.connect(self._state.change)
-        self.comment_added_initial.connect(self._state.change)
-        self.comment_added_undo.connect(self._state.change)
-        self.comment_added_redo.connect(self._state.change)
-        self.comment_removed_initial.connect(self._state.change)
-        self.comment_removed_undo.connect(self._state.change)
-        self.time_updated_initial.connect(self._state.change)
-        self.time_updated_undo.connect(self._state.change)
-        self.time_updated_redo.connect(self._state.change)
-        self.comment_type_updated_initial.connect(self._state.change)
-        self.comment_type_updated_undo.connect(self._state.change)
-        self.comment_updated_initial.connect(self._state.change)
-        self.comment_updated_undo.connect(self._state.change)
+    @Slot(object)
+    def _on_mutated(self, mutation: ModelMutation) -> None:
+        if mutation.marks_unsaved:
+            self._state.change()
 
     @Property(int, notify=selectedRowChanged)
     def selectedRow(self) -> int:
@@ -125,15 +94,13 @@ class MpvqcCommentModel(QStandardItemModel):
         def on_after_undo(row: int) -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
-            self.comments_imported_undo.emit(row)
+            self.mutated.emit(QuickSelection(row=row))
 
         def on_after_redo(index: QModelIndex, added_initially: bool) -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
             self.sort(0)
-
-            signal = self.comments_imported_initial if added_initially else self.comments_imported_redo
-            signal.emit(index.row())
+            self.mutated.emit(QuickSelection(row=index.row(), marks_unsaved=not added_initially))
 
         self._undo_stack.push(
             ImportComments(
@@ -150,12 +117,12 @@ class MpvqcCommentModel(QStandardItemModel):
         def on_after_undo() -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
-            self.comments_cleared_undo.emit()
+            self.mutated.emit(LastRowSelection())
 
         def on_after_redo() -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
-            self.comments_cleared_initial.emit()
+            self.mutated.emit(NoViewAction(marks_unsaved=False))
 
         self._undo_stack.push(
             ClearComments(
@@ -167,15 +134,13 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def add_row(self, comment_type: str) -> None:
         def on_after_undo(row: int) -> None:
-            self.comment_added_undo.emit(row)
+            self.mutated.emit(QuickSelection(row=row))
             self.search_invalidated.emit()
 
         def on_after_redo(index: QModelIndex, added_initially: bool) -> None:
             self.sort(0)
-
-            signal = self.comment_added_initial if added_initially else self.comment_added_redo
-            signal.emit(index.row())
-
+            mutation = RowAddEdit(row=index.row()) if added_initially else QuickSelection(row=index.row())
+            self.mutated.emit(mutation)
             self.search_invalidated.emit()
 
         command = AddAndUpdateCommentCommand(
@@ -193,11 +158,11 @@ class MpvqcCommentModel(QStandardItemModel):
     def remove_row(self, row: int) -> None:
         def on_after_undo(_row: int) -> None:
             self.sort(0)
-            self.comment_removed_undo.emit(_row)
+            self.mutated.emit(QuickSelection(row=_row))
             self.search_invalidated.emit()
 
         def on_after_redo() -> None:
-            self.comment_removed_initial.emit()
+            self.mutated.emit(NoViewAction(marks_unsaved=True))
             self.search_invalidated.emit()
 
         self._undo_stack.push(
@@ -213,14 +178,13 @@ class MpvqcCommentModel(QStandardItemModel):
         def on_after_undo(_row: int) -> None:
             self.search_invalidated.emit()
             self.sort(0)
-            self.time_updated_undo.emit(_row)
+            self.mutated.emit(QuickSelection(row=_row))
 
         def on_after_redo(index: QModelIndex, added_initially: bool) -> None:
             self.search_invalidated.emit()
             self.sort(0)
-
-            signal = self.time_updated_initial if added_initially else self.time_updated_redo
-            signal.emit(index.row())
+            mutation = AnimatedSelection(row=index.row()) if added_initially else QuickSelection(row=index.row())
+            self.mutated.emit(mutation)
 
         self._undo_stack.push(
             UpdateTime(
@@ -233,38 +197,31 @@ class MpvqcCommentModel(QStandardItemModel):
         )
 
     def update_comment_type(self, row: int, comment_type: str) -> None:
-        def on_after_undo(_row: int) -> None:
-            self.comment_type_updated_undo.emit(_row)
-
-        def on_after_redo(_row: int) -> None:
-            self.comment_type_updated_initial.emit(_row)
+        def on_mutation(_row: int) -> None:
+            self.mutated.emit(QuickSelection(row=_row))
 
         self._undo_stack.push(
             UpdateType(
                 model=self,
                 row=row,
                 new_comment_type=comment_type,
-                on_after_undo=on_after_undo,
-                on_after_redo=on_after_redo,
+                on_after_undo=on_mutation,
+                on_after_redo=on_mutation,
             )
         )
 
     def update_comment(self, row: int, comment: str) -> None:
-        def on_after_undo(_row: int) -> None:
+        def on_mutation(_row: int) -> None:
             self.search_invalidated.emit()
-            self.comment_updated_undo.emit(_row)
-
-        def on_after_redo(_row: int) -> None:
-            self.search_invalidated.emit()
-            self.comment_updated_initial.emit(_row)
+            self.mutated.emit(QuickSelection(row=_row))
 
         self._undo_stack.push(
             UpdateComment(
                 model=self,
                 row=row,
                 new_text=comment,
-                on_after_undo=on_after_undo,
-                on_after_redo=on_after_redo,
+                on_after_undo=on_mutation,
+                on_after_redo=on_mutation,
             )
         )
 
