@@ -6,17 +6,17 @@
 name = "mpvQC"
 organization = "mpvQC"
 domain = "mpvqc.github.io"
-version = ">>>tag<<<"      # CI replaces this
-commit = ">>>commit-id<<<" # CI replaces this
-is_release = false         # CI replaces this
+version = ">>>tag<<<"       # CI replaces this
+commit = ">>>commit-id<<<"  # CI replaces this
+is_release = false          # CI replaces this
 
 [[dependency]]
 name = "inject"
 package = "inject"
-version = "5.3.0"                                     # Real version, updated by script
+version = "5.3.0"                                      # Real version, updated by script
 url = "https://github.com/ivankorobkov/python-inject"
 licence = "Apache-2.0"
-platforms = ["linux", "win32"]                        # Match sys.platform values
+platforms = ["linux", "win32"]                         # Match sys.platform values
 
 [[dependency]]
 name = "jinja2"
@@ -53,7 +53,7 @@ platforms = ["win32"]
 [[dev_dependency]]
 name = "pytest"
 package = "pytest"
-version = "9.0.2"
+version = "9.0.3"
 url = "https://github.com/pytest-dev/pytest"
 licence = "MIT"
 platforms = ["linux", "win32"]

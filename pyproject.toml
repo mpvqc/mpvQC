@@ -6,34 +6,34 @@
 name = "mpvQC"
 version = "0.9.0-beta3"
 description = "libmpv based application for quality control of videos"
-requires-python = "~=3.13.0"
 readme = "README.MD"
+requires-python = "~=3.13.0"
+classifiers = [
+    "Development Status :: 4 - Beta",                                   # 4 - Beta, 5 - Production/Stable
+    "License :: OSI Approved :: GNU General Public License v3",
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3.13",
+]
 dependencies = [
-    "inject>=5.3.0",
     "Jinja2>=3.1.6",
-    "mpv>=1.0.8",
     "PySide6-Essentials==6.11.0",
+    "inject>=5.3.0",
+    "mpv>=1.0.8",
     "pywin32>=311; sys_platform == 'win32'",
 ]
-classifiers = [
-    "Development Status :: 4 - Beta",                           # 4 - Beta, 5 - Production/Stable
-    "License :: OSI Approved :: GNU General Public License v3",
-    "Programming Language :: Python :: 3.13",
-    "Private :: Do Not Upload",
-]
+
+[project.urls]
+Homepage = "https://mpvqc.github.io"
+Issues = "https://github.com/mpvqc/mpvQC/issues"
+Repository = "https://github.com/mpvqc/mpvQC"
 
 [dependency-groups]
 dev = [
     "materialyoucolor>=3.0.2",
     "prek>=0.3.8",
     "pyrefly>=0.59.1",
-    "pytest>=9.0.2",
+    "pytest>=9.0.3",
 ]
-
-[project.urls]
-Homepage = "https://mpvqc.github.io"
-Repository = "https://github.com/mpvqc/mpvQC"
-Issues = "https://github.com/mpvqc/mpvQC/issues"
 
 [tool.pyrefly]
 python-version = "3.13"
@@ -41,102 +41,6 @@ ignore-missing-imports = ["win32api", "win32con", "win32gui", "win32print"]
 
 [tool.pyrefly.errors]
 missing-override-decorator = "error"
-
-[tool.ruff]
-line-length = 120
-target-version = "py313"
-
-[tool.ruff.lint]
-preview = true
-extend-select = [
-    "F",    # Pyflakes – basic errors like unused imports, undefined names
-    "FLY",  # Flynt – suggests f-string conversion
-    "FURB", # Refurb – style suggestions from the `refurb` tool
-    "I",    # Isort – enforces import sorting
-    "PERF", # Performance – flags suboptimal code patterns
-    "PGH",  # Pygrep-hooks – enforces commit hook conventions (if any)
-    "PL",   # Pylint – a broad range of static analysis rules
-    "RUF",  # Ruff-specific – catches issues unique to ruff (e.g. mutable ClassVar, Optional vs X | Y)
-    "S",    # Bandit – security issues (e.g. eval, subprocess, etc.)
-    "UP",   # Upgrade – flags code that could use newer Python features
-
-    # flake8
-    "A",    # Builtins – flags variable/argument names that shadow Python builtins
-    "ANN",  # Annotations – checks for missing type annotations on arguments and return types
-    "ARG",  # Unused Arguments – flags unused function arguments
-    "B",    # Bugbear – finds common bugs and design problems (mutable defaults, missing raise-from, etc.)
-    "C",    # Cyclomatic complexity (mccabe) – flags overly complex code
-    "CPY",  # Copyright – checks for required copyright notices
-    "DTZ",  # datetime-timezone – flags naive datetime usage
-    "EM",   # Error Messages – ensures proper string formatting in exception messages
-    "EXE",  # Executable – checks for shebangs and file permissions
-    "FA",   # Future Annotations – flags issues with postponed evaluation of annotations
-    "FIX",  # Fixme – flags TODO, FIXME, and similar comments
-    "G",    # Logging – ensures proper usage of logging practices
-    "ICN",  # Import Conventions – checks for naming and import rules
-    "INP",  # No PEP 420 – flags implicit namespace packages (missing __init__.py)
-    "ISC",  # Implicit String Concatenation – disallows adjacent string literals without +
-    "LOG",  # Logging Format – flags improper logging string formatting
-    "PIE",  # Pie – miscellaneous Python code style improvements
-    "PT",   # Pytest – checks for pytest best practices
-    "PTH",  # Pathlib – encourages use of `pathlib` over `os.path`
-    "PYI",  # Pyi – rules for stub (`.pyi`) files
-    "Q",    # Quotes – enforces consistent quote style
-    "RET",  # Return – flags redundant or inconsistent return statements
-    "RSE",  # Raise – flags incorrect `raise` statements
-    "SIM",  # Simplify – flags code that can be simplified
-    "SLF",  # Self – restricts access to private members
-    "SLOT", # Slots – enforces use of `__slots__` where appropriate
-    "T10",  # Debugger – flags debugger imports and breakpoint() calls
-    "T20",  # Print – flags print() statements
-    "TC",   # Type-checking – ensures proper usage of `TYPE_CHECKING` blocks
-    "TD",   # TODO – flags TODO comments with optional enforcement
-    "TID",  # Tidiness – general code tidiness rules
-    "YTT",  # flake8-2020 – flags incorrect sys.version comparisons
-]
-
-ignore = [
-    "PLC0415", # `import` should be at top of file
-    "PLR0904", # Too many public methods
-    "PLR0911", # Too many return statements
-    "PLR0913", # Too many arguments
-    "PLR0914", # Too many local variables
-    "PLR0917", # Too many positional arguments
-    "PLR6301", # Method could be a function
-    "PLW0108", # Statement has no effect
-]
-
-[tool.ruff.lint.extend-per-file-ignores]
-"build-aux/**" = [
-    "T20", # Allow print() in build/dev scripts
-    "INP", # build-aux is not a package
-]
-
-"mpvqc/services/frameless/win/**" = [
-    "ANN", # Ignore missing type annotations in Windows-specific code
-]
-
-"test/**" = [ # Adjust rules for test files
-    "ANN",    # Ignore missing type annotations in tests
-    "ARG",    # Ignore unused arguments (common in fixtures)
-    "FBT",    # Ignore boolean positional argument check (e.g. in parametrize)
-    "PLR",    # Ignore complexity/readability issues
-    "RUF067", # Allow __init__ files to contain implementation in tests (e.g. fixtures)
-    "S101",   # Allow `assert` in tests
-    "SLF",    # Ignore access to private members
-]
-
-"**/test_*.py" = [
-    # Adjust rules for test files
-    "ANN",  # Ignore missing type annotations in tests
-    "S101", # Allow `assert` in tests
-]
-
-[tool.ruff.lint.isort]
-known-first-party = ["mpvqc", "rc_project"]
-
-[tool.ruff.lint.flake8-copyright]
-notice-rgx = "SPDX-FileCopyrightText: mpvQC developers"
 
 [tool.pyside6-project]
 files = [
@@ -410,3 +314,97 @@ files = [
     "qt/qml/views/table/qmldir",
     "qt/qml/views/table/tst_MpvqcCommentList.qml",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+preview = true
+extend-select = [
+    "F",           # Pyflakes – basic errors like unused imports, undefined names
+    "FLY",         # Flynt – suggests f-string conversion
+    "FURB",        # Refurb – style suggestions from the `refurb` tool
+    "I",           # Isort – enforces import sorting
+    "PERF",        # Performance – flags suboptimal code patterns
+    "PGH",         # Pygrep-hooks – enforces commit hook conventions (if any)
+    "PL",          # Pylint – a broad range of static analysis rules
+    "RUF",         # Ruff-specific – catches issues unique to ruff (e.g. mutable ClassVar, Optional vs X | Y)
+    "S",           # Bandit – security issues (e.g. eval, subprocess, etc.)
+    "UP",          # Upgrade – flags code that could use newer Python features
+
+    # flake8
+    "A",           # Builtins – flags variable/argument names that shadow Python builtins
+    "ANN",         # Annotations – checks for missing type annotations on arguments and return types
+    "ARG",         # Unused Arguments – flags unused function arguments
+    "B",           # Bugbear – finds common bugs and design problems (mutable defaults, missing raise-from, etc.)
+    "C",           # Cyclomatic complexity (mccabe) – flags overly complex code
+    "CPY",         # Copyright – checks for required copyright notices
+    "DTZ",         # datetime-timezone – flags naive datetime usage
+    "EM",          # Error Messages – ensures proper string formatting in exception messages
+    "EXE",         # Executable – checks for shebangs and file permissions
+    "FA",          # Future Annotations – flags issues with postponed evaluation of annotations
+    "FIX",         # Fixme – flags TODO, FIXME, and similar comments
+    "G",           # Logging – ensures proper usage of logging practices
+    "ICN",         # Import Conventions – checks for naming and import rules
+    "INP",         # No PEP 420 – flags implicit namespace packages (missing __init__.py)
+    "ISC",         # Implicit String Concatenation – disallows adjacent string literals without +
+    "LOG",         # Logging Format – flags improper logging string formatting
+    "PIE",         # Pie – miscellaneous Python code style improvements
+    "PT",          # Pytest – checks for pytest best practices
+    "PTH",         # Pathlib – encourages use of `pathlib` over `os.path`
+    "PYI",         # Pyi – rules for stub (`.pyi`) files
+    "Q",           # Quotes – enforces consistent quote style
+    "RET",         # Return – flags redundant or inconsistent return statements
+    "RSE",         # Raise – flags incorrect `raise` statements
+    "SIM",         # Simplify – flags code that can be simplified
+    "SLF",         # Self – restricts access to private members
+    "SLOT",        # Slots – enforces use of `__slots__` where appropriate
+    "T10",         # Debugger – flags debugger imports and breakpoint() calls
+    "T20",         # Print – flags print() statements
+    "TC",          # Type-checking – ensures proper usage of `TYPE_CHECKING` blocks
+    "TD",          # TODO – flags TODO comments with optional enforcement
+    "TID",         # Tidiness – general code tidiness rules
+    "YTT",         # flake8-2020 – flags incorrect sys.version comparisons
+]
+
+ignore = [
+    "PLC0415",  # `import` should be at top of file
+    "PLR0904",  # Too many public methods
+    "PLR0911",  # Too many return statements
+    "PLR0913",  # Too many arguments
+    "PLR0914",  # Too many local variables
+    "PLR0917",  # Too many positional arguments
+    "PLR6301",  # Method could be a function
+    "PLW0108",  # Statement has no effect
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"build-aux/**" = [
+    "T20",          # Allow print() in build/dev scripts
+    "INP",          # build-aux is not a package
+]
+
+# Ignore missing type annotations in Windows-specific code
+"mpvqc/services/frameless/win/**" = ["ANN"]
+
+"test/**" = [  # Adjust rules for test files
+    "ANN",     # Ignore missing type annotations in tests
+    "ARG",     # Ignore unused arguments (common in fixtures)
+    "FBT",     # Ignore boolean positional argument check (e.g. in parametrize)
+    "PLR",     # Ignore complexity/readability issues
+    "RUF067",  # Allow __init__ files to contain implementation in tests (e.g. fixtures)
+    "S101",    # Allow `assert` in tests
+    "SLF",     # Ignore access to private members
+]
+
+"**/test_*.py" = [
+    "ANN",          # Ignore missing type annotations in tests
+    "S101",         # Allow `assert` in tests
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mpvqc", "rc_project"]
+
+[tool.ruff.lint.flake8-copyright]
+notice-rgx = "SPDX-FileCopyrightText: mpvQC developers"

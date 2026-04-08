@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: MIT
+
+toml-version = "v1.1.0"
+
+[format]
+[format.rules]
+indent-style = "space"
+indent-width = 4
+line-ending = "lf"
+line-width = 120
+string-quote-style = "double"
+trailing-comment-alignment = true

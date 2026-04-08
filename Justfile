@@ -49,7 +49,7 @@ update-python-dependencies:
 
 [group('dev')]
 update-git-hook-dependencies:
-    uv run prek autoupdate
+    uv run prek auto-update
 
 # Stamp version info into data/build-info.toml
 [group('build')]
