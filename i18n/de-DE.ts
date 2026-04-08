@@ -487,6 +487,10 @@
         <translation>Tastenkombinationen …</translation>
     </message>
     <message>
+        <source>Open App Data Folder...</source>
+        <translation>Programmdaten öffnen …</translation>
+    </message>
+    <message>
         <source>About mpvQC...</source>
         <translation>Über mpvQC …</translation>
     </message>

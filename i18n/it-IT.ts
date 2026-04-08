@@ -479,6 +479,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Open App Data Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>About mpvQC...</source>
         <translation type="unfinished"></translation>
     </message>
