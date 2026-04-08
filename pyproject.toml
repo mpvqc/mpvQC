@@ -35,13 +35,6 @@ dev = [
     "pytest>=9.0.3",
 ]
 
-[tool.pyrefly]
-python-version = "3.13"
-ignore-missing-imports = ["win32api", "win32con", "win32gui", "win32print"]
-
-[tool.pyrefly.errors]
-missing-override-decorator = "error"
-
 [tool.pyside6-project]
 files = [
     # WARNING! This list is auto updated by the just build helper

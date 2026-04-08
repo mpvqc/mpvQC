@@ -142,8 +142,8 @@ test-qml SKIP_PREPARATION='false':
 
 # Lint Python files (type checker only)
 [group('lint')]
-@lint-python *ARGS:
-    uv run pyrefly check {{ ARGS }}
+lint-python *ARGS:
+    uv run pyrefly check --config .config/pyrefly.toml {{ ARGS }}
 
 # Lint QML files
 [group('lint')]
