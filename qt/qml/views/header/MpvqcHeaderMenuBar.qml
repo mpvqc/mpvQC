@@ -333,6 +333,16 @@ MenuBar {
         }
 
         MenuItem {
+            text: qsTranslate("MainWindow", "Open App Data Folder...")
+            icon.source: "qrc:/data/icons/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.height: 24
+            icon.width: 24
+            onTriggered: root.viewModel.openAppDataFolder()
+        }
+
+        MenuSeparator {}
+
+        MenuItem {
             text: qsTranslate("MainWindow", "About mpvQC...")
             icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
             icon.height: 24
