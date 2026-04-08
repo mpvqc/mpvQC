@@ -91,7 +91,18 @@ hooks = [
 [[repos]]
 repo = "https://github.com/astral-sh/ruff-pre-commit"
 rev = "v0.15.9"
-hooks = [{ id = "ruff", name = "lint py", args = ["--fix"] }, { id = "ruff-format", name = "format py" }]
+hooks = [
+    {
+        id = "ruff",
+        name = "lint py",
+        args = ["--config", ".config/ruff.toml", "--fix"],
+    },
+    {
+        id = "ruff-format",
+        name = "format py",
+        args = ["--config", ".config/ruff.toml"],
+    },
+]
 
 [[repos]]
 repo = "https://github.com/tomas-krupa/qmlformat-hook.git"
