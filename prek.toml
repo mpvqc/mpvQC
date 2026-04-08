@@ -21,25 +21,8 @@ hooks = [
         id = "biome-check",
         name = "format json",
         files = '\.(jsonc?)$',
-        args = [
-            "--bracket-spacing=true",
-            "--indent-style=space",
-            "--indent-width=4",
-            "--line-ending=lf",
-            "--line-width=120"
-        ]
-    },
-    {
-        id = "biome-check",
-        name = "format js",
-        files = '\.js$',
-        args = [
-            "--bracket-spacing=true",
-            "--indent-style=space",
-            "--indent-width=4",
-            "--line-ending=lf",
-            "--line-width=120"
-        ]
+        exclude = '\.config/biome\.jsonc',
+        args = ["--config-path=.config"],
     },
 ]
 
