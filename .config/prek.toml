@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: MIT
+
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "builtin"
+hooks = [
+    { id = "end-of-file-fixer" },
+    { id = "trailing-whitespace" },
+]
+
+[[repos]]
+repo = "https://github.com/biomejs/pre-commit"
+rev = "v2.4.10"
+hooks = [
+    {
+        id = "biome-check",
+        name = "format json",
+        files = '\.(jsonc?)$',
+        exclude = '\.config/biome\.jsonc',
+        args = ["--config-path=.config"],
+    },
+]
+
+[[repos]]
+repo = "https://github.com/tombi-toml/tombi-pre-commit"
+rev = "v0.9.16"
+hooks = [
+    {
+        id = "tombi-format",
+        name = "format toml",
+        exclude = "uv.lock",
+        args = [
+            "--offline",
+        ]
+    },
+]
+
+[[repos]]
+repo = "https://github.com/google/yamlfmt"
+rev = "v0.21.0"
+hooks = [
+    {
+        id = "yamlfmt",
+        name = "format yml",
+        args = ["-conf", ".config/yamlfmt.yaml"],
+    },
+]
+
+[[repos]]
+repo = "https://github.com/hukkin/mdformat"
+rev = "1.0.0"
+hooks = [
+    {
+        id = "mdformat",
+        name = "format md",
+        exclude = ".github/",
+        args = ["--number", "--wrap", "keep", "--end-of-line", "lf"],
+        additional_dependencies = ["mdformat-gfm"]
+    },
+]
+
+[[repos]]
+repo = "https://github.com/astral-sh/ruff-pre-commit"
+rev = "v0.15.9"
+hooks = [
+    {
+        id = "ruff",
+        name = "lint py",
+        args = ["--config", ".config/ruff.toml", "--fix"],
+    },
+    {
+        id = "ruff-format",
+        name = "format py",
+        args = ["--config", ".config/ruff.toml"],
+    },
+]
+
+[[repos]]
+repo = "https://github.com/tomas-krupa/qmlformat-hook.git"
+rev = "1.2.0"
+hooks = [
+    {
+        id = "qmlformat",
+        additional_dependencies = ["PySide6-Essentials==6.11.0"],
+        files = '.*\.qml$',
+        name = "format qml",
+        args = ["--settings", ".config/qmlformat.ini"]
+    },
+]
+
+[[repos]]
+repo = "https://github.com/fsfe/reuse-tool"
+rev = "v6.2.0"
+hooks = [
+    { id = "reuse-lint-file", name = "lint licenses" },
+]

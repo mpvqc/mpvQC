@@ -70,8 +70,8 @@ python-mpv
 PySide6
   Description: Official Python bindings for Qt
   Homepage: https://wiki.qt.io/Qt_for_Python
-  License: LGPL-3.0-or-later
-  License File: LGPL-3.0.txt
+  License: LGPL-3.0-only
+  License File: LGPL-3.0-only.txt
   Platforms: Linux, Windows
 
 pywin32

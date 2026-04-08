@@ -1,0 +1,23 @@
+// SPDX-FileCopyrightText: mpvQC developers
+//
+// SPDX-License-Identifier: MIT
+
+{
+    "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
+    "formatter": {
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineEnding": "lf",
+        "lineWidth": 120
+    },
+    "javascript": {
+        "formatter": {
+            "bracketSpacing": true
+        }
+    },
+    "json": {
+        "formatter": {
+            "bracketSpacing": true
+        }
+    }
+}

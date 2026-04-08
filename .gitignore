@@ -423,9 +423,6 @@ compile_commands.json
 # Include directories
 *.includes
 
-# Project configuration settings like predefined Macros
-*.config
-
 # Qt Creator settings
 *.creator
 
