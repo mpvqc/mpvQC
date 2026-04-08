@@ -47,14 +47,7 @@ hooks = [
     {
         id = "yamlfmt",
         name = "format yml",
-        args = [
-            "-formatter",
-            "line_ending=lf",
-            "-formatter",
-            "retain_line_breaks_single=true",
-            "-formatter",
-            "scan_folded_as_literal=true"
-        ]
+        args = ["-conf", ".config/yamlfmt.yaml"],
     },
 ]
 
