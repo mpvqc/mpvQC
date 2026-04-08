@@ -4,7 +4,6 @@
 
 set dotenv-load := true
 set lazy        := true
-set unstable    := true
 
 GIT_TAG := `git describe --tags --abbrev=0`
 GIT_COMMIT := `git rev-parse HEAD | head -c 8`
@@ -39,8 +38,8 @@ init ARGS='--group dev':
     fi
 
 [group('dev')]
-@format:
-    uv run prek run --all-files
+format:
+    uv run prek --config .config/prek.toml run --all-files
 
 [group('dev')]
 update-python-dependencies:
@@ -49,7 +48,7 @@ update-python-dependencies:
 
 [group('dev')]
 update-git-hook-dependencies:
-    uv run prek auto-update
+    uv run prek --config .config/prek.toml auto-update
 
 # Stamp version info into data/build-info.toml
 [group('build')]
