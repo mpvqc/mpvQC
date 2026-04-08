@@ -24,7 +24,7 @@ init ARGS='--group dev':
       echo "[General]" > "$QMLLS_INI"
       echo "DisableDefaultImports=false" >> "$QMLLS_INI"
       echo "no-cmake-calls=true" >> "$QMLLS_INI"
-      echo "importPaths={{ justfile_directory() }}/pyobjects" >> "$QMLLS_INI"
+      echo "importPaths={{ justfile_directory() }}" >> "$QMLLS_INI"
       echo "buildDir={{ justfile_directory() }}" >> "$QMLLS_INI"
       echo "just init: Created $QMLLS_INI ..."
 
