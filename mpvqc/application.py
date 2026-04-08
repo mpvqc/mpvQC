@@ -75,7 +75,7 @@ class MpvqcApplication(QGuiApplication):
         self._i18n.retranslate(app=self, language_code=language_code)
 
     def start(self) -> None:
-        url = QUrl.fromLocalFile(":/qt/qml/MpvqcApplication.qml")
+        url = QUrl("qrc:/qt/qml/MpvqcApplication.qml")
         self._engine.load(url)
 
         if not self._engine.rootObjects():
