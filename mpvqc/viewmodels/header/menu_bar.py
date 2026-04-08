@@ -8,9 +8,17 @@ from enum import IntEnum
 
 import inject
 from PySide6.QtCore import Property, QEnum, QObject, QUrl, Signal, Slot
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ExportService, ResetService, SettingsService, StateService
+from mpvqc.services import (
+    ApplicationPathsService,
+    ExportService,
+    ResetService,
+    SettingsService,
+    StateService,
+    TypeMapperService,
+)
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -20,9 +28,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcMenuBarViewModel(QObject):
     _exporter = inject.attr(ExportService)
-    _state = inject.attr(StateService)
+    _paths = inject.attr(ApplicationPathsService)
     _resetter = inject.attr(ResetService)
     _settings = inject.attr(SettingsService)
+    _state = inject.attr(StateService)
+    _type_mapper = inject.attr(TypeMapperService)
 
     class WindowTitleFormat(IntEnum):
         DEFAULT = 0
@@ -156,6 +166,12 @@ class MpvqcMenuBarViewModel(QObject):
     @Slot()
     def requestOpenAboutDialog(self) -> None:
         self.aboutDialogRequested.emit()
+
+    @Slot()
+    def openAppDataFolder(self) -> None:
+        config = self._paths.dir_config
+        url = self._type_mapper.map_path_to_url(config)
+        QDesktopServices.openUrl(url)
 
     @Slot()
     def requestClose(self) -> None:
