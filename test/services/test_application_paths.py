@@ -36,3 +36,5 @@ def test_non_portable(make_app_env):
     service = ApplicationPathsService(app_environment)
 
     assert "appdata" not in f"{service.dir_config}"
+    assert service.dir_backup == service.dir_config / "backups"
+    assert service.dir_screenshots == service.dir_config / "screenshots"

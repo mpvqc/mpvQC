@@ -42,12 +42,10 @@ def _portable_directories(executing_directory: Path) -> _Directories:
 def _xdg_directories() -> _Directories:
     appname = QCoreApplication.applicationName()
     config = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.ConfigLocation)
-    documents = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
-    pictures = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.PicturesLocation)
     return _Directories(
-        backup=Path(documents) / appname / "backups",
+        backup=Path(config) / appname / "backups",
         config=Path(config) / appname,
-        screenshots=Path(pictures) / appname,
+        screenshots=Path(config) / appname / "screenshots",
         export_templates=Path(config) / appname / "export-templates",
     )
 
