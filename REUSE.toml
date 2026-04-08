@@ -74,7 +74,7 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 path = "NOTICE.txt"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "MIT"
+SPDX-License-Identifier = "Apache-2.0 AND BSD-3-Clause AND GPL-3.0-or-later AND LGPL-3.0-only AND MIT AND OFL-1.1 AND PSF-2.0"
 
 [[annotations]]
 path = "LICENSES/PSF-2.0.txt"
