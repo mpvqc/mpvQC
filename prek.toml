@@ -89,7 +89,7 @@ hooks = [
         additional_dependencies = ["PySide6-Essentials==6.11.0"],
         files = '.*\.qml$',
         name = "format qml",
-        args = ["--newline=unix"]
+        args = ["--settings", ".config/qmlformat.ini"]
     },
 ]
 
