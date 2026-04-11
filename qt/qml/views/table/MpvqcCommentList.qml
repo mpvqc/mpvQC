@@ -7,8 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
-import pyobjects
-
 import "../../utility"
 
 ListView {
@@ -19,10 +17,12 @@ ListView {
     readonly property bool hasComments: count > 0
     readonly property bool isCurrentlyEditing: _editLoader.active
     readonly property bool isNotCurrentlyEditing: !isCurrentlyEditing
+    readonly property bool isHandleKeyEvents: root.isNotCurrentlyEditing && !_contextMenuLoader.active && !_messageBoxLoader.active
 
     readonly property alias editLoader: _editLoader // for tests
     readonly property alias contextMenuLoader: _contextMenuLoader // for tests
     readonly property alias messageBoxLoader: _messageBoxLoader // for tests
+    readonly property alias searchBoxLoader: _searchBoxLoader // for tests
 
     readonly property string searchQuery: _searchBoxLoader.searchQuery
 
@@ -56,8 +56,6 @@ ListView {
     }
 
     delegate: MpvqcCommentListDelegate {
-        readonly property bool isSelected: ListView.isCurrentItem
-
         width: parent ? root.width : 0
         scrollBarWidth: _scrollBar.visibleWidth
 
@@ -85,7 +83,6 @@ ListView {
             root.viewModel.startEditingCommentType(index, commentType, coordinates);
         }
 
-
         onCommentLabelDoubleClicked: {
             root.viewModel.startEditingComment(index);
         }
@@ -98,27 +95,84 @@ ListView {
         }
     }
 
+    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
+
+    Binding {
+        target: root.model
+        property: "selectedRow"
+        value: root.currentIndex
+        restoreMode: Binding.RestoreNone
+    }
+
+    Connections {
+        target: root.viewModel
+
+        function onQuickSelectionRequested(index: int): void {
+            const duration = root.highlightMoveDuration;
+            root.highlightMoveDuration = 0;
+            root.currentIndex = index;
+            root.highlightMoveDuration = duration;
+        }
+
+        function onSelectionRequested(index: int): void {
+            root.currentIndex = index;
+        }
+
+        function onTimeEditRequested(index: int, time: int, coordinates: point): void {
+            _editLoader.startEditingTime(index, time, coordinates, root.viewModel.videoDuration);
+        }
+
+        function onCommentTypeEditRequested(index: int, commentType: string, coordinates: point): void {
+            _editLoader.startEditingCommentType(index, commentType, coordinates, root.viewModel.commentTypes);
+        }
+
+        function onCommentEditRequested(index: int, comment: string): void {
+            root.positionViewAtIndex(index, ListView.Contain);
+            const item = root.currentItem as MpvqcCommentListDelegate;
+            const commentLabel = item.commentLabel;
+            _editLoader.startEditingComment(index, comment, commentLabel);
+        }
+
+        function onContextMenuRequested(index: int, coordinates: point): void {
+            _contextMenuLoader.show(index, coordinates);
+        }
+
+        function onDeleteCommentRequested(index: int, time: int, commentType: string, commentText: string): void {
+            _messageBoxLoader.requestDeletion(index, time, commentType, commentText);
+        }
+
+        function onSearchRequested(): void {
+            _searchBoxLoader.show();
+        }
+    }
+
     MpvqcCommentListKeyHandler {
         id: _keyHandler
 
         hasComments: root.hasComments
-        isEditing: root.isCurrentlyEditing
+        ignoreEvents: !root.isHandleKeyEvents
         currentIndex: root.currentIndex
 
         onEditCommentRequested: index => root.viewModel.startEditingComment(index)
         onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
-        onSearchRequested: root.viewModel.showSearchBox()
+        onSearchRequested: root.viewModel.openSearchBox()
         onUndoRequested: root.viewModel.undo()
         onRedoRequested: root.viewModel.redo()
     }
 
-    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
+    Connections {
+        target: root.model
+
+        function onCommentsAboutToBeImported(): void {
+            _editLoader.abortEdit();
+            _contextMenuLoader.dismiss();
+            _messageBoxLoader.dismiss();
+        }
+    }
 
     MpvqcEditLoader {
         id: _editLoader
-
-        viewModel: root.viewModel
 
         // Calculate how much to scroll to keep the expanding editor visible.
         // Returns the scroll amount needed, or 0 if no scrolling is required.
@@ -149,6 +203,40 @@ ListView {
                 root.contentY += scrollAmount;
             }
         }
+
+        onTimeTemporaryChanged: time => root.viewModel.jumpToTime(time)
+        onTimeKept: oldTime => root.viewModel.jumpToTime(oldTime)
+
+        onTimeEdited: (index, newTime) => root.viewModel.updateTime(index, newTime)
+        onCommentTypeEdited: (index, newCommentType) => root.viewModel.updateCommentType(index, newCommentType)
+        onCommentEdited: (index, newComment) => root.viewModel.updateComment(index, newComment)
+        onClosed: root.forceActiveFocus()
+    }
+
+    MpvqcContextMenuLoader {
+        id: _contextMenuLoader
+
+        onEditCommentRequested: index => root.viewModel.startEditingComment(index)
+        onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
+        onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
+        onDismissed: root.forceActiveFocus()
+    }
+
+    MpvqcMessageBoxLoader {
+        id: _messageBoxLoader
+
+        onDeleteConfirmed: index => root.viewModel.removeRow(index)
+        onClosed: root.forceActiveFocus()
+    }
+
+    MpvqcSearchBoxLoader {
+        id: _searchBoxLoader
+
+        model: root.model
+        selectedIndex: root.currentIndex
+
+        onHighlightRequested: index => root.viewModel.select(index)
+        onClosed: root.forceActiveFocus()
     }
 
     // *** *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***
@@ -165,6 +253,8 @@ ListView {
 
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
             onPressed: event => {
                 event.accepted = true;
                 if (_editLoader.isEditingCommentType && _editLoader.item) {
@@ -176,69 +266,4 @@ ListView {
         }
     }
     // *** *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***
-
-    MpvqcContextMenuLoader {
-        id: _contextMenuLoader
-
-        viewModel: root.viewModel
-    }
-
-    MpvqcMessageBoxLoader {
-        id: _messageBoxLoader
-
-        viewModel: root.viewModel
-        onClosed: root.forceActiveFocus()
-    }
-
-    MpvqcSearchBoxLoader {
-        id: _searchBoxLoader
-
-        viewModel: root.viewModel
-        searchBoxViewModel: MpvqcSearchBoxViewModel {
-            model: root.model
-            selectedIndex: root.currentIndex
-            onHighlightRequested: index => root.viewModel.select(index)
-        }
-        onClosed: root.forceActiveFocus()
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onQuickSelectionRequested(index: int): void {
-            const duration = root.highlightMoveDuration;
-            root.highlightMoveDuration = 0;
-            root.currentIndex = index;
-            root.highlightMoveDuration = duration;
-        }
-
-        function onSelectionRequested(index: int): void {
-            root.currentIndex = index;
-        }
-
-        function onRowEditRequested(index: int): void {
-            onQuickSelectionRequested(index);
-            onCommentEditRequested(index);
-        }
-
-        function onLastRowSelected(): void {
-            const lastIndex = root.count - 1;
-            onQuickSelectionRequested(lastIndex);
-        }
-
-        function onCommentEditRequested(index: int): void {
-            root.positionViewAtIndex(index, ListView.Contain);
-            const item = root.currentItem as MpvqcCommentListDelegate;
-            const comment = item.comment;
-            const commentLabel = item.commentLabel;
-            _editLoader.startEditingComment(index, comment, commentLabel);
-        }
-    }
-
-    Binding {
-        target: root.model
-        property: "selectedRow"
-        value: root.currentIndex
-        restoreMode: Binding.RestoreNone
-    }
 }

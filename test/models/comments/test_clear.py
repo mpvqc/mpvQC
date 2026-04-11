@@ -73,7 +73,7 @@ def test_clear_comments_undo_redo_fires_signals(model, make_spy):
     spy.reset()
     model.undo()
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == LastRowSelection()
+    assert spy.at(invocation=0, argument=0) == LastRowSelection(row=4)
 
     spy.reset()
     model.redo()

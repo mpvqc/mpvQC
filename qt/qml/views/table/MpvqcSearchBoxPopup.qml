@@ -76,6 +76,7 @@ Popup {
 
         TextField {
             id: _textField
+            objectName: "searchTextField"
 
             Layout.fillWidth: true
             focus: false
@@ -99,6 +100,7 @@ Popup {
         }
 
         Label {
+            objectName: "statusLabel"
             text: root.viewModel.statusLabel
             color: Material.hintTextColor
             Layout.leftMargin: 4
@@ -110,6 +112,7 @@ Popup {
         }
 
         ToolButton {
+            objectName: "previousButton"
             enabled: root.viewModel.hasMultipleResults
             focusPolicy: Qt.NoFocus
 
@@ -121,6 +124,7 @@ Popup {
         }
 
         ToolButton {
+            objectName: "nextButton"
             enabled: root.viewModel.hasMultipleResults
             focusPolicy: Qt.NoFocus
 
@@ -132,6 +136,7 @@ Popup {
         }
 
         ToolButton {
+            objectName: "closeButton"
             focusPolicy: Qt.NoFocus
 
             icon {

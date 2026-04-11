@@ -306,4 +306,5 @@ files = [
     "qt/qml/views/table/MpvqcTableView.qml",
     "qt/qml/views/table/qmldir",
     "qt/qml/views/table/tst_MpvqcCommentList.qml",
+    "qt/qml/views/table/tst_MpvqcCommentListKeyHandler.qml",
 ]

@@ -8,6 +8,13 @@ import inject
 import pytest
 
 from mpvqc.datamodels import Comment
+from mpvqc.models.comments.mutation import (
+    AnimatedSelection,
+    LastRowSelection,
+    NoViewAction,
+    QuickSelection,
+    RowAddEdit,
+)
 from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService
 from mpvqc.viewmodels import MpvqcCommentTableViewModel
 
@@ -89,3 +96,78 @@ def test_copy_to_clipboard(make_view_model, make_spy):
 
     vm.copyToClipboard(2)
     assert spy.at(2, 0) == "[00:05:00] [Spelling] Comment Content 3"
+
+
+def test_on_mutated_quick_selection(make_view_model, make_spy):
+    vm = make_view_model(comments=[])
+    spy = make_spy(vm.quickSelectionRequested)
+
+    vm._on_mutated(QuickSelection(row=3))
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == 3
+
+
+def test_on_mutated_animated_selection(make_view_model, make_spy):
+    vm = make_view_model(comments=[])
+    spy = make_spy(vm.selectionRequested)
+
+    vm._on_mutated(AnimatedSelection(row=7))
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == 7
+
+
+def test_on_mutated_row_add_edit(make_view_model, make_spy):
+    vm = make_view_model(
+        comments=[
+            Comment(time=0, comment_type="Type", comment="text"),
+            Comment(time=1, comment_type="Type", comment="text"),
+        ]
+    )
+    quick_spy = make_spy(vm.quickSelectionRequested)
+    edit_spy = make_spy(vm.commentEditRequested)
+
+    vm._on_mutated(RowAddEdit(row=1))
+
+    assert quick_spy.count() == 1
+    assert quick_spy.at(0, 0) == 1
+    assert edit_spy.count() == 1
+    assert edit_spy.at(0, 0) == 1
+
+
+def test_on_mutated_last_row_selection(make_view_model, make_spy):
+    vm = make_view_model(comments=[])
+    spy = make_spy(vm.quickSelectionRequested)
+
+    vm._on_mutated(LastRowSelection(row=4))
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == 4
+
+
+def test_on_mutated_no_view_action(make_view_model, make_spy):
+    vm = make_view_model(comments=[])
+    quick_spy = make_spy(vm.quickSelectionRequested)
+    selection_spy = make_spy(vm.selectionRequested)
+
+    vm._on_mutated(NoViewAction(marks_unsaved=True))
+
+    assert quick_spy.count() == 0
+    assert selection_spy.count() == 0
+
+
+def test_on_mutated_marks_unsaved(make_view_model, state_service_mock):
+    vm = make_view_model(comments=[])
+
+    vm._on_mutated(QuickSelection(row=0, marks_unsaved=True))
+
+    state_service_mock.change.assert_called_once()
+
+
+def test_on_mutated_does_not_mark_unsaved(make_view_model, state_service_mock):
+    vm = make_view_model(comments=[])
+
+    vm._on_mutated(QuickSelection(row=0, marks_unsaved=False))
+
+    state_service_mock.change.assert_not_called()

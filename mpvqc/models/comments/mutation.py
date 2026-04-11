@@ -33,6 +33,7 @@ class RowAddEdit:
 class LastRowSelection:
     """Jump to the last row without animation."""
 
+    row: int
     marks_unsaved: bool = True
 
 

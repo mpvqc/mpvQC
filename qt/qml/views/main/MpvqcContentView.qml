@@ -141,6 +141,8 @@ Page {
 
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
             onPressed: event => {
                 event.accepted = true;
                 _newCommentMenuOverlay.menuOpen = false;

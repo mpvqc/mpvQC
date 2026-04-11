@@ -61,6 +61,22 @@ def test_import_comments_fires_signals(model, make_spy):
     assert spy.at(invocation=0, argument=0) == QuickSelection(row=9, marks_unsaved=False)
 
 
+def test_import_comments_emits_about_to_be_imported(model, make_spy):
+    spy = make_spy(model.commentsAboutToBeImported)
+
+    model.import_comments(DEFAULT_COMMENTS)
+
+    assert spy.count() == 1
+
+
+def test_import_comments_empty_does_not_emit_about_to_be_imported(model, make_spy):
+    spy = make_spy(model.commentsAboutToBeImported)
+
+    model.import_comments([])
+
+    assert spy.count() == 0
+
+
 def test_import_comments_undo_redo(model):
     comments = (
         Comment(time=1, comment_type="commentType", comment="Undo Redo 1"),

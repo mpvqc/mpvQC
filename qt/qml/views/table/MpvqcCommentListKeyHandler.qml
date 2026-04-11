@@ -10,7 +10,7 @@ QtObject {
     id: root
 
     required property bool hasComments
-    required property bool isEditing
+    required property bool ignoreEvents
     required property int currentIndex
 
     readonly property bool isFullScreen: MpvqcWindowUtility.isFullscreen
@@ -22,7 +22,12 @@ QtObject {
     signal undoRequested
     signal redoRequested
 
-    function handleKeyPress(event: KeyEvent): void {
+    function handleKeyPress(event): void {
+        if (ignoreEvents) {
+            event.accepted = true;
+            return;
+        }
+
         switch (event.key) {
         case Qt.Key_Return:
             _handleReturnKeyPressed(event);
@@ -45,16 +50,16 @@ QtObject {
         }
     }
 
-    function _handleReturnKeyPressed(event: KeyEvent): void {
+    function _handleReturnKeyPressed(event): void {
         if (event.isAutoRepeat) {
             return;
         }
-        if (hasComments && !isEditing && !isFullScreen) {
+        if (hasComments && !isFullScreen) {
             root.editCommentRequested(currentIndex);
         }
     }
 
-    function _handleDeleteComment(event: KeyEvent): void {
+    function _handleDeleteComment(event): void {
         if (event.isAutoRepeat) {
             return;
         }
@@ -63,10 +68,10 @@ QtObject {
         }
     }
 
-    function _handleCPressed(event: KeyEvent): void {
+    function _handleCPressed(event): void {
         const isCtrlPressed = event.modifiers === Qt.ControlModifier;
         if (isCtrlPressed && !event.isAutoRepeat) {
-            if (hasComments && !isEditing && !isFullScreen) {
+            if (hasComments && !isFullScreen) {
                 root.copyCommentRequested(currentIndex);
                 return;
             }
@@ -74,10 +79,10 @@ QtObject {
         event.accepted = false;
     }
 
-    function _handleFPressed(event: KeyEvent): void {
+    function _handleFPressed(event): void {
         const isCtrlPressed = event.modifiers === Qt.ControlModifier;
         if (isCtrlPressed && !event.isAutoRepeat) {
-            if (hasComments && !isEditing && !isFullScreen) {
+            if (hasComments && !isFullScreen) {
                 root.searchRequested();
                 return;
             }
@@ -85,7 +90,7 @@ QtObject {
         event.accepted = false;
     }
 
-    function _handleZPressed(event: KeyEvent): void {
+    function _handleZPressed(event): void {
         const isCtrlPressed = event.modifiers & Qt.ControlModifier;
         const isShiftPressed = event.modifiers & Qt.ShiftModifier;
         if (isCtrlPressed && !event.isAutoRepeat) {
