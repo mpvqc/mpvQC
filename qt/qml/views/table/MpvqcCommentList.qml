@@ -71,38 +71,23 @@ ListView {
             }
         }
 
-        onTimeLabelPressed: coordinates => {
-            if (root.isCurrentlyEditing && isSelected) {
-                return;
-            }
-
-            if (isSelected) {
-                root.viewModel.pauseVideo();
-                root.viewModel.jumpToTime(time);
-                root.viewModel.startEditingTime(index, time, coordinates);
-            } else {
-                root.viewModel.select(index);
-            }
+        onRowPressed: {
+            root.viewModel.select(index);
         }
 
-        onCommentTypeLabelPressed: coordinates => {
-            if (root.isCurrentlyEditing && isSelected) {
-                return;
-            }
-
-            if (isSelected) {
-                root.viewModel.startEditingCommentType(index, commentType, coordinates);
-            } else {
-                root.viewModel.select(index);
-            }
+        onTimeLabelDoubleClicked: coordinates => {
+            root.viewModel.pauseVideo();
+            root.viewModel.jumpToTime(time);
+            root.viewModel.startEditingTime(index, time, coordinates);
         }
 
-        onCommentLabelPressed: {
-            if (isSelected) {
-                root.viewModel.startEditingComment(index);
-            } else {
-                root.viewModel.select(index);
-            }
+        onCommentTypeLabelDoubleClicked: coordinates => {
+            root.viewModel.startEditingCommentType(index, commentType, coordinates);
+        }
+
+
+        onCommentLabelDoubleClicked: {
+            root.viewModel.startEditingComment(index);
         }
 
         onRightMouseButtonPressed: coordinates => {
