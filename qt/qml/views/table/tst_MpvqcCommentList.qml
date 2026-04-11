@@ -27,6 +27,16 @@ TestCase {
             return control.mapFromGlobal(globalPt.x, globalPt.y);
         }
 
+        function _topRightOf(control: MpvqcCommentList, item: Item): point {
+            const globalPt = item.mapToGlobal(item.width - 3, 3);
+            return control.mapFromGlobal(globalPt.x, globalPt.y);
+        }
+
+        function _topLeftOf(control: MpvqcCommentList, item: Item): point {
+            const globalPt = item.mapToGlobal(3, 3);
+            return control.mapFromGlobal(globalPt.x, globalPt.y);
+        }
+
         function centerOfPlayButton(control: MpvqcCommentList, row: int): point {
             const delegate = control.itemAtIndex(row);
             return _centerOf(control, findChild(delegate, "playButton"));
@@ -45,6 +55,26 @@ TestCase {
         function centerOfCommentLabel(control: MpvqcCommentList, row: int): point {
             const delegate = control.itemAtIndex(row);
             return _centerOf(control, findChild(delegate, "commentLabel"));
+        }
+
+        function topRightOfTimeLabel(control: MpvqcCommentList, row: int): point {
+            const delegate = control.itemAtIndex(row);
+            return _topRightOf(control, findChild(delegate, "timeLabel"));
+        }
+
+        function topLeftOfTimeLabel(control: MpvqcCommentList, row: int): point {
+            const delegate = control.itemAtIndex(row);
+            return _topLeftOf(control, findChild(delegate, "timeLabel"));
+        }
+
+        function topRightOfCommentTypeLabel(control: MpvqcCommentList, row: int): point {
+            const delegate = control.itemAtIndex(row);
+            return _topRightOf(control, findChild(delegate, "commentTypeLabel"));
+        }
+
+        function topRightOfCommentLabel(control: MpvqcCommentList, row: int): point {
+            const delegate = control.itemAtIndex(row);
+            return _topRightOf(control, findChild(delegate, "commentLabel"));
         }
 
         function clickContextMenuItem(control: MpvqcCommentList, name: string): void {
@@ -220,20 +250,39 @@ TestCase {
     function test_selectionWhileNotEditing_data(): list<var> {
         return [
             {
+                tag: "on-same-row-time-label-clicked",
+                centerPoint: control => _clickHelper.centerOfTimeLabel(control, 0),
+                rowIndexExpected: 0
+            },
+            {
+                tag: "on-same-row-comment-type-label-clicked",
+                centerPoint: control => _clickHelper.centerOfCommentTypeLabel(control, 0),
+                rowIndexExpected: 0
+            },
+            {
+                tag: "on-same-row-comment-label-clicked",
+                centerPoint: control => _clickHelper.centerOfCommentLabel(control, 0),
+                rowIndexExpected: 0
+            },
+            {
                 tag: "on-other-row-play-button-clicked",
-                centerPoint: control => _clickHelper.centerOfPlayButton(control, 1)
+                centerPoint: control => _clickHelper.centerOfPlayButton(control, 1),
+                rowIndexExpected: 1
             },
             {
                 tag: "on-other-row-time-label-clicked",
-                centerPoint: control => _clickHelper.centerOfTimeLabel(control, 1)
+                centerPoint: control => _clickHelper.centerOfTimeLabel(control, 1),
+                rowIndexExpected: 1
             },
             {
                 tag: "on-other-row-comment-type-label-clicked",
-                centerPoint: control => _clickHelper.centerOfCommentTypeLabel(control, 1)
+                centerPoint: control => _clickHelper.centerOfCommentTypeLabel(control, 1),
+                rowIndexExpected: 1
             },
             {
                 tag: "on-other-row-comment-label-clicked",
-                centerPoint: control => _clickHelper.centerOfCommentLabel(control, 1)
+                centerPoint: control => _clickHelper.centerOfCommentLabel(control, 1),
+                rowIndexExpected: 1
             },
         ];
     }
@@ -245,7 +294,7 @@ TestCase {
         _mouse.click(control, pt.x, pt.y);
         tryVerify(() => control.isNotCurrentlyEditing);
 
-        compare(control.currentIndex, 1);
+        compare(control.currentIndex, data.rowIndexExpected);
     }
 
     function test_selectionWhileEditingComment_data() {
@@ -305,7 +354,7 @@ TestCase {
         const control = makeControl();
 
         const timeLabel = _clickHelper.centerOfTimeLabel(control, 0);
-        _mouse.click(control, timeLabel.x, timeLabel.y);
+        _mouse.doubleClick(control, timeLabel.x, timeLabel.y);
         waitUntilEditControlOpened(control);
         verify(control.isCurrentlyEditing);
 
@@ -315,16 +364,102 @@ TestCase {
         compare(control.currentIndex, 0);
     }
 
+    function test_doubleClickWhileEditingTime_data() {
+        return [
+            {
+                tag: "on-same-row-time-label",
+                centerPoint: control => _clickHelper.topLeftOfTimeLabel(control, 0)
+            },
+            {
+                tag: "on-same-row-comment-type-label",
+                centerPoint: control => _clickHelper.topRightOfCommentTypeLabel(control, 0)
+            },
+            {
+                tag: "on-same-row-comment-label",
+                centerPoint: control => _clickHelper.topRightOfCommentLabel(control, 0)
+            },
+            {
+                tag: "on-other-row-time-label",
+                centerPoint: control => _clickHelper.topLeftOfTimeLabel(control, 1)
+            },
+            {
+                tag: "on-other-row-comment-type-label",
+                centerPoint: control => _clickHelper.topRightOfCommentTypeLabel(control, 1)
+            },
+            {
+                tag: "on-other-row-comment-label",
+                centerPoint: control => _clickHelper.topRightOfCommentLabel(control, 1)
+            },
+        ];
+    }
+
+    function test_doubleClickWhileEditingTime(data) {
+        const control = makeControl();
+
+        const timeLabel = _clickHelper.centerOfTimeLabel(control, 0);
+        _mouse.doubleClick(control, timeLabel.x, timeLabel.y);
+        waitUntilEditControlOpened(control);
+        verify(control.isCurrentlyEditing);
+
+        const pt = data.centerPoint(control);
+        _mouse.doubleClick(control, pt.x, pt.y);
+        tryVerify(() => control.isNotCurrentlyEditing);
+        compare(control.currentIndex, 0);
+    }
+
     function test_selectionWhileEditingCommentType() {
         const control = makeControl();
 
         const commentTypeLabel = _clickHelper.centerOfCommentTypeLabel(control, 0);
-        _mouse.click(control, commentTypeLabel.x, commentTypeLabel.y);
+        _mouse.doubleClick(control, commentTypeLabel.x, commentTypeLabel.y);
         waitUntilEditControlOpened(control);
         verify(control.isCurrentlyEditing);
 
         const commentLabel = _clickHelper.centerOfCommentLabel(control, 1);
         _mouse.click(control, commentLabel.x, commentLabel.y);
+        tryVerify(() => control.isNotCurrentlyEditing);
+        compare(control.currentIndex, 0);
+    }
+
+    function test_doubleClickWhileEditingCommentType_data() {
+        return [
+            {
+                tag: "on-same-row-time-label",
+                centerPoint: control => _clickHelper.topLeftOfTimeLabel(control, 0)
+            },
+            {
+                tag: "on-same-row-comment-type-label",
+                centerPoint: control => _clickHelper.topRightOfCommentTypeLabel(control, 0)
+            },
+            {
+                tag: "on-same-row-comment-label",
+                centerPoint: control => _clickHelper.topRightOfCommentLabel(control, 0)
+            },
+            {
+                tag: "on-other-row-time-label",
+                centerPoint: control => _clickHelper.topLeftOfTimeLabel(control, 1)
+            },
+            {
+                tag: "on-other-row-comment-type-label",
+                centerPoint: control => _clickHelper.topRightOfCommentTypeLabel(control, 1)
+            },
+            {
+                tag: "on-other-row-comment-label",
+                centerPoint: control => _clickHelper.topRightOfCommentLabel(control, 1)
+            },
+        ];
+    }
+
+    function test_doubleClickWhileEditingCommentType(data) {
+        const control = makeControl();
+
+        const commentTypeLabel = _clickHelper.centerOfCommentTypeLabel(control, 0);
+        _mouse.doubleClick(control, commentTypeLabel.x, commentTypeLabel.y);
+        waitUntilEditControlOpened(control);
+        verify(control.isCurrentlyEditing);
+
+        const pt = data.centerPoint(control);
+        _mouse.doubleClick(control, pt.x, pt.y);
         tryVerify(() => control.isNotCurrentlyEditing);
         compare(control.currentIndex, 0);
     }
@@ -344,6 +479,20 @@ TestCase {
             {
                 tag: "via-shortcut-return",
                 exec: control => keyPress(Qt.Key_Return)
+            },
+            {
+                tag: "via-double-click-on-selected-row",
+                exec: control => {
+                    const pt = _clickHelper.centerOfCommentLabel(control, 0);
+                    _mouse.doubleClick(control, pt.x, pt.y);
+                }
+            },
+            {
+                tag: "via-double-click-on-unselected-row",
+                exec: control => {
+                    const pt = _clickHelper.centerOfCommentLabel(control, 1);
+                    _mouse.doubleClick(control, pt.x, pt.y);
+                }
             },
         ];
     }
@@ -436,7 +585,7 @@ TestCase {
         tryVerify(() => control.getItem(0, "time") === 1);
 
         const timeLabel = _clickHelper.centerOfTimeLabel(control, 0);
-        _mouse.click(control, timeLabel.x, timeLabel.y);
+        _mouse.doubleClick(control, timeLabel.x, timeLabel.y);
         waitUntilEditControlOpened(control);
 
         _clickHelper.clickEditPopupItem(control, "decrementButton");
@@ -453,7 +602,7 @@ TestCase {
         tryVerify(() => control.getItem(0, "time") === 1);
 
         const timeLabel = _clickHelper.centerOfTimeLabel(control, 0);
-        _mouse.click(control, timeLabel.x, timeLabel.y);
+        _mouse.doubleClick(control, timeLabel.x, timeLabel.y);
         waitUntilEditControlOpened(control);
 
         _clickHelper.clickEditPopupItem(control, "incrementButton");
@@ -470,7 +619,7 @@ TestCase {
         tryVerify(() => control.getItem(0, "time") === 1);
 
         const timeLabel = _clickHelper.centerOfTimeLabel(control, 0);
-        _mouse.click(control, timeLabel.x, timeLabel.y);
+        _mouse.doubleClick(control, timeLabel.x, timeLabel.y);
         waitUntilEditControlOpened(control);
 
         const timeChangedSpy = createTemporaryObject(signalSpy, control, {
@@ -492,7 +641,7 @@ TestCase {
         const control = makeControl();
 
         const commentTypeLabel = _clickHelper.centerOfCommentTypeLabel(control, 0);
-        _mouse.click(control, commentTypeLabel.x, commentTypeLabel.y);
+        _mouse.doubleClick(control, commentTypeLabel.x, commentTypeLabel.y);
         waitUntilEditControlOpened(control);
 
         _clickHelper.clickCommentTypeMenuItem(control, "Comment Type 3");
@@ -504,7 +653,7 @@ TestCase {
         const control = makeControl();
 
         const commentTypeLabel = _clickHelper.centerOfCommentTypeLabel(control, 0);
-        _mouse.click(control, commentTypeLabel.x, commentTypeLabel.y);
+        _mouse.doubleClick(control, commentTypeLabel.x, commentTypeLabel.y);
         waitUntilEditControlOpened(control);
 
         keyPress(Qt.Key_Escape);
@@ -517,7 +666,7 @@ TestCase {
         const control = makeControl();
 
         const commentLabel = _clickHelper.centerOfCommentLabel(control, 0);
-        _mouse.click(control, commentLabel.x, commentLabel.y);
+        _mouse.doubleClick(control, commentLabel.x, commentLabel.y);
         waitUntilEditControlOpened(control);
 
         keyPress("h");
@@ -532,7 +681,7 @@ TestCase {
         compare(control.getItem(0, "comment"), "Comment 1");
 
         const commentLabel = _clickHelper.centerOfCommentLabel(control, 0);
-        _mouse.click(control, commentLabel.x, commentLabel.y);
+        _mouse.doubleClick(control, commentLabel.x, commentLabel.y);
         waitUntilEditControlOpened(control);
 
         keyPress("h");
@@ -548,7 +697,7 @@ TestCase {
         compare(control.getItem(0, "comment"), "Comment 1");
 
         const commentLabel = _clickHelper.centerOfCommentLabel(control, 0);
-        _mouse.click(control, commentLabel.x, commentLabel.y);
+        _mouse.doubleClick(control, commentLabel.x, commentLabel.y);
         waitUntilEditControlOpened(control);
 
         keyPress(Qt.Key_Return);
@@ -561,7 +710,7 @@ TestCase {
 
         // Start editing first comment
         const commentLabel0 = _clickHelper.centerOfCommentLabel(control, 0);
-        _mouse.click(control, commentLabel0.x, commentLabel0.y);
+        _mouse.doubleClick(control, commentLabel0.x, commentLabel0.y);
         waitUntilEditControlOpened(control);
 
         // Type some text

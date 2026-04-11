@@ -31,10 +31,11 @@ Item {
     readonly property int verticalItemPadding: 13
 
     signal playButtonPressed
+    signal rowPressed
 
-    signal timeLabelPressed(coordinates: point)
-    signal commentTypeLabelPressed(coordinates: point)
-    signal commentLabelPressed
+    signal timeLabelDoubleClicked(coordinates: point)
+    signal commentTypeLabelDoubleClicked(coordinates: point)
+    signal commentLabelDoubleClicked
 
     signal rightMouseButtonPressed(coordinates: point)
 
@@ -63,24 +64,32 @@ Item {
         }
 
         onPressed: event => {
-            const coordinates = root.mapToItem(root.listView, mouseX, mouseY);
-
             if (event.button === Qt.RightButton) {
+                const coordinates = root.mapToItem(root.listView, mouseX, mouseY);
                 root.rightMouseButtonPressed(coordinates);
                 return;
             }
 
+            root.rowPressed();
+        }
+
+        onDoubleClicked: event => {
+            if (event.button !== Qt.LeftButton) {
+                return;
+            }
+
+            const coordinates = root.mapToItem(root.listView, mouseX, mouseY);
             const itemPressed = _row.childAt(mouseX, mouseY);
 
             switch (itemPressed) {
             case _timeLabel:
-                root.timeLabelPressed(coordinates);
+                root.timeLabelDoubleClicked(coordinates);
                 break;
             case _commentTypeLabel:
-                root.commentTypeLabelPressed(coordinates);
+                root.commentTypeLabelDoubleClicked(coordinates);
                 break;
             case _commentLabel:
-                root.commentLabelPressed();
+                root.commentLabelDoubleClicked();
                 break;
             }
         }
