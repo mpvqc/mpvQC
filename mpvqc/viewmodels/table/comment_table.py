@@ -40,16 +40,14 @@ class MpvqcCommentTableViewModel(QObject):
 
     quickSelectionRequested = Signal(int)
     selectionRequested = Signal(int)
-    rowEditRequested = Signal(int)
-    lastRowSelected = Signal()
 
     timeEditRequested = Signal(int, int, QPointF)
     commentTypeEditRequested = Signal(int, str, QPointF)
-    commentEditRequested = Signal(int)
+    commentEditRequested = Signal(int, str)  # index, comment
 
-    showSearchBoxRequested = Signal()
     contextMenuRequested = Signal(int, QPointF)
     deleteCommentRequested = Signal(int, int, str, str)  # index, time, commentType, commentText
+    searchRequested = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -74,9 +72,10 @@ class MpvqcCommentTableViewModel(QObject):
             case AnimatedSelection(row=row):
                 self.selectionRequested.emit(row)
             case RowAddEdit(row=row):
-                self.rowEditRequested.emit(row)
-            case LastRowSelection():
-                self.lastRowSelected.emit()
+                self.quickSelectionRequested.emit(row)
+                self.startEditingComment(row)
+            case LastRowSelection(row=row):
+                self.quickSelectionRequested.emit(row)
             case NoViewAction():
                 pass
             case _ as unreachable:
@@ -112,15 +111,16 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def startEditingComment(self, index: int) -> None:
-        self.commentEditRequested.emit(index)
-
-    @Slot()
-    def showSearchBox(self) -> None:
-        self.showSearchBoxRequested.emit()
+        comment = self._model.comment_text_at(index)
+        self.commentEditRequested.emit(index, comment)
 
     @Slot(int, QPointF)
     def openContextMenu(self, index: int, coordinates: QPointF) -> None:
         self.contextMenuRequested.emit(index, coordinates)
+
+    @Slot()
+    def openSearchBox(self) -> None:
+        self.searchRequested.emit()
 
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:

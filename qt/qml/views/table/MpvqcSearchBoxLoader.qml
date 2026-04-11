@@ -6,15 +6,32 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import pyobjects
+
 Loader {
     id: root
 
-    required property var viewModel
-    required property var searchBoxViewModel
+    required property var model
+    required property int selectedIndex
+
+    readonly property MpvqcSearchBoxViewModel viewModel: MpvqcSearchBoxViewModel {
+        model: root.model
+        selectedIndex: root.selectedIndex
+        onHighlightRequested: index => root.highlightRequested(index)
+    }
 
     readonly property string searchQuery: (item as MpvqcSearchBoxPopup)?.searchQuery ?? ""
 
+    signal highlightRequested(index: int)
     signal closed
+
+    function show(): void {
+        if (root.active) {
+            (root.item as MpvqcSearchBoxPopup).open();
+        } else {
+            root.active = true;
+        }
+    }
 
     active: false
     visible: active
@@ -23,19 +40,7 @@ Loader {
 
     sourceComponent: MpvqcSearchBoxPopup {
         parent: root.parent
-        viewModel: root.searchBoxViewModel
+        viewModel: root.viewModel
         onClosed: root.closed()
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onShowSearchBoxRequested(): void {
-            if (root.active) {
-                (root.item as MpvqcSearchBoxPopup).open();
-            } else {
-                root.active = true;
-            }
-        }
     }
 }

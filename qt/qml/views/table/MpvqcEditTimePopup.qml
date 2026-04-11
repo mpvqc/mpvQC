@@ -61,6 +61,7 @@ Popup {
 
     contentItem: SpinBox {
         id: _spinBox
+        objectName: "timeSpinBox"
 
         value: root.currentTime
 

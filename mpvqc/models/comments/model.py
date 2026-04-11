@@ -42,6 +42,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcCommentModel(QStandardItemModel):
     selectedRowChanged = Signal(int)
 
+    commentsAboutToBeImported = Signal()
+
     mutated = Signal(object)
     search_invalidated = Signal()
 
@@ -74,6 +76,8 @@ class MpvqcCommentModel(QStandardItemModel):
         if not comments:
             return
 
+        self.commentsAboutToBeImported.emit()
+
         def on_after_undo(row: int) -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
@@ -100,7 +104,7 @@ class MpvqcCommentModel(QStandardItemModel):
         def on_after_undo() -> None:
             self.layoutChanged.emit()
             self.search_invalidated.emit()
-            self.mutated.emit(LastRowSelection())
+            self.mutated.emit(LastRowSelection(row=self.rowCount() - 1))
 
         def on_after_redo() -> None:
             self.layoutChanged.emit()
@@ -218,6 +222,9 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def comment_at(self, row: int) -> Comment:
         return cast("CommentItem", self.item(row, column=0)).to_comment()
+
+    def comment_text_at(self, row: int) -> str:
+        return cast("CommentItem", self.item(row, column=0)).comment
 
     def retrieve_comments(self) -> Iterator[Comment]:
         for row in range(self.rowCount()):

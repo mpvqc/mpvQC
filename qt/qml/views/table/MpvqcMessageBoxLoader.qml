@@ -14,14 +14,25 @@ import "../../utility"
 Loader {
     id: root
 
-    required property var viewModel
-
     property int commentIndex: -1
     property int commentTime: 0
     property string commentType: ""
     property string commentText: ""
 
+    signal deleteConfirmed(index: int)
     signal closed
+
+    function requestDeletion(index: int, time: int, commentType: string, commentText: string): void {
+        root.commentIndex = index;
+        root.commentTime = time;
+        root.commentType = commentType;
+        root.commentText = commentText;
+        root.active = true;
+    }
+
+    function dismiss(): void {
+        root.item?.close();
+    }
 
     active: false
     visible: active
@@ -74,26 +85,13 @@ Loader {
             }
 
             onAccepted: {
-                root.viewModel.removeRow(root.commentIndex);
+                root.deleteConfirmed(root.commentIndex);
             }
 
             onClosed: {
                 root.active = false;
                 root.closed();
             }
-        }
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onDeleteCommentRequested(index: int, time: int, commentType: string, commentText: string): void {
-            root.commentIndex = index;
-            root.commentTime = time;
-            root.commentType = commentType;
-            root.commentText = commentText;
-
-            root.active = true;
         }
     }
 }

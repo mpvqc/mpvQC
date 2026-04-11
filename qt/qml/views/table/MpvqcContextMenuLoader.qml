@@ -13,10 +13,26 @@ import "../../utility"
 Loader {
     id: root
 
-    required property var viewModel
-
     property int currentListIndex: -1
     property point openedAt: Qt.point(0, 0)
+
+    property bool _actionTriggered: false
+
+    signal editCommentRequested(index: int)
+    signal copyCommentRequested(index: int)
+    signal deleteCommentRequested(index: int)
+    signal dismissed
+
+    function show(index: int, coordinates: point): void {
+        root._actionTriggered = false;
+        root.currentListIndex = index;
+        root.openedAt = coordinates;
+        root.active = true;
+    }
+
+    function dismiss(): void {
+        root.item?.close();
+    }
 
     active: false
     visible: active
@@ -36,6 +52,13 @@ Loader {
             Material.background: MpvqcTheme.backgroundAlternate
             Material.foreground: MpvqcTheme.foregroundAlternate
 
+            onClosed: {
+                root.active = false;
+                if (!root._actionTriggered) {
+                    root.dismissed();
+                }
+            }
+
             MenuItem {
                 objectName: "editCommentAction"
 
@@ -44,8 +67,9 @@ Loader {
                 icon.source: "qrc:/data/icons/edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 onTriggered: {
+                    root._actionTriggered = true;
                     _menu.exit = null;
-                    _menu.deferToOnClose = () => root.viewModel.startEditingComment(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.editCommentRequested(root.currentListIndex);
                 }
             }
 
@@ -57,7 +81,8 @@ Loader {
                 icon.source: "qrc:/data/icons/content_copy_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 onTriggered: {
-                    _menu.deferToOnClose = () => root.viewModel.copyToClipboard(root.currentListIndex);
+                    root._actionTriggered = true;
+                    _menu.deferToOnClose = () => root.copyCommentRequested(root.currentListIndex);
                 }
             }
 
@@ -69,24 +94,11 @@ Loader {
                 icon.source: "qrc:/data/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
 
                 onTriggered: {
+                    root._actionTriggered = true;
                     _menu.exit = null;
-                    _menu.deferToOnClose = () => root.viewModel.askToDeleteRow(root.currentListIndex);
+                    _menu.deferToOnClose = () => root.deleteCommentRequested(root.currentListIndex);
                 }
             }
-
-            onClosed: {
-                root.active = false;
-            }
-        }
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onContextMenuRequested(index: int, coordinates: point): void {
-            root.currentListIndex = index;
-            root.openedAt = coordinates;
-            root.active = true;
         }
     }
 }

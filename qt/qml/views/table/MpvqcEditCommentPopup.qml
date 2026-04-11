@@ -33,6 +33,7 @@ Popup {
 
     contentItem: TextArea {
         id: _textField
+        objectName: "commentTextArea"
 
         text: root.currentComment
         wrapMode: Text.WordWrap
