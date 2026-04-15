@@ -13,11 +13,14 @@ import "../../utility"
 
 Popup {
     id: root
+    objectName: "searchBoxPopup"
 
     required property MpvqcSearchBoxViewModel viewModel
 
     readonly property bool isApplicationFullScreen: MpvqcWindowUtility.isFullscreen
     readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""
+    readonly property int edgeMarginHorizontal: 30
+    readonly property int edgeMarginVertical: 15
 
     property bool searchActive: false
 
@@ -28,8 +31,24 @@ Popup {
         exit = exitAnimation;
     }
 
-    x: mirrored ? 30 : parent.width - width - 30
-    y: parent.height - height - 15
+    function _scaleUp(): void {
+        _dragScaleAnimation.from = root.scale;
+        _dragScaleAnimation.to = _dragScaleAnimation.dragScaleFactor;
+        _dragScaleAnimation.start();
+    }
+
+    function _scaleDown(): void {
+        _dragScaleAnimation.from = root.scale;
+        _dragScaleAnimation.to = 1;
+        _dragScaleAnimation.start();
+    }
+
+    function _shouldSuppressScaleOnPress(): bool {
+        return _textFieldHover.hovered || (_previousButton.enabled && _previousButton.hovered) || (_nextButton.enabled && _nextButton.hovered) || _closeButton.hovered;
+    }
+
+    x: mirrored ? edgeMarginHorizontal : parent.width - width - edgeMarginHorizontal
+    y: parent.height - height - edgeMarginVertical
     z: 1
 
     width: 450
@@ -41,6 +60,23 @@ Popup {
     Material.background: MpvqcTheme.backgroundAlternate
     Material.foreground: MpvqcTheme.foregroundAlternate
     Material.roundedScale: Material.SmallScale
+
+    enter: Transition {
+        NumberAnimation {
+            property: "opacity"
+            from: 0.0
+            to: 1.0
+            duration: 150
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            property: "scale"
+            from: 0.95
+            to: 1.0
+            duration: 150
+            easing.type: Easing.OutCubic
+        }
+    }
 
     onAboutToShow: {
         root.searchActive = true;
@@ -58,11 +94,17 @@ Popup {
         }
     }
 
+    HoverHandler {
+        objectName: "popupBackgroundCursorHandler"
+        cursorShape: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+    }
+
     RowLayout {
         width: root.width - root.leftPadding - root.rightPadding
         spacing: 0
 
         MpvqcIconLabel {
+            objectName: "searchIconLabel"
             Layout.leftMargin: 8
             Layout.rightMargin: 4
 
@@ -92,6 +134,12 @@ Popup {
                 }
             }
 
+            HoverHandler {
+                id: _textFieldHover
+                objectName: "searchTextFieldCursorHandler"
+                cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.IBeamCursor
+            }
+
             Component.onCompleted: {
                 background.fillColor = "transparent";
                 background.outlineColor = "transparent";
@@ -111,32 +159,72 @@ Popup {
             padding: 0
         }
 
-        ToolButton {
-            objectName: "previousButton"
-            enabled: root.viewModel.hasMultipleResults
-            focusPolicy: Qt.NoFocus
+        Item {
+            implicitWidth: _previousButton.implicitWidth
+            implicitHeight: _previousButton.implicitHeight
 
-            icon {
-                source: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            ToolButton {
+                id: _previousButton
+                objectName: "previousButton"
+                anchors.fill: parent
+
+                enabled: root.viewModel.hasMultipleResults
+                focusPolicy: Qt.NoFocus
+
+                icon {
+                    source: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                }
+
+                onClicked: root.viewModel.selectPrevious()
+
+                HoverHandler {
+                    objectName: "previousButtonEnabledCursorHandler"
+                    cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+                }
             }
 
-            onPressed: root.viewModel.selectPrevious()
+            HoverHandler {
+                objectName: "previousButtonDisabledCursorHandler"
+                enabled: !_previousButton.enabled
+                cursorShape: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+            }
+        }
+
+        Item {
+            implicitWidth: _nextButton.implicitWidth
+            implicitHeight: _nextButton.implicitHeight
+
+            ToolButton {
+                id: _nextButton
+                objectName: "nextButton"
+                anchors.fill: parent
+
+                enabled: root.viewModel.hasMultipleResults
+                focusPolicy: Qt.NoFocus
+
+                icon {
+                    source: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                }
+
+                onClicked: root.viewModel.selectNext()
+
+                HoverHandler {
+                    objectName: "nextButtonEnabledCursorHandler"
+                    cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+                }
+            }
+
+            HoverHandler {
+                objectName: "nextButtonDisabledCursorHandler"
+                enabled: !_nextButton.enabled
+                cursorShape: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+            }
         }
 
         ToolButton {
-            objectName: "nextButton"
-            enabled: root.viewModel.hasMultipleResults
-            focusPolicy: Qt.NoFocus
-
-            icon {
-                source: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            }
-
-            onPressed: root.viewModel.selectNext()
-        }
-
-        ToolButton {
+            id: _closeButton
             objectName: "closeButton"
+
             focusPolicy: Qt.NoFocus
 
             icon {
@@ -145,7 +233,12 @@ Popup {
                 source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
             }
 
-            onPressed: root.close()
+            onClicked: root.close()
+
+            HoverHandler {
+                objectName: "closeButtonCursorHandler"
+                cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+            }
         }
     }
 
@@ -179,67 +272,36 @@ Popup {
         onActivated: root.close()
     }
 
-    DragHandler {
+    MpvqcSearchBoxDragHandler {
         id: _dragHandler
 
-        readonly property int marginVertical: 15
-        readonly property real dragScaleFactor: 1.0375
-        readonly property int snapThreshold: 15
-        readonly property int minY: marginVertical
-        readonly property int maxY: root.parent.height - root.height - marginVertical
+        parent: root.contentItem
 
-        property int targetY: maxY
-        property int dragStartY: -1
-        property bool snapToBottom: true
+        edgeMarginVertical: root.edgeMarginVertical
+        parentHeight: root.parent.height
+        popupHeight: root.height
+        popupY: root.y
 
-        function updateTargetPosition(newY: int): void {
-            targetY = Math.max(minY, Math.min(maxY, newY));
-            snapToBottom = (targetY >= maxY - snapThreshold);
-
-            if (!active && snapToBottom) {
-                targetY = maxY;
+        onPointerPressed: {
+            if (!root._shouldSuppressScaleOnPress()) {
+                root._scaleUp();
             }
         }
 
-        dragThreshold: 0
-        target: null
-        xAxis.enabled: false
-        yAxis.enabled: true
+        onPointerReleased: root._scaleDown()
 
-        onActiveChanged: {
-            if (active) {
-                dragStartY = root.y;
-                _dragScaleAnimation.from = 1;
-                _dragScaleAnimation.to = dragScaleFactor;
-                _dragScaleAnimation.start();
-            } else {
-                dragStartY = -1;
-                _dragScaleAnimation.from = dragScaleFactor;
-                _dragScaleAnimation.to = 1;
-                _dragScaleAnimation.start();
+        onDragStarted: {
+            if (root.scale < _dragScaleAnimation.dragScaleFactor) {
+                root._scaleUp();
             }
-        }
-
-        onMaxYChanged: {
-            if (maxY <= 0)
-                return;
-
-            if (snapToBottom) {
-                targetY = maxY;
-            } else {
-                updateTargetPosition(targetY);
-            }
-        }
-
-        yAxis.onActiveValueChanged: {
-            if (dragStartY === -1)
-                return;
-            updateTargetPosition(dragStartY + yAxis.activeValue);
         }
     }
 
     NumberAnimation {
         id: _dragScaleAnimation
+
+        readonly property real dragScaleFactor: 1.0375
+
         target: root
         property: "scale"
         duration: 75
@@ -250,13 +312,5 @@ Popup {
         target: root
         property: "y"
         value: _dragHandler.snapToBottom && !_dragHandler.active ? _dragHandler.maxY : _dragHandler.targetY
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: true
-        cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-        z: _dragHandler.active ? 1 : -1
     }
 }
