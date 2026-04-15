@@ -300,6 +300,7 @@ files = [
     "qt/qml/views/table/MpvqcEditTimePopup.qml",
     "qt/qml/views/table/MpvqcMessageBoxLoader.qml",
     "qt/qml/views/table/MpvqcPlaceholderView.qml",
+    "qt/qml/views/table/MpvqcSearchBoxDragHandler.qml",
     "qt/qml/views/table/MpvqcSearchBoxLoader.qml",
     "qt/qml/views/table/MpvqcSearchBoxPopup.qml",
     "qt/qml/views/table/MpvqcTableUtility.qml",
