@@ -31,7 +31,7 @@ Loader {
     }
 
     function dismiss(): void {
-        root.item?.close();
+        (root.item as MpvqcPositionedMenu)?.close();
     }
 
     active: false
@@ -46,6 +46,7 @@ Loader {
 
         MpvqcPositionedMenu {
             id: _menu
+            objectName: "commentContextMenu"
 
             position: root.openedAt
 

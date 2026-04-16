@@ -31,7 +31,7 @@ Loader {
     }
 
     function dismiss(): void {
-        root.item?.close();
+        (root.item as MpvqcMessageBox)?.close();
     }
 
     active: false
@@ -45,6 +45,8 @@ Loader {
         id: _messageBoxComponent
 
         MpvqcMessageBox {
+            objectName: "deleteConfirmationMessageBox"
+
             title: qsTranslate("MessageBoxes", "Delete Comment")
             standardButtons: Dialog.Yes | Dialog.Cancel
 

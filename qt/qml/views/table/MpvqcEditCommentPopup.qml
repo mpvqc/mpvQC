@@ -15,13 +15,9 @@ Popup {
 
     readonly property bool isOdd: currentListIndex % 2 === 1
 
-    readonly property alias textField: _textField // for tests
-
-    property int previousHeight: 0
     property bool acceptValue: true
 
     signal commentEdited(index: int, newComment: string)
-    signal commentEditPopupHeightChanged(editorHeight: int, heightDelta: int)
 
     width: root.parent.width
 
@@ -81,15 +77,6 @@ Popup {
         if (!activeFocus) {
             root.close();
         }
-    }
-
-    onHeightChanged: {
-        const heightDelta = root.height - root.previousHeight;
-        if (root.previousHeight > 0) {
-            // Skip first change (initialization)
-            root.commentEditPopupHeightChanged(root.height, heightDelta);
-        }
-        root.previousHeight = root.height;
     }
 
     Shortcut {
