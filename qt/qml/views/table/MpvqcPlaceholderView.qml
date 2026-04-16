@@ -12,78 +12,76 @@ import pyobjects
 
 Item {
     id: root
+    objectName: "placeholder"
 
     readonly property MpvqcPlaceholderViewModel viewModel: MpvqcPlaceholderViewModel {}
 
     readonly property bool horizontalLayout: viewModel.layoutOrientation === Qt.Horizontal
-    readonly property var textAlignment: horizontalLayout ? Qt.AlignLeft : Qt.AlignVCenter | Qt.AlignRight
-    readonly property int shortcutBottomMargin: horizontalLayout ? spacing + 10 : 0
-    readonly property int spacing: 30
+    readonly property int textAlignment: horizontalLayout ? Qt.AlignLeft : (Qt.AlignVCenter | Qt.AlignRight)
+    readonly property int columnSpacing: 30
+    readonly property int rowSpacing: 10
+    readonly property int verticalGroupGap: horizontalLayout ? columnSpacing + rowSpacing : 0
+
+    component ShortcutLabel: Label {
+        Layout.alignment: root.textAlignment
+    }
+
+    component ShortcutKey: Button {
+        enabled: false
+    }
+
+    component Plus: Label {
+        text: "+"
+    }
 
     GridLayout {
         anchors.centerIn: root
         columns: root.horizontalLayout ? 1 : 2
-        columnSpacing: root.horizontalLayout ? 0 : root.spacing
-        rowSpacing: 10
+        columnSpacing: root.horizontalLayout ? 0 : root.columnSpacing
+        rowSpacing: root.rowSpacing
 
-        Label {
+        ShortcutLabel {
             //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Open Video")
-
-            Layout.alignment: root.textAlignment
         }
 
         RowLayout {
-            Layout.bottomMargin: root.shortcutBottomMargin
+            Layout.bottomMargin: root.verticalGroupGap
 
-            Button {
+            ShortcutKey {
                 text: qsTranslate("KeyboardKeys", "Ctrl")
-                enabled: false
             }
 
-            Label {
-                text: "+"
-            }
+            Plus {}
 
-            Button {
+            ShortcutKey {
                 text: qsTranslate("KeyboardKeys", "Alt")
-                enabled: false
             }
 
-            Label {
-                text: "+"
-            }
+            Plus {}
 
-            Button {
+            ShortcutKey {
                 text: "O"
-                enabled: false
             }
         }
 
-        Label {
+        ShortcutLabel {
             //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Add Comment")
-
-            Layout.alignment: root.textAlignment
         }
 
-        Button {
+        ShortcutKey {
             text: "E"
-            enabled: false
-
-            Layout.bottomMargin: root.shortcutBottomMargin
+            Layout.bottomMargin: root.verticalGroupGap
         }
 
-        Label {
+        ShortcutLabel {
             //: Keyboard shortcut - displayed when there are zero comments
             text: qsTranslate("CommentTable", "Show Keyboard Shortcuts")
-
-            Layout.alignment: root.textAlignment
         }
 
-        Button {
+        ShortcutKey {
             text: "?"
-            enabled: false
         }
     }
 }

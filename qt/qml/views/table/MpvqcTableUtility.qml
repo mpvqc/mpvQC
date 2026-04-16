@@ -12,6 +12,7 @@ QtObject {
     readonly property MpvqcTableUtilityBackend backend: MpvqcTableUtilityBackend {}
 
     readonly property bool useLongFormat: backend.duration >= 3600
+    readonly property var _reForbidden: /[\u00AD\r\n]/gi
 
     function formatTime(inputSeconds: real): string {
         const hours = Math.floor(inputSeconds / 3600);
@@ -32,47 +33,20 @@ QtObject {
      *  - newline
      */
     function sanitizeText(text: string): string {
-        const reForbidden = /[\u00AD\r\n]/gi;
-        if (text.search(reForbidden) === -1) {
-            return text;
-        }
-        return text.replace(reForbidden, "");
+        return text.replace(_reForbidden, "");
     }
 
-    /**
-     * @param comment {string}
-     * @param highlightedText {string}
-     * @returns {string}
-     */
     function highlightComment(comment: string, highlightedText: string): string {
         const re = new RegExp(_escapeRegExp(highlightedText), "gi");
         return comment.replace(re, "<b><u>$&</u></b>");
     }
 
     /**
-     * https://github.com/tc39/proposal-regex-escaping
-     * This is a direct translation to code of the spec
+     * Escape regex syntax characters so the result is safe to feed into
+     * `new RegExp(...)` as a literal pattern. Equivalent to the ES2025
+     * `RegExp.escape`, which is not yet available in Qt's engine.
      */
-    function _escapeRegExp(S: string): string {
-        // 1. let str be ToString(S).
-        // 2. ReturnIfAbrupt(str).
-        const str = String(S);
-        // 3. Let cpList be a List containing in order the code
-        // points as defined in 6.1.4 of str, starting at the first element of str.
-        const cpList = Array.from(str[Symbol.iterator]());
-        // 4. let cuList be a new List
-        const cuList = [];
-        // 5. For each code point c in cpList in List order, do:
-        for (const c of cpList) {
-            // i. If c is a SyntaxCharacter then do:
-            if ("^$\\.*+?()[]{}|".indexOf(c) !== -1) {
-                // a. Append "\" to cuList.
-                cuList.push("\\");
-            }
-            // Append c to cpList.
-            cuList.push(c);
-        }
-        // 7. Return a String whose elements are, in order, the elements of cuList.
-        return cuList.join("");
+    function _escapeRegExp(s: string): string {
+        return s.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
     }
 }

@@ -16,7 +16,6 @@ Loader {
 
     signal timeTemporaryChanged(time: int)
     signal timeKept(oldTime: int)
-    signal commentEditPopupHeightChanged(editorHeight: int, heightDelta: int)
 
     signal timeEdited(index: int, newTime: int)
     signal commentTypeEdited(index: int, newCommentType: string)
@@ -60,11 +59,19 @@ Loader {
     }
 
     function abortEdit(): void {
-        if (active && item) {
-            if (item.acceptValue !== undefined) {
-                item.acceptValue = false;
-            }
-            item.close();
+        if (!active || !item) {
+            return;
+        }
+        switch (source) {
+        case editTimePopup:
+            const popup = item as MpvqcEditTimePopup;
+            popup.acceptValue = false;
+            popup.close();
+            break;
+        case editCommentTypeMenu:
+            const menu = item as MpvqcEditCommentTypeMenu;
+            menu.close();
+            break;
         }
     }
 
@@ -95,10 +102,6 @@ Loader {
 
         function onCommentEdited(index: int, newComment: string): void {
             root.commentEdited(index, newComment);
-        }
-
-        function onCommentEditPopupHeightChanged(editorHeight: int, heightDelta: int): void {
-            root.commentEditPopupHeightChanged(editorHeight, heightDelta);
         }
 
         function onClosed(): void {

@@ -12,63 +12,31 @@ import "../../utility"
 
 MpvqcPositionedMenu {
     id: root
+    objectName: "editCommentTypeMenu"
 
     required property string currentCommentType
     required property int currentListIndex
     required property list<string> commentTypes
 
-    readonly property bool isCommentTypeKnown: commentTypes.some(commentType => commentType === currentCommentType)
-    readonly property bool isCommentTypeUnknown: !isCommentTypeKnown
+    readonly property bool isCommentTypeUnknown: !commentTypes.includes(currentCommentType)
 
     signal commentTypeEdited(index: int, newCommentType: string)
 
-    function _handleTriggered(potentialNewCommentType: string): void {
-        if (root.currentCommentType !== potentialNewCommentType) {
-            root.commentTypeEdited(root.currentListIndex, potentialNewCommentType);
+    function _handleTriggered(newCommentType: string): void {
+        if (root.currentCommentType !== newCommentType) {
+            root.commentTypeEdited(root.currentListIndex, newCommentType);
         }
-    }
-
-    function _populateKnownItems(): void {
-        for (const commentType of root.commentTypes) {
-            const menuItem = _menuItem.createObject(root.contentItem, {
-                commentType
-            });
-            root.addItem(menuItem);
-        }
-    }
-
-    function _populateUnknownItem(): void {
-        const separator = _menuItemSeparator.createObject(root.contentItem);
-        root.addItem(separator);
-
-        const menuItem = _menuItem.createObject(root.contentItem, {
-            commentType: root.currentCommentType
-        });
-        root.addItem(menuItem);
     }
 
     Material.background: MpvqcTheme.backgroundAlternate
     Material.foreground: MpvqcTheme.foregroundAlternate
 
-    Component.onCompleted: {
-        root._populateKnownItems();
+    Repeater {
+        model: root.commentTypes
 
-        if (isCommentTypeUnknown) {
-            root._populateUnknownItem();
-        }
-    }
-
-    Component {
-        id: _menuItemSeparator
-
-        MenuSeparator {}
-    }
-
-    Component {
-        id: _menuItem
-
-        MenuItem {
-            required property string commentType
+        delegate: MenuItem {
+            required property string modelData
+            readonly property string commentType: modelData
 
             text: qsTranslate("CommentTypes", commentType)
             autoExclusive: true
@@ -77,5 +45,30 @@ MpvqcPositionedMenu {
 
             onTriggered: root._handleTriggered(commentType)
         }
+    }
+
+    Instantiator {
+        model: root.isCommentTypeUnknown ? 1 : 0
+
+        delegate: MenuSeparator {}
+
+        onObjectAdded: (_index, object) => root.addItem(object)
+    }
+
+    Instantiator {
+        model: root.isCommentTypeUnknown ? 1 : 0
+
+        delegate: MenuItem {
+            readonly property string commentType: root.currentCommentType
+
+            text: qsTranslate("CommentTypes", commentType)
+            autoExclusive: true
+            checkable: true
+            checked: true
+
+            onTriggered: root._handleTriggered(commentType)
+        }
+
+        onObjectAdded: (_index, object) => root.addItem(object)
     }
 }

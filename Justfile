@@ -98,6 +98,7 @@ build-release:
     set -euo pipefail
     function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
     execute find . -type f -name 'tst_*' -delete
+    execute find . -type f -name 'TestHelpers.qml' -delete
     execute export MPVQC_COMPILE_QML=true
     execute export UV_NO_SYNC="1"
     execute export UV_OFFLINE="1"
