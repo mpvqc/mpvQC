@@ -12,7 +12,7 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcNewCommentMenuView"
+    name: "MpvqcNewCommentMenu"
 
     Component {
         id: signalSpy
@@ -30,7 +30,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcNewCommentMenuView {}
+        MpvqcNewCommentMenu {}
     }
 
     readonly property var initProperties: ({

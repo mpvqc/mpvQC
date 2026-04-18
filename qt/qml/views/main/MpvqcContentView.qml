@@ -10,6 +10,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../../utility"
+import "../player"
 import "../table"
 
 Page {
@@ -99,7 +100,7 @@ Page {
         anchors.fill: _splitView
     }
 
-    MpvqcNewCommentMenuView {
+    MpvqcNewCommentMenu {
         id: _commentMenu
 
         onCommentTypeChosen: commentType => {
@@ -108,49 +109,9 @@ Page {
         }
     }
 
-    // *** *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***
-    // Workaround for QTBUG-145585: On Windows, Popup.Window menus do not respect
-    // the modal property, allowing clicks to pass through to underlying items.
-    // This item lives in the window overlay layer and intercepts every click
-    // while the new-comment menu is open, closing it and swallowing the event
-    // so nothing underneath reacts.
-    //
-    // The menuOpen flag is cleared via Qt.callLater instead of directly in
-    // onClosed because the signal is delivered immediately.
-    // Without the deferral the overlay would be gone before the click arrives.
-    Item {
-        id: _newCommentMenuOverlay
-
-        property bool menuOpen: false
-
-        parent: Overlay.overlay
-        anchors.fill: parent
-        visible: Qt.platform.os === "windows" && menuOpen
-
-        Connections {
-            target: _commentMenu
-            function onAboutToShow(): void {
-                _newCommentMenuOverlay.menuOpen = true;
-            }
-            function onClosed(): void {
-                Qt.callLater(() => {
-                    _newCommentMenuOverlay.menuOpen = false;
-                });
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-            onPressed: event => {
-                event.accepted = true;
-                _newCommentMenuOverlay.menuOpen = false;
-                _commentMenu.close();
-            }
-        }
+    MpvqcNewCommentMenuClickGuard {
+        menu: _commentMenu
     }
-    // *** *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***  *** ***
 
     MpvqcResizeHandler {
         id: _videoResizer
