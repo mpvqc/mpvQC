@@ -30,18 +30,6 @@ class MpvqcContentViewModel(QObject):
         super().__init__(parent)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
 
-    @Property(int, constant=True, final=True)
-    def minContainerHeight(self) -> int:
-        return 200
-
-    @Property(int, constant=True, final=True)
-    def minContainerWidth(self) -> int:
-        return 500
-
-    @Property(float, constant=True, final=True)
-    def defaultSplitRatio(self) -> float:
-        return 0.4
-
     @Property(int, notify=layoutOrientationChanged)
     def layoutOrientation(self) -> int:
         return self._settings.layout_orientation
@@ -95,12 +83,3 @@ class MpvqcContentViewModel(QObject):
                 pass
 
         self._player.handle_key_event(key, modifiers)
-
-    @Slot(int, int, result=dict)
-    def calculatePreferredSplitSizes(self, split_view_width: int, split_view_height: int) -> dict:
-        return {
-            # pyrefly: ignore [unsupported-operation]
-            "width": round(split_view_width * self.defaultSplitRatio),
-            # pyrefly: ignore [unsupported-operation]
-            "height": round(split_view_height * self.defaultSplitRatio),
-        }

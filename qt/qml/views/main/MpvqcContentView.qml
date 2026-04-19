@@ -19,6 +19,10 @@ Page {
     required property MpvqcContentViewModel viewModel
     required property int windowBorder
 
+    readonly property int minContainerHeight: 200
+    readonly property int minContainerWidth: 500
+    readonly property real defaultSplitRatio: 0.4
+
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }
@@ -46,8 +50,8 @@ Page {
         MpvqcPlayerView {
             id: _player
 
-            SplitView.minimumHeight: root.viewModel.minContainerHeight
-            SplitView.minimumWidth: root.viewModel.minContainerWidth
+            SplitView.minimumHeight: root.minContainerHeight
+            SplitView.minimumWidth: root.minContainerWidth
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
@@ -61,8 +65,8 @@ Page {
 
             visible: !MpvqcWindowUtility.isFullscreen
 
-            SplitView.minimumHeight: root.viewModel.minContainerHeight
-            SplitView.minimumWidth: root.viewModel.minContainerWidth
+            SplitView.minimumHeight: root.minContainerHeight
+            SplitView.minimumWidth: root.minContainerWidth
 
             function setPreferredSizes(width, height) {
                 SplitView.preferredWidth = width;
@@ -145,7 +149,8 @@ Page {
     }
 
     Component.onCompleted: {
-        const sizes = root.viewModel.calculatePreferredSplitSizes(_splitView.width, _splitView.height);
-        _tableContainer.setPreferredSizes(sizes.width, sizes.height);
+        const width = Math.round(_splitView.width * root.defaultSplitRatio);
+        const height = Math.round(_splitView.height * root.defaultSplitRatio);
+        _tableContainer.setPreferredSizes(width, height);
     }
 }
