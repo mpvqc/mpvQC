@@ -10,6 +10,7 @@ import QtQuick.Controls.Material
 import pyobjects
 
 import "../../utility"
+import "../footer"
 import "../player"
 import "../table"
 
@@ -98,12 +99,9 @@ Page {
             MpvqcFooterView {
                 id: _footer
 
-                viewModel: MpvqcFooterViewModel {
-                    selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
-                    totalCommentCount: _mpvqcCommentTable.commentCount
-                }
-
                 width: _tableContainer.width
+                selectedCommentIndex: _mpvqcCommentTable.selectedCommentIndex
+                totalCommentCount: _mpvqcCommentTable.commentCount
             }
         }
     }

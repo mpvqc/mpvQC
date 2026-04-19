@@ -10,13 +10,15 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../../components"
 import "../../utility"
 
 Item {
     id: root
 
-    required property MpvqcFooterViewModel viewModel
+    required property int selectedCommentIndex
+    required property int totalCommentCount
+
+    readonly property MpvqcFooterViewModel viewModel: MpvqcFooterViewModel {}
 
     readonly property int bottomMargin: MpvqcWindowUtility.isMaximized ? 2 : 0
     readonly property int rightMargin: MpvqcWindowUtility.isMaximized ? 0 : 1
@@ -45,8 +47,10 @@ Item {
         }
 
         Label {
-            text: root.viewModel.commentCountText
-            visible: root.viewModel.isCommentCountVisible
+            objectName: "commentCountLabel"
+
+            text: `${root.selectedCommentIndex + 1}/${root.totalCommentCount}`
+            visible: root.totalCommentCount > 0
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: root.bottomMargin
             Layout.leftMargin: 3
@@ -57,16 +61,20 @@ Item {
         }
 
         Label {
-            text: root.viewModel.videoPercentText
-            visible: root.viewModel.isVideoPercentVisible
+            objectName: "percentLabel"
+
+            text: root.viewModel.percentText
+            visible: root.viewModel.isPercentVisible
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: root.bottomMargin
         }
 
         Label {
+            objectName: "timeLabel"
+
             text: root.viewModel.timeText
-            visible: root.viewModel.isTimeTextVisible
+            visible: root.viewModel.isTimeVisible
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
             Layout.preferredWidth: root.viewModel.timeWidth
@@ -84,6 +92,7 @@ Item {
 
             ToolButton {
                 id: _toolButton
+                objectName: "contextMenuButton"
 
                 icon.source: "qrc:/data/icons/arrow_drop_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
                 focusPolicy: Qt.NoFocus
@@ -100,7 +109,7 @@ Item {
 
         function openContextMenu(): void {
             if (active) {
-                item.open(); // qmllint disable
+                (item as MpvqcFooterContextMenu).open();
             } else {
                 active = true;
             }
@@ -108,65 +117,25 @@ Item {
 
         active: false
         asynchronous: true
-        visible: active
 
-        onLoaded: item.open() // qmllint disable
+        onLoaded: (item as MpvqcFooterContextMenu).open()
 
-        sourceComponent: MpvqcMenu {
+        sourceComponent: MpvqcFooterContextMenu {
             x: isMirrored ? _toolButtonContainer.x : _toolButtonContainer.x + _toolButtonContainer.width - width
             y: -height
             transformOrigin: isMirrored ? Popup.BottomLeft : Popup.BottomRight
-            modal: true
-            dim: false
 
-            Material.background: MpvqcTheme.backgroundAlternate
-            Material.foreground: MpvqcTheme.foregroundAlternate
+            isDefaultFormatChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.CURRENT_TOTAL_TIME
+            isCurrentTimeChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.CURRENT_TIME
+            isRemainingTimeChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.REMAINING_TIME
+            isHideTimeChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.EMPTY
+            isPercentChecked: root.viewModel.statusbarPercentage
 
-            MenuItem {
-                text: qsTranslate("MainWindow", "Default format")
-                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.CURRENT_TOTAL_TIME
-                autoExclusive: true
-                checkable: true
-
-                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.CURRENT_TOTAL_TIME
-            }
-
-            MenuItem {
-                text: qsTranslate("MainWindow", "Current time")
-                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.CURRENT_TIME
-                autoExclusive: true
-                checkable: true
-
-                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.CURRENT_TIME
-            }
-
-            MenuItem {
-                text: qsTranslate("MainWindow", "Remaining time")
-                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.REMAINING_TIME
-                autoExclusive: true
-                checkable: true
-
-                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.REMAINING_TIME
-            }
-
-            MenuItem {
-                text: qsTranslate("MainWindow", "Hide time")
-                checked: root.viewModel.timeFormat === MpvqcFooterViewModel.TimeFormat.EMPTY
-                autoExclusive: true
-                checkable: true
-
-                onTriggered: root.viewModel.timeFormat = MpvqcFooterViewModel.TimeFormat.EMPTY
-            }
-
-            MenuSeparator {}
-
-            Action {
-                text: qsTranslate("MainWindow", "Progress in percent")
-                checked: root.viewModel.isVideoPercentVisible
-                checkable: true
-
-                onTriggered: root.viewModel.toggleVideoPercentDisplay()
-            }
+            onDefaultFormatPicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.CURRENT_TOTAL_TIME
+            onCurrentTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.CURRENT_TIME
+            onRemainingTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.REMAINING_TIME
+            onHideTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.EMPTY
+            onPercentToggled: root.viewModel.toggleStatusbarPercentage()
         }
     }
 }
