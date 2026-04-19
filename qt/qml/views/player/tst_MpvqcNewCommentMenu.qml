@@ -30,28 +30,41 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcNewCommentMenu {}
-    }
+        MpvqcNewCommentMenu {
+            id: menu
 
-    readonly property var initProperties: ({
-            viewModel: {
-                commentTypes: ["1", "ABC", "3", "4"],
-                player: {
-                    pausePlayer: () => {}
+            property int pausePlayerCount: 0
+
+            viewModel: QtObject {
+                readonly property var commentTypes: ["1", "ABC", "3", "4"]
+                function cursorPosition(): point {
+                    return Qt.point(0, 0);
+                }
+                function pausePlayer(): void {
+                    menu.pausePlayerCount += 1;
                 }
             }
-        })
+        }
+    }
 
-    function test_select() {
-        const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
+    function makeControl(): var {
+        const control = createTemporaryObject(objectUnderTest, testCase, {});
         verify(control);
+        return control;
+    }
 
+    function makeSpy(control, signalName): var {
         const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
-            signalName: "commentTypeChosen"
+            signalName: signalName
         });
         verify(spy);
+        return spy;
+    }
 
+    function test_select() {
+        const control = makeControl();
+        const spy = makeSpy(control, "commentTypeChosen");
         control.popup();
 
         keyClick(Qt.Key_Down);
@@ -60,24 +73,27 @@ TestCase {
 
         compare(spy.count, 1);
         compare(spy.invocation(0).arg(0), "ABC");
+        compare(control.pausePlayerCount, 1);
     }
 
     function test_cancel() {
-        const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
-        verify(control);
-
-        const spy = createTemporaryObject(signalSpy, testCase, {
-            target: control,
-            signalName: "commentTypeChosen"
-        });
-        verify(spy);
-
-        compare(spy.count, 0);
+        const control = makeControl();
+        const spy = makeSpy(control, "commentTypeChosen");
 
         control.popup();
 
         keyClick(Qt.Key_Escape);
-
         compare(spy.count, 0);
+        compare(control.pausePlayerCount, 1);
+    }
+
+    function test_hidden_after_close() {
+        const control = makeControl();
+
+        control.popup();
+        tryCompare(control, "visible", true);
+
+        control.close();
+        tryCompare(control, "visible", false);
     }
 }

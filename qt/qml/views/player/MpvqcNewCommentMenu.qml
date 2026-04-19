@@ -15,7 +15,7 @@ import "../../utility"
 MpvqcPositionedMenu {
     id: root
 
-    readonly property var viewModel: MpvqcNewCommentMenuViewModel {}
+    property var viewModel: MpvqcNewCommentMenuViewModel {}
 
     function calculatePosition(): point {
         const global = viewModel.cursorPosition();
