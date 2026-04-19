@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 set dotenv-load := true
-set lazy        := true
+set lazy := true
 
 GIT_TAG := `git describe --tags --abbrev=0`
 GIT_COMMIT := `git rev-parse HEAD | head -c 8`
@@ -108,23 +108,21 @@ build-release:
 
 # Run Python and QML tests
 [group('test')]
-@test: _prepare-tests (test-python 'no-prep') (test-qml 'no-prep')
+@test: prepare-tests test-python test-qml
+
+# Recompile resources
+[group('test')]
+prepare-tests: build-develop
+    rm -f test/rc_project.py
+    cp rc_project.py test/rc_project.py
 
 [group('test')]
-test-python SKIP_PREPARATION='false':
-    #!/usr/bin/env bash
-    if [[ "{{ SKIP_PREPARATION }}" == "false" ]] then
-      just _prepare-tests
-    fi
-    export QT_QPA_PLATFORM=offscreen
-    uv run pytest build-aux test
+test-python:
+    QT_QPA_PLATFORM=offscreen uv run pytest build-aux test
 
 [group('test')]
-test-qml SKIP_PREPARATION='false':
+test-qml:
     #!/usr/bin/env bash
-    if [[ "{{ SKIP_PREPARATION }}" == "false" ]] then
-      just _prepare-tests
-    fi
     uv run python -c '
     import sys
     from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP

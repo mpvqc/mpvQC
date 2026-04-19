@@ -64,6 +64,8 @@ jobs:
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
         run: just init
+      - name: Prepare tests
+        run: just prepare-tests
       - name: Execute Python Tests
         run: just test-python
 
@@ -87,6 +89,8 @@ jobs:
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
         run: just init
+      - name: Prepare tests
+        run: just prepare-tests
       - name: Execute Python Tests
         run: just test-python
 
@@ -110,6 +114,8 @@ jobs:
         uses: ./.github/actions/install-libmpv
       - name: Initialize Project
         run: just init
+      - name: Prepare tests
+        run: just prepare-tests
       - name: Execute Qml Tests
         run: just test-qml
 
