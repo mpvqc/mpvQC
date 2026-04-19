@@ -11,11 +11,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QObject, Qt, Signal
+from PySide6.QtCore import Property, QObject, Signal
 
 from .application_paths import ApplicationPathsService
 from .host_integration import HostIntegrationService
-from .key_command import KeyCommandGeneratorService
 from .type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
@@ -27,7 +26,6 @@ logger = logging.getLogger(__name__)
 
 
 class PlayerService(QObject):
-    _command_generator = inject.attr(KeyCommandGeneratorService)
     _host_integration = inject.attr(HostIntegrationService)
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper = inject.attr(TypeMapperService)
@@ -313,9 +311,8 @@ class PlayerService(QObject):
     def pause(self) -> None:
         self._mpv_player.pause = True
 
-    def handle_key_event(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
-        if command := self._command_generator.generate_command(key, modifiers):
-            self._mpv_player.command_async("keypress", command)
+    def press_key(self, command: str) -> None:
+        self._mpv_player.command_async("keypress", command)
 
     def jump_to(self, seconds: int) -> None:
         self._mpv_player.command_async("seek", seconds, "absolute+exact")

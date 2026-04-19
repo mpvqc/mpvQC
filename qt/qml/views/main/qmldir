@@ -8,3 +8,5 @@ MpvqcContentView MpvqcContentView.qml
 MpvqcDialogLoaderView MpvqcDialogLoaderView.qml
 MpvqcFileDialogLoaderView MpvqcFileDialogLoaderView.qml
 MpvqcMessageBoxLoaderView MpvqcMessageBoxLoaderView.qml
+
+internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml

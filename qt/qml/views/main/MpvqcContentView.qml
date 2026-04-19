@@ -33,7 +33,15 @@ Page {
 
     Keys.onEscapePressed: root.viewModel.requestDisableFullScreen()
 
-    Keys.onPressed: event => root.viewModel.onKeyPressed(event.key, event.modifiers, event.isAutoRepeat)
+    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
+
+    MpvqcContentKeyHandler {
+        id: _keyHandler
+
+        onOpenCommentMenuRequested: root.viewModel.requestOpenNewCommentMenu()
+        onToggleFullScreenRequested: root.viewModel.requestToggleFullScreen()
+        onForwardKeyToPlayerRequested: (key, modifiers) => root.viewModel.forwardKeyToPlayer(key, modifiers)
+    }
 
     SplitView {
         id: _splitView

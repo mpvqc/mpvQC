@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService, SettingsService
+from mpvqc.services import KeyCommandGeneratorService, PlayerService, SettingsService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -17,6 +17,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcContentViewModel(QObject):
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
+    _command_generator = inject.attr(KeyCommandGeneratorService)
 
     appWindowSizeRequested = Signal(int, int)
     disableFullScreenRequested = Signal()
@@ -42,6 +43,10 @@ class MpvqcContentViewModel(QObject):
     def requestToggleFullScreen(self) -> None:
         self.toggleFullScreenRequested.emit()
 
+    @Slot()
+    def requestOpenNewCommentMenu(self) -> None:
+        self.openNewCommentMenuRequested.emit()
+
     @Slot(int, int)
     def requestResizeAppWindow(self, width: int, height: int) -> None:
         self.appWindowSizeRequested.emit(width, height)
@@ -50,36 +55,7 @@ class MpvqcContentViewModel(QObject):
     def addNewEmptyComment(self, comment_type: str) -> None:
         self.addNewCommentRequested.emit(comment_type)
 
-    @Slot(Qt.Key, Qt.KeyboardModifier, bool)
-    def onKeyPressed(self, key: Qt.Key, modifiers: Qt.KeyboardModifier, is_auto_repeat: bool) -> None:  # noqa: C901
-        plain_press = not is_auto_repeat and modifiers == Qt.KeyboardModifier.NoModifier
-        no_modifier = modifiers == Qt.KeyboardModifier.NoModifier
-        ctrl_modifier = (modifiers & Qt.KeyboardModifier.ControlModifier) != 0
-
-        match key:
-            case Qt.Key.Key_E if plain_press:
-                self.openNewCommentMenuRequested.emit()
-                return
-            case Qt.Key.Key_F if plain_press:
-                self.toggleFullScreenRequested.emit()
-                return
-            case Qt.Key.Key_Up | Qt.Key.Key_Down:
-                return
-            case Qt.Key.Key_Return if no_modifier:
-                return
-            case Qt.Key.Key_Escape if no_modifier:
-                return
-            case Qt.Key.Key_Delete if no_modifier:
-                return
-            case Qt.Key.Key_Backspace if no_modifier:
-                return
-            case Qt.Key.Key_F if ctrl_modifier:
-                return
-            case Qt.Key.Key_C if ctrl_modifier:
-                return
-            case Qt.Key.Key_Z if ctrl_modifier:
-                return
-            case _:
-                pass
-
-        self._player.handle_key_event(key, modifiers)
+    @Slot(Qt.Key, Qt.KeyboardModifier)
+    def forwardKeyToPlayer(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:
+        if command := self._command_generator.generate_command(key, modifiers):
+            self._player.press_key(command)
