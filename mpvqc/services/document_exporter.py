@@ -53,10 +53,10 @@ class DocumentRenderService:
         comments = self._comments_service.comments()
         generator = f"{self._build_info.name} {self._build_info.version}"
         nickname = self._settings.nickname
-        subtitles = [str(sub) for sub in self._player.external_subtitles]
+        subtitles = self._player.external_subtitles
 
-        if (path := self._player.path) is not None:
-            path = Path(path)
+        if raw_path := self._player.path:
+            path = Path(raw_path)
             video_path = str(path)  # use platform specific path separators
             video_name = f"{path.name}"
         else:
@@ -90,7 +90,7 @@ class DocumentBackupService:
 
     @property
     def _video_name(self) -> str:
-        if (path := self._player.path) is not None:
+        if path := self._player.path:
             return Path(path).name
         #: Will be used in the file name proposal when saving a qc document when there's no video being loaded
         return QCoreApplication.translate("FileInteractionDialogs", "untitled")
@@ -119,8 +119,8 @@ class DocumentExportService(QObject):
     export_error_occurred = Signal(str, int)
 
     def generate_file_path_proposal(self) -> Path:
-        if (path := self._player.path) is not None:
-            path = Path(path)
+        if raw_path := self._player.path:
+            path = Path(raw_path)
             video_directory = str(path.parent)
             video_name = path.stem
         else:

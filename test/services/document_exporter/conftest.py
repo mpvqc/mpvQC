@@ -88,6 +88,6 @@ def configure_mocks(qt_app, comments_service_mock, settings_service, player_serv
         settings_service.language = "en-US"
 
         player_service_mock.path = str(video) if video else None
-        player_service_mock.external_subtitles = subtitles or []
+        player_service_mock.external_subtitles = tuple(str(s) for s in subtitles or ())
 
     return _make_mock

@@ -10,7 +10,7 @@ def test_log_handler_set_when_mpvqc_debug_is_set(monkeypatch):
 
     service = PlayerService()
 
-    assert "log_handler" in service._init_args
+    assert "log_handler" in service._build_init_args()
 
 
 def test_log_handler_set_when_mpvqc_player_log_is_set(monkeypatch):
@@ -20,7 +20,7 @@ def test_log_handler_set_when_mpvqc_player_log_is_set(monkeypatch):
 
     service = PlayerService()
 
-    assert "log_handler" in service._init_args
+    assert "log_handler" in service._build_init_args()
 
 
 def test_log_handler_not_set_when_no_env_vars(monkeypatch):
@@ -31,4 +31,4 @@ def test_log_handler_not_set_when_no_env_vars(monkeypatch):
 
     service = PlayerService()
 
-    assert "log_handler" not in service._init_args
+    assert "log_handler" not in service._build_init_args()

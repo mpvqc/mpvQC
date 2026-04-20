@@ -6,14 +6,12 @@ from dataclasses import dataclass
 
 import pytest
 
-SOME_PROPERTY_NAME = "does not matter"
-
 
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
-        (0, 0),
-        (0.0, 0.0),
+        (0, None),
+        (0.0, None),
         (120.5, 120.5),
         (None, None),
     ],
@@ -21,7 +19,7 @@ SOME_PROPERTY_NAME = "does not matter"
 def test_duration_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.duration_changed)
 
-    player_service._on_duration_changed(SOME_PROPERTY_NAME, value)
+    player_service._duration_prop.on_update(value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -34,48 +32,57 @@ def test_duration_changed(player_service, make_spy, value, expected):
     ("value", "expected"),
     [
         ("/path/to/video.mp4", "/path/to/video.mp4"),
-        (None, ""),
+        (None, None),
     ],
 )
 def test_path_changed_emits_signal(player_service, make_spy, value, expected):
     spy = make_spy(player_service.path_changed)
 
-    player_service._on_player_path_changed(SOME_PROPERTY_NAME, value)
+    player_service._path_prop.on_update(value)
 
-    assert spy.count() == 1
-    assert spy.at(0, 0) == expected
+    if expected is not None:
+        assert spy.count() == 1
+        assert spy.at(0, 0) == expected
+    else:
+        assert spy.count() == 0
 
 
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
         ("/path/to/video.mp4", True),
-        (None, False),
+        (None, None),
     ],
 )
 def test_path_changed_emits_video_loaded(player_service, make_spy, value, expected):
     spy = make_spy(player_service.video_loaded_changed)
 
-    player_service._on_player_path_changed(SOME_PROPERTY_NAME, value)
+    player_service._video_loaded_prop.on_update(value)
 
-    assert spy.count() == 1
-    assert spy.at(0, 0) == expected
+    if expected is not None:
+        assert spy.count() == 1
+        assert spy.at(0, 0) == expected
+    else:
+        assert spy.count() == 0
 
 
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
         ("video.mp4", "video.mp4"),
-        (None, ""),
+        (None, None),
     ],
 )
 def test_filename_changed_emits_signal(player_service, make_spy, value, expected):
     spy = make_spy(player_service.filename_changed)
 
-    player_service._on_player_filename_changed(SOME_PROPERTY_NAME, value)
+    player_service._filename_prop.on_update(value)
 
-    assert spy.count() == 1
-    assert spy.at(0, 0) == expected
+    if expected is not None:
+        assert spy.count() == 1
+        assert spy.at(0, 0) == expected
+    else:
+        assert spy.count() == 0
 
 
 @pytest.mark.parametrize(
@@ -88,7 +95,7 @@ def test_filename_changed_emits_signal(player_service, make_spy, value, expected
 def test_percent_pos_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.percent_pos_changed)
 
-    player_service._on_player_percent_pos_changed(SOME_PROPERTY_NAME, value)
+    player_service._percent_pos_prop.on_update(value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -107,7 +114,7 @@ def test_percent_pos_changed(player_service, make_spy, value, expected):
 def test_time_pos_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.time_pos_changed)
 
-    player_service._on_player_time_pos_changed(SOME_PROPERTY_NAME, value)
+    player_service._time_pos_prop.on_update(value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -124,11 +131,11 @@ def test_time_pos_changed(player_service, make_spy, value, expected):
         (0.500001, 1),
         (1.499999, 1),
         (1.500001, 2),
-        (None, None),
+        (None, 0),
     ],
 )
-def test_time_pos(player_service, mpv_mock, value, expected):
-    mpv_mock.time_pos = value
+def test_time_pos(player_service, value, expected):
+    player_service._time_pos_prop.on_update(value)
 
     assert player_service.time_pos == expected
 
@@ -144,7 +151,7 @@ def test_time_pos(player_service, mpv_mock, value, expected):
 def test_time_remaining_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.time_remaining_changed)
 
-    player_service._on_player_time_remaining_changed(SOME_PROPERTY_NAME, value)
+    player_service._time_remaining_prop.on_update(value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -163,7 +170,7 @@ def test_time_remaining_changed(player_service, make_spy, value, expected):
 def test_height_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.height_changed)
 
-    player_service._on_player_height_changed(SOME_PROPERTY_NAME, value)
+    player_service._height_prop.on_update(value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -182,7 +189,7 @@ def test_height_changed(player_service, make_spy, value, expected):
 def test_width_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.width_changed)
 
-    player_service._on_player_width_changed(SOME_PROPERTY_NAME, value)
+    player_service._width_prop.on_update(value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -197,6 +204,11 @@ class TrackCountTestCase:
     track_list: list[dict]
     expected_audio_count: int
     expected_subtitle_count: int
+
+
+def _handle_track_list(player_service, value):
+    player_service._audio_track_count_prop.on_update(value)
+    player_service._subtitle_track_count_prop.on_update(value)
 
 
 @pytest.mark.parametrize(
@@ -259,30 +271,28 @@ class TrackCountTestCase:
     ],
     ids=lambda tc: tc.description,
 )
-def test_track_list_changed_updates_counts(player_service, mpv_mock, test_case):
-    mpv_mock.track_list = test_case.track_list
-
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, test_case.track_list)
+def test_track_list_changed_updates_counts(player_service, test_case):
+    _handle_track_list(player_service, test_case.track_list)
 
     assert player_service.audio_track_count == test_case.expected_audio_count
     assert player_service.subtitle_track_count == test_case.expected_subtitle_count
 
 
-def test_track_list_changed_emits_audio_signal(player_service, mpv_mock, make_spy):
+def test_track_list_changed_emits_audio_signal(player_service, make_spy):
     spy = make_spy(player_service.audio_track_count_changed)
-    mpv_mock.track_list = [{"type": "audio", "external": False, "external-filename": ""}]
+    track_list = [{"type": "audio", "external": False, "external-filename": ""}]
 
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, mpv_mock.track_list)
+    _handle_track_list(player_service, track_list)
 
     assert spy.count() == 1
     assert spy.at(0, 0) == 1
 
 
-def test_track_list_changed_emits_subtitle_signal(player_service, mpv_mock, make_spy):
+def test_track_list_changed_emits_subtitle_signal(player_service, make_spy):
     spy = make_spy(player_service.subtitle_track_count_changed)
-    mpv_mock.track_list = [{"type": "sub", "external": False, "external-filename": ""}]
+    track_list = [{"type": "sub", "external": False, "external-filename": ""}]
 
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, mpv_mock.track_list)
+    _handle_track_list(player_service, track_list)
 
     assert spy.count() == 1
     assert spy.at(0, 0) == 1
@@ -292,38 +302,38 @@ def test_track_list_changed_does_not_emit_for_none(player_service, make_spy):
     audio_spy = make_spy(player_service.audio_track_count_changed)
     subtitle_spy = make_spy(player_service.subtitle_track_count_changed)
 
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, None)
+    _handle_track_list(player_service, None)
 
     assert audio_spy.count() == 0
     assert subtitle_spy.count() == 0
 
 
-def test_track_list_changed_does_not_emit_when_count_unchanged(player_service, mpv_mock, make_spy):
-    mpv_mock.track_list = [{"type": "audio", "external": False, "external-filename": ""}]
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, mpv_mock.track_list)
+def test_track_list_changed_does_not_emit_when_count_unchanged(player_service, make_spy):
+    track_list = [{"type": "audio", "external": False, "external-filename": ""}]
+    _handle_track_list(player_service, track_list)
 
     spy = make_spy(player_service.audio_track_count_changed)
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, mpv_mock.track_list)
+    _handle_track_list(player_service, track_list)
 
     assert spy.count() == 0
 
 
-def test_track_list_changed_emits_only_changed_signal(player_service, mpv_mock, make_spy):
-    mpv_mock.track_list = [
+def test_track_list_changed_emits_only_changed_signal(player_service, make_spy):
+    initial_list = [
         {"type": "audio", "external": False, "external-filename": ""},
         {"type": "sub", "external": False, "external-filename": ""},
     ]
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, mpv_mock.track_list)
+    _handle_track_list(player_service, initial_list)
 
     audio_spy = make_spy(player_service.audio_track_count_changed)
     subtitle_spy = make_spy(player_service.subtitle_track_count_changed)
 
-    mpv_mock.track_list = [
+    updated_list = [
         {"type": "audio", "external": False, "external-filename": ""},
         {"type": "sub", "external": False, "external-filename": ""},
         {"type": "sub", "external": True, "external-filename": "/path/sub.srt"},
     ]
-    player_service._on_track_list_changed(SOME_PROPERTY_NAME, mpv_mock.track_list)
+    _handle_track_list(player_service, updated_list)
 
     assert audio_spy.count() == 0
     assert subtitle_spy.count() == 1
