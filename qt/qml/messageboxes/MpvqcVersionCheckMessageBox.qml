@@ -9,7 +9,7 @@ import pyobjects
 import "../components"
 
 MpvqcMessageBox {
-    property var viewModel: MpvqcVersionCheckMessageBoxViewModel {}
+    readonly property MpvqcVersionCheckMessageBoxViewModel viewModel: MpvqcVersionCheckMessageBoxViewModel {}
 
     title: viewModel.title || qsTranslate("MessageBoxes", "Checking for Updates...")
     text: viewModel.text || qsTranslate("MessageBoxes", "Loading...")

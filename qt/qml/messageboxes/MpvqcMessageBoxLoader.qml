@@ -13,18 +13,18 @@ Loader {
 
     readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
 
-    readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("../../messageboxes/MpvqcDocumentNotCompatibleMessageBox.qml")
-    readonly property url messageBoxExtendedExport: Qt.resolvedUrl("../../messageboxes/MpvqcExtendedExportMessageBox.qml")
-    readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("../../messageboxes/MpvqcExtendedExportErrorMessageBox.qml")
-    readonly property url messageBoxQuit: Qt.resolvedUrl("../../messageboxes/MpvqcQuitMessageBox.qml")
-    readonly property url messageBoxReset: Qt.resolvedUrl("../../messageboxes/MpvqcResetMessageBox.qml")
-    readonly property url messageBoxVersionCheck: Qt.resolvedUrl("../../messageboxes/MpvqcVersionCheckMessageBox.qml")
+    readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("MpvqcDocumentNotCompatibleMessageBox.qml")
+    readonly property url messageBoxExtendedExport: Qt.resolvedUrl("MpvqcExtendedExportMessageBox.qml")
+    readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("MpvqcExtendedExportErrorMessageBox.qml")
+    readonly property url messageBoxQuit: Qt.resolvedUrl("MpvqcQuitMessageBox.qml")
+    readonly property url messageBoxReset: Qt.resolvedUrl("MpvqcResetMessageBox.qml")
+    readonly property url messageBoxVersionCheck: Qt.resolvedUrl("MpvqcVersionCheckMessageBox.qml")
 
     signal messageBoxClosed
 
     asynchronous: true
     active: false
-    visible: active
+    visible: status === Loader.Ready
 
     function openDocumentNotCompatibleMessageBox(documents: list<var>): void {
         setSource(messageBoxDocumentNotCompatible, {

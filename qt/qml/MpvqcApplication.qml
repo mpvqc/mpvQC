@@ -7,6 +7,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "messageboxes"
 import "utility"
 import "views/header"
 import "views/main"
