@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module messageboxes
+
+MpvqcMessageBoxLoader MpvqcMessageBoxLoader.qml
+
+internal MpvqcDocumentNotCompatibleMessageBox MpvqcDocumentNotCompatibleMessageBox.qml
+internal MpvqcExtendedExportErrorMessageBox MpvqcExtendedExportErrorMessageBox.qml
+internal MpvqcExtendedExportMessageBox MpvqcExtendedExportMessageBox.qml
+internal MpvqcQuitMessageBox MpvqcQuitMessageBox.qml
+internal MpvqcResetMessageBox MpvqcResetMessageBox.qml
+internal MpvqcVersionCheckMessageBox MpvqcVersionCheckMessageBox.qml

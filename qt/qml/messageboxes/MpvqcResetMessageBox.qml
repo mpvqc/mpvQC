@@ -9,7 +9,7 @@ import pyobjects
 import "../components"
 
 MpvqcMessageBox {
-    property var viewModel: MpvqcResetMessageBoxViewModel {}
+    readonly property MpvqcResetMessageBoxViewModel viewModel: MpvqcResetMessageBoxViewModel {}
 
     title: qsTranslate("MessageBoxes", "Unsaved Changes")
     text: qsTranslate("MessageBoxes", "Do you really want to create a new QC document without saving your QC?")
