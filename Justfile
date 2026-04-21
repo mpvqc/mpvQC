@@ -123,6 +123,8 @@ test-python:
 [group('test')]
 test-qml:
     #!/usr/bin/env bash
+    export QT_QUICK_CONTROLS_STYLE=Material
+    export QT_QUICK_CONTROLS_MATERIAL_VARIANT=Dense
     uv run python -c '
     import sys
     from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
