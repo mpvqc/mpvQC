@@ -62,19 +62,19 @@ ApplicationWindow {
         }
     }
 
-    MpvqcDialogLoaderView {
+    MpvqcDialogLoader {
         id: _dialogLoader
 
         onDialogClosed: _content.focusCommentTable()
     }
 
-    MpvqcFileDialogLoaderView {
+    MpvqcFileDialogLoader {
         id: _fileDialogLoader
 
         onDialogClosed: _content.focusCommentTable()
     }
 
-    MpvqcMessageBoxLoaderView {
+    MpvqcMessageBoxLoader {
         id: _messageBoxLoader
 
         onMessageBoxClosed: _content.focusCommentTable()

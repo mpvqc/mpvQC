@@ -14,7 +14,7 @@ TestCase {
     height: 720
     visible: true
     when: windowShown
-    name: "MpvqcFileDialogLoaderView"
+    name: "MpvqcDialogLoader"
 
     Component {
         id: signalSpy
@@ -25,20 +25,18 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcFileDialogLoaderView {}
+        MpvqcDialogLoader {}
     }
 
     function makeControl(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase, {
-            cleanupDelay: 0
-        });
+        const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
         return control;
     }
 
     function waitUntilLoaded(control: Item): void {
         tryVerify(() => control.item);
-        tryVerify(() => control.item.visible);
+        waitForRendering(control.item?.contentItem);
     }
 
     function test_open_data() {
@@ -82,12 +80,8 @@ TestCase {
         });
         verify(spy);
 
-        control.openImportQcDocumentsDialog();
+        control.openAboutDialog();
         waitUntilLoaded(control);
-        if (Qt.platform.os === "windows") {
-            // We run into crashs on Windows if we close the dialog immediately after it has been opened.
-            wait(1000);
-        }
         control.item.close();
 
         tryVerify(() => !control.item, 1000);

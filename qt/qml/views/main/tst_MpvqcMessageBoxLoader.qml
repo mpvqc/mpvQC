@@ -10,11 +10,16 @@ import QtQuick
 TestCase {
     id: testCase
 
+    property var arguments: ({
+            openExtendedExportFailedMessageBox: ["message", 1],
+            openDocumentNotCompatibleMessageBox: [["doc1", "doc2"]]
+        })
+
     width: 1280
     height: 720
     visible: true
     when: windowShown
-    name: "MpvqcDialogLoaderView"
+    name: "MpvqcMessageBoxLoader"
 
     Component {
         id: signalSpy
@@ -25,7 +30,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcDialogLoaderView {}
+        MpvqcMessageBoxLoader {}
     }
 
     function makeControl(): Item {
@@ -43,7 +48,7 @@ TestCase {
         const probe = makeControl();
         const names = [];
         for (const k of Object.keys(probe)) {
-            if (typeof probe[k] === "function" && k.startsWith("open") && k.endsWith("Dialog")) {
+            if (typeof probe[k] === "function" && k.startsWith("open") && k.endsWith("MessageBox")) {
                 names.push(k);
             }
         }
@@ -52,14 +57,40 @@ TestCase {
 
         const rows = [];
         for (const name of names) {
-            const core = name.slice(4, -6);
+            const core = name.slice(4, -10);
             const tag = core.charAt(0).toLowerCase() + core.slice(1);
 
-            rows.push({
+            const row = {
                 tag: tag,
                 methodName: name,
-                exec: control => control[name]()
-            });
+                exec: null
+            };
+
+            switch (name) {
+            case "openVersionCheckMessageBox":
+                row.exec = control => {
+                    control.setSource(control.messageBoxVersionCheck, {
+                        viewModel: {
+                            title: "title",
+                            text: "text"
+                        }
+                    });
+                    control.active = true;
+                };
+                break;
+            default:
+                row.exec = control => {
+                    const args = testCase.arguments[name];
+                    if (args) {
+                        control[name](...testCase.arguments[name]);
+                    } else {
+                        control[name]();
+                    }
+                };
+                break;
+            }
+
+            rows.push(row);
         }
 
         return rows;
@@ -76,11 +107,11 @@ TestCase {
 
         const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
-            signalName: "dialogClosed"
+            signalName: "messageBoxClosed"
         });
         verify(spy);
 
-        control.openAboutDialog();
+        control.openExtendedExportsMessageBox();
         waitUntilLoaded(control);
         control.item.close();
 

@@ -106,7 +106,7 @@ Page {
         }
     }
 
-    MpvqcFileDropAreaView {
+    MpvqcFileDropArea {
         anchors.fill: _splitView
     }
 
