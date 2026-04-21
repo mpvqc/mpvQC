@@ -10,16 +10,11 @@ import QtQuick
 TestCase {
     id: testCase
 
-    property var arguments: ({
-            openExtendedExportFailedMessageBox: ["message", 1],
-            openDocumentNotCompatibleMessageBox: [["doc1", "doc2"]]
-        })
-
     width: 1280
     height: 720
     visible: true
     when: windowShown
-    name: "MpvqcMessageBoxLoaderView"
+    name: "MpvqcFileDialogLoader"
 
     Component {
         id: signalSpy
@@ -30,25 +25,27 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcMessageBoxLoaderView {}
+        MpvqcFileDialogLoader {}
     }
 
     function makeControl(): Item {
-        const control = createTemporaryObject(objectUnderTest, testCase);
+        const control = createTemporaryObject(objectUnderTest, testCase, {
+            cleanupDelay: 0
+        });
         verify(control);
         return control;
     }
 
     function waitUntilLoaded(control: Item): void {
         tryVerify(() => control.item);
-        waitForRendering(control.item?.contentItem);
+        tryVerify(() => control.item.visible);
     }
 
     function test_open_data() {
         const probe = makeControl();
         const names = [];
         for (const k of Object.keys(probe)) {
-            if (typeof probe[k] === "function" && k.startsWith("open") && k.endsWith("MessageBox")) {
+            if (typeof probe[k] === "function" && k.startsWith("open") && k.endsWith("Dialog")) {
                 names.push(k);
             }
         }
@@ -57,40 +54,14 @@ TestCase {
 
         const rows = [];
         for (const name of names) {
-            const core = name.slice(4, -10);
+            const core = name.slice(4, -6);
             const tag = core.charAt(0).toLowerCase() + core.slice(1);
 
-            const row = {
+            rows.push({
                 tag: tag,
                 methodName: name,
-                exec: null
-            };
-
-            switch (name) {
-            case "openVersionCheckMessageBox":
-                row.exec = control => {
-                    control.setSource(control.messageBoxVersionCheck, {
-                        viewModel: {
-                            title: "title",
-                            text: "text"
-                        }
-                    });
-                    control.active = true;
-                };
-                break;
-            default:
-                row.exec = control => {
-                    const args = testCase.arguments[name];
-                    if (args) {
-                        control[name](...testCase.arguments[name]);
-                    } else {
-                        control[name]();
-                    }
-                };
-                break;
-            }
-
-            rows.push(row);
+                exec: control => control[name]()
+            });
         }
 
         return rows;
@@ -107,12 +78,16 @@ TestCase {
 
         const spy = createTemporaryObject(signalSpy, testCase, {
             target: control,
-            signalName: "messageBoxClosed"
+            signalName: "dialogClosed"
         });
         verify(spy);
 
-        control.openExtendedExportsMessageBox();
+        control.openImportQcDocumentsDialog();
         waitUntilLoaded(control);
+        if (Qt.platform.os === "windows") {
+            // We run into crashs on Windows if we close the dialog immediately after it has been opened.
+            wait(1000);
+        }
         control.item.close();
 
         tryVerify(() => !control.item, 1000);
