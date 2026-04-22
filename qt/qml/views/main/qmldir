@@ -5,7 +5,6 @@
 module views.main
 
 MpvqcContentView MpvqcContentView.qml
-MpvqcDialogLoader MpvqcDialogLoader.qml
 
 internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
 internal MpvqcFileDropArea MpvqcFileDropArea.qml

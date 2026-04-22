@@ -13,16 +13,16 @@ Loader {
 
     readonly property MpvqcDialogLoaderViewModel viewModel: MpvqcDialogLoaderViewModel {}
 
-    readonly property url aboutDialog: Qt.resolvedUrl("../../dialogs/MpvqcAboutDialog.qml")
-    readonly property url appearanceDialog: Qt.resolvedUrl("../../dialogs/MpvqcAppearanceDialog.qml")
-    readonly property url backupSettingsDialog: Qt.resolvedUrl("../../dialogs/MpvqcBackupDialog.qml")
-    readonly property url commentTypeDialog: Qt.resolvedUrl("../../dialogs/MpvqcCommentTypesDialog.qml")
-    readonly property url editInputDialog: Qt.resolvedUrl("../../dialogs/MpvqcEditInputDialog.qml")
-    readonly property url editMpvDialog: Qt.resolvedUrl("../../dialogs/MpvqcEditMpvDialog.qml")
-    readonly property url exportSettingsDialog: Qt.resolvedUrl("../../dialogs/MpvqcExportSettingsDialog.qml")
-    readonly property url importSettingsDialog: Qt.resolvedUrl("../../dialogs/MpvqcImportSettingsDialog.qml")
-    readonly property url importConfirmationDialog: Qt.resolvedUrl("../../dialogs/MpvqcImportConfirmationDialog.qml")
-    readonly property url shortcutsDialog: Qt.resolvedUrl("../../dialogs/MpvqcShortcutDialog.qml")
+    readonly property url aboutDialog: Qt.resolvedUrl("MpvqcAboutDialog.qml")
+    readonly property url appearanceDialog: Qt.resolvedUrl("MpvqcAppearanceDialog.qml")
+    readonly property url backupSettingsDialog: Qt.resolvedUrl("MpvqcBackupDialog.qml")
+    readonly property url commentTypeDialog: Qt.resolvedUrl("MpvqcCommentTypesDialog.qml")
+    readonly property url editInputDialog: Qt.resolvedUrl("MpvqcEditInputDialog.qml")
+    readonly property url editMpvDialog: Qt.resolvedUrl("MpvqcEditMpvDialog.qml")
+    readonly property url exportSettingsDialog: Qt.resolvedUrl("MpvqcExportSettingsDialog.qml")
+    readonly property url importSettingsDialog: Qt.resolvedUrl("MpvqcImportSettingsDialog.qml")
+    readonly property url importConfirmationDialog: Qt.resolvedUrl("MpvqcImportConfirmationDialog.qml")
+    readonly property url shortcutsDialog: Qt.resolvedUrl("MpvqcShortcutDialog.qml")
 
     signal dialogClosed
 
