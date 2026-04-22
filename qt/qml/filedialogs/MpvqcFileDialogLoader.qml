@@ -9,10 +9,11 @@ import QtQuick
 Loader {
     id: root
 
-    readonly property url exportDocumentDialog: Qt.resolvedUrl("../../filedialogs/MpvqcExportDocumentFileDialog.qml")
-    readonly property url importDocumentsDialog: Qt.resolvedUrl("../../filedialogs/MpvqcImportDocumentsFileDialog.qml")
-    readonly property url importSubtitlesDialog: Qt.resolvedUrl("../../filedialogs/MpvqcImportSubtitlesFileDialog.qml")
-    readonly property url importVideoDialog: Qt.resolvedUrl("../../filedialogs/MpvqcImportVideoFileDialog.qml")
+    readonly property url exportDocumentDialog: Qt.resolvedUrl("MpvqcExportDocumentFileDialog.qml")
+    readonly property url importDocumentsDialog: Qt.resolvedUrl("MpvqcImportDocumentsFileDialog.qml")
+    readonly property url importSubtitlesDialog: Qt.resolvedUrl("MpvqcImportSubtitlesFileDialog.qml")
+    readonly property url importVideoDialog: Qt.resolvedUrl("MpvqcImportVideoFileDialog.qml")
+    readonly property url saveDocumentDialog: Qt.resolvedUrl("MpvqcSaveDocumentFileDialog.qml")
 
     readonly property int cleanupDelay: 250
 
@@ -22,16 +23,13 @@ Loader {
     active: false
     visible: active
 
-    function openDocumentExportDialog(): void {
-        setSource(exportDocumentDialog, {
-            isExtendedExport: false
-        });
+    function openDocumentSaveDialog(): void {
+        setSource(saveDocumentDialog);
         active = true;
     }
 
     function openExtendedDocumentExportDialog(exportTemplate: url): void {
         setSource(exportDocumentDialog, {
-            isExtendedExport: true,
             exportTemplate: exportTemplate
         });
         active = true;

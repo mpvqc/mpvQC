@@ -7,6 +7,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "filedialogs"
 import "messageboxes"
 import "utility"
 import "views/header"
@@ -111,7 +112,7 @@ ApplicationWindow {
 
         onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
 
-        onExportPathRequested: _fileDialogLoader.openDocumentExportDialog()
+        onExportPathRequested: _fileDialogLoader.openDocumentSaveDialog()
 
         onExtendedExportRequested: exportTemplate => _fileDialogLoader.openExtendedDocumentExportDialog(exportTemplate)
 
