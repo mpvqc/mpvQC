@@ -24,10 +24,6 @@ DragHandler {
     property bool _hasPassiveGrab: false
     property bool _hasExclusiveGrab: false
 
-    signal pointerPressed
-    signal pointerReleased
-    signal dragStarted
-
     function _updateTargetPosition(newY: int): void {
         targetY = Math.max(minY, Math.min(maxY, newY));
         snapToBottom = (targetY >= maxY - snapThreshold);
@@ -43,8 +39,6 @@ DragHandler {
     yAxis.enabled: true
 
     onGrabChanged: transition => {
-        const wasPressed = isPressed;
-
         switch (transition) {
         case PointerDevice.GrabPassive:
             _hasPassiveGrab = true;
@@ -61,18 +55,11 @@ DragHandler {
             _hasExclusiveGrab = false;
             break;
         }
-
-        if (isPressed && !wasPressed) {
-            root.pointerPressed();
-        } else if (!isPressed && wasPressed) {
-            root.pointerReleased();
-        }
     }
 
     onActiveChanged: {
         if (active) {
             _dragStartY = root.popupY;
-            root.dragStarted();
         } else {
             _dragStartY = -1;
         }

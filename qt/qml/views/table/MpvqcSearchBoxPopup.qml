@@ -19,8 +19,13 @@ Popup {
 
     readonly property bool isApplicationFullScreen: MpvqcWindowUtility.isFullscreen
     readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""
+
     readonly property int edgeMarginHorizontal: 30
     readonly property int edgeMarginVertical: 15
+    readonly property real _dragScaleFactor: 1.0375
+
+    readonly property bool _anyChildHovered: _textFieldHover.hovered || (_previousButton.enabled && _previousButton.hovered) || (_nextButton.enabled && _nextButton.hovered) || _closeButton.hovered
+    readonly property bool _shouldScaleUp: _dragHandler.active || (_dragHandler.isPressed && !_anyChildHovered)
 
     property bool searchActive: false
 
@@ -31,22 +36,6 @@ Popup {
         exit = exitAnimation;
     }
 
-    function _scaleUp(): void {
-        _dragScaleAnimation.from = root.scale;
-        _dragScaleAnimation.to = _dragScaleAnimation.dragScaleFactor;
-        _dragScaleAnimation.start();
-    }
-
-    function _scaleDown(): void {
-        _dragScaleAnimation.from = root.scale;
-        _dragScaleAnimation.to = 1;
-        _dragScaleAnimation.start();
-    }
-
-    function _shouldSuppressScaleOnPress(): bool {
-        return _textFieldHover.hovered || (_previousButton.enabled && _previousButton.hovered) || (_nextButton.enabled && _nextButton.hovered) || _closeButton.hovered;
-    }
-
     x: mirrored ? edgeMarginHorizontal : parent.width - width - edgeMarginHorizontal
     y: parent.height - height - edgeMarginVertical
     z: 1
@@ -54,6 +43,15 @@ Popup {
     width: 450
     height: _textField.height + topPadding + bottomPadding
     padding: 5
+
+    scale: _shouldScaleUp ? _dragScaleFactor : 1
+
+    Behavior on scale {
+        enabled: root.opened
+        NumberAnimation {
+            duration: 75
+        }
+    }
 
     closePolicy: Popup.NoAutoClose
 
@@ -281,30 +279,6 @@ Popup {
         parentHeight: root.parent.height
         popupHeight: root.height
         popupY: root.y
-
-        onPointerPressed: {
-            if (!root._shouldSuppressScaleOnPress()) {
-                root._scaleUp();
-            }
-        }
-
-        onPointerReleased: root._scaleDown()
-
-        onDragStarted: {
-            if (root.scale < _dragScaleAnimation.dragScaleFactor) {
-                root._scaleUp();
-            }
-        }
-    }
-
-    NumberAnimation {
-        id: _dragScaleAnimation
-
-        readonly property real dragScaleFactor: 1.0375
-
-        target: root
-        property: "scale"
-        duration: 75
     }
 
     Binding {
