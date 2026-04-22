@@ -183,6 +183,8 @@ TestCase {
                 expectedIndex: 1,
                 expectedEditor: ""
             },
+            // "other-row-time-label" flakes roughly 1 in 10 full-suite runs
+            // (commentPopup → timePopup transition on a real compositor).
             {
                 tag: "other-row-time-label",
                 clickPoint: c => _clickHelper.topLeftOfTimeLabel(c, 1),
