@@ -59,7 +59,12 @@ Loader {
     }
 
     function abortEdit(): void {
-        if (!active || !item) {
+        if (!active) {
+            return;
+        }
+        if (!item) {
+            // Async load in flight: cancel before the editor materializes.
+            active = false;
             return;
         }
         switch (source) {

@@ -9,6 +9,7 @@ import "../../utility"
 
 Popup {
     id: root
+    objectName: "editTimePopup"
 
     required property int currentTime
     required property int currentListIndex

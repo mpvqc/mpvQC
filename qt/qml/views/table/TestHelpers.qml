@@ -237,7 +237,13 @@ QtObject {
 
         function _anyEditorOpen(control: MpvqcTableView): bool {
             const tc = root.testCase;
-            return tc.findChild(tc, "timeSpinBox") !== null || tc.findChild(tc, "commentTextArea") !== null || tc.findChild(tc, "editCommentTypeMenu") !== null;
+            for (const name of ["editTimePopup", "editCommentPopup", "editCommentTypeMenu"]) {
+                const popup = tc.findChild(tc, name);
+                if (popup && popup.opened) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         function isNotEditing(control: MpvqcTableView): void {
@@ -318,15 +324,18 @@ QtObject {
         }
 
         readonly property var _editorObjectNames: ({
-                "timePopup": "timeSpinBox",
+                "timePopup": "editTimePopup",
                 "commentTypeMenu": "editCommentTypeMenu",
-                "commentPopup": "commentTextArea"
+                "commentPopup": "editCommentPopup"
             })
 
         function isEditorShowing(control: MpvqcTableView, editor: string): void {
             const name = _editorObjectNames[editor];
             root.testCase.verify(name, `Unknown editor '${editor}'`);
-            root.testCase.tryVerify(() => root.testCase.findChild(control, name) !== null, root.testCase.timeout, `Expected editor '${editor}' (objectName='${name}') to be present`);
+            root.testCase.tryVerify(() => {
+                const popup = root.testCase.findChild(control, name);
+                return popup !== null && popup.opened;
+            }, root.testCase.timeout, `Expected editor '${editor}' (objectName='${name}') to be opened`);
         }
 
         function isEditorShowingTimePopup(control: MpvqcTableView): void {
