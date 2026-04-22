@@ -7,6 +7,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "dialogs"
 import "filedialogs"
 import "messageboxes"
 import "utility"
