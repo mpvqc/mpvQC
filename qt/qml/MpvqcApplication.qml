@@ -23,6 +23,8 @@ ApplicationWindow {
     readonly property int windowsFlags: Qt.CustomizeWindowHint | Qt.Window
     readonly property int linuxFlags: Qt.FramelessWindowHint | Qt.Window
 
+    property bool _initialFocusDone: false
+
     objectName: "MpvqcMainWindow"
     flags: isWindows ? windowsFlags : linuxFlags
 
@@ -47,6 +49,15 @@ ApplicationWindow {
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
+
+    Component.onCompleted: root.requestActivate()
+
+    onActiveChanged: {
+        if (active && !_initialFocusDone) {
+            _initialFocusDone = true;
+            _content.focusCommentTable();
+        }
+    }
 
     MpvqcContentView {
         id: _content
@@ -165,17 +176,5 @@ ApplicationWindow {
 
     MpvqcWindowVisibilityHandler {
         id: _windowVisibilityHandler
-    }
-
-    Timer {
-        // Work around window activation issue in Qt 6.10 on Windows
-        interval: Qt.platform.os === "windows" ? 500 : 0
-        running: true
-        onTriggered: {
-            if (Qt.platform.os === "windows") {
-                root.requestActivate();
-            }
-            _content.focusCommentTable();
-        }
     }
 }
