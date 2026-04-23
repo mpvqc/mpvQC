@@ -18,8 +18,6 @@ Item {
     required property MpvqcHeaderViewModel viewModel
     required property MpvqcMenuBarViewModel menuBarViewModel
 
-    readonly property MpvqcWindowButtons windowButtons: MpvqcWindowButtons {}
-
     readonly property alias menuBarWidth: _menuBar.width
     readonly property alias menuBarHeight: _menuBar.height
 
@@ -51,7 +49,7 @@ Item {
         width: root.width
         spacing: 0
 
-        MpvqcHeaderMenuBar {
+        MpvqcMenuBar {
             id: _menuBar
 
             viewModel: root.menuBarViewModel
@@ -75,7 +73,7 @@ Item {
         Item {
             id: _leftTitleSpacer
 
-            Layout.preferredWidth: Math.max(root.minTitleSpacing + 16, root.width / 2 - root.leftContentWidth - _title.implicitWidth / 2)
+            Layout.preferredWidth: Math.max(root.minTitleSpacing + root.separatorMargin * 2, root.width / 2 - root.leftContentWidth - _title.implicitWidth / 2)
             Layout.preferredHeight: root.menuBarHeight
         }
 
@@ -91,78 +89,12 @@ Item {
             verticalAlignment: Text.AlignVCenter
         }
 
-        Row {
-            id: _windowButtons
-
+        MpvqcHeaderWindowButtons {
             Layout.preferredHeight: root.menuBarHeight
 
-            ToolButton {
-                id: _minimizeButton
-
-                visible: root.windowButtons.showMinimizeButton
-                height: root.menuBarHeight
-                focusPolicy: Qt.NoFocus
-                icon.width: 20
-                icon.height: 20
-                icon.source: "qrc:/data/icons/minimize_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                onClicked: {
-                    root.viewModel.requestMinimize();
-                }
-            }
-
-            ToolButton {
-                id: _maximizeButton
-
-                readonly property url iconMaximize: "qrc:/data/icons/open_in_full_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-                readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-
-                visible: root.windowButtons.showMaximizeButton
-                height: root.menuBarHeight
-                focusPolicy: Qt.NoFocus
-                icon.width: 18
-                icon.height: 18
-                icon.source: MpvqcWindowUtility.isMaximized ? iconNormalize : iconMaximize
-
-                onClicked: {
-                    root.viewModel.requestToggleMaximize();
-                }
-            }
-
-            ToolButton {
-                id: _closeButton
-
-                visible: root.windowButtons.showCloseButton
-                height: root.menuBarHeight
-                focusPolicy: Qt.NoFocus
-
-                icon {
-                    width: 18
-                    height: 18
-                    source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-                    color: {
-                        if (root.viewModel.isWindows && _closeButton.hovered) {
-                            return "#FFFFFD";
-                        } else if (_closeButton.hovered) {
-                            return MpvqcTheme.background;
-                        } else {
-                            return MpvqcTheme.foreground;
-                        }
-                    }
-                }
-
-                onClicked: {
-                    root.viewModel.requestClose();
-                }
-
-                Binding {
-                    when: true
-                    target: _closeButton.background
-                    property: "color"
-                    value: root.viewModel.isWindows ? "#C42C1E" : MpvqcTheme.control
-                    restoreMode: Binding.RestoreNone
-                }
-            }
+            onMinimizeRequested: root.viewModel.requestMinimize()
+            onToggleMaximizeRequested: root.viewModel.requestToggleMaximize()
+            onCloseRequested: root.viewModel.requestClose()
         }
     }
 }

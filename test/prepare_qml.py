@@ -8,7 +8,7 @@ from PySide6.QtQml import QQmlEngine
 
 from mpvqc import startup
 from mpvqc.injections import bindings as original_bindings
-from mpvqc.services import WindowPropertiesService
+from mpvqc.services import HostIntegrationService, WindowPropertiesService
 
 
 # noinspection PyPep8Naming
@@ -36,6 +36,10 @@ class _StubWindowPropertiesService(WindowPropertiesService):
 def configure_dependency_injection():
     def test_bindings(binder: inject.Binder):
         original_bindings(binder)
+        binder.bind_to_constructor(
+            HostIntegrationService,
+            lambda: HostIntegrationService(detect_configuration=False),
+        )
         binder.bind(WindowPropertiesService, _StubWindowPropertiesService())
 
     inject.configure(test_bindings, bind_in_runtime=False, clear=True, allow_override=True)

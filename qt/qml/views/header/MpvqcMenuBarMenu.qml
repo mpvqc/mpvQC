@@ -4,8 +4,13 @@
 
 import QtQuick
 
+import "../../components"
+
 MpvqcMenu {
     exit: null
+
+    icon.width: 24
+    icon.height: 24
 
     onAboutToShow: {
         x = isMirrored ? -width + parent.width : 0;

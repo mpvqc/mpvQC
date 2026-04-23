@@ -5,3 +5,11 @@
 module views.header
 
 MpvqcHeaderView MpvqcHeaderView.qml
+internal MpvqcHeaderWindowButtons MpvqcHeaderWindowButtons.qml
+internal MpvqcLanguageSubMenu MpvqcLanguageSubMenu.qml
+internal MpvqcMenuBar MpvqcMenuBar.qml
+internal MpvqcMenuBarItem MpvqcMenuBarItem.qml
+internal MpvqcMenuBarMenu MpvqcMenuBarMenu.qml
+internal MpvqcRadioMenu MpvqcRadioMenu.qml
+internal MpvqcToolBarButton MpvqcToolBarButton.qml
+internal MpvqcToolBarView MpvqcToolBarView.qml

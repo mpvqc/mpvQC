@@ -9,8 +9,6 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../../components"
-
 MenuBar {
     id: root
 
@@ -22,58 +20,52 @@ MenuBar {
     }
 
     MpvqcMenuBarMenu {
-
         title: qsTranslate("MainWindow", "File")
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "New QC Document")
             icon.source: "qrc:/data/icons/draft_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestResetAppState()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Open QC Document(s)...")
             icon.source: "qrc:/data/icons/file_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenQcDocuments()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Save QC Document")
             icon.source: "qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestSaveQcDocument()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Save QC Document As...")
             icon.source: "qrc:/data/icons/save_as_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestSaveQcDocumentAs()
         }
 
         MenuSeparator {
-            visible: _extendedExportModel.count > 0
-            height: visible ? implicitHeight : 0
+            Component.onCompleted: {
+                if (_extendedExportModel.count === 0) {
+                    visible = false;
+                    height = 0;
+                }
+            }
         }
 
         MpvqcMenuBarMenu {
             title: qsTranslate("MainWindow", "Export QC Document")
             icon.source: "qrc:/data/icons/file_export_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
 
-            enabled: _extendedExportModel.count > 0
-
-            onEnabledChanged: {
-                parent.enabled = enabled;
-                parent.visible = enabled;
-                parent.height = enabled ? parent.implicitHeight : 0;
+            Component.onCompleted: {
+                if (_extendedExportModel.count === 0) {
+                    // `visible` on a Menu toggles its open/closed state,
+                    // so hiding the entry has to go through the parent MenuItem instead of a reactive binding
+                    parent.visible = false;
+                    parent.height = 0;
+                }
             }
 
             Repeater {
@@ -81,14 +73,12 @@ MenuBar {
                     id: _extendedExportModel
                 }
 
-                delegate: MenuItem {
+                delegate: MpvqcMenuBarItem {
                     required property string name
                     required property url path
 
                     text: name
                     icon.source: "qrc:/data/icons/notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-                    icon.height: 24
-                    icon.width: 24
                     onTriggered: root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
                 }
             }
@@ -96,257 +86,171 @@ MenuBar {
 
         MenuSeparator {}
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Exit mpvQC")
             icon.source: "qrc:/data/icons/exit_to_app_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestClose()
         }
     }
 
     MpvqcMenuBarMenu {
-
         title: qsTranslate("MainWindow", "Video")
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Open Video...")
             icon.source: "qrc:/data/icons/movie_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenVideo()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Open Subtitle(s)...")
             icon.source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenSubtitles()
         }
 
         MenuSeparator {}
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
             icon.source: "qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestResizeVideo()
         }
     }
 
     MpvqcMenuBarMenu {
-
         title: qsTranslate("MainWindow", "Options")
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Appearance...")
             icon.source: "qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenAppearanceDialog()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Comment Type Settings...")
             icon.source: "qrc:/data/icons/comment_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenCommentTypesDialog()
         }
 
-        MpvqcMenuBarMenu {
+        MpvqcRadioMenu {
             title: qsTranslate("MainWindow", "Application Title")
             icon.source: "qrc:/data/icons/title_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
 
-            Repeater {
-                model: [
-                    {
-                        "label": qsTranslate("MainWindow", "Default Title"),
-                        "value": MpvqcMenuBarViewModel.WindowTitleFormat.DEFAULT
-                    },
-                    {
-                        "label": qsTranslate("MainWindow", "Video File"),
-                        "value": MpvqcMenuBarViewModel.WindowTitleFormat.FILE_NAME
-                    },
-                    {
-                        "label": qsTranslate("MainWindow", "Video Path"),
-                        "value": MpvqcMenuBarViewModel.WindowTitleFormat.FILE_PATH
-                    },
-                ]
+            currentValue: root.viewModel.windowTitleFormat
+            model: [
+                {
+                    "label": qsTranslate("MainWindow", "Default Title"),
+                    "value": MpvqcMenuBarViewModel.WindowTitleFormat.DEFAULT
+                },
+                {
+                    "label": qsTranslate("MainWindow", "Video File"),
+                    "value": MpvqcMenuBarViewModel.WindowTitleFormat.FILE_NAME
+                },
+                {
+                    "label": qsTranslate("MainWindow", "Video Path"),
+                    "value": MpvqcMenuBarViewModel.WindowTitleFormat.FILE_PATH
+                },
+            ]
 
-                delegate: MenuItem {
-                    required property string label
-                    required property int value
-
-                    text: label
-                    autoExclusive: true
-                    checkable: true
-                    checked: root.viewModel.windowTitleFormat === value
-                    onTriggered: root.viewModel.configureWindowTitleFormat(value)
-                }
-            }
+            onOptionSelected: value => root.viewModel.configureWindowTitleFormat(value)
         }
 
-        MpvqcMenuBarMenu {
+        MpvqcRadioMenu {
             title: qsTranslate("MainWindow", "Application Layout")
             icon.source: "qrc:/data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
 
-            Repeater {
-                model: [
-                    {
-                        "label": qsTranslate("MainWindow", "Video Above Comments"),
-                        "value": Qt.Vertical
-                    },
-                    {
-                        "label": qsTranslate("MainWindow", "Video Next to Comments"),
-                        "value": Qt.Horizontal
-                    },
-                ]
+            currentValue: root.viewModel.applicationLayout
+            model: [
+                {
+                    "label": qsTranslate("MainWindow", "Video Above Comments"),
+                    "value": Qt.Vertical
+                },
+                {
+                    "label": qsTranslate("MainWindow", "Video Next to Comments"),
+                    "value": Qt.Horizontal
+                },
+            ]
 
-                delegate: MenuItem {
-                    required property string label
-                    required property int value
-
-                    text: label
-                    autoExclusive: true
-                    checkable: true
-                    checked: root.viewModel.applicationLayout === value
-                    onTriggered: root.viewModel.configureApplicationLayout(value)
-                }
-            }
+            onOptionSelected: value => root.viewModel.configureApplicationLayout(value)
         }
 
         MenuSeparator {}
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Backup Settings...")
             icon.source: "qrc:/data/icons/settings_backup_restore_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenBackupSettingsDialog()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Export Settings...")
             icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenExportSettingsDialog()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Import Settings...")
             icon.source: "qrc:/data/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenImportSettingsDialog()
         }
 
         MenuSeparator {}
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Edit mpv.conf...")
             icon.source: "qrc:/data/icons/movie_edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenEditMpvConfigDialog()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Edit input.conf...")
             icon.source: "qrc:/data/icons/keyboard_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenEditInputConfigDialog()
         }
 
         MenuSeparator {}
 
-        MpvqcMenuBarMenu {
-            id: _languageMenu
-
-            title: qsTranslate("MainWindow", "Language")
-            icon.source: "qrc:/data/icons/language_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
-
-            property var _deferToOnClose: () => {}
-
-            onClosed: {
-                _deferToOnClose(); // qmllint disable
-                _deferToOnClose = () => {};
-            }
-
-            Repeater {
-                model: MpvqcLanguageModel {}
-
-                MenuItem {
-                    required property string language
-                    required property string identifier
-
-                    text: qsTranslate("Languages", language)
-                    autoExclusive: true
-                    checkable: true
-                    checked: identifier === Qt.uiLanguage
-                    onTriggered: _languageMenu._deferToOnClose = () => root.viewModel.configureLanguage(identifier)
-                }
-            }
+        MpvqcLanguageSubMenu {
+            onLanguageSelected: identifier => root.viewModel.configureLanguage(identifier)
         }
     }
 
     MpvqcMenuBarMenu {
-
         title: qsTranslate("MainWindow", "Help")
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Check for Updates...")
             icon.source: "qrc:/data/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             visible: root.viewModel.isUpdateMenuVisible
             height: visible ? implicitHeight : 0
             onTriggered: root.viewModel.requestOpenCheckForUpdatesDialog()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
             icon.source: "qrc:/data/icons/keyboard_double_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenKeyboardShortcutsDialog()
         }
 
         MenuSeparator {}
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Extended Exports...")
             icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenExtendedExportsDialog()
         }
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "Open App Data Folder...")
             icon.source: "qrc:/data/icons/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.openAppDataFolder()
         }
 
         MenuSeparator {}
 
-        MenuItem {
+        MpvqcMenuBarItem {
             text: qsTranslate("MainWindow", "About mpvQC...")
             icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-            icon.height: 24
-            icon.width: 24
             onTriggered: root.viewModel.requestOpenAboutDialog()
         }
     }

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import Property, QObject, QRunnable, QThreadPool, Signal
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import HostIntegrationService, WindowButtonPreference
@@ -23,14 +23,8 @@ class MpvqcWindowButtons(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._preference: WindowButtonPreference = self._host_integration.DEFAULT_WINDOW_BUTTON_PREFERENCE
-
-        def _detection_job() -> None:
-            preferences = self._host_integration.get_window_button_preference()
-            self._on_detection_complete(preferences)
-
-        job = QRunnable.create(_detection_job)
-        QThreadPool.globalInstance().start(job)
+        self._preference = self._host_integration.window_button_preference
+        self._host_integration.window_button_preference_changed.connect(self._on_preference_changed)
 
     @Property(bool, notify=showMinimizeButtonChanged)
     def showMinimizeButton(self) -> bool:
@@ -44,15 +38,14 @@ class MpvqcWindowButtons(QObject):
     def showCloseButton(self) -> bool:
         return self._preference.close
 
-    def _on_detection_complete(self, new_preference: WindowButtonPreference) -> None:
-        old_preference = self._preference
-        self._preference = new_preference
+    @Slot(object)
+    def _on_preference_changed(self, preference: WindowButtonPreference) -> None:
+        old = self._preference
+        self._preference = preference
 
-        if old_preference.minimize != new_preference.minimize:
-            self.showMinimizeButtonChanged.emit(new_preference.minimize)
-
-        if old_preference.maximize != new_preference.maximize:
-            self.showMaximizeButtonChanged.emit(new_preference.maximize)
-
-        if old_preference.close != new_preference.close:
-            self.showCloseButtonChanged.emit(new_preference.close)
+        if old.minimize != preference.minimize:
+            self.showMinimizeButtonChanged.emit(preference.minimize)
+        if old.maximize != preference.maximize:
+            self.showMaximizeButtonChanged.emit(preference.maximize)
+        if old.close != preference.close:
+            self.showCloseButtonChanged.emit(preference.close)

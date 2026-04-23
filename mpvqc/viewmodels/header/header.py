@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys
-
 import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
@@ -38,10 +36,6 @@ class MpvqcHeaderViewModel(QObject):
         self._settings.windowTitleFormatChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
         self._settings.languageChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
         self._state.saved_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-
-    @Property(bool, constant=True, final=True)
-    def isWindows(self) -> bool:
-        return sys.platform == "win32"
 
     @Property(str, notify=windowTitleChanged)
     def windowTitle(self) -> str:
