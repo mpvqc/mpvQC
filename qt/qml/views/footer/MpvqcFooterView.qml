@@ -138,4 +138,8 @@ Item {
             onPercentToggled: root.viewModel.toggleStatusbarPercentage()
         }
     }
+
+    MpvqcFooterContextMenuClickGuard {
+        menu: _contextMenuLoader.item
+    }
 }

@@ -284,6 +284,7 @@ files = [
     "qt/qml/utility/MpvqcWindowUtility.qml",
     "qt/qml/utility/qmldir",
     "qt/qml/views/footer/MpvqcFooterContextMenu.qml",
+    "qt/qml/views/footer/MpvqcFooterContextMenuClickGuard.qml",
     "qt/qml/views/footer/MpvqcFooterView.qml",
     "qt/qml/views/footer/qmldir",
     "qt/qml/views/footer/tst_MpvqcFooterView.qml",
