@@ -7,3 +7,4 @@ module views.footer
 MpvqcFooterView MpvqcFooterView.qml
 
 internal MpvqcFooterContextMenu MpvqcFooterContextMenu.qml
+internal MpvqcFooterContextMenuClickGuard MpvqcFooterContextMenuClickGuard.qml

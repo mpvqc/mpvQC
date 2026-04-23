@@ -75,12 +75,21 @@ MpvqcMenu {
     MenuSeparator {}
 
     MenuItem {
+        id: _percentMenuItem
         objectName: "percentMenuItem"
 
         text: qsTranslate("MainWindow", "Progress in percent")
-        checked: root.isPercentChecked
         checkable: true
 
         onTriggered: root.percentToggled()
     }
+
+    // Workaround for QTBUG-145585: on Windows the Popup.Window menu can
+    // deliver a spurious release event while closing, causing MenuItem to
+    // auto-toggle a second time and leaving `checked` out of sync with the
+    // view-model. Force-resync on both lifecycle edges:
+    //   - aboutToShow: pick up any external changes made while closed.
+    //   - closed:      undo the spurious toggle delivered during close.
+    onAboutToShow: _percentMenuItem.checked = root.isPercentChecked
+    onClosed: _percentMenuItem.checked = root.isPercentChecked
 }
