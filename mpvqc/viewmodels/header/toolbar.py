@@ -17,15 +17,13 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcToolBarViewModel(QObject):
     _player = inject.attr(PlayerService)
 
-    frameStepBackwardVisibleChanged = Signal(bool)
-    frameStepForwardVisibleChanged = Signal(bool)
+    frameStepVisibleChanged = Signal(bool)
     cycleSubtitleTrackVisibleChanged = Signal(bool)
     cycleAudioTrackVisibleChanged = Signal(bool)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._frame_step_backward_visible = self._player.video_loaded
-        self._frame_step_forward_visible = self._player.video_loaded
+        self._frame_step_visible = self._player.video_loaded
         self._cycle_subtitle_track_visible = self._should_show_cycle_subtitle()
         self._cycle_audio_track_visible = self._should_show_cycle_audio()
 
@@ -44,9 +42,7 @@ class MpvqcToolBarViewModel(QObject):
     @Slot(bool)
     def _on_video_loaded_changed(self, video_loaded: bool) -> None:
         # pyrefly: ignore [bad-assignment]
-        self.frameStepBackwardVisible = video_loaded
-        # pyrefly: ignore [bad-assignment]
-        self.frameStepForwardVisible = video_loaded
+        self.frameStepVisible = video_loaded
         # pyrefly: ignore [bad-assignment]
         self.cycleSubtitleTrackVisible = self._should_show_cycle_subtitle()
         # pyrefly: ignore [bad-assignment]
@@ -78,25 +74,15 @@ class MpvqcToolBarViewModel(QObject):
     def requestCycleAudioTrack(self) -> None:
         self._player.cycle_audio_track()
 
-    @Property(bool, notify=frameStepBackwardVisibleChanged)
-    def frameStepBackwardVisible(self) -> bool:
-        return self._frame_step_backward_visible
+    @Property(bool, notify=frameStepVisibleChanged)
+    def frameStepVisible(self) -> bool:
+        return self._frame_step_visible
 
-    @frameStepBackwardVisible.setter
-    def frameStepBackwardVisible(self, value: bool) -> None:
-        if self._frame_step_backward_visible != value:
-            self._frame_step_backward_visible = value
-            self.frameStepBackwardVisibleChanged.emit(value)
-
-    @Property(bool, notify=frameStepForwardVisibleChanged)
-    def frameStepForwardVisible(self) -> bool:
-        return self._frame_step_forward_visible
-
-    @frameStepForwardVisible.setter
-    def frameStepForwardVisible(self, value: bool) -> None:
-        if self._frame_step_forward_visible != value:
-            self._frame_step_forward_visible = value
-            self.frameStepForwardVisibleChanged.emit(value)
+    @frameStepVisible.setter
+    def frameStepVisible(self, value: bool) -> None:
+        if self._frame_step_visible != value:
+            self._frame_step_visible = value
+            self.frameStepVisibleChanged.emit(value)
 
     @Property(bool, notify=cycleSubtitleTrackVisibleChanged)
     def cycleSubtitleTrackVisible(self) -> bool:

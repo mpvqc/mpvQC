@@ -8,36 +8,47 @@ import logging
 import os
 import sys
 import typing
-from dataclasses import dataclass
 from functools import cached_property
 
 import inject
-from PySide6.QtCore import QEvent, QObject, Signal
+from PySide6.QtCore import QEvent, QObject, QRunnable, QThreadPool, Signal
 
 from mpvqc.services.main_window import MainWindowService
 
+from .window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference, read_window_button_preference
+
 logger = logging.getLogger(__name__)
-
-
-@dataclass(frozen=True)
-class WindowButtonPreference:
-    minimize: bool
-    maximize: bool
-    close: bool
 
 
 class HostIntegrationService(QObject):
     _main_window = inject.attr(MainWindowService)
 
-    DEFAULT_WINDOW_BUTTON_PREFERENCE = WindowButtonPreference(minimize=True, maximize=True, close=True)
-
     display_zoom_factor_changed = Signal(float)
+    window_button_preference_changed = Signal(object)
 
-    def __init__(self) -> None:
+    def __init__(self, detect_configuration: bool = True) -> None:
         super().__init__()
-        self._zoom_factor = self._main_window.display_zoom_factor
-        self._window = self._main_window.window
-        self._window.installEventFilter(self)
+        self._zoom_factor = 1.0
+        self._window_button_preference = DEFAULT_WINDOW_BUTTON_PREFERENCE
+
+        if detect_configuration:
+            self._zoom_factor = self._main_window.display_zoom_factor
+            self._window = self._main_window.window
+            self._window.installEventFilter(self)
+            self._detect_window_button_preference_async()
+
+    def _detect_window_button_preference_async(self) -> None:
+        def job() -> None:
+            preference = read_window_button_preference()
+            if preference != self._window_button_preference:
+                self._window_button_preference = preference
+                self.window_button_preference_changed.emit(preference)
+
+        QThreadPool.globalInstance().start(QRunnable.create(job))
+
+    @property
+    def window_button_preference(self) -> WindowButtonPreference:
+        return self._window_button_preference
 
     @typing.override
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
@@ -59,11 +70,6 @@ class HostIntegrationService(QObject):
         if sys.platform != "linux":
             return False
         return is_tiling_window_manager()
-
-    def get_window_button_preference(self) -> WindowButtonPreference:
-        if sys.platform == "linux":
-            return read_linux_window_button_preference()
-        return self.DEFAULT_WINDOW_BUTTON_PREFERENCE
 
 
 def is_tiling_window_manager() -> bool:
@@ -90,20 +96,3 @@ def is_tiling_window_manager() -> bool:
         logger.debug("Running on tiling window manager")
 
     return is_tiling_wm
-
-
-def read_linux_window_button_preference() -> WindowButtonPreference:
-    from mpvqc.services.host_integration.portals import SettingsPortal
-
-    with SettingsPortal() as portal:
-        layout = portal.read_one("org.gnome.desktop.wm.preferences", "button-layout")
-
-    if layout is None:
-        return WindowButtonPreference(minimize=True, maximize=True, close=True)
-
-    buttons = layout.lower()
-    return WindowButtonPreference(
-        minimize="minimize" in buttons,
-        maximize="maximize" in buttons,
-        close="close" in buttons,
-    )
