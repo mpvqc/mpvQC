@@ -12,17 +12,21 @@ Loader {
     readonly property MpvqcPlayerViewModel viewModel: MpvqcPlayerViewModel {}
 
     readonly property bool isWindows: Qt.platform.os === "windows"
+    readonly property bool isTestMode: typeof mpvqcTestMode !== "undefined"
+
     readonly property url windowsPlayer: Qt.resolvedUrl("MpvqcPlayerWindows.qml")
     readonly property url linuxPlayer: Qt.resolvedUrl("MpvqcPlayerLinux.qml")
+    readonly property url stubPlayer: Qt.resolvedUrl("MpvqcPlayerStub.qml")
 
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
 
-    source: isWindows ? windowsPlayer : linuxPlayer
+    source: isTestMode ? stubPlayer : isWindows ? windowsPlayer : linuxPlayer
     asynchronous: true
 
     MpvqcPlayerInputArea {
         anchors.fill: parent
+        enabled: !root.isTestMode
 
         onAddNewCommentMenuRequested: root.addNewCommentMenuRequested()
         onToggleFullScreenRequested: root.toggleFullScreenRequested()
