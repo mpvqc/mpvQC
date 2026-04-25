@@ -14,7 +14,7 @@ from mpvqc.services import HostIntegrationService, WindowPropertiesService
 # noinspection PyPep8Naming
 class MpvqcTestSetup(QObject):
     @Slot(QQmlEngine)
-    def qmlEngineAvailable(self, _: QQmlEngine):
+    def qmlEngineAvailable(self, engine: QQmlEngine):
         import rc_project  # noqa: F401
 
         startup.configure_qt_application_data()
@@ -22,6 +22,8 @@ class MpvqcTestSetup(QObject):
         configure_dependency_injection()
         startup.configure_environment_variables()
         startup.import_mpvqc_bindings()
+
+        engine.rootContext().setContextProperty("mpvqcTestMode", True)
 
 
 class _StubWindowPropertiesService(WindowPropertiesService):
