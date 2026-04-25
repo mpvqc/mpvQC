@@ -347,4 +347,8 @@ files = [
     "qt/qml/views/table/tst_MpvqcTableView_SearchBox.qml",
     "qt/qml/views/table/tst_MpvqcTableView_SearchBoxPosition.qml",
     "qt/qml/views/table/tst_MpvqcTableView_Selection.qml",
+    "testqml/__init__.py",
+    "testqml/bridge.py",
+    "testqml/injections.py",
+    "testqml/main.py",
 ]
