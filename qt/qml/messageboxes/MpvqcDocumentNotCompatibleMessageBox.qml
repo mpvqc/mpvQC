@@ -5,6 +5,8 @@
 import "../components"
 
 MpvqcMessageBox {
+    objectName: "documentNotCompatibleMessageBox"
+
     required property list<string> files
 
     title: qsTranslate("MessageBoxes", "Document Not Compatible", "", files.length)

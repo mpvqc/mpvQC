@@ -12,6 +12,7 @@ import "../components"
 
 MpvqcDialog {
     id: root
+    objectName: "importConfirmationDialog"
 
     required property string videosJson
     required property string subtitlesJson

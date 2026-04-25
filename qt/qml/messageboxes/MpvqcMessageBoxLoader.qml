@@ -10,6 +10,7 @@ import pyobjects
 
 Loader {
     id: root
+    objectName: "messageBoxLoader"
 
     readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
 

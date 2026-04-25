@@ -15,6 +15,7 @@ import "../utility"
 
 MpvqcDialog {
     id: root
+    objectName: "shortcutsDialog"
 
     title: qsTranslate("ShortcutsDialog", "Keyboard Shortcuts")
 

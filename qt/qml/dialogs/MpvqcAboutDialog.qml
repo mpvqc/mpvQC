@@ -16,6 +16,7 @@ import "../models"
 
 MpvqcDialog {
     id: root
+    objectName: "aboutDialog"
 
     readonly property MpvqcAboutDialogViewModel viewModel: MpvqcAboutDialogViewModel {}
 
