@@ -19,6 +19,9 @@ MpvqcMenuBarMenu {
         model: root.model
 
         delegate: MenuItem {
+            objectName: `${root.objectName}RadioItem_${identifier}`
+
+            required property string identifier
             required property string label
             required property int value
 

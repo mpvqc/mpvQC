@@ -9,6 +9,8 @@ import pyobjects
 import "../components"
 
 MpvqcMessageBox {
+    objectName: "quitMessageBox"
+
     readonly property MpvqcQuitMessageBoxViewModel viewModel: MpvqcQuitMessageBoxViewModel {}
 
     title: qsTranslate("MessageBoxes", "Unsaved Changes")

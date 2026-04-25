@@ -7,6 +7,8 @@ import QtQuick.Controls.Material
 import "../components"
 
 MpvqcMessageBox {
+    objectName: "extendedExportErrorMessageBox"
+
     required property string errorMessage
     required property int errorLine
 

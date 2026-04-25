@@ -15,6 +15,7 @@ import pyobjects
 
 MpvqcDialog {
     id: root
+    objectName: "appearanceDialog"
 
     readonly property MpvqcAppearanceDialogViewModel viewModel: MpvqcAppearanceDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme

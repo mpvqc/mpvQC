@@ -15,6 +15,7 @@ import "../utility"
 
 MpvqcDialog {
     id: root
+    objectName: "commentTypesDialog"
 
     readonly property MpvqcCommentTypesDialogViewModel viewModel: MpvqcCommentTypesDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme

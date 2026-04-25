@@ -10,6 +10,7 @@ import pyobjects
 
 Loader {
     id: root
+    objectName: "dialogLoader"
 
     readonly property MpvqcDialogLoaderViewModel viewModel: MpvqcDialogLoaderViewModel {}
 

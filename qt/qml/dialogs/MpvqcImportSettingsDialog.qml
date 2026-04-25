@@ -12,6 +12,7 @@ import "../components"
 
 MpvqcDialog {
     id: root
+    objectName: "importSettingsDialog"
 
     readonly property MpvqcImportSettingsDialogViewModel viewModel: MpvqcImportSettingsDialogViewModel {}
 

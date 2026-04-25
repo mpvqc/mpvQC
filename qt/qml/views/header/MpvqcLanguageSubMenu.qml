@@ -11,6 +11,7 @@ import pyobjects
 
 MpvqcMenuBarMenu {
     id: root
+    objectName: "languageMenu"
 
     signal languageSelected(identifier: string)
 
@@ -32,6 +33,8 @@ MpvqcMenuBarMenu {
         model: MpvqcLanguageModel {}
 
         MenuItem {
+            objectName: `languageMenuItem_${identifier}`
+
             required property string language
             required property string identifier
 

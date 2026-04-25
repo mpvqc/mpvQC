@@ -14,6 +14,7 @@ import "../components"
 
 MpvqcDialog {
     id: root
+    objectName: "backupDialog"
 
     readonly property MpvqcBackupDialogViewModel viewModel: MpvqcBackupDialogViewModel {}
 
