@@ -282,6 +282,7 @@ files = [
     "qt/qml/styles/MpvqcStyle/ToolTip.qml",
     "qt/qml/TestHelpers.qml",
     "qt/qml/tst_Integration_FileMenu.qml",
+    "qt/qml/tst_Integration_VideoMenu.qml",
     "qt/qml/utility/MpvqcConstants.qml",
     "qt/qml/utility/MpvqcLabelWidthCalculator.qml",
     "qt/qml/utility/MpvqcTheme.qml",
