@@ -15,10 +15,12 @@ from PySide6.QtCore import QObject, QUrl
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
+    DesktopService,
     ExportService,
     HostIntegrationService,
     PlayerService,
     SettingsService,
+    VersionCheckerService,
     VideoResizeService,
     WindowPropertiesService,
 )
@@ -93,14 +95,39 @@ class VideoResizeServiceOverride(VideoResizeService):
         return ResizeResult(window_width=800, window_height=600, table_width=200, table_height=200)
 
 
+class VersionCheckerServiceOverride(VersionCheckerService):
+    @typing.override
+    def check_for_new_version(self) -> tuple[str, str]:
+        return "stub-title", "stub-text"
+
+
+class DesktopServiceOverride(DesktopService):
+    def __init__(self) -> None:
+        self.opened_urls: list[QUrl] = []
+
+    @typing.override
+    def open_app_data_folder(self) -> None:
+        self.opened_urls.append(QUrl("mpvqc-test://app-data-folder"))
+
+    @typing.override
+    def open_backup_folder(self) -> None:
+        self.opened_urls.append(QUrl("mpvqc-test://backup-folder"))
+
+    @typing.override
+    def open_url(self, url: QUrl) -> None:
+        self.opened_urls.append(url)
+
+
 def configure_injections() -> None:
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
+        binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
         binder.bind_to_constructor(HostIntegrationService, HostIntegrationServiceOverride)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
         binder.bind_to_constructor(SettingsService, SettingsServiceOverride)
+        binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)
         binder.bind_to_constructor(WindowPropertiesService, WindowPropertiesServiceOverride)
 

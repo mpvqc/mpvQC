@@ -4,10 +4,9 @@
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
-from PySide6.QtGui import QDesktopServices
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, SettingsService, TypeMapperService
+from mpvqc.services import ApplicationPathsService, DesktopService, SettingsService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,6 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcBackupDialogViewModel(QObject):
+    _desktop = inject.attr(DesktopService)
     _paths = inject.attr(ApplicationPathsService)
     _settings = inject.attr(SettingsService)
     _type_mapper = inject.attr(TypeMapperService)
@@ -55,9 +55,7 @@ class MpvqcBackupDialogViewModel(QObject):
 
     @Slot()
     def openBackupDirectory(self) -> None:
-        path = self._paths.dir_backup
-        url = self._type_mapper.map_path_to_url(path)
-        QDesktopServices.openUrl(url)
+        self._desktop.open_backup_folder()
 
     @Slot()
     def accept(self) -> None:

@@ -6,6 +6,7 @@ from .application_paths import ApplicationPathsService as ApplicationPathsServic
 from .build_info import BuildInfoService as BuildInfoService
 from .comment_type_validator import CommentTypeValidatorService as CommentTypeValidatorService
 from .comments import CommentsService as CommentsService
+from .desktop import DesktopService as DesktopService
 from .document_exporter import DocumentBackupService as DocumentBackupService
 from .document_exporter import DocumentExportService as DocumentExportService
 from .document_exporter import DocumentRenderService as DocumentRenderService

@@ -6,10 +6,10 @@ import sys
 
 import inject
 from PySide6.QtCore import Property, QObject, QUrl, Slot
-from PySide6.QtGui import QDesktopServices, QGuiApplication
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import BuildInfoService, PlayerService
+from mpvqc.services import BuildInfoService, DesktopService, PlayerService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -20,6 +20,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcAboutDialogViewModel(QObject):
     _player = inject.attr(PlayerService)
     _build_info = inject.attr(BuildInfoService)
+    _desktop = inject.attr(DesktopService)
 
     @Property(str, constant=True, final=True)
     def applicationName(self) -> str:
@@ -43,7 +44,7 @@ class MpvqcAboutDialogViewModel(QObject):
 
     @Slot(QUrl)
     def openLink(self, link: QUrl) -> None:
-        QDesktopServices.openUrl(link)
+        self._desktop.open_url(link)
 
     @Slot()
     def copyVersionInfoToClipboard(self) -> None:
