@@ -15,6 +15,7 @@ import "../utility"
 
 MpvqcDialog {
     id: root
+    objectName: "editMpvDialog"
 
     readonly property MpvqcEditMpvDialogViewModel viewModel: MpvqcEditMpvDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme

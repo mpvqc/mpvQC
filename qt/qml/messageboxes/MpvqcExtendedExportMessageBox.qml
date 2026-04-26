@@ -7,6 +7,8 @@ import QtQuick
 import "../components"
 
 MpvqcMessageBox {
+    objectName: "extendedExportMessageBox"
+
     title: qsTranslate("MessageBoxes", "Extended Exports")
 
     //: %1 will be the link to the Jinja templating engine. %2 will be the link to mpvQC's documentation about export templates

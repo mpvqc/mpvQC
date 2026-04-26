@@ -12,6 +12,7 @@ import "../components"
 
 MpvqcDialog {
     id: root
+    objectName: "importConfirmationDialog"
 
     required property string videosJson
     required property string subtitlesJson
@@ -63,6 +64,7 @@ MpvqcDialog {
 
         ListView {
             id: _videoListView
+            objectName: "videoListView"
 
             Layout.fillWidth: true
             Layout.topMargin: root.viewModel.showHeaders ? root.dimensions.noMargin : root.dimensions.contentTopMargin
@@ -181,6 +183,7 @@ MpvqcDialog {
 
         ListView {
             id: _subtitleListView
+            objectName: "subtitleListView"
 
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight

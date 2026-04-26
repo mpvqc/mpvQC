@@ -7,6 +7,8 @@ import QtQuick.Dialogs
 import pyobjects
 
 FileDialog {
+    objectName: "importSubtitlesFileDialog"
+
     readonly property MpvqcImportFileDialogViewModel viewModel: MpvqcImportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open Subtitle(s)")

@@ -2,15 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import logging
-
 import inject
-from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import HostIntegrationService, PlayerService, SettingsService, WindowPropertiesService
-
-logger = logging.getLogger(__name__)
+from mpvqc.services import PlayerService, VideoResizeService
+from mpvqc.services.video_resize import ViewDimensions
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -19,10 +16,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcResizeHandler(QObject):
-    _host_integration = inject.attr(HostIntegrationService)
     _player = inject.attr(PlayerService)
-    _settings_service = inject.attr(SettingsService)
-    _window_properties_service = inject.attr(WindowPropertiesService)
+    _resize_service = inject.attr(VideoResizeService)
 
     headerHeightChanged = Signal(int)
     borderSizeChanged = Signal(int)
@@ -44,34 +39,6 @@ class MpvqcResizeHandler(QObject):
         self._table_height = 0
 
         self._player.video_dimensions_changed.connect(self.recalculateSizes)
-
-    @property
-    def _scaled_height(self) -> int:
-        if height := self._player.height:
-            return int(height / self._host_integration.display_zoom_factor)
-        return 0
-
-    @property
-    def _scaled_width(self) -> int:
-        if width := self._player.width:
-            return int(width / self._host_integration.display_zoom_factor)
-        return 0
-
-    @property
-    def _available_screen_width(self) -> int:
-        screen = self._window_properties_service.screen
-        if not screen:
-            logger.error("Primary screen is None - cannot determine available width")
-            return 0
-        return int(screen.geometry().width() * 0.95)
-
-    @property
-    def _available_screen_height(self) -> int:
-        screen = self._window_properties_service.screen
-        if not screen:
-            logger.error("Primary screen is None - cannot determine available height")
-            return 0
-        return int(screen.geometry().height() * 0.95)
 
     @Property(int, notify=headerHeightChanged)
     def headerHeight(self) -> int:
@@ -135,93 +102,18 @@ class MpvqcResizeHandler(QObject):
 
     @Slot()
     def recalculateSizes(self) -> None:
-        if not self._can_resize():
-            return
-
-        match self._settings_service.layout_orientation:
-            case Qt.Orientation.Vertical.value:
-                self._recalculate_sizes_for_vertical_app_layout()
-            case Qt.Orientation.Horizontal.value:
-                self._recalculate_sizes_for_horizontal_app_layout()
-            case _:
-                msg = f"Unexpected layout orientation: {self._settings_service.layout_orientation}"
-                raise ValueError(msg)
-
-    def _can_resize(self) -> bool:
-        return (
-            not self._window_properties_service.is_fullscreen
-            and not self._window_properties_service.is_maximized
-            and self._player.video_loaded
-            and self._requested_video_size_fits_on_screen()
-        )
-
-    def _requested_video_size_fits_on_screen(self) -> bool:
-        fits_width = self._scaled_width < self._available_screen_width
-        fits_height = self._scaled_height < self._available_screen_height
-        return fits_width and fits_height
-
-    def _recalculate_sizes_for_vertical_app_layout(self) -> None:
-        window_width, window_height, table_width, table_height = calculate_vertical_layout_sizes(
-            video_width=self._scaled_width,
-            video_height=self._scaled_height,
-            header_height=self._header_height,
-            border_size=self._border_size,
-            handle_height=self._handle_height,
-            table_height=self._table_height,
-            available_height=self._available_screen_height,
-        )
-        self.appWindowSizeRequested.emit(window_width, window_height)
-        self.splitViewTableSizeRequested.emit(table_width, table_height)
-
-    def _recalculate_sizes_for_horizontal_app_layout(self) -> None:
-        window_width, window_height, table_width, table_height = calculate_horizontal_layout_sizes(
-            video_width=self._scaled_width,
-            video_height=self._scaled_height,
+        view_dims = ViewDimensions(
             header_height=self._header_height,
             border_size=self._border_size,
             handle_width=self._handle_width,
+            handle_height=self._handle_height,
             table_width=self._table_width,
-            available_width=self._available_screen_width,
+            table_height=self._table_height,
         )
-        self.appWindowSizeRequested.emit(window_width, window_height)
-        self.splitViewTableSizeRequested.emit(table_width, table_height)
 
+        result = self._resize_service.compute_resize(view_dims)
+        if result is None:
+            return
 
-def calculate_vertical_layout_sizes(
-    video_width: int,
-    video_height: int,
-    header_height: int,
-    border_size: int,
-    handle_height: int,
-    table_height: int,
-    available_height: int,
-) -> tuple[int, int, int, int]:
-    height_without_table = 2 * border_size + header_height + video_height + handle_height
-
-    new_table_height = max(0, min(table_height, available_height - height_without_table))
-
-    window_width = video_width + 2 * border_size
-    window_height = height_without_table + new_table_height
-    table_width = video_width
-
-    return window_width, window_height, table_width, new_table_height
-
-
-def calculate_horizontal_layout_sizes(
-    video_width: int,
-    video_height: int,
-    header_height: int,
-    border_size: int,
-    handle_width: int,
-    table_width: int,
-    available_width: int,
-) -> tuple[int, int, int, int]:
-    width_without_table = 2 * border_size + video_width + handle_width
-
-    new_table_width = max(0, min(table_width, available_width - width_without_table))
-
-    window_width = 2 * border_size + video_width + handle_width + new_table_width
-    window_height = 2 * border_size + header_height + video_height
-    table_height = video_height
-
-    return window_width, window_height, new_table_width, table_height
+        self.appWindowSizeRequested.emit(result.window_width, result.window_height)
+        self.splitViewTableSizeRequested.emit(result.table_width, result.table_height)

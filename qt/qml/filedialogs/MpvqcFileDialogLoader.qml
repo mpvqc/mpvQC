@@ -8,6 +8,7 @@ import QtQuick
 
 Loader {
     id: root
+    objectName: "fileDialogLoader"
 
     readonly property url exportDocumentDialog: Qt.resolvedUrl("MpvqcExportDocumentFileDialog.qml")
     readonly property url importDocumentsDialog: Qt.resolvedUrl("MpvqcImportDocumentsFileDialog.qml")

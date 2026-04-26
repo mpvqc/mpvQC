@@ -89,7 +89,7 @@ set-build-info:
 @clean:
     find i18n -name "*.qm" -type f -delete
     find qt/qml -name "*.qmlc" -type f -delete
-    rm -rf build pyobjects test/rc_project.py rc_project.py project.json project.qrc
+    rm -rf build pyobjects test/rc_project.py testqml/rc_project.py rc_project.py project.json project.qrc
 
 # Build release artifact (⚠️ modifies working tree)
 [group('ci')]
@@ -97,8 +97,11 @@ build-release:
     #!/usr/bin/env bash
     set -euo pipefail
     function execute() { echo -e "\033[0;34m$*\033[0m"; "$@"; }
-    execute find . -type f -name 'tst_*' -delete
-    execute find . -type f -name 'TestHelpers.qml' -delete
+    execute rm -f .env
+    execute find test testqml -mindepth 1 -delete
+    execute find . -type f -name 'tst_*' -print -delete
+    execute find . -type f -name 'TestHelpers.qml' -print -delete
+    execute find . -type f -name '*Stub.qml' -print -delete
     execute export MPVQC_COMPILE_QML=true
     execute export UV_NO_SYNC="1"
     execute export UV_OFFLINE="1"
@@ -106,15 +109,16 @@ build-release:
     execute just build
     execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
 
-# Run Python and QML tests
-[group('test')]
-@test: prepare-tests test-python test-qml
-
 # Recompile resources
 [group('test')]
 prepare-tests: build-develop
-    rm -f test/rc_project.py
+    rm -f test/rc_project.py testqml/rc_project.py
     cp rc_project.py test/rc_project.py
+    cp rc_project.py testqml/rc_project.py
+
+# Run Python and QML tests
+[group('test')]
+@test: prepare-tests test-python test-qml
 
 [group('test')]
 test-python:
@@ -122,23 +126,12 @@ test-python:
 
 [group('test')]
 test-qml:
-    #!/usr/bin/env bash
-    export QT_QUICK_CONTROLS_STYLE=Material
-    export QT_QUICK_CONTROLS_MATERIAL_VARIANT=Dense
-    uv run python -c '
-    import sys
-    from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
-    from test.prepare_qml import MpvqcTestSetup
+    uv run -m testqml.main
 
-    # Pass additional arguments to qmltestrunner:
-    sys.argv += ["-platform", "offscreen"]
-    sys.argv += ["-silent"]
-    sys.argv += ["-input", "qt/qml"]
-    # sys.argv += ["-eventdelay", "50"]  # Simulate slower systems
-
-    ex = QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=sys.argv)
-    sys.exit(ex)
-    '
+# TARGET = file by name recursively matched under qt/qml
+[group('test')]
+test-qml-debug TARGET:
+    uv run -m testqml.main --target '{{ TARGET }}'
 
 # Lint Python files (type checker only)
 [group('lint')]
@@ -162,8 +155,9 @@ lint-python *ARGS:
     uv run pyside6-lupdate -locations none -project project.json
 
 @_prepare-tests: build-develop
-    rm -f test/rc_project.py
+    rm -f test/rc_project.py testqml/rc_project.py
     cp rc_project.py test/rc_project.py
+    cp rc_project.py testqml/rc_project.py
 
 @_update_pyproject_file: _generate-qrc-file
     uv run python build-aux/update_pyproject_file.py \
@@ -171,6 +165,7 @@ lint-python *ARGS:
         --include-directory qt/qml \
         --include-directory data \
         --include-directory mpvqc \
+        --include-directory testqml \
         --include-directory i18n \
         --include-file main.py \
         --include-file project.qrc

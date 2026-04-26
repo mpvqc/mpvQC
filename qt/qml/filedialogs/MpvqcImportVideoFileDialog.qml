@@ -7,6 +7,8 @@ import QtQuick.Dialogs
 import pyobjects
 
 FileDialog {
+    objectName: "importVideoFileDialog"
+
     readonly property MpvqcImportFileDialogViewModel viewModel: MpvqcImportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open Video")
@@ -15,6 +17,6 @@ FileDialog {
 
     onAccepted: {
         viewModel.lastDirectoryVideo = currentFolder;
-        viewModel.openVideo(currentFile);
+        viewModel.openVideo(selectedFile);
     }
 }

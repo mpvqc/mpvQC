@@ -1,0 +1,6 @@
+[FILE]
+path :
+
+[DATA]
+[00:00:10] [Translation] first
+[00:01:20] [Spelling] second

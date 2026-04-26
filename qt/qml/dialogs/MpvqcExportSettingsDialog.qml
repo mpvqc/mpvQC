@@ -11,6 +11,7 @@ import "../components"
 
 MpvqcDialog {
     id: root
+    objectName: "exportSettingsDialog"
 
     readonly property MpvqcExportSettingsDialogViewModel viewModel: MpvqcExportSettingsDialogViewModel {}
 

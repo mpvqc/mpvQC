@@ -7,6 +7,8 @@ import QtQuick.Dialogs
 import pyobjects
 
 FileDialog {
+    objectName: "exportDocumentFileDialog"
+
     readonly property MpvqcExportFileDialogViewModel viewModel: MpvqcExportFileDialogViewModel {}
 
     required property url exportTemplate
@@ -17,5 +19,5 @@ FileDialog {
     defaultSuffix: "txt"
     nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
-    onAccepted: viewModel.export(currentFile, exportTemplate)
+    onAccepted: viewModel.export(selectedFile, exportTemplate)
 }
