@@ -35,4 +35,5 @@ from .subtitle_importer import SubtitleImporterService as SubtitleImporterServic
 from .theme import ThemeService as ThemeService
 from .type_mapper import TypeMapperService as TypeMapperService
 from .version_checker import VersionCheckerService as VersionCheckerService
+from .video_resize import VideoResizeService as VideoResizeService
 from .window_properties import WindowPropertiesService as WindowPropertiesService
