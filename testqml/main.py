@@ -2,20 +2,23 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import argparse
+import glob
 import os
 
 os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
 os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
 
+import pathlib
 import sys
 
-from PySide6.QtCore import QObject, Slot
+from PySide6.QtCore import QCoreApplication, QObject, Qt, Slot
 from PySide6.QtQml import QQmlEngine
 from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
 
 import testqml.bridge  # noqa: F401, registers MpvqcTestBridge
 from mpvqc import startup
-from testqml.injections import configure_injections
+from testqml.injections import TEMP_ROOT, configure_injections
 
 
 # noinspection PyPep8Naming
@@ -26,6 +29,7 @@ class MpvqcTestSetup(QObject):
 
         startup.configure_qt_application_data()
         startup.configure_qt_settings()
+        # startup.configure_logging()
         configure_injections()
         startup.configure_environment_variables()
         startup.import_mpvqc_bindings()
@@ -33,13 +37,52 @@ class MpvqcTestSetup(QObject):
         engine.rootContext().setContextProperty("mpvqcTestMode", True)
 
 
-def main() -> int:
-    sys.argv += ["-platform", "offscreen"]  # Disabled: run with a visible window so events are observable
-    sys.argv += ["-silent"]
-    sys.argv += ["-input", "qt/qml/tst_MpvqcApplicationContent.qml"]
-    # sys.argv += ["-eventdelay", "50"]  # Slow events down so the test is watchable
+def parse_cli() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(prog="testqml")
+    parser.add_argument(
+        "--target",
+        help="Run a single file by name (matches anywhere under qt/qml/).",
+    )
+    return parser.parse_args()
 
-    return QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=sys.argv)
+
+def resolve_input(args: argparse.Namespace) -> str:
+    if args.target:
+        return resolve_target_file(args.target)
+    return "qt/qml"
+
+
+def resolve_target_file(file_part: str) -> str:
+    if file_part.endswith(".qml") and pathlib.Path(file_part).is_file():
+        return file_part
+    basename = file_part if file_part.endswith(".qml") else f"{file_part}.qml"
+    matches = sorted(glob.glob(f"qt/qml/**/{basename}", recursive=True))
+    if not matches:
+        msg = f"No test file found matching '{file_part}'"
+        raise SystemExit(msg)
+    if len(matches) > 1:
+        joined = ", ".join(matches)
+        msg = f"Ambiguous target '{file_part}', matches: {joined}"
+        raise SystemExit(msg)
+    return matches[0]
+
+
+def main() -> int:
+    args = parse_cli()
+    input_path = resolve_input(args)
+
+    print(f"Storing temporary test data in {TEMP_ROOT}", flush=True)
+
+    # Always work with Qt internal file dialogs in tests (less variation -> hopefully more stable tests)
+    QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_DontUseNativeDialogs)
+
+    qt_argv = [sys.argv[0]]
+    qt_argv += ["-platform", "offscreen"]
+    # qt_argv += ["-silent"]
+    qt_argv += ["-input", input_path]
+    # qt_argv += ["-eventdelay", "50"]
+
+    return QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=qt_argv)
 
 
 if __name__ == "__main__":

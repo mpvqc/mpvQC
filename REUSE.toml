@@ -87,3 +87,9 @@ path = "uv.lock"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "testqml/fixtures/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "GPL-3.0-or-later"

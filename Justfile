@@ -109,16 +109,16 @@ build-release:
     execute just build
     execute find build/release -type d -name "__pycache__" -print0 | xargs -0 rm -rf
 
-# Run Python and QML tests
-[group('test')]
-@test: prepare-tests test-python test-qml
-
 # Recompile resources
 [group('test')]
 prepare-tests: build-develop
     rm -f test/rc_project.py testqml/rc_project.py
     cp rc_project.py test/rc_project.py
     cp rc_project.py testqml/rc_project.py
+
+# Run Python and QML tests
+[group('test')]
+@test: prepare-tests test-python test-qml
 
 [group('test')]
 test-python:
@@ -127,6 +127,11 @@ test-python:
 [group('test')]
 test-qml:
     uv run -m testqml.main
+
+# TARGET = file by name recursively matched under qt/qml
+[group('test')]
+test-qml-debug TARGET:
+    uv run -m testqml.main --target '{{ TARGET }}'
 
 # Lint Python files (type checker only)
 [group('lint')]
