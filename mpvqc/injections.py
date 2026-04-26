@@ -12,6 +12,7 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
     binder.bind_to_constructor(s.CommentsService, s.CommentsService)
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)
+    binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.DocumentBackupService, s.DocumentBackupService)
     binder.bind_to_constructor(s.DocumentExportService, s.DocumentExportService)
     binder.bind_to_constructor(s.DocumentImporterService, s.DocumentImporterService)

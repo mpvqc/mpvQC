@@ -4,10 +4,9 @@
 
 import inject
 from PySide6.QtCore import Property, QObject, QUrl, Slot
-from PySide6.QtGui import QDesktopServices
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ApplicationPathsService, ResourceService, TypeMapperService
+from mpvqc.services import ApplicationPathsService, DesktopService, ResourceService, TypeMapperService
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,6 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker,PyCallingNonCallable,PyArgumentList
 @QmlElement
 class MpvqcEditInputDialogViewModel(QObject):
+    _desktop = inject.attr(DesktopService)
     _paths = inject.attr(ApplicationPathsService)
     _resources = inject.attr(ResourceService)
     _type_mapper = inject.attr(TypeMapperService)
@@ -30,4 +30,4 @@ class MpvqcEditInputDialogViewModel(QObject):
 
     @Slot(QUrl)
     def openLink(self, link: QUrl) -> None:
-        QDesktopServices.openUrl(link)
+        self._desktop.open_url(link)

@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService, StateService
+from mpvqc.services import DesktopService, PlayerService, StateService
 from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections
 
 QML_IMPORT_NAME = "pyobjects"
@@ -86,3 +86,8 @@ class MpvqcTestBridge(QObject):
     @Slot(result=int)
     def openedSubtitleCount(self) -> int:
         return len(getattr(inject.instance(PlayerService), "opened_subtitles", ()))
+
+    @Slot(result=list)
+    def openedDesktopUrls(self) -> list[str]:
+        urls = getattr(inject.instance(DesktopService), "opened_urls", ())
+        return [url.toString() for url in urls]
