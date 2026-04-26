@@ -7,6 +7,8 @@ import QtQuick.Dialogs
 import pyobjects
 
 FileDialog {
+    objectName: "importDocumentsFileDialog"
+
     readonly property MpvqcImportFileDialogViewModel viewModel: MpvqcImportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Open QC Document(s)")

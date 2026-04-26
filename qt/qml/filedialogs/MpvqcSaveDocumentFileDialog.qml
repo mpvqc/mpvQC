@@ -7,6 +7,8 @@ import QtQuick.Dialogs
 import pyobjects
 
 FileDialog {
+    objectName: "saveDocumentFileDialog"
+
     readonly property MpvqcExportFileDialogViewModel viewModel: MpvqcExportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Save QC Document As")
@@ -15,5 +17,5 @@ FileDialog {
     defaultSuffix: "txt"
     nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
-    onAccepted: viewModel.save(currentFile)
+    onAccepted: viewModel.save(selectedFile)
 }

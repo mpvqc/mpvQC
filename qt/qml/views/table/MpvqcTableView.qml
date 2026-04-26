@@ -8,6 +8,7 @@ import pyobjects
 
 Item {
     id: root
+    objectName: "tableView"
 
     property MpvqcCommentTableViewModel viewModel: MpvqcCommentTableViewModel {}
     property bool backupEnabled: true
