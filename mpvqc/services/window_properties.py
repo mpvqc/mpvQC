@@ -4,7 +4,6 @@
 
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
-from PySide6.QtGui import QScreen
 
 from .main_window import MainWindowService
 
@@ -52,8 +51,16 @@ class WindowPropertiesService(QObject):
         return self._is_maximized
 
     @property
-    def screen(self) -> QScreen:
-        return self._window.screen()
+    def screen_width(self) -> int:
+        if screen := self._window.screen():
+            return screen.geometry().width()
+        return 0
+
+    @property
+    def screen_height(self) -> int:
+        if screen := self._window.screen():
+            return screen.geometry().height()
+        return 0
 
     @Slot(int)
     def _on_width_changed(self, width: int) -> None:

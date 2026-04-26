@@ -173,6 +173,7 @@ files = [
     "mpvqc/services/theme.py",
     "mpvqc/services/type_mapper.py",
     "mpvqc/services/version_checker.py",
+    "mpvqc/services/video_resize.py",
     "mpvqc/services/window_properties.py",
     "mpvqc/startup.py",
     "mpvqc/utility/__init__.py",
