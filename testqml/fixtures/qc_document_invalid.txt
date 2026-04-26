@@ -1,0 +1,2 @@
+this document does not start with the [FILE] header
+[00:00:10] [Translation] should not be parsed
