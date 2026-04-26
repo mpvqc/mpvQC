@@ -1,0 +1,7 @@
+[Script Info]
+Title: complex
+ScriptType: v4.00+
+Video File: video_basic.mp4
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
