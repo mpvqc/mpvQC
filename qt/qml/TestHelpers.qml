@@ -15,6 +15,7 @@ QtObject {
     required property TestCase testCase
 
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
+    readonly property MpvqcTestSettings settings: MpvqcTestSettings {}
 
     readonly property Component _contentComponent: Component {
         MpvqcApplicationContent {

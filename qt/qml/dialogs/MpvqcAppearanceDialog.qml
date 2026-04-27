@@ -120,6 +120,8 @@ MpvqcDialog {
             }
 
             ListView {
+                objectName: "themeListView"
+
                 Layout.preferredHeight: root.dimensions.itemSize
                 Layout.fillWidth: true
 
@@ -162,6 +164,7 @@ MpvqcDialog {
 
             GridView {
                 id: _gridView
+                objectName: "colorGridView"
 
                 Layout.preferredHeight: {
                     const d = root.dimensions;

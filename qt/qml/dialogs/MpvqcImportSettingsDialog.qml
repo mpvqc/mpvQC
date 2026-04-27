@@ -36,6 +36,8 @@ MpvqcDialog {
             }
 
             ComboBox {
+                objectName: "importFoundVideoComboBox"
+
                 Layout.preferredWidth: 165
 
                 textRole: "text"

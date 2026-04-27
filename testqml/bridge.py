@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import DesktopService, PlayerService, StateService
+from mpvqc.services import ApplicationPathsService, DesktopService, PlayerService, SettingsService, StateService
 from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections
 
 QML_IMPORT_NAME = "pyobjects"
@@ -91,3 +91,75 @@ class MpvqcTestBridge(QObject):
     def openedDesktopUrls(self) -> list[str]:
         urls = getattr(inject.instance(DesktopService), "opened_urls", ())
         return [url.toString() for url in urls]
+
+    @Slot(result=QUrl)
+    def mpvConfPath(self) -> QUrl:
+        return QUrl.fromLocalFile(str(inject.instance(ApplicationPathsService).file_mpv_conf))
+
+    @Slot(result=QUrl)
+    def inputConfPath(self) -> QUrl:
+        return QUrl.fromLocalFile(str(inject.instance(ApplicationPathsService).file_input_conf))
+
+
+# noinspection PyPep8Naming
+@QmlElement
+class MpvqcTestSettings(QObject):
+    @Slot(result=bool)
+    def backupEnabled(self) -> bool:
+        return inject.instance(SettingsService).backup_enabled
+
+    @Slot(result=int)
+    def backupInterval(self) -> int:
+        return inject.instance(SettingsService).backup_interval
+
+    @Slot(result=str)
+    def themeIdentifier(self) -> str:
+        return inject.instance(SettingsService).theme_identifier
+
+    @Slot(result=int)
+    def themeColorOption(self) -> int:
+        return inject.instance(SettingsService).theme_color_option
+
+    @Slot(result=list)
+    def commentTypes(self) -> list[str]:
+        return list(inject.instance(SettingsService).comment_types)
+
+    @Slot(result=int)
+    def importFoundVideo(self) -> int:
+        return inject.instance(SettingsService).import_found_video
+
+    @Slot(result=str)
+    def nickname(self) -> str:
+        return inject.instance(SettingsService).nickname
+
+    @Slot(result=bool)
+    def writeHeaderDate(self) -> bool:
+        return inject.instance(SettingsService).write_header_date
+
+    @Slot(result=bool)
+    def writeHeaderGenerator(self) -> bool:
+        return inject.instance(SettingsService).write_header_generator
+
+    @Slot(result=bool)
+    def writeHeaderNickname(self) -> bool:
+        return inject.instance(SettingsService).write_header_nickname
+
+    @Slot(result=bool)
+    def writeHeaderVideoPath(self) -> bool:
+        return inject.instance(SettingsService).write_header_video_path
+
+    @Slot(result=bool)
+    def writeHeaderSubtitles(self) -> bool:
+        return inject.instance(SettingsService).write_header_subtitles
+
+    @Slot(result=int)
+    def windowTitleFormat(self) -> int:
+        return inject.instance(SettingsService).window_title_format
+
+    @Slot(result=int)
+    def layoutOrientation(self) -> int:
+        return inject.instance(SettingsService).layout_orientation
+
+    @Slot(result=str)
+    def language(self) -> str:
+        return inject.instance(SettingsService).language
