@@ -46,6 +46,7 @@ Page {
 
     SplitView {
         id: _splitView
+        objectName: "applicationSplitView"
 
         readonly property int tableContainerHeight: _tableContainer.height
         readonly property int tableContainerWidth: _tableContainer.width

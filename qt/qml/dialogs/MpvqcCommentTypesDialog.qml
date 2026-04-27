@@ -42,6 +42,7 @@ MpvqcDialog {
 
             TextField {
                 id: _textField
+                objectName: "commentTypeTextField"
 
                 Layout.fillWidth: true
 
@@ -59,6 +60,7 @@ MpvqcDialog {
             }
 
             ToolButton {
+                objectName: "commentTypeAcceptInputButton"
                 enabled: root.viewModel.isAcceptButtonEnabled
 
                 icon {
@@ -119,6 +121,7 @@ MpvqcDialog {
 
             ListView {
                 id: _listView
+                objectName: "commentTypesListView"
 
                 property bool upMovement: true
 
@@ -286,6 +289,7 @@ MpvqcDialog {
                 }
 
                 ToolButton {
+                    objectName: "commentTypeDeleteButton"
                     enabled: root.viewModel.isDeleteButtonEnabled
 
                     icon {

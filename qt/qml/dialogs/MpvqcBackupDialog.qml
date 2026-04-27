@@ -28,6 +28,8 @@ MpvqcDialog {
     contentItem: ColumnLayout {
 
         MpvqcSwitchRow {
+            objectName: "backupEnabledRow"
+
             Layout.topMargin: 20
             Layout.fillWidth: true
 
@@ -40,6 +42,8 @@ MpvqcDialog {
         }
 
         MpvqcSpinBoxRow {
+            objectName: "backupIntervalRow"
+
             label: qsTranslate("BackupDialog", "Backup Interval")
             suffix: qsTranslate("BackupDialog", "Seconds")
             prefWidth: parent.width
@@ -54,6 +58,8 @@ MpvqcDialog {
         }
 
         Button {
+            objectName: "backupOpenLocationButton"
+
             text: qsTranslate("BackupDialog", "Backup Location")
             icon.source: "qrc:/data/icons/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
             hoverEnabled: true

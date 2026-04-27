@@ -43,6 +43,7 @@ MpvqcDialog {
 
         Label {
             id: _label
+            objectName: "inputConfLearnMoreLabel"
 
             property string url: "https://mpv.io/manual/master/#list-of-input-commands"
             property string text1: qsTranslate("InputConfEditDialog", "Changes to the input.conf are available after a restart.")
@@ -87,6 +88,7 @@ MpvqcDialog {
 
             TextArea {
                 id: _textArea
+                objectName: "inputConfTextArea"
 
                 background: null
                 font.family: "Noto Sans Mono"

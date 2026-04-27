@@ -14,6 +14,7 @@ import "../../utility"
 
 MpvqcPositionedMenu {
     id: root
+    objectName: "newCommentMenu"
 
     property var viewModel: MpvqcNewCommentMenuViewModel {}
 

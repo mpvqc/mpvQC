@@ -82,6 +82,10 @@ class PlayerServiceOverride(PlayerService):
     def open_subtitles(self, subtitles: Iterable[Path]) -> None:
         self.opened_subtitles = tuple(subtitles)
 
+    @typing.override
+    def pause(self) -> None:
+        pass
+
 
 class ExportServiceOverride(ExportService):
     @typing.override

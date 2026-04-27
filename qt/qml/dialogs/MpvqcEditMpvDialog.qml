@@ -43,6 +43,7 @@ MpvqcDialog {
 
         Label {
             id: _label
+            objectName: "mpvConfLearnMoreLabel"
 
             property string url: "https://mpv.io/manual/master/#configuration-files"
             property string text1: qsTranslate("MpvConfEditDialog", "Changes to the mpv.conf are available after a restart.")
@@ -87,6 +88,7 @@ MpvqcDialog {
 
             TextArea {
                 id: _textArea
+                objectName: "mpvConfTextArea"
 
                 background: null
                 font.family: "Noto Sans Mono"

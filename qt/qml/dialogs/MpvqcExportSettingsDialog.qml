@@ -23,6 +23,8 @@ MpvqcDialog {
         spacing: 10
 
         MpvqcTextFieldRow {
+            objectName: "exportNicknameRow"
+
             Layout.topMargin: 10
 
             label: qsTranslate("ExportSettingsDialog", "Nickname")
@@ -47,6 +49,8 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            objectName: "exportWriteDateRow"
+
             Layout.fillWidth: true
 
             label: qsTranslate("ExportSettingsDialog", "Write Date")
@@ -58,6 +62,8 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            objectName: "exportWriteGeneratorRow"
+
             Layout.fillWidth: true
 
             //: %1 will be the application name. Most probably 'mpvQC' :)
@@ -70,6 +76,8 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            objectName: "exportWriteNicknameRow"
+
             Layout.fillWidth: true
 
             label: qsTranslate("ExportSettingsDialog", "Write Nickname")
@@ -81,6 +89,8 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            objectName: "exportWriteVideoPathRow"
+
             Layout.fillWidth: true
 
             label: qsTranslate("ExportSettingsDialog", "Write Video Path")
@@ -92,6 +102,8 @@ MpvqcDialog {
         }
 
         MpvqcSwitchRow {
+            objectName: "exportWriteSubtitlesRow"
+
             Layout.fillWidth: true
 
             label: qsTranslate("ExportSettingsDialog", "Write Subtitle Paths")
