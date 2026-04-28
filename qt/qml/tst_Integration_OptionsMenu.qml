@@ -153,7 +153,7 @@ TestCase {
         tryVerify(() => it.settings.commentTypes().length === 2);
         tryVerify(() => it.settings.commentTypes()[1] === newType);
 
-        const menu = openNewCommentMenu(control);
+        const menu = it.openNewCommentMenu(control);
         tryVerify(() => menu.count === 2);
         menu.close();
     }
@@ -177,7 +177,7 @@ TestCase {
         it.acceptDialog(dialog);
         tryVerify(() => JSON.stringify(it.settings.commentTypes()) === JSON.stringify(defaults));
 
-        const menu = openNewCommentMenu(control);
+        const menu = it.openNewCommentMenu(control);
         tryVerify(() => menu.count === defaults.length);
         menu.close();
     }

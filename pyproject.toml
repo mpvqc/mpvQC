@@ -284,6 +284,7 @@ files = [
     "qt/qml/TestHelpers.qml",
     "qt/qml/tst_Integration_FileMenu.qml",
     "qt/qml/tst_Integration_HelpMenu.qml",
+    "qt/qml/tst_Integration_NewCommentMenu.qml",
     "qt/qml/tst_Integration_OptionsMenu.qml",
     "qt/qml/tst_Integration_Shortcuts.qml",
     "qt/qml/tst_Integration_VideoMenu.qml",

@@ -76,6 +76,17 @@ QtObject {
         root.bridge.waitForBackgroundJobs();
     }
 
+    function openNewCommentMenu(control: Item): QtObject {
+        const tableView = root.testCase.findChild(control, "tableView");
+        root.testCase.verify(tableView, "tableView not found");
+        tableView.forceActiveFocus();
+        root.testCase.keyClick(Qt.Key_E);
+        const menu = root.testCase.findChild(control, "newCommentMenu");
+        root.testCase.verify(menu, "newCommentMenu not found");
+        root.testCase.tryVerify(() => menu.opened);
+        return menu;
+    }
+
     function triggerMenuItem(control: Item, menuName: string, itemName: string): void {
         const menu = root.testCase.findChild(control, menuName);
         root.testCase.verify(menu, `${menuName} not found`);
