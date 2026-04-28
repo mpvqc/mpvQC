@@ -43,6 +43,7 @@ class ArgumentValidator:
 class ProjectFileUpdater:
     _FILENAME = "pyproject.toml"
     _EXTENSIONS_IGNORED = frozenset({".pyc", ".qm"})
+    _NAMES_IGNORED = frozenset({"rc_project.py"})
 
     def __init__(self, root_dir: Path) -> None:
         self._root_dir = root_dir
@@ -51,11 +52,14 @@ class ProjectFileUpdater:
     def add(self, directories: list[Path], files: list[Path]) -> None:
         for directory in directories:
             for path in directory.rglob("*"):
-                if path.is_file() and path.suffix not in self._EXTENSIONS_IGNORED:
+                if path.is_file() and self._is_eligible(path):
                     self._files.add(path)
         for file in files:
-            if file.is_file() and file.suffix not in self._EXTENSIONS_IGNORED:
+            if file.is_file() and self._is_eligible(file):
                 self._files.add(file)
+
+    def _is_eligible(self, path: Path) -> bool:
+        return path.suffix not in self._EXTENSIONS_IGNORED and path.name not in self._NAMES_IGNORED
 
     def make_files_relative(self) -> None:
         self._files = {p.relative_to(self._root_dir) for p in self._files}
