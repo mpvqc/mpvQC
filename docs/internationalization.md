@@ -4,39 +4,49 @@ SPDX-FileCopyrightText: mpvQC developers
 SPDX-License-Identifier: MIT
 -->
 
-# Adding Languages
+# Internationalization
 
-- Checkout repository
-- Make sure development environment is set up correctly for your OS
-- Create a new translation file by running
-  ```shell
-  just add-translation <locale>  # just add-translation fr-FR
-  ```
-- New `<locale>.ts` file appears in the `i18n` directory
-- Translate the `ts` file using Qt Linguist 6:
-  ```shell
-  pyside6-linguist i18n/<locale>.ts  # pyside6-linguist i18n/fr-FR.ts
-  ```
-- To test the translation:
-  - Run
-    ```shell
-    just build-develop
-    ```
-  - Start the application and close it
-  - Edit the `appdata/settings.ini`
-    ```ini
-    [Common]
-    language=<locale>
-    ```
-- Add a new `Language` entry to the `LANGUAGES` tuple in `mpvqc/models/languages.py`
-- Open a new pull request
+Translations live as `.ts` files under `i18n/` (Qt's translation source format). The build pipeline compiles them to `.qm` binaries that ship with the application. Editing happens in Qt Linguist; everything else is a `just` recipe.
 
-# Updating Translations
+For setup, see [development.md](development.md).
 
-When translatable strings in the source code change, update all existing `.ts` files by running:
+## Adding a language
+
+1. Create the translation file:
+
+   ```shell
+   just add-translation <locale>  # e.g. just add-translation fr-FR
+   ```
+
+   A `<locale>.ts` file appears under `i18n/`.
+
+2. Translate the strings using Qt Linguist:
+
+   ```shell
+   pyside6-linguist i18n/<locale>.ts
+   ```
+
+3. Register the new language in the languages model under `mpvqc/models/` so it appears in the application's language menu.
+
+4. Recompile resources and test:
+
+   ```shell
+   just build-develop
+   ```
+
+   Start the application, switch to the new locale through the application's settings, and verify the strings render correctly.
+
+## Updating existing translations
+
+When translatable strings in the source code change, refresh every `.ts` file from current sources:
 
 ```shell
 just update-translations
 ```
 
-This scans all QML and Python source files for translatable strings and updates the `.ts` files accordingly.
+This scans Python and QML for translatable strings and merges new entries into the existing `.ts` files, preserving prior translations.
+
+## See also
+
+- [development.md](development.md) — setup and tooling
+- [releasing.md](releasing.md) — translation checks in the release flow
