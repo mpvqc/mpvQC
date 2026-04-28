@@ -28,30 +28,6 @@ TestCase {
         it.resetState();
     }
 
-    function triggerSubmenuItem(control: Item, parentMenuName: string, submenuName: string, itemName: string): void {
-        const parent = findChild(control, parentMenuName);
-        verify(parent, `${parentMenuName} not found`);
-        parent.open();
-        tryVerify(() => parent.opened);
-
-        const submenu = findChild(parent, submenuName);
-        verify(submenu, `${submenuName} not found`);
-        submenu.open();
-        tryVerify(() => submenu.opened);
-
-        let item = null;
-        for (let i = 0; i < submenu.count; i++) {
-            const candidate = submenu.itemAt(i);
-            if (candidate?.objectName === itemName) {
-                item = candidate;
-                break;
-            }
-        }
-        verify(item, `${itemName} not found`);
-        mouseClick(item);
-        tryVerify(() => !submenu.opened);
-    }
-
     function openNewCommentMenu(control: Item): QtObject {
         const tableView = findChild(control, "tableView");
         verify(tableView, "tableView not found");
@@ -204,7 +180,7 @@ TestCase {
 
     function test_applicationTitleRadio(data): void {
         const control = it.makeControl();
-        triggerSubmenuItem(control, "optionsMenu", "applicationTitleMenu", `applicationTitleMenuRadioItem_${data.identifier}`);
+        it.triggerSubmenuItem(control, "optionsMenu", "applicationTitleMenu", `applicationTitleMenuRadioItem_${data.identifier}`);
         tryVerify(() => it.settings.windowTitleFormat() === data.expected);
     }
 
@@ -225,7 +201,7 @@ TestCase {
 
     function test_applicationLayoutRadio(data): void {
         const control = it.makeControl();
-        triggerSubmenuItem(control, "optionsMenu", "applicationLayoutMenu", `applicationLayoutMenuRadioItem_${data.identifier}`);
+        it.triggerSubmenuItem(control, "optionsMenu", "applicationLayoutMenu", `applicationLayoutMenuRadioItem_${data.identifier}`);
         tryVerify(() => it.settings.layoutOrientation() === data.expected);
 
         const splitView = findChild(control, "applicationSplitView");
@@ -391,7 +367,7 @@ TestCase {
 
     function test_languageSubmenu(data): void {
         const control = it.makeControl();
-        triggerSubmenuItem(control, "optionsMenu", "languageMenu", `languageMenuItem_${data.identifier}`);
+        it.triggerSubmenuItem(control, "optionsMenu", "languageMenu", `languageMenuItem_${data.identifier}`);
         tryVerify(() => it.settings.language() === data.identifier);
     }
 }

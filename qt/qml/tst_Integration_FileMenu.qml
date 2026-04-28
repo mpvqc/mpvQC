@@ -28,30 +28,6 @@ TestCase {
         it.resetState();
     }
 
-    function triggerExportTemplate(control: Item, templateName: string): void {
-        const fileMenu = findChild(control, "fileMenu");
-        verify(fileMenu, "fileMenu not found");
-        fileMenu.open();
-        tryVerify(() => fileMenu.opened);
-
-        const submenu = findChild(fileMenu, "exportQcDocumentMenu");
-        verify(submenu, "exportQcDocumentMenu not found");
-        submenu.open();
-        tryVerify(() => submenu.opened);
-
-        let item = null;
-        for (let i = 0; i < submenu.count; i++) {
-            const candidate = submenu.itemAt(i);
-            if (candidate && candidate.text === templateName) {
-                item = candidate;
-                break;
-            }
-        }
-        verify(item, `template ${templateName} not found`);
-        mouseClick(item);
-        tryVerify(() => !submenu.opened);
-    }
-
     function test_newQcDocumentWhenSaved_resetsDirectly(): void {
         const control = it.makeControl();
         verify(it.bridge.saved, "expected initial state to be saved");
@@ -258,7 +234,7 @@ TestCase {
         const sentinel = "extended-export-payload";
         it.addComment(control, "Translation", sentinel);
 
-        triggerExportTemplate(control, "working");
+        it.triggerSubmenuItemByText(control, "fileMenu", "exportQcDocumentMenu", "working");
 
         const dialog = it.findOpenedDialog(control, "exportDocumentFileDialog");
         const savePath = it.bridge.tempSavePath();
@@ -272,7 +248,7 @@ TestCase {
         const control = it.makeControl();
         it.addComment(control, "Translation", "extended-export-payload");
 
-        triggerExportTemplate(control, "error");
+        it.triggerSubmenuItemByText(control, "fileMenu", "exportQcDocumentMenu", "error");
 
         const dialog = it.findOpenedDialog(control, "exportDocumentFileDialog");
         dialog.selectedFile = it.bridge.tempSavePath();

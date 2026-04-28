@@ -98,4 +98,36 @@ QtObject {
         root.testCase.mouseClick(item);
         root.testCase.tryVerify(() => !menu.opened);
     }
+
+    function triggerSubmenuItem(control: Item, parentMenuName: string, submenuName: string, itemObjectName: string): void {
+        root._triggerSubmenuItemMatching(control, parentMenuName, submenuName, c => c?.objectName === itemObjectName, itemObjectName);
+    }
+
+    function triggerSubmenuItemByText(control: Item, parentMenuName: string, submenuName: string, itemText: string): void {
+        root._triggerSubmenuItemMatching(control, parentMenuName, submenuName, c => c?.text === itemText, itemText);
+    }
+
+    function _triggerSubmenuItemMatching(control: Item, parentMenuName: string, submenuName: string, predicate: var, description: string): void {
+        const parent = root.testCase.findChild(control, parentMenuName);
+        root.testCase.verify(parent, `${parentMenuName} not found`);
+        parent.open();
+        root.testCase.tryVerify(() => parent.opened);
+
+        const submenu = root.testCase.findChild(parent, submenuName);
+        root.testCase.verify(submenu, `${submenuName} not found`);
+        submenu.open();
+        root.testCase.tryVerify(() => submenu.opened);
+
+        let item = null;
+        for (let i = 0; i < submenu.count; i++) {
+            const candidate = submenu.itemAt(i);
+            if (predicate(candidate)) {
+                item = candidate;
+                break;
+            }
+        }
+        root.testCase.verify(item, `${description} not found`);
+        root.testCase.mouseClick(item);
+        root.testCase.tryVerify(() => !submenu.opened);
+    }
 }
