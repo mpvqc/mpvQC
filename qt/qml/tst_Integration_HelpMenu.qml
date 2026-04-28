@@ -27,7 +27,7 @@ TestCase {
         it.resetState();
     }
 
-    function test_checkForUpdatesOpensMessageBox(): void {
+    function test_checkForUpdates_opensMessageBox(): void {
         const control = it.makeControl();
 
         it.triggerMenuItem(control, "helpMenu", "openCheckForUpdatesMenuItem");
@@ -36,7 +36,7 @@ TestCase {
         it.bridge.waitForBackgroundJobs();
     }
 
-    function test_keyboardShortcutsDialogOpensFromHelpMenu(): void {
+    function test_keyboardShortcuts_opensDialog(): void {
         const control = it.makeControl();
 
         it.triggerMenuItem(control, "helpMenu", "openKeyboardShortcutsMenuItem");
@@ -44,7 +44,7 @@ TestCase {
         it.findOpenedDialog(control, "shortcutsDialog");
     }
 
-    function test_extendedExportsOpensMessageBox(): void {
+    function test_extendedExports_opensMessageBox(): void {
         const control = it.makeControl();
 
         it.triggerMenuItem(control, "helpMenu", "openExtendedExportsDialogMenuItem");
@@ -52,7 +52,7 @@ TestCase {
         it.findOpenedDialog(control, "extendedExportMessageBox");
     }
 
-    function test_appDataFolderOpensFromHelpMenu(): void {
+    function test_appDataFolder_opensExternalUrl(): void {
         const control = it.makeControl();
 
         it.triggerMenuItem(control, "helpMenu", "openAppDataFolderMenuItem");
@@ -60,7 +60,7 @@ TestCase {
         tryVerify(() => it.bridge.openedDesktopUrls().includes("mpvqc-test://app-data-folder"));
     }
 
-    function test_aboutDialogOpensFromHelpMenu(): void {
+    function test_about_opensDialog(): void {
         const control = it.makeControl();
 
         it.triggerMenuItem(control, "helpMenu", "openAboutDialogMenuItem");
