@@ -112,7 +112,7 @@ QtObject {
         return control;
     }
 
-    readonly property QtObject clickHelper: QtObject {
+    readonly property var clickHelper: QtObject {
         id: _clickHelper
 
         function _centerOf(control: MpvqcTableView, item: Item): point {
@@ -232,7 +232,7 @@ QtObject {
         }
     }
 
-    readonly property QtObject expect: QtObject {
+    readonly property var expect: QtObject {
         id: _expect
 
         function _anyEditorOpen(control: MpvqcTableView): bool {
@@ -367,7 +367,7 @@ QtObject {
         }
     }
 
-    readonly property QtObject find: QtObject {
+    readonly property var find: QtObject {
         id: _find
 
         function timeSpinBox(control: MpvqcTableView): Item {
@@ -419,42 +419,43 @@ QtObject {
         }
     }
 
-    // --- waitUntil* helpers all observe the same objectName-keyed state used
-    // by the `_expect.*` assertions above. Keeping them in lock-step makes
-    // "wait for X" + "verify X" never disagree.
+    // wait.* helpers observe the same objectName-keyed state as expect.*
+    // above. Keeping them in lock-step makes "wait for X" + "verify X"
+    // never disagree.
+    readonly property var wait: QtObject {
+        function editControlOpened(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => root.expect._anyEditorOpen(control));
+        }
 
-    function waitUntilEditControlOpened(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => root.expect._anyEditorOpen(control));
-    }
+        function editControlClosed(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => !root.expect._anyEditorOpen(control));
+        }
 
-    function waitUntilEditControlClosed(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => !root.expect._anyEditorOpen(control));
-    }
+        function contextMenuOpened(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => root.testCase.findChild(control, "commentContextMenu")?.opened);
+        }
 
-    function waitUntilContextMenuOpened(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => root.testCase.findChild(control, "commentContextMenu")?.opened);
-    }
+        function contextMenuClosed(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => root.testCase.findChild(control, "commentContextMenu") === null);
+        }
 
-    function waitUntilContextMenuClosed(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => root.testCase.findChild(control, "commentContextMenu") === null);
-    }
+        function messageBoxOpened(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => root.testCase.findChild(control, "deleteConfirmationMessageBox")?.opened);
+        }
 
-    function waitUntilMessageBoxOpened(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => root.testCase.findChild(control, "deleteConfirmationMessageBox")?.opened);
-    }
+        function messageBoxClosed(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => root.testCase.findChild(control, "deleteConfirmationMessageBox") === null);
+        }
 
-    function waitUntilMessageBoxClosed(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => root.testCase.findChild(control, "deleteConfirmationMessageBox") === null);
-    }
+        function searchBoxOpened(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
+            root.testCase.tryVerify(() => root.testCase.findChild(control, "searchBoxPopup")?.opened);
+        }
 
-    function waitUntilSearchBoxOpened(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
-        root.testCase.tryVerify(() => root.testCase.findChild(control, "searchBoxPopup")?.opened);
-    }
-
-    function waitUntilSearchBoxClosed(control: MpvqcTableView): void {
-        root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
-        root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.opened);
+        function searchBoxClosed(control: MpvqcTableView): void {
+            root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
+            root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.opened);
+        }
     }
 
     function typeWord(word: string): void {

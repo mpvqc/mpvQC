@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -22,9 +21,7 @@ TestCase {
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
-
-    readonly property Component signalSpy: _helpers.signalSpy
-    readonly property Component objectWithRealViewModel: _helpers.objectWithRealViewModel
+    readonly property alias _wait: _helpers.wait
 
     width: 600
     height: 400
@@ -36,59 +33,15 @@ TestCase {
         _helpers.initTestCase();
     }
 
-    function makeControl(): var {
-        return _helpers.makeControl();
-    }
-
-    function waitUntilEditControlOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlOpened(control);
-    }
-
-    function waitUntilEditControlClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlClosed(control);
-    }
-
-    function waitUntilContextMenuOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuOpened(control);
-    }
-
-    function waitUntilContextMenuClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuClosed(control);
-    }
-
-    function waitUntilMessageBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxOpened(control);
-    }
-
-    function waitUntilMessageBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxClosed(control);
-    }
-
-    function waitUntilSearchBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxOpened(control);
-    }
-
-    function waitUntilSearchBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxClosed(control);
-    }
-
-    function getCommentTypeItems(control: MpvqcTableView): list<Item> {
-        return _helpers.getCommentTypeItems(control);
-    }
-
-    function typeWord(word: string): void {
-        _helpers.typeWord(word);
-    }
-
     property var control: null
 
     function init(): void {
-        control = testCase.makeControl();
+        control = _helpers.makeControl();
         control.commentList.currentIndex = 2;
         waitForRendering(control);
         const pt = _clickHelper.centerOfTimeLabel(control, 2);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
         _expect.isEditing(control);
         _expect.isNotInteractive(control);
         _expect.isEditorShowingTimePopup(control);
@@ -150,7 +103,7 @@ TestCase {
         _clickHelper.clickDecrementButton(control);
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.hasItemTime(control, 2, 2);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
@@ -206,7 +159,7 @@ TestCase {
         _clickHelper.clickDecrementButton(control);
         const pt = data.clickPoint(control);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.hasItemTime(control, 2, 2);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
@@ -230,7 +183,7 @@ TestCase {
         _clickHelper.clickDecrementButton(control);
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.hasItemTime(control, 2, 2);
         _expect.hasCurrentIndex(control, 2);
         _expect.hasContextMenuClosed(control);
@@ -278,7 +231,7 @@ TestCase {
         _expect.hasLastJumpedToTime(control, 2);
         const pt = _clickHelper.topRightOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.isNotEditing(control);
         _expect.hasItemTime(control, 2, 2);
     }
@@ -313,7 +266,7 @@ TestCase {
         _expect.hasLastJumpedToTime(control, 4);
         const pt = _clickHelper.topRightOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.isNotEditing(control);
         _expect.hasItemTime(control, 2, 4);
     }
@@ -323,7 +276,7 @@ TestCase {
         _clickHelper.clickDecrementButton(control);
         _expect.hasLastJumpedToTime(control, 2);
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.isNotEditing(control);
         _expect.hasItemTime(control, 2, 3);
         _expect.hasLastJumpedToTime(control, 3);
@@ -342,7 +295,7 @@ TestCase {
                 "comment": "Imported"
             },
         ]);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
 
         _expect.isNotEditing(control);
         _expect.hasItemTime(control, 2, 3);
@@ -382,7 +335,7 @@ TestCase {
 
         const pt = _clickHelper.topRightOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.isNotEditing(control);
 
         tryVerify(() => control.commentList.currentIndex === 4);

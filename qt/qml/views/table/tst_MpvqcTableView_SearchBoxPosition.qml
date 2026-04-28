@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -22,9 +21,7 @@ TestCase {
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
-
-    readonly property Component signalSpy: _helpers.signalSpy
-    readonly property Component objectWithRealViewModel: _helpers.objectWithRealViewModel
+    readonly property alias _wait: _helpers.wait
 
     width: 600
     height: 400
@@ -36,54 +33,10 @@ TestCase {
         _helpers.initTestCase();
     }
 
-    function makeControl(): var {
-        return _helpers.makeControl();
-    }
-
-    function waitUntilEditControlOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlOpened(control);
-    }
-
-    function waitUntilEditControlClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlClosed(control);
-    }
-
-    function waitUntilContextMenuOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuOpened(control);
-    }
-
-    function waitUntilContextMenuClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuClosed(control);
-    }
-
-    function waitUntilMessageBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxOpened(control);
-    }
-
-    function waitUntilMessageBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxClosed(control);
-    }
-
-    function waitUntilSearchBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxOpened(control);
-    }
-
-    function waitUntilSearchBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxClosed(control);
-    }
-
-    function getCommentTypeItems(control: MpvqcTableView): list<Item> {
-        return _helpers.getCommentTypeItems(control);
-    }
-
-    function typeWord(word: string): void {
-        _helpers.typeWord(word);
-    }
-
     property var control: null
 
     function init(): void {
-        control = testCase.makeControl();
+        control = _helpers.makeControl();
         control.commentList.currentIndex = 0;
         waitForRendering(control);
 
@@ -97,7 +50,7 @@ TestCase {
         waitForRendering(control);
 
         keyPress(Qt.Key_F, Qt.ControlModifier);
-        testCase.waitUntilSearchBoxOpened(control);
+        _wait.searchBoxOpened(control);
         _expect.hasSearchBoxOpen(control);
     }
 
@@ -146,14 +99,14 @@ TestCase {
 
     function test_reopenedAtBottomAfterResize(): void {
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilSearchBoxClosed(control);
+        _wait.searchBoxClosed(control);
         _expect.hasActiveFocus(control);
 
         control.height = 300;
         waitForRendering(control);
 
         keyPress(Qt.Key_F, Qt.ControlModifier);
-        testCase.waitUntilSearchBoxOpened(control);
+        _wait.searchBoxOpened(control);
 
         const popup = _find.searchBoxPopup(control);
         tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
@@ -322,7 +275,7 @@ TestCase {
             // Type a query that matches multiple comments
             const textField = _find.searchTextField(control);
             mouseClick(textField);
-            testCase.typeWord("some");
+            _helpers.typeWord("some");
             waitForRendering(control);
         }
 

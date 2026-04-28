@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -22,8 +21,7 @@ TestCase {
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
-
-    readonly property Component objectWithRealViewModel: _helpers.objectWithRealViewModel
+    readonly property alias _wait: _helpers.wait
 
     width: 600
     height: 400
@@ -36,7 +34,7 @@ TestCase {
     }
 
     function test_commentTypeMenuReceivesPythonCommentTypes(): void {
-        const control = createTemporaryObject(objectWithRealViewModel, testCase);
+        const control = createTemporaryObject(_helpers.objectWithRealViewModel, testCase);
         verify(control);
         waitForRendering(control);
 
@@ -45,7 +43,7 @@ TestCase {
 
         const pt = _clickHelper.centerOfCommentTypeLabel(control, 0);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        _helpers.waitUntilEditControlOpened(control);
+        _helpers.wait.editControlOpened(control);
 
         const menu = _find.editCommentTypeMenu(control);
         verify(menu.commentTypes.length >= expected.length);

@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -22,9 +21,7 @@ TestCase {
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
-
-    readonly property Component signalSpy: _helpers.signalSpy
-    readonly property Component objectWithRealViewModel: _helpers.objectWithRealViewModel
+    readonly property alias _wait: _helpers.wait
 
     width: 600
     height: 400
@@ -36,54 +33,10 @@ TestCase {
         _helpers.initTestCase();
     }
 
-    function makeControl(): var {
-        return _helpers.makeControl();
-    }
-
-    function waitUntilEditControlOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlOpened(control);
-    }
-
-    function waitUntilEditControlClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlClosed(control);
-    }
-
-    function waitUntilContextMenuOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuOpened(control);
-    }
-
-    function waitUntilContextMenuClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuClosed(control);
-    }
-
-    function waitUntilMessageBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxOpened(control);
-    }
-
-    function waitUntilMessageBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxClosed(control);
-    }
-
-    function waitUntilSearchBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxOpened(control);
-    }
-
-    function waitUntilSearchBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxClosed(control);
-    }
-
-    function getCommentTypeItems(control: MpvqcTableView): list<Item> {
-        return _helpers.getCommentTypeItems(control);
-    }
-
-    function typeWord(word: string): void {
-        _helpers.typeWord(word);
-    }
-
     property var control: null
 
     function init(): void {
-        control = testCase.makeControl();
+        control = _helpers.makeControl();
         control.commentList.currentIndex = 0;
         waitForRendering(control);
 
@@ -107,7 +60,7 @@ TestCase {
         waitForRendering(control);
 
         keyPress(Qt.Key_F, Qt.ControlModifier);
-        testCase.waitUntilSearchBoxOpened(control);
+        _wait.searchBoxOpened(control);
         _expect.hasSearchBoxOpen(control);
     }
 
@@ -178,7 +131,7 @@ TestCase {
         const reviewRows = _reviewRows();
         const statusLabel = _find.searchStatusLabel(control);
 
-        typeWord("review");
+        _helpers.typeWord("review");
         tryVerify(() => control.commentList.currentIndex === reviewRows[0]);
         compare(statusLabel.text, "1/3");
 
@@ -250,7 +203,7 @@ TestCase {
         const reviewRows = _reviewRows();
         const statusLabel = _find.searchStatusLabel(control);
 
-        typeWord("review");
+        _helpers.typeWord("review");
         tryVerify(() => control.commentList.currentIndex === reviewRows[0]);
         compare(statusLabel.text, "1/3");
 
@@ -277,14 +230,14 @@ TestCase {
     function test_close(data): void {
         data.action(control);
 
-        testCase.waitUntilSearchBoxClosed(control);
+        _wait.searchBoxClosed(control);
         _expect.hasSearchBoxClosed(control);
         _expect.isEventuallySearchBoxClosed(control);
         _expect.hasActiveFocus(control);
     }
 
     function test_search_highlightFocusAndRestore(): void {
-        typeWord("review");
+        _helpers.typeWord("review");
 
         tryVerify(() => _find.searchBoxPopup(control)?.searchQuery === "review");
 
@@ -293,7 +246,7 @@ TestCase {
         tryVerify(() => commentLabel.text.includes("<b><u>"));
 
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilSearchBoxClosed(control);
+        _wait.searchBoxClosed(control);
         _expect.hasSearchBoxClosed(control);
         tryVerify(() => !commentLabel.text.includes("<b><u>"));
 
@@ -301,7 +254,7 @@ TestCase {
         _expect.hasActiveFocus(control);
 
         keyPress(Qt.Key_F, Qt.ControlModifier);
-        testCase.waitUntilSearchBoxOpened(control);
+        _wait.searchBoxOpened(control);
         _expect.hasSearchBoxOpen(control);
 
         tryVerify(() => commentLabel.text.includes("<b><u>"));
@@ -312,7 +265,7 @@ TestCase {
         const prevButton = _find.searchPreviousButton(control);
         const nextButton = _find.searchNextButton(control);
 
-        typeWord("nomatch");
+        _helpers.typeWord("nomatch");
 
         tryVerify(() => statusLabel.text === "0/0");
         verify(!prevButton.enabled);
@@ -320,7 +273,7 @@ TestCase {
     }
 
     function test_deleteKeyDoesNotOpenMessageBox(): void {
-        typeWord("review");
+        _helpers.typeWord("review");
         keyPress(Qt.Key_Delete);
         _expect.hasMessageBoxClosed(control);
         _expect.hasSearchBoxOpen(control);
@@ -330,30 +283,30 @@ TestCase {
     }
 
     function test_rightClickOpensContextMenuThenEscapeClosesMenuThenSearch(): void {
-        typeWord("review");
+        _helpers.typeWord("review");
         tryVerify(() => control.commentList.currentIndex === _reviewRows()[0]);
 
         const pt = _clickHelper.centerOfCommentLabel(control, control.commentList.currentIndex);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
-        testCase.waitUntilContextMenuOpened(control);
+        _wait.contextMenuOpened(control);
         _expect.hasContextMenuOpen(control);
         _expect.hasSearchBoxOpen(control);
 
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasContextMenuClosed(control);
         _expect.isEventuallySearchBoxOpen(control);
         _expect.hasActiveFocus(control);
 
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilSearchBoxClosed(control);
+        _wait.searchBoxClosed(control);
         _expect.hasSearchBoxClosed(control);
         _expect.isEventuallySearchBoxClosed(control);
         _expect.hasActiveFocus(control);
     }
 
     function test_ctrlFWhileOpenRefocusesAndSelectsText(): void {
-        typeWord("review");
+        _helpers.typeWord("review");
         tryVerify(() => _find.searchBoxPopup(control)?.searchQuery === "review");
 
         const textField = _find.searchTextField(control);
@@ -370,20 +323,20 @@ TestCase {
     function test_escapeClosesEditorThenSearch(): void {
         const reviewRows = _reviewRows();
 
-        typeWord("review");
+        _helpers.typeWord("review");
         tryVerify(() => control.commentList.currentIndex === reviewRows[0]);
 
         const pt = _clickHelper.centerOfCommentLabel(control, control.commentList.currentIndex);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
 
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilEditControlClosed(control);
+        _wait.editControlClosed(control);
         _expect.isEventuallySearchBoxOpen(control);
         waitForRendering(control);
 
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilSearchBoxClosed(control);
+        _wait.searchBoxClosed(control);
         _expect.hasSearchBoxClosed(control);
         _expect.isEventuallySearchBoxClosed(control);
         _expect.hasActiveFocus(control);
@@ -391,13 +344,13 @@ TestCase {
 
     function test_searchBoxCanBeReopened(): void {
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilSearchBoxClosed(control);
+        _wait.searchBoxClosed(control);
         _expect.hasSearchBoxClosed(control);
         _expect.isEventuallySearchBoxClosed(control);
         _expect.hasActiveFocus(control);
 
         keyPress(Qt.Key_F, Qt.ControlModifier);
-        testCase.waitUntilSearchBoxOpened(control);
+        _wait.searchBoxOpened(control);
         _expect.hasSearchBoxOpen(control);
     }
 }

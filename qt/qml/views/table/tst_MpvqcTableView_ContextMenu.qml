@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -22,9 +21,7 @@ TestCase {
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
-
-    readonly property Component signalSpy: _helpers.signalSpy
-    readonly property Component objectWithRealViewModel: _helpers.objectWithRealViewModel
+    readonly property alias _wait: _helpers.wait
 
     width: 600
     height: 400
@@ -36,59 +33,15 @@ TestCase {
         _helpers.initTestCase();
     }
 
-    function makeControl(): var {
-        return _helpers.makeControl();
-    }
-
-    function waitUntilEditControlOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlOpened(control);
-    }
-
-    function waitUntilEditControlClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlClosed(control);
-    }
-
-    function waitUntilContextMenuOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuOpened(control);
-    }
-
-    function waitUntilContextMenuClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuClosed(control);
-    }
-
-    function waitUntilMessageBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxOpened(control);
-    }
-
-    function waitUntilMessageBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxClosed(control);
-    }
-
-    function waitUntilSearchBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxOpened(control);
-    }
-
-    function waitUntilSearchBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxClosed(control);
-    }
-
-    function getCommentTypeItems(control: MpvqcTableView): list<Item> {
-        return _helpers.getCommentTypeItems(control);
-    }
-
-    function typeWord(word: string): void {
-        _helpers.typeWord(word);
-    }
-
     property var control: null
 
     function init(): void {
-        control = testCase.makeControl();
+        control = _helpers.makeControl();
         control.commentList.currentIndex = 2;
         waitForRendering(control);
         const pt = _clickHelper.topLeftOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
-        testCase.waitUntilContextMenuOpened(control);
+        _wait.contextMenuOpened(control);
         _expect.isNotEditing(control);
         _expect.hasCurrentIndex(control, 2);
     }
@@ -146,7 +99,7 @@ TestCase {
     function test_singleClick(data): void {
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
         _expect.hasContextMenuClosed(control);
@@ -200,7 +153,7 @@ TestCase {
     function test_doubleClick(data): void {
         const pt = data.clickPoint(control);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
         _expect.hasContextMenuClosed(control);
@@ -224,7 +177,7 @@ TestCase {
     function test_rightClick(data): void {
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
         _expect.hasContextMenuClosed(control);
@@ -236,21 +189,21 @@ TestCase {
 
     function test_selectEditComment(): void {
         _clickHelper.clickEditCommentAction(control);
-        testCase.waitUntilContextMenuClosed(control);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.contextMenuClosed(control);
+        _wait.editControlOpened(control);
         _expect.isEditing(control);
         _expect.hasContextMenuClosed(control);
     }
 
     function test_selectCopyToClipboard(): void {
-        const spy = createTemporaryObject(signalSpy, control, {
+        const spy = createTemporaryObject(_helpers.signalSpy, control, {
             target: control.viewModel,
             signalName: "copiedToClipboard"
         });
         verify(spy);
 
         _clickHelper.clickCopyCommentAction(control);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasContextMenuClosed(control);
 
         tryVerify(() => spy.count === 1);
@@ -261,7 +214,7 @@ TestCase {
     function test_selectDeleteComment(): void {
         const countAtBeginning = control.commentCount;
         _clickHelper.clickDeleteCommentAction(control);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         _expect.hasContextMenuClosed(control);
 
         keyPress(Qt.Key_Tab);
@@ -273,7 +226,7 @@ TestCase {
     function test_escapeClosesMenu(): void {
         keyPress(Qt.Key_Escape);
 
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasCurrentIndex(control, 2);
         _expect.isNotEditing(control);
         _expect.hasContextMenuClosed(control);
@@ -281,17 +234,17 @@ TestCase {
 
     function test_contextMenuCanBeReopened(): void {
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasContextMenuClosed(control);
         _expect.hasActiveFocus(control);
 
         const pt = _clickHelper.centerOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
-        testCase.waitUntilContextMenuOpened(control);
+        _wait.contextMenuOpened(control);
         _expect.hasContextMenuOpen(control);
 
         keyPress(Qt.Key_Escape);
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasContextMenuClosed(control);
         _expect.hasActiveFocus(control);
     }
@@ -307,7 +260,7 @@ TestCase {
             },
         ]);
 
-        testCase.waitUntilContextMenuClosed(control);
+        _wait.contextMenuClosed(control);
         _expect.hasContextMenuClosed(control);
         _expect.hasActiveFocus(control);
     }

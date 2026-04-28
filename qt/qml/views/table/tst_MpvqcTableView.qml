@@ -7,8 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
-import pyobjects
-
 TestCase {
     id: testCase
 
