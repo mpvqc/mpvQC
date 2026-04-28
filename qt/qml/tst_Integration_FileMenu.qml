@@ -7,7 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtTest
-import pyobjects
 
 TestCase {
     id: testCase
@@ -32,9 +31,9 @@ TestCase {
         const control = it.makeControl();
         verify(it.bridge.saved, "expected initial state to be saved");
 
-        it.triggerMenuItem(control, "fileMenu", "newQcDocumentMenuItem");
+        it.menu.trigger(control, "fileMenu", "newQcDocumentMenuItem");
 
-        const messageBoxLoader = findChild(control, "messageBoxLoader");
+        const messageBoxLoader = it.find.messageBoxLoader(control);
         verify(messageBoxLoader, "messageBoxLoader not found");
         verify(!messageBoxLoader.active, "no confirmation expected when state is saved");
     }
@@ -58,19 +57,18 @@ TestCase {
 
     function test_newQcDocumentWhenUnsaved(data): void {
         const control = it.makeControl();
-        it.addComment(control, "Translation", "");
+        it.comment.add(control, "Translation", "");
         tryVerify(() => !it.bridge.saved);
 
-        it.triggerMenuItem(control, "fileMenu", "newQcDocumentMenuItem");
+        it.menu.trigger(control, "fileMenu", "newQcDocumentMenuItem");
 
-        const messageBox = it.findOpenedDialog(control, "resetMessageBox");
+        const messageBox = it.find.openedDialog(control, "resetMessageBox");
 
         const button = messageBox.standardButton(data.button);
         verify(button, "dialog button not found");
         mouseClick(button);
 
-        const tableView = findChild(control, "tableView");
-        tryVerify(() => tableView.commentCount === data.remainingComments);
+        it.expect.commentCount(control, data.remainingComments);
         tryVerify(() => it.bridge.saved === data.expectedSaved);
     }
 
@@ -80,7 +78,7 @@ TestCase {
                 tag: "accepted",
                 interact: dialog => {
                     dialog.selectedFile = it.bridge.importArtifact("qc_document_basic.txt");
-                    it.acceptDialog(dialog);
+                    it.dialog.accept(dialog);
                 },
                 expectedComments: 2
             },
@@ -95,44 +93,39 @@ TestCase {
     function test_openQcDocument(data): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "fileMenu", "openQcDocumentsMenuItem");
+        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importDocumentsFileDialog");
+        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
 
         data.interact(dialog);
 
-        const tableView = findChild(control, "tableView");
-        verify(tableView, "tableView not found");
-        tryVerify(() => tableView.commentCount === data.expectedComments);
+        it.expect.commentCount(control, data.expectedComments);
     }
 
     function test_openQcDocument_incompatibleDocument_opensNotCompatibleMessageBox(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "fileMenu", "openQcDocumentsMenuItem");
+        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importDocumentsFileDialog");
+        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
         dialog.selectedFile = it.bridge.importArtifact("qc_document_invalid.txt");
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
-        const messageBox = it.findOpenedDialog(control, "documentNotCompatibleMessageBox");
+        const messageBox = it.find.openedDialog(control, "documentNotCompatibleMessageBox");
         verify(messageBox.text.includes("qc_document_invalid.txt"));
-
-        const tableView = findChild(control, "tableView");
-        verify(tableView, "tableView not found");
-        compare(tableView.commentCount, 0, "no comments should be imported from an invalid document");
+        it.expect.commentCount(control, 0);
     }
 
     function test_openQcDocument_complex_promptsThenLoadsVideoAndSubtitles(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "fileMenu", "openQcDocumentsMenuItem");
+        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importDocumentsFileDialog");
+        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
         dialog.selectedFile = it.bridge.importComplexDocument();
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
-        const confirmation = it.findOpenedDialog(control, "importConfirmationDialog");
+        const confirmation = it.find.openedDialog(control, "importConfirmationDialog");
 
         const videoList = findChild(confirmation, "videoListView");
         const subtitleList = findChild(confirmation, "subtitleListView");
@@ -142,8 +135,7 @@ TestCase {
         confirmation.accept();
         it.bridge.waitForBackgroundJobs();
 
-        const tableView = findChild(control, "tableView");
-        tryVerify(() => tableView.commentCount === 2);
+        it.expect.commentCount(control, 2);
         tryVerify(() => it.bridge.openedVideoName() === "video.mp4");
         tryVerify(() => it.bridge.openedSubtitleCount() === 2);
     }
@@ -151,43 +143,42 @@ TestCase {
     function test_openQcDocument_complex_rejectingConfirmationSkipsVideoAndSubtitles(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "fileMenu", "openQcDocumentsMenuItem");
+        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importDocumentsFileDialog");
+        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
         dialog.selectedFile = it.bridge.importComplexDocument();
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
-        const confirmation = it.findOpenedDialog(control, "importConfirmationDialog");
+        const confirmation = it.find.openedDialog(control, "importConfirmationDialog");
         confirmation.reject();
         it.bridge.waitForBackgroundJobs();
 
-        const tableView = findChild(control, "tableView");
-        tryVerify(() => tableView.commentCount === 2);
+        it.expect.commentCount(control, 2);
         compare(it.bridge.openedVideoName(), "", "no video should be opened");
         compare(it.bridge.openedSubtitleCount(), 0, "no subtitles should be opened");
     }
 
     function test_saveQcDocument_promptsThenSavesDirectly(): void {
         const control = it.makeControl();
-        it.addComment(control, "Translation", "hello");
+        it.comment.add(control, "Translation", "hello");
 
-        it.triggerMenuItem(control, "fileMenu", "saveQcDocumentMenuItem");
+        it.menu.trigger(control, "fileMenu", "saveQcDocumentMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "saveDocumentFileDialog");
+        const dialog = it.find.openedDialog(control, "saveDocumentFileDialog");
 
         const savePath = it.bridge.tempSavePath();
         dialog.selectedFile = savePath;
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.bridge.saved);
         verify(it.bridge.fileContains(savePath, "Translation"), "first save should write Translation");
         verify(it.bridge.fileContains(savePath, "hello"), "first save should write the typed comment");
 
-        it.addComment(control, "Spelling", "world");
+        it.comment.add(control, "Spelling", "world");
 
-        it.triggerMenuItem(control, "fileMenu", "saveQcDocumentMenuItem");
+        it.menu.trigger(control, "fileMenu", "saveQcDocumentMenuItem");
 
-        const fileDialogLoader = findChild(control, "fileDialogLoader");
+        const fileDialogLoader = it.find.fileDialogLoader(control);
         verify(fileDialogLoader, "fileDialogLoader not found");
         verify(!fileDialogLoader.active, "no save dialog expected once document path is known");
 
@@ -200,28 +191,28 @@ TestCase {
 
     function test_saveQcDocumentAs_alwaysPromptsForPath(): void {
         const control = it.makeControl();
-        it.addComment(control, "Translation", "hello");
+        it.comment.add(control, "Translation", "hello");
 
-        it.triggerMenuItem(control, "fileMenu", "saveQcDocumentAsMenuItem");
+        it.menu.trigger(control, "fileMenu", "saveQcDocumentAsMenuItem");
 
-        const firstDialog = it.findOpenedDialog(control, "saveDocumentFileDialog");
+        const firstDialog = it.find.openedDialog(control, "saveDocumentFileDialog");
         const firstPath = it.bridge.tempSavePath();
         firstDialog.selectedFile = firstPath;
-        it.acceptDialog(firstDialog);
+        it.dialog.accept(firstDialog);
 
         tryVerify(() => it.bridge.saved);
         verify(it.bridge.fileContains(firstPath, "hello"));
 
         tryVerify(() => !findChild(control, "saveDocumentFileDialog"));
 
-        it.addComment(control, "Spelling", "world");
+        it.comment.add(control, "Spelling", "world");
 
-        it.triggerMenuItem(control, "fileMenu", "saveQcDocumentAsMenuItem");
+        it.menu.trigger(control, "fileMenu", "saveQcDocumentAsMenuItem");
 
-        const secondDialog = it.findOpenedDialog(control, "saveDocumentFileDialog");
+        const secondDialog = it.find.openedDialog(control, "saveDocumentFileDialog");
         const secondPath = it.bridge.tempSavePath();
         secondDialog.selectedFile = secondPath;
-        it.acceptDialog(secondDialog);
+        it.dialog.accept(secondDialog);
 
         verify(it.bridge.fileContains(secondPath, "hello"), "second save should contain hello");
         verify(it.bridge.fileContains(secondPath, "world"), "second save should contain world");
@@ -232,36 +223,36 @@ TestCase {
     function test_extendedExport_writesFileUsingTemplate(): void {
         const control = it.makeControl();
         const sentinel = "extended-export-payload";
-        it.addComment(control, "Translation", sentinel);
+        it.comment.add(control, "Translation", sentinel);
 
-        it.triggerSubmenuItemByText(control, "fileMenu", "exportQcDocumentMenu", "working");
+        it.menu.triggerSubItemByText(control, "fileMenu", "exportQcDocumentMenu", "working");
 
-        const dialog = it.findOpenedDialog(control, "exportDocumentFileDialog");
+        const dialog = it.find.openedDialog(control, "exportDocumentFileDialog");
         const savePath = it.bridge.tempSavePath();
         dialog.selectedFile = savePath;
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         verify(it.bridge.fileContains(savePath, sentinel), "exported file should contain comment text");
     }
 
     function test_extendedExport_brokenTemplate_opensErrorMessageBox(): void {
         const control = it.makeControl();
-        it.addComment(control, "Translation", "extended-export-payload");
+        it.comment.add(control, "Translation", "extended-export-payload");
 
-        it.triggerSubmenuItemByText(control, "fileMenu", "exportQcDocumentMenu", "error");
+        it.menu.triggerSubItemByText(control, "fileMenu", "exportQcDocumentMenu", "error");
 
-        const dialog = it.findOpenedDialog(control, "exportDocumentFileDialog");
+        const dialog = it.find.openedDialog(control, "exportDocumentFileDialog");
         dialog.selectedFile = it.bridge.tempSavePath();
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
-        it.findOpenedDialog(control, "extendedExportErrorMessageBox");
+        it.find.openedDialog(control, "extendedExportErrorMessageBox");
     }
 
     function test_exitMpvqcEmitsCloseRequested(): void {
         const control = it.makeControl();
         const spy = it.makeSpy(control, "closeRequested");
 
-        it.triggerMenuItem(control, "fileMenu", "exitMpvqcMenuItem");
+        it.menu.trigger(control, "fileMenu", "exitMpvqcMenuItem");
 
         tryVerify(() => spy.count === 1);
     }

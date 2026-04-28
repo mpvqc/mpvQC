@@ -6,7 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtTest
-import pyobjects
 
 TestCase {
     id: testCase
@@ -29,46 +28,40 @@ TestCase {
 
     function test_mouseClick_addsCommentOfChosenType(): void {
         const control = it.makeControl();
-        const tableView = findChild(control, "tableView");
-        verify(tableView, "tableView not found");
         const commentTypes = it.settings.commentTypes();
 
-        const menu = it.openNewCommentMenu(control);
+        const menu = it.menu.openNewCommentMenu(control);
         const firstItem = menu.itemAt(0);
         verify(firstItem, "expected at least one menu item");
         mouseClick(firstItem);
 
-        tryVerify(() => tableView.commentCount === 1);
-        tryVerify(() => tableView.commentList.itemAtIndex(0).commentType === commentTypes[0]);
-        tryVerify(() => findChild(control, "commentTextArea")?.activeFocus);
+        it.expect.commentCount(control, 1);
+        it.expect.commentTypeAt(control, 0, commentTypes[0]);
+        it.expect.commentEditorHasFocus(control);
     }
 
     function test_keyboardNavigation_addsCommentOfHighlightedType(): void {
         const control = it.makeControl();
-        const tableView = findChild(control, "tableView");
-        verify(tableView, "tableView not found");
         const commentTypes = it.settings.commentTypes();
 
-        it.openNewCommentMenu(control);
+        it.menu.openNewCommentMenu(control);
         keyClick(Qt.Key_Down);
         keyClick(Qt.Key_Down);
         keyClick(Qt.Key_Return);
 
-        tryVerify(() => tableView.commentCount === 1);
-        tryVerify(() => tableView.commentList.itemAtIndex(0).commentType === commentTypes[1]);
-        tryVerify(() => findChild(control, "commentTextArea")?.activeFocus);
+        it.expect.commentCount(control, 1);
+        it.expect.commentTypeAt(control, 0, commentTypes[1]);
+        it.expect.commentEditorHasFocus(control);
     }
 
     function test_escape_closesMenuWithoutAddingComment(): void {
         const control = it.makeControl();
-        const tableView = findChild(control, "tableView");
-        verify(tableView, "tableView not found");
 
-        const menu = it.openNewCommentMenu(control);
+        const menu = it.menu.openNewCommentMenu(control);
         keyClick(Qt.Key_Escape);
 
         tryVerify(() => !menu.opened);
-        compare(tableView.commentCount, 0);
-        tryVerify(() => tableView.commentList.activeFocus);
+        it.expect.commentCount(control, 0);
+        it.expect.commentListHasFocus(control);
     }
 }
