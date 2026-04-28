@@ -6,7 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtTest
-import pyobjects
 
 TestCase {
     id: testCase
@@ -30,12 +29,12 @@ TestCase {
     function test_openVideo_loadsVideoIntoPlayer(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "videoMenu", "openVideoMenuItem");
+        it.menu.trigger(control, "videoMenu", "openVideoMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importVideoFileDialog");
+        const dialog = it.find.openedDialog(control, "importVideoFileDialog");
         dialog.selectedFile = it.bridge.importArtifact("video_basic.mp4");
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.bridge.openedVideoName() === "video_basic.mp4");
     }
@@ -43,11 +42,11 @@ TestCase {
     function test_openSubtitles_loadsSubtitleIntoPlayer(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "videoMenu", "openSubtitlesMenuItem");
+        it.menu.trigger(control, "videoMenu", "openSubtitlesMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importSubtitlesFileDialog");
+        const dialog = it.find.openedDialog(control, "importSubtitlesFileDialog");
         dialog.selectedFile = it.bridge.importArtifact("subtitle_basic.ass");
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.bridge.openedSubtitleCount() === 1);
     }
@@ -55,13 +54,13 @@ TestCase {
     function test_openSubtitles_complex_promptsThenLoadsVideoAndSubtitle(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "videoMenu", "openSubtitlesMenuItem");
+        it.menu.trigger(control, "videoMenu", "openSubtitlesMenuItem");
 
-        const dialog = it.findOpenedDialog(control, "importSubtitlesFileDialog");
+        const dialog = it.find.openedDialog(control, "importSubtitlesFileDialog");
         dialog.selectedFile = it.bridge.importArtifact("subtitle_complex.ass");
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
-        const confirmation = it.findOpenedDialog(control, "importConfirmationDialog");
+        const confirmation = it.find.openedDialog(control, "importConfirmationDialog");
 
         const videoList = findChild(confirmation, "videoListView");
         const subtitleList = findChild(confirmation, "subtitleListView");
@@ -79,7 +78,7 @@ TestCase {
         const control = it.makeControl();
         const spy = it.makeSpy(control, "appWindowSizeRequested");
 
-        it.triggerMenuItem(control, "videoMenu", "resizeVideoMenuItem");
+        it.menu.trigger(control, "videoMenu", "resizeVideoMenuItem");
 
         tryVerify(() => spy.count === 1);
         compare(spy.signalArguments[0][0], 800);

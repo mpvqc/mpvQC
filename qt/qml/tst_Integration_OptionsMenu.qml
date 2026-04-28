@@ -7,7 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtTest
-import pyobjects
 
 TestCase {
     id: testCase
@@ -42,8 +41,8 @@ TestCase {
     function test_appearanceDialog_accept_persistsThemeAndColor(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "optionsMenu", "openAppearanceDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "appearanceDialog");
+        it.menu.trigger(control, "optionsMenu", "openAppearanceDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "appearanceDialog");
 
         const themeListView = findChild(dialog, "themeListView");
         verify(themeListView, "themeListView not found");
@@ -61,7 +60,7 @@ TestCase {
         tryVerify(() => it.settings.themeIdentifier() === expectedThemeId);
         tryVerify(() => it.settings.themeColorOption() === newColorIdx);
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.settings.themeIdentifier() === expectedThemeId);
         tryVerify(() => it.settings.themeColorOption() === newColorIdx);
@@ -72,8 +71,8 @@ TestCase {
         const initialTheme = it.settings.themeIdentifier();
         const initialColor = it.settings.themeColorOption();
 
-        it.triggerMenuItem(control, "optionsMenu", "openAppearanceDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "appearanceDialog");
+        it.menu.trigger(control, "optionsMenu", "openAppearanceDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "appearanceDialog");
 
         const themeListView = findChild(dialog, "themeListView");
         const colorGridView = findChild(dialog, "colorGridView");
@@ -99,8 +98,8 @@ TestCase {
         verify(defaults.length > 1, "expected multiple default comment types");
         const newType = "IntegrationTestType";
 
-        it.triggerMenuItem(control, "optionsMenu", "openCommentTypesDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "commentTypesDialog");
+        it.menu.trigger(control, "optionsMenu", "openCommentTypesDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "commentTypesDialog");
 
         const listView = findChild(dialog, "commentTypesListView");
         verify(listView, "commentTypesListView not found");
@@ -125,11 +124,11 @@ TestCase {
         mouseClick(acceptInputButton);
         tryVerify(() => listView.count === 2);
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
         tryVerify(() => it.settings.commentTypes().length === 2);
         tryVerify(() => it.settings.commentTypes()[1] === newType);
 
-        const menu = it.openNewCommentMenu(control);
+        const menu = it.menu.openNewCommentMenu(control);
         tryVerify(() => menu.count === 2);
         menu.close();
     }
@@ -139,21 +138,21 @@ TestCase {
         const defaults = it.settings.commentTypes();
         verify(defaults.length > 1, "expected multiple default comment types");
 
-        it.triggerMenuItem(control, "optionsMenu", "openCommentTypesDialogMenuItem");
-        let dialog = it.findOpenedDialog(control, "commentTypesDialog");
+        it.menu.trigger(control, "optionsMenu", "openCommentTypesDialogMenuItem");
+        let dialog = it.find.openedDialog(control, "commentTypesDialog");
         mouseClick(findChild(dialog, "commentTypeDeleteButton"));
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
         verify(it.settings.commentTypes().length < defaults.length, "precondition: settings should differ from defaults");
 
-        it.triggerMenuItem(control, "optionsMenu", "openCommentTypesDialogMenuItem");
-        dialog = it.findOpenedDialog(control, "commentTypesDialog");
+        it.menu.trigger(control, "optionsMenu", "openCommentTypesDialogMenuItem");
+        dialog = it.find.openedDialog(control, "commentTypesDialog");
         const resetButton = dialog.standardButton(Dialog.Reset);
         verify(resetButton, "Reset standard button not found");
         mouseClick(resetButton);
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
         tryVerify(() => JSON.stringify(it.settings.commentTypes()) === JSON.stringify(defaults));
 
-        const menu = it.openNewCommentMenu(control);
+        const menu = it.menu.openNewCommentMenu(control);
         tryVerify(() => menu.count === defaults.length);
         menu.close();
     }
@@ -180,7 +179,7 @@ TestCase {
 
     function test_applicationTitleRadio(data): void {
         const control = it.makeControl();
-        it.triggerSubmenuItem(control, "optionsMenu", "applicationTitleMenu", `applicationTitleMenuRadioItem_${data.identifier}`);
+        it.menu.triggerSubItem(control, "optionsMenu", "applicationTitleMenu", `applicationTitleMenuRadioItem_${data.identifier}`);
         tryVerify(() => it.settings.windowTitleFormat() === data.expected);
     }
 
@@ -201,7 +200,7 @@ TestCase {
 
     function test_applicationLayoutRadio(data): void {
         const control = it.makeControl();
-        it.triggerSubmenuItem(control, "optionsMenu", "applicationLayoutMenu", `applicationLayoutMenuRadioItem_${data.identifier}`);
+        it.menu.triggerSubItem(control, "optionsMenu", "applicationLayoutMenu", `applicationLayoutMenuRadioItem_${data.identifier}`);
         tryVerify(() => it.settings.layoutOrientation() === data.expected);
 
         const splitView = findChild(control, "applicationSplitView");
@@ -217,8 +216,8 @@ TestCase {
         const newEnabled = !initialEnabled;
         const newInterval = initialInterval + 30;
 
-        it.triggerMenuItem(control, "optionsMenu", "openBackupSettingsDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "backupDialog");
+        it.menu.trigger(control, "optionsMenu", "openBackupSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "backupDialog");
 
         const switchRow = findChild(dialog, "backupEnabledRow");
         verify(switchRow, "backupEnabledRow not found");
@@ -233,7 +232,7 @@ TestCase {
         mouseClick(locationButton);
         tryVerify(() => it.bridge.openedDesktopUrls().includes("mpvqc-test://backup-folder"));
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.settings.backupEnabled() === newEnabled);
         tryVerify(() => it.settings.backupInterval() === newInterval);
@@ -252,8 +251,8 @@ TestCase {
         };
         const newNickname = initial.nickname + "-edited";
 
-        it.triggerMenuItem(control, "optionsMenu", "openExportSettingsDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "exportSettingsDialog");
+        it.menu.trigger(control, "optionsMenu", "openExportSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "exportSettingsDialog");
 
         const nicknameRow = findChild(dialog, "exportNicknameRow");
         verify(nicknameRow, "exportNicknameRow not found");
@@ -266,7 +265,7 @@ TestCase {
             row.checked = !row.checked;
         }
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.settings.nickname() === newNickname);
         tryVerify(() => it.settings.writeHeaderDate() === !initial.date);
@@ -280,8 +279,8 @@ TestCase {
         const control = it.makeControl();
         const initial = it.settings.importFoundVideo();
 
-        it.triggerMenuItem(control, "optionsMenu", "openImportSettingsDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "importSettingsDialog");
+        it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "importSettingsDialog");
 
         const comboBox = findChild(dialog, "importFoundVideoComboBox");
         verify(comboBox, "importFoundVideoComboBox not found");
@@ -289,7 +288,7 @@ TestCase {
         verify(newIndex !== comboBox.currentIndex, "expected to pick a different option");
         comboBox.activated(newIndex);
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
         tryVerify(() => it.settings.importFoundVideo() === newIndex);
         verify(it.settings.importFoundVideo() !== initial, "setting should differ from initial value");
     }
@@ -298,8 +297,8 @@ TestCase {
         const control = it.makeControl();
         const sentinel = "# integration-test-mpv-marker";
 
-        it.triggerMenuItem(control, "optionsMenu", "openEditMpvConfigDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "editMpvDialog");
+        it.menu.trigger(control, "optionsMenu", "openEditMpvConfigDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "editMpvDialog");
 
         const textArea = findChild(dialog, "mpvConfTextArea");
         verify(textArea, "mpvConfTextArea not found");
@@ -318,7 +317,7 @@ TestCase {
         label.linkActivated(label.url);
         tryVerify(() => it.bridge.openedDesktopUrls().includes(label.url));
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.bridge.fileContains(it.bridge.mpvConfPath(), sentinel));
     }
@@ -327,8 +326,8 @@ TestCase {
         const control = it.makeControl();
         const sentinel = "# integration-test-input-marker";
 
-        it.triggerMenuItem(control, "optionsMenu", "openEditInputConfigDialogMenuItem");
-        const dialog = it.findOpenedDialog(control, "editInputDialog");
+        it.menu.trigger(control, "optionsMenu", "openEditInputConfigDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "editInputDialog");
 
         const textArea = findChild(dialog, "inputConfTextArea");
         verify(textArea, "inputConfTextArea not found");
@@ -347,7 +346,7 @@ TestCase {
         label.linkActivated(label.url);
         tryVerify(() => it.bridge.openedDesktopUrls().includes(label.url));
 
-        it.acceptDialog(dialog);
+        it.dialog.accept(dialog);
 
         tryVerify(() => it.bridge.fileContains(it.bridge.inputConfPath(), sentinel));
     }
@@ -367,7 +366,7 @@ TestCase {
 
     function test_languageSubmenu(data): void {
         const control = it.makeControl();
-        it.triggerSubmenuItem(control, "optionsMenu", "languageMenu", `languageMenuItem_${data.identifier}`);
+        it.menu.triggerSubItem(control, "optionsMenu", "languageMenu", `languageMenuItem_${data.identifier}`);
         tryVerify(() => it.settings.language() === data.identifier);
     }
 }

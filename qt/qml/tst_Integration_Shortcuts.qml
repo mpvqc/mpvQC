@@ -6,7 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtTest
-import pyobjects
 
 TestCase {
     id: testCase
@@ -65,8 +64,8 @@ TestCase {
     function test_shortcutOpensDialog(data): void {
         const control = it.makeControl();
         keyClick(data.key, data.modifiers);
-        tryVerify(() => findChild(control, data.dialogName)?.visible);
-        findChild(control, data.dialogName).close();
+        const dialog = it.find.openedDialog(control, data.dialogName);
+        dialog.close();
     }
 
     function test_shortcutEmitsContentSignal_data() {

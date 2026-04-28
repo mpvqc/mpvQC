@@ -6,7 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtTest
-import pyobjects
 
 TestCase {
     id: testCase
@@ -30,32 +29,32 @@ TestCase {
     function test_checkForUpdates_opensMessageBox(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "helpMenu", "openCheckForUpdatesMenuItem");
+        it.menu.trigger(control, "helpMenu", "openCheckForUpdatesMenuItem");
 
-        it.findOpenedDialog(control, "versionCheckMessageBox");
+        it.find.openedDialog(control, "versionCheckMessageBox");
         it.bridge.waitForBackgroundJobs();
     }
 
     function test_keyboardShortcuts_opensDialog(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "helpMenu", "openKeyboardShortcutsMenuItem");
+        it.menu.trigger(control, "helpMenu", "openKeyboardShortcutsMenuItem");
 
-        it.findOpenedDialog(control, "shortcutsDialog");
+        it.find.openedDialog(control, "shortcutsDialog");
     }
 
     function test_extendedExports_opensMessageBox(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "helpMenu", "openExtendedExportsDialogMenuItem");
+        it.menu.trigger(control, "helpMenu", "openExtendedExportsDialogMenuItem");
 
-        it.findOpenedDialog(control, "extendedExportMessageBox");
+        it.find.openedDialog(control, "extendedExportMessageBox");
     }
 
     function test_appDataFolder_opensExternalUrl(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "helpMenu", "openAppDataFolderMenuItem");
+        it.menu.trigger(control, "helpMenu", "openAppDataFolderMenuItem");
 
         tryVerify(() => it.bridge.openedDesktopUrls().includes("mpvqc-test://app-data-folder"));
     }
@@ -63,8 +62,8 @@ TestCase {
     function test_about_opensDialog(): void {
         const control = it.makeControl();
 
-        it.triggerMenuItem(control, "helpMenu", "openAboutDialogMenuItem");
+        it.menu.trigger(control, "helpMenu", "openAboutDialogMenuItem");
 
-        it.findOpenedDialog(control, "aboutDialog");
+        it.find.openedDialog(control, "aboutDialog");
     }
 }
