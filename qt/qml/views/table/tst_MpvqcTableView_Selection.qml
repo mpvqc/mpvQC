@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -22,9 +21,7 @@ TestCase {
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
-
-    readonly property Component signalSpy: _helpers.signalSpy
-    readonly property Component objectWithRealViewModel: _helpers.objectWithRealViewModel
+    readonly property alias _wait: _helpers.wait
 
     width: 600
     height: 400
@@ -36,54 +33,10 @@ TestCase {
         _helpers.initTestCase();
     }
 
-    function makeControl(): var {
-        return _helpers.makeControl();
-    }
-
-    function waitUntilEditControlOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlOpened(control);
-    }
-
-    function waitUntilEditControlClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilEditControlClosed(control);
-    }
-
-    function waitUntilContextMenuOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuOpened(control);
-    }
-
-    function waitUntilContextMenuClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilContextMenuClosed(control);
-    }
-
-    function waitUntilMessageBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxOpened(control);
-    }
-
-    function waitUntilMessageBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilMessageBoxClosed(control);
-    }
-
-    function waitUntilSearchBoxOpened(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxOpened(control);
-    }
-
-    function waitUntilSearchBoxClosed(control: MpvqcTableView): void {
-        _helpers.waitUntilSearchBoxClosed(control);
-    }
-
-    function getCommentTypeItems(control: MpvqcTableView): list<Item> {
-        return _helpers.getCommentTypeItems(control);
-    }
-
-    function typeWord(word: string): void {
-        _helpers.typeWord(word);
-    }
-
     property var control: null
 
     function init(): void {
-        control = testCase.makeControl();
+        control = _helpers.makeControl();
         control.commentList.currentIndex = 2;
         waitForRendering(control);
         _expect.isNotEditing(control);
@@ -214,7 +167,7 @@ TestCase {
     function test_doubleClickOpensEditor(data): void {
         const pt = data.clickPoint(control);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
         _expect.isEditing(control);
         _expect.isEditorShowing(control, data.expectedEditor);
         _expect.hasCurrentIndex(control, data.expectedIndex);
@@ -238,7 +191,7 @@ TestCase {
     function test_rightClickOpensContextMenu(data): void {
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
-        testCase.waitUntilContextMenuOpened(control);
+        _wait.contextMenuOpened(control);
         _expect.hasCurrentIndex(control, data.expectedIndex);
     }
 
@@ -290,7 +243,7 @@ TestCase {
 
     function test_keyPressReturnOpensCommentEditor(): void {
         keyPress(Qt.Key_Return);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
         _expect.isEditing(control);
         _expect.isNotInteractive(control);
         _expect.isEditorShowingCommentPopup(control);
@@ -300,7 +253,7 @@ TestCase {
         const countAtBeginning = control.commentCount;
 
         keyPress(Qt.Key_Backspace);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         _expect.isNotInteractive(control);
         keyPress(Qt.Key_Tab);
         keyPress(Qt.Key_Return);
@@ -313,7 +266,7 @@ TestCase {
         const countAtBeginning = control.commentCount;
 
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         keyPress(Qt.Key_Tab);
         keyPress(Qt.Key_Return);
 
@@ -325,25 +278,25 @@ TestCase {
         const countAtBeginning = control.commentCount;
 
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         keyPress(Qt.Key_Return);
 
-        testCase.waitUntilMessageBoxClosed(control);
+        _wait.messageBoxClosed(control);
         _expect.hasCount(control, countAtBeginning);
         _expect.hasCurrentIndex(control, 2);
     }
 
     function test_messageBoxCanBeReopened(): void {
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         _expect.hasMessageBoxOpen(control);
 
         keyPress(Qt.Key_Return); // cancel
-        testCase.waitUntilMessageBoxClosed(control);
+        _wait.messageBoxClosed(control);
         _expect.hasMessageBoxClosed(control);
 
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         _expect.hasMessageBoxOpen(control);
     }
 
@@ -351,7 +304,7 @@ TestCase {
         const countAtBeginning = control.commentCount;
 
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         _expect.hasMessageBoxOpen(control);
 
         control.commentList.model.import_comments([
@@ -362,7 +315,7 @@ TestCase {
             },
         ]);
 
-        testCase.waitUntilMessageBoxClosed(control);
+        _wait.messageBoxClosed(control);
         _expect.hasMessageBoxClosed(control);
         _expect.hasCount(control, countAtBeginning + 1);
         _expect.hasActiveFocus(control);
@@ -374,17 +327,17 @@ TestCase {
         _expect.hasItemComment(control, 2, "Comment 3");
 
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         keyPress(Qt.Key_Tab);
         keyPress(Qt.Key_Return);
         _expect.hasEventuallyCount(control, countAtBeginning - 1);
         _expect.hasCurrentIndex(control, 2);
 
-        testCase.waitUntilMessageBoxClosed(control);
+        _wait.messageBoxClosed(control);
         _expect.hasItemComment(control, 2, "Comment 4");
 
         keyPress(Qt.Key_Delete);
-        testCase.waitUntilMessageBoxOpened(control);
+        _wait.messageBoxOpened(control);
         keyPress(Qt.Key_Tab);
         keyPress(Qt.Key_Return);
         _expect.hasEventuallyCount(control, countAtBeginning - 2);
@@ -394,7 +347,7 @@ TestCase {
     }
 
     function test_keyPressCtrlPlusCCopiesToClipboard(): void {
-        const spy = createTemporaryObject(signalSpy, control, {
+        const spy = createTemporaryObject(_helpers.signalSpy, control, {
             target: control.viewModel,
             signalName: "copiedToClipboard"
         });
@@ -413,7 +366,7 @@ TestCase {
     function test_keyPressCtrlPlusFOpensSearch(): void {
         _expect.hasSearchBoxClosed(control);
         keyPress(Qt.Key_F, Qt.ControlModifier);
-        testCase.waitUntilSearchBoxOpened(control);
+        _wait.searchBoxOpened(control);
         _expect.hasSearchBoxOpen(control);
     }
 
@@ -429,7 +382,7 @@ TestCase {
         const countBefore = control.commentCount;
         control.viewModel.addRow("Comment Type 1"); // time=0 in test env → sorts to index 0
         _expect.hasCount(control, countBefore + 1);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
         _expect.isEditing(control);
         _expect.isEditorShowingCommentPopup(control);
         _expect.hasCurrentIndex(control, 0);
@@ -456,9 +409,9 @@ TestCase {
 
         const pt = _clickHelper.centerOfCommentTypeLabel(control, control.commentCount - 1);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
 
-        const legacyItem = testCase.getCommentTypeItems(control).find(item => item.commentType === "Legacy Type");
+        const legacyItem = _helpers.getCommentTypeItems(control).find(item => item.commentType === "Legacy Type");
         verify(legacyItem);
         verify(legacyItem.checked);
     }
@@ -475,9 +428,9 @@ TestCase {
 
         const pt = _clickHelper.centerOfCommentTypeLabel(control, control.commentCount - 1);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
-        testCase.waitUntilEditControlOpened(control);
+        _wait.editControlOpened(control);
 
-        const items = testCase.getCommentTypeItems(control);
+        const items = _helpers.getCommentTypeItems(control);
         const expected = ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4", "Comment Type 5", "Legacy Type"];
         compare(items.map(item => item.commentType), expected);
     }
