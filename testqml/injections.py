@@ -10,7 +10,7 @@ import typing
 from pathlib import Path
 
 import inject
-from PySide6.QtCore import QObject, QUrl
+from PySide6.QtCore import QUrl
 
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
@@ -38,11 +38,7 @@ TEMP_SAVES_DIR.mkdir()
 
 class WindowPropertiesServiceOverride(WindowPropertiesService):
     def __init__(self) -> None:
-        QObject.__init__(self)
-        self._width = 1280
-        self._height = 720
-        self._is_fullscreen = False
-        self._is_maximized = False
+        super().__init__(bind_window=False, width=1280, height=720)
 
 
 class HostIntegrationServiceOverride(HostIntegrationService):

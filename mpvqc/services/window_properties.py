@@ -2,10 +2,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+import logging
+from typing import TYPE_CHECKING
+
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
 from .main_window import MainWindowService
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QWindow
+
+logger = logging.getLogger(__name__)
 
 
 class WindowPropertiesService(QObject):
@@ -16,23 +26,33 @@ class WindowPropertiesService(QObject):
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
 
-    def __init__(self, parent: QObject | None = None) -> None:
+    def __init__(
+        self,
+        parent: QObject | None = None,
+        *,
+        bind_window: bool = True,
+        width: int = 0,
+        height: int = 0,
+    ) -> None:
         super().__init__(parent)
 
-        self._width = 0
-        self._height = 0
+        self._width = width
+        self._height = height
         self._is_fullscreen = False
         self._is_maximized = False
+        self._window: QWindow | None = None
 
-        self._window = self._main_window.window
+        if bind_window:
+            window = self._main_window.window
 
-        self._on_width_changed(self._window.width())
-        self._on_height_changed(self._window.height())
-        self._on_window_state_changed(self._window.windowState())
+            self._on_width_changed(window.width())
+            self._on_height_changed(window.height())
+            self._on_window_state_changed(window.windowState())
+            window.widthChanged.connect(self._on_width_changed)
+            window.heightChanged.connect(self._on_height_changed)
+            window.windowStateChanged.connect(self._on_window_state_changed)
 
-        self._window.widthChanged.connect(self._on_width_changed)
-        self._window.heightChanged.connect(self._on_height_changed)
-        self._window.windowStateChanged.connect(self._on_window_state_changed)
+            self._window = window
 
     @property
     def width(self) -> int:
@@ -52,15 +72,19 @@ class WindowPropertiesService(QObject):
 
     @property
     def screen_width(self) -> int:
-        if screen := self._window.screen():
-            return screen.geometry().width()
-        return 0
+        screen = self._window.screen() if self._window else None
+        if not screen:
+            logger.error("Primary screen is None - cannot determine available width")
+            return 0
+        return screen.geometry().width()
 
     @property
     def screen_height(self) -> int:
-        if screen := self._window.screen():
-            return screen.geometry().height()
-        return 0
+        screen = self._window.screen() if self._window else None
+        if not screen:
+            logger.error("Primary screen is None - cannot determine available height")
+            return 0
+        return screen.geometry().height()
 
     @Slot(int)
     def _on_width_changed(self, width: int) -> None:
