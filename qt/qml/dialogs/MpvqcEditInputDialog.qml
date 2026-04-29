@@ -95,6 +95,8 @@ MpvqcDialog {
                 font.pointSize: 11
                 leftPadding: _scrollView.mirrored && _scrollView.needsVerticalScroll ? 22 : 0
                 textDocument.source: root.viewModel.inputFileUrl
+
+                ContextMenu.menu: null
             }
         }
 

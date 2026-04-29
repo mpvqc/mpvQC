@@ -34,6 +34,8 @@ RowLayout {
         bottomPadding: topPadding
         horizontalAlignment: Text.AlignLeft
 
+        ContextMenu.menu: null
+
         onTextChanged: {
             root.textChanged(text);
         }

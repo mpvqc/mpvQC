@@ -45,6 +45,7 @@ MpvqcDialog {
                 objectName: "commentTypeTextField"
 
                 Layout.fillWidth: true
+                ContextMenu.menu: null
 
                 selectByMouse: true
                 horizontalAlignment: Text.AlignLeft

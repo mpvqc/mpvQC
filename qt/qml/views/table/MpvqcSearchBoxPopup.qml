@@ -123,6 +123,8 @@ Popup {
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
 
+            ContextMenu.menu: null
+
             onTextChanged: {
                 const sanitized = MpvqcTableUtility.sanitizeText(text);
                 if (sanitized !== text) {

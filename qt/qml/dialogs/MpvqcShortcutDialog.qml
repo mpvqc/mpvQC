@@ -36,6 +36,8 @@ MpvqcDialog {
             placeholderText: qsTranslate("ShortcutsDialog", "Search")
             horizontalAlignment: Text.AlignLeft
 
+            ContextMenu.menu: null
+
             onTextChanged: {
                 _listView.filterQuery = text.trim().toLowerCase();
             }
