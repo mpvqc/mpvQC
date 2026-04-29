@@ -76,10 +76,12 @@ def main() -> int:
     QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_DontUseNativeDialogs)
 
     qt_argv = [sys.argv[0]]
-    qt_argv += ["-platform", "offscreen"]
+
     # qt_argv += ["-silent"]
-    qt_argv += ["-input", input_path]
     # qt_argv += ["-eventdelay", "50"]
+
+    qt_argv += ["-platform", "offscreen"]
+    qt_argv += ["-input", input_path]
 
     return QUICK_TEST_MAIN_WITH_SETUP("qmltestrunner", MpvqcTestSetup, argv=qt_argv)
 
