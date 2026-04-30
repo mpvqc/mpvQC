@@ -82,6 +82,10 @@ class PlayerServiceOverride(PlayerService):
     def pause(self) -> None:
         pass
 
+    @typing.override
+    def move_mouse(self, x: int, y: int) -> None:
+        pass
+
 
 class ExportServiceOverride(ExportService):
     @typing.override

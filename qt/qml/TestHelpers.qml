@@ -73,6 +73,18 @@ QtObject {
             const tableView = root.find.tableView(control);
             tableView.forceActiveFocus();
             root.testCase.keyClick(Qt.Key_E);
+            return _waitForNewCommentMenu(control);
+        }
+
+        function openNewCommentMenuViaRightClick(control: Item): QtObject {
+            const inputArea = root.testCase.findChild(control, "playerInputArea");
+            root.testCase.verify(inputArea, "playerInputArea not found");
+            root.testCase.tryVerify(() => inputArea.width > 0 && inputArea.height > 0);
+            root.testCase.mouseClick(inputArea, inputArea.width / 2, inputArea.height / 2, Qt.RightButton);
+            return _waitForNewCommentMenu(control);
+        }
+
+        function _waitForNewCommentMenu(control: Item): QtObject {
             const menu = root.testCase.findChild(control, "newCommentMenu");
             root.testCase.verify(menu, "newCommentMenu not found");
             root.testCase.tryVerify(() => menu.opened);

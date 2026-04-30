@@ -25,8 +25,8 @@ Loader {
     asynchronous: true
 
     MpvqcPlayerInputArea {
+        objectName: "playerInputArea"
         anchors.fill: parent
-        enabled: !root.isTestMode
 
         onAddNewCommentMenuRequested: root.addNewCommentMenuRequested()
         onToggleFullScreenRequested: root.toggleFullScreenRequested()

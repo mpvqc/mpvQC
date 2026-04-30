@@ -26,11 +26,22 @@ TestCase {
         it.resetState();
     }
 
-    function test_mouseClick_addsCommentOfChosenType(): void {
+    function test_mouseClick_addsCommentOfChosenType_data() {
+        return [
+            {
+                tag: "keyboard"
+            },
+            {
+                tag: "rightClick"
+            },
+        ];
+    }
+
+    function test_mouseClick_addsCommentOfChosenType(data): void {
         const control = it.makeControl();
         const commentTypes = it.settings.commentTypes();
 
-        const menu = it.menu.openNewCommentMenu(control);
+        const menu = data.tag === "rightClick" ? it.menu.openNewCommentMenuViaRightClick(control) : it.menu.openNewCommentMenu(control);
         const firstItem = menu.itemAt(0);
         verify(firstItem, "expected at least one menu item");
         mouseClick(firstItem);
