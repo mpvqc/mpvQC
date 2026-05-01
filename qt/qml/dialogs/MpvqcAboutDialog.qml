@@ -59,14 +59,14 @@ MpvqcDialog {
             }
 
             MpvqcHeader {
-                text: root.viewModel.applicationName
+                text: root.viewModel.applicationName // qmllint disable stale-property-read
                 font.pointSize: 14
 
                 Layout.alignment: Qt.AlignHCenter
             }
 
             Label {
-                text: root.viewModel.applicationVersion
+                text: root.viewModel.applicationVersion // qmllint disable stale-property-read
                 font.weight: Font.DemiBold
 
                 Layout.alignment: Qt.AlignHCenter
@@ -186,7 +186,7 @@ MpvqcDialog {
                 dependencyName: "libmpv"
                 dependencyUrl: "https://mpv.io/"
                 dependencyLicence: "GPL-2.0+"
-                dependencyVersion: root.viewModel.mpvVersion
+                dependencyVersion: root.viewModel.mpvVersion // qmllint disable stale-property-read
 
                 Layout.fillWidth: true
             }
@@ -195,7 +195,7 @@ MpvqcDialog {
                 dependencyName: "ffmpeg"
                 dependencyUrl: "https://ffmpeg.org/"
                 dependencyLicence: "GPL-2.0+"
-                dependencyVersion: root.viewModel.ffmpegVersion
+                dependencyVersion: root.viewModel.ffmpegVersion // qmllint disable stale-property-read
 
                 Layout.fillWidth: true
             }
@@ -241,7 +241,7 @@ MpvqcDialog {
             MpvqcSpacer {}
 
             Label {
-                text: qsTranslate("AboutDialog", "Powered by Python %1").arg(root.viewModel.pythonVersion)
+                text: qsTranslate("AboutDialog", "Powered by Python %1").arg(root.viewModel.pythonVersion) // qmllint disable stale-property-read
                 font.italic: true
                 opacity: 0.7
 

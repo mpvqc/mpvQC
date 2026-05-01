@@ -4,12 +4,12 @@
 
 import QtQuick
 
-import pyobjects
+import pyobjects // qmllint disable unused-imports
 
 WindowContainer {
     id: root
 
-    window: MpvWindowPyObject {}
+    window: MpvWindowPyObject {} // qmllint disable import
 
     // Workaround: on Windows, when the top-level transitions through
     // minimize → maximize, the embedded child HWND ends up offset by a few
