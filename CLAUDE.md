@@ -8,6 +8,7 @@ SPDX-License-Identifier: MIT
 
 - See [docs/development.md](docs/development.md) for setup and commands; [docs/architecture.md](docs/architecture.md) for codebase orientation.
 - Use `just test-qml` for QML tests and `just test-python` for Python tests; neither recompiles resources.
+- Use `test-qml-debug <TARGET>` where `TARGET` is the QML test file to test individual files.
 - Run `just prepare-tests` (or the umbrella `just test`) when you've changed production QML, data, or translation files.
 
 ## Project structure

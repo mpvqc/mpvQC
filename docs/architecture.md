@@ -51,7 +51,7 @@ Tests sit at three layers:
 
 ```mermaid
 flowchart TB
-    subgraph Integration["QML integration tests — qt/qml/tst_Integration_*.qml"]
+    subgraph Integration["QML integration tests — qt/qml/app/tst_MpvqcApplicationContent_*.qml"]
         I1["Drives the application end-to-end<br/>through real menus, dialogs, services"]
     end
     subgraph QmlUnit["QML unit tests — qt/qml/.../tst_*.qml (colocated)"]
@@ -80,11 +80,11 @@ Standard pytest suite. Each service and viewmodel has its own test module that e
 
 Each non-trivial QML file has a sibling `tst_<Name>.qml` that exercises that component in isolation. Where the component depends on a viewmodel, the test instantiates a mock viewmodel inline; a small number of tests use a real viewmodel to cover model-binding paths that mocks can't fake. Run together with the integration tests via `just test-qml`.
 
-### QML integration tests — `qt/qml/tst_Integration_*.qml`
+### QML integration tests — `qt/qml/app/tst_MpvqcApplicationContent_*.qml`
 
 These drive the application content end-to-end against real, injected services. They click menu items, accept dialogs, and assert against application state through a Python test bridge. The harness lives entirely under `testqml/`: a Python entry point that boots a stripped-down application with the player swapped for a stub, bridges that expose inject state to QML, service overrides that keep tests off the real OS, and shared fixtures.
 
-`TestHelpers.qml` files keep test code terse by exposing the shared interactions — opening menus, finding dialogs, asserting state — as nested namespaces. There is one at the QML root for application-level tests and one inside the table view for component-level tests; each file's tests use the namespace shape that fits its scope.
+`TestHelpers.qml` files keep test code terse by exposing the shared interactions — opening menus, finding dialogs, asserting state — as nested namespaces. There is one in `qt/qml/app/` for application-level tests and one inside the table view for component-level tests; each file's tests use the namespace shape that fits its scope.
 
 ## Build & resources
 
