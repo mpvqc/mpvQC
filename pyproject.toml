@@ -228,6 +228,7 @@ files = [
     "qt/qml/app/MpvqcContentKeyHandler.qml",
     "qt/qml/app/MpvqcFileDropArea.qml",
     "qt/qml/app/MpvqcLayout.qml",
+    "qt/qml/app/MpvqcOverlayController.qml",
     "qt/qml/app/qmldir",
     "qt/qml/app/tst_MpvqcContentKeyHandler.qml",
     "qt/qml/components/MpvqcDebugRectangle.qml",

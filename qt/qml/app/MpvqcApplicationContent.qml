@@ -8,9 +8,6 @@ import QtQuick
 
 import pyobjects
 
-import "../dialogs"
-import "../filedialogs"
-import "../messageboxes"
 import "../views/header"
 import "../views/player"
 
@@ -48,29 +45,6 @@ Item {
 
     MpvqcMenuBarViewModel {
         id: _menuBarViewModel
-
-        onConfirmResetRequested: _messageBoxLoader.openResetMessageBox()
-        onOpenQcDocumentsRequested: _fileDialogLoader.openImportQcDocumentsDialog()
-        onExportPathRequested: _fileDialogLoader.openDocumentSaveDialog()
-        onExtendedExportRequested: exportTemplate => _fileDialogLoader.openExtendedDocumentExportDialog(exportTemplate)
-        onCloseAppRequested: root.closeRequested()
-
-        onOpenVideoRequested: _fileDialogLoader.openImportVideoDialog()
-        onOpenSubtitlesRequested: _fileDialogLoader.openImportSubtitlesDialog()
-        onResizeVideoRequested: _layout.recalculateSizes()
-
-        onAppearanceDialogRequested: _dialogLoader.openAppearanceDialog()
-        onCommentTypesDialogRequested: _dialogLoader.openCommentTypesDialog()
-        onBackupSettingsDialogRequested: _dialogLoader.openBackupSettingsDialog()
-        onExportSettingsDialogRequested: _dialogLoader.openExportSettingsDialog()
-        onImportSettingsDialogRequested: _dialogLoader.openImportSettingsDialog()
-        onEditMpvConfigDialogRequested: _dialogLoader.openEditMpvDialog()
-        onEditInputConfigDialogRequested: _dialogLoader.openEditInputDialog()
-
-        onKeyboardShortcutsDialogRequested: _dialogLoader.openShortcutsDialog()
-        onAboutDialogRequested: _dialogLoader.openAboutDialog()
-        onUpdateDialogRequested: _messageBoxLoader.openVersionCheckMessageBox()
-        onExtendedExportDialogRequested: _messageBoxLoader.openExtendedExportsMessageBox()
     }
 
     MpvqcContentViewModel {
@@ -135,22 +109,12 @@ Item {
         }
     }
 
-    MpvqcDialogLoader {
-        id: _dialogLoader
+    MpvqcOverlayController {
+        viewModel: _menuBarViewModel
 
-        onDialogClosed: _layout.focusCommentTable()
-    }
-
-    MpvqcFileDialogLoader {
-        id: _fileDialogLoader
-
-        onDialogClosed: _layout.focusCommentTable()
-    }
-
-    MpvqcMessageBoxLoader {
-        id: _messageBoxLoader
-
-        onMessageBoxClosed: _layout.focusCommentTable()
+        onFocusWanted: _layout.focusCommentTable()
+        onCloseAppRequested: root.closeRequested()
+        onResizeVideoRequested: _layout.recalculateSizes()
     }
 
     MpvqcContentKeyHandler {
