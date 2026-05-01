@@ -6,12 +6,13 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal
 from PySide6.QtQml import QmlElement
 
+from mpvqc.enums import MpvqcWindowTitleFormat
 from mpvqc.services import PlayerService, SettingsService, StateService
-
-from .menu_bar import MpvqcMenuBarViewModel
 
 QML_IMPORT_NAME = "pyobjects"
 QML_IMPORT_MAJOR_VERSION = 1
+
+WindowTitleFormat = MpvqcWindowTitleFormat.WindowTitleFormat
 
 
 # noinspection PyPep8Naming,PyTypeChecker
@@ -35,7 +36,6 @@ class MpvqcHeaderViewModel(QObject):
     @Property(str, notify=windowTitleChanged)
     def windowTitle(self) -> str:
         window_title_format = self._settings.window_title_format
-        WindowTitleFormat = MpvqcMenuBarViewModel.WindowTitleFormat
 
         if not self._player.video_loaded or window_title_format == WindowTitleFormat.DEFAULT:
             title = QCoreApplication.applicationName()

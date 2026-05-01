@@ -156,17 +156,17 @@ MenuBar {
                 {
                     "identifier": "default",
                     "label": qsTranslate("MainWindow", "Default Title"),
-                    "value": MpvqcMenuBarViewModel.WindowTitleFormat.DEFAULT
+                    "value": MpvqcWindowTitleFormat.WindowTitleFormat.DEFAULT
                 },
                 {
                     "identifier": "filename",
                     "label": qsTranslate("MainWindow", "Video File"),
-                    "value": MpvqcMenuBarViewModel.WindowTitleFormat.FILE_NAME
+                    "value": MpvqcWindowTitleFormat.WindowTitleFormat.FILE_NAME
                 },
                 {
                     "identifier": "filepath",
                     "label": qsTranslate("MainWindow", "Video Path"),
-                    "value": MpvqcMenuBarViewModel.WindowTitleFormat.FILE_PATH
+                    "value": MpvqcWindowTitleFormat.WindowTitleFormat.FILE_PATH
                 },
             ]
 
