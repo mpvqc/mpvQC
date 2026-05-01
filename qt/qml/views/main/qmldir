@@ -5,6 +5,3 @@
 module views.main
 
 MpvqcContentView MpvqcContentView.qml
-
-internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
-internal MpvqcFileDropArea MpvqcFileDropArea.qml
