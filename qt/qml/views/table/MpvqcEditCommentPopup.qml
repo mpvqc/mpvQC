@@ -52,6 +52,8 @@ Popup {
             color: MpvqcTheme.getBackground(root.isOdd)
         }
 
+        ContextMenu.menu: null
+
         Keys.onReturnPressed: {
             root.close();
         }
