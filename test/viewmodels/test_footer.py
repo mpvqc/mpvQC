@@ -7,7 +7,7 @@ import pytest
 
 from mpvqc.enums import MpvqcTimeFormat
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService
-from mpvqc.viewmodels.footer import MpvqcFooterViewModel
+from mpvqc.viewmodels import MpvqcFooterViewModel
 
 TimeFormat = MpvqcTimeFormat.TimeFormat
 
