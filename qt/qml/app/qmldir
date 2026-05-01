@@ -10,3 +10,4 @@ internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
 internal MpvqcFileDropArea MpvqcFileDropArea.qml
 internal MpvqcLayout MpvqcLayout.qml
 internal MpvqcOverlayController MpvqcOverlayController.qml
+internal TestHelpers TestHelpers.qml

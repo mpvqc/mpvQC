@@ -10,7 +10,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    name: "Integration::VideoMenu"
+    name: "MpvqcApplicationContent::VideoMenu"
     width: 1280
     height: 720
     visible: true
