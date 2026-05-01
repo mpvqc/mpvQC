@@ -9,8 +9,8 @@ import QtQuick
 import pyobjects
 
 QtObject {
-    readonly property MpvqcLabelWidthCalculatorBackend backend: MpvqcLabelWidthCalculatorBackend {}
+    readonly property MpvqcLabelWidthCalculatorViewModel viewModel: MpvqcLabelWidthCalculatorViewModel {}
 
-    property int commentTypesLabelWidth: backend.commentTypesLabelWidth
-    property int timeLabelWidth: backend.timeLabelWidth
+    property int commentTypesLabelWidth: viewModel.commentTypesLabelWidth
+    property int timeLabelWidth: viewModel.timeLabelWidth
 }

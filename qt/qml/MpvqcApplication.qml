@@ -68,7 +68,7 @@ ApplicationWindow {
         }
     }
 
-    MpvqcWindowVisibilityHandler {
+    MpvqcWindowVisibilityViewModel {
         id: _windowVisibilityHandler
     }
 }

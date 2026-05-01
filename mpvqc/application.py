@@ -15,6 +15,7 @@ from PySide6.QtCore import QUrl, Slot
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
+from mpvqc.close_event_filter import CloseEventFilter
 from mpvqc.services import (
     FileStartupService,
     FontLoaderService,
@@ -23,7 +24,6 @@ from mpvqc.services import (
     MainWindowService,
     SettingsService,
 )
-from mpvqc.utility import CloseEventFilter
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

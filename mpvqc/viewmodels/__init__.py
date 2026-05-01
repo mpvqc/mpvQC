@@ -4,47 +4,25 @@
 
 from .app import MpvqcAppViewModel as MpvqcAppViewModel
 from .app import MpvqcDropAreaViewModel as MpvqcDropAreaViewModel
-from .dialogs import (
-    MpvqcAboutDialogViewModel as MpvqcAboutDialogViewModel,
-)
-from .dialogs import (
-    MpvqcAppearanceDialogViewModel as MpvqcAppearanceDialogViewModel,
-)
-from .dialogs import (
-    MpvqcBackupDialogViewModel as MpvqcBackupDialogViewModel,
-)
-from .dialogs import (
-    MpvqcCommentTypesDialogViewModel as MpvqcCommentTypesDialogViewModel,
-)
-from .dialogs import (
-    MpvqcDialogLoaderViewModel as MpvqcDialogLoaderViewModel,
-)
-from .dialogs import (
-    MpvqcEditInputDialogViewModel as MpvqcEditInputDialogViewModel,
-)
-from .dialogs import (
-    MpvqcEditMpvDialogViewModel as MpvqcEditMpvDialogViewModel,
-)
-from .dialogs import (
-    MpvqcExportSettingsDialogViewModel as MpvqcExportSettingsDialogViewModel,
-)
-from .dialogs import (
-    MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel,
-)
+from .app import MpvqcResizeViewModel as MpvqcResizeViewModel
+from .dialogs import MpvqcAboutDialogViewModel as MpvqcAboutDialogViewModel
+from .dialogs import MpvqcAppearanceDialogViewModel as MpvqcAppearanceDialogViewModel
+from .dialogs import MpvqcBackupDialogViewModel as MpvqcBackupDialogViewModel
+from .dialogs import MpvqcCommentTypesDialogViewModel as MpvqcCommentTypesDialogViewModel
+from .dialogs import MpvqcDialogLoaderViewModel as MpvqcDialogLoaderViewModel
+from .dialogs import MpvqcEditInputDialogViewModel as MpvqcEditInputDialogViewModel
+from .dialogs import MpvqcEditMpvDialogViewModel as MpvqcEditMpvDialogViewModel
+from .dialogs import MpvqcExportSettingsDialogViewModel as MpvqcExportSettingsDialogViewModel
+from .dialogs import MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel
 from .file_dialogs import MpvqcExportFileDialogViewModel as MpvqcExportFileDialogViewModel
 from .file_dialogs import MpvqcImportFileDialogViewModel as MpvqcImportFileDialogViewModel
-from .message_boxes import (
-    MpvqcMessageBoxLoaderViewModel as MpvqcMessageBoxLoaderViewModel,
-)
-from .message_boxes import (
-    MpvqcQuitMessageBoxViewModel as MpvqcQuitMessageBoxViewModel,
-)
-from .message_boxes import (
-    MpvqcResetMessageBoxViewModel as MpvqcResetMessageBoxViewModel,
-)
-from .message_boxes import (
-    MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionCheckMessageBoxViewModel,
-)
+from .message_boxes import MpvqcMessageBoxLoaderViewModel as MpvqcMessageBoxLoaderViewModel
+from .message_boxes import MpvqcQuitMessageBoxViewModel as MpvqcQuitMessageBoxViewModel
+from .message_boxes import MpvqcResetMessageBoxViewModel as MpvqcResetMessageBoxViewModel
+from .message_boxes import MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionCheckMessageBoxViewModel
+from .utility import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
+from .utility import MpvqcThemeViewModel as MpvqcThemeViewModel
+from .utility import MpvqcWindowPropertiesViewModel as MpvqcWindowPropertiesViewModel
 from .views import MpvqcBackupTimerViewModel as MpvqcBackupTimerViewModel
 from .views import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
 from .views import MpvqcFooterViewModel as MpvqcFooterViewModel
@@ -54,4 +32,7 @@ from .views import MpvqcNewCommentMenuViewModel as MpvqcNewCommentMenuViewModel
 from .views import MpvqcPlaceholderViewModel as MpvqcPlaceholderViewModel
 from .views import MpvqcPlayerViewModel as MpvqcPlayerViewModel
 from .views import MpvqcSearchBoxViewModel as MpvqcSearchBoxViewModel
+from .views import MpvqcTableUtilityViewModel as MpvqcTableUtilityViewModel
 from .views import MpvqcToolBarViewModel as MpvqcToolBarViewModel
+from .views import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel
+from .window_visibility import MpvqcWindowVisibilityViewModel as MpvqcWindowVisibilityViewModel

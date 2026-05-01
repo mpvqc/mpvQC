@@ -13,7 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcTableUtilityBackend(QObject):
+class MpvqcTableUtilityViewModel(QObject):
     _player = inject.attr(PlayerService)
 
     durationChanged = Signal(float)

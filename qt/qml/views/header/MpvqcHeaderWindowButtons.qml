@@ -15,7 +15,7 @@ Row {
     id: root
 
     readonly property bool isWindows: Qt.platform.os === "windows"
-    readonly property MpvqcWindowButtons windowButtons: MpvqcWindowButtons {}
+    readonly property MpvqcWindowButtonsViewModel windowButtons: MpvqcWindowButtonsViewModel {}
 
     signal minimizeRequested
     signal toggleMaximizeRequested

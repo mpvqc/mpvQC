@@ -9,7 +9,7 @@ import inject
 import pytest
 
 from mpvqc.services import MainWindowService, WindowPropertiesService
-from mpvqc.utility import MpvqcWindowVisibilityHandler
+from mpvqc.viewmodels import MpvqcWindowVisibilityViewModel
 
 
 @pytest.fixture
@@ -79,7 +79,7 @@ class ToggleTestCase(NamedTuple):
 )
 def test_toggle_fullscreen(window_properties_service_mock, test_case: ToggleTestCase):
     # noinspection PyCallingNonCallable
-    handler = MpvqcWindowVisibilityHandler()
+    handler = MpvqcWindowVisibilityViewModel()
     window_properties_service_mock.is_fullscreen = test_case.fullscreen
     window_properties_service_mock.is_maximized = test_case.maximized
     handler._was_maximized_before = test_case.was_maximized_before

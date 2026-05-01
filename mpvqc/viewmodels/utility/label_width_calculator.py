@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcLabelWidthCalculatorBackend(QObject):
+class MpvqcLabelWidthCalculatorViewModel(QObject):
     _settings = inject.attr(SettingsService)
     _player = inject.attr(PlayerService)
     _width_service = inject.attr(LabelWidthCalculatorService)
