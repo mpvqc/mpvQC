@@ -19,12 +19,6 @@ class MpvqcContentViewModel(QObject):
     _settings = inject.attr(SettingsService)
     _command_generator = inject.attr(KeyCommandGeneratorService)
 
-    appWindowSizeRequested = Signal(int, int)
-    disableFullScreenRequested = Signal()
-    toggleFullScreenRequested = Signal()
-    openNewCommentMenuRequested = Signal()
-    addNewCommentRequested = Signal(str)
-
     layoutOrientationChanged = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
@@ -34,26 +28,6 @@ class MpvqcContentViewModel(QObject):
     @Property(int, notify=layoutOrientationChanged)
     def layoutOrientation(self) -> int:
         return self._settings.layout_orientation
-
-    @Slot()
-    def requestDisableFullScreen(self) -> None:
-        self.disableFullScreenRequested.emit()
-
-    @Slot()
-    def requestToggleFullScreen(self) -> None:
-        self.toggleFullScreenRequested.emit()
-
-    @Slot()
-    def requestOpenNewCommentMenu(self) -> None:
-        self.openNewCommentMenuRequested.emit()
-
-    @Slot(int, int)
-    def requestResizeAppWindow(self, width: int, height: int) -> None:
-        self.appWindowSizeRequested.emit(width, height)
-
-    @Slot(str)
-    def addNewEmptyComment(self, comment_type: str) -> None:
-        self.addNewCommentRequested.emit(comment_type)
 
     @Slot(Qt.Key, Qt.KeyboardModifier)
     def forwardKeyToPlayer(self, key: Qt.Key, modifiers: Qt.KeyboardModifier) -> None:

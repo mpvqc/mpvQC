@@ -53,7 +53,16 @@ Item {
             viewModel: _headerViewModel
             menuBarViewModel: _menuBarViewModel
             width: root.windowWidth
+
+            onWindowDragRequested: root.startSystemMoveRequested()
+            onMinimizeRequested: root.minimizeRequested()
+            onToggleMaximizeRequested: root.toggleMaximizeRequested()
+            onCloseRequested: root.closeRequested()
         }
+
+        onToggleFullScreenRequested: root.toggleFullScreenRequested()
+        onDisableFullScreenRequested: root.disableFullScreenRequested()
+        onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)
     }
 
     MpvqcDialogLoader {
@@ -87,11 +96,6 @@ Item {
 
     MpvqcHeaderViewModel {
         id: _headerViewModel
-
-        onWindowDragRequested: root.startSystemMoveRequested()
-        onMinimizeAppRequested: root.minimizeRequested()
-        onToggleMaximizeAppRequested: root.toggleMaximizeRequested()
-        onCloseAppRequested: root.closeRequested()
     }
 
     MpvqcMenuBarViewModel {
@@ -123,9 +127,5 @@ Item {
 
     MpvqcContentViewModel {
         id: _contentViewModel
-
-        onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)
-        onDisableFullScreenRequested: root.disableFullScreenRequested()
-        onToggleFullScreenRequested: root.toggleFullScreenRequested()
     }
 }

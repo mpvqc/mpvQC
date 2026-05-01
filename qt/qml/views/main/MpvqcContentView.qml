@@ -24,6 +24,10 @@ Page {
     readonly property int minContainerWidth: 500
     readonly property real defaultSplitRatio: 0.4
 
+    signal toggleFullScreenRequested
+    signal disableFullScreenRequested
+    signal appWindowSizeRequested(width: int, height: int)
+
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }
@@ -32,15 +36,15 @@ Page {
         _videoResizer.recalculateSizes();
     }
 
-    Keys.onEscapePressed: root.viewModel.requestDisableFullScreen()
+    Keys.onEscapePressed: root.disableFullScreenRequested()
 
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
     MpvqcContentKeyHandler {
         id: _keyHandler
 
-        onOpenCommentMenuRequested: root.viewModel.requestOpenNewCommentMenu()
-        onToggleFullScreenRequested: root.viewModel.requestToggleFullScreen()
+        onOpenCommentMenuRequested: _commentMenu.popup()
+        onToggleFullScreenRequested: root.toggleFullScreenRequested()
         onForwardKeyToPlayerRequested: (key, modifiers) => root.viewModel.forwardKeyToPlayer(key, modifiers)
     }
 
@@ -65,9 +69,9 @@ Page {
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            onAddNewCommentMenuRequested: root.viewModel.openNewCommentMenuRequested()
+            onAddNewCommentMenuRequested: _commentMenu.popup()
 
-            onToggleFullScreenRequested: root.viewModel.requestToggleFullScreen()
+            onToggleFullScreenRequested: root.toggleFullScreenRequested()
         }
 
         Column {
@@ -115,8 +119,8 @@ Page {
         id: _commentMenu
 
         onCommentTypeChosen: commentType => {
-            root.viewModel.requestDisableFullScreen();
-            root.viewModel.addNewEmptyComment(commentType);
+            root.disableFullScreenRequested();
+            _mpvqcCommentTable.addNewComment(commentType);
         }
     }
 
@@ -135,23 +139,11 @@ Page {
         tableHeight: _splitView.tableContainerHeight
 
         onAppWindowSizeRequested: (width, height) => {
-            root.viewModel.requestResizeAppWindow(width, height);
+            root.appWindowSizeRequested(width, height);
         }
 
         onSplitViewTableSizeRequested: (width, height) => {
             _tableContainer.setPreferredSizes(width, height);
-        }
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onOpenNewCommentMenuRequested(): void {
-            _commentMenu.popup();
-        }
-
-        function onAddNewCommentRequested(commentType: string): void {
-            _mpvqcCommentTable.addNewComment(commentType);
         }
     }
 
