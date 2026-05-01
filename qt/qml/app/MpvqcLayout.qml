@@ -9,44 +9,36 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
-import "../../app"
-import "../../utility"
-import "../footer"
-import "../player"
-import "../table"
+import "../utility"
+import "../views/footer"
+import "../views/player"
+import "../views/table"
 
 Page {
     id: root
 
-    required property MpvqcContentViewModel viewModel
+    required property int layoutOrientation
     required property int windowBorder
+    required property int headerHeight
 
     readonly property int minContainerHeight: 200
     readonly property int minContainerWidth: 500
     readonly property real defaultSplitRatio: 0.4
 
     signal toggleFullScreenRequested
-    signal disableFullScreenRequested
+    signal addNewCommentMenuRequested
     signal appWindowSizeRequested(width: int, height: int)
 
     function focusCommentTable(): void {
         _mpvqcCommentTable.forceActiveFocus();
     }
 
-    function resizeVideo(): void {
-        _videoResizer.recalculateSizes();
+    function addComment(commentType: string): void {
+        _mpvqcCommentTable.addNewComment(commentType);
     }
 
-    Keys.onEscapePressed: root.disableFullScreenRequested()
-
-    Keys.onPressed: event => _keyHandler.handleKeyPress(event)
-
-    MpvqcContentKeyHandler {
-        id: _keyHandler
-
-        onOpenCommentMenuRequested: _commentMenu.popup()
-        onToggleFullScreenRequested: root.toggleFullScreenRequested()
-        onForwardKeyToPlayerRequested: (key, modifiers) => root.viewModel.forwardKeyToPlayer(key, modifiers)
+    function recalculateSizes(): void {
+        _videoResizer.recalculateSizes();
     }
 
     SplitView {
@@ -60,7 +52,7 @@ Page {
 
         focus: true
         anchors.fill: root.contentItem
-        orientation: root.viewModel.layoutOrientation
+        orientation: root.layoutOrientation
 
         MpvqcPlayerView {
             id: _player
@@ -70,8 +62,7 @@ Page {
             SplitView.fillHeight: true
             SplitView.fillWidth: true
 
-            onAddNewCommentMenuRequested: _commentMenu.popup()
-
+            onAddNewCommentMenuRequested: root.addNewCommentMenuRequested()
             onToggleFullScreenRequested: root.toggleFullScreenRequested()
         }
 
@@ -112,27 +103,10 @@ Page {
         }
     }
 
-    MpvqcFileDropArea {
-        anchors.fill: _splitView
-    }
-
-    MpvqcNewCommentMenu {
-        id: _commentMenu
-
-        onCommentTypeChosen: commentType => {
-            root.disableFullScreenRequested();
-            _mpvqcCommentTable.addNewComment(commentType);
-        }
-    }
-
-    MpvqcNewCommentMenuClickGuard {
-        menu: _commentMenu
-    }
-
     MpvqcResizeHandler {
         id: _videoResizer
 
-        headerHeight: root.header.height
+        headerHeight: root.headerHeight
         borderSize: root.windowBorder
         handleWidth: _splitView.draggerWidth
         handleHeight: _splitView.draggerHeight
