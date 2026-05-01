@@ -4,5 +4,8 @@
 
 module app
 
-MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
-MpvqcFileDropArea MpvqcFileDropArea.qml
+MpvqcApplicationContent MpvqcApplicationContent.qml
+
+internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
+internal MpvqcFileDropArea MpvqcFileDropArea.qml
+internal MpvqcLayout MpvqcLayout.qml

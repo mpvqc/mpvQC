@@ -7,6 +7,7 @@ import QtQuick.Controls.Material
 
 import pyobjects
 
+import "app"
 import "utility"
 
 ApplicationWindow {
