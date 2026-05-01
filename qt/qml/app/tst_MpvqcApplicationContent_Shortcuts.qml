@@ -10,7 +10,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    name: "Integration::Shortcuts"
+    name: "MpvqcApplicationContent::Shortcuts"
     width: 1280
     height: 720
     visible: true

@@ -9,8 +9,6 @@ import QtTest
 
 import pyobjects
 
-import "app"
-
 QtObject {
     id: root
 

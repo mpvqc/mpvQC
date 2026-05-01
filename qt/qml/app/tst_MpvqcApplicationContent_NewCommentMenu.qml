@@ -10,7 +10,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    name: "Integration::NewCommentMenu"
+    name: "MpvqcApplicationContent::NewCommentMenu"
     width: 1280
     height: 720
     visible: true

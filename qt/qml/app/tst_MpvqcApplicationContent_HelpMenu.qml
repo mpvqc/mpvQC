@@ -10,7 +10,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    name: "Integration::HelpMenu"
+    name: "MpvqcApplicationContent::HelpMenu"
     width: 1280
     height: 720
     visible: true

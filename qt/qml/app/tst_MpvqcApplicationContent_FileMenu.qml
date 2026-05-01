@@ -11,7 +11,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    name: "Integration::FileMenu"
+    name: "MpvqcApplicationContent::FileMenu"
     width: 1280
     height: 720
     visible: true
