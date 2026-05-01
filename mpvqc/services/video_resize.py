@@ -51,8 +51,8 @@ class VideoResizeService:
         if video_width >= available_width or video_height >= available_height:
             return None
 
-        match self._settings.layout_orientation:
-            case Qt.Orientation.Vertical.value:
+        match Qt.Orientation(self._settings.layout_orientation):
+            case Qt.Orientation.Vertical:
                 return calculate_vertical_layout_sizes(
                     video_width=video_width,
                     video_height=video_height,
@@ -62,7 +62,7 @@ class VideoResizeService:
                     table_height=dimensions.table_height,
                     available_height=available_height,
                 )
-            case Qt.Orientation.Horizontal.value:
+            case Qt.Orientation.Horizontal:
                 return calculate_horizontal_layout_sizes(
                     video_width=video_width,
                     video_height=video_height,
