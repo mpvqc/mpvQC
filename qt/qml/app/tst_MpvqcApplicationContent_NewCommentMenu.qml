@@ -65,6 +65,18 @@ TestCase {
         it.expect.commentEditorHasFocus(control);
     }
 
+    function test_chosenCommentType_emitsDisableFullScreenRequested(): void {
+        const control = it.makeControl();
+        const spy = it.makeSpy(control, "disableFullScreenRequested");
+
+        const menu = it.menu.openNewCommentMenu(control);
+        const firstItem = menu.itemAt(0);
+        verify(firstItem, "expected at least one menu item");
+        mouseClick(firstItem);
+
+        tryVerify(() => spy.count === 1);
+    }
+
     function test_escape_closesMenuWithoutAddingComment(): void {
         const control = it.makeControl();
 

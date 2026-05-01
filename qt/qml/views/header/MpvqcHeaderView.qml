@@ -14,6 +14,7 @@ import "../../utility"
 
 Item {
     id: root
+    objectName: "headerView"
 
     required property MpvqcHeaderViewModel viewModel
     required property MpvqcMenuBarViewModel menuBarViewModel
