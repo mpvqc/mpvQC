@@ -35,7 +35,7 @@ QML files describe what the user sees and how they interact. Views hold no busin
 
 ### ViewModels — `mpvqc/viewmodels/`
 
-ViewModels are Python `QObject` subclasses exposed to QML via PySide6's `@QmlElement`. They translate between Qt's signal/slot world and the underlying services: a viewmodel pulls in services with `inject.attr`, exposes the data the view needs as Qt properties, and turns user actions (`Slot`s) into service calls. The folder structure broadly mirrors `qt/qml/`'s where it helps locate things.
+ViewModels are Python `QObject` subclasses exposed to QML via PySide6's `@QmlElement`. They translate between Qt's signal/slot world and the underlying services: a viewmodel pulls in services with `inject.attr`, exposes the data the view needs as Qt properties, and turns user actions (`Slot`s) into service calls. The folder layout mirrors `qt/qml/` — each viewmodel sits in the directory that matches its consuming QML.
 
 ### Services — `mpvqc/services/`
 

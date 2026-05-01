@@ -6,6 +6,7 @@ from .about import MpvqcAboutDialogViewModel as MpvqcAboutDialogViewModel
 from .appearance import MpvqcAppearanceDialogViewModel as MpvqcAppearanceDialogViewModel
 from .backup import MpvqcBackupDialogViewModel as MpvqcBackupDialogViewModel
 from .comment_types import MpvqcCommentTypesDialogViewModel as MpvqcCommentTypesDialogViewModel
+from .dialog_loader import MpvqcDialogLoaderViewModel as MpvqcDialogLoaderViewModel
 from .edit_input import MpvqcEditInputDialogViewModel as MpvqcEditInputDialogViewModel
 from .edit_mpv import MpvqcEditMpvDialogViewModel as MpvqcEditMpvDialogViewModel
 from .export_settings import MpvqcExportSettingsDialogViewModel as MpvqcExportSettingsDialogViewModel
