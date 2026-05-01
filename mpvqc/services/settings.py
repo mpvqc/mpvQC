@@ -8,7 +8,17 @@ from functools import cache
 from typing import cast
 
 import inject
-from PySide6.QtCore import QT_TRANSLATE_NOOP, QLocale, QObject, QSettings, QStandardPaths, QUrl, Signal, SignalInstance
+from PySide6.QtCore import (
+    QT_TRANSLATE_NOOP,
+    QLocale,
+    QObject,
+    QSettings,
+    QStandardPaths,
+    Qt,
+    QUrl,
+    Signal,
+    SignalInstance,
+)
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -253,7 +263,7 @@ class SettingsService(QObject):
 
     @property
     def layout_orientation(self) -> int:
-        return self._get("SplitView/layoutOrientation", 2, _type=int)  # Qt.Vertical
+        return self._get("SplitView/layoutOrientation", Qt.Orientation.Vertical.value, _type=int)
 
     @layout_orientation.setter
     def layout_orientation(self, value: int) -> None:
