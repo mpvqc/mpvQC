@@ -38,39 +38,6 @@ def configure_inject(common_bindings_with, player_service_mock, command_generato
     common_bindings_with(custom_bindings)
 
 
-def test_request_open_new_comment_menu_emits_signal(view_model, make_spy):
-    spy = make_spy(view_model.openNewCommentMenuRequested)
-    view_model.requestOpenNewCommentMenu()
-    assert spy.count() == 1
-
-
-def test_request_toggle_full_screen_emits_signal(view_model, make_spy):
-    spy = make_spy(view_model.toggleFullScreenRequested)
-    view_model.requestToggleFullScreen()
-    assert spy.count() == 1
-
-
-def test_request_disable_full_screen_emits_signal(view_model, make_spy):
-    spy = make_spy(view_model.disableFullScreenRequested)
-    view_model.requestDisableFullScreen()
-    assert spy.count() == 1
-
-
-def test_request_resize_app_window_emits_signal_with_args(view_model, make_spy):
-    spy = make_spy(view_model.appWindowSizeRequested)
-    view_model.requestResizeAppWindow(800, 600)
-    assert spy.count() == 1
-    assert spy.at(0, 0) == 800
-    assert spy.at(0, 1) == 600
-
-
-def test_add_new_empty_comment_emits_signal_with_type(view_model, make_spy):
-    spy = make_spy(view_model.addNewCommentRequested)
-    view_model.addNewEmptyComment("Spelling")
-    assert spy.count() == 1
-    assert spy.at(0, 0) == "Spelling"
-
-
 def test_forward_key_to_player_sends_generated_command(view_model, player_service_mock, command_generator_mock):
     command_generator_mock.generate_command.return_value = "SPACE"
     view_model.forwardKeyToPlayer(Qt.Key.Key_Space, Qt.KeyboardModifier.NoModifier)

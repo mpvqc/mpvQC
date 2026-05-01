@@ -25,6 +25,11 @@ Item {
     readonly property int separatorMargin: 8
     readonly property int leftContentWidth: menuBarWidth + _separator.width + _toolBar.width
 
+    signal windowDragRequested
+    signal minimizeRequested
+    signal toggleMaximizeRequested
+    signal closeRequested
+
     height: menuBarHeight
     visible: !MpvqcWindowUtility.isFullscreen
 
@@ -34,14 +39,14 @@ Item {
 
         onActiveChanged: {
             if (active) {
-                root.viewModel.requestWindowDrag();
+                root.windowDragRequested();
             }
         }
     }
 
     TapHandler {
         onDoubleTapped: {
-            root.viewModel.requestToggleMaximize();
+            root.toggleMaximizeRequested();
         }
     }
 
@@ -92,9 +97,9 @@ Item {
         MpvqcHeaderWindowButtons {
             Layout.preferredHeight: root.menuBarHeight
 
-            onMinimizeRequested: root.viewModel.requestMinimize()
-            onToggleMaximizeRequested: root.viewModel.requestToggleMaximize()
-            onCloseRequested: root.viewModel.requestClose()
+            onMinimizeRequested: root.minimizeRequested()
+            onToggleMaximizeRequested: root.toggleMaximizeRequested()
+            onCloseRequested: root.closeRequested()
         }
     }
 }

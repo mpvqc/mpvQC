@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, Signal
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import PlayerService, SettingsService, StateService
@@ -22,11 +22,6 @@ class MpvqcHeaderViewModel(QObject):
     _state = inject.attr(StateService)
 
     windowTitleChanged = Signal(str)
-
-    windowDragRequested = Signal()
-    minimizeAppRequested = Signal()
-    toggleMaximizeAppRequested = Signal()
-    closeAppRequested = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -57,19 +52,3 @@ class MpvqcHeaderViewModel(QObject):
 
         #: %1 will be the title of the application (one of: mpvQC, file name, file path)
         return QCoreApplication.translate("MainWindow", "%1 (unsaved)").replace("%1", title)
-
-    @Slot()
-    def requestWindowDrag(self) -> None:
-        self.windowDragRequested.emit()
-
-    @Slot()
-    def requestMinimize(self) -> None:
-        self.minimizeAppRequested.emit()
-
-    @Slot()
-    def requestToggleMaximize(self) -> None:
-        self.toggleMaximizeAppRequested.emit()
-
-    @Slot()
-    def requestClose(self) -> None:
-        self.closeAppRequested.emit()
