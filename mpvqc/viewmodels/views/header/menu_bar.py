@@ -59,8 +59,8 @@ class MpvqcMenuBarViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._settings.windowTitleFormatChanged.connect(lambda v: self.windowTitleFormatChanged.emit(v))
-        self._settings.layoutOrientationChanged.connect(lambda v: self.applicationLayoutChanged.emit(v))
+        self._settings.windowTitleFormatChanged.connect(self.windowTitleFormatChanged)
+        self._settings.layoutOrientationChanged.connect(self.applicationLayoutChanged)
 
     @Property(bool, constant=True, final=True)
     def isUpdateMenuVisible(self) -> bool:

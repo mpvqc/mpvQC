@@ -58,7 +58,10 @@ class Renderer(QQuickFramebufferObject.Renderer):
         super().__init__()
         self._parent = parent
         self._ctx: MpvRenderContext | None = None
-        self._host_integration.display_zoom_factor_changed.connect(lambda _: self._parent.update_requested.emit())
+        self._host_integration.display_zoom_factor_changed.connect(self._on_zoom_factor_changed)
+
+    def _on_zoom_factor_changed(self) -> None:
+        self._parent.update_requested.emit()
 
     @typing.override
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
