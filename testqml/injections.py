@@ -86,6 +86,38 @@ class PlayerServiceOverride(PlayerService):
     def move_mouse(self, x: int, y: int) -> None:
         pass
 
+    @typing.override
+    def press_key(self, command: str) -> None:
+        pass
+
+    @typing.override
+    def press_mouse_left(self) -> None:
+        pass
+
+    @typing.override
+    def release_mouse_left(self) -> None:
+        pass
+
+    @typing.override
+    def press_mouse_middle(self) -> None:
+        pass
+
+    @typing.override
+    def press_mouse_back(self) -> None:
+        pass
+
+    @typing.override
+    def press_mouse_forward(self) -> None:
+        pass
+
+    @typing.override
+    def scroll_up(self) -> None:
+        pass
+
+    @typing.override
+    def scroll_down(self) -> None:
+        pass
+
 
 class ExportServiceOverride(ExportService):
     @typing.override

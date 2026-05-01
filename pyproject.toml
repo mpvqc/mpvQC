@@ -236,6 +236,7 @@ files = [
     "qt/qml/app/tst_MpvqcApplicationContent_OptionsMenu.qml",
     "qt/qml/app/tst_MpvqcApplicationContent_Shortcuts.qml",
     "qt/qml/app/tst_MpvqcApplicationContent_VideoMenu.qml",
+    "qt/qml/app/tst_MpvqcApplicationContent_WindowChrome.qml",
     "qt/qml/app/tst_MpvqcContentKeyHandler.qml",
     "qt/qml/components/MpvqcDebugRectangle.qml",
     "qt/qml/components/MpvqcDialog.qml",
