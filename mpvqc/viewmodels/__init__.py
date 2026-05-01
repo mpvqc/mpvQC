@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .application import MpvqcApplicationViewModel as MpvqcApplicationViewModel
+from .app import MpvqcAppViewModel as MpvqcAppViewModel
 from .backup_timer import MpvqcBackupTimerViewModel as MpvqcBackupTimerViewModel
-from .content import MpvqcContentViewModel as MpvqcContentViewModel
 from .dialog_loader import MpvqcDialogLoaderViewModel as MpvqcDialogLoaderViewModel
 from .dialogs import (
     MpvqcAboutDialogViewModel as MpvqcAboutDialogViewModel,
