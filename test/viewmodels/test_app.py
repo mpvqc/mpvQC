@@ -7,9 +7,16 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
+from PySide6.QtCore import Qt
 
-from mpvqc.services import HostIntegrationService, WindowPropertiesService
-from mpvqc.viewmodels import MpvqcApplicationViewModel
+from mpvqc.services import (
+    HostIntegrationService,
+    KeyCommandGeneratorService,
+    PlayerService,
+    SettingsService,
+    WindowPropertiesService,
+)
+from mpvqc.viewmodels import MpvqcAppViewModel
 
 
 @pytest.fixture
@@ -27,13 +34,39 @@ def window_properties_service_mock():
     return mock
 
 
+@pytest.fixture
+def player_service_mock():
+    return MagicMock(spec_set=PlayerService)
+
+
+@pytest.fixture
+def command_generator_mock():
+    return MagicMock(spec_set=KeyCommandGeneratorService)
+
+
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, host_integration_service_mock, window_properties_service_mock):
+def configure_inject(
+    common_bindings_with,
+    host_integration_service_mock,
+    window_properties_service_mock,
+    player_service_mock,
+    command_generator_mock,
+    settings_service,
+):
     def custom_bindings(binder: inject.Binder):
         binder.bind(HostIntegrationService, host_integration_service_mock)
         binder.bind(WindowPropertiesService, window_properties_service_mock)
+        binder.bind(PlayerService, player_service_mock)
+        binder.bind(KeyCommandGeneratorService, command_generator_mock)
+        binder.bind(SettingsService, settings_service)
 
     common_bindings_with(custom_bindings)
+
+
+@pytest.fixture
+def view_model() -> MpvqcAppViewModel:
+    # noinspection PyCallingNonCallable
+    return MpvqcAppViewModel()
 
 
 class WindowBorderTestCase(NamedTuple):
@@ -105,6 +138,19 @@ def test_window_border(test_case: WindowBorderTestCase, host_integration_service
     window_properties_service_mock.is_maximized = test_case.is_maximized
 
     # noinspection PyCallingNonCallable
-    view_model = MpvqcApplicationViewModel()
+    view_model = MpvqcAppViewModel()
 
     assert view_model.windowBorder == test_case.expected_border
+
+
+def test_forward_key_to_player_sends_generated_command(view_model, player_service_mock, command_generator_mock):
+    command_generator_mock.generate_command.return_value = "SPACE"
+    view_model.forwardKeyToPlayer(Qt.Key.Key_Space, Qt.KeyboardModifier.NoModifier)
+    command_generator_mock.generate_command.assert_called_once_with(Qt.Key.Key_Space, Qt.KeyboardModifier.NoModifier)
+    player_service_mock.press_key.assert_called_once_with("SPACE")
+
+
+def test_forward_key_to_player_skips_when_no_command_generated(view_model, player_service_mock, command_generator_mock):
+    command_generator_mock.generate_command.return_value = None
+    view_model.forwardKeyToPlayer(Qt.Key.Key_unknown, Qt.KeyboardModifier.NoModifier)
+    player_service_mock.press_key.assert_not_called()

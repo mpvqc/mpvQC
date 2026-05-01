@@ -14,7 +14,7 @@ import "../views/player"
 Item {
     id: root
 
-    readonly property MpvqcApplicationViewModel viewModel: MpvqcApplicationViewModel {}
+    readonly property MpvqcAppViewModel viewModel: MpvqcAppViewModel {}
 
     required property bool windowActive
     required property real windowWidth
@@ -47,10 +47,6 @@ Item {
         id: _menuBarViewModel
     }
 
-    MpvqcContentViewModel {
-        id: _contentViewModel
-    }
-
     MpvqcHeaderView {
         id: _header
 
@@ -72,7 +68,7 @@ Item {
         anchors.margins: root.viewModel.windowBorder
 
         header: _header
-        layoutOrientation: _contentViewModel.layoutOrientation
+        layoutOrientation: root.viewModel.layoutOrientation
         windowBorder: root.viewModel.windowBorder
         headerHeight: _header.height
 
@@ -122,6 +118,6 @@ Item {
 
         onOpenCommentMenuRequested: _commentMenu.popup()
         onToggleFullScreenRequested: root.toggleFullScreenRequested()
-        onForwardKeyToPlayerRequested: (key, modifiers) => _contentViewModel.forwardKeyToPlayer(key, modifiers)
+        onForwardKeyToPlayerRequested: (key, modifiers) => root.viewModel.forwardKeyToPlayer(key, modifiers)
     }
 }
