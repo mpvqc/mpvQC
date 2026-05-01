@@ -118,6 +118,7 @@ files = [
     "mpvqc/datamodels.py",
     "mpvqc/enums/__init__.py",
     "mpvqc/enums/time_format.py",
+    "mpvqc/enums/window_title_format.py",
     "mpvqc/injections.py",
     "mpvqc/logging_utils.py",
     "mpvqc/models/__init__.py",

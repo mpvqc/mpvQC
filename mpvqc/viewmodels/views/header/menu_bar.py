@@ -4,10 +4,9 @@
 
 import os
 import sys
-from enum import IntEnum
 
 import inject
-from PySide6.QtCore import Property, QEnum, QObject, QUrl, Signal, Slot
+from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
@@ -30,13 +29,6 @@ class MpvqcMenuBarViewModel(QObject):
     _resetter = inject.attr(ResetService)
     _settings = inject.attr(SettingsService)
     _state = inject.attr(StateService)
-
-    class WindowTitleFormat(IntEnum):
-        DEFAULT = 0
-        FILE_NAME = 1
-        FILE_PATH = 2
-
-    QEnum(WindowTitleFormat)
 
     confirmResetRequested = Signal()
     exportPathRequested = Signal()
