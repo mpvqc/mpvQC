@@ -98,7 +98,7 @@ Page {
         }
     }
 
-    MpvqcResizeHandler {
+    MpvqcResizeViewModel {
         id: _videoResizer
 
         headerHeight: root.headerHeight

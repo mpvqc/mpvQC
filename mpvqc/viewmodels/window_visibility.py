@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcWindowVisibilityHandler(QObject):
+class MpvqcWindowVisibilityViewModel(QObject):
     _window_properties_service = inject.attr(WindowPropertiesService)
     _main_window = inject.attr(MainWindowService)
 

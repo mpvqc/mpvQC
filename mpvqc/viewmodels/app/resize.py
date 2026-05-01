@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
-class MpvqcResizeHandler(QObject):
+class MpvqcResizeViewModel(QObject):
     _player = inject.attr(PlayerService)
     _resize_service = inject.attr(VideoResizeService)
 

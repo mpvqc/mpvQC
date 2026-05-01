@@ -10,12 +10,12 @@ import pyobjects
 
 QtObject {
 
-    readonly property MpvqcWindowPropertiesBackend windowPropertiesBackend: MpvqcWindowPropertiesBackend {}
+    readonly property MpvqcWindowPropertiesViewModel viewModel: MpvqcWindowPropertiesViewModel {}
 
-    readonly property int appWidth: windowPropertiesBackend.appWidth
-    readonly property int appHeight: windowPropertiesBackend.appHeight
-    readonly property bool isFullscreen: windowPropertiesBackend.isFullscreen
-    readonly property bool isMaximized: windowPropertiesBackend.isMaximized
+    readonly property int appWidth: viewModel.appWidth
+    readonly property int appHeight: viewModel.appHeight
+    readonly property bool isFullscreen: viewModel.isFullscreen
+    readonly property bool isMaximized: viewModel.isMaximized
 
     /**
      * Checks if local coordinates of an item are within the bottom region of the window.

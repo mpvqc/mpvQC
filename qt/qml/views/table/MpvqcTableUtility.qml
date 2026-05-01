@@ -9,9 +9,9 @@ import QtQuick
 import pyobjects
 
 QtObject {
-    readonly property MpvqcTableUtilityBackend backend: MpvqcTableUtilityBackend {}
+    readonly property MpvqcTableUtilityViewModel viewModel: MpvqcTableUtilityViewModel {}
 
-    readonly property bool useLongFormat: backend.duration >= 3600
+    readonly property bool useLongFormat: viewModel.duration >= 3600
     readonly property var _reForbidden: /[\u00AD\r\n]/gi
 
     function formatTime(inputSeconds: real): string {
