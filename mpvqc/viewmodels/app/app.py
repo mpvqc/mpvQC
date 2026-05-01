@@ -33,8 +33,8 @@ class MpvqcAppViewModel(QObject):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._window_border = self._compute_window_border()
-        self._window_properties.is_fullscreen_changed.connect(lambda _: self._update_window_border())
-        self._window_properties.is_maximized_changed.connect(lambda _: self._update_window_border())
+        self._window_properties.is_fullscreen_changed.connect(self._update_window_border)
+        self._window_properties.is_maximized_changed.connect(self._update_window_border)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
 
     def _compute_window_border(self) -> int:
@@ -44,6 +44,7 @@ class MpvqcAppViewModel(QObject):
             return 0
         return 1
 
+    @Slot()
     def _update_window_border(self) -> None:
         new_value = self._compute_window_border()
         if new_value != self._window_border:

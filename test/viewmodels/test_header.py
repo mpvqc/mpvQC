@@ -142,5 +142,5 @@ def test_window_title_changed(
 
     spy = make_spy(view_model.windowTitleChanged)
 
-    settings_service.language = "es-MX"
+    settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
     assert spy.count() == 1

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, Signal
+from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.enums import MpvqcWindowTitleFormat
@@ -26,15 +26,27 @@ class MpvqcHeaderViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._player.video_loaded_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._player.path_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._player.filename_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._settings.windowTitleFormatChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._settings.languageChanged.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
-        self._state.saved_changed.connect(lambda _: self.windowTitleChanged.emit(self.windowTitle))
+        self._window_title = self._derive_window_title()
+        self._player.video_loaded_changed.connect(self._update_window_title)
+        self._player.path_changed.connect(self._update_window_title)
+        self._player.filename_changed.connect(self._update_window_title)
+        self._settings.windowTitleFormatChanged.connect(self._update_window_title)
+        self._settings.languageChanged.connect(self._update_window_title)
+        self._state.saved_changed.connect(self._update_window_title)
 
     @Property(str, notify=windowTitleChanged)
     def windowTitle(self) -> str:
+        return self._derive_window_title()
+
+    @Slot()
+    def _update_window_title(self) -> None:
+        new_value = self._derive_window_title()
+        if new_value == self._window_title:
+            return
+        self._window_title = new_value
+        self.windowTitleChanged.emit(new_value)
+
+    def _derive_window_title(self) -> str:
         window_title_format = self._settings.window_title_format
 
         if not self._player.video_loaded or window_title_format == WindowTitleFormat.DEFAULT:
