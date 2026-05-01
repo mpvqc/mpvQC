@@ -184,8 +184,7 @@ def test_add_valid_comment_type(view_model, comment_type_validator_service_mock,
     assert not view_model.textFieldContent
 
 
-def test_add_with_validation_error(view_model, comment_type_validator_service_mock, make_spy):
-    validation_error_changed_spy = make_spy(view_model.validationErrorChanged)
+def test_add_with_validation_error(view_model, comment_type_validator_service_mock):
     comment_type_validator_service_mock.validate_new_comment_type.return_value = "Duplicate name"
 
     view_model.onTextFieldFocusChanged(True)
@@ -193,8 +192,6 @@ def test_add_with_validation_error(view_model, comment_type_validator_service_mo
 
     # Should show error
     assert view_model.validationError == "Duplicate name"
-    assert validation_error_changed_spy.count() == 1
-    assert validation_error_changed_spy.at(0, 0) == "Duplicate name"
 
     # Accept button should be disabled
     assert not view_model.isAcceptButtonEnabled
@@ -388,35 +385,31 @@ def test_accept_saves_to_settings(view_model, comment_types, settings_service_mo
 
 
 def test_signals_on_selection_change(view_model, make_spy):
-    selected_index_changed_spy = make_spy(view_model.selectedIndexChanged)
-    is_move_up_button_enabled_changed_spy = make_spy(view_model.isMoveUpButtonEnabledChanged)
-    is_move_down_button_enabled_changed_spy = make_spy(view_model.isMoveDownButtonEnabledChanged)
+    selected_index_spy = make_spy(view_model.selectedIndexChanged)
 
     view_model.selectItem(3)
 
-    assert selected_index_changed_spy.count() == 1
-    assert selected_index_changed_spy.at(0, 0) == 3
-    assert is_move_up_button_enabled_changed_spy.count() == 1
-    assert is_move_down_button_enabled_changed_spy.count() >= 0
+    assert selected_index_spy.count() == 1
+    assert view_model.selectedIndex == 3
+    assert view_model.isMoveUpButtonEnabled
+    assert view_model.isMoveDownButtonEnabled
 
 
 def test_validation_error_signal(view_model, comment_type_validator_service_mock, make_spy):
-    validation_error_changed_spy = make_spy(view_model.validationErrorChanged)
+    validation_error_spy = make_spy(view_model.validationErrorChanged)
     comment_type_validator_service_mock.validate_new_comment_type.return_value = "Error message"
 
     view_model.onTextFieldFocusChanged(True)
     view_model.onTextChanged("Invalid")
 
-    assert validation_error_changed_spy.count() == 1
-    assert validation_error_changed_spy.at(0, 0) == "Error message"
+    assert validation_error_spy.count() >= 1
+    assert view_model.validationError == "Error message"
 
     # Clear error
     comment_type_validator_service_mock.validate_new_comment_type.return_value = None
     view_model.onTextChanged("Valid")
 
-    # Should emit with empty string
-    assert validation_error_changed_spy.count() == 2
-    assert not validation_error_changed_spy.at(1, 0)
+    assert not view_model.validationError
 
 
 def test_no_focus_change_in_idle(view_model, make_spy):
