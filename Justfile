@@ -83,6 +83,7 @@ set-build-info:
 [group('build')]
 @build-develop: _update_pyproject_file
     uv run pyside6-project build
+    grep -qxF 'depends QtQml.Models' pyobjects/qmldir || echo 'depends QtQml.Models' >> pyobjects/qmldir
 
 # Remove ALL generated files
 [group('build')]

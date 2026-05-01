@@ -4,6 +4,6 @@
 
 import QtQuick
 
-import pyobjects
+import pyobjects // qmllint disable unused-imports
 
-MpvqcMpvFrameBufferObjectPyObject {}
+MpvqcMpvFrameBufferObjectPyObject {} // qmllint disable import
