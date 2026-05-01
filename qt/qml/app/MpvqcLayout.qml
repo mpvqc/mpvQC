@@ -45,11 +45,6 @@ Page {
         id: _splitView
         objectName: "applicationSplitView"
 
-        readonly property int tableContainerHeight: _tableContainer.height
-        readonly property int tableContainerWidth: _tableContainer.width
-        readonly property int draggerHeight: _splitView.height - _player.height - tableContainerHeight
-        readonly property int draggerWidth: _splitView.width - _player.width - tableContainerWidth
-
         focus: true
         anchors.fill: root.contentItem
         orientation: root.layoutOrientation
@@ -108,10 +103,10 @@ Page {
 
         headerHeight: root.headerHeight
         borderSize: root.windowBorder
-        handleWidth: _splitView.draggerWidth
-        handleHeight: _splitView.draggerHeight
-        tableWidth: _splitView.tableContainerWidth
-        tableHeight: _splitView.tableContainerHeight
+        handleWidth: _splitView.width - _player.width - _tableContainer.width
+        handleHeight: _splitView.height - _player.height - _tableContainer.height
+        tableWidth: _tableContainer.width
+        tableHeight: _tableContainer.height
 
         onAppWindowSizeRequested: (width, height) => {
             root.appWindowSizeRequested(width, height);
