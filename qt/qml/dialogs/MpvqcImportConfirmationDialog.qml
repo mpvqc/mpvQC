@@ -9,6 +9,7 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import "../components"
+import "../utility"
 
 MpvqcDialog {
     id: root
@@ -97,7 +98,7 @@ MpvqcDialog {
                     spacing: root.dimensions.rowSpacing
 
                     MpvqcIconLabel {
-                        icon.source: _delegate.index === root.viewModel.selectedVideoIndex ? "qrc:/data/icons/select_check_box_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" : "qrc:/data/icons/select_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        icon.source: _delegate.index === root.viewModel.selectedVideoIndex ? MpvqcIcons.selectCheckBox : MpvqcIcons.select
                         icon {
                             width: root.dimensions.iconSize
                             height: root.dimensions.iconSize
@@ -122,7 +123,7 @@ MpvqcDialog {
                         icon {
                             width: root.dimensions.iconSize
                             height: root.dimensions.iconSize
-                            source: "qrc:/data/icons/description_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                            source: MpvqcIcons.description
                         }
 
                         opacity: 0.3
@@ -136,7 +137,7 @@ MpvqcDialog {
                         icon {
                             width: root.dimensions.iconSize
                             height: root.dimensions.iconSize
-                            source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                            source: MpvqcIcons.subtitles
                         }
 
                         opacity: 0.3
@@ -213,7 +214,7 @@ MpvqcDialog {
                     spacing: root.dimensions.rowSpacing
 
                     MpvqcIconLabel {
-                        icon.source: _subtitleDelegate.checked ? "qrc:/data/icons/select_check_box_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" : "qrc:/data/icons/select_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        icon.source: _subtitleDelegate.checked ? MpvqcIcons.selectCheckBox : MpvqcIcons.select
                         icon {
                             width: root.dimensions.iconSize
                             height: root.dimensions.iconSize

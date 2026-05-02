@@ -65,7 +65,7 @@ Loader {
 
                 //: Context menu on right click in comments table
                 text: qsTranslate("CommentTable", "Edit Comment")
-                icon.source: "qrc:/data/icons/edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                icon.source: MpvqcIcons.edit
 
                 onTriggered: {
                     root._actionTriggered = true;
@@ -79,7 +79,7 @@ Loader {
 
                 //: Context menu on right click in comments table
                 text: qsTranslate("CommentTable", "Copy Comment")
-                icon.source: "qrc:/data/icons/content_copy_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                icon.source: MpvqcIcons.contentCopy
 
                 onTriggered: {
                     root._actionTriggered = true;
@@ -92,7 +92,7 @@ Loader {
 
                 //: Context menu on right click in comments table
                 text: qsTranslate("CommentTable", "Delete Comment")
-                icon.source: "qrc:/data/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                icon.source: MpvqcIcons.delete_
 
                 onTriggered: {
                     root._actionTriggered = true;

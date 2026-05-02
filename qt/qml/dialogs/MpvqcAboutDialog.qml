@@ -72,8 +72,8 @@ MpvqcDialog {
                 Layout.alignment: Qt.AlignHCenter
 
                 ToolButton {
-                    readonly property url beforeCopyIcon: "qrc:/data/icons/content_copy_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-                    readonly property url afterCopyIcon: "qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    readonly property url beforeCopyIcon: MpvqcIcons.contentCopy
+                    readonly property url afterCopyIcon: MpvqcIcons.check
 
                     anchors.left: parent.right
                     anchors.leftMargin: 0

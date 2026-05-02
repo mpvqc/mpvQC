@@ -24,8 +24,8 @@ Popup {
         return false;
     }
 
-    readonly property url iconNext: "qrc:/data/icons/keyboard_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-    readonly property url iconBefore: "qrc:/data/icons/keyboard_arrow_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+    readonly property url iconNext: MpvqcIcons.keyboardArrowRight
+    readonly property url iconBefore: MpvqcIcons.keyboardArrowLeft
 
     readonly property url downIcon: mirrored ? iconNext : iconBefore
     readonly property url upIcon: mirrored ? iconBefore : iconNext

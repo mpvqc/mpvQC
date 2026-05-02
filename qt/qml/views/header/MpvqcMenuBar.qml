@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import pyobjects
+import "../../utility"
 
 MenuBar {
     id: root
@@ -26,28 +27,28 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "newQcDocumentMenuItem"
             text: qsTranslate("MainWindow", "New QC Document")
-            icon.source: "qrc:/data/icons/draft_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.draft
             onTriggered: root.viewModel.requestResetAppState()
         }
 
         MpvqcMenuBarItem {
             objectName: "openQcDocumentsMenuItem"
             text: qsTranslate("MainWindow", "Open QC Document(s)...")
-            icon.source: "qrc:/data/icons/file_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.fileOpen
             onTriggered: root.viewModel.requestOpenQcDocuments()
         }
 
         MpvqcMenuBarItem {
             objectName: "saveQcDocumentMenuItem"
             text: qsTranslate("MainWindow", "Save QC Document")
-            icon.source: "qrc:/data/icons/save_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.save
             onTriggered: root.viewModel.requestSaveQcDocument()
         }
 
         MpvqcMenuBarItem {
             objectName: "saveQcDocumentAsMenuItem"
             text: qsTranslate("MainWindow", "Save QC Document As...")
-            icon.source: "qrc:/data/icons/save_as_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.saveAs
             onTriggered: root.viewModel.requestSaveQcDocumentAs()
         }
 
@@ -63,7 +64,7 @@ MenuBar {
         MpvqcMenuBarMenu {
             objectName: "exportQcDocumentMenu"
             title: qsTranslate("MainWindow", "Export QC Document")
-            icon.source: "qrc:/data/icons/file_export_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.fileExport
 
             Component.onCompleted: {
                 if (_extendedExportModel.count === 0) {
@@ -84,7 +85,7 @@ MenuBar {
                     required property url path
 
                     text: name
-                    icon.source: "qrc:/data/icons/notes_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    icon.source: MpvqcIcons.notes
                     onTriggered: root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
                 }
             }
@@ -95,7 +96,7 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "exitMpvqcMenuItem"
             text: qsTranslate("MainWindow", "Exit mpvQC")
-            icon.source: "qrc:/data/icons/exit_to_app_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.exitToApp
             onTriggered: root.viewModel.requestClose()
         }
     }
@@ -107,14 +108,14 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openVideoMenuItem"
             text: qsTranslate("MainWindow", "Open Video...")
-            icon.source: "qrc:/data/icons/movie_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.movie
             onTriggered: root.viewModel.requestOpenVideo()
         }
 
         MpvqcMenuBarItem {
             objectName: "openSubtitlesMenuItem"
             text: qsTranslate("MainWindow", "Open Subtitle(s)...")
-            icon.source: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.subtitles
             onTriggered: root.viewModel.requestOpenSubtitles()
         }
 
@@ -123,7 +124,7 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "resizeVideoMenuItem"
             text: qsTranslate("MainWindow", "Resize Video to Original Resolution")
-            icon.source: "qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.aspectRatio
             onTriggered: root.viewModel.requestResizeVideo()
         }
     }
@@ -135,21 +136,21 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openAppearanceDialogMenuItem"
             text: qsTranslate("MainWindow", "Appearance...")
-            icon.source: "qrc:/data/icons/palette_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.palette
             onTriggered: root.viewModel.requestOpenAppearanceDialog()
         }
 
         MpvqcMenuBarItem {
             objectName: "openCommentTypesDialogMenuItem"
             text: qsTranslate("MainWindow", "Comment Type Settings...")
-            icon.source: "qrc:/data/icons/comment_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.comment
             onTriggered: root.viewModel.requestOpenCommentTypesDialog()
         }
 
         MpvqcRadioMenu {
             objectName: "applicationTitleMenu"
             title: qsTranslate("MainWindow", "Application Title")
-            icon.source: "qrc:/data/icons/title_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.title
 
             currentValue: root.viewModel.windowTitleFormat
             model: [
@@ -176,7 +177,7 @@ MenuBar {
         MpvqcRadioMenu {
             objectName: "applicationLayoutMenu"
             title: qsTranslate("MainWindow", "Application Layout")
-            icon.source: "qrc:/data/icons/vertical_split_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.verticalSplit
 
             currentValue: root.viewModel.applicationLayout
             model: [
@@ -200,21 +201,21 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openBackupSettingsDialogMenuItem"
             text: qsTranslate("MainWindow", "Backup Settings...")
-            icon.source: "qrc:/data/icons/settings_backup_restore_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.settingsBackupRestore
             onTriggered: root.viewModel.requestOpenBackupSettingsDialog()
         }
 
         MpvqcMenuBarItem {
             objectName: "openExportSettingsDialogMenuItem"
             text: qsTranslate("MainWindow", "Export Settings...")
-            icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.upload
             onTriggered: root.viewModel.requestOpenExportSettingsDialog()
         }
 
         MpvqcMenuBarItem {
             objectName: "openImportSettingsDialogMenuItem"
             text: qsTranslate("MainWindow", "Import Settings...")
-            icon.source: "qrc:/data/icons/download_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.download
             onTriggered: root.viewModel.requestOpenImportSettingsDialog()
         }
 
@@ -223,14 +224,14 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openEditMpvConfigDialogMenuItem"
             text: qsTranslate("MainWindow", "Edit mpv.conf...")
-            icon.source: "qrc:/data/icons/movie_edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.movieEdit
             onTriggered: root.viewModel.requestOpenEditMpvConfigDialog()
         }
 
         MpvqcMenuBarItem {
             objectName: "openEditInputConfigDialogMenuItem"
             text: qsTranslate("MainWindow", "Edit input.conf...")
-            icon.source: "qrc:/data/icons/keyboard_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.keyboard
             onTriggered: root.viewModel.requestOpenEditInputConfigDialog()
         }
 
@@ -248,7 +249,7 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openCheckForUpdatesMenuItem"
             text: qsTranslate("MainWindow", "Check for Updates...")
-            icon.source: "qrc:/data/icons/update_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.update
             visible: root.viewModel.isUpdateMenuVisible
             height: visible ? implicitHeight : 0
             onTriggered: root.viewModel.requestOpenCheckForUpdatesDialog()
@@ -257,7 +258,7 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openKeyboardShortcutsMenuItem"
             text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
-            icon.source: "qrc:/data/icons/keyboard_double_arrow_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.keyboardDoubleArrowRight
             onTriggered: root.viewModel.requestOpenKeyboardShortcutsDialog()
         }
 
@@ -266,14 +267,14 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openExtendedExportsDialogMenuItem"
             text: qsTranslate("MainWindow", "Extended Exports...")
-            icon.source: "qrc:/data/icons/upload_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.upload
             onTriggered: root.viewModel.requestOpenExtendedExportsDialog()
         }
 
         MpvqcMenuBarItem {
             objectName: "openAppDataFolderMenuItem"
             text: qsTranslate("MainWindow", "Open App Data Folder...")
-            icon.source: "qrc:/data/icons/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.folderOpen
             onTriggered: root.viewModel.openAppDataFolder()
         }
 
@@ -282,7 +283,7 @@ MenuBar {
         MpvqcMenuBarItem {
             objectName: "openAboutDialogMenuItem"
             text: qsTranslate("MainWindow", "About mpvQC...")
-            icon.source: "qrc:/data/icons/info_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.info
             onTriggered: root.viewModel.requestOpenAboutDialog()
         }
     }

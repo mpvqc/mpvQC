@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import "../utility"
 
 RowLayout {
     id: root
@@ -32,7 +33,7 @@ RowLayout {
         toolTipText: root.toolTip
 
         icon {
-            source: "qrc:/data/icons/tooltip_2_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg"
+            source: MpvqcIcons.tooltip2
             width: 18
             height: 18
         }

@@ -125,7 +125,7 @@ Item {
             objectName: "playButton"
 
             focusPolicy: Qt.NoFocus
-            icon.source: "qrc:/data/icons/play_arrow_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.playArrow
 
             onPressed: root.playButtonPressed()
         }
