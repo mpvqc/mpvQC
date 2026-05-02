@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls.Material
 
 import pyobjects
+
 import "../../utility"
 
 MpvqcMenuBarMenu {
