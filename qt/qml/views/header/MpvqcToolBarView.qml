@@ -7,6 +7,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 
 import pyobjects
+import "../../utility"
 
 Item {
     id: root
@@ -37,7 +38,7 @@ Item {
 
             MpvqcToolBarButton {
                 size: root.buttonSize
-                iconSource: "qrc:/data/icons/first_page_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                iconSource: MpvqcIcons.firstPage
                 //: Tooltip for 'Frame Step Backward', %1 will be the default shortcut button identifier
                 toolTipText: qsTranslate("ToolBar", "Frame Step Backward (%1)").arg(" , ")
 
@@ -46,7 +47,7 @@ Item {
 
             MpvqcToolBarButton {
                 size: root.buttonSize
-                iconSource: "qrc:/data/icons/last_page_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                iconSource: MpvqcIcons.lastPage
                 //: Tooltip for 'Frame Step Forward', %1 will be the default shortcut button identifier
                 toolTipText: qsTranslate("ToolBar", "Frame Step Forward (%1)").arg(" . ")
 
@@ -63,7 +64,7 @@ Item {
         MpvqcToolBarButton {
             size: root.buttonSize
             visible: root.viewModel.cycleSubtitleTrackVisible
-            iconSource: "qrc:/data/icons/subtitles_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            iconSource: MpvqcIcons.subtitles
             //: Tooltip for 'Cycle Subtitle Track', %1 will be the default shortcut button identifier
             toolTipText: qsTranslate("ToolBar", "Cycle Subtitle Track (%1)").arg("J")
 
@@ -73,7 +74,7 @@ Item {
         MpvqcToolBarButton {
             size: root.buttonSize
             visible: root.viewModel.cycleAudioTrackVisible
-            iconSource: "qrc:/data/icons/music_note_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            iconSource: MpvqcIcons.musicNote
             //: Tooltip for 'Cycle Audio Track', %1 will be the default shortcut button identifier
             toolTipText: qsTranslate("ToolBar", "Cycle Audio Track (%1)").arg("#")
 

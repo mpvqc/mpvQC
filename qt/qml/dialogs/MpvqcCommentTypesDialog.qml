@@ -67,7 +67,7 @@ MpvqcDialog {
                 icon {
                     width: 20
                     height: 20
-                    source: "qrc:/data/icons/check_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    source: MpvqcIcons.check
                 }
 
                 onPressed: {
@@ -81,7 +81,7 @@ MpvqcDialog {
                 icon {
                     width: 20
                     height: 20
-                    source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    source: MpvqcIcons.close
                 }
 
                 onPressed: {
@@ -253,7 +253,7 @@ MpvqcDialog {
                     icon {
                         width: 28
                         height: 28
-                        source: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        source: MpvqcIcons.keyboardArrowUp
                     }
 
                     onPressed: {
@@ -268,7 +268,7 @@ MpvqcDialog {
                     icon {
                         width: 28
                         height: 28
-                        source: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        source: MpvqcIcons.keyboardArrowDown
                     }
 
                     onPressed: {
@@ -281,7 +281,7 @@ MpvqcDialog {
                     enabled: root.viewModel.isEditButtonEnabled
 
                     icon {
-                        source: "qrc:/data/icons/edit_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        source: MpvqcIcons.edit
                     }
 
                     onPressed: {
@@ -294,7 +294,7 @@ MpvqcDialog {
                     enabled: root.viewModel.isDeleteButtonEnabled
 
                     icon {
-                        source: "qrc:/data/icons/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                        source: MpvqcIcons.delete_
                     }
 
                     onPressed: {

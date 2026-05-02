@@ -107,7 +107,7 @@ Popup {
             Layout.rightMargin: 4
 
             icon {
-                source: "qrc:/data/icons/search_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                source: MpvqcIcons.search
                 height: 24
                 width: 24
                 color: Material.hintTextColor
@@ -172,7 +172,7 @@ Popup {
                 focusPolicy: Qt.NoFocus
 
                 icon {
-                    source: "qrc:/data/icons/keyboard_arrow_up_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    source: MpvqcIcons.keyboardArrowUp
                 }
 
                 onClicked: root.viewModel.selectPrevious()
@@ -203,7 +203,7 @@ Popup {
                 focusPolicy: Qt.NoFocus
 
                 icon {
-                    source: "qrc:/data/icons/keyboard_arrow_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                    source: MpvqcIcons.keyboardArrowDown
                 }
 
                 onClicked: root.viewModel.selectNext()
@@ -230,7 +230,7 @@ Popup {
             icon {
                 width: 18
                 height: 18
-                source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+                source: MpvqcIcons.close
             }
 
             onClicked: root.close()

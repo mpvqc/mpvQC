@@ -11,6 +11,7 @@ import QtQuick.Layouts
 import pyobjects
 
 import "../components"
+import "../utility"
 
 MpvqcDialog {
     id: root
@@ -61,7 +62,7 @@ MpvqcDialog {
             objectName: "backupOpenLocationButton"
 
             text: qsTranslate("BackupDialog", "Backup Location")
-            icon.source: "qrc:/data/icons/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            icon.source: MpvqcIcons.folderOpen
             hoverEnabled: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 40

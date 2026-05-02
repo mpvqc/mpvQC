@@ -29,7 +29,7 @@ Row {
         focusPolicy: Qt.NoFocus
         icon.width: 20
         icon.height: 20
-        icon.source: "qrc:/data/icons/minimize_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+        icon.source: MpvqcIcons.minimize
 
         onClicked: root.minimizeRequested()
     }
@@ -37,8 +37,8 @@ Row {
     ToolButton {
         objectName: "maximizeButton"
 
-        readonly property url iconMaximize: "qrc:/data/icons/open_in_full_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
-        readonly property url iconNormalize: "qrc:/data/icons/close_fullscreen_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+        readonly property url iconMaximize: MpvqcIcons.openInFull
+        readonly property url iconNormalize: MpvqcIcons.closeFullscreen
 
         visible: root.windowButtons.showMaximizeButton
         height: root.height
@@ -65,7 +65,7 @@ Row {
         icon {
             width: 18
             height: 18
-            source: "qrc:/data/icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            source: MpvqcIcons.close
             color: _closeButton.hovered ? _closeButton.hoverIconColor : _closeButton.idleIconColor
         }
 
