@@ -7,6 +7,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 
 import pyobjects
+
 import "../../utility"
 
 Item {

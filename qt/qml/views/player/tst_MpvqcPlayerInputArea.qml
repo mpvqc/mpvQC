@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import QtTest
 import QtQuick
+import QtTest
 
 TestCase {
     id: testCase

@@ -4,8 +4,8 @@
 
 pragma ComponentBehavior: Bound
 
-import QtTest
 import QtQuick
+import QtTest
 
 import "../../utility"
 

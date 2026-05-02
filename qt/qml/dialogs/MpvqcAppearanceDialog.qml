@@ -8,10 +8,10 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import pyobjects
+
 import "../components"
 import "../utility"
-
-import pyobjects
 
 MpvqcDialog {
     id: root
