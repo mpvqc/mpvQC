@@ -7,201 +7,24 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, cast, override
+from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QObject, Signal, SignalInstance
+from PySide6.QtCore import Property, QObject, Signal
 
-from .application_paths import ApplicationPathsService
-from .host_integration import HostIntegrationService
-from .type_mapper import TypeMapperService
+import mpvqc.services.player.properties as props
+from mpvqc.services.application_paths import ApplicationPathsService
+from mpvqc.services.host_integration import HostIntegrationService
+from mpvqc.services.player.coordinators import DimensionsCoordinator, SubtitleLoadCoordinator
+from mpvqc.services.type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-    from typing import Any, ClassVar
+    from typing import Any
 
     from mpv import MPV, MpvRenderContext
 
 logger = logging.getLogger(__name__)
-
-
-class MpvProperty[TRaw, T]:
-    name: ClassVar[str]
-    initial: ClassVar[Any]
-
-    def __init__(self, signal: SignalInstance) -> None:
-        self._signal = signal
-        self._cached: T = self.initial
-        self._listeners: list[Callable[[T], object]] = []
-
-    def transform(self, raw: TRaw) -> T:
-        return cast("T", raw)
-
-    def on_change(self, listener: Callable[[T], object]) -> None:
-        self._listeners.append(listener)
-
-    def on_update(self, raw: TRaw | None) -> None:
-        if raw is None:
-            return
-        new_value = self.transform(raw)
-        self.set(new_value)
-
-    def set(self, new_value: T) -> None:
-        if self._cached == new_value:
-            return
-        self._cached = new_value
-        self._signal.emit(new_value)
-        for listener in self._listeners:
-            listener(new_value)
-
-    @property
-    def cached(self) -> T:
-        return self._cached
-
-
-class DurationProperty(MpvProperty[float, float]):
-    name: ClassVar[str] = "duration"
-    initial: ClassVar[float] = 0.0
-
-
-class PercentPosProperty(MpvProperty[float, int]):
-    name: ClassVar[str] = "percent-pos"
-    initial: ClassVar[int] = 0
-
-    @override
-    def transform(self, raw: float) -> int:
-        return int(raw + 0.5)
-
-
-class TimePosProperty(MpvProperty[float, int]):
-    name: ClassVar[str] = "time-pos"
-    initial: ClassVar[int] = 0
-
-    @override
-    def transform(self, raw: float) -> int:
-        return int(raw + 0.5)
-
-
-class TimeRemainingProperty(MpvProperty[float, int]):
-    name: ClassVar[str] = "time-remaining"
-    initial: ClassVar[int] = 0
-
-    @override
-    def transform(self, raw: float) -> int:
-        return int(raw + 0.5)
-
-
-class PathProperty(MpvProperty[str, str]):
-    name: ClassVar[str] = "path"
-    initial: ClassVar[str] = ""
-
-
-class VideoLoadedProperty(MpvProperty[str, bool]):
-    name: ClassVar[str] = "path"
-    initial: ClassVar[bool] = False
-
-    @override
-    def on_update(self, raw: str | None) -> None:
-        self.set(raw is not None)
-
-
-class FilenameProperty(MpvProperty[str, str]):
-    name: ClassVar[str] = "filename"
-    initial: ClassVar[str] = ""
-
-
-class HeightProperty(MpvProperty[int, int]):
-    name: ClassVar[str] = "height"
-    initial: ClassVar[int] = 0
-
-
-class WidthProperty(MpvProperty[int, int]):
-    name: ClassVar[str] = "width"
-    initial: ClassVar[int] = 0
-
-
-class AudioTrackCountProperty(MpvProperty[list[dict], int]):
-    name: ClassVar[str] = "track-list"
-    initial: ClassVar[int] = 0
-
-    @override
-    def transform(self, raw: list[dict]) -> int:
-        return sum(1 for entry in raw if entry.get("type") == "audio")
-
-
-class SubtitleTrackCountProperty(MpvProperty[list[dict], int]):
-    name: ClassVar[str] = "track-list"
-    initial: ClassVar[int] = 0
-
-    @override
-    def transform(self, raw: list[dict]) -> int:
-        return sum(1 for entry in raw if entry.get("type") == "sub")
-
-
-class ExternalSubtitlesProperty(MpvProperty[list[dict], tuple[str, ...]]):
-    name: ClassVar[str] = "track-list"
-    initial: ClassVar[tuple[str, ...]] = ()
-
-    @override
-    def transform(self, raw: list[dict]) -> tuple[str, ...]:
-        external = {
-            str(Path(entry.get("external-filename", "")).resolve())
-            for entry in raw
-            if entry.get("external") and entry.get("type") == "sub"
-        }
-        return tuple(sorted(external))
-
-
-class DimensionsCoordinator:
-    def __init__(self, on_both_ready: Callable[[int, int], None]) -> None:
-        self._on_both_ready = on_both_ready
-        self._pending_width: int | None = None
-        self._pending_height: int | None = None
-
-    def on_width(self, value: int) -> None:
-        self._pending_width = value
-        self._check()
-
-    def on_height(self, value: int) -> None:
-        self._pending_height = value
-        self._check()
-
-    def reset(self) -> None:
-        self._pending_width = None
-        self._pending_height = None
-
-    def _check(self) -> None:
-        if self._pending_width and self._pending_height:
-            self._on_both_ready(self._pending_width, self._pending_height)
-            self.reset()
-
-
-class SubtitleLoadCoordinator:
-    def __init__(self, on_flush: Callable[[Iterable[Path]], None]) -> None:
-        self._on_flush = on_flush
-        self._cache: set[Path] = set()
-        self._loading = False
-
-    @property
-    def is_loading(self) -> bool:
-        return self._loading
-
-    @property
-    def cached(self) -> set[Path]:
-        return self._cache
-
-    def begin_loading(self) -> None:
-        self._loading = True
-
-    def queue(self, subtitles: Iterable[Path]) -> None:
-        self._cache |= set(subtitles)
-
-    def on_video_loaded(self, loaded: bool) -> None:
-        if loaded and self._loading:
-            self._loading = False
-            if self._cache:
-                self._on_flush(self._cache)
-                self._cache.clear()
 
 
 class PlayerService(QObject):
@@ -229,26 +52,26 @@ class PlayerService(QObject):
         super().__init__()
 
         self._mpv: MPV | None = None
-        self._observed: list[MpvProperty[Any, Any]] = []
+        self._observed: list[props.MpvProperty[Any, Any]] = []
         self._dimensions_coordinator = DimensionsCoordinator(on_both_ready=self.video_dimensions_changed.emit)
         self._subtitle_coordinator = SubtitleLoadCoordinator(on_flush=self._load_subtitles_now)
 
-        def register[P: MpvProperty[Any, Any]](prop: P) -> P:
+        def register[P: props.MpvProperty[Any, Any]](prop: P) -> P:
             self._observed.append(prop)
             return prop
 
-        self._duration_prop = register(DurationProperty(self.duration_changed))
-        self._percent_pos_prop = register(PercentPosProperty(self.percent_pos_changed))
-        self._time_pos_prop = register(TimePosProperty(self.time_pos_changed))
-        self._time_remaining_prop = register(TimeRemainingProperty(self.time_remaining_changed))
-        self._path_prop = register(PathProperty(self.path_changed))
-        self._video_loaded_prop = register(VideoLoadedProperty(self.video_loaded_changed))
-        self._filename_prop = register(FilenameProperty(self.filename_changed))
-        self._height_prop = register(HeightProperty(self.height_changed))
-        self._width_prop = register(WidthProperty(self.width_changed))
-        self._audio_track_count_prop = register(AudioTrackCountProperty(self.audio_track_count_changed))
-        self._subtitle_track_count_prop = register(SubtitleTrackCountProperty(self.subtitle_track_count_changed))
-        self._external_subtitles_prop = register(ExternalSubtitlesProperty(self.external_subtitles_changed))
+        self._duration_prop = register(props.Duration(self.duration_changed))
+        self._percent_pos_prop = register(props.PercentPos(self.percent_pos_changed))
+        self._time_pos_prop = register(props.TimePos(self.time_pos_changed))
+        self._time_remaining_prop = register(props.TimeRemaining(self.time_remaining_changed))
+        self._path_prop = register(props.Path(self.path_changed))
+        self._video_loaded_prop = register(props.VideoLoaded(self.video_loaded_changed))
+        self._filename_prop = register(props.Filename(self.filename_changed))
+        self._height_prop = register(props.Height(self.height_changed))
+        self._width_prop = register(props.Width(self.width_changed))
+        self._audio_track_count_prop = register(props.AudioTrackCount(self.audio_track_count_changed))
+        self._subtitle_track_count_prop = register(props.SubtitleTrackCount(self.subtitle_track_count_changed))
+        self._external_subtitles_prop = register(props.ExternalSubtitles(self.external_subtitles_changed))
 
         self._path_prop.on_change(lambda _: self._dimensions_coordinator.reset())
         self._video_loaded_prop.on_change(self._subtitle_coordinator.on_video_loaded)
