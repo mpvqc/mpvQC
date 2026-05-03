@@ -17,7 +17,7 @@ from mpvqc.services import (
     StateService,
 )
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 

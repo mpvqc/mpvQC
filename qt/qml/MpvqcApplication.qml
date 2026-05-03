@@ -5,10 +5,9 @@
 import QtQuick
 import QtQuick.Controls.Material
 
-import pyobjects
-
-import "app"
-import "utility"
+import io.github.mpvqc.mpvQC.App
+import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
 
 ApplicationWindow {
     id: root

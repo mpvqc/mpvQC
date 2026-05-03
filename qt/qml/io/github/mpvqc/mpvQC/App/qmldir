@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module io.github.mpvqc.mpvQC.App
+
+MpvqcApplicationContent MpvqcApplicationContent.qml
+
+internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
+internal MpvqcFileDropArea MpvqcFileDropArea.qml
+internal MpvqcLayout MpvqcLayout.qml
+internal MpvqcOverlayController MpvqcOverlayController.qml
+internal TestHelpers TestHelpers.qml

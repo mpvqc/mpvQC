@@ -1,0 +1,109 @@
+// SPDX-FileCopyrightText: mpvQC developers
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import QtQuick
+import QtQuick.Controls.Material
+
+import io.github.mpvqc.mpvQC.Utility
+
+Popup {
+    id: root
+    objectName: "editCommentPopup"
+
+    required property int currentListIndex
+    required property string currentComment
+
+    readonly property bool isOdd: currentListIndex % 2 === 1
+
+    property bool acceptValue: true
+
+    signal commentEdited(index: int, newComment: string)
+
+    width: root.parent.width
+
+    background: null
+    dim: false
+    modal: false
+    enter: null
+    exit: null
+
+    contentItem: TextArea {
+        id: _textField
+        objectName: "commentTextArea"
+
+        text: root.currentComment
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignLeft
+
+        focus: true
+        selectByMouse: true
+
+        bottomPadding: root.bottomPadding
+        topPadding: root.topPadding
+        leftPadding: root.leftPadding
+        rightPadding: root.rightPadding
+
+        selectionColor: MpvqcTheme.rowHighlight
+        selectedTextColor: MpvqcTheme.rowHighlightText
+
+        background: Rectangle {
+            anchors.fill: parent
+            color: MpvqcTheme.getBackground(root.isOdd)
+        }
+
+        ContextMenu.menu: null
+
+        Keys.onReturnPressed: {
+            root.close();
+        }
+    }
+
+    onAboutToHide: {
+        if (!acceptValue)
+            return;
+
+        const text = _textField.text.trim();
+        const sanitizedText = MpvqcTableUtility.sanitizeText(text);
+
+        if (root.currentComment !== sanitizedText) {
+            root.commentEdited(root.currentListIndex, sanitizedText);
+        }
+    }
+
+    onOpened: {
+        _textField.selectAll();
+        _textField.forceActiveFocus();
+    }
+
+    onActiveFocusChanged: {
+        if (!activeFocus) {
+            root.close();
+        }
+    }
+
+    Shortcut {
+        sequence: "Esc"
+
+        onActivated: {
+            root.acceptValue = false;
+            root.close();
+        }
+    }
+
+    // Hide original text while editing to avoid visual duplication
+    Binding {
+        when: root.visible
+        target: root.parent
+        property: "text"
+        value: ""
+    }
+
+    // Notify delegate of editor height so it can expand to accommodate growing content
+    Binding {
+        when: root.visible
+        target: root.parent
+        property: "editorHeight"
+        value: root.height
+    }
+}

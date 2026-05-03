@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module io.github.mpvqc.mpvQC.FileDialogs
+
+MpvqcFileDialogLoader MpvqcFileDialogLoader.qml
+
+internal MpvqcExportDocumentFileDialog MpvqcExportDocumentFileDialog.qml
+internal MpvqcImportDocumentsFileDialog MpvqcImportDocumentsFileDialog.qml
+internal MpvqcImportSubtitlesFileDialog MpvqcImportSubtitlesFileDialog.qml
+internal MpvqcImportVideoFileDialog MpvqcImportVideoFileDialog.qml
+internal MpvqcSaveDocumentFileDialog MpvqcSaveDocumentFileDialog.qml

@@ -13,7 +13,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import ApplicationPathsService, DesktopService, PlayerService, SettingsService, StateService
 from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 _DELAY_MS = int(os.environ.get("MPVQC_TEST_DELAY_MS", "100"))

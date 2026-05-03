@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
     from .item import CommentItem
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 

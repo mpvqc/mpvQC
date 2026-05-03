@@ -31,11 +31,13 @@ flowchart LR
 
 ### Views — `qt/qml/`
 
-QML files describe what the user sees and how they interact. Views hold no business logic; they bind to a viewmodel's properties, call its slots in response to user actions, and react to its signals. Subdirectories group views by surface area, with reusable building blocks alongside.
+QML files describe what the user sees and how they interact. Views hold no business logic; they bind to a viewmodel's properties, call its slots in response to user actions, and react to its signals.
+
+QML modules under `qt/qml/` follow a reverse-DNS naming convention rooted at the project's namespace; imports use the full module URI rather than relative paths. The QQuickStyle override directory is the one intentional exception — it lives outside the dotted tree because Qt's style resolution looks for it at an import-path root by single-segment name.
 
 ### ViewModels — `mpvqc/viewmodels/`
 
-ViewModels are Python `QObject` subclasses exposed to QML via PySide6's `@QmlElement`. They translate between Qt's signal/slot world and the underlying services: a viewmodel pulls in services with `inject.attr`, exposes the data the view needs as Qt properties, and turns user actions (`Slot`s) into service calls. The folder layout mirrors `qt/qml/` — each viewmodel sits in the directory that matches its consuming QML.
+ViewModels are Python `QObject` subclasses exposed to QML via PySide6's `@QmlElement`. They translate between Qt's signal/slot world and the underlying services: a viewmodel pulls in services with `inject.attr`, exposes the data the view needs as Qt properties, and turns user actions (`Slot`s) into service calls. They register into a single QML module that follows the same reverse-DNS convention as the QML-side modules. The folder layout under `mpvqc/viewmodels/` groups files by the consuming QML module.
 
 ### Services — `mpvqc/services/`
 
@@ -51,7 +53,7 @@ Tests sit at three layers:
 
 ```mermaid
 flowchart TB
-    subgraph Integration["QML integration tests — qt/qml/app/tst_MpvqcApplicationContent_*.qml"]
+    subgraph Integration["QML integration tests — tst_MpvqcApplicationContent_*.qml"]
         I1["Drives the application end-to-end<br/>through real menus, dialogs, services"]
     end
     subgraph QmlUnit["QML unit tests — qt/qml/.../tst_*.qml (colocated)"]
@@ -80,11 +82,11 @@ Standard pytest suite. Each service and viewmodel has its own test module that e
 
 Each non-trivial QML file has a sibling `tst_<Name>.qml` that exercises that component in isolation. Where the component depends on a viewmodel, the test instantiates a mock viewmodel inline; a small number of tests use a real viewmodel to cover model-binding paths that mocks can't fake. Run together with the integration tests via `just test-qml`.
 
-### QML integration tests — `qt/qml/app/tst_MpvqcApplicationContent_*.qml`
+### QML integration tests — `tst_MpvqcApplicationContent_*.qml`
 
 These drive the application content end-to-end against real, injected services. They click menu items, accept dialogs, and assert against application state through a Python test bridge. The harness lives entirely under `testqml/`: a Python entry point that boots a stripped-down application with the player swapped for a stub, bridges that expose inject state to QML, service overrides that keep tests off the real OS, and shared fixtures.
 
-`TestHelpers.qml` files keep test code terse by exposing the shared interactions — opening menus, finding dialogs, asserting state — as nested namespaces. There is one in `qt/qml/app/` for application-level tests and one inside the table view for component-level tests; each file's tests use the namespace shape that fits its scope.
+`TestHelpers.qml` files keep test code terse by exposing the shared interactions — opening menus, finding dialogs, asserting state — as nested namespaces. They sit alongside the QML they help test; each file's tests use the namespace shape that fits its scope.
 
 ## Build & resources
 
