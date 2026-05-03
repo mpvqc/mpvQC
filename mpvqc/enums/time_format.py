@@ -7,7 +7,7 @@ from enum import IntEnum
 from PySide6.QtCore import QEnum, QObject
 from PySide6.QtQml import QmlElement
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 

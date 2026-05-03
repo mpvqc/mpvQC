@@ -32,7 +32,7 @@ LANGUAGES = (
     Language(language=str(QT_TRANSLATE_NOOP("Languages", "Portuguese")), identifier="pt-PT", translator="Diogo_23"),
 )
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 

@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module io.github.mpvqc.mpvQC.Views.Player
+
+MpvqcNewCommentMenu MpvqcNewCommentMenu.qml
+MpvqcNewCommentMenuClickGuard MpvqcNewCommentMenuClickGuard.qml
+MpvqcPlayerView MpvqcPlayerView.qml
+
+internal MpvqcPlayerInputArea MpvqcPlayerInputArea.qml
+internal MpvqcPlayerLinux MpvqcPlayerLinux.qml
+internal MpvqcPlayerWindows MpvqcPlayerWindows.qml

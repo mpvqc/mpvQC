@@ -9,7 +9,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.enums import MpvqcTimeFormat
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService, TimeFormatterService
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 TimeFormat = MpvqcTimeFormat.TimeFormat

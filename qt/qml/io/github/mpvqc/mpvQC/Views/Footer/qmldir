@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module io.github.mpvqc.mpvQC.Views.Footer
+
+MpvqcFooterView MpvqcFooterView.qml
+
+internal MpvqcFooterContextMenu MpvqcFooterContextMenu.qml
+internal MpvqcFooterContextMenuClickGuard MpvqcFooterContextMenuClickGuard.qml

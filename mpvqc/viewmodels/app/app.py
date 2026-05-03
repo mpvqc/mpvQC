@@ -14,7 +14,7 @@ from mpvqc.services import (
     WindowPropertiesService,
 )
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 

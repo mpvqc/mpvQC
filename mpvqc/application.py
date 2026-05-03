@@ -41,7 +41,6 @@ class MpvqcApplication(QGuiApplication):
         super().__init__(arguments)
         self._close_event_filter = CloseEventFilter()
         self._engine = QQmlApplicationEngine()
-        self._engine.addImportPath(":/qt/qml/styles")
 
     def configure(self) -> None:
         icon = QIcon(":/data/icon.svg")

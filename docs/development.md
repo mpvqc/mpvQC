@@ -54,7 +54,7 @@ After changing production QML, data, or translation files, run `just prepare-tes
 | Path         | Contents                                                                                    |
 | ------------ | ------------------------------------------------------------------------------------------- |
 | `mpvqc/`     | Python: services (business logic), viewmodels (Qt-exposed glue), application bootstrap      |
-| `qt/qml/`    | QML views, components, dialogs, message boxes, file dialogs, plus colocated unit tests      |
+| `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources     |
 | `test/`      | Python tests (pytest) — services and viewmodels in isolation                                |
 | `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides               |
 | `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, themes, `build-info.toml`                  |

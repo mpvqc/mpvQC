@@ -20,7 +20,7 @@ from mpvqc.models.comments.mutation import (
 )
 from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService, TimeFormatterService
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 

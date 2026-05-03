@@ -12,7 +12,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.datamodels import VideoSource
 from mpvqc.services import ImporterService, TypeMapperService
 
-QML_IMPORT_NAME = "pyobjects"
+QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
