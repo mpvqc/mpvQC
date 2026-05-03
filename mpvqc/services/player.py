@@ -365,6 +365,9 @@ class PlayerService(QObject):
         return self._subtitle_track_count_prop.cached
 
     def move_mouse(self, x: int, y: int) -> None:
+        if self._mpv is None:
+            logger.debug("Ignoring mouse move; player not yet initialized")
+            return
         zoom_factor = self._host_integration.display_zoom_factor
         x = int(x * zoom_factor)
         y = int(y * zoom_factor)
