@@ -4,8 +4,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, assert_never
+from dataclasses import dataclass, replace
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Property, QObject, Signal
 
@@ -13,43 +13,11 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class StateService(QObject):
-    saved_changed = Signal(bool)
-
-    def __init__(self, parent: QObject | None = None) -> None:
-        super().__init__(parent)
-        self._state = ApplicationState(document=None, video=None, saved=True)
-
-    @Property(bool, notify=saved_changed)
-    def saved(self) -> bool:
-        return self._state.saved
-
-    @property
-    def document(self) -> Path | None:
-        return self._state.document
-
-    def _update_state(self, new_state: ApplicationState) -> None:
-        old_saved = self._state.saved
-        self._state = new_state
-        if old_saved != self._state.saved:
-            self.saved_changed.emit(self._state.saved)
-
-    def save(self, document: Path) -> None:
-        new_state = reduce(self._state, SaveAction(document))
-        self._update_state(new_state)
-
-    def change(self) -> None:
-        new_state = reduce(self._state, CHANGE_ACTION)
-        self._update_state(new_state)
-
-    def reset(self) -> None:
-        new_state = reduce(self._state, RESET_ACTION)
-        self._update_state(new_state)
-
-    def import_documents(self, documents: list[Path], video: Path | None, video_from_subtitle: bool) -> None:
-        change = ImportChange(documents, video, video_from_subtitle)
-        new_state = reduce(self._state, ImportAction(change))
-        self._update_state(new_state)
+@dataclass(frozen=True)
+class ApplicationState:
+    document: Path | None
+    video: Path | None
+    saved: bool
 
 
 @dataclass(frozen=True)
@@ -71,78 +39,73 @@ class ImportChange:
         return self.documents[0]
 
 
-@dataclass(frozen=True)
-class ApplicationState:
-    document: Path | None
-    video: Path | None
-    saved: bool
+class StateService(QObject):
+    saved_changed = Signal(bool)
+
+    def __init__(self, parent: QObject | None = None) -> None:
+        super().__init__(parent)
+        self._state = ApplicationState(document=None, video=None, saved=True)
+
+    @Property(bool, notify=saved_changed)
+    def saved(self) -> bool:
+        return self._state.saved
+
+    @property
+    def document(self) -> Path | None:
+        return self._state.document
+
+    def save(self, document: Path) -> None:
+        new_state = replace(self._state, document=document, saved=True)
+        self._set(new_state)
+
+    def change(self) -> None:
+        new_state = replace(self._state, saved=False)
+        self._set(new_state)
+
+    def reset(self) -> None:
+        new_state = replace(self._state, document=None, saved=True)
+        self._set(new_state)
+
+    def import_documents(self, documents: list[Path], video: Path | None, video_from_subtitle: bool) -> None:
+        change = ImportChange(documents, video, video_from_subtitle)
+        new_state = _apply_import(self._state, change)
+        self._set(new_state)
+
+    def _set(self, new_state: ApplicationState) -> None:
+        was_saved = self._state.saved
+        self._state = new_state
+        if was_saved != new_state.saved:
+            self.saved_changed.emit(new_state.saved)
 
 
-@dataclass(frozen=True)
-class ImportAction:
-    change: ImportChange
+def _apply_import(state: ApplicationState, change: ImportChange) -> ApplicationState:
+    if _is_blank_state(state):
+        return _apply_blank_state_import(state, change)
+    if _is_redundant_video_reimport(state, change):
+        return state
+    return ApplicationState(None, change.video or state.video, saved=False)
 
 
-@dataclass(frozen=True)
-class SaveAction:
-    document: Path
+def _is_blank_state(state: ApplicationState) -> bool:
+    return state.document is None and state.saved
 
 
-@dataclass(frozen=True)
-class ChangeAction:
-    pass
-
-
-@dataclass(frozen=True)
-class ResetAction:
-    pass
-
-
-CHANGE_ACTION = ChangeAction()
-RESET_ACTION = ResetAction()
-
-type Action = ImportAction | SaveAction | ChangeAction | ResetAction
-
-
-def reduce(state: ApplicationState, action: Action) -> ApplicationState:
-    match action:
-        case SaveAction(document):
-            return ApplicationState(document, state.video, saved=True)
-
-        case ChangeAction():
-            return ApplicationState(state.document, state.video, saved=False)
-
-        case ResetAction():
-            return ApplicationState(None, state.video, saved=True)
-
-        case ImportAction(change):
-            return _handle_import(state, change)
-
-        case _ as unreachable:
-            assert_never(unreachable)
-
-
-def _handle_import(state: ApplicationState, change: ImportChange) -> ApplicationState:
-    is_initial_state = state.document is None and state.saved
-
-    if is_initial_state:
-        if change.only_video_imported:
-            return ApplicationState(None, change.video, saved=True)
-
-        video = change.video or state.video
-
-        if change.exactly_one_document_imported:
-            if change.video_from_subtitle:
-                return ApplicationState(None, video, saved=True)
-            return ApplicationState(change.imported_document, video, saved=True)
-
-        return ApplicationState(None, video, saved=False)
-
-    if state.video and change.only_video_imported and _is_same_video(state.video, change.video):
-        return ApplicationState(state.document, state.video, state.saved)
+def _apply_blank_state_import(state: ApplicationState, change: ImportChange) -> ApplicationState:
+    if change.only_video_imported:
+        return ApplicationState(None, change.video, saved=True)
 
     video = change.video or state.video
+
+    if change.exactly_one_document_imported:
+        if change.video_from_subtitle:
+            return ApplicationState(None, video, saved=True)
+        return ApplicationState(change.imported_document, video, saved=True)
+
     return ApplicationState(None, video, saved=False)
+
+
+def _is_redundant_video_reimport(state: ApplicationState, change: ImportChange) -> bool:
+    return change.only_video_imported and _is_same_video(state.video, change.video)
 
 
 def _is_same_video(current_video: Path | None, imported_video: Path | None) -> bool:
