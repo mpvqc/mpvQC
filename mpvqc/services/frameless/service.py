@@ -9,10 +9,6 @@ import typing
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-import inject
-
-from ..host_integration import HostIntegrationService  # noqa: TID252
-
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
@@ -21,7 +17,7 @@ class FramelessWindowService(ABC):
     """Service for managing frameless window behavior across different platforms."""
 
     @abstractmethod
-    def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
+    def configure_for(self, app: QGuiApplication, window: QWindow, *, display_zoom_factor: float) -> None:
         pass
 
     @abstractmethod
@@ -30,15 +26,13 @@ class FramelessWindowService(ABC):
 
 
 class WinImplementation(FramelessWindowService):
-    host_integration = inject.attr(HostIntegrationService)
-
     def __init__(self) -> None:
         from mpvqc.services.frameless.win import WindowsEventFilter
 
         self._event_filter = WindowsEventFilter()
 
     @typing.override
-    def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
+    def configure_for(self, app: QGuiApplication, window: QWindow, *, display_zoom_factor: float) -> None:
         hwnd_top_lvl = window.winId()
         self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
         app.installNativeEventFilter(self._event_filter)
@@ -52,8 +46,8 @@ class WinImplementation(FramelessWindowService):
         extend_frame_into_client_area(hwnd_top_lvl)
         configure_gwl_style(hwnd_top_lvl)
 
-        width = int(1280 * self.host_integration.display_zoom_factor)
-        height = int(720 * self.host_integration.display_zoom_factor)
+        width = int(1280 * display_zoom_factor)
+        height = int(720 * display_zoom_factor)
         set_outer_window_size(hwnd_top_lvl, width, height)
 
     @typing.override
@@ -63,7 +57,7 @@ class WinImplementation(FramelessWindowService):
 
 class LinuxImplementation(FramelessWindowService):
     @typing.override
-    def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
+    def configure_for(self, app: QGuiApplication, window: QWindow, *, display_zoom_factor: float) -> None:
         from mpvqc.services.frameless.linux import LinuxEventFilter
 
         self._event_filter = LinuxEventFilter(window, app)

@@ -21,7 +21,7 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.FileStartupService, s.FileStartupService)
     binder.bind_to_constructor(s.FontLoaderService, s.FontLoaderService)
     binder.bind_to_constructor(s.FramelessWindowService, s.get_frameless_window_service)
-    binder.bind_to_constructor(s.HostIntegrationService, s.HostIntegrationService)
+    binder.bind_to_constructor(s.HostEnvironmentService, s.HostEnvironmentService)
     binder.bind_to_constructor(s.ImporterService, s.ImporterService)
     binder.bind_to_constructor(s.InternationalizationService, s.InternationalizationService)
     binder.bind_to_constructor(s.KeyCommandGeneratorService, s.KeyCommandGeneratorService)
@@ -41,7 +41,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.TypeMapperService, s.TypeMapperService)
     binder.bind_to_constructor(s.VersionCheckerService, s.VersionCheckerService)
     binder.bind_to_constructor(s.VideoResizeService, s.VideoResizeService)
-    binder.bind_to_constructor(s.WindowPropertiesService, s.WindowPropertiesService)
 
 
 def configure_injections() -> None:

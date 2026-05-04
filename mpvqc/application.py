@@ -19,7 +19,6 @@ from mpvqc.close_event_filter import CloseEventFilter
 from mpvqc.services import (
     FileStartupService,
     FontLoaderService,
-    FramelessWindowService,
     InternationalizationService,
     MainWindowService,
     SettingsService,
@@ -32,7 +31,6 @@ if TYPE_CHECKING:
 class MpvqcApplication(QGuiApplication):
     _start_up = inject.attr(FileStartupService)
     _font_loader = inject.attr(FontLoaderService)
-    _frameless_window = inject.attr(FramelessWindowService)
     _i18n = inject.attr(InternationalizationService)
     _main_window = inject.attr(MainWindowService)
     _settings = inject.attr(SettingsService)
@@ -80,12 +78,11 @@ class MpvqcApplication(QGuiApplication):
         if not self._engine.rootObjects():
             sys.exit(-1)
 
-        window = self._main_window.window
-        self._frameless_window.configure_for(self, window)
-        window.installEventFilter(self._close_event_filter)
+        self._main_window.initialize(self)
+        self._main_window.install_event_filter(self._close_event_filter)
 
         remove_nuitka_splash_screen()
-        window.setVisible(True)
+        self._main_window.show()
 
 
 def remove_nuitka_splash_screen() -> None:

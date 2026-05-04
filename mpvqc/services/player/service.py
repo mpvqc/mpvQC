@@ -14,7 +14,7 @@ from PySide6.QtCore import Property, QObject, Signal
 
 import mpvqc.services.player.properties as props
 from mpvqc.services.application_paths import ApplicationPathsService
-from mpvqc.services.host_integration import HostIntegrationService
+from mpvqc.services.main_window import MainWindowService
 from mpvqc.services.player.coordinators import DimensionsCoordinator, SubtitleLoadCoordinator
 from mpvqc.services.type_mapper import TypeMapperService
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlayerService(QObject):
-    _host_integration = inject.attr(HostIntegrationService)
+    _main_window = inject.attr(MainWindowService)
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper = inject.attr(TypeMapperService)
 
@@ -191,7 +191,7 @@ class PlayerService(QObject):
         if self._mpv is None:
             logger.debug("Ignoring mouse move; player not yet initialized")
             return
-        zoom_factor = self._host_integration.display_zoom_factor
+        zoom_factor = self._main_window.display_zoom_factor
         x = int(x * zoom_factor)
         y = int(y * zoom_factor)
         self._mpv_player.command_async("mouse", x, y)

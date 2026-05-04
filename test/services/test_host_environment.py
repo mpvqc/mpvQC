@@ -8,14 +8,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from mpvqc.services import WindowButtonPreference
-from mpvqc.services.host_integration.window_buttons import read_linux_window_button_preference
+from mpvqc.services.host_environment.window_buttons import read_linux_window_button_preference
 
 linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Requires Linux")
 
 
 @pytest.fixture
 def settings_portal_mock():
-    with patch("mpvqc.services.host_integration.portals.SettingsPortal") as mock_class:
+    with patch("mpvqc.services.host_environment.portals.SettingsPortal") as mock_class:
         mock_instance = MagicMock()
         mock_class.return_value = mock_instance
         mock_instance.__enter__.return_value = mock_instance

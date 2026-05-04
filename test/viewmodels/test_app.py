@@ -10,25 +10,25 @@ import pytest
 from PySide6.QtCore import Qt
 
 from mpvqc.services import (
-    HostIntegrationService,
+    HostEnvironmentService,
     KeyCommandGeneratorService,
+    MainWindowService,
     PlayerService,
     SettingsService,
-    WindowPropertiesService,
 )
 from mpvqc.viewmodels import MpvqcAppViewModel
 
 
 @pytest.fixture
-def host_integration_service_mock():
-    mock = MagicMock(spec_set=HostIntegrationService)
+def host_environment_service_mock():
+    mock = MagicMock(spec_set=HostEnvironmentService)
     mock.is_tiling_window_manager = False
     return mock
 
 
 @pytest.fixture
-def window_properties_service_mock():
-    mock = MagicMock(spec_set=WindowPropertiesService)
+def main_window_service_mock():
+    mock = MagicMock(spec_set=MainWindowService)
     mock.is_fullscreen = False
     mock.is_maximized = False
     return mock
@@ -47,15 +47,15 @@ def command_generator_mock():
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
-    host_integration_service_mock,
-    window_properties_service_mock,
+    host_environment_service_mock,
+    main_window_service_mock,
     player_service_mock,
     command_generator_mock,
     settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(HostIntegrationService, host_integration_service_mock)
-        binder.bind(WindowPropertiesService, window_properties_service_mock)
+        binder.bind(HostEnvironmentService, host_environment_service_mock)
+        binder.bind(MainWindowService, main_window_service_mock)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(KeyCommandGeneratorService, command_generator_mock)
         binder.bind(SettingsService, settings_service)
@@ -132,10 +132,10 @@ class WindowBorderTestCase(NamedTuple):
     ],
     ids=lambda tc: tc.name,
 )
-def test_window_border(test_case: WindowBorderTestCase, host_integration_service_mock, window_properties_service_mock):
-    host_integration_service_mock.is_tiling_window_manager = test_case.is_tiling_wm
-    window_properties_service_mock.is_fullscreen = test_case.is_fullscreen
-    window_properties_service_mock.is_maximized = test_case.is_maximized
+def test_window_border(test_case: WindowBorderTestCase, host_environment_service_mock, main_window_service_mock):
+    host_environment_service_mock.is_tiling_window_manager = test_case.is_tiling_wm
+    main_window_service_mock.is_fullscreen = test_case.is_fullscreen
+    main_window_service_mock.is_maximized = test_case.is_maximized
 
     # noinspection PyCallingNonCallable
     view_model = MpvqcAppViewModel()

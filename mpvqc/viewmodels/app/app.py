@@ -7,11 +7,11 @@ from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
-    HostIntegrationService,
+    HostEnvironmentService,
     KeyCommandGeneratorService,
+    MainWindowService,
     PlayerService,
     SettingsService,
-    WindowPropertiesService,
 )
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -21,8 +21,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcAppViewModel(QObject):
-    _host_integration = inject.attr(HostIntegrationService)
-    _window_properties = inject.attr(WindowPropertiesService)
+    _host_environment = inject.attr(HostEnvironmentService)
+    _main_window = inject.attr(MainWindowService)
     _settings = inject.attr(SettingsService)
     _player = inject.attr(PlayerService)
     _command_generator = inject.attr(KeyCommandGeneratorService)
@@ -33,14 +33,14 @@ class MpvqcAppViewModel(QObject):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._window_border = self._compute_window_border()
-        self._window_properties.is_fullscreen_changed.connect(self._update_window_border)
-        self._window_properties.is_maximized_changed.connect(self._update_window_border)
+        self._main_window.is_fullscreen_changed.connect(self._update_window_border)
+        self._main_window.is_maximized_changed.connect(self._update_window_border)
         self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
 
     def _compute_window_border(self) -> int:
-        if self._host_integration.is_tiling_window_manager:
+        if self._host_environment.is_tiling_window_manager:
             return 0
-        if self._window_properties.is_fullscreen or self._window_properties.is_maximized:
+        if self._main_window.is_fullscreen or self._main_window.is_maximized:
             return 0
         return 1
 

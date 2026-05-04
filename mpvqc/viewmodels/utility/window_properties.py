@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import WindowPropertiesService
+from mpvqc.services import MainWindowService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcWindowPropertiesViewModel(QObject):
-    _window_properties_service = inject.attr(WindowPropertiesService)
+    _main_window = inject.attr(MainWindowService)
 
     appWidthChanged = Signal(int)
     appHeightChanged = Signal(int)
@@ -25,23 +25,23 @@ class MpvqcWindowPropertiesViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._window_properties_service.width_changed.connect(self.appWidthChanged.emit)
-        self._window_properties_service.height_changed.connect(self.appHeightChanged.emit)
-        self._window_properties_service.is_fullscreen_changed.connect(self.isFullscreenChanged.emit)
-        self._window_properties_service.is_maximized_changed.connect(self.isMaximizedChanged.emit)
+        self._main_window.width_changed.connect(self.appWidthChanged.emit)
+        self._main_window.height_changed.connect(self.appHeightChanged.emit)
+        self._main_window.is_fullscreen_changed.connect(self.isFullscreenChanged.emit)
+        self._main_window.is_maximized_changed.connect(self.isMaximizedChanged.emit)
 
     @Property(int, notify=appWidthChanged)
     def appWidth(self) -> int:
-        return self._window_properties_service.width
+        return self._main_window.width
 
     @Property(int, notify=appHeightChanged)
     def appHeight(self) -> int:
-        return self._window_properties_service.height
+        return self._main_window.height
 
     @Property(bool, notify=isFullscreenChanged)
     def isFullscreen(self) -> bool:
-        return self._window_properties_service.is_fullscreen
+        return self._main_window.is_fullscreen
 
     @Property(bool, notify=isMaximizedChanged)
     def isMaximized(self) -> bool:
-        return self._window_properties_service.is_maximized
+        return self._main_window.is_maximized

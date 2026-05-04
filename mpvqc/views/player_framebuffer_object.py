@@ -13,7 +13,7 @@ from PySide6.QtGui import QOpenGLContext
 from PySide6.QtQml import QmlElement
 from PySide6.QtQuick import QQuickFramebufferObject
 
-from mpvqc.services import HostIntegrationService, PlayerService
+from mpvqc.services import MainWindowService, PlayerService
 
 if TYPE_CHECKING:
     from types import NoneType
@@ -51,14 +51,14 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
 
 
 class Renderer(QQuickFramebufferObject.Renderer):
-    _host_integration = inject.attr(HostIntegrationService)
+    _main_window = inject.attr(MainWindowService)
     _player = inject.attr(PlayerService)
 
     def __init__(self, parent: MpvqcMpvFrameBufferObjectPyObject) -> None:
         super().__init__()
         self._parent = parent
         self._ctx: MpvRenderContext | None = None
-        self._host_integration.display_zoom_factor_changed.connect(self._on_zoom_factor_changed)
+        self._main_window.display_zoom_factor_changed.connect(self._on_zoom_factor_changed)
 
     def _on_zoom_factor_changed(self) -> None:
         self._parent.update_requested.emit()
@@ -75,7 +75,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     @typing.override
     def render(self) -> None:
         if self._ctx:
-            factor: float = self._host_integration.display_zoom_factor
+            factor: float = self._main_window.display_zoom_factor
             rect = self._parent.size()
 
             width = int(rect.width() * factor)

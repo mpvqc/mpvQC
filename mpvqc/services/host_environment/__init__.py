@@ -2,5 +2,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .service import HostIntegrationService as HostIntegrationService
+from .service import HostEnvironmentService as HostEnvironmentService
 from .window_buttons import WindowButtonPreference as WindowButtonPreference
