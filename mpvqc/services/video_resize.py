@@ -7,10 +7,9 @@ from dataclasses import dataclass
 import inject
 from PySide6.QtCore import Qt
 
-from .host_integration import HostIntegrationService
+from .main_window import MainWindowService
 from .player import PlayerService
 from .settings import SettingsService
-from .window_properties import WindowPropertiesService
 
 
 @dataclass(frozen=True)
@@ -32,13 +31,12 @@ class ResizeResult:
 
 
 class VideoResizeService:
-    _host_integration = inject.attr(HostIntegrationService)
+    _main_window = inject.attr(MainWindowService)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
-    _window_properties = inject.attr(WindowPropertiesService)
 
     def compute_resize(self, dimensions: ViewDimensions) -> ResizeResult | None:
-        if self._window_properties.is_fullscreen or self._window_properties.is_maximized:
+        if self._main_window.is_fullscreen or self._main_window.is_maximized:
             return None
         if not self._player.video_loaded:
             return None
@@ -78,19 +76,19 @@ class VideoResizeService:
 
     def _scaled_width(self) -> int:
         if width := self._player.width:
-            return int(width / self._host_integration.display_zoom_factor)
+            return int(width / self._main_window.display_zoom_factor)
         return 0
 
     def _scaled_height(self) -> int:
         if height := self._player.height:
-            return int(height / self._host_integration.display_zoom_factor)
+            return int(height / self._main_window.display_zoom_factor)
         return 0
 
     def _available_screen_width(self) -> int:
-        return int(self._window_properties.screen_width * 0.95)
+        return int(self._main_window.screen_width * 0.95)
 
     def _available_screen_height(self) -> int:
-        return int(self._window_properties.screen_height * 0.95)
+        return int(self._main_window.screen_height * 0.95)
 
 
 def calculate_vertical_layout_sizes(

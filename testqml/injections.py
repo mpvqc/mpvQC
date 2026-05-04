@@ -17,12 +17,12 @@ from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
     ExportService,
-    HostIntegrationService,
+    HostEnvironmentService,
+    MainWindowService,
     PlayerService,
     SettingsService,
     VersionCheckerService,
     VideoResizeService,
-    WindowPropertiesService,
 )
 from mpvqc.services.application_paths import ApplicationEnvironment
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
@@ -36,14 +36,22 @@ TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
 
-class WindowPropertiesServiceOverride(WindowPropertiesService):
-    def __init__(self) -> None:
-        super().__init__(bind_window=False, width=1280, height=720)
+class MainWindowServiceOverride(MainWindowService):
+    @property
+    @typing.override
+    def width(self) -> int:
+        return 1280
+
+    @property
+    @typing.override
+    def height(self) -> int:
+        return 720
 
 
-class HostIntegrationServiceOverride(HostIntegrationService):
-    def __init__(self) -> None:
-        super().__init__(detect_configuration=False)
+class HostEnvironmentServiceOverride(HostEnvironmentService):
+    @typing.override
+    def _detect_window_button_preference_async(self) -> None:
+        pass
 
 
 class ApplicationPathsServiceOverride(ApplicationPathsService):
@@ -160,11 +168,11 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
-        binder.bind_to_constructor(HostIntegrationService, HostIntegrationServiceOverride)
+        binder.bind_to_constructor(HostEnvironmentService, HostEnvironmentServiceOverride)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
         binder.bind_to_constructor(SettingsService, SettingsServiceOverride)
         binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)
+        binder.bind_to_constructor(MainWindowService, MainWindowServiceOverride)
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)
-        binder.bind_to_constructor(WindowPropertiesService, WindowPropertiesServiceOverride)
 
     inject.configure(test_bindings, bind_in_runtime=False, clear=True, allow_override=True)

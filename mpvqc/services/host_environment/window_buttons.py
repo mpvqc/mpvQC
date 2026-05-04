@@ -29,7 +29,7 @@ def read_window_button_preference() -> WindowButtonPreference:
 
 
 def read_linux_window_button_preference() -> WindowButtonPreference:
-    from mpvqc.services.host_integration.portals import SettingsPortal
+    from mpvqc.services.host_environment.portals import SettingsPortal
 
     with SettingsPortal() as portal:
         layout = portal.read_one("org.gnome.desktop.wm.preferences", "button-layout")

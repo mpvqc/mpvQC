@@ -10,11 +10,10 @@ import pytest
 from PySide6.QtCore import Qt
 
 from mpvqc.services import (
-    HostIntegrationService,
+    MainWindowService,
     PlayerService,
     SettingsService,
     VideoResizeService,
-    WindowPropertiesService,
 )
 from mpvqc.services.video_resize import (
     ResizeResult,
@@ -156,18 +155,12 @@ def settings_mock() -> MagicMock:
 
 
 @pytest.fixture
-def window_properties_mock() -> MagicMock:
-    mock = MagicMock(spec_set=WindowPropertiesService)
+def main_window_service_mock() -> MagicMock:
+    mock = MagicMock(spec_set=MainWindowService)
     mock.is_fullscreen = False
     mock.is_maximized = False
     mock.screen_width = 2560
     mock.screen_height = 1440
-    return mock
-
-
-@pytest.fixture
-def host_integration_mock() -> MagicMock:
-    mock = MagicMock(spec_set=HostIntegrationService)
     mock.display_zoom_factor = 1.0
     return mock
 
@@ -177,14 +170,12 @@ def configure_injections(
     common_bindings_with,
     player_mock,
     settings_mock,
-    window_properties_mock,
-    host_integration_mock,
+    main_window_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_mock)
         binder.bind(SettingsService, settings_mock)
-        binder.bind(WindowPropertiesService, window_properties_mock)
-        binder.bind(HostIntegrationService, host_integration_mock)
+        binder.bind(MainWindowService, main_window_service_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -194,13 +185,13 @@ def service() -> VideoResizeService:
     return VideoResizeService()
 
 
-def test_compute_resize_returns_none_when_fullscreen(service, window_properties_mock):
-    window_properties_mock.is_fullscreen = True
+def test_compute_resize_returns_none_when_fullscreen(service, main_window_service_mock):
+    main_window_service_mock.is_fullscreen = True
     assert service.compute_resize(VIEW_DIMS) is None
 
 
-def test_compute_resize_returns_none_when_maximized(service, window_properties_mock):
-    window_properties_mock.is_maximized = True
+def test_compute_resize_returns_none_when_maximized(service, main_window_service_mock):
+    main_window_service_mock.is_maximized = True
     assert service.compute_resize(VIEW_DIMS) is None
 
 
@@ -215,9 +206,9 @@ def test_compute_resize_returns_none_when_video_does_not_fit(service, player_moc
     assert service.compute_resize(VIEW_DIMS) is None
 
 
-def test_compute_resize_returns_none_when_screen_unavailable(service, window_properties_mock):
-    window_properties_mock.screen_width = 0
-    window_properties_mock.screen_height = 0
+def test_compute_resize_returns_none_when_screen_unavailable(service, main_window_service_mock):
+    main_window_service_mock.screen_width = 0
+    main_window_service_mock.screen_height = 0
     assert service.compute_resize(VIEW_DIMS) is None
 
 
@@ -248,8 +239,8 @@ def test_compute_resize_raises_for_unknown_layout(service, settings_mock):
         service.compute_resize(VIEW_DIMS)
 
 
-def test_compute_resize_applies_display_zoom_factor(service, host_integration_mock):
-    host_integration_mock.display_zoom_factor = 2.0
+def test_compute_resize_applies_display_zoom_factor(service, main_window_service_mock):
+    main_window_service_mock.display_zoom_factor = 2.0
     result = service.compute_resize(VIEW_DIMS)
     # Scaled video: 854/2 = 427, 480/2 = 240
     assert result is not None

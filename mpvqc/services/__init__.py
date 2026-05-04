@@ -17,8 +17,8 @@ from .font_loader import FontLoaderService as FontLoaderService
 from .formatter_time import TimeFormatterService as TimeFormatterService
 from .frameless import FramelessWindowService as FramelessWindowService
 from .frameless import get_frameless_window_service as get_frameless_window_service
-from .host_integration import HostIntegrationService as HostIntegrationService
-from .host_integration import WindowButtonPreference as WindowButtonPreference
+from .host_environment import HostEnvironmentService as HostEnvironmentService
+from .host_environment import WindowButtonPreference as WindowButtonPreference
 from .i18n import InternationalizationService as InternationalizationService
 from .importer import ImporterService as ImporterService
 from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
@@ -37,4 +37,3 @@ from .theme import ThemeService as ThemeService
 from .type_mapper import TypeMapperService as TypeMapperService
 from .version_checker import VersionCheckerService as VersionCheckerService
 from .video_resize import VideoResizeService as VideoResizeService
-from .window_properties import WindowPropertiesService as WindowPropertiesService
