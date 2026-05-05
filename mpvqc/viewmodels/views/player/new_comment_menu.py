@@ -23,7 +23,7 @@ class MpvqcNewCommentMenuViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._settings.commentTypesChanged.connect(self.commentTypesChanged)
+        self._settings.comment_types_changed.connect(self.commentTypesChanged)
 
     @Property(list, notify=commentTypesChanged)
     def commentTypes(self) -> list[str]:

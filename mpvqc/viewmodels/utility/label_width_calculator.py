@@ -32,8 +32,8 @@ class MpvqcLabelWidthCalculatorViewModel(QObject):
         self._update_comment_types_label_width()
         self._update_time_label_width()
 
-        self._settings.languageChanged.connect(self._schedule_comment_types_label_width_update)
-        self._settings.commentTypesChanged.connect(self._schedule_comment_types_label_width_update)
+        self._settings.language_changed.connect(self._schedule_comment_types_label_width_update)
+        self._settings.comment_types_changed.connect(self._schedule_comment_types_label_width_update)
         self._player.duration_changed.connect(self._schedule_update_time_label_width_update)
 
     @Property(int, notify=commentTypesLabelWidthChanged)

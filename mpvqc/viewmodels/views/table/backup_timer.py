@@ -37,8 +37,8 @@ class MpvqcBackupTimerViewModel(QObject):
         self._job = BackupJob()
         self._job.setAutoDelete(False)
 
-        self._settings.backupEnabledChanged.connect(self.backupEnabledChanged.emit)
-        self._settings.backupIntervalChanged.connect(self.backupIntervalChanged.emit)
+        self._settings.backup_enabled_changed.connect(self.backupEnabledChanged)
+        self._settings.backup_interval_changed.connect(self.backupIntervalChanged)
 
     @Property(bool, notify=backupEnabledChanged)
     def backupEnabled(self) -> bool:

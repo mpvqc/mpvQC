@@ -35,7 +35,7 @@ class MpvqcAppViewModel(QObject):
         self._window_border = self._compute_window_border()
         self._main_window.is_fullscreen_changed.connect(self._update_window_border)
         self._main_window.is_maximized_changed.connect(self._update_window_border)
-        self._settings.layoutOrientationChanged.connect(self.layoutOrientationChanged)
+        self._settings.layout_orientation_changed.connect(self.layoutOrientationChanged)
 
     def _compute_window_border(self) -> int:
         if self._host_environment.is_tiling_window_manager:

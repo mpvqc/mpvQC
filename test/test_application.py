@@ -64,7 +64,7 @@ def test_application_configured(
 def test_language_change_triggers_retranslation(qt_app, internationalization_service_mock, settings_service):
     qt_app.configure()
 
-    settings_service.languageChanged.emit("he-IL")
+    settings_service.language_changed.emit("he-IL")
 
     assert internationalization_service_mock.retranslate.call_count == 2
 

@@ -48,8 +48,8 @@ class MpvqcFooterViewModel(QObject):
         self._time_text = self._derive_time_text()
         self._time_width = self._derive_time_width()
 
-        self._settings.statusbarPercentageChanged.connect(self.setStatusbarPercentage)
-        self._settings.timeFormatChanged.connect(self.setTimeFormat)
+        self._settings.statusbar_percentage_changed.connect(self.setStatusbarPercentage)
+        self._settings.time_format_changed.connect(self.setTimeFormat)
         self._player.video_loaded_changed.connect(self.setVideoLoaded)
         self._player.percent_pos_changed.connect(self.setPercentPos)
         self._player.time_pos_changed.connect(self.setTimePos)

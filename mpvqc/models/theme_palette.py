@@ -48,8 +48,10 @@ class MpvqcThemePaletteModel(QAbstractListModel):
         super().__init__(parent)
         self._theme_identifier = self._settings.theme_identifier
 
-        self._theme_changed_connection = self._settings.themeIdentifierChanged.connect(self._set_theme_identifier)
-        self.destroyed.connect(lambda: self._settings.themeIdentifierChanged.disconnect(self._theme_changed_connection))
+        self._theme_changed_connection = self._settings.theme_identifier_changed.connect(self._set_theme_identifier)
+        self.destroyed.connect(
+            lambda: self._settings.theme_identifier_changed.disconnect(self._theme_changed_connection)
+        )
 
     @Slot(str)
     def _set_theme_identifier(self, theme_identifier: str) -> None:

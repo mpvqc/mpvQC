@@ -30,8 +30,8 @@ class MpvqcHeaderViewModel(QObject):
         self._player.video_loaded_changed.connect(self._update_window_title)
         self._player.path_changed.connect(self._update_window_title)
         self._player.filename_changed.connect(self._update_window_title)
-        self._settings.windowTitleFormatChanged.connect(self._update_window_title)
-        self._settings.languageChanged.connect(self._update_window_title)
+        self._settings.window_title_format_changed.connect(self._update_window_title)
+        self._settings.language_changed.connect(self._update_window_title)
         self._state.saved_changed.connect(self._update_window_title)
 
     @Property(str, notify=windowTitleChanged)
