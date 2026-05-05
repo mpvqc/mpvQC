@@ -10,6 +10,7 @@ import inject
 import pytest
 
 from mpvqc.datamodels import NO_DOCUMENT_IMPORT, NO_SUBTITLE_IMPORT, DocumentImportResult, SubtitleImportResult
+from mpvqc.enums import MpvqcImportFoundVideo
 from mpvqc.services import (
     CommentsService,
     DocumentImporterService,
@@ -19,6 +20,8 @@ from mpvqc.services import (
     SubtitleImporterService,
 )
 from mpvqc.services.importer import ImporterService
+
+ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo
 
 
 @pytest.fixture
@@ -147,7 +150,7 @@ def test_example_2_single_document_no_video_references(
 
 
 class ParameterizedTestCase(NamedTuple):
-    setting: SettingsService.ImportFoundVideo
+    setting: ImportFoundVideo
     expect_ask_user_count: int
     expect_comments_count: int
     expect_video_opened_count: int
@@ -158,21 +161,21 @@ class ParameterizedTestCase(NamedTuple):
     "test_case",
     [
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            setting=ImportFoundVideo.ALWAYS,
             expect_ask_user_count=0,
             expect_comments_count=1,
             expect_video_opened_count=1,
             expect_state_updated_count=1,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            setting=ImportFoundVideo.ASK_EVERY_TIME,
             expect_ask_user_count=1,
             expect_comments_count=0,
             expect_video_opened_count=0,
             expect_state_updated_count=0,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.NEVER,
+            setting=ImportFoundVideo.NEVER,
             expect_ask_user_count=0,
             expect_comments_count=1,
             expect_video_opened_count=0,
@@ -315,21 +318,21 @@ def test_single_document_multiple_videos(
     "test_case",
     [
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            setting=ImportFoundVideo.ALWAYS,
             expect_ask_user_count=0,
             expect_comments_count=1,
             expect_video_opened_count=1,
             expect_state_updated_count=1,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            setting=ImportFoundVideo.ASK_EVERY_TIME,
             expect_ask_user_count=1,
             expect_comments_count=0,
             expect_video_opened_count=0,
             expect_state_updated_count=0,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.NEVER,
+            setting=ImportFoundVideo.NEVER,
             expect_ask_user_count=0,
             expect_comments_count=1,
             expect_video_opened_count=0,
@@ -391,21 +394,21 @@ def test_single_document_video_from_subtitle_not_loaded(
     "test_case",
     [
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            setting=ImportFoundVideo.ALWAYS,
             expect_ask_user_count=0,
             expect_comments_count=1,
             expect_video_opened_count=1,
             expect_state_updated_count=1,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            setting=ImportFoundVideo.ASK_EVERY_TIME,
             expect_ask_user_count=1,
             expect_comments_count=0,
             expect_video_opened_count=0,
             expect_state_updated_count=0,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.NEVER,
+            setting=ImportFoundVideo.NEVER,
             expect_ask_user_count=0,
             expect_comments_count=1,
             expect_video_opened_count=0,
@@ -769,7 +772,7 @@ def test_multiple_subtitles_different_videos(
 
 
 class ParameterizedTestCase(NamedTuple):
-    setting: SettingsService.ImportFoundVideo
+    setting: ImportFoundVideo
     expect_ask_user_count: int
     expect_comments_count: int
     expect_video_opened_count: int
@@ -781,7 +784,7 @@ class ParameterizedTestCase(NamedTuple):
     "test_case",
     [
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ALWAYS,
+            setting=ImportFoundVideo.ALWAYS,
             expect_ask_user_count=0,
             expect_comments_count=0,
             expect_video_opened_count=1,
@@ -789,7 +792,7 @@ class ParameterizedTestCase(NamedTuple):
             expect_subtitles_opened_count=1,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.ASK_EVERY_TIME,
+            setting=ImportFoundVideo.ASK_EVERY_TIME,
             expect_ask_user_count=1,
             expect_comments_count=0,
             expect_video_opened_count=0,
@@ -797,7 +800,7 @@ class ParameterizedTestCase(NamedTuple):
             expect_subtitles_opened_count=0,
         ),
         ParameterizedTestCase(
-            setting=SettingsService.ImportFoundVideo.NEVER,
+            setting=ImportFoundVideo.NEVER,
             expect_ask_user_count=0,
             expect_comments_count=0,
             expect_video_opened_count=0,

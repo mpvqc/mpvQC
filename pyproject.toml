@@ -118,6 +118,7 @@ files = [
     "mpvqc/close_event_filter.py",
     "mpvqc/datamodels.py",
     "mpvqc/enums/__init__.py",
+    "mpvqc/enums/import_found_video.py",
     "mpvqc/enums/time_format.py",
     "mpvqc/enums/window_title_format.py",
     "mpvqc/injections.py",

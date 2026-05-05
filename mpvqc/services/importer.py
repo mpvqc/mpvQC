@@ -17,6 +17,7 @@ from mpvqc.datamodels import (
     SubtitleImportResult,
     VideoSource,
 )
+from mpvqc.enums import MpvqcImportFoundVideo
 
 from .comments import CommentsService
 from .document_importer import DocumentImporterService
@@ -24,6 +25,8 @@ from .player import PlayerService
 from .settings import SettingsService
 from .state import StateService
 from .subtitle_importer import SubtitleImporterService
+
+ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo
 
 logger = logging.getLogger(__name__)
 
@@ -186,11 +189,11 @@ class ImporterService(QObject):
         setting = self._settings.import_found_video
 
         match setting:
-            case SettingsService.ImportFoundVideo.ALWAYS.value:
+            case ImportFoundVideo.ALWAYS:
                 self.finalize_import(video.path, result.found_subtitles, result)
-            case SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value:
+            case ImportFoundVideo.ASK_EVERY_TIME:
                 self._ask_user_what_to_import(result)
-            case SettingsService.ImportFoundVideo.NEVER.value:
+            case ImportFoundVideo.NEVER:
                 self.finalize_import(None, result.found_subtitles, result)
             case _:
                 msg = f"Unknown import_found_video setting: {setting}"

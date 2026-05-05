@@ -9,7 +9,7 @@ import typing
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import SettingsService
+from mpvqc.enums import MpvqcImportFoundVideo
 
 if typing.TYPE_CHECKING:
     from typing import Any
@@ -19,6 +19,8 @@ if typing.TYPE_CHECKING:
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
+
+ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo
 
 
 @QmlElement
@@ -33,15 +35,15 @@ class ImportOptionsModel(QAbstractListModel):
         self._items = [
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Always"),
-                "value": SettingsService.ImportFoundVideo.ALWAYS.value,
+                "value": ImportFoundVideo.ALWAYS.value,
             },
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Ask every time"),
-                "value": SettingsService.ImportFoundVideo.ASK_EVERY_TIME.value,
+                "value": ImportFoundVideo.ASK_EVERY_TIME.value,
             },
             {
                 "text": QCoreApplication.translate("ImportSettingsDialog", "Never"),
-                "value": SettingsService.ImportFoundVideo.NEVER.value,
+                "value": ImportFoundVideo.NEVER.value,
             },
         ]
 
