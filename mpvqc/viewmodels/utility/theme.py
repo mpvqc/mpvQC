@@ -24,8 +24,8 @@ class MpvqcThemeViewModel(QObject):
         super().__init__(parent)
         self._theme = self._themes.theme(self._settings.theme_identifier)
         self._palette = self._themes.palette_at(self._settings.theme_identifier, self._settings.theme_color_option)
-        self._settings.themeIdentifierChanged.connect(self._on_theme_identifier_changed)
-        self._settings.themeColorOptionChanged.connect(self._on_color_option_changed)
+        self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
+        self._settings.theme_color_option_changed.connect(self._on_color_option_changed)
 
     @Slot()
     def _on_theme_identifier_changed(self) -> None:

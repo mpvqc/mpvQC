@@ -55,7 +55,7 @@ class MpvqcApplication(QGuiApplication):
         self._i18n.retranslate(app=self, language_code=language)
         self._engine.setUiLanguage(language)
 
-        self._settings.languageChanged.connect(self._on_language_changed)
+        self._settings.language_changed.connect(self._on_language_changed)
         self._engine.uiLanguageChanged.connect(self._retranslate)
 
     @Slot()

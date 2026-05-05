@@ -51,7 +51,7 @@ def test_backup_enabled_set_and_get(settings_service):
 
 
 def test_backup_enabled_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.backupEnabledChanged)
+    spy = make_spy(settings_service.backup_enabled_changed)
 
     settings_service.backup_enabled = False
     assert spy.count() == 1
@@ -72,7 +72,7 @@ def test_theme_identifier_set_and_get(settings_service):
 
 
 def test_theme_identifier_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.themeIdentifierChanged)
+    spy = make_spy(settings_service.theme_identifier_changed)
 
     test_theme = "new-theme"
     settings_service.theme_identifier = test_theme
@@ -94,7 +94,7 @@ def test_backup_interval_set_and_get(settings_service):
 
 
 def test_backup_interval_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.backupIntervalChanged)
+    spy = make_spy(settings_service.backup_interval_changed)
 
     test_interval = 90
     settings_service.backup_interval = test_interval
@@ -116,7 +116,7 @@ def test_time_format_set_and_get(settings_service):
 
 
 def test_time_format_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.timeFormatChanged)
+    spy = make_spy(settings_service.time_format_changed)
 
     test_format = 2
     settings_service.time_format = test_format

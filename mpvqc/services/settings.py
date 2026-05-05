@@ -101,164 +101,164 @@ class SettingsService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper = inject.attr(TypeMapperService)
 
-    backupEnabledChanged = Signal(bool)
+    backup_enabled_changed = Signal(bool)
     backup_enabled = _Setting(
         "Backup/enabled",
         default=True,
         type_=bool,
-        signal=backupEnabledChanged,
+        signal=backup_enabled_changed,
     )
 
-    backupIntervalChanged = Signal(int)
+    backup_interval_changed = Signal(int)
     backup_interval = _Setting(
         "Backup/interval",
         default=60,
         type_=int,
-        signal=backupIntervalChanged,
+        signal=backup_interval_changed,
     )
 
-    languageChanged = Signal(str)
+    language_changed = Signal(str)
     language = _Setting(
         "Common/language",
         default=get_default_language,
         type_=str,
-        signal=languageChanged,
+        signal=language_changed,
     )
 
-    commentTypesChanged = Signal(list)
+    comment_types_changed = Signal(list)
     comment_types = _Setting(
         "Common/commentTypes",
         default=get_default_comment_types,
         type_=list,
-        signal=commentTypesChanged,
+        signal=comment_types_changed,
     )
 
-    nicknameChanged = Signal(str)
+    nickname_changed = Signal(str)
     nickname = _Setting(
         "Export/nickname",
         default=get_default_username,
         type_=str,
-        signal=nicknameChanged,
+        signal=nickname_changed,
     )
 
-    writeHeaderDateChanged = Signal(bool)
+    write_header_date_changed = Signal(bool)
     write_header_date = _Setting(
         "Export/writeHeaderDate",
         default=True,
         type_=bool,
-        signal=writeHeaderDateChanged,
+        signal=write_header_date_changed,
     )
 
-    writeHeaderGeneratorChanged = Signal(bool)
+    write_header_generator_changed = Signal(bool)
     write_header_generator = _Setting(
         "Export/writeHeaderGenerator",
         default=True,
         type_=bool,
-        signal=writeHeaderGeneratorChanged,
+        signal=write_header_generator_changed,
     )
 
-    writeHeaderNicknameChanged = Signal(bool)
+    write_header_nickname_changed = Signal(bool)
     write_header_nickname = _Setting(
         "Export/writeHeaderNickname",
         default=False,
         type_=bool,
-        signal=writeHeaderNicknameChanged,
+        signal=write_header_nickname_changed,
     )
 
-    writeHeaderVideoPathChanged = Signal(bool)
+    write_header_video_path_changed = Signal(bool)
     write_header_video_path = _Setting(
         "Export/writeHeaderVideoPath",
         default=True,
         type_=bool,
-        signal=writeHeaderVideoPathChanged,
+        signal=write_header_video_path_changed,
     )
 
-    writeHeaderSubtitlesChanged = Signal(bool)
+    write_header_subtitles_changed = Signal(bool)
     write_header_subtitles = _Setting(
         "Export/writeHeaderSubtitles",
         default=False,
         type_=bool,
-        signal=writeHeaderSubtitlesChanged,
+        signal=write_header_subtitles_changed,
     )
 
-    statusbarPercentageChanged = Signal(bool)
+    statusbar_percentage_changed = Signal(bool)
     statusbar_percentage = _Setting(
         "StatusBar/statusbarPercentage",
         default=True,
         type_=bool,
-        signal=statusbarPercentageChanged,
+        signal=statusbar_percentage_changed,
     )
 
-    timeFormatChanged = Signal(int)
+    time_format_changed = Signal(int)
     time_format = _Setting(
         "StatusBar/timeFormat",
         default=MpvqcTimeFormat.TimeFormat.CURRENT_TOTAL_TIME.value,
         type_=int,
-        signal=timeFormatChanged,
+        signal=time_format_changed,
     )
 
-    lastDirectoryVideoChanged = Signal(QUrl)
+    last_directory_video_changed = Signal(QUrl)
     last_directory_video = _Setting(
         "Import/lastDirectoryVideo",
         default=get_default_movie_location,
         type_=QUrl,
-        signal=lastDirectoryVideoChanged,
+        signal=last_directory_video_changed,
     )
 
-    lastDirectoryDocumentsChanged = Signal(QUrl)
+    last_directory_documents_changed = Signal(QUrl)
     last_directory_documents = _Setting(
         "Import/lastDirectoryDocuments",
         default=get_default_documents_location,
         type_=QUrl,
-        signal=lastDirectoryDocumentsChanged,
+        signal=last_directory_documents_changed,
     )
 
-    lastDirectorySubtitlesChanged = Signal(QUrl)
+    last_directory_subtitles_changed = Signal(QUrl)
     last_directory_subtitles = _Setting(
         "Import/lastDirectorySubtitles",
         default=get_default_documents_location,
         type_=QUrl,
-        signal=lastDirectorySubtitlesChanged,
+        signal=last_directory_subtitles_changed,
     )
 
-    importFoundVideoChanged = Signal(int)
+    import_found_video_changed = Signal(int)
     import_found_video = _Setting(
         "Import/importFoundVideo",
         default=MpvqcImportFoundVideo.ImportFoundVideo.ASK_EVERY_TIME.value,
         type_=int,
-        signal=importFoundVideoChanged,
+        signal=import_found_video_changed,
     )
 
-    layoutOrientationChanged = Signal(int)
+    layout_orientation_changed = Signal(int)
     layout_orientation = _Setting(
         "SplitView/layoutOrientation",
         default=Qt.Orientation.Vertical.value,
         type_=int,
-        signal=layoutOrientationChanged,
+        signal=layout_orientation_changed,
     )
 
-    themeIdentifierChanged = Signal(str)
+    theme_identifier_changed = Signal(str)
     theme_identifier = _Setting(
         "Theme/themeIdentifier",
         default="material-you-dark",
         type_=str,
-        signal=themeIdentifierChanged,
+        signal=theme_identifier_changed,
     )
 
-    themeColorOptionChanged = Signal(int)
+    theme_color_option_changed = Signal(int)
     theme_color_option = _Setting(
         "Theme/themeColorOption",
         default=4,
         type_=int,
-        signal=themeColorOptionChanged,
+        signal=theme_color_option_changed,
     )
 
-    windowTitleFormatChanged = Signal(int)
+    window_title_format_changed = Signal(int)
     window_title_format = _Setting(
         "Window/titleFormat",
         default=MpvqcWindowTitleFormat.WindowTitleFormat.DEFAULT.value,
         type_=int,
-        signal=windowTitleFormatChanged,
+        signal=window_title_format_changed,
     )
 
     def __init__(self, parent: QObject | None = None, ini_file: str | None = None) -> None:
