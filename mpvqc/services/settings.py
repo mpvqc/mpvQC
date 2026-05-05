@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from enum import IntEnum
 from functools import cache
 from typing import TYPE_CHECKING, cast, overload
 
@@ -99,11 +98,6 @@ class _Setting[T]:
 class SettingsService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper = inject.attr(TypeMapperService)
-
-    class ImportFoundVideo(IntEnum):
-        ALWAYS = 0
-        ASK_EVERY_TIME = 1
-        NEVER = 2
 
     backupEnabledChanged = Signal(bool)
     backup_enabled = _Setting(
