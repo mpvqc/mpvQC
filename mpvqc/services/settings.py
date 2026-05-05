@@ -2,10 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import os
+from dataclasses import dataclass
 from enum import IntEnum
 from functools import cache
-from typing import cast
+from typing import TYPE_CHECKING, cast, overload
 
 import inject
 from PySide6.QtCore import (
@@ -17,11 +20,13 @@ from PySide6.QtCore import (
     Qt,
     QUrl,
     Signal,
-    SignalInstance,
 )
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def get_default_username() -> str:
@@ -66,6 +71,31 @@ def get_default_comment_types() -> list[str]:
     ]
 
 
+@dataclass(eq=False)
+class _Setting[T]:
+    key: str
+    default: T | Callable[[], T]
+    type_: type[T]
+    signal: Signal
+
+    @overload
+    def __get__(self, obj: None, _owner: type | None = None) -> _Setting[T]: ...
+
+    @overload
+    def __get__(self, obj: SettingsService, _owner: type | None = None) -> T: ...
+
+    def __get__(self, obj: SettingsService | None, _owner: type | None = None) -> T | _Setting[T]:
+        if obj is None:
+            return self
+        default = self.default() if callable(self.default) else self.default
+        return cast("T", obj.qsettings.value(self.key, default, type=self.type_))
+
+    def __set__(self, obj: SettingsService, value: T) -> None:
+        if self.__get__(obj) != value:
+            obj.qsettings.setValue(self.key, value)
+            self.signal.__get__(obj, type(obj)).emit(value)
+
+
 class SettingsService(QObject):
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper = inject.attr(TypeMapperService)
@@ -75,220 +105,171 @@ class SettingsService(QObject):
         ASK_EVERY_TIME = 1
         NEVER = 2
 
-    # Backup
     backupEnabledChanged = Signal(bool)
+    backup_enabled = _Setting(
+        "Backup/enabled",
+        default=True,
+        type_=bool,
+        signal=backupEnabledChanged,
+    )
+
     backupIntervalChanged = Signal(int)
+    backup_interval = _Setting(
+        "Backup/interval",
+        default=60,
+        type_=int,
+        signal=backupIntervalChanged,
+    )
 
-    # Common
     languageChanged = Signal(str)
+    language = _Setting(
+        "Common/language",
+        default=get_default_language,
+        type_=str,
+        signal=languageChanged,
+    )
+
     commentTypesChanged = Signal(list)
+    comment_types = _Setting(
+        "Common/commentTypes",
+        default=get_default_comment_types,
+        type_=list,
+        signal=commentTypesChanged,
+    )
 
-    # Export
     nicknameChanged = Signal(str)
+    nickname = _Setting(
+        "Export/nickname",
+        default=get_default_username,
+        type_=str,
+        signal=nicknameChanged,
+    )
+
     writeHeaderDateChanged = Signal(bool)
+    write_header_date = _Setting(
+        "Export/writeHeaderDate",
+        default=True,
+        type_=bool,
+        signal=writeHeaderDateChanged,
+    )
+
     writeHeaderGeneratorChanged = Signal(bool)
+    write_header_generator = _Setting(
+        "Export/writeHeaderGenerator",
+        default=True,
+        type_=bool,
+        signal=writeHeaderGeneratorChanged,
+    )
+
     writeHeaderNicknameChanged = Signal(bool)
+    write_header_nickname = _Setting(
+        "Export/writeHeaderNickname",
+        default=False,
+        type_=bool,
+        signal=writeHeaderNicknameChanged,
+    )
+
     writeHeaderVideoPathChanged = Signal(bool)
+    write_header_video_path = _Setting(
+        "Export/writeHeaderVideoPath",
+        default=True,
+        type_=bool,
+        signal=writeHeaderVideoPathChanged,
+    )
+
     writeHeaderSubtitlesChanged = Signal(bool)
+    write_header_subtitles = _Setting(
+        "Export/writeHeaderSubtitles",
+        default=False,
+        type_=bool,
+        signal=writeHeaderSubtitlesChanged,
+    )
 
-    # StatusBar
     statusbarPercentageChanged = Signal(bool)
+    statusbar_percentage = _Setting(
+        "StatusBar/statusbarPercentage",
+        default=True,
+        type_=bool,
+        signal=statusbarPercentageChanged,
+    )
+
     timeFormatChanged = Signal(int)
+    time_format = _Setting(
+        "StatusBar/timeFormat",
+        default=3,
+        type_=int,
+        signal=timeFormatChanged,
+    )
 
-    # Import
     lastDirectoryVideoChanged = Signal(QUrl)
+    last_directory_video = _Setting(
+        "Import/lastDirectoryVideo",
+        default=get_default_movie_location,
+        type_=QUrl,
+        signal=lastDirectoryVideoChanged,
+    )
+
     lastDirectoryDocumentsChanged = Signal(QUrl)
+    last_directory_documents = _Setting(
+        "Import/lastDirectoryDocuments",
+        default=get_default_documents_location,
+        type_=QUrl,
+        signal=lastDirectoryDocumentsChanged,
+    )
+
     lastDirectorySubtitlesChanged = Signal(QUrl)
+    last_directory_subtitles = _Setting(
+        "Import/lastDirectorySubtitles",
+        default=get_default_documents_location,
+        type_=QUrl,
+        signal=lastDirectorySubtitlesChanged,
+    )
+
     importFoundVideoChanged = Signal(int)
+    import_found_video = _Setting(
+        "Import/importFoundVideo",
+        default=1,
+        type_=int,
+        signal=importFoundVideoChanged,
+    )
 
-    # SplitView
     layoutOrientationChanged = Signal(int)
+    layout_orientation = _Setting(
+        "SplitView/layoutOrientation",
+        default=Qt.Orientation.Vertical.value,
+        type_=int,
+        signal=layoutOrientationChanged,
+    )
 
-    # Theme
     themeIdentifierChanged = Signal(str)
-    themeColorOptionChanged = Signal(int)
+    theme_identifier = _Setting(
+        "Theme/themeIdentifier",
+        default="material-you-dark",
+        type_=str,
+        signal=themeIdentifierChanged,
+    )
 
-    # Window Title
+    themeColorOptionChanged = Signal(int)
+    theme_color_option = _Setting(
+        "Theme/themeColorOption",
+        default=4,
+        type_=int,
+        signal=themeColorOptionChanged,
+    )
+
     windowTitleFormatChanged = Signal(int)
+    window_title_format = _Setting(
+        "Window/titleFormat",
+        default=0,
+        type_=int,
+        signal=windowTitleFormatChanged,
+    )
 
     def __init__(self, parent: QObject | None = None, ini_file: str | None = None) -> None:
         super().__init__(parent)
         file = ini_file if ini_file is not None else self._type_mapper.map_path_to_str(self._paths.file_settings)
-        self._settings = QSettings(file, QSettings.Format.IniFormat)
-
-    def _get[T](self, key: str, default: T, *, _type: type[T]) -> T:
-        # noinspection PyUnnecessaryCast
-        return cast("T", self._settings.value(key, default, type=_type))
-
-    def _set[T](self, key: str, current_value: T, new_value: T, signal: SignalInstance) -> None:
-        if current_value != new_value:
-            self._settings.setValue(key, new_value)
-            signal.emit(new_value)
+        self.qsettings = QSettings(file, QSettings.Format.IniFormat)
 
     @staticmethod
     def get_default_comment_types() -> list[str]:
         return get_default_comment_types()
-
-    @property
-    def backup_enabled(self) -> bool:
-        return self._get("Backup/enabled", True, _type=bool)
-
-    @backup_enabled.setter
-    def backup_enabled(self, value: bool) -> None:
-        self._set("Backup/enabled", self.backup_enabled, value, self.backupEnabledChanged)
-
-    @property
-    def backup_interval(self) -> int:
-        return self._get("Backup/interval", 60, _type=int)
-
-    @backup_interval.setter
-    def backup_interval(self, value: int) -> None:
-        self._set("Backup/interval", self.backup_interval, value, self.backupIntervalChanged)
-
-    @property
-    def language(self) -> str:
-        return self._get("Common/language", get_default_language(), _type=str)
-
-    @language.setter
-    def language(self, value: str) -> None:
-        self._set("Common/language", self.language, value, self.languageChanged)
-
-    @property
-    def comment_types(self) -> list[str]:
-        return self._get("Common/commentTypes", self.get_default_comment_types(), _type=list)
-
-    @comment_types.setter
-    def comment_types(self, value: list[str]) -> None:
-        self._set("Common/commentTypes", self.comment_types, value, self.commentTypesChanged)
-
-    @property
-    def nickname(self) -> str:
-        return self._get("Export/nickname", get_default_username(), _type=str)
-
-    @nickname.setter
-    def nickname(self, value: str) -> None:
-        self._set("Export/nickname", self.nickname, value, self.nicknameChanged)
-
-    @property
-    def write_header_date(self) -> bool:
-        return self._get("Export/writeHeaderDate", True, _type=bool)
-
-    @write_header_date.setter
-    def write_header_date(self, value: bool) -> None:
-        self._set("Export/writeHeaderDate", self.write_header_date, value, self.writeHeaderDateChanged)
-
-    @property
-    def write_header_generator(self) -> bool:
-        return self._get("Export/writeHeaderGenerator", True, _type=bool)
-
-    @write_header_generator.setter
-    def write_header_generator(self, value: bool) -> None:
-        self._set("Export/writeHeaderGenerator", self.write_header_generator, value, self.writeHeaderGeneratorChanged)
-
-    @property
-    def write_header_nickname(self) -> bool:
-        return self._get("Export/writeHeaderNickname", False, _type=bool)
-
-    @write_header_nickname.setter
-    def write_header_nickname(self, value: bool) -> None:
-        self._set("Export/writeHeaderNickname", self.write_header_nickname, value, self.writeHeaderNicknameChanged)
-
-    @property
-    def write_header_video_path(self) -> bool:
-        return self._get("Export/writeHeaderVideoPath", True, _type=bool)
-
-    @write_header_video_path.setter
-    def write_header_video_path(self, value: bool) -> None:
-        self._set("Export/writeHeaderVideoPath", self.write_header_video_path, value, self.writeHeaderVideoPathChanged)
-
-    @property
-    def write_header_subtitles(self) -> bool:
-        return self._get("Export/writeHeaderSubtitles", False, _type=bool)
-
-    @write_header_subtitles.setter
-    def write_header_subtitles(self, value: bool) -> None:
-        self._set("Export/writeHeaderSubtitles", self.write_header_subtitles, value, self.writeHeaderSubtitlesChanged)
-
-    @property
-    def statusbar_percentage(self) -> bool:
-        return self._get("StatusBar/statusbarPercentage", True, _type=bool)
-
-    @statusbar_percentage.setter
-    def statusbar_percentage(self, value: bool) -> None:
-        self._set("StatusBar/statusbarPercentage", self.statusbar_percentage, value, self.statusbarPercentageChanged)
-
-    @property
-    def time_format(self) -> int:
-        return self._get("StatusBar/timeFormat", 3, _type=int)  # CURRENT_TOTAL_TIME
-
-    @time_format.setter
-    def time_format(self, value: int) -> None:
-        self._set("StatusBar/timeFormat", self.time_format, value, self.timeFormatChanged)
-
-    @property
-    def last_directory_video(self) -> QUrl:
-        return self._get("Import/lastDirectoryVideo", get_default_movie_location(), _type=QUrl)
-
-    @last_directory_video.setter
-    def last_directory_video(self, value: QUrl) -> None:
-        self._set("Import/lastDirectoryVideo", self.last_directory_video, value, self.lastDirectoryVideoChanged)
-
-    @property
-    def last_directory_documents(self) -> QUrl:
-        return self._get("Import/lastDirectoryDocuments", get_default_documents_location(), _type=QUrl)
-
-    @last_directory_documents.setter
-    def last_directory_documents(self, value: QUrl) -> None:
-        self._set(
-            "Import/lastDirectoryDocuments", self.last_directory_documents, value, self.lastDirectoryDocumentsChanged
-        )
-
-    @property
-    def last_directory_subtitles(self) -> QUrl:
-        return self._get("Import/lastDirectorySubtitles", get_default_documents_location(), _type=QUrl)
-
-    @last_directory_subtitles.setter
-    def last_directory_subtitles(self, value: QUrl) -> None:
-        self._set(
-            "Import/lastDirectorySubtitles", self.last_directory_subtitles, value, self.lastDirectorySubtitlesChanged
-        )
-
-    @property
-    def import_found_video(self) -> int:
-        return self._get("Import/importFoundVideo", 1, _type=int)  # ASK_EVERY_TIME
-
-    @import_found_video.setter
-    def import_found_video(self, value: int) -> None:
-        self._set("Import/importFoundVideo", self.import_found_video, value, self.importFoundVideoChanged)
-
-    @property
-    def layout_orientation(self) -> int:
-        return self._get("SplitView/layoutOrientation", Qt.Orientation.Vertical.value, _type=int)
-
-    @layout_orientation.setter
-    def layout_orientation(self, value: int) -> None:
-        self._set("SplitView/layoutOrientation", self.layout_orientation, value, self.layoutOrientationChanged)
-
-    @property
-    def theme_identifier(self) -> str:
-        return self._get("Theme/themeIdentifier", "material-you-dark", _type=str)
-
-    @theme_identifier.setter
-    def theme_identifier(self, value: str) -> None:
-        self._set("Theme/themeIdentifier", self.theme_identifier, value, self.themeIdentifierChanged)
-
-    @property
-    def theme_color_option(self) -> int:
-        return self._get("Theme/themeColorOption", 4, _type=int)
-
-    @theme_color_option.setter
-    def theme_color_option(self, value: int) -> None:
-        self._set("Theme/themeColorOption", self.theme_color_option, value, self.themeColorOptionChanged)
-
-    @property
-    def window_title_format(self) -> int:
-        return self._get("Window/titleFormat", 0, _type=int)
-
-    @window_title_format.setter
-    def window_title_format(self, value: int) -> None:
-        self._set("Window/titleFormat", self.window_title_format, value, self.windowTitleFormatChanged)
