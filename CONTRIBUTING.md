@@ -34,7 +34,7 @@ ______________________________________________________________________
 
 ## Coding Standards & Testing
 
-- See [docs/development.md](docs/development.md) for setup, daily commands, and tooling (`just fmt`, `just lint-python`, `just lint-qml`, `just test`).
+- See [docs/development.md](docs/development.md) for setup, daily commands, and tooling (`just fmt`, `just lint-qml`, `just test`).
 - See [docs/architecture.md](docs/architecture.md) for a high-level overview of the codebase before making non-trivial changes.
 - Include or update tests when you add or modify functionality, and make sure all existing tests pass before opening a PR.
 

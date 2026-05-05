@@ -39,8 +39,7 @@ Whenever you change files in `data/`, `i18n/`, or `qt/qml/`, re-run `just build-
 | `just test-python`            | Run Python tests only — does **not** recompile                                   |
 | `just test-qml`               | Run QML tests only — does **not** recompile                                      |
 | `just test-qml-debug TARGET`  | Run a single QML test file matched by name (useful for iteration)                |
-| `just fmt`                    | Format Python, QML, JSON, TOML, YAML, Markdown                                   |
-| `just lint-python`            | Run pyrefly type checker                                                         |
+| `just fmt`                    | Format and lint Python, QML, JSON, TOML, YAML, Markdown                          |
 | `just lint-qml`               | Run pyside6-qmllint                                                              |
 | `just build-develop`          | Recompile QML/data/i18n into the resource bundle                                 |
 | `just clean`                  | Remove all generated files                                                       |

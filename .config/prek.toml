@@ -15,7 +15,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/biomejs/pre-commit"
-rev = "v2.4.10"
+rev = "v2.4.14"
 hooks = [
     {
         id = "biome-check",
@@ -28,7 +28,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/tombi-toml/tombi-pre-commit"
-rev = "v0.9.16"
+rev = "v0.10.4"
 hooks = [
     {
         id = "tombi-format",
@@ -65,18 +65,35 @@ hooks = [
 ]
 
 [[repos]]
-repo = "https://github.com/astral-sh/ruff-pre-commit"
-rev = "v0.15.9"
+repo = "local"
 hooks = [
     {
         id = "ruff",
         name = "lint py",
+        entry = "ruff check",
+        language = "system",
+        types = ["python"],
+        require_serial = true,
         args = ["--config", ".config/ruff.toml", "--fix"],
     },
     {
         id = "ruff-format",
         name = "format py",
+        entry = "ruff format",
+        language = "system",
+        types = ["python"],
+        require_serial = true,
         args = ["--config", ".config/ruff.toml"],
+    },
+    {
+        id = "pyrefly",
+        name = "typecheck py",
+        entry = "pyrefly check",
+        language = "system",
+        types = ["python"],
+        pass_filenames = false,
+        require_serial = true,
+        args = ["--config", ".config/pyrefly.toml"],
     },
 ]
 
@@ -97,5 +114,8 @@ hooks = [
 repo = "https://github.com/fsfe/reuse-tool"
 rev = "v6.2.0"
 hooks = [
-    { id = "reuse-lint-file", name = "lint licenses" },
+    {
+        id = "reuse-lint-file",
+        name = "lint licenses",
+    },
 ]

@@ -30,9 +30,10 @@ Repository = "https://github.com/mpvqc/mpvQC"
 [dependency-groups]
 dev = [
     "materialyoucolor>=3.0.2",
-    "prek>=0.3.8",
-    "pyrefly>=0.59.1",
+    "prek>=0.3.13",
+    "pyrefly>=0.63.1",
     "pytest>=9.0.3",
+    "ruff>=0.15.12",
 ]
 
 [tool.pyside6-project]

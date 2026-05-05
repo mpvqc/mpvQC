@@ -39,6 +39,8 @@ jobs:
         run: sudo apt update -y
       - name: Initialize Project
         run: just init
+      - name: Generate Resources
+        run: just prepare-tests
       - name: Run Linter and Formatter
         run: just format
       - name: Lint Qml
