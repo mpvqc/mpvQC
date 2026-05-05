@@ -136,11 +136,6 @@ test-qml:
 test-qml-debug TARGET:
     uv run -m testqml.main --target '{{ TARGET }}'
 
-# Lint Python files (type checker only)
-[group('lint')]
-lint-python *ARGS:
-    uv run pyrefly check --config .config/pyrefly.toml {{ ARGS }}
-
 # Lint QML files
 [group('lint')]
 @lint-qml: build-develop
