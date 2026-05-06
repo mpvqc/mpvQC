@@ -19,3 +19,6 @@ class MpvqcImportFoundVideo(QObject):
         NEVER = 2
 
     QEnum(ImportFoundVideo)
+
+
+ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo

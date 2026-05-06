@@ -21,7 +21,7 @@ from PySide6.QtCore import (
     Signal,
 )
 
-from mpvqc.enums import MpvqcImportFoundVideo, MpvqcTimeFormat, MpvqcWindowTitleFormat
+from mpvqc.enums import ImportFoundVideo, TimeFormat, WindowTitleFormat
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -192,7 +192,7 @@ class SettingsService(QObject):
     time_format_changed = Signal(int)
     time_format = _Setting(
         "StatusBar/timeFormat",
-        default=MpvqcTimeFormat.TimeFormat.CURRENT_TOTAL_TIME.value,
+        default=TimeFormat.CURRENT_TOTAL_TIME.value,
         type_=int,
         signal=time_format_changed,
     )
@@ -224,7 +224,7 @@ class SettingsService(QObject):
     import_found_video_changed = Signal(int)
     import_found_video = _Setting(
         "Import/importFoundVideo",
-        default=MpvqcImportFoundVideo.ImportFoundVideo.ASK_EVERY_TIME.value,
+        default=ImportFoundVideo.ASK_EVERY_TIME.value,
         type_=int,
         signal=import_found_video_changed,
     )
@@ -256,7 +256,7 @@ class SettingsService(QObject):
     window_title_format_changed = Signal(int)
     window_title_format = _Setting(
         "Window/titleFormat",
-        default=MpvqcWindowTitleFormat.WindowTitleFormat.DEFAULT.value,
+        default=WindowTitleFormat.DEFAULT.value,
         type_=int,
         signal=window_title_format_changed,
     )
