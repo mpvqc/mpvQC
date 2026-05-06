@@ -34,9 +34,9 @@ ApplicationWindow {
     }
 
     Material.theme: MpvqcTheme.isDark ? Material.Dark : Material.Light
-    Material.accent: MpvqcTheme.control
-    Material.background: MpvqcTheme.background
-    Material.foreground: MpvqcTheme.foreground
+    Material.accent: MpvqcTheme.palette.control
+    Material.background: MpvqcTheme.palette.background
+    Material.foreground: MpvqcTheme.palette.foreground
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true

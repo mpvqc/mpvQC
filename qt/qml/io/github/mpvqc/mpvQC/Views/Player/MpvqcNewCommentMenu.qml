@@ -28,8 +28,8 @@ MpvqcPositionedMenu {
     z: 2
     exit: null
 
-    Material.background: MpvqcTheme.backgroundAlternate
-    Material.foreground: MpvqcTheme.foregroundAlternate
+    Material.background: MpvqcTheme.palette.backgroundAlternate
+    Material.foreground: MpvqcTheme.palette.foregroundAlternate
 
     onAboutToShow: {
         viewModel.pausePlayer();

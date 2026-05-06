@@ -14,8 +14,6 @@ Popup {
     required property int currentListIndex
     required property string currentComment
 
-    readonly property bool isOdd: currentListIndex % 2 === 1
-
     property bool acceptValue: true
 
     signal commentEdited(index: int, newComment: string)
@@ -44,12 +42,12 @@ Popup {
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
 
-        selectionColor: MpvqcTheme.rowHighlight
-        selectedTextColor: MpvqcTheme.rowHighlightText
+        selectionColor: MpvqcTheme.palette.rowHighlight
+        selectedTextColor: MpvqcTheme.palette.rowHighlightText
 
         background: Rectangle {
             anchors.fill: parent
-            color: MpvqcTheme.getBackground(root.isOdd)
+            color: MpvqcTheme.palette.rowBackground(root.currentListIndex)
         }
 
         ContextMenu.menu: null

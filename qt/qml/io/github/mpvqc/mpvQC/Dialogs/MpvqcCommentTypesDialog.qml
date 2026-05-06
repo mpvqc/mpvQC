@@ -103,7 +103,7 @@ MpvqcDialog {
 
                 text: root.viewModel.validationError
                 maximumLineCount: 3
-                color: root.mpvqcTheme.control
+                color: root.mpvqcTheme.palette.control
                 wrapMode: Label.WordWrap
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignTop
@@ -141,7 +141,7 @@ MpvqcDialog {
                 highlightResizeVelocity: -1
 
                 highlight: Rectangle {
-                    color: root.mpvqcTheme.rowHighlight
+                    color: root.mpvqcTheme.palette.rowHighlight
                     radius: Material.ExtraSmallScale
                 }
 
@@ -151,13 +151,13 @@ MpvqcDialog {
                     required property var modelData
                     required property int index
 
-                    readonly property color foregroundColor: root.mpvqcTheme.getForeground(index % 2 === 1)
-                    readonly property color backgroundColor: root.mpvqcTheme.getBackground(index % 2 === 1)
+                    readonly property color foregroundColor: root.mpvqcTheme.palette.rowForeground(index)
+                    readonly property color backgroundColor: root.mpvqcTheme.palette.rowBackground(index)
 
                     width: ListView.view.width - _scrollBar.visibleWidth
                     height: _upButton.height
 
-                    Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.rowHighlightText : foregroundColor
+                    Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.palette.rowHighlightText : foregroundColor
                     Material.background: backgroundColor
 
                     onPressed: root.viewModel.selectItem(index)

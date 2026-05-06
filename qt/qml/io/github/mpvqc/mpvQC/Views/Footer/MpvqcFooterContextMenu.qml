@@ -25,8 +25,8 @@ MpvqcMenu {
 
     modal: true
 
-    Material.background: MpvqcTheme.backgroundAlternate
-    Material.foreground: MpvqcTheme.foregroundAlternate
+    Material.background: MpvqcTheme.palette.backgroundAlternate
+    Material.foreground: MpvqcTheme.palette.foregroundAlternate
 
     MenuItem {
         objectName: "defaultFormatMenuItem"

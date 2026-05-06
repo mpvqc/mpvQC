@@ -88,7 +88,7 @@ TestCase {
             {
                 tag: "nonWindows",
                 isWindows: false,
-                expected: MpvqcTheme.control
+                expected: MpvqcTheme.palette.control
             }
         ];
     }
@@ -112,7 +112,7 @@ TestCase {
             {
                 tag: "nonWindows",
                 isWindows: false,
-                expected: MpvqcTheme.background
+                expected: MpvqcTheme.palette.background
             }
         ];
     }
@@ -145,6 +145,6 @@ TestCase {
         });
         const button = findChild(control, "closeButton");
 
-        compare(button.idleIconColor, MpvqcTheme.foreground);
+        compare(button.idleIconColor, MpvqcTheme.palette.foreground);
     }
 }

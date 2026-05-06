@@ -136,7 +136,7 @@ MpvqcDialog {
 
                 highlight: SelectionHighlight {
                     size: root.dimensions.itemSize
-                    highlightColor: root.mpvqcTheme.control
+                    highlightColor: root.mpvqcTheme.palette.control
                     borderWidth: 0
                     borderColor: "transparent"
                     moveDuration: root.animations.highlightMoveDuration
@@ -171,10 +171,7 @@ MpvqcDialog {
                 }
                 Layout.fillWidth: true
 
-                model: MpvqcThemePaletteModel {
-                    onAboutToReset: _gridView.highlightMoveDuration = 0
-                    onResetDone: _gridView.highlightMoveDuration = root.animations.highlightMoveDuration
-                }
+                model: MpvqcThemeColorOptionsModel {}
 
                 currentIndex: root.viewModel.colorIndex
                 boundsBehavior: Flickable.StopAtBounds
@@ -187,19 +184,17 @@ MpvqcDialog {
 
                 highlight: SelectionHighlight {
                     size: root.dimensions.itemSize
-                    highlightColor: root.mpvqcTheme.isDark ? root.mpvqcTheme.foreground : root.mpvqcTheme.background
+                    highlightColor: root.mpvqcTheme.isDark ? root.mpvqcTheme.palette.foreground : root.mpvqcTheme.palette.background
                     borderWidth: root.mpvqcTheme.isDark ? 0 : 2
-                    borderColor: root.mpvqcTheme.rowHighlight
+                    borderColor: root.mpvqcTheme.palette.rowHighlight
                     moveDuration: root.animations.highlightMoveDuration
                 }
 
                 delegate: SelectionDelegate {
-                    required property color rowHighlight
                     required property int index
 
                     itemSize: root.dimensions.itemSize
                     borderSize: root.dimensions.borderSize
-                    displayColor: rowHighlight
 
                     onSelected: idx => root.viewModel.setColorOption(idx)
                 }

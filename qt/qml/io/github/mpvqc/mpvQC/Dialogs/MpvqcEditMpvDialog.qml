@@ -31,7 +31,7 @@ MpvqcDialog {
     component Separator: Rectangle {
         property int topMargin: 0
 
-        color: root.mpvqcTheme.control
+        color: root.mpvqcTheme.palette.control
 
         Layout.topMargin: topMargin
         Layout.preferredHeight: 1

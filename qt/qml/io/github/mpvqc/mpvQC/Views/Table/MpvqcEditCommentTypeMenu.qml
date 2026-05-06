@@ -28,8 +28,8 @@ MpvqcPositionedMenu {
         }
     }
 
-    Material.background: MpvqcTheme.backgroundAlternate
-    Material.foreground: MpvqcTheme.foregroundAlternate
+    Material.background: MpvqcTheme.palette.backgroundAlternate
+    Material.foreground: MpvqcTheme.palette.foregroundAlternate
 
     Repeater {
         model: root.commentTypes
