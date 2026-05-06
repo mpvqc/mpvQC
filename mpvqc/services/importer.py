@@ -17,7 +17,7 @@ from mpvqc.datamodels import (
     SubtitleImportResult,
     VideoSource,
 )
-from mpvqc.enums import MpvqcImportFoundVideo
+from mpvqc.enums import ImportFoundVideo
 
 from .comments import CommentsService
 from .document_importer import DocumentImporterService
@@ -25,8 +25,6 @@ from .player import PlayerService
 from .settings import SettingsService
 from .state import StateService
 from .subtitle_importer import SubtitleImporterService
-
-ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo
 
 logger = logging.getLogger(__name__)
 

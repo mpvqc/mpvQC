@@ -9,7 +9,7 @@ import typing
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import MpvqcImportFoundVideo
+from mpvqc.enums import ImportFoundVideo
 
 if typing.TYPE_CHECKING:
     from typing import Any
@@ -19,8 +19,6 @@ if typing.TYPE_CHECKING:
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
-
-ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo
 
 
 @QmlElement

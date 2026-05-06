@@ -19,3 +19,6 @@ class MpvqcWindowTitleFormat(QObject):
         FILE_PATH = 2
 
     QEnum(WindowTitleFormat)
+
+
+WindowTitleFormat = MpvqcWindowTitleFormat.WindowTitleFormat

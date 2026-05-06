@@ -6,13 +6,12 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import MpvqcTimeFormat
+from mpvqc.enums import TimeFormat
 from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService, TimeFormatterService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-TimeFormat = MpvqcTimeFormat.TimeFormat
 SECONDS_PER_HOUR = 3600
 
 

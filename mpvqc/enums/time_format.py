@@ -20,3 +20,6 @@ class MpvqcTimeFormat(QObject):
         CURRENT_TOTAL_TIME = 3
 
     QEnum(TimeFormat)
+
+
+TimeFormat = MpvqcTimeFormat.TimeFormat
