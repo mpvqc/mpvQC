@@ -153,7 +153,7 @@ class ImporterService(QObject):
             return
 
         if not result.found_videos:
-            self.finalize_import(None, result.found_subtitles, result)
+            self._apply_import(None, result.found_subtitles, result)
             return
 
         self._handle_found_videos(result)
@@ -162,7 +162,7 @@ class ImporterService(QObject):
         found_videos = result.found_videos
 
         if len(found_videos) == 1:
-            self.finalize_import(found_videos[0].path, result.found_subtitles, result)
+            self._apply_import(found_videos[0].path, result.found_subtitles, result)
             return
 
         self._ask_user_what_to_import(result)
@@ -171,7 +171,7 @@ class ImporterService(QObject):
         found_videos = result.found_videos
 
         if self._should_skip_video_import_because_already_loaded(found_videos):
-            self.finalize_import(None, result.found_subtitles, result)
+            self._apply_import(None, result.found_subtitles, result)
             return
 
         if len(found_videos) == 1:
@@ -188,11 +188,11 @@ class ImporterService(QObject):
 
         match setting:
             case ImportFoundVideo.ALWAYS:
-                self.finalize_import(video.path, result.found_subtitles, result)
+                self._apply_import(video.path, result.found_subtitles, result)
             case ImportFoundVideo.ASK_EVERY_TIME:
                 self._ask_user_what_to_import(result)
             case ImportFoundVideo.NEVER:
-                self.finalize_import(None, result.found_subtitles, result)
+                self._apply_import(None, result.found_subtitles, result)
             case _:
                 msg = f"Unknown import_found_video setting: {setting}"
                 raise ValueError(msg)
@@ -201,18 +201,19 @@ class ImporterService(QObject):
         self._pending_result = result
         self.ask_user_what_to_import.emit(result.found_videos, result.found_subtitles)
 
-    def finalize_import(
+    def finalize_import(self, video: Path | None, subtitles: tuple[Path, ...]) -> None:
+        pending, self._pending_result = self._pending_result, None
+        if pending is None:
+            logger.error("Cannot finalize import: no pending import state")
+            return
+        self._apply_import(video, subtitles, pending)
+
+    def _apply_import(
         self,
         video: Path | None,
         subtitles: tuple[Path, ...],
-        result: ScanResult | None = None,
+        result: ScanResult,
     ) -> None:
-        result = result or self._pending_result
-
-        if result is None:
-            logger.error("Cannot finalize import: no import state available")
-            return
-
         if comments := result.comments:
             self._comments.import_comments(comments)
 
