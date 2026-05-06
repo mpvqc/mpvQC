@@ -6,7 +6,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import inject
-from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, QObject, QStandardPaths, Signal
+from PySide6.QtCore import QCoreApplication, QDateTime, QObject, QStandardPaths, Signal
 
 from .application_paths import ApplicationPathsService
 from .build_info import BuildInfoService
@@ -43,39 +43,27 @@ class DocumentRenderService:
 
     @property
     def _arguments(self) -> dict:
-        write_date = self._settings.write_header_date
-        write_generator = self._settings.write_header_generator
-        write_video_path = self._settings.write_header_video_path
-        write_nickname = self._settings.write_header_nickname
-        write_subtitle_paths = self._settings.write_header_subtitles
-
-        date = QLocale(self._settings.language).toString(QDateTime.currentDateTime(), QLocale.FormatType.LongFormat)
-        comments = self._comments_service.comments()
-        generator = f"{self._build_info.name} {self._build_info.version}"
-        nickname = self._settings.nickname
-        subtitles = self._player.external_subtitles
-
         if raw_path := self._player.path:
             path = Path(raw_path)
-            video_path = str(path)  # use platform specific path separators
-            video_name = f"{path.name}"
+            video_path = str(path)  # use platform-specific path separators
+            video_name = path.name
         else:
             video_path = ""
             video_name = ""
 
         return {
-            "write_date": write_date,
-            "write_generator": write_generator,
-            "write_nickname": write_nickname,
-            "write_video_path": write_video_path,
-            "write_subtitle_paths": write_subtitle_paths,
-            "date": date,
-            "generator": generator,
-            "nickname": nickname,
+            "write_date": self._settings.write_header_date,
+            "write_generator": self._settings.write_header_generator,
+            "write_nickname": self._settings.write_header_nickname,
+            "write_video_path": self._settings.write_header_video_path,
+            "write_subtitle_paths": self._settings.write_header_subtitles,
+            "date": QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm"),
+            "generator": f"{self._build_info.name} {self._build_info.version}",
+            "nickname": self._settings.nickname,
             "video_path": video_path,
             "video_name": video_name,
-            "subtitles": subtitles,
-            "comments": comments,
+            "subtitles": self._player.external_subtitles,
+            "comments": self._comments_service.comments(),
         }
 
     def render(self, template: str) -> str:
