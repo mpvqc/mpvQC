@@ -54,8 +54,8 @@ Popup {
 
     closePolicy: Popup.NoAutoClose
 
-    Material.background: MpvqcTheme.backgroundAlternate
-    Material.foreground: MpvqcTheme.foregroundAlternate
+    Material.background: MpvqcTheme.palette.backgroundAlternate
+    Material.foreground: MpvqcTheme.palette.foregroundAlternate
     Material.roundedScale: Material.SmallScale
 
     enter: Transition {

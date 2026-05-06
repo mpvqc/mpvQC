@@ -15,7 +15,7 @@ IconLabel {
 
     display: IconLabel.IconOnly
 
-    icon.color: MpvqcTheme.control
+    icon.color: MpvqcTheme.palette.control
 
     ToolTip.delay: 350
     ToolTip.text: root.toolTipText

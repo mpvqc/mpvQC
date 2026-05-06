@@ -33,7 +33,7 @@ ListView {
     highlight: Rectangle {
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
-        color: MpvqcTheme.rowHighlight
+        color: MpvqcTheme.palette.rowHighlight
     }
 
     ScrollBar.vertical: ScrollBar {

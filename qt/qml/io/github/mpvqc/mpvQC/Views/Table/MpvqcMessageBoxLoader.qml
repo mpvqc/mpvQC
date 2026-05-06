@@ -71,13 +71,13 @@ Loader {
 
                     text: {
                         const hasComment = root.commentText.trim().length > 0;
-                        const commentColor = hasComment ? MpvqcTheme.foreground : Material.hintTextColor;
+                        const commentColor = hasComment ? MpvqcTheme.palette.foreground : Material.hintTextColor;
                         //: This is displayed as a fallback in the delete confirmation box when the actual comment is empty.
                         const noTextFallback = qsTranslate("MessageBoxes", "No text available");
                         const commentContent = hasComment ? root.commentText : noTextFallback;
 
-                        const time = `<font color="${MpvqcTheme.control}">${MpvqcTableUtility.formatTime(root.commentTime)}</font>`;
-                        const type = `<font color="${MpvqcTheme.control}">${qsTranslate("CommentTypes", root.commentType)}</font>`;
+                        const time = `<font color="${MpvqcTheme.palette.control}">${MpvqcTableUtility.formatTime(root.commentTime)}</font>`;
+                        const type = `<font color="${MpvqcTheme.palette.control}">${qsTranslate("CommentTypes", root.commentType)}</font>`;
                         const comment = `<font color="${commentColor}">${commentContent}</font>`;
                         const separator = "&nbsp;&nbsp;•&nbsp;&nbsp;";
 

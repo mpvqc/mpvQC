@@ -19,9 +19,8 @@ Item {
 
     property alias scrollBarWidth: _scrollBarSpacer.width
 
-    readonly property bool isOdd: index % 2 === 1
-    readonly property color backgroundColor: MpvqcTheme.getBackground(isOdd)
-    readonly property color foregroundColor: ListView.isCurrentItem ? MpvqcTheme.rowHighlightText : MpvqcTheme.getForeground(isOdd)
+    readonly property color backgroundColor: MpvqcTheme.palette.rowBackground(index)
+    readonly property color foregroundColor: ListView.isCurrentItem ? MpvqcTheme.palette.rowHighlightText : MpvqcTheme.palette.rowForeground(index)
     property color _foregroundColor: foregroundColor // mutable for animation
 
     readonly property alias commentLabel: _commentLabel
@@ -186,7 +185,7 @@ Item {
         Rectangle {
             id: _scrollBarSpacer
             height: root.height
-            color: MpvqcTheme.background
+            color: MpvqcTheme.palette.background
         }
     }
 

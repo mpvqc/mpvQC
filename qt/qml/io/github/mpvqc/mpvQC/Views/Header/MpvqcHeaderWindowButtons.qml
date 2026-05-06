@@ -53,9 +53,9 @@ Row {
         id: _closeButton
         objectName: "closeButton"
 
-        readonly property color hoverIconColor: root.isWindows ? "#FFFFFD" : MpvqcTheme.background
-        readonly property color idleIconColor: MpvqcTheme.foreground
-        readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcTheme.control
+        readonly property color hoverIconColor: root.isWindows ? "#FFFFFD" : MpvqcTheme.palette.background
+        readonly property color idleIconColor: MpvqcTheme.palette.foreground
+        readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcTheme.palette.control
 
         visible: root.windowButtons.showCloseButton
         height: root.height

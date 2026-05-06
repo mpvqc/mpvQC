@@ -50,8 +50,8 @@ Loader {
 
             position: root.openedAt
 
-            Material.background: MpvqcTheme.backgroundAlternate
-            Material.foreground: MpvqcTheme.foregroundAlternate
+            Material.background: MpvqcTheme.palette.backgroundAlternate
+            Material.foreground: MpvqcTheme.palette.foregroundAlternate
 
             onClosed: {
                 root.active = false;
