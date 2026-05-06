@@ -24,6 +24,7 @@ from PySide6.QtCore import (
 from mpvqc.enums import ImportFoundVideo, TimeFormat, WindowTitleFormat
 
 from .application_paths import ApplicationPathsService
+from .theme import DEFAULT_THEME_IDENTIFIER
 from .type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
@@ -240,7 +241,7 @@ class SettingsService(QObject):
     theme_identifier_changed = Signal(str)
     theme_identifier = _Setting(
         "Theme/themeIdentifier",
-        default="material-you-dark",
+        default=DEFAULT_THEME_IDENTIFIER,
         type_=str,
         signal=theme_identifier_changed,
     )
