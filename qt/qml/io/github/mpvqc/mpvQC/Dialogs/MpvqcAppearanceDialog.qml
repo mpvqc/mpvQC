@@ -32,6 +32,8 @@ MpvqcDialog {
         readonly property int scaleAnimationDuration: 125
         readonly property real scalePressed: 1.1
         readonly property real scaleNormal: 1.0
+        readonly property int appearDuration: 180
+        readonly property int staggerInterval: 15
     }
 
     contentHeight: 450
@@ -44,11 +46,13 @@ MpvqcDialog {
         required property int itemSize
         required property int borderSize
         required property color displayColor
+        required property int index
 
         signal selected(int index)
 
         width: itemSize
         height: itemSize
+        opacity: 0
 
         background: Rectangle {
             x: delegateRoot.borderSize
@@ -63,6 +67,18 @@ MpvqcDialog {
             NumberAnimation {
                 duration: root.animations.scaleAnimationDuration
                 easing.type: Easing.InOutQuad
+            }
+        }
+
+        SequentialAnimation on opacity {
+            PauseAnimation {
+                duration: delegateRoot.index * root.animations.staggerInterval
+            }
+            NumberAnimation {
+                from: 0
+                to: 1
+                duration: root.animations.appearDuration
+                easing.type: Easing.OutCubic
             }
         }
 
@@ -88,11 +104,13 @@ MpvqcDialog {
         required property int borderWidth
         required property color borderColor
         required property int moveDuration
+        required property int appearIndex
 
         width: size
         height: size
         color: highlightColor
         radius: Material.SmallScale
+        opacity: 0
 
         border {
             width: borderWidth
@@ -102,6 +120,24 @@ MpvqcDialog {
         Behavior on color {
             ColorAnimation {
                 duration: _selectionHighlight.moveDuration
+            }
+        }
+
+        Behavior on border.width {
+            NumberAnimation {
+                duration: _selectionHighlight.moveDuration
+            }
+        }
+
+        SequentialAnimation on opacity {
+            PauseAnimation {
+                duration: _selectionHighlight.appearIndex * root.animations.staggerInterval
+            }
+            NumberAnimation {
+                from: 0
+                to: 1
+                duration: root.animations.appearDuration
+                easing.type: Easing.OutCubic
             }
         }
     }
@@ -119,6 +155,7 @@ MpvqcDialog {
             }
 
             ListView {
+                id: _themeListView
                 objectName: "themeListView"
 
                 Layout.preferredHeight: root.dimensions.itemSize
@@ -140,12 +177,12 @@ MpvqcDialog {
                     borderWidth: 0
                     borderColor: "transparent"
                     moveDuration: root.animations.highlightMoveDuration
+                    appearIndex: _themeListView.currentIndex
                 }
 
                 delegate: SelectionDelegate {
                     required property string identifier
                     required property color preview
-                    required property int index
 
                     itemSize: root.dimensions.itemSize
                     borderSize: root.dimensions.borderSize
@@ -188,11 +225,10 @@ MpvqcDialog {
                     borderWidth: root.mpvqcTheme.isDark ? 0 : 2
                     borderColor: root.mpvqcTheme.palette.rowHighlight
                     moveDuration: root.animations.highlightMoveDuration
+                    appearIndex: _gridView.currentIndex
                 }
 
                 delegate: SelectionDelegate {
-                    required property int index
-
                     itemSize: root.dimensions.itemSize
                     borderSize: root.dimensions.borderSize
 
