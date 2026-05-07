@@ -217,7 +217,6 @@ class UpdateType(QUndoCommand):
         on_after_redo: Callable,
     ) -> None:
         super().__init__()
-        self.setText(f"update comment type | row:{row} new-comment-time:{new_comment_type}")
         self._model = model
         self._row = row
         self._new_comment_type = new_comment_type
