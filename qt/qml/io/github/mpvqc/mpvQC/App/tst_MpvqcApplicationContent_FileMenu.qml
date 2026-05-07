@@ -245,7 +245,7 @@ TestCase {
         dialog.selectedFile = it.bridge.tempSavePath();
         it.dialog.accept(dialog);
 
-        it.find.openedDialog(control, "extendedExportErrorMessageBox");
+        it.find.openedDialog(control, "exportErrorMessageBox");
     }
 
     function test_exitMpvqcEmitsCloseRequested(): void {

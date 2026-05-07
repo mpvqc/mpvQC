@@ -286,7 +286,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/FileDialogs/MpvqcSaveDocumentFileDialog.qml",
     "qt/qml/io/github/mpvqc/mpvQC/FileDialogs/qmldir",
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcDocumentNotCompatibleMessageBox.qml",
-    "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcExtendedExportErrorMessageBox.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcExportErrorMessageBox.qml",
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcExtendedExportMessageBox.qml",
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcMessageBoxLoader.qml",
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcQuitMessageBox.qml",

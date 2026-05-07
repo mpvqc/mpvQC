@@ -616,6 +616,16 @@
         <source>Loading...</source>
         <translation>Wird geladen …</translation>
     </message>
+    <message>
+        <source>The export template could not be read.</source>
+        <extracomment>Shown when a user-supplied export template cannot be read (file gone, permission denied, or not valid UTF-8). The technical detail is logged, not surfaced to the user.</extracomment>
+        <translation>Die Exportvorlage konnte nicht gelesen werden.</translation>
+    </message>
+    <message>
+        <source>The document could not be saved.</source>
+        <extracomment>Shown when writing the QC document fails (permission denied, disk full, target directory missing). The technical detail is logged, not surfaced.</extracomment>
+        <translation>Das Dokument konnte nicht gespeichert werden.</translation>
+    </message>
 </context>
 <context>
     <name>MpvConfEditDialog</name>

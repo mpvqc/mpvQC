@@ -60,35 +60,87 @@ def test_generates_file_path_proposals(case, configure_mocks, service):
     assert actual == case.expected
 
 
-def test_exports(service, document_render_service_mock, make_spy):
+def test_export_succeeds(service, document_render_service_mock, make_spy):
     error_spy = make_spy(service.export_error_occurred)
-
     template_mock = MagicMock()
     file_mock = MagicMock()
 
     service.export(file_mock, template_mock)
+
     assert error_spy.count() == 0
     assert template_mock.read_text.called
-    assert file_mock.write_text.called
     assert document_render_service_mock.render.called
+    assert file_mock.write_text.called
 
-    document_render_service_mock.render.side_effect = TemplateSyntaxError(message="error", lineno=42)
-    service.export(file_mock, template_mock)
+
+@pytest.mark.parametrize(
+    ("render_error", "expected_lineno"),
+    [
+        (TemplateSyntaxError(message="error", lineno=42), 42),
+        (TemplateError(message="error"), -1),
+    ],
+)
+def test_export_signals_on_render_failure(
+    service, document_render_service_mock, make_spy, render_error, expected_lineno
+):
+    error_spy = make_spy(service.export_error_occurred)
+    document_render_service_mock.render.side_effect = render_error
+
+    service.export(MagicMock(), MagicMock())
+
     assert error_spy.count() == 1
     assert error_spy.at(invocation=0, argument=0) == "error"
-    assert error_spy.at(invocation=0, argument=1) == 42
-
-    document_render_service_mock.render.side_effect = TemplateError(message="error #2")
-    service.export(file_mock, template_mock)
-    assert error_spy.count() == 2
-    assert error_spy.at(invocation=1, argument=0) == "error #2"
-    assert error_spy.at(invocation=1, argument=1) == -1
+    assert error_spy.at(invocation=0, argument=1) == expected_lineno
 
 
-def test_saves(service, document_render_service_mock):
+@pytest.mark.parametrize(
+    "read_error",
+    [
+        UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid"),
+        FileNotFoundError("template gone"),
+    ],
+)
+def test_export_signals_on_template_read_failure(service, make_spy, read_error):
+    error_spy = make_spy(service.export_error_occurred)
+    template_mock = MagicMock()
+    template_mock.read_text.side_effect = read_error
+
+    service.export(MagicMock(), template_mock)
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=1) == -1
+
+
+def test_export_signals_on_write_failure(service, document_render_service_mock, make_spy):
+    error_spy = make_spy(service.export_error_occurred)
+    file_mock = MagicMock()
+    file_mock.write_text.side_effect = PermissionError("read-only target")
+
+    service.export(file_mock, MagicMock())
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=1) == -1
+    assert document_render_service_mock.render.called
+
+
+def test_save_succeeds(service, document_render_service_mock, make_spy):
+    error_spy = make_spy(service.export_error_occurred)
     file_mock = MagicMock()
 
     service.save(file_mock)
 
     assert document_render_service_mock.render.called
     assert file_mock.write_text.called
+    assert error_spy.count() == 0
+
+
+def test_save_signals_on_write_failure(service, document_render_service_mock, make_spy):
+    error_spy = make_spy(service.export_error_occurred)
+    file_mock = MagicMock()
+    file_mock.write_text.side_effect = PermissionError("read-only target")
+
+    service.save(file_mock)
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=1) == -1
+    assert document_render_service_mock.render.called
