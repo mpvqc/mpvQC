@@ -2,18 +2,20 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import ClassVar
+from enum import IntEnum
+from typing import Final
 
-from PySide6.QtCore import QByteArray
+from PySide6.QtCore import QByteArray, Qt
 
 
-class Role:
-    TIME = 1010
-    TYPE = 1020
-    COMMENT = 1030
+class Role(IntEnum):
+    TIME = Qt.ItemDataRole.UserRole + 1
+    TYPE = Qt.ItemDataRole.UserRole + 2
+    COMMENT = Qt.ItemDataRole.UserRole + 3
 
-    MAPPING: ClassVar[dict[int, QByteArray]] = {
-        TIME: QByteArray(b"time"),
-        TYPE: QByteArray(b"commentType"),
-        COMMENT: QByteArray(b"comment"),
-    }
+
+ROLE_NAMES: Final[dict[int, QByteArray]] = {
+    Role.TIME: QByteArray(b"time"),
+    Role.TYPE: QByteArray(b"commentType"),
+    Role.COMMENT: QByteArray(b"comment"),
+}

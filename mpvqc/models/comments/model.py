@@ -11,7 +11,7 @@ from PySide6.QtGui import QStandardItemModel
 from PySide6.QtQml import QmlElement
 
 from .mutation import AnimatedSelection, LastRowSelection, NoViewAction, QuickSelection, RowAddEdit
-from .roles import Role
+from .roles import ROLE_NAMES, Role
 from .undo import (
     AddAndUpdateCommentCommand,
     AddComment,
@@ -49,7 +49,7 @@ class MpvqcCommentModel(QStandardItemModel):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self.setItemRoleNames(Role.MAPPING)
+        self.setItemRoleNames(ROLE_NAMES)
         self.setSortRole(Role.TIME)
 
         self._undo_stack = MpvqcUndoStack(self)
