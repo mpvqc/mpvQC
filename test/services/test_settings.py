@@ -7,14 +7,7 @@ from unittest.mock import patch
 import pytest
 from PySide6.QtCore import QLocale
 
-from mpvqc.services.settings import get_default_language
-
-
-@pytest.fixture(autouse=True)
-def clear_cache():
-    get_default_language.cache_clear()
-    yield
-    get_default_language.cache_clear()
+from mpvqc.services.settings import default_language
 
 
 @pytest.mark.parametrize(
@@ -25,7 +18,7 @@ def clear_cache():
     ],
 )
 @patch("mpvqc.models.languages.LANGUAGES")
-def test_get_default_language(mock_languages, locale_string, expected):
+def test_default_language(mock_languages, locale_string, expected):
     class MockLanguage:
         def __init__(self, identifier):
             self.identifier = identifier
@@ -33,7 +26,7 @@ def test_get_default_language(mock_languages, locale_string, expected):
     mock_languages.__iter__.return_value = [MockLanguage("fr-FR"), MockLanguage("en-US"), MockLanguage("de-DE")]
     locale = QLocale(locale_string)
 
-    result = get_default_language(locale)
+    result = default_language(locale)
 
     assert result == expected
 

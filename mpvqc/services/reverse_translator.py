@@ -7,7 +7,7 @@ from functools import cached_property
 
 from PySide6.QtCore import QDir, QTranslator
 
-from .settings import get_default_comment_types
+from .settings import default_comment_types
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class LookupTable:
             self._add_to_combined_lookup_table()
 
     def _add_to_combined_lookup_table(self) -> None:
-        for english in get_default_comment_types():
+        for english in default_comment_types():
             translated = self._translator.translate("CommentTypes", english)
             if translated is None:
                 msg = f"Failed to translate comment type: {english!r}"
