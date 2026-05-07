@@ -72,7 +72,7 @@ MpvqcDialog {
 
         SequentialAnimation on opacity {
             PauseAnimation {
-                duration: delegateRoot.index * root.animations.staggerInterval
+                duration: Math.max(0, delegateRoot.index * root.animations.staggerInterval)
             }
             NumberAnimation {
                 from: 0
@@ -131,7 +131,7 @@ MpvqcDialog {
 
         SequentialAnimation on opacity {
             PauseAnimation {
-                duration: _selectionHighlight.appearIndex * root.animations.staggerInterval
+                duration: Math.max(0, _selectionHighlight.appearIndex * root.animations.staggerInterval)
             }
             NumberAnimation {
                 from: 0
@@ -229,10 +229,12 @@ MpvqcDialog {
                 }
 
                 delegate: SelectionDelegate {
+                    required property string identifier
+
                     itemSize: root.dimensions.itemSize
                     borderSize: root.dimensions.borderSize
 
-                    onSelected: idx => root.viewModel.setColorOption(idx)
+                    onSelected: root.viewModel.setPrimaryColor(identifier)
                 }
             }
         }

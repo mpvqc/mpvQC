@@ -24,9 +24,10 @@ class MpvqcAppearanceDialogViewModel(QObject):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._original_theme_identifier = self._settings.theme_identifier
-        self._original_theme_color_option = self._settings.theme_color_option
-        self._theme_index = self._themes.theme_index(self._settings.theme_identifier)
-        self._color_index = self._settings.theme_color_option
+        self._original_primary_color = self._settings.primary_color
+        self._theme_index = self._themes.theme_index()
+        self._color_index = self._themes.theme().palette_index(self._settings.primary_color)
+        self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
 
     @Property(int, notify=themeIndexChanged)
     def themeIndex(self) -> int:
@@ -47,17 +48,23 @@ class MpvqcAppearanceDialogViewModel(QObject):
             self.colorIndexChanged.emit(value)
 
     @Slot(str)
+    def _on_theme_identifier_changed(self, theme_identifier: str) -> None:
+        new_index = self._themes.theme(theme_identifier).palette_index(self._settings.primary_color)
+        self._set_color_index(new_index)
+
+    @Slot(str)
     def setTheme(self, theme_identifier: str) -> None:
         new_index = self._themes.theme_index(theme_identifier)
         self._set_theme_index(new_index)
         self._settings.theme_identifier = theme_identifier
 
-    @Slot(int)
-    def setColorOption(self, index: int) -> None:
-        self._set_color_index(index)
-        self._settings.theme_color_option = index
+    @Slot(str)
+    def setPrimaryColor(self, identifier: str) -> None:
+        new_index = self._themes.theme().palette_index(identifier)
+        self._set_color_index(new_index)
+        self._settings.primary_color = identifier
 
     @Slot()
     def reject(self) -> None:
         self._settings.theme_identifier = self._original_theme_identifier
-        self._settings.theme_color_option = self._original_theme_color_option
+        self._settings.primary_color = self._original_primary_color

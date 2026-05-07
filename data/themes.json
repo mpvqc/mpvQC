@@ -6,6 +6,7 @@
         "is_dark": false,
         "palettes": [
             {
+                "identifier": "#f44336",
                 "background": "#fff0ee",
                 "background_alternate": "#ffdad5",
                 "foreground": "#534341",
@@ -19,6 +20,7 @@
                 "row_base_alternate_text": "#534341"
             },
             {
+                "identifier": "#e91e63",
                 "background": "#fff0f1",
                 "background_alternate": "#ffd9de",
                 "foreground": "#524345",
@@ -32,6 +34,7 @@
                 "row_base_alternate_text": "#524345"
             },
             {
+                "identifier": "#9c27b0",
                 "background": "#fcf0f7",
                 "background_alternate": "#f4dbf1",
                 "foreground": "#4d444c",
@@ -45,6 +48,7 @@
                 "row_base_alternate_text": "#4d444c"
             },
             {
+                "identifier": "#673ab7",
                 "background": "#f8f1fa",
                 "background_alternate": "#e9def8",
                 "foreground": "#49454e",
@@ -58,6 +62,7 @@
                 "row_base_alternate_text": "#49454e"
             },
             {
+                "identifier": "#3f51b5",
                 "background": "#f5f2fa",
                 "background_alternate": "#e0e1f9",
                 "foreground": "#46464f",
@@ -71,6 +76,7 @@
                 "row_base_alternate_text": "#46464f"
             },
             {
+                "identifier": "#2196f3",
                 "background": "#f2f3fa",
                 "background_alternate": "#d7e3f7",
                 "foreground": "#43474e",
@@ -84,6 +90,7 @@
                 "row_base_alternate_text": "#43474e"
             },
             {
+                "identifier": "#03a9f4",
                 "background": "#f1f4f9",
                 "background_alternate": "#d3e5f5",
                 "foreground": "#41474d",
@@ -97,6 +104,7 @@
                 "row_base_alternate_text": "#41474d"
             },
             {
+                "identifier": "#00bcd4",
                 "background": "#eff5f6",
                 "background_alternate": "#cde7ed",
                 "foreground": "#3f484a",
@@ -110,6 +118,7 @@
                 "row_base_alternate_text": "#3f484a"
             },
             {
+                "identifier": "#009688",
                 "background": "#eff5f2",
                 "background_alternate": "#cce8e2",
                 "foreground": "#3f4947",
@@ -123,6 +132,7 @@
                 "row_base_alternate_text": "#3f4947"
             },
             {
+                "identifier": "#4caf50",
                 "background": "#f1f5ec",
                 "background_alternate": "#d5e8cf",
                 "foreground": "#424940",
@@ -136,6 +146,7 @@
                 "row_base_alternate_text": "#424940"
             },
             {
+                "identifier": "#8bc34a",
                 "background": "#f3f4e9",
                 "background_alternate": "#dbe7c8",
                 "foreground": "#44483d",
@@ -149,6 +160,7 @@
                 "row_base_alternate_text": "#44483d"
             },
             {
+                "identifier": "#cddc39",
                 "background": "#f6f4e7",
                 "background_alternate": "#e4e5c1",
                 "foreground": "#47483b",
@@ -162,6 +174,7 @@
                 "row_base_alternate_text": "#47483b"
             },
             {
+                "identifier": "#ffeb3b",
                 "background": "#f9f3e5",
                 "background_alternate": "#ebe3bd",
                 "foreground": "#4a473a",
@@ -175,6 +188,7 @@
                 "row_base_alternate_text": "#4a473a"
             },
             {
+                "identifier": "#ffc107",
                 "background": "#fcf2e5",
                 "background_alternate": "#f5e0bb",
                 "foreground": "#4d4639",
@@ -188,6 +202,7 @@
                 "row_base_alternate_text": "#4d4639"
             },
             {
+                "identifier": "#ff9800",
                 "background": "#fff1e7",
                 "background_alternate": "#ffdcbe",
                 "foreground": "#51453a",
@@ -209,6 +224,7 @@
         "is_dark": true,
         "palettes": [
             {
+                "identifier": "#f44336",
                 "background": "#1a1110",
                 "background_alternate": "#382d2c",
                 "foreground": "#dbc5c1",
@@ -222,6 +238,7 @@
                 "row_base_alternate_text": "#dbc5c1"
             },
             {
+                "identifier": "#e91e63",
                 "background": "#191112",
                 "background_alternate": "#372d2e",
                 "foreground": "#dac5c6",
@@ -235,6 +252,7 @@
                 "row_base_alternate_text": "#dac5c6"
             },
             {
+                "identifier": "#9c27b0",
                 "background": "#171216",
                 "background_alternate": "#342e33",
                 "foreground": "#d3c6cf",
@@ -248,6 +266,7 @@
                 "row_base_alternate_text": "#d3c6cf"
             },
             {
+                "identifier": "#673ab7",
                 "background": "#151218",
                 "background_alternate": "#312f35",
                 "foreground": "#cec7d2",
@@ -261,6 +280,7 @@
                 "row_base_alternate_text": "#cec7d2"
             },
             {
+                "identifier": "#3f51b5",
                 "background": "#121318",
                 "background_alternate": "#2f2f35",
                 "foreground": "#cac8d3",
@@ -274,6 +294,7 @@
                 "row_base_alternate_text": "#cac8d3"
             },
             {
+                "identifier": "#2196f3",
                 "background": "#111418",
                 "background_alternate": "#2d3035",
                 "foreground": "#c6cad2",
@@ -287,6 +308,7 @@
                 "row_base_alternate_text": "#c6cad2"
             },
             {
+                "identifier": "#03a9f4",
                 "background": "#101417",
                 "background_alternate": "#2c3034",
                 "foreground": "#c4cad1",
@@ -300,6 +322,7 @@
                 "row_base_alternate_text": "#c4cad1"
             },
             {
+                "identifier": "#00bcd4",
                 "background": "#0e1416",
                 "background_alternate": "#2b3132",
                 "foreground": "#c2cbce",
@@ -313,6 +336,7 @@
                 "row_base_alternate_text": "#c2cbce"
             },
             {
+                "identifier": "#009688",
                 "background": "#0e1513",
                 "background_alternate": "#2a3130",
                 "foreground": "#c1ccc9",
@@ -326,6 +350,7 @@
                 "row_base_alternate_text": "#c1ccc9"
             },
             {
+                "identifier": "#4caf50",
                 "background": "#10140f",
                 "background_alternate": "#2d312b",
                 "foreground": "#c5ccc0",
@@ -339,6 +364,7 @@
                 "row_base_alternate_text": "#c5ccc0"
             },
             {
+                "identifier": "#8bc34a",
                 "background": "#12140e",
                 "background_alternate": "#2e3129",
                 "foreground": "#c8cbbd",
@@ -352,6 +378,7 @@
                 "row_base_alternate_text": "#c8cbbd"
             },
             {
+                "identifier": "#cddc39",
                 "background": "#13140c",
                 "background_alternate": "#303028",
                 "foreground": "#cbcaba",
@@ -365,6 +392,7 @@
                 "row_base_alternate_text": "#cbcaba"
             },
             {
+                "identifier": "#ffeb3b",
                 "background": "#15130c",
                 "background_alternate": "#323027",
                 "foreground": "#cfcab8",
@@ -378,6 +406,7 @@
                 "row_base_alternate_text": "#cfcab8"
             },
             {
+                "identifier": "#ffc107",
                 "background": "#17130b",
                 "background_alternate": "#342f26",
                 "foreground": "#d3c8b7",
@@ -391,6 +420,7 @@
                 "row_base_alternate_text": "#d3c8b7"
             },
             {
+                "identifier": "#ff9800",
                 "background": "#19120c",
                 "background_alternate": "#362e27",
                 "foreground": "#d8c6b8",

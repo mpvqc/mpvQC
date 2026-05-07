@@ -116,9 +116,9 @@ class MpvqcTestSettings(QObject):
     def themeIdentifier(self) -> str:
         return inject.instance(SettingsService).theme_identifier
 
-    @Slot(result=int)
-    def themeColorOption(self) -> int:
-        return inject.instance(SettingsService).theme_color_option
+    @Slot(result=str)
+    def primaryColor(self) -> str:
+        return inject.instance(SettingsService).primary_color
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:

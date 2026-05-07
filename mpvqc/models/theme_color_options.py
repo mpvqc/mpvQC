@@ -7,7 +7,7 @@ from __future__ import annotations
 import typing
 
 import inject
-from PySide6.QtCore import QAbstractListModel, QByteArray, Qt, Slot
+from PySide6.QtCore import QAbstractListModel, QByteArray, QModelIndex, Qt, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import SettingsService, ThemeService
@@ -15,7 +15,7 @@ from mpvqc.services import SettingsService, ThemeService
 if typing.TYPE_CHECKING:
     from typing import Any
 
-    from PySide6.QtCore import QModelIndex, QObject, QPersistentModelIndex
+    from PySide6.QtCore import QObject, QPersistentModelIndex
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -27,7 +27,8 @@ class MpvqcThemeColorOptionsModel(QAbstractListModel):
     _themes = inject.attr(ThemeService)
     _settings = inject.attr(SettingsService)
 
-    DisplayColorRole = Qt.ItemDataRole.UserRole + 1
+    IdentifierRole = Qt.ItemDataRole.UserRole + 1
+    DisplayColorRole = Qt.ItemDataRole.UserRole + 2
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -36,13 +37,22 @@ class MpvqcThemeColorOptionsModel(QAbstractListModel):
 
     @Slot(str)
     def _set_theme_identifier(self, theme_identifier: str) -> None:
+        old_count = self.rowCount()
         self._theme_identifier = theme_identifier
-        row_count = self.rowCount()
-        if row_count == 0:
-            return
-        first = self.index(0)
-        last = self.index(row_count - 1)
-        self.dataChanged.emit(first, last, [self.DisplayColorRole])
+        new_count = self.rowCount()
+
+        if new_count > old_count:
+            self.beginInsertRows(QModelIndex(), old_count, new_count - 1)
+            self.endInsertRows()
+        elif new_count < old_count:
+            self.beginRemoveRows(QModelIndex(), new_count, old_count - 1)
+            self.endRemoveRows()
+
+        overlap = min(old_count, new_count)
+        if overlap > 0:
+            first = self.index(0)
+            last = self.index(overlap - 1)
+            self.dataChanged.emit(first, last, [self.IdentifierRole, self.DisplayColorRole])
 
     @typing.override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
@@ -53,13 +63,19 @@ class MpvqcThemeColorOptionsModel(QAbstractListModel):
         if not index.isValid() or index.row() >= self.rowCount():
             return None
 
-        if role == self.DisplayColorRole:
-            return self._themes.palette_at(self._theme_identifier, index.row()).row_highlight
+        palette = self._themes.theme(self._theme_identifier).palettes[index.row()]
+
+        match role:
+            case self.IdentifierRole:
+                return palette.identifier
+            case self.DisplayColorRole:
+                return palette.row_highlight
 
         return None
 
     @typing.override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
+            self.IdentifierRole: QByteArray(b"identifier"),
             self.DisplayColorRole: QByteArray(b"displayColor"),
         }
