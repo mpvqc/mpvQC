@@ -24,7 +24,6 @@ from mpvqc.services import (
     VersionCheckerService,
     VideoResizeService,
 )
-from mpvqc.services.application_paths import ApplicationEnvironment
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 
 if typing.TYPE_CHECKING:
@@ -58,7 +57,7 @@ class ApplicationPathsServiceOverride(ApplicationPathsService):
     def __init__(self) -> None:
         base = Path(tempfile.mkdtemp(prefix="paths-", dir=str(TEMP_ROOT)))
         shutil.copytree(FIXTURES_DIR / "portable-root", base, dirs_exist_ok=True)
-        super().__init__(ApplicationEnvironment(executing_directory=base))
+        super().__init__(base)
 
 
 class SettingsServiceOverride(SettingsService):
