@@ -47,7 +47,7 @@ class MainWindowService(QObject):
         self._on_window_state_changed(window.windowState())
 
         self._zoom_factor = window.devicePixelRatio()
-        self._frameless.configure_for(app, window, display_zoom_factor=self._zoom_factor)
+        self._frameless.configure_for(app, window)
 
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
