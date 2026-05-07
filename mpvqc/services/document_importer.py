@@ -27,7 +27,11 @@ class DocumentImporterService:
         all_comments = []
 
         for document in documents:
-            content = document.read_text(encoding="utf-8")
+            try:
+                content = document.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                invalid_docs.append(document)
+                continue
 
             if content.startswith("[FILE]"):
                 valid_docs.append(document)
