@@ -27,6 +27,7 @@ class Color:
 
 @dataclass(frozen=True)
 class MpvqcColorSet:
+    identifier: str
     background: str
     background_alternate: str
     foreground: str
@@ -85,10 +86,11 @@ def generate(colors: list[str], dark: bool, contrast: float) -> None:
     color_map = {}
 
     for hex_color in colors:
-        hct = Hct.from_int(int("0xff" + hex_color[1:], 16))
+        seed = hex_color.lower()
+        hct = Hct.from_int(int("0xff" + seed[1:], 16))
         scheme = SchemeTonalSpot(hct, dark, contrast, spec_version=spec_version)
         mdc = MaterialDynamicColors(spec=spec_version)
-        color_map[hex_color] = generate_palette_from(scheme, mdc)
+        color_map[seed] = generate_palette_from(scheme, mdc)
 
     mpvqc_colors = map_to_mpvqc_colors(color_map, dark)
     update_theme_file(mpvqc_colors, dark)
@@ -109,10 +111,11 @@ def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) 
 
 def map_to_mpvqc_colors(color_map: dict, dark: bool) -> list[MpvqcColorSet]:
     colors = []
-    for palette in color_map.values():
+    for hex_seed, palette in color_map.items():
         if dark:
             colors.append(
                 MpvqcColorSet(
+                    identifier=hex_seed,
                     background=palette["surface"],
                     background_alternate=palette["surfaceContainerHigh"],
                     foreground=palette["onSurfaceVariant"],
@@ -129,6 +132,7 @@ def map_to_mpvqc_colors(color_map: dict, dark: bool) -> list[MpvqcColorSet]:
         else:
             colors.append(
                 MpvqcColorSet(
+                    identifier=hex_seed,
                     background=palette["surfaceContainerLow"],
                     background_alternate=palette["secondaryContainer"],
                     foreground=palette["onSurfaceVariant"],

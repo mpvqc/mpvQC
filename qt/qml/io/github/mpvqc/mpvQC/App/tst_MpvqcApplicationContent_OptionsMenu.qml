@@ -55,21 +55,22 @@ TestCase {
         mouseClick(themeDelegate);
 
         const newColorIdx = colorGridView.currentIndex === 0 ? 1 : 0;
+        const expectedColorId = colorGridView.itemAtIndex(newColorIdx).identifier;
         mouseClick(colorGridView.itemAtIndex(newColorIdx));
 
         tryVerify(() => it.settings.themeIdentifier() === expectedThemeId);
-        tryVerify(() => it.settings.themeColorOption() === newColorIdx);
+        tryVerify(() => it.settings.primaryColor() === expectedColorId);
 
         it.dialog.accept(dialog);
 
         tryVerify(() => it.settings.themeIdentifier() === expectedThemeId);
-        tryVerify(() => it.settings.themeColorOption() === newColorIdx);
+        tryVerify(() => it.settings.primaryColor() === expectedColorId);
     }
 
     function test_appearanceDialog_reject_revertsThemeAndColor(): void {
         const control = it.makeControl();
         const initialTheme = it.settings.themeIdentifier();
-        const initialColor = it.settings.themeColorOption();
+        const initialColor = it.settings.primaryColor();
 
         it.menu.trigger(control, "optionsMenu", "openAppearanceDialogMenuItem");
         const dialog = it.find.openedDialog(control, "appearanceDialog");
@@ -89,7 +90,7 @@ TestCase {
         it.bridge.waitForBackgroundJobs();
 
         tryVerify(() => it.settings.themeIdentifier() === initialTheme);
-        tryVerify(() => it.settings.themeColorOption() === initialColor);
+        tryVerify(() => it.settings.primaryColor() === initialColor);
     }
 
     function test_commentTypesDialog_deleteAndAdd_persistsAndUpdatesNewCommentMenu(): void {

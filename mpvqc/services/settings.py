@@ -24,11 +24,16 @@ from PySide6.QtCore import (
 from mpvqc.enums import ImportFoundVideo, TimeFormat, WindowTitleFormat
 
 from .application_paths import ApplicationPathsService
-from .theme import DEFAULT_THEME_IDENTIFIER
 from .type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+
+def _default_theme_identifier() -> str:
+    from .theme import DEFAULT_THEME_IDENTIFIER
+
+    return DEFAULT_THEME_IDENTIFIER
 
 
 def get_default_username() -> str:
@@ -241,17 +246,17 @@ class SettingsService(QObject):
     theme_identifier_changed = Signal(str)
     theme_identifier = _Setting(
         "Theme/themeIdentifier",
-        default=DEFAULT_THEME_IDENTIFIER,
+        default=_default_theme_identifier,
         type_=str,
         signal=theme_identifier_changed,
     )
 
-    theme_color_option_changed = Signal(int)
-    theme_color_option = _Setting(
-        "Theme/themeColorOption",
-        default=4,
-        type_=int,
-        signal=theme_color_option_changed,
+    primary_color_changed = Signal(str)
+    primary_color = _Setting(
+        "Theme/primaryColor",
+        default="#3f51b5",
+        type_=str,
+        signal=primary_color_changed,
     )
 
     window_title_format_changed = Signal(int)

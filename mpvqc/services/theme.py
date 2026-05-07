@@ -4,16 +4,19 @@
 
 import json
 from dataclasses import dataclass
+from functools import cached_property
 
 import inject
 
 from .resource import ResourceService
+from .settings import SettingsService
 
 DEFAULT_THEME_IDENTIFIER = "material-you-dark"
 
 
 @dataclass(frozen=True)
 class ThemePalette:
+    identifier: str
     background: str
     background_alternate: str
     foreground: str
@@ -39,6 +42,20 @@ class Theme:
     def palette_count(self) -> int:
         return len(self.palettes)
 
+    @cached_property
+    def _palette_by_identifier(self) -> dict[str, ThemePalette]:
+        return {palette.identifier: palette for palette in self.palettes}
+
+    @cached_property
+    def _index_by_identifier(self) -> dict[str, int]:
+        return {palette.identifier: idx for idx, palette in enumerate(self.palettes)}
+
+    def palette_for(self, palette_identifier: str) -> ThemePalette:
+        return self._palette_by_identifier.get(palette_identifier, self.palettes[0])
+
+    def palette_index(self, palette_identifier: str) -> int:
+        return self._index_by_identifier.get(palette_identifier, 0)
+
 
 def _parse_theme(data: dict) -> Theme:
     return Theme(
@@ -52,6 +69,7 @@ def _parse_theme(data: dict) -> Theme:
 
 class ThemeService:
     _resource = inject.attr(ResourceService)
+    _settings = inject.attr(SettingsService)
 
     def __init__(self) -> None:
         raw = json.loads(self._resource.themes_json)
@@ -63,21 +81,18 @@ class ThemeService:
     def previews(self) -> tuple[Theme, ...]:
         return self._themes
 
-    def theme(self, theme_identifier: str) -> Theme:
+    def theme(self, theme_identifier: str | None = None) -> Theme:
+        if theme_identifier is None:
+            theme_identifier = self._settings.theme_identifier
         theme = self._id_to_theme.get(theme_identifier) or self._id_to_theme.get(DEFAULT_THEME_IDENTIFIER)
         if theme is None:
             msg = f"Theme identifier {theme_identifier} not found in themes.json"
             raise ValueError(msg)
         return theme
 
-    def palette_at(self, theme_identifier: str, index: int) -> ThemePalette:
-        theme = self.theme(theme_identifier)
-        if not 0 <= index < theme.palette_count:
-            msg = f"Palette index {index} out of range for theme '{theme_identifier}' ({theme.palette_count} palettes)"
-            raise ValueError(msg)
-        return theme.palettes[index]
-
-    def theme_index(self, theme_identifier: str) -> int:
+    def theme_index(self, theme_identifier: str | None = None) -> int:
+        if theme_identifier is None:
+            theme_identifier = self._settings.theme_identifier
         if (idx := self._id_to_index.get(theme_identifier)) is not None:
             return idx
         if (idx := self._id_to_index.get(DEFAULT_THEME_IDENTIFIER)) is not None:
