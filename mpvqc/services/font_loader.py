@@ -11,7 +11,7 @@ class FontLoaderService:
     def load_application_fonts() -> None:
         for entry_info in QDir(":/data/fonts").entryInfoList():
             resource_path = entry_info.filePath()
-            if not QFontDatabase.addApplicationFont(resource_path) >= 0:
+            if QFontDatabase.addApplicationFont(resource_path) == -1:
                 msg = f"Cannot load font from {resource_path}"
                 raise ValueError(msg)
 
