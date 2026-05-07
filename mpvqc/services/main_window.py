@@ -42,15 +42,11 @@ class MainWindowService(QObject):
 
     def initialize(self, app: QGuiApplication) -> None:
         window = _find_main_window()
+        self._on_width_changed(window.width())
+        self._on_height_changed(window.height())
+        self._on_window_state_changed(window.windowState())
 
         self._zoom_factor = window.devicePixelRatio()
-        self._width = window.width()
-        self._height = window.height()
-
-        state = window.windowState()
-        self._is_fullscreen = state == Qt.WindowState.WindowFullScreen
-        self._is_maximized = state == Qt.WindowState.WindowMaximized
-
         self._frameless.configure_for(app, window, display_zoom_factor=self._zoom_factor)
 
         window.widthChanged.connect(self._on_width_changed)
