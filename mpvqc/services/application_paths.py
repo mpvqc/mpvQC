@@ -9,25 +9,16 @@ from pathlib import Path
 from PySide6.QtCore import QCoreApplication, QStandardPaths
 
 
-class ApplicationEnvironment:
-    def __init__(self, executing_directory: Path | None = None) -> None:
-        self._executing_directory = executing_directory or Path(sys.argv[0]).parent
-
-    @property
-    def is_portable(self) -> bool:
-        return self._executing_directory.joinpath("portable").is_file()
-
-    @property
-    def executing_directory(self) -> Path:
-        return self._executing_directory
-
-
 @dataclass(frozen=True)
 class _Directories:
     backup: Path
     config: Path
     screenshots: Path
     export_templates: Path
+
+
+def _is_portable(executing_directory: Path) -> bool:
+    return executing_directory.joinpath("portable").is_file()
 
 
 def _portable_directories(executing_directory: Path) -> _Directories:
@@ -50,16 +41,16 @@ def _xdg_directories() -> _Directories:
     )
 
 
-def _resolve_directories(app: ApplicationEnvironment) -> _Directories:
-    if app.is_portable:
-        return _portable_directories(app.executing_directory)
+def _resolve_directories(executing_directory: Path) -> _Directories:
+    if _is_portable(executing_directory):
+        return _portable_directories(executing_directory)
     return _xdg_directories()
 
 
 class ApplicationPathsService:
-    def __init__(self, app_environment: ApplicationEnvironment | None = None) -> None:
-        app = ApplicationEnvironment() if app_environment is None else app_environment
-        self._dirs = _resolve_directories(app)
+    def __init__(self, executing_directory: Path | None = None) -> None:
+        base = Path(sys.argv[0]).parent if executing_directory is None else Path(executing_directory)
+        self._dirs = _resolve_directories(base)
 
     @property
     def dir_backup(self) -> Path:
