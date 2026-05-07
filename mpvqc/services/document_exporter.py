@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import logging
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -15,6 +16,8 @@ from .formatter_time import TimeFormatterService
 from .player import PlayerService
 from .resource import ResourceService
 from .settings import SettingsService
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentRenderService:
@@ -125,7 +128,12 @@ class DocumentExportService(QObject):
     def export(self, file: Path, template: Path) -> None:
         from jinja2 import TemplateError, TemplateSyntaxError
 
-        user_template = template.read_text(encoding="utf-8")
+        try:
+            user_template = template.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            logger.exception("Failed to read export template %s", template)
+            self.export_error_occurred.emit(self._template_read_error(), -1)
+            return
 
         try:
             content = self._renderer.render(user_template)
@@ -134,9 +142,29 @@ class DocumentExportService(QObject):
             self.export_error_occurred.emit(e.message, e.lineno)
         except TemplateError as e:
             self.export_error_occurred.emit(e.message, -1)
+        except OSError:
+            logger.exception("Failed to write export to %s", file)
+            self.export_error_occurred.emit(self._document_save_error(), -1)
 
     def save(self, file: Path) -> None:
         export_template = self._resources.default_export_template
         content = self._renderer.render(export_template)
 
-        file.write_text(content, encoding="utf-8", newline="\n")
+        try:
+            file.write_text(content, encoding="utf-8", newline="\n")
+        except OSError:
+            logger.exception("Failed to save document to %s", file)
+            self.export_error_occurred.emit(self._document_save_error(), -1)
+
+    @staticmethod
+    def _template_read_error() -> str:
+        #: Shown when a user-supplied export template cannot be read (file gone,
+        #: permission denied, or not valid UTF-8). The technical detail is logged,
+        #: not surfaced to the user.
+        return QCoreApplication.translate("MessageBoxes", "The export template could not be read.")
+
+    @staticmethod
+    def _document_save_error() -> str:
+        #: Shown when writing the QC document fails (permission denied, disk full,
+        #: target directory missing). The technical detail is logged, not surfaced.
+        return QCoreApplication.translate("MessageBoxes", "The document could not be saved.")

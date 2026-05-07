@@ -16,7 +16,7 @@ Loader {
 
     readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("MpvqcDocumentNotCompatibleMessageBox.qml")
     readonly property url messageBoxExtendedExport: Qt.resolvedUrl("MpvqcExtendedExportMessageBox.qml")
-    readonly property url messageBoxExtendedExportFailed: Qt.resolvedUrl("MpvqcExtendedExportErrorMessageBox.qml")
+    readonly property url messageBoxExportError: Qt.resolvedUrl("MpvqcExportErrorMessageBox.qml")
     readonly property url messageBoxQuit: Qt.resolvedUrl("MpvqcQuitMessageBox.qml")
     readonly property url messageBoxReset: Qt.resolvedUrl("MpvqcResetMessageBox.qml")
     readonly property url messageBoxVersionCheck: Qt.resolvedUrl("MpvqcVersionCheckMessageBox.qml")
@@ -39,8 +39,8 @@ Loader {
         active = true;
     }
 
-    function openExtendedExportFailedMessageBox(message: string, lineNr: int): void {
-        setSource(messageBoxExtendedExportFailed, {
+    function openExportErrorMessageBox(message: string, lineNr: int): void {
+        setSource(messageBoxExportError, {
             errorMessage: message,
             errorLine: lineNr
         });
@@ -83,7 +83,7 @@ Loader {
         }
 
         function onExportErrorOccurred(message: string, line: int): void {
-            root.openExtendedExportFailedMessageBox(message, line);
+            root.openExportErrorMessageBox(message, line);
         }
 
         function onConfirmQuit(): void {
