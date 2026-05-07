@@ -48,7 +48,7 @@ class MpvqcDependencyModel(QAbstractListModel):
 
     @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= len(self._all_dependencies):
+        if not index.isValid() or index.row() >= self.rowCount():
             return None
 
         dependency = self._all_dependencies[index.row()]

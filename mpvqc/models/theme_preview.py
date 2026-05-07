@@ -35,6 +35,9 @@ class MpvqcThemePreviewModel(QAbstractListModel):
 
     @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
+        if not index.isValid() or index.row() >= self.rowCount():
+            return None
+
         preview = self._themes.previews[index.row()]
 
         match role:

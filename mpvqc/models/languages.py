@@ -48,7 +48,7 @@ class MpvqcLanguageModel(QAbstractListModel):
 
     @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or index.row() >= len(LANGUAGES):
+        if not index.isValid() or index.row() >= self.rowCount():
             return None
 
         language = LANGUAGES[index.row()]

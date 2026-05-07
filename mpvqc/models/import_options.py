@@ -51,7 +51,7 @@ class ImportOptionsModel(QAbstractListModel):
 
     @typing.override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid():
+        if not index.isValid() or index.row() >= self.rowCount():
             return None
 
         item = self._items[index.row()]
