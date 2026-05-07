@@ -23,7 +23,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 # noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
-class MpvqcThemeColorOptionsModel(QAbstractListModel):
+class MpvqcPrimaryColorModel(QAbstractListModel):
     _themes = inject.attr(ThemeService)
     _settings = inject.attr(SettingsService)
 
