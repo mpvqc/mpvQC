@@ -14,3 +14,15 @@ def test_import_invalid_documents(
     assert len(result.invalid_documents) == 2
     assert document_invalid_1 in result.invalid_documents
     assert document_invalid_2 in result.invalid_documents
+
+
+def test_import_unreadable_documents(
+    service,
+    document_with_invalid_encoding,
+    document_missing,
+):
+    result = service.read([document_with_invalid_encoding, document_missing])
+
+    assert not result.valid_documents
+    assert document_with_invalid_encoding in result.invalid_documents
+    assert document_missing in result.invalid_documents

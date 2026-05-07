@@ -89,6 +89,20 @@ def document_invalid_2(tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
+def document_with_invalid_encoding(tmp_path_factory):
+    temp_dir = tmp_path_factory.mktemp("data")
+    file_path = temp_dir / "document_invalid_encoding.txt"
+    file_path.write_bytes(b"[FILE]\n\xff\xfe not valid utf-8")
+    return file_path
+
+
+@pytest.fixture(scope="session")
+def document_missing(tmp_path_factory):
+    temp_dir = tmp_path_factory.mktemp("data")
+    return temp_dir / "this_document_does_not_exist.txt"
+
+
+@pytest.fixture(scope="session")
 def document_with_existing_video_1(tmp_path_factory, video_file_existing_1):
     temp_dir = tmp_path_factory.mktemp("data")
     file_path = temp_dir / "document_with_video_1.txt"
