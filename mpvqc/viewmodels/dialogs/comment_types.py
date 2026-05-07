@@ -128,7 +128,7 @@ class CommentTypeList:
         return self._validator.validate_editing_of_comment_type(text, original, self._model.stringList())
 
     def reset_to_defaults(self) -> None:
-        self._model.setStringList(list(self._settings.get_default_comment_types()))
+        self._model.setStringList(list(self._settings.default_comment_types()))
 
     def save(self) -> None:
         self._settings.comment_types = self._model.stringList()

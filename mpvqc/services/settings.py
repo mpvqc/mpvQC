@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from functools import cache
 from typing import TYPE_CHECKING, cast, overload
 
 import inject
@@ -30,28 +29,25 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 
-def _default_theme_identifier() -> str:
-    from .theme import DEFAULT_THEME_IDENTIFIER
-
-    return DEFAULT_THEME_IDENTIFIER
+def default_theme_identifier() -> str:
+    return "material-you-dark"
 
 
-def get_default_username() -> str:
+def default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
 
 
-def get_default_documents_location() -> QUrl:
+def default_documents_location() -> QUrl:
     location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
     return QUrl.fromLocalFile(location)
 
 
-def get_default_movie_location() -> QUrl:
+def default_movie_location() -> QUrl:
     location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
     return QUrl.fromLocalFile(location)
 
 
-@cache
-def get_default_language(locale: QLocale | None = None) -> str:
+def default_language(locale: QLocale | None = None) -> str:
     if locale is None:
         locale = QLocale.system()
 
@@ -66,7 +62,7 @@ def get_default_language(locale: QLocale | None = None) -> str:
     return "en-US"
 
 
-def get_default_comment_types() -> list[str]:
+def default_comment_types() -> list[str]:
     return [
         str(QT_TRANSLATE_NOOP("CommentTypes", "Translation")),
         str(QT_TRANSLATE_NOOP("CommentTypes", "Spelling")),
@@ -94,8 +90,9 @@ class _Setting[T]:
     def __get__(self, obj: SettingsService | None, _owner: type | None = None) -> T | _Setting[T]:
         if obj is None:
             return self
-        default = self.default() if callable(self.default) else self.default
-        return cast("T", obj.qsettings.value(self.key, default, type=self.type_))
+        if callable(self.default):
+            self.default = self.default()
+        return cast("T", obj.qsettings.value(self.key, self.default, type=self.type_))
 
     def __set__(self, obj: SettingsService, value: T) -> None:
         if self.__get__(obj) != value:
@@ -126,7 +123,7 @@ class SettingsService(QObject):
     language_changed = Signal(str)
     language = _Setting(
         "Common/language",
-        default=get_default_language,
+        default=default_language,
         type_=str,
         signal=language_changed,
     )
@@ -134,7 +131,7 @@ class SettingsService(QObject):
     comment_types_changed = Signal(list)
     comment_types = _Setting(
         "Common/commentTypes",
-        default=get_default_comment_types,
+        default=default_comment_types,
         type_=list,
         signal=comment_types_changed,
     )
@@ -142,7 +139,7 @@ class SettingsService(QObject):
     nickname_changed = Signal(str)
     nickname = _Setting(
         "Export/nickname",
-        default=get_default_username,
+        default=default_username,
         type_=str,
         signal=nickname_changed,
     )
@@ -206,7 +203,7 @@ class SettingsService(QObject):
     last_directory_video_changed = Signal(QUrl)
     last_directory_video = _Setting(
         "Import/lastDirectoryVideo",
-        default=get_default_movie_location,
+        default=default_movie_location,
         type_=QUrl,
         signal=last_directory_video_changed,
     )
@@ -214,7 +211,7 @@ class SettingsService(QObject):
     last_directory_documents_changed = Signal(QUrl)
     last_directory_documents = _Setting(
         "Import/lastDirectoryDocuments",
-        default=get_default_documents_location,
+        default=default_documents_location,
         type_=QUrl,
         signal=last_directory_documents_changed,
     )
@@ -222,7 +219,7 @@ class SettingsService(QObject):
     last_directory_subtitles_changed = Signal(QUrl)
     last_directory_subtitles = _Setting(
         "Import/lastDirectorySubtitles",
-        default=get_default_documents_location,
+        default=default_documents_location,
         type_=QUrl,
         signal=last_directory_subtitles_changed,
     )
@@ -246,7 +243,7 @@ class SettingsService(QObject):
     theme_identifier_changed = Signal(str)
     theme_identifier = _Setting(
         "Theme/themeIdentifier",
-        default=_default_theme_identifier,
+        default=default_theme_identifier,
         type_=str,
         signal=theme_identifier_changed,
     )
@@ -273,5 +270,9 @@ class SettingsService(QObject):
         self.qsettings = QSettings(file, QSettings.Format.IniFormat)
 
     @staticmethod
-    def get_default_comment_types() -> list[str]:
-        return get_default_comment_types()
+    def default_theme_identifier() -> str:
+        return default_theme_identifier()
+
+    @staticmethod
+    def default_comment_types() -> list[str]:
+        return default_comment_types()

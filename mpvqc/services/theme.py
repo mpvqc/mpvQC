@@ -11,8 +11,6 @@ import inject
 from .resource import ResourceService
 from .settings import SettingsService
 
-DEFAULT_THEME_IDENTIFIER = "material-you-dark"
-
 
 @dataclass(frozen=True)
 class ThemePalette:
@@ -84,7 +82,9 @@ class ThemeService:
     def theme(self, theme_identifier: str | None = None) -> Theme:
         if theme_identifier is None:
             theme_identifier = self._settings.theme_identifier
-        theme = self._id_to_theme.get(theme_identifier) or self._id_to_theme.get(DEFAULT_THEME_IDENTIFIER)
+        theme = self._id_to_theme.get(theme_identifier) or self._id_to_theme.get(
+            self._settings.default_theme_identifier()
+        )
         if theme is None:
             msg = f"Theme identifier {theme_identifier} not found in themes.json"
             raise ValueError(msg)
@@ -95,7 +95,7 @@ class ThemeService:
             theme_identifier = self._settings.theme_identifier
         if (idx := self._id_to_index.get(theme_identifier)) is not None:
             return idx
-        if (idx := self._id_to_index.get(DEFAULT_THEME_IDENTIFIER)) is not None:
+        if (idx := self._id_to_index.get(self._settings.default_theme_identifier())) is not None:
             return idx
         msg = f"Theme identifier {theme_identifier} not found in themes.json"
         raise ValueError(msg)

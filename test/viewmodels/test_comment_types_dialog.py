@@ -40,7 +40,7 @@ def reverse_translator_service_mock():
 def settings_service_mock(comment_types, comment_types_reset):
     mock = MagicMock(spec_set=SettingsService)
     mock.comment_types = comment_types.copy()
-    mock.get_default_comment_types.return_value = comment_types_reset.copy()
+    mock.default_comment_types.return_value = comment_types_reset.copy()
     return mock
 
 
@@ -86,7 +86,7 @@ def test_initial_state(view_model, comment_types):
 
 def test_initial_state_single_item(settings_service_mock):
     settings_service_mock.comment_types = ["Only Item"]
-    settings_service_mock.get_default_comment_types.return_value = ["Only Item"]
+    settings_service_mock.default_comment_types.return_value = ["Only Item"]
 
     # noinspection PyCallingNonCallable
     view_model_override = MpvqcCommentTypesDialogViewModel()
