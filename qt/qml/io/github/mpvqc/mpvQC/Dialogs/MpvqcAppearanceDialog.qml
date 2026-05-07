@@ -208,7 +208,7 @@ MpvqcDialog {
                 }
                 Layout.fillWidth: true
 
-                model: MpvqcThemeColorOptionsModel {}
+                model: MpvqcPrimaryColorModel {}
 
                 currentIndex: root.viewModel.colorIndex
                 boundsBehavior: Flickable.StopAtBounds
