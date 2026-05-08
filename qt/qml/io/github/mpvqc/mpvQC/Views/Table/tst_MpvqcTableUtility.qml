@@ -228,4 +228,37 @@ TestCase {
         const utility = makeUtility({});
         compare(utility.highlightComment(data.comment, data.highlight), data.expected);
     }
+
+    function test_highlightComment_isStableAcrossRepeatedQueries(): void {
+        const utility = makeUtility({});
+        compare(utility.highlightComment("Hello world", "world"), "Hello <b><u>world</u></b>");
+        compare(utility.highlightComment("another world here", "world"), "another <b><u>world</u></b> here");
+        compare(utility.highlightComment("no match here", "world"), "no match here");
+    }
+
+    function test_highlightComment_recompilesWhenQueryChanges(): void {
+        const utility = makeUtility({});
+        compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
+        compare(utility.highlightComment("foo bar", "bar"), "foo <b><u>bar</u></b>");
+        compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
+    }
+
+    function test_highlightComment_returnsCommentUnchangedForEmptyQuery(): void {
+        const utility = makeUtility({});
+        compare(utility.highlightComment("Hello world", ""), "Hello world");
+    }
+
+    function test_highlightComment_emptyQueryBetweenSameQueryStillHighlights(): void {
+        const utility = makeUtility({});
+        compare(utility.highlightComment("Hello world", "world"), "Hello <b><u>world</u></b>");
+        compare(utility.highlightComment("Hello world", ""), "Hello world");
+        compare(utility.highlightComment("Hello world", "world"), "Hello <b><u>world</u></b>");
+    }
+
+    function test_highlightComment_emptyQueryBetweenDifferentQueriesStillHighlights(): void {
+        const utility = makeUtility({});
+        compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
+        compare(utility.highlightComment("foo bar", ""), "foo bar");
+        compare(utility.highlightComment("foo bar", "bar"), "foo <b><u>bar</u></b>");
+    }
 }

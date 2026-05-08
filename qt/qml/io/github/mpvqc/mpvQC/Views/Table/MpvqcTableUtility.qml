@@ -14,6 +14,11 @@ QtObject {
     readonly property bool useLongFormat: viewModel.duration >= 3600
     readonly property var _reForbidden: /[\u00AD\r\n]/gi
 
+    readonly property var _highlightCache: ({
+            query: "",
+            regExp: null
+        })
+
     function formatTime(inputSeconds: real): string {
         const hours = Math.floor(inputSeconds / 3600);
         const minutes = Math.floor((inputSeconds % 3600) / 60);
@@ -37,8 +42,14 @@ QtObject {
     }
 
     function highlightComment(comment: string, highlightedText: string): string {
-        const re = new RegExp(_escapeRegExp(highlightedText), "gi");
-        return comment.replace(re, "<b><u>$&</u></b>");
+        if (!highlightedText) {
+            return comment;
+        }
+        if (highlightedText !== _highlightCache.query || _highlightCache.regExp === null) {
+            _highlightCache.query = highlightedText;
+            _highlightCache.regExp = new RegExp(_escapeRegExp(highlightedText), "gi");
+        }
+        return comment.replace(_highlightCache.regExp, "<b><u>$&</u></b>");
     }
 
     /**
