@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys
-
 import inject
 from PySide6.QtCore import QCoreApplication, QObject, QTimer, Signal
 
@@ -33,8 +31,5 @@ class QuitService(QObject):
         self._quit_despite_unsaved_changes = True
 
     def shutdown(self) -> None:
-        if sys.platform == "win32":
-            # Required to shut down explicitly due to nested window for player
-            self._player.terminate()
-
+        self._player.terminate()
         QTimer.singleShot(0, QCoreApplication.quit)

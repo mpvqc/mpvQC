@@ -52,6 +52,7 @@ class PlayerService(QObject):
         super().__init__()
 
         self._mpv: MPV | None = None
+        self._render_context: MpvRenderContext | None = None
         self._observed: list[props.MpvProperty[Any, Any]] = []
         self._dimensions_coordinator = DimensionsCoordinator(on_both_ready=self.video_dimensions_changed.emit)
         self._subtitle_coordinator = SubtitleLoadCoordinator(on_flush=self._load_subtitles_now)
@@ -125,11 +126,12 @@ class PlayerService(QObject):
     def create_render_context(self, get_proc_address: Callable) -> MpvRenderContext:
         from mpv import MpvGlGetProcAddressFn, MpvRenderContext
 
-        return MpvRenderContext(
+        self._render_context = render_context = MpvRenderContext(
             mpv=self._mpv_player,
             api_type="opengl",
             opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_proc_address)},
         )
+        return render_context
 
     @property
     def mpv_version(self) -> str:
@@ -264,4 +266,7 @@ class PlayerService(QObject):
         self._mpv_player.command_async("osd-msg", "cycle", "audio")
 
     def terminate(self) -> None:
+        if self._render_context is not None:
+            self._render_context.free()
+            self._render_context = None
         self._mpv_player.terminate()
