@@ -11,7 +11,7 @@ import io.github.mpvqc.mpvQC.Python
 Loader {
     id: root
 
-    required property var model
+    required property MpvqcCommentModel model
     required property int selectedIndex
 
     readonly property MpvqcSearchBoxViewModel viewModel: MpvqcSearchBoxViewModel {

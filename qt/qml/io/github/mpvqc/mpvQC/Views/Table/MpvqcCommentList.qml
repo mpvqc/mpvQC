@@ -7,12 +7,13 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
+import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 ListView {
     id: root
 
-    required property var viewModel
+    required property MpvqcCommentTableViewModel viewModel
     required property bool modalActive
     required property string searchQuery
 

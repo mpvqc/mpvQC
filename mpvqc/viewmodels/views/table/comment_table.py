@@ -35,6 +35,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)
+    modelChanged = Signal()  # never emitted; model is constant for the lifetime of this object
 
     copiedToClipboard = Signal(str)
 
@@ -81,7 +82,8 @@ class MpvqcCommentTableViewModel(QObject):
             case _ as unreachable:
                 assert_never(unreachable)
 
-    @Property(list, notify=commentTypesChanged)
+    # pyrefly: ignore [bad-argument-type]
+    @Property("QStringList", notify=commentTypesChanged)
     def commentTypes(self) -> list[str]:
         return self._settings.comment_types
 
@@ -89,7 +91,7 @@ class MpvqcCommentTableViewModel(QObject):
     def videoDuration(self) -> float:
         return self._player.duration
 
-    @Property(MpvqcCommentModel, constant=True)
+    @Property(MpvqcCommentModel, notify=modelChanged)
     def model(self) -> MpvqcCommentModel:
         return self._model
 

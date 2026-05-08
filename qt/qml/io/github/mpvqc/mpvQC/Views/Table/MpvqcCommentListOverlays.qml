@@ -6,10 +6,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 
+import io.github.mpvqc.mpvQC.Python
+
 Item {
     id: root
 
-    required property var viewModel
+    required property MpvqcCommentTableViewModel viewModel
     required property ListView listView
 
     readonly property bool anyModalActive: _editLoader.active || _contextMenuLoader.active || _messageBoxLoader.active
@@ -48,7 +50,7 @@ Item {
     }
 
     Connections {
-        target: root.viewModel.model
+        target: root.viewModel.model as QtObject
 
         function onCommentsAboutToBeImported(): void {
             _editLoader.abortEdit();
