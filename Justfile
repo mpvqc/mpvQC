@@ -124,8 +124,8 @@ prepare-tests: build-develop
 @test: prepare-tests test-python test-qml
 
 [group('test')]
-test-python:
-    QT_QPA_PLATFORM=offscreen uv run pytest build-aux test
+test-python *ARGS='build-aux test':
+    QT_QPA_PLATFORM=offscreen uv run pytest {{ ARGS }}
 
 [group('test')]
 test-qml:
