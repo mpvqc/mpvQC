@@ -13,6 +13,7 @@ DialogButtonBox {
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
+    property int initialFocusRole: DialogButtonBox.RejectRole
     property int _focusedIndex: 0
 
     function _initFocus(): void {
@@ -20,8 +21,7 @@ DialogButtonBox {
             const item = contentModel.get(idx);
             if (!item)
                 continue;
-            const role = item.DialogButtonBox.buttonRole;
-            if (role === DialogButtonBox.RejectRole || role === DialogButtonBox.NoRole) {
+            if (item.DialogButtonBox.buttonRole === root.initialFocusRole) {
                 _focusedIndex = idx;
                 _updateVisualFocus();
                 return;
