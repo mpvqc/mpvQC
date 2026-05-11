@@ -12,6 +12,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import (
     DesktopService,
     ExportService,
+    MainWindowService,
     ResetService,
     SettingsService,
     StateService,
@@ -26,6 +27,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcMenuBarViewModel(QObject):
     _desktop = inject.attr(DesktopService)
     _exporter = inject.attr(ExportService)
+    _main_window = inject.attr(MainWindowService)
     _resetter = inject.attr(ResetService)
     _settings = inject.attr(SettingsService)
     _state = inject.attr(StateService)
@@ -56,11 +58,13 @@ class MpvqcMenuBarViewModel(QObject):
 
     windowTitleFormatChanged = Signal(int)
     applicationLayoutChanged = Signal(int)
+    isMainWindowFocusedChanged = Signal(bool)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._settings.window_title_format_changed.connect(self.windowTitleFormatChanged)
         self._settings.layout_orientation_changed.connect(self.applicationLayoutChanged)
+        self._main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
 
     @Property(bool, constant=True, final=True)
     def isUpdateMenuVisible(self) -> bool:
@@ -73,6 +77,10 @@ class MpvqcMenuBarViewModel(QObject):
     @Property(int, notify=applicationLayoutChanged)
     def applicationLayout(self) -> int:
         return self._settings.layout_orientation
+
+    @Property(bool, notify=isMainWindowFocusedChanged)
+    def isMainWindowFocused(self) -> bool:
+        return self._main_window.is_main_window_focused
 
     @Slot()
     def requestResetAppState(self) -> None:

@@ -11,7 +11,7 @@ from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ApplicationPathsService, DesktopService, PlayerService, SettingsService, StateService
-from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections
+from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections, rebind_main_window
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -47,6 +47,7 @@ class MpvqcTestBridge(QObject):
     @Slot()
     def resetState(self) -> None:
         configure_injections()
+        rebind_main_window()
 
     @Property(int, constant=True)
     def delayMs(self) -> int:

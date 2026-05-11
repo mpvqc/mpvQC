@@ -254,7 +254,7 @@ Popup {
     }
 
     Shortcut {
-        enabled: root.visible
+        enabled: root.visible && root.viewModel.isMainWindowFocused
         sequence: "ctrl+f"
         autoRepeat: false
         onActivated: {
@@ -265,7 +265,7 @@ Popup {
     }
 
     Shortcut {
-        enabled: root.visible
+        enabled: root.visible && root.viewModel.isMainWindowFocused
         sequence: "esc"
         autoRepeat: false
         onActivated: root.close()

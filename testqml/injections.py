@@ -17,6 +17,7 @@ from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
     ExportService,
+    FramelessWindowService,
     HostEnvironmentService,
     MainWindowService,
     PlayerService,
@@ -29,22 +30,22 @@ from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 if typing.TYPE_CHECKING:
     from collections.abc import Iterable
 
+    from PySide6.QtGui import QGuiApplication, QWindow
+
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 TEMP_ROOT = Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
 TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
 
-class MainWindowServiceOverride(MainWindowService):
-    @property
+class FramelessWindowServiceOverride(FramelessWindowService):
     @typing.override
-    def width(self) -> int:
-        return 1280
+    def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
+        pass
 
-    @property
     @typing.override
-    def height(self) -> int:
-        return 720
+    def set_embedded_player_hwnd(self, win_id: int) -> None:
+        pass
 
 
 class HostEnvironmentServiceOverride(HostEnvironmentService):
@@ -167,11 +168,15 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
+        binder.bind_to_constructor(FramelessWindowService, FramelessWindowServiceOverride)
         binder.bind_to_constructor(HostEnvironmentService, HostEnvironmentServiceOverride)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
         binder.bind_to_constructor(SettingsService, SettingsServiceOverride)
         binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)
-        binder.bind_to_constructor(MainWindowService, MainWindowServiceOverride)
         binder.bind_to_constructor(VideoResizeService, VideoResizeServiceOverride)
 
     inject.configure(test_bindings, bind_in_runtime=False, clear=True, allow_override=True)
+
+
+def rebind_main_window() -> None:
+    inject.instance(MainWindowService).initialize()

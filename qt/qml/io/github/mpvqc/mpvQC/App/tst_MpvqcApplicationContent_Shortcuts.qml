@@ -91,4 +91,56 @@ TestCase {
         keyClick(data.key, data.modifiers);
         tryVerify(() => spy.count === 1);
     }
+
+    function test_questionMarkInTextInputDoesNotOpenShortcutsDialog(): void {
+        const control = it.makeControl();
+        it.comment.add(control, "Translation", "hello");
+
+        const tableView = it.find.tableView(control);
+        tableView.forceActiveFocus();
+        keyClick(Qt.Key_F, Qt.ControlModifier);
+
+        const searchField = findChild(control, "searchTextField");
+        tryVerify(() => searchField?.activeFocus);
+
+        keyClick(Qt.Key_Question);
+
+        tryVerify(() => searchField.text === "?");
+        verify(!findChild(control, "shortcutsDialog"), "shortcuts dialog should not open while a text input has focus");
+    }
+
+    function test_questionMarkInCommentEditorDoesNotOpenShortcutsDialog(): void {
+        const control = it.makeControl();
+        const tableView = it.find.tableView(control);
+        tableView.addNewComment("Translation");
+
+        tryVerify(() => it.find.commentTextArea(control)?.activeFocus);
+        const textArea = it.find.commentTextArea(control);
+
+        keyClick(Qt.Key_Question);
+
+        tryVerify(() => textArea.text === "?");
+        verify(!findChild(control, "shortcutsDialog"), "shortcuts dialog should not open while editing a comment");
+    }
+
+    function test_escapeClosesAppearanceDialogThenSearchBox(): void {
+        const control = it.makeControl();
+        it.comment.add(control, "Translation", "hello");
+
+        const tableView = it.find.tableView(control);
+        tableView.forceActiveFocus();
+        keyClick(Qt.Key_F, Qt.ControlModifier);
+        tryVerify(() => findChild(control, "searchBoxPopup")?.searchActive);
+
+        it.menu.trigger(control, "optionsMenu", "openAppearanceDialogMenuItem");
+        it.find.openedDialog(control, "appearanceDialog");
+
+        keyClick(Qt.Key_Escape);
+        it.expect.dialogClosed(control, "appearanceDialog");
+        verify(findChild(control, "searchBoxPopup")?.searchActive, "search box should remain open after first Escape");
+        tryVerify(() => it.find.tableView(control).commentList.activeFocus);
+
+        keyClick(Qt.Key_Escape);
+        tryVerify(() => !findChild(control, "searchBoxPopup")?.searchActive);
+    }
 }
