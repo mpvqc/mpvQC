@@ -8,7 +8,14 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.services import DesktopService, ExportService, ResetService, SettingsService, StateService
+from mpvqc.services import (
+    DesktopService,
+    ExportService,
+    MainWindowService,
+    ResetService,
+    SettingsService,
+    StateService,
+)
 from mpvqc.viewmodels import MpvqcMenuBarViewModel
 
 
@@ -48,6 +55,7 @@ def configure_inject(
         binder.bind(ResetService, reset_service_mock)
         binder.bind(SettingsService, settings_service)
         binder.bind(ExportService, export_service_mock)
+        binder.bind_to_constructor(MainWindowService, MainWindowService)
 
     common_bindings_with(custom_bindings)
 

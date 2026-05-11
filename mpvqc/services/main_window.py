@@ -4,19 +4,24 @@
 
 from __future__ import annotations
 
+import logging
 import typing
 from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import QEvent, QObject, Qt, Signal, Slot
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QWindow
 
 from .frameless import FramelessWindowService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from PySide6.QtGui import QScreen, QWindow
+    from PySide6.QtGui import QScreen
+
+
+logger = logging.getLogger(__name__)
+
 
 MAIN_WINDOW_OBJECT_NAME = "MpvqcMainWindow"
 
@@ -28,6 +33,7 @@ class MainWindowService(QObject):
     height_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
+    is_main_window_focused_changed = Signal(bool)
     display_zoom_factor_changed = Signal(float)
 
     def __init__(self) -> None:
@@ -38,13 +44,21 @@ class MainWindowService(QObject):
         self._height = 0
         self._is_fullscreen = False
         self._is_maximized = False
+        self._is_main_window_focused = True
         self._zoom_factor = 1.0
 
-    def initialize(self, app: QGuiApplication) -> None:
-        window = _find_main_window()
+    def initialize(self) -> None:
+        app = QGuiApplication.instance()
+        if not isinstance(app, QGuiApplication):
+            logger.error("fatal: cannot bind to QGuiApplication.instance()")
+            return
+
+        self._window = window = app.topLevelWindows()[0]
+
         self._on_width_changed(window.width())
         self._on_height_changed(window.height())
         self._on_window_state_changed(window.windowState())
+        self._on_focus_window_changed(app.focusWindow())
 
         self._zoom_factor = window.devicePixelRatio()
         self._frameless.configure_for(app, window)
@@ -52,12 +66,12 @@ class MainWindowService(QObject):
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
         window.windowStateChanged.connect(self._on_window_state_changed)
+        app.focusWindowChanged.connect(self._on_focus_window_changed)
 
-        zoom_monitor = _DisplayZoomMonitor(window, self._on_zoom_factor_changed)
+        self._zoom_monitor = zoom_monitor = _DisplayZoomMonitor(window, self._on_zoom_factor_changed)
         window.installEventFilter(zoom_monitor)
 
-        self._zoom_monitor = zoom_monitor
-        self._window = window
+        logger.debug("wired up main window service")
 
     def install_event_filter(self, event_filter: QObject) -> None:
         self._active_window.installEventFilter(event_filter)
@@ -96,6 +110,10 @@ class MainWindowService(QObject):
     @property
     def is_maximized(self) -> bool:
         return self._is_maximized
+
+    @property
+    def is_main_window_focused(self) -> bool:
+        return self._is_main_window_focused
 
     @property
     def display_zoom_factor(self) -> float:
@@ -147,6 +165,13 @@ class MainWindowService(QObject):
             self._zoom_factor = zoom_factor
             self.display_zoom_factor_changed.emit(zoom_factor)
 
+    @Slot(QWindow)
+    def _on_focus_window_changed(self, focused: QWindow | None) -> None:
+        is_focused = focused is self._window or (focused is not None and not focused.isVisible())
+        if is_focused != self._is_main_window_focused:
+            self._is_main_window_focused = is_focused
+            self.is_main_window_focused_changed.emit(is_focused)
+
 
 class _DisplayZoomMonitor(QObject):
     def __init__(self, window: QWindow, on_change: Callable[[float], None]) -> None:
@@ -163,11 +188,3 @@ class _DisplayZoomMonitor(QObject):
                 self._last = current
                 self._on_change(current)
         return False
-
-
-def _find_main_window() -> QWindow:
-    for window in QGuiApplication.topLevelWindows():
-        if window.objectName() == MAIN_WINDOW_OBJECT_NAME:
-            return window
-    msg = f"Could not find window with name: {MAIN_WINDOW_OBJECT_NAME}"
-    raise ValueError(msg)

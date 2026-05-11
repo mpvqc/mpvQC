@@ -15,11 +15,6 @@ MenuBar {
 
     required property MpvqcMenuBarViewModel viewModel
 
-    readonly property bool isShortcutEnabled: {
-        const item = root.Window.window?.activeFocusItem;
-        return !item || !(item instanceof TextField || item instanceof TextArea || item instanceof TextInput || item instanceof TextEdit);
-    }
-
     MpvqcMenuBarMenu {
         objectName: "fileMenu"
         title: qsTranslate("MainWindow", "File")
@@ -290,49 +285,49 @@ MenuBar {
 
     Shortcut {
         sequence: "CTRL+N"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestResetAppState()
     }
 
     Shortcut {
         sequence: "CTRL+O"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestOpenQcDocuments()
     }
 
     Shortcut {
         sequence: "CTRL+S"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestSaveQcDocument()
     }
 
     Shortcut {
         sequence: "CTRL+Shift+S"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestSaveQcDocumentAs()
     }
 
     Shortcut {
         sequence: "CTRL+Q"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestClose()
     }
 
     Shortcut {
         sequence: "CTRL+Alt+O"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestOpenVideo()
     }
 
     Shortcut {
         sequence: "CTRL+R"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestResizeVideo()
     }
 
     Shortcut {
         sequence: "?"
-        enabled: root.isShortcutEnabled
+        enabled: root.viewModel.isMainWindowFocused
         onActivated: root.viewModel.requestOpenKeyboardShortcutsDialog()
     }
 }

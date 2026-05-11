@@ -78,7 +78,7 @@ class MpvqcApplication(QGuiApplication):
         if not self._engine.rootObjects():
             sys.exit(-1)
 
-        self._main_window.initialize(self)
+        self._main_window.initialize()
         self._main_window.install_event_filter(self._close_event_filter)
 
         remove_nuitka_splash_screen()

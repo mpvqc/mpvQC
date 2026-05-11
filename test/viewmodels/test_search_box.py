@@ -4,10 +4,12 @@
 
 from collections.abc import Callable, Iterable
 
+import inject
 import pytest
 
 from mpvqc.datamodels import Comment
 from mpvqc.models import MpvqcCommentModel
+from mpvqc.services import MainWindowService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
 DEFAULT_COMMENTS_SEARCH = (
@@ -43,6 +45,14 @@ def make_model() -> Callable[[Iterable[Comment]], MpvqcCommentModel]:
 def model(make_model):
     # noinspection PyArgumentList
     return make_model(set_comments=DEFAULT_COMMENTS_SEARCH)
+
+
+@pytest.fixture(autouse=True)
+def configure_inject(common_bindings_with):
+    def custom_bindings(binder: inject.Binder):
+        binder.bind_to_constructor(MainWindowService, MainWindowService)
+
+    common_bindings_with(custom_bindings)
 
 
 @pytest.fixture

@@ -7,11 +7,13 @@ from __future__ import annotations
 import bisect
 from typing import TYPE_CHECKING
 
+import inject
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.models import MpvqcCommentModel
 from mpvqc.models.comments.roles import Role
+from mpvqc.services import MainWindowService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -26,6 +28,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcSearchBoxViewModel(QObject):
+    _main_window = inject.attr(MainWindowService)
+
     modelChanged = Signal(MpvqcCommentModel)
     selectedIndexChanged = Signal(int)
 
@@ -33,6 +37,7 @@ class MpvqcSearchBoxViewModel(QObject):
     hasMultipleResultsChanged = Signal(bool)
     statusLabelChanged = Signal(str)
     highlightRequested = Signal(int)
+    isMainWindowFocusedChanged = Signal(bool)
 
     def __init__(self) -> None:
         super().__init__()
@@ -48,6 +53,8 @@ class MpvqcSearchBoxViewModel(QObject):
         self._model: MpvqcCommentModel | None = None
         self._selected_index: int = -1
         self._search_invalidate_connection: QMetaObject.Connection | None = None
+
+        self._main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
 
     @Property(MpvqcCommentModel, notify=modelChanged)
     def model(self) -> MpvqcCommentModel:
@@ -87,6 +94,10 @@ class MpvqcSearchBoxViewModel(QObject):
     @Property(str, notify=statusLabelChanged)
     def statusLabel(self) -> str:
         return self._status_label
+
+    @Property(bool, notify=isMainWindowFocusedChanged)
+    def isMainWindowFocused(self) -> bool:
+        return self._main_window.is_main_window_focused
 
     def _update_search_state(self, query: str, current: int, total: int) -> None:
         if self._search_query != query:
