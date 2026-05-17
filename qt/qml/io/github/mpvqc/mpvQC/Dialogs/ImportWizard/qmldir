@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: mpvQC developers
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+module io.github.mpvqc.mpvQC.Dialogs.ImportWizard
+
+MpvqcImportWizardDialog MpvqcImportWizardDialog.qml
+internal MpvqcImportWizardFooter MpvqcImportWizardFooter.qml
+internal MpvqcWizardErrorsStep MpvqcWizardErrorsStep.qml
+internal MpvqcWizardSessionStep MpvqcWizardSessionStep.qml
+internal MpvqcWizardStepGlyph MpvqcWizardStepGlyph.qml
+internal MpvqcWizardStepHeader MpvqcWizardStepHeader.qml
+internal MpvqcWizardStepIndicator MpvqcWizardStepIndicator.qml
+internal MpvqcWizardSteps MpvqcWizardSteps.qml
+internal MpvqcWizardSubtitlesStep MpvqcWizardSubtitlesStep.qml
+internal MpvqcWizardVideoStep MpvqcWizardVideoStep.qml
+internal MpvqcWizardVideoStepDelegate MpvqcWizardVideoStepDelegate.qml

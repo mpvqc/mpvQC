@@ -11,3 +11,4 @@ from .edit_input import MpvqcEditInputDialogViewModel as MpvqcEditInputDialogVie
 from .edit_mpv import MpvqcEditMpvDialogViewModel as MpvqcEditMpvDialogViewModel
 from .export_settings import MpvqcExportSettingsDialogViewModel as MpvqcExportSettingsDialogViewModel
 from .import_settings import MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel
+from .import_wizard import MpvqcImportWizardViewModel as MpvqcImportWizardViewModel

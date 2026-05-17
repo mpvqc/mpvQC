@@ -198,5 +198,49 @@ QtObject {
         function commentEditorHasFocus(control: Item): void {
             root.testCase.tryVerify(() => root.find.commentTextArea(control)?.activeFocus);
         }
+
+        function openedVideo(name: string): void {
+            root.testCase.tryVerify(() => root.bridge.openedVideoName() === name);
+        }
+
+        function noOpenedVideo(): void {
+            root.testCase.compare(root.bridge.openedVideoName(), "");
+        }
+
+        function openedSubtitleCount(count: int): void {
+            root.testCase.tryVerify(() => root.bridge.openedSubtitleCount() === count);
+        }
+    }
+
+    readonly property var imports: QtObject {
+        function dropFiles(control: Item, urls: list<url>): void {
+            const dropArea = root.testCase.findChild(control, "fileDropArea");
+            root.testCase.verify(dropArea, "fileDropArea not found");
+            dropArea.viewModel.open(urls);
+            root.bridge.waitForBackgroundJobs();
+        }
+    }
+
+    readonly property var wizard: QtObject {
+        function opened(control: Item): QtObject {
+            const dlg = root.find.openedDialog(control, "importWizardDialog");
+            const stepView = root.testCase.findChild(dlg.contentItem, "stepView");
+            if (stepView) {
+                stepView.animationDuration = 0;
+            }
+            return dlg;
+        }
+
+        function clickPrimary(dlg: QtObject): void {
+            const btn = root.testCase.findChild(dlg.footer, "primaryButton");
+            root.testCase.verify(btn, "primaryButton not found");
+            root.testCase.mouseClick(btn);
+        }
+
+        function clickCancel(dlg: QtObject): void {
+            const btn = root.testCase.findChild(dlg.footer, "cancelButton");
+            root.testCase.verify(btn, "cancelButton not found");
+            root.testCase.mouseClick(btn);
+        }
     }
 }

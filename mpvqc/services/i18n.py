@@ -29,6 +29,9 @@ class InternationalizationService:
         locale: QLocale = create_locale_from(language_code)
         logger.debug("Loading mpvQC translation %s for locale %s", language_code, locale.name())
 
+        QLocale.setDefault(locale)
+        logger.debug("Set default Qt locale to %s", locale.name())
+
         qt_translations_path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
 
         if not self._translator_qt.load(locale, "qtbase", "_", qt_translations_path):

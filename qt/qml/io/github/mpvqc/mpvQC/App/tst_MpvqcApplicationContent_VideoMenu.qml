@@ -51,29 +51,6 @@ TestCase {
         tryVerify(() => it.bridge.openedSubtitleCount() === 1);
     }
 
-    function test_openSubtitles_complex_promptsThenLoadsVideoAndSubtitle(): void {
-        const control = it.makeControl();
-
-        it.menu.trigger(control, "videoMenu", "openSubtitlesMenuItem");
-
-        const dialog = it.find.openedDialog(control, "importSubtitlesFileDialog");
-        dialog.selectedFile = it.bridge.importArtifact("subtitle_complex.ass");
-        it.dialog.accept(dialog);
-
-        const confirmation = it.find.openedDialog(control, "importConfirmationDialog");
-
-        const videoList = findChild(confirmation, "videoListView");
-        const subtitleList = findChild(confirmation, "subtitleListView");
-        compare(videoList.count, 2, "expected one video plus skip option");
-        compare(subtitleList.count, 1);
-
-        confirmation.accept();
-        it.bridge.waitForBackgroundJobs();
-
-        tryVerify(() => it.bridge.openedVideoName() === "video_basic.mp4");
-        tryVerify(() => it.bridge.openedSubtitleCount() === 1);
-    }
-
     function test_resizeVideo_emitsAppWindowSizeRequested(): void {
         const control = it.makeControl();
         const spy = it.makeSpy(control, "appWindowSizeRequested");

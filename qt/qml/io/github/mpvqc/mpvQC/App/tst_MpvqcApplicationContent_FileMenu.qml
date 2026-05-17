@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtTest
 
 TestCase {
@@ -100,62 +100,6 @@ TestCase {
         data.interact(dialog);
 
         it.expect.commentCount(control, data.expectedComments);
-    }
-
-    function test_openQcDocument_incompatibleDocument_opensNotCompatibleMessageBox(): void {
-        const control = it.makeControl();
-
-        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
-
-        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
-        dialog.selectedFile = it.bridge.importArtifact("qc_document_invalid.txt");
-        it.dialog.accept(dialog);
-
-        const messageBox = it.find.openedDialog(control, "documentNotCompatibleMessageBox");
-        verify(messageBox.text.includes("qc_document_invalid.txt"));
-        it.expect.commentCount(control, 0);
-    }
-
-    function test_openQcDocument_complex_promptsThenLoadsVideoAndSubtitles(): void {
-        const control = it.makeControl();
-
-        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
-
-        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
-        dialog.selectedFile = it.bridge.importComplexDocument();
-        it.dialog.accept(dialog);
-
-        const confirmation = it.find.openedDialog(control, "importConfirmationDialog");
-
-        const videoList = findChild(confirmation, "videoListView");
-        const subtitleList = findChild(confirmation, "subtitleListView");
-        compare(videoList.count, 2, "expected one video plus skip option");
-        compare(subtitleList.count, 2);
-
-        confirmation.accept();
-        it.bridge.waitForBackgroundJobs();
-
-        it.expect.commentCount(control, 2);
-        tryVerify(() => it.bridge.openedVideoName() === "video.mp4");
-        tryVerify(() => it.bridge.openedSubtitleCount() === 2);
-    }
-
-    function test_openQcDocument_complex_rejectingConfirmationSkipsVideoAndSubtitles(): void {
-        const control = it.makeControl();
-
-        it.menu.trigger(control, "fileMenu", "openQcDocumentsMenuItem");
-
-        const dialog = it.find.openedDialog(control, "importDocumentsFileDialog");
-        dialog.selectedFile = it.bridge.importComplexDocument();
-        it.dialog.accept(dialog);
-
-        const confirmation = it.find.openedDialog(control, "importConfirmationDialog");
-        confirmation.reject();
-        it.bridge.waitForBackgroundJobs();
-
-        it.expect.commentCount(control, 2);
-        compare(it.bridge.openedVideoName(), "", "no video should be opened");
-        compare(it.bridge.openedSubtitleCount(), 0, "no subtitles should be opened");
     }
 
     function test_saveQcDocument_promptsThenSavesDirectly(): void {

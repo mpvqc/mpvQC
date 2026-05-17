@@ -12,6 +12,7 @@ IconLabel {
     id: root
 
     property string toolTipText: ""
+    property alias iconColor: root.icon.color
 
     display: IconLabel.IconOnly
 

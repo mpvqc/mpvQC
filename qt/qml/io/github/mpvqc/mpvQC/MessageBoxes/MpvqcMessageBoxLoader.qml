@@ -14,7 +14,6 @@ Loader {
 
     readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
 
-    readonly property url messageBoxDocumentNotCompatible: Qt.resolvedUrl("MpvqcDocumentNotCompatibleMessageBox.qml")
     readonly property url messageBoxExtendedExport: Qt.resolvedUrl("MpvqcExtendedExportMessageBox.qml")
     readonly property url messageBoxExportError: Qt.resolvedUrl("MpvqcExportErrorMessageBox.qml")
     readonly property url messageBoxQuit: Qt.resolvedUrl("MpvqcQuitMessageBox.qml")
@@ -26,13 +25,6 @@ Loader {
     asynchronous: true
     active: false
     visible: status === Loader.Ready
-
-    function openDocumentNotCompatibleMessageBox(documents: list<var>): void {
-        setSource(messageBoxDocumentNotCompatible, {
-            files: documents
-        });
-        active = true;
-    }
 
     function openExtendedExportsMessageBox(): void {
         setSource(messageBoxExtendedExport);
@@ -77,10 +69,6 @@ Loader {
 
     Connections {
         target: root.viewModel
-
-        function onErroneousDocumentsImported(documents: list<var>): void {
-            root.openDocumentNotCompatibleMessageBox(documents);
-        }
 
         function onExportErrorOccurred(message: string, line: int): void {
             root.openExportErrorMessageBox(message, line);

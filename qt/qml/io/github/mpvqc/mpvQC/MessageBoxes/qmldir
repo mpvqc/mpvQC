@@ -6,7 +6,6 @@ module io.github.mpvqc.mpvQC.MessageBoxes
 
 MpvqcMessageBoxLoader MpvqcMessageBoxLoader.qml
 
-internal MpvqcDocumentNotCompatibleMessageBox MpvqcDocumentNotCompatibleMessageBox.qml
 internal MpvqcExportErrorMessageBox MpvqcExportErrorMessageBox.qml
 internal MpvqcExtendedExportMessageBox MpvqcExtendedExportMessageBox.qml
 internal MpvqcQuitMessageBox MpvqcQuitMessageBox.qml
