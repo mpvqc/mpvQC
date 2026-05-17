@@ -89,6 +89,24 @@
     </message>
 </context>
 <context>
+    <name>ChooseVideoDialog</name>
+    <message>
+        <source>Choose Video</source>
+        <extracomment>Title of the choose-video dialog</extracomment>
+        <translation type="vanished">Video auswählen</translation>
+    </message>
+    <message>
+        <source>Skip video</source>
+        <extracomment>Button declining to import any of the candidate videos</extracomment>
+        <translation type="vanished">Video überspringen</translation>
+    </message>
+    <message>
+        <source>Load video</source>
+        <extracomment>Button confirming the selected candidate video for import</extracomment>
+        <translation type="vanished">Video laden</translation>
+    </message>
+</context>
+<context>
     <name>CommentTable</name>
     <message>
         <source>Edit Comment</source>
@@ -262,6 +280,29 @@
     </message>
 </context>
 <context>
+    <name>FoundVideoDialog</name>
+    <message>
+        <source>Found a Video</source>
+        <extracomment>Title of the found-video confirmation dialog</extracomment>
+        <translation type="vanished">Video gefunden</translation>
+    </message>
+    <message>
+        <source>Remember this choice</source>
+        <extracomment>Checkbox; applies the load/skip decision to future imports</extracomment>
+        <translation type="vanished">Auswahl merken</translation>
+    </message>
+    <message>
+        <source>Load video</source>
+        <extracomment>Button; loads the inferred video</extracomment>
+        <translation type="vanished">Video laden</translation>
+    </message>
+    <message>
+        <source>Skip video</source>
+        <extracomment>Button; closes the dialog without loading the video</extracomment>
+        <translation type="vanished">Video überspringen</translation>
+    </message>
+</context>
+<context>
     <name>ImportConfirmationDialog</name>
     <message>
         <source>Confirm Import</source>
@@ -330,114 +371,124 @@
 <context>
     <name>ImportWizardDialog</name>
     <message>
-        <source>Close</source>
-        <extracomment>Primary button when the wizard only lists unreadable documents</extracomment>
-        <translation type="unfinished"></translation>
+        <source>Cancel import</source>
+        <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
+        <translation>Import abbrechen</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <extracomment>Primary button on the last step when nothing valid has been resolved yet</extracomment>
-        <translation type="unfinished"></translation>
+        <source>Close</source>
+        <extracomment>Primary button when the wizard only lists unreadable documents</extracomment>
+        <translation>Schließen</translation>
     </message>
     <message>
         <source>Confirm import</source>
         <extracomment>Primary button finalizing the import on the last wizard step</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Import bestätigen</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <extracomment>Primary button on the last step when nothing valid has been resolved yet</extracomment>
+        <translation>Bestätigen</translation>
+    </message>
+    <message>
+        <source>Errors</source>
+        <extracomment>Step indicator label for the errors step</extracomment>
+        <translation>Fehler</translation>
+    </message>
+    <message>
+        <source>Session</source>
+        <extracomment>Step indicator label for the session step</extracomment>
+        <translation>Sitzung</translation>
+    </message>
+    <message>
+        <source>Video</source>
+        <extracomment>Step indicator label for the video step</extracomment>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <source>Subtitles</source>
+        <extracomment>Step indicator label for the subtitles step</extracomment>
+        <translation>Untertitel</translation>
     </message>
     <message>
         <source>Next</source>
         <extracomment>Primary button advancing to the next wizard step</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import Error</source>
-        <extracomment>Title of the import wizard dialog when no valid content can be imported</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Weiter</translation>
     </message>
     <message>
         <source>Confirm Import</source>
         <extracomment>Title of the import wizard dialog</extracomment>
-        <translation type="unfinished">Import bestätigen</translation>
+        <translation>Import bestätigen</translation>
     </message>
     <message>
-        <source>Cancel import</source>
-        <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>%Ln incompatible QC document(s):</source>
-        <extracomment>Header above the list of QC documents whose format the importer rejected</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+        <source>Import Error</source>
+        <extracomment>Title of the import wizard dialog when no valid content can be imported</extracomment>
+        <translation>Import-Fehler</translation>
     </message>
     <message numerus="yes">
         <source>You&apos;re about to import &lt;span style=&apos;font-weight: 600&apos;&gt;%Ln&lt;/span&gt; comment(s) into your current session. What do you want to do?</source>
         <extracomment>Session step header: states the incoming comment count and asks how to proceed (%Ln is the count)</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Sie sind dabei, &lt;span style=&apos;font-weight: 600&apos;&gt;%Ln&lt;/span&gt; Kommentar in Ihre aktuelle Sitzung zu importieren. Was möchten Sie tun?</numerusform>
+            <numerusform>Sie sind dabei, &lt;span style=&apos;font-weight: 600&apos;&gt;%Ln&lt;/span&gt; Kommentare in Ihre aktuelle Sitzung zu importieren. Was möchten Sie tun?</numerusform>
         </translation>
     </message>
     <message>
         <source>Add to your current comments</source>
         <extracomment>Merge option label — keeps the existing comments and appends the incoming ones</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zu den vorhandenen Kommentaren hinzufügen</translation>
     </message>
     <message>
         <source>Start fresh with the new comments</source>
         <extracomment>Replace option label — discards the existing comments before importing the incoming ones</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mit den neuen Kommentaren neu beginnen</translation>
     </message>
     <message>
-        <source>Errors</source>
-        <extracomment>Step indicator label for the errors step</extracomment>
-        <translation type="unfinished"></translation>
+        <source>Add the new comments to your session</source>
+        <extracomment>Merge option label — adds the new comments to the existing session</extracomment>
+        <translation type="vanished">Neue Kommentare zur Sitzung hinzufügen</translation>
     </message>
     <message>
-        <source>Session</source>
-        <extracomment>Step indicator label for the session step</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <extracomment>Step indicator label for the video step</extracomment>
-        <translation type="unfinished">Video</translation>
-    </message>
-    <message>
-        <source>Subtitles</source>
-        <extracomment>Step indicator label for the subtitles step</extracomment>
-        <translation type="unfinished">Untertitel</translation>
-    </message>
-    <message>
-        <source>Which subtitles should be loaded?</source>
-        <extracomment>Subtitles step prompt above the subtitles list</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <extracomment>Tri-state &quot;Select all&quot; checkbox in the subtitles step header</extracomment>
-        <translation type="unfinished"></translation>
+        <source>Replace your session with the new comments</source>
+        <extracomment>Replace option label — discards the current session before importing</extracomment>
+        <translation type="vanished">Sitzung durch neue Kommentare ersetzen</translation>
     </message>
     <message>
         <source>Which video should be loaded?</source>
         <extracomment>Video step prompt above the candidate list</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Welches Video soll geladen werden?</translation>
     </message>
     <message>
         <source>Skip video</source>
-        <translation type="unfinished">Kein Video importieren</translation>
+        <translation>Video überspringen</translation>
     </message>
     <message>
         <source>Referenced by an imported QC document</source>
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the QC documents being imported</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wird von einem importierten QC-Dokument referenziert</translation>
     </message>
     <message>
         <source>Referenced by an imported subtitle file</source>
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wird von einer importierten Untertiteldatei referenziert</translation>
+    </message>
+    <message>
+        <source>Which subtitles should be loaded?</source>
+        <extracomment>Subtitles step prompt above the subtitles list</extracomment>
+        <translation>Welche Untertitel sollen geladen werden?</translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <extracomment>Tri-state &quot;Select all&quot; checkbox in the subtitles step header</extracomment>
+        <translation>Alle auswählen</translation>
+    </message>
+    <message numerus="yes">
+        <source>%Ln incompatible QC document(s):</source>
+        <extracomment>Header above the list of QC documents whose format the importer rejected</extracomment>
+        <translation>
+            <numerusform>%Ln inkompatibles QC-Dokument:</numerusform>
+            <numerusform>%Ln inkompatible QC-Dokumente:</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -756,10 +807,17 @@
     </message>
 </context>
 <context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>Close</source>
+        <translation type="vanished">Schließen</translation>
+    </message>
+</context>
+<context>
     <name>QShortcut</name>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
