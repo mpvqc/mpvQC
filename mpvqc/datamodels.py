@@ -4,7 +4,6 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Final
 
 
 @dataclass(frozen=True)
@@ -17,20 +16,22 @@ class Comment:
 @dataclass(frozen=True)
 class VideoSource:
     path: Path
-    from_document: bool
-    from_subtitle: bool
+    explicitly_provided: bool = False
+    found_in_document: bool = False
+    found_in_subtitle: bool = False
+
+
+@dataclass(frozen=True)
+class SubtitleSource:
+    path: Path
+    explicitly_provided: bool = False
+    found_in_document: bool = False
 
 
 @dataclass(frozen=True)
 class SubtitleImportResult:
     subtitles: tuple[Path, ...]
     existing_videos: tuple[Path, ...]
-
-
-NO_SUBTITLE_IMPORT: Final[SubtitleImportResult] = SubtitleImportResult(
-    subtitles=(),
-    existing_videos=(),
-)
 
 
 @dataclass(frozen=True)
@@ -40,12 +41,3 @@ class DocumentImportResult:
     existing_videos: tuple[Path, ...]
     existing_subtitles: tuple[Path, ...]
     comments: tuple[Comment, ...]
-
-
-NO_DOCUMENT_IMPORT: Final[DocumentImportResult] = DocumentImportResult(
-    valid_documents=(),
-    invalid_documents=(),
-    existing_videos=(),
-    existing_subtitles=(),
-    comments=(),
-)
