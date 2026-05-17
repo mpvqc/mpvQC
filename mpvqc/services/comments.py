@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class CommentsProvider(Protocol):
+    def rowCount(self) -> int: ...
     def comments(self) -> list[dict[str, Any]]: ...
     def clear_comments(self) -> None: ...
     def import_comments(self, comments: Sequence[Comment]) -> None: ...
@@ -35,6 +36,10 @@ class CommentsService:
     def register(self, provider: CommentsProvider) -> None:
         logger.debug("Registering comments provider: %s", provider)
         self._provider = provider
+
+    @property
+    def count(self) -> int:
+        return self._registered_provider.rowCount()
 
     def comments(self) -> list[dict[str, Any]]:
         return self._registered_provider.comments()

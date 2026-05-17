@@ -204,10 +204,11 @@ class PlayerService(QObject):
         self._mpv_player.command("loadfile", path, "replace")
         self.play()
 
-    def is_video_loaded(self, video: Path) -> bool:
-        if path := self.path:
-            return Path(path).resolve() == video.resolve()
-        return False
+    def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
+        if not (path := self.path):
+            return False
+        current = Path(path).resolve()
+        return any(current == video.resolve() for video in videos)
 
     def open_subtitles(self, subtitles: Iterable[Path]) -> None:
         if self.video_loaded and not self._subtitle_coordinator.is_loading:
