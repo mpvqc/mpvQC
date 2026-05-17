@@ -69,6 +69,7 @@ def configure_environment_variables() -> None:
 
 
 def import_mpvqc_bindings() -> None:
+    import mpvqc.dialogs  # noqa: F401
     import mpvqc.enums  # noqa: F401
     import mpvqc.models  # noqa: F401
     import mpvqc.viewmodels  # noqa: F401
