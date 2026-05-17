@@ -15,6 +15,7 @@ from PySide6.QtCore import QUrl
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
+    CommentsService,
     DesktopService,
     ExportService,
     FramelessWindowService,
@@ -79,8 +80,11 @@ class PlayerServiceOverride(PlayerService):
         self.opened_video = video
 
     @typing.override
-    def is_video_loaded(self, video: Path) -> bool:
-        return self.opened_video is not None and self.opened_video.resolve() == video.resolve()
+    def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
+        if self.opened_video is None:
+            return False
+        current = self.opened_video.resolve()
+        return any(current == video.resolve() for video in videos)
 
     @typing.override
     def open_subtitles(self, subtitles: Iterable[Path]) -> None:
@@ -145,6 +149,26 @@ class VersionCheckerServiceOverride(VersionCheckerService):
         return "stub-title", "stub-text"
 
 
+class _NoopCommentsProvider:
+    def rowCount(self) -> int:
+        return 0
+
+    def comments(self) -> list[dict[str, typing.Any]]:
+        return []
+
+    def clear_comments(self) -> None:
+        pass
+
+    def import_comments(self, comments) -> None:  # noqa: ANN001
+        pass
+
+
+class CommentsServiceOverride(CommentsService):
+    def __init__(self) -> None:
+        super().__init__()
+        self.register(_NoopCommentsProvider())
+
+
 class DesktopServiceOverride(DesktopService):
     def __init__(self) -> None:
         self.opened_urls: list[QUrl] = []
@@ -166,6 +190,7 @@ def configure_injections() -> None:
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
+        binder.bind_to_constructor(CommentsService, CommentsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
         binder.bind_to_constructor(FramelessWindowService, FramelessWindowServiceOverride)

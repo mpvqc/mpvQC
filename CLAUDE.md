@@ -33,7 +33,8 @@ SPDX-License-Identifier: MIT
 
 - Prefer data-driven Python tests.
 - Prefer testing important areas in the code. Don't go for coverage only.
-- Prefer data-driven QML tests and construct the object being tested using `makeControl` and `createTemporaryObject`.
+- Prefer data-driven QML tests and construct the object being tested using `makeControl` / `makeSpy` and `createTemporaryObject`.
+- Ensure tests pass on Linux and Windows
 - Don't use hard timeouts in QML tests.
 
 ## Committing

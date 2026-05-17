@@ -140,9 +140,14 @@ MpvqcDialog {
                 highlightResizeDuration: 0
                 highlightResizeVelocity: -1
 
-                highlight: Rectangle {
-                    color: root.mpvqcTheme.palette.rowHighlight
-                    radius: Material.ExtraSmallScale
+                highlight: Item {
+                    Rectangle {
+                        x: root.isMirrored ? _scrollBar.visibleWidth : 0
+                        width: parent.width - _scrollBar.visibleWidth
+                        height: parent.height
+                        color: root.mpvqcTheme.palette.rowHighlight
+                        radius: Material.ExtraSmallScale
+                    }
                 }
 
                 delegate: ItemDelegate {
@@ -154,8 +159,10 @@ MpvqcDialog {
                     readonly property color foregroundColor: root.mpvqcTheme.palette.rowForeground(index)
                     readonly property color backgroundColor: root.mpvqcTheme.palette.rowBackground(index)
 
-                    width: ListView.view.width - _scrollBar.visibleWidth
+                    width: ListView.view.width
                     height: _upButton.height
+                    leftInset: root.isMirrored ? _scrollBar.visibleWidth : 0
+                    rightInset: root.isMirrored ? 0 : _scrollBar.visibleWidth
 
                     Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.palette.rowHighlightText : foregroundColor
                     Material.background: backgroundColor

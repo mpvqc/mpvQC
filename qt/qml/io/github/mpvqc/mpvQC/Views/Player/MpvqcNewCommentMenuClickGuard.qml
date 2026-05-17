@@ -15,7 +15,7 @@
 // TODO: Remove this file when Qt fixes QTBUG-145585.
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 
 Item {
     id: root

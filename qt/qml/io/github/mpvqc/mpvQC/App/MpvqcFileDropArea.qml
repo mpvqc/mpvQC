@@ -7,6 +7,8 @@ import QtQuick
 import io.github.mpvqc.mpvQC.Python
 
 DropArea {
+    objectName: "fileDropArea"
+
     readonly property MpvqcDropAreaViewModel viewModel: MpvqcDropAreaViewModel {}
 
     onEntered: event => {
