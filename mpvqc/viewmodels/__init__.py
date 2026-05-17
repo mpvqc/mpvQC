@@ -5,15 +5,6 @@
 from .app import MpvqcAppViewModel as MpvqcAppViewModel
 from .app import MpvqcDropAreaViewModel as MpvqcDropAreaViewModel
 from .app import MpvqcResizeViewModel as MpvqcResizeViewModel
-from .dialogs import MpvqcAboutDialogViewModel as MpvqcAboutDialogViewModel
-from .dialogs import MpvqcAppearanceDialogViewModel as MpvqcAppearanceDialogViewModel
-from .dialogs import MpvqcBackupDialogViewModel as MpvqcBackupDialogViewModel
-from .dialogs import MpvqcCommentTypesDialogViewModel as MpvqcCommentTypesDialogViewModel
-from .dialogs import MpvqcDialogLoaderViewModel as MpvqcDialogLoaderViewModel
-from .dialogs import MpvqcEditInputDialogViewModel as MpvqcEditInputDialogViewModel
-from .dialogs import MpvqcEditMpvDialogViewModel as MpvqcEditMpvDialogViewModel
-from .dialogs import MpvqcExportSettingsDialogViewModel as MpvqcExportSettingsDialogViewModel
-from .dialogs import MpvqcImportSettingsDialogViewModel as MpvqcImportSettingsDialogViewModel
 from .file_dialogs import MpvqcExportFileDialogViewModel as MpvqcExportFileDialogViewModel
 from .file_dialogs import MpvqcImportFileDialogViewModel as MpvqcImportFileDialogViewModel
 from .message_boxes import MpvqcMessageBoxLoaderViewModel as MpvqcMessageBoxLoaderViewModel

@@ -4,10 +4,12 @@
 
 module io.github.mpvqc.mpvQC.Components
 
+MpvqcAnimatedIcon MpvqcAnimatedIcon.qml
 MpvqcDebugRectangle MpvqcDebugRectangle.qml
 MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcIconLabel MpvqcIconLabel.qml
+MpvqcKeyboardFocusableButtonBox MpvqcKeyboardFocusableButtonBox.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml

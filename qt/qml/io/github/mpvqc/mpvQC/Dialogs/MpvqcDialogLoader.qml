@@ -22,7 +22,7 @@ Loader {
     readonly property url editMpvDialog: Qt.resolvedUrl("MpvqcEditMpvDialog.qml")
     readonly property url exportSettingsDialog: Qt.resolvedUrl("MpvqcExportSettingsDialog.qml")
     readonly property url importSettingsDialog: Qt.resolvedUrl("MpvqcImportSettingsDialog.qml")
-    readonly property url importConfirmationDialog: Qt.resolvedUrl("MpvqcImportConfirmationDialog.qml")
+    readonly property url importWizardDialog: Qt.resolvedUrl("ImportWizard/MpvqcImportWizardDialog.qml")
     readonly property url shortcutsDialog: Qt.resolvedUrl("MpvqcShortcutDialog.qml")
 
     signal dialogClosed
@@ -71,10 +71,9 @@ Loader {
         active = true;
     }
 
-    function openImportConfirmationDialog(videosJson: string, subtitlesJson: string): void {
-        setSource(importConfirmationDialog, {
-            videosJson: videosJson,
-            subtitlesJson: subtitlesJson
+    function openImportWizardDialog(viewModel: MpvqcImportWizardViewModel): void {
+        setSource(importWizardDialog, {
+            viewModel: viewModel
         });
         active = true;
     }
@@ -94,18 +93,15 @@ Loader {
             root.active = false;
             root.source = "";
             root.dialogClosed();
-        }
-
-        function onImportConfirmed(selectedVideoPath: string, selectedSubtitlePaths: list<string>): void {
-            root.viewModel.confirmImport(selectedVideoPath, selectedSubtitlePaths);
+            root.viewModel.releaseActiveDialog();
         }
     }
 
     Connections {
         target: root.viewModel
 
-        function onImportConfirmationDialogRequested(videosJson: string, subtitlesJson: string): void {
-            root.openImportConfirmationDialog(videosJson, subtitlesJson);
+        function onImportWizardDialogRequested(viewModel: MpvqcImportWizardViewModel): void {
+            root.openImportWizardDialog(viewModel);
         }
     }
 }

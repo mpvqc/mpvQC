@@ -10,7 +10,9 @@ import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import ApplicationPathsService, DesktopService, PlayerService, SettingsService, StateService
+from testqml import import_wizard_fixtures
 from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections, rebind_main_window
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -40,6 +42,39 @@ def _create_complex_qc_document() -> Path:
         encoding="utf-8",
     )
     return doc
+
+
+def _create_video_only_qc_document() -> Path:
+    base = TEMP_ROOT / f"video-only-{uuid.uuid4().hex[:8]}"
+    base.mkdir()
+    video = base / "video_only.mp4"
+    video.touch()
+    doc = base / "qc-video-only.txt"
+    doc.write_text(
+        f"[FILE]\npath     : {video}\n\n[DATA]\n[00:00:10] [Translation] line1\n",
+        encoding="utf-8",
+    )
+    return doc
+
+
+def _create_multi_video_qc_documents() -> tuple[Path, Path]:
+    base = TEMP_ROOT / f"multi-video-{uuid.uuid4().hex[:8]}"
+    base.mkdir()
+    video_a = base / "alpha.mp4"
+    video_b = base / "beta.mp4"
+    for f in (video_a, video_b):
+        f.touch()
+    doc_a = base / "qc-alpha.txt"
+    doc_a.write_text(
+        f"[FILE]\npath     : {video_a}\n\n[DATA]\n[00:00:10] [Translation] line1\n",
+        encoding="utf-8",
+    )
+    doc_b = base / "qc-beta.txt"
+    doc_b.write_text(
+        f"[FILE]\npath     : {video_b}\n\n[DATA]\n[00:00:20] [Spelling] line2\n",
+        encoding="utf-8",
+    )
+    return doc_a, doc_b
 
 
 @QmlElement
@@ -79,6 +114,14 @@ class MpvqcTestBridge(QObject):
     def importComplexDocument(self) -> QUrl:
         return QUrl.fromLocalFile(str(_create_complex_qc_document()))
 
+    @Slot(result=QUrl)
+    def importVideoOnlyDocument(self) -> QUrl:
+        return QUrl.fromLocalFile(str(_create_video_only_qc_document()))
+
+    @Slot(result=list)
+    def importMultiVideoDocuments(self) -> list[QUrl]:
+        return [QUrl.fromLocalFile(str(p)) for p in _create_multi_video_qc_documents()]
+
     @Slot(result=str)
     def openedVideoName(self) -> str:
         opened = getattr(inject.instance(PlayerService), "opened_video", None)
@@ -87,6 +130,11 @@ class MpvqcTestBridge(QObject):
     @Slot(result=int)
     def openedSubtitleCount(self) -> int:
         return len(getattr(inject.instance(PlayerService), "opened_subtitles", ()))
+
+    @Slot(result=list)
+    def openedSubtitleNames(self) -> list[str]:
+        subtitles = getattr(inject.instance(PlayerService), "opened_subtitles", ())
+        return [s.name for s in subtitles]
 
     @Slot(result=list)
     def openedDesktopUrls(self) -> list[str]:
@@ -101,8 +149,12 @@ class MpvqcTestBridge(QObject):
     def inputConfPath(self) -> QUrl:
         return QUrl.fromLocalFile(str(inject.instance(ApplicationPathsService).file_input_conf))
 
+    @Slot(str, result=MpvqcImportWizardViewModel)
+    def buildWizardViewModel(self, scenario: str) -> MpvqcImportWizardViewModel:
+        plan = import_wizard_fixtures.build(scenario)
+        return MpvqcImportWizardViewModel(self, plan)
 
-# noinspection PyPep8Naming
+
 @QmlElement
 class MpvqcTestSettings(QObject):
     @Slot(result=bool)
