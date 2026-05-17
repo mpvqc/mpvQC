@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QObject, Signal
+from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 
 import mpvqc.services.player.properties as props
 from mpvqc.services.application_paths import ApplicationPathsService
@@ -48,6 +48,8 @@ class PlayerService(QObject):
     subtitle_track_count_changed = Signal(int)
     external_subtitles_changed = Signal(list)
 
+    file_loaded = Signal()
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -55,7 +57,7 @@ class PlayerService(QObject):
         self._render_context: MpvRenderContext | None = None
         self._observed: list[props.MpvProperty[Any, Any]] = []
         self._dimensions_coordinator = DimensionsCoordinator(on_both_ready=self.video_dimensions_changed.emit)
-        self._subtitle_coordinator = SubtitleLoadCoordinator(on_flush=self._load_subtitles_now)
+        self._subtitle_coordinator = SubtitleLoadCoordinator(on_add=self._load_subtitles_now)
 
         def register[P: props.MpvProperty[Any, Any]](prop: P) -> P:
             self._observed.append(prop)
@@ -75,9 +77,10 @@ class PlayerService(QObject):
         self._external_subtitles_prop = register(props.ExternalSubtitles(self.external_subtitles_changed))
 
         self._path_prop.on_change(lambda _: self._dimensions_coordinator.reset())
-        self._video_loaded_prop.on_change(self._subtitle_coordinator.on_video_loaded)
         self._height_prop.on_change(self._dimensions_coordinator.on_height)
         self._width_prop.on_change(self._dimensions_coordinator.on_width)
+
+        self.file_loaded.connect(self._on_file_loaded, Qt.ConnectionType.QueuedConnection)
 
     def init(self, win_id: int | None = None) -> None:
         args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
@@ -89,6 +92,8 @@ class PlayerService(QObject):
 
         for prop in self._observed:
             mpv.observe_property(prop.name, lambda _, v, p=prop: p.on_update(v))
+
+        mpv.event_callback("file-loaded")(lambda _event: self.file_loaded.emit())
 
         self._mpv = mpv
 
@@ -198,26 +203,28 @@ class PlayerService(QObject):
         y = int(y * zoom_factor)
         self._mpv_player.command_async("mouse", x, y)
 
-    def open_video(self, video: Path) -> None:
-        self._subtitle_coordinator.begin_loading()
-        path = self._type_mapper.map_path_to_str(video)
-        self._mpv_player.command("loadfile", path, "replace")
-        self.play()
-
     def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
         if not (path := self.path):
             return False
         current = Path(path).resolve()
         return any(current == video.resolve() for video in videos)
 
-    def open_subtitles(self, subtitles: Iterable[Path]) -> None:
-        if self.video_loaded and not self._subtitle_coordinator.is_loading:
-            self._load_subtitles_now(subtitles)
-        else:
-            self._subtitle_coordinator.queue(subtitles)
+    def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
+        if video is None:
+            self._subtitle_coordinator.attach_or_queue(subtitles, video_loaded=self.video_loaded)
+            return
 
-    def _load_subtitles_now(self, subtitles: Iterable[Path]) -> None:
-        for subtitle in subtitles:
+        self._subtitle_coordinator.queue_for_next_load(subtitles)
+        path = self._type_mapper.map_path_to_str(video)
+        self._mpv_player.command("loadfile", path, "replace")
+        self.play()
+
+    @Slot()
+    def _on_file_loaded(self) -> None:
+        self._subtitle_coordinator.flush()
+
+    def _load_subtitles_now(self, subtitles: tuple[Path, ...]) -> None:
+        for subtitle in dict.fromkeys(subtitles):
             path = self._type_mapper.map_path_to_str(subtitle)
             self._mpv_player.command("sub-add", path, "select")
 

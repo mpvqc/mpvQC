@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+from typing import NamedTuple, cast
 from unittest.mock import MagicMock
 
 import inject
@@ -80,3 +82,65 @@ def test_execute_unblocks_next_open(service: ImporterService) -> None:
     assert service.busy is True
     assert spy.count() == 1
     assert spy.at(0) == [True]
+
+
+V = Path("/movies/v.mp4")
+S1 = Path("/work/a.srt")
+S2 = Path("/work/b.srt")
+
+
+class DispatchCase(NamedTuple):
+    name: str
+    plan: FinishedPlan
+    expected: dict[str, Path | tuple[Path, ...] | None] | None
+
+
+DISPATCH_CASES = [
+    DispatchCase(
+        name="video and subtitles both load",
+        plan=FinishedPlan(
+            comments=(),
+            session=session.Merge(),
+            video=video.Load(path=V),
+            subtitles=subtitles.Load(paths=(S1, S2)),
+        ),
+        expected={"video": V, "subtitles": (S1, S2)},
+    ),
+    DispatchCase(
+        name="video loads, subtitles skipped",
+        plan=FinishedPlan(
+            comments=(),
+            session=session.Merge(),
+            video=video.Load(path=V),
+            subtitles=subtitles.Skip(),
+        ),
+        expected={"video": V, "subtitles": ()},
+    ),
+    DispatchCase(
+        name="subtitles load without a video",
+        plan=FinishedPlan(
+            comments=(),
+            session=session.Merge(),
+            video=video.Skip(),
+            subtitles=subtitles.Load(paths=(S1,)),
+        ),
+        expected={"video": None, "subtitles": (S1,)},
+    ),
+    DispatchCase(
+        name="nothing to load leaves the player untouched",
+        plan=NOOP_PLAN,
+        expected=None,
+    ),
+]
+
+
+@pytest.mark.parametrize("case", DISPATCH_CASES, ids=lambda c: c.name)
+def test_execute_dispatches_to_open_media(service: ImporterService, case: DispatchCase) -> None:
+    player = cast("MagicMock", inject.instance(PlayerService))
+
+    service.execute(case.plan)
+
+    if case.expected is None:
+        player.open_media.assert_not_called()
+    else:
+        player.open_media.assert_called_once_with(**case.expected)
