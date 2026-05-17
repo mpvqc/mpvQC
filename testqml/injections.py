@@ -76,10 +76,6 @@ class PlayerServiceOverride(PlayerService):
         self.opened_subtitles: tuple[Path, ...] = ()
 
     @typing.override
-    def open_video(self, video: Path) -> None:
-        self.opened_video = video
-
-    @typing.override
     def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
         if self.opened_video is None:
             return False
@@ -87,8 +83,11 @@ class PlayerServiceOverride(PlayerService):
         return any(current == video.resolve() for video in videos)
 
     @typing.override
-    def open_subtitles(self, subtitles: Iterable[Path]) -> None:
-        self.opened_subtitles = tuple(subtitles)
+    def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
+        if video is not None:
+            self.opened_video = video
+        if subtitles:
+            self.opened_subtitles = subtitles
 
     @typing.override
     def pause(self) -> None:

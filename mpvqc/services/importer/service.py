@@ -93,16 +93,14 @@ class ImporterService(QObject):
         if plan.comments:
             self._comments.import_comments(plan.comments)
 
-        match plan.video:
-            case video.Load(path=p):
-                self._player.open_video(p)
-            case video.Skip():
-                pass
-
-        match plan.subtitles:
-            case subtitles.Load(paths=p):
-                self._player.open_subtitles(p)
-            case subtitles.Skip():
+        match (plan.video, plan.subtitles):
+            case (video.Load(path=v), subtitles.Load(paths=s)):
+                self._player.open_media(video=v, subtitles=s)
+            case (video.Load(path=v), subtitles.Skip()):
+                self._player.open_media(video=v, subtitles=())
+            case (video.Skip(), subtitles.Load(paths=s)):
+                self._player.open_media(video=None, subtitles=s)
+            case (video.Skip(), subtitles.Skip()):
                 pass
 
         self._notify_state(plan)

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Callable
     from pathlib import Path
 
 
@@ -36,28 +36,26 @@ class DimensionsCoordinator:
 
 
 class SubtitleLoadCoordinator:
-    def __init__(self, on_flush: Callable[[Iterable[Path]], None]) -> None:
-        self._on_flush = on_flush
-        self._cache: set[Path] = set()
-        self._loading = False
+    def __init__(self, on_add: Callable[[tuple[Path, ...]], None]) -> None:
+        self._on_add = on_add
+        self._pending: tuple[Path, ...] | None = None
 
-    @property
-    def is_loading(self) -> bool:
-        return self._loading
+    def attach_or_queue(self, subtitles: tuple[Path, ...], *, video_loaded: bool) -> None:
+        if not subtitles:
+            return
+        if video_loaded:
+            self._on_add(subtitles)
+        else:
+            self._queue(subtitles)
 
-    @property
-    def cached(self) -> set[Path]:
-        return self._cache
+    def queue_for_next_load(self, subtitles: tuple[Path, ...]) -> None:
+        self._queue(subtitles)
 
-    def begin_loading(self) -> None:
-        self._loading = True
+    def flush(self) -> None:
+        pending, self._pending = self._pending, None
+        if pending:
+            self._on_add(pending)
 
-    def queue(self, subtitles: Iterable[Path]) -> None:
-        self._cache |= set(subtitles)
-
-    def on_video_loaded(self, loaded: bool) -> None:
-        if loaded and self._loading:
-            self._loading = False
-            if self._cache:
-                self._on_flush(self._cache)
-                self._cache.clear()
+    def _queue(self, subtitles: tuple[Path, ...]) -> None:
+        existing = self._pending or ()
+        self._pending = tuple(dict.fromkeys((*existing, *subtitles)))
