@@ -287,6 +287,11 @@
 <context>
     <name>ImportWizardDialog</name>
     <message>
+        <source>Back</source>
+        <extracomment>Button that returns the import wizard to the previous step</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cancel import</source>
         <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
         <translation type="unfinished"></translation>
@@ -620,13 +625,6 @@
 </context>
 <context>
     <name>MessageBoxes</name>
-    <message numerus="yes">
-        <source>Document Not Compatible</source>
-        <translation type="vanished">
-            <numerusform>Incompatible Document</numerusform>
-            <numerusform>Incompatible Documents</numerusform>
-        </translation>
-    </message>
     <message>
         <source>Extended Exports</source>
         <translation type="unfinished"></translation>
@@ -701,13 +699,6 @@
     </message>
     <message>
         <source>Learn more</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QShortcut</name>
-    <message>
-        <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

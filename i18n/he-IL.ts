@@ -293,6 +293,11 @@
 <context>
     <name>ImportWizardDialog</name>
     <message>
+        <source>Back</source>
+        <extracomment>Button that returns the import wizard to the previous step</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cancel import</source>
         <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
         <translation type="unfinished"></translation>
@@ -641,14 +646,6 @@
         <translation>האם ברצונך ליצור מסמך QC חדש מבלי לשמור את מסמך ה-QC הנוכחי?</translation>
     </message>
     <message>
-        <source>Video Found</source>
-        <translation type="vanished">וידאו נמצא</translation>
-    </message>
-    <message>
-        <source>A video was found. Do you want to open it?</source>
-        <translation type="vanished">קובץ וידאו נמצא. האם ברצונך לפתוח אותו?</translation>
-    </message>
-    <message>
         <source>Delete Comment</source>
         <translation>מחיקת הערה</translation>
     </message>
@@ -660,13 +657,6 @@
         <source>No text available</source>
         <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
         <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>Document Not Compatible</source>
-        <translation type="vanished">
-            <numerusform>המסמך אינו בפורמט המתאים</numerusform>
-            <numerusform>המסמכים אינם בפורמט המתאים</numerusform>
-        </translation>
     </message>
     <message>
         <source>Export Error</source>
@@ -719,13 +709,6 @@
     <message>
         <source>Learn more</source>
         <translation>קראו עוד</translation>
-    </message>
-</context>
-<context>
-    <name>QShortcut</name>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

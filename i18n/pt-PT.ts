@@ -287,6 +287,11 @@
 <context>
     <name>ImportWizardDialog</name>
     <message>
+        <source>Back</source>
+        <extracomment>Button that returns the import wizard to the previous step</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cancel import</source>
         <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
         <translation type="unfinished"></translation>
@@ -633,14 +638,6 @@
         <translation>Deseja criar um novo documento de CQ sem guardar o seu CQ actual?</translation>
     </message>
     <message>
-        <source>Video Found</source>
-        <translation type="vanished">Vídeo Encontrado</translation>
-    </message>
-    <message>
-        <source>A video was found. Do you want to open it?</source>
-        <translation type="vanished">Foi encontrado um vídeo. Deseja abri-lo?</translation>
-    </message>
-    <message>
         <source>Delete Comment</source>
         <translation>Eliminar Comentário</translation>
     </message>
@@ -652,13 +649,6 @@
         <source>No text available</source>
         <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
         <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>Document Not Compatible</source>
-        <translation type="vanished">
-            <numerusform>Documento Incompatível</numerusform>
-            <numerusform>Documentos Incompatíveis</numerusform>
-        </translation>
     </message>
     <message>
         <source>Export Error</source>
@@ -710,13 +700,6 @@
     <message>
         <source>Learn more</source>
         <translation>Mais informações</translation>
-    </message>
-</context>
-<context>
-    <name>QShortcut</name>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
