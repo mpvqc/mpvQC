@@ -14,4 +14,4 @@ class ResetService:
 
     def reset(self) -> None:
         self._comments.reset()
-        self._app_state.reset()
+        self._app_state.record_reset()

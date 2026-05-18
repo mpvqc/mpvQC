@@ -9,7 +9,7 @@ import typing
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QObject, Qt
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.services.importer.concerns import errors
+from mpvqc.services.importer import errors
 
 if typing.TYPE_CHECKING:
     from pathlib import Path

@@ -14,6 +14,4 @@ QtObject {
 
     readonly property int popupWindowEdgeMargin: 8
     readonly property int tooltipDelay: 350
-
-    readonly property int wizardStepHeaderHeight: 40
 }

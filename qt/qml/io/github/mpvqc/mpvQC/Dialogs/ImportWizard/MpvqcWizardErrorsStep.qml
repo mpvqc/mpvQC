@@ -8,7 +8,6 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 ColumnLayout {
@@ -61,7 +60,7 @@ ColumnLayout {
 
             ToolTip.text: _delegate.fullPath
             ToolTip.visible: hovered
-            ToolTip.delay: 350
+            ToolTip.delay: MpvqcConstants.tooltipDelay
         }
 
         ScrollBar.vertical: ScrollBar {

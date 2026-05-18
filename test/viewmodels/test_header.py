@@ -38,6 +38,7 @@ def configure_inject(
 
 class WindowTitleTestCase(NamedTuple):
     saved: bool
+    document: Path | None
     window_title_format: WindowTitleFormat
     video_loaded: bool
     filename: str | None
@@ -50,6 +51,7 @@ class WindowTitleTestCase(NamedTuple):
     [
         WindowTitleTestCase(
             saved=True,
+            document=None,
             window_title_format=WindowTitleFormat.DEFAULT,
             video_loaded=False,
             filename=None,
@@ -58,6 +60,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=False,
+            document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.DEFAULT,
             video_loaded=False,
             filename=None,
@@ -66,6 +69,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=True,
+            document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_NAME,
             video_loaded=True,
             filename="test_video.mp4",
@@ -74,6 +78,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=False,
+            document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_NAME,
             video_loaded=True,
             filename="test_video.mp4",
@@ -82,6 +87,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=True,
+            document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_PATH,
             video_loaded=True,
             filename=None,
@@ -90,6 +96,7 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=False,
+            document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_PATH,
             video_loaded=True,
             filename=None,
@@ -98,11 +105,21 @@ class WindowTitleTestCase(NamedTuple):
         ),
         WindowTitleTestCase(
             saved=True,
+            document=None,
             window_title_format=WindowTitleFormat.FILE_NAME,
             video_loaded=False,
             filename=None,
             path=None,
             expected="TestApp",
+        ),
+        WindowTitleTestCase(
+            saved=False,
+            document=None,
+            window_title_format=WindowTitleFormat.FILE_NAME,
+            video_loaded=True,
+            filename="test_video.mp4",
+            path=None,
+            expected="test_video.mp4",
         ),
     ],
 )
@@ -114,7 +131,7 @@ def test_window_title(
     settings_service,
     test_case: WindowTitleTestCase,
 ):
-    configure_state(saved=test_case.saved)
+    configure_state(saved=test_case.saved, document=test_case.document)
     player_service_mock.update(
         video_loaded=test_case.video_loaded,
         filename=test_case.filename,

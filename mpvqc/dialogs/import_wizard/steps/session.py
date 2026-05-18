@@ -10,7 +10,7 @@ from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.enums import SessionMode
-from mpvqc.services.importer.concerns import session
+from mpvqc.services.importer import session
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

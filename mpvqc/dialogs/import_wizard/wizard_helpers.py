@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from mpvqc.enums import StepKind
-from mpvqc.services.importer.concerns import errors, session, subtitles, video
+from mpvqc.services.importer import errors, session, subtitles, video
 
 if TYPE_CHECKING:
     from mpvqc.services.importer import UnfinishedPlan

@@ -8,16 +8,16 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import io.github.mpvqc.mpvQC.Utility
-
 Item {
     id: root
 
     property alias text: _question.text
     default property alias rightContent: _rightArea.data
 
+    readonly property int minimumHeight: 40
+
     Layout.fillWidth: true
-    Layout.preferredHeight: Math.max(MpvqcConstants.wizardStepHeaderHeight, _question.implicitHeight)
+    Layout.preferredHeight: Math.max(root.minimumHeight, _question.implicitHeight)
 
     Label {
         id: _question
@@ -32,6 +32,7 @@ Item {
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.Wrap
+        textFormat: Text.StyledText
     }
 
     Item {

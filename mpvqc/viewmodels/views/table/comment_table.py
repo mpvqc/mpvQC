@@ -65,7 +65,7 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(object)
     def _on_mutated(self, mutation: ModelMutation) -> None:
         if mutation.marks_unsaved:
-            self._state.change()
+            self._state.record_change()
 
         match mutation:
             case QuickSelection(row=row):

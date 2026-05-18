@@ -13,6 +13,7 @@ from PySide6.QtCore import Property, QObject, Qt, QThreadPool, Signal, Slot
 from mpvqc.enums import ImportFoundVideo
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
+from mpvqc.services.resetter import ResetService
 from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
@@ -32,6 +33,7 @@ class ImporterService(QObject):
     _settings = inject.attr(SettingsService)
     _state = inject.attr(StateService)
     _comments = inject.attr(CommentsService)
+    _resetter = inject.attr(ResetService)
 
     unfinished_plan_ready = Signal(UnfinishedPlan)
     _finished_plan_ready = Signal(FinishedPlan)
@@ -83,10 +85,11 @@ class ImporterService(QObject):
 
     @Slot(FinishedPlan)
     def execute(self, plan: FinishedPlan) -> None:
+        is_new_video = isinstance(plan.video, video.Load) and not self._player.is_any_video_loaded([plan.video.path])
+
         match plan.session:
             case session.Replace():
-                self._comments.reset()
-                self._state.reset()
+                self._resetter.reset()
             case session.Merge():
                 pass
 
@@ -103,15 +106,13 @@ class ImporterService(QObject):
             case (video.Skip(), subtitles.Skip()):
                 pass
 
-        self._notify_state(plan)
+        self._notify_state(plan, is_new_video=is_new_video)
         self._set_busy(False)
 
     @Slot()
     def cancel_pending(self) -> None:
         self._set_busy(False)
 
-    def _notify_state(self, plan: FinishedPlan) -> None:
-        video_path = plan.video.path if isinstance(plan.video, video.Load) else None
-        if not plan.comments and video_path is None:
-            return
-        self._state.apply_import(video=video_path, has_comments=bool(plan.comments))
+    def _notify_state(self, plan: FinishedPlan, *, is_new_video: bool) -> None:
+        if plan.comments or is_new_video:
+            self._state.record_import()

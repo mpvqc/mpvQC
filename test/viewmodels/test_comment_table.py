@@ -71,10 +71,10 @@ def test_registers_comments_service_on_construction(make_view_model, comments_se
 def test_state_changes_on_mutation(make_view_model, state_service_mock):
     vm = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
     vm.removeRow(0)
-    assert state_service_mock.change.call_count == 1
+    assert state_service_mock.record_change.call_count == 1
 
     vm.undo()
-    assert state_service_mock.change.call_count == 2
+    assert state_service_mock.record_change.call_count == 2
 
 
 def test_copy_to_clipboard(make_view_model, make_spy):
@@ -162,7 +162,7 @@ def test_on_mutated_marks_unsaved(make_view_model, state_service_mock):
 
     vm._on_mutated(QuickSelection(row=0, marks_unsaved=True))
 
-    state_service_mock.change.assert_called_once()
+    state_service_mock.record_change.assert_called_once()
 
 
 def test_on_mutated_does_not_mark_unsaved(make_view_model, state_service_mock):
@@ -170,4 +170,4 @@ def test_on_mutated_does_not_mark_unsaved(make_view_model, state_service_mock):
 
     vm._on_mutated(QuickSelection(row=0, marks_unsaved=False))
 
-    state_service_mock.change.assert_not_called()
+    state_service_mock.record_change.assert_not_called()

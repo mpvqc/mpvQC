@@ -32,6 +32,6 @@ class ExportService:
         def _job() -> None:
             with QMutexLocker(self._mutex):
                 self._document_exporter.save(document)
-                self._state.save(document)
+                self._state.record_save(document)
 
         QThreadPool.globalInstance().start(_job)
