@@ -129,7 +129,6 @@ def configure_state(state_service) -> Callable:
         old = state_service._state
         state_service._state = ApplicationState(
             document=kwargs.get("document", old.document),
-            video=kwargs.get("video", old.video),
             saved=bool(kwargs.get("saved", old.saved)),
         )
 

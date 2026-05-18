@@ -13,8 +13,7 @@ from PySide6.QtCore import QCoreApplication, QEvent
 
 from mpvqc.dialogs import MpvqcDialogLoaderViewModel
 from mpvqc.services import ImporterService, SettingsService
-from mpvqc.services.importer import UnfinishedPlan
-from mpvqc.services.importer.concerns import errors, session, subtitles, video
+from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 
 
 @pytest.fixture

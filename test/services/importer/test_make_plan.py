@@ -15,9 +15,12 @@ from mpvqc.services.importer import (
     FinishedPlan,
     ScanResult,
     UnfinishedPlan,
-    make_plan,
+    errors,
+    session,
+    subtitles,
+    video,
 )
-from mpvqc.services.importer.concerns import errors, session, subtitles, video
+from mpvqc.services.importer.plan import make_plan
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

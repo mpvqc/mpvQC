@@ -21,7 +21,7 @@ ColumnLayout {
 
     MpvqcWizardStepHeader {
         //: Session step header: states the incoming comment count and asks how to proceed (%Ln is the count)
-        text: qsTranslate("ImportWizardDialog", "You're about to import <span style='font-weight: 600'>%Ln</span> comment(s) into your current session. What do you want to do?", "", root.viewModel.incomingCommentCount)
+        text: qsTranslate("ImportWizardDialog", "You're about to import <b>%Ln</b> comment(s) into your current session. What do you want to do?", "", root.viewModel.incomingCommentCount)
     }
 
     ListView {

@@ -13,8 +13,7 @@ import pytest
 from mpvqc.datamodels import Comment, VideoSource
 from mpvqc.dialogs.import_wizard import FooterState, PrimaryAction, WizardFooterPolicy
 from mpvqc.enums import StepKind
-from mpvqc.services.importer import UnfinishedPlan
-from mpvqc.services.importer.concerns import errors, session, subtitles, video
+from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 
 VIDEO_A = Path("/movies/a.mp4")
 SUB_A = Path("/work/a.en.srt")

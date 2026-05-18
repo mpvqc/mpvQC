@@ -42,4 +42,4 @@ def test_reset(service, comments_service_mock, state_service_mock):
     service.reset()
 
     comments_service_mock.reset.assert_called_once()
-    state_service_mock.reset.assert_called_once()
+    state_service_mock.record_reset.assert_called_once()

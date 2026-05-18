@@ -60,7 +60,7 @@ ItemDelegate {
 
             ToolTip.text: root.fullPath
             ToolTip.visible: !root.isNoVideo && _labelHover.hovered
-            ToolTip.delay: 350
+            ToolTip.delay: MpvqcConstants.tooltipDelay
         }
 
         MpvqcIconLabel {

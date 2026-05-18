@@ -30,7 +30,7 @@ class MpvqcHeaderViewModel(QObject):
         self._player.filename_changed.connect(self._update_window_title)
         self._settings.window_title_format_changed.connect(self._update_window_title)
         self._settings.language_changed.connect(self._update_window_title)
-        self._state.saved_changed.connect(self._update_window_title)
+        self._state.has_unsaved_document_changed.connect(self._update_window_title)
 
     @Property(str, notify=windowTitleChanged)
     def windowTitle(self) -> str:
@@ -57,7 +57,7 @@ class MpvqcHeaderViewModel(QObject):
             msg = "Cannot determine window title: configuration not known"
             raise ValueError(msg)
 
-        if self._state.saved:
+        if not self._state.has_unsaved_document:
             return title
 
         #: %1 will be the title of the application (one of: mpvQC, file name, file path)

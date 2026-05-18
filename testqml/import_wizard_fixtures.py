@@ -7,8 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from mpvqc.datamodels import Comment, VideoSource
-from mpvqc.services.importer import UnfinishedPlan
-from mpvqc.services.importer.concerns import errors, session, subtitles, video
+from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 from testqml.injections import TEMP_ROOT
 
 if TYPE_CHECKING:

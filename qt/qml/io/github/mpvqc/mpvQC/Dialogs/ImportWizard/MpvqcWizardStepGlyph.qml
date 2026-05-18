@@ -5,7 +5,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility

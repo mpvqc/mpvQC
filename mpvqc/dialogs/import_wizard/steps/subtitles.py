@@ -11,7 +11,7 @@ from typing import assert_never
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.services.importer.concerns import subtitles
+from mpvqc.services.importer import subtitles
 
 if typing.TYPE_CHECKING:
     from pathlib import Path

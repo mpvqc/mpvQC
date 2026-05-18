@@ -353,7 +353,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <source>You&apos;re about to import &lt;span style=&apos;font-weight: 600&apos;&gt;%Ln&lt;/span&gt; comment(s) into your current session. What do you want to do?</source>
+        <source>You&apos;re about to import &lt;b&gt;%Ln&lt;/b&gt; comment(s) into your current session. What do you want to do?</source>
         <extracomment>Session step header: states the incoming comment count and asks how to proceed (%Ln is the count)</extracomment>
         <translation type="unfinished">
             <numerusform></numerusform>
