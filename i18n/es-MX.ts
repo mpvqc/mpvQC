@@ -89,14 +89,6 @@
     </message>
 </context>
 <context>
-    <name>ChooseVideoDialog</name>
-    <message>
-        <source>Skip video</source>
-        <extracomment>Button declining to import any of the candidate videos</extracomment>
-        <translation type="obsolete">Omitir video</translation>
-    </message>
-</context>
-<context>
     <name>CommentTable</name>
     <message>
         <source>Edit Comment</source>
@@ -270,57 +262,6 @@
     </message>
 </context>
 <context>
-    <name>FoundVideoDialog</name>
-    <message>
-        <source>Skip video</source>
-        <extracomment>Button; closes the dialog without loading the video</extracomment>
-        <translation type="obsolete">Omitir video</translation>
-    </message>
-</context>
-<context>
-    <name>ImportConfirmationDialog</name>
-    <message>
-        <source>Confirm Import</source>
-        <extracomment>Dialog title for confirming which videos and subtitles to import</extracomment>
-        <translation type="vanished">Confirmar importación</translation>
-    </message>
-    <message>
-        <source>Videos</source>
-        <extracomment>Section header for video selection list</extracomment>
-        <translation type="vanished">Videos</translation>
-    </message>
-    <message>
-        <source>Skip video</source>
-        <extracomment>Option to import without selecting any video</extracomment>
-        <translation type="vanished">Omitir video</translation>
-    </message>
-    <message>
-        <source>From QC document</source>
-        <extracomment>Tooltip indicating the video file was referenced in one of the imported documents</extracomment>
-        <translation type="vanished">Del documento de QC</translation>
-    </message>
-    <message>
-        <source>From subtitle</source>
-        <extracomment>Tooltip indicating the video file was referenced in one of the imported subtitles</extracomment>
-        <translation type="vanished">Del subtítulo</translation>
-    </message>
-    <message>
-        <source>Subtitles</source>
-        <extracomment>Section header for subtitle selection list</extracomment>
-        <translation type="vanished">Subtítulos</translation>
-    </message>
-    <message>
-        <source>Select All</source>
-        <extracomment>Button to select all subtitles in the list</extracomment>
-        <translation type="vanished">Seleccionar todo</translation>
-    </message>
-    <message>
-        <source>Deselect All</source>
-        <extracomment>Button to deselect all subtitles in the list</extracomment>
-        <translation type="vanished">Deseleccionar todo</translation>
-    </message>
-</context>
-<context>
     <name>ImportSettingsDialog</name>
     <message>
         <source>Import Settings</source>
@@ -345,6 +286,11 @@
 </context>
 <context>
     <name>ImportWizardDialog</name>
+    <message>
+        <source>Back</source>
+        <extracomment>Button that returns the import wizard to the previous step</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Cancel import</source>
         <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
@@ -692,14 +638,6 @@
         <translation>¿Seguro que quieres crear un nuevo documento de QC sin guardar tu QC?</translation>
     </message>
     <message>
-        <source>Video Found</source>
-        <translation type="vanished">Video encontrado</translation>
-    </message>
-    <message>
-        <source>A video was found. Do you want to open it?</source>
-        <translation type="vanished">Se encontró un video. ¿Quieres abrirlo?</translation>
-    </message>
-    <message>
         <source>Delete Comment</source>
         <translation>Borrar comentario</translation>
     </message>
@@ -711,13 +649,6 @@
         <source>No text available</source>
         <extracomment>This is displayed as a fallback in the delete confirmation box when the actual comment is empty.</extracomment>
         <translation>No hay texto disponible</translation>
-    </message>
-    <message numerus="yes">
-        <source>Document Not Compatible</source>
-        <translation type="vanished">
-            <numerusform>Documento no compatible</numerusform>
-            <numerusform>Documentos no compatibles</numerusform>
-        </translation>
     </message>
     <message>
         <source>Export Error</source>
@@ -769,13 +700,6 @@
     <message>
         <source>Learn more</source>
         <translation>Más información</translation>
-    </message>
-</context>
-<context>
-    <name>QShortcut</name>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

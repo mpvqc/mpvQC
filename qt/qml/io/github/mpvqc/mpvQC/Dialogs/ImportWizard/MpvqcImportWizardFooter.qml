@@ -53,7 +53,8 @@ Control {
         FooterButton {
             objectName: "backButton"
             shown: root.showBack
-            text: qsTranslate("QShortcut", "Back")
+            //: Button that returns the import wizard to the previous step
+            text: qsTranslate("ImportWizardDialog", "Back")
 
             onClicked: root.backClicked()
         }
