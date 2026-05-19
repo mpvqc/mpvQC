@@ -121,6 +121,7 @@ QtObject {
             dialog.accepted();
             dialog.close();
             root.bridge.waitForBackgroundJobs();
+            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
         }
     }
 
@@ -133,7 +134,7 @@ QtObject {
             root.find.commentTextArea(control).text = text;
             root.testCase.findChild(control, "editCommentPopup").close();
             root.testCase.tryVerify(() => tableView.commentCount === before + 1);
-            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait, model state propagation is async
+            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
         }
     }
 
