@@ -38,6 +38,7 @@ TestCase {
             if (stepView) {
                 stepView.animationDuration = 0;
             }
+            waitForRendering(dlg.contentItem);
             return dlg;
         }
     }
