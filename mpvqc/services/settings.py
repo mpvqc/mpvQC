@@ -90,9 +90,9 @@ class _Setting[T]:
     def __get__(self, obj: SettingsService | None, _owner: type | None = None) -> T | _Setting[T]:
         if obj is None:
             return self
-        if callable(self.default):
-            self.default = self.default()
-        return cast("T", obj.qsettings.value(self.key, self.default, type=self.type_))
+        if obj.qsettings.contains(self.key):
+            return cast("T", obj.qsettings.value(self.key, type=self.type_))
+        return self.default() if callable(self.default) else self.default
 
     def __set__(self, obj: SettingsService, value: T) -> None:
         if self.__get__(obj) != value:
