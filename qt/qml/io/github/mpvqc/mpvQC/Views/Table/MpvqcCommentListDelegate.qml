@@ -28,10 +28,6 @@ Item {
     readonly property int horizontalItemPadding: 14
     readonly property int verticalItemPadding: 13
 
-    // Tracks height across frames so we can emit the delta when the inline
-    // editor causes the delegate to grow.
-    property int _previousHeight: 0
-
     signal playButtonPressed
     signal rowPressed
     signal rightMouseButtonPressed(coordinates: point)
@@ -40,28 +36,17 @@ Item {
     signal commentTypeLabelDoubleClicked(coordinates: point)
     signal commentLabelDoubleClicked
 
-    // Emitted when the delegate grows while its inline editor is open.
-    // The list handles this by scrolling just enough to keep the delegate in view.
-    signal heightGrewWhileEditing(delta: int)
+    // Emitted when the delegate's height changes while its inline editor is
+    // open. The list handles this by scrolling to keep the delegate in view if
+    // needed (shrinks naturally no-op there).
+    signal heightChangedWhileEditing
 
     height: Math.max(_commentLabel.height, _commentLabel.editorHeight, _playButton.height)
 
     onHeightChanged: {
-        const isEditingThisRow = ListView.isCurrentItem && _commentLabel.editorHeight > 0;
-        if (isEditingThisRow && _previousHeight > 0) {
-            const delta = height - _previousHeight;
-            if (delta > 0) {
-                root.heightGrewWhileEditing(delta);
-            }
+        if (ListView.isCurrentItem && _commentLabel.editorHeight > 0) {
+            root.heightChangedWhileEditing();
         }
-        _previousHeight = height;
-    }
-
-    ListView.onReused: {
-        // ListView pools delegates when reuseItems is enabled. Reset per-row JS
-        // state so the next row's first onHeightChanged compares against a fresh
-        // baseline instead of the previous row's last height.
-        _previousHeight = 0;
     }
 
     Material.background: root.backgroundColor

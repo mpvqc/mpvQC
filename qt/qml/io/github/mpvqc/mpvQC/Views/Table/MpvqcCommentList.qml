@@ -82,13 +82,13 @@ ListView {
             }
         }
 
-        // The delegate grew to accommodate its inline editor; scroll just
-        // enough to keep the bottom of the delegate visible.
-        onHeightGrewWhileEditing: delta => {
+        onHeightChangedWhileEditing: {
+            // The delegate's height changed while its inline editor is open;
+            // scroll just enough to keep its bottom in view.
             const itemBottom = y - root.contentY + height;
             const overflow = itemBottom - root.height;
             if (overflow > 0) {
-                root.contentY += Math.min(overflow, delta);
+                root.contentY += overflow;
             }
         }
     }
