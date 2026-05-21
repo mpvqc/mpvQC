@@ -7,17 +7,15 @@ from collections.abc import Callable, Iterable
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models import MpvqcCommentModel
+from mpvqc.models.comments import CommentsFacade
 
 
 @pytest.fixture
-def make_model() -> Callable[[Iterable[Comment]], MpvqcCommentModel]:
-    def _make_model(
-        set_comments: Iterable[Comment],
-    ) -> MpvqcCommentModel:
+def make_model() -> Callable[[Iterable[Comment]], CommentsFacade]:
+    def _make_model(set_comments: Iterable[Comment]) -> CommentsFacade:
         # noinspection PyCallingNonCallable
-        model = MpvqcCommentModel()
-        model.import_comments(tuple(set_comments))
-        return model
+        facade = CommentsFacade()
+        facade.import_comments(tuple(set_comments))
+        return facade
 
     return _make_model

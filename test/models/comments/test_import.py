@@ -5,7 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments.mutation import QuickSelection
+from mpvqc.models.comments import QuickSelection
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -52,17 +52,32 @@ def test_import_sorts_comments(make_model):
     assert [c["comment"] for c in model.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
 
 
+def test_import_unsorted_focuses_time_maximum(make_model, make_spy):
+    model = make_model(set_comments=[])
+    spy = make_spy(model.view_action)
+
+    model.import_comments(
+        (
+            Comment(time=100, comment_type="commentType", comment="latest"),
+            Comment(time=10, comment_type="commentType", comment="earliest"),
+            Comment(time=50, comment_type="commentType", comment="middle"),
+        )
+    )
+
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=2)
+
+
 def test_import_comments_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
     model.import_comments(DEFAULT_COMMENTS)
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == QuickSelection(row=9, marks_unsaved=False)
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=9)
 
 
 def test_import_comments_emits_about_to_be_imported(model, make_spy):
-    spy = make_spy(model.commentsAboutToBeImported)
+    spy = make_spy(model.about_to_import)
 
     model.import_comments(DEFAULT_COMMENTS)
 
@@ -70,7 +85,7 @@ def test_import_comments_emits_about_to_be_imported(model, make_spy):
 
 
 def test_import_comments_empty_does_not_emit_about_to_be_imported(model, make_spy):
-    spy = make_spy(model.commentsAboutToBeImported)
+    spy = make_spy(model.about_to_import)
 
     model.import_comments([])
 
@@ -106,29 +121,26 @@ def test_import_comments_undo_redo(model):
     assert comments[5]["comment"] == "Undo Redo 3"
 
 
-def test_import_comments_undo_redo_invalidates_search(model, make_spy):
-    spy = make_spy(model.search_invalidated)
+def test_import_invalidates_search(model):
+    initial = model.search("Word", include_current_row=True, top_down=True)
+    assert initial.total == 5
 
-    model.import_comments(((Comment(time=99, comment_type="commentType", comment="Word 1")),))
-    assert spy.count() == 1
+    model.import_comments((Comment(time=99, comment_type="commentType", comment="Word New"),))
 
-    model.undo()
-    assert spy.count() == 2
-
-    model.redo()
-    assert spy.count() == 3
+    after = model.search("Word", include_current_row=True, top_down=True)
+    assert after.total == 6
 
 
 def test_import_comments_undo_redo_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
-    model.selectedRow = 3
+    model.selection.selectedRow = 3
 
     comment = Comment(time=99, comment_type="commentType", comment="Word 1")
     model.import_comments((comment,))
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == QuickSelection(row=5, marks_unsaved=False)
+    assert spy.at(invocation=0, argument=0) == QuickSelection(row=5)
 
     spy.reset()
     model.undo()

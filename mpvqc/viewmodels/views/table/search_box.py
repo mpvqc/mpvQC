@@ -4,22 +4,11 @@
 
 from __future__ import annotations
 
-import bisect
-from typing import TYPE_CHECKING
-
 import inject
-from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.models import MpvqcCommentModel
-from mpvqc.models.comments.roles import Role
-from mpvqc.services import MainWindowService
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from PySide6.QtCore import QMetaObject
-
+from mpvqc.services import CommentsService, MainWindowService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -28,10 +17,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 # noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcSearchBoxViewModel(QObject):
+    _comments_service = inject.attr(CommentsService)
     _main_window = inject.attr(MainWindowService)
-
-    modelChanged = Signal(MpvqcCommentModel)
-    selectedIndexChanged = Signal(int)
 
     searchQueryChanged = Signal(str)
     hasMultipleResultsChanged = Signal(bool)
@@ -41,47 +28,11 @@ class MpvqcSearchBoxViewModel(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._search_backend = SearchBackend()
-
-        self._current_result = -1
-        self._total_results = -1
-
         self._search_query = ""
         self._has_multiple_results = False
         self._status_label = ""
 
-        self._model: MpvqcCommentModel | None = None
-        self._selected_index: int = -1
-        self._search_invalidate_connection: QMetaObject.Connection | None = None
-
         self._main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
-
-    @Property(MpvqcCommentModel, notify=modelChanged)
-    def model(self) -> MpvqcCommentModel:
-        if self._model is None:
-            msg = "Model has not been set"
-            raise ValueError(msg)
-        return self._model
-
-    @model.setter
-    def model(self, model: MpvqcCommentModel) -> None:
-        if self._search_invalidate_connection is not None and model is not None:
-            msg = "Changing the model later is not supported"
-            raise RuntimeError(msg)
-
-        self._model = model
-        # noinspection PyUnresolvedReferences
-        self._search_invalidate_connection = model.search_invalidated.connect(self._search_backend.invalidate)
-
-    @Property(int, notify=selectedIndexChanged)
-    def selectedIndex(self) -> int:
-        return self._selected_index
-
-    @selectedIndex.setter
-    def selectedIndex(self, value: int) -> None:
-        if self._selected_index != value:
-            self._selected_index = value
-            self.selectedIndexChanged.emit(value)
 
     @Property(str, notify=searchQueryChanged)
     def searchQuery(self) -> str:
@@ -103,9 +54,6 @@ class MpvqcSearchBoxViewModel(QObject):
         if self._search_query != query:
             self._search_query = query
             self.searchQueryChanged.emit(query)
-
-        self._current_result = current
-        self._total_results = total
 
         has_multiple = total > 1
         if self._has_multiple_results != has_multiple:
@@ -131,77 +79,9 @@ class MpvqcSearchBoxViewModel(QObject):
         self._perform_search(self._search_query, include_current_row=False, top_down=False)
 
     def _perform_search(self, query: str, include_current_row: bool, top_down: bool) -> None:
-        next_index, current_result, total_results = self._search_backend.search(
-            query=query,
-            include_current_row=include_current_row,
-            top_down=top_down,
-            selected_index=self._selected_index,
-            search_func=self._search_func,
-        )
+        result = self._comments_service.search(query, include_current_row=include_current_row, top_down=top_down)
 
-        self._update_search_state(query, current_result, total_results)
+        self._update_search_state(query, result.current, result.total)
 
-        if next_index >= 0:
-            self.highlightRequested.emit(next_index)
-
-    def _search_func(self, query: str) -> list[int]:
-        if self._model is None:
-            msg = "Model has not been set"
-            raise ValueError(msg)
-        from_beginning = self._model.index(0, 0)
-        role = Role.COMMENT
-        flags = Qt.MatchFlag.MatchContains | Qt.MatchFlag.MatchWrap
-        all_results = -1  # Search everything
-        results = self._model.match(from_beginning, role, query, all_results, flags)
-        results = sorted(results)
-        return [m_idx.row() for m_idx in results]
-
-
-class SearchBackend:
-    def __init__(self) -> None:
-        self._query = ""
-        self._hits: list[int] | None = None
-
-    def invalidate(self) -> None:
-        self._hits = None
-
-    def search(
-        self,
-        query: str,
-        include_current_row: bool,
-        top_down: bool,
-        selected_index: int,
-        search_func: Callable[[str], list[int]],
-    ) -> tuple[int, int, int]:
-        """Perform a search and return a tuple of (next_index, current_result_number, total_results)."""
-
-        if not query:
-            self._query = ""
-            self._hits = None
-            return -1, -1, -1
-
-        query_changed = self._query != query
-        if query_changed or self._hits is None:
-            self._query = query
-            self._hits = search_func(query)
-
-        if not self._hits:
-            return -1, 0, 0
-
-        total = len(self._hits)
-
-        if query_changed:
-            return self._hits[0], 1, total
-
-        if top_down:
-            start = selected_index if include_current_row else selected_index + 1
-            idx = bisect.bisect_left(self._hits, start)
-            if idx >= total:
-                idx = 0
-        else:
-            end = selected_index if include_current_row else selected_index - 1
-            idx = bisect.bisect_right(self._hits, end) - 1
-            if idx < 0:
-                idx = total - 1
-
-        return self._hits[idx], idx + 1, total
+        if result.index >= 0:
+            self.highlightRequested.emit(result.index)

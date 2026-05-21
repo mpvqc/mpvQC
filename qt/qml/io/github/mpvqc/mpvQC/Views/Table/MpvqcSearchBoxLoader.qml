@@ -11,12 +11,7 @@ import io.github.mpvqc.mpvQC.Python
 Loader {
     id: root
 
-    required property MpvqcCommentModel model
-    required property int selectedIndex
-
     readonly property MpvqcSearchBoxViewModel viewModel: MpvqcSearchBoxViewModel {
-        model: root.model
-        selectedIndex: root.selectedIndex
         onHighlightRequested: index => root.highlightRequested(index)
     }
 

@@ -252,7 +252,7 @@ TestCase {
     function test_importClosesContextMenu(): void {
         _expect.hasContextMenuOpen(control);
 
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 99,
                 "commentType": "Comment Type 1",

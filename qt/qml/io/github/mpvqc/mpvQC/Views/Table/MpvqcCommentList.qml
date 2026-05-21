@@ -17,6 +17,24 @@ ListView {
     required property bool modalActive
     required property string searchQuery
 
+    readonly property int _animationDuration: 50
+    property bool _instantHighlight: false
+
+    /**
+     *  Set currentIndex to a value different from `target` so a subsequent
+     *  assignment to `target` is a real change. Required to trigger Qt's
+     *  auto-scroll when the assignment would otherwise be a no-op.
+     */
+    function _nudgeCurrentIndex(target: int): void {
+        if (target !== 0) {
+            root.currentIndex = target - 1;
+        } else if (root.count > 1 && root.currentIndex !== 1) {
+            root.currentIndex = 1;
+        } else if (root.count > 2) {
+            root.currentIndex = 2;
+        }
+    }
+
     model: viewModel.model
 
     clip: true
@@ -26,24 +44,36 @@ ListView {
     interactive: !root.modalActive
     boundsBehavior: Flickable.StopAtBounds
 
-    highlightMoveDuration: 50
+    highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
-    highlightResizeDuration: root.modalActive ? 0 : 50
+    highlightResizeDuration: root.modalActive ? 0 : _animationDuration
     highlightResizeVelocity: -1
+
+    move: Transition {
+        NumberAnimation {
+            property: "y"
+            duration: root._animationDuration
+        }
+    }
+
+    displaced: Transition {
+        NumberAnimation {
+            property: "y"
+            duration: root._animationDuration
+        }
+    }
+
+    remove: Transition {
+        NumberAnimation {
+            property: "y"
+            duration: root._animationDuration
+        }
+    }
 
     highlight: Rectangle {
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
         color: MpvqcTheme.palette.rowHighlight
-    }
-
-    ScrollBar.vertical: ScrollBar {
-        id: _scrollBar
-
-        readonly property bool isShown: root.contentHeight > root.height
-        readonly property int visibleWidth: isShown ? width : 0
-
-        policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
     }
 
     delegate: MpvqcCommentListDelegate {
@@ -93,12 +123,52 @@ ListView {
         }
     }
 
+    ScrollBar.vertical: ScrollBar {
+        id: _scrollBar
+
+        readonly property bool isShown: root.contentHeight > root.height
+        readonly property int visibleWidth: isShown ? width : 0
+
+        policy: isShown ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+    }
+
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
-    Binding {
+    Connections {
         target: root.model
+
+        function onAboutToInsertRow(): void {
+            root._instantHighlight = true;
+            root.currentIndex = -1;
+            root._instantHighlight = false;
+        }
+
+        function onAboutToRemoveRow(): void {
+            root.highlightFollowsCurrentItem = false;
+        }
+
+        function onRowsRemoved(): void {
+            _reEngageHighlightTracking.restart();
+        }
+    }
+
+    Timer {
+        id: _reEngageHighlightTracking
+        interval: root._animationDuration
+        onTriggered: root.highlightFollowsCurrentItem = true
+    }
+
+    Binding {
+        target: root.viewModel.selection
         property: "selectedRow"
         value: root.currentIndex
+        restoreMode: Binding.RestoreNone
+    }
+
+    Binding {
+        target: root.viewModel.selection
+        property: "selectedRowVisible"
+        value: root.currentItem !== null && root.currentItem.y >= root.contentY && root.currentItem.y + root.currentItem.height <= root.contentY + root.height
         restoreMode: Binding.RestoreNone
     }
 
@@ -106,13 +176,17 @@ ListView {
         target: root.viewModel
 
         function onQuickSelectionRequested(index: int): void {
-            const duration = root.highlightMoveDuration;
-            root.highlightMoveDuration = 0;
+            if (root.currentIndex === index) {
+                root.positionViewAtIndex(index, ListView.Contain);
+                return;
+            }
+            root._instantHighlight = true;
             root.currentIndex = index;
-            root.highlightMoveDuration = duration;
+            root._instantHighlight = false;
         }
 
         function onSelectionRequested(index: int): void {
+            root._nudgeCurrentIndex(index);
             root.currentIndex = index;
         }
     }

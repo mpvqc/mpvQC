@@ -356,7 +356,7 @@ def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model)
         ],
     )
 
-    model.selectedRow = 0
+    model.selection.selectedRow = 0
     model.update_comment(1, "Word Added 1")
     assert_comments(
         actual=model.comments(),
@@ -400,3 +400,32 @@ def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model)
             [25, "added 1", "Word Added 1"],
         ],
     )
+
+
+def test_undo_focus_phases_when_selected_row_not_visible(make_model):
+    # noinspection PyArgumentList
+    model = make_model(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
+    model.update_comment(0, "edited")
+
+    model.selection.selectedRowVisible = False
+    model.undo()
+    assert model.comment_at(0).comment == "edited"
+
+    model.selection.selectedRowVisible = True
+    model.undo()
+    assert model.comment_at(0).comment == "Word 1"
+
+
+def test_redo_focus_phases_when_selected_row_not_visible(make_model):
+    # noinspection PyArgumentList
+    model = make_model(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
+    model.update_comment(0, "edited")
+    model.undo()
+
+    model.selection.selectedRowVisible = False
+    model.redo()
+    assert model.comment_at(0).comment == "Word 1"
+
+    model.selection.selectedRowVisible = True
+    model.redo()
+    assert model.comment_at(0).comment == "edited"

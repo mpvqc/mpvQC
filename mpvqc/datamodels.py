@@ -6,11 +6,18 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Comment:
     time: int
     comment_type: str
     comment: str
+
+
+@dataclass(frozen=True)
+class SearchResult:
+    index: int
+    current: int
+    total: int
 
 
 @dataclass(frozen=True)

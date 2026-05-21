@@ -50,7 +50,7 @@ TestCase {
                 "comment": `Comment ${i}`
             });
         }
-        control.commentList.model.import_comments(extra);
+        control.viewModel.importComments(extra);
         waitForRendering(control);
     }
 

@@ -5,8 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments.mutation import QuickSelection, RowAddEdit
-from mpvqc.models.comments.roles import Role
+from mpvqc.models.comments import NoViewAction, QuickSelection, QuickSelectionAndEdit
 
 DEFAULT_COMMENTS = [
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -36,18 +35,17 @@ def test_add_comment_sorts_model(make_model):
 
     model.add_row(7, custom_comment_type)
 
-    item = model.item(2, 0)
-    actual = item.data(Role.TYPE)
+    actual = model.comment_at(2).comment_type
     assert custom_comment_type == actual
 
 
 def test_add_comment_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
     model.add_row(0, "comment type")
 
     assert spy.count() == 1
-    assert isinstance(spy.at(invocation=0, argument=0), RowAddEdit)
+    assert isinstance(spy.at(invocation=0, argument=0), QuickSelectionAndEdit)
 
 
 def test_add_comment_undo_redo(make_model):
@@ -88,36 +86,35 @@ def test_add_comment_undo_redo_sorts_model(make_model):
     assert expected == [ct["commentType"] for ct in model.comments()]
 
 
-def test_add_comment_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.search_invalidated)
+def test_add_row_invalidates_search(model):
+    initial = model.search("Word", include_current_row=True, top_down=True)
+    assert initial.index == 0
+    assert initial.total == 5
 
-    model.add_row(0, "undo redo comment type")
-    assert spy.count() == 1
+    # New row inserts at row 0; existing matches shift to rows 1..5.
+    model.add_row(time=-1, comment_type="commentType")
 
-    model.undo()
-    assert spy.count() == 2
-
-    model.redo()
-    assert spy.count() == 3
+    after = model.search("Word", include_current_row=True, top_down=True)
+    assert after.index == 1
+    assert after.total == 5
 
 
 def test_add_comment_undo_redo_fires_signals(make_model, make_spy):
     # noinspection PyArgumentList
     model = make_model(set_comments=DEFAULT_COMMENTS)
 
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
-    model.selectedRow = 3
     model.add_row(99, "undo redo comment type")
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == RowAddEdit(row=5)
+    assert spy.at(invocation=0, argument=0) == QuickSelectionAndEdit(row=5)
 
     spy.reset()
     model.undo()
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == QuickSelection(row=3)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()
 
     spy.reset()
     model.redo()

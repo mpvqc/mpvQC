@@ -2,21 +2,22 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import assert_never
+from typing import Any, assert_never
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, QPointF, Signal, Slot
+from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, QPointF, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
-from mpvqc.models import MpvqcCommentModel
-from mpvqc.models.comments.mutation import (
+from mpvqc.datamodels import Comment
+from mpvqc.models.comments import (
     AnimatedSelection,
-    LastRowSelection,
-    ModelMutation,
+    CommentsFacade,
     NoViewAction,
     QuickSelection,
-    RowAddEdit,
+    QuickSelectionAndEdit,
+    SelectionState,
+    ViewAction,
 )
 from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService, TimeFormatterService
 
@@ -35,7 +36,8 @@ class MpvqcCommentTableViewModel(QObject):
 
     commentTypesChanged = Signal(list)
     videoDurationChanged = Signal(float)
-    modelChanged = Signal()  # never emitted; model is constant for the lifetime of this object
+
+    commentsAboutToBeImported = Signal()
 
     copiedToClipboard = Signal(str)
 
@@ -57,26 +59,22 @@ class MpvqcCommentTableViewModel(QObject):
 
         self._clipboard = QGuiApplication.clipboard()
 
-        # noinspection PyCallingNonCallable
-        self._model: MpvqcCommentModel = MpvqcCommentModel(parent=self)
-        self._model.mutated.connect(self._on_mutated)
-        self._comments_service.register(self._model)
+        self._comments = CommentsFacade(parent=self)
+        self._comments.view_action.connect(self._on_view_action)
+        self._comments.dirty.connect(self._state.record_change)
+        self._comments.about_to_import.connect(self.commentsAboutToBeImported)
+        self._comments_service.register(self._comments)
 
     @Slot(object)
-    def _on_mutated(self, mutation: ModelMutation) -> None:
-        if mutation.marks_unsaved:
-            self._state.record_change()
-
-        match mutation:
-            case QuickSelection(row=row):
-                self.quickSelectionRequested.emit(row)
+    def _on_view_action(self, action: ViewAction) -> None:
+        match action:
             case AnimatedSelection(row=row):
                 self.selectionRequested.emit(row)
-            case RowAddEdit(row=row):
+            case QuickSelection(row=row):
+                self.quickSelectionRequested.emit(row)
+            case QuickSelectionAndEdit(row=row):
                 self.quickSelectionRequested.emit(row)
                 self.startEditingComment(row)
-            case LastRowSelection(row=row):
-                self.quickSelectionRequested.emit(row)
             case NoViewAction():
                 pass
             case _ as unreachable:
@@ -91,9 +89,13 @@ class MpvqcCommentTableViewModel(QObject):
     def videoDuration(self) -> float:
         return self._player.duration
 
-    @Property(MpvqcCommentModel, notify=modelChanged)
-    def model(self) -> MpvqcCommentModel:
-        return self._model
+    @Property(QAbstractItemModel, constant=True, final=True)
+    def model(self) -> QAbstractItemModel:
+        return self._comments.store
+
+    @Property(SelectionState, constant=True, final=True)
+    def selection(self) -> SelectionState:
+        return self._comments.selection
 
     @Slot(int)
     def select(self, index: int) -> None:
@@ -113,7 +115,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def startEditingComment(self, index: int) -> None:
-        comment = self._model.comment_text_at(index)
+        comment = self._comments.comment_at(index).comment
         self.commentEditRequested.emit(index, comment)
 
     @Slot(int, QPointF)
@@ -126,7 +128,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:
-        comment = self._model.comment_at(index)
+        comment = self._comments.comment_at(index)
         self.deleteCommentRequested.emit(index, comment.time, comment.comment_type, comment.comment)
 
     @Slot(int)
@@ -139,7 +141,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(int)
     def copyToClipboard(self, row: int) -> None:
-        comment = self._model.comment_at(row)
+        comment = self._comments.comment_at(row)
         time = self._time_formatter.format_time_to_string(comment.time, long_format=True)
         comment_type = QCoreApplication.translate("CommentTypes", comment.comment_type)
         content = f"[{time}] [{comment_type}] {comment.comment}"
@@ -148,28 +150,42 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(str)
     def addRow(self, comment_type: str) -> None:
-        self._model.add_row(self._player.time_pos, comment_type)
+        self._comments.add_row(self._player.time_pos, comment_type)
 
     @Slot(int)
     def removeRow(self, row: int) -> None:
-        self._model.remove_row(row)
+        self._comments.remove_row(row)
 
     @Slot(int, int)
     def updateTime(self, row: int, new_time: int) -> None:
-        self._model.update_time(row, new_time)
+        self._comments.update_time(row, new_time)
 
     @Slot(int, str)
     def updateCommentType(self, row: int, comment_type: str) -> None:
-        self._model.update_comment_type(row, comment_type)
+        self._comments.update_comment_type(row, comment_type)
 
     @Slot(int, str)
     def updateComment(self, row: int, comment: str) -> None:
-        self._model.update_comment(row, comment)
+        self._comments.update_comment(row, comment)
 
     @Slot()
     def undo(self) -> None:
-        self._model.undo()
+        self._comments.undo()
 
     @Slot()
     def redo(self) -> None:
-        self._model.redo()
+        self._comments.redo()
+
+    @Slot(list)
+    def importComments(self, comments: list[dict[str, Any]]) -> None:
+        self._comments.import_comments(
+            [Comment(time=c["time"], comment_type=c["commentType"], comment=c["comment"]) for c in comments]
+        )
+
+    @Slot()
+    def clearComments(self) -> None:
+        self._comments.clear_comments()
+
+    @Slot(result=list)
+    def comments(self) -> list[dict[str, Any]]:
+        return self._comments.comments()

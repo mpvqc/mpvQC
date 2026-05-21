@@ -288,7 +288,7 @@ TestCase {
         _clickHelper.clickDecrementButton(control);
         _expect.hasLastJumpedToTime(control, 2);
 
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 99,
                 "commentType": "Comment Type 1",

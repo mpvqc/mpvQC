@@ -73,7 +73,7 @@ TestCase {
         tryVerify(() => control.commentCount === 1);
         verify(!_placeholder(control).visible);
 
-        control.commentList.model.clear_comments();
+        control.viewModel.clearComments();
 
         tryVerify(() => control.commentCount === 0);
         verify(_placeholder(control).visible);
@@ -89,7 +89,7 @@ TestCase {
         control.addNewComment("Comment Type 2");
         tryVerify(() => control.commentCount === 2);
 
-        const rows = control.commentList.model.comments();
+        const rows = control.viewModel.comments();
         compare(rows[0].commentType, "Comment Type 1");
         compare(rows[1].commentType, "Comment Type 2");
     }
