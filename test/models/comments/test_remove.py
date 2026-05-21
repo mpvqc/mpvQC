@@ -5,7 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments.mutation import NoViewAction, QuickSelection
+from mpvqc.models.comments import NoViewAction, QuickSelection
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -29,12 +29,12 @@ def test_remove_comment(model):
 
 
 def test_remove_comment_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
     model.remove_row(0)
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=True)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()
 
 
 def test_remove_comment_undo_redo(model):
@@ -68,26 +68,23 @@ def test_remove_comment_undo_sorts_model(model):
     assert expected == [c["comment"] for c in model.comments()]
 
 
-def test_remove_comment_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.search_invalidated)
+def test_remove_invalidates_search(model):
+    initial = model.search("Word", include_current_row=True, top_down=True)
+    assert initial.total == 5
 
     model.remove_row(0)
-    assert spy.count() == 1
 
-    model.undo()
-    assert spy.count() == 2
-
-    model.redo()
-    assert spy.count() == 3
+    after = model.search("Word", include_current_row=True, top_down=True)
+    assert after.total == 4
 
 
 def test_remove_comment_undo_redo_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
     model.remove_row(3)
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=True)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()
 
     spy.reset()
     model.undo()
@@ -99,4 +96,4 @@ def test_remove_comment_undo_redo_fires_signals(model, make_spy):
     model.redo()
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=True)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()

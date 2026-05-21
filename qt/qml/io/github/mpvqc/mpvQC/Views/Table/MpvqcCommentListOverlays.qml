@@ -32,7 +32,7 @@ Item {
 
         function onCommentEditRequested(index: int, comment: string): void {
             root.listView.positionViewAtIndex(index, ListView.Contain);
-            const item = root.listView.currentItem as MpvqcCommentListDelegate;
+            const item = root.listView.itemAtIndex(index) as MpvqcCommentListDelegate;
             _editLoader.startEditingComment(index, comment, item.commentLabel);
         }
 
@@ -47,10 +47,6 @@ Item {
         function onSearchRequested(): void {
             _searchBoxLoader.show();
         }
-    }
-
-    Connections {
-        target: root.viewModel.model as QtObject
 
         function onCommentsAboutToBeImported(): void {
             _editLoader.abortEdit();
@@ -90,9 +86,6 @@ Item {
 
     MpvqcSearchBoxLoader {
         id: _searchBoxLoader
-
-        model: root.viewModel.model
-        selectedIndex: root.listView.currentIndex
 
         onHighlightRequested: index => root.viewModel.select(index)
         onClosed: root.focusWanted()

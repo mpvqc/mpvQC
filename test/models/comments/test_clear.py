@@ -5,7 +5,7 @@
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments.mutation import LastRowSelection, NoViewAction
+from mpvqc.models.comments import NoViewAction
 
 DEFAULT_COMMENTS = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -28,12 +28,12 @@ def test_clear_comments(model):
 
 
 def test_clear_comments_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
     model.clear_comments()
 
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=False)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()
 
 
 def test_clear_comments_undo_redo(model):
@@ -50,32 +50,29 @@ def test_clear_comments_undo_redo(model):
     assert model.rowCount() == 0
 
 
-def test_clear_comments_undo_redo_invalidates_search_results(model, make_spy):
-    spy = make_spy(model.search_invalidated)
+def test_clear_invalidates_search(model):
+    initial = model.search("Word", include_current_row=True, top_down=True)
+    assert initial.total == 5
 
     model.clear_comments()
-    assert spy.count() == 1
 
-    model.undo()
-    assert spy.count() == 2
-
-    model.redo()
-    assert spy.count() == 3
+    after = model.search("Word", include_current_row=True, top_down=True)
+    assert after.total == 0
 
 
 def test_clear_comments_undo_redo_fires_signals(model, make_spy):
-    spy = make_spy(model.mutated)
+    spy = make_spy(model.view_action)
 
     model.clear_comments()
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=False)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()
 
     spy.reset()
     model.undo()
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == LastRowSelection(row=4)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()
 
     spy.reset()
     model.redo()
     assert spy.count() == 1
-    assert spy.at(invocation=0, argument=0) == NoViewAction(marks_unsaved=False)
+    assert spy.at(invocation=0, argument=0) == NoViewAction()

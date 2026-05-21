@@ -40,7 +40,7 @@ TestCase {
         control.commentList.currentIndex = 0;
         waitForRendering(control);
 
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 0,
                 "commentType": "Comment Type 1",
@@ -70,7 +70,7 @@ TestCase {
     }
 
     function _reviewRows(): list<int> {
-        const comments = control.commentList.model.comments();
+        const comments = control.viewModel.comments();
         return comments.map((_c, i) => i).filter(i => comments[i].comment.includes("review"));
     }
 

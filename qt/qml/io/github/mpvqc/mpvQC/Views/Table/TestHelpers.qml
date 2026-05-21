@@ -19,9 +19,9 @@ QtObject {
         SignalSpy {}
     }
 
-    readonly property Component objectWithRealViewModel: Component {
+    readonly property Component objectWithRealCommentTypes: Component {
         MpvqcTableView {
-            id: _realVmControl
+            id: _realCommentTypesControl
 
             backupEnabled: false
 
@@ -29,14 +29,14 @@ QtObject {
             width: root.testCase.width
 
             Component.onCompleted: {
-                _realVmControl.commentList.model.import_comments([
+                _realCommentTypesControl.viewModel.importComments([
                     {
                         "time": 1,
                         "commentType": "Comment Type 1",
                         "comment": "Comment 1"
                     }
                 ]);
-                _realVmControl.commentList.currentIndex = 0;
+                _realCommentTypesControl.commentList.currentIndex = 0;
             }
         }
     }
@@ -62,7 +62,7 @@ QtObject {
             width: root.testCase.width
 
             Component.onCompleted: {
-                _mockVmControl.commentList.model.import_comments([
+                _mockVmControl.viewModel.importComments([
                     {
                         "time": 1,
                         "commentType": "Comment Type 1",
@@ -93,7 +93,7 @@ QtObject {
             }
 
             function getItem(index: int, property: string): var {
-                return commentList.model.comments()[index][property];
+                return viewModel.comments()[index][property];
             }
         }
     }

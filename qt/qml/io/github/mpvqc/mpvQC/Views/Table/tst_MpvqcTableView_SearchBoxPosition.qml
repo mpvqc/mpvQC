@@ -40,7 +40,7 @@ TestCase {
         control.commentList.currentIndex = 0;
         waitForRendering(control);
 
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 0,
                 "commentType": "Comment Type 1",
@@ -258,7 +258,7 @@ TestCase {
     function test_cursorBehaviorNavButtonsEnabled(data): void {
         if (data.needsMultipleResults) {
             // Import additional comments so search yields multiple results
-            control.commentList.model.import_comments([
+            control.viewModel.importComments([
                 {
                     "time": 1,
                     "commentType": "Comment Type 1",

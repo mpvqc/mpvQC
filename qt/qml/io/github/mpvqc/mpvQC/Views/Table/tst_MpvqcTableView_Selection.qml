@@ -307,7 +307,7 @@ TestCase {
         _wait.messageBoxOpened(control);
         _expect.hasMessageBoxOpen(control);
 
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 99,
                 "commentType": "Comment Type 1",
@@ -388,17 +388,48 @@ TestCase {
         _expect.hasCurrentIndex(control, 0);
     }
 
-    function test_undoClearSelectsLastRow(): void {
-        const countBeforeClear = control.commentCount;
-        control.commentList.model.clear_comments();
-        _expect.hasEventuallyCount(control, 0);
-        keyPress(Qt.Key_Z, Qt.ControlModifier); // undo clear
-        _expect.hasEventuallyCount(control, countBeforeClear);
-        _expect.hasCurrentIndex(control, control.commentCount - 1);
+    function test_updateTimeOnVisibleRowMovingItFarScrollsViewToFollow(): void {
+        // Mirrors the real user flow: editing a visible row's time to a value
+        // that puts it far from the current viewport. The view should scroll
+        // to follow the moved row to its new position.
+        const filler = [];
+        for (let i = 0; i < 400; i++) {
+            filler.push({
+                "time": 100 + i,
+                "commentType": "Comment Type 1",
+                "comment": `Row ${i}`
+            });
+        }
+        control.viewModel.importComments(filler);
+        waitForRendering(control);
+
+        const list = control.commentList;
+
+        // Scroll deep into the list — emulates the user navigating to a
+        // section that isn't near the start.
+        list.positionViewAtIndex(300, ListView.Beginning);
+        waitForRendering(control);
+
+        // Click a visible row to select it (this is what a real user does
+        // before opening the time editor on that row).
+        const visibleRow = 305;
+        const pt = _clickHelper.centerOfCommentLabel(control, visibleRow);
+        testCase.mouseClick(control, pt.x, pt.y);
+        tryVerify(() => control.commentList.currentIndex === visibleRow);
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
+
+        // Edit the selected row's time to land it near the top of the list.
+        // This is what the time-popup commit does internally; we skip the
+        // popup interaction since this test is about the post-commit scroll.
+        control.viewModel.updateTime(visibleRow, 1);
+        waitForRendering(control);
+
+        // The moved row must follow into view at its new position.
+        tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not scroll to follow the moved row");
     }
 
     function test_unknownCommentTypeAppearsInEditMenu(): void {
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 10,
                 "commentType": "Legacy Type",
@@ -417,7 +448,7 @@ TestCase {
     }
 
     function test_unknownCommentTypeAppearsAtBottomOfEditMenu(): void {
-        control.commentList.model.import_comments([
+        control.viewModel.importComments([
             {
                 "time": 10,
                 "commentType": "Legacy Type",

@@ -12,6 +12,7 @@ from pathlib import Path
 import inject
 from PySide6.QtCore import QUrl
 
+from mpvqc.datamodels import SearchResult
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
@@ -29,7 +30,7 @@ from mpvqc.services import (
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Sequence
 
     from PySide6.QtGui import QGuiApplication, QWindow
 
@@ -158,8 +159,11 @@ class _NoopCommentsProvider:
     def clear_comments(self) -> None:
         pass
 
-    def import_comments(self, comments) -> None:  # noqa: ANN001
+    def import_comments(self, comments: Sequence) -> None:
         pass
+
+    def search(self, query: str, *, include_current_row: bool, top_down: bool) -> SearchResult:  # noqa: ARG002
+        return SearchResult(index=-1, current=-1, total=-1)
 
 
 class CommentsServiceOverride(CommentsService):

@@ -27,14 +27,14 @@ TestCase {
     height: 400
     visible: true
     when: windowShown
-    name: "MpvqcTableView::RealViewModel"
+    name: "MpvqcTableView::CommentTypes"
 
     function initTestCase(): void {
         _helpers.initTestCase();
     }
 
     function test_commentTypeMenuReceivesPythonCommentTypes(): void {
-        const control = createTemporaryObject(_helpers.objectWithRealViewModel, testCase);
+        const control = createTemporaryObject(_helpers.objectWithRealCommentTypes, testCase);
         verify(control);
         waitForRendering(control);
 
