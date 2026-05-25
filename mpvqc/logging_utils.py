@@ -8,9 +8,8 @@ import logging
 import os
 import re
 import sys
-import typing
 from enum import StrEnum
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Final, override
 
 from PySide6.QtCore import QtMsgType
 
@@ -54,7 +53,7 @@ class MpvqcFormatter(logging.Formatter):
         super().__init__()
         self._use_color = use_color()
 
-    @typing.override
+    @override
     def format(self, record: logging.LogRecord) -> str:
         if self._use_color:
             color = LEVEL_COLORS.get(record.levelno, AnsiColor.RESET)

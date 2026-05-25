@@ -6,10 +6,9 @@ from __future__ import annotations
 
 import bisect
 import itertools
-import typing
 from dataclasses import dataclass
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol, override
 
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelIndex, Qt, Signal
 
@@ -61,11 +60,11 @@ class CommentStore(QAbstractListModel):
         super().__init__(parent)
         self._rows: list[StoreItem] = []
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._rows)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -79,7 +78,7 @@ class CommentStore(QAbstractListModel):
                 return comment.comment
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return ROLE_NAMES
 

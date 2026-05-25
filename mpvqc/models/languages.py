@@ -4,13 +4,13 @@
 
 from __future__ import annotations
 
-import typing
 from dataclasses import dataclass
+from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP, QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
@@ -42,11 +42,11 @@ class MpvqcLanguageModel(QAbstractListModel):
     IdentifierRole = Qt.ItemDataRole.UserRole + 2
     TranslatorRole = Qt.ItemDataRole.UserRole + 3
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(LANGUAGES)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -63,7 +63,7 @@ class MpvqcLanguageModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.LanguageRole: QByteArray(b"language"),

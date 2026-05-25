@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import typing
+from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, QModelIndex, Qt, Slot
@@ -12,7 +12,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.services import SettingsService, ThemeService
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QObject, QPersistentModelIndex
@@ -54,11 +54,11 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
             last = self.index(overlap - 1)
             self.dataChanged.emit(first, last, [self.IdentifierRole, self.DisplayColorRole])
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return self._themes.theme(self._theme_identifier).palette_count
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -73,7 +73,7 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.IdentifierRole: QByteArray(b"identifier"),

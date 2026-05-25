@@ -4,16 +4,15 @@
 
 from __future__ import annotations
 
-import typing
 from dataclasses import dataclass
-from typing import assert_never
+from typing import TYPE_CHECKING, assert_never, override
 
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QObject, Qt, Signal
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.services.importer import video
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pathlib import Path
     from typing import Any
 
@@ -55,11 +54,11 @@ class MpvqcImportVideosModel(QAbstractListModel):
         ]
         self._items.append(_SKIP_VIDEO_ENTRY)
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._items)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -86,7 +85,7 @@ class MpvqcImportVideosModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.FilenameRole: QByteArray(b"filename"),

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import typing
+from typing import override
 
 import inject
 from PySide6.QtCore import Property, QObject, QRunnable, QThreadPool, Signal, Slot
@@ -18,7 +18,7 @@ class BackupJob(QRunnable):
     _backupper = inject.attr(DocumentBackupService)
 
     @Slot()
-    @typing.override
+    @override
     def run(self) -> None:
         self._backupper.backup()
 
