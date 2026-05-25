@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
-import typing
+from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 from PySide6.QtQml import QmlElement
 
 from mpvqc.enums import ImportFoundVideo
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
@@ -45,11 +45,11 @@ class ImportOptionsModel(QAbstractListModel):
             },
         ]
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._items)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -64,7 +64,7 @@ class ImportOptionsModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.TextRole: QByteArray(b"text"),

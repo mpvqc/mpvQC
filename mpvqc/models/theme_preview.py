@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import typing
+from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, Qt
@@ -12,7 +12,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ThemeService
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
@@ -29,11 +29,11 @@ class MpvqcThemePreviewModel(QAbstractListModel):
     IdentifierRole = Qt.ItemDataRole.UserRole + 1
     PreviewRole = Qt.ItemDataRole.UserRole + 2
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._themes.previews)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -48,7 +48,7 @@ class MpvqcThemePreviewModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.IdentifierRole: QByteArray(b"identifier"),

@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-import typing
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import QSize, Signal, Slot
@@ -45,7 +44,7 @@ class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
     def do_update(self) -> None:
         self.update()
 
-    @typing.override
+    @override
     def createRenderer(self) -> QQuickFramebufferObject.Renderer:
         return Renderer(self)
 
@@ -63,7 +62,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
     def _on_zoom_factor_changed(self) -> None:
         self._parent.update_requested.emit()
 
-    @typing.override
+    @override
     def createFramebufferObject(self, size: QSize) -> QOpenGLFramebufferObject:
         if self._ctx is None:
             self._player.init()
@@ -72,7 +71,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
         return QQuickFramebufferObject.Renderer.createFramebufferObject(self, size)
 
-    @typing.override
+    @override
     def render(self) -> None:
         if self._ctx:
             factor: float = self._main_window.display_zoom_factor

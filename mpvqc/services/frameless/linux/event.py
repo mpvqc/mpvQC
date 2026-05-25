@@ -11,8 +11,7 @@
 
 from __future__ import annotations
 
-import typing
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QEvent, QObject, Qt
 from PySide6.QtGui import QCursor
@@ -29,7 +28,7 @@ class LinuxEventFilter(QObject):
         self._cursor_override_active = False
         self._border_width = 6
 
-    @typing.override
+    @override
     def eventFilter(self, _watched: QObject, event: QEvent) -> bool:  # noqa: C901, PLR0912, PLR0915
         event_type = event.type()
 

@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import shutil
 import tempfile
-import typing
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, override
 
 import inject
 from PySide6.QtCore import QUrl
@@ -29,7 +29,7 @@ from mpvqc.services import (
 )
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -41,17 +41,17 @@ TEMP_SAVES_DIR.mkdir()
 
 
 class FramelessWindowServiceOverride(FramelessWindowService):
-    @typing.override
+    @override
     def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
         pass
 
-    @typing.override
+    @override
     def set_embedded_player_hwnd(self, win_id: int) -> None:
         pass
 
 
 class HostEnvironmentServiceOverride(HostEnvironmentService):
-    @typing.override
+    @override
     def _detect_window_button_preference_async(self) -> None:
         pass
 
@@ -76,75 +76,75 @@ class PlayerServiceOverride(PlayerService):
         self.opened_video: Path | None = None
         self.opened_subtitles: tuple[Path, ...] = ()
 
-    @typing.override
+    @override
     def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
         if self.opened_video is None:
             return False
         current = self.opened_video.resolve()
         return any(current == video.resolve() for video in videos)
 
-    @typing.override
+    @override
     def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
         if video is not None:
             self.opened_video = video
         if subtitles:
             self.opened_subtitles = subtitles
 
-    @typing.override
+    @override
     def pause(self) -> None:
         pass
 
-    @typing.override
+    @override
     def move_mouse(self, x: int, y: int) -> None:
         pass
 
-    @typing.override
+    @override
     def press_key(self, command: str) -> None:
         pass
 
-    @typing.override
+    @override
     def press_mouse_left(self) -> None:
         pass
 
-    @typing.override
+    @override
     def release_mouse_left(self) -> None:
         pass
 
-    @typing.override
+    @override
     def press_mouse_middle(self) -> None:
         pass
 
-    @typing.override
+    @override
     def press_mouse_back(self) -> None:
         pass
 
-    @typing.override
+    @override
     def press_mouse_forward(self) -> None:
         pass
 
-    @typing.override
+    @override
     def scroll_up(self) -> None:
         pass
 
-    @typing.override
+    @override
     def scroll_down(self) -> None:
         pass
 
 
 class ExportServiceOverride(ExportService):
-    @typing.override
+    @override
     def generate_file_path_proposal(self) -> Path:
         return TEMP_SAVES_DIR / "qc_proposal.txt"
 
 
 class VideoResizeServiceOverride(VideoResizeService):
-    @typing.override
+    @override
     def compute_resize(self, dimensions: ViewDimensions) -> ResizeResult | None:
         return ResizeResult(window_width=800, window_height=600, table_width=200, table_height=200)
 
 
 class VersionCheckerServiceOverride(VersionCheckerService):
-    @typing.override
+    @override
     def check_for_new_version(self) -> tuple[str, str]:
         return "stub-title", "stub-text"
 
@@ -153,7 +153,7 @@ class _NoopCommentsProvider:
     def rowCount(self) -> int:
         return 0
 
-    def comments(self) -> list[dict[str, typing.Any]]:
+    def comments(self) -> list[dict[str, Any]]:
         return []
 
     def clear_comments(self) -> None:
@@ -176,15 +176,15 @@ class DesktopServiceOverride(DesktopService):
     def __init__(self) -> None:
         self.opened_urls: list[QUrl] = []
 
-    @typing.override
+    @override
     def open_app_data_folder(self) -> None:
         self.opened_urls.append(QUrl("mpvqc-test://app-data-folder"))
 
-    @typing.override
+    @override
     def open_backup_folder(self) -> None:
         self.opened_urls.append(QUrl("mpvqc-test://backup-folder"))
 
-    @typing.override
+    @override
     def open_url(self, url: QUrl) -> None:
         self.opened_urls.append(url)
 

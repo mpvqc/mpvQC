@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import operator
-import typing
+from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import Property, QAbstractListModel, QByteArray, Qt
@@ -13,7 +13,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ApplicationPathsService, TypeMapperService
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QModelIndex, QPersistentModelIndex
@@ -50,11 +50,11 @@ class MpvqcExportTemplateModel(QAbstractListModel):
     def count(self) -> int:
         return len(self._items)
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._items)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -69,7 +69,7 @@ class MpvqcExportTemplateModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.NameRole: QByteArray(b"name"),

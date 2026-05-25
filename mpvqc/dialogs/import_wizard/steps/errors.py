@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
-import typing
+from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QObject, Qt
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.services.importer import errors
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pathlib import Path
     from typing import Any
 
@@ -30,11 +30,11 @@ class MpvqcImportErrorsModel(QAbstractListModel):
         super().__init__()
         self._documents = documents
 
-    @typing.override
+    @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         return len(self._documents)
 
-    @typing.override
+    @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
@@ -49,7 +49,7 @@ class MpvqcImportErrorsModel(QAbstractListModel):
 
         return None
 
-    @typing.override
+    @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.FilenameRole: QByteArray(b"filename"),

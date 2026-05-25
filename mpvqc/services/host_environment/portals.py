@@ -5,11 +5,10 @@
 from __future__ import annotations
 
 import logging
-import typing
 from functools import cached_property
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from types import TracebackType
 
 try:

@@ -5,8 +5,7 @@
 from __future__ import annotations
 
 import logging
-import typing
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 import inject
 from PySide6.QtCore import QEvent, QObject, Qt, Signal, Slot
@@ -180,7 +179,7 @@ class _DisplayZoomMonitor(QObject):
         self._on_change = on_change
         self._last = window.devicePixelRatio()
 
-    @typing.override
+    @override
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if event.type() == QEvent.Type.DevicePixelRatioChange:
             current = self._window.devicePixelRatio()

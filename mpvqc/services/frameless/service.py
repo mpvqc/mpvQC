@@ -5,9 +5,8 @@
 from __future__ import annotations
 
 import sys
-import typing
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -31,7 +30,7 @@ class WinImplementation(FramelessWindowService):
 
         self._event_filter = WindowsEventFilter()
 
-    @typing.override
+    @override
     def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
         hwnd_top_lvl = window.winId()
         self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
@@ -51,20 +50,20 @@ class WinImplementation(FramelessWindowService):
         height = int(720 * zoom)
         set_outer_window_size(hwnd_top_lvl, width, height)
 
-    @typing.override
+    @override
     def set_embedded_player_hwnd(self, win_id: int) -> None:
         self._event_filter.set_embedded_player_hwnd(win_id)
 
 
 class LinuxImplementation(FramelessWindowService):
-    @typing.override
+    @override
     def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
         from mpvqc.services.frameless.linux import LinuxEventFilter
 
         self._event_filter = LinuxEventFilter(window, app)
         app.installEventFilter(self._event_filter)
 
-    @typing.override
+    @override
     def set_embedded_player_hwnd(self, win_id: int) -> None:
         pass
 
