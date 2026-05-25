@@ -135,6 +135,7 @@ ListView {
     Keys.onPressed: event => _keyHandler.handleKeyPress(event)
 
     Connections {
+        // Keep the highlight from sliding to the wrong row during structural model changes.
         target: root.model
 
         function onAboutToInsertRow(): void {

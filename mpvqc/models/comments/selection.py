@@ -14,13 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 @QmlUncreatable("constructed by CommentsFacade")
 class SelectionState(QObject):
-    """View state shared between the QML view and the facade.
-
-    `selectedRow` is bidirectional with role-dependent authority: QML owns it
-    on user input (a Binding mirrors the ListView's currentIndex through to
-    here), the facade owns it during command application (it sets the focus
-    target before emitting the view action).
-    """
+    """One-way view state updated from QML to Python."""
 
     selectedRowChanged = Signal(int)
     selectedRowVisibleChanged = Signal(bool)
