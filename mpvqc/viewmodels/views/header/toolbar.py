@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import inject
-from PySide6.QtCore import Property, QObject, Signal, Slot
+from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import PlayerService
@@ -12,51 +14,77 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcToolBarViewModel(QObject):
     _player = inject.attr(PlayerService)
 
-    frameStepVisibleChanged = Signal(bool)
-    cycleSubtitleTrackVisibleChanged = Signal(bool)
-    cycleAudioTrackVisibleChanged = Signal(bool)
+    frameStepActiveChanged = Signal(bool)
+    subtitleActiveChanged = Signal(bool)
+    audioActiveChanged = Signal(bool)
+
+    _BURST_WINDOW_MS = 300
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._frame_step_visible = self._player.video_loaded
-        self._cycle_subtitle_track_visible = self._should_show_cycle_subtitle()
-        self._cycle_audio_track_visible = self._should_show_cycle_audio()
+        self._frame_step_active = False
+        self._subtitle_active = False
+        self._audio_active = False
 
-        self._player.video_loaded_changed.connect(self._on_video_loaded_changed)
-        self._player.audio_track_count_changed.connect(self._on_audio_track_count_changed)
-        self._player.subtitle_track_count_changed.connect(self._on_subtitle_track_count_changed)
+        self._refresh_timer = QTimer(self)
+        self._refresh_timer.setSingleShot(True)
+        self._refresh_timer.setInterval(self._BURST_WINDOW_MS)
+        self._refresh_timer.timeout.connect(self._refresh)
 
-    def _should_show_cycle_audio(self) -> bool:
-        # pyrefly: ignore [unsupported-operation]
-        return self._player.video_loaded and self._player.audio_track_count > 0
+        self._player.video_loaded_changed.connect(self._schedule_refresh)
+        self._player.audio_track_count_changed.connect(self._schedule_refresh)
+        self._player.subtitle_track_count_changed.connect(self._schedule_refresh)
+        self._player.file_loaded.connect(self._schedule_refresh)
 
-    def _should_show_cycle_subtitle(self) -> bool:
-        # pyrefly: ignore [unsupported-operation]
-        return self._player.video_loaded and self._player.subtitle_track_count > 0
+    @Slot()
+    def _schedule_refresh(self) -> None:
+        self._refresh_timer.start()
 
-    @Slot(bool)
-    def _on_video_loaded_changed(self, video_loaded: bool) -> None:
-        # pyrefly: ignore [bad-assignment]
-        self.frameStepVisible = video_loaded
-        # pyrefly: ignore [bad-assignment]
-        self.cycleSubtitleTrackVisible = self._should_show_cycle_subtitle()
-        # pyrefly: ignore [bad-assignment]
-        self.cycleAudioTrackVisible = self._should_show_cycle_audio()
+    @Slot()
+    def _refresh(self) -> None:
+        video_loaded = self._player.video_loaded
+        if video_loaded:
+            # pyrefly: ignore [bad-assignment]
+            self.frameStepActive = True
 
-    @Slot(int)
-    def _on_audio_track_count_changed(self, _: int) -> None:
-        # pyrefly: ignore [bad-assignment]
-        self.cycleAudioTrackVisible = self._should_show_cycle_audio()
+        # pyrefly: ignore [bad-assignment, unsupported-operation]
+        self.subtitleActive = video_loaded and self._player.subtitle_track_count > 0
+        # pyrefly: ignore [bad-assignment, unsupported-operation]
+        self.audioActive = video_loaded and self._player.audio_track_count > 0
 
-    @Slot(int)
-    def _on_subtitle_track_count_changed(self, _: int) -> None:
-        # pyrefly: ignore [bad-assignment]
-        self.cycleSubtitleTrackVisible = self._should_show_cycle_subtitle()
+    @Property(bool, notify=frameStepActiveChanged)
+    def frameStepActive(self) -> bool:
+        return self._frame_step_active
+
+    @frameStepActive.setter
+    def frameStepActive(self, value: bool) -> None:
+        if self._frame_step_active != value:
+            self._frame_step_active = value
+            self.frameStepActiveChanged.emit(value)
+
+    @Property(bool, notify=subtitleActiveChanged)
+    def subtitleActive(self) -> bool:
+        return self._subtitle_active
+
+    @subtitleActive.setter
+    def subtitleActive(self, value: bool) -> None:
+        if self._subtitle_active != value:
+            self._subtitle_active = value
+            self.subtitleActiveChanged.emit(value)
+
+    @Property(bool, notify=audioActiveChanged)
+    def audioActive(self) -> bool:
+        return self._audio_active
+
+    @audioActive.setter
+    def audioActive(self, value: bool) -> None:
+        if self._audio_active != value:
+            self._audio_active = value
+            self.audioActiveChanged.emit(value)
 
     @Slot()
     def requestFrameStepBackward(self) -> None:
@@ -73,33 +101,3 @@ class MpvqcToolBarViewModel(QObject):
     @Slot()
     def requestCycleAudioTrack(self) -> None:
         self._player.cycle_audio_track()
-
-    @Property(bool, notify=frameStepVisibleChanged)
-    def frameStepVisible(self) -> bool:
-        return self._frame_step_visible
-
-    @frameStepVisible.setter
-    def frameStepVisible(self, value: bool) -> None:
-        if self._frame_step_visible != value:
-            self._frame_step_visible = value
-            self.frameStepVisibleChanged.emit(value)
-
-    @Property(bool, notify=cycleSubtitleTrackVisibleChanged)
-    def cycleSubtitleTrackVisible(self) -> bool:
-        return self._cycle_subtitle_track_visible
-
-    @cycleSubtitleTrackVisible.setter
-    def cycleSubtitleTrackVisible(self, value: bool) -> None:
-        if self._cycle_subtitle_track_visible != value:
-            self._cycle_subtitle_track_visible = value
-            self.cycleSubtitleTrackVisibleChanged.emit(value)
-
-    @Property(bool, notify=cycleAudioTrackVisibleChanged)
-    def cycleAudioTrackVisible(self) -> bool:
-        return self._cycle_audio_track_visible
-
-    @cycleAudioTrackVisible.setter
-    def cycleAudioTrackVisible(self, value: bool) -> None:
-        if self._cycle_audio_track_visible != value:
-            self._cycle_audio_track_visible = value
-            self.cycleAudioTrackVisibleChanged.emit(value)
