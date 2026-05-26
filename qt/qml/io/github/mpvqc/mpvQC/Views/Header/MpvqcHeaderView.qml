@@ -22,8 +22,8 @@ Item {
     readonly property alias menuBarHeight: _menuBar.height
 
     readonly property int minTitleSpacing: 32
-    readonly property int separatorMargin: 8
-    readonly property int leftContentWidth: menuBarWidth + _separator.width + _toolBar.width
+    readonly property int titleEdgeMargin: 8
+    readonly property int leftContentWidth: menuBarWidth + _toolBar.width
 
     signal windowDragRequested
     signal minimizeRequested
@@ -60,14 +60,6 @@ Item {
             viewModel: root.menuBarViewModel
         }
 
-        ToolSeparator {
-            id: _separator
-
-            visible: _toolBar.anyButtonVisible
-
-            Layout.preferredHeight: 32
-        }
-
         MpvqcToolBarView {
             id: _toolBar
 
@@ -78,7 +70,7 @@ Item {
         Item {
             id: _leftTitleSpacer
 
-            Layout.preferredWidth: Math.max(root.minTitleSpacing + root.separatorMargin * 2, root.width / 2 - root.leftContentWidth - _title.implicitWidth / 2)
+            Layout.preferredWidth: Math.max(root.minTitleSpacing + root.titleEdgeMargin * 2, root.width / 2 - root.leftContentWidth - _title.implicitWidth / 2)
             Layout.preferredHeight: root.menuBarHeight
         }
 
