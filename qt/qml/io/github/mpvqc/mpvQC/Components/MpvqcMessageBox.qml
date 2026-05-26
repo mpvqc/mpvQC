@@ -30,11 +30,8 @@ Dialog {
             Qt.openUrlExternally(link);
         }
 
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-            hoverEnabled: true
+        HoverHandler {
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
         }
     }
 
