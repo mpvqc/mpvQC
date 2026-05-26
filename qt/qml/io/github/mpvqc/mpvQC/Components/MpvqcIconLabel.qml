@@ -20,14 +20,10 @@ IconLabel {
 
     ToolTip.delay: 350
     ToolTip.text: root.toolTipText
-    ToolTip.visible: root.toolTipText && _mouseArea.containsMouse
+    ToolTip.visible: root.toolTipText && _hover.hovered
 
-    MouseArea {
-        id: _mouseArea
-
-        anchors.fill: parent
-        acceptedButtons: Qt.NoButton
-        hoverEnabled: true
+    HoverHandler {
+        id: _hover
         cursorShape: root.toolTipText ? Qt.PointingHandCursor : undefined
     }
 }

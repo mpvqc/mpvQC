@@ -56,12 +56,8 @@ MpvqcDialog {
 
             onLinkActivated: link => root.viewModel.openLink(link)
 
-            MouseArea {
-                anchors.fill: parent
-
-                acceptedButtons: Qt.NoButton
-                cursorShape: _label.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
-                hoverEnabled: true
+            HoverHandler {
+                cursorShape: _label.hoveredLink ? Qt.PointingHandCursor : undefined
             }
 
             ToolTip.delay: 350

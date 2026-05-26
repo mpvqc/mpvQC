@@ -103,10 +103,8 @@ MpvqcDialog {
 
                 onLinkActivated: link => root.viewModel.openLink(link)
 
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                HoverHandler {
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
                 }
             }
 
@@ -128,10 +126,8 @@ MpvqcDialog {
 
                 onLinkActivated: link => root.viewModel.openLink(link)
 
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                HoverHandler {
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
                 }
 
                 ToolTip.delay: 350
@@ -300,10 +296,8 @@ MpvqcDialog {
 
             onLinkActivated: link => root.viewModel.openLink(link)
 
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton
-                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            HoverHandler {
+                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
             }
 
             ToolTip.delay: 350
