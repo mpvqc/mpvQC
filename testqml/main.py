@@ -16,7 +16,6 @@ from mpvqc import startup
 from testqml.injections import TEMP_ROOT, configure_injections
 
 
-# noinspection PyPep8Naming
 class MpvqcTestSetup(QObject):
     @Slot(QQmlEngine)
     def qmlEngineAvailable(self, engine: QQmlEngine) -> None:

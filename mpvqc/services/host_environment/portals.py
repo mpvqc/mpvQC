@@ -12,7 +12,6 @@ if TYPE_CHECKING:
     from types import TracebackType
 
 try:
-    # noinspection PyUnusedImports
     from PySide6.QtDBus import QDBusConnection, QDBusInterface, QDBusMessage
 
     QTDBUS_AVAILABLE = True

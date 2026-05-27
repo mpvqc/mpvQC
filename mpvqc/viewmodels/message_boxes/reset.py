@@ -12,7 +12,6 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyTypeChecker
 @QmlElement
 class MpvqcResetMessageBoxViewModel(QObject):
     _resetter = inject.attr(ResetService)

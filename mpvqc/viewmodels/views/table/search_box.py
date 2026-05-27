@@ -14,7 +14,6 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcSearchBoxViewModel(QObject):
     _comments_service = inject.attr(CommentsService)

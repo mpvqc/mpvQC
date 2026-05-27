@@ -12,7 +12,6 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcWindowPropertiesViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
