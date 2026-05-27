@@ -33,7 +33,7 @@ class CommentSearchEngine:
         query_changed = self._query != query
         if query_changed or self._hits is None:
             self._query = query
-            self._hits = self._store.find_rows_containing(query)
+            self._hits = self._store.search_rows(query)
 
         if not self._hits:
             return SearchResult(index=-1, current=0, total=0)

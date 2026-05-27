@@ -20,7 +20,7 @@ def store():
             return [1, 3, 5]
         return []
 
-    return SimpleNamespace(find_rows_containing=Mock(side_effect=_find))
+    return SimpleNamespace(search_rows=Mock(side_effect=_find))
 
 
 @pytest.fixture
@@ -60,7 +60,7 @@ def test_repeated_same_query_is_cached(engine, store):
     _search(engine, "match")
     _search(engine, "match")
 
-    assert store.find_rows_containing.call_count == 1
+    assert store.search_rows.call_count == 1
 
 
 def test_invalidate_drops_cache(engine, store):
@@ -68,7 +68,7 @@ def test_invalidate_drops_cache(engine, store):
     engine.invalidate()
     _search(engine, "match")
 
-    assert store.find_rows_containing.call_count == 2
+    assert store.search_rows.call_count == 2
 
 
 def test_next_wraps_forward(engine, selection):
