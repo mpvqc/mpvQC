@@ -143,7 +143,7 @@ def test_update_comment_type_does_not_invalidate_search(comments, monkeypatch):
     def fail(*_args, **_kwargs):
         pytest.fail("UpdateType must not trigger a fresh scan")
 
-    monkeypatch.setattr(comments.store, "find_rows_containing", fail)
+    monkeypatch.setattr(comments.store, "search_rows", fail)
     comments.update_comment_type(row=0, comment_type="other")
 
     after = comments.search("Word", include_current_row=True, top_down=True)
