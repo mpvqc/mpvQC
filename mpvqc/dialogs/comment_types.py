@@ -134,7 +134,6 @@ class CommentTypeList:
         self._settings.comment_types = self._model.stringList()
 
 
-# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcCommentTypesDialogViewModel(QObject):
     textFieldContentChanged = Signal()

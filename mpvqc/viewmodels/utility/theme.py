@@ -13,7 +13,6 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyPep8Naming,PyTypeChecker
 @QmlAnonymous
 class MpvqcThemePalette(QObject):
     paletteChanged = Signal()
@@ -72,7 +71,6 @@ class MpvqcThemePalette(QObject):
         return self._palette.row_base_alternate_text
 
 
-# noinspection PyPep8Naming,PyTypeChecker
 @QmlElement
 class MpvqcThemeViewModel(QObject):
     _themes = inject.attr(ThemeService)

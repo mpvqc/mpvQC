@@ -21,7 +21,6 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-# noinspection PyTypeChecker,PyPep8Naming
 @QmlElement
 class MpvqcPrimaryColorModel(QAbstractListModel):
     _themes = inject.attr(ThemeService)

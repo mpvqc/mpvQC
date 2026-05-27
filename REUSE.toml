@@ -93,3 +93,9 @@ path = "testqml/fixtures/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ".idea/inspectionProfiles/Project_Default.xml"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "MIT"
