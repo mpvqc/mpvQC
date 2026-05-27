@@ -30,17 +30,10 @@ Run the formatter before committing.
   - Copy URL and SHA256 hash
   - Update `LIBMPV_URL` and `LIBMPV_SHA256` in workflow file
 - [ ] CI verified green: https://github.com/mpvqc/mpvQC/actions
-- [ ] Manual testing on Windows:
-  - [ ] All menus open correctly
-  - [ ] All clickable elements trigger expected actions
+- [ ] Manual testing on Windows (areas the test suite cannot exercise):
   - [ ] Video playback works
-  - [ ] Comment creation/editing/deletion works
-  - [ ] Basic export works
-  - [ ] Extended export works
-  - [ ] Extended export error handling works
-  - [ ] Basic import works
-  - [ ] Import with video file works
-  - [ ] Import with subtitle file works
+  - [ ] Basic export writes a real file via the native file dialog
+  - [ ] Smoke-click each menu and the window chrome (close/minimize/maximize)
 - [ ] Manual testing on Linux:
   - [ ] Flatpak builds locally
   - [ ] Flatpak installs locally
@@ -78,10 +71,10 @@ With this, the Windows release process is complete. Additional steps are require
 
 These steps apply to the [mpvQC-flatpak](https://github.com/mpvqc/mpvQC-flatpak) repository.
 
-- [ ] In the manifest update mpvQC source URL to `release-build-linux.zip` from GitHub release
-- [ ] In the manifest update mpvQC source SHA256 hash
+- [ ] In the manifest update the mpvQC source tag to `vX.Y.Z`
 - [ ] Update `io.github.mpvqc.mpvQC.metainfo.xml`:
-  - [ ] Add release entry and add changelog
+  - [ ] Bump the top-level `version`
+  - [ ] Add a `<release version="X.Y.Z" date="YYYY-MM-DD">` entry with changelog
   - [ ] Update screenshots if UI changed
 - [ ] Commit changes to mpvQC-flatpak repository
 - [ ] Trigger a new flatpak build **manually** via GitHub Actions in the `Build Flatpak` section.
