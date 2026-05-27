@@ -15,10 +15,9 @@ def assert_comments(expected: list[list[Any]], actual: list[dict[str, Any]]):
         assert c_e[2] == c_a["comment"]
 
 
-def test_undo_redo_combination(make_model):
-    # noinspection PyArgumentList
-    model = make_model(set_comments=[])
-    model.import_comments(
+def test_undo_redo_combination(make_facade):
+    comments = make_facade(set_comments=[])
+    comments.import_comments(
         (
             Comment(time=10, comment_type="type 1", comment="Word 1"),
             Comment(time=20, comment_type="type 2", comment="Word 2"),
@@ -29,7 +28,7 @@ def test_undo_redo_combination(make_model):
     )
 
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -39,9 +38,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.add_row(25, "added 1")
+    comments.add_row(25, "added 1")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -52,9 +51,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.update_comment(2, "Word Edited 1")
+    comments.update_comment(2, "Word Edited 1")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -65,9 +64,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.update_time(2, 35)
+    comments.update_time(2, 35)
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -78,9 +77,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.update_comment_type(3, "edited")
+    comments.update_comment_type(3, "edited")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -91,11 +90,11 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.undo()
-    model.undo()
-    model.undo()
+    comments.undo()
+    comments.undo()
+    comments.undo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -105,10 +104,10 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.redo()
-    model.redo()
+    comments.redo()
+    comments.redo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -119,9 +118,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.update_comment_type(3, "edited 2")
+    comments.update_comment_type(3, "edited 2")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -132,15 +131,15 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.clear_comments()
+    comments.clear_comments()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[],
     )
 
-    model.undo()
+    comments.undo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -151,9 +150,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.update_comment(3, "Word Edited 2")
+    comments.update_comment(3, "Word Edited 2")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -164,9 +163,9 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.add_row(55, "added 2")
+    comments.add_row(55, "added 2")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -178,11 +177,11 @@ def test_undo_redo_combination(make_model):
         ],
     )
 
-    model.undo()
-    model.redo()
+    comments.undo()
+    comments.redo()
 
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -195,18 +194,18 @@ def test_undo_redo_combination(make_model):
     )
 
     for _ in range(50):
-        model.undo()
+        comments.undo()
 
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[],
     )
 
     for _ in range(50):
-        model.redo()
+        comments.redo()
 
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [20, "type 2", "Word 2"],
@@ -219,115 +218,113 @@ def test_undo_redo_combination(make_model):
     )
 
 
-def test_merge_add_and_update(make_model):
-    # noinspection PyArgumentList
-    model = make_model(set_comments=[])
-    model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
+def test_merge_add_and_update(make_facade):
+    comments = make_facade(set_comments=[])
+    comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
         ],
     )
 
-    model.add_row(25, "added 1")
+    comments.add_row(25, "added 1")
     assert_comments(
-        actual=model.comments(),
-        expected=[
-            [10, "type 1", "Word 1"],
-            [25, "added 1", ""],
-        ],
-    )
-
-    model.update_comment(1, "Word Added 1")
-    assert_comments(
-        actual=model.comments(),
-        expected=[
-            [10, "type 1", "Word 1"],
-            [25, "added 1", "Word Added 1"],
-        ],
-    )
-
-    model.undo()
-    assert_comments(
-        actual=model.comments(),
-        expected=[
-            [10, "type 1", "Word 1"],
-        ],
-    )
-
-    model.redo()
-    assert_comments(
-        actual=model.comments(),
-        expected=[
-            [10, "type 1", "Word 1"],
-            [25, "added 1", "Word Added 1"],
-        ],
-    )
-
-
-def test_merge_add_and_update_declined_because_of_other_command(make_model):
-    # noinspection PyArgumentList
-    model = make_model(set_comments=[])
-    model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
-
-    assert_comments(
-        actual=model.comments(),
-        expected=[
-            [10, "type 1", "Word 1"],
-        ],
-    )
-
-    model.add_row(25, "added 1")
-    assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", ""],
         ],
     )
 
-    model.update_time(1, new_time=24)
-    model.update_comment(1, "Word Added 1")
+    comments.update_comment(1, "Word Added 1")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+            [25, "added 1", "Word Added 1"],
+        ],
+    )
+
+    comments.undo()
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+        ],
+    )
+
+    comments.redo()
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+            [25, "added 1", "Word Added 1"],
+        ],
+    )
+
+
+def test_merge_add_and_update_declined_because_of_other_command(make_facade):
+    comments = make_facade(set_comments=[])
+    comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
+
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+        ],
+    )
+
+    comments.add_row(25, "added 1")
+    assert_comments(
+        actual=comments.comments(),
+        expected=[
+            [10, "type 1", "Word 1"],
+            [25, "added 1", ""],
+        ],
+    )
+
+    comments.update_time(1, new_time=24)
+    comments.update_comment(1, "Word Added 1")
+    assert_comments(
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [24, "added 1", "Word Added 1"],
         ],
     )
 
-    model.undo()
+    comments.undo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [24, "added 1", ""],
         ],
     )
 
-    model.undo()
+    comments.undo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", ""],
         ],
     )
 
-    model.redo()
+    comments.redo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [24, "added 1", ""],
         ],
     )
 
-    model.redo()
+    comments.redo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [24, "added 1", "Word Added 1"],
@@ -335,66 +332,65 @@ def test_merge_add_and_update_declined_because_of_other_command(make_model):
     )
 
 
-def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model):
-    # noinspection PyArgumentList
-    model = make_model(set_comments=[])
-    model.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
+def test_merge_add_and_update_declined_on_selection_of_other_comment(make_facade):
+    comments = make_facade(set_comments=[])
+    comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
         ],
     )
 
-    model.add_row(25, "added 1")
+    comments.add_row(25, "added 1")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", ""],
         ],
     )
 
-    model.selection.selectedRow = 0
-    model.update_comment(1, "Word Added 1")
+    comments.selection.selectedRow = 0
+    comments.update_comment(1, "Word Added 1")
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", "Word Added 1"],
         ],
     )
 
-    model.undo()
+    comments.undo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", ""],
         ],
     )
 
-    model.undo()
+    comments.undo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
         ],
     )
 
-    model.redo()
+    comments.redo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", ""],
         ],
     )
 
-    model.redo()
+    comments.redo()
     assert_comments(
-        actual=model.comments(),
+        actual=comments.comments(),
         expected=[
             [10, "type 1", "Word 1"],
             [25, "added 1", "Word Added 1"],
@@ -402,30 +398,28 @@ def test_merge_add_and_update_declined_on_selection_of_other_comment(make_model)
     )
 
 
-def test_undo_focus_phases_when_selected_row_not_visible(make_model):
-    # noinspection PyArgumentList
-    model = make_model(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
-    model.update_comment(0, "edited")
+def test_undo_focus_phases_when_selected_row_not_visible(make_facade):
+    comments = make_facade(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
+    comments.update_comment(0, "edited")
 
-    model.selection.selectedRowVisible = False
-    model.undo()
-    assert model.comment_at(0).comment == "edited"
+    comments.selection.selectedRowVisible = False
+    comments.undo()
+    assert comments.comment_at(0).comment == "edited"
 
-    model.selection.selectedRowVisible = True
-    model.undo()
-    assert model.comment_at(0).comment == "Word 1"
+    comments.selection.selectedRowVisible = True
+    comments.undo()
+    assert comments.comment_at(0).comment == "Word 1"
 
 
-def test_redo_focus_phases_when_selected_row_not_visible(make_model):
-    # noinspection PyArgumentList
-    model = make_model(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
-    model.update_comment(0, "edited")
-    model.undo()
+def test_redo_focus_phases_when_selected_row_not_visible(make_facade):
+    comments = make_facade(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
+    comments.update_comment(0, "edited")
+    comments.undo()
 
-    model.selection.selectedRowVisible = False
-    model.redo()
-    assert model.comment_at(0).comment == "Word 1"
+    comments.selection.selectedRowVisible = False
+    comments.redo()
+    assert comments.comment_at(0).comment == "Word 1"
 
-    model.selection.selectedRowVisible = True
-    model.redo()
-    assert model.comment_at(0).comment == "edited"
+    comments.selection.selectedRowVisible = True
+    comments.redo()
+    assert comments.comment_at(0).comment == "edited"
