@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+import threading
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, override
 
@@ -18,6 +19,7 @@ from mpvqc.services import (
     ApplicationPathsService,
     CommentsService,
     DesktopService,
+    DocumentBackupService,
     ExportService,
     FramelessWindowService,
     HostEnvironmentService,
@@ -28,6 +30,7 @@ from mpvqc.services import (
     VideoResizeService,
 )
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
+from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
@@ -68,6 +71,24 @@ class SettingsServiceOverride(SettingsService):
         super().__init__()
         # pyrefly: ignore [missing-override-decorator]
         self.last_directory_documents = QUrl.fromLocalFile(str(FIXTURES_DIR))
+        # pyrefly: ignore [missing-override-decorator]
+        self.backup_interval = 0
+
+
+class DocumentBackupServiceOverride(DocumentBackupService):
+    def __init__(self) -> None:
+        super().__init__()
+        self.write_count = 0
+        self.max_writes = 1
+        self._lock = threading.Lock()
+
+    @override
+    def backup(self) -> None:
+        with self._lock:
+            if self.write_count >= self.max_writes:
+                return
+            super().backup()
+            self.write_count += 1
 
 
 class PlayerServiceOverride(PlayerService):
@@ -190,11 +211,14 @@ class DesktopServiceOverride(DesktopService):
 
 
 def configure_injections() -> None:
+    MpvqcBackupTimerViewModel.MIN_INTERVAL_MS = 50
+
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(CommentsService, CommentsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
+        binder.bind_to_constructor(DocumentBackupService, DocumentBackupServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
         binder.bind_to_constructor(FramelessWindowService, FramelessWindowServiceOverride)
         binder.bind_to_constructor(HostEnvironmentService, HostEnvironmentServiceOverride)

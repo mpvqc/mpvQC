@@ -396,6 +396,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcCommentListKeyHandler.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableUtility.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_Backup.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_CommentTypes.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_ContextMenu.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_EditingComment.qml",

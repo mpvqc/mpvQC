@@ -5,13 +5,21 @@
 import os
 import uuid
 from pathlib import Path
+from zipfile import ZipFile
 
 import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
-from mpvqc.services import ApplicationPathsService, DesktopService, PlayerService, SettingsService, StateService
+from mpvqc.services import (
+    ApplicationPathsService,
+    DesktopService,
+    DocumentBackupService,
+    PlayerService,
+    SettingsService,
+    StateService,
+)
 from testqml import import_wizard_fixtures
 from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections, rebind_main_window
 
@@ -140,6 +148,22 @@ class MpvqcTestBridge(QObject):
     def openedDesktopUrls(self) -> list[str]:
         urls = getattr(inject.instance(DesktopService), "opened_urls", ())
         return [url.toString() for url in urls]
+
+    @Slot(result=int)
+    def backupWriteCount(self) -> int:
+        return getattr(inject.instance(DocumentBackupService), "write_count", 0)
+
+    @Slot(str, result=bool)
+    def backupArchiveAnyEntryContains(self, text: str) -> bool:
+        backup_dir = inject.instance(ApplicationPathsService).dir_backup
+        if not backup_dir.is_dir():
+            return False
+        for archive in backup_dir.glob("*.zip"):
+            with ZipFile(archive) as zf:
+                for name in zf.namelist():
+                    if text in zf.read(name).decode("utf-8", errors="replace"):
+                        return True
+        return False
 
     @Slot(result=QUrl)
     def mpvConfPath(self) -> QUrl:
