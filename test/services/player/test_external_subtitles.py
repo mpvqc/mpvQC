@@ -34,7 +34,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_1),
+                    "external-filename": SUB_1,
                 },
             ],
             expected_paths=(SUB_1,),
@@ -45,17 +45,17 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_2),
+                    "external-filename": SUB_2,
                 },
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_1),
+                    "external-filename": SUB_1,
                 },
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_3),
+                    "external-filename": SUB_3,
                 },
             ],
             expected_paths=(SUB_1, SUB_2, SUB_3),
@@ -66,7 +66,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_1),
+                    "external-filename": SUB_1,
                 },
                 {
                     "type": "sub",
@@ -76,7 +76,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_2),
+                    "external-filename": SUB_2,
                 },
             ],
             expected_paths=(SUB_1, SUB_2),
@@ -87,7 +87,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_1),
+                    "external-filename": SUB_1,
                 },
                 {
                     "type": "audio",
@@ -97,7 +97,7 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_2),
+                    "external-filename": SUB_2,
                 },
             ],
             expected_paths=(SUB_1, SUB_2),
@@ -108,12 +108,12 @@ SUB_3 = str(SUBTITLE_DIR / "subtitle3.ass")
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_1),
+                    "external-filename": SUB_1,
                 },
                 {
                     "type": "sub",
                     "external": True,
-                    "external-filename": str(SUB_1),
+                    "external-filename": SUB_1,
                 },
             ],
             expected_paths=(SUB_1,),
