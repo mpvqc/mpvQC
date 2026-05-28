@@ -117,12 +117,12 @@ TestCase {
 
         const textField = findChild(dialog, "commentTypeTextField");
         verify(textField, "commentTypeTextField not found");
-        const acceptInputButton = findChild(dialog, "commentTypeAcceptInputButton");
-        verify(acceptInputButton, "commentTypeAcceptInputButton not found");
+        const addButton = findChild(dialog, "commentTypeAddButton");
+        verify(addButton, "commentTypeAddButton not found");
         textField.forceActiveFocus();
         textField.text = newType;
-        tryVerify(() => acceptInputButton.enabled);
-        mouseClick(acceptInputButton);
+        tryVerify(() => addButton.enabled);
+        mouseClick(addButton);
         tryVerify(() => listView.count === 2);
 
         it.dialog.accept(dialog);
