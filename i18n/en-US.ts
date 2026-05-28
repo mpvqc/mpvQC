@@ -174,11 +174,6 @@
         <source>New comment type</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Edit &quot;%1&quot;</source>
-        <extracomment>%1 will be the comment type being edited</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ExportSettingsDialog</name>

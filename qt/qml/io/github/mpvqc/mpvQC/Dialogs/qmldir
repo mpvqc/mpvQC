@@ -9,7 +9,6 @@ MpvqcDialogLoader MpvqcDialogLoader.qml
 internal MpvqcAboutDialog MpvqcAboutDialog.qml
 internal MpvqcAppearanceDialog MpvqcAppearanceDialog.qml
 internal MpvqcBackupDialog MpvqcBackupDialog.qml
-internal MpvqcCommentTypesDialog MpvqcCommentTypesDialog.qml
 internal MpvqcEditInputDialog MpvqcEditInputDialog.qml
 internal MpvqcEditMpvDialog MpvqcEditMpvDialog.qml
 internal MpvqcExportSettingsDialog MpvqcExportSettingsDialog.qml
