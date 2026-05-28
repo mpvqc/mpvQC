@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from functools import cached_property
+
 from mpvqc.build import Dependency, get_build_info
 
 
@@ -41,7 +43,7 @@ class BuildInfoService:
     def dev_dependencies(self) -> tuple[Dependency, ...]:
         return self._build_info.dev_dependencies
 
-    @property
+    @cached_property
     def combined_version_info(self) -> str:
         if self.is_release:
             return f"{self.version} - {self.commit}"

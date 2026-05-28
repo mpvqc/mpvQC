@@ -26,8 +26,8 @@ class Unresolved:
     incoming_comment_count: int
 
 
-Resolved = Merge | Replace
-Concern = Resolved | Unresolved
+type Resolved = Merge | Replace
+type Concern = Resolved | Unresolved
 
 
 def resolve(scan: ScanResult, *, has_existing_comments: bool) -> Concern:

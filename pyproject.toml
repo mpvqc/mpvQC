@@ -412,6 +412,7 @@ files = [
     "qt/qml/MpvqcStyle/ToolTip.qml",
     "testqml/__init__.py",
     "testqml/bridge.py",
+    "testqml/fixtures/portable-root/appdata/backups/.keep",
     "testqml/fixtures/portable-root/appdata/export-templates/error.jinja",
     "testqml/fixtures/portable-root/appdata/export-templates/working.jinja",
     "testqml/fixtures/portable-root/appdata/input.conf",

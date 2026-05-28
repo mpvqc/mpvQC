@@ -31,8 +31,8 @@ class Unresolved:
     candidates: tuple[Path, ...]
 
 
-Resolved = Load | Skip
-Concern = Resolved | Unresolved
+type Resolved = Load | Skip
+type Concern = Resolved | Unresolved
 
 
 def resolve(scan: ScanResult, video_concern: video.Concern) -> Concern:
