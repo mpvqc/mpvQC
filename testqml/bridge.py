@@ -98,7 +98,7 @@ class MpvqcTestBridge(QObject):
 
     @Property(bool)
     def saved(self) -> bool:
-        return bool(inject.instance(StateService).saved)
+        return inject.instance(StateService).saved
 
     @Slot(str, result=QUrl)
     def importArtifact(self, name: str) -> QUrl:

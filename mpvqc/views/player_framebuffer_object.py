@@ -28,7 +28,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 def get_process_address(_: NoneType, name: bytes) -> int:
     current_gl_context = QOpenGLContext.currentContext()
     if current_gl_context:
-        return int(current_gl_context.getProcAddress(name))
+        return current_gl_context.getProcAddress(name)
     return 0
 
 
@@ -79,6 +79,6 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
             width = int(rect.width() * factor)
             height = int(rect.height() * factor)
-            fbo = int(self.framebufferObject().handle())
+            fbo = self.framebufferObject().handle()
 
             self._ctx.render(flip_y=False, opengl_fbo={"w": width, "h": height, "fbo": fbo})

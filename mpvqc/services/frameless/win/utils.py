@@ -124,7 +124,7 @@ def find_window(hwnd) -> QWindow | None:
 
     hwnd = int(hwnd)
     for window in windows:
-        if window and int(window.winId()) == hwnd:
+        if window and window.winId() == hwnd:
             return window
     return None
 
