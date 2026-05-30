@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -18,6 +19,7 @@ MpvqcDialog {
     contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("ExportSettingsDialog", "Export Settings")
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
     contentItem: ColumnLayout {
         spacing: 10

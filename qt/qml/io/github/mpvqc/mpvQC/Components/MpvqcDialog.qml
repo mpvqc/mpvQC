@@ -21,7 +21,6 @@ Dialog {
     dim: false
     z: 2
     closePolicy: Popup.CloseOnEscape
-    standardButtons: Dialog.Ok
 
     Binding {
         when: root.popupType === Popup.Window

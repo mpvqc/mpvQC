@@ -24,6 +24,7 @@ MpvqcDialog {
     contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("BackupDialog", "Backup Settings")
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
     contentItem: ColumnLayout {
 

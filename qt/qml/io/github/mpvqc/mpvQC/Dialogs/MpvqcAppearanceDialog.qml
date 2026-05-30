@@ -39,6 +39,7 @@ MpvqcDialog {
     contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("AppearanceDialog", "Appearance")
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
     component SelectionDelegate: ItemDelegate {
         id: delegateRoot

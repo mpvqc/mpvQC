@@ -19,6 +19,7 @@ MpvqcDialog {
     contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
+    standardButtons: Dialog.Ok | Dialog.Cancel
 
     contentItem: ColumnLayout {
         spacing: 10
