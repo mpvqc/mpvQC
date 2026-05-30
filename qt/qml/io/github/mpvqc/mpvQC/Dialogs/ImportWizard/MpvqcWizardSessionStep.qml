@@ -33,13 +33,13 @@ ColumnLayout {
 
         model: [
             {
-                mode: MpvqcImportWizardSessionMode.MERGE,
+                mode: MpvqcImportWizardSessionMode.SessionMode.MERGE,
                 //: Merge option label — keeps the existing comments and appends the incoming ones
                 text: qsTranslate("ImportWizardDialog", "Add to your current comments"),
                 objectName: "mergeRadio"
             },
             {
-                mode: MpvqcImportWizardSessionMode.REPLACE,
+                mode: MpvqcImportWizardSessionMode.SessionMode.REPLACE,
                 //: Replace option label — discards the existing comments before importing the incoming ones
                 text: qsTranslate("ImportWizardDialog", "Start fresh with the new comments"),
                 objectName: "replaceRadio"

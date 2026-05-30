@@ -53,7 +53,6 @@ MpvqcDialog {
 
         width: itemSize
         height: itemSize
-        opacity: 0
 
         background: Rectangle {
             x: delegateRoot.borderSize
@@ -72,11 +71,13 @@ MpvqcDialog {
         }
 
         SequentialAnimation on opacity {
+            PropertyAction {
+                value: 0
+            }
             PauseAnimation {
                 duration: Math.max(0, delegateRoot.index * root.animations.staggerInterval)
             }
             NumberAnimation {
-                from: 0
                 to: 1
                 duration: root.animations.appearDuration
                 easing.type: Easing.OutCubic
@@ -111,7 +112,6 @@ MpvqcDialog {
         height: size
         color: highlightColor
         radius: Material.SmallScale
-        opacity: 0
 
         border {
             width: borderWidth
@@ -131,11 +131,13 @@ MpvqcDialog {
         }
 
         SequentialAnimation on opacity {
+            PropertyAction {
+                value: 0
+            }
             PauseAnimation {
                 duration: Math.max(0, _selectionHighlight.appearIndex * root.animations.staggerInterval)
             }
             NumberAnimation {
-                from: 0
                 to: 1
                 duration: root.animations.appearDuration
                 easing.type: Easing.OutCubic

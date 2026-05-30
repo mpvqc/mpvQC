@@ -47,7 +47,7 @@ TestCase {
         return spy;
     }
 
-    readonly property var allKinds: [MpvqcImportWizardStepKind.ERRORS, MpvqcImportWizardStepKind.SESSION, MpvqcImportWizardStepKind.VIDEO, MpvqcImportWizardStepKind.SUBTITLES,]
+    readonly property var allKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO, MpvqcImportWizardStepKind.StepKind.SUBTITLES,]
 
     function collect(root: Item, objectName: string): list<Item> {
         const found = [];
@@ -78,12 +78,12 @@ TestCase {
             },
             {
                 tag: "one",
-                kinds: [MpvqcImportWizardStepKind.ERRORS],
+                kinds: [MpvqcImportWizardStepKind.StepKind.ERRORS],
                 expectVisible: false
             },
             {
                 tag: "two",
-                kinds: [MpvqcImportWizardStepKind.ERRORS, MpvqcImportWizardStepKind.VIDEO],
+                kinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.VIDEO],
                 expectVisible: true
             },
             {
@@ -127,7 +127,7 @@ TestCase {
 
     function test_activeStateIconCountsReflectStepState(data): void {
         const indicator = makeControl({
-            stepKinds: [MpvqcImportWizardStepKind.ERRORS, MpvqcImportWizardStepKind.SESSION, MpvqcImportWizardStepKind.VIDEO],
+            stepKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO],
             currentStepIndex: data.currentStepIndex
         });
         waitForRendering(indicator);
@@ -155,7 +155,7 @@ TestCase {
 
     function test_connectorHiddenOnLastEntryOnly(): void {
         const indicator = makeControl({
-            stepKinds: [MpvqcImportWizardStepKind.ERRORS, MpvqcImportWizardStepKind.SESSION, MpvqcImportWizardStepKind.VIDEO],
+            stepKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO],
             currentStepIndex: 0
         });
         waitForRendering(indicator);

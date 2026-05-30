@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls.Material // qmllint disable unused-imports
 import QtTest
 
 TestCase {

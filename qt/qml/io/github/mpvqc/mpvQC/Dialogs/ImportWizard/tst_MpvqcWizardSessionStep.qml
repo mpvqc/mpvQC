@@ -26,7 +26,7 @@ TestCase {
 
             anchors.fill: parent
 
-            property int sessionMode: MpvqcImportWizardSessionMode.MERGE
+            property int sessionMode: MpvqcImportWizardSessionMode.SessionMode.MERGE
             property int incomingCount: 0
 
             viewModel: QtObject {
@@ -55,16 +55,16 @@ TestCase {
         const step = makeControl();
         const replace = findChild(step, "replaceRadio");
         mouseClick(replace);
-        compare(step.viewModel.mode, MpvqcImportWizardSessionMode.REPLACE);
+        compare(step.viewModel.mode, MpvqcImportWizardSessionMode.SessionMode.REPLACE);
     }
 
     function test_togglingMergeUpdatesViewModelMode(): void {
         const step = makeControl({
-            sessionMode: MpvqcImportWizardSessionMode.REPLACE
+            sessionMode: MpvqcImportWizardSessionMode.SessionMode.REPLACE
         });
         const merge = findChild(step, "mergeRadio");
         mouseClick(merge);
-        compare(step.viewModel.mode, MpvqcImportWizardSessionMode.MERGE);
+        compare(step.viewModel.mode, MpvqcImportWizardSessionMode.SessionMode.MERGE);
     }
 
     function test_headerReflectsIncomingCount(): void {
