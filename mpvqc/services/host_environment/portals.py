@@ -105,31 +105,34 @@ class SettingsPortal:
             return None
 
         try:
-            # ReadOne() is preferred for version 2+
-            if portal_version >= 2:  # noqa: PLR2004
-                method_name = "ReadOne"
-            else:
-                method_name = "Read"
-                logger.debug("Using deprecated Read() method (portal version: %s)", portal_version)
-
-            reply = self._interface.call(method_name, namespace, key)
-
-            if reply.type() == QDBusMessage.MessageType.ErrorMessage:
-                logger.debug("D-Bus error reading %s %s: %s", namespace, key, reply.errorMessage())
-                return None
-
-            dbus_variant = reply.arguments()[0]
-
-            if portal_version >= 2:  # noqa: SIM108,PLR2004
-                value = dbus_variant.variant()
-            else:
-                value = dbus_variant.variant().variant()
-
-            if value is None:
-                logger.debug("Portal setting %s %s returned None", namespace, key)
-                return None
-
-            return str(value)
+            return self._read_setting(self._interface, namespace, key, portal_version)
         except Exception:
             logger.exception("Exception reading portal setting %s %s", namespace, key)
             return None
+
+    def _read_setting(self, interface: QDBusInterface, namespace: str, key: str, portal_version: int) -> str | None:
+        # ReadOne() is preferred for version 2+
+        if portal_version >= 2:  # noqa: PLR2004
+            method_name = "ReadOne"
+        else:
+            method_name = "Read"
+            logger.debug("Using deprecated Read() method (portal version: %s)", portal_version)
+
+        reply = interface.call(method_name, namespace, key)
+
+        if reply.type() == QDBusMessage.MessageType.ErrorMessage:
+            logger.debug("D-Bus error reading %s %s: %s", namespace, key, reply.errorMessage())
+            return None
+
+        dbus_variant = reply.arguments()[0]
+
+        if portal_version >= 2:  # noqa: SIM108,PLR2004
+            value = dbus_variant.variant()
+        else:
+            value = dbus_variant.variant().variant()
+
+        if value is None:
+            logger.debug("Portal setting %s %s returned None", namespace, key)
+            return None
+
+        return str(value)
