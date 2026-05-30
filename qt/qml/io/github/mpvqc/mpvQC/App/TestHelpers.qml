@@ -117,14 +117,14 @@ QtObject {
     }
 
     readonly property var dialog: QtObject {
-        function accept(dialog: QtObject): void {
+        function accept(dialog: var): void {
             dialog.accepted();
             dialog.close();
             root.bridge.waitForBackgroundJobs();
             root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
         }
 
-        function reject(dialog: QtObject): void {
+        function reject(dialog: var): void {
             dialog.rejected();
             dialog.close();
             root.bridge.waitForBackgroundJobs();

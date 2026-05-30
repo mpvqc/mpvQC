@@ -113,13 +113,13 @@ StackView {
 
     function _stepComponentFor(kind: int): Component {
         switch (kind) {
-        case MpvqcImportWizardStepKind.ERRORS:
+        case MpvqcImportWizardStepKind.StepKind.ERRORS:
             return _errorsStep;
-        case MpvqcImportWizardStepKind.SESSION:
+        case MpvqcImportWizardStepKind.StepKind.SESSION:
             return _sessionStep;
-        case MpvqcImportWizardStepKind.VIDEO:
+        case MpvqcImportWizardStepKind.StepKind.VIDEO:
             return _videoStep;
-        case MpvqcImportWizardStepKind.SUBTITLES:
+        case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
             return _subtitlesStep;
         }
         return null;

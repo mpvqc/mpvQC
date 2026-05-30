@@ -17,8 +17,8 @@ import QtQuick.Controls.Material
 Item {
     id: root
 
-    required property Loader editLoader
-    required property Loader contextMenuLoader
+    required property MpvqcEditLoader editLoader
+    required property MpvqcContextMenuLoader contextMenuLoader
 
     parent: Overlay.overlay
     anchors.fill: parent
@@ -30,10 +30,10 @@ Item {
 
         onPressed: event => {
             event.accepted = true;
-            if (root.editLoader.isEditingCommentType && root.editLoader.item) {
-                root.editLoader.item.close();
-            } else if (root.contextMenuLoader.active && root.contextMenuLoader.item) {
-                root.contextMenuLoader.item.close();
+            if (root.editLoader.isEditingCommentType) {
+                root.editLoader.abortEdit();
+            } else if (root.contextMenuLoader.active) {
+                root.contextMenuLoader.dismiss();
             }
         }
     }

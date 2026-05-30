@@ -182,7 +182,7 @@ TestCase {
         }
 
         function sessionMode(dlg: QtObject, mode: string): void {
-            const expected = mode === "replace" ? MpvqcImportWizardSessionMode.REPLACE : MpvqcImportWizardSessionMode.MERGE;
+            const expected = mode === "replace" ? MpvqcImportWizardSessionMode.SessionMode.REPLACE : MpvqcImportWizardSessionMode.SessionMode.MERGE;
             testCase.tryCompare(dlg.viewModel.sessionStepViewModel, "mode", expected);
             const radio = testCase.find.sessionRadio(dlg, mode);
             testCase.tryVerify(() => radio.selected === true);

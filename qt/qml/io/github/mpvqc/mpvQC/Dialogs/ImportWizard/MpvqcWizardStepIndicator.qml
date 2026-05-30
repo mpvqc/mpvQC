@@ -99,16 +99,16 @@ Item {
                         horizontalAlignment: Text.AlignLeft
                         text: {
                             switch (_entry.modelData) {
-                            case MpvqcImportWizardStepKind.ERRORS:
+                            case MpvqcImportWizardStepKind.StepKind.ERRORS:
                                 //: Step indicator label for the errors step
                                 return qsTranslate("ImportWizardDialog", "Errors");
-                            case MpvqcImportWizardStepKind.SESSION:
+                            case MpvqcImportWizardStepKind.StepKind.SESSION:
                                 //: Step indicator label for the session step
                                 return qsTranslate("ImportWizardDialog", "Session");
-                            case MpvqcImportWizardStepKind.VIDEO:
+                            case MpvqcImportWizardStepKind.StepKind.VIDEO:
                                 //: Step indicator label for the video step
                                 return qsTranslate("ImportWizardDialog", "Video");
-                            case MpvqcImportWizardStepKind.SUBTITLES:
+                            case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
                                 //: Step indicator label for the subtitles step
                                 return qsTranslate("ImportWizardDialog", "Subtitles");
                             }
