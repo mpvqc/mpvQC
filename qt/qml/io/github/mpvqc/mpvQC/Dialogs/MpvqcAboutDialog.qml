@@ -35,6 +35,7 @@ MpvqcDialog {
     readonly property int rowSpacing: 10
 
     contentHeight: Math.min(720, MpvqcWindowUtility.appHeight * 0.65)
+    standardButtons: Dialog.Close
 
     contentItem: ScrollView {
         readonly property bool isVerticalScollBarShown: contentHeight > root.contentHeight
