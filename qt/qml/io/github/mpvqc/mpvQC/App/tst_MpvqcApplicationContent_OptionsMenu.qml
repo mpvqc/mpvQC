@@ -85,9 +85,7 @@ TestCase {
 
         tryVerify(() => it.settings.themeIdentifier() !== initialTheme);
 
-        dialog.reject();
-        dialog.close();
-        it.bridge.waitForBackgroundJobs();
+        it.dialog.reject(dialog);
 
         tryVerify(() => it.settings.themeIdentifier() === initialTheme);
         tryVerify(() => it.settings.primaryColor() === initialColor);
@@ -239,6 +237,29 @@ TestCase {
         tryVerify(() => it.settings.backupInterval() === newInterval);
     }
 
+    function test_backupDialog_reject_discardsSettings(): void {
+        const control = it.makeControl();
+
+        const initialEnabled = it.settings.backupEnabled();
+        const initialInterval = it.settings.backupInterval();
+
+        it.menu.trigger(control, "optionsMenu", "openBackupSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "backupDialog");
+
+        const switchRow = findChild(dialog, "backupEnabledRow");
+        verify(switchRow, "backupEnabledRow not found");
+        switchRow.checked = !initialEnabled;
+
+        const intervalRow = findChild(dialog, "backupIntervalRow");
+        verify(intervalRow, "backupIntervalRow not found");
+        intervalRow.value = initialInterval + 30;
+
+        it.dialog.reject(dialog);
+
+        verify(it.settings.backupEnabled() === initialEnabled, "backup enabled should be unchanged after reject");
+        verify(it.settings.backupInterval() === initialInterval, "backup interval should be unchanged after reject");
+    }
+
     function test_exportSettingsDialog_drivesAllSettings(): void {
         const control = it.makeControl();
 
@@ -276,6 +297,29 @@ TestCase {
         tryVerify(() => it.settings.writeHeaderSubtitles() === !initial.subtitles);
     }
 
+    function test_exportSettingsDialog_reject_discardsSettings(): void {
+        const control = it.makeControl();
+
+        const initialNickname = it.settings.nickname();
+        const initialDate = it.settings.writeHeaderDate();
+
+        it.menu.trigger(control, "optionsMenu", "openExportSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "exportSettingsDialog");
+
+        const nicknameRow = findChild(dialog, "exportNicknameRow");
+        verify(nicknameRow, "exportNicknameRow not found");
+        nicknameRow.input = initialNickname + "-edited";
+
+        const dateRow = findChild(dialog, "exportWriteDateRow");
+        verify(dateRow, "exportWriteDateRow not found");
+        dateRow.checked = !initialDate;
+
+        it.dialog.reject(dialog);
+
+        verify(it.settings.nickname() === initialNickname, "nickname should be unchanged after reject");
+        verify(it.settings.writeHeaderDate() === initialDate, "write header date should be unchanged after reject");
+    }
+
     function test_importSettingsDialog_changeOption_persistsOnAccept(): void {
         const control = it.makeControl();
         const initial = it.settings.importFoundVideo();
@@ -292,6 +336,24 @@ TestCase {
         it.dialog.accept(dialog);
         tryVerify(() => it.settings.importFoundVideo() === newIndex);
         verify(it.settings.importFoundVideo() !== initial, "setting should differ from initial value");
+    }
+
+    function test_importSettingsDialog_reject_discardsSettings(): void {
+        const control = it.makeControl();
+        const initial = it.settings.importFoundVideo();
+
+        it.menu.trigger(control, "optionsMenu", "openImportSettingsDialogMenuItem");
+        const dialog = it.find.openedDialog(control, "importSettingsDialog");
+
+        const comboBox = findChild(dialog, "importFoundVideoComboBox");
+        verify(comboBox, "importFoundVideoComboBox not found");
+        const newIndex = comboBox.currentIndex === 0 ? comboBox.count - 1 : 0;
+        verify(newIndex !== comboBox.currentIndex, "expected to pick a different option");
+        comboBox.activated(newIndex);
+
+        it.dialog.reject(dialog);
+
+        verify(it.settings.importFoundVideo() === initial, "import found video should be unchanged after reject");
     }
 
     function test_editMpvDialog_resetEditAcceptAndLinkActivation(): void {

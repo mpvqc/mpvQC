@@ -123,6 +123,13 @@ QtObject {
             root.bridge.waitForBackgroundJobs();
             root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
         }
+
+        function reject(dialog: QtObject): void {
+            dialog.rejected();
+            dialog.close();
+            root.bridge.waitForBackgroundJobs();
+            root.testCase.wait(root.bridge.delayMs); // TODO: replace with a deterministic wait
+        }
     }
 
     readonly property var comment: QtObject {
