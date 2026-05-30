@@ -128,13 +128,18 @@ class PlayerService(QObject):
             raise RuntimeError(msg)
         return self._mpv
 
-    def create_render_context(self, get_proc_address: Callable) -> MpvRenderContext:
+    def create_render_context(
+        self,
+        get_proc_address: Callable,
+        display_params: dict[str, int],
+    ) -> MpvRenderContext:
         from mpv import MpvGlGetProcAddressFn, MpvRenderContext
 
         self._render_context = render_context = MpvRenderContext(
             mpv=self._mpv_player,
             api_type="opengl",
             opengl_init_params={"get_proc_address": MpvGlGetProcAddressFn(get_proc_address)},
+            **display_params,
         )
         return render_context
 
