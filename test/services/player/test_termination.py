@@ -58,7 +58,7 @@ def test_create_render_context_stores_the_handle(player_service):
         patch("mpv.MpvRenderContext", return_value=sentinel),
         patch("mpv.MpvGlGetProcAddressFn", side_effect=lambda f: f),
     ):
-        result = player_service.create_render_context(get_proc_address=lambda *_: 0)
+        result = player_service.create_render_context(get_proc_address=lambda *_: 0, display_params={})
 
     assert result is sentinel
     assert player_service._render_context is sentinel
