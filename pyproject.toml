@@ -16,7 +16,7 @@ classifiers = [
 ]
 dependencies = [
     "Jinja2>=3.1.6",
-    "PySide6-Essentials==6.11.0",
+    "PySide6-Essentials==6.11.1",
     "inject>=5.3.0",
     "mpv>=1.0.8",
     "pywin32>=311; sys_platform == 'win32'",
@@ -30,10 +30,10 @@ Repository = "https://github.com/mpvqc/mpvQC"
 [dependency-groups]
 dev = [
     "materialyoucolor>=3.0.2",
-    "prek>=0.3.13",
-    "pyrefly>=0.63.1",
+    "prek>=0.4.3",
+    "pyrefly>=1.0.0",
     "pytest>=9.0.3",
-    "ruff>=0.15.12",
+    "ruff>=0.15.15",
 ]
 
 [tool.pyside6-project]
