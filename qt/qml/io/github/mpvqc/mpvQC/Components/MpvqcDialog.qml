@@ -7,6 +7,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Material
 
+import io.github.mpvqc.mpvQC.Utility
+
 Dialog {
     id: root
 
@@ -14,7 +16,7 @@ Dialog {
 
     popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
     anchors.centerIn: Overlay.overlay
-    contentWidth: 370
+    contentWidth: MpvqcConstants.smallDialogContentWidth
     modal: true
     dim: false
     z: 2

@@ -21,7 +21,7 @@ MpvqcDialog {
     readonly property int minBackupInterval: 15
     readonly property int maxBackupInterval: 5 * 60
 
-    contentHeight: 450
+    contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("BackupDialog", "Backup Settings")
 

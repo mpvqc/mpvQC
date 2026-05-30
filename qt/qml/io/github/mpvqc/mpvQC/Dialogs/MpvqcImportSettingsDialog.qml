@@ -8,6 +8,7 @@ import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
 
 MpvqcDialog {
     id: root
@@ -15,7 +16,7 @@ MpvqcDialog {
 
     readonly property MpvqcImportSettingsDialogViewModel viewModel: MpvqcImportSettingsDialogViewModel {}
 
-    contentHeight: 450
+    contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("ImportSettingsDialog", "Import Settings")
 

@@ -10,6 +10,7 @@ import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
+import io.github.mpvqc.mpvQC.Utility
 
 MpvqcDialog {
     id: root
@@ -17,7 +18,7 @@ MpvqcDialog {
 
     readonly property MpvqcCommentTypesDialogViewModel viewModel: MpvqcCommentTypesDialogViewModel {}
 
-    contentHeight: 450
+    contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("CommentTypesDialog", "Comment Types")
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset

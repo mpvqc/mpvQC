@@ -36,7 +36,7 @@ MpvqcDialog {
         readonly property int staggerInterval: 15
     }
 
-    contentHeight: 450
+    contentHeight: MpvqcConstants.smallDialogContentHeight
 
     title: qsTranslate("AppearanceDialog", "Appearance")
 
