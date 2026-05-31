@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from threading import Lock
 from typing import TYPE_CHECKING, cast, override
 
 import inject
@@ -52,19 +53,29 @@ def get_display_params() -> dict[str, int]:
 
 @QmlElement
 class MpvqcMpvFrameBufferObjectPyObject(QQuickFramebufferObject):
+    _player = inject.attr(PlayerService)
+
     update_requested = Signal()
 
     def __init__(self) -> None:
         super().__init__()
+        self._renderer: Renderer | None = None
         self.update_requested.connect(self.do_update)
+        self._player.set_shutdown_hook(self._release)
 
     @Slot()
     def do_update(self) -> None:
         self.update()
 
+    def _release(self) -> None:
+        if self._renderer is not None:
+            self._renderer.release()
+        self._player.set_shutdown_hook(None)
+
     @override
     def createRenderer(self) -> QQuickFramebufferObject.Renderer:
-        return Renderer(self)
+        self._renderer = r = Renderer(self)
+        return r
 
 
 class Renderer(QQuickFramebufferObject.Renderer):
@@ -75,6 +86,7 @@ class Renderer(QQuickFramebufferObject.Renderer):
         super().__init__()
         self._parent = parent
         self._ctx: MpvRenderContext | None = None
+        self._lock = Lock()
         self._main_window.display_zoom_factor_changed.connect(self._on_zoom_factor_changed)
 
     def _on_zoom_factor_changed(self) -> None:
@@ -94,7 +106,10 @@ class Renderer(QQuickFramebufferObject.Renderer):
 
     @override
     def render(self) -> None:
-        if self._ctx:
+        with self._lock:
+            if self._ctx is None:
+                return
+
             factor: float = self._main_window.display_zoom_factor
             rect = self._parent.size()
 
@@ -103,3 +118,9 @@ class Renderer(QQuickFramebufferObject.Renderer):
             fbo = self.framebufferObject().handle()
 
             self._ctx.render(flip_y=False, opengl_fbo={"w": width, "h": height, "fbo": fbo})
+
+    def release(self) -> None:
+        with self._lock:
+            if self._ctx is not None:
+                self._ctx.free()
+                self._ctx = None
