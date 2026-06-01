@@ -13,7 +13,7 @@ https://mpvqc.github.io
 
 ______________________________________________________________________
 
-<img alt="Logo" src=".github/screenshot.png" width="960" height="858"/>
+<img alt="Logo" src=".github/screenshot.webp" width="960" height="858"/>
 
 ______________________________________________________________________
 
@@ -34,6 +34,8 @@ This project uses multiple licenses for different parts:
 - **Build scripts and helper code**: [MIT](LICENSES/MIT.txt)
 - **Fonts (Noto Sans)**: [SIL Open Font License 1.1](LICENSES/OFL-1.1.txt)
 - **Icons (Google Material Icons/Symbols)**: [Apache-2.0](LICENSES/Apache-2.0.txt)
+
+Bundled runtime dependencies (such as libmpv and PySide6) carry their own licenses; see [NOTICE.txt](NOTICE.txt) for the full third-party breakdown.
 
 Each source file usually contains an SPDX license header.
 If a file does not have a header, its licensing information can be found in our [REUSE.toml](REUSE.toml).

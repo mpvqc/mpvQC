@@ -44,7 +44,10 @@ Run the formatter before committing.
 
 - [ ] Splash updated
 - [ ] README.md updated
-- [ ] NOTICE.txt verified: All dependencies match `pyproject.toml`
+- [ ] NOTICE.txt verified:
+  - [ ] All dependencies match `pyproject.toml`
+  - [ ] License identifiers match each package's actual metadata, not the project's umbrella license
+  - [ ] `REUSE.toml` aggregate and `LICENSES/` texts are in sync: `reuse lint`
 - [ ] New screenshots created (both light and dark themes) for Website and Flatpak
 - [ ] Release notes drafted
 
