@@ -63,12 +63,12 @@ Jinja2
 python-mpv
   Description: Python interface to the mpv media player
   Homepage: https://github.com/jaseg/python-mpv
-  License: GPL-3.0-or-later
-  License File: GPL-3.0-or-later.txt
+  License: GPL-2.0-or-later
+  License File: GPL-2.0-or-later.txt
   Platforms: Linux, Windows
 
 PySide6
-  Description: Official Python bindings for Qt
+  Description: Official Python bindings for Qt, including the Shiboken6 binding runtime
   Homepage: https://wiki.qt.io/Qt_for_Python
   License: LGPL-3.0-only
   License File: LGPL-3.0-only.txt
@@ -87,8 +87,8 @@ Bundled Libraries
 libmpv (libmpv-2.dll)
   Description: mpv media player library
   Homepage: https://mpv.io
-  License: GPL-3.0-or-later
-  License File: GPL-3.0-or-later.txt
+  License: GPL-2.0-or-later
+  License File: GPL-2.0-or-later.txt
 
 
 Additional Information
