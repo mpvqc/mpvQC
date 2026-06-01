@@ -13,7 +13,7 @@ https://mpvqc.github.io
 
 ______________________________________________________________________
 
-<img alt="Logo" src=".github/screenshot.png" width="960" height="858"/>
+<img alt="Logo" src=".github/screenshot.webp" width="960" height="858"/>
 
 ______________________________________________________________________
 

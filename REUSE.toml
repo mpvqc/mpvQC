@@ -17,7 +17,7 @@ SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = ".github/screenshot.png"
+path = ".github/screenshot.webp"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
