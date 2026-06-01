@@ -24,8 +24,8 @@ class Language:
 
 
 LANGUAGES = (
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "German")), identifier="de-DE"),
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "English")), identifier="en-US"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "German")), identifier="de-DE", translator=""),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "English")), identifier="en-US", translator=""),
     Language(language=str(QT_TRANSLATE_NOOP("Languages", "Spanish")), identifier="es-MX", translator="CiferrC"),
     Language(language=str(QT_TRANSLATE_NOOP("Languages", "Hebrew")), identifier="he-IL", translator="cN3rd"),
     Language(language=str(QT_TRANSLATE_NOOP("Languages", "Italian")), identifier="it-IT", translator="maddo"),
