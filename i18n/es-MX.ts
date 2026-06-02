@@ -284,116 +284,116 @@
     <message>
         <source>Back</source>
         <extracomment>Button that returns the import wizard to the previous step</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Atrás</translation>
     </message>
     <message>
         <source>Cancel import</source>
         <extracomment>Button that aborts the import wizard and discards any parsed comments</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cancelar importación</translation>
     </message>
     <message>
         <source>Close</source>
         <extracomment>Primary button when the wizard only lists unreadable documents</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cerrar</translation>
     </message>
     <message>
         <source>Confirm import</source>
         <extracomment>Primary button finalizing the import on the last wizard step</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Confirmar importación</translation>
     </message>
     <message>
         <source>Confirm</source>
         <extracomment>Primary button on the last step when nothing valid has been resolved yet</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Confirmar</translation>
     </message>
     <message>
         <source>Errors</source>
         <extracomment>Step indicator label for the errors step</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Errores</translation>
     </message>
     <message>
         <source>Session</source>
         <extracomment>Step indicator label for the session step</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesión</translation>
     </message>
     <message>
         <source>Video</source>
         <extracomment>Step indicator label for the video step</extracomment>
-        <translation type="unfinished">Video</translation>
+        <translation>Video</translation>
     </message>
     <message>
         <source>Subtitles</source>
         <extracomment>Step indicator label for the subtitles step</extracomment>
-        <translation type="unfinished">Subtítulos</translation>
+        <translation>Subtítulos</translation>
     </message>
     <message>
         <source>Next</source>
         <extracomment>Primary button advancing to the next wizard step</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente</translation>
     </message>
     <message>
         <source>Confirm Import</source>
         <extracomment>Title of the import wizard dialog</extracomment>
-        <translation type="unfinished">Confirmar importación</translation>
+        <translation>Confirmar importación</translation>
     </message>
     <message>
         <source>Import Error</source>
         <extracomment>Title of the import wizard dialog when no valid content can be imported</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Error de importación</translation>
     </message>
     <message numerus="yes">
         <source>You&apos;re about to import &lt;b&gt;%Ln&lt;/b&gt; comment(s) into your current session. What do you want to do?</source>
         <extracomment>Session step header: states the incoming comment count and asks how to proceed (%Ln is the count)</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Estás a punto de importar &lt;b&gt;%Ln&lt;/b&gt; comentario a tu sesión actual. ¿Qué deseas hacer?</numerusform>
+            <numerusform>Estás a punto de importar &lt;b&gt;%Ln&lt;/b&gt; comentarios a tu sesión actual. ¿Qué deseas hacer?</numerusform>
         </translation>
     </message>
     <message>
         <source>Add to your current comments</source>
         <extracomment>Merge option label — keeps the existing comments and appends the incoming ones</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Añadir a tus comentarios actuales</translation>
     </message>
     <message>
         <source>Start fresh with the new comments</source>
         <extracomment>Replace option label — discards the existing comments before importing the incoming ones</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Empezar de cero con los nuevos comentarios</translation>
     </message>
     <message>
         <source>Which video should be loaded?</source>
         <extracomment>Video step prompt above the candidate list</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>¿Qué video se debe cargar?</translation>
     </message>
     <message>
         <source>Skip video</source>
-        <translation type="unfinished">Omitir video</translation>
+        <translation>Omitir video</translation>
     </message>
     <message>
         <source>Referenced by an imported QC document</source>
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the QC documents being imported</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Referenciado por un documento de QC importado</translation>
     </message>
     <message>
         <source>Referenced by an imported subtitle file</source>
         <extracomment>Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Referenciado por un archivo de subtítulos importado</translation>
     </message>
     <message>
         <source>Which subtitles should be loaded?</source>
         <extracomment>Subtitles step prompt above the subtitles list</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>¿Qué subtítulos se deben cargar?</translation>
     </message>
     <message>
         <source>Select all</source>
         <extracomment>Tri-state &quot;Select all&quot; checkbox in the subtitles step header</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar todo</translation>
     </message>
     <message numerus="yes">
         <source>%Ln incompatible QC document(s):</source>
         <extracomment>Header above the list of QC documents whose format the importer rejected</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%Ln documento de QC incompatible:</numerusform>
+            <numerusform>%Ln documentos de QC incompatibles:</numerusform>
         </translation>
     </message>
 </context>
@@ -558,7 +558,7 @@
     </message>
     <message>
         <source>Open App Data Folder...</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir carpeta de datos de la aplicación...</translation>
     </message>
     <message>
         <source>About mpvQC...</source>
@@ -566,7 +566,7 @@
     </message>
     <message>
         <source>Appearance...</source>
-        <translation>Apariencia</translation>
+        <translation>Apariencia...</translation>
     </message>
     <message>
         <source>Comment Type Settings...</source>
@@ -665,7 +665,7 @@
     </message>
     <message>
         <source>Checking for Updates...</source>
-        <translation>Buscar actualizaciones...</translation>
+        <translation>Buscando actualizaciones...</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -674,12 +674,12 @@
     <message>
         <source>The export template could not be read.</source>
         <extracomment>Shown when a user-supplied export template cannot be read (file gone, permission denied, or not valid UTF-8). The technical detail is logged, not surfaced to the user.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La plantilla de exportación no pudo ser leída.</translation>
     </message>
     <message>
         <source>The document could not be saved.</source>
         <extracomment>Shown when writing the QC document fails (permission denied, disk full, target directory missing). The technical detail is logged, not surfaced.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>El documento no pudo ser guardado.</translation>
     </message>
 </context>
 <context>
