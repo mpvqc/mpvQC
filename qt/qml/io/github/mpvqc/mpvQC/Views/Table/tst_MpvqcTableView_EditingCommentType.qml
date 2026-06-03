@@ -220,7 +220,7 @@ TestCase {
 
         control.viewModel.importComments([
             {
-                "time": 99,
+                "time": 99 * 1000,
                 "commentType": "Comment Type 1",
                 "comment": "Imported"
             },

@@ -131,8 +131,8 @@ class MpvqcCommentTableViewModel(QObject):
         self.deleteCommentRequested.emit(index, comment.time, comment.comment_type, comment.comment)
 
     @Slot(int)
-    def jumpToTime(self, seconds: int) -> None:
-        self._player.jump_to(seconds)
+    def jumpToTime(self, time: int) -> None:
+        self._player.jump_to(time / TimeFormatterService.MILLISECONDS_PER_SECOND)
 
     @Slot()
     def pauseVideo(self) -> None:
@@ -141,7 +141,7 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot(int)
     def copyToClipboard(self, row: int) -> None:
         comment = self._comments.comment_at(row)
-        time = self._time_formatter.format_time_to_string(comment.time, long_format=True)
+        time = self._time_formatter.format_milliseconds_to_string(comment.time, long_format=True)
         comment_type = QCoreApplication.translate("CommentTypes", comment.comment_type)
         content = f"[{time}] [{comment_type}] {comment.comment}"
         self._clipboard.setText(content)
@@ -149,7 +149,7 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(str)
     def addRow(self, comment_type: str) -> None:
-        self._comments.add_row(self._player.time_pos, comment_type)
+        self._comments.add_row(self._player.time_pos * TimeFormatterService.MILLISECONDS_PER_SECOND, comment_type)
 
     @Slot(int)
     def removeRow(self, row: int) -> None:

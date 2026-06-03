@@ -31,7 +31,7 @@ QtObject {
             Component.onCompleted: {
                 _realCommentTypesControl.viewModel.importComments([
                     {
-                        "time": 1,
+                        "time": 1 * 1000,
                         "commentType": "Comment Type 1",
                         "comment": "Comment 1"
                     }
@@ -64,27 +64,27 @@ QtObject {
             Component.onCompleted: {
                 _mockVmControl.viewModel.importComments([
                     {
-                        "time": 1,
+                        "time": 1 * 1000,
                         "commentType": "Comment Type 1",
                         "comment": "Comment 1"
                     },
                     {
-                        "time": 2,
+                        "time": 2 * 1000,
                         "commentType": "Comment Type 2",
                         "comment": "Comment 2"
                     },
                     {
-                        "time": 3,
+                        "time": 3 * 1000,
                         "commentType": "Comment Type 3",
                         "comment": "Comment 3"
                     },
                     {
-                        "time": 4,
+                        "time": 4 * 1000,
                         "commentType": "Comment Type 4",
                         "comment": "Comment 4"
                     },
                     {
-                        "time": 5,
+                        "time": 5 * 1000,
                         "commentType": "Comment Type 5",
                         "comment": "Comment 5"
                     },

@@ -8,7 +8,7 @@ from pathlib import Path
 
 @dataclass(frozen=True, slots=True)
 class Comment:
-    time: int
+    time: int  # milliseconds
     comment_type: str
     comment: str
 

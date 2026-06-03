@@ -67,7 +67,8 @@ Popup {
         value: root.currentTime
 
         from: 0
-        to: root.videoDuration > 0 ? root.videoDuration : 24 * 60 * 60 - 1
+        to: root.videoDuration > 0 ? root.videoDuration * 1000 : (24 * 60 * 60 - 1) * 1000
+        stepSize: 1000
 
         textFromValue: value => MpvqcTableUtility.formatTime(value)
 

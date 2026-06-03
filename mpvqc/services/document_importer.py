@@ -9,11 +9,13 @@ import inject
 
 from mpvqc.datamodels import Comment, DocumentImportResult
 
+from .formatter_time import TimeFormatterService
 from .reverse_translator import ReverseTranslatorService
 
 
 class DocumentImporterService:
     _reverse_translator = inject.attr(ReverseTranslatorService)
+    _time_formatter = inject.attr(TimeFormatterService)
 
     _REGEX_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")
     _REGEX_SUBTITLE = re.compile(r"^subtitle\s*?:(?P<subtitle>.*)$")
@@ -100,8 +102,7 @@ class DocumentImporterService:
         comment_type = match.group("type").strip()
         comment = match.group("comment").strip()
 
-        hours, minutes, seconds = map(int, time.split(":"))
-        time = hours * 3600 + minutes * 60 + seconds
+        time = self._time_formatter.parse_string_to_milliseconds(time)
         comment_type = self._reverse_translator.lookup(comment_type)
 
         return Comment(time, comment_type, comment)
