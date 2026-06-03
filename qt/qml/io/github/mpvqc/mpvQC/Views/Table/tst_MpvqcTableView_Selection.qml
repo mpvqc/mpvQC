@@ -107,12 +107,12 @@ TestCase {
             {
                 tag: "selected-row",
                 row: 2,
-                expectedTime: 3
+                expectedTime: 3 * 1000
             },
             {
                 tag: "other-row",
                 row: 1,
-                expectedTime: 2
+                expectedTime: 2 * 1000
             },
         ];
     }
@@ -431,7 +431,7 @@ TestCase {
     function test_unknownCommentTypeAppearsInEditMenu(): void {
         control.viewModel.importComments([
             {
-                "time": 10,
+                "time": 10 * 1000,
                 "commentType": "Legacy Type",
                 "comment": "Old"
             },
@@ -450,7 +450,7 @@ TestCase {
     function test_unknownCommentTypeAppearsAtBottomOfEditMenu(): void {
         control.viewModel.importComments([
             {
-                "time": 10,
+                "time": 10 * 1000,
                 "commentType": "Legacy Type",
                 "comment": "Old"
             },

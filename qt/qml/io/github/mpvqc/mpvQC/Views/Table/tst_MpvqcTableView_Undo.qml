@@ -347,9 +347,9 @@ TestCase {
         // Select B and re-time it past the init rows; B moves from 1 to 6.
         control.commentList.currentIndex = 1;
         waitForRendering(control);
-        control.viewModel.updateTime(1, 8);
+        control.viewModel.updateTime(1, 8 * 1000);
         tryVerify(() => control.viewModel.comments()[6].comment === "second");
-        compare(control.viewModel.comments()[6].time, 8);
+        compare(control.viewModel.comments()[6].time, 8 * 1000);
 
         // Undo time move — focused on B at dst index 6.
         tryVerify(() => control.commentList.currentIndex === 6);
@@ -372,7 +372,7 @@ TestCase {
         waitForRendering(control);
         control.viewModel.redo();
         tryVerify(() => control.viewModel.comments()[6].comment === "second");
-        compare(control.viewModel.comments()[6].time, 8);
+        compare(control.viewModel.comments()[6].time, 8 * 1000);
         compare(control.viewModel.comments()[0].comment, "first edited");
     }
 }

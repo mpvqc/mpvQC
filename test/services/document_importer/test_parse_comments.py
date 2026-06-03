@@ -12,17 +12,17 @@ def test_import_comments(
     assert len(result.comments) == 3
 
     comment = result.comments[0]
-    assert comment.time == 1
+    assert comment.time == 1 * 1000
     assert comment.comment_type == "CommentType"
     assert comment.comment == "Document 2 / Comment 1"
 
     comment = result.comments[1]
-    assert comment.time == 120
+    assert comment.time == 120 * 1000
     assert comment.comment_type == "CommentType"
     assert comment.comment == "Document 2 / Comment 2"
 
     comment = result.comments[2]
-    assert comment.time == 10800
+    assert comment.time == 10800 * 1000
     assert comment.comment_type == "CommentType"
     assert comment.comment == "Document 2 / Comment 3"
 
@@ -36,17 +36,17 @@ def test_import_comments_with_special_types(
     assert len(result.comments) == 3
 
     comment = result.comments[0]
-    assert comment.time == 11
+    assert comment.time == 11 * 1000
     assert comment.comment_type == "A SPECIAL Comment-_-Type"
     assert comment.comment == "Document 3 / Comment 1"
 
     comment = result.comments[1]
-    assert comment.time == 1320
+    assert comment.time == 1320 * 1000
     assert comment.comment_type == "YOOOOO-comment-type"
     assert comment.comment == "Document 3 / Comment 2"
 
     comment = result.comments[2]
-    assert comment.time == 118800
+    assert comment.time == 118800 * 1000
     assert comment.comment_type == "Phrasing"
     assert comment.comment == "Document 3 / Comment 3"
 

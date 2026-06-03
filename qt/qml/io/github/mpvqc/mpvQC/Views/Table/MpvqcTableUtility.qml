@@ -19,7 +19,8 @@ QtObject {
             regExp: null
         })
 
-    function formatTime(inputSeconds: real): string {
+    function formatTime(inputMilliseconds: real): string {
+        const inputSeconds = Math.floor(inputMilliseconds / 1000);
         const hours = Math.floor(inputSeconds / 3600);
         const minutes = Math.floor((inputSeconds % 3600) / 60);
         const seconds = Math.floor(inputSeconds % 60);

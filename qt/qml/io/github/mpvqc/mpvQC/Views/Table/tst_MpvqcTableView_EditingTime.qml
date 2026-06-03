@@ -99,12 +99,12 @@ TestCase {
     }
 
     function test_singleClick(data): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         _clickHelper.clickDecrementButton(control);
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y);
         _wait.editControlClosed(control);
-        _expect.hasItemTime(control, 2, 2);
+        _expect.hasItemTime(control, 2, 2 * 1000);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
     }
@@ -155,12 +155,12 @@ TestCase {
     }
 
     function test_doubleClick(data): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         _clickHelper.clickDecrementButton(control);
         const pt = data.clickPoint(control);
         testCase.mouseDoubleClickSequence(control, pt.x, pt.y);
         _wait.editControlClosed(control);
-        _expect.hasItemTime(control, 2, 2);
+        _expect.hasItemTime(control, 2, 2 * 1000);
         _expect.hasCurrentIndex(control, data.expectedIndex);
         _expect.isNotEditing(control);
     }
@@ -179,12 +179,12 @@ TestCase {
     }
 
     function test_rightClick(data): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         _clickHelper.clickDecrementButton(control);
         const pt = data.clickPoint(control);
         testCase.mouseClick(control, pt.x, pt.y, Qt.RightButton);
         _wait.editControlClosed(control);
-        _expect.hasItemTime(control, 2, 2);
+        _expect.hasItemTime(control, 2, 2 * 1000);
         _expect.hasCurrentIndex(control, 2);
         _expect.hasContextMenuClosed(control);
         _expect.isNotEditing(control);
@@ -226,14 +226,14 @@ TestCase {
     }
 
     function test_decrementsTime(data): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         data.action(control);
-        _expect.hasLastJumpedToTime(control, 2);
+        _expect.hasLastJumpedToTime(control, 2 * 1000);
         const pt = _clickHelper.topRightOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y);
         _wait.editControlClosed(control);
         _expect.isNotEditing(control);
-        _expect.hasItemTime(control, 2, 2);
+        _expect.hasItemTime(control, 2, 2 * 1000);
     }
 
     function test_incrementsTime_data(): list<var> {
@@ -261,36 +261,36 @@ TestCase {
     }
 
     function test_incrementsTime(data): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         data.action(control);
-        _expect.hasLastJumpedToTime(control, 4);
+        _expect.hasLastJumpedToTime(control, 4 * 1000);
         const pt = _clickHelper.topRightOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y);
         _wait.editControlClosed(control);
         _expect.isNotEditing(control);
-        _expect.hasItemTime(control, 2, 4);
+        _expect.hasItemTime(control, 2, 4 * 1000);
     }
 
     function test_escapeAbortsEdit(): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         _clickHelper.clickDecrementButton(control);
-        _expect.hasLastJumpedToTime(control, 2);
+        _expect.hasLastJumpedToTime(control, 2 * 1000);
         keyPress(Qt.Key_Escape);
         _wait.editControlClosed(control);
         _expect.isNotEditing(control);
-        _expect.hasItemTime(control, 2, 3);
-        _expect.hasLastJumpedToTime(control, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
+        _expect.hasLastJumpedToTime(control, 3 * 1000);
         _expect.hasActiveFocus(control);
     }
 
     function test_importAbortsEdit(): void {
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
         _clickHelper.clickDecrementButton(control);
-        _expect.hasLastJumpedToTime(control, 2);
+        _expect.hasLastJumpedToTime(control, 2 * 1000);
 
         control.viewModel.importComments([
             {
-                "time": 99,
+                "time": 99 * 1000,
                 "commentType": "Comment Type 1",
                 "comment": "Imported"
             },
@@ -298,40 +298,40 @@ TestCase {
         _wait.editControlClosed(control);
 
         _expect.isNotEditing(control);
-        _expect.hasItemTime(control, 2, 3);
-        _expect.hasLastJumpedToTime(control, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
+        _expect.hasLastJumpedToTime(control, 3 * 1000);
         _expect.hasActiveFocus(control);
     }
 
     function test_decrementClampsAtZero(): void {
         for (let expected = 2; expected >= 0; expected--) {
             keyPress(Qt.Key_Down);
-            _expect.hasLastJumpedToTime(control, expected);
+            _expect.hasLastJumpedToTime(control, expected * 1000);
         }
         keyPress(Qt.Key_Down);
-        _expect.hasLastJumpedToTime(control, 0);
+        _expect.hasLastJumpedToTime(control, 0 * 1000);
     }
 
     function test_incrementClampsAtVideoDuration(): void {
         const duration = control.viewModel.videoDuration;
         for (let expected = 4; expected <= duration; expected++) {
             keyPress(Qt.Key_Up);
-            _expect.hasLastJumpedToTime(control, expected);
+            _expect.hasLastJumpedToTime(control, expected * 1000);
         }
         keyPress(Qt.Key_Up);
-        _expect.hasLastJumpedToTime(control, duration);
+        _expect.hasLastJumpedToTime(control, duration * 1000);
     }
 
     function test_timeEditReordersAndSelectionFollows(): void {
         _expect.hasCurrentIndex(control, 2);
-        _expect.hasItemTime(control, 2, 3);
+        _expect.hasItemTime(control, 2, 3 * 1000);
 
         keyPress(Qt.Key_Up);
-        _expect.hasLastJumpedToTime(control, 4);
+        _expect.hasLastJumpedToTime(control, 4 * 1000);
         keyPress(Qt.Key_Up);
-        _expect.hasLastJumpedToTime(control, 5);
+        _expect.hasLastJumpedToTime(control, 5 * 1000);
         keyPress(Qt.Key_Up);
-        _expect.hasLastJumpedToTime(control, 6);
+        _expect.hasLastJumpedToTime(control, 6 * 1000);
 
         const pt = _clickHelper.topRightOfCommentLabel(control, 2);
         testCase.mouseClick(control, pt.x, pt.y);

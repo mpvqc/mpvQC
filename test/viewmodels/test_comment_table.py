@@ -80,9 +80,9 @@ def test_state_changes_on_mutation(make_view_model, state_service_mock):
 def test_copy_to_clipboard(make_view_model, make_spy):
     vm = make_view_model(
         comments=[
-            Comment(time=100, comment_type="Phrasing", comment="Comment Content 1"),
-            Comment(time=200, comment_type="Translation", comment="Comment Content 2"),
-            Comment(time=300, comment_type="Spelling", comment="Comment Content 3"),
+            Comment(time=100 * 1000, comment_type="Phrasing", comment="Comment Content 1"),
+            Comment(time=200 * 1000, comment_type="Translation", comment="Comment Content 2"),
+            Comment(time=300 * 1000, comment_type="Spelling", comment="Comment Content 3"),
         ]
     )
 

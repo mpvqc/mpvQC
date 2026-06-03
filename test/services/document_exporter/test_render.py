@@ -106,9 +106,9 @@ def test_renders_partial_headers_generator(configure_mocks, service, resource_se
 def test_renders_comments(configure_mocks, service, resource_service):
     configure_mocks(
         comments=[
-            {"time": 0, "commentType": "Translation", "comment": "My first comment"},
-            {"time": 50, "commentType": "Spelling", "comment": "My second comment"},
-            {"time": 100, "commentType": "Phrasing", "comment": "My third comment"},
+            {"time": 0 * 1000, "commentType": "Translation", "comment": "My first comment"},
+            {"time": 50 * 1000, "commentType": "Spelling", "comment": "My second comment"},
+            {"time": 100 * 1000, "commentType": "Phrasing", "comment": "My third comment"},
         ]
     )
 
@@ -127,14 +127,20 @@ def test_renders_comments(configure_mocks, service, resource_service):
     assert expected == actual
 
 
+def test_templates_receive_time_in_seconds(configure_mocks, service):
+    configure_mocks(comments=[{"time": 90 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+
+    assert service.render("{{ comments[0]['time'] }}") == "90"
+
+
 def test_renders_backup(configure_mocks, service, resource_service):
     configure_mocks(
         write_header_video_path=False,
         video="/path/to/video/ignore/user/setting",
         comments=[
-            {"time": 0, "commentType": "Translation", "comment": "My first comment"},
-            {"time": 50, "commentType": "Spelling", "comment": "My second comment"},
-            {"time": 100, "commentType": "Phrasing", "comment": "My third comment"},
+            {"time": 0 * 1000, "commentType": "Translation", "comment": "My first comment"},
+            {"time": 50 * 1000, "commentType": "Spelling", "comment": "My second comment"},
+            {"time": 100 * 1000, "commentType": "Phrasing", "comment": "My third comment"},
         ],
     )
 

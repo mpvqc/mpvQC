@@ -66,7 +66,10 @@ class DocumentRenderService:
             "video_path": video_path,
             "video_name": video_name,
             "subtitles": self._player.external_subtitles,
-            "comments": self._comments_service.comments(),
+            "comments": [
+                {**c, "time": c["time"] // TimeFormatterService.MILLISECONDS_PER_SECOND}
+                for c in self._comments_service.comments()
+            ],
         }
 
     def render(self, template: str) -> str:

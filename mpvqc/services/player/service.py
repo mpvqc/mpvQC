@@ -237,7 +237,7 @@ class PlayerService(QObject):
     def press_key(self, command: str) -> None:
         self._mpv_player.command_async("keypress", command)
 
-    def jump_to(self, seconds: int) -> None:
+    def jump_to(self, seconds: float) -> None:
         self._mpv_player.command_async("seek", seconds, "absolute+exact")
 
     def press_mouse_left(self) -> None:

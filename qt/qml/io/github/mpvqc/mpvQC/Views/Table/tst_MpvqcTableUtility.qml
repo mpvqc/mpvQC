@@ -27,73 +27,73 @@ TestCase {
             {
                 tag: "short-format--zero",
                 useLongFormat: false,
-                seconds: 0,
+                milliseconds: 0 * 1000,
                 expected: "00:00"
             },
             {
                 tag: "short-format--single-second",
                 useLongFormat: false,
-                seconds: 7,
+                milliseconds: 7 * 1000,
                 expected: "00:07"
             },
             {
                 tag: "short-format--single-minute",
                 useLongFormat: false,
-                seconds: 65,
+                milliseconds: 65 * 1000,
                 expected: "01:05"
             },
             {
                 tag: "short-format--ten-minutes",
                 useLongFormat: false,
-                seconds: 605,
+                milliseconds: 605 * 1000,
                 expected: "10:05"
             },
             {
                 tag: "short-format--just-below-one-hour",
                 useLongFormat: false,
-                seconds: 3599,
+                milliseconds: 3599 * 1000,
                 expected: "59:59"
             },
             {
-                tag: "short-format--fractional-seconds-truncate",
+                tag: "short-format--sub-second-truncates",
                 useLongFormat: false,
-                seconds: 12.9,
+                milliseconds: 12 * 1000 + 900,
                 expected: "00:12"
             },
             {
                 tag: "long-format--zero",
                 useLongFormat: true,
-                seconds: 0,
+                milliseconds: 0 * 1000,
                 expected: "00:00:00"
             },
             {
                 tag: "long-format--single-second",
                 useLongFormat: true,
-                seconds: 7,
+                milliseconds: 7 * 1000,
                 expected: "00:00:07"
             },
             {
                 tag: "long-format--single-minute",
                 useLongFormat: true,
-                seconds: 65,
+                milliseconds: 65 * 1000,
                 expected: "00:01:05"
             },
             {
                 tag: "long-format--exactly-one-hour",
                 useLongFormat: true,
-                seconds: 3600,
+                milliseconds: 3600 * 1000,
                 expected: "01:00:00"
             },
             {
                 tag: "long-format--mixed-h-m-s",
                 useLongFormat: true,
-                seconds: 3661,
+                milliseconds: 3661 * 1000,
                 expected: "01:01:01"
             },
             {
                 tag: "long-format--double-digit-hours",
                 useLongFormat: true,
-                seconds: 36000,
+                milliseconds: 36000 * 1000,
                 expected: "10:00:00"
             }
         ];
@@ -103,7 +103,7 @@ TestCase {
         const utility = makeUtility({
             useLongFormat: data.useLongFormat
         });
-        compare(utility.formatTime(data.seconds), data.expected);
+        compare(utility.formatTime(data.milliseconds), data.expected);
     }
 
     function test_sanitizeText_data(): var {

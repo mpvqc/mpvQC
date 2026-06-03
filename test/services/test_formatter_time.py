@@ -37,3 +37,32 @@ def test_format_time_to_string_long(service, expected, input_seconds):
 def test_format_time_to_string_short(service, expected, input_seconds):
     actual = service.format_time_to_string(input_seconds, long_format=False)
     assert expected == actual
+
+
+@pytest.mark.parametrize(
+    ("expected", "input_milliseconds", "long_format"),
+    [
+        ("00:00:00", 0 * 1000, True),
+        ("00:01:08", 68 * 1000, True),
+        ("02:46:40", 10000 * 1000, True),
+        ("00:01:08", 68 * 1000 + 999, True),
+        ("01:08", 68 * 1000, False),
+    ],
+)
+def test_format_milliseconds_to_string(service, expected, input_milliseconds, long_format):
+    actual = service.format_milliseconds_to_string(input_milliseconds, long_format=long_format)
+    assert expected == actual
+
+
+@pytest.mark.parametrize(
+    ("expected_milliseconds", "input_string"),
+    [
+        (0 * 1000, "00:00:00"),
+        (68 * 1000, "00:01:08"),
+        (10000 * 1000, "02:46:40"),
+        (118800 * 1000, "33:00:00"),
+    ],
+)
+def test_parse_string_to_milliseconds(service, expected_milliseconds, input_string):
+    actual = service.parse_string_to_milliseconds(input_string)
+    assert expected_milliseconds == actual
