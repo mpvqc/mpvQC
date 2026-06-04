@@ -86,8 +86,7 @@ MpvqcDialog {
                 objectName: "mpvConfTextArea"
 
                 background: null
-                font.family: "Noto Sans Mono"
-                font.pointSize: 11
+                font: MpvqcFonts.monospaceFont
                 leftPadding: _scrollView.mirrored && _scrollView.needsVerticalScroll ? 22 : 0
                 textDocument.source: root.viewModel.mpvFileUrl
 

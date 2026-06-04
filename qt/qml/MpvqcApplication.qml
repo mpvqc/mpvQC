@@ -28,10 +28,7 @@ ApplicationWindow {
     visible: false
     color: M.Material.background
 
-    font {
-        pointSize: 10
-        family: 'Noto Sans'
-    }
+    font: MpvqcFonts.applicationFont
 
     M.Material.theme: MpvqcTheme.isDark ? M.Material.Dark : M.Material.Light
     M.Material.accent: MpvqcTheme.palette.accent

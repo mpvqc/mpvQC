@@ -27,10 +27,7 @@ T.ToolTip {
 
     contentItem: Text {
         text: control.text
-        font {
-            pointSize: 10
-            family: 'Noto Sans'
-        }
+        font: MpvqcFonts.applicationFont
         wrapMode: Text.Wrap
         color: MpvqcTheme.palette.tooltipText
     }

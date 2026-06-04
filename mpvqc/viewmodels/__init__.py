@@ -11,6 +11,7 @@ from .message_boxes import MpvqcMessageBoxLoaderViewModel as MpvqcMessageBoxLoad
 from .message_boxes import MpvqcQuitMessageBoxViewModel as MpvqcQuitMessageBoxViewModel
 from .message_boxes import MpvqcResetMessageBoxViewModel as MpvqcResetMessageBoxViewModel
 from .message_boxes import MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionCheckMessageBoxViewModel
+from .utility import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .utility import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
 from .utility import MpvqcThemeViewModel as MpvqcThemeViewModel
 from .utility import MpvqcWindowPropertiesViewModel as MpvqcWindowPropertiesViewModel

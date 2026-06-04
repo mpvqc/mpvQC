@@ -40,3 +40,8 @@ def test_fonts_loaded(qt_app):
         assert font_family in loaded_font_families, (
             f"Cannot find font family '{font_family}' in loaded font families {loaded_font_families}"
         )
+
+
+def test_application_fonts_cover_all_shipped_scripts(qt_app):
+    assert FontLoaderService.application_font().families() == ["Noto Sans", "Noto Sans Hebrew"]
+    assert FontLoaderService.monospace_font().families() == ["Noto Sans Mono", "Noto Sans", "Noto Sans Hebrew"]

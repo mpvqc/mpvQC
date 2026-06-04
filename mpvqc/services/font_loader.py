@@ -15,4 +15,16 @@ class FontLoaderService:
                 msg = f"Cannot load font from {resource_path}"
                 raise ValueError(msg)
 
-        QFont.insertSubstitution("Noto Sans", "Noto Sans Hebrew")
+    @staticmethod
+    def application_font() -> QFont:
+        font = QFont()
+        font.setFamilies(["Noto Sans", "Noto Sans Hebrew"])
+        font.setPointSize(10)
+        return font
+
+    @staticmethod
+    def monospace_font() -> QFont:
+        font = QFont()
+        font.setFamilies(["Noto Sans Mono", "Noto Sans", "Noto Sans Hebrew"])
+        font.setPointSize(11)
+        return font
