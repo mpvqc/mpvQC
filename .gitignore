@@ -528,6 +528,7 @@ $RECYCLE.BIN/
 /.qtcreator
 /appdata
 /build-dir
+/docs/dev
 /io
 /repo
 /venv-runner
