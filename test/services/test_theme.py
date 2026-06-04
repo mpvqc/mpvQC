@@ -2,10 +2,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import dataclasses
+
 import pytest
 from PySide6.QtGui import QColor
 
 from mpvqc.services import SettingsService, ThemeService
+from mpvqc.services.theme import ThemePalette
+
+
+@pytest.fixture(autouse=True)
+def configure_injections(common_bindings_with):
+    common_bindings_with()
 
 
 @pytest.fixture
@@ -17,40 +25,30 @@ def test_material_you_theme(theme_service):
     material_you = next(t for t in theme_service.previews if t.identifier == "material-you")
 
     assert material_you.name == "Material You"
-    assert material_you.preview == "#f4f4e9"
+    assert material_you.preview == "#f5f2fa"
     assert material_you.is_dark is False
-    assert len(material_you.palettes) == 15
+    assert len(material_you.palettes) == 17
 
     assert theme_service.theme_index("material-you") == 0
 
-    assert theme_service.theme("material-you").palette_count == 15
+    assert theme_service.theme("material-you").palette_count == 17
 
 
 def test_material_you_dark_theme(theme_service):
     material_you_dark = next(t for t in theme_service.previews if t.identifier == "material-you-dark")
 
     assert material_you_dark.name == "Material You Dark"
-    assert material_you_dark.preview == "#121212"
+    assert material_you_dark.preview == "#121318"
     assert material_you_dark.is_dark is True
-    assert len(material_you_dark.palettes) == 15
+    assert len(material_you_dark.palettes) == 17
 
     assert theme_service.theme_index("material-you-dark") == 1
 
-    assert theme_service.theme("material-you-dark").palette_count == 15
+    assert theme_service.theme("material-you-dark").palette_count == 17
 
 
 def test_all_palette_colors_are_valid_colors(theme_service):
-    color_attrs = [
-        "background",
-        "foreground",
-        "control",
-        "row_highlight",
-        "row_highlight_text",
-        "row_base",
-        "row_base_text",
-        "row_base_alternate",
-        "row_base_alternate_text",
-    ]
+    color_attrs = [field.name for field in dataclasses.fields(ThemePalette) if field.name != "identifier"]
 
     for theme in theme_service.previews:
         for palette in theme.palettes:

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Utility
@@ -29,14 +29,13 @@ RowLayout {
         Layout.preferredWidth: visible ? implicitWidth : 0
 
         visible: root.toolTip
-        opacity: 0.6
-
         toolTipText: root.toolTip
 
         icon {
             source: MpvqcIcons.tooltip2
             width: 18
             height: 18
+            color: MpvqcTheme.palette.hint
         }
     }
 }

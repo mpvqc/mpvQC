@@ -4,7 +4,7 @@
 
 set fallback := true
 
-BASE_COLORS := '"#F44336" "#E91E63" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#03A9F4" "#00BCD4" "#009688" "#4CAF50" "#8BC34A" "#CDDC39" "#FFEB3B" "#FFC107" "#FF9800"'
+BASE_COLORS := '"#F44336" "#E91E63" "#B15989" "#9C27B0" "#673AB7" "#3F51B5" "#2196F3" "#0080AB" "#00BCD4" "#009688" "#00885E" "#4CAF50" "#678021" "#FFEB3B" "#FFC107" "#FF9800" "#B75F2D"'
 
 @_default:
     just --list --unsorted
@@ -17,7 +17,7 @@ regenerate-colors: regenerate-light-colors regenerate-dark-colors
 # Regenerate dark color palettes
 [group('colors')]
 regenerate-dark-colors:
-    uv run color-generator.py --dark {{ BASE_COLORS }}
+    uv run color-generator.py --dark --contrast 0.0 {{ BASE_COLORS }}
 
 # Regenerate light color palettes
 [group('colors')]

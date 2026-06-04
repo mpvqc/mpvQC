@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.App
 import io.github.mpvqc.mpvQC.Python
@@ -25,17 +26,17 @@ ApplicationWindow {
     minimumHeight: 540
 
     visible: false
-    color: Material.background
+    color: M.Material.background
 
     font {
         pointSize: 10
         family: 'Noto Sans'
     }
 
-    Material.theme: MpvqcTheme.isDark ? Material.Dark : Material.Light
-    Material.accent: MpvqcTheme.palette.control
-    Material.background: MpvqcTheme.palette.background
-    Material.foreground: MpvqcTheme.palette.foreground
+    M.Material.theme: MpvqcTheme.isDark ? M.Material.Dark : M.Material.Light
+    M.Material.accent: MpvqcTheme.palette.accent
+    M.Material.background: MpvqcTheme.palette.background
+    M.Material.foreground: MpvqcTheme.palette.foreground
 
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true

@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Python
@@ -32,6 +32,11 @@ Item {
 
     height: menuBarHeight
     visible: !MpvqcWindowUtility.isFullscreen
+
+    Rectangle {
+        anchors.fill: parent
+        color: MpvqcTheme.palette.headerBackground
+    }
 
     DragHandler {
         target: null

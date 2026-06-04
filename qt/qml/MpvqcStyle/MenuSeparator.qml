@@ -1,0 +1,24 @@
+// SPDX-FileCopyrightText: 2017 The Qt Company Ltd.
+// SPDX-FileCopyrightText: mpvQC developers
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import QtQuick
+import QtQuick.Templates as T
+
+import io.github.mpvqc.mpvQC.Utility
+
+T.MenuSeparator {
+    id: control
+
+    implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
+    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding)
+
+    verticalPadding: 8
+
+    contentItem: Rectangle {
+        implicitWidth: 200
+        implicitHeight: 1
+        color: MpvqcTheme.palette.separator
+    }
+}

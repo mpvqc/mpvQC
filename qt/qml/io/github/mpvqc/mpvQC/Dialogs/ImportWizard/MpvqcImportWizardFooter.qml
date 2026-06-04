@@ -5,7 +5,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 import QtQuick.Layouts
 
 Control {
@@ -24,7 +25,7 @@ Control {
     verticalPadding: 2
 
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
-    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding, Material.dialogButtonBoxHeight)
+    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding, M.Material.dialogButtonBoxHeight)
 
     component FooterButton: Button {
         required property bool shown

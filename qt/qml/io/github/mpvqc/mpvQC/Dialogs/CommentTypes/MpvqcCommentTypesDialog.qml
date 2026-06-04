@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -102,7 +102,7 @@ MpvqcDialog {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                rowHeight: _actions.buttonHeight
+                rowHeight: 44
             }
 
             MpvqcCommentTypesActions {

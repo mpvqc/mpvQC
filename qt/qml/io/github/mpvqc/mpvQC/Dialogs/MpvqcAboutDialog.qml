@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -239,7 +239,7 @@ MpvqcDialog {
             Label {
                 text: qsTranslate("AboutDialog", "Powered by Python %1").arg(root.viewModel.pythonVersion) // qmllint disable stale-property-read
                 font.italic: true
-                opacity: 0.7
+                color: MpvqcTheme.palette.hint
 
                 Layout.alignment: Qt.AlignHCenter
             }

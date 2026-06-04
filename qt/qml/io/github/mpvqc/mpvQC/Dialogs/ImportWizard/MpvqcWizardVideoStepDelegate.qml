@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -70,7 +70,7 @@ ItemDelegate {
             Layout.preferredHeight: root.iconSize
 
             visible: root.foundInDocument
-            opacity: 0.6
+            iconColor: MpvqcTheme.palette.hint
             icon.source: MpvqcIcons.description
             icon.width: root.iconSize
             icon.height: root.iconSize
@@ -86,7 +86,7 @@ ItemDelegate {
             Layout.preferredHeight: root.iconSize
 
             visible: root.foundInSubtitle
-            opacity: 0.6
+            iconColor: MpvqcTheme.palette.hint
             icon.source: MpvqcIcons.subtitles
             icon.width: root.iconSize
             icon.height: root.iconSize

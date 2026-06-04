@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Controls.impl
 
 import io.github.mpvqc.mpvQC.Utility
@@ -16,7 +16,7 @@ IconLabel {
 
     display: IconLabel.IconOnly
 
-    icon.color: MpvqcTheme.palette.control
+    icon.color: MpvqcTheme.palette.accent
 
     ToolTip.delay: 350
     ToolTip.text: root.toolTipText

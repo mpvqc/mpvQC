@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Utility
@@ -54,6 +54,7 @@ ColumnLayout {
 
             icon {
                 source: MpvqcIcons.error
+                color: MpvqcTheme.palette.error
                 width: 24
                 height: 24
             }

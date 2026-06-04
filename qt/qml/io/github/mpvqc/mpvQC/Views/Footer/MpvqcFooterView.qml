@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Python
@@ -98,6 +98,11 @@ Item {
                 padding: 2
                 height: parent.height
                 width: parent.width + 1
+
+                background: Rectangle {
+                    color: _toolButton.hovered ? Qt.alpha(MpvqcTheme.palette.foreground, 0.08) : "transparent"
+                }
+
                 onPressed: _contextMenuLoader.openContextMenu()
             }
         }

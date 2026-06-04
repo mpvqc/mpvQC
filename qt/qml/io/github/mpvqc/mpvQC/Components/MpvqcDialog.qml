@@ -5,7 +5,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.Utility
 
@@ -21,6 +22,8 @@ Dialog {
     dim: false
     z: 2
     closePolicy: Popup.CloseOnEscape
+
+    M.Material.background: MpvqcTheme.palette.dialogBackground
 
     Binding {
         when: root.popupType === Popup.Window

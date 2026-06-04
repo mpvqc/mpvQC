@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -31,7 +31,7 @@ MpvqcDialog {
     component Separator: Rectangle {
         property int topMargin: 0
 
-        color: root.mpvqcTheme.palette.control
+        color: root.mpvqcTheme.palette.separator
 
         Layout.topMargin: topMargin
         Layout.preferredHeight: 1

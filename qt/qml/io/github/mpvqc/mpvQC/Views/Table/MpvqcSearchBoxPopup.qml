@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -54,9 +55,9 @@ Popup {
 
     closePolicy: Popup.NoAutoClose
 
-    Material.background: MpvqcTheme.palette.backgroundAlternate
-    Material.foreground: MpvqcTheme.palette.foregroundAlternate
-    Material.roundedScale: Material.SmallScale
+    M.Material.background: MpvqcTheme.palette.popupBackground
+    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.roundedScale: M.Material.SmallScale
 
     enter: Transition {
         NumberAnimation {
@@ -97,6 +98,8 @@ Popup {
     }
 
     RowLayout {
+        anchors.verticalCenter: parent.verticalCenter
+
         width: root.width - root.leftPadding - root.rightPadding
         spacing: 0
 
@@ -109,7 +112,7 @@ Popup {
                 source: MpvqcIcons.search
                 height: 24
                 width: 24
-                color: Material.hintTextColor
+                color: MpvqcTheme.palette.hint
             }
         }
 
@@ -149,7 +152,7 @@ Popup {
         Label {
             objectName: "statusLabel"
             text: root.viewModel.statusLabel
-            color: Material.hintTextColor
+            color: MpvqcTheme.palette.hint
             Layout.leftMargin: 4
             Layout.rightMargin: 4
         }
@@ -161,6 +164,9 @@ Popup {
         Item {
             implicitWidth: _previousButton.implicitWidth
             implicitHeight: _previousButton.implicitHeight
+
+            Layout.preferredWidth: 36
+            Layout.preferredHeight: 36
 
             ToolButton {
                 id: _previousButton
@@ -193,6 +199,10 @@ Popup {
             implicitWidth: _nextButton.implicitWidth
             implicitHeight: _nextButton.implicitHeight
 
+            Layout.preferredWidth: 36
+            Layout.preferredHeight: 36
+            Layout.leftMargin: 3
+
             ToolButton {
                 id: _nextButton
                 objectName: "nextButton"
@@ -223,6 +233,11 @@ Popup {
         ToolButton {
             id: _closeButton
             objectName: "closeButton"
+
+            Layout.preferredWidth: 36
+            Layout.preferredHeight: 36
+            Layout.leftMargin: 3
+            Layout.rightMargin: 3
 
             focusPolicy: Qt.NoFocus
 

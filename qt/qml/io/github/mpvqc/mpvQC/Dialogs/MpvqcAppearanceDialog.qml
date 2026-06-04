@@ -5,7 +5,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
@@ -60,7 +61,7 @@ MpvqcDialog {
             height: parent.height - 2 * delegateRoot.borderSize
             width: parent.width - 2 * delegateRoot.borderSize
             color: delegateRoot.displayColor
-            radius: Material.LargeScale
+            radius: M.Material.LargeScale
         }
 
         Behavior on scale {
@@ -111,7 +112,7 @@ MpvqcDialog {
         width: size
         height: size
         color: highlightColor
-        radius: Material.SmallScale
+        radius: M.Material.SmallScale
 
         border {
             width: borderWidth
@@ -176,7 +177,7 @@ MpvqcDialog {
 
                 highlight: SelectionHighlight {
                     size: root.dimensions.itemSize
-                    highlightColor: root.mpvqcTheme.palette.control
+                    highlightColor: root.mpvqcTheme.palette.accent
                     borderWidth: 0
                     borderColor: "transparent"
                     moveDuration: root.animations.highlightMoveDuration
@@ -226,7 +227,7 @@ MpvqcDialog {
                     size: root.dimensions.itemSize
                     highlightColor: root.mpvqcTheme.isDark ? root.mpvqcTheme.palette.foreground : root.mpvqcTheme.palette.background
                     borderWidth: root.mpvqcTheme.isDark ? 0 : 2
-                    borderColor: root.mpvqcTheme.palette.rowHighlight
+                    borderColor: root.mpvqcTheme.palette.rowSelected
                     moveDuration: root.animations.highlightMoveDuration
                     appearIndex: _gridView.currentIndex
                 }

@@ -5,7 +5,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility
@@ -50,9 +51,6 @@ Loader {
 
             position: root.openedAt
 
-            Material.background: MpvqcTheme.palette.backgroundAlternate
-            Material.foreground: MpvqcTheme.palette.foregroundAlternate
-
             onClosed: {
                 root.active = false;
                 if (!root._actionTriggered) {
@@ -93,6 +91,8 @@ Loader {
                 //: Context menu on right click in comments table
                 text: qsTranslate("CommentTable", "Delete Comment")
                 icon.source: MpvqcIcons.delete_
+
+                M.Material.foreground: MpvqcTheme.palette.error
 
                 onTriggered: {
                     root._actionTriggered = true;

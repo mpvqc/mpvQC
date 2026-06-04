@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import MpvqcStyle
 
@@ -15,7 +15,6 @@ ToolButton {
     required property string toolTipText
 
     readonly property int iconSize: 22
-    readonly property int cornerRadius: 8
 
     property bool pressedDuringHover: false
 
@@ -36,11 +35,6 @@ ToolButton {
         if (pressed) {
             pressedDuringHover = true;
         }
-    }
-
-    background: Rectangle {
-        radius: root.cornerRadius
-        color: root.hovered ? root.Material.rippleColor : "transparent"
     }
 
     ToolTip {
