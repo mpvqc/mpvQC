@@ -6,7 +6,7 @@ import inject
 import pytest
 
 from mpvqc.enums import MpvqcTimeFormat
-from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService
+from mpvqc.services import FontLoaderService, LabelWidthCalculatorService, PlayerService, SettingsService
 from mpvqc.viewmodels import MpvqcFooterViewModel
 
 TimeFormat = MpvqcTimeFormat.TimeFormat
@@ -17,6 +17,7 @@ def configure_inject(common_bindings_with, player_service_mock, settings_service
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
+        binder.bind_to_constructor(FontLoaderService, FontLoaderService)
         binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())
 
     common_bindings_with(custom_bindings)

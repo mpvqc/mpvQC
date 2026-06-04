@@ -5,6 +5,7 @@
 module io.github.mpvqc.mpvQC.Utility
 
 singleton MpvqcConstants MpvqcConstants.qml
+singleton MpvqcFonts MpvqcFonts.qml
 singleton MpvqcIcons MpvqcIcons.qml
 singleton MpvqcLabelWidthCalculator MpvqcLabelWidthCalculator.qml
 singleton MpvqcTheme MpvqcTheme.qml

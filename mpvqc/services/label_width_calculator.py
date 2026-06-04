@@ -3,14 +3,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import Iterable
+from functools import cached_property
 
+import inject
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtGui import QFont, QFontMetricsF
+from PySide6.QtGui import QFontMetricsF
+
+from .font_loader import FontLoaderService
 
 
 class LabelWidthCalculatorService:
-    def __init__(self) -> None:
-        self._font_metrics = QFontMetricsF(QFont("Noto Sans", 10))
+    _font_loader = inject.attr(FontLoaderService)
+
+    @cached_property
+    def _font_metrics(self) -> QFontMetricsF:
+        return QFontMetricsF(self._font_loader.application_font())
 
     def calculate_width_for(self, texts: Iterable[str]) -> int:
         if not texts:

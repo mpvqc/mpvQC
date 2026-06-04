@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .fonts import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .label_width_calculator import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
 from .theme import MpvqcThemeViewModel as MpvqcThemeViewModel
 from .window_properties import MpvqcWindowPropertiesViewModel as MpvqcWindowPropertiesViewModel
