@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.Utility
 
@@ -57,8 +58,9 @@ Popup {
     width: 155
     padding: 6
 
-    Material.background: MpvqcTheme.palette.backgroundAlternate
-    Material.foreground: MpvqcTheme.palette.foregroundAlternate
+    M.Material.background: MpvqcTheme.palette.popupBackground
+    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.roundedScale: M.Material.SmallScale
 
     contentItem: SpinBox {
         id: _spinBox

@@ -7,7 +7,6 @@ import json
 import re
 import sys
 from argparse import Namespace
-from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal
 
@@ -17,28 +16,6 @@ from materialyoucolor.hct import Hct
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
 
 HEX_PATTERN = re.compile(r"^#[A-Fa-f0-9]{6}$")
-
-
-@dataclass(frozen=True)
-class Color:
-    name: str
-    value: str
-
-
-@dataclass(frozen=True)
-class MpvqcColorSet:
-    identifier: str
-    background: str
-    background_alternate: str
-    foreground: str
-    foreground_alternate: str
-    control: str
-    row_highlight: str
-    row_highlight_text: str
-    row_base: str
-    row_base_text: str
-    row_base_alternate: str
-    row_base_alternate_text: str
 
 
 def main() -> None:
@@ -57,8 +34,8 @@ def main() -> None:
     parser.add_argument(
         "--contrast",
         type=float,
-        help="Contrast between 0 and 1, default: 1/3",
-        default=1 / 3,
+        help="Contrast between 0 and 1, default: 0.0",
+        default=0.0,
     )
     run(parser.parse_args())
 
@@ -92,8 +69,7 @@ def generate(colors: list[str], dark: bool, contrast: float) -> None:
         mdc = MaterialDynamicColors(spec=spec_version)
         color_map[seed] = generate_palette_from(scheme, mdc)
 
-    mpvqc_colors = map_to_mpvqc_colors(color_map, dark)
-    update_theme_file(mpvqc_colors, dark)
+    update_theme_file(color_map, dark)
 
 
 def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) -> dict[str, str]:
@@ -109,47 +85,7 @@ def generate_palette_from(scheme: DynamicScheme, colors: MaterialDynamicColors) 
     return result
 
 
-def map_to_mpvqc_colors(color_map: dict, dark: bool) -> list[MpvqcColorSet]:
-    colors = []
-    for hex_seed, palette in color_map.items():
-        if dark:
-            colors.append(
-                MpvqcColorSet(
-                    identifier=hex_seed,
-                    background=palette["surface"],
-                    background_alternate=palette["surfaceContainerHigh"],
-                    foreground=palette["onSurfaceVariant"],
-                    foreground_alternate=palette["onSurfaceVariant"],
-                    control=palette["primary"],
-                    row_highlight=palette["inversePrimary"],
-                    row_highlight_text=palette["onSurface"],
-                    row_base=palette["surface"],
-                    row_base_text=palette["onSurfaceVariant"],
-                    row_base_alternate=palette["surfaceContainerLow"],
-                    row_base_alternate_text=palette["onSurfaceVariant"],
-                )
-            )
-        else:
-            colors.append(
-                MpvqcColorSet(
-                    identifier=hex_seed,
-                    background=palette["surfaceContainerLow"],
-                    background_alternate=palette["secondaryContainer"],
-                    foreground=palette["onSurfaceVariant"],
-                    foreground_alternate=palette["onSecondaryContainer"],
-                    control=palette["secondary"],
-                    row_highlight=palette["primary"],
-                    row_highlight_text=palette["onPrimary"],
-                    row_base=palette["surfaceContainerLow"],
-                    row_base_text=palette["onSurfaceVariant"],
-                    row_base_alternate=palette["surfaceContainerHighest"],
-                    row_base_alternate_text=palette["onSurfaceVariant"],
-                )
-            )
-    return colors
-
-
-def update_theme_file(colors: list[MpvqcColorSet], dark: bool) -> None:
+def update_theme_file(color_map: dict[str, dict[str, str]], dark: bool) -> None:
     path = Path() / ".." / "data" / "themes.json"
     path = path.resolve()
 
@@ -160,7 +96,7 @@ def update_theme_file(colors: list[MpvqcColorSet], dark: bool) -> None:
 
     for idx, item in enumerate(file):
         if theme == item["identifier"]:
-            file[idx]["palettes"] = [asdict(c) for c in colors]
+            file[idx]["palettes"] = [{"identifier": seed, "colors": palette} for seed, palette in color_map.items()]
 
     Path(path).write_text(json.dumps(file, indent=4), encoding="utf-8")
 

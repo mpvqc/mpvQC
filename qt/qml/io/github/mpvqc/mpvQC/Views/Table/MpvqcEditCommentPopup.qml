@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Utility
 
@@ -42,8 +42,8 @@ Popup {
         leftPadding: root.leftPadding
         rightPadding: root.rightPadding
 
-        selectionColor: MpvqcTheme.palette.rowHighlight
-        selectedTextColor: MpvqcTheme.palette.rowHighlightText
+        selectionColor: MpvqcTheme.palette.rowSelected
+        selectedTextColor: MpvqcTheme.palette.rowSelectedText
 
         background: Rectangle {
             anchors.fill: parent

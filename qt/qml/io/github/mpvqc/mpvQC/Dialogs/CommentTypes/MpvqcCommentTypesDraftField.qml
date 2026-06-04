@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Utility
@@ -78,7 +78,7 @@ ColumnLayout {
 
             text: root.validationError
             maximumLineCount: 3
-            color: root.mpvqcTheme.palette.control
+            color: root.mpvqcTheme.palette.error
             wrapMode: Label.WordWrap
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop

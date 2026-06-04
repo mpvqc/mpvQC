@@ -7,6 +7,8 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Templates as T
 
+import io.github.mpvqc.mpvQC.Utility
+
 T.ToolTip {
     id: control
 
@@ -30,13 +32,13 @@ T.ToolTip {
             family: 'Noto Sans'
         }
         wrapMode: Text.Wrap
-        color: control.Material.background
+        color: MpvqcTheme.palette.tooltipText
     }
 
     background: Rectangle {
         implicitHeight: control.Material.tooltipHeight
         width: control.implicitWidth
-        color: control.Material.foreground
+        color: MpvqcTheme.palette.tooltipBackground
         radius: 12
     }
 

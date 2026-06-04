@@ -5,11 +5,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
-import io.github.mpvqc.mpvQC.Utility
 
 MpvqcPositionedMenu {
     id: root
@@ -27,9 +26,6 @@ MpvqcPositionedMenu {
     visible: false
     z: 2
     exit: null
-
-    Material.background: MpvqcTheme.palette.backgroundAlternate
-    Material.foreground: MpvqcTheme.palette.foregroundAlternate
 
     onAboutToShow: {
         viewModel.pausePlayer();

@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
+
+import io.github.mpvqc.mpvQC.Utility
 
 Dialog {
     id: root
@@ -19,6 +22,8 @@ Dialog {
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: Overlay.overlay
     dim: false
+
+    M.Material.background: MpvqcTheme.palette.dialogBackground
 
     contentItem: Label {
         text: root.text

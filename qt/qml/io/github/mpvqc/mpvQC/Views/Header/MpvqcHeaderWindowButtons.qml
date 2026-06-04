@@ -5,7 +5,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
@@ -21,6 +22,7 @@ Row {
     signal closeRequested
 
     ToolButton {
+        id: _minimizeButton
         objectName: "minimizeButton"
 
         visible: root.windowButtons.showMinimizeButton
@@ -30,10 +32,16 @@ Row {
         icon.height: 20
         icon.source: MpvqcIcons.minimize
 
+        background: Rectangle {
+            implicitWidth: _minimizeButton.M.Material.touchTarget
+            color: _minimizeButton.hovered ? Qt.alpha(MpvqcTheme.palette.foreground, 0.08) : "transparent"
+        }
+
         onClicked: root.minimizeRequested()
     }
 
     ToolButton {
+        id: _maximizeButton
         objectName: "maximizeButton"
 
         readonly property url iconMaximize: MpvqcIcons.openInFull
@@ -46,6 +54,11 @@ Row {
         icon.height: 18
         icon.source: MpvqcWindowUtility.isMaximized ? iconNormalize : iconMaximize
 
+        background: Rectangle {
+            implicitWidth: _maximizeButton.M.Material.touchTarget
+            color: _maximizeButton.hovered ? Qt.alpha(MpvqcTheme.palette.foreground, 0.08) : "transparent"
+        }
+
         onClicked: root.toggleMaximizeRequested()
     }
 
@@ -53,9 +66,9 @@ Row {
         id: _closeButton
         objectName: "closeButton"
 
-        readonly property color hoverIconColor: root.isWindows ? "#FFFFFD" : MpvqcTheme.palette.background
+        readonly property color hoverIconColor: root.isWindows ? "#FFFFFD" : MpvqcTheme.palette.errorText
         readonly property color idleIconColor: MpvqcTheme.palette.foreground
-        readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcTheme.palette.control
+        readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcTheme.palette.error
 
         visible: root.windowButtons.showCloseButton
         height: root.height
@@ -68,14 +81,11 @@ Row {
             color: _closeButton.hovered ? _closeButton.hoverIconColor : _closeButton.idleIconColor
         }
 
-        onClicked: root.closeRequested()
-
-        Binding {
-            when: true
-            target: _closeButton.background
-            property: "color"
-            value: _closeButton.backgroundColor
-            restoreMode: Binding.RestoreNone
+        background: Rectangle {
+            implicitWidth: _closeButton.M.Material.touchTarget
+            color: _closeButton.hovered ? _closeButton.backgroundColor : "transparent"
         }
+
+        onClicked: root.closeRequested()
     }
 }

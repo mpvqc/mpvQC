@@ -88,7 +88,7 @@ TestCase {
             {
                 tag: "nonWindows",
                 isWindows: false,
-                expected: MpvqcTheme.palette.control
+                expected: MpvqcTheme.palette.error
             }
         ];
     }
@@ -112,7 +112,7 @@ TestCase {
             {
                 tag: "nonWindows",
                 isWindows: false,
-                expected: MpvqcTheme.palette.background
+                expected: MpvqcTheme.palette.errorText
             }
         ];
     }

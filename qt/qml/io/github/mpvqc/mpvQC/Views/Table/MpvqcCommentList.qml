@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
@@ -73,7 +73,7 @@ ListView {
     highlight: Rectangle {
         width: parent ? parent.width - _scrollBar.visibleWidth : 0
         height: parent?.height ?? 0
-        color: MpvqcTheme.palette.rowHighlight
+        color: MpvqcTheme.palette.rowSelected
     }
 
     delegate: MpvqcCommentListDelegate {

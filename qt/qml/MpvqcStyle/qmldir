@@ -4,4 +4,9 @@
 
 module MpvqcStyle
 
+Button Button.qml
+DialogButtonBox DialogButtonBox.qml
+MenuSeparator MenuSeparator.qml
+ToolButton ToolButton.qml
+ToolSeparator ToolSeparator.qml
 ToolTip ToolTip.qml

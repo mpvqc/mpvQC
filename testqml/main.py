@@ -62,7 +62,8 @@ def resolve_target_file(file_part: str) -> str:
 
 
 def main() -> int:
-    os.environ["QT_QUICK_CONTROLS_STYLE"] = "Material"
+    os.environ["QT_QUICK_CONTROLS_STYLE"] = "MpvqcStyle"
+    os.environ["QT_QUICK_CONTROLS_FALLBACK_STYLE"] = "Material"
     os.environ["QT_QUICK_CONTROLS_MATERIAL_VARIANT"] = "Dense"
     os.environ["MPVQC_DEBUG"] = "1"
 

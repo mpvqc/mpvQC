@@ -5,6 +5,7 @@
 import json
 from dataclasses import dataclass
 from functools import cached_property
+from typing import Self
 
 import inject
 
@@ -16,16 +17,77 @@ from .settings import SettingsService
 class ThemePalette:
     identifier: str
     background: str
-    background_alternate: str
     foreground: str
-    foreground_alternate: str
-    control: str
-    row_highlight: str
-    row_highlight_text: str
+    hint: str
+    accent: str
+    separator: str
+    error: str
+    error_text: str
+    header_background: str
+    popup_background: str
+    popup_text: str
+    menu_background: str
+    dialog_background: str
+    tooltip_background: str
+    tooltip_text: str
     row_base: str
     row_base_text: str
-    row_base_alternate: str
-    row_base_alternate_text: str
+    row_stripe: str
+    row_stripe_text: str
+    row_selected: str
+    row_selected_text: str
+
+    @classmethod
+    def dark(cls, identifier: str, colors: dict[str, str]) -> Self:
+        return cls(
+            identifier=identifier,
+            background=colors["surface"],
+            foreground=colors["onSurfaceVariant"],
+            hint=colors["outline"],
+            accent=colors["primary"],
+            separator=colors["surfaceVariant"],
+            error=colors["error"],
+            error_text=colors["onError"],
+            header_background=colors["surfaceContainer"],
+            popup_background=colors["surfaceContainerHigh"],
+            popup_text=colors["onSurfaceVariant"],
+            menu_background=colors["surfaceContainer"],
+            dialog_background=colors["surfaceContainerHigh"],
+            tooltip_background=colors["inverseSurface"],
+            tooltip_text=colors["inverseOnSurface"],
+            row_base=colors["surface"],
+            row_base_text=colors["onSurfaceVariant"],
+            row_stripe=colors["surfaceContainerLow"],
+            row_stripe_text=colors["onSurfaceVariant"],
+            row_selected=colors["inversePrimary"],
+            row_selected_text=colors["onSurface"],
+        )
+
+    @classmethod
+    def light(cls, identifier: str, colors: dict[str, str]) -> Self:
+        return cls(
+            identifier=identifier,
+            background=colors["surfaceContainerLow"],
+            foreground=colors["onSurfaceVariant"],
+            hint=colors["outline"],
+            accent=colors["secondary"],
+            separator=colors["outlineVariant"],
+            error=colors["error"],
+            error_text=colors["onError"],
+            header_background=colors["surfaceContainer"],
+            popup_background=colors["secondaryContainer"],
+            popup_text=colors["onSecondaryContainer"],
+            menu_background=colors["surfaceContainer"],
+            dialog_background=colors["surfaceContainerHigh"],
+            tooltip_background=colors["inverseSurface"],
+            tooltip_text=colors["inverseOnSurface"],
+            row_base=colors["surfaceContainerLow"],
+            row_base_text=colors["onSurfaceVariant"],
+            row_stripe=colors["surfaceContainerHighest"],
+            row_stripe_text=colors["onSurfaceVariant"],
+            row_selected=colors["primary"],
+            row_selected_text=colors["onPrimary"],
+        )
 
 
 @dataclass(frozen=True)
@@ -56,12 +118,13 @@ class Theme:
 
 
 def _parse_theme(data: dict) -> Theme:
+    make_palette = ThemePalette.dark if data["is_dark"] else ThemePalette.light
     return Theme(
         identifier=data["identifier"],
         name=data["name"],
         preview=data["preview"],
         is_dark=data["is_dark"],
-        palettes=tuple(ThemePalette(**p) for p in data["palettes"]),
+        palettes=tuple(make_palette(p["identifier"], p["colors"]) for p in data["palettes"]),
     )
 
 

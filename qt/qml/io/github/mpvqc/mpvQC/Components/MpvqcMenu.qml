@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
+import QtQuick.Controls.Material as M
+
+import io.github.mpvqc.mpvQC.Utility
 
 Menu {
     id: root // todo check if it can be removed by using parent on its usages
@@ -17,6 +20,10 @@ Menu {
     dim: false
 
     width: calculateMenuWidths()
+
+    M.Material.background: MpvqcTheme.palette.popupBackground
+    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.roundedScale: M.Material.SmallScale
 
     function calculateMenuWidths(): int {
         // Adapted from: https://martin.rpdev.net/2018/03/13/qt-quick-controls-2-automatically-set-the-width-of-menus.html

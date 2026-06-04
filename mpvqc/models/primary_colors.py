@@ -68,7 +68,7 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
             case self.IdentifierRole:
                 return palette.identifier
             case self.DisplayColorRole:
-                return palette.row_highlight
+                return palette.row_selected
 
         return None
 

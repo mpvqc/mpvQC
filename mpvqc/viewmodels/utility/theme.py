@@ -31,28 +31,56 @@ class MpvqcThemePalette(QObject):
         return self._palette.background
 
     @Property(str, notify=paletteChanged)
-    def backgroundAlternate(self) -> str:
-        return self._palette.background_alternate
-
-    @Property(str, notify=paletteChanged)
     def foreground(self) -> str:
         return self._palette.foreground
 
     @Property(str, notify=paletteChanged)
-    def foregroundAlternate(self) -> str:
-        return self._palette.foreground_alternate
+    def hint(self) -> str:
+        return self._palette.hint
 
     @Property(str, notify=paletteChanged)
-    def control(self) -> str:
-        return self._palette.control
+    def accent(self) -> str:
+        return self._palette.accent
 
     @Property(str, notify=paletteChanged)
-    def rowHighlight(self) -> str:
-        return self._palette.row_highlight
+    def separator(self) -> str:
+        return self._palette.separator
 
     @Property(str, notify=paletteChanged)
-    def rowHighlightText(self) -> str:
-        return self._palette.row_highlight_text
+    def error(self) -> str:
+        return self._palette.error
+
+    @Property(str, notify=paletteChanged)
+    def errorText(self) -> str:
+        return self._palette.error_text
+
+    @Property(str, notify=paletteChanged)
+    def headerBackground(self) -> str:
+        return self._palette.header_background
+
+    @Property(str, notify=paletteChanged)
+    def popupBackground(self) -> str:
+        return self._palette.popup_background
+
+    @Property(str, notify=paletteChanged)
+    def popupText(self) -> str:
+        return self._palette.popup_text
+
+    @Property(str, notify=paletteChanged)
+    def menuBackground(self) -> str:
+        return self._palette.menu_background
+
+    @Property(str, notify=paletteChanged)
+    def dialogBackground(self) -> str:
+        return self._palette.dialog_background
+
+    @Property(str, notify=paletteChanged)
+    def tooltipBackground(self) -> str:
+        return self._palette.tooltip_background
+
+    @Property(str, notify=paletteChanged)
+    def tooltipText(self) -> str:
+        return self._palette.tooltip_text
 
     @Property(str, notify=paletteChanged)
     def rowBase(self) -> str:
@@ -63,12 +91,20 @@ class MpvqcThemePalette(QObject):
         return self._palette.row_base_text
 
     @Property(str, notify=paletteChanged)
-    def rowBaseAlternate(self) -> str:
-        return self._palette.row_base_alternate
+    def rowStripe(self) -> str:
+        return self._palette.row_stripe
 
     @Property(str, notify=paletteChanged)
-    def rowBaseAlternateText(self) -> str:
-        return self._palette.row_base_alternate_text
+    def rowStripeText(self) -> str:
+        return self._palette.row_stripe_text
+
+    @Property(str, notify=paletteChanged)
+    def rowSelected(self) -> str:
+        return self._palette.row_selected
+
+    @Property(str, notify=paletteChanged)
+    def rowSelectedText(self) -> str:
+        return self._palette.row_selected_text
 
 
 @QmlElement

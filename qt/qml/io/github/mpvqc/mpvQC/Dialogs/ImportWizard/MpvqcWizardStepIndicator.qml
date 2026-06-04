@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
@@ -130,13 +130,12 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 visible: !_entry.isLast
-                opacity: 0.5
 
                 icon {
                     source: Application.layoutDirection === Qt.RightToLeft ? MpvqcIcons.keyboardArrowLeft : MpvqcIcons.keyboardArrowRight
                     width: root.glyphSize
                     height: root.glyphSize
-                    color: MpvqcTheme.palette.foreground
+                    color: MpvqcTheme.palette.hint
                 }
             }
         }

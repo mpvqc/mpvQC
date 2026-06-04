@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
@@ -125,6 +125,7 @@ Item {
 
             ToolSeparator {
                 id: _separator
+                anchors.verticalCenter: parent.verticalCenter
                 height: 32
             }
         }

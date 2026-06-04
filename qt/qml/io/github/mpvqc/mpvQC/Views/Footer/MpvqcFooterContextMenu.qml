@@ -3,10 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Components
-import io.github.mpvqc.mpvQC.Utility
 
 MpvqcMenu {
     id: root
@@ -24,9 +23,6 @@ MpvqcMenu {
     signal percentToggled
 
     modal: true
-
-    Material.background: MpvqcTheme.palette.backgroundAlternate
-    Material.foreground: MpvqcTheme.palette.foregroundAlternate
 
     MenuItem {
         objectName: "defaultFormatMenuItem"

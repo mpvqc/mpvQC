@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 
 import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
@@ -14,6 +14,8 @@ MenuBar {
     id: root
 
     required property MpvqcMenuBarViewModel viewModel
+
+    background: null
 
     MpvqcMenuBarMenu {
         objectName: "fileMenu"
