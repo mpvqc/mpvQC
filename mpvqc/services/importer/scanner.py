@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import inject
 
 from mpvqc.datamodels import SubtitleSource, VideoSource
-from mpvqc.services.document_importer import DocumentImporterService
+from mpvqc.services.importer.documents import DocumentImporterService
 from mpvqc.services.subtitle_importer import SubtitleImporterService
 
 if TYPE_CHECKING:

@@ -13,8 +13,7 @@ import pytest
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.services.comments import CommentsService
-from mpvqc.services.document_importer import DocumentImporterService
-from mpvqc.services.importer import FinishedPlan, ImporterService, session, subtitles, video
+from mpvqc.services.importer import DocumentImporterService, FinishedPlan, ImporterService, session, subtitles, video
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.settings import SettingsService
