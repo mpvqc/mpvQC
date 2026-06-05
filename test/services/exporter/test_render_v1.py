@@ -11,13 +11,13 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.exporter.documents.v1 import render
+from mpvqc.services.exporter.documents.v1 import render_v1
 
 
-def test_renders_minimal_document(configure_mocks):
+def test_renders_minimal_document(configure_mocks, render_context):
     configure_mocks()
 
-    content = render()
+    content = render_v1(render_context)
 
     assert content.endswith("\n")
     assert json.loads(content) == {
@@ -27,7 +27,7 @@ def test_renders_minimal_document(configure_mocks):
     }
 
 
-def test_renders_full_document(configure_mocks, build_info_service_mock):
+def test_renders_full_document(configure_mocks, render_context, build_info_service_mock):
     build_info_service_mock.name = "mpvQC"
     build_info_service_mock.version = "0.9.0"
     configure_mocks(
@@ -45,7 +45,7 @@ def test_renders_full_document(configure_mocks, build_info_service_mock):
         write_header_subtitles=True,
     )
 
-    document = json.loads(render())
+    document = json.loads(render_v1(render_context))
 
     created_at = document.pop("created_at")
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", created_at)
@@ -63,7 +63,7 @@ def test_renders_full_document(configure_mocks, build_info_service_mock):
     }
 
 
-def test_renders_keys_in_specification_order(configure_mocks):
+def test_renders_keys_in_specification_order(configure_mocks, render_context):
     configure_mocks(
         video="/path/to/video.mkv",
         nickname="lorem",
@@ -75,7 +75,7 @@ def test_renders_keys_in_specification_order(configure_mocks):
         write_header_subtitles=True,
     )
 
-    document = json.loads(render())
+    document = json.loads(render_v1(render_context))
 
     assert list(document) == [
         "$schema",
@@ -103,9 +103,9 @@ OMITTED_WHEN_EMPTY = [
 
 
 @pytest.mark.parametrize("case", OMITTED_WHEN_EMPTY, ids=lambda case: case.name)
-def test_omits_field_when_toggled_on_but_empty(configure_mocks, case):
+def test_omits_field_when_toggled_on_but_empty(configure_mocks, render_context, case):
     configure_mocks(**case.settings)
 
-    document = json.loads(render())
+    document = json.loads(render_v1(render_context))
 
     assert case.absent_field not in document

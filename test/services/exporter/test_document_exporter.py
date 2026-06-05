@@ -8,15 +8,19 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from jinja2 import TemplateError, TemplateSyntaxError
-from PySide6.QtCore import QStandardPaths
+from PySide6.QtCore import QStandardPaths, QThreadPool
 
-from mpvqc.services import DocumentExportService
+from mpvqc.services import ExportService
+from mpvqc.services.exporter.writer import ExportError, save_v1
 
 
 @pytest.fixture
-def service() -> DocumentExportService:
-    return DocumentExportService()
+def service(qt_app) -> ExportService:
+    return ExportService()
+
+
+def wait_for_jobs() -> None:
+    QThreadPool.globalInstance().waitForDone()
 
 
 @dataclass
@@ -61,36 +65,40 @@ def test_generates_file_path_proposals(case, configure_mocks, service):
     assert actual == case.expected
 
 
-def test_export_succeeds(service, document_render_service_mock, make_spy):
+def test_export_succeeds(configure_mocks, service, tmp_path, make_spy):
+    configure_mocks(nickname="lorem")
     error_spy = make_spy(service.export_error_occurred)
-    template_mock = MagicMock()
-    file_mock = MagicMock()
+    template = tmp_path / "template.jinja"
+    template.write_text("nick: {{ nickname }}", encoding="utf-8")
+    file = tmp_path / "export.txt"
 
-    service.export(file_mock, template_mock)
+    service.export(file, template)
+    wait_for_jobs()
 
     assert error_spy.count() == 0
-    assert template_mock.read_text.called
-    assert document_render_service_mock.render.called
-    assert file_mock.write_text.called
+    assert file.read_text(encoding="utf-8") == "nick: lorem"
 
 
 @pytest.mark.parametrize(
-    ("render_error", "expected_lineno"),
+    ("template_content", "expected_lineno"),
     [
-        (TemplateSyntaxError(message="error", lineno=42), 42),
-        (TemplateError(message="error"), -1),
+        ("{% if %}", 1),
+        ("{{ undefined_thing() }}", -1),
     ],
 )
 def test_export_signals_on_render_failure(
-    service, document_render_service_mock, make_spy, render_error, expected_lineno
+    configure_mocks, service, tmp_path, make_spy, template_content, expected_lineno
 ):
+    configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
-    document_render_service_mock.render.side_effect = render_error
+    template = tmp_path / "template.jinja"
+    template.write_text(template_content, encoding="utf-8")
 
-    service.export(MagicMock(), MagicMock())
+    service.export(tmp_path / "export.txt", template)
+    wait_for_jobs()
 
     assert error_spy.count() == 1
-    assert error_spy.at(invocation=0, argument=0) == "error"
+    assert error_spy.at(invocation=0, argument=0)
     assert error_spy.at(invocation=0, argument=1) == expected_lineno
 
 
@@ -101,38 +109,43 @@ def test_export_signals_on_render_failure(
         FileNotFoundError("template gone"),
     ],
 )
-def test_export_signals_on_template_read_failure(service, make_spy, read_error):
+def test_export_signals_on_template_read_failure(configure_mocks, service, make_spy, read_error):
+    configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     template_mock = MagicMock()
     template_mock.read_text.side_effect = read_error
 
     service.export(MagicMock(), template_mock)
+    wait_for_jobs()
 
     assert error_spy.count() == 1
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_export_signals_on_write_failure(service, document_render_service_mock, make_spy):
+def test_export_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy):
+    configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
+    template = tmp_path / "template.jinja"
+    template.write_text("static", encoding="utf-8")
     file_mock = MagicMock()
     file_mock.write_text.side_effect = PermissionError("read-only target")
 
-    service.export(file_mock, MagicMock())
+    service.export(file_mock, template)
+    wait_for_jobs()
 
     assert error_spy.count() == 1
     assert error_spy.at(invocation=0, argument=1) == -1
-    assert document_render_service_mock.render.called
 
 
-def test_save_succeeds(configure_mocks, service, make_spy):
+def test_save_writes_classic_document(configure_mocks, service, tmp_path, make_spy):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
-    file_mock = MagicMock()
+    file = tmp_path / "saved.txt"
 
-    service.save(file_mock)
+    service.save(file)
+    wait_for_jobs()
 
-    written = file_mock.write_text.call_args.args[0]
-    assert json.loads(written)["version"] == 1
+    assert file.read_text(encoding="utf-8").startswith("[FILE]")
     assert error_spy.count() == 0
 
 
@@ -143,29 +156,67 @@ def test_save_signals_on_write_failure(configure_mocks, service, make_spy):
     file_mock.write_text.side_effect = PermissionError("read-only target")
 
     service.save(file_mock)
+    wait_for_jobs()
 
     assert error_spy.count() == 1
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_save_classic_succeeds(service, document_render_service_mock, make_spy):
-    error_spy = make_spy(service.export_error_occurred)
-    file_mock = MagicMock()
+def test_save_records_save(configure_mocks, service, tmp_path, state_service_mock):
+    configure_mocks()
+    file = tmp_path / "saved.txt"
 
-    service.save_classic(file_mock)
+    service.save(file)
+    wait_for_jobs()
 
-    assert document_render_service_mock.render.called
-    assert file_mock.write_text.called
-    assert error_spy.count() == 0
+    state_service_mock.record_save.assert_called_once_with(file)
 
 
-def test_save_classic_signals_on_write_failure(service, document_render_service_mock, make_spy):
-    error_spy = make_spy(service.export_error_occurred)
+def test_save_failure_does_not_record_save(configure_mocks, service, state_service_mock):
+    configure_mocks()
     file_mock = MagicMock()
     file_mock.write_text.side_effect = PermissionError("read-only target")
 
-    service.save_classic(file_mock)
+    service.save(file_mock)
+    wait_for_jobs()
 
-    assert error_spy.count() == 1
-    assert error_spy.at(invocation=0, argument=1) == -1
-    assert document_render_service_mock.render.called
+    state_service_mock.record_save.assert_not_called()
+
+
+def test_backup_writes_archive(configure_mocks, service, application_paths_service_mock, tmp_path):
+    application_paths_service_mock.dir_backup = tmp_path
+    configure_mocks(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+
+    service.backup()
+    wait_for_jobs()
+
+    assert len(list(tmp_path.glob("*.zip"))) == 1
+
+
+def test_backup_failure_is_logged(configure_mocks, service, application_paths_service_mock, tmp_path, caplog):
+    application_paths_service_mock.dir_backup = tmp_path / "does-not-exist"
+    configure_mocks()
+
+    service.backup()
+    wait_for_jobs()
+
+    assert "Failed to create backup" in caplog.text
+    assert not (tmp_path / "does-not-exist").exists()
+
+
+def test_save_v1_writes_v1_document(configure_mocks, render_context, tmp_path):
+    configure_mocks()
+    file = tmp_path / "saved.json"
+
+    save_v1(file, render_context)
+
+    assert json.loads(file.read_text(encoding="utf-8"))["version"] == 1
+
+
+def test_save_v1_raises_on_write_failure(configure_mocks, render_context):
+    configure_mocks()
+    file_mock = MagicMock()
+    file_mock.write_text.side_effect = PermissionError("read-only target")
+
+    with pytest.raises(ExportError):
+        save_v1(file_mock, render_context)

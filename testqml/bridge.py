@@ -15,7 +15,7 @@ from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
-    DocumentBackupService,
+    ExportService,
     PlayerService,
     SettingsService,
     StateService,
@@ -151,7 +151,7 @@ class MpvqcTestBridge(QObject):
 
     @Slot(result=int)
     def backupWriteCount(self) -> int:
-        return getattr(inject.instance(DocumentBackupService), "write_count", 0)
+        return getattr(inject.instance(ExportService), "write_count", 0)
 
     @Slot(str, result=bool)
     def backupArchiveAnyEntryContains(self, text: str) -> bool:
