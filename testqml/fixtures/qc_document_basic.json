@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "comments": [
+        {
+            "time": "00:00:10.000",
+            "type": "Translation",
+            "text": "first"
+        },
+        {
+            "time": "00:01:20.500",
+            "type": "Spelling",
+            "text": "second"
+        }
+    ]
+}

@@ -26,6 +26,7 @@ class MpvqcDropAreaViewModel(QObject):
 
     @Slot(list)
     def open(self, urls: list[QUrl]) -> None:
+        document_extensions = [f".{ext}" for ext in self._mimetype_provider.DOCUMENT_FILE_EXTENSIONS]
         subtitle_extensions = [f".{ext}" for ext in self._mimetype_provider.SUBTITLE_FILE_EXTENSIONS]
         documents = []
         subtitles = []
@@ -33,7 +34,7 @@ class MpvqcDropAreaViewModel(QObject):
 
         for url in urls:
             path = self._type_mapper.map_url_to_path(url)
-            if path.suffix == ".txt":
+            if path.suffix in document_extensions:
                 documents.append(path)
             elif path.suffix in subtitle_extensions:
                 subtitles.append(path)

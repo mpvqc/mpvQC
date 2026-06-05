@@ -14,7 +14,7 @@ FileDialog {
     title: qsTranslate("FileInteractionDialogs", "Open QC Document(s)")
     currentFolder: viewModel.lastDirectoryDocuments
     fileMode: FileDialog.OpenFiles
-    nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
+    nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt *.json)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 
     onAccepted: {
         viewModel.lastDirectoryDocuments = currentFolder;
