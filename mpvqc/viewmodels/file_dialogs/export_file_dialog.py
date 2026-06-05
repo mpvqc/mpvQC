@@ -23,13 +23,6 @@ class MpvqcExportFileDialogViewModel(QObject):
         path = self._exporter.generate_file_path_proposal()
         return self._type_mapper.map_path_to_url(path)
 
-    @Slot(QUrl, QUrl)
-    def export(self, document: QUrl, template: QUrl) -> None:
-        self._exporter.export(
-            document=self._type_mapper.map_url_to_path(document),
-            template=self._type_mapper.map_url_to_path(template),
-        )
-
     @Slot(QUrl)
     def save(self, document: QUrl) -> None:
         path = self._type_mapper.map_url_to_path(document)
@@ -39,3 +32,10 @@ class MpvqcExportFileDialogViewModel(QObject):
     def exportClassic(self, document: QUrl) -> None:
         path = self._type_mapper.map_url_to_path(document)
         self._exporter.export_classic(path)
+
+    @Slot(QUrl, QUrl)
+    def exportCustom(self, document: QUrl, template: QUrl) -> None:
+        self._exporter.export_custom(
+            document=self._type_mapper.map_url_to_path(document),
+            template=self._type_mapper.map_url_to_path(template),
+        )

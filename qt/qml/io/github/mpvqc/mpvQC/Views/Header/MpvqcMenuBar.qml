@@ -52,8 +52,8 @@ MenuBar {
         MenuSeparator {}
 
         MpvqcExportQcDocumentMenu {
-            onClassicExportTriggered: root.viewModel.requestSaveQcDocumentClassic()
-            onTemplateExportTriggered: (name, path) => root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
+            onClassicExportTriggered: root.viewModel.requestExportQcDocumentClassic()
+            onCustomExportTriggered: (name, path) => root.viewModel.requestExportQcDocumentCustom(name, path)
         }
 
         MenuSeparator {}
@@ -230,10 +230,10 @@ MenuBar {
         MenuSeparator {}
 
         MpvqcMenuBarItem {
-            objectName: "openExtendedExportsDialogMenuItem"
+            objectName: "openCustomExportsDialogMenuItem"
             text: qsTranslate("MainWindow", "Extended Exports...")
             icon.source: MpvqcIcons.upload
-            onTriggered: root.viewModel.requestOpenExtendedExportsDialog()
+            onTriggered: root.viewModel.requestOpenCustomExportsDialog()
         }
 
         MpvqcMenuBarItem {

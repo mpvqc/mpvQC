@@ -43,12 +43,12 @@ TestCase {
         it.find.openedDialog(control, "shortcutsDialog");
     }
 
-    function test_extendedExports_opensMessageBox(): void {
+    function test_customExports_opensMessageBox(): void {
         const control = it.makeControl();
 
-        it.menu.trigger(control, "helpMenu", "openExtendedExportsDialogMenuItem");
+        it.menu.trigger(control, "helpMenu", "openCustomExportsDialogMenuItem");
 
-        it.find.openedDialog(control, "extendedExportMessageBox");
+        it.find.openedDialog(control, "customExportMessageBox");
     }
 
     function test_appDataFolder_opensExternalUrl(): void {

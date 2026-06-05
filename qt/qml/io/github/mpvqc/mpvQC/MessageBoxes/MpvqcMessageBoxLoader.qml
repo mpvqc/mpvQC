@@ -14,7 +14,7 @@ Loader {
 
     readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
 
-    readonly property url messageBoxExtendedExport: Qt.resolvedUrl("MpvqcExtendedExportMessageBox.qml")
+    readonly property url messageBoxCustomExport: Qt.resolvedUrl("MpvqcCustomExportMessageBox.qml")
     readonly property url messageBoxExportError: Qt.resolvedUrl("MpvqcExportErrorMessageBox.qml")
     readonly property url messageBoxQuit: Qt.resolvedUrl("MpvqcQuitMessageBox.qml")
     readonly property url messageBoxReset: Qt.resolvedUrl("MpvqcResetMessageBox.qml")
@@ -26,8 +26,8 @@ Loader {
     active: false
     visible: status === Loader.Ready
 
-    function openExtendedExportsMessageBox(): void {
-        setSource(messageBoxExtendedExport);
+    function openCustomExportsMessageBox(): void {
+        setSource(messageBoxCustomExport);
         active = true;
     }
 

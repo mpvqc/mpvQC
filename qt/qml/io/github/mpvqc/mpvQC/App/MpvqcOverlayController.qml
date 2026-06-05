@@ -49,16 +49,16 @@ Item {
             _fileDialogLoader.openImportQcDocumentsDialog();
         }
 
-        function onExportPathRequested(): void {
+        function onSavePathRequested(): void {
             _fileDialogLoader.openDocumentSaveDialog();
-        }
-
-        function onExtendedExportRequested(template: url): void {
-            _fileDialogLoader.openExtendedDocumentExportDialog(template);
         }
 
         function onClassicExportRequested(): void {
             _fileDialogLoader.openClassicDocumentExportDialog();
+        }
+
+        function onCustomExportRequested(template: url): void {
+            _fileDialogLoader.openCustomDocumentExportDialog(template);
         }
 
         function onCloseAppRequested(): void {
@@ -117,8 +117,8 @@ Item {
             _messageBoxLoader.openVersionCheckMessageBox();
         }
 
-        function onExtendedExportDialogRequested(): void {
-            _messageBoxLoader.openExtendedExportsMessageBox();
+        function onCustomExportDialogRequested(): void {
+            _messageBoxLoader.openCustomExportsMessageBox();
         }
     }
 }
