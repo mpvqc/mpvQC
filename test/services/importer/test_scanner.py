@@ -17,7 +17,7 @@ from mpvqc.datamodels import (
     SubtitleSource,
     VideoSource,
 )
-from mpvqc.services.document_importer import DocumentImporterService
+from mpvqc.services.importer import DocumentImporterService
 from mpvqc.services.importer.scanner import ResourceScanner
 from mpvqc.services.subtitle_importer import SubtitleImporterService
 

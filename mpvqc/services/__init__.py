@@ -10,7 +10,6 @@ from .desktop import DesktopService as DesktopService
 from .document_exporter import DocumentBackupService as DocumentBackupService
 from .document_exporter import DocumentExportService as DocumentExportService
 from .document_exporter import DocumentRenderService as DocumentRenderService
-from .document_importer import DocumentImporterService as DocumentImporterService
 from .exporter import ExportService as ExportService
 from .file_startup import FileStartupService as FileStartupService
 from .font_loader import FontLoaderService as FontLoaderService
@@ -20,6 +19,7 @@ from .frameless import get_frameless_window_service as get_frameless_window_serv
 from .host_environment import HostEnvironmentService as HostEnvironmentService
 from .host_environment import WindowButtonPreference as WindowButtonPreference
 from .i18n import InternationalizationService as InternationalizationService
+from .importer import DocumentImporterService as DocumentImporterService
 from .importer import ImporterService as ImporterService
 from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService

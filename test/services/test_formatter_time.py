@@ -66,3 +66,18 @@ def test_format_milliseconds_to_string(service, expected, input_milliseconds, lo
 def test_parse_string_to_milliseconds(service, expected_milliseconds, input_string):
     actual = service.parse_string_to_milliseconds(input_string)
     assert expected_milliseconds == actual
+
+
+@pytest.mark.parametrize(
+    ("expected_milliseconds", "input_string"),
+    [
+        (0, "00:00:00.000"),
+        (68 * 1000 + 1, "00:01:08.001"),
+        ((15 * 60 + 29) * 1000 + 340, "00:15:29.340"),
+        (10000 * 1000 + 999, "02:46:40.999"),
+        (359999 * 1000 + 999, "99:59:59.999"),
+    ],
+)
+def test_parse_subsecond_string_to_milliseconds(service, expected_milliseconds, input_string):
+    actual = service.parse_subsecond_string_to_milliseconds(input_string)
+    assert expected_milliseconds == actual
