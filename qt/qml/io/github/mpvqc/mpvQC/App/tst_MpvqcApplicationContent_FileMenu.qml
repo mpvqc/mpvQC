@@ -75,9 +75,17 @@ TestCase {
     function test_openQcDocument_data() {
         return [
             {
-                tag: "accepted",
+                tag: "accepted classic",
                 interact: dialog => {
                     dialog.selectedFile = it.bridge.importArtifact("qc_document_basic.txt");
+                    it.dialog.accept(dialog);
+                },
+                expectedComments: 2
+            },
+            {
+                tag: "accepted v1",
+                interact: dialog => {
+                    dialog.selectedFile = it.bridge.importArtifact("qc_document_basic.json");
                     it.dialog.accept(dialog);
                 },
                 expectedComments: 2

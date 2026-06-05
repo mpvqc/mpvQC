@@ -444,6 +444,7 @@ files = [
     "testqml/fixtures/portable-root/appdata/input.conf",
     "testqml/fixtures/portable-root/appdata/mpv.conf",
     "testqml/fixtures/portable-root/portable",
+    "testqml/fixtures/qc_document_basic.json",
     "testqml/fixtures/qc_document_basic.txt",
     "testqml/fixtures/qc_document_invalid.txt",
     "testqml/fixtures/subtitle_basic.ass",

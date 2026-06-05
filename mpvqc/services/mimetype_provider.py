@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 class MimetypeProviderService:
+    DOCUMENT_FILE_EXTENSIONS: Final[frozenset[str]] = frozenset({"txt", "json"})
+
     # fmt: off
     SUBTITLE_FILE_EXTENSIONS: Final[frozenset[str]] = frozenset({
         "aqt", "ass", "idx", "js", "jss", "mks", "rt", "scc", "smi",
