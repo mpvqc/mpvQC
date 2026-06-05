@@ -23,6 +23,12 @@ class TimeFormatterService:
         return TimeFormatterService.format_time_to_string(seconds, long_format=long_format)
 
     @staticmethod
+    def format_milliseconds_to_subsecond_string(input_milliseconds: int) -> str:
+        seconds, milliseconds = divmod(input_milliseconds, TimeFormatterService.MILLISECONDS_PER_SECOND)
+        time = TimeFormatterService.format_time_to_string(seconds, long_format=True)
+        return f"{time}.{milliseconds:03d}"
+
+    @staticmethod
     def parse_string_to_milliseconds(time_string: str) -> int:
         hours, minutes, seconds = map(int, time_string.split(":"))
         return (hours * 3600 + minutes * 60 + seconds) * TimeFormatterService.MILLISECONDS_PER_SECOND

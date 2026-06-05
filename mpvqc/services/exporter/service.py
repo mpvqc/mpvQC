@@ -7,8 +7,9 @@ from pathlib import Path
 import inject
 from PySide6.QtCore import QMutex, QMutexLocker, QThreadPool
 
-from .document_exporter import DocumentExportService
-from .state import StateService
+from mpvqc.services.state import StateService
+
+from .documents import DocumentExportService
 
 
 class ExportService:
@@ -31,7 +32,7 @@ class ExportService:
     def save(self, document: Path) -> None:
         def _job() -> None:
             with QMutexLocker(self._mutex):
-                self._document_exporter.save(document)
+                self._document_exporter.save_classic(document)
                 self._state.record_save(document)
 
         QThreadPool.globalInstance().start(_job)

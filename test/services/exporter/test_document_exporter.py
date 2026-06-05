@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -123,23 +124,47 @@ def test_export_signals_on_write_failure(service, document_render_service_mock, 
     assert document_render_service_mock.render.called
 
 
-def test_save_succeeds(service, document_render_service_mock, make_spy):
+def test_save_succeeds(configure_mocks, service, make_spy):
+    configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     file_mock = MagicMock()
 
     service.save(file_mock)
+
+    written = file_mock.write_text.call_args.args[0]
+    assert json.loads(written)["version"] == 1
+    assert error_spy.count() == 0
+
+
+def test_save_signals_on_write_failure(configure_mocks, service, make_spy):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+    file_mock = MagicMock()
+    file_mock.write_text.side_effect = PermissionError("read-only target")
+
+    service.save(file_mock)
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=1) == -1
+
+
+def test_save_classic_succeeds(service, document_render_service_mock, make_spy):
+    error_spy = make_spy(service.export_error_occurred)
+    file_mock = MagicMock()
+
+    service.save_classic(file_mock)
 
     assert document_render_service_mock.render.called
     assert file_mock.write_text.called
     assert error_spy.count() == 0
 
 
-def test_save_signals_on_write_failure(service, document_render_service_mock, make_spy):
+def test_save_classic_signals_on_write_failure(service, document_render_service_mock, make_spy):
     error_spy = make_spy(service.export_error_occurred)
     file_mock = MagicMock()
     file_mock.write_text.side_effect = PermissionError("read-only target")
 
-    service.save(file_mock)
+    service.save_classic(file_mock)
 
     assert error_spy.count() == 1
     assert error_spy.at(invocation=0, argument=1) == -1
