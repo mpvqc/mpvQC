@@ -11,7 +11,6 @@ import pytest
 from PySide6.QtCore import QStandardPaths, QThreadPool
 
 from mpvqc.services import ExportService
-from mpvqc.services.exporter.writer import ExportError, save_v1
 
 
 @pytest.fixture
@@ -27,6 +26,7 @@ def wait_for_jobs() -> None:
 class FilePathProposalTestSet:
     video: Path | None
     nickname: str | None
+    suffix: str
     expected: Path
 
 
@@ -40,40 +40,44 @@ MOVIES = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.Mo
         FilePathProposalTestSet(
             video=HOME / "Documents" / "my-movie.mp4",
             nickname="some-nickname",
-            expected=HOME / "Documents" / "[QC]_my-movie_some-nickname.txt",
+            suffix="json",
+            expected=HOME / "Documents" / "[QC]_my-movie_some-nickname.json",
         ),
         FilePathProposalTestSet(
             video=HOME / "Documents" / "my-movie.mp4",
             nickname=None,
+            suffix="txt",
             expected=HOME / "Documents" / "[QC]_my-movie.txt",
         ),
         FilePathProposalTestSet(
             video=None,
             nickname="some-nickname",
+            suffix="txt",
             expected=MOVIES / "[QC]_untitled_some-nickname.txt",
         ),
         FilePathProposalTestSet(
             video=None,
             nickname=None,
-            expected=MOVIES / "[QC]_untitled.txt",
+            suffix="json",
+            expected=MOVIES / "[QC]_untitled.json",
         ),
     ],
 )
 def test_generates_file_path_proposals(case, configure_mocks, service):
     configure_mocks(video=case.video, nickname=case.nickname)
-    actual = service.generate_file_path_proposal()
+    actual = service.generate_file_path_proposal(case.suffix)
     assert actual == case.expected
 
 
-def test_save_writes_classic_document(configure_mocks, service, tmp_path, make_spy):
+def test_save_writes_v1_document(configure_mocks, service, tmp_path, make_spy):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
-    file = tmp_path / "saved.txt"
+    file = tmp_path / "saved.json"
 
     service.save(file)
     wait_for_jobs()
 
-    assert file.read_text(encoding="utf-8").startswith("[FILE]")
+    assert json.loads(file.read_text(encoding="utf-8"))["version"] == 1
     assert error_spy.count() == 0
 
 
@@ -109,24 +113,6 @@ def test_save_failure_does_not_record_save(configure_mocks, service, state_servi
     wait_for_jobs()
 
     state_service_mock.record_save.assert_not_called()
-
-
-def test_save_v1_writes_v1_document(configure_mocks, render_context, tmp_path):
-    configure_mocks()
-    file = tmp_path / "saved.json"
-
-    save_v1(file, render_context)
-
-    assert json.loads(file.read_text(encoding="utf-8"))["version"] == 1
-
-
-def test_save_v1_raises_on_write_failure(configure_mocks, render_context):
-    configure_mocks()
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
-
-    with pytest.raises(ExportError):
-        save_v1(file_mock, render_context)
 
 
 def test_export_classic_writes_classic_document_without_recording(

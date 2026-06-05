@@ -28,12 +28,12 @@ class ExportError(Exception):
         self.lineno = lineno
 
 
-def save_classic(file: Path, resources: ResourceService, context: RenderContext) -> None:
-    _write(file, render_classic(resources.default_export_template, context))
-
-
-def save_v1(file: Path, context: RenderContext) -> None:
+def save(file: Path, context: RenderContext) -> None:
     _write(file, render_v1(context))
+
+
+def export_classic(file: Path, resources: ResourceService, context: RenderContext) -> None:
+    _write(file, render_classic(resources.default_export_template, context))
 
 
 def export_custom(file: Path, template: Path, context: RenderContext) -> None:

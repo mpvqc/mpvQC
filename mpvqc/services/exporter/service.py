@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import Literal
 
 import inject
 from PySide6.QtCore import QCoreApplication, QMutex, QMutexLocker, QObject, QStandardPaths, QThreadPool, Signal
@@ -20,7 +21,7 @@ from mpvqc.services.state import StateService
 
 from .backup import backup as create_backup
 from .context import RenderContext
-from .writer import ExportError, export_custom, save_classic
+from .writer import ExportError, export_classic, export_custom, save
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ class ExportService(QObject):
             comments=self._comments,
         )
 
-    def generate_file_path_proposal(self) -> Path:
+    def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:
         if raw_path := self._player.path:
             path = Path(raw_path)
             video_directory = str(path.parent)
@@ -58,7 +59,7 @@ class ExportService(QObject):
             video_name = QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
         nickname = self._settings.nickname
-        file_name = f"[QC]_{video_name}_{nickname}.txt" if nickname else f"[QC]_{video_name}.txt"
+        file_name = f"[QC]_{video_name}_{nickname}.{suffix}" if nickname else f"[QC]_{video_name}.{suffix}"
 
         return Path(video_directory).joinpath(file_name).absolute()
 
@@ -68,7 +69,7 @@ class ExportService(QObject):
         def _job() -> None:
             with QMutexLocker(self._mutex):
                 try:
-                    save_classic(document, self._resources, context)
+                    save(document, context)
                     self._state.record_save(document)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
@@ -81,7 +82,7 @@ class ExportService(QObject):
         def _job() -> None:
             with QMutexLocker(self._mutex):
                 try:
-                    save_classic(document, self._resources, context)
+                    export_classic(document, self._resources, context)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
 

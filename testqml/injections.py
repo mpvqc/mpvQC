@@ -7,7 +7,7 @@ from __future__ import annotations
 import shutil
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, override
+from typing import TYPE_CHECKING, Any, Literal, override
 
 import inject
 from PySide6.QtCore import QUrl
@@ -141,8 +141,8 @@ class ExportServiceOverride(ExportService):
         self.max_writes = 1
 
     @override
-    def generate_file_path_proposal(self) -> Path:
-        return TEMP_SAVES_DIR / "qc_proposal.txt"
+    def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:
+        return TEMP_SAVES_DIR / f"qc_proposal.{suffix}"
 
     @override
     def backup(self) -> None:

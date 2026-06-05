@@ -13,7 +13,7 @@ FileDialog {
 
     title: qsTranslate("FileInteractionDialogs", "Save QC Document As")
     fileMode: FileDialog.SaveFile
-    selectedFile: viewModel.filenameProposal
+    selectedFile: viewModel.classicFilenameProposal
     defaultSuffix: "txt"
     nameFilters: [qsTranslate("FileInteractionDialogs", "QC documents") + " (*.txt)", qsTranslate("FileInteractionDialogs", "All files") + " (*)"]
 

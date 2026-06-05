@@ -20,7 +20,17 @@ class MpvqcExportFileDialogViewModel(QObject):
 
     @Property(QUrl, constant=True, final=True)
     def filenameProposal(self) -> QUrl:
-        path = self._exporter.generate_file_path_proposal()
+        path = self._exporter.generate_file_path_proposal("json")
+        return self._type_mapper.map_path_to_url(path)
+
+    @Property(QUrl, constant=True, final=True)
+    def classicFilenameProposal(self) -> QUrl:
+        path = self._exporter.generate_file_path_proposal("txt")
+        return self._type_mapper.map_path_to_url(path)
+
+    @Property(QUrl, constant=True, final=True)
+    def customFilenameProposal(self) -> QUrl:
+        path = self._exporter.generate_file_path_proposal("txt")
         return self._type_mapper.map_path_to_url(path)
 
     @Slot(QUrl)
