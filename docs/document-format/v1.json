@@ -1,0 +1,87 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json",
+    "title": "mpvQC document (version 1)",
+    "description": "A structured quality check (QC) report: timestamped comments on a video file.",
+    "type": "object",
+    "required": ["version", "comments"],
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "description": "Optional reference to this schema, exactly its published URL. Lets editors and validators pick up the contract from the document itself.",
+            "const": "https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json"
+        },
+        "version": {
+            "description": "Version of the document format. Any change to the format increments it.",
+            "type": "integer",
+            "const": 1
+        },
+        "created_at": {
+            "description": "When the document was written: a UTC timestamp, exactly 'YYYY-MM-DDThh:mm:ssZ'.",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+            "examples": ["2026-06-05T16:24:13Z"]
+        },
+        "generator": {
+            "description": "Free-form name and version of the program that wrote the document.",
+            "type": "string",
+            "minLength": 1,
+            "examples": ["mpvQC 0.9.0"]
+        },
+        "author": {
+            "description": "Name or nickname of the person who performed the quality check.",
+            "type": "string",
+            "minLength": 1
+        },
+        "video": {
+            "description": "Absolute path to the checked video file, in the path syntax of the writing OS.",
+            "type": "string",
+            "minLength": 1,
+            "examples": ["/home/lorem/videos/video.mkv", "C:\\Users\\lorem\\Videos\\video.mkv"]
+        },
+        "subtitles": {
+            "description": "Absolute paths to external subtitle files loaded during the quality check. Omitted when there are none.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            },
+            "examples": [["/home/lorem/videos/video.de.ass", "/home/lorem/videos/video.en.srt"]]
+        },
+        "comments": {
+            "description": "QC comments. Order is not guaranteed; entries may share a time, and duplicates are valid.",
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/comment"
+            }
+        }
+    },
+    "$defs": {
+        "comment": {
+            "type": "object",
+            "required": ["time", "type", "text"],
+            "additionalProperties": false,
+            "properties": {
+                "time": {
+                    "description": "Video position as 'HH:MM:SS.mmm', zero-padded, millisecond precision.",
+                    "type": "string",
+                    "pattern": "^\\d{2}:[0-5]\\d:[0-5]\\d\\.\\d{3}$",
+                    "examples": ["00:15:29.340"]
+                },
+                "type": {
+                    "description": "Comment category, a free-form string. Locale-dependent: not a stable identifier.",
+                    "type": "string",
+                    "minLength": 1,
+                    "examples": ["Translation", "Traducción", "Timing"]
+                },
+                "text": {
+                    "description": "The comment itself, a single line without line breaks. May be empty.",
+                    "type": "string",
+                    "pattern": "^[^\\n\\r]*$"
+                }
+            }
+        }
+    }
+}

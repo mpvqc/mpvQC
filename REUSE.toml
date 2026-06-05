@@ -65,6 +65,12 @@ SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
+path = "docs/document-format/*.json"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
 path = "i18n/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
