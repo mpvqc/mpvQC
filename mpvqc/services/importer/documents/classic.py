@@ -7,23 +7,17 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-import inject
-
 from mpvqc.datamodels import Comment
 from mpvqc.services.formatter_time import TimeFormatterService
+from mpvqc.services.importer.parsed import ParsedDocument
 from mpvqc.services.reverse_translator import ReverseTranslatorService
-
-from .parsed import ParsedDocument
 
 _REGEX_PATH = re.compile(r"^path\s*?:(?P<path>.*)$")
 _REGEX_SUBTITLE = re.compile(r"^subtitle\s*?:(?P<subtitle>.*)$")
 _REGEX_COMMENT = re.compile(r"^\[(?P<time>\d{2}:\d{2}:\d{2})]\s*?\[(?P<type>.*?)]\s*?(?P<comment>.*?)$")
 
 
-def parse(content: str) -> ParsedDocument:
-    time_formatter = inject.instance(TimeFormatterService)
-    reverse_translator = inject.instance(ReverseTranslatorService)
-
+def parse_classic(content: str) -> ParsedDocument:
     video: Path | None = None
     subtitles = []
     comments = []
@@ -38,7 +32,7 @@ def parse(content: str) -> ParsedDocument:
             subtitles.append(subtitle)
             continue
 
-        if comment := _parse_comment(line, time_formatter, reverse_translator):
+        if comment := _parse_comment(line):
             comments.append(comment)
 
     return ParsedDocument(video=video, subtitles=tuple(subtitles), comments=tuple(comments))
@@ -58,11 +52,7 @@ def _parse_subtitle(line: str) -> Path | None:
     return Path(match.group("subtitle").strip())
 
 
-def _parse_comment(
-    line: str,
-    time_formatter: TimeFormatterService,
-    reverse_translator: ReverseTranslatorService,
-) -> Comment | None:
+def _parse_comment(line: str) -> Comment | None:
     match = _REGEX_COMMENT.match(line.strip())
     if match is None:
         return None
@@ -72,7 +62,7 @@ def _parse_comment(
     comment = match.group("comment").strip()
 
     return Comment(
-        time=time_formatter.parse_string_to_milliseconds(time),
-        comment_type=reverse_translator.lookup(comment_type),
+        time=TimeFormatterService.parse_string_to_milliseconds(time),
+        comment_type=ReverseTranslatorService.lookup(comment_type),
         comment=comment,
     )

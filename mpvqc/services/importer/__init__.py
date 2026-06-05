@@ -6,7 +6,6 @@ from .concerns import errors as errors
 from .concerns import session as session
 from .concerns import subtitles as subtitles
 from .concerns import video as video
-from .documents import DocumentImporterService as DocumentImporterService
 from .plan import FinishedPlan as FinishedPlan
 from .plan import UnfinishedPlan as UnfinishedPlan
 from .scanner import ScanResult as ScanResult

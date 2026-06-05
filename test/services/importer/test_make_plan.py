@@ -65,7 +65,6 @@ def make_scan(
     videos: Sequence[Path | VideoSource] = (),
     subtitles: Sequence[Path | SubtitleSource] = (),
     comment_count: int = 0,
-    valid_docs: Sequence[Path] = (),
     invalid_docs: Sequence[Path] = (),
 ) -> ScanResult:
     def _coerce_video(v: Path | VideoSource) -> VideoSource:
@@ -82,7 +81,6 @@ def make_scan(
         videos=tuple(_coerce_video(v) for v in videos),
         subtitles=tuple(_coerce_subtitle(s) for s in subtitles),
         comments=stub_comments(comment_count),
-        valid_documents=tuple(valid_docs),
         invalid_documents=tuple(invalid_docs),
     )
 
@@ -109,7 +107,7 @@ def assert_plan_matches(scenario: Scenario) -> None:
 SIMPLE_DOCUMENT_IMPORTS = [
     Scenario(
         name="doc with video, ALWAYS",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.ALWAYS,
         expected=FinishedPlan(
             comments=stub_comments(3),
@@ -120,7 +118,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with video, ALWAYS, with subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A], comment_count=3),
         found_video_setting=ImportFoundVideo.ALWAYS,
         expected=FinishedPlan(
             comments=stub_comments(3),
@@ -131,7 +129,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with video, ASK, no subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -142,7 +140,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with video, ASK, with subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A], comment_count=3),
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -153,7 +151,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with video, NEVER",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.NEVER,
         expected=FinishedPlan(
             comments=stub_comments(3),
@@ -164,7 +162,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with video, NEVER, with subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A], comment_count=3),
         found_video_setting=ImportFoundVideo.NEVER,
         expected=FinishedPlan(
             comments=stub_comments(3),
@@ -175,7 +173,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with comments only",
-        scan=make_scan(valid_docs=[DOC_A], comment_count=3),
+        scan=make_scan(comment_count=3),
         expected=FinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -185,7 +183,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with video + 2 doc-derived subs, ASK",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A, SUB_B], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A, SUB_B], comment_count=3),
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -196,7 +194,7 @@ SIMPLE_DOCUMENT_IMPORTS = [
     ),
     Scenario(
         name="doc with 2 doc-derived subs, no video, subs dropped",
-        scan=make_scan(valid_docs=[DOC_A], subtitles=[SUB_A, SUB_B], comment_count=3),
+        scan=make_scan(subtitles=[SUB_A, SUB_B], comment_count=3),
         expected=FinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -308,7 +306,7 @@ def test_explicit_resource_imports(scenario: Scenario) -> None:
 EXISTING_COMMENTS_IMPORTS = [
     Scenario(
         name="doc with video, ALWAYS",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=5),
+        scan=make_scan(videos=[VIDEO_A], comment_count=5),
         found_video_setting=ImportFoundVideo.ALWAYS,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -321,7 +319,7 @@ EXISTING_COMMENTS_IMPORTS = [
     ),
     Scenario(
         name="doc with video, ASK",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=5),
+        scan=make_scan(videos=[VIDEO_A], comment_count=5),
         has_existing_comments=True,
         expected=UnfinishedPlan(
             comments=stub_comments(5),
@@ -333,7 +331,7 @@ EXISTING_COMMENTS_IMPORTS = [
     ),
     Scenario(
         name="doc with video, NEVER",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=5),
+        scan=make_scan(videos=[VIDEO_A], comment_count=5),
         found_video_setting=ImportFoundVideo.NEVER,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -346,7 +344,7 @@ EXISTING_COMMENTS_IMPORTS = [
     ),
     Scenario(
         name="doc with video, no comments, ALWAYS",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A]),
+        scan=make_scan(videos=[VIDEO_A]),
         found_video_setting=ImportFoundVideo.ALWAYS,
         has_existing_comments=True,
         expected=FinishedPlan(
@@ -358,7 +356,7 @@ EXISTING_COMMENTS_IMPORTS = [
     ),
     Scenario(
         name="doc with video, ALWAYS, with subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A], comment_count=5),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A], comment_count=5),
         found_video_setting=ImportFoundVideo.ALWAYS,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -371,7 +369,7 @@ EXISTING_COMMENTS_IMPORTS = [
     ),
     Scenario(
         name="doc with video, ASK, with subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A], comment_count=5),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A], comment_count=5),
         has_existing_comments=True,
         expected=UnfinishedPlan(
             comments=stub_comments(5),
@@ -383,7 +381,7 @@ EXISTING_COMMENTS_IMPORTS = [
     ),
     Scenario(
         name="doc with video, NEVER, with subs",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A], comment_count=5),
+        scan=make_scan(videos=[VIDEO_A], subtitles=[SUB_A], comment_count=5),
         found_video_setting=ImportFoundVideo.NEVER,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -397,7 +395,6 @@ EXISTING_COMMENTS_IMPORTS = [
     Scenario(
         name="valid doc + explicit video + explicit sub, existing session",
         scan=make_scan(
-            valid_docs=[DOC_A],
             videos=[VID_A_EXPLICIT],
             subtitles=[SUB_A_EXPLICIT],
             comment_count=3,
@@ -422,7 +419,7 @@ def test_existing_comments_imports(scenario: Scenario) -> None:
 ERROR_IMPORTS = [
     Scenario(
         name="invalid doc + valid doc with video, ALWAYS",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.ALWAYS,
         expected=UnfinishedPlan(
             comments=stub_comments(3),
@@ -445,7 +442,7 @@ ERROR_IMPORTS = [
     ),
     Scenario(
         name="invalid doc + valid doc with video, ASK",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VIDEO_A], comment_count=3),
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -456,7 +453,7 @@ ERROR_IMPORTS = [
     ),
     Scenario(
         name="invalid doc + existing session + comments, ALWAYS",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=5),
+        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VIDEO_A], comment_count=5),
         found_video_setting=ImportFoundVideo.ALWAYS,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -471,7 +468,6 @@ ERROR_IMPORTS = [
         name="invalid doc + existing session + 2 videos + subs",
         scan=make_scan(
             invalid_docs=[DOC_BROKEN],
-            valid_docs=[DOC_A],
             videos=[VIDEO_A, VIDEO_B],
             subtitles=[SUB_A],
             comment_count=5,
@@ -518,7 +514,7 @@ def test_error_imports(scenario: Scenario) -> None:
 ALREADY_LOADED_VIDEO = [
     Scenario(
         name="doc with video, already loaded, ALWAYS",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.ALWAYS,
         any_candidate_loaded=True,
         expected=FinishedPlan(
@@ -541,7 +537,7 @@ ALREADY_LOADED_VIDEO = [
     ),
     Scenario(
         name="2 doc videos, one already loaded",
-        scan=make_scan(valid_docs=[DOC_A, DOC_B], videos=[VIDEO_A, VIDEO_B], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A, VIDEO_B], comment_count=3),
         any_candidate_loaded=True,
         expected=UnfinishedPlan(
             comments=stub_comments(3),
@@ -553,7 +549,7 @@ ALREADY_LOADED_VIDEO = [
     ),
     Scenario(
         name="doc with video, already loaded, ASK",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         any_candidate_loaded=True,
         expected=FinishedPlan(
             comments=stub_comments(3),
@@ -564,7 +560,7 @@ ALREADY_LOADED_VIDEO = [
     ),
     Scenario(
         name="doc with video, already loaded, NEVER",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.NEVER,
         any_candidate_loaded=True,
         expected=FinishedPlan(
@@ -576,7 +572,7 @@ ALREADY_LOADED_VIDEO = [
     ),
     Scenario(
         name="doc with video, already loaded, ALWAYS, existing comments",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.ALWAYS,
         any_candidate_loaded=True,
         has_existing_comments=True,
@@ -590,7 +586,7 @@ ALREADY_LOADED_VIDEO = [
     ),
     Scenario(
         name="doc with video, already loaded, ASK, existing comments",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         any_candidate_loaded=True,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -603,7 +599,7 @@ ALREADY_LOADED_VIDEO = [
     ),
     Scenario(
         name="doc with video, already loaded, NEVER, existing comments",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.NEVER,
         any_candidate_loaded=True,
         has_existing_comments=True,
@@ -626,7 +622,7 @@ def test_already_loaded_video(scenario: Scenario) -> None:
 MIXED_PROVENANCE = [
     Scenario(
         name="explicit video + doc-found video",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VID_A_EXPLICIT, VID_B_DOC], comment_count=3),
+        scan=make_scan(videos=[VID_A_EXPLICIT, VID_B_DOC], comment_count=3),
         expected=FinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -636,7 +632,7 @@ MIXED_PROVENANCE = [
     ),
     Scenario(
         name="2 explicit videos + doc-found video",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VID_A_EXPLICIT, VID_B_EXPLICIT, VID_C_DOC], comment_count=3),
+        scan=make_scan(videos=[VID_A_EXPLICIT, VID_B_EXPLICIT, VID_C_DOC], comment_count=3),
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -647,7 +643,7 @@ MIXED_PROVENANCE = [
     ),
     Scenario(
         name="same video, explicit + doc-found",
-        scan=make_scan(valid_docs=[DOC_A], videos=[VID_A_EXPLICIT_DOC], comment_count=3),
+        scan=make_scan(videos=[VID_A_EXPLICIT_DOC], comment_count=3),
         expected=FinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
@@ -658,7 +654,6 @@ MIXED_PROVENANCE = [
     Scenario(
         name="mixed subs (explicit + doc), NEVER video",
         scan=make_scan(
-            valid_docs=[DOC_A],
             videos=[VIDEO_A],
             subtitles=[SUB_A_EXPLICIT_DOC],
             comment_count=3,
@@ -728,7 +723,7 @@ MIXED_PROVENANCE = [
     ),
     Scenario(
         name="explicit sub + doc-derived sub, explicit wins (silent)",
-        scan=make_scan(valid_docs=[DOC_A], subtitles=[SUB_A_EXPLICIT, SUB_B_DOC]),
+        scan=make_scan(subtitles=[SUB_A_EXPLICIT, SUB_B_DOC]),
         expected=FinishedPlan(
             comments=(),
             session=session.Merge(),
@@ -738,7 +733,7 @@ MIXED_PROVENANCE = [
     ),
     Scenario(
         name="explicit sub + doc-derived sub, video step fires",
-        scan=make_scan(valid_docs=[DOC_A], subtitles=[SUB_A_EXPLICIT, SUB_B_DOC], videos=[VIDEO_A]),
+        scan=make_scan(subtitles=[SUB_A_EXPLICIT, SUB_B_DOC], videos=[VIDEO_A]),
         expected=UnfinishedPlan(
             comments=(),
             session=session.Merge(),
@@ -750,7 +745,6 @@ MIXED_PROVENANCE = [
     Scenario(
         name="valid doc + explicit video + explicit sub, blank session",
         scan=make_scan(
-            valid_docs=[DOC_A],
             videos=[VID_A_EXPLICIT],
             subtitles=[SUB_A_EXPLICIT],
             comment_count=3,
@@ -765,7 +759,6 @@ MIXED_PROVENANCE = [
     Scenario(
         name="explicit video overrides doc video, doc subs need confirmation",
         scan=make_scan(
-            valid_docs=[DOC_A],
             videos=[VID_A_EXPLICIT, VID_B_DOC],
             subtitles=[SUB_A_DOC],
             comment_count=3,
@@ -781,7 +774,6 @@ MIXED_PROVENANCE = [
     Scenario(
         name="explicit video matches doc video, doc subs load silently",
         scan=make_scan(
-            valid_docs=[DOC_A],
             videos=[VID_A_EXPLICIT_DOC],
             subtitles=[SUB_A_DOC],
             comment_count=3,
@@ -796,7 +788,6 @@ MIXED_PROVENANCE = [
     Scenario(
         name="explicit video + doc subs without doc video, subs need confirmation",
         scan=make_scan(
-            valid_docs=[DOC_A],
             videos=[VID_A_EXPLICIT],
             subtitles=[SUB_A_DOC],
             comment_count=3,

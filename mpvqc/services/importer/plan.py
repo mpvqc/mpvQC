@@ -43,7 +43,7 @@ def make_plan(
     errors_outcome = errors.resolve(scan)
     session_outcome = session.resolve(scan, has_existing_comments=has_existing_comments)
     video_outcome = video.resolve(scan, setting=found_video_setting, any_candidate_loaded=any_candidate_loaded)
-    subtitles_outcome = subtitles.resolve(scan, video_outcome)
+    subtitles_outcome = subtitles.resolve(scan, video_concern=video_outcome)
 
     match (errors_outcome, session_outcome, video_outcome, subtitles_outcome):
         case (

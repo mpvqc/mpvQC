@@ -2,41 +2,33 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import logging
-from collections.abc import Sequence
-from pathlib import Path
+from __future__ import annotations
 
-from mpvqc.datamodels import SubtitleImportResult
+import logging
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 logger = logging.getLogger(__name__)
 
 
-class SubtitleImporterService:
-    @staticmethod
-    def read(subtitles: Sequence[Path]) -> SubtitleImportResult:
-        existing_vids = []
-
-        for subtitle in subtitles:
-            if video := parse_video_from(subtitle):
-                existing_vids.append(video)  # noqa: PERF401
-
-        return SubtitleImportResult(
-            subtitles=tuple(subtitles),
-            existing_videos=tuple(existing_vids),
-        )
+def find_videos_in_subtitles(subtitles: Sequence[Path]) -> tuple[Path, ...]:
+    return tuple(video for subtitle in subtitles if (video := _parse_video_from(subtitle)) is not None)
 
 
-def parse_video_from(subtitle: Path) -> Path | None:
+def _parse_video_from(subtitle: Path) -> Path | None:
     try:
         match subtitle.suffix.lower():
             case ".ass" | ".ssa":
-                return parse_video_in_ass_ssa(subtitle)
+                return _parse_video_in_ass_ssa(subtitle)
     except Exception:
         logger.exception("Failed to parse video path from subtitle file: %s", subtitle)
     return None
 
 
-def parse_video_in_ass_ssa(subtitle: Path) -> Path | None:
+def _parse_video_in_ass_ssa(subtitle: Path) -> Path | None:
     with subtitle.open("r", encoding="utf-8-sig") as file:
         for raw_line in file:
             line = raw_line.strip()

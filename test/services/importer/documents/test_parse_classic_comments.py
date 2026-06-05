@@ -2,12 +2,39 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from mpvqc.services.importer.reader import read_documents
+
+DOCUMENT_WITH_MALFORMED_LINES = """\
+[FILE]
+nick: someone
+
+[DATA]
+[00:00:01][Translation] A valid comment
+[0:00:02][Translation] one-digit hour is not a comment line
+[00:00:03] missing the type bracket
+random prose between comments
+[00:00:04][Spelling] Another valid comment
+"""
+
+
+def test_import_skips_malformed_lines_and_keeps_document_valid(tmp_path):
+    document = tmp_path / "document.txt"
+    document.write_text(DOCUMENT_WITH_MALFORMED_LINES, encoding="utf-8")
+
+    result = read_documents([document])
+
+    assert result.valid_documents == (document,)
+    assert result.invalid_documents == ()
+    assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [
+        (1 * 1000, "Translation", "A valid comment"),
+        (4 * 1000, "Spelling", "Another valid comment"),
+    ]
+
 
 def test_import_comments(
-    service,
     document_with_existing_video_1,
 ):
-    result = service.read([document_with_existing_video_1])
+    result = read_documents([document_with_existing_video_1])
 
     assert len(result.comments) == 3
 
@@ -28,10 +55,9 @@ def test_import_comments(
 
 
 def test_import_comments_with_special_types(
-    service,
     document_with_existing_video_2,
 ):
-    result = service.read([document_with_existing_video_2])
+    result = read_documents([document_with_existing_video_2])
 
     assert len(result.comments) == 3
 
@@ -52,13 +78,12 @@ def test_import_comments_with_special_types(
 
 
 def test_import_multiple_documents(
-    service,
     document_invalid_1,
     document_with_existing_video_1,
     document_with_existing_video_2,
     document_with_nonexistent_video,
 ):
-    result = service.read(
+    result = read_documents(
         [
             document_invalid_1,
             document_with_existing_video_1,

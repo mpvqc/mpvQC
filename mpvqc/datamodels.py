@@ -36,12 +36,6 @@ class SubtitleSource:
 
 
 @dataclass(frozen=True)
-class SubtitleImportResult:
-    subtitles: tuple[Path, ...]
-    existing_videos: tuple[Path, ...]
-
-
-@dataclass(frozen=True)
 class DocumentImportResult:
     valid_documents: tuple[Path, ...]
     invalid_documents: tuple[Path, ...]

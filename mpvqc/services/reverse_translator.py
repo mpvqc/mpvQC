@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import functools
 import logging
-from functools import cached_property
 
 from PySide6.QtCore import QDir, QTranslator
 
@@ -12,45 +12,29 @@ from .settings import default_comment_types
 logger = logging.getLogger(__name__)
 
 
-class LookupTable:
-    def __init__(self) -> None:
-        self._combined_lookup_table: dict[str, str] = {}
+class ReverseTranslatorService:
+    @staticmethod
+    def lookup(comment_type_in_current_language: str) -> str:
+        table = _lookup_table()
+        return table.get(comment_type_in_current_language, comment_type_in_current_language)
 
-        self._translator = QTranslator()
-        try:
-            self._create_lookup_tables()
-        finally:
-            del self._translator
 
-    def _create_lookup_tables(self) -> None:
-        for entry_info in QDir(":/i18n").entryInfoList():
-            identifier = entry_info.baseName()
-            resource_path = entry_info.filePath()
-            if not self._translator.load(resource_path):
-                msg = f"Cannot load language: {identifier}"
-                raise ValueError(msg)
-            self._add_to_combined_lookup_table()
+@functools.cache
+def _lookup_table() -> dict[str, str]:
+    table: dict[str, str] = {}
+    translator = QTranslator()
 
-    def _add_to_combined_lookup_table(self) -> None:
+    for entry_info in QDir(":/i18n").entryInfoList():
+        if not translator.load(entry_info.filePath()):
+            msg = f"Cannot load language: {entry_info.baseName()}"
+            raise ValueError(msg)
+
         for english in default_comment_types():
-            translated = self._translator.translate("CommentTypes", english)
+            translated = translator.translate("CommentTypes", english)
             if translated is None:
                 msg = f"Failed to translate comment type: {english!r}"
                 logger.error(msg)
                 raise ValueError(msg)
-            self._combined_lookup_table[translated] = english
+            table[translated] = english
 
-    def lookup(self, comment_type: str) -> str:
-        return self._combined_lookup_table.get(comment_type, comment_type)
-
-
-class ReverseTranslatorService:
-    """Service that offers reverse translation of comment types.
-    It provides comment type identifiers mpvQC internally uses for the comment type model"""
-
-    @cached_property
-    def _lookup_table(self) -> LookupTable:
-        return LookupTable()
-
-    def lookup(self, comment_type_in_current_language: str) -> str:
-        return self._lookup_table.lookup(comment_type_in_current_language)
+    return table

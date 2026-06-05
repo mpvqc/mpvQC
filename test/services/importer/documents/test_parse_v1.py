@@ -11,6 +11,8 @@ from typing import NamedTuple
 
 import pytest
 
+from mpvqc.services.importer.reader import read_documents
+
 DOCUMENT_FORMAT_README = Path(__file__).parents[4] / "docs" / "document-format" / "README.md"
 
 
@@ -24,7 +26,7 @@ def make_document(comments: list, **fields) -> str:
     return json.dumps({"version": 1, "comments": comments, **fields})
 
 
-def test_import_v1_comments(service, tmp_path):
+def test_import_v1_comments(tmp_path):
     document = write_document(
         tmp_path,
         make_document(
@@ -36,7 +38,7 @@ def test_import_v1_comments(service, tmp_path):
         ),
     )
 
-    result = service.read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == (document,)
 
@@ -56,7 +58,7 @@ def test_import_v1_comments(service, tmp_path):
     assert not comment.comment
 
 
-def test_import_v1_video_and_subtitles(service, tmp_path, video_file_existing_1):
+def test_import_v1_video_and_subtitles(tmp_path, video_file_existing_1):
     existing_subtitle = tmp_path / "existing.ass"
     existing_subtitle.touch()
     missing_subtitle = tmp_path / "missing.ass"
@@ -70,24 +72,24 @@ def test_import_v1_video_and_subtitles(service, tmp_path, video_file_existing_1)
         ),
     )
 
-    result = service.read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == (document,)
     assert result.existing_videos == (video_file_existing_1,)
     assert result.existing_subtitles == (existing_subtitle,)
 
 
-def test_import_v1_minimal_document(service, tmp_path):
+def test_import_v1_minimal_document(tmp_path):
     document = write_document(tmp_path, make_document([]))
 
-    result = service.read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == (document,)
     assert result.invalid_documents == ()
     assert result.comments == ()
 
 
-def test_import_v1_ignores_unknown_fields(service, tmp_path):
+def test_import_v1_ignores_unknown_fields(tmp_path):
     document = write_document(
         tmp_path,
         make_document(
@@ -99,7 +101,7 @@ def test_import_v1_ignores_unknown_fields(service, tmp_path):
         ),
     )
 
-    result = service.read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == (document,)
     assert len(result.comments) == 1
@@ -131,23 +133,23 @@ INVALID_DOCUMENTS = [
 
 
 @pytest.mark.parametrize("case", INVALID_DOCUMENTS, ids=lambda case: case.name)
-def test_import_v1_invalid_documents(service, tmp_path, case):
+def test_import_v1_invalid_documents(tmp_path, case):
     document = write_document(tmp_path, case.content)
 
-    result = service.read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == ()
     assert result.invalid_documents == (document,)
     assert result.comments == ()
 
 
-def test_import_readme_example_document(service, tmp_path):
+def test_import_readme_example_document(tmp_path):
     readme = DOCUMENT_FORMAT_README.read_text(encoding="utf-8")
     example = re.search(r"<!-- verified-by-tests: example-v1 -->\s*```json\n(.*?)```", readme, re.DOTALL)
     assert example is not None
     document = write_document(tmp_path, example.group(1))
 
-    result = service.read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == (document,)
     assert len(result.comments) == 1
@@ -158,13 +160,13 @@ def test_import_readme_example_document(service, tmp_path):
     assert comment.comment == "Lorem ipsum dolor sit amet"
 
 
-def test_import_mixed_formats(service, tmp_path, document_with_existing_video_1):
+def test_import_mixed_formats(tmp_path, document_with_existing_video_1):
     v1_document = write_document(
         tmp_path,
         make_document([{"time": "00:00:01.000", "type": "Translation", "text": "From v1"}]),
     )
 
-    result = service.read([document_with_existing_video_1, v1_document])
+    result = read_documents([document_with_existing_video_1, v1_document])
 
     assert set(result.valid_documents) == {document_with_existing_video_1, v1_document}
     assert len(result.comments) == 4

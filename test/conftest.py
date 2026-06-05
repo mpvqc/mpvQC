@@ -15,7 +15,6 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     CommentsService,
     ResourceService,
-    ReverseTranslatorService,
     SettingsService,
     StateService,
     TimeFormatterService,
@@ -167,7 +166,6 @@ def common_bindings_with():
             # Common & shared services
             binder.bind_to_constructor(CommentsService, CommentsService)
             binder.bind_to_constructor(ResourceService, ResourceService)
-            binder.bind_to_constructor(ReverseTranslatorService, ReverseTranslatorService)
             binder.bind_to_constructor(StateService, StateService)
             binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)
             binder.bind_to_constructor(TypeMapperService, TypeMapperService)
