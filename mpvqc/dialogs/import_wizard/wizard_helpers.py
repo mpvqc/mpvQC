@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def compute_steps(unfinished_plan: UnfinishedPlan) -> tuple[StepKind, ...]:
     steps: list[StepKind] = []
-    if isinstance(unfinished_plan.errors, errors.Unresolved):
+    if isinstance(unfinished_plan.errors, errors.Present):
         steps.append(StepKind.ERRORS)
     if isinstance(unfinished_plan.session, session.Unresolved):
         steps.append(StepKind.SESSION)

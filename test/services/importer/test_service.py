@@ -316,12 +316,12 @@ def run_jobs_inline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.QThreadPool", InlineThreadPool)
 
 
-EMPTY_SCAN = ScanResult(videos=(), subtitles=(), comments=(), invalid_documents=())
+EMPTY_SCAN = ScanResult(videos=(), subtitles=(), comments=(), rejected_documents=())
 UNRESOLVED_SCAN = ScanResult(
     videos=(VideoSource(path=V, found_in_document=True),),
     subtitles=(),
     comments=(),
-    invalid_documents=(),
+    rejected_documents=(),
 )
 
 

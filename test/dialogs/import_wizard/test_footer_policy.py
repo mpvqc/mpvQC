@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment, VideoSource
+from mpvqc.datamodels import Comment, DocumentRejectionReason, RejectedDocument, VideoSource
 from mpvqc.dialogs.import_wizard import FooterState, PrimaryAction, WizardFooterPolicy
 from mpvqc.enums import StepKind
 from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
@@ -28,7 +28,9 @@ EMPTY = UnfinishedPlan(
     errors=errors.Absent(),
 )
 
-UNRESOLVED_ERRORS = errors.Unresolved(invalid_documents=(Path("/broken.qc"),))
+PRESENT_ERRORS = errors.Present(
+    rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
+)
 UNRESOLVED_VIDEO = video.Unresolved(candidates=(VID_A_DOC,))
 UNRESOLVED_SUBS = subtitles.Unresolved(candidates=(SUB_A,))
 UNRESOLVED_SESSION = session.Unresolved(incoming_comment_count=1)
@@ -45,14 +47,14 @@ class FooterCase(NamedTuple):
 CASES = [
     FooterCase(
         name="errors-only, no content -> Close + reject, no cancel",
-        plan=replace(EMPTY, errors=UNRESOLVED_ERRORS),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS),
         steps=(StepKind.ERRORS,),
         index=0,
         expected=FooterState("Close", PrimaryAction.REJECT, show_cancel=False, show_back=False),
     ),
     FooterCase(
         name="errors-only, valid content survives -> Confirm import, cancel shown",
-        plan=replace(EMPTY, errors=UNRESOLVED_ERRORS, video=video.Load(path=VIDEO_A)),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=video.Load(path=VIDEO_A)),
         steps=(StepKind.ERRORS,),
         index=0,
         expected=FooterState("Confirm import", PrimaryAction.ACCEPT, show_cancel=True, show_back=False),
@@ -73,28 +75,28 @@ CASES = [
     ),
     FooterCase(
         name="errors+video, no content, on errors step -> Next, cancel shown (multi-step exit)",
-        plan=replace(EMPTY, errors=UNRESOLVED_ERRORS, video=UNRESOLVED_VIDEO),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
         steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=0,
         expected=FooterState("Next", PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, no content, on video (terminal) -> Confirm + accept, cancel shown",
-        plan=replace(EMPTY, errors=UNRESOLVED_ERRORS, video=UNRESOLVED_VIDEO),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
         steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=1,
         expected=FooterState("Confirm", PrimaryAction.ACCEPT, show_cancel=True, show_back=True),
     ),
     FooterCase(
         name="errors+video, with comments, on errors step -> Next, cancel shown",
-        plan=replace(EMPTY, errors=UNRESOLVED_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
         steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=0,
         expected=FooterState("Next", PrimaryAction.ADVANCE, show_cancel=True, show_back=False),
     ),
     FooterCase(
         name="errors+video, with comments, on video step -> Confirm import",
-        plan=replace(EMPTY, errors=UNRESOLVED_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO, comments=(COMMENT,)),
         steps=(StepKind.ERRORS, StepKind.VIDEO),
         index=1,
         expected=FooterState("Confirm import", PrimaryAction.ACCEPT, show_cancel=True, show_back=True),

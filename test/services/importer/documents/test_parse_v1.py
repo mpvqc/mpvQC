@@ -11,6 +11,7 @@ from typing import NamedTuple
 
 import pytest
 
+from mpvqc.datamodels import DocumentRejectionReason, RejectedDocument
 from mpvqc.services.importer.reader import read_documents
 
 DOCUMENT_FORMAT_README = Path(__file__).parents[4] / "docs" / "document-format" / "README.md"
@@ -85,7 +86,7 @@ def test_import_v1_minimal_document(tmp_path):
     result = read_documents([document])
 
     assert result.valid_documents == (document,)
-    assert result.invalid_documents == ()
+    assert result.rejected_documents == ()
     assert result.comments == ()
 
 
@@ -113,7 +114,6 @@ class InvalidDocumentCase(NamedTuple):
 
 
 INVALID_DOCUMENTS = [
-    InvalidDocumentCase("unsupported version", json.dumps({"version": 999, "comments": []})),
     InvalidDocumentCase("missing version", json.dumps({"comments": []})),
     InvalidDocumentCase("version as string", json.dumps({"version": "1", "comments": []})),
     InvalidDocumentCase("missing comments", json.dumps({"version": 1})),
@@ -139,7 +139,17 @@ def test_import_v1_invalid_documents(tmp_path, case):
     result = read_documents([document])
 
     assert result.valid_documents == ()
-    assert result.invalid_documents == (document,)
+    assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.INVALID),)
+    assert result.comments == ()
+
+
+def test_import_v1_unsupported_version(tmp_path):
+    document = write_document(tmp_path, json.dumps({"version": 999, "comments": []}))
+
+    result = read_documents([document])
+
+    assert result.valid_documents == ()
+    assert result.rejected_documents == (RejectedDocument(document, DocumentRejectionReason.UNSUPPORTED_VERSION),)
     assert result.comments == ()
 
 

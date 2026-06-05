@@ -11,7 +11,7 @@ def test_import_document_with_existing_video(
 ):
     result = read_documents([document_with_existing_video_1])
 
-    assert not result.invalid_documents
+    assert not result.rejected_documents
     assert result.valid_documents
     assert len(result.existing_videos) == 1
     assert video_file_existing_1 in result.existing_videos
@@ -22,7 +22,7 @@ def test_import_document_with_nonexistent_video(
 ):
     result = read_documents([document_with_nonexistent_video])
 
-    assert not result.invalid_documents
+    assert not result.rejected_documents
     assert result.valid_documents
     assert not result.existing_videos
 
@@ -42,7 +42,6 @@ def test_import_multiple_documents_video_detection(
         ]
     )
 
-    assert len(result.invalid_documents) == 1
-    assert document_invalid_1 in result.invalid_documents
+    assert [r.path for r in result.rejected_documents] == [document_invalid_1]
     assert len(result.valid_documents) == 3
     assert len(result.existing_videos) == 2

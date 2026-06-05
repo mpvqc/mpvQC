@@ -56,12 +56,13 @@ TestCase {
         return list;
     }
 
-    function test_delegateShowsFilenameOnly(): void {
+    function test_delegateShowsFilenameAndReason(): void {
         const step = makeControl();
         seed(step, [
             {
                 filename: "broken.qc",
-                fullPath: "/full/path/to/broken.qc"
+                fullPath: "/full/path/to/broken.qc",
+                reason: "mock reason"
             }
         ]);
         const list = findListView(step);
@@ -69,7 +70,8 @@ TestCase {
         waitForRendering(list);
         const item = list.itemAtIndex(0);
         verify(item);
-        compare(item.text, "broken.qc");
+        compare(findChild(item, "filenameLabel").text, "broken.qc");
+        compare(findChild(item, "reasonLabel").text, "mock reason");
     }
 
     function test_delegateExposesFullPathAsTooltip(): void {
@@ -77,7 +79,8 @@ TestCase {
         seed(step, [
             {
                 filename: "broken.qc",
-                fullPath: "/full/path/to/broken.qc"
+                fullPath: "/full/path/to/broken.qc",
+                reason: "mock reason"
             }
         ]);
         const list = findListView(step);

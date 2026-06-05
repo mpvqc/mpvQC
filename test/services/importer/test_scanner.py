@@ -9,7 +9,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from mpvqc.datamodels import Comment, DocumentImportResult, SubtitleSource, VideoSource
+from mpvqc.datamodels import (
+    Comment,
+    DocumentImportResult,
+    DocumentRejectionReason,
+    RejectedDocument,
+    SubtitleSource,
+    VideoSource,
+)
 from mpvqc.services.importer import scanner
 
 DOC_A = Path("/work/a.qc")
@@ -23,7 +30,7 @@ COMMENT = Comment(time=0, comment_type="", comment="")
 
 EMPTY_DOCUMENT_RESULT = DocumentImportResult(
     valid_documents=(),
-    invalid_documents=(),
+    rejected_documents=(),
     existing_videos=(),
     existing_subtitles=(),
     comments=(),
@@ -52,7 +59,7 @@ def test_explicit_video_gets_explicit_flag() -> None:
 def test_doc_video_gets_doc_flag(read_documents_mock: MagicMock) -> None:
     read_documents_mock.return_value = DocumentImportResult(
         valid_documents=(DOC_A,),
-        invalid_documents=(),
+        rejected_documents=(),
         existing_videos=(VIDEO_A,),
         existing_subtitles=(),
         comments=(),
@@ -77,7 +84,7 @@ def test_video_sources_merge_flags_when_path_collides(
 ) -> None:
     read_documents_mock.return_value = DocumentImportResult(
         valid_documents=(DOC_A,),
-        invalid_documents=(),
+        rejected_documents=(),
         existing_videos=(VIDEO_A,),
         existing_subtitles=(),
         comments=(),
@@ -99,7 +106,7 @@ def test_explicit_subtitle_gets_explicit_flag() -> None:
 def test_doc_subtitle_gets_doc_flag(read_documents_mock: MagicMock) -> None:
     read_documents_mock.return_value = DocumentImportResult(
         valid_documents=(DOC_A,),
-        invalid_documents=(),
+        rejected_documents=(),
         existing_videos=(),
         existing_subtitles=(SUB_A,),
         comments=(),
@@ -113,7 +120,7 @@ def test_doc_subtitle_gets_doc_flag(read_documents_mock: MagicMock) -> None:
 def test_subtitle_sources_merge_flags_when_path_collides(read_documents_mock: MagicMock) -> None:
     read_documents_mock.return_value = DocumentImportResult(
         valid_documents=(DOC_A,),
-        invalid_documents=(),
+        rejected_documents=(),
         existing_videos=(),
         existing_subtitles=(SUB_A,),
         comments=(),
@@ -130,7 +137,7 @@ def test_subtitle_paths_deduplicated_before_video_detection(
 ) -> None:
     read_documents_mock.return_value = DocumentImportResult(
         valid_documents=(DOC_A,),
-        invalid_documents=(),
+        rejected_documents=(),
         existing_videos=(),
         existing_subtitles=(SUB_A,),
         comments=(),
@@ -144,7 +151,10 @@ def test_subtitle_paths_deduplicated_before_video_detection(
 def test_comments_and_documents_flow_through(read_documents_mock: MagicMock) -> None:
     read_documents_mock.return_value = DocumentImportResult(
         valid_documents=(DOC_A,),
-        invalid_documents=(DOC_BROKEN,),
+        rejected_documents=(
+            RejectedDocument(DOC_BROKEN, DocumentRejectionReason.INVALID),
+            RejectedDocument(DOC_B, DocumentRejectionReason.UNSUPPORTED_VERSION),
+        ),
         existing_videos=(),
         existing_subtitles=(),
         comments=(COMMENT, COMMENT, COMMENT),
@@ -152,5 +162,8 @@ def test_comments_and_documents_flow_through(read_documents_mock: MagicMock) -> 
 
     result = scanner.scan(documents=[DOC_A, DOC_BROKEN], videos=[], subtitles=[])
 
-    assert result.invalid_documents == (DOC_BROKEN,)
+    assert result.rejected_documents == (
+        RejectedDocument(DOC_BROKEN, DocumentRejectionReason.INVALID),
+        RejectedDocument(DOC_B, DocumentRejectionReason.UNSUPPORTED_VERSION),
+    )
     assert result.comments == (COMMENT, COMMENT, COMMENT)

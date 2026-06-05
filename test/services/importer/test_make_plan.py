@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import pytest
 
-from mpvqc.datamodels import Comment, SubtitleSource, VideoSource
+from mpvqc.datamodels import Comment, DocumentRejectionReason, RejectedDocument, SubtitleSource, VideoSource
 from mpvqc.enums import ImportFoundVideo
 from mpvqc.services.importer import (
     FinishedPlan,
@@ -29,13 +29,18 @@ if TYPE_CHECKING:
 DOC_A = Path("/work/a.qc")
 DOC_B = Path("/work/b.qc")
 DOC_BROKEN = Path("/work/broken.qc")
+
+REJECTED_BROKEN = RejectedDocument(DOC_BROKEN, DocumentRejectionReason.INVALID)
+REJECTED_B_INVALID = RejectedDocument(DOC_B, DocumentRejectionReason.INVALID)
+REJECTED_B_UNSUPPORTED = RejectedDocument(DOC_B, DocumentRejectionReason.UNSUPPORTED_VERSION)
+
 VIDEO_A = Path("/movies/a.mp4")
 VIDEO_B = Path("/movies/b.mkv")
 VIDEO_C = Path("/movies/c.avi")
 VIDEO_D = Path("/movies/d.mov")
+
 SUB_A = Path("/work/a.en.srt")
 SUB_B = Path("/work/a.ja.srt")
-
 
 # VideoSource shorthand for the shapes used in scenarios.
 VID_A_DOC = VideoSource(path=VIDEO_A, found_in_document=True)
@@ -65,7 +70,7 @@ def make_scan(
     videos: Sequence[Path | VideoSource] = (),
     subtitles: Sequence[Path | SubtitleSource] = (),
     comment_count: int = 0,
-    invalid_docs: Sequence[Path] = (),
+    rejected_docs: Sequence[RejectedDocument] = (),
 ) -> ScanResult:
     def _coerce_video(v: Path | VideoSource) -> VideoSource:
         if isinstance(v, VideoSource):
@@ -81,7 +86,7 @@ def make_scan(
         videos=tuple(_coerce_video(v) for v in videos),
         subtitles=tuple(_coerce_subtitle(s) for s in subtitles),
         comments=stub_comments(comment_count),
-        invalid_documents=tuple(invalid_docs),
+        rejected_documents=tuple(rejected_docs),
     )
 
 
@@ -419,41 +424,52 @@ def test_existing_comments_imports(scenario: Scenario) -> None:
 ERROR_IMPORTS = [
     Scenario(
         name="invalid doc + valid doc with video, ALWAYS",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(rejected_docs=[REJECTED_BROKEN], videos=[VIDEO_A], comment_count=3),
         found_video_setting=ImportFoundVideo.ALWAYS,
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN,)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
         name="invalid docs only",
-        scan=make_scan(invalid_docs=[DOC_BROKEN, DOC_B]),
+        scan=make_scan(rejected_docs=[REJECTED_BROKEN, REJECTED_B_INVALID]),
         expected=UnfinishedPlan(
             comments=(),
             session=session.Merge(),
             video=video.Skip(),
             subtitles=subtitles.Skip(),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN, DOC_B)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN, REJECTED_B_INVALID)),
+        ),
+    ),
+    Scenario(
+        name="unsupported version doc only",
+        scan=make_scan(rejected_docs=[REJECTED_B_UNSUPPORTED]),
+        expected=UnfinishedPlan(
+            comments=(),
+            session=session.Merge(),
+            video=video.Skip(),
+            subtitles=subtitles.Skip(),
+            errors=errors.Present(rejected_documents=(REJECTED_B_UNSUPPORTED,)),
         ),
     ),
     Scenario(
         name="invalid doc + valid doc with video, ASK",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VIDEO_A], comment_count=3),
+        scan=make_scan(rejected_docs=[REJECTED_BROKEN], videos=[VIDEO_A], comment_count=3),
         expected=UnfinishedPlan(
             comments=stub_comments(3),
             session=session.Merge(),
             video=video.Unresolved(candidates=(VID_A_DOC,)),
             subtitles=subtitles.Skip(),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN,)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
         name="invalid doc + existing session + comments, ALWAYS",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VIDEO_A], comment_count=5),
+        scan=make_scan(rejected_docs=[REJECTED_BROKEN], videos=[VIDEO_A], comment_count=5),
         found_video_setting=ImportFoundVideo.ALWAYS,
         has_existing_comments=True,
         expected=UnfinishedPlan(
@@ -461,13 +477,13 @@ ERROR_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN,)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
         name="invalid doc + existing session + 2 videos + subs",
         scan=make_scan(
-            invalid_docs=[DOC_BROKEN],
+            rejected_docs=[REJECTED_BROKEN],
             videos=[VIDEO_A, VIDEO_B],
             subtitles=[SUB_A],
             comment_count=5,
@@ -478,29 +494,29 @@ ERROR_IMPORTS = [
             session=session.Unresolved(incoming_comment_count=5),
             video=video.Unresolved(candidates=(VID_A_DOC, VID_B_DOC)),
             subtitles=subtitles.Unresolved(candidates=(SUB_A,)),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN,)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
         name="invalid doc + explicit video",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VID_A_EXPLICIT]),
+        scan=make_scan(rejected_docs=[REJECTED_BROKEN], videos=[VID_A_EXPLICIT]),
         expected=UnfinishedPlan(
             comments=(),
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Skip(),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN,)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
     Scenario(
         name="invalid doc + explicit video + explicit subs",
-        scan=make_scan(invalid_docs=[DOC_BROKEN], videos=[VID_A_EXPLICIT], subtitles=[SUB_A_EXPLICIT]),
+        scan=make_scan(rejected_docs=[REJECTED_BROKEN], videos=[VID_A_EXPLICIT], subtitles=[SUB_A_EXPLICIT]),
         expected=UnfinishedPlan(
             comments=(),
             session=session.Merge(),
             video=video.Load(path=VIDEO_A),
             subtitles=subtitles.Load(paths=(SUB_A,)),
-            errors=errors.Unresolved(invalid_documents=(DOC_BROKEN,)),
+            errors=errors.Present(rejected_documents=(REJECTED_BROKEN,)),
         ),
     ),
 ]

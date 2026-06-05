@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from mpvqc.datamodels import Comment, VideoSource
+from mpvqc.datamodels import Comment, DocumentRejectionReason, RejectedDocument, VideoSource
 from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 from testqml.injections import TEMP_ROOT
 
@@ -38,7 +38,9 @@ def video_choice() -> UnfinishedPlan:
 def all_steps() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(Comment(time=0, comment_type="Translation", comment="incoming"),),
-        errors=errors.Unresolved(invalid_documents=(_path("broken.qc"),)),
+        errors=errors.Present(
+            rejected_documents=(RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),)
+        ),
         session=session.Unresolved(incoming_comment_count=5),
         video=video.Unresolved(
             candidates=(
@@ -69,7 +71,12 @@ def subtitles_only() -> UnfinishedPlan:
 def errors_only() -> UnfinishedPlan:
     return UnfinishedPlan(
         comments=(),
-        errors=errors.Unresolved(invalid_documents=(_path("broken.qc"),)),
+        errors=errors.Present(
+            rejected_documents=(
+                RejectedDocument(_path("broken.qc"), DocumentRejectionReason.INVALID),
+                RejectedDocument(_path("future.json"), DocumentRejectionReason.UNSUPPORTED_VERSION),
+            )
+        ),
         session=session.Merge(),
         video=video.Skip(),
         subtitles=subtitles.Skip(),

@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import dataclass
+from enum import Enum, auto
 from pathlib import Path
 
 
@@ -35,10 +36,21 @@ class SubtitleSource:
     found_in_document: bool = False
 
 
+class DocumentRejectionReason(Enum):
+    INVALID = auto()
+    UNSUPPORTED_VERSION = auto()
+
+
+@dataclass(frozen=True)
+class RejectedDocument:
+    path: Path
+    reason: DocumentRejectionReason
+
+
 @dataclass(frozen=True)
 class DocumentImportResult:
     valid_documents: tuple[Path, ...]
-    invalid_documents: tuple[Path, ...]
+    rejected_documents: tuple[RejectedDocument, ...]
     existing_videos: tuple[Path, ...]
     existing_subtitles: tuple[Path, ...]
     comments: tuple[Comment, ...]

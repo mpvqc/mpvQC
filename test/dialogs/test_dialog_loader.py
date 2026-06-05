@@ -11,6 +11,7 @@ import inject
 import pytest
 from PySide6.QtCore import QCoreApplication, QEvent
 
+from mpvqc.datamodels import DocumentRejectionReason, RejectedDocument
 from mpvqc.dialogs import MpvqcDialogLoaderViewModel
 from mpvqc.services import ImporterService, SettingsService
 from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
@@ -53,7 +54,9 @@ def test_releases_view_model_after_wizard(loader):
         session=session.Merge(),
         video=video.Skip(),
         subtitles=subtitles.Skip(),
-        errors=errors.Unresolved(invalid_documents=(Path("/broken.qc"),)),
+        errors=errors.Present(
+            rejected_documents=(RejectedDocument(Path("/broken.qc"), DocumentRejectionReason.INVALID),)
+        ),
     )
 
     loader._request_import_wizard(unfinished_plan)
