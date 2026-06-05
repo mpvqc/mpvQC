@@ -7,9 +7,9 @@ from .build_info import BuildInfoService as BuildInfoService
 from .comment_type_validator import CommentTypeValidatorService as CommentTypeValidatorService
 from .comments import CommentsService as CommentsService
 from .desktop import DesktopService as DesktopService
-from .document_exporter import DocumentBackupService as DocumentBackupService
-from .document_exporter import DocumentExportService as DocumentExportService
-from .document_exporter import DocumentRenderService as DocumentRenderService
+from .exporter import DocumentBackupService as DocumentBackupService
+from .exporter import DocumentExportService as DocumentExportService
+from .exporter import DocumentRenderService as DocumentRenderService
 from .exporter import ExportService as ExportService
 from .file_startup import FileStartupService as FileStartupService
 from .font_loader import FontLoaderService as FontLoaderService

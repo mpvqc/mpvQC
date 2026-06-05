@@ -19,7 +19,7 @@ def service() -> DocumentBackupService:
 
 @pytest.fixture
 def zip_file():
-    with patch("mpvqc.services.document_exporter.ZipFile", return_value=MagicMock()) as mock:
+    with patch("mpvqc.services.exporter.backup.ZipFile", return_value=MagicMock()) as mock:
         yield mock
 
 
