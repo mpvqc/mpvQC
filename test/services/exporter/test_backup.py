@@ -9,12 +9,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PySide6.QtCore import QDateTime
 
-from mpvqc.services import DocumentBackupService
-
-
-@pytest.fixture
-def service() -> DocumentBackupService:
-    return DocumentBackupService()
+from mpvqc.services import ResourceService
+from mpvqc.services.exporter.backup import backup
 
 
 @pytest.fixture
@@ -23,25 +19,26 @@ def zip_file():
         yield mock
 
 
-def test_archive_name(configure_mocks, application_paths_service_mock, zip_file, service):
+def test_archive_name(configure_mocks, render_context, application_paths_service_mock, zip_file):
     application_paths_service_mock.dir_backup = Path.home()
     configure_mocks()
 
-    service.backup()
+    backup(application_paths_service_mock, ResourceService(), render_context)
 
     assert zip_file.called
     zip_name = zip_file.call_args.args[0]
     assert zip_name.name == f"{datetime.now(UTC):%Y-%m}.zip"
 
 
-def test_render_called(configure_mocks, document_render_service_mock, zip_file, service):
-    configure_mocks()
+def test_writes_rendered_backup(configure_mocks, render_context, application_paths_service_mock, zip_file):
+    configure_mocks(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
 
-    service.backup()
+    backup(application_paths_service_mock, ResourceService(), render_context)
 
     writestr_mock = zip_file.return_value.__enter__.return_value.writestr
     assert writestr_mock.called
 
-    filename, _ = writestr_mock.call_args.args
+    filename, content = writestr_mock.call_args.args
     assert f"{QDateTime.currentDateTime().toString('yyyy-MM-dd')}" in filename
-    document_render_service_mock.render.assert_called_once()
+    assert content.startswith("[FILE]")
+    assert "[00:00:50] [Spelling] My comment" in content

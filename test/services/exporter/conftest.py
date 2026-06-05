@@ -12,10 +12,11 @@ from mpvqc.services import (
     ApplicationPathsService,
     BuildInfoService,
     CommentsService,
-    DocumentRenderService,
     PlayerService,
     SettingsService,
+    StateService,
 )
+from mpvqc.services.exporter.context import RenderContext
 
 
 @pytest.fixture
@@ -34,13 +35,13 @@ def build_info_service_mock() -> MagicMock:
 
 
 @pytest.fixture
-def document_render_service_mock() -> MagicMock:
-    return MagicMock(spec_set=DocumentRenderService)
+def player_service_mock():
+    return MagicMock(spec_set=PlayerService)
 
 
 @pytest.fixture
-def player_service_mock():
-    return MagicMock(spec_set=PlayerService)
+def state_service_mock() -> MagicMock:
+    return MagicMock(spec_set=StateService)
 
 
 @pytest.fixture(autouse=True)
@@ -49,19 +50,29 @@ def configure_injections(
     application_paths_service_mock,
     build_info_service_mock,
     comments_service_mock,
-    document_render_service_mock,
     player_service_mock,
     settings_service,
+    state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(ApplicationPathsService, application_paths_service_mock)
         binder.bind(BuildInfoService, build_info_service_mock)
         binder.bind(CommentsService, comments_service_mock)
-        binder.bind(DocumentRenderService, document_render_service_mock)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(SettingsService, settings_service)
+        binder.bind(StateService, state_service_mock)
 
     common_bindings_with(custom_bindings)
+
+
+@pytest.fixture
+def render_context(settings_service, player_service_mock, build_info_service_mock, comments_service_mock):
+    return RenderContext(
+        settings=settings_service,
+        player=player_service_mock,
+        build_info=build_info_service_mock,
+        comments=comments_service_mock,
+    )
 
 
 @pytest.fixture

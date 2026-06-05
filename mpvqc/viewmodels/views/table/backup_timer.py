@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import Property, QObject, QThreadPool, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import DocumentBackupService, SettingsService
+from mpvqc.services import ExportService, SettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,7 +15,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcBackupTimerViewModel(QObject):
     _settings = inject.attr(SettingsService)
-    _backupper = inject.attr(DocumentBackupService)
+    _exporter = inject.attr(ExportService)
 
     MIN_INTERVAL_MS = 15000
 
@@ -37,4 +37,4 @@ class MpvqcBackupTimerViewModel(QObject):
 
     @Slot()
     def backup(self) -> None:
-        QThreadPool.globalInstance().start(self._backupper.backup)
+        self._exporter.backup()

@@ -12,7 +12,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from mpvqc.services import DocumentImporterService
-from mpvqc.services.exporter.documents.v1 import render
+from mpvqc.services.exporter.documents.v1 import render_v1
 
 SCHEMA = Path(__file__).parents[3] / "docs" / "document-format" / "v1.json"
 
@@ -52,17 +52,19 @@ CONFORMANCE_CASES = [
 
 
 @pytest.mark.parametrize("case", CONFORMANCE_CASES, ids=lambda case: case.name)
-def test_rendered_documents_validate_against_schema(configure_mocks, build_info_service_mock, validator, case):
+def test_rendered_documents_validate_against_schema(
+    configure_mocks, render_context, build_info_service_mock, validator, case
+):
     build_info_service_mock.name = "mpvQC"
     build_info_service_mock.version = "0.9.0"
     configure_mocks(**case.settings)
 
-    document = json.loads(render())
+    document = json.loads(render_v1(render_context))
 
     validator.validate(document)
 
 
-def test_exported_document_imports_losslessly(configure_mocks, tmp_path):
+def test_exported_document_imports_losslessly(configure_mocks, render_context, tmp_path):
     configure_mocks(
         comments=[
             {"time": 0, "commentType": "Translation", "comment": "Lorem ipsum"},
@@ -72,7 +74,7 @@ def test_exported_document_imports_losslessly(configure_mocks, tmp_path):
     )
 
     document = tmp_path / "report.json"
-    document.write_text(render(), encoding="utf-8")
+    document.write_text(render_v1(render_context), encoding="utf-8")
 
     result = DocumentImporterService().read([document])
 
