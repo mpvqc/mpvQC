@@ -49,43 +49,11 @@ MenuBar {
             onTriggered: root.viewModel.requestSaveQcDocumentAs()
         }
 
-        MenuSeparator {
-            Component.onCompleted: {
-                if (_extendedExportModel.count === 0) {
-                    visible = false;
-                    height = 0;
-                }
-            }
-        }
+        MenuSeparator {}
 
-        MpvqcMenuBarMenu {
-            objectName: "exportQcDocumentMenu"
-            title: qsTranslate("MainWindow", "Export QC Document")
-            icon.source: MpvqcIcons.fileExport
-
-            Component.onCompleted: {
-                if (_extendedExportModel.count === 0) {
-                    // `visible` on a Menu toggles its open/closed state,
-                    // so hiding the entry has to go through the parent MenuItem instead of a reactive binding
-                    parent.visible = false;
-                    parent.height = 0;
-                }
-            }
-
-            Repeater {
-                model: MpvqcExportTemplateModel {
-                    id: _extendedExportModel
-                }
-
-                delegate: MpvqcMenuBarItem {
-                    required property string name
-                    required property url path
-
-                    text: name
-                    icon.source: MpvqcIcons.notes
-                    onTriggered: root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
-                }
-            }
+        MpvqcExportQcDocumentMenu {
+            onClassicExportTriggered: root.viewModel.requestSaveQcDocumentClassic()
+            onTemplateExportTriggered: (name, path) => root.viewModel.requestSaveQcDocumentExtendedUsing(name, path)
         }
 
         MenuSeparator {}

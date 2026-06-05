@@ -179,6 +179,23 @@ TestCase {
         verify(it.bridge.fileContains(savePath, sentinel), "exported file should contain comment text");
     }
 
+    function test_classicExport_writesClassicDocumentWithoutMarkingSaved(): void {
+        const control = it.makeControl();
+        const sentinel = "classic-export-payload";
+        it.comment.add(control, "Translation", sentinel);
+
+        it.menu.triggerSubItemByText(control, "fileMenu", "exportQcDocumentMenu", "mpvQC Classic");
+
+        const dialog = it.find.openedDialog(control, "exportClassicDocumentFileDialog");
+        const savePath = it.bridge.tempSavePath();
+        dialog.selectedFile = savePath;
+        it.dialog.accept(dialog);
+
+        tryVerify(() => it.bridge.fileContains(savePath, "[FILE]"));
+        verify(it.bridge.fileContains(savePath, sentinel), "classic export should contain comment text");
+        verify(!it.bridge.saved, "classic export must not mark the session as saved");
+    }
+
     function test_extendedExport_brokenTemplate_opensErrorMessageBox(): void {
         const control = it.makeControl();
         it.comment.add(control, "Translation", "extended-export-payload");

@@ -7,6 +7,8 @@ pragma Singleton
 import QtQuick
 
 QtObject {
+    readonly property url mpvqcLogo: Qt.resolvedUrl("qrc:/data/icon.svg")
+
     readonly property url add: Qt.resolvedUrl("qrc:/data/icons/add_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url arrowDropDown: Qt.resolvedUrl("qrc:/data/icons/arrow_drop_down_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")
     readonly property url aspectRatio: Qt.resolvedUrl("qrc:/data/icons/aspect_ratio_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg")

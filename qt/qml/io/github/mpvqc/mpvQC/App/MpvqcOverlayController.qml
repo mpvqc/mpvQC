@@ -57,6 +57,10 @@ Item {
             _fileDialogLoader.openExtendedDocumentExportDialog(template);
         }
 
+        function onClassicExportRequested(): void {
+            _fileDialogLoader.openClassicDocumentExportDialog();
+        }
+
         function onCloseAppRequested(): void {
             root.closeAppRequested();
         }

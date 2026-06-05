@@ -5,6 +5,7 @@
 module io.github.mpvqc.mpvQC.Views.Header
 
 MpvqcHeaderView MpvqcHeaderView.qml
+internal MpvqcExportQcDocumentMenu MpvqcExportQcDocumentMenu.qml
 internal MpvqcHeaderWindowButtons MpvqcHeaderWindowButtons.qml
 internal MpvqcLanguageSubMenu MpvqcLanguageSubMenu.qml
 internal MpvqcMenuBar MpvqcMenuBar.qml

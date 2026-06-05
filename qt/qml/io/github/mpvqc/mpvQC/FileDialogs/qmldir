@@ -6,6 +6,7 @@ module io.github.mpvqc.mpvQC.FileDialogs
 
 MpvqcFileDialogLoader MpvqcFileDialogLoader.qml
 
+internal MpvqcExportClassicDocumentFileDialog MpvqcExportClassicDocumentFileDialog.qml
 internal MpvqcExportDocumentFileDialog MpvqcExportDocumentFileDialog.qml
 internal MpvqcImportDocumentsFileDialog MpvqcImportDocumentsFileDialog.qml
 internal MpvqcImportSubtitlesFileDialog MpvqcImportSubtitlesFileDialog.qml

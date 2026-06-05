@@ -87,6 +87,18 @@ class ExportService(QObject):
 
         QThreadPool.globalInstance().start(_job)
 
+    def export_classic(self, document: Path) -> None:
+        context = self._context()
+
+        def _job() -> None:
+            with QMutexLocker(self._mutex):
+                try:
+                    save_classic(document, self._resources, context)
+                except ExportError as e:
+                    self.export_error_occurred.emit(e.message, e.lineno)
+
+        QThreadPool.globalInstance().start(_job)
+
     def backup(self) -> None:
         context = self._context()
 
