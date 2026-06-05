@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.services import SubtitleImporterService
+from mpvqc.services.importer.subtitle_videos import find_videos_in_subtitles
 
 SUBTITLE_EMPTY = """\
 """
@@ -171,59 +171,48 @@ def subtitle_video_relative_path(tmp_path_factory, request):
     return file_path, video_path
 
 
-@pytest.fixture(scope="session")
-def service():
-    return SubtitleImporterService()
-
-
 def test_subtitles_no_existing_video_path(
-    service,
     subtitle_empty,
     subtitle_incomplete,
 ):
-    assert not service.read([subtitle_empty]).existing_videos
-    assert not service.read([subtitle_incomplete]).existing_videos
-    assert not service.read([subtitle_empty, subtitle_incomplete]).existing_videos
+    assert not find_videos_in_subtitles([subtitle_empty])
+    assert not find_videos_in_subtitles([subtitle_incomplete])
+    assert not find_videos_in_subtitles([subtitle_empty, subtitle_incomplete])
 
 
 def test_subtitle_video_in_script_info(
-    service,
     subtitle_video_in_script_info,
     video_file_existing_1,
 ):
-    assert video_file_existing_1 in service.read([subtitle_video_in_script_info]).existing_videos
+    assert video_file_existing_1 in find_videos_in_subtitles([subtitle_video_in_script_info])
 
 
 def test_subtitle_video_in_aegisub(
-    service,
     subtitle_video_in_aegisub,
     video_file_existing_1,
 ):
-    assert video_file_existing_1 in service.read([subtitle_video_in_aegisub]).existing_videos
+    assert video_file_existing_1 in find_videos_in_subtitles([subtitle_video_in_aegisub])
 
 
 def test_subtitle_video_in_aegisub_nonexistent(
-    service,
     subtitle_video_in_aegisub_nonexistent,
     video_file_existing_1,
 ):
-    assert not service.read([subtitle_video_in_aegisub_nonexistent]).existing_videos
+    assert not find_videos_in_subtitles([subtitle_video_in_aegisub_nonexistent])
 
 
 def test_subtitle_video_in_both(
-    service,
     subtitle_video_in_both,
     video_file_existing_1,
 ):
-    assert video_file_existing_1 in service.read([subtitle_video_in_both]).existing_videos
+    assert video_file_existing_1 in find_videos_in_subtitles([subtitle_video_in_both])
 
 
 def test_subtitle_video_relative_path(
-    service,
     subtitle_video_relative_path,
 ):
     subtitle_path, expected_video_path = subtitle_video_relative_path
-    result = service.read([subtitle_path])
+    result = find_videos_in_subtitles([subtitle_path])
 
-    assert len(result.existing_videos) == 1
-    assert result.existing_videos[0].resolve() == expected_video_path.resolve()
+    assert len(result) == 1
+    assert result[0].resolve() == expected_video_path.resolve()

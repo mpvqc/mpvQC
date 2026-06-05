@@ -19,7 +19,7 @@ from mpvqc.services.state import StateService
 
 from .concerns import session, subtitles, video
 from .plan import FinishedPlan, UnfinishedPlan, make_plan
-from .scanner import ResourceScanner
+from .scanner import scan
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -41,7 +41,6 @@ class ImporterService(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._scanner = ResourceScanner()
         self._busy = False
         self._finished_plan_ready.connect(self.execute, Qt.ConnectionType.QueuedConnection)
 
@@ -54,13 +53,13 @@ class ImporterService(QObject):
             self._busy = value
             self.busy_changed.emit(value)
 
-    def open(self, documents: list[Path], videos: list[Path], subtitles: list[Path]) -> None:
+    def open(self, document_paths: list[Path], video_paths: list[Path], subtitle_paths: list[Path]) -> None:
         if self._busy:
             logger.debug(
                 "Skipping import while another is in progress; documents=%s videos=%s subtitles=%s",
-                documents,
-                videos,
-                subtitles,
+                document_paths,
+                video_paths,
+                subtitle_paths,
             )
             return
         self._set_busy(True)
@@ -69,12 +68,12 @@ class ImporterService(QObject):
         has_existing_comments = self._comments.count > 0
 
         def scan_and_dispatch() -> None:
-            scan = self._scanner.scan(documents, videos, subtitles)
+            scan_result = scan(document_paths, video_paths, subtitle_paths)
             match make_plan(
-                scan,
+                scan_result,
                 found_video_setting=ImportFoundVideo(self._settings.import_found_video),
                 has_existing_comments=has_existing_comments,
-                any_candidate_loaded=self._player.is_any_video_loaded(v.path for v in scan.videos),
+                any_candidate_loaded=self._player.is_any_video_loaded(v.path for v in scan_result.videos),
             ):
                 case FinishedPlan() as plan:
                     self._finished_plan_ready.emit(plan)

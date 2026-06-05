@@ -5,20 +5,24 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from unittest.mock import MagicMock
 
 import inject
 import pytest
 from PySide6.QtTest import QSignalSpy
 
+from mpvqc.datamodels import Comment, VideoSource
+from mpvqc.enums import ImportFoundVideo
 from mpvqc.services.comments import CommentsService
-from mpvqc.services.importer import DocumentImporterService, FinishedPlan, ImporterService, session, subtitles, video
+from mpvqc.services.importer import FinishedPlan, ImporterService, ScanResult, session, subtitles, video
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
-from mpvqc.services.subtitle_importer import SubtitleImporterService
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @pytest.fixture(autouse=True)
@@ -53,16 +57,6 @@ def reset_service_mock() -> MagicMock:
     return MagicMock(spec_set=ResetService)
 
 
-@pytest.fixture
-def document_importer_service_mock() -> MagicMock:
-    return MagicMock(spec_set=DocumentImporterService)
-
-
-@pytest.fixture
-def subtitle_importer_service_mock() -> MagicMock:
-    return MagicMock(spec_set=SubtitleImporterService)
-
-
 @pytest.fixture(autouse=True)
 def configure_inject(
     player_service_mock: MagicMock,
@@ -70,8 +64,6 @@ def configure_inject(
     state_service_mock: MagicMock,
     comments_service_mock: MagicMock,
     reset_service_mock: MagicMock,
-    document_importer_service_mock: MagicMock,
-    subtitle_importer_service_mock: MagicMock,
 ) -> None:
     def config(binder: inject.Binder) -> None:
         binder.bind(PlayerService, player_service_mock)
@@ -79,8 +71,6 @@ def configure_inject(
         binder.bind(StateService, state_service_mock)
         binder.bind(CommentsService, comments_service_mock)
         binder.bind(ResetService, reset_service_mock)
-        binder.bind(DocumentImporterService, document_importer_service_mock)
-        binder.bind(SubtitleImporterService, subtitle_importer_service_mock)
 
     inject.configure(config, allow_override=True, bind_in_runtime=False, clear=True)
 
@@ -266,3 +256,110 @@ def test_execute_gates_state_record_import(
         state_service_mock.record_import.assert_called_once()
     else:
         state_service_mock.record_import.assert_not_called()
+
+
+COMMENTS = (Comment(time=0, comment_type="Translation", comment="Lorem ipsum"),)
+
+
+def test_execute_replace_session_resets_application(
+    service: ImporterService,
+    reset_service_mock: MagicMock,
+) -> None:
+    plan = FinishedPlan(comments=(), session=session.Replace(), video=video.Skip(), subtitles=subtitles.Skip())
+
+    service.execute(plan)
+
+    reset_service_mock.reset.assert_called_once()
+
+
+def test_execute_merge_session_does_not_reset(
+    service: ImporterService,
+    reset_service_mock: MagicMock,
+) -> None:
+    service.execute(NOOP_PLAN)
+
+    reset_service_mock.reset.assert_not_called()
+
+
+def test_execute_imports_comments(
+    service: ImporterService,
+    comments_service_mock: MagicMock,
+) -> None:
+    plan = FinishedPlan(comments=COMMENTS, session=session.Merge(), video=video.Skip(), subtitles=subtitles.Skip())
+
+    service.execute(plan)
+
+    comments_service_mock.import_comments.assert_called_once_with(COMMENTS)
+
+
+def test_execute_without_comments_imports_nothing(
+    service: ImporterService,
+    comments_service_mock: MagicMock,
+) -> None:
+    service.execute(NOOP_PLAN)
+
+    comments_service_mock.import_comments.assert_not_called()
+
+
+class InlineThreadPool:
+    @staticmethod
+    def globalInstance() -> type[InlineThreadPool]:
+        return InlineThreadPool
+
+    @staticmethod
+    def start(job: Callable[[], None]) -> None:
+        job()
+
+
+@pytest.fixture
+def run_jobs_inline(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("mpvqc.services.importer.service.QThreadPool", InlineThreadPool)
+
+
+EMPTY_SCAN = ScanResult(videos=(), subtitles=(), comments=(), invalid_documents=())
+UNRESOLVED_SCAN = ScanResult(
+    videos=(VideoSource(path=V, found_in_document=True),),
+    subtitles=(),
+    comments=(),
+    invalid_documents=(),
+)
+
+
+def test_open_routes_resolvable_scan_to_execute(
+    qt_app,
+    run_jobs_inline: None,
+    monkeypatch: pytest.MonkeyPatch,
+    service: ImporterService,
+    settings_service_mock: MagicMock,
+    player_service_mock: MagicMock,
+) -> None:
+    monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: EMPTY_SCAN)
+    settings_service_mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME.value
+    player_service_mock.is_any_video_loaded.return_value = False
+    unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
+
+    service.open([], [], [])
+    qt_app.processEvents()
+
+    assert unfinished_spy.count() == 0
+    assert service.busy is False
+
+
+def test_open_routes_unresolvable_scan_to_wizard(
+    qt_app,
+    run_jobs_inline: None,
+    monkeypatch: pytest.MonkeyPatch,
+    service: ImporterService,
+    settings_service_mock: MagicMock,
+    player_service_mock: MagicMock,
+) -> None:
+    monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: UNRESOLVED_SCAN)
+    settings_service_mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME.value
+    player_service_mock.is_any_video_loaded.return_value = False
+    unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
+
+    service.open([], [], [])
+    qt_app.processEvents()
+
+    assert unfinished_spy.count() == 1
+    assert service.busy is True

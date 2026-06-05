@@ -23,8 +23,7 @@ class Unresolved:
     invalid_documents: tuple[Path, ...]
 
 
-type Resolved = Absent
-type Concern = Resolved | Unresolved
+type Concern = Absent | Unresolved
 
 
 def resolve(scan: ScanResult) -> Concern:

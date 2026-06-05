@@ -11,8 +11,8 @@ from typing import NamedTuple
 import pytest
 from jsonschema import Draft202012Validator
 
-from mpvqc.services import DocumentImporterService
 from mpvqc.services.exporter.documents.v1 import render_v1
+from mpvqc.services.importer.reader import read_documents
 
 SCHEMA = Path(__file__).parents[3] / "docs" / "document-format" / "v1.json"
 
@@ -76,7 +76,7 @@ def test_exported_document_imports_losslessly(configure_mocks, render_context, t
     document = tmp_path / "report.json"
     document.write_text(render_v1(render_context), encoding="utf-8")
 
-    result = DocumentImporterService().read([document])
+    result = read_documents([document])
 
     assert result.valid_documents == (document,)
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [

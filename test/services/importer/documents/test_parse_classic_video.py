@@ -2,13 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from mpvqc.services.importer.reader import read_documents
+
 
 def test_import_document_with_existing_video(
-    service,
     document_with_existing_video_1,
     video_file_existing_1,
 ):
-    result = service.read([document_with_existing_video_1])
+    result = read_documents([document_with_existing_video_1])
 
     assert not result.invalid_documents
     assert result.valid_documents
@@ -17,10 +18,9 @@ def test_import_document_with_existing_video(
 
 
 def test_import_document_with_nonexistent_video(
-    service,
     document_with_nonexistent_video,
 ):
-    result = service.read([document_with_nonexistent_video])
+    result = read_documents([document_with_nonexistent_video])
 
     assert not result.invalid_documents
     assert result.valid_documents
@@ -28,13 +28,12 @@ def test_import_document_with_nonexistent_video(
 
 
 def test_import_multiple_documents_video_detection(
-    service,
     document_invalid_1,
     document_with_existing_video_1,
     document_with_existing_video_2,
     document_with_nonexistent_video,
 ):
-    result = service.read(
+    result = read_documents(
         [
             document_invalid_1,
             document_with_existing_video_1,

@@ -35,7 +35,7 @@ type Resolved = Load | Skip
 type Concern = Resolved | Unresolved
 
 
-def resolve(scan: ScanResult, video_concern: video.Concern) -> Concern:
+def resolve(scan: ScanResult, *, video_concern: video.Concern) -> Concern:
     explicit = tuple(s for s in scan.subtitles if s.explicitly_provided)
     if explicit:
         return _from_explicit(explicit)

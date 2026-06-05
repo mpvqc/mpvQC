@@ -16,7 +16,6 @@ from .frameless import get_frameless_window_service as get_frameless_window_serv
 from .host_environment import HostEnvironmentService as HostEnvironmentService
 from .host_environment import WindowButtonPreference as WindowButtonPreference
 from .i18n import InternationalizationService as InternationalizationService
-from .importer import DocumentImporterService as DocumentImporterService
 from .importer import ImporterService as ImporterService
 from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorService
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
@@ -29,7 +28,6 @@ from .resource import ResourceService as ResourceService
 from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
 from .settings import SettingsService as SettingsService
 from .state import StateService as StateService
-from .subtitle_importer import SubtitleImporterService as SubtitleImporterService
 from .theme import ThemeService as ThemeService
 from .type_mapper import TypeMapperService as TypeMapperService
 from .version_checker import VersionCheckerService as VersionCheckerService

@@ -4,8 +4,6 @@
 
 import pytest
 
-from mpvqc.services import DocumentImporterService
-
 DOCUMENT_INVALID = """\
 erroneous_document
 """
@@ -43,11 +41,6 @@ path: {video_path}
 [00:00:00][ניסוח] Document 4 / Comment 3
 [33:00:00][ניסוח] Document 4 / Comment 4
 """
-
-
-@pytest.fixture(autouse=True, scope="module")
-def configure_inject(common_bindings_with):
-    common_bindings_with()
 
 
 @pytest.fixture(scope="session")
@@ -127,8 +120,3 @@ def document_with_nonexistent_video(tmp_path_factory, video_file_not_existing):
     content = DOCUMENT_WITH_NONEXISTENT_VIDEO.format(video_path=video_file_not_existing)
     file_path.write_text(content, encoding="utf-8")
     return file_path
-
-
-@pytest.fixture(scope="session")
-def service():
-    return DocumentImporterService()

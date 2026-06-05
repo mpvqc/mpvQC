@@ -4,6 +4,8 @@
 
 import pytest
 
+from mpvqc.services.importer.reader import read_documents
+
 DOCUMENT_NO_SUBTITLES = """\
 [FILE]
 nick: some-weird-nick
@@ -90,31 +92,28 @@ def document_two_subtitles(tmp_path_factory, subtitle_existing_1, subtitle_exist
 
 
 def test_parse_document_no_subtitles(
-    service,
     document_no_subtitles,
 ):
-    result = service.read([document_no_subtitles])
+    result = read_documents([document_no_subtitles])
 
     assert result.valid_documents
     assert not result.existing_subtitles
 
 
 def test_parse_document_subtitle_not_existing(
-    service,
     document_subtitle_not_existing,
 ):
-    result = service.read([document_subtitle_not_existing])
+    result = read_documents([document_subtitle_not_existing])
 
     assert result.valid_documents
     assert not result.existing_subtitles
 
 
 def test_parse_document_one_subtitle(
-    service,
     document_one_subtitle,
     subtitle_existing_1,
 ):
-    result = service.read([document_one_subtitle])
+    result = read_documents([document_one_subtitle])
 
     assert result.valid_documents
     assert len(result.existing_subtitles) == 1
@@ -122,12 +121,11 @@ def test_parse_document_one_subtitle(
 
 
 def test_parse_document_two_subtitles(
-    service,
     document_two_subtitles,
     subtitle_existing_1,
     subtitle_existing_2,
 ):
-    result = service.read([document_two_subtitles])
+    result = read_documents([document_two_subtitles])
 
     assert result.valid_documents
     assert len(result.existing_subtitles) == 2
