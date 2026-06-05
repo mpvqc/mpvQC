@@ -7,7 +7,7 @@ import QtQuick
 import io.github.mpvqc.mpvQC.Components
 
 MpvqcMessageBox {
-    objectName: "extendedExportMessageBox"
+    objectName: "customExportMessageBox"
 
     title: qsTranslate("MessageBoxes", "Extended Exports")
 

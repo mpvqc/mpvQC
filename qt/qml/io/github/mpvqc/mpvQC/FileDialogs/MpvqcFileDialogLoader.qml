@@ -11,7 +11,7 @@ Loader {
     objectName: "fileDialogLoader"
 
     readonly property url exportClassicDocumentDialog: Qt.resolvedUrl("MpvqcExportClassicDocumentFileDialog.qml")
-    readonly property url exportDocumentDialog: Qt.resolvedUrl("MpvqcExportDocumentFileDialog.qml")
+    readonly property url exportCustomDocumentDialog: Qt.resolvedUrl("MpvqcExportCustomDocumentFileDialog.qml")
     readonly property url importDocumentsDialog: Qt.resolvedUrl("MpvqcImportDocumentsFileDialog.qml")
     readonly property url importSubtitlesDialog: Qt.resolvedUrl("MpvqcImportSubtitlesFileDialog.qml")
     readonly property url importVideoDialog: Qt.resolvedUrl("MpvqcImportVideoFileDialog.qml")
@@ -35,8 +35,8 @@ Loader {
         active = true;
     }
 
-    function openExtendedDocumentExportDialog(exportTemplate: url): void {
-        setSource(exportDocumentDialog, {
+    function openCustomDocumentExportDialog(exportTemplate: url): void {
+        setSource(exportCustomDocumentDialog, {
             exportTemplate: exportTemplate
         });
         active = true;

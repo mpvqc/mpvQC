@@ -28,7 +28,15 @@ class ExportError(Exception):
         self.lineno = lineno
 
 
-def export_document(file: Path, template: Path, context: RenderContext) -> None:
+def save_classic(file: Path, resources: ResourceService, context: RenderContext) -> None:
+    _write(file, render_classic(resources.default_export_template, context))
+
+
+def save_v1(file: Path, context: RenderContext) -> None:
+    _write(file, render_v1(context))
+
+
+def export_custom(file: Path, template: Path, context: RenderContext) -> None:
     from jinja2 import TemplateError, TemplateSyntaxError
 
     try:
@@ -38,8 +46,8 @@ def export_document(file: Path, template: Path, context: RenderContext) -> None:
         #: Shown when a user-supplied export template cannot be read (file gone,
         #: permission denied, or not valid UTF-8). The technical detail is logged,
         #: not surfaced to the user.
-        message = QCoreApplication.translate("MessageBoxes", "The export template could not be read.")
-        raise ExportError(message) from e
+        msg = QCoreApplication.translate("MessageBoxes", "The export template could not be read.")
+        raise ExportError(msg) from e
 
     try:
         content = render_classic(user_template, context)
@@ -51,14 +59,6 @@ def export_document(file: Path, template: Path, context: RenderContext) -> None:
     _write(file, content)
 
 
-def save_v1(file: Path, context: RenderContext) -> None:
-    _write(file, render_v1(context))
-
-
-def save_classic(file: Path, resources: ResourceService, context: RenderContext) -> None:
-    _write(file, render_classic(resources.default_export_template, context))
-
-
 def _write(file: Path, content: str) -> None:
     try:
         file.write_text(content, encoding="utf-8", newline="\n")
@@ -66,5 +66,5 @@ def _write(file: Path, content: str) -> None:
         logger.exception("Failed to save document to %s", file)
         #: Shown when writing the QC document fails (permission denied, disk full,
         #: target directory missing). The technical detail is logged, not surfaced.
-        message = QCoreApplication.translate("MessageBoxes", "The document could not be saved.")
-        raise ExportError(message) from e
+        msg = QCoreApplication.translate("MessageBoxes", "The document could not be saved.")
+        raise ExportError(msg) from e

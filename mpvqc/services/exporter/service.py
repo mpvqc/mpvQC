@@ -20,7 +20,7 @@ from mpvqc.services.state import StateService
 
 from .backup import backup as create_backup
 from .context import RenderContext
-from .writer import ExportError, export_document, save_classic
+from .writer import ExportError, export_custom, save_classic
 
 logger = logging.getLogger(__name__)
 
@@ -62,18 +62,6 @@ class ExportService(QObject):
 
         return Path(video_directory).joinpath(file_name).absolute()
 
-    def export(self, document: Path, template: Path) -> None:
-        context = self._context()
-
-        def _job() -> None:
-            with QMutexLocker(self._mutex):
-                try:
-                    export_document(document, template, context)
-                except ExportError as e:
-                    self.export_error_occurred.emit(e.message, e.lineno)
-
-        QThreadPool.globalInstance().start(_job)
-
     def save(self, document: Path) -> None:
         context = self._context()
 
@@ -94,6 +82,18 @@ class ExportService(QObject):
             with QMutexLocker(self._mutex):
                 try:
                     save_classic(document, self._resources, context)
+                except ExportError as e:
+                    self.export_error_occurred.emit(e.message, e.lineno)
+
+        QThreadPool.globalInstance().start(_job)
+
+    def export_custom(self, document: Path, template: Path) -> None:
+        context = self._context()
+
+        def _job() -> None:
+            with QMutexLocker(self._mutex):
+                try:
+                    export_custom(document, template, context)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
 

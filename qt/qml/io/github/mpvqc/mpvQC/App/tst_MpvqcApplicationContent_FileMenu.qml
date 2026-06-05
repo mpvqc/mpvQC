@@ -164,14 +164,14 @@ TestCase {
         verify(!it.bridge.fileContains(firstPath, "world"), "first file should not contain world");
     }
 
-    function test_extendedExport_writesFileUsingTemplate(): void {
+    function test_customExport_writesFileUsingTemplate(): void {
         const control = it.makeControl();
         const sentinel = "extended-export-payload";
         it.comment.add(control, "Translation", sentinel);
 
         it.menu.triggerSubItemByText(control, "fileMenu", "exportQcDocumentMenu", "working");
 
-        const dialog = it.find.openedDialog(control, "exportDocumentFileDialog");
+        const dialog = it.find.openedDialog(control, "exportCustomDocumentFileDialog");
         const savePath = it.bridge.tempSavePath();
         dialog.selectedFile = savePath;
         it.dialog.accept(dialog);
@@ -196,13 +196,13 @@ TestCase {
         verify(!it.bridge.saved, "classic export must not mark the session as saved");
     }
 
-    function test_extendedExport_brokenTemplate_opensErrorMessageBox(): void {
+    function test_customExport_brokenTemplate_opensErrorMessageBox(): void {
         const control = it.makeControl();
         it.comment.add(control, "Translation", "extended-export-payload");
 
         it.menu.triggerSubItemByText(control, "fileMenu", "exportQcDocumentMenu", "error");
 
-        const dialog = it.find.openedDialog(control, "exportDocumentFileDialog");
+        const dialog = it.find.openedDialog(control, "exportCustomDocumentFileDialog");
         dialog.selectedFile = it.bridge.tempSavePath();
         it.dialog.accept(dialog);
 

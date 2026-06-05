@@ -76,7 +76,7 @@ def test_request_reset_app_state(view_model, configure_state, reset_service_mock
 
 
 def test_save(view_model, make_spy, configure_state, export_service_mock):
-    spy = make_spy(view_model.exportPathRequested)
+    spy = make_spy(view_model.savePathRequested)
 
     configure_state(document=None)
     view_model.requestSaveQcDocumentAs()
@@ -104,7 +104,7 @@ def test_save(view_model, make_spy, configure_state, export_service_mock):
 def test_request_classic_export(view_model, make_spy):
     spy = make_spy(view_model.classicExportRequested)
 
-    view_model.requestSaveQcDocumentClassic()
+    view_model.requestExportQcDocumentClassic()
 
     assert spy.count() == 1
 

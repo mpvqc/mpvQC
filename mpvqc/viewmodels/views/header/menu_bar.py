@@ -32,11 +32,11 @@ class MpvqcMenuBarViewModel(QObject):
     _state = inject.attr(StateService)
 
     confirmResetRequested = Signal()
-    exportPathRequested = Signal()
 
     openQcDocumentsRequested = Signal()
-    extendedExportRequested = Signal(QUrl)
+    savePathRequested = Signal()
     classicExportRequested = Signal()
+    customExportRequested = Signal(QUrl)
 
     openVideoRequested = Signal()
     openSubtitlesRequested = Signal()
@@ -51,7 +51,7 @@ class MpvqcMenuBarViewModel(QObject):
     editInputConfigDialogRequested = Signal()
     updateDialogRequested = Signal()
     keyboardShortcutsDialogRequested = Signal()
-    extendedExportDialogRequested = Signal()
+    customExportDialogRequested = Signal()
     aboutDialogRequested = Signal()
 
     closeAppRequested = Signal()
@@ -102,15 +102,15 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestSaveQcDocumentAs(self) -> None:
-        self.exportPathRequested.emit()
-
-    @Slot(str, QUrl)
-    def requestSaveQcDocumentExtendedUsing(self, _: str, exportTemplate: QUrl) -> None:
-        self.extendedExportRequested.emit(exportTemplate)
+        self.savePathRequested.emit()
 
     @Slot()
-    def requestSaveQcDocumentClassic(self) -> None:
+    def requestExportQcDocumentClassic(self) -> None:
         self.classicExportRequested.emit()
+
+    @Slot(str, QUrl)
+    def requestExportQcDocumentCustom(self, _: str, exportTemplate: QUrl) -> None:
+        self.customExportRequested.emit(exportTemplate)
 
     @Slot()
     def requestOpenVideo(self) -> None:
@@ -161,8 +161,8 @@ class MpvqcMenuBarViewModel(QObject):
         self.keyboardShortcutsDialogRequested.emit()
 
     @Slot()
-    def requestOpenExtendedExportsDialog(self) -> None:
-        self.extendedExportDialogRequested.emit()
+    def requestOpenCustomExportsDialog(self) -> None:
+        self.customExportDialogRequested.emit()
 
     @Slot()
     def requestOpenAboutDialog(self) -> None:

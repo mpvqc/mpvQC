@@ -65,78 +65,6 @@ def test_generates_file_path_proposals(case, configure_mocks, service):
     assert actual == case.expected
 
 
-def test_export_succeeds(configure_mocks, service, tmp_path, make_spy):
-    configure_mocks(nickname="lorem")
-    error_spy = make_spy(service.export_error_occurred)
-    template = tmp_path / "template.jinja"
-    template.write_text("nick: {{ nickname }}", encoding="utf-8")
-    file = tmp_path / "export.txt"
-
-    service.export(file, template)
-    wait_for_jobs()
-
-    assert error_spy.count() == 0
-    assert file.read_text(encoding="utf-8") == "nick: lorem"
-
-
-@pytest.mark.parametrize(
-    ("template_content", "expected_lineno"),
-    [
-        ("{% if %}", 1),
-        ("{{ undefined_thing() }}", -1),
-    ],
-)
-def test_export_signals_on_render_failure(
-    configure_mocks, service, tmp_path, make_spy, template_content, expected_lineno
-):
-    configure_mocks()
-    error_spy = make_spy(service.export_error_occurred)
-    template = tmp_path / "template.jinja"
-    template.write_text(template_content, encoding="utf-8")
-
-    service.export(tmp_path / "export.txt", template)
-    wait_for_jobs()
-
-    assert error_spy.count() == 1
-    assert error_spy.at(invocation=0, argument=0)
-    assert error_spy.at(invocation=0, argument=1) == expected_lineno
-
-
-@pytest.mark.parametrize(
-    "read_error",
-    [
-        UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid"),
-        FileNotFoundError("template gone"),
-    ],
-)
-def test_export_signals_on_template_read_failure(configure_mocks, service, make_spy, read_error):
-    configure_mocks()
-    error_spy = make_spy(service.export_error_occurred)
-    template_mock = MagicMock()
-    template_mock.read_text.side_effect = read_error
-
-    service.export(MagicMock(), template_mock)
-    wait_for_jobs()
-
-    assert error_spy.count() == 1
-    assert error_spy.at(invocation=0, argument=1) == -1
-
-
-def test_export_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy):
-    configure_mocks()
-    error_spy = make_spy(service.export_error_occurred)
-    template = tmp_path / "template.jinja"
-    template.write_text("static", encoding="utf-8")
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
-
-    service.export(file_mock, template)
-    wait_for_jobs()
-
-    assert error_spy.count() == 1
-    assert error_spy.at(invocation=0, argument=1) == -1
-
-
 def test_save_writes_classic_document(configure_mocks, service, tmp_path, make_spy):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
@@ -183,6 +111,24 @@ def test_save_failure_does_not_record_save(configure_mocks, service, state_servi
     state_service_mock.record_save.assert_not_called()
 
 
+def test_save_v1_writes_v1_document(configure_mocks, render_context, tmp_path):
+    configure_mocks()
+    file = tmp_path / "saved.json"
+
+    save_v1(file, render_context)
+
+    assert json.loads(file.read_text(encoding="utf-8"))["version"] == 1
+
+
+def test_save_v1_raises_on_write_failure(configure_mocks, render_context):
+    configure_mocks()
+    file_mock = MagicMock()
+    file_mock.write_text.side_effect = PermissionError("read-only target")
+
+    with pytest.raises(ExportError):
+        save_v1(file_mock, render_context)
+
+
 def test_export_classic_writes_classic_document_without_recording(
     configure_mocks, service, tmp_path, state_service_mock
 ):
@@ -209,6 +155,78 @@ def test_export_classic_signals_on_write_failure(configure_mocks, service, make_
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
+def test_export_custom_succeeds(configure_mocks, service, tmp_path, make_spy):
+    configure_mocks(nickname="lorem")
+    error_spy = make_spy(service.export_error_occurred)
+    template = tmp_path / "template.jinja"
+    template.write_text("nick: {{ nickname }}", encoding="utf-8")
+    file = tmp_path / "export.txt"
+
+    service.export_custom(file, template)
+    wait_for_jobs()
+
+    assert error_spy.count() == 0
+    assert file.read_text(encoding="utf-8") == "nick: lorem"
+
+
+@pytest.mark.parametrize(
+    ("template_content", "expected_lineno"),
+    [
+        ("{% if %}", 1),
+        ("{{ undefined_thing() }}", -1),
+    ],
+)
+def test_export_custom_signals_on_render_failure(
+    configure_mocks, service, tmp_path, make_spy, template_content, expected_lineno
+):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+    template = tmp_path / "template.jinja"
+    template.write_text(template_content, encoding="utf-8")
+
+    service.export_custom(tmp_path / "export.txt", template)
+    wait_for_jobs()
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=0)
+    assert error_spy.at(invocation=0, argument=1) == expected_lineno
+
+
+@pytest.mark.parametrize(
+    "read_error",
+    [
+        UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid"),
+        FileNotFoundError("template gone"),
+    ],
+)
+def test_export_custom_signals_on_template_read_failure(configure_mocks, service, make_spy, read_error):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+    template_mock = MagicMock()
+    template_mock.read_text.side_effect = read_error
+
+    service.export_custom(MagicMock(), template_mock)
+    wait_for_jobs()
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=1) == -1
+
+
+def test_export_custom_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+    template = tmp_path / "template.jinja"
+    template.write_text("static", encoding="utf-8")
+    file_mock = MagicMock()
+    file_mock.write_text.side_effect = PermissionError("read-only target")
+
+    service.export_custom(file_mock, template)
+    wait_for_jobs()
+
+    assert error_spy.count() == 1
+    assert error_spy.at(invocation=0, argument=1) == -1
+
+
 def test_backup_writes_archive(configure_mocks, service, application_paths_service_mock, tmp_path):
     application_paths_service_mock.dir_backup = tmp_path
     configure_mocks(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
@@ -228,21 +246,3 @@ def test_backup_failure_is_logged(configure_mocks, service, application_paths_se
 
     assert "Failed to create backup" in caplog.text
     assert not (tmp_path / "does-not-exist").exists()
-
-
-def test_save_v1_writes_v1_document(configure_mocks, render_context, tmp_path):
-    configure_mocks()
-    file = tmp_path / "saved.json"
-
-    save_v1(file, render_context)
-
-    assert json.loads(file.read_text(encoding="utf-8"))["version"] == 1
-
-
-def test_save_v1_raises_on_write_failure(configure_mocks, render_context):
-    configure_mocks()
-    file_mock = MagicMock()
-    file_mock.write_text.side_effect = PermissionError("read-only target")
-
-    with pytest.raises(ExportError):
-        save_v1(file_mock, render_context)

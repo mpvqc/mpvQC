@@ -15,7 +15,7 @@ MpvqcMenuBarMenu {
     objectName: "exportQcDocumentMenu"
 
     signal classicExportTriggered
-    signal templateExportTriggered(name: string, path: url)
+    signal customExportTriggered(name: string, path: url)
 
     title: qsTranslate("MainWindow", "Export QC Document")
     icon.source: MpvqcIcons.fileExport
@@ -28,13 +28,13 @@ MpvqcMenuBarMenu {
     }
 
     MenuSeparator {
-        visible: _extendedExportModel.count > 0
+        visible: _exportTemplateModel.count > 0
         height: visible ? implicitHeight : 0
     }
 
     Repeater {
         model: MpvqcExportTemplateModel {
-            id: _extendedExportModel
+            id: _exportTemplateModel
         }
 
         delegate: MpvqcMenuBarItem {
@@ -43,7 +43,7 @@ MpvqcMenuBarMenu {
 
             text: name
             icon.source: MpvqcIcons.notes
-            onTriggered: root.templateExportTriggered(name, path)
+            onTriggered: root.customExportTriggered(name, path)
         }
     }
 }
