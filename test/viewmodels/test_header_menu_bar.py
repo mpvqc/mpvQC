@@ -101,6 +101,14 @@ def test_save(view_model, make_spy, configure_state, export_service_mock):
     assert spy.count() == 3
 
 
+def test_request_classic_export(view_model, make_spy):
+    spy = make_spy(view_model.classicExportRequested)
+
+    view_model.requestSaveQcDocumentClassic()
+
+    assert spy.count() == 1
+
+
 def test_open_app_data_folder(view_model, desktop_service_mock):
     view_model.openAppDataFolder()
 

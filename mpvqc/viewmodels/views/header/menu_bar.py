@@ -36,6 +36,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     openQcDocumentsRequested = Signal()
     extendedExportRequested = Signal(QUrl)
+    classicExportRequested = Signal()
 
     openVideoRequested = Signal()
     openSubtitlesRequested = Signal()
@@ -106,6 +107,10 @@ class MpvqcMenuBarViewModel(QObject):
     @Slot(str, QUrl)
     def requestSaveQcDocumentExtendedUsing(self, _: str, exportTemplate: QUrl) -> None:
         self.extendedExportRequested.emit(exportTemplate)
+
+    @Slot()
+    def requestSaveQcDocumentClassic(self) -> None:
+        self.classicExportRequested.emit()
 
     @Slot()
     def requestOpenVideo(self) -> None:

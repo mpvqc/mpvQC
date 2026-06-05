@@ -10,6 +10,7 @@ Loader {
     id: root
     objectName: "fileDialogLoader"
 
+    readonly property url exportClassicDocumentDialog: Qt.resolvedUrl("MpvqcExportClassicDocumentFileDialog.qml")
     readonly property url exportDocumentDialog: Qt.resolvedUrl("MpvqcExportDocumentFileDialog.qml")
     readonly property url importDocumentsDialog: Qt.resolvedUrl("MpvqcImportDocumentsFileDialog.qml")
     readonly property url importSubtitlesDialog: Qt.resolvedUrl("MpvqcImportSubtitlesFileDialog.qml")
@@ -26,6 +27,11 @@ Loader {
 
     function openDocumentSaveDialog(): void {
         setSource(saveDocumentDialog);
+        active = true;
+    }
+
+    function openClassicDocumentExportDialog(): void {
+        setSource(exportClassicDocumentDialog);
         active = true;
     }
 
