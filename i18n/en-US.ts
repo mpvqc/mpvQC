@@ -388,12 +388,22 @@
         <extracomment>Tri-state &quot;Select all&quot; checkbox in the subtitles step header</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unsupported document format version</source>
+        <extracomment>Shown beneath a rejected document declaring a format version this mpvQC release does not know</extracomment>
+        <translation>Unsupported document format version</translation>
+    </message>
+    <message>
+        <source>Not a valid QC document</source>
+        <extracomment>Shown beneath a rejected document that does not parse as any known QC document format</extracomment>
+        <translation>Not a valid QC document</translation>
+    </message>
     <message numerus="yes">
-        <source>%Ln incompatible QC document(s):</source>
-        <extracomment>Header above the list of QC documents whose format the importer rejected</extracomment>
+        <source>%Ln QC document(s) could not be imported:</source>
+        <extracomment>Header above the list of QC documents the importer rejected</extracomment>
         <translation>
-            <numerusform>%Ln incompatible QC document:</numerusform>
-            <numerusform>%Ln incompatible QC documents:</numerusform>
+            <numerusform>%Ln QC document could not be imported:</numerusform>
+            <numerusform>%Ln QC documents could not be imported:</numerusform>
         </translation>
     </message>
 </context>

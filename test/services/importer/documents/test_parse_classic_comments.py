@@ -24,7 +24,7 @@ def test_import_skips_malformed_lines_and_keeps_document_valid(tmp_path):
     result = read_documents([document])
 
     assert result.valid_documents == (document,)
-    assert result.invalid_documents == ()
+    assert result.rejected_documents == ()
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [
         (1 * 1000, "Translation", "A valid comment"),
         (4 * 1000, "Spelling", "Another valid comment"),

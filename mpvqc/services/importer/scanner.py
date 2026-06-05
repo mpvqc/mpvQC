@@ -15,7 +15,7 @@ from .subtitle_videos import find_videos_in_subtitles
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mpvqc.datamodels import Comment
+    from mpvqc.datamodels import Comment, RejectedDocument
 
 
 @dataclass(frozen=True)
@@ -23,7 +23,7 @@ class ScanResult:
     videos: tuple[VideoSource, ...]
     subtitles: tuple[SubtitleSource, ...]
     comments: tuple[Comment, ...]
-    invalid_documents: tuple[Path, ...]
+    rejected_documents: tuple[RejectedDocument, ...]
 
 
 def scan(documents: list[Path], videos: list[Path], subtitles: list[Path]) -> ScanResult:
@@ -46,7 +46,7 @@ def scan(documents: list[Path], videos: list[Path], subtitles: list[Path]) -> Sc
         videos=_merge_video_sources(video_sources),
         subtitles=merged_subtitles,
         comments=doc_data.comments,
-        invalid_documents=doc_data.invalid_documents,
+        rejected_documents=doc_data.rejected_documents,
     )
 
 

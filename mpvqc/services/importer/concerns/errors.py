@@ -8,8 +8,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
+    from mpvqc.datamodels import RejectedDocument
     from mpvqc.services.importer.scanner import ScanResult
 
 
@@ -19,14 +18,14 @@ class Absent:
 
 
 @dataclass(frozen=True)
-class Unresolved:
-    invalid_documents: tuple[Path, ...]
+class Present:
+    rejected_documents: tuple[RejectedDocument, ...]
 
 
-type Concern = Absent | Unresolved
+type Concern = Absent | Present
 
 
 def resolve(scan: ScanResult) -> Concern:
-    if not scan.invalid_documents:
+    if not scan.rejected_documents:
         return Absent()
-    return Unresolved(invalid_documents=scan.invalid_documents)
+    return Present(rejected_documents=scan.rejected_documents)

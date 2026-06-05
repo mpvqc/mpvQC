@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility
 
 ColumnLayout {
@@ -21,8 +22,8 @@ ColumnLayout {
 
     MpvqcWizardStepHeader {
         objectName: "errorsHeader"
-        //: Header above the list of QC documents whose format the importer rejected
-        text: qsTranslate("ImportWizardDialog", "%Ln incompatible QC document(s):", "", _listView.count)
+        //: Header above the list of QC documents the importer rejected
+        text: qsTranslate("ImportWizardDialog", "%Ln QC document(s) could not be imported:", "", _listView.count)
     }
 
     ListView {
@@ -43,20 +44,56 @@ ColumnLayout {
 
             required property string filename
             required property string fullPath
+            required property string reason
+
+            readonly property int iconSize: 24
 
             width: ListView.view.width
-            verticalPadding: 16
+            verticalPadding: 12
             leftInset: root.isMirrored ? _scrollBar.visibleWidth : 0
             rightInset: root.isMirrored ? 0 : _scrollBar.visibleWidth
             leftPadding: leftInset + 16
             rightPadding: rightInset + 16
-            text: _delegate.filename
 
-            icon {
-                source: MpvqcIcons.error
-                color: MpvqcTheme.palette.error
-                width: 24
-                height: 24
+            contentItem: RowLayout {
+                spacing: 12
+
+                MpvqcIconLabel {
+                    Layout.preferredWidth: _delegate.iconSize
+                    Layout.preferredHeight: _delegate.iconSize
+
+                    iconColor: MpvqcTheme.palette.error
+                    icon.source: MpvqcIcons.error
+                    icon.width: _delegate.iconSize
+                    icon.height: _delegate.iconSize
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+
+                    spacing: 2
+
+                    Label {
+                        objectName: "filenameLabel"
+
+                        Layout.fillWidth: true
+
+                        text: _delegate.filename
+                        horizontalAlignment: Text.AlignLeft
+                        elide: Text.ElideRight
+                    }
+
+                    Label {
+                        objectName: "reasonLabel"
+
+                        Layout.fillWidth: true
+
+                        text: _delegate.reason
+                        color: MpvqcTheme.palette.hint
+                        horizontalAlignment: Text.AlignLeft
+                        elide: Text.ElideRight
+                    }
+                }
             }
 
             ToolTip.text: _delegate.fullPath

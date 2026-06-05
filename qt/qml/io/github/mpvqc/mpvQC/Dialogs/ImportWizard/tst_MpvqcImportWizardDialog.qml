@@ -291,6 +291,26 @@ TestCase {
         tryCompare(selectAll, "checkState", Qt.Checked);
     }
 
+    function test_errorsStepShowsRejectionReasonPerDocument(): void {
+        const dlg = open.scenario("errors-only");
+
+        const errorList = findChild(dlg, "errorList");
+        verify(errorList, "error list not found");
+        tryCompare(errorList, "count", 2);
+
+        tryVerify(() => errorList.itemAtIndex(0) !== null);
+        tryVerify(() => errorList.itemAtIndex(1) !== null);
+
+        const first = errorList.itemAtIndex(0);
+        const second = errorList.itemAtIndex(1);
+
+        compare(first.filename, "broken.qc");
+        compare(second.filename, "future.json");
+        verify(first.reason.length > 0, "invalid document should show a rejection reason");
+        verify(second.reason.length > 0, "unsupported document should show a rejection reason");
+        verify(first.reason !== second.reason, "different rejection reasons should render differently");
+    }
+
     function test_closeOnlyModeShowsOnlyCloseAndClosesWithoutImport(): void {
         const dlg = open.scenario("errors-only");
 
