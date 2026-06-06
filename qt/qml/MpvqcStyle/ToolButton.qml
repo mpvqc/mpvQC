@@ -51,7 +51,7 @@ T.ToolButton {
         clipRadius: 8
         pressed: control.pressed
         anchor: control
-        active: control.enabled && (control.down || control.visualFocus || control.hovered)
+        active: control.enabled && (control.down || control.visualFocus || control.hovered || control.highlighted)
         color: Qt.alpha(control._contentColor, 0.1)
     }
 }

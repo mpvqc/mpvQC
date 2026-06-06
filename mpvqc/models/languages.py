@@ -20,16 +20,16 @@ if TYPE_CHECKING:
 class Language:
     language: str
     identifier: str
-    translator: str | None = None
+    translators: tuple[str, ...] = ()
 
 
 LANGUAGES = (
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "German")), identifier="de-DE", translator=""),
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "English")), identifier="en-US", translator=""),
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Spanish")), identifier="es-MX", translator="CiferrC"),
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Hebrew")), identifier="he-IL", translator="cN3rd"),
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Italian")), identifier="it-IT", translator="maddo"),
-    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Portuguese")), identifier="pt-PT", translator="Diogo_23"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "German")), identifier="de-DE"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "English")), identifier="en-US"),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Spanish")), identifier="es-MX", translators=("CiferrC",)),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Hebrew")), identifier="he-IL", translators=("cN3rd",)),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Italian")), identifier="it-IT", translators=("maddo",)),
+    Language(language=str(QT_TRANSLATE_NOOP("Languages", "Portuguese")), identifier="pt-PT", translators=("Diogo_23",)),
 )
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -40,7 +40,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcLanguageModel(QAbstractListModel):
     LanguageRole = Qt.ItemDataRole.UserRole + 1
     IdentifierRole = Qt.ItemDataRole.UserRole + 2
-    TranslatorRole = Qt.ItemDataRole.UserRole + 3
+    TranslatorsRole = Qt.ItemDataRole.UserRole + 3
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
@@ -58,8 +58,8 @@ class MpvqcLanguageModel(QAbstractListModel):
                 return language.language
             case self.IdentifierRole:
                 return language.identifier
-            case self.TranslatorRole:
-                return language.translator
+            case self.TranslatorsRole:
+                return list(language.translators)
 
         return None
 
@@ -68,5 +68,5 @@ class MpvqcLanguageModel(QAbstractListModel):
         return {
             self.LanguageRole: QByteArray(b"language"),
             self.IdentifierRole: QByteArray(b"identifier"),
-            self.TranslatorRole: QByteArray(b"translator"),
+            self.TranslatorsRole: QByteArray(b"translators"),
         }

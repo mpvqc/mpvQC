@@ -14,7 +14,7 @@ Loader {
 
     readonly property MpvqcDialogLoaderViewModel viewModel: MpvqcDialogLoaderViewModel {}
 
-    readonly property url aboutDialog: Qt.resolvedUrl("MpvqcAboutDialog.qml")
+    readonly property url aboutDialog: Qt.resolvedUrl("About/MpvqcAboutDialog.qml")
     readonly property url appearanceDialog: Qt.resolvedUrl("MpvqcAppearanceDialog.qml")
     readonly property url backupSettingsDialog: Qt.resolvedUrl("MpvqcBackupDialog.qml")
     readonly property url commentTypeDialog: Qt.resolvedUrl("CommentTypes/MpvqcCommentTypesDialog.qml")

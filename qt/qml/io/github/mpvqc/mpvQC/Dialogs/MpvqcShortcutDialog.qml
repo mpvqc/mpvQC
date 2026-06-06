@@ -10,7 +10,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import io.github.mpvqc.mpvQC.Components
-import io.github.mpvqc.mpvQC.Models
 import io.github.mpvqc.mpvQC.Utility
 
 MpvqcDialog {
