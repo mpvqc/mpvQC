@@ -149,7 +149,8 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(str)
     def addRow(self, comment_type: str) -> None:
-        self._comments.add_row(self._player.time_pos * TimeFormatterService.MILLISECONDS_PER_SECOND, comment_type)
+        time = round(self._player.exact_time_pos * TimeFormatterService.MILLISECONDS_PER_SECOND)
+        self._comments.add_row(time, comment_type)
 
     @Slot(int)
     def removeRow(self, row: int) -> None:
