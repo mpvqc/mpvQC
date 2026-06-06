@@ -70,6 +70,9 @@ def _parse_document(content: str, document: Path) -> ParsedDocument | DocumentRe
         return DocumentRejectionReason.INVALID
 
     match data.get("version"):
+        case bool() | float() as version:
+            logger.warning("Malformed document version %r: %s", version, document)
+            return DocumentRejectionReason.INVALID
         case 1:
             try:
                 return parse_v1(data)
