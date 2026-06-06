@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import json
-from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -27,7 +26,7 @@ def test_archive_name(configure_mocks, render_context, application_paths_service
 
     assert zip_file.called
     zip_name = zip_file.call_args.args[0]
-    assert zip_name.name == f"{datetime.now(UTC):%Y-%m}.zip"
+    assert zip_name.name == f"{QDateTime.currentDateTime().toString('yyyy-MM')}.zip"
 
 
 def test_writes_rendered_backup(configure_mocks, render_context, application_paths_service_mock, zip_file):

@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import NamedTuple
 
@@ -15,6 +16,7 @@ from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
 from mpvqc.services.importer.reader import read_documents
 
 SCHEMA = Path(__file__).parents[3] / "docs" / "document-format" / "v1.json"
+README = Path(__file__).parents[3] / "docs" / "document-format" / "README.md"
 
 
 @pytest.fixture(scope="module")
@@ -62,6 +64,14 @@ def test_rendered_documents_validate_against_schema(
     document = json.loads(render_v1(render_context))
 
     validator.validate(document)
+
+
+def test_readme_example_validates_against_schema(validator):
+    readme = README.read_text(encoding="utf-8")
+    example = re.search(r"<!-- verified-by-tests: example-v1 -->\s*```json\n(.*?)```", readme, re.DOTALL)
+    assert example is not None
+
+    validator.validate(json.loads(example.group(1)))
 
 
 def test_rendered_backup_validates_against_schema(configure_mocks, render_context, validator):
