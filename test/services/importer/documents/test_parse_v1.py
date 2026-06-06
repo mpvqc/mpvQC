@@ -116,6 +116,8 @@ class InvalidDocumentCase(NamedTuple):
 INVALID_DOCUMENTS = [
     InvalidDocumentCase("missing version", json.dumps({"comments": []})),
     InvalidDocumentCase("version as string", json.dumps({"version": "1", "comments": []})),
+    InvalidDocumentCase("version as bool", json.dumps({"version": True, "comments": []})),
+    InvalidDocumentCase("version as float", json.dumps({"version": 1.0, "comments": []})),
     InvalidDocumentCase("missing comments", json.dumps({"version": 1})),
     InvalidDocumentCase("comments not a list", json.dumps({"version": 1, "comments": "00:00:01.000"})),
     InvalidDocumentCase("comment entry not an object", make_document(["not a dict"])),
