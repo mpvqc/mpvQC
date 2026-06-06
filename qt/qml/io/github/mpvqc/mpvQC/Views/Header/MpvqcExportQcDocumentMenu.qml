@@ -22,6 +22,7 @@ MpvqcMenuBarMenu {
 
     MpvqcMenuBarItem {
         objectName: "exportClassicMenuItem"
+        // "mpvQC Classic" names the file format (a proper noun) and must NOT be translated
         text: "mpvQC Classic"
         icon.source: MpvqcIcons.mpvqcLogo
         onTriggered: root.classicExportTriggered()
