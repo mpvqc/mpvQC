@@ -105,7 +105,7 @@ class ExportService(QObject):
 
         def _job() -> None:
             try:
-                create_backup(self._paths, self._resources, context)
+                create_backup(self._paths, context)
             except Exception:
                 logger.exception("Failed to create backup")
 

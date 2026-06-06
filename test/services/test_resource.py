@@ -14,7 +14,6 @@ def resource_service() -> ResourceService:
 
 def test_resources(resource_service):
     assert resource_service.input_conf_content
-    assert resource_service.backup_template
     assert resource_service.default_export_template
 
     export_template = resource_service.default_export_template

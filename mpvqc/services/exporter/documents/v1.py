@@ -44,6 +44,25 @@ def render_v1(context: RenderContext) -> str:
 
     document["comments"] = _render_comments(context.comments)
 
+    return _dump(document)
+
+
+def render_backup(context: RenderContext) -> str:
+    document: dict[str, object] = {
+        "$schema": _SCHEMA_URL,
+        "version": 1,
+        "created_at": QDateTime.currentDateTimeUtc().toString(Qt.DateFormat.ISODate),
+    }
+
+    if video := context.player.path:
+        document["video"] = TypeMapperService.map_path_to_str(Path(video))
+
+    document["comments"] = _render_comments(context.comments)
+
+    return _dump(document)
+
+
+def _dump(document: dict[str, object]) -> str:
     return json.dumps(document, ensure_ascii=False, indent=4) + "\n"
 
 

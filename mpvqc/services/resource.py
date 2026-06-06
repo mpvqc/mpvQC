@@ -24,10 +24,6 @@ class ResourceService:
         return _read_resource(":/data/themes.json")
 
     @cached_property
-    def backup_template(self) -> str:
-        return _read_resource(":/data/config/backup-template.jinja")
-
-    @cached_property
     def default_export_template(self) -> str:
         return _read_resource(":/data/config/export-template.jinja")
 
