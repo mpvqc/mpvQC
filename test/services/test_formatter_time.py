@@ -62,6 +62,8 @@ def test_format_milliseconds_to_string(service, expected, input_milliseconds, lo
         ("00:15:29.340", (15 * 60 + 29) * 1000 + 340),
         ("02:46:40.999", 10000 * 1000 + 999),
         ("99:59:59.999", 359999 * 1000 + 999),
+        ("99:59:59.999", 359999 * 1000 + 1000),
+        ("99:59:59.999", 100 * 3600 * 1000),
     ],
 )
 def test_format_milliseconds_to_subsecond_string(service, expected, input_milliseconds):
