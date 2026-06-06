@@ -12,7 +12,7 @@ from mpvqc.services import ReverseTranslatorService
     [
         ("Spelling", "Spelling"),
         ("Spelling", "Rechtschreibung"),
-        ("Spelling", "איות"),
+        ("Spelling", "איות"),  # Hebrew
         ("Spelling", "Typo"),
         ("Spelling", "Ortografía"),
         ("not-found", "not-found"),

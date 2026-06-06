@@ -33,6 +33,7 @@ def test_import_v1_comments(tmp_path):
         make_document(
             [
                 {"time": "00:00:00.000", "type": "A SPECIAL Comment-_-Type", "text": "Comment 1"},
+                # Hebrew: type "Phrasing"
                 {"time": "00:15:29.340", "type": "ניסוח", "text": "Comment 2"},
                 {"time": "33:00:00.999", "type": "Translation", "text": ""},
             ]
