@@ -29,12 +29,17 @@ def _environment() -> Environment:
 
     environment = Environment(loader=BaseLoader(), keep_trailing_newline=True)  # noqa: S701
     environment.filters["as_time"] = _as_time
+    environment.filters["as_time_ms"] = _as_time_ms
     environment.filters["as_comment_type"] = _as_comment_type
     return environment
 
 
 def _as_time(seconds: int) -> str:
     return TimeFormatterService.format_time_to_string(seconds, long_format=True)
+
+
+def _as_time_ms(milliseconds: int) -> str:
+    return TimeFormatterService.format_milliseconds_to_subsecond_string(milliseconds)
 
 
 def _as_comment_type(comment_type: str) -> str:
@@ -67,7 +72,7 @@ def _arguments(context: RenderContext) -> dict:
         "video_name": video_name,
         "subtitles": tuple(TypeMapperService.map_path_to_str(Path(s)) for s in player.external_subtitles),
         "comments": [
-            {**c, "time": c["time"] // TimeFormatterService.MILLISECONDS_PER_SECOND}
+            {**c, "time": c["time"] // TimeFormatterService.MILLISECONDS_PER_SECOND, "time_ms": c["time"]}
             for c in context.comments.comments()
         ],
     }

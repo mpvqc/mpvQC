@@ -129,6 +129,18 @@ def test_templates_receive_time_in_seconds(configure_mocks, render_context):
     assert render_classic("{{ comments[0]['time'] }}", render_context) == "90"
 
 
+def test_templates_receive_exact_time_in_milliseconds(configure_mocks, render_context):
+    configure_mocks(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
+
+    assert render_classic("{{ comments[0]['time_ms'] }}", render_context) == "929340"
+
+
+def test_as_time_ms_filter_formats_subsecond_time(configure_mocks, render_context):
+    configure_mocks(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
+
+    assert render_classic("{{ comments[0]['time_ms'] | as_time_ms }}", render_context) == "00:15:29.340"
+
+
 def test_renders_no_subtitles(configure_mocks, render_context, resource_service):
     subtitles = [Path.home() / "subtitle.ass"]
     expected = textwrap.dedent(
