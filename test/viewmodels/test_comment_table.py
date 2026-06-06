@@ -77,6 +77,16 @@ def test_state_changes_on_mutation(make_view_model, state_service_mock):
     assert state_service_mock.record_change.call_count == 2
 
 
+def test_add_row_captures_exact_player_time(make_view_model, player_service_mock):
+    player_service_mock.exact_time_pos = 12.3454
+    vm = make_view_model(comments=[])
+
+    vm.addRow("Translation")
+
+    comment = vm._comments.comments()[0]
+    assert comment["time"] == 12345
+
+
 def test_copy_to_clipboard(make_view_model, make_spy):
     vm = make_view_model(
         comments=[

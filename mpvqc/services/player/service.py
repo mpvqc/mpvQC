@@ -163,6 +163,12 @@ class PlayerService(QObject):
         return self._time_pos_prop.cached
 
     @property
+    def exact_time_pos(self) -> float:
+        if self._mpv is not None and (raw := self._mpv.time_pos) is not None:
+            return raw
+        return float(self._time_pos_prop.cached)
+
+    @property
     def time_remaining(self) -> int:
         return self._time_remaining_prop.cached
 
