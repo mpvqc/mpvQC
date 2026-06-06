@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import pytest
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
 from mpvqc.services.importer.reader import read_documents
@@ -41,6 +41,7 @@ CONFORMANCE_CASES = [
             "subtitles": ["/path/to/video.de.ass", "/path/to/video.en.srt"],
             "comments": [
                 {"time": 0, "commentType": "Translation", "comment": "Lorem ipsum"},
+                # Hebrew: type "Phrasing"
                 {"time": (15 * 60 + 29) * 1000 + 340, "commentType": "ניסוח", "comment": ""},
             ],
             "write_header_date": True,
@@ -64,6 +65,47 @@ def test_rendered_documents_validate_against_schema(
     document = json.loads(render_v1(render_context))
 
     validator.validate(document)
+
+
+class SchemaViolationCase(NamedTuple):
+    name: str
+    document: dict
+
+
+SCHEMA_VIOLATIONS = [
+    SchemaViolationCase("missing version", {"comments": []}),
+    SchemaViolationCase("missing comments", {"version": 1}),
+    SchemaViolationCase("unknown version", {"version": 2, "comments": []}),
+    SchemaViolationCase("unknown top-level field", {"version": 1, "comments": [], "frame": 25}),
+    SchemaViolationCase(
+        "foreign $schema url", {"$schema": "https://example.com/v1.json", "version": 1, "comments": []}
+    ),
+    SchemaViolationCase("empty subtitles array", {"version": 1, "comments": [], "subtitles": []}),
+    SchemaViolationCase(
+        "created_at with offset", {"version": 1, "comments": [], "created_at": "2026-06-06T10:00:00+02:00"}
+    ),
+    SchemaViolationCase(
+        "three-digit hours", {"version": 1, "comments": [{"time": "100:00:00.000", "type": "T", "text": ""}]}
+    ),
+    SchemaViolationCase(
+        "centisecond time", {"version": 1, "comments": [{"time": "00:00:01.34", "type": "T", "text": ""}]}
+    ),
+    SchemaViolationCase(
+        "unknown comment field",
+        {"version": 1, "comments": [{"time": "00:00:01.000", "type": "T", "text": "", "frame": 25}]},
+    ),
+    SchemaViolationCase("comment missing text", {"version": 1, "comments": [{"time": "00:00:01.000", "type": "T"}]}),
+    SchemaViolationCase(
+        "text with newline", {"version": 1, "comments": [{"time": "00:00:01.000", "type": "T", "text": "a\nb"}]}
+    ),
+    SchemaViolationCase("empty type", {"version": 1, "comments": [{"time": "00:00:01.000", "type": "", "text": ""}]}),
+]
+
+
+@pytest.mark.parametrize("case", SCHEMA_VIOLATIONS, ids=lambda case: case.name)
+def test_schema_rejects_contract_violations(validator, case):
+    with pytest.raises(ValidationError):
+        validator.validate(case.document)
 
 
 def test_readme_example_validates_against_schema(validator):
@@ -103,6 +145,10 @@ def test_exported_document_imports_losslessly(configure_mocks, render_context, t
             {"time": 0, "commentType": "Translation", "comment": "Lorem ipsum"},
             {"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""},
             {"time": 359999 * 1000 + 999, "commentType": "Custom Type", "comment": "dolor sit amet"},
+            # Hebrew: type "Phrasing", text "from right to left"
+            {"time": 60 * 1000, "commentType": "ניסוח", "comment": "מימין לשמאל"},
+            # CJK: type "subtitles", text "test" / "Chinese" / "Korean"
+            {"time": 61 * 1000, "commentType": "字幕", "comment": "テスト 中文 한국어 😀🎬"},
         ]
     )
 
@@ -116,4 +162,6 @@ def test_exported_document_imports_losslessly(configure_mocks, render_context, t
         (0, "Translation", "Lorem ipsum"),
         ((15 * 60 + 29) * 1000 + 340, "Spelling", ""),
         (359999 * 1000 + 999, "Custom Type", "dolor sit amet"),
+        (60 * 1000, "Phrasing", "מימין לשמאל"),
+        (61 * 1000, "字幕", "テスト 中文 한국어 😀🎬"),
     ]
