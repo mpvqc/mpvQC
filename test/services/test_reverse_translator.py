@@ -7,11 +7,6 @@ import pytest
 from mpvqc.services import ReverseTranslatorService
 
 
-@pytest.fixture
-def service() -> ReverseTranslatorService:
-    return ReverseTranslatorService()
-
-
 @pytest.mark.parametrize(
     ("expected", "translated"),
     [
@@ -23,5 +18,5 @@ def service() -> ReverseTranslatorService:
         ("not-found", "not-found"),
     ],
 )
-def test_lookup2(service, expected, translated):
-    assert expected == service.lookup(translated)
+def test_lookup_maps_translated_comment_types_to_english(expected, translated):
+    assert expected == ReverseTranslatorService.lookup(translated)
