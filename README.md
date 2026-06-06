@@ -21,6 +21,10 @@ ______________________________________________________________________
 
 See [docs/development.md](docs/development.md) for setup, daily commands, and project layout, and [docs/architecture.md](docs/architecture.md) for a high-level overview of the codebase.
 
+## Document format
+
+QC documents are saved in a versioned JSON format specified in [docs/document-format](docs/document-format/README.md), including a JSON Schema for third-party tooling.
+
 ## Internationalization
 
 If you want to translate this application into more languages, see the [internationalization guide](docs/internationalization.md).
