@@ -31,7 +31,7 @@ name = "python-mpv"
 package = "mpv"
 version = "1.0.8"
 url = "https://github.com/jaseg/python-mpv"
-licence = "GPL-3.0"
+licence = "GPL-2.0+"
 platforms = ["linux", "win32"]
 
 [[dependency]]

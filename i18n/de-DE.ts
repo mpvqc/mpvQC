@@ -9,6 +9,11 @@
         <translation>Copyright © mpvQC Developers</translation>
     </message>
     <message>
+        <source>Website</source>
+        <extracomment>Label of the row linking to the project website</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>GNU General Public License, version 3 or later</source>
         <extracomment>This text is part of the software license description. This is the name of the license being used.</extracomment>
         <translation>GNU General Public License, Version 3 oder später</translation>
@@ -19,21 +24,8 @@
         <translation>Dieses Programm wird ohne jede Garantie bereitgestellt.</translation>
     </message>
     <message>
-        <source>See the %1 for details.</source>
-        <extracomment>This text is part of the software license description. Argument %1 will be the link to the license</extracomment>
-        <translation>Siehe %1 für Details.</translation>
-    </message>
-    <message>
         <source>Copy version info to clipboard</source>
         <translation>Versionsinformationen in die Zwischenablage kopieren</translation>
-    </message>
-    <message>
-        <source>Made by</source>
-        <translation>Entwickelt von</translation>
-    </message>
-    <message>
-        <source>Powered by</source>
-        <translation>Basiert auf</translation>
     </message>
     <message>
         <source>Powered by Python %1</source>
@@ -41,13 +33,43 @@
     </message>
     <message>
         <source>Development</source>
-        <extracomment>This describes the contribution by a person</extracomment>
+        <extracomment>This describes the contribution by a group of people</extracomment>
         <translation>Entwicklung</translation>
     </message>
     <message>
         <source>Artwork</source>
-        <extracomment>This describes the contribution by a person</extracomment>
+        <extracomment>This describes the contribution by a group of people</extracomment>
         <translation>Grafik</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <extracomment>Label of the button displaying general application information</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Credits</source>
+        <extracomment>Label of the button displaying contributors and translators</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Licenses</source>
+        <extracomment>Label of the button displaying third-party dependencies and their licenses</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Playback</source>
+        <extracomment>Section title in the licenses view above the media playback libraries</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Libraries</source>
+        <extracomment>Section title in the licenses view above the code dependencies</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fonts and icons</source>
+        <extracomment>Section title in the licenses view above the bundled font and icon sets</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

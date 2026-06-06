@@ -6,7 +6,6 @@ module io.github.mpvqc.mpvQC.Dialogs
 
 MpvqcDialogLoader MpvqcDialogLoader.qml
 
-internal MpvqcAboutDialog MpvqcAboutDialog.qml
 internal MpvqcAppearanceDialog MpvqcAppearanceDialog.qml
 internal MpvqcBackupDialog MpvqcBackupDialog.qml
 internal MpvqcEditInputDialog MpvqcEditInputDialog.qml
@@ -14,3 +13,4 @@ internal MpvqcEditMpvDialog MpvqcEditMpvDialog.qml
 internal MpvqcExportSettingsDialog MpvqcExportSettingsDialog.qml
 internal MpvqcImportSettingsDialog MpvqcImportSettingsDialog.qml
 internal MpvqcShortcutDialog MpvqcShortcutDialog.qml
+internal MpvqcShortcutsModel MpvqcShortcutsModel.qml

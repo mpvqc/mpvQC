@@ -56,7 +56,6 @@ QtObject {
 
     readonly property MpvqcThemeViewModel _viewModel: MpvqcThemeViewModel {}
 
-    // qmllint disable stale-property-read
     // qmlformat off
     readonly property AnimatedColor _background: AnimatedColor { value: root._viewModel.palette.background }
     readonly property AnimatedColor _foreground: AnimatedColor { value: root._viewModel.palette.foreground }
@@ -79,5 +78,4 @@ QtObject {
     readonly property AnimatedColor _rowSelected: AnimatedColor { value: root._viewModel.palette.rowSelected }
     readonly property AnimatedColor _rowSelectedText: AnimatedColor { value: root._viewModel.palette.rowSelectedText }
     // qmlformat on
-    // qmllint enable stale-property-read
 }
