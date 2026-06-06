@@ -28,7 +28,7 @@ def read_documents(documents: list[Path]) -> DocumentImportResult:
 
     for document in documents:
         try:
-            content = document.read_text(encoding="utf-8")
+            content = document.read_text(encoding="utf-8-sig")
         except (OSError, UnicodeDecodeError):
             logger.exception("Failed to read document: %s", document)
             rejected_docs.append(RejectedDocument(document, DocumentRejectionReason.INVALID))
