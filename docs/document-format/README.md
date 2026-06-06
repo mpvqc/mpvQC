@@ -16,7 +16,8 @@ Documents are JSON, encoded as UTF-8 without BOM, using the `.json` file extensi
 Every document carries an integer `version` field declaring the format version it conforms to.
 
 - **A released format version is immutable.** Its schema never changes. Any change to the format, additive or breaking,
-  ships as a new `version` with its own schema.
+  ships as a new `version` with its own schema. A version is released, and its schema frozen, once it is reachable from
+  the `main` branch.
 - **A document contains exactly the fields its version defines.** The schemas reject unknown fields at every level,
   including inside `comments` entries.
 - Validate against the schema matching the document's `version`. A document with an unknown `version` cannot be
