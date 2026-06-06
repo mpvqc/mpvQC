@@ -41,7 +41,6 @@ dev = [
 files = [
     # WARNING! This list is auto updated by the just build helper
     "data/build-info.toml",
-    "data/config/backup-template.jinja",
     "data/config/export-template.jinja",
     "data/config/input.conf",
     "data/config/mpv-linux.conf",

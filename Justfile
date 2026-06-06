@@ -35,7 +35,7 @@ init ARGS='--group dev':
       echo "just init: Configured portable mode ..."
 
       mkdir -p appdata/export-templates
-      cp data/config/backup-template.jinja appdata/export-templates/export-working.jinja
+      cp data/config/export-template.jinja appdata/export-templates/export-working.jinja
       echo '{{ '{{' }}' > appdata/export-templates/export-error.jinja
     fi
 

@@ -129,26 +129,6 @@ def test_templates_receive_time_in_seconds(configure_mocks, render_context):
     assert render_classic("{{ comments[0]['time'] }}", render_context) == "90"
 
 
-def test_renders_backup(configure_mocks, render_context, resource_service):
-    configure_mocks(
-        write_header_video_path=False,
-        video="/path/to/video/ignore/user/setting",
-        comments=[
-            {"time": 0 * 1000, "commentType": "Translation", "comment": "My first comment"},
-            {"time": 50 * 1000, "commentType": "Spelling", "comment": "My second comment"},
-            {"time": 100 * 1000, "commentType": "Phrasing", "comment": "My third comment"},
-        ],
-    )
-
-    rendered = render_classic(resource_service.backup_template, render_context)
-
-    assert f"path      : {Path('/path/to/video/ignore/user/setting').resolve()}" in rendered
-    assert "[00:00:00] [Translation] My first comment" in rendered
-    assert "[00:00:50] [Spelling] My second comment" in rendered
-    assert "[00:01:40] [Phrasing] My third comment" in rendered
-    assert "# total lines: 3" in rendered
-
-
 def test_renders_no_subtitles(configure_mocks, render_context, resource_service):
     subtitles = [Path.home() / "subtitle.ass"]
     expected = textwrap.dedent(
