@@ -8,7 +8,7 @@ from typing import Any
 
 import inject
 import pytest
-from PySide6.QtCore import QByteArray, QCoreApplication, QObject, Signal, SignalInstance
+from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QObject, Signal, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
@@ -138,6 +138,13 @@ def configure_state(state_service) -> Callable:
 def settings_service(tmp_path, type_mapper):
     file = tmp_path / "test_settings.ini"
     return SettingsService(ini_file=type_mapper.map_path_to_str(file))
+
+
+@pytest.fixture(autouse=True)
+def restore_default_locale():
+    locale = QLocale()
+    yield
+    QLocale.setDefault(locale)
 
 
 @pytest.fixture

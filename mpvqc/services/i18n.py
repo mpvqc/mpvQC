@@ -7,7 +7,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QFile, QLibraryInfo, QLocale, QTranslator
+from PySide6.QtCore import QFile, QLibraryInfo, QLocale, QObject, QTranslator, Signal
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication
@@ -15,8 +15,11 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class InternationalizationService:
+class InternationalizationService(QObject):
+    retranslated = Signal()
+
     def __init__(self) -> None:
+        super().__init__()
         self._translator_mpvqc = QTranslator()
         self._translator_qt = QTranslator()
         self._translator_qt_overrides = QTranslator()
@@ -51,6 +54,8 @@ class InternationalizationService:
             app.installTranslator(self._translator_mpvqc)
 
         app.setLayoutDirection(locale.textDirection())
+
+        self.retranslated.emit()
 
 
 def create_locale_from(language_code: str) -> QLocale:
