@@ -11,7 +11,7 @@
     <message>
         <source>Website</source>
         <extracomment>Label of the row linking to the project website</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Website</translation>
     </message>
     <message>
         <source>GNU General Public License, version 3 or later</source>
@@ -44,32 +44,32 @@
     <message>
         <source>About</source>
         <extracomment>Label of the button displaying general application information</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Credits</source>
         <extracomment>Label of the button displaying contributors and translators</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mitwirkende</translation>
     </message>
     <message>
         <source>Licenses</source>
         <extracomment>Label of the button displaying third-party dependencies and their licenses</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lizenzen</translation>
     </message>
     <message>
         <source>Playback</source>
         <extracomment>Section title in the licenses view above the media playback libraries</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wiedergabe</translation>
     </message>
     <message>
         <source>Libraries</source>
         <extracomment>Section title in the licenses view above the code dependencies</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotheken</translation>
     </message>
     <message>
         <source>Fonts and icons</source>
         <extracomment>Section title in the licenses view above the bundled font and icon sets</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Schriften und Icons</translation>
     </message>
 </context>
 <context>
@@ -460,7 +460,7 @@
     </message>
     <message>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation>Entf</translation>
     </message>
 </context>
 <context>
@@ -743,7 +743,7 @@
     <message>
         <source>No shortcuts found</source>
         <extracomment>Shown in the keyboard shortcut dialog when the search matches no shortcut</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Keine Tastenkombinationen gefunden</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
@@ -751,7 +751,7 @@
     </message>
     <message>
         <source>Cycle Through Audio Tracks</source>
-        <translation>Durch Audiotracks wechseln</translation>
+        <translation>Audiospuren durchschalten</translation>
     </message>
     <message>
         <source>New QC Document</source>
@@ -807,7 +807,7 @@
     </message>
     <message>
         <source>With embedded subtitle tracks, seeking is limited to lines mpv has already buffered. External subtitle files work across the whole video.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bei eingebetteten Untertitelspuren ist das Springen auf Zeilen beschränkt, die mpv bereits gepuffert hat. Externe Untertiteldateien funktionieren im gesamten Video.</translation>
     </message>
     <message>
         <source>Toggle Fullscreen</source>
@@ -827,19 +827,19 @@
     </message>
     <message>
         <source>Seek Backward by 5 Seconds to Keyframe</source>
-        <translation>5 Sekunden bis zum Keyframe zurückspringen</translation>
+        <translation>5 Sekunden zurückspringen (auf Keyframe)</translation>
     </message>
     <message>
         <source>Seek Forward by 5 Seconds to Keyframe</source>
-        <translation>5 Sekunden bis zum Keyframe vorspringen</translation>
+        <translation>5 Sekunden vorspringen (auf Keyframe)</translation>
     </message>
     <message>
         <source>Seek to Previous Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Zum vorherigen Untertitel springen</translation>
     </message>
     <message>
         <source>Seek to Next Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Zum nächsten Untertitel springen</translation>
     </message>
     <message>
         <source>Decrease Volume</source>
@@ -863,19 +863,19 @@
     </message>
     <message>
         <source>Set/Clear A-B Loop</source>
-        <translation type="unfinished"></translation>
+        <translation>A-B-Schleife setzen/aufheben</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Tracks</source>
-        <translation>Durch Untertitelspuren wechseln</translation>
+        <translation>Untertitelspuren durchschalten</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Tracks Backwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Untertitelspuren rückwärts durchschalten</translation>
     </message>
     <message>
         <source>Video Screenshot (Unscaled)</source>
-        <translation>Video-Screenshot (ungeskaliert)</translation>
+        <translation>Video-Screenshot (unskaliert)</translation>
     </message>
     <message>
         <source>Video Screenshot (Scaled)</source>
@@ -883,7 +883,7 @@
     </message>
     <message>
         <source>Cycle Through Subtitle Render Modes</source>
-        <translation>Untertitel-Darstellungsmodus durchschalten</translation>
+        <translation>Untertitel-Darstellungsmodi durchschalten</translation>
     </message>
     <message>
         <source>Toggle Video Statistics</source>
