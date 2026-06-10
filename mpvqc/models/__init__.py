@@ -9,4 +9,5 @@ from .export_templates import MpvqcExportTemplateModel as MpvqcExportTemplateMod
 from .import_options import ImportOptionsModel as ImportOptionsModel
 from .languages import MpvqcLanguageModel as MpvqcLanguageModel
 from .primary_colors import MpvqcPrimaryColorModel as MpvqcPrimaryColorModel
+from .shortcuts import MpvqcShortcutsModel as MpvqcShortcutsModel
 from .theme_preview import MpvqcThemePreviewModel as MpvqcThemePreviewModel

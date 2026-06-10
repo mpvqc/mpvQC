@@ -741,6 +741,11 @@
         <translation>Buscar</translation>
     </message>
     <message>
+        <source>No shortcuts found</source>
+        <extracomment>Shown in the keyboard shortcut dialog when the search matches no shortcut</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Open QC Document(s)</source>
         <translation>Abrir documento(s) de QC</translation>
     </message>
@@ -801,6 +806,10 @@
         <translation>Video</translation>
     </message>
     <message>
+        <source>With embedded subtitle tracks, seeking is limited to lines mpv has already buffered. External subtitle files work across the whole video.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Toggle Fullscreen</source>
         <translation>Activar/desactivar pantalla completa</translation>
     </message>
@@ -825,6 +834,14 @@
         <translation>Avanzar 5 segundos hasta el fotograma clave</translation>
     </message>
     <message>
+        <source>Seek to Previous Subtitle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek to Next Subtitle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Decrease Volume</source>
         <translation>Bajar volumen</translation>
     </message>
@@ -845,8 +862,16 @@
         <translation>Avanzar un fotograma</translation>
     </message>
     <message>
+        <source>Set/Clear A-B Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cycle Through Subtitle Tracks</source>
         <translation>Cambiar pista de subtítulos</translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Tracks Backwards</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Video Screenshot (Unscaled)</source>

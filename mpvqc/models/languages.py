@@ -55,6 +55,8 @@ class MpvqcLanguageModelBackend(QAbstractListModel):
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
+        if parent is not None and parent.isValid():
+            return 0
         return len(LANGUAGES)
 
     @override

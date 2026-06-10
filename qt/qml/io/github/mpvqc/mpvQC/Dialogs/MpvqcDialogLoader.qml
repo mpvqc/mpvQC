@@ -23,7 +23,7 @@ Loader {
     readonly property url exportSettingsDialog: Qt.resolvedUrl("MpvqcExportSettingsDialog.qml")
     readonly property url importSettingsDialog: Qt.resolvedUrl("MpvqcImportSettingsDialog.qml")
     readonly property url importWizardDialog: Qt.resolvedUrl("ImportWizard/MpvqcImportWizardDialog.qml")
-    readonly property url shortcutsDialog: Qt.resolvedUrl("MpvqcShortcutDialog.qml")
+    readonly property url shortcutsDialog: Qt.resolvedUrl("Shortcuts/MpvqcShortcutDialog.qml")
 
     signal dialogClosed
 
