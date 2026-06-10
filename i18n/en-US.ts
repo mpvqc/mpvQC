@@ -741,6 +741,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>No shortcuts found</source>
+        <extracomment>Shown in the keyboard shortcut dialog when the search matches no shortcut</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>New QC Document</source>
         <translation type="unfinished"></translation>
     </message>
@@ -813,6 +818,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>With embedded subtitle tracks, seeking is limited to lines mpv has already buffered. External subtitle files work across the whole video.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Toggle Fullscreen</source>
         <translation type="unfinished"></translation>
     </message>
@@ -837,6 +846,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Seek to Previous Subtitle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seek to Next Subtitle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Decrease Volume</source>
         <translation type="unfinished"></translation>
     </message>
@@ -857,7 +874,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Set/Clear A-B Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cycle Through Subtitle Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle Through Subtitle Tracks Backwards</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

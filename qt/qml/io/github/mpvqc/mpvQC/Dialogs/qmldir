@@ -12,5 +12,3 @@ internal MpvqcEditInputDialog MpvqcEditInputDialog.qml
 internal MpvqcEditMpvDialog MpvqcEditMpvDialog.qml
 internal MpvqcExportSettingsDialog MpvqcExportSettingsDialog.qml
 internal MpvqcImportSettingsDialog MpvqcImportSettingsDialog.qml
-internal MpvqcShortcutDialog MpvqcShortcutDialog.qml
-internal MpvqcShortcutsModel MpvqcShortcutsModel.qml
