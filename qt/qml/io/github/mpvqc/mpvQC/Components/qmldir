@@ -10,6 +10,7 @@ MpvqcDialog MpvqcDialog.qml
 MpvqcHeader MpvqcHeader.qml
 MpvqcIconLabel MpvqcIconLabel.qml
 MpvqcKeyboardFocusableButtonBox MpvqcKeyboardFocusableButtonBox.qml
+MpvqcKeycap MpvqcKeycap.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml

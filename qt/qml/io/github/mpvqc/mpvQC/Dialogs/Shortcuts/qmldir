@@ -4,6 +4,5 @@
 
 module io.github.mpvqc.mpvQC.Dialogs.Shortcuts
 
-internal MpvqcKeycap MpvqcKeycap.qml
 internal MpvqcShortcutDialog MpvqcShortcutDialog.qml
 internal MpvqcShortcutRow MpvqcShortcutRow.qml
