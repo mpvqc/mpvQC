@@ -113,6 +113,6 @@ Control {
 
     background: Rectangle {
         radius: 4
-        color: root.striped ? Qt.alpha(MpvqcTheme.palette.foreground, MpvqcTheme.isDark ? 0.03 : 0.05) : "transparent"
+        color: root.striped ? MpvqcTheme.listStripe : "transparent"
     }
 }

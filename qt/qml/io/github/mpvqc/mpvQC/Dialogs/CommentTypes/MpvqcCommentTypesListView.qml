@@ -142,8 +142,8 @@ ListView {
         required property int index
 
         readonly property color foregroundColor: root.mpvqcTheme.palette.foreground
-        readonly property color stripeColor: Qt.alpha(root.mpvqcTheme.palette.foreground, 0.08)
-        readonly property color backgroundColor: ListView.isCurrentItem ? (root._moving ? root.mpvqcTheme.palette.rowSelected : "transparent") : index % 2 === 0 ? stripeColor : "transparent"
+        readonly property color stripeColor: root.mpvqcTheme.listStripe
+        readonly property color backgroundColor: ListView.isCurrentItem ? (root._moving ? root.mpvqcTheme.palette.rowSelected : "transparent") : index % 2 === 1 ? stripeColor : "transparent"
 
         width: ListView.view.width
         height: root.rowHeight
