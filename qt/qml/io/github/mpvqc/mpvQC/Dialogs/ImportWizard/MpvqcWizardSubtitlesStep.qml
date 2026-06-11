@@ -8,6 +8,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import io.github.mpvqc.mpvQC.Utility
+
 ColumnLayout {
     id: root
 
@@ -65,6 +67,7 @@ ColumnLayout {
             required property bool isChecked
 
             width: ListView.view.width
+            height: Math.max(implicitHeight, MpvqcConstants.listRowHeight)
             verticalPadding: 16
             leftInset: root.isMirrored ? _scrollBar.visibleWidth : 0
             rightInset: root.isMirrored ? 0 : _scrollBar.visibleWidth

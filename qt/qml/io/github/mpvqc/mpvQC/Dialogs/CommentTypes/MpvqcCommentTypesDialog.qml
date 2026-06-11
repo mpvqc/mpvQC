@@ -102,7 +102,7 @@ MpvqcDialog {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                rowHeight: 44
+                rowHeight: MpvqcConstants.listRowHeight
             }
 
             MpvqcCommentTypesActions {
