@@ -29,8 +29,8 @@ Control {
     readonly property int _iconSize: 18
     readonly property int _minimumWidth: _iconSize + leftPadding + rightPadding
 
-    implicitWidth: Math.max(implicitContentWidth + leftPadding + rightPadding, _minimumWidth)
-    implicitHeight: Math.max(implicitContentHeight + topPadding + bottomPadding, _iconSize + topPadding + bottomPadding)
+    implicitWidth: Math.max(Math.ceil(implicitContentWidth) + leftPadding + rightPadding, _minimumWidth)
+    implicitHeight: Math.max(Math.ceil(implicitContentHeight) + topPadding + bottomPadding, _iconSize + topPadding + bottomPadding)
 
     horizontalPadding: 10
     verticalPadding: 6

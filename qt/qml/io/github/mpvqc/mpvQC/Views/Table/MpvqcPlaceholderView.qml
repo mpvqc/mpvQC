@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
 
 Item {
@@ -19,15 +20,11 @@ Item {
     readonly property bool horizontalLayout: viewModel.layoutOrientation === Qt.Horizontal
     readonly property int textAlignment: horizontalLayout ? Qt.AlignLeft : (Qt.AlignVCenter | Qt.AlignRight)
     readonly property int columnSpacing: 30
-    readonly property int rowSpacing: 10
-    readonly property int verticalGroupGap: horizontalLayout ? columnSpacing + rowSpacing : 0
+    readonly property int rowSpacing: horizontalLayout ? 10 : 14
+    readonly property int verticalGroupGap: horizontalLayout ? columnSpacing : 0
 
     component ShortcutLabel: Label {
         Layout.alignment: root.textAlignment
-    }
-
-    component ShortcutKey: Button {
-        enabled: false
     }
 
     component Plus: Label {
@@ -48,19 +45,19 @@ Item {
         RowLayout {
             Layout.bottomMargin: root.verticalGroupGap
 
-            ShortcutKey {
+            MpvqcKeycap {
                 text: qsTranslate("KeyboardKeys", "Ctrl")
             }
 
             Plus {}
 
-            ShortcutKey {
+            MpvqcKeycap {
                 text: qsTranslate("KeyboardKeys", "Alt")
             }
 
             Plus {}
 
-            ShortcutKey {
+            MpvqcKeycap {
                 text: "O"
             }
         }
@@ -70,7 +67,7 @@ Item {
             text: qsTranslate("CommentTable", "Add Comment")
         }
 
-        ShortcutKey {
+        MpvqcKeycap {
             text: "E"
             Layout.bottomMargin: root.verticalGroupGap
         }
@@ -80,7 +77,7 @@ Item {
             text: qsTranslate("CommentTable", "Show Keyboard Shortcuts")
         }
 
-        ShortcutKey {
+        MpvqcKeycap {
             text: "?"
         }
     }

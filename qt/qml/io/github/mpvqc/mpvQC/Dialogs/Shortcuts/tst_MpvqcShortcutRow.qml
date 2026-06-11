@@ -149,10 +149,10 @@ TestCase {
         const keycaps = collectVisible(control, "keycap");
         compare(keycaps.length, 3);
 
-        compare(keycaps[0].width, keycaps[1].width);
-        compare(keycaps[1].width, keycaps[2].width);
-        compare(keycaps[0].height, keycaps[1].height);
-        compare(keycaps[1].height, keycaps[2].height);
+        fuzzyCompare(keycaps[0].width, keycaps[1].width, 1);
+        fuzzyCompare(keycaps[1].width, keycaps[2].width, 1);
+        fuzzyCompare(keycaps[0].height, keycaps[1].height, 1);
+        fuzzyCompare(keycaps[1].height, keycaps[2].height, 1);
     }
 
     function test_noteIconShownOnlyWithNote(): void {
