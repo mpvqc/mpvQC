@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Literal
 
 import inject
-from PySide6.QtCore import QCoreApplication, QMutex, QMutexLocker, QObject, QStandardPaths, QThreadPool, Signal
+from PySide6.QtCore import QCoreApplication, QMutex, QMutexLocker, QObject, QStandardPaths, Qt, QThreadPool, Signal
 
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
@@ -36,10 +36,12 @@ class ExportService(QObject):
     _comments = inject.attr(CommentsService)
 
     export_error_occurred = Signal(str, int)
+    _document_saved = Signal(Path)
 
     def __init__(self) -> None:
         super().__init__()
         self._mutex = QMutex()
+        self._document_saved.connect(self._state.record_save, Qt.ConnectionType.QueuedConnection)
 
     def _capture(self) -> RenderContext:
         return RenderContext(
@@ -76,7 +78,7 @@ class ExportService(QObject):
             with QMutexLocker(self._mutex):
                 try:
                     save(document, context)
-                    self._state.record_save(document)
+                    self._document_saved.emit(document)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
 
