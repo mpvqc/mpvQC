@@ -32,12 +32,16 @@ def stub_threadpool(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.fixture
 def player_service_mock() -> MagicMock:
-    return MagicMock(spec_set=PlayerService)
+    mock = MagicMock(spec_set=PlayerService)
+    mock.path = ""
+    return mock
 
 
 @pytest.fixture
 def settings_service_mock() -> MagicMock:
-    return MagicMock(spec_set=SettingsService)
+    mock = MagicMock(spec_set=SettingsService)
+    mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME.value
+    return mock
 
 
 @pytest.fixture
@@ -330,12 +334,8 @@ def test_open_routes_resolvable_scan_to_execute(
     run_jobs_inline: None,
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
-    settings_service_mock: MagicMock,
-    player_service_mock: MagicMock,
 ) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: EMPTY_SCAN)
-    settings_service_mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME.value
-    player_service_mock.is_any_video_loaded.return_value = False
     unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -350,16 +350,35 @@ def test_open_routes_unresolvable_scan_to_wizard(
     run_jobs_inline: None,
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
-    settings_service_mock: MagicMock,
-    player_service_mock: MagicMock,
 ) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: UNRESOLVED_SCAN)
-    settings_service_mock.import_found_video = ImportFoundVideo.ASK_EVERY_TIME.value
-    player_service_mock.is_any_video_loaded.return_value = False
     unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
 
     service.open([], [], [])
     qt_app.processEvents()
 
     assert unfinished_spy.count() == 1
+    assert service.busy is True
+
+
+def test_open_recovers_when_scan_raises(
+    qt_app,
+    run_jobs_inline: None,
+    monkeypatch: pytest.MonkeyPatch,
+    service: ImporterService,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    def raise_scan_error(*_args: object) -> ScanResult:
+        msg = "scan exploded"
+        raise RuntimeError(msg)
+
+    monkeypatch.setattr("mpvqc.services.importer.service.scan", raise_scan_error)
+
+    service.open([], [], [])
+    qt_app.processEvents()
+
+    assert service.busy is False
+    assert "Import scan failed" in caplog.text
+
+    service.open([], [], [])
     assert service.busy is True
