@@ -14,6 +14,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,
+    CommentsService,
     DesktopService,
     ExportService,
     PlayerService,
@@ -91,6 +92,10 @@ class MpvqcTestBridge(QObject):
     def resetState(self) -> None:
         configure_injections()
         rebind_main_window()
+
+    @Slot()
+    def resetComments(self) -> None:
+        inject.instance(CommentsService).reset()
 
     @Property(int, constant=True)
     def delayMs(self) -> int:

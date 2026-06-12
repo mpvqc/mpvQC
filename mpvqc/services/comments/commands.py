@@ -230,34 +230,6 @@ class AddAndUpdateText:
 
 
 @dataclass(frozen=True)
-class ClearComments:
-    invalidates_search: ClassVar[bool] = True
-
-    snapshot: tuple[StoreItem, ...]
-
-    @classmethod
-    def build(cls, store: Store) -> ClearComments:
-        return cls(snapshot=store.snapshot())
-
-    def initial(self, store: Store) -> ViewAction:
-        return self.redo(store)
-
-    def focus_undo(self) -> int | None:
-        return None
-
-    def undo(self, store: Store) -> ViewAction:
-        store.reset(self.snapshot)
-        return NoViewAction()
-
-    def focus_redo(self) -> int | None:
-        return None
-
-    def redo(self, store: Store) -> ViewAction:
-        store.reset([])
-        return NoViewAction()
-
-
-@dataclass(frozen=True)
 class ImportComments:
     invalidates_search: ClassVar[bool] = True
 

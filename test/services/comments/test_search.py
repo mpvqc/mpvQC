@@ -8,7 +8,7 @@ from unittest.mock import Mock
 import pytest
 
 from mpvqc.datamodels import SearchResult
-from mpvqc.models.comments.search import CommentSearchEngine
+from mpvqc.services.comments.search import CommentSearchEngine
 
 
 @pytest.fixture

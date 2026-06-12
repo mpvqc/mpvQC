@@ -8,7 +8,7 @@ from typing import Protocol
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments import CommentsFacade
+from mpvqc.services.comments import CommentsService
 
 DEFAULT_COMMENTS: tuple[Comment, ...] = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -19,18 +19,23 @@ DEFAULT_COMMENTS: tuple[Comment, ...] = (
 )
 
 
-class FacadeFactory(Protocol):
-    def __call__(self, *, set_comments: Iterable[Comment]) -> CommentsFacade: ...
+class CommentsFactory(Protocol):
+    def __call__(self, *, set_comments: Iterable[Comment]) -> CommentsService: ...
+
+
+@pytest.fixture(autouse=True)
+def configure_injections(common_bindings_with):
+    common_bindings_with()
 
 
 @pytest.fixture
-def make_facade() -> FacadeFactory:
-    def _make_facade(*, set_comments: Iterable[Comment]) -> CommentsFacade:
-        facade = CommentsFacade()
-        facade.import_comments(tuple(set_comments))
-        return facade
+def make_comments() -> CommentsFactory:
+    def _make_comments(*, set_comments: Iterable[Comment]) -> CommentsService:
+        service = CommentsService()
+        service.import_comments(tuple(set_comments))
+        return service
 
-    return _make_facade
+    return _make_comments
 
 
 @pytest.fixture
@@ -39,5 +44,5 @@ def default_comments() -> tuple[Comment, ...]:
 
 
 @pytest.fixture
-def comments(make_facade, default_comments) -> CommentsFacade:
-    return make_facade(set_comments=default_comments)
+def comments(make_comments, default_comments) -> CommentsService:
+    return make_comments(set_comments=default_comments)

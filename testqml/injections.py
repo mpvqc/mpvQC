@@ -7,16 +7,14 @@ from __future__ import annotations
 import shutil
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal, override
+from typing import TYPE_CHECKING, Literal, override
 
 import inject
 from PySide6.QtCore import QUrl
 
-from mpvqc.datamodels import SearchResult
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
     ApplicationPathsService,
-    CommentsService,
     DesktopService,
     ExportService,
     FramelessWindowService,
@@ -31,7 +29,7 @@ from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Iterable
 
     from PySide6.QtGui import QGuiApplication, QWindow
 
@@ -164,29 +162,6 @@ class VersionCheckerServiceOverride(VersionCheckerService):
         return "stub-title", "stub-text"
 
 
-class _NoopCommentsProvider:
-    def rowCount(self) -> int:
-        return 0
-
-    def comments(self) -> list[dict[str, Any]]:
-        return []
-
-    def clear_comments(self) -> None:
-        pass
-
-    def import_comments(self, comments: Sequence) -> None:
-        pass
-
-    def search(self, query: str, *, include_current_row: bool, top_down: bool) -> SearchResult:  # noqa: ARG002
-        return SearchResult(index=-1, current=-1, total=-1)
-
-
-class CommentsServiceOverride(CommentsService):
-    def __init__(self) -> None:
-        super().__init__()
-        self.register(_NoopCommentsProvider())
-
-
 class DesktopServiceOverride(DesktopService):
     def __init__(self) -> None:
         self.opened_urls: list[QUrl] = []
@@ -210,7 +185,6 @@ def configure_injections() -> None:
     def test_bindings(binder: inject.Binder) -> None:
         original_bindings(binder)
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
-        binder.bind_to_constructor(CommentsService, CommentsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
         binder.bind_to_constructor(FramelessWindowService, FramelessWindowServiceOverride)

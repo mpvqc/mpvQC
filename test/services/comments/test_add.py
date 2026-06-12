@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.models.comments import NoViewAction, QuickSelection, QuickSelectionAndEdit
+from mpvqc.services.comments import NoViewAction, QuickSelection, QuickSelectionAndEdit
 
 
 def test_add_comment(comments):
-    assert comments.rowCount() == 5
+    assert comments.count == 5
     comments.add_row(0, "comment type")
-    assert comments.rowCount() == 6
+    assert comments.count == 6
 
 
 def test_add_comment_sorts_model(comments):
@@ -30,20 +30,20 @@ def test_add_comment_fires_signals(comments, make_spy):
 
 
 def test_add_comment_undo_redo(comments):
-    assert comments.rowCount() == 5
+    assert comments.count == 5
 
     comments.add_row(99, "undo redo comment type")
-    assert comments.rowCount() == 6
+    assert comments.count == 6
     comment = comments.comments()[-1]
     assert comment["commentType"] == "undo redo comment type"
 
     comments.undo()
-    assert comments.rowCount() == 5
+    assert comments.count == 5
     comment = comments.comments()[-1]
     assert comment["commentType"] != "undo redo comment type"
 
     comments.redo()
-    assert comments.rowCount() == 6
+    assert comments.count == 6
     comment = comments.comments()[-1]
     assert comment["commentType"] == "undo redo comment type"
 

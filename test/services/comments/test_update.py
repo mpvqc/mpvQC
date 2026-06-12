@@ -7,8 +7,8 @@ from typing import NamedTuple
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments import AnimatedSelection, QuickSelection
-from mpvqc.models.comments.roles import Role
+from mpvqc.services.comments import AnimatedSelection, QuickSelection
+from mpvqc.services.comments.roles import Role
 
 
 def _data_at(comments, row, role):
@@ -90,11 +90,11 @@ def test_update_time_reorders(comments, make_spy, case: _RetimeCase):
     comments.update_time(row=case.src_row, new_time=case.new_time)
 
     assert spy.at(invocation=0, argument=0) == AnimatedSelection(row=case.expected_dst_row)
-    assert [_data_at(comments, i, Role.COMMENT) for i in range(comments.rowCount())] == case.expected_order
+    assert [_data_at(comments, i, Role.COMMENT) for i in range(comments.count)] == case.expected_order
 
 
-def test_update_time_into_tied_group_respects_seq_order(make_facade):
-    comments = make_facade(
+def test_update_time_into_tied_group_respects_seq_order(make_comments):
+    comments = make_comments(
         set_comments=(
             Comment(time=0, comment_type="t", comment="A"),
             Comment(time=5, comment_type="t", comment="B"),
@@ -171,8 +171,8 @@ def test_update_comment_invalidates_search(comments):
     assert after.total == 4
 
 
-def test_update_time_invalidates_search(make_facade):
-    comments = make_facade(
+def test_update_time_invalidates_search(make_comments):
+    comments = make_comments(
         set_comments=(
             Comment(time=0, comment_type="commentType", comment="Word 1"),
             Comment(time=5, comment_type="commentType", comment="Other"),
