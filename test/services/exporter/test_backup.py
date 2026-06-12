@@ -18,21 +18,18 @@ def zip_file():
         yield mock
 
 
-def test_archive_name(configure_mocks, render_context, application_paths_service_mock, zip_file):
-    application_paths_service_mock.dir_backup = Path.home()
-    configure_mocks()
-
-    backup(application_paths_service_mock, render_context)
+def test_archive_name(make_context, zip_file, tmp_path):
+    backup(tmp_path, make_context())
 
     assert zip_file.called
     zip_name = zip_file.call_args.args[0]
     assert zip_name.name == f"{QDateTime.currentDateTime().toString('yyyy-MM')}.zip"
 
 
-def test_writes_rendered_backup(configure_mocks, render_context, application_paths_service_mock, zip_file):
-    configure_mocks(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+def test_writes_rendered_backup(make_context, zip_file, tmp_path):
+    context = make_context(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
 
-    backup(application_paths_service_mock, render_context)
+    backup(tmp_path, context)
 
     writestr_mock = zip_file.return_value.__enter__.return_value.writestr
     assert writestr_mock.called
@@ -46,10 +43,8 @@ def test_writes_rendered_backup(configure_mocks, render_context, application_pat
     assert document["comments"] == [{"time": "00:00:50.000", "type": "Spelling", "text": "My comment"}]
 
 
-def test_backup_fields_ignore_export_settings(
-    configure_mocks, render_context, application_paths_service_mock, zip_file
-):
-    configure_mocks(
+def test_backup_fields_ignore_export_settings(make_context, zip_file, tmp_path):
+    context = make_context(
         video="/path/to/video.mkv",
         nickname="lorem",
         write_header_date=False,
@@ -59,7 +54,7 @@ def test_backup_fields_ignore_export_settings(
         write_header_subtitles=True,
     )
 
-    backup(application_paths_service_mock, render_context)
+    backup(tmp_path, context)
 
     _, content = zip_file.return_value.__enter__.return_value.writestr.call_args.args
     document = json.loads(content)

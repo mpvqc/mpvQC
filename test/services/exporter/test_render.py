@@ -16,7 +16,7 @@ def resource_service() -> ResourceService:
     return ResourceService()
 
 
-def test_video_path_video_name(configure_mocks, render_context):
+def test_video_path_video_name(make_context):
     template = textwrap.dedent(
         """\
         video_path: {{ video_path }}
@@ -24,29 +24,24 @@ def test_video_path_video_name(configure_mocks, render_context):
         """
     )
 
-    configure_mocks(video=Path.home() / "video.mkv")
     expected = textwrap.dedent(f"""\
         video_path: {(Path.home() / "video.mkv").resolve()}
         video_name: video.mkv
         """)
-    actual = render_classic(template, render_context)
+    actual = render_classic(template, make_context(video=Path.home() / "video.mkv"))
     assert actual == expected
 
-    configure_mocks(video=None)
     expected = textwrap.dedent("""video_path: \nvideo_name: \n""")
-    actual = render_classic(template, render_context)
+    actual = render_classic(template, make_context(video=None))
     assert actual == expected
 
 
-def test_renders_text_that_ends_with_newline(configure_mocks, render_context, resource_service):
-    configure_mocks()
-    actual = render_classic(resource_service.default_export_template, render_context)
+def test_renders_text_that_ends_with_newline(make_context, resource_service):
+    actual = render_classic(resource_service.default_export_template, make_context())
     assert actual[-1] == "\n"
 
 
-def test_renders_no_headers(configure_mocks, render_context, resource_service):
-    configure_mocks()
-
+def test_renders_no_headers(make_context, resource_service):
     expected = textwrap.dedent(
         """\
         [FILE]
@@ -55,12 +50,12 @@ def test_renders_no_headers(configure_mocks, render_context, resource_service):
         # total lines: 0
         """
     )
-    actual = render_classic(resource_service.default_export_template, render_context)
+    actual = render_classic(resource_service.default_export_template, make_context())
     assert expected == actual
 
 
-def test_renders_partial_headers(configure_mocks, render_context, resource_service):
-    configure_mocks(
+def test_renders_partial_headers(make_context, resource_service):
+    context = make_context(
         write_header_video_path=True,
         video="/path/to/video",
         write_header_nickname=True,
@@ -77,14 +72,12 @@ def test_renders_partial_headers(configure_mocks, render_context, resource_servi
         # total lines: 0
         """
     )
-    actual = render_classic(resource_service.default_export_template, render_context)
+    actual = render_classic(resource_service.default_export_template, context)
     assert expected == actual
 
 
-def test_renders_partial_headers_generator(configure_mocks, render_context, resource_service, build_info_service_mock):
-    build_info_service_mock.name = "Jon"
-    build_info_service_mock.version = "Snow"
-    configure_mocks(write_header_generator=True)
+def test_renders_partial_headers_generator(make_context, resource_service):
+    context = make_context(write_header_generator=True, generator="Jon Snow")
 
     expected = textwrap.dedent(
         """\
@@ -95,12 +88,12 @@ def test_renders_partial_headers_generator(configure_mocks, render_context, reso
         # total lines: 0
         """
     )
-    actual = render_classic(resource_service.default_export_template, render_context)
+    actual = render_classic(resource_service.default_export_template, context)
     assert expected == actual
 
 
-def test_renders_comments(configure_mocks, render_context, resource_service):
-    configure_mocks(
+def test_renders_comments(make_context, resource_service):
+    context = make_context(
         comments=[
             {"time": 0 * 1000, "commentType": "Translation", "comment": "My first comment"},
             {"time": 50 * 1000, "commentType": "Spelling", "comment": "My second comment"},
@@ -119,29 +112,29 @@ def test_renders_comments(configure_mocks, render_context, resource_service):
         # total lines: 3
         """
     )
-    actual = render_classic(resource_service.default_export_template, render_context)
+    actual = render_classic(resource_service.default_export_template, context)
     assert expected == actual
 
 
-def test_templates_receive_time_in_seconds(configure_mocks, render_context):
-    configure_mocks(comments=[{"time": 90 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+def test_templates_receive_time_in_seconds(make_context):
+    context = make_context(comments=[{"time": 90 * 1000, "commentType": "Spelling", "comment": "My comment"}])
 
-    assert render_classic("{{ comments[0]['time'] }}", render_context) == "90"
-
-
-def test_templates_receive_exact_time_in_milliseconds(configure_mocks, render_context):
-    configure_mocks(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
-
-    assert render_classic("{{ comments[0]['time_ms'] }}", render_context) == "929340"
+    assert render_classic("{{ comments[0]['time'] }}", context) == "90"
 
 
-def test_as_time_ms_filter_formats_subsecond_time(configure_mocks, render_context):
-    configure_mocks(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
+def test_templates_receive_exact_time_in_milliseconds(make_context):
+    context = make_context(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
 
-    assert render_classic("{{ comments[0]['time_ms'] | as_time_ms }}", render_context) == "00:15:29.340"
+    assert render_classic("{{ comments[0]['time_ms'] }}", context) == "929340"
 
 
-def test_renders_no_subtitles(configure_mocks, render_context, resource_service):
+def test_as_time_ms_filter_formats_subsecond_time(make_context):
+    context = make_context(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
+
+    assert render_classic("{{ comments[0]['time_ms'] | as_time_ms }}", context) == "00:15:29.340"
+
+
+def test_renders_no_subtitles(make_context, resource_service):
     subtitles = [Path.home() / "subtitle.ass"]
     expected = textwrap.dedent(
         """\
@@ -152,26 +145,24 @@ def test_renders_no_subtitles(configure_mocks, render_context, resource_service)
         """
     )
 
-    configure_mocks()
-    assert expected == render_classic(resource_service.default_export_template, render_context)
+    assert expected == render_classic(resource_service.default_export_template, make_context())
 
-    configure_mocks(subtitles=subtitles)
-    assert expected == render_classic(resource_service.default_export_template, render_context)
+    assert expected == render_classic(resource_service.default_export_template, make_context(subtitles=subtitles))
 
-    configure_mocks(write_header_subtitles=True)
-    assert expected == render_classic(resource_service.default_export_template, render_context)
-
-    configure_mocks(write_header_subtitles=True, subtitles=subtitles)
-    assert expected != render_classic(resource_service.default_export_template, render_context), (
-        "Documents should not match as subtitles should now be rendered"
+    assert expected == render_classic(
+        resource_service.default_export_template, make_context(write_header_subtitles=True)
     )
 
+    assert expected != render_classic(
+        resource_service.default_export_template, make_context(write_header_subtitles=True, subtitles=subtitles)
+    ), "Documents should not match as subtitles should now be rendered"
 
-def test_renders_subtitles(configure_mocks, render_context, resource_service):
+
+def test_renders_subtitles(make_context, resource_service):
     subtitle1 = Path.home() / "subtitle-1.ass"
     subtitle2 = Path.home() / "subtitle-2.srt"
 
-    configure_mocks(
+    context = make_context(
         write_header_nickname=True,
         nickname="ಠ_ಠ",
         write_header_subtitles=False,
@@ -186,9 +177,9 @@ def test_renders_subtitles(configure_mocks, render_context, resource_service):
         # total lines: 0
         """
     )
-    assert expected == render_classic(resource_service.default_export_template, render_context)
+    assert expected == render_classic(resource_service.default_export_template, context)
 
-    configure_mocks(
+    context = make_context(
         write_header_nickname=True,
         nickname="ಠ_ಠ",
         write_header_subtitles=True,
@@ -205,4 +196,4 @@ def test_renders_subtitles(configure_mocks, render_context, resource_service):
         # total lines: 0
         """
     )
-    assert expected == render_classic(resource_service.default_export_template, render_context)
+    assert expected == render_classic(resource_service.default_export_template, context)

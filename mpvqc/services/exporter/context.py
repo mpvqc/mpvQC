@@ -5,18 +5,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from mpvqc.services.build_info import BuildInfoService
-    from mpvqc.services.comments import CommentsService
-    from mpvqc.services.player import PlayerService
-    from mpvqc.services.settings import SettingsService
+from typing import Any
 
 
 @dataclass(frozen=True)
 class RenderContext:
-    settings: SettingsService
-    player: PlayerService
-    build_info: BuildInfoService
-    comments: CommentsService
+    write_header_date: bool
+    write_header_generator: bool
+    write_header_nickname: bool
+    write_header_video_path: bool
+    write_header_subtitles: bool
+    nickname: str | None
+    video_path: str | None
+    external_subtitles: tuple[str, ...]
+    generator: str
+    comments: tuple[dict[str, Any], ...]

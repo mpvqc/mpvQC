@@ -18,6 +18,35 @@ def service(qt_app) -> ExportService:
     return ExportService()
 
 
+@pytest.fixture
+def configure_mocks(qt_app, comments_service_mock, settings_service, player_service_mock):
+    def _make_mock(
+        video: Path | str | None = None,
+        nickname: str | None = None,
+        comments: list | None = None,
+        subtitles: list | None = None,
+        write_header_date: bool = False,
+        write_header_generator: bool = False,
+        write_header_nickname: bool = False,
+        write_header_video_path: bool = False,
+        write_header_subtitles: bool = False,
+    ):
+        comments_service_mock.comments.return_value = comments or []
+
+        settings_service.nickname = nickname
+        settings_service.write_header_date = write_header_date
+        settings_service.write_header_generator = write_header_generator
+        settings_service.write_header_nickname = write_header_nickname
+        settings_service.write_header_video_path = write_header_video_path
+        settings_service.write_header_subtitles = write_header_subtitles
+        settings_service.language = "en-US"
+
+        player_service_mock.path = str(video) if video else None
+        player_service_mock.external_subtitles = tuple(str(s) for s in subtitles or ())
+
+    return _make_mock
+
+
 def wait_for_jobs() -> None:
     QThreadPool.globalInstance().waitForDone()
 

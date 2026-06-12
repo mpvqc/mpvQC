@@ -14,10 +14,8 @@ import pytest
 from mpvqc.services.exporter.documents.v1 import render_v1
 
 
-def test_renders_minimal_document(configure_mocks, render_context):
-    configure_mocks()
-
-    content = render_v1(render_context)
+def test_renders_minimal_document(make_context):
+    content = render_v1(make_context())
 
     assert content.endswith("\n")
     assert json.loads(content) == {
@@ -27,10 +25,9 @@ def test_renders_minimal_document(configure_mocks, render_context):
     }
 
 
-def test_renders_full_document(configure_mocks, render_context, build_info_service_mock):
-    build_info_service_mock.name = "mpvQC"
-    build_info_service_mock.version = "0.9.0"
-    configure_mocks(
+def test_renders_full_document(make_context):
+    context = make_context(
+        generator="mpvQC 0.9.0",
         video=Path.home() / "video.mkv",
         nickname="ಠ_ಠ",
         subtitles=[Path.home() / "video.de.ass", Path.home() / "video.en.srt"],
@@ -45,7 +42,7 @@ def test_renders_full_document(configure_mocks, render_context, build_info_servi
         write_header_subtitles=True,
     )
 
-    document = json.loads(render_v1(render_context))
+    document = json.loads(render_v1(context))
 
     created_at = document.pop("created_at")
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", created_at)
@@ -63,8 +60,8 @@ def test_renders_full_document(configure_mocks, render_context, build_info_servi
     }
 
 
-def test_renders_keys_in_specification_order(configure_mocks, render_context):
-    configure_mocks(
+def test_renders_keys_in_specification_order(make_context):
+    context = make_context(
         video="/path/to/video.mkv",
         nickname="lorem",
         subtitles=["/path/to/video.de.ass"],
@@ -75,7 +72,7 @@ def test_renders_keys_in_specification_order(configure_mocks, render_context):
         write_header_subtitles=True,
     )
 
-    document = json.loads(render_v1(render_context))
+    document = json.loads(render_v1(context))
 
     assert list(document) == [
         "$schema",
@@ -103,9 +100,7 @@ OMITTED_WHEN_EMPTY = [
 
 
 @pytest.mark.parametrize("case", OMITTED_WHEN_EMPTY, ids=lambda case: case.name)
-def test_omits_field_when_toggled_on_but_empty(configure_mocks, render_context, case):
-    configure_mocks(**case.settings)
-
-    document = json.loads(render_v1(render_context))
+def test_omits_field_when_toggled_on_but_empty(make_context, case):
+    document = json.loads(render_v1(make_context(**case.settings)))
 
     assert case.absent_field not in document

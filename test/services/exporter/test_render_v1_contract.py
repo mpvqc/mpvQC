@@ -55,14 +55,10 @@ CONFORMANCE_CASES = [
 
 
 @pytest.mark.parametrize("case", CONFORMANCE_CASES, ids=lambda case: case.name)
-def test_rendered_documents_validate_against_schema(
-    configure_mocks, render_context, build_info_service_mock, validator, case
-):
-    build_info_service_mock.name = "mpvQC"
-    build_info_service_mock.version = "0.9.0"
-    configure_mocks(**case.settings)
+def test_rendered_documents_validate_against_schema(make_context, validator, case):
+    context = make_context(generator="mpvQC 0.9.0", **case.settings)
 
-    document = json.loads(render_v1(render_context))
+    document = json.loads(render_v1(context))
 
     validator.validate(document)
 
@@ -116,22 +112,22 @@ def test_readme_example_validates_against_schema(validator):
     validator.validate(json.loads(example.group(1)))
 
 
-def test_rendered_backup_validates_against_schema(configure_mocks, render_context, validator):
-    configure_mocks(
+def test_rendered_backup_validates_against_schema(make_context, validator):
+    context = make_context(
         video="/path/to/video.mkv",
         comments=[{"time": 754321, "commentType": "Spelling", "comment": "Lorem ipsum"}],
     )
 
-    document = json.loads(render_backup(render_context))
+    document = json.loads(render_backup(context))
 
     validator.validate(document)
 
 
-def test_backup_imports_losslessly(configure_mocks, render_context, tmp_path):
-    configure_mocks(comments=[{"time": 754321, "commentType": "Spelling", "comment": "Lorem ipsum"}])
+def test_backup_imports_losslessly(make_context, tmp_path):
+    context = make_context(comments=[{"time": 754321, "commentType": "Spelling", "comment": "Lorem ipsum"}])
 
     document = tmp_path / "backup.json"
-    document.write_text(render_backup(render_context), encoding="utf-8")
+    document.write_text(render_backup(context), encoding="utf-8")
 
     result = read_documents([document])
 
@@ -139,8 +135,8 @@ def test_backup_imports_losslessly(configure_mocks, render_context, tmp_path):
     assert [(c.time, c.comment_type, c.comment) for c in result.comments] == [(754321, "Spelling", "Lorem ipsum")]
 
 
-def test_exported_document_imports_losslessly(configure_mocks, render_context, tmp_path):
-    configure_mocks(
+def test_exported_document_imports_losslessly(make_context, tmp_path):
+    context = make_context(
         comments=[
             {"time": 0, "commentType": "Translation", "comment": "Lorem ipsum"},
             {"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""},
@@ -153,7 +149,7 @@ def test_exported_document_imports_losslessly(configure_mocks, render_context, t
     )
 
     document = tmp_path / "report.json"
-    document.write_text(render_v1(render_context), encoding="utf-8")
+    document.write_text(render_v1(context), encoding="utf-8")
 
     result = read_documents([document])
 
