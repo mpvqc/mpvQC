@@ -23,6 +23,10 @@ class _UndoStack:
         self._redo.clear()
         self._undo.append(cmd)
 
+    def clear(self) -> None:
+        self._undo.clear()
+        self._redo.clear()
+
     def replace_top(self, cmd: Command) -> None:
         self._undo[-1] = cmd
 
@@ -52,6 +56,10 @@ class History:
         action = cmd.initial(self._store)
         self._stack.push(cmd)
         return action
+
+    def clear(self) -> None:
+        self._mergeable = None
+        self._stack.clear()
 
     def arm_merge(self, cmd: AddComment) -> None:
         self._mergeable = cmd

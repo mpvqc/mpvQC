@@ -6,11 +6,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, assert_never, cast
 
+import inject
 from PySide6.QtCore import QAbstractItemModel, QObject, Signal
+
+from mpvqc.services.state import StateService
 
 from .commands import (
     AddComment,
-    ClearComments,
     ImportComments,
     RemoveComment,
     UpdateText,
@@ -32,7 +34,9 @@ if TYPE_CHECKING:
     from .view_action import ViewAction
 
 
-class CommentsFacade(QObject):
+class CommentsService(QObject):
+    _state = inject.attr(StateService)
+
     view_action = Signal(object)  # ViewAction union; Qt sigs can't carry type aliases
     dirty = Signal()
     about_to_import = Signal()
@@ -44,6 +48,7 @@ class CommentsFacade(QObject):
         self._history = History(self._store)
         self._search = CommentSearchEngine(self._store, self._selection)
         self._selection.selectedRowChanged.connect(self._history.disarm_merge)
+        self.dirty.connect(self._state.record_change)
 
     @property
     def store(self) -> QAbstractItemModel:
@@ -53,7 +58,8 @@ class CommentsFacade(QObject):
     def selection(self) -> SelectionState:
         return self._selection
 
-    def rowCount(self) -> int:
+    @property
+    def count(self) -> int:
         return self._store.rowCount()
 
     def comments(self) -> list[dict[str, Any]]:
@@ -96,11 +102,6 @@ class CommentsFacade(QObject):
         action = self._history.push(cmd)
         self._emit_apply(cmd, action)
 
-    def clear_comments(self) -> None:
-        cmd = ClearComments.build(self._store)
-        action = self._history.push(cmd)
-        self._emit_apply(cmd, action)
-
     def import_comments(self, comments: Sequence[Comment]) -> None:
         if not comments:
             return
@@ -112,6 +113,13 @@ class CommentsFacade(QObject):
         )
         action = self._history.push(cmd)
         self._emit_apply(cmd, action)
+
+    def reset(self) -> None:
+        self._history.clear()
+        self._search.invalidate()
+        self._store.reset(())
+        # pyrefly: ignore [bad-assignment]
+        self._selection.selectedRow = -1
 
     def undo(self) -> None:
         self._history.disarm_merge()

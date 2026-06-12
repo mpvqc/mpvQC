@@ -38,6 +38,7 @@ TestCase {
     }
 
     function makeControl(): var {
+        _helpers.bridge.resetComments();
         const control = createTemporaryObject(emptyControl, testCase);
         verify(control);
         waitForRendering(control);
@@ -73,11 +74,11 @@ TestCase {
         tryVerify(() => control.commentCount === 1);
         verify(!_placeholder(control).visible);
 
-        control.viewModel.clearComments();
+        control.viewModel.removeRow(0);
 
         tryVerify(() => control.commentCount === 0);
-        verify(_placeholder(control).visible);
-        verify(!control.commentList.visible);
+        tryVerify(() => _placeholder(control).visible);
+        tryVerify(() => !control.commentList.visible);
     }
 
     function test_addNewCommentAppendsRowToModel(): void {

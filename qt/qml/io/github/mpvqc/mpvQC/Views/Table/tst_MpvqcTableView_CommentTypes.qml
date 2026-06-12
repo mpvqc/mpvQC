@@ -34,9 +34,7 @@ TestCase {
     }
 
     function test_commentTypeMenuReceivesPythonCommentTypes(): void {
-        const control = createTemporaryObject(_helpers.objectWithRealCommentTypes, testCase);
-        verify(control);
-        waitForRendering(control);
+        const control = _helpers.makeRealCommentTypesControl();
 
         const expected = control.viewModel.commentTypes;
         verify(expected.length > 0);

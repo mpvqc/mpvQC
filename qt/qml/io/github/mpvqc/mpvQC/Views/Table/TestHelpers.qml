@@ -15,6 +15,8 @@ QtObject {
 
     required property TestCase testCase
 
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
+
     readonly property Component signalSpy: Component {
         SignalSpy {}
     }
@@ -104,7 +106,16 @@ QtObject {
     }
 
     function makeControl(): var {
+        root.bridge.resetComments();
         const control = root.testCase.createTemporaryObject(root.objectUnderTest, root.testCase);
+        root.testCase.verify(control);
+        root.testCase.waitForRendering(control);
+        return control;
+    }
+
+    function makeRealCommentTypesControl(): var {
+        root.bridge.resetComments();
+        const control = root.testCase.createTemporaryObject(root.objectWithRealCommentTypes, root.testCase);
         root.testCase.verify(control);
         root.testCase.waitForRendering(control);
         return control;

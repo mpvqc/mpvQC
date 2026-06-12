@@ -3,20 +3,20 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments import QuickSelection
+from mpvqc.services.comments import QuickSelection
 
 
 def test_import_comments(comments):
     comment = Comment(time=999, comment_type="commentType", comment="Word 1")
 
-    assert comments.rowCount() == 5
+    assert comments.count == 5
     comments.import_comments((comment,))
-    assert comments.rowCount() == 6
+    assert comments.count == 6
     assert comments.comments()[-1]["time"] == 999
 
 
-def test_import_sorts_comments(make_facade):
-    comments = make_facade(set_comments=[])
+def test_import_sorts_comments(make_comments):
+    comments = make_comments(set_comments=[])
 
     to_import = (
         Comment(time=1, comment_type="commentType", comment="Word 1"),
@@ -35,8 +35,8 @@ def test_import_sorts_comments(make_facade):
     assert [c["comment"] for c in comments.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
 
 
-def test_import_unsorted_focuses_time_maximum(make_facade, make_spy):
-    comments = make_facade(set_comments=[])
+def test_import_unsorted_focuses_time_maximum(make_comments, make_spy):
+    comments = make_comments(set_comments=[])
     spy = make_spy(comments.view_action)
 
     comments.import_comments(
@@ -81,23 +81,23 @@ def test_import_comments_undo_redo(comments):
         Comment(time=6, comment_type="commentType", comment="Undo Redo 2"),
         Comment(time=11, comment_type="commentType", comment="Undo Redo 3"),
     )
-    assert comments.rowCount() == 5
+    assert comments.count == 5
 
     comments.import_comments(to_import)
-    assert comments.rowCount() == 8
+    assert comments.count == 8
     rows = comments.comments()
     assert rows[1]["comment"] == "Undo Redo 1"
     assert rows[3]["comment"] == "Undo Redo 2"
     assert rows[5]["comment"] == "Undo Redo 3"
 
     comments.undo()
-    assert comments.rowCount() == 5
+    assert comments.count == 5
     rows = comments.comments()
     assert rows[1]["comment"] == "Word 2"
     assert rows[3]["comment"] == "Word 4"
 
     comments.redo()
-    assert comments.rowCount() == 8
+    assert comments.count == 8
     rows = comments.comments()
     assert rows[1]["comment"] == "Undo Redo 1"
     assert rows[3]["comment"] == "Undo Redo 2"

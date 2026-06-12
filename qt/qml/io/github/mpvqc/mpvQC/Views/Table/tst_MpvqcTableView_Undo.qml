@@ -304,18 +304,6 @@ TestCase {
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not follow the row after undoing the time change");
     }
 
-    function test_undoClearPreservesSelection(): void {
-        const countBeforeClear = control.commentCount;
-        const selectedBeforeClear = control.commentList.currentIndex;
-        control.viewModel.clearComments();
-        _expect.hasEventuallyCount(control, 0);
-
-        control.viewModel.undo();
-
-        _expect.hasEventuallyCount(control, countBeforeClear);
-        _expect.hasCurrentIndex(control, selectedBeforeClear);
-    }
-
     function test_userJourneyAddEditUndoRedoRoundTrips(): void {
         // Add A: opens the comment popup; cancel it, then commit the text via
         // a direct updateComment which fuses with the armed AddComment.

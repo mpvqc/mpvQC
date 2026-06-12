@@ -15,8 +15,8 @@ def assert_comments(expected: list[list[Any]], actual: list[dict[str, Any]]):
         assert c_e[2] == c_a["comment"]
 
 
-def test_undo_redo_combination(make_facade):
-    comments = make_facade(set_comments=[])
+def test_undo_redo_combination(make_comments):
+    comments = make_comments(set_comments=[])
     comments.import_comments(
         (
             Comment(time=10, comment_type="type 1", comment="Word 1"),
@@ -131,25 +131,6 @@ def test_undo_redo_combination(make_facade):
         ],
     )
 
-    comments.clear_comments()
-    assert_comments(
-        actual=comments.comments(),
-        expected=[],
-    )
-
-    comments.undo()
-    assert_comments(
-        actual=comments.comments(),
-        expected=[
-            [10, "type 1", "Word 1"],
-            [20, "type 2", "Word 2"],
-            [30, "type 3", "Word 3"],
-            [35, "edited 2", "Word Edited 1"],
-            [40, "type 4", "Word 4"],
-            [50, "type 5", "Word 5"],
-        ],
-    )
-
     comments.update_comment(3, "Word Edited 2")
     assert_comments(
         actual=comments.comments(),
@@ -218,8 +199,8 @@ def test_undo_redo_combination(make_facade):
     )
 
 
-def test_merge_add_and_update(make_facade):
-    comments = make_facade(set_comments=[])
+def test_merge_add_and_update(make_comments):
+    comments = make_comments(set_comments=[])
     comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
@@ -265,8 +246,8 @@ def test_merge_add_and_update(make_facade):
     )
 
 
-def test_merge_add_and_update_declined_because_of_other_command(make_facade):
-    comments = make_facade(set_comments=[])
+def test_merge_add_and_update_declined_because_of_other_command(make_comments):
+    comments = make_comments(set_comments=[])
     comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
@@ -332,8 +313,8 @@ def test_merge_add_and_update_declined_because_of_other_command(make_facade):
     )
 
 
-def test_merge_add_and_update_declined_on_selection_of_other_comment(make_facade):
-    comments = make_facade(set_comments=[])
+def test_merge_add_and_update_declined_on_selection_of_other_comment(make_comments):
+    comments = make_comments(set_comments=[])
     comments.import_comments((Comment(time=10, comment_type="type 1", comment="Word 1"),))
 
     assert_comments(
@@ -398,8 +379,8 @@ def test_merge_add_and_update_declined_on_selection_of_other_comment(make_facade
     )
 
 
-def test_undo_focus_phases_when_selected_row_not_visible(make_facade):
-    comments = make_facade(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
+def test_undo_focus_phases_when_selected_row_not_visible(make_comments):
+    comments = make_comments(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
     comments.update_comment(0, "edited")
 
     comments.selection.selectedRowVisible = False
@@ -411,8 +392,8 @@ def test_undo_focus_phases_when_selected_row_not_visible(make_facade):
     assert comments.comment_at(0).comment == "Word 1"
 
 
-def test_redo_focus_phases_when_selected_row_not_visible(make_facade):
-    comments = make_facade(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
+def test_redo_focus_phases_when_selected_row_not_visible(make_comments):
+    comments = make_comments(set_comments=[Comment(time=10, comment_type="t", comment="Word 1")])
     comments.update_comment(0, "edited")
     comments.undo()
 

@@ -10,16 +10,15 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments import (
+from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
+from mpvqc.services.comments import (
     AnimatedSelection,
-    CommentsFacade,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
     SelectionState,
     ViewAction,
 )
-from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService, TimeFormatterService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -27,10 +26,9 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcCommentTableViewModel(QObject):
-    _comments_service = inject.attr(CommentsService)
+    _comments = inject.attr(CommentsService)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
-    _state = inject.attr(StateService)
     _time_formatter = inject.attr(TimeFormatterService)
 
     commentTypesChanged = Signal(list)
@@ -58,11 +56,8 @@ class MpvqcCommentTableViewModel(QObject):
 
         self._clipboard = QGuiApplication.clipboard()
 
-        self._comments = CommentsFacade(parent=self)
         self._comments.view_action.connect(self._on_view_action)
-        self._comments.dirty.connect(self._state.record_change)
         self._comments.about_to_import.connect(self.commentsAboutToBeImported)
-        self._comments_service.register(self._comments)
 
     @Slot(object)
     def _on_view_action(self, action: ViewAction) -> None:
@@ -181,10 +176,6 @@ class MpvqcCommentTableViewModel(QObject):
         self._comments.import_comments(
             [Comment(time=c["time"], comment_type=c["commentType"], comment=c["comment"]) for c in comments]
         )
-
-    @Slot()
-    def clearComments(self) -> None:
-        self._comments.clear_comments()
 
     @Slot(result=list)
     def comments(self) -> list[dict[str, Any]]:

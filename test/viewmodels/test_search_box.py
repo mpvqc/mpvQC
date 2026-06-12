@@ -2,21 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable, Iterable
-from typing import Protocol
+from collections.abc import Callable
 
 import inject
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments import CommentsFacade
 from mpvqc.services import CommentsService, MainWindowService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
-
-
-class CommentsModelFactory(Protocol):
-    def __call__(self, *, set_comments: Iterable[Comment]) -> CommentsFacade: ...
-
 
 DEFAULT_COMMENTS_SEARCH = (
     Comment(time=0, comment_type="commentType", comment="Word 1"),
@@ -36,20 +29,10 @@ EXTRA_COMMENTS = (
 
 
 @pytest.fixture
-def make_model() -> CommentsModelFactory:
-    def _make_model(*, set_comments: Iterable[Comment]) -> CommentsFacade:
-        facade = CommentsFacade()
-        facade.import_comments(tuple(set_comments))
-        return facade
-
-    return _make_model
-
-
-@pytest.fixture
-def model(make_model) -> CommentsFacade:
-    facade = make_model(set_comments=DEFAULT_COMMENTS_SEARCH)
-    inject.instance(CommentsService).register(facade)
-    return facade
+def model() -> CommentsService:
+    service = inject.instance(CommentsService)
+    service.import_comments(DEFAULT_COMMENTS_SEARCH)
+    return service
 
 
 @pytest.fixture(autouse=True)
@@ -61,7 +44,7 @@ def configure_inject(common_bindings_with):
 
 
 @pytest.fixture
-def view_model(model: CommentsFacade) -> MpvqcSearchBoxViewModel:
+def view_model(model: CommentsService) -> MpvqcSearchBoxViewModel:
     # noinspection PyCallingNonCallable
     return MpvqcSearchBoxViewModel()
 

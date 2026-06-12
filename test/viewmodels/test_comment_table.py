@@ -8,19 +8,14 @@ import inject
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.models.comments import (
+from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService
+from mpvqc.services.comments import (
     AnimatedSelection,
     NoViewAction,
     QuickSelection,
     QuickSelectionAndEdit,
 )
-from mpvqc.services import CommentsService, PlayerService, SettingsService, StateService
 from mpvqc.viewmodels import MpvqcCommentTableViewModel
-
-
-@pytest.fixture
-def comments_service_mock():
-    return MagicMock(spec_set=CommentsService)
 
 
 @pytest.fixture
@@ -33,11 +28,10 @@ def configure_inject(
     common_bindings_with,
     player_service_mock,
     settings_service,
-    comments_service_mock,
     state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(CommentsService, comments_service_mock)
+        binder.bind_to_constructor(CommentsService, CommentsService)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(StateService, state_service_mock)
         binder.bind(SettingsService, settings_service)
@@ -61,9 +55,11 @@ def make_view_model():
     return _make
 
 
-def test_registers_comments_service_on_construction(make_view_model, comments_service_mock):
-    vm = make_view_model(comments=[])
-    comments_service_mock.register.assert_called_once_with(vm._comments)
+def test_view_models_share_one_document(make_view_model):
+    vm1 = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
+    vm2 = MpvqcCommentTableViewModel()
+
+    assert vm2.comments() == vm1.comments()
 
 
 def test_state_changes_on_mutation(make_view_model, state_service_mock):
@@ -155,11 +151,3 @@ def test_on_view_action_no_view_action(make_view_model, make_spy):
 
     assert quick_spy.count() == 0
     assert selection_spy.count() == 0
-
-
-def test_dirty_signal_records_change(make_view_model, state_service_mock):
-    vm = make_view_model(comments=[])
-
-    vm._comments.dirty.emit()
-
-    state_service_mock.record_change.assert_called_once()

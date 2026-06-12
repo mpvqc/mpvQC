@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from mpvqc.models.comments import NoViewAction, QuickSelection
+from mpvqc.services.comments import NoViewAction, QuickSelection
 
 
 def test_remove_comment(comments):
-    assert comments.rowCount() == 5
+    assert comments.count == 5
     comments.remove_row(0)
-    assert comments.rowCount() == 4
+    assert comments.count == 4
 
 
 def test_remove_comment_fires_signals(comments, make_spy):
@@ -21,26 +21,26 @@ def test_remove_comment_fires_signals(comments, make_spy):
 
 
 def test_remove_comment_undo_redo(comments):
-    assert comments.rowCount() == 5
+    assert comments.count == 5
 
     comments.remove_row(0)
-    assert comments.rowCount() == 4
+    assert comments.count == 4
     comment = comments.comments()[0]
     assert comment["comment"] == "Word 2"
 
     comments.undo()
-    assert comments.rowCount() == 5
+    assert comments.count == 5
     comment = comments.comments()[0]
     assert comment["comment"] == "Word 1"
 
     comments.redo()
-    assert comments.rowCount() == 4
+    assert comments.count == 4
     comment = comments.comments()[0]
     assert comment["comment"] == "Word 2"
 
 
 def test_remove_comment_undo_sorts_model(comments):
-    assert comments.rowCount() == 5
+    assert comments.count == 5
 
     comments.remove_row(1)
     expected = ["Word 1", "Word 3", "Word 4", "Word 5"]
