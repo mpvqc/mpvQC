@@ -12,8 +12,7 @@ SUBTITLES = (SUBTITLE,)
 
 
 def test_subs_only_with_video_loaded_attach_directly(mpv_mock, player_service):
-    player_service._path_prop.on_update("video")
-    player_service._video_loaded_prop.on_update("video")
+    player_service._apply_property_update("path", "video")
 
     player_service.open_media(video=None, subtitles=SUBTITLES)
 
@@ -44,8 +43,7 @@ def test_video_with_subs_flushes_after_file_loaded(mpv_mock, player_service):
 
 
 def test_same_video_reloads_and_flushes_subs(mpv_mock, player_service):
-    player_service._path_prop.on_update(str(VIDEO))
-    player_service._video_loaded_prop.on_update(str(VIDEO))
+    player_service._apply_property_update("path", str(VIDEO))
 
     player_service.open_media(video=VIDEO, subtitles=SUBTITLES)
     _simulate_file_loaded(player_service)

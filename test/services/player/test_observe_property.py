@@ -2,9 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 
 import pytest
+
+from mpvqc.services.player.state import PlayerState
+
+
+def test_every_state_field_has_a_notifier(player_service):
+    assert set(player_service._notifiers) == {field.name for field in fields(PlayerState)}
 
 
 @pytest.mark.parametrize(
@@ -19,7 +25,7 @@ import pytest
 def test_duration_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.duration_changed)
 
-    player_service._duration_prop.on_update(value)
+    player_service._apply_property_update("duration", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -38,7 +44,7 @@ def test_duration_changed(player_service, make_spy, value, expected):
 def test_path_changed_emits_signal(player_service, make_spy, value, expected):
     spy = make_spy(player_service.path_changed)
 
-    player_service._path_prop.on_update(value)
+    player_service._apply_property_update("path", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -57,7 +63,7 @@ def test_path_changed_emits_signal(player_service, make_spy, value, expected):
 def test_path_changed_emits_video_loaded(player_service, make_spy, value, expected):
     spy = make_spy(player_service.video_loaded_changed)
 
-    player_service._video_loaded_prop.on_update(value)
+    player_service._apply_property_update("path", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -76,7 +82,7 @@ def test_path_changed_emits_video_loaded(player_service, make_spy, value, expect
 def test_filename_changed_emits_signal(player_service, make_spy, value, expected):
     spy = make_spy(player_service.filename_changed)
 
-    player_service._filename_prop.on_update(value)
+    player_service._apply_property_update("filename", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -95,7 +101,7 @@ def test_filename_changed_emits_signal(player_service, make_spy, value, expected
 def test_percent_pos_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.percent_pos_changed)
 
-    player_service._percent_pos_prop.on_update(value)
+    player_service._apply_property_update("percent-pos", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -114,7 +120,7 @@ def test_percent_pos_changed(player_service, make_spy, value, expected):
 def test_time_pos_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.time_pos_changed)
 
-    player_service._time_pos_prop.on_update(value)
+    player_service._apply_property_update("time-pos", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -135,7 +141,7 @@ def test_time_pos_changed(player_service, make_spy, value, expected):
     ],
 )
 def test_time_pos(player_service, value, expected):
-    player_service._time_pos_prop.on_update(value)
+    player_service._apply_property_update("time-pos", value)
 
     assert player_service.time_pos == expected
 
@@ -151,7 +157,7 @@ def test_time_pos(player_service, value, expected):
 def test_time_remaining_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.time_remaining_changed)
 
-    player_service._time_remaining_prop.on_update(value)
+    player_service._apply_property_update("time-remaining", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -170,7 +176,7 @@ def test_time_remaining_changed(player_service, make_spy, value, expected):
 def test_height_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.height_changed)
 
-    player_service._height_prop.on_update(value)
+    player_service._apply_property_update("height", value)
 
     if expected is not None:
         assert spy.count() == 1
@@ -189,13 +195,49 @@ def test_height_changed(player_service, make_spy, value, expected):
 def test_width_changed(player_service, make_spy, value, expected):
     spy = make_spy(player_service.width_changed)
 
-    player_service._width_prop.on_update(value)
+    player_service._apply_property_update("width", value)
 
     if expected is not None:
         assert spy.count() == 1
         assert spy.at(0, 0) == expected
     else:
         assert spy.count() == 0
+
+
+def test_video_dimensions_emitted_once_both_arrive(player_service, make_spy):
+    spy = make_spy(player_service.video_dimensions_changed)
+
+    player_service._apply_property_update("path", "/movies/a.mkv")
+    player_service._apply_property_update("width", 1920)
+    assert spy.count() == 0
+
+    player_service._apply_property_update("height", 1080)
+    assert spy.count() == 1
+    assert spy.at(0, 0) == 1920
+    assert spy.at(0, 1) == 1080
+
+
+def test_video_dimensions_emitted_again_after_new_video(player_service, make_spy):
+    player_service._apply_property_update("path", "/movies/a.mkv")
+    player_service._apply_property_update("width", 1920)
+    player_service._apply_property_update("height", 1080)
+
+    spy = make_spy(player_service.video_dimensions_changed)
+    player_service._apply_property_update("path", "/movies/b.mkv")
+    player_service._apply_property_update("width", 1280)
+    player_service._apply_property_update("height", 720)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == 1280
+    assert spy.at(0, 1) == 720
+
+
+def test_property_updates_apply_after_event_loop_hop(qt_app, player_service):
+    player_service._property_updated.emit("path", "/movies/a.mkv")
+
+    assert not player_service.path
+    qt_app.processEvents()
+    assert player_service.path == "/movies/a.mkv"
 
 
 @dataclass
@@ -207,8 +249,7 @@ class TrackCountTestCase:
 
 
 def _handle_track_list(player_service, value):
-    player_service._audio_track_count_prop.on_update(value)
-    player_service._subtitle_track_count_prop.on_update(value)
+    player_service._apply_property_update("track-list", value)
 
 
 @pytest.mark.parametrize(
