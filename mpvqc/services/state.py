@@ -5,12 +5,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 from PySide6.QtCore import QObject, Signal, Slot
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -43,6 +40,7 @@ class StateService(QObject):
     def document(self) -> Path | None:
         return self._state.document
 
+    @Slot(Path)
     def record_save(self, document: Path) -> None:
         new_state = replace(self._state, document=document, saved=True)
         self._set(new_state)
