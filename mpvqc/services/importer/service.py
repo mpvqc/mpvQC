@@ -37,12 +37,14 @@ class ImporterService(QObject):
 
     unfinished_plan_ready = Signal(UnfinishedPlan)
     _finished_plan_ready = Signal(FinishedPlan)
+    _scan_failed = Signal()
     busy_changed = Signal(bool)
 
     def __init__(self) -> None:
         super().__init__()
         self._busy = False
         self._finished_plan_ready.connect(self.execute, Qt.ConnectionType.QueuedConnection)
+        self._scan_failed.connect(self.cancel_pending, Qt.ConnectionType.QueuedConnection)
 
     @Property(bool, notify=busy_changed)
     def busy(self) -> bool:
@@ -66,19 +68,30 @@ class ImporterService(QObject):
 
         # Capture on the GUI thread
         has_existing_comments = self._comments.count > 0
+        found_video_setting = ImportFoundVideo(self._settings.import_found_video)
+        current_video = self._player.path
 
         def scan_and_dispatch() -> None:
-            scan_result = scan(document_paths, video_paths, subtitle_paths)
-            match make_plan(
-                scan_result,
-                found_video_setting=ImportFoundVideo(self._settings.import_found_video),
-                has_existing_comments=has_existing_comments,
-                any_candidate_loaded=self._player.is_any_video_loaded(v.path for v in scan_result.videos),
-            ):
-                case FinishedPlan() as plan:
+            try:
+                scan_result = scan(document_paths, video_paths, subtitle_paths)
+                plan = make_plan(
+                    scan_result,
+                    found_video_setting=found_video_setting,
+                    has_existing_comments=has_existing_comments,
+                    any_candidate_loaded=PlayerService.is_video_path_loaded(
+                        current_video, (v.path for v in scan_result.videos)
+                    ),
+                )
+            except Exception:
+                logger.exception("Import scan failed")
+                self._scan_failed.emit()
+                return
+
+            match plan:
+                case FinishedPlan():
                     self._finished_plan_ready.emit(plan)
-                case UnfinishedPlan() as unfinished_plan:
-                    self.unfinished_plan_ready.emit(unfinished_plan)
+                case UnfinishedPlan():
+                    self.unfinished_plan_ready.emit(plan)
 
         QThreadPool.globalInstance().start(scan_and_dispatch)
 

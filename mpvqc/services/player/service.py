@@ -209,11 +209,15 @@ class PlayerService(QObject):
         y = int(y * zoom_factor)
         self._mpv_player.command_async("mouse", x, y)
 
-    def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
-        if not (path := self.path):
+    @staticmethod
+    def is_video_path_loaded(loaded_path: str, videos: Iterable[Path]) -> bool:
+        if not loaded_path:
             return False
-        current = Path(path).resolve()
+        current = Path(loaded_path).resolve()
         return any(current == video.resolve() for video in videos)
+
+    def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:
+        return self.is_video_path_loaded(self.path, videos)
 
     def open_media(self, *, video: Path | None, subtitles: tuple[Path, ...]) -> None:
         if video is None:
