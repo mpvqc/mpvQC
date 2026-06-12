@@ -47,11 +47,7 @@ def _as_comment_type(comment_type: str) -> str:
 
 
 def _arguments(context: RenderContext) -> dict:
-    settings = context.settings
-    player = context.player
-    build_info = context.build_info
-
-    if raw_path := player.path:
+    if raw_path := context.video_path:
         path = Path(raw_path)
         video_path = TypeMapperService.map_path_to_str(path)
         video_name = path.name
@@ -60,19 +56,19 @@ def _arguments(context: RenderContext) -> dict:
         video_name = ""
 
     return {
-        "write_date": settings.write_header_date,
-        "write_generator": settings.write_header_generator,
-        "write_nickname": settings.write_header_nickname,
-        "write_video_path": settings.write_header_video_path,
-        "write_subtitle_paths": settings.write_header_subtitles,
+        "write_date": context.write_header_date,
+        "write_generator": context.write_header_generator,
+        "write_nickname": context.write_header_nickname,
+        "write_video_path": context.write_header_video_path,
+        "write_subtitle_paths": context.write_header_subtitles,
         "date": QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm"),
-        "generator": f"{build_info.name} {build_info.version}",
-        "nickname": settings.nickname,
+        "generator": context.generator,
+        "nickname": context.nickname,
         "video_path": video_path,
         "video_name": video_name,
-        "subtitles": tuple(TypeMapperService.map_path_to_str(Path(s)) for s in player.external_subtitles),
+        "subtitles": tuple(TypeMapperService.map_path_to_str(Path(s)) for s in context.external_subtitles),
         "comments": [
             {**c, "time": c["time"] // TimeFormatterService.MILLISECONDS_PER_SECOND, "time_ms": c["time"]}
-            for c in context.comments.comments()
+            for c in context.comments
         ],
     }

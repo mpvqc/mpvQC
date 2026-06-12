@@ -41,12 +41,18 @@ class ExportService(QObject):
         super().__init__()
         self._mutex = QMutex()
 
-    def _context(self) -> RenderContext:
+    def _capture(self) -> RenderContext:
         return RenderContext(
-            settings=self._settings,
-            player=self._player,
-            build_info=self._build_info,
-            comments=self._comments,
+            write_header_date=self._settings.write_header_date,
+            write_header_generator=self._settings.write_header_generator,
+            write_header_nickname=self._settings.write_header_nickname,
+            write_header_video_path=self._settings.write_header_video_path,
+            write_header_subtitles=self._settings.write_header_subtitles,
+            nickname=self._settings.nickname,
+            video_path=self._player.path,
+            external_subtitles=tuple(self._player.external_subtitles),
+            generator=f"{self._build_info.name} {self._build_info.version}",
+            comments=tuple(self._comments.comments()),
         )
 
     def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:
@@ -64,7 +70,7 @@ class ExportService(QObject):
         return Path(video_directory).joinpath(file_name).absolute()
 
     def save(self, document: Path) -> None:
-        context = self._context()
+        context = self._capture()
 
         def _job() -> None:
             with QMutexLocker(self._mutex):
@@ -77,7 +83,7 @@ class ExportService(QObject):
         QThreadPool.globalInstance().start(_job)
 
     def export_classic(self, document: Path) -> None:
-        context = self._context()
+        context = self._capture()
 
         def _job() -> None:
             with QMutexLocker(self._mutex):
@@ -89,7 +95,7 @@ class ExportService(QObject):
         QThreadPool.globalInstance().start(_job)
 
     def export_custom(self, document: Path, template: Path) -> None:
-        context = self._context()
+        context = self._capture()
 
         def _job() -> None:
             with QMutexLocker(self._mutex):
@@ -101,11 +107,12 @@ class ExportService(QObject):
         QThreadPool.globalInstance().start(_job)
 
     def backup(self) -> None:
-        context = self._context()
+        backup_dir = self._paths.dir_backup
+        context = self._capture()
 
         def _job() -> None:
             try:
-                create_backup(self._paths, context)
+                create_backup(backup_dir, context)
             except Exception:
                 logger.exception("Failed to create backup")
 

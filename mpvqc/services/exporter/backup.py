@@ -13,24 +13,22 @@ from PySide6.QtCore import QCoreApplication, QDateTime
 from mpvqc.services.exporter.documents import render_backup
 
 if TYPE_CHECKING:
-    from mpvqc.services.application_paths import ApplicationPathsService
     from mpvqc.services.exporter.context import RenderContext
-    from mpvqc.services.player import PlayerService
 
 
-def backup(paths: ApplicationPathsService, context: RenderContext) -> None:
+def backup(backup_dir: Path, context: RenderContext) -> None:
     now = QDateTime.currentDateTime()
 
     zip_name = f"{now.toString('yyyy-MM')}.zip"
-    zip_path = paths.dir_backup / zip_name
-    file_name = f"{now.toString('yyyy-MM-dd_HH-mm-ss')}_{_video_name(context.player)}.json"
+    zip_path = backup_dir / zip_name
+    file_name = f"{now.toString('yyyy-MM-dd_HH-mm-ss')}_{_video_name(context.video_path)}.json"
 
     with ZipFile(zip_path, mode="a" if zip_path.exists() else "w", compression=ZIP_DEFLATED) as file:
         file.writestr(file_name, render_backup(context))
 
 
-def _video_name(player: PlayerService) -> str:
-    if path := player.path:
-        return Path(path).name
+def _video_name(video_path: str | None) -> str:
+    if video_path:
+        return Path(video_path).name
     #: Will be used in the file name proposal when saving a qc document when there's no video being loaded
     return QCoreApplication.translate("FileInteractionDialogs", "untitled")
