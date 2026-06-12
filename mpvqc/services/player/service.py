@@ -12,17 +12,19 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 
-import mpvqc.services.player.properties as props
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.main_window import MainWindowService
-from mpvqc.services.player.coordinators import DimensionsCoordinator, SubtitleLoadCoordinator
+from mpvqc.services.player.coordinators import SubtitleLoadCoordinator
+from mpvqc.services.player.state import OBSERVED_PROPERTIES, PlayerState, reduce_update
 from mpvqc.services.type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-    from typing import Any
 
     from mpv import MPV, MpvRenderContext
+    from PySide6.QtCore import SignalInstance
+
+    from mpvqc.services.player.state import RawPropertyValue
 
 logger = logging.getLogger(__name__)
 
@@ -50,36 +52,31 @@ class PlayerService(QObject):
 
     file_loaded = Signal()
 
+    _property_updated = Signal(str, object)
+
     def __init__(self) -> None:
         super().__init__()
 
         self._mpv: MPV | None = None
         self._shutdown_hook: Callable[[], None] | None = None
-        self._observed: list[props.MpvProperty[Any, Any]] = []
-        self._dimensions_coordinator = DimensionsCoordinator(on_both_ready=self.video_dimensions_changed.emit)
+        self._state = PlayerState()
         self._subtitle_coordinator = SubtitleLoadCoordinator(on_add=self._load_subtitles_now)
+        self._notifiers: dict[str, SignalInstance] = {
+            "duration": self.duration_changed,
+            "percent_pos": self.percent_pos_changed,
+            "time_pos": self.time_pos_changed,
+            "time_remaining": self.time_remaining_changed,
+            "path": self.path_changed,
+            "video_loaded": self.video_loaded_changed,
+            "filename": self.filename_changed,
+            "height": self.height_changed,
+            "width": self.width_changed,
+            "audio_track_count": self.audio_track_count_changed,
+            "subtitle_track_count": self.subtitle_track_count_changed,
+            "external_subtitles": self.external_subtitles_changed,
+        }
 
-        def register[P: props.MpvProperty[Any, Any]](prop: P) -> P:
-            self._observed.append(prop)
-            return prop
-
-        self._duration_prop = register(props.Duration(self.duration_changed))
-        self._percent_pos_prop = register(props.PercentPos(self.percent_pos_changed))
-        self._time_pos_prop = register(props.TimePos(self.time_pos_changed))
-        self._time_remaining_prop = register(props.TimeRemaining(self.time_remaining_changed))
-        self._path_prop = register(props.Path(self.path_changed))
-        self._video_loaded_prop = register(props.VideoLoaded(self.video_loaded_changed))
-        self._filename_prop = register(props.Filename(self.filename_changed))
-        self._height_prop = register(props.Height(self.height_changed))
-        self._width_prop = register(props.Width(self.width_changed))
-        self._audio_track_count_prop = register(props.AudioTrackCount(self.audio_track_count_changed))
-        self._subtitle_track_count_prop = register(props.SubtitleTrackCount(self.subtitle_track_count_changed))
-        self._external_subtitles_prop = register(props.ExternalSubtitles(self.external_subtitles_changed))
-
-        self._path_prop.on_change(lambda _: self._dimensions_coordinator.reset())
-        self._height_prop.on_change(self._dimensions_coordinator.on_height)
-        self._width_prop.on_change(self._dimensions_coordinator.on_width)
-
+        self._property_updated.connect(self._apply_property_update, Qt.ConnectionType.QueuedConnection)
         self.file_loaded.connect(self._on_file_loaded, Qt.ConnectionType.QueuedConnection)
 
     def init(self, win_id: int | None = None) -> None:
@@ -90,8 +87,8 @@ class PlayerService(QObject):
 
         mpv = MPV(**merged_args)
 
-        for prop in self._observed:
-            mpv.observe_property(prop.name, lambda _, v, p=prop: p.on_update(v))
+        for name in OBSERVED_PROPERTIES:
+            mpv.observe_property(name, lambda _, v, n=name: self._property_updated.emit(n, v))
 
         mpv.event_callback("file-loaded")(lambda _event: self.file_loaded.emit())
 
@@ -121,6 +118,25 @@ class PlayerService(QObject):
 
         return args
 
+    @Slot(str, object)
+    def _apply_property_update(self, name: str, raw: RawPropertyValue) -> None:
+        old = self._state
+        new = reduce_update(old, name, raw)
+        if new is old or new == old:
+            return
+        self._state = new
+        self._emit_field_changes(old, new)
+        self._emit_transitions(old, new)
+
+    def _emit_field_changes(self, old: PlayerState, new: PlayerState) -> None:
+        for field_name, signal in self._notifiers.items():
+            if (value := getattr(new, field_name)) != getattr(old, field_name):
+                signal.emit(value)
+
+    def _emit_transitions(self, old: PlayerState, new: PlayerState) -> None:
+        if new.has_dimensions and not old.has_dimensions:
+            self.video_dimensions_changed.emit(new.width, new.height)
+
     @property
     def _mpv_player(self) -> MPV:
         if self._mpv is None:
@@ -148,57 +164,57 @@ class PlayerService(QObject):
 
     @property
     def path(self) -> str:
-        return self._path_prop.cached
+        return self._state.path
 
     @property
     def filename(self) -> str:
-        return self._filename_prop.cached
+        return self._state.filename
 
     @property
     def percent_pos(self) -> int:
-        return self._percent_pos_prop.cached
+        return self._state.percent_pos
 
     @property
     def time_pos(self) -> int:
-        return self._time_pos_prop.cached
+        return self._state.time_pos
 
     @property
     def exact_time_pos(self) -> float:
         if self._mpv is not None and (raw := self._mpv.time_pos) is not None:
             return raw
-        return float(self._time_pos_prop.cached)
+        return float(self._state.time_pos)
 
     @property
     def time_remaining(self) -> int:
-        return self._time_remaining_prop.cached
+        return self._state.time_remaining
 
     @property
     def height(self) -> int:
-        return self._height_prop.cached
+        return self._state.height
 
     @property
     def width(self) -> int:
-        return self._width_prop.cached
+        return self._state.width
 
     @property
     def video_loaded(self) -> bool:
-        return self._video_loaded_prop.cached
+        return self._state.video_loaded
 
     @property
     def duration(self) -> float:
-        return self._duration_prop.cached
+        return self._state.duration
 
     @property
     def external_subtitles(self) -> tuple[str, ...]:
-        return self._external_subtitles_prop.cached
+        return self._state.external_subtitles
 
     @Property(int, notify=audio_track_count_changed)
     def audio_track_count(self) -> int:
-        return self._audio_track_count_prop.cached
+        return self._state.audio_track_count
 
     @Property(int, notify=subtitle_track_count_changed)
     def subtitle_track_count(self) -> int:
-        return self._subtitle_track_count_prop.cached
+        return self._state.subtitle_track_count
 
     def move_mouse(self, x: int, y: int) -> None:
         if self._mpv is None:
