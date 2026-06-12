@@ -41,7 +41,7 @@ ViewModels are Python `QObject` subclasses exposed to QML via PySide6's `@QmlEle
 
 ### Services — `mpvqc/services/`
 
-Services hold the application's logic and own its mutable state. They have no QML awareness — they are plain Python classes that other services and viewmodels can pull in via `inject.attr`. Each service sits in its own module, and `mpvqc/injections.py` registers the bindings for the inject container.
+Services hold the application's logic and own its mutable state. QML never talks to them directly: they are Python classes that other services and viewmodels pull in via `inject.attr`. A few define Qt types that viewmodels hand through to QML, such as the comment store and its selection state. Each service sits in its own module or package, and `mpvqc/injections.py` registers the bindings for the inject container.
 
 ### Bootstrap
 
