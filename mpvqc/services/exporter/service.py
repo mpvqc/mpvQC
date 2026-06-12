@@ -6,10 +6,11 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from threading import Lock
 from typing import Literal
 
 import inject
-from PySide6.QtCore import QCoreApplication, QMutex, QMutexLocker, QObject, QStandardPaths, Qt, QThreadPool, Signal
+from PySide6.QtCore import QCoreApplication, QObject, QStandardPaths, Qt, QThreadPool, Signal
 
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
@@ -40,7 +41,7 @@ class ExportService(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._mutex = QMutex()
+        self._lock = Lock()
         self._document_saved.connect(self._state.record_save, Qt.ConnectionType.QueuedConnection)
 
     def _capture(self) -> RenderContext:
@@ -75,7 +76,7 @@ class ExportService(QObject):
         context = self._capture()
 
         def _job() -> None:
-            with QMutexLocker(self._mutex):
+            with self._lock:
                 try:
                     save(document, context)
                     self._document_saved.emit(document)
@@ -88,7 +89,7 @@ class ExportService(QObject):
         context = self._capture()
 
         def _job() -> None:
-            with QMutexLocker(self._mutex):
+            with self._lock:
                 try:
                     export_classic(document, self._resources, context)
                 except ExportError as e:
@@ -100,7 +101,7 @@ class ExportService(QObject):
         context = self._capture()
 
         def _job() -> None:
-            with QMutexLocker(self._mutex):
+            with self._lock:
                 try:
                     export_custom(document, template, context)
                 except ExportError as e:
@@ -113,9 +114,10 @@ class ExportService(QObject):
         context = self._capture()
 
         def _job() -> None:
-            try:
-                create_backup(backup_dir, context)
-            except Exception:
-                logger.exception("Failed to create backup")
+            with self._lock:
+                try:
+                    create_backup(backup_dir, context)
+                except Exception:
+                    logger.exception("Failed to create backup")
 
         QThreadPool.globalInstance().start(_job)
