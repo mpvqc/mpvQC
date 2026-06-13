@@ -78,7 +78,7 @@ class Shortcut:
     def search_text(self) -> str:
         chords = [self.chord_text(alternative) for alternative in self.alternatives]
         searchable_chords = [chord for chord in chords if chord]
-        return "\n".join([self.label, self.category, *searchable_chords]).lower()
+        return "\n".join([self.label, self.category, *searchable_chords]).casefold()
 
     @staticmethod
     def chord_text(alternative: tuple[Key, ...]) -> str:
@@ -231,7 +231,7 @@ class MpvqcShortcutsModel(QSortFilterProxyModel):
         if value != self._query:
             self.beginFilterChange()
             self._query = value
-            self._needle = value.strip().lower()
+            self._needle = value.strip().casefold()
             self.endFilterChange(QSortFilterProxyModel.Direction.Rows)
             self.queryChanged.emit(value)
 
