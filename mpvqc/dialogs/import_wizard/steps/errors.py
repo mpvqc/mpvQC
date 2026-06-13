@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, assert_never, override
 
 from PySide6.QtCore import Property, QAbstractItemModel, QAbstractListModel, QByteArray, QCoreApplication, QObject, Qt
 from PySide6.QtQml import QmlElement, QmlUncreatable
@@ -86,6 +86,8 @@ def _reason_text(reason: DocumentRejectionReason) -> str:
         case DocumentRejectionReason.UNSUPPORTED_VERSION:
             #: Shown beneath a rejected document declaring a format version this mpvQC release does not know
             return QCoreApplication.translate("ImportWizardDialog", "Unsupported document format version")
-        case _:
+        case DocumentRejectionReason.INVALID:
             #: Shown beneath a rejected document that does not parse as any known QC document format
             return QCoreApplication.translate("ImportWizardDialog", "Not a valid QC document")
+        case _ as unreachable:
+            assert_never(unreachable)
