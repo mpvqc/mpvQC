@@ -67,6 +67,17 @@ def test_version_checker_new_version_available(service, build_info_service_mock)
     assert actual_title == "New Version Available"
 
 
+def test_version_checker_escapes_remote_version(service, build_info_service_mock):
+    build_info_service_mock.version = "0.1.1"
+
+    with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
+        mock_response(mock_request, body='{ "latest": "1.2.3<script>" }')
+        _, actual_text = service.check_for_new_version()
+
+    assert "&lt;script&gt;" in actual_text
+    assert "1.2.3<script>" not in actual_text
+
+
 def test_version_checker_service_error(service):
     error = HTTPError("https://example.com", 500, "Internal Error", Message(), None)
 
