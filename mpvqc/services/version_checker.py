@@ -5,6 +5,7 @@
 import json
 import urllib.error
 import urllib.request
+from html import escape
 
 import inject
 from PySide6.QtCore import QCoreApplication
@@ -43,7 +44,7 @@ class VersionCheckerService:
             return title, text
 
         if self._build_info.version != latest_version:
-            new_version = f"<i>{latest_version}</i>"
+            new_version = f"<i>{escape(latest_version)}</i>"
             home_url = f'<a href="{_HOME_URL}">{_HOME_URL}</a>'
 
             title = QCoreApplication.translate("VersionCheckDialog", "New Version Available")
