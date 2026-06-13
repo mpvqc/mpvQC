@@ -126,9 +126,11 @@ def configure_state(state_service) -> Callable:
     def _configure(**kwargs):
         # noinspection PyProtectedMember
         old = state_service._state
-        state_service._state = ApplicationState(
-            document=kwargs.get("document", old.document),
-            saved=bool(kwargs.get("saved", old.saved)),
+        state_service._set(
+            ApplicationState(
+                document=kwargs.get("document", old.document),
+                saved=bool(kwargs.get("saved", old.saved)),
+            )
         )
 
     return _configure

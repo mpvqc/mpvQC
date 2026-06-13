@@ -33,7 +33,7 @@ class MpvqcHeaderViewModel(QObject):
 
     @Property(str, notify=windowTitleChanged)
     def windowTitle(self) -> str:
-        return self._derive_window_title()
+        return self._window_title
 
     @Slot()
     def _update_window_title(self) -> None:
