@@ -110,14 +110,9 @@ class Renderer(QQuickFramebufferObject.Renderer):
             if self._ctx is None:
                 return
 
-            factor: float = self._main_window.display_zoom_factor
-            rect = self._parent.size()
-
-            width = int(rect.width() * factor)
-            height = int(rect.height() * factor)
-            fbo = self.framebufferObject().handle()
-
-            self._ctx.render(flip_y=False, opengl_fbo={"w": width, "h": height, "fbo": fbo})
+            fbo = self.framebufferObject()
+            size = fbo.size()
+            self._ctx.render(flip_y=False, opengl_fbo={"w": size.width(), "h": size.height(), "fbo": fbo.handle()})
 
     def release(self) -> None:
         with self._lock:
