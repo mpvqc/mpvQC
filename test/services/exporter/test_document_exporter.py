@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import NamedTuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -292,3 +294,53 @@ def test_backup_failure_is_logged(configure_mocks, service, application_paths_se
 
     assert "Failed to create backup" in caplog.text
     assert not (tmp_path / "does-not-exist").exists()
+
+
+def _make_template(tmp_path: Path) -> Path:
+    template = tmp_path / "template.jinja"
+    template.write_text("static", encoding="utf-8")
+    return template
+
+
+class UnexpectedErrorCase(NamedTuple):
+    name: str
+    render_target: str
+    log_message: str
+    invoke: Callable[[ExportService, Path], None]
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        UnexpectedErrorCase(
+            name="save",
+            render_target="mpvqc.services.exporter.writer.render_v1",
+            log_message="Failed to save document",
+            invoke=lambda service, tmp_path: service.save(tmp_path / "out.json"),
+        ),
+        UnexpectedErrorCase(
+            name="export_classic",
+            render_target="mpvqc.services.exporter.writer.render_classic",
+            log_message="Failed to export document",
+            invoke=lambda service, tmp_path: service.export_classic(tmp_path / "out.txt"),
+        ),
+        UnexpectedErrorCase(
+            name="export_custom",
+            render_target="mpvqc.services.exporter.writer.render_classic",
+            log_message="Failed to export document",
+            invoke=lambda service, tmp_path: service.export_custom(tmp_path / "out.txt", _make_template(tmp_path)),
+        ),
+    ],
+    ids=lambda case: case.name,
+)
+def test_unexpected_error_is_logged_and_not_signaled(case, configure_mocks, service, tmp_path, make_spy, caplog):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(case.render_target, MagicMock(side_effect=RuntimeError("boom")))
+        case.invoke(service, tmp_path)
+        wait_for_jobs()
+
+    assert error_spy.count() == 0
+    assert case.log_message in caplog.text
