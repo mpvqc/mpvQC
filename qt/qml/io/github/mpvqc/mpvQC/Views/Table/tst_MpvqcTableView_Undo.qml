@@ -37,28 +37,28 @@ TestCase {
                     "comment": isLong ? `Row ${i}: ${longText}` : `Row ${i}`
                 });
             }
-            testCase.control.viewModel.importComments(filler);
+            _helpers.bridge.importComments(filler);
             testCase.waitForRendering(testCase.control);
         }
 
         function editComment(row: int, newText: string): string {
-            const originalText = testCase.control.viewModel.comments()[row].comment;
+            const originalText = _helpers.bridge.comment(row).comment;
             testCase.control.commentList.currentIndex = row;
             testCase.waitForRendering(testCase.control);
             testCase.control.viewModel.updateComment(row, newText);
             testCase.waitForRendering(testCase.control);
-            testCase.compare(testCase.control.viewModel.comments()[row].comment, newText);
+            testCase.compare(_helpers.bridge.comment(row).comment, newText);
             return originalText;
         }
 
         function editTime(srcRow: int, newTime: int): var {
-            const original = testCase.control.viewModel.comments()[srcRow];
+            const original = _helpers.bridge.comment(srcRow);
             testCase.control.commentList.currentIndex = srcRow;
             testCase.waitForRendering(testCase.control);
             testCase.control.viewModel.updateTime(srcRow, newTime);
             testCase.tryVerify(() => testCase.control.viewModel.selection.selectedRowVisible === true);
             const dstRow = testCase.control.commentList.currentIndex;
-            testCase.compare(testCase.control.viewModel.comments()[dstRow].time, newTime);
+            testCase.compare(_helpers.bridge.comment(dstRow).time, newTime);
             return {
                 "dstRow": dstRow,
                 "originalTime": original.time,
@@ -112,23 +112,23 @@ TestCase {
         control.viewModel.undo();
         _expect.hasEventuallyCount(control, 0);
 
-        const before = JSON.stringify(control.viewModel.comments());
+        const before = JSON.stringify(_helpers.bridge.comments());
 
         control.viewModel.undo();
         waitForRendering(control);
 
-        compare(JSON.stringify(control.viewModel.comments()), before);
+        compare(JSON.stringify(_helpers.bridge.comments()), before);
     }
 
     function test_redoIsNoopWithEmptyRedoStack(): void {
         _undoHelpers.editComment(1, "edited");
-        const after = JSON.stringify(control.viewModel.comments());
+        const after = JSON.stringify(_helpers.bridge.comments());
 
         // Fresh edit clears the redo stack; redo should now be a no-op.
         control.viewModel.redo();
         waitForRendering(control);
 
-        compare(JSON.stringify(control.viewModel.comments()), after);
+        compare(JSON.stringify(_helpers.bridge.comments()), after);
     }
 
     function test_undoCommentEditRevertsWhenSelectionMatches(): void {
@@ -136,7 +136,7 @@ TestCase {
 
         control.viewModel.undo();
 
-        tryVerify(() => control.viewModel.comments()[1].comment === originalText);
+        tryVerify(() => _helpers.bridge.comment(1).comment === originalText);
     }
 
     function test_redoCommentEditReappliesWhenSelectionMatches(): void {
@@ -146,7 +146,7 @@ TestCase {
 
         control.viewModel.redo();
 
-        tryVerify(() => control.viewModel.comments()[1].comment === "edited");
+        tryVerify(() => _helpers.bridge.comment(1).comment === "edited");
     }
 
     function test_undoCommentEditMovesSelectionThenRevertsWhenSelectionElsewhere(): void {
@@ -155,10 +155,10 @@ TestCase {
 
         control.viewModel.undo();
         tryVerify(() => control.commentList.currentIndex === 1);
-        compare(control.viewModel.comments()[1].comment, "edited");
+        compare(_helpers.bridge.comment(1).comment, "edited");
 
         control.viewModel.undo();
-        tryVerify(() => control.viewModel.comments()[1].comment === originalText);
+        tryVerify(() => _helpers.bridge.comment(1).comment === originalText);
     }
 
     function test_redoCommentEditMovesSelectionThenReappliesWhenSelectionElsewhere(): void {
@@ -169,10 +169,10 @@ TestCase {
 
         control.viewModel.redo();
         tryVerify(() => control.commentList.currentIndex === 1);
-        compare(control.viewModel.comments()[1].comment, originalText);
+        compare(_helpers.bridge.comment(1).comment, originalText);
 
         control.viewModel.redo();
-        tryVerify(() => control.viewModel.comments()[1].comment === "edited");
+        tryVerify(() => _helpers.bridge.comment(1).comment === "edited");
     }
 
     function test_undoCommentEditScrollsToRowThenRevertsWhenSelectionOffscreen(): void {
@@ -183,10 +183,10 @@ TestCase {
         control.viewModel.undo();
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
         waitForRendering(control);
-        compare(control.viewModel.comments()[0].comment, "edited");
+        compare(_helpers.bridge.comment(0).comment, "edited");
 
         control.viewModel.undo();
-        tryVerify(() => control.viewModel.comments()[0].comment === originalText);
+        tryVerify(() => _helpers.bridge.comment(0).comment === originalText);
     }
 
     function test_undoTimeEditRevertsWhenSelectionMatches(): void {
@@ -197,7 +197,7 @@ TestCase {
         control.viewModel.undo();
 
         tryVerify(() => {
-            const c = control.viewModel.comments()[250];
+            const c = _helpers.bridge.comment(250);
             return c.time === edit.originalTime && c.comment === edit.originalComment;
         });
     }
@@ -212,7 +212,7 @@ TestCase {
 
         control.viewModel.redo();
 
-        tryVerify(() => control.viewModel.comments()[edit.dstRow].time === 5);
+        tryVerify(() => _helpers.bridge.comment(edit.dstRow).time === 5);
     }
 
     function test_undoTimeEditMovesSelectionThenRevertsWhenSelectionElsewhere(): void {
@@ -224,11 +224,11 @@ TestCase {
 
         control.viewModel.undo();
         tryVerify(() => control.commentList.currentIndex === edit.dstRow && control.viewModel.selection.selectedRowVisible === true);
-        compare(control.viewModel.comments()[edit.dstRow].time, 5);
+        compare(_helpers.bridge.comment(edit.dstRow).time, 5);
 
         control.viewModel.undo();
         tryVerify(() => {
-            const c = control.viewModel.comments()[250];
+            const c = _helpers.bridge.comment(250);
             return c.time === edit.originalTime && c.comment === edit.originalComment;
         });
     }
@@ -248,10 +248,10 @@ TestCase {
 
         control.viewModel.redo();
         tryVerify(() => control.commentList.currentIndex === 250);
-        compare(control.viewModel.comments()[250].time, edit.originalTime);
+        compare(_helpers.bridge.comment(250).time, edit.originalTime);
 
         control.viewModel.redo();
-        tryVerify(() => control.viewModel.comments()[edit.dstRow].time === 5);
+        tryVerify(() => _helpers.bridge.comment(edit.dstRow).time === 5);
     }
 
     function test_undoTimeEditScrollsToRowThenRevertsWhenSelectionOffscreen(): void {
@@ -262,11 +262,11 @@ TestCase {
         control.viewModel.undo();
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
         waitForRendering(control);
-        compare(control.viewModel.comments()[edit.dstRow].time, 5);
+        compare(_helpers.bridge.comment(edit.dstRow).time, 5);
 
         control.viewModel.undo();
         tryVerify(() => {
-            const c = control.viewModel.comments()[250];
+            const c = _helpers.bridge.comment(250);
             return c.time === edit.originalTime && c.comment === edit.originalComment;
         });
     }
@@ -283,10 +283,10 @@ TestCase {
         control.viewModel.redo();
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true);
         waitForRendering(control);
-        compare(control.viewModel.comments()[250].time, edit.originalTime);
+        compare(_helpers.bridge.comment(250).time, edit.originalTime);
 
         control.viewModel.redo();
-        tryVerify(() => control.viewModel.comments()[edit.dstRow].time === 5);
+        tryVerify(() => _helpers.bridge.comment(edit.dstRow).time === 5);
     }
 
     function test_undoTimeEditScrollsBackToOriginalPosition(): void {
@@ -294,13 +294,13 @@ TestCase {
         control.commentList.currentIndex = 6;
         waitForRendering(control);
 
-        const startTime = control.viewModel.comments()[6].time;
+        const startTime = _helpers.bridge.comment(6).time;
         _undoHelpers.editTime(6, startTime + 1000000);
 
         control.viewModel.undo();
         waitForRendering(control);
 
-        tryVerify(() => control.viewModel.comments()[6].time === startTime);
+        tryVerify(() => _helpers.bridge.comment(6).time === startTime);
         tryVerify(() => control.viewModel.selection.selectedRowVisible === true, 2000, "view did not follow the row after undoing the time change");
     }
 
@@ -312,7 +312,7 @@ TestCase {
         keyClick(Qt.Key_Escape);
         _wait.editControlClosed(control);
         control.viewModel.updateComment(0, "first");
-        tryVerify(() => control.viewModel.comments()[0].comment === "first");
+        tryVerify(() => _helpers.bridge.comment(0).comment === "first");
         compare(control.commentCount, 6);
 
         // Add B the same way (also time 0, seq tie-break places it at index 1).
@@ -321,7 +321,7 @@ TestCase {
         keyClick(Qt.Key_Escape);
         _wait.editControlClosed(control);
         control.viewModel.updateComment(1, "second");
-        tryVerify(() => control.viewModel.comments()[1].comment === "second");
+        tryVerify(() => _helpers.bridge.comment(1).comment === "second");
         compare(control.commentCount, 7);
 
         // Select A — disarms the merge so the next text edit is its own command.
@@ -330,37 +330,37 @@ TestCase {
 
         // Edit A's text — separate UpdateComment, not fused.
         control.viewModel.updateComment(0, "first edited");
-        compare(control.viewModel.comments()[0].comment, "first edited");
+        compare(_helpers.bridge.comment(0).comment, "first edited");
 
         // Select B and re-time it past the init rows; B moves from 1 to 6.
         control.commentList.currentIndex = 1;
         waitForRendering(control);
         control.viewModel.updateTime(1, 8 * 1000);
-        tryVerify(() => control.viewModel.comments()[6].comment === "second");
-        compare(control.viewModel.comments()[6].time, 8 * 1000);
+        tryVerify(() => _helpers.bridge.comment(6).comment === "second");
+        compare(_helpers.bridge.comment(6).time, 8 * 1000);
 
         // Undo time move — focused on B at dst index 6.
         tryVerify(() => control.commentList.currentIndex === 6);
         control.viewModel.undo();
-        tryVerify(() => control.viewModel.comments()[1].comment === "second");
-        compare(control.viewModel.comments()[1].time, 0);
+        tryVerify(() => _helpers.bridge.comment(1).comment === "second");
+        compare(_helpers.bridge.comment(1).time, 0);
 
         // Re-focus A; undo the text edit.
         control.commentList.currentIndex = 0;
         waitForRendering(control);
         control.viewModel.undo();
-        tryVerify(() => control.viewModel.comments()[0].comment === "first");
+        tryVerify(() => _helpers.bridge.comment(0).comment === "first");
 
         // Redo the text edit — still focused on A.
         control.viewModel.redo();
-        tryVerify(() => control.viewModel.comments()[0].comment === "first edited");
+        tryVerify(() => _helpers.bridge.comment(0).comment === "first edited");
 
         // Re-focus B; redo the time move and verify the round-trip state.
         control.commentList.currentIndex = 1;
         waitForRendering(control);
         control.viewModel.redo();
-        tryVerify(() => control.viewModel.comments()[6].comment === "second");
-        compare(control.viewModel.comments()[6].time, 8 * 1000);
-        compare(control.viewModel.comments()[0].comment, "first edited");
+        tryVerify(() => _helpers.bridge.comment(6).comment === "second");
+        compare(_helpers.bridge.comment(6).time, 8 * 1000);
+        compare(_helpers.bridge.comment(0).comment, "first edited");
     }
 }

@@ -53,7 +53,7 @@ TestCase {
     function test_timerWritesSeededCommentToBackupZip(): void {
         const view = makeControl();
 
-        view.viewModel.importComments([
+        bridge.importComments([
             {
                 "time": 1,
                 "commentType": "Comment Type 1",

@@ -218,7 +218,7 @@ TestCase {
     function test_importAbortsEdit(): void {
         _expect.hasItemCommentType(control, 2, "Comment Type 3");
 
-        control.viewModel.importComments([
+        _helpers.bridge.importComments([
             {
                 "time": 99 * 1000,
                 "commentType": "Comment Type 1",

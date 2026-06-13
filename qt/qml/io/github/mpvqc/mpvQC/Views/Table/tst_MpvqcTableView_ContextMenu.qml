@@ -252,7 +252,7 @@ TestCase {
     function test_importClosesContextMenu(): void {
         _expect.hasContextMenuOpen(control);
 
-        control.viewModel.importComments([
+        _helpers.bridge.importComments([
             {
                 "time": 99,
                 "commentType": "Comment Type 1",

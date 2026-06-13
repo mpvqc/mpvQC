@@ -50,7 +50,7 @@ TestCase {
                 "comment": `Comment ${i}`
             });
         }
-        control.viewModel.importComments(extra);
+        _helpers.bridge.importComments(extra);
         waitForRendering(control);
     }
 

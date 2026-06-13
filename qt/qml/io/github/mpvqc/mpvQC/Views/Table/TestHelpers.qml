@@ -31,7 +31,7 @@ QtObject {
             width: root.testCase.width
 
             Component.onCompleted: {
-                _realCommentTypesControl.viewModel.importComments([
+                root.bridge.importComments([
                     {
                         "time": 1 * 1000,
                         "commentType": "Comment Type 1",
@@ -64,7 +64,7 @@ QtObject {
             width: root.testCase.width
 
             Component.onCompleted: {
-                _mockVmControl.viewModel.importComments([
+                root.bridge.importComments([
                     {
                         "time": 1 * 1000,
                         "commentType": "Comment Type 1",
@@ -95,7 +95,7 @@ QtObject {
             }
 
             function getItem(index: int, property: string): var {
-                return viewModel.comments()[index][property];
+                return root.bridge.comment(index)[property];
             }
         }
     }
