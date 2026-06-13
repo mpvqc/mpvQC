@@ -3,13 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import functools
-import logging
 
 from PySide6.QtCore import QDir, QTranslator
 
 from .settings import default_comment_types
-
-logger = logging.getLogger(__name__)
 
 
 class ReverseTranslatorService:
@@ -31,10 +28,7 @@ def _lookup_table() -> dict[str, str]:
 
         for english in default_comment_types():
             translated = translator.translate("CommentTypes", english)
-            if translated is None:
-                msg = f"Failed to translate comment type: {english!r}"
-                logger.error(msg)
-                raise ValueError(msg)
-            table[translated] = english
+            if translated:
+                table[translated] = english
 
     return table
