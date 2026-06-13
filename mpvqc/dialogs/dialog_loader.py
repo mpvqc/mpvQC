@@ -36,7 +36,8 @@ class MpvqcDialogLoaderViewModel(QObject):
         if self._active_dialog_vm is not None:
             self._active_dialog_vm.deleteLater()
             self._active_dialog_vm = None
-            self._importer.cancel_pending()
+            if self._importer.busy:
+                self._importer.cancel_pending()
 
     @Slot(UnfinishedPlan)
     def _request_import_wizard(self, unfinished_plan: UnfinishedPlan) -> None:

@@ -81,3 +81,21 @@ def test_does_not_request_wizard_when_plan_has_no_steps(loader):
 
     assert requested == []
     assert loader._active_dialog_vm is None
+
+
+def test_release_cancels_pending_when_importer_busy(loader, importer_service_mock):
+    importer_service_mock.busy = True
+    loader._active_dialog_vm = QObject()
+
+    loader.releaseActiveDialog()
+
+    importer_service_mock.cancel_pending.assert_called_once_with()
+
+
+def test_release_does_not_cancel_pending_when_importer_idle(loader, importer_service_mock):
+    importer_service_mock.busy = False
+    loader._active_dialog_vm = QObject()
+
+    loader.releaseActiveDialog()
+
+    importer_service_mock.cancel_pending.assert_not_called()
