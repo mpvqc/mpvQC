@@ -11,13 +11,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, cast, override
 
 from PySide6.QtCore import QEvent, QObject, Qt
-from PySide6.QtGui import QCursor
 
 if TYPE_CHECKING:
-    from PySide6.QtGui import QGuiApplication, QWindow
+    from PySide6.QtGui import QGuiApplication, QMouseEvent, QWindow
 
 
 class LinuxEventFilter(QObject):
@@ -43,10 +42,10 @@ class LinuxEventFilter(QObject):
                 self._cursor_override_active = False
             return False
 
-        cursor_pos = QCursor.pos()
+        global_pos = cast("QMouseEvent", event).globalPosition()
         window_pos = self._window.position()
-        x = cursor_pos.x() - window_pos.x()
-        y = cursor_pos.y() - window_pos.y()
+        x = int(global_pos.x() - window_pos.x())
+        y = int(global_pos.y() - window_pos.y())
 
         window_width = self._window.width()
         window_height = self._window.height()
