@@ -36,25 +36,6 @@ class CommentTypeValidatorService:
         translated = ReverseTranslatorService.lookup(new_comment_type)
         return new_comment_type in existing_comment_types or translated in existing_comment_types
 
-    def validate_editing_of_comment_type(
-        self,
-        new_comment_type: str,
-        comment_type_being_edited: str,
-        existing_comment_types: list[str],
-    ) -> str | None:
-        if not new_comment_type:
-            return self._must_not_be_blank()
-        if self._contains_forbidden_characters(new_comment_type):
-            return self._must_not_contain_forbidden_characters()
-
-        comment_types = existing_comment_types.copy()
-        if (translated := ReverseTranslatorService.lookup(comment_type_being_edited)) in comment_types:
-            comment_types.remove(translated)
-        if self._already_exists(new_comment_type, comment_types):
-            return self._must_not_already_exist()
-
-        return None
-
     @staticmethod
     def _must_not_be_blank() -> str:
         return QCoreApplication.translate("CommentTypesDialog", "A comment type must not be blank")
