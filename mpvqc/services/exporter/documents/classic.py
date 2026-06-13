@@ -25,9 +25,10 @@ def render_classic(template: str, context: RenderContext) -> str:
 
 @functools.cache
 def _environment() -> Environment:
-    from jinja2 import BaseLoader, Environment
+    from jinja2 import BaseLoader
+    from jinja2.sandbox import ImmutableSandboxedEnvironment
 
-    environment = Environment(loader=BaseLoader(), keep_trailing_newline=True)  # noqa: S701
+    environment = ImmutableSandboxedEnvironment(loader=BaseLoader(), keep_trailing_newline=True)
     environment.filters["as_time"] = _as_time
     environment.filters["as_time_ms"] = _as_time_ms
     environment.filters["as_comment_type"] = _as_comment_type
