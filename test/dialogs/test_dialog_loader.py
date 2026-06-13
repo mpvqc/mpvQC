@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import QCoreApplication, QEvent
+from PySide6.QtCore import QCoreApplication, QEvent, QObject
 
 from mpvqc.datamodels import DocumentRejectionReason, RejectedDocument
 from mpvqc.dialogs import MpvqcDialogLoaderViewModel
@@ -63,3 +63,21 @@ def test_releases_view_model_after_wizard(loader):
     loader.releaseActiveDialog()
 
     _assert_view_model_collected(captured[0])
+
+
+def test_does_not_request_wizard_when_plan_has_no_steps(loader):
+    requested: list[QObject] = []
+    loader.importWizardDialogRequested.connect(lambda vm: requested.append(vm))
+
+    unfinished_plan = UnfinishedPlan(
+        comments=(),
+        session=session.Merge(),
+        video=video.Skip(),
+        subtitles=subtitles.Skip(),
+        errors=errors.Absent(),
+    )
+
+    loader._request_import_wizard(unfinished_plan)
+
+    assert requested == []
+    assert loader._active_dialog_vm is None
