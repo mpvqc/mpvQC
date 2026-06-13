@@ -303,6 +303,8 @@ class PlayerService(QObject):
         self._shutdown_hook = hook
 
     def terminate(self) -> None:
+        if self._mpv is None:
+            return
         if self._shutdown_hook is not None:
             self._shutdown_hook()
         self._mpv_player.terminate()
