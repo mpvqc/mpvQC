@@ -161,3 +161,19 @@ def test_window_title_changed(
 
     settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
     assert spy.count() == 1
+
+
+def test_window_title_reflects_only_notified_changes(
+    view_model,
+    configure_state,
+    player_service_mock,
+    settings_service,
+):
+    configure_state(saved=True)
+    settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
+    cached = view_model.windowTitle
+
+    player_service_mock.video_loaded = True
+    player_service_mock.filename = "video.mp4"
+
+    assert view_model.windowTitle == cached
