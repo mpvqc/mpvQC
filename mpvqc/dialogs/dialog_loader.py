@@ -43,6 +43,7 @@ class MpvqcDialogLoaderViewModel(QObject):
     def _request_import_wizard(self, unfinished_plan: UnfinishedPlan) -> None:
         if not compute_steps(unfinished_plan):
             logger.error("UnfinishedPlan has no steps; unfinished_plan=%r", unfinished_plan)
+            self._importer.cancel_pending()
             return
 
         self._active_dialog_vm = MpvqcImportWizardViewModel(self, unfinished_plan)

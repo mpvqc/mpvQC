@@ -65,7 +65,7 @@ def test_releases_view_model_after_wizard(loader):
     _assert_view_model_collected(captured[0])
 
 
-def test_does_not_request_wizard_when_plan_has_no_steps(loader):
+def test_does_not_request_wizard_when_plan_has_no_steps(loader, importer_service_mock):
     requested: list[QObject] = []
     loader.importWizardDialogRequested.connect(lambda vm: requested.append(vm))
 
@@ -81,6 +81,7 @@ def test_does_not_request_wizard_when_plan_has_no_steps(loader):
 
     assert requested == []
     assert loader._active_dialog_vm is None
+    importer_service_mock.cancel_pending.assert_called_once_with()
 
 
 def test_release_cancels_pending_when_importer_busy(loader, importer_service_mock):
