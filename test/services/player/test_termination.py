@@ -4,6 +4,16 @@
 
 from unittest.mock import MagicMock, call
 
+from mpvqc.services import PlayerService
+
+
+def test_terminate_is_a_noop_when_mpv_not_initialized():
+    service = PlayerService()
+
+    service.terminate()
+
+    assert service._mpv is None
+
 
 def test_terminate_terminates_mpv(player_service, mpv_mock):
     player_service.terminate()
