@@ -6,7 +6,7 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.logging_utils import use_color
+from mpvqc.logging_utils import logger_name_from, use_color
 
 
 class UseColorTestCase(NamedTuple):
@@ -36,3 +36,34 @@ def test_use_color(monkeypatch, test_case: UseColorTestCase):
         monkeypatch.setenv("NO_COLOR", test_case.env_var)
     monkeypatch.setattr("sys.stdout.isatty", lambda: test_case.is_tty)
     assert use_color() == test_case.expected
+
+
+class LoggerNameCase(NamedTuple):
+    name: str
+    raw: str
+    expected: str
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        LoggerNameCase(
+            name="qrc root file",
+            raw="qrc:/qt/qml/MpvqcApplication.qml",
+            expected="MpvqcApplication",
+        ),
+        LoggerNameCase(
+            name="trailing qml chars kept",
+            raw="qrc:/qt/qml/MpvqcOverlayPanel.qml",
+            expected="MpvqcOverlayPanel",
+        ),
+        LoggerNameCase(
+            name="nested module path",
+            raw="qrc:/qt/qml/io/github/mpvqc/mpvQC/Views/Player/MpvqcPlayerView.qml",
+            expected="io.github.mpvqc.mpvQC.Views.Player.MpvqcPlayerView",
+        ),
+    ],
+    ids=lambda case: case.name,
+)
+def test_logger_name_from(case: LoggerNameCase):
+    assert logger_name_from(case.raw) == case.expected
