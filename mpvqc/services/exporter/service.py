@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 from threading import Lock
 from typing import Literal
@@ -25,6 +26,13 @@ from .context import RenderContext
 from .writer import ExportError, export_classic, export_custom, save
 
 logger = logging.getLogger(__name__)
+
+
+_INVALID_FILENAME_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+
+
+def _sanitize_filename_component(value: str) -> str:
+    return _INVALID_FILENAME_CHARS.sub("_", value)
 
 
 class ExportService(QObject):
@@ -67,7 +75,7 @@ class ExportService(QObject):
             video_directory = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.MoviesLocation)
             video_name = QCoreApplication.translate("FileInteractionDialogs", "untitled")
 
-        nickname = self._settings.nickname
+        nickname = _sanitize_filename_component(self._settings.nickname or "")
         file_name = f"[QC]_{video_name}_{nickname}.{suffix}" if nickname else f"[QC]_{video_name}.{suffix}"
 
         return Path(video_directory).joinpath(file_name).absolute()
