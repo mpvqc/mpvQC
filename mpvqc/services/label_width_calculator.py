@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Iterable
+from collections.abc import Collection
 from functools import cached_property
 
 import inject
@@ -19,7 +19,7 @@ class LabelWidthCalculatorService:
     def _font_metrics(self) -> QFontMetricsF:
         return QFontMetricsF(self._font_loader.application_font())
 
-    def calculate_width_for(self, texts: Iterable[str]) -> int:
+    def calculate_width_for(self, texts: Collection[str]) -> int:
         if not texts:
             return 0
 
