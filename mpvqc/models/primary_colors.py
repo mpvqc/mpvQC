@@ -55,6 +55,8 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
+        if parent is not None and parent.isValid():
+            return 0
         return self._themes.theme(self._theme_identifier).palette_count
 
     @override
