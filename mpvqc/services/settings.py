@@ -20,6 +20,7 @@ from PySide6.QtCore import (
     Signal,
 )
 
+from mpvqc.datamodels import LANGUAGES
 from mpvqc.enums import ImportFoundVideo, TimeFormat, WindowTitleFormat
 
 from .application_paths import ApplicationPathsService
@@ -52,8 +53,6 @@ def default_language(locale: QLocale | None = None) -> str:
         locale = QLocale.system()
 
     system_languages = locale.uiLanguages()
-
-    from mpvqc.models.languages import LANGUAGES
 
     for language in LANGUAGES:
         if language.identifier in system_languages:
