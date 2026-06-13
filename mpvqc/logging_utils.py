@@ -102,8 +102,15 @@ def setup_mpvqc_logging() -> None:
             logging.getLogger(name).setLevel(logging.WARNING)
 
 
-def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
+_URL_SCHEME_PATTERN: Final = re.compile(r"^\w+:")
 
+
+def logger_name_from(path: str) -> str:
+    path = _URL_SCHEME_PATTERN.sub("", path).lstrip("/").removeprefix("qt/qml/")
+    return path.replace("/", ".").removesuffix(".qml")
+
+
+def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
     levels: Final[dict[QtMsgType, int]] = {
         QtMsgType.QtDebugMsg: logging.DEBUG,
         QtMsgType.QtInfoMsg: logging.INFO,
@@ -112,23 +119,15 @@ def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
         QtMsgType.QtFatalMsg: logging.CRITICAL,
     }
 
-    logger_name_pattern = re.compile(r"file::(.*?):(.*?):\s(.*?)$")
-
     def handler(message_type: QtMsgType, context: QMessageLogContext, message: str) -> None:
         file = str(context.file) if context.file else None
 
         if file:
-            logger_name = file.removeprefix("file::/").replace("/", ".").rstrip(".qml")
+            logger_name = logger_name_from(file)
             line = context.line if isinstance(context.line, int) else 0
-            msg = message
-        elif message.startswith("file") and (match := logger_name_pattern.match(message)):
-            logger_name = match.group(1).lstrip("/").replace("/", ".").rstrip(".qml")
-            line = int(match.group(2).split(":")[0].strip())
-            msg = str(match.group(3))
         else:
             logger_name = "unknown"
             line = 0
-            msg = message
 
         log_level = levels.get(message_type, logging.ERROR)
         qml_logger = logging.getLogger(logger_name)
@@ -138,7 +137,7 @@ def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
             level=log_level,
             fn="",
             lno=line,
-            msg=msg,
+            msg=message,
             args=(),
             exc_info=None,
         )
