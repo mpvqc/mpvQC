@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Any, assert_never
+from typing import assert_never
 
 import inject
 from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, QPointF, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
-from mpvqc.datamodels import Comment
 from mpvqc.services import CommentsService, PlayerService, SettingsService, TimeFormatterService
 from mpvqc.services.comments import (
     AnimatedSelection,
@@ -170,15 +169,3 @@ class MpvqcCommentTableViewModel(QObject):
     @Slot()
     def redo(self) -> None:
         self._comments.redo()
-
-    @Slot(list)
-    def importComments(self, comments: list[dict[str, Any]]) -> None:
-        self._comments.import_comments(
-            [Comment(time=c["time"], comment_type=c["commentType"], comment=c["comment"]) for c in comments]
-        )
-
-    @Slot(result=list)
-    def comments(self) -> list[dict[str, Any]]:
-        return [
-            {"time": c.time, "commentType": c.comment_type, "comment": c.comment} for c in self._comments.comments()
-        ]

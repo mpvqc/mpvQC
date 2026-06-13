@@ -90,7 +90,7 @@ TestCase {
         control.addNewComment("Comment Type 2");
         tryVerify(() => control.commentCount === 2);
 
-        const rows = control.viewModel.comments();
+        const rows = _helpers.bridge.comments();
         compare(rows[0].commentType, "Comment Type 1");
         compare(rows[1].commentType, "Comment Type 2");
     }

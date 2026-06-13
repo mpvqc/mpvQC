@@ -59,7 +59,9 @@ def test_view_models_share_one_document(make_view_model):
     vm1 = make_view_model(comments=[Comment(time=0, comment_type="Type", comment="text")])
     vm2 = MpvqcCommentTableViewModel()
 
-    assert vm2.comments() == vm1.comments()
+    expected = (Comment(time=0, comment_type="Type", comment="text"),)
+    assert vm1._comments.comments() == expected
+    assert vm2._comments.comments() == expected
 
 
 def test_state_changes_on_mutation(make_view_model, state_service_mock):

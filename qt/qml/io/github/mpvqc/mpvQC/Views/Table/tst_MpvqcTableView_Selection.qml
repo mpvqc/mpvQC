@@ -307,7 +307,7 @@ TestCase {
         _wait.messageBoxOpened(control);
         _expect.hasMessageBoxOpen(control);
 
-        control.viewModel.importComments([
+        _helpers.bridge.importComments([
             {
                 "time": 99,
                 "commentType": "Comment Type 1",
@@ -400,7 +400,7 @@ TestCase {
                 "comment": `Row ${i}`
             });
         }
-        control.viewModel.importComments(filler);
+        _helpers.bridge.importComments(filler);
         waitForRendering(control);
 
         const list = control.commentList;
@@ -429,7 +429,7 @@ TestCase {
     }
 
     function test_unknownCommentTypeAppearsInEditMenu(): void {
-        control.viewModel.importComments([
+        _helpers.bridge.importComments([
             {
                 "time": 10 * 1000,
                 "commentType": "Legacy Type",
@@ -448,7 +448,7 @@ TestCase {
     }
 
     function test_unknownCommentTypeAppearsAtBottomOfEditMenu(): void {
-        control.viewModel.importComments([
+        _helpers.bridge.importComments([
             {
                 "time": 10 * 1000,
                 "commentType": "Legacy Type",

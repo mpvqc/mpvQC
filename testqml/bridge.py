@@ -11,6 +11,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
     ApplicationPathsService,
@@ -96,6 +97,24 @@ class MpvqcTestBridge(QObject):
     @Slot()
     def resetComments(self) -> None:
         inject.instance(CommentsService).reset()
+
+    @Slot(result=list)
+    def comments(self) -> list:
+        return [
+            {"time": c.time, "commentType": c.comment_type, "comment": c.comment}
+            for c in inject.instance(CommentsService).comments()
+        ]
+
+    @Slot(int, result=dict)
+    def comment(self, index: int) -> dict:
+        c = inject.instance(CommentsService).comment_at(index)
+        return {"time": c.time, "commentType": c.comment_type, "comment": c.comment}
+
+    @Slot(list)
+    def importComments(self, comments: list) -> None:
+        inject.instance(CommentsService).import_comments(
+            [Comment(time=c["time"], comment_type=c["commentType"], comment=c["comment"]) for c in comments]
+        )
 
     @Property(int, constant=True)
     def delayMs(self) -> int:
