@@ -30,15 +30,15 @@ def scan(documents: list[Path], videos: list[Path], subtitles: list[Path]) -> Sc
     doc_data = read_documents(documents)
 
     subtitle_sources = [
-        *(SubtitleSource(path=sub, explicitly_provided=True) for sub in subtitles),
-        *(SubtitleSource(path=sub, found_in_document=True) for sub in doc_data.existing_subtitles),
+        *(SubtitleSource(path=sub.resolve(), explicitly_provided=True) for sub in subtitles),
+        *(SubtitleSource(path=sub.resolve(), found_in_document=True) for sub in doc_data.existing_subtitles),
     ]
     merged_subtitles = _merge_subtitle_sources(subtitle_sources)
     subtitle_videos = find_videos_in_subtitles(tuple(s.path for s in merged_subtitles))
 
     video_sources = [
-        *(VideoSource(path=video, explicitly_provided=True) for video in videos),
-        *(VideoSource(path=video, found_in_document=True) for video in doc_data.existing_videos),
+        *(VideoSource(path=video.resolve(), explicitly_provided=True) for video in videos),
+        *(VideoSource(path=video.resolve(), found_in_document=True) for video in doc_data.existing_videos),
         *(VideoSource(path=video, found_in_subtitle=True) for video in subtitle_videos),
     ]
 

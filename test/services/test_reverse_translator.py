@@ -16,6 +16,7 @@ from mpvqc.services import ReverseTranslatorService
         ("Spelling", "Typo"),
         ("Spelling", "Ortografía"),
         ("not-found", "not-found"),
+        ("", ""),
     ],
 )
 def test_lookup_maps_translated_comment_types_to_english(expected, translated):

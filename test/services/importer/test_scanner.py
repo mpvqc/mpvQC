@@ -53,7 +53,7 @@ def subtitle_videos_mock(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
 
 def test_explicit_video_gets_explicit_flag() -> None:
     result = scanner.scan(documents=[], videos=[VIDEO_A], subtitles=[])
-    assert result.videos == (VideoSource(path=VIDEO_A, explicitly_provided=True),)
+    assert result.videos == (VideoSource(path=VIDEO_A.resolve(), explicitly_provided=True),)
 
 
 def test_doc_video_gets_doc_flag(read_documents_mock: MagicMock) -> None:
@@ -67,7 +67,7 @@ def test_doc_video_gets_doc_flag(read_documents_mock: MagicMock) -> None:
 
     result = scanner.scan(documents=[DOC_A], videos=[], subtitles=[])
 
-    assert result.videos == (VideoSource(path=VIDEO_A, found_in_document=True),)
+    assert result.videos == (VideoSource(path=VIDEO_A.resolve(), found_in_document=True),)
 
 
 def test_subtitle_referenced_video_gets_subtitle_flag(subtitle_videos_mock: MagicMock) -> None:
@@ -89,18 +89,18 @@ def test_video_sources_merge_flags_when_path_collides(
         existing_subtitles=(),
         comments=(),
     )
-    subtitle_videos_mock.return_value = (VIDEO_A,)
+    subtitle_videos_mock.return_value = (VIDEO_A.resolve(),)
 
     result = scanner.scan(documents=[DOC_A], videos=[VIDEO_A], subtitles=[SUB_A])
 
     assert result.videos == (
-        VideoSource(path=VIDEO_A, explicitly_provided=True, found_in_document=True, found_in_subtitle=True),
+        VideoSource(path=VIDEO_A.resolve(), explicitly_provided=True, found_in_document=True, found_in_subtitle=True),
     )
 
 
 def test_explicit_subtitle_gets_explicit_flag() -> None:
     result = scanner.scan(documents=[], videos=[], subtitles=[SUB_A])
-    assert result.subtitles == (SubtitleSource(path=SUB_A, explicitly_provided=True),)
+    assert result.subtitles == (SubtitleSource(path=SUB_A.resolve(), explicitly_provided=True),)
 
 
 def test_doc_subtitle_gets_doc_flag(read_documents_mock: MagicMock) -> None:
@@ -114,7 +114,7 @@ def test_doc_subtitle_gets_doc_flag(read_documents_mock: MagicMock) -> None:
 
     result = scanner.scan(documents=[DOC_A], videos=[], subtitles=[])
 
-    assert result.subtitles == (SubtitleSource(path=SUB_A, found_in_document=True),)
+    assert result.subtitles == (SubtitleSource(path=SUB_A.resolve(), found_in_document=True),)
 
 
 def test_subtitle_sources_merge_flags_when_path_collides(read_documents_mock: MagicMock) -> None:
@@ -128,7 +128,7 @@ def test_subtitle_sources_merge_flags_when_path_collides(read_documents_mock: Ma
 
     result = scanner.scan(documents=[DOC_A], videos=[], subtitles=[SUB_A])
 
-    assert result.subtitles == (SubtitleSource(path=SUB_A, explicitly_provided=True, found_in_document=True),)
+    assert result.subtitles == (SubtitleSource(path=SUB_A.resolve(), explicitly_provided=True, found_in_document=True),)
 
 
 def test_subtitle_paths_deduplicated_before_video_detection(
@@ -145,7 +145,7 @@ def test_subtitle_paths_deduplicated_before_video_detection(
 
     scanner.scan(documents=[DOC_A], videos=[], subtitles=[SUB_A])
 
-    subtitle_videos_mock.assert_called_once_with((SUB_A,))
+    subtitle_videos_mock.assert_called_once_with((SUB_A.resolve(),))
 
 
 def test_comments_and_documents_flow_through(read_documents_mock: MagicMock) -> None:
@@ -167,3 +167,39 @@ def test_comments_and_documents_flow_through(read_documents_mock: MagicMock) -> 
         RejectedDocument(DOC_B, DocumentRejectionReason.UNSUPPORTED_VERSION),
     )
     assert result.comments == (COMMENT, COMMENT, COMMENT)
+
+
+def test_video_sources_merge_when_spelling_differs(read_documents_mock: MagicMock, tmp_path: Path) -> None:
+    real = tmp_path / "movie.mkv"
+    real.write_bytes(b"")
+    (tmp_path / "sub").mkdir()
+    alias = tmp_path / "sub" / ".." / "movie.mkv"
+    read_documents_mock.return_value = DocumentImportResult(
+        valid_documents=(tmp_path / "a.qc",),
+        rejected_documents=(),
+        existing_videos=(alias,),
+        existing_subtitles=(),
+        comments=(),
+    )
+
+    result = scanner.scan(documents=[tmp_path / "a.qc"], videos=[real], subtitles=[])
+
+    assert result.videos == (VideoSource(path=real.resolve(), explicitly_provided=True, found_in_document=True),)
+
+
+def test_subtitle_sources_merge_when_spelling_differs(read_documents_mock: MagicMock, tmp_path: Path) -> None:
+    real = tmp_path / "subs.ass"
+    real.write_text("", encoding="utf-8")
+    (tmp_path / "sub").mkdir()
+    alias = tmp_path / "sub" / ".." / "subs.ass"
+    read_documents_mock.return_value = DocumentImportResult(
+        valid_documents=(tmp_path / "a.qc",),
+        rejected_documents=(),
+        existing_videos=(),
+        existing_subtitles=(alias,),
+        comments=(),
+    )
+
+    result = scanner.scan(documents=[tmp_path / "a.qc"], videos=[], subtitles=[real])
+
+    assert result.subtitles == (SubtitleSource(path=real.resolve(), explicitly_provided=True, found_in_document=True),)

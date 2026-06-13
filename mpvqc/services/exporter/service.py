@@ -90,6 +90,8 @@ class ExportService(QObject):
                     self._document_saved.emit(document)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
+                except Exception:
+                    logger.exception("Failed to save document")
 
         QThreadPool.globalInstance().start(_job)
 
@@ -102,6 +104,8 @@ class ExportService(QObject):
                     export_classic(document, self._resources, context)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
+                except Exception:
+                    logger.exception("Failed to export document")
 
         QThreadPool.globalInstance().start(_job)
 
@@ -114,6 +118,8 @@ class ExportService(QObject):
                     export_custom(document, template, context)
                 except ExportError as e:
                     self.export_error_occurred.emit(e.message, e.lineno)
+                except Exception:
+                    logger.exception("Failed to export document")
 
         QThreadPool.globalInstance().start(_job)
 
