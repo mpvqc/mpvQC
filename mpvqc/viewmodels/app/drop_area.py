@@ -34,9 +34,10 @@ class MpvqcDropAreaViewModel(QObject):
 
         for url in urls:
             path = self._type_mapper.map_url_to_path(url)
-            if path.suffix in document_extensions:
+            suffix = path.suffix.lower()
+            if suffix in document_extensions:
                 documents.append(path)
-            elif path.suffix in subtitle_extensions:
+            elif suffix in subtitle_extensions:
                 subtitles.append(path)
             else:
                 videos.append(path)

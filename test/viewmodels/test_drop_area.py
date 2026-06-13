@@ -35,14 +35,15 @@ def view_model() -> MpvqcDropAreaViewModel:
 def test_open_routes_dropped_files_by_extension(view_model, importer_service_mock):
     urls = [
         QUrl.fromLocalFile("/work/report.txt"),
-        QUrl.fromLocalFile("/work/report.json"),
+        QUrl.fromLocalFile("/work/notes.JSON"),
         QUrl.fromLocalFile("/work/subtitle.ass"),
+        QUrl.fromLocalFile("/work/other.SrT"),
         QUrl.fromLocalFile("/work/movie.mkv"),
     ]
 
     view_model.open(urls)
 
     documents, videos, subtitles = importer_service_mock.open.call_args.args
-    assert [path.name for path in documents] == ["report.txt", "report.json"]
+    assert [path.name for path in documents] == ["report.txt", "notes.JSON"]
     assert [path.name for path in videos] == ["movie.mkv"]
-    assert [path.name for path in subtitles] == ["subtitle.ass"]
+    assert [path.name for path in subtitles] == ["subtitle.ass", "other.SrT"]
