@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import dataclass, fields
+from typing import NamedTuple
 
 import pytest
 
@@ -199,19 +200,33 @@ def test_video_dimensions_emitted_once_both_arrive(player_service, make_spy):
     assert spy.at(0, 1) == 1080
 
 
-def test_video_dimensions_emitted_again_after_new_video(player_service, make_spy):
+class NewVideoCase(NamedTuple):
+    name: str
+    width: int
+    height: int
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        NewVideoCase("different resolution", 1280, 720),
+        NewVideoCase("same resolution", 1920, 1080),
+    ],
+    ids=lambda case: case.name,
+)
+def test_video_dimensions_emitted_again_after_new_video(player_service, make_spy, case):
     player_service._apply_property_update("path", "/movies/a.mkv")
     player_service._apply_property_update("width", 1920)
     player_service._apply_property_update("height", 1080)
 
     spy = make_spy(player_service.video_dimensions_changed)
     player_service._apply_property_update("path", "/movies/b.mkv")
-    player_service._apply_property_update("width", 1280)
-    player_service._apply_property_update("height", 720)
+    player_service._apply_property_update("width", case.width)
+    player_service._apply_property_update("height", case.height)
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == 1280
-    assert spy.at(0, 1) == 720
+    assert spy.at(0, 0) == case.width
+    assert spy.at(0, 1) == case.height
 
 
 def test_property_updates_apply_after_event_loop_hop(qt_app, player_service):
