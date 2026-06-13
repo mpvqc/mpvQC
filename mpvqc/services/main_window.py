@@ -22,9 +22,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-MAIN_WINDOW_OBJECT_NAME = "MpvqcMainWindow"
-
-
 class MainWindowService(QObject):
     _frameless = inject.attr(FramelessWindowService)
 
