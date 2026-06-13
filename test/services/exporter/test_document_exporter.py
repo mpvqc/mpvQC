@@ -210,6 +210,28 @@ def test_export_custom_signals_on_render_failure(
 
 
 @pytest.mark.parametrize(
+    "template_content",
+    [
+        "{{ ''.__class__.__mro__[1].__subclasses__() }}",
+        "{{ cycler.__init__.__globals__ }}",
+        "{{ comments.append(1) }}",
+    ],
+)
+def test_export_custom_blocks_unsafe_templates(configure_mocks, service, tmp_path, make_spy, template_content):
+    configure_mocks()
+    error_spy = make_spy(service.export_error_occurred)
+    file = tmp_path / "export.txt"
+    template = tmp_path / "template.jinja"
+    template.write_text(template_content, encoding="utf-8")
+
+    service.export_custom(file, template)
+    wait_for_jobs()
+
+    assert error_spy.count() == 1
+    assert not file.exists()
+
+
+@pytest.mark.parametrize(
     "read_error",
     [
         UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid"),
