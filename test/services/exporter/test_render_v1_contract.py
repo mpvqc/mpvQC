@@ -12,6 +12,7 @@ from typing import NamedTuple
 import pytest
 from jsonschema import Draft202012Validator, ValidationError
 
+from mpvqc.datamodels import Comment
 from mpvqc.services.exporter.documents.v1 import render_backup, render_v1
 from mpvqc.services.importer.reader import read_documents
 
@@ -40,9 +41,9 @@ CONFORMANCE_CASES = [
             "nickname": "lorem",
             "subtitles": ["/path/to/video.de.ass", "/path/to/video.en.srt"],
             "comments": [
-                {"time": 0, "commentType": "Translation", "comment": "Lorem ipsum"},
+                Comment(time=0, comment_type="Translation", comment="Lorem ipsum"),
                 # Hebrew: type "Phrasing"
-                {"time": (15 * 60 + 29) * 1000 + 340, "commentType": "ניסוח", "comment": ""},
+                Comment(time=(15 * 60 + 29) * 1000 + 340, comment_type="ניסוח", comment=""),
             ],
             "write_header_date": True,
             "write_header_generator": True,
@@ -115,7 +116,7 @@ def test_readme_example_validates_against_schema(validator):
 def test_rendered_backup_validates_against_schema(make_context, validator):
     context = make_context(
         video="/path/to/video.mkv",
-        comments=[{"time": 754321, "commentType": "Spelling", "comment": "Lorem ipsum"}],
+        comments=[Comment(time=754321, comment_type="Spelling", comment="Lorem ipsum")],
     )
 
     document = json.loads(render_backup(context))
@@ -124,7 +125,7 @@ def test_rendered_backup_validates_against_schema(make_context, validator):
 
 
 def test_backup_imports_losslessly(make_context, tmp_path):
-    context = make_context(comments=[{"time": 754321, "commentType": "Spelling", "comment": "Lorem ipsum"}])
+    context = make_context(comments=[Comment(time=754321, comment_type="Spelling", comment="Lorem ipsum")])
 
     document = tmp_path / "backup.json"
     document.write_text(render_backup(context), encoding="utf-8")
@@ -138,13 +139,13 @@ def test_backup_imports_losslessly(make_context, tmp_path):
 def test_exported_document_imports_losslessly(make_context, tmp_path):
     context = make_context(
         comments=[
-            {"time": 0, "commentType": "Translation", "comment": "Lorem ipsum"},
-            {"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""},
-            {"time": 359999 * 1000 + 999, "commentType": "Custom Type", "comment": "dolor sit amet"},
+            Comment(time=0, comment_type="Translation", comment="Lorem ipsum"),
+            Comment(time=(15 * 60 + 29) * 1000 + 340, comment_type="Spelling", comment=""),
+            Comment(time=359999 * 1000 + 999, comment_type="Custom Type", comment="dolor sit amet"),
             # Hebrew: type "Phrasing", text "from right to left"
-            {"time": 60 * 1000, "commentType": "ניסוח", "comment": "מימין לשמאל"},
+            Comment(time=60 * 1000, comment_type="ניסוח", comment="מימין לשמאל"),
             # CJK: type "subtitles", text "test" / "Chinese" / "Korean"
-            {"time": 61 * 1000, "commentType": "字幕", "comment": "テスト 中文 한국어 😀🎬"},
+            Comment(time=61 * 1000, comment_type="字幕", comment="テスト 中文 한국어 😀🎬"),
         ]
     )
 

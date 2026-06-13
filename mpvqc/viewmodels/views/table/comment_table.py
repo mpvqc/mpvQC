@@ -179,4 +179,6 @@ class MpvqcCommentTableViewModel(QObject):
 
     @Slot(result=list)
     def comments(self) -> list[dict[str, Any]]:
-        return self._comments.comments()
+        return [
+            {"time": c.time, "commentType": c.comment_type, "comment": c.comment} for c in self._comments.comments()
+        ]

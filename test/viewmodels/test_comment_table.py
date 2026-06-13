@@ -80,7 +80,7 @@ def test_add_row_captures_exact_player_time(make_view_model, player_service_mock
     vm.addRow("Translation")
 
     comment = vm._comments.comments()[0]
-    assert comment["time"] == 12345
+    assert comment.time == 12345
 
 
 def test_copy_to_clipboard(make_view_model, make_spy):

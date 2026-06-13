@@ -12,7 +12,7 @@ def test_import_comments(comments):
     assert comments.count == 5
     comments.import_comments((comment,))
     assert comments.count == 6
-    assert comments.comments()[-1]["time"] == 999
+    assert comments.comments()[-1].time == 999
 
 
 def test_import_sorts_comments(make_comments):
@@ -26,13 +26,13 @@ def test_import_sorts_comments(make_comments):
     )
 
     comments.import_comments(to_import)
-    assert [c["comment"] for c in comments.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
+    assert [c.comment for c in comments.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
 
     comments.undo()
     assert not comments.comments()
 
     comments.redo()
-    assert [c["comment"] for c in comments.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
+    assert [c.comment for c in comments.comments()] == ["Word 1", "Word 3", "Word 2", "Word 4"]
 
 
 def test_import_unsorted_focuses_time_maximum(make_comments, make_spy):
@@ -86,22 +86,22 @@ def test_import_comments_undo_redo(comments):
     comments.import_comments(to_import)
     assert comments.count == 8
     rows = comments.comments()
-    assert rows[1]["comment"] == "Undo Redo 1"
-    assert rows[3]["comment"] == "Undo Redo 2"
-    assert rows[5]["comment"] == "Undo Redo 3"
+    assert rows[1].comment == "Undo Redo 1"
+    assert rows[3].comment == "Undo Redo 2"
+    assert rows[5].comment == "Undo Redo 3"
 
     comments.undo()
     assert comments.count == 5
     rows = comments.comments()
-    assert rows[1]["comment"] == "Word 2"
-    assert rows[3]["comment"] == "Word 4"
+    assert rows[1].comment == "Word 2"
+    assert rows[3].comment == "Word 4"
 
     comments.redo()
     assert comments.count == 8
     rows = comments.comments()
-    assert rows[1]["comment"] == "Undo Redo 1"
-    assert rows[3]["comment"] == "Undo Redo 2"
-    assert rows[5]["comment"] == "Undo Redo 3"
+    assert rows[1].comment == "Undo Redo 1"
+    assert rows[3].comment == "Undo Redo 2"
+    assert rows[5].comment == "Undo Redo 3"
 
 
 def test_import_invalidates_search(comments):

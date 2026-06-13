@@ -7,12 +7,12 @@ from typing import Any
 from mpvqc.datamodels import Comment
 
 
-def assert_comments(expected: list[list[Any]], actual: list[dict[str, Any]]):
+def assert_comments(expected: list[list[Any]], actual: tuple[Comment, ...]):
     assert len(expected) == len(actual)
     for c_e, c_a in zip(expected, actual, strict=True):
-        assert c_e[0] == c_a["time"]
-        assert c_e[1] == c_a["commentType"]
-        assert c_e[2] == c_a["comment"]
+        assert c_e[0] == c_a.time
+        assert c_e[1] == c_a.comment_type
+        assert c_e[2] == c_a.comment
 
 
 def test_undo_redo_combination(make_comments):

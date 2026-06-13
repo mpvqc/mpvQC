@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, assert_never, cast
+from typing import TYPE_CHECKING, assert_never, cast
 
 import inject
 from PySide6.QtCore import QAbstractItemModel, QObject, Signal
@@ -62,10 +62,8 @@ class CommentsService(QObject):
     def count(self) -> int:
         return self._store.rowCount()
 
-    def comments(self) -> list[dict[str, Any]]:
-        return [
-            {"time": c.time, "commentType": c.comment_type, "comment": c.comment} for c in self._store.iter_comments()
-        ]
+    def comments(self) -> tuple[Comment, ...]:
+        return self._store.comments()
 
     def comment_at(self, row: int) -> Comment:
         return self._store.item(row).comment

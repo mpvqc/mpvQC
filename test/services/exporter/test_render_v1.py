@@ -11,6 +11,7 @@ from typing import NamedTuple
 
 import pytest
 
+from mpvqc.datamodels import Comment
 from mpvqc.services.exporter.documents.v1 import render_v1
 
 
@@ -32,8 +33,8 @@ def test_renders_full_document(make_context):
         nickname="ಠ_ಠ",
         subtitles=[Path.home() / "video.de.ass", Path.home() / "video.en.srt"],
         comments=[
-            {"time": 0, "commentType": "Translation", "comment": "My first comment"},
-            {"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""},
+            Comment(time=0, comment_type="Translation", comment="My first comment"),
+            Comment(time=(15 * 60 + 29) * 1000 + 340, comment_type="Spelling", comment=""),
         ],
         write_header_date=True,
         write_header_generator=True,

@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from mpvqc.datamodels import Comment
 from mpvqc.services import ResourceService
 from mpvqc.services.exporter.documents.classic import render_classic
 
@@ -95,9 +96,9 @@ def test_renders_partial_headers_generator(make_context, resource_service):
 def test_renders_comments(make_context, resource_service):
     context = make_context(
         comments=[
-            {"time": 0 * 1000, "commentType": "Translation", "comment": "My first comment"},
-            {"time": 50 * 1000, "commentType": "Spelling", "comment": "My second comment"},
-            {"time": 100 * 1000, "commentType": "Phrasing", "comment": "My third comment"},
+            Comment(time=0 * 1000, comment_type="Translation", comment="My first comment"),
+            Comment(time=50 * 1000, comment_type="Spelling", comment="My second comment"),
+            Comment(time=100 * 1000, comment_type="Phrasing", comment="My third comment"),
         ]
     )
 
@@ -117,19 +118,19 @@ def test_renders_comments(make_context, resource_service):
 
 
 def test_templates_receive_time_in_seconds(make_context):
-    context = make_context(comments=[{"time": 90 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+    context = make_context(comments=[Comment(time=90 * 1000, comment_type="Spelling", comment="My comment")])
 
     assert render_classic("{{ comments[0]['time'] }}", context) == "90"
 
 
 def test_templates_receive_exact_time_in_milliseconds(make_context):
-    context = make_context(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
+    context = make_context(comments=[Comment(time=(15 * 60 + 29) * 1000 + 340, comment_type="Spelling", comment="")])
 
     assert render_classic("{{ comments[0]['time_ms'] }}", context) == "929340"
 
 
 def test_as_time_ms_filter_formats_subsecond_time(make_context):
-    context = make_context(comments=[{"time": (15 * 60 + 29) * 1000 + 340, "commentType": "Spelling", "comment": ""}])
+    context = make_context(comments=[Comment(time=(15 * 60 + 29) * 1000 + 340, comment_type="Spelling", comment="")])
 
     assert render_classic("{{ comments[0]['time_ms'] | as_time_ms }}", context) == "00:15:29.340"
 

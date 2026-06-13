@@ -15,7 +15,7 @@ from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelInde
 from .roles import ROLE_NAMES, Role
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Sequence
 
     from PySide6.QtCore import QByteArray, QObject
 
@@ -93,8 +93,8 @@ class CommentStore(QAbstractListModel):
     def snapshot(self) -> tuple[StoreItem, ...]:
         return tuple(self._rows)
 
-    def iter_comments(self) -> Iterator[Comment]:
-        return (r.comment for r in self._rows)
+    def comments(self) -> tuple[Comment, ...]:
+        return tuple(r.comment for r in self._rows)
 
     def search_rows(self, query: str) -> list[int]:
         if not query:
