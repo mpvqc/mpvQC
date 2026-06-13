@@ -90,6 +90,12 @@ MOVIES = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.Mo
             suffix="json",
             expected=MOVIES / "[QC]_untitled.json",
         ),
+        FilePathProposalTestSet(
+            video=HOME / "Documents" / "my-movie.mp4",
+            nickname="foo/bar\\baz:1",
+            suffix="json",
+            expected=HOME / "Documents" / "[QC]_my-movie_foo_bar_baz_1.json",
+        ),
     ],
 )
 def test_generates_file_path_proposals(case, configure_mocks, service):
