@@ -15,7 +15,7 @@ from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.main_window import MainWindowService
 from mpvqc.services.player.coordinators import SubtitleLoadCoordinator
-from mpvqc.services.player.state import OBSERVED_PROPERTIES, PlayerState, reduce_update
+from mpvqc.services.player.state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
 from mpvqc.services.type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
@@ -87,8 +87,8 @@ class PlayerService(QObject):
 
         mpv = MPV(**merged_args)
 
-        for name in OBSERVED_PROPERTIES:
-            mpv.observe_property(name, lambda _, v, n=name: self._property_updated.emit(n, v))
+        for spec in OBSERVED_PROPERTIES:
+            mpv.observe_property(spec.name, make_observer(spec, self._property_updated.emit))
 
         mpv.event_callback("file-loaded")(lambda _event: self.file_loaded.emit())
 
