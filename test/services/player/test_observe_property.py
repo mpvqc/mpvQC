@@ -94,7 +94,7 @@ def test_filename_changed_emits_signal(player_service, make_spy, value, expected
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
-        (50.7, 51),
+        (51, 51),
         (None, None),
     ],
 )
@@ -113,7 +113,7 @@ def test_percent_pos_changed(player_service, make_spy, value, expected):
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
-        (65.8, 66),
+        (66, 66),
         (None, None),
     ],
 )
@@ -132,25 +132,7 @@ def test_time_pos_changed(player_service, make_spy, value, expected):
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
-        (0.499999, 0),
-        (0.500000, 1),
-        (0.500001, 1),
-        (1.499999, 1),
-        (1.500001, 2),
-        (None, 0),
-    ],
-)
-def test_time_pos(player_service, value, expected):
-    player_service._apply_property_update("time-pos", value)
-
-    assert player_service.time_pos == expected
-
-
-@pytest.mark.parametrize(
-    ("value", "expected"),
-    [
-        (30.2, 30),
-        (30.7, 31),
+        (30, 30),
         (None, None),
     ],
 )

@@ -7,21 +7,52 @@ from __future__ import annotations
 import logging
 import pathlib
 from dataclasses import dataclass, replace
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
 type RawPropertyValue = float | int | str | list[dict] | None
 
+
+def float_to_int(value: float) -> int:
+    return int(value + 0.5)
+
+
+@dataclass(frozen=True)
+class ObservedProperty:
+    name: str
+    dedup: bool = False
+    transform: Callable[..., RawPropertyValue] | None = None
+
+
+def make_observer(spec: ObservedProperty, emit: Callable[[str, RawPropertyValue], None]) -> Callable[..., None]:
+    last: object = object()
+
+    def observe(_: str, raw: RawPropertyValue) -> None:
+        nonlocal last
+        value = raw if raw is None or spec.transform is None else spec.transform(raw)
+        if spec.dedup:
+            if value == last:
+                return
+            last = value
+        emit(spec.name, value)
+
+    return observe
+
+
 OBSERVED_PROPERTIES = (
-    "duration",
-    "percent-pos",
-    "time-pos",
-    "time-remaining",
-    "path",
-    "filename",
-    "height",
-    "width",
-    "track-list",
+    ObservedProperty("duration"),
+    ObservedProperty("percent-pos", dedup=True, transform=float_to_int),
+    ObservedProperty("time-pos", dedup=True, transform=float_to_int),
+    ObservedProperty("time-remaining", dedup=True, transform=float_to_int),
+    ObservedProperty("path"),
+    ObservedProperty("filename"),
+    ObservedProperty("height"),
+    ObservedProperty("width"),
+    ObservedProperty("track-list"),
 )
 
 
@@ -61,15 +92,12 @@ def _reduce_scalar(state: PlayerState, name: str, raw: RawPropertyValue) -> Play
     match name, raw:
         case "duration", float(value):
             return replace(state, duration=value)
-        case "percent-pos", float(value):
-            percent_pos = int(value + 0.5)
-            return state if percent_pos == state.percent_pos else replace(state, percent_pos=percent_pos)
-        case "time-pos", float(value):
-            time_pos = int(value + 0.5)
-            return state if time_pos == state.time_pos else replace(state, time_pos=time_pos)
-        case "time-remaining", float(value):
-            time_remaining = int(value + 0.5)
-            return state if time_remaining == state.time_remaining else replace(state, time_remaining=time_remaining)
+        case "percent-pos", int(value):
+            return replace(state, percent_pos=value)
+        case "time-pos", int(value):
+            return replace(state, time_pos=value)
+        case "time-remaining", int(value):
+            return replace(state, time_remaining=value)
         case "filename", str(value):
             return replace(state, filename=value)
         case "height", int(value):

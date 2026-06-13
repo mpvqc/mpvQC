@@ -15,7 +15,7 @@ def test_reads_unrounded_time_from_mpv(player_service, mpv_mock):
 
 def test_falls_back_to_cached_when_mpv_reports_none(player_service, mpv_mock):
     mpv_mock.time_pos = None
-    player_service._apply_property_update("time-pos", 929.6)
+    player_service._apply_property_update("time-pos", 930)
 
     assert player_service.exact_time_pos == pytest.approx(930.0)
 

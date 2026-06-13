@@ -9,7 +9,14 @@ from typing import NamedTuple
 
 import pytest
 
-from mpvqc.services.player.state import PlayerState, RawPropertyValue, reduce_update
+from mpvqc.services.player.state import (
+    OBSERVED_PROPERTIES,
+    ObservedProperty,
+    PlayerState,
+    RawPropertyValue,
+    make_observer,
+    reduce_update,
+)
 
 
 class ReduceCase(NamedTuple):
@@ -23,12 +30,9 @@ class ReduceCase(NamedTuple):
 SCALAR_CASES = [
     ReduceCase("duration", PlayerState(), "duration", 120.5, PlayerState(duration=120.5)),
     ReduceCase("duration zero keeps default", PlayerState(), "duration", 0.0, PlayerState()),
-    ReduceCase("percent-pos rounds", PlayerState(), "percent-pos", 50.7, PlayerState(percent_pos=51)),
-    ReduceCase("time-pos rounds down", PlayerState(), "time-pos", 0.499999, PlayerState()),
-    ReduceCase("time-pos rounds half up", PlayerState(), "time-pos", 0.5, PlayerState(time_pos=1)),
-    ReduceCase("time-pos rounds up", PlayerState(), "time-pos", 1.500001, PlayerState(time_pos=2)),
-    ReduceCase("time-remaining rounds down", PlayerState(), "time-remaining", 30.2, PlayerState(time_remaining=30)),
-    ReduceCase("time-remaining rounds up", PlayerState(), "time-remaining", 30.7, PlayerState(time_remaining=31)),
+    ReduceCase("percent-pos stores int", PlayerState(), "percent-pos", 51, PlayerState(percent_pos=51)),
+    ReduceCase("time-pos stores int", PlayerState(), "time-pos", 66, PlayerState(time_pos=66)),
+    ReduceCase("time-remaining stores int", PlayerState(), "time-remaining", 30, PlayerState(time_remaining=30)),
     ReduceCase("filename", PlayerState(), "filename", "video.mp4", PlayerState(filename="video.mp4")),
     ReduceCase("height", PlayerState(), "height", 1080, PlayerState(height=1080)),
     ReduceCase("width", PlayerState(), "width", 1920, PlayerState(width=1920)),
@@ -179,20 +183,41 @@ def test_has_dimensions(width: int, height: int, expected: bool):
     assert PlayerState(width=width, height=height).has_dimensions is expected
 
 
-class HotPathCase(NamedTuple):
+def _spec(name: str) -> ObservedProperty:
+    return next(spec for spec in OBSERVED_PROPERTIES if spec.name == name)
+
+
+class ObserverCase(NamedTuple):
     name: str
-    state: PlayerState
     prop: str
-    raw: float
+    raws: list[RawPropertyValue]
+    forwarded: list[RawPropertyValue]
 
 
-HOT_PATH_CASES = [
-    HotPathCase("percent-pos same percent", PlayerState(percent_pos=51), "percent-pos", 50.7),
-    HotPathCase("time-pos same second", PlayerState(time_pos=66), "time-pos", 65.8),
-    HotPathCase("time-remaining same second", PlayerState(time_remaining=30), "time-remaining", 30.2),
+OBSERVER_CASES = [
+    ObserverCase("rounds and dedups within a second", "time-pos", [0.2, 0.3, 0.7], [0, 1]),
+    ObserverCase("rounds and dedups within a percent", "percent-pos", [50.2, 50.7, 51.1], [50, 51]),
+    ObserverCase("non-dedup property forwards duplicates", "path", ["/a", "/a", "/b"], ["/a", "/a", "/b"]),
+    ObserverCase("forwards none through", "time-pos", [65.0, None], [65, None]),
+    ObserverCase("dedups consecutive none", "time-pos", [None, None], [None]),
 ]
 
 
-@pytest.mark.parametrize("case", HOT_PATH_CASES, ids=lambda case: case.name)
-def test_unchanged_rounded_value_returns_identical_state(case: HotPathCase):
-    assert reduce_update(case.state, case.prop, case.raw) is case.state
+@pytest.mark.parametrize("case", OBSERVER_CASES, ids=lambda case: case.name)
+def test_observer_forwards_expected_values(case: ObserverCase):
+    forwarded: list[RawPropertyValue] = []
+    observe = make_observer(_spec(case.prop), lambda _name, value: forwarded.append(value))
+
+    for raw in case.raws:
+        observe(None, raw)
+
+    assert forwarded == case.forwarded
+
+
+def test_observer_forwards_property_name():
+    seen: list[tuple[str, RawPropertyValue]] = []
+    observe = make_observer(_spec("time-pos"), lambda name, value: seen.append((name, value)))
+
+    observe(None, 12.4)
+
+    assert seen == [("time-pos", 12)]
