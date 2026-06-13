@@ -69,7 +69,12 @@ def _arguments(context: RenderContext) -> dict:
         "video_name": video_name,
         "subtitles": tuple(TypeMapperService.map_path_to_str(Path(s)) for s in context.external_subtitles),
         "comments": [
-            {**c, "time": c["time"] // TimeFormatterService.MILLISECONDS_PER_SECOND, "time_ms": c["time"]}
+            {
+                "time": c.time // TimeFormatterService.MILLISECONDS_PER_SECOND,
+                "time_ms": c.time,
+                "commentType": c.comment_type,
+                "comment": c.comment,
+            }
             for c in context.comments
         ],
     }

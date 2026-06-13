@@ -26,17 +26,17 @@ def test_remove_comment_undo_redo(comments):
     comments.remove_row(0)
     assert comments.count == 4
     comment = comments.comments()[0]
-    assert comment["comment"] == "Word 2"
+    assert comment.comment == "Word 2"
 
     comments.undo()
     assert comments.count == 5
     comment = comments.comments()[0]
-    assert comment["comment"] == "Word 1"
+    assert comment.comment == "Word 1"
 
     comments.redo()
     assert comments.count == 4
     comment = comments.comments()[0]
-    assert comment["comment"] == "Word 2"
+    assert comment.comment == "Word 2"
 
 
 def test_remove_comment_undo_sorts_model(comments):
@@ -44,11 +44,11 @@ def test_remove_comment_undo_sorts_model(comments):
 
     comments.remove_row(1)
     expected = ["Word 1", "Word 3", "Word 4", "Word 5"]
-    assert expected == [c["comment"] for c in comments.comments()]
+    assert expected == [c.comment for c in comments.comments()]
 
     comments.undo()
     expected = ["Word 1", "Word 2", "Word 3", "Word 4", "Word 5"]
-    assert expected == [c["comment"] for c in comments.comments()]
+    assert expected == [c.comment for c in comments.comments()]
 
 
 def test_remove_invalidates_search(comments):

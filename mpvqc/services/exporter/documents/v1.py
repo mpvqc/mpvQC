@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QCoreApplication, QDateTime, Qt
 
@@ -14,6 +14,7 @@ from mpvqc.services.formatter_time import TimeFormatterService
 from mpvqc.services.type_mapper import TypeMapperService
 
 if TYPE_CHECKING:
+    from mpvqc.datamodels import Comment
     from mpvqc.services.exporter.context import RenderContext
 
 _SCHEMA_URL = "https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json"
@@ -61,12 +62,12 @@ def _dump(document: dict[str, object]) -> str:
     return json.dumps(document, ensure_ascii=False, indent=4) + "\n"
 
 
-def _render_comments(comments: tuple[dict[str, Any], ...]) -> list[dict[str, str]]:
+def _render_comments(comments: tuple[Comment, ...]) -> list[dict[str, str]]:
     return [
         {
-            "time": TimeFormatterService.format_milliseconds_to_subsecond_string(comment["time"]),
-            "type": QCoreApplication.translate("CommentTypes", comment["commentType"]),
-            "text": comment["comment"],
+            "time": TimeFormatterService.format_milliseconds_to_subsecond_string(comment.time),
+            "type": QCoreApplication.translate("CommentTypes", comment.comment_type),
+            "text": comment.comment,
         }
         for comment in comments
     ]

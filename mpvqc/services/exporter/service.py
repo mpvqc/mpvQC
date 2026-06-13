@@ -63,7 +63,7 @@ class ExportService(QObject):
             video_path=self._player.path,
             external_subtitles=tuple(self._player.external_subtitles),
             generator=f"{self._build_info.name} {self._build_info.version}",
-            comments=tuple(self._comments.comments()),
+            comments=self._comments.comments(),
         )
 
     def generate_file_path_proposal(self, suffix: Literal["json", "txt"]) -> Path:

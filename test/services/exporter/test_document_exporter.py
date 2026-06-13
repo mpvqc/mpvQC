@@ -10,6 +10,7 @@ from unittest.mock import MagicMock
 import pytest
 from PySide6.QtCore import QStandardPaths, QThreadPool
 
+from mpvqc.datamodels import Comment
 from mpvqc.services import ExportService
 
 
@@ -31,7 +32,7 @@ def configure_mocks(qt_app, comments_service_mock, settings_service, player_serv
         write_header_video_path: bool = False,
         write_header_subtitles: bool = False,
     ):
-        comments_service_mock.comments.return_value = comments or []
+        comments_service_mock.comments.return_value = tuple(comments or ())
 
         settings_service.nickname = nickname
         settings_service.write_header_date = write_header_date
@@ -274,7 +275,7 @@ def test_export_custom_signals_on_write_failure(configure_mocks, service, tmp_pa
 
 def test_backup_writes_archive(configure_mocks, service, application_paths_service_mock, tmp_path):
     application_paths_service_mock.dir_backup = tmp_path
-    configure_mocks(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+    configure_mocks(comments=[Comment(time=50 * 1000, comment_type="Spelling", comment="My comment")])
 
     service.backup()
     wait_for_jobs()

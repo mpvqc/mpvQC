@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PySide6.QtCore import QDateTime
 
+from mpvqc.datamodels import Comment
 from mpvqc.services.exporter.backup import backup
 
 
@@ -27,7 +28,7 @@ def test_archive_name(make_context, zip_file, tmp_path):
 
 
 def test_writes_rendered_backup(make_context, zip_file, tmp_path):
-    context = make_context(comments=[{"time": 50 * 1000, "commentType": "Spelling", "comment": "My comment"}])
+    context = make_context(comments=[Comment(time=50 * 1000, comment_type="Spelling", comment="My comment")])
 
     backup(tmp_path, context)
 

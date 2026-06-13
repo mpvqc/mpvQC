@@ -35,31 +35,31 @@ def test_add_comment_undo_redo(comments):
     comments.add_row(99, "undo redo comment type")
     assert comments.count == 6
     comment = comments.comments()[-1]
-    assert comment["commentType"] == "undo redo comment type"
+    assert comment.comment_type == "undo redo comment type"
 
     comments.undo()
     assert comments.count == 5
     comment = comments.comments()[-1]
-    assert comment["commentType"] != "undo redo comment type"
+    assert comment.comment_type != "undo redo comment type"
 
     comments.redo()
     assert comments.count == 6
     comment = comments.comments()[-1]
-    assert comment["commentType"] == "undo redo comment type"
+    assert comment.comment_type == "undo redo comment type"
 
 
 def test_add_comment_undo_redo_sorts_model(comments):
     comments.add_row(7, "undo redo comment type")
     expected = ["commentType", "commentType", "undo redo comment type", "commentType", "commentType", "commentType"]
-    assert expected == [ct["commentType"] for ct in comments.comments()]
+    assert expected == [ct.comment_type for ct in comments.comments()]
 
     comments.undo()
     expected = ["commentType", "commentType", "commentType", "commentType", "commentType"]
-    assert expected == [ct["commentType"] for ct in comments.comments()]
+    assert expected == [ct.comment_type for ct in comments.comments()]
 
     comments.redo()
     expected = ["commentType", "commentType", "undo redo comment type", "commentType", "commentType", "commentType"]
-    assert expected == [ct["commentType"] for ct in comments.comments()]
+    assert expected == [ct.comment_type for ct in comments.comments()]
 
 
 def test_add_row_invalidates_search(comments):
