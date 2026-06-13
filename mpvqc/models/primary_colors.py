@@ -37,15 +37,18 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
     @Slot(str)
     def _set_theme_identifier(self, theme_identifier: str) -> None:
         old_count = self.rowCount()
-        self._theme_identifier = theme_identifier
-        new_count = self.rowCount()
+        new_count = self._themes.theme(theme_identifier).palette_count
 
         if new_count > old_count:
             self.beginInsertRows(QModelIndex(), old_count, new_count - 1)
+            self._theme_identifier = theme_identifier
             self.endInsertRows()
         elif new_count < old_count:
             self.beginRemoveRows(QModelIndex(), new_count, old_count - 1)
+            self._theme_identifier = theme_identifier
             self.endRemoveRows()
+        else:
+            self._theme_identifier = theme_identifier
 
         overlap = min(old_count, new_count)
         if overlap > 0:
