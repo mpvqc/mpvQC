@@ -57,7 +57,7 @@ class ImporterService(QObject):
 
     def open(self, document_paths: list[Path], video_paths: list[Path], subtitle_paths: list[Path]) -> None:
         if self._busy:
-            logger.debug(
+            logger.warning(
                 "Skipping import while another is in progress; documents=%s videos=%s subtitles=%s",
                 document_paths,
                 video_paths,

@@ -9,17 +9,24 @@ import os
 import re
 import sys
 from enum import StrEnum
+from logging.handlers import RotatingFileHandler
 from typing import TYPE_CHECKING, Final, override
 
-from PySide6.QtCore import QtMsgType
+from PySide6.QtCore import QtMsgType, qInstallMessageHandler
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from pathlib import Path
 
     from PySide6.QtCore import QMessageLogContext
 
 MPV_LEVEL: Final[int] = 25
 logging.addLevelName(MPV_LEVEL, "MPV")
+
+FILE_LOG_MAX_BYTES: Final[int] = 1_000_000
+FILE_LOG_BACKUP_COUNT: Final[int] = 5
+
+_URL_SCHEME_PATTERN: Final = re.compile(r"^\w+:")
 
 
 class AnsiColor(StrEnum):
@@ -49,9 +56,9 @@ def use_color() -> bool:
 
 
 class MpvqcFormatter(logging.Formatter):
-    def __init__(self) -> None:
+    def __init__(self, *, colored: bool) -> None:
         super().__init__()
-        self._use_color = use_color()
+        self._use_color = colored
 
     @override
     def format(self, record: logging.LogRecord) -> str:
@@ -84,6 +91,12 @@ class MpvqcFormatter(logging.Formatter):
 
 
 def setup_mpvqc_logging() -> None:
+    _setup_console_logging()
+    _setup_file_logging()
+    qInstallMessageHandler(_qt_log_handler())
+
+
+def _setup_console_logging() -> None:
     is_debug = os.getenv("MPVQC_DEBUG")
 
     root_logger = logging.getLogger()
@@ -93,7 +106,7 @@ def setup_mpvqc_logging() -> None:
         root_logger.removeHandler(handler)
 
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(MpvqcFormatter())
+    console_handler.setFormatter(MpvqcFormatter(colored=use_color()))
     root_logger.addHandler(console_handler)
 
     if is_debug:
@@ -102,15 +115,29 @@ def setup_mpvqc_logging() -> None:
             logging.getLogger(name).setLevel(logging.WARNING)
 
 
-_URL_SCHEME_PATTERN: Final = re.compile(r"^\w+:")
+def _setup_file_logging() -> None:
+    try:
+        from mpvqc.services.application_paths import ApplicationPathsService
+
+        paths = ApplicationPathsService()
+        paths.dir_logs.mkdir(parents=True, exist_ok=True)
+        attach_file_logging(paths.file_log)
+    except Exception:
+        logging.getLogger(__name__).exception("Could not set up file logging")
 
 
-def logger_name_from(path: str) -> str:
-    path = _URL_SCHEME_PATTERN.sub("", path).lstrip("/").removeprefix("qt/qml/")
-    return path.replace("/", ".").removesuffix(".qml")
+def attach_file_logging(log_file: Path) -> None:
+    handler = RotatingFileHandler(
+        log_file,
+        maxBytes=FILE_LOG_MAX_BYTES,
+        backupCount=FILE_LOG_BACKUP_COUNT,
+        encoding="utf-8",
+    )
+    handler.setFormatter(MpvqcFormatter(colored=False))
+    logging.getLogger().addHandler(handler)
 
 
-def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
+def _qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
     levels: Final[dict[QtMsgType, int]] = {
         QtMsgType.QtDebugMsg: logging.DEBUG,
         QtMsgType.QtInfoMsg: logging.INFO,
@@ -144,3 +171,8 @@ def qt_log_handler() -> Callable[[QtMsgType, QMessageLogContext, str], None]:
         qml_logger.handle(record)
 
     return handler
+
+
+def logger_name_from(path: str) -> str:
+    path = _URL_SCHEME_PATTERN.sub("", path).lstrip("/").removeprefix("qt/qml/")
+    return path.replace("/", ".").removesuffix(".qml")

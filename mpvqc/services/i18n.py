@@ -30,7 +30,7 @@ class InternationalizationService(QObject):
         app.removeTranslator(self._translator_qt)
 
         locale: QLocale = create_locale_from(language_code)
-        logger.debug("Loading mpvQC translation %s for locale %s", language_code, locale.name())
+        logger.info("Loading mpvQC translation %s for locale %s", language_code, locale.name())
 
         QLocale.setDefault(locale)
         logger.debug("Set default Qt locale to %s", locale.name())

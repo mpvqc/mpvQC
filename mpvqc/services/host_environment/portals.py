@@ -33,7 +33,7 @@ class SettingsPortal:
 
     def __enter__(self) -> Self:
         if not QTDBUS_AVAILABLE:
-            logger.debug("QtDBus not available, cannot read portal settings")
+            logger.info("QtDBus not available, cannot read portal settings")
             return self
 
         self._connection = connection = QDBusConnection.connectToBus(
@@ -52,7 +52,7 @@ class SettingsPortal:
         )
 
         if not interface.isValid():
-            logger.debug("D-Bus settings portal interface is not valid")
+            logger.info("D-Bus settings portal interface is not valid")
 
         return self
 
@@ -81,7 +81,7 @@ class SettingsPortal:
             if version is not None:
                 return int(version)
         except (TypeError, ValueError):
-            logger.debug("Could not determine Settings portal version")
+            logger.info("Could not determine Settings portal version")
 
         return 0
 
@@ -116,12 +116,12 @@ class SettingsPortal:
             method_name = "ReadOne"
         else:
             method_name = "Read"
-            logger.debug("Using deprecated Read() method (portal version: %s)", portal_version)
+            logger.info("Using deprecated Read() method (portal version: %s)", portal_version)
 
         reply = interface.call(method_name, namespace, key)
 
         if reply.type() == QDBusMessage.MessageType.ErrorMessage:
-            logger.debug("D-Bus error reading %s %s: %s", namespace, key, reply.errorMessage())
+            logger.info("D-Bus error reading %s %s: %s", namespace, key, reply.errorMessage())
             return None
 
         dbus_variant = reply.arguments()[0]
@@ -132,7 +132,7 @@ class SettingsPortal:
             value = dbus_variant.variant().variant()
 
         if value is None:
-            logger.debug("Portal setting %s %s returned None", namespace, key)
+            logger.info("Portal setting %s %s returned None", namespace, key)
             return None
 
         return str(value)

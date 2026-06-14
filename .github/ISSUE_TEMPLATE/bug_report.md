@@ -33,5 +33,9 @@ If applicable, add screenshots to help explain your problem.
 
 - If you have modified the mpv configuration (`Options` ⟶ `Edit mpv.conf...`), list all your changes or a copy of your config
 
+**Logs**
+
+- Please attach the log file. Open `Help` ⟶ `Open App Data Folder...`, then grab `mpvQC.log` from the `logs/` folder
+
 **Additional context**
 Add any other context about the problem here.
