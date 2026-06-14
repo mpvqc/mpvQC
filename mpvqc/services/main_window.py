@@ -67,7 +67,7 @@ class MainWindowService(QObject):
         self._zoom_monitor = zoom_monitor = _DisplayZoomMonitor(window, self._on_zoom_factor_changed)
         window.installEventFilter(zoom_monitor)
 
-        logger.debug("wired up main window service")
+        logger.debug("Wired up main window service")
 
     def install_event_filter(self, event_filter: QObject) -> None:
         self._active_window.installEventFilter(event_filter)

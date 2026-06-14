@@ -65,6 +65,6 @@ def is_tiling_window_manager() -> bool:
     is_tiling_wm = bool(desktops & tiling_wms)
 
     if is_tiling_wm:
-        logger.debug("Running on tiling window manager")
+        logger.info("Running on tiling window manager")
 
     return is_tiling_wm

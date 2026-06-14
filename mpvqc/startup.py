@@ -45,12 +45,9 @@ def configure_qt_settings() -> None:
 
 
 def configure_logging() -> None:
-    from PySide6 import QtCore
-
-    from mpvqc.logging_utils import qt_log_handler, setup_mpvqc_logging
+    from mpvqc.logging_utils import setup_mpvqc_logging
 
     setup_mpvqc_logging()
-    QtCore.qInstallMessageHandler(qt_log_handler())
 
 
 def configure_dependency_injection() -> None:

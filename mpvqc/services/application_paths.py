@@ -13,6 +13,7 @@ from PySide6.QtCore import QCoreApplication, QStandardPaths
 class _Directories:
     backup: Path
     config: Path
+    logs: Path
     screenshots: Path
     export_templates: Path
 
@@ -25,6 +26,7 @@ def _portable_directories(executing_directory: Path) -> _Directories:
     return _Directories(
         backup=executing_directory / "appdata" / "backups",
         config=executing_directory / "appdata",
+        logs=executing_directory / "appdata" / "logs",
         screenshots=executing_directory / "appdata" / "screenshots",
         export_templates=executing_directory / "appdata" / "export-templates",
     )
@@ -36,6 +38,7 @@ def _xdg_directories() -> _Directories:
     return _Directories(
         backup=Path(config) / appname / "backups",
         config=Path(config) / appname,
+        logs=Path(config) / appname / "logs",
         screenshots=Path(config) / appname / "screenshots",
         export_templates=Path(config) / appname / "export-templates",
     )
@@ -61,6 +64,10 @@ class ApplicationPathsService:
         return self._dirs.config
 
     @property
+    def dir_logs(self) -> Path:
+        return self._dirs.logs
+
+    @property
     def dir_screenshots(self) -> Path:
         return self._dirs.screenshots
 
@@ -75,6 +82,10 @@ class ApplicationPathsService:
     @property
     def file_mpv_conf(self) -> Path:
         return self.dir_config / "mpv.conf"
+
+    @property
+    def file_log(self) -> Path:
+        return self.dir_logs / "mpvQC.log"
 
     @property
     def file_settings(self) -> Path:
