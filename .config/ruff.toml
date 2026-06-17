@@ -72,7 +72,7 @@ ignore = [
 ]
 
 # Ignore missing type annotations in Windows-specific code
-"mpvqc/services/frameless/win/**" = ["ANN"]
+"mpvqc/services/platform/win/**" = ["ANN"]
 
 "test/**" = [  # Adjust rules for test files
     "ANN",     # Ignore missing type annotations in tests

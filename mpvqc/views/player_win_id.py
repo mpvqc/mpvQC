@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QWindow
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import FramelessWindowService, PlayerService
+from mpvqc.services import PlatformService, PlayerService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,11 +16,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvWindowPyObject(QWindow):
     _player = inject.attr(PlayerService)
-    _frameless_window = inject.attr(FramelessWindowService)
+    _platform = inject.attr(PlatformService)
 
     def __init__(self) -> None:
         super().__init__()
         self.setFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowTransparentForInput)
         win_id = self.winId()
         self._player.init(win_id=win_id)
-        self._frameless_window.set_embedded_player_hwnd(win_id)
+        self._platform.set_embedded_player_hwnd(win_id)
