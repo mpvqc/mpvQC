@@ -47,6 +47,7 @@ format:
 update-python-dependencies:
     uv sync --upgrade
     just _update-dependency-versions
+    bash build-aux/update-wayland-symbols.sh
 
 [group('dev')]
 update-git-hook-dependencies:

@@ -40,6 +40,8 @@ Page {
         _videoResizer.recalculateSizes();
     }
 
+    background: null
+
     SplitView {
         id: _splitView
         objectName: "applicationSplitView"

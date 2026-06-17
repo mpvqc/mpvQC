@@ -39,3 +39,8 @@ class WinWindowIntegration(WindowIntegration):
     @override
     def set_embedded_player_hwnd(self, win_id: int) -> None:
         self._event_filter.set_embedded_player_hwnd(win_id)
+
+    @override
+    def apply_content_margins(self, margin: int) -> None:
+        # Windows keeps the real window rect via the DWM frame; no inset needed.
+        pass

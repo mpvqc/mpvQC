@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class WindowIntegration(ABC):
-    """Platform-specific native window configuration (chrome, resize, embedding)."""
+    """Platform-specific native window configuration (resize, embedding)."""
 
     @abstractmethod
     def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
@@ -21,6 +21,10 @@ class WindowIntegration(ABC):
 
     @abstractmethod
     def set_embedded_player_hwnd(self, win_id: int) -> None:
+        pass
+
+    @abstractmethod
+    def apply_content_margins(self, margin: int) -> None:
         pass
 
 

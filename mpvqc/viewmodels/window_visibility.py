@@ -16,10 +16,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcWindowVisibilityViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
 
-    def __init__(self, parent: QObject | None = None) -> None:
-        super().__init__(parent)
-        self._was_maximized_before = False
-
     @Slot()
     def toggleMaximized(self) -> None:
         if self._main_window.is_maximized:
@@ -30,18 +26,11 @@ class MpvqcWindowVisibilityViewModel(QObject):
     @Slot()
     def toggleFullScreen(self) -> None:
         if self._main_window.is_fullscreen:
-            self.disableFullScreen()
+            self._main_window.exit_fullscreen()
         else:
-            self._enable_fullscreen()
+            self._main_window.show_fullscreen()
 
     @Slot()
     def disableFullScreen(self) -> None:
-        if self._main_window.is_fullscreen and self._was_maximized_before:
-            self._main_window.show_maximized()
-        elif self._main_window.is_fullscreen:
-            self._main_window.show_normal()
-
-    def _enable_fullscreen(self) -> None:
-        if not self._main_window.is_fullscreen:
-            self._was_maximized_before = self._main_window.is_maximized
-            self._main_window.show_fullscreen()
+        if self._main_window.is_fullscreen:
+            self._main_window.exit_fullscreen()

@@ -39,8 +39,14 @@ TEMP_SAVES_DIR.mkdir()
 
 
 class PlatformServiceOverride(PlatformService):
+    @property
     @override
-    def _detect_window_button_preference_async(self) -> None:
+    def draws_own_shadow(self) -> bool:
+        # Tests load bare components, not the shadowed shell, so there is no margin.
+        return False
+
+    @override
+    def _detect_window_button_preference(self) -> None:
         pass
 
     @override

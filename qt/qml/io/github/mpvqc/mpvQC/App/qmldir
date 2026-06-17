@@ -5,6 +5,7 @@
 module io.github.mpvqc.mpvQC.App
 
 MpvqcApplicationContent MpvqcApplicationContent.qml
+MpvqcWindowShadow MpvqcWindowShadow.qml
 
 internal MpvqcContentKeyHandler MpvqcContentKeyHandler.qml
 internal MpvqcFileDropArea MpvqcFileDropArea.qml

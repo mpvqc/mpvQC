@@ -21,12 +21,17 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# Transparent padding the self-drawn drop shadow lives in. Must exceed the
+# widest shadow blur + offset, otherwise the soft edge clips at the surface.
+_SHADOW_MARGIN = 88
+
 
 class MainWindowService(QObject):
     _platform = inject.attr(PlatformService)
 
     width_changed = Signal(int)
     height_changed = Signal(int)
+    shadow_margin_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
     is_main_window_focused_changed = Signal(bool)
@@ -36,8 +41,9 @@ class MainWindowService(QObject):
         super().__init__()
         self._window: QWindow | None = None
         self._zoom_monitor: _DisplayZoomMonitor | None = None
-        self._width = 0
-        self._height = 0
+        self._outer_width = 0
+        self._outer_height = 0
+        self._shadow_margin = 0
         self._is_fullscreen = False
         self._is_maximized = False
         self._is_main_window_focused = True
@@ -51,13 +57,17 @@ class MainWindowService(QObject):
 
         self._window = window = app.topLevelWindows()[0]
 
-        self._on_width_changed(window.width())
-        self._on_height_changed(window.height())
-        self._on_window_state_changed(window.windowState())
+        self._outer_width = window.width()
+        self._outer_height = window.height()
+        self._apply_window_state(window.windowStates())
         self._on_focus_window_changed(app.focusWindow())
 
         self._zoom_factor = window.devicePixelRatio()
         self._platform.configure_window(app, window)
+
+        # Emits shadow_margin_changed so the QML shadow inset, already bound before
+        # initialize() runs, syncs with the surface margins applied here.
+        self._refresh_shadow_margin()
 
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
@@ -76,13 +86,20 @@ class MainWindowService(QObject):
         self._active_window.setVisible(True)
 
     def show_fullscreen(self) -> None:
-        self._active_window.showFullScreen()
+        # Keep the maximized flag set while fullscreen so leaving fullscreen returns
+        # to maximized, instead of the compositor restoring the saved normal geometry.
+        states = self._active_window.windowStates() | Qt.WindowState.WindowFullScreen
+        self._active_window.setWindowStates(states)
+
+    def exit_fullscreen(self) -> None:
+        states = self._active_window.windowStates() & ~Qt.WindowState.WindowFullScreen
+        self._active_window.setWindowStates(states)
 
     def show_maximized(self) -> None:
-        self._active_window.showMaximized()
+        self._active_window.setWindowStates(Qt.WindowState.WindowMaximized)
 
     def show_normal(self) -> None:
-        self._active_window.showNormal()
+        self._active_window.setWindowStates(Qt.WindowState.WindowNoState)
 
     @property
     def _active_window(self) -> QWindow:
@@ -93,11 +110,17 @@ class MainWindowService(QObject):
 
     @property
     def width(self) -> int:
-        return self._width
+        # Visible content size: the raw surface minus the shadow margin on each side.
+        return self._outer_width - 2 * self._shadow_margin
 
     @property
     def height(self) -> int:
-        return self._height
+        # Visible content size: the raw surface minus the shadow margin on each side.
+        return self._outer_height - 2 * self._shadow_margin
+
+    @property
+    def shadow_margin(self) -> int:
+        return self._shadow_margin
 
     @property
     def is_fullscreen(self) -> bool:
@@ -131,22 +154,39 @@ class MainWindowService(QObject):
             raise RuntimeError(msg)
         return screen
 
+    def _compute_shadow_margin(self) -> int:
+        if not self._platform.draws_own_shadow:
+            return 0
+        if self._is_fullscreen or self._is_maximized:
+            return 0
+        return _SHADOW_MARGIN
+
     @Slot(int)
     def _on_width_changed(self, width: int) -> None:
-        if width != self._width:
-            self._width = width
-            self.width_changed.emit(width)
+        if width == self._outer_width:
+            return
+        previous = self.width
+        self._outer_width = width
+        if self.width != previous:
+            self.width_changed.emit(self.width)
 
     @Slot(int)
     def _on_height_changed(self, height: int) -> None:
-        if height != self._height:
-            self._height = height
-            self.height_changed.emit(height)
+        if height == self._outer_height:
+            return
+        previous = self.height
+        self._outer_height = height
+        if self.height != previous:
+            self.height_changed.emit(self.height)
 
     @Slot(Qt.WindowState)
-    def _on_window_state_changed(self, state: Qt.WindowState) -> None:
-        is_fullscreen = state == Qt.WindowState.WindowFullScreen
-        is_maximized = state == Qt.WindowState.WindowMaximized
+    def _on_window_state_changed(self, _state: Qt.WindowState) -> None:
+        self._apply_window_state(self._active_window.windowStates())
+        self._refresh_shadow_margin()
+
+    def _apply_window_state(self, states: Qt.WindowState) -> None:
+        is_fullscreen = bool(states & Qt.WindowState.WindowFullScreen)
+        is_maximized = bool(states & Qt.WindowState.WindowMaximized)
 
         if is_fullscreen != self._is_fullscreen:
             self._is_fullscreen = is_fullscreen
@@ -155,6 +195,22 @@ class MainWindowService(QObject):
         if is_maximized != self._is_maximized:
             self._is_maximized = is_maximized
             self.is_maximized_changed.emit(is_maximized)
+
+    def _refresh_shadow_margin(self) -> None:
+        margin = self._compute_shadow_margin()
+        if margin == self._shadow_margin:
+            return
+
+        previous_width = self.width
+        previous_height = self.height
+        self._shadow_margin = margin
+        self._platform.apply_content_margins(margin)
+        self.shadow_margin_changed.emit(margin)
+
+        if self.width != previous_width:
+            self.width_changed.emit(self.width)
+        if self.height != previous_height:
+            self.height_changed.emit(self.height)
 
     def _on_zoom_factor_changed(self, zoom_factor: float) -> None:
         if zoom_factor != self._zoom_factor:

@@ -162,6 +162,7 @@ def main_window_service_mock() -> MagicMock:
     mock.screen_width = 2560
     mock.screen_height = 1440
     mock.display_zoom_factor = 1.0
+    mock.shadow_margin = 0
     return mock
 
 
@@ -245,3 +246,14 @@ def test_compute_resize_applies_display_zoom_factor(service, main_window_service
     # Scaled video: 854/2 = 427, 480/2 = 240
     assert result is not None
     assert result.window_width == 427 + 2 * BORDER_SIZE
+
+
+def test_compute_resize_grows_window_by_shadow_margin(service, main_window_service_mock):
+    main_window_service_mock.shadow_margin = 64
+    result = service.compute_resize(VIEW_DIMS)
+    assert result == ResizeResult(
+        window_width=866 + 2 * 64,
+        window_height=738 + 2 * 64,
+        table_width=854,
+        table_height=200,
+    )
