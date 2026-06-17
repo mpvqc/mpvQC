@@ -14,6 +14,7 @@ QtObject {
     readonly property bool isDark: root._viewModel.isDark
 
     readonly property color listStripe: Qt.alpha(palette.foreground, isDark ? 0.04 : 0.08)
+    readonly property color hoverHighlight: Qt.alpha(palette.foreground, isDark ? 0.15 : 0.24)
 
     readonly property var palette: QtObject {
         readonly property color background: root._background.value

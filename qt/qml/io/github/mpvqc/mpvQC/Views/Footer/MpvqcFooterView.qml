@@ -100,7 +100,9 @@ Item {
                 width: parent.width + 1
 
                 background: Rectangle {
-                    color: _toolButton.hovered ? Qt.alpha(MpvqcTheme.palette.foreground, 0.08) : "transparent"
+                    color: _toolButton.hovered ? MpvqcTheme.hoverHighlight : "transparent"
+                    bottomLeftRadius: MpvqcWindowUtility.isMirrored ? MpvqcWindowUtility.windowRadius : 0
+                    bottomRightRadius: MpvqcWindowUtility.isMirrored ? 0 : MpvqcWindowUtility.windowRadius
                 }
 
                 onPressed: _contextMenuLoader.openContextMenu()

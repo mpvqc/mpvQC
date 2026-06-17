@@ -27,6 +27,7 @@ class MpvqcAppViewModel(QObject):
     _command_generator = inject.attr(KeyCommandGeneratorService)
 
     windowBorderChanged = Signal(int)
+    shadowMarginChanged = Signal(int)
     layoutOrientationChanged = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
@@ -34,10 +35,11 @@ class MpvqcAppViewModel(QObject):
         self._window_border = self._compute_window_border()
         self._main_window.is_fullscreen_changed.connect(self._update_window_border)
         self._main_window.is_maximized_changed.connect(self._update_window_border)
+        self._main_window.shadow_margin_changed.connect(self.shadowMarginChanged)
         self._settings.layout_orientation_changed.connect(self.layoutOrientationChanged)
 
     def _compute_window_border(self) -> int:
-        if self._platform.is_tiling_window_manager:
+        if not self._platform.draws_window_border:
             return 0
         if self._main_window.is_fullscreen or self._main_window.is_maximized:
             return 0
@@ -45,14 +47,18 @@ class MpvqcAppViewModel(QObject):
 
     @Slot()
     def _update_window_border(self) -> None:
-        new_value = self._compute_window_border()
-        if new_value != self._window_border:
-            self._window_border = new_value
-            self.windowBorderChanged.emit(new_value)
+        border = self._compute_window_border()
+        if border != self._window_border:
+            self._window_border = border
+            self.windowBorderChanged.emit(border)
 
     @Property(int, notify=windowBorderChanged)
     def windowBorder(self) -> int:
         return self._window_border
+
+    @Property(int, notify=shadowMarginChanged)
+    def shadowMargin(self) -> int:
+        return self._main_window.shadow_margin
 
     @Property(int, notify=layoutOrientationChanged)
     def layoutOrientation(self) -> int:

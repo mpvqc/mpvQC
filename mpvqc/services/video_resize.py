@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import inject
 from PySide6.QtCore import Qt
@@ -51,7 +51,7 @@ class VideoResizeService:
 
         match Qt.Orientation(self._settings.layout_orientation):
             case Qt.Orientation.Vertical:
-                return calculate_vertical_layout_sizes(
+                result = calculate_vertical_layout_sizes(
                     video_width=video_width,
                     video_height=video_height,
                     header_height=dimensions.header_height,
@@ -61,7 +61,7 @@ class VideoResizeService:
                     available_height=available_height,
                 )
             case Qt.Orientation.Horizontal:
-                return calculate_horizontal_layout_sizes(
+                result = calculate_horizontal_layout_sizes(
                     video_width=video_width,
                     video_height=video_height,
                     header_height=dimensions.header_height,
@@ -73,6 +73,15 @@ class VideoResizeService:
             case other:
                 msg = f"Unexpected layout orientation: {other}"
                 raise ValueError(msg)
+
+        # The layout math yields the visible content extent; grow it to the outer
+        # surface so the shadow margin does not eat into the fitted video.
+        margin = self._main_window.shadow_margin
+        return replace(
+            result,
+            window_width=result.window_width + 2 * margin,
+            window_height=result.window_height + 2 * margin,
+        )
 
     def _scaled_width(self) -> int:
         if width := self._player.width:

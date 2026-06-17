@@ -17,6 +17,16 @@ MenuBar {
 
     background: null
 
+    delegate: MenuBarItem {
+        id: _menuBarItem
+
+        background: Rectangle {
+            color: _menuBarItem.highlighted ? MpvqcTheme.hoverHighlight : "transparent"
+            topLeftRadius: !MpvqcWindowUtility.isMirrored && _menuBarItem.x <= 0 ? MpvqcWindowUtility.windowRadius : 0
+            topRightRadius: MpvqcWindowUtility.isMirrored && _menuBarItem.x + _menuBarItem.width >= root.width ? MpvqcWindowUtility.windowRadius : 0
+        }
+    }
+
     MpvqcMenuBarMenu {
         objectName: "fileMenu"
         title: qsTranslate("MainWindow", "File")
@@ -216,11 +226,15 @@ MenuBar {
             text: qsTranslate("MainWindow", "Check for Updates...")
             icon.source: MpvqcIcons.update
             visible: root.viewModel.isUpdateMenuVisible
-            height: visible ? implicitHeight : 0
+            // Collapse when hidden via a sibling's natural height; reading own
+            // implicitHeight here triggers a height -> implicitHeight binding loop.
+            height: visible ? _keyboardShortcutsMenuItem.implicitHeight : 0
             onTriggered: root.viewModel.requestOpenCheckForUpdatesDialog()
         }
 
         MpvqcMenuBarItem {
+            id: _keyboardShortcutsMenuItem
+
             objectName: "openKeyboardShortcutsMenuItem"
             text: qsTranslate("MainWindow", "Keyboard Shortcuts...")
             icon.source: MpvqcIcons.keyboardDoubleArrowRight

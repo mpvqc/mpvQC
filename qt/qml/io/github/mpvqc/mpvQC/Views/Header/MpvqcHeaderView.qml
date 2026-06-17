@@ -36,6 +36,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: MpvqcTheme.palette.headerBackground
+        topLeftRadius: MpvqcWindowUtility.windowRadius
+        topRightRadius: MpvqcWindowUtility.windowRadius
     }
 
     DragHandler {

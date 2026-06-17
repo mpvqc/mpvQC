@@ -19,13 +19,20 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QMouseEvent, QWindow
 
 
+MARGIN_RESIZE_BAND = 8  # grab band hugging the frame, sitting in the shadow margin
+_FLUSH_RESIZE_BAND = 6  # grab band reaching into content when there is no margin
+
+
 class LinuxEventFilter(QObject):
     def __init__(self, window: QWindow, app: QGuiApplication) -> None:
         super().__init__()
         self._window = window
         self._app = app
         self._cursor_override_active = False
-        self._border_width = 6
+        self._resize_margin = 0
+
+    def set_resize_margin(self, margin: int) -> None:
+        self._resize_margin = margin
 
     @override
     def eventFilter(self, _watched: QObject, event: QEvent) -> bool:  # noqa: C901, PLR0912, PLR0915
@@ -49,22 +56,32 @@ class LinuxEventFilter(QObject):
 
         window_width = self._window.width()
         window_height = self._window.height()
-        border_width = self._border_width
+        margin = self._resize_margin
 
-        is_cursor_in_interior = (
-            border_width <= x < window_width - border_width and border_width <= y < window_height - border_width
-        )
+        if margin:
+            # Content frame is inset by `margin`; the grab band hugs its outside,
+            # in the transparent shadow (GTK CSD style).
+            band = MARGIN_RESIZE_BAND
+            left = margin - band <= x < margin
+            right = window_width - margin <= x < window_width - margin + band
+            top = margin - band <= y < margin
+            bottom = window_height - margin <= y < window_height - margin + band
+            is_cursor_in_interior = margin <= x < window_width - margin and margin <= y < window_height - margin
+        else:
+            # No margin (tiling / maximized): reach into content from the edge,
+            # reproducing the pre-shadow behaviour.
+            band = _FLUSH_RESIZE_BAND
+            left = x < band
+            right = x >= window_width - band
+            top = y < band
+            bottom = y >= window_height - band
+            is_cursor_in_interior = band <= x < window_width - band and band <= y < window_height - band
 
         if is_cursor_in_interior:
             if event_type == QEvent.Type.MouseMove and self._cursor_override_active:
                 self._app.restoreOverrideCursor()
                 self._cursor_override_active = False
             return False
-
-        left = x < border_width
-        right = x >= window_width - border_width
-        top = y < border_width
-        bottom = y >= window_height - border_width
 
         if event_type == QEvent.Type.MouseMove:
             match (top, bottom, left, right):

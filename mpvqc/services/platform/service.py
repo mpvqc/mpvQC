@@ -5,14 +5,20 @@
 from __future__ import annotations
 
 import logging
-import sys
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal
+from PySide6.QtCore import QObject, Signal
 
-from .desktop_environment import is_tiling_window_manager
-from .window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference, read_window_button_preference
+from .window_buttons import WindowButtonDetector, WindowButtonPreference
+from .window_environment import (
+    is_tiling_window_manager as detect_tiling_window_manager,
+)
+from .window_environment import (
+    should_draw_own_shadow,
+    should_draw_window_border,
+    window_root_qml_url,
+)
 from .window_integration import select_window_integration
 
 if TYPE_CHECKING:
@@ -34,31 +40,39 @@ class PlatformService(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._window = select_window_integration()
-        self._window_button_preference = DEFAULT_WINDOW_BUTTON_PREFERENCE
-        self._detect_window_button_preference_async()
+        self._integration = select_window_integration()
+        self._window_buttons = WindowButtonDetector()
+        self._window_buttons.preference_changed.connect(self.window_button_preference_changed)
+        self._detect_window_button_preference()
 
-    def _detect_window_button_preference_async(self) -> None:
-        def job() -> None:
-            preference = read_window_button_preference()
-            if preference != self._window_button_preference:
-                self._window_button_preference = preference
-                self.window_button_preference_changed.emit(preference)
-
-        QThreadPool.globalInstance().start(QRunnable.create(job))
+    def _detect_window_button_preference(self) -> None:
+        self._window_buttons.detect()
 
     @property
     def window_button_preference(self) -> WindowButtonPreference:
-        return self._window_button_preference
+        return self._window_buttons.preference
 
     @cached_property
     def is_tiling_window_manager(self) -> bool:
-        if sys.platform != "linux":
-            return False
-        return is_tiling_window_manager()
+        return detect_tiling_window_manager()
+
+    @property
+    def root_qml_url(self) -> str:
+        return window_root_qml_url()
+
+    @cached_property
+    def draws_own_shadow(self) -> bool:
+        return should_draw_own_shadow(is_tiling_wm=self.is_tiling_window_manager)
+
+    @cached_property
+    def draws_window_border(self) -> bool:
+        return should_draw_window_border()
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
-        self._window.configure_for(app, window)
+        self._integration.configure_for(app, window)
 
     def set_embedded_player_hwnd(self, win_id: int) -> None:
-        self._window.set_embedded_player_hwnd(win_id)
+        self._integration.set_embedded_player_hwnd(win_id)
+
+    def apply_content_margins(self, margin: int) -> None:
+        self._integration.apply_content_margins(margin)

@@ -13,11 +13,7 @@ import io.github.mpvqc.mpvQC.Utility
 ApplicationWindow {
     id: root
 
-    readonly property bool isWindows: Qt.platform.os === "windows"
-    readonly property int windowsFlags: Qt.CustomizeWindowHint | Qt.Window
-    readonly property int linuxFlags: Qt.FramelessWindowHint | Qt.Window
-
-    flags: isWindows ? windowsFlags : linuxFlags
+    flags: Qt.CustomizeWindowHint | Qt.Window
 
     width: 1280
     height: 720
@@ -38,7 +34,10 @@ ApplicationWindow {
     LayoutMirroring.enabled: Application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    Component.onCompleted: root.requestActivate()
+    Component.onCompleted: {
+        MpvqcWindowUtility.contentFrame = _content;
+        root.requestActivate();
+    }
 
     MpvqcApplicationContent {
         id: _content

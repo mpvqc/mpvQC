@@ -34,7 +34,7 @@ Row {
 
         background: Rectangle {
             implicitWidth: _minimizeButton.M.Material.touchTarget
-            color: _minimizeButton.hovered ? Qt.alpha(MpvqcTheme.palette.foreground, 0.08) : "transparent"
+            color: _minimizeButton.hovered ? MpvqcTheme.hoverHighlight : "transparent"
         }
 
         onClicked: root.minimizeRequested()
@@ -56,7 +56,7 @@ Row {
 
         background: Rectangle {
             implicitWidth: _maximizeButton.M.Material.touchTarget
-            color: _maximizeButton.hovered ? Qt.alpha(MpvqcTheme.palette.foreground, 0.08) : "transparent"
+            color: _maximizeButton.hovered ? MpvqcTheme.hoverHighlight : "transparent"
         }
 
         onClicked: root.toggleMaximizeRequested()
@@ -84,6 +84,8 @@ Row {
         background: Rectangle {
             implicitWidth: _closeButton.M.Material.touchTarget
             color: _closeButton.hovered ? _closeButton.backgroundColor : "transparent"
+            topLeftRadius: MpvqcWindowUtility.isMirrored ? MpvqcWindowUtility.windowRadius : 0
+            topRightRadius: MpvqcWindowUtility.isMirrored ? 0 : MpvqcWindowUtility.windowRadius
         }
 
         onClicked: root.closeRequested()
