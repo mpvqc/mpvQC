@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import HostEnvironmentService, WindowButtonPreference
+from mpvqc.services import PlatformService, WindowButtonPreference
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -14,7 +14,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcWindowButtonsViewModel(QObject):
-    _host_environment = inject.attr(HostEnvironmentService)
+    _platform = inject.attr(PlatformService)
 
     showMinimizeButtonChanged = Signal(bool)
     showMaximizeButtonChanged = Signal(bool)
@@ -22,8 +22,8 @@ class MpvqcWindowButtonsViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._preference = self._host_environment.window_button_preference
-        self._host_environment.window_button_preference_changed.connect(self._on_preference_changed)
+        self._preference = self._platform.window_button_preference
+        self._platform.window_button_preference_changed.connect(self._on_preference_changed)
 
     @Property(bool, notify=showMinimizeButtonChanged)
     def showMinimizeButton(self) -> bool:

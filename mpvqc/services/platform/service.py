@@ -5,22 +5,36 @@
 from __future__ import annotations
 
 import logging
-import os
 import sys
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal
 
+from .desktop_environment import is_tiling_window_manager
 from .window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference, read_window_button_preference
+from .window_integration import select_window_integration
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QGuiApplication, QWindow
 
 logger = logging.getLogger(__name__)
 
 
-class HostEnvironmentService(QObject):
+class PlatformService(QObject):
+    """Single entry point for OS- and desktop-specific window behavior.
+
+    Hides the platform hacks (native window configuration, desktop-environment
+    queries) behind one interface. Delegates to focused collaborators so each
+    hack stays in its own module and can be removed cleanly once Qt grows a
+    native equivalent.
+    """
+
     window_button_preference_changed = Signal(object)
 
     def __init__(self) -> None:
         super().__init__()
+        self._window = select_window_integration()
         self._window_button_preference = DEFAULT_WINDOW_BUTTON_PREFERENCE
         self._detect_window_button_preference_async()
 
@@ -43,28 +57,8 @@ class HostEnvironmentService(QObject):
             return False
         return is_tiling_window_manager()
 
+    def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
+        self._window.configure_for(app, window)
 
-def is_tiling_window_manager() -> bool:
-    tiling_wms = {
-        "awesome",
-        "bspwm",
-        "dwm",
-        "herbstluftwm",
-        "hyprland",
-        "i3",
-        "niri",
-        "qtile",
-        "river",
-        "sway",
-        "wlroots",
-        "xmonad",
-    }
-
-    xdg_current_desktop = os.environ.get("XDG_CURRENT_DESKTOP", "")
-    desktops = {d.lower() for d in xdg_current_desktop.split(":")}
-    is_tiling_wm = bool(desktops & tiling_wms)
-
-    if is_tiling_wm:
-        logger.info("Running on tiling window manager")
-
-    return is_tiling_wm
+    def set_embedded_player_hwnd(self, win_id: int) -> None:
+        self._window.set_embedded_player_hwnd(win_id)

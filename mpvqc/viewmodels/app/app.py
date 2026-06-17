@@ -7,9 +7,9 @@ from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
-    HostEnvironmentService,
     KeyCommandGeneratorService,
     MainWindowService,
+    PlatformService,
     PlayerService,
     SettingsService,
 )
@@ -20,7 +20,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcAppViewModel(QObject):
-    _host_environment = inject.attr(HostEnvironmentService)
+    _platform = inject.attr(PlatformService)
     _main_window = inject.attr(MainWindowService)
     _settings = inject.attr(SettingsService)
     _player = inject.attr(PlayerService)
@@ -37,7 +37,7 @@ class MpvqcAppViewModel(QObject):
         self._settings.layout_orientation_changed.connect(self.layoutOrientationChanged)
 
     def _compute_window_border(self) -> int:
-        if self._host_environment.is_tiling_window_manager:
+        if self._platform.is_tiling_window_manager:
             return 0
         if self._main_window.is_fullscreen or self._main_window.is_maximized:
             return 0

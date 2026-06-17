@@ -10,9 +10,9 @@ import pytest
 from PySide6.QtCore import Qt
 
 from mpvqc.services import (
-    HostEnvironmentService,
     KeyCommandGeneratorService,
     MainWindowService,
+    PlatformService,
     PlayerService,
     SettingsService,
 )
@@ -20,8 +20,8 @@ from mpvqc.viewmodels import MpvqcAppViewModel
 
 
 @pytest.fixture
-def host_environment_service_mock():
-    mock = MagicMock(spec_set=HostEnvironmentService)
+def platform_service_mock():
+    mock = MagicMock(spec_set=PlatformService)
     mock.is_tiling_window_manager = False
     return mock
 
@@ -47,14 +47,14 @@ def command_generator_mock():
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
-    host_environment_service_mock,
+    platform_service_mock,
     main_window_service_mock,
     player_service_mock,
     command_generator_mock,
     settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(HostEnvironmentService, host_environment_service_mock)
+        binder.bind(PlatformService, platform_service_mock)
         binder.bind(MainWindowService, main_window_service_mock)
         binder.bind(PlayerService, player_service_mock)
         binder.bind(KeyCommandGeneratorService, command_generator_mock)
@@ -132,8 +132,8 @@ class WindowBorderTestCase(NamedTuple):
     ],
     ids=lambda tc: tc.name,
 )
-def test_window_border(test_case: WindowBorderTestCase, host_environment_service_mock, main_window_service_mock):
-    host_environment_service_mock.is_tiling_window_manager = test_case.is_tiling_wm
+def test_window_border(test_case: WindowBorderTestCase, platform_service_mock, main_window_service_mock):
+    platform_service_mock.is_tiling_window_manager = test_case.is_tiling_wm
     main_window_service_mock.is_fullscreen = test_case.is_fullscreen
     main_window_service_mock.is_maximized = test_case.is_maximized
 

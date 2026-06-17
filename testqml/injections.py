@@ -17,9 +17,8 @@ from mpvqc.services import (
     ApplicationPathsService,
     DesktopService,
     ExportService,
-    FramelessWindowService,
-    HostEnvironmentService,
     MainWindowService,
+    PlatformService,
     PlayerService,
     SettingsService,
     VersionCheckerService,
@@ -39,19 +38,17 @@ TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
 
-class FramelessWindowServiceOverride(FramelessWindowService):
+class PlatformServiceOverride(PlatformService):
     @override
-    def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
+    def _detect_window_button_preference_async(self) -> None:
+        pass
+
+    @override
+    def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         pass
 
     @override
     def set_embedded_player_hwnd(self, win_id: int) -> None:
-        pass
-
-
-class HostEnvironmentServiceOverride(HostEnvironmentService):
-    @override
-    def _detect_window_button_preference_async(self) -> None:
         pass
 
 
@@ -187,8 +184,7 @@ def configure_injections() -> None:
         binder.bind_to_constructor(ApplicationPathsService, ApplicationPathsServiceOverride)
         binder.bind_to_constructor(DesktopService, DesktopServiceOverride)
         binder.bind_to_constructor(ExportService, ExportServiceOverride)
-        binder.bind_to_constructor(FramelessWindowService, FramelessWindowServiceOverride)
-        binder.bind_to_constructor(HostEnvironmentService, HostEnvironmentServiceOverride)
+        binder.bind_to_constructor(PlatformService, PlatformServiceOverride)
         binder.bind_to_constructor(PlayerService, PlayerServiceOverride)
         binder.bind_to_constructor(SettingsService, SettingsServiceOverride)
         binder.bind_to_constructor(VersionCheckerService, VersionCheckerServiceOverride)

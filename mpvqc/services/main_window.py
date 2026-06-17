@@ -11,7 +11,7 @@ import inject
 from PySide6.QtCore import QEvent, QObject, Qt, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QWindow
 
-from .frameless import FramelessWindowService
+from .platform import PlatformService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class MainWindowService(QObject):
-    _frameless = inject.attr(FramelessWindowService)
+    _platform = inject.attr(PlatformService)
 
     width_changed = Signal(int)
     height_changed = Signal(int)
@@ -57,7 +57,7 @@ class MainWindowService(QObject):
         self._on_focus_window_changed(app.focusWindow())
 
         self._zoom_factor = window.devicePixelRatio()
-        self._frameless.configure_for(app, window)
+        self._platform.configure_window(app, window)
 
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
