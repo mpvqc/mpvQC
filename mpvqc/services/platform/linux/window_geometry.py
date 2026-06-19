@@ -15,7 +15,8 @@ apply_wayland_content_margins with the public call and drop the ctypes plumbing.
 
 The mangled symbol names below are regenerated from the bundled Qt by our dependency
 updater script run by `just update-python-dependencies`) do not hand-edit them.
-The QObject base offset is sizeof(QObject) on 64-bit.
+The QObject base offset is sizeof(QObject), derived from the pointer width so it
+holds on 32- and 64-bit.
 """
 
 from __future__ import annotations
@@ -42,10 +43,7 @@ _HANDLE_SYMBOL = "_ZNK7QWindow6handleEv"
 # QtWaylandClient::QWaylandWindow::setCustomMargins(QMargins const&)
 _SET_CUSTOM_MARGINS_SYMBOL = "_ZN15QtWaylandClient14QWaylandWindow16setCustomMarginsERK8QMargins"
 
-# QWaylandWindow inherits QObject then QPlatformWindow. handle() returns the
-# QPlatformWindow subobject, which sits one QObject (16 bytes on 64-bit) past the
-# QWaylandWindow* the method needs. A C++ static_cast does this; we subtract it.
-_QOBJECT_BASE_OFFSET = 16
+_QOBJECT_BASE_OFFSET = 2 * ctypes.sizeof(c_void_p)
 
 
 class _QMargins(Structure):

@@ -9,17 +9,20 @@ from typing import TYPE_CHECKING, override
 from PySide6.QtCore import QEvent, QObject
 from PySide6.QtGui import QGuiApplication, QRegion
 
-from mpvqc.services.platform.linux import MARGIN_RESIZE_BAND, LinuxEventFilter
+from mpvqc.services.platform.backend import PlatformBackend
+from mpvqc.services.platform.linux import MARGIN_RESIZE_BAND, WindowResizeFilter
+from mpvqc.services.platform.linux.window_button_detector import WindowButtonDetector
 from mpvqc.services.platform.linux.window_geometry import apply_wayland_content_margins
-from mpvqc.services.platform.window_integration import WindowIntegration
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtGui import QWindow
 
+    from mpvqc.services.platform.window_buttons import WindowButtonPreference
 
-class _WindowExposeFilter(QObject):
+
+class WindowExposeFilter(QObject):
     def __init__(self, window: QWindow, on_mapped: Callable[[], None]) -> None:
         super().__init__()
         self._window = window
@@ -36,32 +39,52 @@ class _WindowExposeFilter(QObject):
         return False
 
 
-class LinuxWindowIntegration(WindowIntegration):
+class LinuxDesktopPlatformBackend(PlatformBackend):
     def __init__(self) -> None:
+        super().__init__()
         self._window: QWindow | None = None
-        self._event_filter: LinuxEventFilter | None = None
-        self._expose_filter: _WindowExposeFilter | None = None
+        self._event_filter: WindowResizeFilter | None = None
+        self._expose_filter: WindowExposeFilter | None = None
         self._margin = 0
+        self._window_buttons = WindowButtonDetector()
+        self._window_buttons.preference_changed.connect(self.window_button_preference_changed)
+        self._window_buttons.detect()
+
+    @property
+    @override
+    def root_qml_url(self) -> str:
+        return "qrc:/qt/qml/MpvqcApplicationLinux.qml"
+
+    @property
+    @override
+    def draws_own_shadow(self) -> bool:
+        return True
+
+    @property
+    @override
+    def draws_window_border(self) -> bool:
+        return False
+
+    @property
+    @override
+    def window_button_preference(self) -> WindowButtonPreference:
+        return self._window_buttons.preference
 
     @override
-    def configure_for(self, app: QGuiApplication, window: QWindow) -> None:
+    def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._window = window
-        self._event_filter = event_filter = LinuxEventFilter(window, app)
+        self._event_filter = event_filter = WindowResizeFilter(window, app)
         event_filter.set_resize_margin(self._margin)
         app.installEventFilter(event_filter)
 
         # The inset and mask need a created, mapped surface, which is not ready
         # at QML-load time. On the first show the inset also does not stick until
         # the surface is actually exposed, so re-assert on show and on expose.
-        self._expose_filter = expose_filter = _WindowExposeFilter(window, self._reassert_surface)
+        self._expose_filter = expose_filter = WindowExposeFilter(window, self._reassert_surface)
         window.installEventFilter(expose_filter)
         window.visibleChanged.connect(self._on_visible_changed)
         window.widthChanged.connect(self._apply_input_mask)
         window.heightChanged.connect(self._apply_input_mask)
-
-    @override
-    def set_embedded_player_hwnd(self, win_id: int) -> None:
-        pass
 
     @override
     def apply_content_margins(self, margin: int) -> None:
@@ -99,9 +122,5 @@ class LinuxWindowIntegration(WindowIntegration):
         width = self._window.width()
         height = self._window.height()
 
-        if self._margin <= 0:
-            self._window.setMask(QRegion(0, 0, width, height))
-            return
-
-        inset = self._margin - MARGIN_RESIZE_BAND
+        inset = max(0, self._margin - MARGIN_RESIZE_BAND)
         self._window.setMask(QRegion(inset, inset, width - 2 * inset, height - 2 * inset))

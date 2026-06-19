@@ -50,16 +50,16 @@ After changing production QML, data, or translation files, run `just prepare-tes
 
 ## Project layout
 
-| Path         | Contents                                                                                    |
-| ------------ | ------------------------------------------------------------------------------------------- |
-| `mpvqc/`     | Python: services (business logic), viewmodels (Qt-exposed glue), application bootstrap      |
-| `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources     |
-| `test/`      | Python tests (pytest) — services and viewmodels in isolation                                |
-| `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides               |
-| `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, themes, `build-info.toml`                  |
-| `i18n/`      | Translations as `.ts` source files; `.qm` binaries are generated                            |
-| `build-aux/` | Generator scripts: `pyproject.toml` files-list updater, qrc generator, lupdate project file |
-| `docs/`      | These docs                                                                                  |
+| Path         | Contents                                                                                                                     |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `mpvqc/`     | Python: services (business logic), viewmodels (Qt-exposed glue), application bootstrap                                       |
+| `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources                                      |
+| `test/`      | Python tests (pytest) — services and viewmodels in isolation                                                                 |
+| `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides                                                |
+| `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, themes, `build-info.toml`                                                   |
+| `i18n/`      | Translations as `.ts` source files; `.qm` binaries are generated                                                             |
+| `build-aux/` | Generator scripts: `pyproject.toml` files-list updater, qrc generator, lupdate project file, Wayland symbol-name regenerator |
+| `docs/`      | These docs                                                                                                                   |
 
 ## See also
 

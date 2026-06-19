@@ -20,22 +20,27 @@ if TYPE_CHECKING:
 
 
 MARGIN_RESIZE_BAND = 8  # grab band hugging the frame, sitting in the shadow margin
-_FLUSH_RESIZE_BAND = 6  # grab band reaching into content when there is no margin
 
 
-class LinuxEventFilter(QObject):
+class WindowResizeFilter(QObject):
     def __init__(self, window: QWindow, app: QGuiApplication) -> None:
         super().__init__()
         self._window = window
         self._app = app
         self._cursor_override_active = False
         self._resize_margin = 0
+        window.windowStateChanged.connect(self._clear_cursor_override)
 
     def set_resize_margin(self, margin: int) -> None:
         self._resize_margin = margin
 
+    def _clear_cursor_override(self) -> None:
+        if self._cursor_override_active:
+            self._app.restoreOverrideCursor()
+            self._cursor_override_active = False
+
     @override
-    def eventFilter(self, _watched: QObject, event: QEvent) -> bool:  # noqa: C901, PLR0912, PLR0915
+    def eventFilter(self, _watched: QObject, event: QEvent) -> bool:  # noqa: C901, PLR0912
         event_type = event.type()
 
         if event_type != QEvent.Type.MouseButtonPress and event_type != QEvent.Type.MouseMove:  # noqa: PLR1714
@@ -44,9 +49,12 @@ class LinuxEventFilter(QObject):
         is_normal_window_state = self._window.windowState() == Qt.WindowState.WindowNoState
 
         if not is_normal_window_state:
-            if event_type == QEvent.Type.MouseMove and self._cursor_override_active:
-                self._app.restoreOverrideCursor()
-                self._cursor_override_active = False
+            self._clear_cursor_override()
+            return False
+
+        margin = self._resize_margin
+        if not margin:
+            self._clear_cursor_override()
             return False
 
         global_pos = cast("QMouseEvent", event).globalPosition()
@@ -56,31 +64,18 @@ class LinuxEventFilter(QObject):
 
         window_width = self._window.width()
         window_height = self._window.height()
-        margin = self._resize_margin
 
-        if margin:
-            # Content frame is inset by `margin`; the grab band hugs its outside,
-            # in the transparent shadow (GTK CSD style).
-            band = MARGIN_RESIZE_BAND
-            left = margin - band <= x < margin
-            right = window_width - margin <= x < window_width - margin + band
-            top = margin - band <= y < margin
-            bottom = window_height - margin <= y < window_height - margin + band
-            is_cursor_in_interior = margin <= x < window_width - margin and margin <= y < window_height - margin
-        else:
-            # No margin (tiling / maximized): reach into content from the edge,
-            # reproducing the pre-shadow behaviour.
-            band = _FLUSH_RESIZE_BAND
-            left = x < band
-            right = x >= window_width - band
-            top = y < band
-            bottom = y >= window_height - band
-            is_cursor_in_interior = band <= x < window_width - band and band <= y < window_height - band
+        # Content frame is inset by `margin`; the grab band hugs its outside,
+        # in the transparent shadow (GTK CSD style).
+        band = MARGIN_RESIZE_BAND
+        left = margin - band <= x < margin
+        right = window_width - margin <= x < window_width - margin + band
+        top = margin - band <= y < margin
+        bottom = window_height - margin <= y < window_height - margin + band
+        is_cursor_in_interior = margin <= x < window_width - margin and margin <= y < window_height - margin
 
         if is_cursor_in_interior:
-            if event_type == QEvent.Type.MouseMove and self._cursor_override_active:
-                self._app.restoreOverrideCursor()
-                self._cursor_override_active = False
+            self._clear_cursor_override()
             return False
 
         if event_type == QEvent.Type.MouseMove:
@@ -96,14 +91,10 @@ class LinuxEventFilter(QObject):
                 case _:
                     cursor_shape = None
 
-            if cursor_shape:
-                if self._cursor_override_active:
-                    self._app.restoreOverrideCursor()
+            self._clear_cursor_override()
+            if cursor_shape is not None:
                 self._app.setOverrideCursor(cursor_shape)
                 self._cursor_override_active = True
-            elif self._cursor_override_active:
-                self._app.restoreOverrideCursor()
-                self._cursor_override_active = False
         else:  # MouseButtonPress
             edges = Qt.Edge(0)
             if left:

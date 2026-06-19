@@ -24,18 +24,18 @@ class MpvqcWindowPropertiesViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._main_window.width_changed.connect(self.appWidthChanged.emit)
-        self._main_window.height_changed.connect(self.appHeightChanged.emit)
-        self._main_window.is_fullscreen_changed.connect(self.isFullscreenChanged.emit)
-        self._main_window.is_maximized_changed.connect(self.isMaximizedChanged.emit)
+        self._main_window.content_width_changed.connect(self.appWidthChanged)
+        self._main_window.content_height_changed.connect(self.appHeightChanged)
+        self._main_window.is_fullscreen_changed.connect(self.isFullscreenChanged)
+        self._main_window.is_maximized_changed.connect(self.isMaximizedChanged)
 
     @Property(int, notify=appWidthChanged)
     def appWidth(self) -> int:
-        return self._main_window.width
+        return self._main_window.content_width
 
     @Property(int, notify=appHeightChanged)
     def appHeight(self) -> int:
-        return self._main_window.height
+        return self._main_window.content_height
 
     @Property(bool, notify=isFullscreenChanged)
     def isFullscreen(self) -> bool:

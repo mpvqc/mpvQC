@@ -37,7 +37,7 @@ class MpvqcWindowButtonsViewModel(QObject):
     def showCloseButton(self) -> bool:
         return self._preference.close
 
-    @Slot(object)
+    @Slot(WindowButtonPreference)
     def _on_preference_changed(self, preference: WindowButtonPreference) -> None:
         old = self._preference
         self._preference = preference

@@ -29,8 +29,8 @@ _SHADOW_MARGIN = 88
 class MainWindowService(QObject):
     _platform = inject.attr(PlatformService)
 
-    width_changed = Signal(int)
-    height_changed = Signal(int)
+    content_width_changed = Signal(int)
+    content_height_changed = Signal(int)
     shadow_margin_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
@@ -109,13 +109,11 @@ class MainWindowService(QObject):
         return self._window
 
     @property
-    def width(self) -> int:
-        # Visible content size: the raw surface minus the shadow margin on each side.
+    def content_width(self) -> int:
         return self._outer_width - 2 * self._shadow_margin
 
     @property
-    def height(self) -> int:
-        # Visible content size: the raw surface minus the shadow margin on each side.
+    def content_height(self) -> int:
         return self._outer_height - 2 * self._shadow_margin
 
     @property
@@ -165,19 +163,19 @@ class MainWindowService(QObject):
     def _on_width_changed(self, width: int) -> None:
         if width == self._outer_width:
             return
-        previous = self.width
+        previous = self.content_width
         self._outer_width = width
-        if self.width != previous:
-            self.width_changed.emit(self.width)
+        if self.content_width != previous:
+            self.content_width_changed.emit(self.content_width)
 
     @Slot(int)
     def _on_height_changed(self, height: int) -> None:
         if height == self._outer_height:
             return
-        previous = self.height
+        previous = self.content_height
         self._outer_height = height
-        if self.height != previous:
-            self.height_changed.emit(self.height)
+        if self.content_height != previous:
+            self.content_height_changed.emit(self.content_height)
 
     @Slot(Qt.WindowState)
     def _on_window_state_changed(self, _state: Qt.WindowState) -> None:
@@ -201,16 +199,16 @@ class MainWindowService(QObject):
         if margin == self._shadow_margin:
             return
 
-        previous_width = self.width
-        previous_height = self.height
+        previous_width = self.content_width
+        previous_height = self.content_height
         self._shadow_margin = margin
         self._platform.apply_content_margins(margin)
         self.shadow_margin_changed.emit(margin)
 
-        if self.width != previous_width:
-            self.width_changed.emit(self.width)
-        if self.height != previous_height:
-            self.height_changed.emit(self.height)
+        if self.content_width != previous_width:
+            self.content_width_changed.emit(self.content_width)
+        if self.content_height != previous_height:
+            self.content_height_changed.emit(self.content_height)
 
     def _on_zoom_factor_changed(self, zoom_factor: float) -> None:
         if zoom_factor != self._zoom_factor:
