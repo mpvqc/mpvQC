@@ -68,19 +68,19 @@ def test_width_and_height_subtract_the_shadow_margin(service):
     service._outer_width = 1280
     service._outer_height = 720
     service._shadow_margin = 64
-    assert service.width == 1280 - 2 * 64
-    assert service.height == 720 - 2 * 64
+    assert service.content_width == 1280 - 2 * 64
+    assert service.content_height == 720 - 2 * 64
 
 
 def test_width_and_height_equal_surface_without_margin(service):
     service._outer_width = 1280
     service._outer_height = 720
     service._shadow_margin = 0
-    assert service.width == 1280
-    assert service.height == 720
+    assert service.content_width == 1280
+    assert service.content_height == 720
 
 
-def test_refresh_shadow_margin_applies_and_emits_visible_size(service, platform_service_mock):
+def test_refresh_shadow_margin_applies_and_emits_content_size(service, platform_service_mock):
     service._outer_width = 1280
     service._outer_height = 720
     platform_service_mock.draws_own_shadow = True
@@ -88,7 +88,7 @@ def test_refresh_shadow_margin_applies_and_emits_visible_size(service, platform_
     margins: list[int] = []
     widths: list[int] = []
     service.shadow_margin_changed.connect(margins.append)
-    service.width_changed.connect(widths.append)
+    service.content_width_changed.connect(widths.append)
 
     service._refresh_shadow_margin()
 
@@ -111,13 +111,13 @@ def test_refresh_shadow_margin_is_noop_when_unchanged(service, platform_service_
     assert margins == []
 
 
-def test_on_width_changed_reports_visible_width(service):
+def test_on_width_changed_reports_content_width(service):
     service._shadow_margin = 64
 
     widths: list[int] = []
-    service.width_changed.connect(widths.append)
+    service.content_width_changed.connect(widths.append)
 
     service._on_width_changed(1280)
 
-    assert service.width == 1280 - 2 * 64
+    assert service.content_width == 1280 - 2 * 64
     assert widths == [1280 - 2 * 64]

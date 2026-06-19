@@ -4,75 +4,48 @@
 
 from __future__ import annotations
 
-import logging
-from functools import cached_property
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Signal
 
-from .window_buttons import WindowButtonDetector, WindowButtonPreference
-from .window_environment import (
-    is_tiling_window_manager as detect_tiling_window_manager,
-)
-from .window_environment import (
-    should_draw_own_shadow,
-    should_draw_window_border,
-    window_root_qml_url,
-)
-from .window_integration import select_window_integration
+from .backend import select_platform_backend
+from .window_buttons import WindowButtonPreference
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
-logger = logging.getLogger(__name__)
+    from .backend import PlatformBackend
 
 
 class PlatformService(QObject):
-    """Single entry point for OS- and desktop-specific window behavior.
+    window_button_preference_changed = Signal(WindowButtonPreference)
 
-    Hides the platform hacks (native window configuration, desktop-environment
-    queries) behind one interface. Delegates to focused collaborators so each
-    hack stays in its own module and can be removed cleanly once Qt grows a
-    native equivalent.
-    """
-
-    window_button_preference_changed = Signal(object)
-
-    def __init__(self) -> None:
+    def __init__(self, backend: PlatformBackend | None = None) -> None:
         super().__init__()
-        self._integration = select_window_integration()
-        self._window_buttons = WindowButtonDetector()
-        self._window_buttons.preference_changed.connect(self.window_button_preference_changed)
-        self._detect_window_button_preference()
-
-    def _detect_window_button_preference(self) -> None:
-        self._window_buttons.detect()
+        self._backend = backend or select_platform_backend()
+        self._backend.window_button_preference_changed.connect(self.window_button_preference_changed)
 
     @property
     def window_button_preference(self) -> WindowButtonPreference:
-        return self._window_buttons.preference
-
-    @cached_property
-    def is_tiling_window_manager(self) -> bool:
-        return detect_tiling_window_manager()
+        return self._backend.window_button_preference
 
     @property
     def root_qml_url(self) -> str:
-        return window_root_qml_url()
+        return self._backend.root_qml_url
 
-    @cached_property
+    @property
     def draws_own_shadow(self) -> bool:
-        return should_draw_own_shadow(is_tiling_wm=self.is_tiling_window_manager)
+        return self._backend.draws_own_shadow
 
-    @cached_property
+    @property
     def draws_window_border(self) -> bool:
-        return should_draw_window_border()
+        return self._backend.draws_window_border
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
-        self._integration.configure_for(app, window)
+        self._backend.configure_window(app, window)
 
     def set_embedded_player_hwnd(self, win_id: int) -> None:
-        self._integration.set_embedded_player_hwnd(win_id)
+        self._backend.set_embedded_player_hwnd(win_id)
 
     def apply_content_margins(self, margin: int) -> None:
-        self._integration.apply_content_margins(margin)
+        self._backend.apply_content_margins(margin)

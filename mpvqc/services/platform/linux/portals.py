@@ -111,7 +111,6 @@ class SettingsPortal:
             return None
 
     def _read_setting(self, interface: QDBusInterface, namespace: str, key: str, portal_version: int) -> str | None:
-        # ReadOne() is preferred for version 2+
         if portal_version >= 2:  # noqa: PLR2004
             method_name = "ReadOne"
         else:

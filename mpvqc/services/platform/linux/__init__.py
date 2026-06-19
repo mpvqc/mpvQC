@@ -9,4 +9,4 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 from .resize_filter import MARGIN_RESIZE_BAND as MARGIN_RESIZE_BAND
-from .resize_filter import LinuxEventFilter as LinuxEventFilter
+from .resize_filter import WindowResizeFilter as WindowResizeFilter

@@ -24,6 +24,7 @@ from mpvqc.services import (
     VersionCheckerService,
     VideoResizeService,
 )
+from mpvqc.services.platform.backend import PlatformBackend
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
@@ -38,24 +39,31 @@ TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
 
-class PlatformServiceOverride(PlatformService):
+class _HeadlessPlatformBackend(PlatformBackend):
+    @property
+    @override
+    def root_qml_url(self) -> str:
+        return "qrc:/qt/qml/MpvqcApplicationLinux.qml"
+
     @property
     @override
     def draws_own_shadow(self) -> bool:
         # Tests load bare components, not the shadowed shell, so there is no margin.
         return False
 
+    @property
     @override
-    def _detect_window_button_preference(self) -> None:
-        pass
+    def draws_window_border(self) -> bool:
+        return False
 
     @override
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         pass
 
-    @override
-    def set_embedded_player_hwnd(self, win_id: int) -> None:
-        pass
+
+class PlatformServiceOverride(PlatformService):
+    def __init__(self) -> None:
+        super().__init__(_HeadlessPlatformBackend())
 
 
 class ApplicationPathsServiceOverride(ApplicationPathsService):
