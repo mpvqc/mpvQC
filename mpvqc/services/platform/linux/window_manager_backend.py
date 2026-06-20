@@ -7,7 +7,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.linux.window_button_detector import WindowButtonDetector
+
+from .window_button_detector import WindowButtonDetector
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow

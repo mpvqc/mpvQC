@@ -7,8 +7,7 @@ import dataclasses
 import pytest
 from PySide6.QtGui import QColor
 
-from mpvqc.services import SettingsService, ThemeService
-from mpvqc.services.theme import ThemePalette
+from mpvqc.services import SettingsService, ThemePalette, ThemeService
 
 
 @pytest.fixture(autouse=True)

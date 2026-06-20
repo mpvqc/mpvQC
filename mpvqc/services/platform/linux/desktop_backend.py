@@ -10,9 +10,10 @@ from PySide6.QtCore import QEvent, QObject
 from PySide6.QtGui import QGuiApplication, QRegion
 
 from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.linux import MARGIN_RESIZE_BAND, WindowResizeFilter
-from mpvqc.services.platform.linux.window_button_detector import WindowButtonDetector
-from mpvqc.services.platform.linux.window_geometry import apply_wayland_content_margins
+
+from .resize_filter import MARGIN_RESIZE_BAND, WindowResizeFilter
+from .window_button_detector import WindowButtonDetector
+from .window_geometry import apply_wayland_content_margins
 
 if TYPE_CHECKING:
     from collections.abc import Callable

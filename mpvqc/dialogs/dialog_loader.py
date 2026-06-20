@@ -10,9 +10,10 @@ import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel, compute_steps
 from mpvqc.services import ImporterService
 from mpvqc.services.importer import UnfinishedPlan
+
+from .import_wizard import MpvqcImportWizardViewModel, compute_steps
 
 logger = logging.getLogger(__name__)
 

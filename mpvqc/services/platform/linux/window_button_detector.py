@@ -6,8 +6,9 @@ from __future__ import annotations
 
 from PySide6.QtCore import QObject, Qt, QThreadPool, Signal, Slot
 
-from mpvqc.services.platform.linux.portals import SettingsPortal
 from mpvqc.services.platform.window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
+
+from .portals import SettingsPortal
 
 
 class WindowButtonDetector(QObject):

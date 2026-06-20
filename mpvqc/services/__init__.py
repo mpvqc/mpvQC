@@ -26,7 +26,9 @@ from .resource import ResourceService as ResourceService
 from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
 from .settings import SettingsService as SettingsService
 from .state import StateService as StateService
+from .theme import ThemePalette as ThemePalette
 from .theme import ThemeService as ThemeService
 from .type_mapper import TypeMapperService as TypeMapperService
 from .version_checker import VersionCheckerService as VersionCheckerService
 from .video_resize import VideoResizeService as VideoResizeService
+from .video_resize import ViewDimensions as ViewDimensions
