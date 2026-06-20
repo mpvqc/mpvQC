@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Signal
 
-from mpvqc.services.platform.window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
+from .window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -50,7 +50,7 @@ class PlatformBackend(QObject):
 def select_platform_backend() -> PlatformBackend:
     match sys.platform:
         case "win32":
-            from mpvqc.services.platform.win.backend import WindowsPlatformBackend
+            from .win.backend import WindowsPlatformBackend
 
             backend = WindowsPlatformBackend()
         case "linux":
@@ -64,9 +64,9 @@ def select_platform_backend() -> PlatformBackend:
 
 
 def _select_linux_backend() -> PlatformBackend:
-    from mpvqc.services.platform.linux.desktop_backend import LinuxDesktopPlatformBackend
-    from mpvqc.services.platform.linux.tiling import is_tiling_window_manager
-    from mpvqc.services.platform.linux.window_manager_backend import LinuxWindowManagerPlatformBackend
+    from .linux.desktop_backend import LinuxDesktopPlatformBackend
+    from .linux.tiling import is_tiling_window_manager
+    from .linux.window_manager_backend import LinuxWindowManagerPlatformBackend
 
     if is_tiling_window_manager():
         return LinuxWindowManagerPlatformBackend()

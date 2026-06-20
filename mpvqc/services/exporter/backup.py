@@ -10,10 +10,10 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from PySide6.QtCore import QCoreApplication, QDateTime
 
-from mpvqc.services.exporter.documents import render_backup
+from .documents import render_backup
 
 if TYPE_CHECKING:
-    from mpvqc.services.exporter.context import RenderContext
+    from .context import RenderContext
 
 
 def backup(backup_dir: Path, context: RenderContext) -> None:

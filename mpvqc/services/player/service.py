@@ -14,9 +14,10 @@ from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.main_window import MainWindowService
-from mpvqc.services.player.coordinators import SubtitleLoadCoordinator
-from mpvqc.services.player.state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
 from mpvqc.services.type_mapper import TypeMapperService
+
+from .coordinators import SubtitleLoadCoordinator
+from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
     from mpv import MPV, MpvRenderContext
     from PySide6.QtCore import SignalInstance
 
-    from mpvqc.services.player.state import RawPropertyValue
+    from .state import RawPropertyValue
 
 logger = logging.getLogger(__name__)
 

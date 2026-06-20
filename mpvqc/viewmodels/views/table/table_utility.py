@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services.player import PlayerService
+from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

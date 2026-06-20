@@ -7,8 +7,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.win import (
-    WindowsEventFilter,
+
+from .event import WindowsEventFilter
+from .utils import (
     configure_gwl_style,
     extend_frame_into_client_area,
     set_outer_window_size,

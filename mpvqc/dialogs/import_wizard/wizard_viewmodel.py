@@ -10,7 +10,12 @@ import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.dialogs.import_wizard.steps import (
+from mpvqc.enums import StepKind
+from mpvqc.services import ImporterService
+from mpvqc.services.importer import FinishedPlan
+
+from .footer_policy import PrimaryAction, WizardFooterPolicy
+from .steps import (
     MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
     MpvqcImportWizardSubtitlesStepViewModel,
@@ -23,11 +28,6 @@ from mpvqc.dialogs.import_wizard.steps import (
     resolve_subtitles,
     resolve_video,
 )
-from mpvqc.enums import StepKind
-from mpvqc.services import ImporterService
-from mpvqc.services.importer import FinishedPlan
-
-from .footer_policy import PrimaryAction, WizardFooterPolicy
 from .wizard_helpers import compute_steps, has_valid_content
 
 if TYPE_CHECKING:
