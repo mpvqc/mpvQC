@@ -65,9 +65,11 @@ class MainWindowService(QObject):
         self._zoom_factor = window.devicePixelRatio()
         self._platform.configure_window(app, window)
 
-        # Emits shadow_margin_changed so the QML shadow inset, already bound before
-        # initialize() runs, syncs with the surface margins applied here.
+        # Sync QML bindings that were created during engine.load(), before the window
+        # size was known. Margin first: content size reads it.
         self._refresh_shadow_margin()
+        self.content_width_changed.emit(self.content_width)
+        self.content_height_changed.emit(self.content_height)
 
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)

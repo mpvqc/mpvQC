@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
+from PySide6.QtGui import QWindow
 
 from mpvqc.services import MainWindowService, PlatformService
 
@@ -109,6 +110,42 @@ def test_refresh_shadow_margin_is_noop_when_unchanged(service, platform_service_
     assert service.shadow_margin == 0
     platform_service_mock.apply_content_margins.assert_not_called()
     assert margins == []
+
+
+class InitializeBroadcastTestCase(NamedTuple):
+    name: str
+    draws_own_shadow: bool
+    expected_width: int
+    expected_height: int
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        InitializeBroadcastTestCase(
+            "with_shadow_margin", draws_own_shadow=True, expected_width=1280 - 2 * 88, expected_height=720 - 2 * 88
+        ),
+        InitializeBroadcastTestCase(
+            "without_shadow_margin", draws_own_shadow=False, expected_width=1280, expected_height=720
+        ),
+    ],
+    ids=lambda case: case.name,
+)
+def test_initialize_broadcasts_content_size(case, qt_app, service, platform_service_mock, make_spy):
+    platform_service_mock.draws_own_shadow = case.draws_own_shadow
+
+    window = QWindow()
+    window.resize(1280, 720)
+
+    width_spy = make_spy(service.content_width_changed)
+    height_spy = make_spy(service.content_height_changed)
+
+    service.initialize()
+
+    assert width_spy.count() >= 1
+    assert height_spy.count() >= 1
+    assert width_spy.at(width_spy.count() - 1, 0) == case.expected_width
+    assert height_spy.at(height_spy.count() - 1, 0) == case.expected_height
 
 
 def test_on_width_changed_reports_content_width(service):
