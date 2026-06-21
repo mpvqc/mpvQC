@@ -29,6 +29,8 @@ from .type_mapper import TypeMapperService
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from PySide6.QtCore import SignalInstance
+
 
 def default_theme_identifier() -> str:
     return "material-you-dark"
@@ -78,7 +80,7 @@ class _Setting[T]:
     key: str
     default: T | Callable[[], T]
     type_: type[T]
-    signal: Signal
+    signal: Callable[[SettingsService], SignalInstance]
 
     @overload
     def __get__(self, obj: None, _owner: type | None = None) -> _Setting[T]: ...
@@ -96,7 +98,7 @@ class _Setting[T]:
     def __set__(self, obj: SettingsService, value: T) -> None:
         if self.__get__(obj) != value:
             obj.qsettings.setValue(self.key, value)
-            self.signal.__get__(obj, type(obj)).emit(value)
+            self.signal(obj).emit(value)
 
 
 class SettingsService(QObject):
@@ -108,7 +110,7 @@ class SettingsService(QObject):
         "Backup/enabled",
         default=True,
         type_=bool,
-        signal=backup_enabled_changed,
+        signal=lambda s: s.backup_enabled_changed,
     )
 
     backup_interval_changed = Signal(int)
@@ -116,7 +118,7 @@ class SettingsService(QObject):
         "Backup/interval",
         default=60,
         type_=int,
-        signal=backup_interval_changed,
+        signal=lambda s: s.backup_interval_changed,
     )
 
     language_changed = Signal(str)
@@ -124,7 +126,7 @@ class SettingsService(QObject):
         "Common/language",
         default=default_language,
         type_=str,
-        signal=language_changed,
+        signal=lambda s: s.language_changed,
     )
 
     comment_types_changed = Signal(list)
@@ -132,7 +134,7 @@ class SettingsService(QObject):
         "Common/commentTypes",
         default=default_comment_types,
         type_=list,
-        signal=comment_types_changed,
+        signal=lambda s: s.comment_types_changed,
     )
 
     nickname_changed = Signal(str)
@@ -140,7 +142,7 @@ class SettingsService(QObject):
         "Export/nickname",
         default=default_username,
         type_=str,
-        signal=nickname_changed,
+        signal=lambda s: s.nickname_changed,
     )
 
     write_header_date_changed = Signal(bool)
@@ -148,7 +150,7 @@ class SettingsService(QObject):
         "Export/writeHeaderDate",
         default=True,
         type_=bool,
-        signal=write_header_date_changed,
+        signal=lambda s: s.write_header_date_changed,
     )
 
     write_header_generator_changed = Signal(bool)
@@ -156,7 +158,7 @@ class SettingsService(QObject):
         "Export/writeHeaderGenerator",
         default=True,
         type_=bool,
-        signal=write_header_generator_changed,
+        signal=lambda s: s.write_header_generator_changed,
     )
 
     write_header_nickname_changed = Signal(bool)
@@ -164,7 +166,7 @@ class SettingsService(QObject):
         "Export/writeHeaderNickname",
         default=False,
         type_=bool,
-        signal=write_header_nickname_changed,
+        signal=lambda s: s.write_header_nickname_changed,
     )
 
     write_header_video_path_changed = Signal(bool)
@@ -172,7 +174,7 @@ class SettingsService(QObject):
         "Export/writeHeaderVideoPath",
         default=True,
         type_=bool,
-        signal=write_header_video_path_changed,
+        signal=lambda s: s.write_header_video_path_changed,
     )
 
     write_header_subtitles_changed = Signal(bool)
@@ -180,7 +182,7 @@ class SettingsService(QObject):
         "Export/writeHeaderSubtitles",
         default=False,
         type_=bool,
-        signal=write_header_subtitles_changed,
+        signal=lambda s: s.write_header_subtitles_changed,
     )
 
     statusbar_percentage_changed = Signal(bool)
@@ -188,7 +190,7 @@ class SettingsService(QObject):
         "StatusBar/statusbarPercentage",
         default=True,
         type_=bool,
-        signal=statusbar_percentage_changed,
+        signal=lambda s: s.statusbar_percentage_changed,
     )
 
     time_format_changed = Signal(int)
@@ -196,7 +198,7 @@ class SettingsService(QObject):
         "StatusBar/timeFormat",
         default=TimeFormat.CURRENT_TOTAL_TIME.value,
         type_=int,
-        signal=time_format_changed,
+        signal=lambda s: s.time_format_changed,
     )
 
     last_directory_video_changed = Signal(QUrl)
@@ -204,7 +206,7 @@ class SettingsService(QObject):
         "Import/lastDirectoryVideo",
         default=default_movie_location,
         type_=QUrl,
-        signal=last_directory_video_changed,
+        signal=lambda s: s.last_directory_video_changed,
     )
 
     last_directory_documents_changed = Signal(QUrl)
@@ -212,7 +214,7 @@ class SettingsService(QObject):
         "Import/lastDirectoryDocuments",
         default=default_documents_location,
         type_=QUrl,
-        signal=last_directory_documents_changed,
+        signal=lambda s: s.last_directory_documents_changed,
     )
 
     last_directory_subtitles_changed = Signal(QUrl)
@@ -220,7 +222,7 @@ class SettingsService(QObject):
         "Import/lastDirectorySubtitles",
         default=default_documents_location,
         type_=QUrl,
-        signal=last_directory_subtitles_changed,
+        signal=lambda s: s.last_directory_subtitles_changed,
     )
 
     import_found_video_changed = Signal(int)
@@ -228,7 +230,7 @@ class SettingsService(QObject):
         "Import/importFoundVideo",
         default=ImportFoundVideo.ASK_EVERY_TIME.value,
         type_=int,
-        signal=import_found_video_changed,
+        signal=lambda s: s.import_found_video_changed,
     )
 
     layout_orientation_changed = Signal(int)
@@ -236,7 +238,7 @@ class SettingsService(QObject):
         "SplitView/layoutOrientation",
         default=Qt.Orientation.Vertical.value,
         type_=int,
-        signal=layout_orientation_changed,
+        signal=lambda s: s.layout_orientation_changed,
     )
 
     theme_identifier_changed = Signal(str)
@@ -244,7 +246,7 @@ class SettingsService(QObject):
         "Theme/themeIdentifier",
         default=default_theme_identifier,
         type_=str,
-        signal=theme_identifier_changed,
+        signal=lambda s: s.theme_identifier_changed,
     )
 
     primary_color_changed = Signal(str)
@@ -252,7 +254,7 @@ class SettingsService(QObject):
         "Theme/primaryColor",
         default="#3f51b5",
         type_=str,
-        signal=primary_color_changed,
+        signal=lambda s: s.primary_color_changed,
     )
 
     window_title_format_changed = Signal(int)
@@ -260,7 +262,7 @@ class SettingsService(QObject):
         "Window/titleFormat",
         default=WindowTitleFormat.DEFAULT.value,
         type_=int,
-        signal=window_title_format_changed,
+        signal=lambda s: s.window_title_format_changed,
     )
 
     def __init__(self, parent: QObject | None = None, ini_file: str | None = None) -> None:

@@ -63,6 +63,7 @@ ignore = [
     "PLR0917",  # Too many positional arguments
     "PLR6301",  # Method could be a function
     "PLW0108",  # Statement has no effect
+    "RUF076",   # Allow autouse=True in pytest fixtures
 ]
 
 [lint.extend-per-file-ignores]
