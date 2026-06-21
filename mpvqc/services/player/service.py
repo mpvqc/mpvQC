@@ -13,6 +13,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
 
 from mpvqc.services.application_paths import ApplicationPathsService
+from mpvqc.services.build_info import BuildInfoService
 from mpvqc.services.main_window import MainWindowService
 from mpvqc.services.type_mapper import TypeMapperService
 
@@ -31,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlayerService(QObject):
+    _build_info = inject.attr(BuildInfoService)
     _main_window = inject.attr(MainWindowService)
     _paths = inject.attr(ApplicationPathsService)
     _type_mapper = inject.attr(TypeMapperService)
@@ -106,6 +108,7 @@ class PlayerService(QObject):
             "config": "yes",
             "config_dir": self._type_mapper.map_path_to_str(self._paths.dir_config),
             "screenshot_directory": self._type_mapper.map_path_to_str(self._paths.dir_screenshots),
+            "audio_client_name": self._build_info.name,
             "ytdl": "yes",
         }
 

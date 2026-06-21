@@ -20,15 +20,16 @@ def perform_startup() -> Never:
 
 
 def configure_qt_application_data() -> None:
-    from PySide6.QtCore import QCoreApplication
+    from PySide6.QtGui import QGuiApplication
 
     from mpvqc.build import get_build_info
 
     app = get_build_info().application
-    QCoreApplication.setApplicationName(app.name)
-    QCoreApplication.setOrganizationName(app.organization)
-    QCoreApplication.setOrganizationDomain(app.domain)
-    QCoreApplication.setApplicationVersion(app.version)
+    QGuiApplication.setApplicationName(app.name)
+    QGuiApplication.setDesktopFileName(app.app_id)
+    QGuiApplication.setOrganizationName(app.organization)
+    QGuiApplication.setOrganizationDomain(app.domain)
+    QGuiApplication.setApplicationVersion(app.version)
 
 
 def configure_qt_style() -> None:

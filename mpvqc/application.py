@@ -17,6 +17,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 
 from mpvqc.close_event_filter import CloseEventFilter
 from mpvqc.services import (
+    BuildInfoService,
     FileStartupService,
     FontLoaderService,
     InternationalizationService,
@@ -30,6 +31,7 @@ if TYPE_CHECKING:
 
 
 class MpvqcApplication(QGuiApplication):
+    _build_info = inject.attr(BuildInfoService)
     _start_up = inject.attr(FileStartupService)
     _font_loader = inject.attr(FontLoaderService)
     _i18n = inject.attr(InternationalizationService)
@@ -43,8 +45,7 @@ class MpvqcApplication(QGuiApplication):
         self._engine = QQmlApplicationEngine()
 
     def configure(self) -> None:
-        icon = QIcon(":/data/icon.svg")
-        self.setWindowIcon(icon)
+        self._set_window_icon()
 
         self._font_loader.load_application_fonts()
 
@@ -59,6 +60,12 @@ class MpvqcApplication(QGuiApplication):
 
         self._settings.language_changed.connect(self._on_language_changed)
         self._engine.uiLanguageChanged.connect(self._retranslate)
+
+    def _set_window_icon(self) -> None:
+        # On some desktop environments, providing the icon via theme makes them prefer the SVG over a rasterized snapshot.
+        # Falls back to the bundled file where the theme lookup misses (non-Linux, dev runs).
+        icon = QIcon.fromTheme(self._build_info.app_id, QIcon(":/data/icon.svg"))
+        self.setWindowIcon(icon)
 
     @Slot()
     def _on_quit(self) -> None:
