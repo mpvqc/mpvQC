@@ -45,7 +45,7 @@ platforms = ["linux", "win32"]
 [[dependency]]
 name = "pywin32"
 package = "pywin32"
-version = "311"
+version = "312"
 url = "https://github.com/mhammond/pywin32"
 licence = "PSF-2.0"
 platforms = ["win32"]
@@ -53,7 +53,7 @@ platforms = ["win32"]
 [[dev_dependency]]
 name = "pytest"
 package = "pytest"
-version = "9.0.3"
+version = "9.1.1"
 url = "https://github.com/pytest-dev/pytest"
 licence = "MIT"
 platforms = ["linux", "win32"]
