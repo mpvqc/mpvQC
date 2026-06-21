@@ -4,11 +4,12 @@
 
 [application]
 name = "mpvQC"
+app_id = "io.github.mpvqc.mpvQC"
 organization = "mpvQC"
 domain = "mpvqc.github.io"
-version = ">>>tag<<<"       # CI replaces this
-commit = ">>>commit-id<<<"  # CI replaces this
-is_release = false          # CI replaces this
+version = ">>>tag<<<"             # CI replaces this
+commit = ">>>commit-id<<<"        # CI replaces this
+is_release = false                # CI replaces this
 
 [[dependency]]
 name = "inject"

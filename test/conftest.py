@@ -13,6 +13,7 @@ from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
+    BuildInfoService,
     CommentsService,
     ResourceService,
     SettingsService,
@@ -173,6 +174,7 @@ def common_bindings_with():
     def _configure(*custom_configs):
         def config(binder: inject.Binder):
             # Common & shared services
+            binder.bind_to_constructor(BuildInfoService, BuildInfoService)
             binder.bind_to_constructor(CommentsService, CommentsService)
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)

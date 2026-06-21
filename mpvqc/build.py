@@ -11,6 +11,7 @@ from functools import cache
 @dataclass(frozen=True)
 class ApplicationInfo:
     name: str
+    app_id: str
     organization: str
     domain: str
     version: str
@@ -55,6 +56,7 @@ def get_build_info() -> BuildInfo:
     app = data["application"]
     application_info = ApplicationInfo(
         name=app["name"],
+        app_id=app["app_id"],
         organization=app["organization"],
         domain=app["domain"],
         version=app["version"],

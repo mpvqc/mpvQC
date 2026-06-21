@@ -16,6 +16,10 @@ class BuildInfoService:
         return self._build_info.application.name
 
     @property
+    def app_id(self) -> str:
+        return self._build_info.application.app_id
+
+    @property
     def organization(self) -> str:
         return self._build_info.application.organization
 
