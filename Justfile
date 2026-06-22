@@ -107,7 +107,10 @@ build-release:
     execute find . -type f -name 'TestHelpers.qml' -print -delete
     execute find . -type f -name '*Stub.qml' -print -delete
     execute export MPVQC_COMPILE_QML=true
-    execute export UV_NO_SYNC="1"
+    # The Flatpak build sets UV_NO_PROJECT, which makes --no-sync redundant and uv warns about it.
+    if [[ -z "${UV_NO_PROJECT:-}" ]]; then
+        execute export UV_NO_SYNC="1"
+    fi
     execute export UV_OFFLINE="1"
     execute just set-build-info
     execute just build
