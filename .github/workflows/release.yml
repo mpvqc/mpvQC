@@ -24,7 +24,7 @@ jobs:
     name: Lint & Format
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v6
         with:
@@ -51,7 +51,7 @@ jobs:
     name: Test Python (Linux)
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v6
         with:
@@ -76,7 +76,7 @@ jobs:
     name: Test Python (Windows)
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v6
         with:
@@ -101,7 +101,7 @@ jobs:
     name: Test QML
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v6
         with:
@@ -130,7 +130,7 @@ jobs:
       artifact_app_name: ${{ steps.artifact_name.outputs.artifact_app_name }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install Python
@@ -164,7 +164,7 @@ jobs:
     name: Build Linux
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install Python
@@ -189,7 +189,7 @@ jobs:
       - build_windows
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Python
         uses: actions/setup-python@v6
         with:
