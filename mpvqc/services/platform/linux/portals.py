@@ -33,7 +33,7 @@ class SettingsPortal:
 
     def __enter__(self) -> Self:
         if not QTDBUS_AVAILABLE:
-            logger.info("QtDBus not available, cannot read portal settings")
+            logger.warning("QtDBus not available, cannot read portal settings")
             return self
 
         self._connection = connection = QDBusConnection.connectToBus(
@@ -52,7 +52,7 @@ class SettingsPortal:
         )
 
         if not interface.isValid():
-            logger.info("D-Bus settings portal interface is not valid")
+            logger.warning("D-Bus settings portal interface is not valid")
 
         return self
 
@@ -81,7 +81,7 @@ class SettingsPortal:
             if version is not None:
                 return int(version)
         except (TypeError, ValueError):
-            logger.info("Could not determine Settings portal version")
+            logger.warning("Could not determine Settings portal version")
 
         return 0
 
@@ -131,7 +131,7 @@ class SettingsPortal:
             value = dbus_variant.variant().variant()
 
         if value is None:
-            logger.info("Portal setting %s %s returned None", namespace, key)
+            logger.warning("Portal setting %s %s returned None", namespace, key)
             return None
 
         return str(value)
