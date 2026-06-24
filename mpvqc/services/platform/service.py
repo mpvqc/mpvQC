@@ -41,6 +41,10 @@ class PlatformService(QObject):
     def draws_window_border(self) -> bool:
         return self._backend.draws_window_border
 
+    @property
+    def owns_window_geometry(self) -> bool:
+        return self._backend.owns_window_geometry
+
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.configure_window(app, window)
 
