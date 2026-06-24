@@ -40,6 +40,12 @@ class LinuxWindowManagerPlatformBackend(PlatformBackend):
 
     @property
     @override
+    def owns_window_geometry(self) -> bool:
+        # Ideally driven by the compositor's runtime tiled state, but Qt doesn't expose it
+        return True
+
+    @property
+    @override
     def window_button_preference(self) -> WindowButtonPreference:
         return self._window_buttons.preference
 

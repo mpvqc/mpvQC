@@ -34,6 +34,10 @@ class PlatformBackend(QObject):
         raise NotImplementedError
 
     @property
+    def owns_window_geometry(self) -> bool:
+        return False
+
+    @property
     def window_button_preference(self) -> WindowButtonPreference:
         return DEFAULT_WINDOW_BUTTON_PREFERENCE
 

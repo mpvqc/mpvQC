@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt
 
 from mpvqc.services import (
     MainWindowService,
+    PlatformService,
     PlayerService,
     SettingsService,
     VideoResizeService,
@@ -166,17 +167,26 @@ def main_window_service_mock() -> MagicMock:
     return mock
 
 
+@pytest.fixture
+def platform_mock() -> MagicMock:
+    mock = MagicMock(spec_set=PlatformService)
+    mock.owns_window_geometry = False
+    return mock
+
+
 @pytest.fixture(autouse=True)
 def configure_injections(
     common_bindings_with,
     player_mock,
     settings_mock,
     main_window_service_mock,
+    platform_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_mock)
         binder.bind(SettingsService, settings_mock)
         binder.bind(MainWindowService, main_window_service_mock)
+        binder.bind(PlatformService, platform_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -257,3 +267,22 @@ def test_compute_resize_grows_window_by_shadow_margin(service, main_window_servi
         table_width=854,
         table_height=200,
     )
+
+
+class ResizesOnVideoLoadTestCase(NamedTuple):
+    name: str
+    owns_window_geometry: bool
+    expected: bool
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        ResizesOnVideoLoadTestCase("desktop", owns_window_geometry=False, expected=True),
+        ResizesOnVideoLoadTestCase("tiling wm", owns_window_geometry=True, expected=False),
+    ],
+    ids=lambda case: case.name,
+)
+def test_resizes_on_video_load_follows_platform(service, platform_mock, case: ResizesOnVideoLoadTestCase):
+    platform_mock.owns_window_geometry = case.owns_window_geometry
+    assert service.resizes_on_video_load is case.expected
