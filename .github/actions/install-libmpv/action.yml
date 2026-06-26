@@ -8,10 +8,10 @@ description: Installs libmpv - via apt on Linux, or by downloading and extractin
 inputs:
   url:
     description: URL to download libmpv from (Windows only)
-    default: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260601/mpv-dev-x86_64-20260601-git-44a9b03.7z
+    default: https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260610/mpv-dev-x86_64-20260610-git-304426c.7z
   sha256:
     description: Expected SHA256 checksum (Windows only)
-    default: eeb7e0c43d71d03014dcbcd657f4a67584536b407a3e15ad1d8b648c1dbcb44f
+    default: 8cbb25ea784f01afbb3f904217cab1317430a8bcfd5680fd827a866367f71cc9
 
 runs:
   using: composite
