@@ -2,43 +2,36 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
   <defs>
-    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
-      <stop offset="0%" stop-color="#2f2f35"/>
-      <stop offset="100%" stop-color="#121318"/>
+    <radialGradient id="bgGrad" cx="50%" cy="42%" r="62%">
+      <stop offset="0%" stop-color="#3a3a44"/>
+      <stop offset="55%" stop-color="#1a1b21"/>
+      <stop offset="100%" stop-color="#08090c"/>
     </radialGradient>
-
-    <radialGradient id="ambientGreen" cx="20%" cy="30%" r="60%" fx="20%" fy="30%">
-      <stop offset="0%" stop-color="#69e692" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#121318" stop-opacity="0"/>
+    <radialGradient id="ambientGreen" cx="20%" cy="24%" r="50%">
+      <stop offset="0%" stop-color="#69e692" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#08090c" stop-opacity="0"/>
     </radialGradient>
-
-    <radialGradient id="ambientRed" cx="80%" cy="70%" r="60%" fx="80%" fy="70%">
-      <stop offset="0%" stop-color="#ff3968" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#121318" stop-opacity="0"/>
+    <radialGradient id="ambientRed" cx="80%" cy="78%" r="50%">
+      <stop offset="0%" stop-color="#ff3968" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#08090c" stop-opacity="0"/>
     </radialGradient>
-
-    <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
-      <feFlood flood-color="#bec6ff" result="color"/>
-      <feComposite in="color" in2="blur" operator="in" result="shadow"/>
-      <feComponentTransfer in="shadow" result="shadowAlpha">
-        <feFuncA type="linear" slope="0.3"/>
-      </feComponentTransfer>
-      <feMerge>
-        <feMergeNode in="shadowAlpha"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <radialGradient id="logoHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9aa0b0" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#9aa0b0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="logoGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="10" stdDeviation="22" flood-color="#000000" flood-opacity="0.55"/>
     </filter>
   </defs>
 
-  <rect width="100%" height="100%" fill="#121318"/>
-  <rect width="100%" height="100%" fill="url(#bgGrad)" opacity="0.5"/>
+  <rect width="100%" height="100%" fill="#08090c"/>
+  <rect width="100%" height="100%" fill="url(#bgGrad)"/>
   <rect width="100%" height="100%" fill="url(#ambientGreen)"/>
   <rect width="100%" height="100%" fill="url(#ambientRed)"/>
 
-    <rect x="0" y="0" width="640" height="400" fill="none" stroke="#333333" stroke-width="4"/>
+  <ellipse cx="320" cy="172" rx="130" ry="105" fill="url(#logoHalo)"/>
 
-  <g transform="translate(320, 170) scale(0.35) translate(-250, -250)">
+  <g transform="translate(320, 172) scale(0.4) translate(-250, -250)" filter="url(#logoGlow)">
     <g>
       <path d="M380.546,394.931C379.769,403.878 378.772,412.826 377.555,421.777C374.388,445.105 357.084,463.199 335.417,465.839C268.595,473.899 201.694,473.865 134.721,465.776C113.054,463.145 95.75,445.051 92.59,421.723C85.874,372.41 85.93,323.026 92.647,273.566C95.798,250.341 112.965,232.289 134.522,229.532C201.232,221.087 268.281,221.062 335.668,229.602C357.201,232.348 374.357,250.365 377.525,273.56C378.793,282.795 379.823,292.033 380.616,301.278C380.939,300.954 381.261,300.631 381.586,300.306C396.422,285.47 407.077,275.771 414.614,269.438C418.193,266.451 423.098,265.609 427.468,267.232C431.838,268.856 435.004,272.696 435.764,277.296C437.874,291.08 439.94,313.297 439.94,347.53C439.94,382.583 437.876,404.817 435.758,418.403C434.994,422.928 431.899,426.714 427.616,428.361C423.333,430.009 418.498,429.273 414.899,426.427C407.152,420.247 396.297,410.684 381.586,395.972C381.237,395.624 380.891,395.277 380.546,394.931Z"
          style="fill:url(#_Radial1);"/>
@@ -81,9 +74,8 @@
     </defs>
   </g>
 
-    <text x="50%" y="330" text-anchor="middle" font-family="Noto Sans" font-weight="bold"
-     letter-spacing="2" fill="#cac8d3">
-    <tspan x="50%" font-size="44">mpvQC</tspan>
-    <tspan x="50%" dy="32" font-size="24">0.9.0-beta4</tspan>
-</text>
+  <text x="320" y="330" text-anchor="middle" font-family="Noto Sans" font-weight="700"
+        letter-spacing="3" fill="#f0eef8" font-size="42">mpvQC</text>
+  <text x="320" y="358" text-anchor="middle" font-family="Noto Sans" font-weight="400"
+        letter-spacing="4" fill="#6e6c7a" font-size="16">0.9.0-beta5</text>
 </svg>
