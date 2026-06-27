@@ -31,11 +31,11 @@ wheels = [
 
 [[package]]
 name = "inject"
-version = "5.3.0"
+version = "5.4.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/3e/b6/762d2dac6b587698abde000dc0fe85dfe9cd469cbda8856699a84adee82a/inject-5.3.0.tar.gz", hash = "sha256:bc9db0fe05a42990dbdaf570db085c409bc8d1a9dea6d06143049476b922abba", size = 26482, upload-time = "2025-06-20T10:20:51.825Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8f/6d/f82cec616a10cb73711b3e0e5fc4ffad7e58955c2228b3d93fcc55fee205/inject-5.4.1.tar.gz", hash = "sha256:9972b9298dda924f3d609a4a8a7916b56aa1af72b707b620ef3b39fd2f7ff9e4", size = 30621, upload-time = "2026-06-27T08:59:45.316Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/98/6e/b00ef8fe9a43aa3a6f5687b710832f0d876c0812bd0ce1c3af3e71bf7dd1/inject-5.3.0-py2.py3-none-any.whl", hash = "sha256:4758eb6c464d3e2badbbf65ac991c64752b05429d6af4c3c0e5b2765efaf7e73", size = 14349, upload-time = "2025-06-20T10:20:50.717Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/28/ac5438418802ae01aea819dfa12f78a3ab0ebd8f3fd3682cff4ee5d912f6/inject-5.4.1-py3-none-any.whl", hash = "sha256:7ecaebc99cae6f3ce4cf2a248cb1d944d69344c5e178c51e1316a4e92a5fdf4f", size = 15474, upload-time = "2026-06-27T08:59:44.068Z" },
 ]
 
 [[package]]
@@ -157,21 +157,21 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "inject", specifier = "~=5.3.0" },
+    { name = "inject", specifier = ">=5.4.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "mpv", specifier = ">=1.0.8" },
     { name = "pyside6-essentials", specifier = "==6.11.1" },
-    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=311" },
+    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=312" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "jsonschema", specifier = ">=4.26.0" },
     { name = "materialyoucolor", specifier = ">=3.0.2" },
-    { name = "prek", specifier = ">=0.4.3" },
-    { name = "pyrefly", specifier = ">=1.0.0" },
-    { name = "pytest", specifier = ">=9.0.3" },
-    { name = "ruff", specifier = ">=0.15.15" },
+    { name = "prek", specifier = ">=0.4.5" },
+    { name = "pyrefly", specifier = ">=1.1.1" },
+    { name = "pytest", specifier = ">=9.1.1" },
+    { name = "ruff", specifier = ">=0.15.20" },
 ]
 
 [[package]]
