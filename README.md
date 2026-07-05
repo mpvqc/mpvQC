@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
 A simple libmpv-based application for creating video file quality control reports.\
-https://mpvqc.github.io
+<https://mpvqc.github.io>
 
 ______________________________________________________________________
 
@@ -19,11 +19,13 @@ ______________________________________________________________________
 
 ## Development
 
-See [docs/development.md](docs/development.md) for setup, daily commands, and project layout, and [docs/architecture.md](docs/architecture.md) for a high-level overview of the codebase.
+See [docs/development.md](docs/development.md) for setup, daily commands, and project layout,
+and [docs/architecture.md](docs/architecture.md) for a high-level overview of the codebase.
 
 ## Document format
 
-QC documents are saved in a versioned JSON format specified in [docs/document-format](docs/document-format/README.md), including a JSON Schema for third-party tooling.
+QC documents are saved in a versioned JSON format specified in [docs/document-format](docs/document-format/README.md),
+including a JSON Schema for third-party tooling.
 
 ## Internationalization
 
@@ -39,7 +41,8 @@ This project uses multiple licenses for different parts:
 - **Fonts (Noto Sans)**: [SIL Open Font License 1.1](LICENSES/OFL-1.1.txt)
 - **Icons (Google Material Icons/Symbols)**: [Apache-2.0](LICENSES/Apache-2.0.txt)
 
-Bundled runtime dependencies (such as libmpv and PySide6) carry their own licenses; see [NOTICE.txt](NOTICE.txt) for the full third-party breakdown.
+Bundled runtime dependencies (such as libmpv and PySide6) carry their own licenses;
+see [NOTICE.txt](NOTICE.txt) for the full third-party breakdown.
 
 Each source file usually contains an SPDX license header.
 If a file does not have a header, its licensing information can be found in our [REUSE.toml](REUSE.toml).

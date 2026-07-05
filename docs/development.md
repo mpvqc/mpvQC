@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 # Development
 
-This guide covers what you need to set up the project, run it locally, and contribute changes. For a high-level tour of how the codebase fits together, see [architecture.md](architecture.md).
+This guide covers what you need to set up the project, run it locally, and contribute changes.
+For a high-level tour of how the codebase fits together, see [architecture.md](architecture.md).
 
 ## Prerequisites
 
@@ -28,7 +29,8 @@ just build-develop  # compile QML, data, and translations into rc_project.py
 uv run main.py      # launch the application
 ```
 
-Whenever you change files in `data/`, `i18n/`, or `qt/qml/`, re-run `just build-develop` so the resource bundle is regenerated. Configure your IDE to run it before launching the app.
+Whenever you change files in `data/`, `i18n/`, or `qt/qml/`, re-run `just build-develop` so the resource bundle is regenerated.
+Configure your IDE to run it before launching the app.
 
 ## Daily commands
 
@@ -46,7 +48,9 @@ Whenever you change files in `data/`, `i18n/`, or `qt/qml/`, re-run `just build-
 | `just add-translation LOCALE` | Start a new translation (see [internationalization.md](internationalization.md)) |
 | `just update-translations`    | Refresh existing `.ts` files from current source strings                         |
 
-After changing production QML, data, or translation files, run `just prepare-tests` (or `just test`, which invokes it) so the resource bundle test runners load is up to date. When iterating on test code only, `just test-qml` and `just test-python` run directly without recompiling.
+After changing production QML, data, or translation files, run `just prepare-tests` (or `just test`, which invokes it)
+so the resource bundle test runners load is up to date.
+When iterating on test code only, `just test-qml` and `just test-python` run directly without recompiling.
 
 ## Project layout
 

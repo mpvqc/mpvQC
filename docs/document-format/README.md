@@ -101,7 +101,7 @@ Each entry in `comments`:
 
 The normative schema is [`v1.json`](v1.json), available at:
 
-```
+```text
 https://raw.githubusercontent.com/mpvqc/mpvQC/main/docs/document-format/v1.json
 ```
 
