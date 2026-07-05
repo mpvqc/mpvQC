@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: mpvQC developers
 SPDX-License-Identifier: MIT
 -->
 
-## Dev environment tips
+# Claude Code
 
 ## Project structure
 
@@ -28,7 +28,11 @@ SPDX-License-Identifier: MIT
 - Don't use structural comments like `# region` or `# ---`.
 - Avoid comments unless absolutely necessary.
 - Use the `signal name(value: type)` notation instead of the old `signal name(type value)` notation in QML signals.
-- Import `QtQuick.Controls` for controls. Never import `QtQuick.Controls.Material` unnamespaced: it resolves controls to Material directly and silently bypasses the MpvqcStyle overrides, regardless of import order. For Material attached properties, use `import QtQuick.Controls.Material as M` and reference `M.Material.*`. Only files inside `qt/qml/MpvqcStyle/` import the Material style unnamespaced.
+- Import `QtQuick.Controls` for controls.
+  - Never import `QtQuick.Controls.Material` unnamespaced: it resolves controls to Material directly
+    and silently bypasses the MpvqcStyle overrides, regardless of import order.
+  - For Material attached properties, use `import QtQuick.Controls.Material as M` and reference `M.Material.*`.
+  - Only files inside `qt/qml/MpvqcStyle/` import the Material style unnamespaced.
 - Follow official QML coding conventions.
 - Respect the recommended QML file layout:
   01. id
@@ -49,7 +53,7 @@ SPDX-License-Identifier: MIT
   16. States
   17. Transitions
 
-# Testing
+## Testing
 
 - Prefer data-driven Python tests.
 - Prefer testing important areas in the code. Don't go for coverage only.

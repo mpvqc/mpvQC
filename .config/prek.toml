@@ -52,15 +52,14 @@ hooks = [
 ]
 
 [[repos]]
-repo = "https://github.com/hukkin/mdformat"
-rev = "1.0.0"
+repo = "https://github.com/rvben/rumdl-pre-commit"
+rev = "v0.2.28"
 hooks = [
     {
-        id = "mdformat",
+        id = "rumdl",
         name = "format md",
         exclude = ".github/",
-        args = ["--number", "--wrap", "keep", "--end-of-line", "lf"],
-        additional_dependencies = ["mdformat-gfm"]
+        args = ["--fix", "--config", ".config/rumdl.toml"],
     },
 ]
 

@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: Elias Mueller
+#
+# SPDX-License-Identifier: MIT
+
+[global]
+flavor = "gfm"
+line-length = 120
+
+[per-file-ignores]
+"README.md" = ["MD033"]
