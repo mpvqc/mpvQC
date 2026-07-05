@@ -13,7 +13,11 @@ A simple libmpv-based application for creating video file quality control report
 
 ______________________________________________________________________
 
-<img alt="Logo" src=".github/screenshot.webp" width="960" height="858"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/mpvQC-dark.webp"/>
+  <source media="(prefers-color-scheme: light)" srcset=".github/screenshots/mpvQC-light.webp"/>
+  <img alt="Screenshot" src=".github/screenshots/mpvQC-dark.webp" width="800"/>
+</picture>
 
 ______________________________________________________________________
 
