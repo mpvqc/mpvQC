@@ -98,6 +98,17 @@ hooks = [
 ]
 
 [[repos]]
+repo = "https://github.com/trin94/qml-import-sort"
+rev = "v0.4.0"
+hooks = [
+    {
+        id = "qml-import-sort",
+        name = "sort qml imports",
+        args = ["--group", "io.github.mpvqc.,MpvqcStyle"],
+    },
+]
+
+[[repos]]
 repo = "https://github.com/tomas-krupa/qmlformat-hook.git"
 rev = "1.2.0"
 hooks = [
