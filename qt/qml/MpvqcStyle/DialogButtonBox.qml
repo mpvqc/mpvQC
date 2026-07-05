@@ -4,9 +4,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
-import QtQuick.Templates as T
-import QtQuick.Controls.impl as Impl
 import QtQuick.Controls.Material as M
+import QtQuick.Controls.impl as Impl
+import QtQuick.Templates as T
 
 T.DialogButtonBox {
     id: control
