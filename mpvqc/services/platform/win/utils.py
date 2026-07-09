@@ -75,13 +75,16 @@ def get_monitor_info(hwnd, dw_flags) -> Any | None:
     return win32api.GetMonitorInfo(monitor)
 
 
+SM_CXPADDEDBORDER = 92
+
+
 def get_resize_border_thickness(hwnd, horizontal=True) -> int:
     window = find_window(hwnd)
     if not window:
         return 0
 
     frame = win32con.SM_CXSIZEFRAME if horizontal else win32con.SM_CYSIZEFRAME
-    result = get_system_metrics(hwnd, frame, horizontal) + get_system_metrics(hwnd, 92, horizontal)
+    result = get_system_metrics(hwnd, frame, horizontal) + get_system_metrics(hwnd, SM_CXPADDEDBORDER, horizontal)
 
     if result > 0:
         return result
@@ -158,6 +161,7 @@ class Taskbar:
     ABS_AUTOHIDE = 1
     ABM_GETSTATE = 4
     ABM_GETTASKBARPOS = 5
+    ABM_GETAUTOHIDEBAREX = 11
 
     @staticmethod
     def is_auto_hide() -> bool:
@@ -178,7 +182,7 @@ class Taskbar:
             positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
             for position in positions:
                 appbar_data.uEdge = position
-                if windll.shell32.SHAppBarMessage(11, byref(appbar_data)):
+                if windll.shell32.SHAppBarMessage(cls.ABM_GETAUTOHIDEBAREX, byref(appbar_data)):
                     return position
 
             return cls.NO_POSITION
