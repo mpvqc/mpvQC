@@ -226,7 +226,6 @@ def configure_gwl_style(hwnd) -> None:
         | win32con.WS_MAXIMIZEBOX
         | win32con.WS_SYSMENU
         | win32con.WS_CAPTION
-        | win32con.CS_DBLCLKS
         | win32con.WS_THICKFRAME,
     )
 
