@@ -8,7 +8,7 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-from ctypes import POINTER, Structure, byref, c_int, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
+from ctypes import POINTER, Structure, byref, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
 from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
 from functools import lru_cache
 from typing import Any
@@ -16,8 +16,6 @@ from typing import Any
 import win32api
 import win32con
 import win32gui
-import win32print
-from PySide6.QtCore import QOperatingSystemVersion, QVersionNumber
 from PySide6.QtGui import QGuiApplication, QWindow
 
 from .c_structures import MARGINS
@@ -61,12 +59,6 @@ def is_fullscreen(hwnd) -> bool:
     return all(i == j for i, j in zip(win_rect, monitor_rect))  # noqa:B905
 
 
-def is_composition_enabled() -> bool:
-    b_result = c_int(0)
-    windll.dwmapi.DwmIsCompositionEnabled(byref(b_result))
-    return bool(b_result.value)
-
-
 def get_monitor_info(hwnd, dw_flags) -> Any | None:
     monitor = win32api.MonitorFromWindow(hwnd, dw_flags)
     if not monitor:
@@ -84,40 +76,17 @@ def get_resize_border_thickness(hwnd, horizontal=True) -> int:
         return 0
 
     frame = win32con.SM_CXSIZEFRAME if horizontal else win32con.SM_CYSIZEFRAME
-    result = get_system_metrics(hwnd, frame, horizontal) + get_system_metrics(hwnd, SM_CXPADDEDBORDER, horizontal)
+    result = get_system_metrics(hwnd, frame) + get_system_metrics(hwnd, SM_CXPADDEDBORDER)
 
     if result > 0:
         return result
 
-    thickness = 8 if is_composition_enabled() else 4
-    return round(thickness * window.devicePixelRatio())
+    return round(8 * window.devicePixelRatio())
 
 
-def get_system_metrics(hwnd, index, horizontal) -> Any:
-    if not hasattr(windll.user32, "GetSystemMetricsForDpi"):
-        return win32api.GetSystemMetrics(index)
-
-    dpi = get_dpi_for_window(hwnd, horizontal)
+def get_system_metrics(hwnd, index) -> int:
+    dpi = windll.user32.GetDpiForWindow(hwnd)
     return windll.user32.GetSystemMetricsForDpi(index, dpi)
-
-
-def get_dpi_for_window(hwnd, horizontal=True) -> int:
-    if hasattr(windll.user32, "GetDpiForWindow"):
-        return windll.user32.GetDpiForWindow(hwnd)
-
-    hdc = win32gui.GetDC(hwnd)
-    if not hdc:
-        return 96
-
-    dpi_x = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSX)
-    dpi_y = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSY)
-    win32gui.ReleaseDC(hwnd, hdc)
-    if dpi_x > 0 and horizontal:
-        return dpi_x
-    if dpi_y > 0 and not horizontal:
-        return dpi_y
-
-    return 96
 
 
 def find_window(hwnd) -> QWindow | None:
@@ -130,12 +99,6 @@ def find_window(hwnd) -> QWindow | None:
         if window and window.winId() == hwnd:
             return window
     return None
-
-
-def is_greater_equal_win8_1() -> bool:
-    cv = QOperatingSystemVersion.current()
-    cv = QVersionNumber(cv.majorVersion(), cv.minorVersion(), cv.microVersion())
-    return cv >= QVersionNumber(8, 1, 0)
 
 
 class APPBARDATA(Structure):
@@ -160,7 +123,6 @@ class Taskbar:
 
     ABS_AUTOHIDE = 1
     ABM_GETSTATE = 4
-    ABM_GETTASKBARPOS = 5
     ABM_GETAUTOHIDEBAREX = 11
 
     @staticmethod
@@ -172,36 +134,17 @@ class Taskbar:
 
     @classmethod
     def get_position(cls, hwnd) -> int:
-        if is_greater_equal_win8_1():
-            monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-            if not monitor_info:
-                return cls.NO_POSITION
-
-            monitor = RECT(*monitor_info["Monitor"])
-            appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, monitor, 0)
-            positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
-            for position in positions:
-                appbar_data.uEdge = position
-                if windll.shell32.SHAppBarMessage(cls.ABM_GETAUTOHIDEBAREX, byref(appbar_data)):
-                    return position
-
+        monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+        if not monitor_info:
             return cls.NO_POSITION
 
-        appbar_data = APPBARDATA(
-            sizeof(APPBARDATA), win32gui.FindWindow("Shell_TrayWnd", None), 0, 0, RECT(0, 0, 0, 0), 0
-        )
-        if appbar_data.hWnd:
-            window_monitor = win32api.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-            if not window_monitor:
-                return cls.NO_POSITION
-
-            taskbar_monitor = win32api.MonitorFromWindow(appbar_data.hWnd, win32con.MONITOR_DEFAULTTOPRIMARY)
-            if not taskbar_monitor:
-                return cls.NO_POSITION
-
-            if taskbar_monitor == window_monitor:
-                windll.shell32.SHAppBarMessage(Taskbar.ABM_GETTASKBARPOS, byref(appbar_data))
-                return appbar_data.uEdge
+        monitor = RECT(*monitor_info["Monitor"])
+        appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, monitor, 0)
+        positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
+        for position in positions:
+            appbar_data.uEdge = position
+            if windll.shell32.SHAppBarMessage(cls.ABM_GETAUTOHIDEBAREX, byref(appbar_data)):
+                return position
 
         return cls.NO_POSITION
 
