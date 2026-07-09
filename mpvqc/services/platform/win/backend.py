@@ -51,8 +51,8 @@ class WindowsPlatformBackend(PlatformBackend):
         configure_gwl_style(hwnd_top_lvl)
 
         zoom = window.devicePixelRatio()
-        width = int(1280 * zoom)
-        height = int(720 * zoom)
+        width = int(window.width() * zoom)
+        height = int(window.height() * zoom)
         set_outer_window_size(hwnd_top_lvl, width, height)
 
     @override
