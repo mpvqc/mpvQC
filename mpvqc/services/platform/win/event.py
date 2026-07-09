@@ -121,14 +121,10 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
                 prevent_window_resize_for(hwnd)
                 return False, 0
 
-        l_param = msg.lParam
-        w_param = msg.wParam
-        message = msg.message
-
-        match message:
+        match msg.message:
             case win32con.WM_NCHITTEST:
-                return handle_non_client_hit_test(hwnd, l_param)
-            case win32con.WM_NCCALCSIZE if w_param:
-                return handle_non_client_calculate_size(hwnd, l_param)
+                return handle_non_client_hit_test(hwnd, msg.lParam)
+            case win32con.WM_NCCALCSIZE if msg.wParam:
+                return handle_non_client_calculate_size(hwnd, msg.lParam)
             case _:
                 return False, 0
