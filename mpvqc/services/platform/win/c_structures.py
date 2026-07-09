@@ -9,7 +9,7 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 from ctypes import POINTER, Structure, c_int
-from ctypes.wintypes import HWND, RECT, UINT
+from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT
 
 
 class MARGINS(Structure):
@@ -38,3 +38,14 @@ class NCCALCSIZE_PARAMS(Structure):
 
 
 LPNCCALCSIZE_PARAMS = POINTER(NCCALCSIZE_PARAMS)
+
+
+class APPBARDATA(Structure):
+    _fields_ = [
+        ("cbSize", DWORD),
+        ("hWnd", HWND),
+        ("uCallbackMessage", UINT),
+        ("uEdge", UINT),
+        ("rc", RECT),
+        ("lParam", LPARAM),
+    ]

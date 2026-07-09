@@ -8,8 +8,8 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-from ctypes import POINTER, Structure, byref, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
-from ctypes.wintypes import DWORD, HWND, LONG, LPARAM, RECT, UINT
+from ctypes import POINTER, byref, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
+from ctypes.wintypes import HWND, LONG, RECT
 from functools import lru_cache
 from typing import Any
 
@@ -18,7 +18,9 @@ import win32con
 import win32gui
 from PySide6.QtGui import QGuiApplication, QWindow
 
-from .c_structures import MARGINS
+from .c_structures import APPBARDATA, MARGINS
+
+SM_CXPADDEDBORDER = 92
 
 
 def get_window_size(hwnd) -> tuple[int, int, int, int]:
@@ -30,12 +32,8 @@ def get_window_size(hwnd) -> tuple[int, int, int, int]:
 
 def set_outer_window_size(hwnd, w, h) -> None:
     """Hard-set the OUTER size (frame included)."""
-    SWP_NOMOVE = 0x0002
-    SWP_NOZORDER = 0x0004
-    SWP_NOACTIVATE = 0x0010
-
-    user32 = windll.user32
-    user32.SetWindowPos(hwnd, None, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE)
+    flags = win32con.SWP_NOMOVE | win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE
+    windll.user32.SetWindowPos(hwnd, None, 0, 0, w, h, flags)
 
 
 def is_maximized(hwnd) -> bool:
@@ -67,9 +65,6 @@ def get_monitor_info(hwnd, dw_flags) -> Any | None:
     return win32api.GetMonitorInfo(monitor)
 
 
-SM_CXPADDEDBORDER = 92
-
-
 def get_resize_border_thickness(hwnd, horizontal=True) -> int:
     window = find_window(hwnd)
     if not window:
@@ -90,26 +85,11 @@ def get_system_metrics(hwnd, index) -> int:
 
 
 def find_window(hwnd) -> QWindow | None:
-    windows = QGuiApplication.topLevelWindows()
-    if not windows:
-        return None
-
     hwnd = int(hwnd)
-    for window in windows:
+    for window in QGuiApplication.topLevelWindows():
         if window and window.winId() == hwnd:
             return window
     return None
-
-
-class APPBARDATA(Structure):
-    _fields_ = [
-        ("cbSize", DWORD),
-        ("hWnd", HWND),
-        ("uCallbackMessage", UINT),
-        ("uEdge", UINT),
-        ("rc", RECT),
-        ("lParam", LPARAM),
-    ]
 
 
 class Taskbar:
@@ -149,9 +129,7 @@ class Taskbar:
         return cls.NO_POSITION
 
 
-dwmapi = windll.dwmapi
-
-DwmExtendFrameIntoClientArea = dwmapi.DwmExtendFrameIntoClientArea
+DwmExtendFrameIntoClientArea = windll.dwmapi.DwmExtendFrameIntoClientArea
 DwmExtendFrameIntoClientArea.argtypes = [HWND, POINTER(MARGINS)]
 DwmExtendFrameIntoClientArea.restype = LONG
 
