@@ -39,10 +39,6 @@ class PlatformService(QObject):
         return self._backend.draws_own_shadow
 
     @property
-    def draws_window_border(self) -> bool:
-        return self._backend.draws_window_border
-
-    @property
     def owns_window_geometry(self) -> bool:
         return self._backend.owns_window_geometry
 

@@ -17,7 +17,6 @@ Page {
     id: root
 
     required property int layoutOrientation
-    required property int windowBorder
     required property int headerHeight
 
     readonly property int minContainerHeight: 200
@@ -103,7 +102,6 @@ Page {
         id: _videoResizer
 
         headerHeight: root.headerHeight
-        borderSize: root.windowBorder
         handleWidth: _splitView.width - _player.width - _tableContainer.width
         handleHeight: _splitView.height - _player.height - _tableContainer.height
         tableWidth: _tableContainer.width

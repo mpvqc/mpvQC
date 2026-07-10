@@ -64,11 +64,9 @@ Item {
 
         focus: true
         anchors.fill: parent
-        anchors.margins: root.viewModel.windowBorder
 
         header: _header
         layoutOrientation: root.viewModel.layoutOrientation
-        windowBorder: root.viewModel.windowBorder
         headerHeight: _header.height
 
         onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)

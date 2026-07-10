@@ -24,7 +24,6 @@ from mpvqc.services.video_resize import (
 )
 
 HEADER_HEIGHT = 40
-BORDER_SIZE = 6
 HANDLE_WIDTH = 6
 HANDLE_HEIGHT = 6
 
@@ -46,8 +45,8 @@ class VerticalLayoutTestCase(NamedTuple):
             table_height=200,
             available_height=int(1440 * 0.95),
             expected=ResizeResult(
-                window_width=866,
-                window_height=738,
+                window_width=854,
+                window_height=726,
                 table_width=854,
                 table_height=200,
             ),
@@ -58,10 +57,10 @@ class VerticalLayoutTestCase(NamedTuple):
             table_height=900,
             available_height=int(1440 * 0.95),
             expected=ResizeResult(
-                window_width=866,
+                window_width=854,
                 window_height=1368,
                 table_width=854,
-                table_height=830,
+                table_height=842,
             ),
         ),
     ],
@@ -71,7 +70,6 @@ def test_calculate_vertical_layout_sizes(case: VerticalLayoutTestCase):
         video_width=case.video_width,
         video_height=case.video_height,
         header_height=HEADER_HEIGHT,
-        border_size=BORDER_SIZE,
         handle_height=HANDLE_HEIGHT,
         table_height=case.table_height,
         available_height=case.available_height,
@@ -96,8 +94,8 @@ class HorizontalLayoutTestCase(NamedTuple):
             table_width=300,
             available_width=int(2560 * 0.95),
             expected=ResizeResult(
-                window_width=1172,
-                window_height=532,
+                window_width=1160,
+                window_height=520,
                 table_width=300,
                 table_height=480,
             ),
@@ -109,8 +107,8 @@ class HorizontalLayoutTestCase(NamedTuple):
             available_width=int(2560 * 0.95),
             expected=ResizeResult(
                 window_width=2432,
-                window_height=532,
-                table_width=1560,
+                window_height=520,
+                table_width=1572,
                 table_height=480,
             ),
         ),
@@ -121,7 +119,6 @@ def test_calculate_horizontal_layout_sizes(case: HorizontalLayoutTestCase):
         video_width=case.video_width,
         video_height=case.video_height,
         header_height=HEADER_HEIGHT,
-        border_size=BORDER_SIZE,
         handle_width=HANDLE_WIDTH,
         table_width=case.table_width,
         available_width=case.available_width,
@@ -131,7 +128,6 @@ def test_calculate_horizontal_layout_sizes(case: HorizontalLayoutTestCase):
 
 VIEW_DIMS = ViewDimensions(
     header_height=HEADER_HEIGHT,
-    border_size=BORDER_SIZE,
     handle_width=HANDLE_WIDTH,
     handle_height=HANDLE_HEIGHT,
     table_width=300,
@@ -226,8 +222,8 @@ def test_compute_resize_returns_none_when_screen_unavailable(service, main_windo
 def test_compute_resize_returns_vertical_layout(service):
     result = service.compute_resize(VIEW_DIMS)
     assert result == ResizeResult(
-        window_width=866,
-        window_height=738,
+        window_width=854,
+        window_height=726,
         table_width=854,
         table_height=200,
     )
@@ -237,8 +233,8 @@ def test_compute_resize_returns_horizontal_layout(service, settings_mock):
     settings_mock.layout_orientation = Qt.Orientation.Horizontal.value
     result = service.compute_resize(VIEW_DIMS)
     assert result == ResizeResult(
-        window_width=1172,
-        window_height=532,
+        window_width=1160,
+        window_height=520,
         table_width=300,
         table_height=480,
     )
@@ -255,15 +251,15 @@ def test_compute_resize_applies_display_zoom_factor(service, main_window_service
     result = service.compute_resize(VIEW_DIMS)
     # Scaled video: 854/2 = 427, 480/2 = 240
     assert result is not None
-    assert result.window_width == 427 + 2 * BORDER_SIZE
+    assert result.window_width == 427
 
 
 def test_compute_resize_grows_window_by_shadow_margin(service, main_window_service_mock):
     main_window_service_mock.shadow_margin = 64
     result = service.compute_resize(VIEW_DIMS)
     assert result == ResizeResult(
-        window_width=866 + 2 * 64,
-        window_height=738 + 2 * 64,
+        window_width=854 + 2 * 64,
+        window_height=726 + 2 * 64,
         table_width=854,
         table_height=200,
     )

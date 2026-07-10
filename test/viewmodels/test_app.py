@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import NamedTuple
 from unittest.mock import MagicMock
 
 import inject
@@ -21,9 +20,7 @@ from mpvqc.viewmodels import MpvqcAppViewModel
 
 @pytest.fixture
 def platform_service_mock():
-    mock = MagicMock(spec_set=PlatformService)
-    mock.draws_window_border = False
-    return mock
+    return MagicMock(spec_set=PlatformService)
 
 
 @pytest.fixture
@@ -67,80 +64,6 @@ def configure_inject(
 def view_model() -> MpvqcAppViewModel:
     # noinspection PyCallingNonCallable
     return MpvqcAppViewModel()
-
-
-class WindowBorderTestCase(NamedTuple):
-    name: str
-    draws_window_border: bool
-    is_fullscreen: bool
-    is_maximized: bool
-    expected_border: int
-
-
-@pytest.mark.parametrize(
-    "test_case",
-    [
-        WindowBorderTestCase(
-            name="windows_normal_has_border",
-            draws_window_border=True,
-            is_fullscreen=False,
-            is_maximized=False,
-            expected_border=1,
-        ),
-        WindowBorderTestCase(
-            name="windows_fullscreen_has_no_border",
-            draws_window_border=True,
-            is_fullscreen=True,
-            is_maximized=False,
-            expected_border=0,
-        ),
-        WindowBorderTestCase(
-            name="windows_maximized_has_no_border",
-            draws_window_border=True,
-            is_fullscreen=False,
-            is_maximized=True,
-            expected_border=0,
-        ),
-        WindowBorderTestCase(
-            name="windows_fullscreen_and_maximized_has_no_border",
-            draws_window_border=True,
-            is_fullscreen=True,
-            is_maximized=True,
-            expected_border=0,
-        ),
-        WindowBorderTestCase(
-            name="linux_normal_has_no_border",
-            draws_window_border=False,
-            is_fullscreen=False,
-            is_maximized=False,
-            expected_border=0,
-        ),
-        WindowBorderTestCase(
-            name="linux_fullscreen_has_no_border",
-            draws_window_border=False,
-            is_fullscreen=True,
-            is_maximized=False,
-            expected_border=0,
-        ),
-        WindowBorderTestCase(
-            name="linux_maximized_has_no_border",
-            draws_window_border=False,
-            is_fullscreen=False,
-            is_maximized=True,
-            expected_border=0,
-        ),
-    ],
-    ids=lambda tc: tc.name,
-)
-def test_window_border(test_case: WindowBorderTestCase, platform_service_mock, main_window_service_mock):
-    platform_service_mock.draws_window_border = test_case.draws_window_border
-    main_window_service_mock.is_fullscreen = test_case.is_fullscreen
-    main_window_service_mock.is_maximized = test_case.is_maximized
-
-    # noinspection PyCallingNonCallable
-    view_model = MpvqcAppViewModel()
-
-    assert view_model.windowBorder == test_case.expected_border
 
 
 def test_shadow_margin_forwards_service_value(main_window_service_mock):
