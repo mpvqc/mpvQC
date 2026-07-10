@@ -6,74 +6,56 @@ from __future__ import annotations
 
 import logging
 import sys
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QObject, Signal
-
-from .window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
-
 if TYPE_CHECKING:
-    from PySide6.QtGui import QGuiApplication, QWindow
-
+    from .content_margins import ContentMarginsApplier
+    from .embedded_player import EmbeddedPlayerTracker
     from .fullscreen import FullscreenHandler
+    from .window_buttons import WindowButtonSource
+    from .window_configuration import WindowConfigurator
 
 logger = logging.getLogger(__name__)
 
 
-class PlatformBackend(QObject):
-    window_button_preference_changed = Signal(WindowButtonPreference)
+@dataclass(frozen=True, kw_only=True)
+class PlatformBackend:
+    root_qml_url: str
+    draws_own_shadow: bool
+    owns_window_geometry: bool
 
-    @property
-    def fullscreen_handler(self) -> FullscreenHandler:
-        raise NotImplementedError
-
-    @property
-    def root_qml_url(self) -> str:
-        raise NotImplementedError
-
-    @property
-    def draws_own_shadow(self) -> bool:
-        raise NotImplementedError
-
-    @property
-    def owns_window_geometry(self) -> bool:
-        return False
-
-    @property
-    def window_button_preference(self) -> WindowButtonPreference:
-        return DEFAULT_WINDOW_BUTTON_PREFERENCE
-
-    def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
-        raise NotImplementedError
-
-    def set_embedded_player_hwnd(self, win_id: int) -> None:
-        pass
-
-    def apply_content_margins(self, margin: int) -> None:
-        pass
+    fullscreen: FullscreenHandler
+    window_configuration: WindowConfigurator
+    embedded_player: EmbeddedPlayerTracker
+    content_margins: ContentMarginsApplier
+    window_buttons: WindowButtonSource
 
 
 def select_platform_backend() -> PlatformBackend:
     match sys.platform:
         case "win32":
-            from .win.backend import WindowsPlatformBackend
+            from .win.backend import create_windows_backend
 
-            backend = WindowsPlatformBackend()
+            backend = create_windows_backend()
+            logger.info("Using Windows platform backend")
+            return backend
         case "linux":
-            backend = _select_linux_backend()
+            return _select_linux_backend()
         case _:
             msg = f"Unsupported platform for window integration: {sys.platform}"
             raise NotImplementedError(msg)
 
-    logger.info("Using platform backend: %s", type(backend).__name__)
-    return backend
-
 
 def _select_linux_backend() -> PlatformBackend:
-    from .linux.desktop_backend import LinuxDesktopPlatformBackend
+    from .linux.backend import create_desktop_backend, create_window_manager_backend
     from .linux.tiling import is_tiling_window_manager
-    from .linux.window_manager_backend import LinuxWindowManagerPlatformBackend
 
     if is_tiling_window_manager():
-        return LinuxWindowManagerPlatformBackend()
-    return LinuxDesktopPlatformBackend()
+        backend = create_window_manager_backend()
+        logger.info("Using Linux window manager platform backend")
+        return backend
+
+    backend = create_desktop_backend()
+    logger.info("Using Linux desktop platform backend")
+    return backend

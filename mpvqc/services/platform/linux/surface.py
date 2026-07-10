@@ -4,26 +4,18 @@
 
 from __future__ import annotations
 
-from functools import cached_property
 from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QEvent, QObject
 from PySide6.QtGui import QGuiApplication, QRegion
 
-from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.fullscreen import QtFullscreenHandler
-
 from .resize_filter import MARGIN_RESIZE_BAND, WindowResizeFilter
-from .window_button_detector import WindowButtonDetector
 from .window_geometry import apply_wayland_content_margins
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtGui import QWindow
-
-    from mpvqc.services.platform.fullscreen import FullscreenHandler
-    from mpvqc.services.platform.window_buttons import WindowButtonPreference
 
 
 class WindowExposeFilter(QObject):
@@ -43,38 +35,17 @@ class WindowExposeFilter(QObject):
         return False
 
 
-class LinuxDesktopPlatformBackend(PlatformBackend):
+class SurfaceController:
+    """Manages the client-side-decorated surface: the shadow margin around the
+    content, the input mask that lets clicks fall through the shadow, and the
+    resize band along the content edge."""
+
     def __init__(self) -> None:
-        super().__init__()
         self._window: QWindow | None = None
         self._event_filter: WindowResizeFilter | None = None
         self._expose_filter: WindowExposeFilter | None = None
         self._margin = 0
-        self._window_buttons = WindowButtonDetector()
-        self._window_buttons.preference_changed.connect(self.window_button_preference_changed)
-        self._window_buttons.detect()
 
-    @property
-    @override
-    def root_qml_url(self) -> str:
-        return "qrc:/qt/qml/MpvqcApplicationLinux.qml"
-
-    @property
-    @override
-    def draws_own_shadow(self) -> bool:
-        return True
-
-    @cached_property
-    @override
-    def fullscreen_handler(self) -> FullscreenHandler:
-        return QtFullscreenHandler()
-
-    @property
-    @override
-    def window_button_preference(self) -> WindowButtonPreference:
-        return self._window_buttons.preference
-
-    @override
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._window = window
         self._event_filter = event_filter = WindowResizeFilter(window, app)
@@ -90,7 +61,6 @@ class LinuxDesktopPlatformBackend(PlatformBackend):
         window.widthChanged.connect(self._apply_input_mask)
         window.heightChanged.connect(self._apply_input_mask)
 
-    @override
     def apply_content_margins(self, margin: int) -> None:
         self._margin = margin
         if self._event_filter is not None:

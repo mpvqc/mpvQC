@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import shutil
 import tempfile
-from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, override
 
@@ -26,16 +25,16 @@ from mpvqc.services import (
     VideoResizeService,
 )
 from mpvqc.services.platform.backend import PlatformBackend
+from mpvqc.services.platform.content_margins import NoContentMarginsApplier
+from mpvqc.services.platform.embedded_player import NoEmbeddedPlayerTracker
 from mpvqc.services.platform.fullscreen import QtFullscreenHandler
+from mpvqc.services.platform.window_buttons import StaticWindowButtons
+from mpvqc.services.platform.window_configuration import NoWindowConfigurator
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-
-    from PySide6.QtGui import QGuiApplication, QWindow
-
-    from mpvqc.services.platform.fullscreen import FullscreenHandler
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 TEMP_ROOT = Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
@@ -43,31 +42,23 @@ TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
 
-class _HeadlessPlatformBackend(PlatformBackend):
-    @property
-    @override
-    def root_qml_url(self) -> str:
-        return "qrc:/qt/qml/MpvqcApplicationLinux.qml"
-
-    @property
-    @override
-    def draws_own_shadow(self) -> bool:
+def _headless_platform_backend() -> PlatformBackend:
+    return PlatformBackend(
+        root_qml_url="qrc:/qt/qml/MpvqcApplicationLinux.qml",
         # Tests load bare components, not the shadowed shell, so there is no margin.
-        return False
-
-    @cached_property
-    @override
-    def fullscreen_handler(self) -> FullscreenHandler:
-        return QtFullscreenHandler()
-
-    @override
-    def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
-        pass
+        draws_own_shadow=False,
+        owns_window_geometry=False,
+        fullscreen=QtFullscreenHandler(),
+        window_configuration=NoWindowConfigurator(),
+        embedded_player=NoEmbeddedPlayerTracker(),
+        content_margins=NoContentMarginsApplier(),
+        window_buttons=StaticWindowButtons(),
+    )
 
 
 class PlatformServiceOverride(PlatformService):
     def __init__(self) -> None:
-        super().__init__(_HeadlessPlatformBackend())
+        super().__init__(_headless_platform_backend())
 
 
 class ApplicationPathsServiceOverride(ApplicationPathsService):
