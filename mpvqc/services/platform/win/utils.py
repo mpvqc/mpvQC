@@ -8,17 +8,24 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-from ctypes import POINTER, byref, sizeof, windll  # pyrefly: ignore[missing-module-attribute]
-from ctypes.wintypes import HWND, LONG, RECT
+from ctypes import (  # pyrefly: ignore[missing-module-attribute]
+    POINTER,
+    WINFUNCTYPE,
+    byref,
+    c_void_p,
+    cast,
+    sizeof,
+    windll,
+)
+from ctypes.wintypes import BOOL, DWORD, HWND, LONG, LPCVOID, RECT
 from functools import lru_cache
 from typing import Any
 
 import win32api
 import win32con
 import win32gui
-from PySide6.QtGui import QGuiApplication, QWindow
 
-from .c_structures import APPBARDATA, MARGINS
+from .c_structures import APPBARDATA, GUID
 
 SM_CXPADDEDBORDER = 92
 
@@ -30,10 +37,23 @@ def get_window_size(hwnd) -> tuple[int, int, int, int]:
     return left, top, width, height
 
 
-def set_outer_window_size(hwnd, w, h) -> None:
-    """Hard-set the OUTER size (frame included)."""
-    flags = win32con.SWP_NOMOVE | win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE
-    windll.user32.SetWindowPos(hwnd, None, 0, 0, w, h, flags)
+def set_outer_window_rect(hwnd, rect) -> None:
+    """Set the outer rect, frame included."""
+    left, top, right, bottom = rect
+    flags = win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED
+    windll.user32.SetWindowPos(hwnd, None, left, top, right - left, bottom - top, flags)
+
+
+def refresh_window_frame(hwnd) -> None:
+    """Force a WM_NCCALCSIZE round trip without moving the window."""
+    flags = (
+        win32con.SWP_FRAMECHANGED
+        | win32con.SWP_NOSIZE
+        | win32con.SWP_NOMOVE
+        | win32con.SWP_NOZORDER
+        | win32con.SWP_NOACTIVATE
+    )
+    windll.user32.SetWindowPos(hwnd, None, 0, 0, 0, 0, flags)
 
 
 def is_maximized(hwnd) -> bool:
@@ -44,17 +64,40 @@ def is_maximized(hwnd) -> bool:
     return window_placement[1] == win32con.SW_MAXIMIZE
 
 
+def is_minimized(hwnd) -> bool:
+    return bool(win32gui.IsIconic(hwnd))
+
+
 def is_fullscreen(hwnd) -> bool:
     win_rect = win32gui.GetWindowRect(hwnd)
     if not win_rect:
         return False
 
-    monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTOPRIMARY)
-    if not monitor_info:
+    return covers_monitor(win_rect)
+
+
+def covers_monitor(rect) -> bool:
+    monitor_rect = get_monitor_rect_for(rect)
+    if monitor_rect is None:
         return False
 
-    monitor_rect = monitor_info["Monitor"]
-    return all(i == j for i, j in zip(win_rect, monitor_rect))  # noqa:B905
+    left, top, right, bottom = rect
+    m_left, m_top, m_right, m_bottom = monitor_rect
+    return left <= m_left and top <= m_top and right >= m_right and bottom >= m_bottom
+
+
+def get_monitor_rect_for(rect) -> tuple[int, int, int, int] | None:
+    monitor = win32api.MonitorFromRect(rect, win32con.MONITOR_DEFAULTTONEAREST)
+    if not monitor:
+        return None
+    return win32api.GetMonitorInfo(monitor)["Monitor"]
+
+
+def get_monitor_rect(hwnd) -> tuple[int, int, int, int] | None:
+    monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+    if not monitor_info:
+        return None
+    return monitor_info["Monitor"]
 
 
 def get_monitor_info(hwnd, dw_flags) -> Any | None:
@@ -66,30 +109,13 @@ def get_monitor_info(hwnd, dw_flags) -> Any | None:
 
 
 def get_resize_border_thickness(hwnd, horizontal=True) -> int:
-    window = find_window(hwnd)
-    if not window:
-        return 0
-
     frame = win32con.SM_CXSIZEFRAME if horizontal else win32con.SM_CYSIZEFRAME
-    result = get_system_metrics(hwnd, frame) + get_system_metrics(hwnd, SM_CXPADDEDBORDER)
-
-    if result > 0:
-        return result
-
-    return round(8 * window.devicePixelRatio())
+    return get_system_metrics(hwnd, frame) + get_system_metrics(hwnd, SM_CXPADDEDBORDER)
 
 
 def get_system_metrics(hwnd, index) -> int:
     dpi = windll.user32.GetDpiForWindow(hwnd)
     return windll.user32.GetSystemMetricsForDpi(index, dpi)
-
-
-def find_window(hwnd) -> QWindow | None:
-    hwnd = int(hwnd)
-    for window in QGuiApplication.topLevelWindows():
-        if window and window.winId() == hwnd:
-            return window
-    return None
 
 
 class Taskbar:
@@ -129,34 +155,81 @@ class Taskbar:
         return cls.NO_POSITION
 
 
-DwmExtendFrameIntoClientArea = windll.dwmapi.DwmExtendFrameIntoClientArea
-DwmExtendFrameIntoClientArea.argtypes = [HWND, POINTER(MARGINS)]
-DwmExtendFrameIntoClientArea.restype = LONG
+DwmSetWindowAttribute = windll.dwmapi.DwmSetWindowAttribute
+DwmSetWindowAttribute.argtypes = [HWND, DWORD, LPCVOID, DWORD]
+DwmSetWindowAttribute.restype = LONG
+
+DWMWA_TRANSITIONS_FORCEDISABLED = 3
+DWMWA_WINDOW_CORNER_PREFERENCE = 33
+DWMWA_BORDER_COLOR = 34
+
+DWMWCP_DEFAULT = 0
+DWMWCP_DONOTROUND = 1
+
+DWMWA_COLOR_DEFAULT = 0xFFFFFFFF
+DWMWA_COLOR_NONE = 0xFFFFFFFE
 
 
-def extend_frame_into_client_area(hwnd) -> None:
-    """Enables drop shadow if 'configure_gwl_style' gets called as well for the same hwnd"""
-
-    margins = MARGINS(-1, -1, -1, -1)
-    DwmExtendFrameIntoClientArea(hwnd, byref(margins))
+_CLSID_TASKBAR_LIST = "{56FDF344-FD6D-11D0-958A-006097C9A090}"
+_IID_ITASKBAR_LIST_2 = "{602D4995-B13A-429B-A66E-1935E44F4317}"
+_CLSCTX_INPROC_SERVER = 1
 
 
-def configure_gwl_style(hwnd) -> None:
+@lru_cache(maxsize=1)
+def _taskbar_list_2():
+    ole32 = windll.ole32
+    ole32.CoInitialize(None)
+
+    clsid, iid = GUID(), GUID()
+    ole32.CLSIDFromString(_CLSID_TASKBAR_LIST, byref(clsid))
+    ole32.IIDFromString(_IID_ITASKBAR_LIST_2, byref(iid))
+
+    interface = c_void_p()
+    if ole32.CoCreateInstance(byref(clsid), None, _CLSCTX_INPROC_SERVER, byref(iid), byref(interface)) != 0:
+        return None
+
+    # IUnknown (0-2) | ITaskbarList: HrInit 3 ... | ITaskbarList2: MarkFullscreenWindow 8
+    vtable = cast(interface, POINTER(POINTER(c_void_p * 9))).contents.contents
+    hr_init = WINFUNCTYPE(LONG, c_void_p)(vtable[3])
+    if hr_init(interface) != 0:
+        return None
+
+    mark_fullscreen_window = WINFUNCTYPE(LONG, c_void_p, HWND, BOOL)(vtable[8])
+    return interface, mark_fullscreen_window
+
+
+def set_shell_fullscreen_marker(hwnd, *, fullscreen: bool) -> None:
+    """The shell only drops the taskbar for windows matching the monitor rect exactly;
+    ours deliberately overhangs by the frame border, so tell the shell explicitly."""
+    entry = _taskbar_list_2()
+    if entry is None:
+        return
+
+    interface, mark_fullscreen_window = entry
+    mark_fullscreen_window(interface, int(hwnd), 1 if fullscreen else 0)
+
+
+def set_window_transitions_enabled(hwnd, *, enabled: bool) -> None:
+    disabled = DWORD(0 if enabled else 1)
+    DwmSetWindowAttribute(int(hwnd), DWMWA_TRANSITIONS_FORCEDISABLED, byref(disabled), sizeof(disabled))
+
+
+def set_window_corners_rounded(hwnd, *, rounded: bool) -> None:
+    preference = DWORD(DWMWCP_DEFAULT if rounded else DWMWCP_DONOTROUND)
+    DwmSetWindowAttribute(int(hwnd), DWMWA_WINDOW_CORNER_PREFERENCE, byref(preference), sizeof(preference))
+
+
+def set_window_border_visible(hwnd, *, visible: bool) -> None:
+    color = DWORD(DWMWA_COLOR_DEFAULT if visible else DWMWA_COLOR_NONE)
+    DwmSetWindowAttribute(int(hwnd), DWMWA_BORDER_COLOR, byref(color), sizeof(color))
+
+
+def set_style_flag(hwnd, flag: int, *, enabled: bool) -> None:
     style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-    win32gui.SetWindowLong(
-        hwnd,
-        win32con.GWL_STYLE,
-        style
-        | win32con.WS_MINIMIZEBOX
-        | win32con.WS_MAXIMIZEBOX
-        | win32con.WS_SYSMENU
-        | win32con.WS_CAPTION
-        | win32con.WS_THICKFRAME,
-    )
+    style = style | flag if enabled else style & ~flag
+    win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
 
 
 @lru_cache(maxsize=32)
 def prevent_window_resize_for(hwnd) -> None:
-    style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-    style &= ~win32con.WS_THICKFRAME
-    win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
+    set_style_flag(hwnd, win32con.WS_THICKFRAME, enabled=False)

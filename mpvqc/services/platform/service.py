@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
     from .backend import PlatformBackend
+    from .fullscreen import FullscreenHandler
 
 
 class PlatformService(QObject):
@@ -44,6 +45,10 @@ class PlatformService(QObject):
     @property
     def owns_window_geometry(self) -> bool:
         return self._backend.owns_window_geometry
+
+    @property
+    def fullscreen_handler(self) -> FullscreenHandler:
+        return self._backend.fullscreen_handler
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.configure_window(app, window)

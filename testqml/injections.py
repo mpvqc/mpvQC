@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, override
 
@@ -25,6 +26,7 @@ from mpvqc.services import (
     VideoResizeService,
 )
 from mpvqc.services.platform.backend import PlatformBackend
+from mpvqc.services.platform.fullscreen import QtFullscreenHandler
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
@@ -32,6 +34,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from PySide6.QtGui import QGuiApplication, QWindow
+
+    from mpvqc.services.platform.fullscreen import FullscreenHandler
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 TEMP_ROOT = Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
@@ -51,10 +55,10 @@ class _HeadlessPlatformBackend(PlatformBackend):
         # Tests load bare components, not the shadowed shell, so there is no margin.
         return False
 
-    @property
+    @cached_property
     @override
-    def draws_window_border(self) -> bool:
-        return False
+    def fullscreen_handler(self) -> FullscreenHandler:
+        return QtFullscreenHandler()
 
     @override
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:

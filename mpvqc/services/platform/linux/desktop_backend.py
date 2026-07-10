@@ -4,12 +4,14 @@
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QEvent, QObject
 from PySide6.QtGui import QGuiApplication, QRegion
 
 from mpvqc.services.platform.backend import PlatformBackend
+from mpvqc.services.platform.fullscreen import QtFullscreenHandler
 
 from .resize_filter import MARGIN_RESIZE_BAND, WindowResizeFilter
 from .window_button_detector import WindowButtonDetector
@@ -20,6 +22,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtGui import QWindow
 
+    from mpvqc.services.platform.fullscreen import FullscreenHandler
     from mpvqc.services.platform.window_buttons import WindowButtonPreference
 
 
@@ -65,6 +68,11 @@ class LinuxDesktopPlatformBackend(PlatformBackend):
     @override
     def draws_window_border(self) -> bool:
         return False
+
+    @cached_property
+    @override
+    def fullscreen_handler(self) -> FullscreenHandler:
+        return QtFullscreenHandler()
 
     @property
     @override
