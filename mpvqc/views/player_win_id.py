@@ -23,4 +23,4 @@ class MpvWindowPyObject(QWindow):
         self.setFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowTransparentForInput)
         win_id = self.winId()
         self._player.init(win_id=win_id)
-        self._platform.set_embedded_player_hwnd(win_id)
+        self._platform.track_embedded_player(win_id)
