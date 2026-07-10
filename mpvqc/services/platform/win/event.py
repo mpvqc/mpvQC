@@ -19,6 +19,9 @@ import win32con
 from .c_structures import LPNCCALCSIZE_PARAMS
 from .utils import (
     Taskbar,
+    covers_monitor,
+    get_monitor_info,
+    get_monitor_rect_for,
     get_resize_border_thickness,
     get_window_size,
     is_fullscreen,
@@ -26,59 +29,54 @@ from .utils import (
     prevent_window_resize_for,
 )
 
-RESIZE_BORDER_WIDTH = 6
-
 
 def handle_non_client_hit_test(hwnd, l_param) -> tuple[bool, int]:
+    # Only the top edge needs help: the client covers the strip where the native
+    # caption and its resize band would live. Left, right and bottom keep real
+    # non-client bands, hit-tested natively.
     if is_maximized(hwnd) or is_fullscreen(hwnd):
-        return False, win32con.HTNOWHERE
+        return False, 0
 
-    x, y, w, h = get_window_size(hwnd)
+    x, y, w, _ = get_window_size(hwnd)
     x_pos = (win32api.LOWORD(l_param) - x) % 65536
     y_pos = (win32api.HIWORD(l_param) - y) % 65536
 
-    lx = x_pos < RESIZE_BORDER_WIDTH
-    rx = x_pos > w - RESIZE_BORDER_WIDTH
-    ty = y_pos < RESIZE_BORDER_WIDTH
-    by = y_pos > h - RESIZE_BORDER_WIDTH
+    band = get_resize_border_thickness(hwnd, horizontal=False)
+    if y_pos >= band:
+        return False, 0
 
-    if lx and ty:
+    corner = 2 * band
+    if x_pos < corner:
         return True, win32con.HTTOPLEFT
-    if rx and by:
-        return True, win32con.HTBOTTOMRIGHT
-    if rx and ty:
+    if x_pos > w - corner:
         return True, win32con.HTTOPRIGHT
-    if lx and by:
-        return True, win32con.HTBOTTOMLEFT
-    if ty:
-        return True, win32con.HTTOP
-    if by:
-        return True, win32con.HTBOTTOM
-    if lx:
-        return True, win32con.HTLEFT
-    if rx:
-        return True, win32con.HTRIGHT
-
-    return False, win32con.HTNOWHERE
+    return True, win32con.HTTOP
 
 
 def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
     rect = cast(l_param, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
+    proposed = (rect.left, rect.top, rect.right, rect.bottom)
 
-    maximized = is_maximized(hwnd)
-    fullscreen = is_fullscreen(hwnd)
+    # Qt's own handling (DefWindowProc frame plus the negative caption margin) is
+    # only wrong when maximized, where the caption correction overshoots the work
+    # area, and when fullscreen.
+    if is_maximized(hwnd):
+        monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
+        if monitor_info is None:
+            return False, 0
+        rect.left, rect.top, rect.right, rect.bottom = monitor_info["Work"]
+    elif covers_monitor(proposed):
+        # The fullscreen window is deliberately larger than the monitor: DWM
+        # permanently drops maximize/restore animations once a client rect fills
+        # the whole window.
+        monitor_rect = get_monitor_rect_for(proposed)
+        if monitor_rect is None:
+            return False, 0
+        rect.left, rect.top, rect.right, rect.bottom = monitor_rect
+    else:
+        return False, 0
 
-    # adjust the size of client rect
-    if maximized and not fullscreen:
-        ty = get_resize_border_thickness(hwnd, False)
-        rect.top += ty
-        rect.bottom -= ty
-
-        tx = get_resize_border_thickness(hwnd, True)
-        rect.left += tx
-        rect.right -= tx
-
-    if (maximized or fullscreen) and Taskbar.is_auto_hide():
+    if Taskbar.is_auto_hide():
         position = Taskbar.get_position(hwnd)
         if position == Taskbar.TOP:
             rect.top += Taskbar.AUTO_HIDE_THICKNESS

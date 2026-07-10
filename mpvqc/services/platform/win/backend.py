@@ -4,22 +4,32 @@
 
 from __future__ import annotations
 
+from ctypes import windll
+from functools import cached_property
 from typing import TYPE_CHECKING, override
+
+import win32con
+import win32gui
+from PySide6.QtCore import QMargins, Qt
 
 from mpvqc.services.platform.backend import PlatformBackend
 
 from .event import WindowsEventFilter
-from .utils import (
-    configure_gwl_style,
-    extend_frame_into_client_area,
-    set_outer_window_size,
-)
+from .fullscreen import WindowsFullscreenHandler
+from .utils import SM_CXPADDEDBORDER
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
+    from mpvqc.services.platform.fullscreen import FullscreenHandler
+
 
 class WindowsPlatformBackend(PlatformBackend):
+    """Keeps the full native window frame and reclaims only the caption strip for
+    the QML title bar, via Qt's "_q_windowsCustomMargins". The left/right/bottom
+    resize bands stay in the invisible non-client frame outside the content;
+    shadows, borders, corners and DWM animations stay native."""
+
     def __init__(self) -> None:
         super().__init__()
         self._event_filter = WindowsEventFilter()
@@ -32,29 +42,52 @@ class WindowsPlatformBackend(PlatformBackend):
     @property
     @override
     def draws_own_shadow(self) -> bool:
-        # Windows keeps the native DWM frame and its own shadow.
         return False
 
     @property
     @override
     def draws_window_border(self) -> bool:
-        # Leave space to let Windows draw its custom border.
+        # Reserve space for the Windows accent border.
         return True
+
+    @cached_property
+    @override
+    def fullscreen_handler(self) -> FullscreenHandler:
+        return WindowsFullscreenHandler()
 
     @override
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
+        # Flags and margins are only read at native window creation, which the
+        # winId() call below triggers.
+        window.setFlags(Qt.WindowType.Window)
+        window.setProperty("_q_windowsCustomMargins", QMargins(0, -_caption_inset(), 0, 0))
+
         hwnd_top_lvl = window.winId()
         self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
         app.installNativeEventFilter(self._event_filter)
 
-        extend_frame_into_client_area(hwnd_top_lvl)
-        configure_gwl_style(hwnd_top_lvl)
-
-        zoom = window.devicePixelRatio()
-        width = int(window.width() * zoom)
-        height = int(window.height() * zoom)
-        set_outer_window_size(hwnd_top_lvl, width, height)
+        _sync_qt_frame_bookkeeping(hwnd_top_lvl)
 
     @override
     def set_embedded_player_hwnd(self, win_id: int) -> None:
         self._event_filter.set_embedded_player_hwnd(win_id)
+
+
+def _caption_inset() -> int:
+    dpi = windll.user32.GetDpiForSystem()
+    border = windll.user32.GetSystemMetricsForDpi(win32con.SM_CYSIZEFRAME, dpi) + windll.user32.GetSystemMetricsForDpi(
+        SM_CXPADDEDBORDER, dpi
+    )
+    caption = windll.user32.GetSystemMetricsForDpi(win32con.SM_CYCAPTION, dpi)
+    return border + caption
+
+
+def _sync_qt_frame_bookkeeping(hwnd) -> None:
+    # Qt corrects its frame margins only on a geometry event, and the Qt Quick
+    # scene follows only on a real size change: the initial scene is sized with
+    # the stale margins while the QWindow property keeps the requested value.
+    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    width, height = right - left, bottom - top
+    flags = win32con.SWP_NOMOVE | win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE
+    windll.user32.SetWindowPos(int(hwnd), None, 0, 0, width, height + 1, flags)
+    windll.user32.SetWindowPos(int(hwnd), None, 0, 0, width, height, flags)

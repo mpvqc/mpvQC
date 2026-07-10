@@ -9,15 +9,15 @@
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
 from ctypes import POINTER, Structure, c_int
-from ctypes.wintypes import DWORD, HWND, LPARAM, RECT, UINT
+from ctypes.wintypes import BYTE, DWORD, HWND, LPARAM, RECT, UINT, WORD
 
 
-class MARGINS(Structure):
+class GUID(Structure):
     _fields_ = [
-        ("cxLeftWidth", c_int),
-        ("cxRightWidth", c_int),
-        ("cyTopHeight", c_int),
-        ("cyBottomHeight", c_int),
+        ("data1", DWORD),
+        ("data2", WORD),
+        ("data3", WORD),
+        ("data4", BYTE * 8),
     ]
 
 

@@ -15,11 +15,17 @@ from .window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPrefer
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
+    from .fullscreen import FullscreenHandler
+
 logger = logging.getLogger(__name__)
 
 
 class PlatformBackend(QObject):
     window_button_preference_changed = Signal(WindowButtonPreference)
+
+    @property
+    def fullscreen_handler(self) -> FullscreenHandler:
+        raise NotImplementedError
 
     @property
     def root_qml_url(self) -> str:

@@ -4,15 +4,18 @@
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import TYPE_CHECKING, override
 
 from mpvqc.services.platform.backend import PlatformBackend
+from mpvqc.services.platform.fullscreen import QtFullscreenHandler
 
 from .window_button_detector import WindowButtonDetector
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
+    from mpvqc.services.platform.fullscreen import FullscreenHandler
     from mpvqc.services.platform.window_buttons import WindowButtonPreference
 
 
@@ -43,6 +46,11 @@ class LinuxWindowManagerPlatformBackend(PlatformBackend):
     def owns_window_geometry(self) -> bool:
         # Ideally driven by the compositor's runtime tiled state, but Qt doesn't expose it
         return True
+
+    @cached_property
+    @override
+    def fullscreen_handler(self) -> FullscreenHandler:
+        return QtFullscreenHandler()
 
     @property
     @override

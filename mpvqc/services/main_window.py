@@ -59,7 +59,7 @@ class MainWindowService(QObject):
 
         self._outer_width = window.width()
         self._outer_height = window.height()
-        self._apply_window_state(window.windowStates())
+        self._apply_window_state()
         self._on_focus_window_changed(app.focusWindow())
 
         self._zoom_factor = window.devicePixelRatio()
@@ -73,6 +73,8 @@ class MainWindowService(QObject):
 
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
+        window.xChanged.connect(self._on_position_changed)
+        window.yChanged.connect(self._on_position_changed)
         window.windowStateChanged.connect(self._on_window_state_changed)
         app.focusWindowChanged.connect(self._on_focus_window_changed)
 
@@ -88,14 +90,12 @@ class MainWindowService(QObject):
         self._active_window.setVisible(True)
 
     def show_fullscreen(self) -> None:
-        # Keep the maximized flag set while fullscreen so leaving fullscreen returns
-        # to maximized, instead of the compositor restoring the saved normal geometry.
-        states = self._active_window.windowStates() | Qt.WindowState.WindowFullScreen
-        self._active_window.setWindowStates(states)
+        self._platform.fullscreen_handler.enter(self._active_window)
+        self._sync_window_state()
 
     def exit_fullscreen(self) -> None:
-        states = self._active_window.windowStates() & ~Qt.WindowState.WindowFullScreen
-        self._active_window.setWindowStates(states)
+        self._platform.fullscreen_handler.exit(self._active_window)
+        self._sync_window_state()
 
     def show_maximized(self) -> None:
         self._active_window.setWindowStates(Qt.WindowState.WindowMaximized)
@@ -169,6 +169,9 @@ class MainWindowService(QObject):
         self._outer_width = width
         if self.content_width != previous:
             self.content_width_changed.emit(self.content_width)
+        # The OS can take the window out of fullscreen through geometry alone
+        # (snapping, display scale changes), without any window state event.
+        self._apply_window_state()
 
     @Slot(int)
     def _on_height_changed(self, height: int) -> None:
@@ -178,15 +181,32 @@ class MainWindowService(QObject):
         self._outer_height = height
         if self.content_height != previous:
             self.content_height_changed.emit(self.content_height)
+        self._apply_window_state()
+
+    @Slot(int)
+    def _on_position_changed(self, _: int) -> None:
+        # Moving without resizing (keyboard move via the system menu) can also take
+        # the window out of fullscreen without any window state event.
+        self._apply_window_state()
 
     @Slot(Qt.WindowState)
     def _on_window_state_changed(self, _state: Qt.WindowState) -> None:
-        self._apply_window_state(self._active_window.windowStates())
+        self._sync_window_state()
+
+    def _sync_window_state(self) -> None:
+        self._apply_window_state()
         self._refresh_shadow_margin()
 
-    def _apply_window_state(self, states: Qt.WindowState) -> None:
-        is_fullscreen = bool(states & Qt.WindowState.WindowFullScreen)
-        is_maximized = bool(states & Qt.WindowState.WindowMaximized)
+    def _apply_window_state(self) -> None:
+        window = self._active_window
+        is_fullscreen = self._platform.fullscreen_handler.is_active(window)
+
+        # While fullscreen the OS-level maximized state is parked (Windows drops the
+        # style bit), so keep reporting the value from before entering.
+        if is_fullscreen:
+            is_maximized = self._is_maximized
+        else:
+            is_maximized = bool(window.windowStates() & Qt.WindowState.WindowMaximized)
 
         if is_fullscreen != self._is_fullscreen:
             self._is_fullscreen = is_fullscreen
