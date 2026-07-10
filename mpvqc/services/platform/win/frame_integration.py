@@ -12,6 +12,7 @@ import win32gui
 from PySide6.QtCore import QMargins, Qt
 
 from .event import WindowsEventFilter
+from .reveal_filter import WindowRevealFilter
 from .utils import SM_CXPADDEDBORDER
 
 if TYPE_CHECKING:
@@ -26,6 +27,7 @@ class WindowsFrameIntegration:
 
     def __init__(self) -> None:
         self._event_filter = WindowsEventFilter()
+        self._reveal_filter = WindowRevealFilter()
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         # Flags and margins are only read at native window creation, which the
@@ -36,6 +38,7 @@ class WindowsFrameIntegration:
         hwnd_top_lvl = window.winId()
         self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
         app.installNativeEventFilter(self._event_filter)
+        app.installEventFilter(self._reveal_filter)
 
         _sync_qt_frame_bookkeeping(hwnd_top_lvl)
 

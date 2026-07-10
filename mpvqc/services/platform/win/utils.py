@@ -159,7 +159,12 @@ DwmSetWindowAttribute = windll.dwmapi.DwmSetWindowAttribute
 DwmSetWindowAttribute.argtypes = [HWND, DWORD, LPCVOID, DWORD]
 DwmSetWindowAttribute.restype = LONG
 
+DwmFlush = windll.dwmapi.DwmFlush
+DwmFlush.argtypes = []
+DwmFlush.restype = LONG
+
 DWMWA_TRANSITIONS_FORCEDISABLED = 3
+DWMWA_CLOAK = 13
 DWMWA_WINDOW_CORNER_PREFERENCE = 33
 DWMWA_BORDER_COLOR = 34
 
@@ -212,6 +217,15 @@ def set_shell_fullscreen_marker(hwnd, *, fullscreen: bool) -> None:
 def set_window_transitions_enabled(hwnd, *, enabled: bool) -> None:
     disabled = DWORD(0 if enabled else 1)
     DwmSetWindowAttribute(int(hwnd), DWMWA_TRANSITIONS_FORCEDISABLED, byref(disabled), sizeof(disabled))
+
+
+def set_window_cloaked(hwnd, *, cloaked: bool) -> None:
+    value = BOOL(1 if cloaked else 0)
+    DwmSetWindowAttribute(int(hwnd), DWMWA_CLOAK, byref(value), sizeof(value))
+
+
+def wait_for_next_composition() -> None:
+    DwmFlush()
 
 
 def set_window_corners_rounded(hwnd, *, rounded: bool) -> None:
