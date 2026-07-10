@@ -64,11 +64,6 @@ class LinuxDesktopPlatformBackend(PlatformBackend):
     def draws_own_shadow(self) -> bool:
         return True
 
-    @property
-    @override
-    def draws_window_border(self) -> bool:
-        return False
-
     @cached_property
     @override
     def fullscreen_handler(self) -> FullscreenHandler:

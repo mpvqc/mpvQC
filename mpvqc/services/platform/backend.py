@@ -36,10 +36,6 @@ class PlatformBackend(QObject):
         raise NotImplementedError
 
     @property
-    def draws_window_border(self) -> bool:
-        raise NotImplementedError
-
-    @property
     def owns_window_geometry(self) -> bool:
         return False
 

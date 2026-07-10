@@ -38,11 +38,6 @@ class LinuxWindowManagerPlatformBackend(PlatformBackend):
 
     @property
     @override
-    def draws_window_border(self) -> bool:
-        return False
-
-    @property
-    @override
     def owns_window_geometry(self) -> bool:
         # Ideally driven by the compositor's runtime tiled state, but Qt doesn't expose it
         return True

@@ -44,12 +44,6 @@ class WindowsPlatformBackend(PlatformBackend):
     def draws_own_shadow(self) -> bool:
         return False
 
-    @property
-    @override
-    def draws_window_border(self) -> bool:
-        # Reserve space for the Windows accent border.
-        return True
-
     @cached_property
     @override
     def fullscreen_handler(self) -> FullscreenHandler:

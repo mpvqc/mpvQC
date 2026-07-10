@@ -9,7 +9,6 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import (
     KeyCommandGeneratorService,
     MainWindowService,
-    PlatformService,
     PlayerService,
     SettingsService,
 )
@@ -20,41 +19,18 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcAppViewModel(QObject):
-    _platform = inject.attr(PlatformService)
     _main_window = inject.attr(MainWindowService)
     _settings = inject.attr(SettingsService)
     _player = inject.attr(PlayerService)
     _command_generator = inject.attr(KeyCommandGeneratorService)
 
-    windowBorderChanged = Signal(int)
     shadowMarginChanged = Signal(int)
     layoutOrientationChanged = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._window_border = self._compute_window_border()
-        self._main_window.is_fullscreen_changed.connect(self._update_window_border)
-        self._main_window.is_maximized_changed.connect(self._update_window_border)
         self._main_window.shadow_margin_changed.connect(self.shadowMarginChanged)
         self._settings.layout_orientation_changed.connect(self.layoutOrientationChanged)
-
-    def _compute_window_border(self) -> int:
-        if not self._platform.draws_window_border:
-            return 0
-        if self._main_window.is_fullscreen or self._main_window.is_maximized:
-            return 0
-        return 1
-
-    @Slot()
-    def _update_window_border(self) -> None:
-        border = self._compute_window_border()
-        if border != self._window_border:
-            self._window_border = border
-            self.windowBorderChanged.emit(border)
-
-    @Property(int, notify=windowBorderChanged)
-    def windowBorder(self) -> int:
-        return self._window_border
 
     @Property(int, notify=shadowMarginChanged)
     def shadowMargin(self) -> int:

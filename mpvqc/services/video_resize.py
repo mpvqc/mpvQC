@@ -16,7 +16,6 @@ from .settings import SettingsService
 @dataclass(frozen=True)
 class ViewDimensions:
     header_height: int
-    border_size: int
     handle_width: int
     handle_height: int
     table_width: int
@@ -61,7 +60,6 @@ class VideoResizeService:
                     video_width=video_width,
                     video_height=video_height,
                     header_height=dimensions.header_height,
-                    border_size=dimensions.border_size,
                     handle_height=dimensions.handle_height,
                     table_height=dimensions.table_height,
                     available_height=available_height,
@@ -71,7 +69,6 @@ class VideoResizeService:
                     video_width=video_width,
                     video_height=video_height,
                     header_height=dimensions.header_height,
-                    border_size=dimensions.border_size,
                     handle_width=dimensions.handle_width,
                     table_width=dimensions.table_width,
                     available_width=available_width,
@@ -110,16 +107,15 @@ def calculate_vertical_layout_sizes(
     video_width: int,
     video_height: int,
     header_height: int,
-    border_size: int,
     handle_height: int,
     table_height: int,
     available_height: int,
 ) -> ResizeResult:
-    height_without_table = 2 * border_size + header_height + video_height + handle_height
+    height_without_table = header_height + video_height + handle_height
     new_table_height = max(0, min(table_height, available_height - height_without_table))
 
     return ResizeResult(
-        window_width=video_width + 2 * border_size,
+        window_width=video_width,
         window_height=height_without_table + new_table_height,
         table_width=video_width,
         table_height=new_table_height,
@@ -130,17 +126,16 @@ def calculate_horizontal_layout_sizes(
     video_width: int,
     video_height: int,
     header_height: int,
-    border_size: int,
     handle_width: int,
     table_width: int,
     available_width: int,
 ) -> ResizeResult:
-    width_without_table = 2 * border_size + video_width + handle_width
+    width_without_table = video_width + handle_width
     new_table_width = max(0, min(table_width, available_width - width_without_table))
 
     return ResizeResult(
-        window_width=2 * border_size + video_width + handle_width + new_table_width,
-        window_height=2 * border_size + header_height + video_height,
+        window_width=video_width + handle_width + new_table_width,
+        window_height=header_height + video_height,
         table_width=new_table_width,
         table_height=video_height,
     )

@@ -18,7 +18,6 @@ class MpvqcResizeViewModel(QObject):
     _resize_service = inject.attr(VideoResizeService)
 
     headerHeightChanged = Signal(int)
-    borderSizeChanged = Signal(int)
     handleWidthChanged = Signal(int)
     handleHeightChanged = Signal(int)
     tableWidthChanged = Signal(int)
@@ -30,7 +29,6 @@ class MpvqcResizeViewModel(QObject):
     def __init__(self, /) -> None:
         super().__init__()
         self._header_height = 0
-        self._border_size = 0
         self._handle_width = 0
         self._handle_height = 0
         self._table_width = 0
@@ -48,16 +46,6 @@ class MpvqcResizeViewModel(QObject):
         if value != self._header_height:
             self._header_height = value
             self.headerHeightChanged.emit(value)
-
-    @Property(int, notify=borderSizeChanged)
-    def borderSize(self) -> int:
-        return self._border_size
-
-    @borderSize.setter
-    def borderSize(self, value: int) -> None:
-        if value != self._border_size:
-            self._border_size = value
-            self.borderSizeChanged.emit(value)
 
     @Property(int, notify=handleWidthChanged)
     def handleWidth(self) -> int:
@@ -103,7 +91,6 @@ class MpvqcResizeViewModel(QObject):
     def recalculateSizes(self) -> None:
         view_dims = ViewDimensions(
             header_height=self._header_height,
-            border_size=self._border_size,
             handle_width=self._handle_width,
             handle_height=self._handle_height,
             table_width=self._table_width,
