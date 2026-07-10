@@ -227,6 +227,7 @@ files = [
     "mpvqc/services/platform/win/event.py",
     "mpvqc/services/platform/win/frame_integration.py",
     "mpvqc/services/platform/win/fullscreen.py",
+    "mpvqc/services/platform/win/reveal_filter.py",
     "mpvqc/services/platform/win/utils.py",
     "mpvqc/services/platform/window_buttons.py",
     "mpvqc/services/platform/window_configuration.py",
