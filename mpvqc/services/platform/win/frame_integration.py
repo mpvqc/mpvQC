@@ -12,7 +12,7 @@ import win32gui
 from PySide6.QtCore import QMargins, Qt
 
 from .event import WindowsEventFilter
-from .utils import SM_CXPADDEDBORDER, set_window_transitions_enabled
+from .utils import SM_CXPADDEDBORDER
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -41,9 +41,6 @@ class WindowsFrameIntegration:
 
     def track(self, win_id: int) -> None:
         self._event_filter.set_embedded_player_hwnd(win_id)
-        # The embedded player lives inside the QML scene like a child item; DWM
-        # must not animate it as an independent top-level window.
-        set_window_transitions_enabled(win_id, enabled=False)
 
 
 def _caption_inset() -> int:
