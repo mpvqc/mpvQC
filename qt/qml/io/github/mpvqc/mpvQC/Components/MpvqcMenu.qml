@@ -12,11 +12,10 @@ Menu {
     id: root // todo check if it can be removed by using parent on its usages
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
-    readonly property bool isWindows: Qt.platform.os === "windows"
 
     z: 2
     transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
-    popupType: isWindows ? Popup.Window : Popup.Item
+    popupType: MpvqcConstants.usesWindowedPopups ? Popup.Window : Popup.Item
     dim: false
 
     width: calculateMenuWidths()

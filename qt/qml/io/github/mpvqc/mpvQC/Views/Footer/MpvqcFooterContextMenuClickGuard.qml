@@ -17,6 +17,8 @@
 import QtQuick
 import QtQuick.Controls
 
+import io.github.mpvqc.mpvQC.Utility
+
 Item {
     id: root
 
@@ -26,7 +28,7 @@ Item {
 
     parent: Overlay.overlay
     anchors.fill: parent
-    visible: Qt.platform.os === "windows" && _menuOpen && root.menu !== null
+    visible: MpvqcConstants.usesWindowedPopups && _menuOpen && root.menu !== null
 
     Connections {
         target: root.menu

@@ -15,7 +15,7 @@ Dialog {
 
     property string text
 
-    popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
+    popupType: MpvqcConstants.usesWindowedPopups ? Popup.Window : Popup.Item
     contentWidth: 420
     z: 2
     standardButtons: Dialog.Ok

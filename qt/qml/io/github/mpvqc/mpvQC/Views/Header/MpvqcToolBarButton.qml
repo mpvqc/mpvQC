@@ -5,6 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 
+import io.github.mpvqc.mpvQC.Utility
+
 import MpvqcStyle
 
 ToolButton {
@@ -39,7 +41,7 @@ ToolButton {
 
     ToolTip {
         y: implicitHeight + 16
-        popupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
+        popupType: MpvqcConstants.usesWindowedPopups ? Popup.Window : Popup.Item
 
         text: root.toolTipText
         visible: root.hovered && !root.pressedDuringHover
