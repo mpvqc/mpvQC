@@ -75,6 +75,13 @@ def is_minimized(hwnd: int) -> bool:
 
 
 def is_fullscreen(hwnd: int) -> bool:
+    # A maximized window overhangs the work area on all edges, so it covers the
+    # whole monitor whenever the work area equals the monitor rect (auto-hide
+    # taskbar, taskbar-less monitor). Fullscreen always runs with WS_MAXIMIZE
+    # stripped, so a window that is still maximized is never fullscreen.
+    if is_maximized(hwnd):
+        return False
+
     win_rect = win32gui.GetWindowRect(hwnd)
     if not win_rect:
         return False
