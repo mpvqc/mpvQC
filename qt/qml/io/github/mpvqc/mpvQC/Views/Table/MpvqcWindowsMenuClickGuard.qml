@@ -14,6 +14,8 @@
 import QtQuick
 import QtQuick.Controls
 
+import io.github.mpvqc.mpvQC.Utility
+
 Item {
     id: root
 
@@ -22,7 +24,7 @@ Item {
 
     parent: Overlay.overlay
     anchors.fill: parent
-    visible: Qt.platform.os === "windows" && (editLoader.isEditingCommentType || contextMenuLoader.active)
+    visible: MpvqcConstants.usesWindowedPopups && (editLoader.isEditingCommentType || contextMenuLoader.active)
 
     MouseArea {
         anchors.fill: parent
