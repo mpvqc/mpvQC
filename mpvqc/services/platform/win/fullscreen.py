@@ -62,8 +62,6 @@ class WindowsFullscreenHandler:
             self._retire_abandoned_session(hwnd)
         if self._saved_placement is None:
             self._saved_placement = win32gui.GetWindowPlacement(hwnd)
-        if is_maximized(hwnd):
-            set_style_flag(hwnd, win32con.WS_MAXIMIZE, enabled=False)
 
         # The frame styles stay on, so Windows 11 would keep the rounded corners
         # and accent border over the fullscreen surface.
@@ -73,7 +71,21 @@ class WindowsFullscreenHandler:
         left, top, right, bottom = monitor_rect
         border_x = get_resize_border_thickness(hwnd, horizontal=True)
         border_y = get_resize_border_thickness(hwnd, horizontal=False)
-        set_outer_window_rect(hwnd, (left - border_x, top, right + border_x, bottom + border_y))
+        fullscreen_rect = (left - border_x, top, right + border_x, bottom + border_y)
+
+        if is_maximized(hwnd):
+            # Dropping WS_MAXIMIZE reads to DWM as a restore, so the move to
+            # fullscreen would animate; suppressing transitions keeps it as
+            # instant as entering from a normal-state window.
+            set_window_transitions_enabled(hwnd, enabled=False)
+            try:
+                set_style_flag(hwnd, win32con.WS_MAXIMIZE, enabled=False)
+                set_outer_window_rect(hwnd, fullscreen_rect)
+            finally:
+                set_window_transitions_enabled(hwnd, enabled=True)
+        else:
+            set_outer_window_rect(hwnd, fullscreen_rect)
+
         set_shell_fullscreen_marker(hwnd, fullscreen=True)
 
     def exit(self, window: QWindow) -> None:
