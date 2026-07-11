@@ -257,6 +257,9 @@ def set_style_flag(hwnd: int, flag: int, *, enabled: bool) -> None:
     win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
 
 
-@lru_cache(maxsize=32)
 def prevent_window_resize_for(hwnd: int) -> None:
-    set_style_flag(hwnd, win32con.WS_THICKFRAME, enabled=False)
+    # Guarding on the live style keeps this idempotent without caching by
+    # handle value, which would go stale once the OS recycles an HWND.
+    style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
+    if style & win32con.WS_THICKFRAME:
+        win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style & ~win32con.WS_THICKFRAME)

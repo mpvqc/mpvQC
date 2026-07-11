@@ -120,7 +120,11 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             case self._top_lvl_hwnd:
                 pass
             case _:
-                prevent_window_resize_for(hwnd)
+                # SetWindowLong pumps WM_STYLECHANGING/WM_STYLECHANGED back
+                # through this filter synchronously; acting on them would
+                # re-enter the style write until win32k's nested-send cap.
+                if msg.message not in {win32con.WM_STYLECHANGING, win32con.WM_STYLECHANGED}:
+                    prevent_window_resize_for(hwnd)
                 return False, 0
 
         match msg.message:
