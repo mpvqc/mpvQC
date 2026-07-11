@@ -7,10 +7,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+if sys.platform != "linux":
+    pytest.skip("Requires Linux", allow_module_level=True)
+
 from mpvqc.services import WindowButtonPreference
 from mpvqc.services.platform.linux.window_button_detector import WindowButtonDetector
-
-linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Requires Linux")
 
 
 @pytest.fixture
@@ -22,7 +23,6 @@ def settings_portal_mock():
         yield mock_instance
 
 
-@linux_only
 @pytest.mark.parametrize(
     ("layout", "expected"),
     [
