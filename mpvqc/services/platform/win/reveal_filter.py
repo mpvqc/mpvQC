@@ -5,12 +5,32 @@
 from __future__ import annotations
 
 import contextlib
-from typing import override
+from functools import partial
+from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QEvent, QObject, Qt, Slot
 from PySide6.QtQuick import QQuickItem, QQuickWindow
 
 from .utils import set_window_cloaked, wait_for_next_composition
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+
+class _FirstFrameGate(QObject):
+    """Receives one show cycle's frameSwapped delivery. Unparented on purpose:
+    the pending map holds the only reference, so dropping it destroys the gate
+    synchronously and Qt sweeps any queued metacall still aimed at it — a stale
+    frame notification from a previous show cycle can never trigger this
+    cycle's reveal."""
+
+    def __init__(self, on_first_frame: Callable[[], None]) -> None:
+        super().__init__()
+        self._on_first_frame = on_first_frame
+
+    @Slot()
+    def notify(self) -> None:
+        self._on_first_frame()
 
 
 class WindowRevealFilter(QObject):
@@ -28,7 +48,7 @@ class WindowRevealFilter(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._main_hwnd: int | None = None
-        self._pending: dict[QQuickWindow, int] = {}
+        self._pending: dict[QQuickWindow, tuple[int, _FirstFrameGate]] = {}
         self._transient_hwnds: dict[QObject, int] = {}
 
     def set_main_window_hwnd(self, hwnd: int) -> None:
@@ -59,22 +79,19 @@ class WindowRevealFilter(QObject):
 
         hwnd = int(window.winId())
         set_window_cloaked(hwnd, cloaked=True)
-        self._pending[window] = hwnd
-        window.frameSwapped.connect(self._reveal_on_first_frame, Qt.ConnectionType.QueuedConnection)
 
-    @Slot()
-    def _reveal_on_first_frame(self) -> None:
-        window = self.sender()
-        if isinstance(window, QQuickWindow):
-            self._reveal(window)
+        gate = _FirstFrameGate(partial(self._reveal, window))
+        self._pending[window] = (hwnd, gate)
+        window.frameSwapped.connect(gate.notify, Qt.ConnectionType.QueuedConnection)
 
     def _reveal(self, window: QQuickWindow) -> None:
-        hwnd = self._pending.pop(window, None)
-        if hwnd is None:
+        entry = self._pending.pop(window, None)
+        if entry is None:
             return
 
+        hwnd, gate = entry
         try:
-            window.frameSwapped.disconnect(self._reveal_on_first_frame)
+            window.frameSwapped.disconnect(gate.notify)
         except RuntimeError:
             # The window died before its first frame; nothing left to reveal.
             return
@@ -137,7 +154,12 @@ class WindowRevealFilter(QObject):
         self._transient_hwnds.pop(window, None)
 
     def _cancel_pending(self, window: QQuickWindow) -> None:
-        if self._pending.pop(window, None) is None:
+        entry = self._pending.pop(window, None)
+        if entry is None:
             return
+
+        _hwnd, gate = entry
         with contextlib.suppress(RuntimeError):
-            window.frameSwapped.disconnect(self._reveal_on_first_frame)
+            window.frameSwapped.disconnect(gate.notify)
+        # Dropping the last reference destroys the gate here, synchronously,
+        # which sweeps any stale queued frameSwapped delivery.

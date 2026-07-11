@@ -58,12 +58,16 @@ def make_reveal_setup(qt_app):
 def _apply_action(action: str, window_filter, window) -> None:
     if action == "show":
         window_filter.eventFilter(window, QShowEvent())
-    elif action == "frame":
-        # frameSwapped is a queued connection; deliver only that slot call to the
-        # filter rather than pumping the whole loop, which would also fire the real
-        # window's own visibleChanged and corrupt the synthetic sequence.
+    elif action == "swap":
         window.frameSwapped.emit()
-        QCoreApplication.sendPostedEvents(window_filter, QEvent.Type.MetaCall)
+    elif action == "deliver":
+        # frameSwapped is a queued connection; deliver only metacalls rather
+        # than pumping the whole loop, which would also fire the real window's
+        # own visibleChanged and corrupt the synthetic sequence.
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.MetaCall)
+    elif action == "frame":
+        _apply_action("swap", window_filter, window)
+        _apply_action("deliver", window_filter, window)
     elif action == "hide":
         window.visibleChanged.emit(False)
     elif action == "teardown":
@@ -168,6 +172,12 @@ class RevealTestCase:
             is_main=False,
             actions=("show", "frame", "teardown", "show", "frame"),
             expected=[True, False, True, True],
+        ),
+        RevealTestCase(
+            name="stale_frame_from_previous_cycle_cannot_reveal_reshow",
+            is_main=False,
+            actions=("show", "swap", "hide", "show", "deliver", "frame"),
+            expected=[True, True, True, False],
         ),
     ],
     ids=lambda case: case.name,
