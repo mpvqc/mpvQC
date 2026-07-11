@@ -16,6 +16,8 @@ from .utils import set_window_cloaked, wait_for_next_composition
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from PySide6.QtGui import QGuiApplication, QWindow
+
 
 class _FirstFrameGate(QObject):
     """Receives one show cycle's frameSwapped delivery. Unparented on purpose:
@@ -51,8 +53,9 @@ class WindowRevealFilter(QObject):
         self._pending: dict[QQuickWindow, tuple[int, _FirstFrameGate]] = {}
         self._transient_hwnds: dict[QObject, int] = {}
 
-    def set_main_window_hwnd(self, hwnd: int) -> None:
-        self._main_hwnd = hwnd
+    def install(self, app: QGuiApplication, main_window: QWindow) -> None:
+        self._main_hwnd = int(main_window.winId())
+        app.installEventFilter(self)
 
     @override
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:

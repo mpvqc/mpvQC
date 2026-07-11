@@ -231,6 +231,7 @@ files = [
     "mpvqc/services/platform/win/utils.py",
     "mpvqc/services/platform/window_buttons.py",
     "mpvqc/services/platform/window_configuration.py",
+    "mpvqc/services/platform/window_reveal.py",
     "mpvqc/services/player/__init__.py",
     "mpvqc/services/player/coordinators.py",
     "mpvqc/services/player/service.py",

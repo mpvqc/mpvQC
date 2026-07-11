@@ -10,6 +10,7 @@ from mpvqc.services.platform.window_buttons import StaticWindowButtons
 
 from .frame_integration import WindowsFrameIntegration
 from .fullscreen import WindowsFullscreenHandler
+from .reveal_filter import WindowRevealFilter
 
 
 def create_windows_backend() -> PlatformBackend:
@@ -20,6 +21,7 @@ def create_windows_backend() -> PlatformBackend:
         owns_window_geometry=False,
         fullscreen=WindowsFullscreenHandler(),
         window_configuration=frame,
+        window_reveal=WindowRevealFilter(),
         embedded_player=frame,
         content_margins=NoContentMarginsApplier(),
         window_buttons=StaticWindowButtons(),

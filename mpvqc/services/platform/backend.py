@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from .fullscreen import FullscreenHandler
     from .window_buttons import WindowButtonSource
     from .window_configuration import WindowConfigurator
+    from .window_reveal import WindowRevealer
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class PlatformBackend:
 
     fullscreen: FullscreenHandler
     window_configuration: WindowConfigurator
+    window_reveal: WindowRevealer
     embedded_player: EmbeddedPlayerTracker
     content_margins: ContentMarginsApplier
     window_buttons: WindowButtonSource
