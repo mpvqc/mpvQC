@@ -8,18 +8,20 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-from ctypes import (  # pyrefly: ignore[missing-module-attribute]
+from __future__ import annotations
+
+from ctypes import (
     POINTER,
-    WINFUNCTYPE,
+    WINFUNCTYPE,  # pyrefly: ignore[missing-module-attribute]
     byref,
     c_void_p,
     cast,
     sizeof,
-    windll,
+    windll,  # pyrefly: ignore[missing-module-attribute]
 )
 from ctypes.wintypes import BOOL, DWORD, HWND, LONG, LPCVOID, RECT
 from functools import lru_cache
-from typing import Any
+from typing import TYPE_CHECKING
 
 import win32api
 import win32con
@@ -27,24 +29,28 @@ import win32gui
 
 from .c_structures import APPBARDATA, GUID
 
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+    from typing import Any
+
 SM_CXPADDEDBORDER = 92
 
 
-def get_window_size(hwnd) -> tuple[int, int, int, int]:
+def get_window_size(hwnd: int) -> tuple[int, int, int, int]:
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     width = right - left
     height = bottom - top
     return left, top, width, height
 
 
-def set_outer_window_rect(hwnd, rect) -> None:
+def set_outer_window_rect(hwnd: int, rect: tuple[int, int, int, int]) -> None:
     """Set the outer rect, frame included."""
     left, top, right, bottom = rect
     flags = win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED
     windll.user32.SetWindowPos(hwnd, None, left, top, right - left, bottom - top, flags)
 
 
-def refresh_window_frame(hwnd) -> None:
+def refresh_window_frame(hwnd: int) -> None:
     """Force a WM_NCCALCSIZE round trip without moving the window."""
     flags = (
         win32con.SWP_FRAMECHANGED
@@ -56,7 +62,7 @@ def refresh_window_frame(hwnd) -> None:
     windll.user32.SetWindowPos(hwnd, None, 0, 0, 0, 0, flags)
 
 
-def is_maximized(hwnd) -> bool:
+def is_maximized(hwnd: int) -> bool:
     window_placement = win32gui.GetWindowPlacement(hwnd)
     if not window_placement:
         return False
@@ -64,11 +70,11 @@ def is_maximized(hwnd) -> bool:
     return window_placement[1] == win32con.SW_MAXIMIZE
 
 
-def is_minimized(hwnd) -> bool:
+def is_minimized(hwnd: int) -> bool:
     return bool(win32gui.IsIconic(hwnd))
 
 
-def is_fullscreen(hwnd) -> bool:
+def is_fullscreen(hwnd: int) -> bool:
     win_rect = win32gui.GetWindowRect(hwnd)
     if not win_rect:
         return False
@@ -76,7 +82,7 @@ def is_fullscreen(hwnd) -> bool:
     return covers_monitor(win_rect)
 
 
-def covers_monitor(rect) -> bool:
+def covers_monitor(rect: tuple[int, int, int, int]) -> bool:
     monitor_rect = get_monitor_rect_for(rect)
     if monitor_rect is None:
         return False
@@ -86,21 +92,21 @@ def covers_monitor(rect) -> bool:
     return left <= m_left and top <= m_top and right >= m_right and bottom >= m_bottom
 
 
-def get_monitor_rect_for(rect) -> tuple[int, int, int, int] | None:
+def get_monitor_rect_for(rect: tuple[int, int, int, int]) -> tuple[int, int, int, int] | None:
     monitor = win32api.MonitorFromRect(rect, win32con.MONITOR_DEFAULTTONEAREST)
     if not monitor:
         return None
     return win32api.GetMonitorInfo(monitor)["Monitor"]
 
 
-def get_monitor_rect(hwnd) -> tuple[int, int, int, int] | None:
+def get_monitor_rect(hwnd: int) -> tuple[int, int, int, int] | None:
     monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
     if not monitor_info:
         return None
     return monitor_info["Monitor"]
 
 
-def get_monitor_info(hwnd, dw_flags) -> Any | None:
+def get_monitor_info(hwnd: int, dw_flags: int) -> Mapping[str, Any] | None:
     monitor = win32api.MonitorFromWindow(hwnd, dw_flags)
     if not monitor:
         return None
@@ -108,12 +114,12 @@ def get_monitor_info(hwnd, dw_flags) -> Any | None:
     return win32api.GetMonitorInfo(monitor)
 
 
-def get_resize_border_thickness(hwnd, horizontal=True) -> int:
+def get_resize_border_thickness(hwnd: int, *, horizontal: bool = True) -> int:
     frame = win32con.SM_CXSIZEFRAME if horizontal else win32con.SM_CYSIZEFRAME
     return get_system_metrics(hwnd, frame) + get_system_metrics(hwnd, SM_CXPADDEDBORDER)
 
 
-def get_system_metrics(hwnd, index) -> int:
+def get_system_metrics(hwnd: int, index: int) -> int:
     dpi = windll.user32.GetDpiForWindow(hwnd)
     return windll.user32.GetSystemMetricsForDpi(index, dpi)
 
@@ -139,7 +145,7 @@ class Taskbar:
         return taskbar_state == Taskbar.ABS_AUTOHIDE
 
     @classmethod
-    def get_position(cls, hwnd) -> int:
+    def get_position(cls, hwnd: int) -> int:
         monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
         if not monitor_info:
             return cls.NO_POSITION
@@ -181,7 +187,7 @@ _CLSCTX_INPROC_SERVER = 1
 
 
 @lru_cache(maxsize=1)
-def _taskbar_list_2():
+def _taskbar_list_2() -> tuple[c_void_p, Any] | None:
     ole32 = windll.ole32
     ole32.CoInitialize(None)
 
@@ -203,7 +209,7 @@ def _taskbar_list_2():
     return interface, mark_fullscreen_window
 
 
-def set_shell_fullscreen_marker(hwnd, *, fullscreen: bool) -> None:
+def set_shell_fullscreen_marker(hwnd: int, *, fullscreen: bool) -> None:
     """The shell only drops the taskbar for windows matching the monitor rect exactly;
     ours deliberately overhangs by the frame border, so tell the shell explicitly."""
     entry = _taskbar_list_2()
@@ -214,12 +220,12 @@ def set_shell_fullscreen_marker(hwnd, *, fullscreen: bool) -> None:
     mark_fullscreen_window(interface, int(hwnd), 1 if fullscreen else 0)
 
 
-def set_window_transitions_enabled(hwnd, *, enabled: bool) -> None:
+def set_window_transitions_enabled(hwnd: int, *, enabled: bool) -> None:
     disabled = DWORD(0 if enabled else 1)
     DwmSetWindowAttribute(int(hwnd), DWMWA_TRANSITIONS_FORCEDISABLED, byref(disabled), sizeof(disabled))
 
 
-def set_window_cloaked(hwnd, *, cloaked: bool) -> None:
+def set_window_cloaked(hwnd: int, *, cloaked: bool) -> None:
     value = BOOL(1 if cloaked else 0)
     DwmSetWindowAttribute(int(hwnd), DWMWA_CLOAK, byref(value), sizeof(value))
 
@@ -228,22 +234,22 @@ def wait_for_next_composition() -> None:
     DwmFlush()
 
 
-def set_window_corners_rounded(hwnd, *, rounded: bool) -> None:
+def set_window_corners_rounded(hwnd: int, *, rounded: bool) -> None:
     preference = DWORD(DWMWCP_DEFAULT if rounded else DWMWCP_DONOTROUND)
     DwmSetWindowAttribute(int(hwnd), DWMWA_WINDOW_CORNER_PREFERENCE, byref(preference), sizeof(preference))
 
 
-def set_window_border_visible(hwnd, *, visible: bool) -> None:
+def set_window_border_visible(hwnd: int, *, visible: bool) -> None:
     color = DWORD(DWMWA_COLOR_DEFAULT if visible else DWMWA_COLOR_NONE)
     DwmSetWindowAttribute(int(hwnd), DWMWA_BORDER_COLOR, byref(color), sizeof(color))
 
 
-def set_style_flag(hwnd, flag: int, *, enabled: bool) -> None:
+def set_style_flag(hwnd: int, flag: int, *, enabled: bool) -> None:
     style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
     style = style | flag if enabled else style & ~flag
     win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
 
 
 @lru_cache(maxsize=32)
-def prevent_window_resize_for(hwnd) -> None:
+def prevent_window_resize_for(hwnd: int) -> None:
     set_style_flag(hwnd, win32con.WS_THICKFRAME, enabled=False)
