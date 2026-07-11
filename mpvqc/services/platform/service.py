@@ -50,6 +50,7 @@ class PlatformService(QObject):
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.window_configuration.configure_window(app, window)
+        self._backend.window_reveal.install(app, window)
 
     def track_embedded_player(self, win_id: int) -> None:
         self._backend.embedded_player.track(win_id)

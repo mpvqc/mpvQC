@@ -185,11 +185,11 @@ class RevealTestCase:
     ],
     ids=lambda case: case.name,
 )
-def test_reveal_sequences(case: RevealTestCase, cloak_calls, make_reveal_setup):
+def test_reveal_sequences(case: RevealTestCase, qt_app, cloak_calls, make_reveal_setup):
     window_filter, window = make_reveal_setup()
 
     if case.is_main:
-        window_filter.set_main_window_hwnd(int(window.winId()))
+        window_filter.install(qt_app, window)
 
     for action in case.actions:
         _apply_action(action, window_filter, window)
