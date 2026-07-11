@@ -149,7 +149,7 @@ class Taskbar:
         appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, RECT(0, 0, 0, 0), 0)
         taskbar_state = windll.shell32.SHAppBarMessage(Taskbar.ABM_GETSTATE, byref(appbar_data))
 
-        return taskbar_state == Taskbar.ABS_AUTOHIDE
+        return bool(taskbar_state & Taskbar.ABS_AUTOHIDE)
 
     @classmethod
     def get_position(cls, hwnd: int) -> int:
