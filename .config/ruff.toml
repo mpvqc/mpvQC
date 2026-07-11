@@ -72,9 +72,6 @@ ignore = [
     "INP",          # build-aux is not a package
 ]
 
-# Ignore missing type annotations in Windows-specific code
-"mpvqc/services/platform/win/**" = ["ANN"]
-
 "test/**" = [  # Adjust rules for test files
     "ANN",     # Ignore missing type annotations in tests
     "ARG",     # Ignore unused arguments (common in fixtures)

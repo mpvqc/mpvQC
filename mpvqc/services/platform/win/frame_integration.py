@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from ctypes import windll
+from ctypes import windll  # pyrefly: ignore[missing-module-attribute]
 from typing import TYPE_CHECKING
 
 import win32con
@@ -59,7 +59,7 @@ def _caption_inset() -> int:
     return border + caption
 
 
-def _sync_qt_frame_bookkeeping(hwnd) -> None:
+def _sync_qt_frame_bookkeeping(hwnd: int) -> None:
     # Qt corrects its frame margins only on a geometry event, and the Qt Quick
     # scene follows only on a real size change: the initial scene is sized with
     # the stale margins while the QWindow property keeps the requested value.

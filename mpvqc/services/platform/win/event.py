@@ -8,6 +8,8 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
+from __future__ import annotations
+
 import ctypes.wintypes
 from ctypes import cast
 from typing import override
@@ -30,7 +32,7 @@ from .utils import (
 )
 
 
-def handle_non_client_hit_test(hwnd, l_param) -> tuple[bool, int]:
+def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
     # Only the top edge needs help: the client covers the strip where the native
     # caption and its resize band would live. Left, right and bottom keep real
     # non-client bands, hit-tested natively.
@@ -53,7 +55,7 @@ def handle_non_client_hit_test(hwnd, l_param) -> tuple[bool, int]:
     return True, win32con.HTTOP
 
 
-def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
+def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
     rect = cast(l_param, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
     proposed = (rect.left, rect.top, rect.right, rect.bottom)
 
@@ -93,17 +95,19 @@ def handle_non_client_calculate_size(hwnd, l_param) -> tuple[bool, int]:
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     def __init__(self) -> None:
         super().__init__()
-        self._top_lvl_hwnd = None
-        self._embedded_player_hwnd = None
+        self._top_lvl_hwnd: int | None = None
+        self._embedded_player_hwnd: int | None = None
 
-    def set_top_lvl_hwnd(self, hwnd) -> None:
+    def set_top_lvl_hwnd(self, hwnd: int) -> None:
         self._top_lvl_hwnd = hwnd
 
-    def set_embedded_player_hwnd(self, hwnd) -> None:
+    def set_embedded_player_hwnd(self, hwnd: int) -> None:
         self._embedded_player_hwnd = hwnd
 
     @override
-    def nativeEventFilter(self, _, message) -> tuple[bool, int]:
+    def nativeEventFilter(
+        self, _: PySide6.QtCore.QByteArray | bytes | bytearray | memoryview, message: int
+    ) -> tuple[bool, int]:
         msg = ctypes.wintypes.MSG.from_address(int(message))
 
         hwnd = msg.hWnd

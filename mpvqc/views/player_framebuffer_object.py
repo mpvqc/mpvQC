@@ -42,10 +42,11 @@ def get_display_params() -> dict[str, int]:
         return {}
     match QGuiApplication.platformName():
         case "wayland":
-            display = cast("QNativeInterface.QWaylandApplication", native).display()
+            # The Linux-only native interfaces are absent from the Windows PySide6 stubs
+            display = cast("QNativeInterface.QWaylandApplication", native).display()  # pyrefly: ignore[missing-attribute]
             return {"wl_display": display} if display else {}
         case "xcb":
-            display = cast("QNativeInterface.QX11Application", native).display()
+            display = cast("QNativeInterface.QX11Application", native).display()  # pyrefly: ignore[missing-attribute]
             return {"x11_display": display} if display else {}
         case _:
             return {}
