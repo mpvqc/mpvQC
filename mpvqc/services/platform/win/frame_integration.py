@@ -37,6 +37,7 @@ class WindowsFrameIntegration:
 
         hwnd_top_lvl = window.winId()
         self._event_filter.set_top_lvl_hwnd(hwnd_top_lvl)
+        self._reveal_filter.set_main_window_hwnd(int(hwnd_top_lvl))
         app.installNativeEventFilter(self._event_filter)
         app.installEventFilter(self._reveal_filter)
 
