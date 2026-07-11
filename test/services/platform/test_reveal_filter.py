@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import contextlib
 import sys
 from dataclasses import dataclass
 
@@ -50,7 +51,9 @@ def make_reveal_setup(qt_app):
     yield _make
 
     for window_filter, window, _content in created:
-        window.deleteLater()
+        # A test may have destroyed the window itself already
+        with contextlib.suppress(RuntimeError):
+            window.deleteLater()
         window_filter.deleteLater()
     QCoreApplication.processEvents()
 
@@ -200,3 +203,15 @@ def test_non_quick_windows_are_ignored(cloak_calls, make_reveal_setup):
     window_filter.eventFilter(QWindow(), QShowEvent())
 
     assert cloak_calls == []
+
+
+def test_destroyed_pending_transient_is_forgotten(cloak_calls, make_reveal_setup):
+    window_filter, window = make_reveal_setup()
+    window_filter.eventFilter(window, QShowEvent())
+
+    window.deleteLater()
+    # processEvents skips DeferredDelete; deliver it explicitly so destroyed fires
+    QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+
+    assert not window_filter._pending
+    assert not window_filter._transient_hwnds

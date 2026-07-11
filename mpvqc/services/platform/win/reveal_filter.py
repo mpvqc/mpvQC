@@ -108,7 +108,9 @@ class WindowRevealFilter(QObject):
         self._transient_hwnds[window] = int(window.winId())
         window.visibleChanged.connect(self._conceal_on_hide)
         window.contentItem().childrenChanged.connect(self._conceal_on_content_teardown)
-        window.destroyed.connect(self._forget_transient)
+        # destroyed delivers a fresh wrapper typed as plain QObject, which never
+        # matches the tracked key; bind the tracked wrapper at connect time.
+        window.destroyed.connect(partial(self._forget_transient, window))
 
     @Slot(bool)
     def _conceal_on_hide(self, visible: bool) -> None:
@@ -149,9 +151,9 @@ class WindowRevealFilter(QObject):
         self._cancel_pending(window)
         set_window_cloaked(hwnd, cloaked=True)
 
-    @Slot(QObject)
-    def _forget_transient(self, window: QObject) -> None:
+    def _forget_transient(self, window: QQuickWindow, _deleted: QObject | None = None) -> None:
         self._transient_hwnds.pop(window, None)
+        self._pending.pop(window, None)
 
     def _cancel_pending(self, window: QQuickWindow) -> None:
         entry = self._pending.pop(window, None)
