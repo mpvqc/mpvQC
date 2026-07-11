@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import sys
 from dataclasses import dataclass
 
 import pytest
@@ -9,9 +10,10 @@ from PySide6.QtCore import QCoreApplication, QEvent
 from PySide6.QtGui import QShowEvent, QWindow
 from PySide6.QtQuick import QQuickItem, QQuickWindow
 
-reveal_filter = pytest.importorskip(
-    "mpvqc.services.platform.win.reveal_filter", reason="Requires the Windows platform modules"
-)
+if sys.platform != "win32":
+    pytest.skip("Requires Windows", allow_module_level=True)
+
+from mpvqc.services.platform.win import reveal_filter
 
 
 @pytest.fixture(autouse=True)
