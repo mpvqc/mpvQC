@@ -127,6 +127,11 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             case self._top_lvl_hwnd:
                 pass
             case _:
+                # Every other window is a windowed popup, and popups must not
+                # be resizable. The style is checked on each message on
+                # purpose: Windows reuses handle values and Qt can add the
+                # frame back at any time.
+                #
                 # SetWindowLong sends WM_STYLECHANGING/WM_STYLECHANGED back into
                 # this filter synchronously. Handling them would call
                 # SetWindowLong again, recursing until win32k's nested-message
