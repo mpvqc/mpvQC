@@ -71,9 +71,9 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
 def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
     destination = read_nccalcsize_proposed_rect(l_param)
 
-    # Qt's own handling (DefWindowProc frame plus the negative caption margin) is
-    # only wrong when maximized, where the caption correction overshoots the work
-    # area, and when fullscreen.
+    # Qt's own handling (the DefWindowProc frame plus the negative caption
+    # margin) is wrong in only two cases: maximized, where the caption
+    # correction overshoots the work area, and fullscreen.
     maximized = is_maximized(hwnd)
     fullscreen = not maximized and overhangs_monitor(destination)
     if not (maximized or fullscreen):
@@ -83,9 +83,10 @@ def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int
     if destination_monitor is None:
         return False, 0
 
-    # Maximized gets the work area. Fullscreen gets the monitor rect, and its
-    # window is deliberately larger: DWM permanently drops maximize/restore
-    # animations once a client rect fills the whole window.
+    # A maximized window gets the work area as its client rect. A fullscreen
+    # window gets the monitor rect while the window itself is larger on
+    # purpose: DWM permanently stops animating maximize/restore once a client
+    # rect fills the whole window.
     client_rect = destination_monitor.work_area if maximized else destination_monitor.monitor_rect
 
     client_rect = reserve_auto_hide_taskbar_strip(client_rect, destination_monitor.monitor_rect)
@@ -122,9 +123,10 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             case self._top_lvl_hwnd:
                 pass
             case _:
-                # SetWindowLong pumps WM_STYLECHANGING/WM_STYLECHANGED back
-                # through this filter synchronously; acting on them would
-                # re-enter the style write until win32k's nested-send cap.
+                # SetWindowLong sends WM_STYLECHANGING/WM_STYLECHANGED back into
+                # this filter synchronously. Handling them would call
+                # SetWindowLong again, recursing until win32k's nested-message
+                # limit.
                 if msg.message not in {_WM_STYLECHANGING, _WM_STYLECHANGED}:
                     prevent_window_resize_for(hwnd)
                 return False, 0

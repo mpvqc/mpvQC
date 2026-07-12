@@ -77,8 +77,8 @@ _AUTO_HIDE_TASKBAR_STRIP = 2
 def reserve_auto_hide_taskbar_strip(
     client_rect: tuple[int, int, int, int], monitor_rect: tuple[int, int, int, int]
 ) -> tuple[int, int, int, int]:
-    """Shave the collapsed-taskbar strip off the client rect, so the hidden bar
-    can still be summoned by mouse."""
+    """Keep a thin strip of the client rect free at the taskbar edge, so the
+    mouse can still bring back the hidden taskbar."""
     if not is_app_bar_auto_hide():
         return client_rect
 
@@ -98,8 +98,9 @@ def reserve_auto_hide_taskbar_strip(
 
 
 def set_shell_fullscreen_marker(hwnd: int, *, fullscreen: bool) -> None:
-    """The shell only drops the taskbar for windows matching the monitor rect exactly;
-    ours deliberately overhangs by the frame border, so tell the shell explicitly."""
+    """The shell hides the taskbar only for windows that match the monitor rect
+    exactly. Our fullscreen window is larger by the frame border on purpose, so
+    the shell must be told explicitly."""
     mark_fullscreen_window(int(hwnd), fullscreen=fullscreen)
 
 

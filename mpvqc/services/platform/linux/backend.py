@@ -36,7 +36,8 @@ def create_window_manager_backend() -> PlatformBackend:
     return PlatformBackend(
         root_qml_url=_ROOT_QML_URL,
         draws_own_shadow=False,
-        # Ideally driven by the compositor's runtime tiled state, but Qt doesn't expose it
+        # Ideally this would follow whether the compositor currently tiles the
+        # window, but Qt does not expose that state
         owns_window_geometry=True,
         fullscreen=QtFullscreenHandler(),
         # The window manager owns sizing and placement; nothing to set up.

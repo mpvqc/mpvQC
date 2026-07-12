@@ -52,9 +52,10 @@ class SurfaceController:
         event_filter.set_resize_margin(self._margin)
         window.installEventFilter(event_filter)
 
-        # The inset and mask need a created, mapped surface, which is not ready
-        # at QML-load time. On the first show the inset also does not stick until
-        # the surface is actually exposed, so re-assert on show and on expose.
+        # The inset and mask need a created and mapped surface, which does not
+        # exist yet when the QML loads. On the first show, the inset is also
+        # ignored until the surface is actually exposed, so apply both again on
+        # show and on expose.
         self._expose_filter = expose_filter = WindowExposeFilter(window, self._reassert_surface)
         window.installEventFilter(expose_filter)
         window.visibleChanged.connect(self._on_visible_changed)

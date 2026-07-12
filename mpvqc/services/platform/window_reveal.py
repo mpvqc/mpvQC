@@ -15,7 +15,7 @@ class WindowRevealer(Protocol):
 
 
 class NoWindowRevealer:
-    """For platforms whose windows never reach the screen without content."""
+    """For platforms that never show a blank window before its content is drawn."""
 
     def install(self, app: QGuiApplication, main_window: QWindow) -> None:
         pass

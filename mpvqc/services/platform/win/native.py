@@ -8,14 +8,16 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""The Windows API surface: every call into Windows lives here as a
-prototyped ctypes binding wrapped in a plain-typed snake_case function.
+"""Every Windows API call used by this package lives here, as a ctypes
+binding with declared argument and return types, wrapped in a small
+function that uses plain Python types.
 
 One block per API call: its constants, its structures, its raw binding and
 the wrappers the rest of the package uses.
 
-Calls are best-effort: queries report failure through their return value,
-setters fail silently — window chrome is not worth raising over."""
+All calls are best-effort: queries report failure through their return
+value, setters fail silently — broken window decoration is not worth an
+exception."""
 
 from __future__ import annotations
 
@@ -190,8 +192,8 @@ def strip_maximize_style(hwnd: int) -> None:
 
 
 def prevent_window_resize_for(hwnd: int) -> None:
-    # Guarding on the live style keeps this idempotent without caching by
-    # handle value, which would go stale once the OS recycles an HWND.
+    # Checking the current style keeps this idempotent without caching handles;
+    # a cache would go stale because Windows reuses HWND values.
     style = _GetWindowLongPtr(hwnd, _GWL_STYLE)
     if style & _WS_THICKFRAME:
         _SetWindowLongPtr(hwnd, _GWL_STYLE, style & ~_WS_THICKFRAME)
