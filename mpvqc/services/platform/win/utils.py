@@ -41,10 +41,9 @@ def covers_monitor(rect: tuple[int, int, int, int]) -> bool:
     return monitor_rect is not None and _covers(rect, monitor_rect)
 
 
-def overhangs_monitor(rect: tuple[int, int, int, int]) -> bool:
-    """Covers the monitor and extends past it on at least one edge."""
-    monitor_rect = _monitor_rect_for(rect)
-    return monitor_rect is not None and _covers(rect, monitor_rect) and tuple(rect) != tuple(monitor_rect)
+def overhangs(rect: tuple[int, int, int, int], monitor_rect: tuple[int, int, int, int]) -> bool:
+    """Covers the monitor rect and extends past it on at least one edge."""
+    return _covers(rect, monitor_rect) and tuple(rect) != tuple(monitor_rect)
 
 
 def _covers(rect: tuple[int, int, int, int], monitor_rect: tuple[int, int, int, int]) -> bool:
