@@ -21,12 +21,12 @@ import win32con
 from .c_structures import LPNCCALCSIZE_PARAMS
 from .utils import (
     Taskbar,
-    covers_monitor,
     get_monitor_info_for,
     get_resize_border_thickness,
     get_window_size,
     is_fullscreen,
     is_maximized,
+    overhangs_monitor,
     prevent_window_resize_for,
 )
 
@@ -62,7 +62,7 @@ def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int
     # only wrong when maximized, where the caption correction overshoots the work
     # area, and when fullscreen.
     maximized = is_maximized(hwnd)
-    fullscreen = not maximized and covers_monitor(destination)
+    fullscreen = not maximized and overhangs_monitor(destination)
     if not (maximized or fullscreen):
         return False, 0
 

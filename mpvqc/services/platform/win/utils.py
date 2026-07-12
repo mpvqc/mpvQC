@@ -91,9 +91,16 @@ def is_fullscreen(hwnd: int) -> bool:
 
 def covers_monitor(rect: tuple[int, int, int, int]) -> bool:
     monitor_rect = get_monitor_rect_for(rect)
-    if monitor_rect is None:
-        return False
+    return monitor_rect is not None and _covers(rect, monitor_rect)
 
+
+def overhangs_monitor(rect: tuple[int, int, int, int]) -> bool:
+    """Covers the monitor and extends past it on at least one edge."""
+    monitor_rect = get_monitor_rect_for(rect)
+    return monitor_rect is not None and _covers(rect, monitor_rect) and tuple(rect) != tuple(monitor_rect)
+
+
+def _covers(rect: tuple[int, int, int, int], monitor_rect: tuple[int, int, int, int]) -> bool:
     left, top, right, bottom = rect
     m_left, m_top, m_right, m_bottom = monitor_rect
     return left <= m_left and top <= m_top and right >= m_right and bottom >= m_bottom
