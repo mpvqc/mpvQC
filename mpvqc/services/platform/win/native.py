@@ -111,7 +111,7 @@ class WindowPlacement(NamedTuple):
         return self.show_cmd == _SW_MAXIMIZE
 
 
-class WINDOWPLACEMENT(Structure):
+class _WINDOWPLACEMENT(Structure):
     _fields_ = [
         ("length", UINT),
         ("flags", UINT),
@@ -123,12 +123,12 @@ class WINDOWPLACEMENT(Structure):
 
 
 _GetWindowPlacement = _user32.GetWindowPlacement
-_GetWindowPlacement.argtypes = [HWND, POINTER(WINDOWPLACEMENT)]
+_GetWindowPlacement.argtypes = [HWND, POINTER(_WINDOWPLACEMENT)]
 _GetWindowPlacement.restype = BOOL
 
 
 def get_window_placement(hwnd: int) -> WindowPlacement | None:
-    data = WINDOWPLACEMENT(length=sizeof(WINDOWPLACEMENT))
+    data = _WINDOWPLACEMENT(length=sizeof(_WINDOWPLACEMENT))
     if not _GetWindowPlacement(hwnd, byref(data)):
         return None
 
@@ -148,13 +148,13 @@ def is_maximized(hwnd: int) -> bool:
 
 
 _SetWindowPlacement = _user32.SetWindowPlacement
-_SetWindowPlacement.argtypes = [HWND, POINTER(WINDOWPLACEMENT)]
+_SetWindowPlacement.argtypes = [HWND, POINTER(_WINDOWPLACEMENT)]
 _SetWindowPlacement.restype = BOOL
 
 
 def set_window_placement(hwnd: int, placement: WindowPlacement) -> None:
-    data = WINDOWPLACEMENT(
-        length=sizeof(WINDOWPLACEMENT),
+    data = _WINDOWPLACEMENT(
+        length=sizeof(_WINDOWPLACEMENT),
         flags=placement.flags,
         showCmd=placement.show_cmd,
         ptMinPosition=POINT(*placement.min_position),
@@ -213,7 +213,7 @@ class MonitorInfo(NamedTuple):
     work_area: tuple[int, int, int, int]
 
 
-class MONITORINFO(Structure):
+class _MONITORINFO(Structure):
     _fields_ = [
         ("cbSize", DWORD),
         ("rcMonitor", RECT),
@@ -225,7 +225,7 @@ class MONITORINFO(Structure):
 _MONITOR_DEFAULTTONEAREST = 2
 
 _GetMonitorInfo = _user32.GetMonitorInfoW
-_GetMonitorInfo.argtypes = [HANDLE, POINTER(MONITORINFO)]
+_GetMonitorInfo.argtypes = [HANDLE, POINTER(_MONITORINFO)]
 _GetMonitorInfo.restype = BOOL
 
 
@@ -233,7 +233,7 @@ def _monitor_info(monitor: int | None) -> MonitorInfo | None:
     if not monitor:
         return None
 
-    info = MONITORINFO(cbSize=sizeof(MONITORINFO))
+    info = _MONITORINFO(cbSize=sizeof(_MONITORINFO))
     if not _GetMonitorInfo(monitor, byref(info)):
         return None
 
@@ -321,7 +321,7 @@ _ABM_GETAUTOHIDEBAREX = 11
 _APP_BAR_EDGES: dict[AppBarEdge, int] = {"left": 0, "top": 1, "right": 2, "bottom": 3}
 
 
-class APPBARDATA(Structure):
+class _APPBARDATA(Structure):
     _fields_ = [
         ("cbSize", DWORD),
         ("hWnd", HWND),
@@ -333,18 +333,18 @@ class APPBARDATA(Structure):
 
 
 _SHAppBarMessage = _shell32.SHAppBarMessage
-_SHAppBarMessage.argtypes = [DWORD, POINTER(APPBARDATA)]
+_SHAppBarMessage.argtypes = [DWORD, POINTER(_APPBARDATA)]
 _SHAppBarMessage.restype = c_size_t  # UINT_PTR
 
 
 def is_app_bar_auto_hide() -> bool:
-    data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, RECT(0, 0, 0, 0), 0)
+    data = _APPBARDATA(sizeof(_APPBARDATA), 0, 0, 0, RECT(0, 0, 0, 0), 0)
     return bool(_SHAppBarMessage(_ABM_GETSTATE, byref(data)) & _ABS_AUTOHIDE)
 
 
 def find_auto_hide_app_bar_edge(monitor_rect: tuple[int, int, int, int]) -> AppBarEdge | None:
     for name, edge in _APP_BAR_EDGES.items():
-        data = APPBARDATA(sizeof(APPBARDATA), 0, 0, edge, RECT(*monitor_rect), 0)
+        data = _APPBARDATA(sizeof(_APPBARDATA), 0, 0, edge, RECT(*monitor_rect), 0)
         if _SHAppBarMessage(_ABM_GETAUTOHIDEBAREX, byref(data)):
             return name
 
@@ -418,7 +418,7 @@ def read_hit_test_point(l_param: int) -> tuple[int, int]:
     return x, y
 
 
-class WINDOWPOS(Structure):
+class _WINDOWPOS(Structure):
     _fields_ = [
         ("hWnd", HWND),
         ("hwndInsertAfter", HWND),
@@ -430,11 +430,11 @@ class WINDOWPOS(Structure):
     ]
 
 
-class NCCALCSIZE_PARAMS(Structure):
-    _fields_ = [("rgrc", RECT * 3), ("lppos", POINTER(WINDOWPOS))]
+class _NCCALCSIZE_PARAMS(Structure):
+    _fields_ = [("rgrc", RECT * 3), ("lppos", POINTER(_WINDOWPOS))]
 
 
-_LPNCCALCSIZE_PARAMS = POINTER(NCCALCSIZE_PARAMS)
+_LPNCCALCSIZE_PARAMS = POINTER(_NCCALCSIZE_PARAMS)
 
 
 def read_nccalcsize_proposed_rect(l_param: int) -> tuple[int, int, int, int]:
@@ -456,7 +456,7 @@ _S_FALSE = 1  # COM already started on this thread
 _RPC_E_CHANGED_MODE = -2147417850  # COM already started with the other threading model; still usable
 
 
-class GUID(Structure):
+class _GUID(Structure):
     _fields_ = [
         ("data1", DWORD),
         ("data2", WORD),
@@ -470,15 +470,15 @@ _CoInitialize.argtypes = [c_void_p]
 _CoInitialize.restype = LONG
 
 _CLSIDFromString = _ole32.CLSIDFromString
-_CLSIDFromString.argtypes = [c_wchar_p, POINTER(GUID)]
+_CLSIDFromString.argtypes = [c_wchar_p, POINTER(_GUID)]
 _CLSIDFromString.restype = LONG
 
 _IIDFromString = _ole32.IIDFromString
-_IIDFromString.argtypes = [c_wchar_p, POINTER(GUID)]
+_IIDFromString.argtypes = [c_wchar_p, POINTER(_GUID)]
 _IIDFromString.restype = LONG
 
 _CoCreateInstance = _ole32.CoCreateInstance
-_CoCreateInstance.argtypes = [POINTER(GUID), c_void_p, DWORD, POINTER(GUID), POINTER(c_void_p)]
+_CoCreateInstance.argtypes = [POINTER(_GUID), c_void_p, DWORD, POINTER(_GUID), POINTER(c_void_p)]
 _CoCreateInstance.restype = LONG
 
 
@@ -494,7 +494,7 @@ def _taskbar_list_2() -> tuple[c_void_p, Any]:
     if _CoInitialize(None) not in {_S_OK, _S_FALSE, _RPC_E_CHANGED_MODE}:
         raise _ComUnavailableError
 
-    clsid, iid = GUID(), GUID()
+    clsid, iid = _GUID(), _GUID()
     _CLSIDFromString(_CLSID_TASKBAR_LIST, byref(clsid))
     _IIDFromString(_IID_ITASKBAR_LIST_2, byref(iid))
 
