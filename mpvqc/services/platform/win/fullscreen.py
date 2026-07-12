@@ -51,6 +51,7 @@ class WindowsFullscreenHandler:
 
     def __init__(self) -> None:
         self._saved_placement: WindowPlacement | None = None
+        self._entering = False
 
     def enter(self, window: QWindow) -> None:
         hwnd = int(window.winId())
@@ -59,38 +60,43 @@ class WindowsFullscreenHandler:
         if monitor_rect is None:
             return
 
-        # A saved placement while the window no longer covers the monitor means
-        # the OS already ended fullscreen on its own (e.g. Win+Up). Discard that
-        # old session so a later exit cannot restore its stale placement.
-        if self._saved_placement is not None and not is_fullscreen(hwnd):
-            self._retire_abandoned_session(hwnd)
-        if self._saved_placement is None:
-            self._saved_placement = get_window_placement(hwnd)
+        self._entering = True
+        try:
+            # A saved placement while the window no longer covers the monitor
+            # means the OS already ended fullscreen on its own (e.g. Win+Up).
+            # Discard that old session so a later exit cannot restore its stale
+            # placement.
+            if self._saved_placement is not None and not is_fullscreen(hwnd):
+                self._retire_abandoned_session(hwnd)
+            if self._saved_placement is None:
+                self._saved_placement = get_window_placement(hwnd)
 
-        # The frame styles stay on, so Windows 11 would keep the rounded corners
-        # and accent border over the fullscreen surface.
-        set_window_corners_rounded(hwnd, rounded=False)
-        set_window_border_visible(hwnd, visible=False)
+            # The frame styles stay on, so Windows 11 would keep the rounded
+            # corners and accent border over the fullscreen surface.
+            set_window_corners_rounded(hwnd, rounded=False)
+            set_window_border_visible(hwnd, visible=False)
 
-        left, top, right, bottom = monitor_rect
-        border_x = get_resize_border_thickness(hwnd, horizontal=True)
-        border_y = get_resize_border_thickness(hwnd, horizontal=False)
-        fullscreen_rect = (left - border_x, top, right + border_x, bottom + border_y)
+            left, top, right, bottom = monitor_rect
+            border_x = get_resize_border_thickness(hwnd, horizontal=True)
+            border_y = get_resize_border_thickness(hwnd, horizontal=False)
+            fullscreen_rect = (left - border_x, top, right + border_x, bottom + border_y)
 
-        if is_maximized(hwnd):
-            # To DWM, removing WS_MAXIMIZE looks like a restore, so the move to
-            # fullscreen would animate. Disabling transitions keeps it as
-            # instant as entering from a normal window.
-            set_window_transitions_enabled(hwnd, enabled=False)
-            try:
-                strip_maximize_style(hwnd)
+            if is_maximized(hwnd):
+                # To DWM, removing WS_MAXIMIZE looks like a restore, so the move
+                # to fullscreen would animate. Disabling transitions keeps it as
+                # instant as entering from a normal window.
+                set_window_transitions_enabled(hwnd, enabled=False)
+                try:
+                    strip_maximize_style(hwnd)
+                    set_outer_window_rect(hwnd, fullscreen_rect)
+                finally:
+                    set_window_transitions_enabled(hwnd, enabled=True)
+            else:
                 set_outer_window_rect(hwnd, fullscreen_rect)
-            finally:
-                set_window_transitions_enabled(hwnd, enabled=True)
-        else:
-            set_outer_window_rect(hwnd, fullscreen_rect)
 
-        set_shell_fullscreen_marker(hwnd, fullscreen=True)
+            set_shell_fullscreen_marker(hwnd, fullscreen=True)
+        finally:
+            self._entering = False
 
     def exit(self, window: QWindow) -> None:
         placement = self._saved_placement
@@ -119,6 +125,12 @@ class WindowsFullscreenHandler:
         refresh_window_frame(hwnd)
 
     def is_active(self, window: QWindow) -> bool:
+        # enter() briefly puts the window into a state that looks like an
+        # abandoned session. A reentrant call must not clear the session that
+        # is being built.
+        if self._entering:
+            return self._saved_placement is not None
+
         if self._saved_placement is None:
             return False
 
