@@ -50,7 +50,11 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
     if is_maximized(hwnd) or is_fullscreen(hwnd):
         return False, 0
 
-    left, top, right, _ = get_window_rect(hwnd)
+    rect = get_window_rect(hwnd)
+    if rect is None:
+        return False, 0
+
+    left, top, right, _ = rect
     cursor_x, cursor_y = read_hit_test_point(l_param)
     x_pos = cursor_x - left
     y_pos = cursor_y - top
