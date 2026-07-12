@@ -12,7 +12,7 @@ import win32gui
 from PySide6.QtCore import QMargins, Qt
 
 from .event import WindowsEventFilter
-from .utils import SM_CXPADDEDBORDER
+from .utils import SM_CXPADDEDBORDER, get_primary_monitor_dpi
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -44,7 +44,7 @@ class WindowsFrameIntegration:
 
 
 def _caption_inset() -> int:
-    dpi = windll.user32.GetDpiForSystem()
+    dpi = get_primary_monitor_dpi()
     border = windll.user32.GetSystemMetricsForDpi(win32con.SM_CYSIZEFRAME, dpi) + windll.user32.GetSystemMetricsForDpi(
         SM_CXPADDEDBORDER, dpi
     )

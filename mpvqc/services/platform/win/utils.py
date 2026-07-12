@@ -19,7 +19,7 @@ from ctypes import (
     sizeof,
     windll,  # pyrefly: ignore[missing-module-attribute]
 )
-from ctypes.wintypes import BOOL, DWORD, HWND, LONG, LPCVOID, RECT
+from ctypes.wintypes import BOOL, DWORD, HANDLE, HWND, LONG, LPCVOID, RECT, UINT
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
@@ -143,6 +143,21 @@ def get_resize_border_thickness(hwnd: int, *, horizontal: bool = True) -> int:
 def get_system_metrics(hwnd: int, index: int) -> int:
     dpi = windll.user32.GetDpiForWindow(hwnd)
     return windll.user32.GetSystemMetricsForDpi(index, dpi)
+
+
+GetDpiForMonitor = windll.shcore.GetDpiForMonitor
+GetDpiForMonitor.argtypes = [HANDLE, UINT, POINTER(UINT), POINTER(UINT)]
+GetDpiForMonitor.restype = LONG
+
+MDT_EFFECTIVE_DPI = 0
+
+
+def get_primary_monitor_dpi() -> int:
+    primary = win32api.MonitorFromPoint((0, 0), win32con.MONITOR_DEFAULTTOPRIMARY)
+    dpi, unused = UINT(), UINT()
+    if GetDpiForMonitor(int(primary), MDT_EFFECTIVE_DPI, byref(dpi), byref(unused)) != 0:
+        return windll.user32.GetDpiForSystem()
+    return dpi.value
 
 
 class Taskbar:
