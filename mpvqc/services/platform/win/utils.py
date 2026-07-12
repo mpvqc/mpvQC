@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from .native import (
     dwm_flush,
-    find_auto_hide_app_bar,
+    find_auto_hide_app_bar_edge,
     get_dpi_for_window,
     get_monitor_info_for_rect,
     get_monitor_info_for_window,
@@ -81,27 +81,31 @@ def get_resize_border_thickness(hwnd: int, *, horizontal: bool = True) -> int:
     return get_resize_border_thickness_for_dpi(get_dpi_for_window(hwnd), horizontal=horizontal)
 
 
-class Taskbar:
-    LEFT = 0
-    TOP = 1
-    RIGHT = 2
-    BOTTOM = 3
-    NO_POSITION = 4
+# An auto-hide taskbar collapses to a thin strip at its monitor edge.
+_AUTO_HIDE_TASKBAR_STRIP = 2
 
-    AUTO_HIDE_THICKNESS = 2
 
-    @staticmethod
-    def is_auto_hide() -> bool:
-        return is_app_bar_auto_hide()
+def reserve_auto_hide_taskbar_strip(
+    client_rect: tuple[int, int, int, int], monitor_rect: tuple[int, int, int, int]
+) -> tuple[int, int, int, int]:
+    """Shave the collapsed-taskbar strip off the client rect, so the hidden bar
+    can still be summoned by mouse."""
+    if not is_app_bar_auto_hide():
+        return client_rect
 
-    @classmethod
-    def get_position(cls, monitor_rect: tuple[int, int, int, int]) -> int:
-        positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
-        for position in positions:
-            if find_auto_hide_app_bar(position, monitor_rect):
-                return position
-
-        return cls.NO_POSITION
+    left, top, right, bottom = client_rect
+    strip = _AUTO_HIDE_TASKBAR_STRIP
+    match find_auto_hide_app_bar_edge(monitor_rect):
+        case "left":
+            return left + strip, top, right, bottom
+        case "top":
+            return left, top + strip, right, bottom
+        case "right":
+            return left, top, right - strip, bottom
+        case "bottom":
+            return left, top, right, bottom - strip
+        case _:
+            return client_rect
 
 
 def set_shell_fullscreen_marker(hwnd: int, *, fullscreen: bool) -> None:

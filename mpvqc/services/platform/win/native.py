@@ -33,7 +33,7 @@ from ctypes import (
 )
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, RECT, UINT, WORD
 from functools import lru_cache
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Literal, NamedTuple
 
 import win32api
 import win32con
@@ -41,6 +41,8 @@ import win32gui
 
 if TYPE_CHECKING:
     from typing import Any
+
+type AppBarEdge = Literal["left", "top", "right", "bottom"]
 
 _SetWindowPos = windll.user32.SetWindowPos
 _SetWindowPos.argtypes = [HWND, HWND, c_int, c_int, c_int, c_int, UINT]
@@ -184,6 +186,8 @@ _ABS_AUTOHIDE = 1
 _ABM_GETSTATE = 4
 _ABM_GETAUTOHIDEBAREX = 11
 
+_APP_BAR_EDGES: dict[AppBarEdge, int] = {"left": 0, "top": 1, "right": 2, "bottom": 3}
+
 
 class APPBARDATA(Structure):
     _fields_ = [
@@ -206,9 +210,13 @@ def is_app_bar_auto_hide() -> bool:
     return bool(_SHAppBarMessage(_ABM_GETSTATE, byref(data)) & _ABS_AUTOHIDE)
 
 
-def find_auto_hide_app_bar(edge: int, monitor_rect: tuple[int, int, int, int]) -> int:
-    data = APPBARDATA(sizeof(APPBARDATA), 0, 0, edge, RECT(*monitor_rect), 0)
-    return _SHAppBarMessage(_ABM_GETAUTOHIDEBAREX, byref(data))
+def find_auto_hide_app_bar_edge(monitor_rect: tuple[int, int, int, int]) -> AppBarEdge | None:
+    for name, edge in _APP_BAR_EDGES.items():
+        data = APPBARDATA(sizeof(APPBARDATA), 0, 0, edge, RECT(*monitor_rect), 0)
+        if _SHAppBarMessage(_ABM_GETAUTOHIDEBAREX, byref(data)):
+            return name
+
+    return None
 
 
 _DWMWA_TRANSITIONS_FORCEDISABLED = 3
