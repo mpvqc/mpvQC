@@ -25,6 +25,7 @@ from ctypes import (
     POINTER,
     WINFUNCTYPE,  # pyrefly: ignore[missing-module-attribute]
     Structure,
+    WinDLL,  # pyrefly: ignore[missing-module-attribute]
     byref,
     c_int,
     c_short,
@@ -34,7 +35,6 @@ from ctypes import (
     c_wchar_p,
     cast,
     sizeof,
-    windll,  # pyrefly: ignore[missing-module-attribute]
 )
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
@@ -45,13 +45,21 @@ if TYPE_CHECKING:
 
 type AppBarEdge = Literal["left", "top", "right", "bottom"]
 
+# Private handles: prototypes set on the shared ctypes.windll cache would be
+# visible to every other library in the process.
+_user32 = WinDLL("user32")
+_shcore = WinDLL("shcore")
+_shell32 = WinDLL("shell32")
+_dwmapi = WinDLL("dwmapi")
+_ole32 = WinDLL("ole32")
+
 _SWP_NOSIZE = 0x0001
 _SWP_NOMOVE = 0x0002
 _SWP_NOZORDER = 0x0004
 _SWP_NOACTIVATE = 0x0010
 _SWP_FRAMECHANGED = 0x0020
 
-_SetWindowPos = windll.user32.SetWindowPos
+_SetWindowPos = _user32.SetWindowPos
 _SetWindowPos.argtypes = [HWND, HWND, c_int, c_int, c_int, c_int, UINT]
 _SetWindowPos.restype = BOOL
 
@@ -76,7 +84,7 @@ def refresh_window_frame(hwnd: int) -> None:
     _set_window_pos(hwnd, 0, 0, 0, 0, flags)
 
 
-_GetWindowRect = windll.user32.GetWindowRect
+_GetWindowRect = _user32.GetWindowRect
 _GetWindowRect.argtypes = [HWND, POINTER(RECT)]
 _GetWindowRect.restype = BOOL
 
@@ -113,7 +121,7 @@ class WINDOWPLACEMENT(Structure):
     ]
 
 
-_GetWindowPlacement = windll.user32.GetWindowPlacement
+_GetWindowPlacement = _user32.GetWindowPlacement
 _GetWindowPlacement.argtypes = [HWND, POINTER(WINDOWPLACEMENT)]
 _GetWindowPlacement.restype = BOOL
 
@@ -138,7 +146,7 @@ def is_maximized(hwnd: int) -> bool:
     return placement is not None and placement.shows_maximized
 
 
-_SetWindowPlacement = windll.user32.SetWindowPlacement
+_SetWindowPlacement = _user32.SetWindowPlacement
 _SetWindowPlacement.argtypes = [HWND, POINTER(WINDOWPLACEMENT)]
 _SetWindowPlacement.restype = BOOL
 
@@ -155,7 +163,7 @@ def set_window_placement(hwnd: int, placement: WindowPlacement) -> None:
     _SetWindowPlacement(hwnd, byref(data))
 
 
-_ShowWindow = windll.user32.ShowWindow
+_ShowWindow = _user32.ShowWindow
 _ShowWindow.argtypes = [HWND, c_int]
 _ShowWindow.restype = BOOL
 
@@ -164,7 +172,7 @@ def maximize_window(hwnd: int) -> None:
     _ShowWindow(hwnd, _SW_MAXIMIZE)
 
 
-_IsIconic = windll.user32.IsIconic
+_IsIconic = _user32.IsIconic
 _IsIconic.argtypes = [HWND]
 _IsIconic.restype = BOOL
 
@@ -177,11 +185,11 @@ _GWL_STYLE = -16
 _WS_THICKFRAME = 0x00040000
 _WS_MAXIMIZE = 0x01000000
 
-_GetWindowLongPtr = windll.user32.GetWindowLongPtrW
+_GetWindowLongPtr = _user32.GetWindowLongPtrW
 _GetWindowLongPtr.argtypes = [HWND, c_int]
 _GetWindowLongPtr.restype = c_ssize_t
 
-_SetWindowLongPtr = windll.user32.SetWindowLongPtrW
+_SetWindowLongPtr = _user32.SetWindowLongPtrW
 _SetWindowLongPtr.argtypes = [HWND, c_int, c_ssize_t]
 _SetWindowLongPtr.restype = c_ssize_t
 
@@ -215,7 +223,7 @@ class MONITORINFO(Structure):
 
 _MONITOR_DEFAULTTONEAREST = 2
 
-_GetMonitorInfo = windll.user32.GetMonitorInfoW
+_GetMonitorInfo = _user32.GetMonitorInfoW
 _GetMonitorInfo.argtypes = [HANDLE, POINTER(MONITORINFO)]
 _GetMonitorInfo.restype = BOOL
 
@@ -233,7 +241,7 @@ def _monitor_info(monitor: int | None) -> MonitorInfo | None:
     return MonitorInfo(monitor_rect=monitor_rect, work_area=work_area)
 
 
-_MonitorFromRect = windll.user32.MonitorFromRect
+_MonitorFromRect = _user32.MonitorFromRect
 _MonitorFromRect.argtypes = [POINTER(RECT), DWORD]
 _MonitorFromRect.restype = HANDLE
 
@@ -243,7 +251,7 @@ def get_monitor_info_for_rect(rect: tuple[int, int, int, int]) -> MonitorInfo | 
     return _monitor_info(monitor)
 
 
-_MonitorFromWindow = windll.user32.MonitorFromWindow
+_MonitorFromWindow = _user32.MonitorFromWindow
 _MonitorFromWindow.argtypes = [HWND, DWORD]
 _MonitorFromWindow.restype = HANDLE
 
@@ -253,7 +261,7 @@ def get_monitor_info_for_window(hwnd: int) -> MonitorInfo | None:
     return _monitor_info(monitor)
 
 
-_GetDpiForWindow = windll.user32.GetDpiForWindow
+_GetDpiForWindow = _user32.GetDpiForWindow
 _GetDpiForWindow.argtypes = [HWND]
 _GetDpiForWindow.restype = UINT
 
@@ -267,7 +275,7 @@ _SM_CXSIZEFRAME = 32
 _SM_CYSIZEFRAME = 33
 _SM_CXPADDEDBORDER = 92
 
-_GetSystemMetricsForDpi = windll.user32.GetSystemMetricsForDpi
+_GetSystemMetricsForDpi = _user32.GetSystemMetricsForDpi
 _GetSystemMetricsForDpi.argtypes = [c_int, UINT]
 _GetSystemMetricsForDpi.restype = c_int
 
@@ -284,15 +292,15 @@ def get_caption_height_for_dpi(dpi: int) -> int:
 _MDT_EFFECTIVE_DPI = 0
 _MONITOR_DEFAULTTOPRIMARY = 1
 
-_GetDpiForSystem = windll.user32.GetDpiForSystem
+_GetDpiForSystem = _user32.GetDpiForSystem
 _GetDpiForSystem.argtypes = []
 _GetDpiForSystem.restype = UINT
 
-_GetDpiForMonitor = windll.shcore.GetDpiForMonitor
+_GetDpiForMonitor = _shcore.GetDpiForMonitor
 _GetDpiForMonitor.argtypes = [HANDLE, UINT, POINTER(UINT), POINTER(UINT)]
 _GetDpiForMonitor.restype = LONG
 
-_MonitorFromPoint = windll.user32.MonitorFromPoint
+_MonitorFromPoint = _user32.MonitorFromPoint
 _MonitorFromPoint.argtypes = [POINT, DWORD]
 _MonitorFromPoint.restype = HANDLE
 
@@ -323,7 +331,7 @@ class APPBARDATA(Structure):
     ]
 
 
-_SHAppBarMessage = windll.shell32.SHAppBarMessage
+_SHAppBarMessage = _shell32.SHAppBarMessage
 _SHAppBarMessage.argtypes = [DWORD, POINTER(APPBARDATA)]
 _SHAppBarMessage.restype = c_size_t  # UINT_PTR
 
@@ -353,7 +361,7 @@ _DWMWCP_DONOTROUND = 1
 _DWMWA_COLOR_DEFAULT = 0xFFFFFFFF
 _DWMWA_COLOR_NONE = 0xFFFFFFFE
 
-_DwmSetWindowAttribute = windll.dwmapi.DwmSetWindowAttribute
+_DwmSetWindowAttribute = _dwmapi.DwmSetWindowAttribute
 _DwmSetWindowAttribute.argtypes = [HWND, DWORD, LPCVOID, DWORD]
 _DwmSetWindowAttribute.restype = LONG
 
@@ -381,7 +389,7 @@ def set_window_border_visible(hwnd: int, *, visible: bool) -> None:
     _dwm_set_window_attribute(hwnd, _DWMWA_BORDER_COLOR, color)
 
 
-_DwmFlush = windll.dwmapi.DwmFlush
+_DwmFlush = _dwmapi.DwmFlush
 _DwmFlush.argtypes = []
 _DwmFlush.restype = LONG
 
@@ -456,19 +464,19 @@ class GUID(Structure):
     ]
 
 
-_CoInitialize = windll.ole32.CoInitialize
+_CoInitialize = _ole32.CoInitialize
 _CoInitialize.argtypes = [c_void_p]
 _CoInitialize.restype = LONG
 
-_CLSIDFromString = windll.ole32.CLSIDFromString
+_CLSIDFromString = _ole32.CLSIDFromString
 _CLSIDFromString.argtypes = [c_wchar_p, POINTER(GUID)]
 _CLSIDFromString.restype = LONG
 
-_IIDFromString = windll.ole32.IIDFromString
+_IIDFromString = _ole32.IIDFromString
 _IIDFromString.argtypes = [c_wchar_p, POINTER(GUID)]
 _IIDFromString.restype = LONG
 
-_CoCreateInstance = windll.ole32.CoCreateInstance
+_CoCreateInstance = _ole32.CoCreateInstance
 _CoCreateInstance.argtypes = [POINTER(GUID), c_void_p, DWORD, POINTER(GUID), POINTER(c_void_p)]
 _CoCreateInstance.restype = LONG
 
