@@ -25,7 +25,9 @@ class WindowsFrameIntegration:
     """Keeps the full native window frame and reclaims only the caption strip for
     the QML title bar, via Qt's "_q_windowsCustomMargins". The left/right/bottom
     resize bands stay in the invisible non-client frame outside the content;
-    shadows, borders, corners and DWM animations stay native."""
+    shadows, borders, corners and DWM animations stay native.
+
+    Also owns and installs the package's native event filter."""
 
     def __init__(self) -> None:
         self._event_filter = WindowsEventFilter()

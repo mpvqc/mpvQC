@@ -178,6 +178,9 @@ class WindowRevealFilter(QObject):
 
     def install(self, app: QGuiApplication, main_window: QWindow) -> None:
         self._main_hwnd = int(main_window.winId())
+        # An application-wide filter runs for every event of every object.
+        # Qt has no signal for "a window was created", so this is the only
+        # reliable way to catch each new window's first Show.
         app.installEventFilter(self)
 
     @override
