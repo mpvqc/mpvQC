@@ -25,11 +25,11 @@ from .native import (
     write_nccalcsize_client_rect,
 )
 from .utils import (
-    Taskbar,
     get_resize_border_thickness,
     get_window_size,
     is_fullscreen,
     overhangs_monitor,
+    reserve_auto_hide_taskbar_strip,
 )
 
 
@@ -72,26 +72,14 @@ def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int
     if destination_monitor is None:
         return False, 0
 
-    if maximized:
-        left, top, right, bottom = destination_monitor.work_area
-    else:
-        # The fullscreen window is deliberately larger than the monitor: DWM
-        # permanently drops maximize/restore animations once a client rect fills
-        # the whole window.
-        left, top, right, bottom = destination_monitor.monitor_rect
+    # Maximized gets the work area. Fullscreen gets the monitor rect, and its
+    # window is deliberately larger: DWM permanently drops maximize/restore
+    # animations once a client rect fills the whole window.
+    client_rect = destination_monitor.work_area if maximized else destination_monitor.monitor_rect
 
-    if Taskbar.is_auto_hide():
-        position = Taskbar.get_position(destination_monitor.monitor_rect)
-        if position == Taskbar.TOP:
-            top += Taskbar.AUTO_HIDE_THICKNESS
-        elif position == Taskbar.BOTTOM:
-            bottom -= Taskbar.AUTO_HIDE_THICKNESS
-        elif position == Taskbar.LEFT:
-            left += Taskbar.AUTO_HIDE_THICKNESS
-        elif position == Taskbar.RIGHT:
-            right -= Taskbar.AUTO_HIDE_THICKNESS
+    client_rect = reserve_auto_hide_taskbar_strip(client_rect, destination_monitor.monitor_rect)
 
-    write_nccalcsize_client_rect(l_param, (left, top, right, bottom))
+    write_nccalcsize_client_rect(l_param, client_rect)
     return True, win32con.WVR_REDRAW
 
 
