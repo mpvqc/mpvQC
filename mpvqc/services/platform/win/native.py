@@ -12,7 +12,10 @@
 prototyped ctypes binding wrapped in a plain-typed snake_case function.
 
 One block per API call: its constants, its structures, its raw binding and
-the wrappers the rest of the package uses."""
+the wrappers the rest of the package uses.
+
+Calls are best-effort: queries report failure through their return value,
+setters fail silently — window chrome is not worth raising over."""
 
 from __future__ import annotations
 
