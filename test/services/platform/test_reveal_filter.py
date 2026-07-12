@@ -213,5 +213,5 @@ def test_destroyed_pending_transient_is_forgotten(cloak_calls, make_reveal_setup
     # processEvents skips DeferredDelete; deliver it explicitly so destroyed fires
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
-    assert not window_filter._pending
-    assert not window_filter._transient_hwnds
+    assert not window_filter._reveal._pending
+    assert not window_filter._transients._hwnds

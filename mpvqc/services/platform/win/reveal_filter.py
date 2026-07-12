@@ -36,48 +36,15 @@ class _FirstFrameGate(QObject):
         self._on_first_frame()
 
 
-class WindowRevealFilter(QObject):
-    """Keeps a Qt Quick window invisible to the compositor whenever it has no
-    valid content on screen. On show, every window stays DWM-cloaked until the
-    compositor has consumed its first frame: Windows would otherwise fill the
-    gap with an uninitialized white surface. Transient windows (dialogs, message
-    boxes: every Quick window except the main one) are cloaked again the moment
-    their content is torn out or they start to hide, since Qt dismantles a
-    Qt-side-closed popup inside the still visible window and hides it only
-    deferred. The main window is left to hide with its native DWM animation.
-    Filters application-wide to also cover the native windows Qt creates for
-    windowed dialogs."""
+class _RevealOnFirstFrame:
+    """Cloaks a window on show and uncloaks it once the compositor has consumed
+    its first frame; Windows would otherwise fill the gap with an uninitialized
+    white surface."""
 
     def __init__(self) -> None:
-        super().__init__()
-        self._main_hwnd: int | None = None
         self._pending: dict[QQuickWindow, tuple[int, _FirstFrameGate]] = {}
-        self._transient_hwnds: dict[QObject, int] = {}
 
-    def install(self, app: QGuiApplication, main_window: QWindow) -> None:
-        self._main_hwnd = int(main_window.winId())
-        app.installEventFilter(self)
-
-    @override
-    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        if isinstance(watched, QQuickWindow) and event.type() == QEvent.Type.Show:
-            if not self._is_main_window(watched):
-                self._track_transient(watched)
-                if not watched.contentItem().childItems():
-                    self._conceal_empty_transient(watched)
-                    return False
-            self._conceal_until_first_frame(watched)
-        return False
-
-    def _is_main_window(self, window: QQuickWindow) -> bool:
-        return self._main_hwnd is not None and int(window.winId()) == self._main_hwnd
-
-    def _conceal_empty_transient(self, window: QQuickWindow) -> None:
-        # A transient window shown without content is mid-teardown; do not arm a
-        # reveal, or a stray frame of the emptied window would uncloak it and flash.
-        set_window_cloaked(int(window.winId()), cloaked=True)
-
-    def _conceal_until_first_frame(self, window: QQuickWindow) -> None:
+    def arm(self, window: QQuickWindow) -> None:
         if window in self._pending:
             return
 
@@ -87,6 +54,20 @@ class WindowRevealFilter(QObject):
         gate = _FirstFrameGate(partial(self._reveal, window))
         self._pending[window] = (hwnd, gate)
         window.frameSwapped.connect(gate.notify, Qt.ConnectionType.QueuedConnection)
+
+    def cancel(self, window: QQuickWindow) -> None:
+        entry = self._pending.pop(window, None)
+        if entry is None:
+            return
+
+        _hwnd, gate = entry
+        with contextlib.suppress(RuntimeError):
+            window.frameSwapped.disconnect(gate.notify)
+        # Dropping the last reference destroys the gate here, synchronously,
+        # which sweeps any stale queued frameSwapped delivery.
+
+    def forget(self, window: QQuickWindow) -> None:
+        self._pending.pop(window, None)
 
     def _reveal(self, window: QQuickWindow) -> None:
         entry = self._pending.pop(window, None)
@@ -106,16 +87,37 @@ class WindowRevealFilter(QObject):
         wait_for_next_composition()
         set_window_cloaked(hwnd, cloaked=False)
 
-    def _track_transient(self, window: QQuickWindow) -> None:
-        if window in self._transient_hwnds:
+
+class _TransientConcealment(QObject):
+    """Cloaks a transient window again the moment its content is torn out or
+    it starts to hide: Qt dismantles a windowed popup inside the still visible
+    window and hides it only deferred."""
+
+    def __init__(self, reveal: _RevealOnFirstFrame) -> None:
+        super().__init__()
+        self._reveal = reveal
+        self._hwnds: dict[QObject, int] = {}
+
+    def handle_show(self, window: QQuickWindow) -> None:
+        self._track(window)
+        if window.contentItem().childItems():
+            self._reveal.arm(window)
+        else:
+            # A transient shown without content is mid-teardown; do not arm a
+            # reveal, or a stray frame of the emptied window would uncloak it
+            # and flash.
+            set_window_cloaked(int(window.winId()), cloaked=True)
+
+    def _track(self, window: QQuickWindow) -> None:
+        if window in self._hwnds:
             return
 
-        self._transient_hwnds[window] = int(window.winId())
+        self._hwnds[window] = int(window.winId())
         window.visibleChanged.connect(self._conceal_on_hide)
         window.contentItem().childrenChanged.connect(self._conceal_on_content_teardown)
         # destroyed delivers a fresh wrapper typed as plain QObject, which never
         # matches the tracked key; bind the tracked wrapper at connect time.
-        window.destroyed.connect(partial(self._forget_transient, window))
+        window.destroyed.connect(partial(self._forget, window))
 
     @Slot(bool)
     def _conceal_on_hide(self, visible: bool) -> None:
@@ -126,13 +128,13 @@ class WindowRevealFilter(QObject):
         if not isinstance(window, QQuickWindow):
             return
 
-        hwnd = self._transient_hwnds.get(window)
+        hwnd = self._hwnds.get(window)
         if hwnd is None:
             return
 
         # visibleChanged arrives before the native hide: cloaking now keeps the
         # teardown frames and the DWM hide transition off the screen.
-        self._cancel_pending(window)
+        self._reveal.cancel(window)
         set_window_cloaked(hwnd, cloaked=True)
 
     @Slot()
@@ -145,7 +147,7 @@ class WindowRevealFilter(QObject):
         if window is None:
             return
 
-        hwnd = self._transient_hwnds.get(window)
+        hwnd = self._hwnds.get(window)
         if hwnd is None:
             return
 
@@ -153,20 +155,38 @@ class WindowRevealFilter(QObject):
         # visible window and only hides it deferred (finalizeExitTransition
         # reparents the popup item first): cloak the moment the content leaves,
         # before the emptied window can reach the screen.
-        self._cancel_pending(window)
+        self._reveal.cancel(window)
         set_window_cloaked(hwnd, cloaked=True)
 
-    def _forget_transient(self, window: QQuickWindow, _deleted: QObject | None = None) -> None:
-        self._transient_hwnds.pop(window, None)
-        self._pending.pop(window, None)
+    def _forget(self, window: QQuickWindow, _deleted: QObject | None = None) -> None:
+        self._hwnds.pop(window, None)
+        self._reveal.forget(window)
 
-    def _cancel_pending(self, window: QQuickWindow) -> None:
-        entry = self._pending.pop(window, None)
-        if entry is None:
-            return
 
-        _hwnd, gate = entry
-        with contextlib.suppress(RuntimeError):
-            window.frameSwapped.disconnect(gate.notify)
-        # Dropping the last reference destroys the gate here, synchronously,
-        # which sweeps any stale queued frameSwapped delivery.
+class WindowRevealFilter(QObject):
+    """Filters application-wide, covering the native windows Qt creates for
+    windowed dialogs: the main window only gets the first-frame reveal and
+    hides with its native DWM animation; every other Quick window is a
+    transient."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._main_hwnd: int | None = None
+        self._reveal = _RevealOnFirstFrame()
+        self._transients = _TransientConcealment(self._reveal)
+
+    def install(self, app: QGuiApplication, main_window: QWindow) -> None:
+        self._main_hwnd = int(main_window.winId())
+        app.installEventFilter(self)
+
+    @override
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if isinstance(watched, QQuickWindow) and event.type() == QEvent.Type.Show:
+            if self._is_main_window(watched):
+                self._reveal.arm(watched)
+            else:
+                self._transients.handle_show(watched)
+        return False
+
+    def _is_main_window(self, window: QQuickWindow) -> bool:
+        return self._main_hwnd is not None and int(window.winId()) == self._main_hwnd
