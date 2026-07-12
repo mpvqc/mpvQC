@@ -100,8 +100,9 @@ class WindowRevealFilter(QObject):
             # The window died before its first frame; nothing left to reveal.
             return
 
-        # frameSwapped only means the frame is queued: uncloaking before the
-        # compositor consumed it still flashes the uninitialized surface.
+        # frameSwapped only means the frame is queued: give the compositor one
+        # composition pass to consume it before uncloaking. One pass usually
+        # suffices, but nothing guarantees it.
         wait_for_next_composition()
         set_window_cloaked(hwnd, cloaked=False)
 
