@@ -473,12 +473,17 @@ _CoCreateInstance.argtypes = [POINTER(GUID), c_void_p, DWORD, POINTER(GUID), POI
 _CoCreateInstance.restype = LONG
 
 
-# The single instance deliberately lives until process exit; the OS reclaims
-# COM and the interface with it.
+class _ComUnavailableError(Exception):
+    pass
+
+
+# A successful instance lives until process exit on purpose. The OS reclaims
+# COM and the interface with it. lru_cache does not store raised exceptions,
+# so a failed attempt is simply tried again on the next call.
 @lru_cache(maxsize=1)
-def _taskbar_list_2() -> tuple[c_void_p, Any] | None:
+def _taskbar_list_2() -> tuple[c_void_p, Any]:
     if _CoInitialize(None) not in {_S_OK, _S_FALSE, _RPC_E_CHANGED_MODE}:
-        return None
+        raise _ComUnavailableError
 
     clsid, iid = GUID(), GUID()
     _CLSIDFromString(_CLSID_TASKBAR_LIST, byref(clsid))
@@ -486,22 +491,22 @@ def _taskbar_list_2() -> tuple[c_void_p, Any] | None:
 
     interface = c_void_p()
     if _CoCreateInstance(byref(clsid), None, _CLSCTX_INPROC_SERVER, byref(iid), byref(interface)) != 0:
-        return None
+        raise _ComUnavailableError
 
     # IUnknown (0-2) | ITaskbarList: HrInit 3 ... | ITaskbarList2: MarkFullscreenWindow 8
     vtable = cast(interface, POINTER(POINTER(c_void_p * 9))).contents.contents
     hr_init = WINFUNCTYPE(LONG, c_void_p)(vtable[3])
     if hr_init(interface) != 0:
-        return None
+        raise _ComUnavailableError
 
     mark_fullscreen = WINFUNCTYPE(LONG, c_void_p, HWND, BOOL)(vtable[8])
     return interface, mark_fullscreen
 
 
 def mark_fullscreen_window(hwnd: int, *, fullscreen: bool) -> None:
-    entry = _taskbar_list_2()
-    if entry is None:
+    try:
+        interface, mark_fullscreen = _taskbar_list_2()
+    except _ComUnavailableError:
         return
 
-    interface, mark_fullscreen = entry
     mark_fullscreen(interface, hwnd, 1 if fullscreen else 0)
