@@ -100,9 +100,7 @@ class WindowsFullscreenHandler:
         self._saved_placement = None
         hwnd = int(window.winId())
 
-        set_shell_fullscreen_marker(hwnd, fullscreen=False)
-        set_window_corners_rounded(hwnd, rounded=True)
-        set_window_border_visible(hwnd, visible=True)
+        self._restore_frame_chrome(hwnd)
 
         if placement.shows_maximized:
             # A real maximize keeps DWM's state in sync, so the next restore still
@@ -141,9 +139,7 @@ class WindowsFullscreenHandler:
             return
 
         self._saved_placement = None
-        set_shell_fullscreen_marker(hwnd, fullscreen=False)
-        set_window_corners_rounded(hwnd, rounded=True)
-        set_window_border_visible(hwnd, visible=True)
+        self._restore_frame_chrome(hwnd)
 
         # While fullscreen the window was in the restored style, so Windows tracked
         # the monitor rect as its normal geometry. Point it back at the pre-fullscreen
@@ -151,6 +147,12 @@ class WindowsFullscreenHandler:
         # maximized: applying a placement to a restored window would move it.
         if is_maximized(hwnd):
             self._repin_normal_geometry(hwnd, placement.normal_rect)
+
+    @staticmethod
+    def _restore_frame_chrome(hwnd: int) -> None:
+        set_shell_fullscreen_marker(hwnd, fullscreen=False)
+        set_window_corners_rounded(hwnd, rounded=True)
+        set_window_border_visible(hwnd, visible=True)
 
     @staticmethod
     def _repin_normal_geometry(hwnd: int, normal_rect: tuple[int, int, int, int]) -> None:
