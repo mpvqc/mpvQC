@@ -6,8 +6,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import win32con
-
 from .native import (
     get_window_placement,
     is_maximized,
@@ -15,11 +13,11 @@ from .native import (
     maximize_window,
     refresh_window_frame,
     set_outer_window_rect,
-    set_style_flag,
     set_window_border_visible,
     set_window_corners_rounded,
     set_window_placement,
     set_window_transitions_enabled,
+    strip_maximize_style,
 )
 from .utils import (
     get_monitor_rect,
@@ -30,6 +28,8 @@ from .utils import (
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QWindow
+
+    from .native import WindowPlacement
 
 
 class WindowsFullscreenHandler:
@@ -50,7 +50,7 @@ class WindowsFullscreenHandler:
     for the same window."""
 
     def __init__(self) -> None:
-        self._saved_placement: tuple | None = None
+        self._saved_placement: WindowPlacement | None = None
 
     def enter(self, window: QWindow) -> None:
         hwnd = int(window.winId())
@@ -83,7 +83,7 @@ class WindowsFullscreenHandler:
             # instant as entering from a normal-state window.
             set_window_transitions_enabled(hwnd, enabled=False)
             try:
-                set_style_flag(hwnd, win32con.WS_MAXIMIZE, enabled=False)
+                strip_maximize_style(hwnd)
                 set_outer_window_rect(hwnd, fullscreen_rect)
             finally:
                 set_window_transitions_enabled(hwnd, enabled=True)
@@ -104,7 +104,7 @@ class WindowsFullscreenHandler:
         set_window_corners_rounded(hwnd, rounded=True)
         set_window_border_visible(hwnd, visible=True)
 
-        if placement[1] == win32con.SW_MAXIMIZE:
+        if placement.shows_maximized:
             # A real maximize keeps DWM's state in sync, so the next restore still
             # animates; suppressing transitions keeps this one instant.
             set_window_transitions_enabled(hwnd, enabled=False)
@@ -115,8 +115,7 @@ class WindowsFullscreenHandler:
 
             # Maximizing re-derived the placement from the poisoned monitor-rect
             # geometry; point the normal geometry back at the pre-fullscreen one.
-            flags, show_cmd, min_pos, max_pos, _ = get_window_placement(hwnd)
-            set_window_placement(hwnd, (flags, show_cmd, min_pos, max_pos, placement[4]))
+            self._repin_normal_geometry(hwnd, placement.normal_rect)
         else:
             set_window_placement(hwnd, placement)
         refresh_window_frame(hwnd)
@@ -151,5 +150,10 @@ class WindowsFullscreenHandler:
         # one, or a later restore-down yields a monitor-sized window. Only safe while
         # maximized: applying a placement to a restored window would move it.
         if is_maximized(hwnd):
-            flags, show_cmd, min_pos, max_pos, _ = get_window_placement(hwnd)
-            set_window_placement(hwnd, (flags, show_cmd, min_pos, max_pos, placement[4]))
+            self._repin_normal_geometry(hwnd, placement.normal_rect)
+
+    @staticmethod
+    def _repin_normal_geometry(hwnd: int, normal_rect: tuple[int, int, int, int]) -> None:
+        placement = get_window_placement(hwnd)
+        if placement is not None:
+            set_window_placement(hwnd, placement._replace(normal_rect=normal_rect))

@@ -13,7 +13,6 @@ from __future__ import annotations
 from typing import override
 
 import PySide6.QtCore
-import win32con
 
 from .native import (
     get_monitor_info_for_rect,
@@ -31,6 +30,17 @@ from .utils import (
     overhangs_monitor,
     reserve_auto_hide_taskbar_strip,
 )
+
+_WM_STYLECHANGING = 0x007C
+_WM_STYLECHANGED = 0x007D
+_WM_NCCALCSIZE = 0x0083
+_WM_NCHITTEST = 0x0084
+
+_HTTOP = 12
+_HTTOPLEFT = 13
+_HTTOPRIGHT = 14
+
+_WVR_REDRAW = 0x0300
 
 
 def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
@@ -51,10 +61,10 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
 
     corner = 2 * band
     if x_pos < corner:
-        return True, win32con.HTTOPLEFT
+        return True, _HTTOPLEFT
     if x_pos > w - corner:
-        return True, win32con.HTTOPRIGHT
-    return True, win32con.HTTOP
+        return True, _HTTOPRIGHT
+    return True, _HTTOP
 
 
 def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
@@ -80,7 +90,7 @@ def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int
     client_rect = reserve_auto_hide_taskbar_strip(client_rect, destination_monitor.monitor_rect)
 
     write_nccalcsize_client_rect(l_param, client_rect)
-    return True, win32con.WVR_REDRAW
+    return True, _WVR_REDRAW
 
 
 class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
@@ -114,14 +124,12 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
                 # SetWindowLong pumps WM_STYLECHANGING/WM_STYLECHANGED back
                 # through this filter synchronously; acting on them would
                 # re-enter the style write until win32k's nested-send cap.
-                if msg.message not in {win32con.WM_STYLECHANGING, win32con.WM_STYLECHANGED}:
+                if msg.message not in {_WM_STYLECHANGING, _WM_STYLECHANGED}:
                     prevent_window_resize_for(hwnd)
                 return False, 0
 
-        match msg.message:
-            case win32con.WM_NCHITTEST:
-                return handle_non_client_hit_test(hwnd, msg.l_param)
-            case win32con.WM_NCCALCSIZE if msg.w_param:
-                return handle_non_client_calculate_size(hwnd, msg.l_param)
-            case _:
-                return False, 0
+        if msg.message == _WM_NCHITTEST:
+            return handle_non_client_hit_test(hwnd, msg.l_param)
+        if msg.message == _WM_NCCALCSIZE and msg.w_param:
+            return handle_non_client_calculate_size(hwnd, msg.l_param)
+        return False, 0

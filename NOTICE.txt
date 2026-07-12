@@ -74,13 +74,6 @@ PySide6
   License File: LGPL-3.0-only.txt
   Platforms: Linux, Windows
 
-pywin32
-  Description: Python extensions for Microsoft Windows
-  Homepage: https://github.com/mhammond/pywin32
-  License: PSF (Python Software Foundation License)
-  License File: PSF-2.0.txt
-  Platforms: Windows only
-
 Bundled Libraries
 -----------------
 

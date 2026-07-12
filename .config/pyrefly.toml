@@ -5,12 +5,6 @@
 python-version = "3.13"
 project-includes = ["../**/*.py*"]
 search-path = [".."]
-ignore-missing-imports = [
-    "win32api",
-    "win32con",
-    "win32gui",
-    "win32print",
-]
 
 [errors]
 missing-override-decorator = "error"

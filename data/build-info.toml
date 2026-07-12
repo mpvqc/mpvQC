@@ -43,14 +43,6 @@ url = "https://wiki.qt.io/Qt_for_Python"
 licence = "LGPL-3.0-only"
 platforms = ["linux", "win32"]
 
-[[dependency]]
-name = "pywin32"
-package = "pywin32"
-version = "312"
-url = "https://github.com/mhammond/pywin32"
-licence = "PSF-2.0"
-platforms = ["win32"]
-
 [[dev_dependency]]
 name = "pytest"
 package = "pytest"
