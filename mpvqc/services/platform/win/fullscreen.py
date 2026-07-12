@@ -128,8 +128,9 @@ class WindowsFullscreenHandler:
             return True
 
         # Visible but not covering the monitor: the OS ended the session behind our
-        # back (Win+Up, snap, display change). Retire now, or the parked placement
-        # flips this back to True on a later minimize.
+        # back (Win+Up, snap, display change). The query deliberately retires the
+        # session as a side effect: retire now, or the parked placement flips this
+        # back to True on a later minimize.
         self._retire_abandoned_session(hwnd)
         return False
 
