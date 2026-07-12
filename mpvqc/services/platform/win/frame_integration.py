@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from ctypes import windll  # pyrefly: ignore[missing-module-attribute]
 from typing import TYPE_CHECKING
 
 import win32con
@@ -12,7 +11,7 @@ import win32gui
 from PySide6.QtCore import QMargins, Qt
 
 from .event import WindowsEventFilter
-from .utils import SM_CXPADDEDBORDER, get_primary_monitor_dpi
+from .utils import SM_CXPADDEDBORDER, GetSystemMetricsForDpi, SetWindowPos, get_primary_monitor_dpi
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -45,10 +44,8 @@ class WindowsFrameIntegration:
 
 def _caption_inset() -> int:
     dpi = get_primary_monitor_dpi()
-    border = windll.user32.GetSystemMetricsForDpi(win32con.SM_CYSIZEFRAME, dpi) + windll.user32.GetSystemMetricsForDpi(
-        SM_CXPADDEDBORDER, dpi
-    )
-    caption = windll.user32.GetSystemMetricsForDpi(win32con.SM_CYCAPTION, dpi)
+    border = GetSystemMetricsForDpi(win32con.SM_CYSIZEFRAME, dpi) + GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi)
+    caption = GetSystemMetricsForDpi(win32con.SM_CYCAPTION, dpi)
     return border + caption
 
 
@@ -59,5 +56,5 @@ def _sync_qt_frame_bookkeeping(hwnd: int) -> None:
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     width, height = right - left, bottom - top
     flags = win32con.SWP_NOMOVE | win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE
-    windll.user32.SetWindowPos(int(hwnd), None, 0, 0, width, height + 1, flags)
-    windll.user32.SetWindowPos(int(hwnd), None, 0, 0, width, height, flags)
+    SetWindowPos(int(hwnd), None, 0, 0, width, height + 1, flags)
+    SetWindowPos(int(hwnd), None, 0, 0, width, height, flags)
