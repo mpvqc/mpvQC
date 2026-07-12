@@ -2,21 +2,22 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Wayland-only hack: tell the compositor the window's real rectangle.
+"""Wayland-only workaround: tell the compositor the window's real rectangle.
 
-A frameless window with a transparent shadow margin hands the compositor the
-whole padded surface, so the content cannot sit flush at screen edges and
-drag-snap/maximize fire off the padded rectangle. QWaylandWindow::setCustomMargins
-declares the real geometry inset. It is private Qt API reached through ctypes.
+A frameless window with a transparent shadow margin gives the compositor the
+whole padded surface. The content then cannot sit flush at screen edges, and
+snapping and maximizing use the padded rectangle instead of the visible one.
+QWaylandWindow::setCustomMargins declares the real geometry inset. It is
+private Qt API, reached through ctypes.
 
-DELETE WHEN: PySide6 exposes a public window-geometry inset (a real QWindow API)
-or ships the QtWaylandClient module. Then replace the body of
-apply_wayland_content_margins with the public call and drop the ctypes plumbing.
+DELETE WHEN: PySide6 exposes a public window-geometry inset (a real QWindow
+API) or ships the QtWaylandClient module. Then replace the body of
+apply_wayland_content_margins with the public call and drop the ctypes code.
 
-The mangled symbol names below are regenerated from the bundled Qt by our dependency
-updater script run by `just update-python-dependencies`) do not hand-edit them.
-The QObject base offset is sizeof(QObject), derived from the pointer width so it
-holds on 32- and 64-bit.
+The mangled symbol names below are regenerated from the bundled Qt by the
+dependency updater script (`just update-python-dependencies`); do not edit
+them by hand. _QOBJECT_BASE_OFFSET is sizeof(QObject) — two pointers — so it
+is correct on both 32- and 64-bit builds.
 """
 
 from __future__ import annotations

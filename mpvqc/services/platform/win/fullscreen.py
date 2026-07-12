@@ -33,21 +33,21 @@ if TYPE_CHECKING:
 
 
 class WindowsFullscreenHandler:
-    """Fullscreen as a single atomic move to the monitor rect, avoiding Qt's style
-    swap plus restore/re-maximize dance that flashes intermediate frames.
+    """Enters fullscreen as one atomic move to the monitor rect. Qt instead swaps
+    window styles, restores, then re-maximizes, which flashes intermediate frames.
 
-    Windows pins the geometry of a maximized window, so WS_MAXIMIZE is dropped
+    Windows fixes the geometry of a maximized window, so WS_MAXIMIZE is removed
     from the style while fullscreen. Restoring the saved placement on exit brings
     back the previous state, including the remembered normal geometry.
 
-    The window extends off-screen by the frame border on the left, right and
-    bottom: Qt's frame arithmetic then yields a scene of exactly the monitor
-    rect, and the surviving non-client sliver keeps DWM from permanently dropping
-    the window's transition animations, which it does once a client rect fills
-    the whole window.
+    The window extends past the screen by the frame border on the left, right and
+    bottom. Qt's frame arithmetic then produces a scene of exactly the monitor
+    rect, and the small non-client area that remains keeps DWM animations alive:
+    DWM permanently stops animating a window once its client rect ever fills the
+    whole window.
 
-    Assumes a single top-level window: one parked placement at a time, always
-    for the same window."""
+    Assumes a single top-level window: one saved placement at a time, always for
+    the same window."""
 
     def __init__(self) -> None:
         self._saved_placement: WindowPlacement | None = None
@@ -59,9 +59,9 @@ class WindowsFullscreenHandler:
         if monitor_rect is None:
             return
 
-        # A parked placement while not covering the monitor means the OS took the
-        # window out of fullscreen behind our back (e.g. Win+Up). Retire that
-        # session so a later exit cannot restore its stale placement.
+        # A saved placement while the window no longer covers the monitor means
+        # the OS already ended fullscreen on its own (e.g. Win+Up). Discard that
+        # old session so a later exit cannot restore its stale placement.
         if self._saved_placement is not None and not is_fullscreen(hwnd):
             self._retire_abandoned_session(hwnd)
         if self._saved_placement is None:
@@ -78,9 +78,9 @@ class WindowsFullscreenHandler:
         fullscreen_rect = (left - border_x, top, right + border_x, bottom + border_y)
 
         if is_maximized(hwnd):
-            # Dropping WS_MAXIMIZE reads to DWM as a restore, so the move to
-            # fullscreen would animate; suppressing transitions keeps it as
-            # instant as entering from a normal-state window.
+            # To DWM, removing WS_MAXIMIZE looks like a restore, so the move to
+            # fullscreen would animate. Disabling transitions keeps it as
+            # instant as entering from a normal window.
             set_window_transitions_enabled(hwnd, enabled=False)
             try:
                 strip_maximize_style(hwnd)
@@ -111,8 +111,8 @@ class WindowsFullscreenHandler:
             finally:
                 set_window_transitions_enabled(hwnd, enabled=True)
 
-            # Maximizing re-derived the placement from the poisoned monitor-rect
-            # geometry; point the normal geometry back at the pre-fullscreen one.
+            # Maximizing rebuilt the placement from the fullscreen monitor-rect
+            # geometry. Set the normal geometry back to the pre-fullscreen one.
             self._repin_normal_geometry(hwnd, placement.normal_rect)
         else:
             set_window_placement(hwnd, placement)
@@ -122,15 +122,16 @@ class WindowsFullscreenHandler:
         if self._saved_placement is None:
             return False
 
-        # A minimized window parks off-screen; the fullscreen session survives it.
+        # Windows moves a minimized window off-screen; that does not end the
+        # fullscreen session.
         hwnd = int(window.winId())
         if is_fullscreen(hwnd) or is_minimized(hwnd):
             return True
 
-        # Visible but not covering the monitor: the OS ended the session behind our
-        # back (Win+Up, snap, display change). The query deliberately retires the
-        # session as a side effect: retire now, or the parked placement flips this
-        # back to True on a later minimize.
+        # Visible but not covering the monitor: the OS ended fullscreen on its
+        # own (Win+Up, snap, display change). This query clears the session on
+        # purpose: otherwise the saved placement would make this return True
+        # again after a later minimize.
         self._retire_abandoned_session(hwnd)
         return False
 

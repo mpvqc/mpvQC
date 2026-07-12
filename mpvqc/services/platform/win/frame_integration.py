@@ -54,9 +54,10 @@ def _caption_inset() -> int:
 
 
 def _sync_qt_frame_bookkeeping(hwnd: int) -> None:
-    # Qt corrects its frame margins only on a geometry event, and the Qt Quick
-    # scene follows only on a real size change: the initial scene is sized with
-    # the stale margins while the QWindow property keeps the requested value.
+    # Qt corrects its frame margins only when a geometry event arrives, and the
+    # Qt Quick scene resizes only on a real size change. Without this, the first
+    # scene keeps the stale margins even though the QWindow property already
+    # holds the new value. Resizing by one pixel and back forces both to update.
     left, top, right, bottom = get_window_rect(int(hwnd))
     width, height = right - left, bottom - top
     resize_window(int(hwnd), width, height + 1)

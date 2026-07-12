@@ -68,7 +68,7 @@ class SettingsPortal:
 
     @cached_property
     def _portal_version(self) -> int:
-        """Get the version of the Settings portal (e.g., 1 or 2), or 0 if unable to determine
+        """The Settings portal version (e.g. 1 or 2), or 0 if it cannot be determined.
 
         https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Settings.html#org-freedesktop-portal-settings-version
         """

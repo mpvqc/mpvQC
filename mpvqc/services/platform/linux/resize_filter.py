@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QMouseEvent, QWindow
 
 
-MARGIN_RESIZE_BAND = 8  # grab band hugging the frame, sitting in the shadow margin
+MARGIN_RESIZE_BAND = 8  # width of the resize strip just outside the content, inside the shadow margin
 
 
 class WindowResizeFilter(QObject):
@@ -65,8 +65,8 @@ class WindowResizeFilter(QObject):
         window_width = self._window.width()
         window_height = self._window.height()
 
-        # Content frame is inset by `margin`; the grab band hugs its outside,
-        # in the transparent shadow (GTK CSD style).
+        # The content is inset by `margin`. The resize strip sits just outside
+        # it, in the transparent shadow, like GTK client-side decorations.
         band = MARGIN_RESIZE_BAND
         left = margin - band <= x < margin
         right = window_width - margin <= x < window_width - margin + band

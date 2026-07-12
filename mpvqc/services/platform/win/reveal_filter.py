@@ -21,11 +21,11 @@ if TYPE_CHECKING:
 
 
 class _FirstFrameGate(QObject):
-    """Receives one show cycle's frameSwapped delivery. Unparented on purpose:
-    the pending map holds the only reference, so dropping it destroys the gate
-    synchronously and Qt sweeps any queued metacall still aimed at it — a stale
-    frame notification from a previous show cycle can never trigger this
-    cycle's reveal."""
+    """Receives frameSwapped for a single show of a window. It has no parent on
+    purpose: the pending map holds the only reference, so dropping that entry
+    destroys the gate at once, and Qt then discards any queued frameSwapped
+    call still addressed to it. A late frame event from an earlier show can
+    therefore never trigger the current reveal."""
 
     def __init__(self, on_first_frame: Callable[[], None]) -> None:
         super().__init__()
@@ -63,8 +63,8 @@ class _RevealOnFirstFrame:
         _hwnd, gate = entry
         with contextlib.suppress(RuntimeError):
             window.frameSwapped.disconnect(gate.notify)
-        # Dropping the last reference destroys the gate here, synchronously,
-        # which sweeps any stale queued frameSwapped delivery.
+        # Dropping the last reference destroys the gate right here; Qt then
+        # discards any queued frameSwapped call still addressed to it.
 
     def forget(self, window: QQuickWindow) -> None:
         self._pending.pop(window, None)
@@ -89,9 +89,9 @@ class _RevealOnFirstFrame:
 
 
 class _TransientConcealment(QObject):
-    """Cloaks a transient window again the moment its content is torn out or
-    it starts to hide: Qt dismantles a windowed popup inside the still visible
-    window and hides it only deferred."""
+    """Cloaks a transient window again as soon as its content is removed or it
+    starts to hide: Qt removes a windowed popup's content while the window is
+    still visible and hides the window only later."""
 
     def __init__(self, reveal: _RevealOnFirstFrame) -> None:
         super().__init__()
@@ -103,9 +103,9 @@ class _TransientConcealment(QObject):
         if window.contentItem().childItems():
             self._reveal.arm(window)
         else:
-            # A transient shown without content is mid-teardown; do not arm a
-            # reveal, or a stray frame of the emptied window would uncloak it
-            # and flash.
+            # A transient window shown without content is being torn down. Do
+            # not arm a reveal: a late frame from the emptied window would
+            # uncloak it and flash white.
             set_window_cloaked(int(window.winId()), cloaked=True)
 
     def _track(self, window: QQuickWindow) -> None:
@@ -115,8 +115,9 @@ class _TransientConcealment(QObject):
         self._hwnds[window] = int(window.winId())
         window.visibleChanged.connect(self._conceal_on_hide)
         window.contentItem().childrenChanged.connect(self._conceal_on_content_teardown)
-        # destroyed delivers a fresh wrapper typed as plain QObject, which never
-        # matches the tracked key; bind the tracked wrapper at connect time.
+        # The destroyed signal passes a new Python wrapper typed as plain
+        # QObject, which never equals the dict key. Capture the tracked wrapper
+        # here, at connect time.
         window.destroyed.connect(partial(self._forget, window))
 
     @Slot(bool)
@@ -151,10 +152,10 @@ class _TransientConcealment(QObject):
         if hwnd is None:
             return
 
-        # Closing a windowed popup Qt-side tears the dialog out of the still
-        # visible window and only hides it deferred (finalizeExitTransition
-        # reparents the popup item first): cloak the moment the content leaves,
-        # before the emptied window can reach the screen.
+        # When a windowed popup closes, Qt first removes the dialog content
+        # while the window is still visible (finalizeExitTransition reparents
+        # the popup item) and hides the window only later. Cloak as soon as the
+        # content leaves, before the emptied window can be shown.
         self._reveal.cancel(window)
         set_window_cloaked(hwnd, cloaked=True)
 
@@ -164,10 +165,10 @@ class _TransientConcealment(QObject):
 
 
 class WindowRevealFilter(QObject):
-    """Filters application-wide, covering the native windows Qt creates for
-    windowed dialogs: the main window only gets the first-frame reveal and
-    hides with its native DWM animation; every other Quick window is a
-    transient."""
+    """Installed on the whole application so it also sees the native windows Qt
+    creates for windowed dialogs. The main window only gets the first-frame
+    reveal and keeps its native DWM hide animation; every other Quick window is
+    treated as a transient."""
 
     def __init__(self) -> None:
         super().__init__()
