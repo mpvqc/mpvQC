@@ -25,9 +25,9 @@ from .native import (
     write_nccalcsize_client_rect,
 )
 from .utils import (
+    covers_monitor,
     get_resize_border_thickness,
-    is_fullscreen,
-    overhangs_monitor,
+    overhangs,
     reserve_auto_hide_taskbar_strip,
 )
 
@@ -47,11 +47,15 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
     # Only the top edge needs help: the client covers the strip where the native
     # caption and its resize band would live. Left, right and bottom keep real
     # non-client bands, hit-tested natively.
-    if is_maximized(hwnd) or is_fullscreen(hwnd):
+    if is_maximized(hwnd):
         return False, 0
 
     rect = get_window_rect(hwnd)
     if rect is None:
+        return False, 0
+
+    fullscreen = covers_monitor(rect)
+    if fullscreen:
         return False, 0
 
     left, top, right, _ = rect
@@ -75,16 +79,16 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
 def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
     destination = read_nccalcsize_proposed_rect(l_param)
 
+    destination_monitor = get_monitor_info_for_rect(destination)
+    if destination_monitor is None:
+        return False, 0
+
     # Qt's own handling (the DefWindowProc frame plus the negative caption
     # margin) is wrong in only two cases: maximized, where the caption
     # correction overshoots the work area, and fullscreen.
     maximized = is_maximized(hwnd)
-    fullscreen = not maximized and overhangs_monitor(destination)
+    fullscreen = not maximized and overhangs(destination, destination_monitor.monitor_rect)
     if not (maximized or fullscreen):
-        return False, 0
-
-    destination_monitor = get_monitor_info_for_rect(destination)
-    if destination_monitor is None:
         return False, 0
 
     # A maximized window gets the work area as its client rect. A fullscreen
