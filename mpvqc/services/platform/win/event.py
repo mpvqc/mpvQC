@@ -25,9 +25,9 @@ from .native import (
     write_nccalcsize_client_rect,
 )
 from .utils import (
-    covers_monitor,
     get_resize_border_thickness,
     overhangs,
+    overhangs_monitor,
     reserve_auto_hide_taskbar_strip,
 )
 
@@ -54,7 +54,7 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
     if rect is None:
         return False, 0
 
-    fullscreen = covers_monitor(rect)
+    fullscreen = overhangs_monitor(rect)
     if fullscreen:
         return False, 0
 

@@ -33,12 +33,12 @@ def is_fullscreen(hwnd: int) -> bool:
         return False
 
     rect = get_window_rect(hwnd)
-    return rect is not None and covers_monitor(rect)
+    return rect is not None and overhangs_monitor(rect)
 
 
-def covers_monitor(rect: tuple[int, int, int, int]) -> bool:
+def overhangs_monitor(rect: tuple[int, int, int, int]) -> bool:
     monitor_rect = _monitor_rect_for(rect)
-    return monitor_rect is not None and _covers(rect, monitor_rect)
+    return monitor_rect is not None and overhangs(rect, monitor_rect)
 
 
 def overhangs(rect: tuple[int, int, int, int], monitor_rect: tuple[int, int, int, int]) -> bool:
