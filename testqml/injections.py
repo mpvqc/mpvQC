@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Literal, override
 
 import inject
 from PySide6.QtCore import QUrl
+from PySide6.QtGui import QGuiApplication
 
 from mpvqc.injections import bindings as original_bindings
 from mpvqc.services import (
@@ -205,4 +206,6 @@ def configure_injections() -> None:
 
 
 def rebind_main_window() -> None:
-    inject.instance(MainWindowService).initialize()
+    # The Quick Test runner owns the engine; its first window hosts the TestCase.
+    test_window = QGuiApplication.topLevelWindows()[0]
+    inject.instance(MainWindowService).initialize(test_window)

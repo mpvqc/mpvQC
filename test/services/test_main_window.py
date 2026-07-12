@@ -150,7 +150,7 @@ def test_initialize_broadcasts_content_size(case, qt_app, service, platform_serv
     width_spy = make_spy(service.content_width_changed)
     height_spy = make_spy(service.content_height_changed)
 
-    service.initialize()
+    service.initialize(window)
 
     assert width_spy.count() >= 1
     assert height_spy.count() >= 1
