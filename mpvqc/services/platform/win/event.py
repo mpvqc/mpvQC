@@ -16,6 +16,7 @@ import PySide6.QtCore
 
 from .native import (
     get_monitor_info_for_rect,
+    get_window_rect,
     is_maximized,
     prevent_window_resize_for,
     read_hit_test_point,
@@ -25,7 +26,6 @@ from .native import (
 )
 from .utils import (
     get_resize_border_thickness,
-    get_window_size,
     is_fullscreen,
     overhangs_monitor,
     reserve_auto_hide_taskbar_strip,
@@ -50,19 +50,20 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
     if is_maximized(hwnd) or is_fullscreen(hwnd):
         return False, 0
 
-    x, y, w, _ = get_window_size(hwnd)
+    left, top, right, _ = get_window_rect(hwnd)
     cursor_x, cursor_y = read_hit_test_point(l_param)
-    x_pos = cursor_x - x
-    y_pos = cursor_y - y
+    x_pos = cursor_x - left
+    y_pos = cursor_y - top
 
     band = get_resize_border_thickness(hwnd, horizontal=False)
     if y_pos >= band:
         return False, 0
 
+    width = right - left
     corner = 2 * band
     if x_pos < corner:
         return True, _HTTOPLEFT
-    if x_pos > w - corner:
+    if x_pos > width - corner:
         return True, _HTTOPRIGHT
     return True, _HTTOP
 

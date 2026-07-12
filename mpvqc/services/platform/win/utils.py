@@ -24,13 +24,6 @@ from .native import (
 )
 
 
-def get_window_size(hwnd: int) -> tuple[int, int, int, int]:
-    left, top, right, bottom = get_window_rect(hwnd)
-    width = right - left
-    height = bottom - top
-    return left, top, width, height
-
-
 def is_fullscreen(hwnd: int) -> bool:
     # A maximized window overhangs the work area on all edges, so it covers the
     # whole monitor whenever the work area equals the monitor rect (auto-hide
