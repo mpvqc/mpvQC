@@ -50,7 +50,7 @@ class SurfaceController:
         self._window = window
         self._event_filter = event_filter = WindowResizeFilter(window, app)
         event_filter.set_resize_margin(self._margin)
-        app.installEventFilter(event_filter)
+        window.installEventFilter(event_filter)
 
         # The inset and mask need a created, mapped surface, which is not ready
         # at QML-load time. On the first show the inset also does not stick until
