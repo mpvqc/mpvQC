@@ -49,13 +49,13 @@ class MainWindowService(QObject):
         self._is_main_window_focused = True
         self._zoom_factor = 1.0
 
-    def initialize(self) -> None:
+    def initialize(self, window: QWindow) -> None:
         app = QGuiApplication.instance()
         if not isinstance(app, QGuiApplication):
             logger.error("fatal: cannot bind to QGuiApplication.instance()")
             return
 
-        self._window = window = app.topLevelWindows()[0]
+        self._window = window
 
         self._outer_width = window.width()
         self._outer_height = window.height()

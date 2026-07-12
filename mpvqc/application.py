@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import QUrl, Slot
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtGui import QGuiApplication, QIcon, QWindow
 from PySide6.QtQml import QQmlApplicationEngine
 
 from mpvqc.close_event_filter import CloseEventFilter
@@ -84,10 +84,15 @@ class MpvqcApplication(QGuiApplication):
         url = QUrl(self._platform.root_qml_url)
         self._engine.load(url)
 
-        if not self._engine.rootObjects():
+        root_objects = self._engine.rootObjects()
+        if not root_objects:
             sys.exit(-1)
 
-        self._main_window.initialize()
+        root_window = root_objects[0]
+        if not isinstance(root_window, QWindow):
+            sys.exit(-1)
+
+        self._main_window.initialize(root_window)
         self._main_window.install_event_filter(self._close_event_filter)
 
         remove_nuitka_splash_screen()
