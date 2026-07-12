@@ -5,9 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 
-import io.github.mpvqc.mpvQC.Utility
-
 import MpvqcStyle
+import io.github.mpvqc.mpvQC.Utility
 
 ToolButton {
     id: root
