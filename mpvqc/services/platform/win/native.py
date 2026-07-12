@@ -89,9 +89,10 @@ _GetWindowRect.argtypes = [HWND, POINTER(RECT)]
 _GetWindowRect.restype = BOOL
 
 
-def get_window_rect(hwnd: int) -> tuple[int, int, int, int]:
+def get_window_rect(hwnd: int) -> tuple[int, int, int, int] | None:
     rect = RECT()
-    _GetWindowRect(hwnd, byref(rect))
+    if not _GetWindowRect(hwnd, byref(rect)):
+        return None
     return rect.left, rect.top, rect.right, rect.bottom
 
 
