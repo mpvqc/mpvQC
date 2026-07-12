@@ -8,12 +8,11 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""The Windows API surface: every call into Windows lives here, whether it
-goes through ctypes or pywin32, wrapped in a plain-typed snake_case function.
+"""The Windows API surface: every call into Windows lives here as a
+prototyped ctypes binding wrapped in a plain-typed snake_case function.
 
 One block per API call: its constants, its structures, its raw binding and
-the wrappers the rest of the package uses. Other modules touch win32con only
-as call vocabulary (metric indexes, flags, message ids)."""
+the wrappers the rest of the package uses."""
 
 from __future__ import annotations
 
@@ -25,93 +24,174 @@ from ctypes import (
     c_int,
     c_short,
     c_size_t,
+    c_ssize_t,
     c_void_p,
     c_wchar_p,
     cast,
     sizeof,
     windll,  # pyrefly: ignore[missing-module-attribute]
 )
-from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, RECT, UINT, WORD
+from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
 from typing import TYPE_CHECKING, Literal, NamedTuple
-
-import win32api
-import win32con
-import win32gui
 
 if TYPE_CHECKING:
     from typing import Any
 
 type AppBarEdge = Literal["left", "top", "right", "bottom"]
 
+_SWP_NOSIZE = 0x0001
+_SWP_NOMOVE = 0x0002
+_SWP_NOZORDER = 0x0004
+_SWP_NOACTIVATE = 0x0010
+_SWP_FRAMECHANGED = 0x0020
+
 _SetWindowPos = windll.user32.SetWindowPos
 _SetWindowPos.argtypes = [HWND, HWND, c_int, c_int, c_int, c_int, UINT]
 _SetWindowPos.restype = BOOL
 
 
-def set_window_pos(hwnd: int, x: int, y: int, width: int, height: int, flags: int) -> None:
+def _set_window_pos(hwnd: int, x: int, y: int, width: int, height: int, flags: int) -> None:
     _SetWindowPos(hwnd, None, x, y, width, height, flags)
 
 
 def set_outer_window_rect(hwnd: int, rect: tuple[int, int, int, int]) -> None:
     """Set the outer rect, frame included."""
     left, top, right, bottom = rect
-    flags = win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED
-    set_window_pos(hwnd, left, top, right - left, bottom - top, flags)
+    _set_window_pos(hwnd, left, top, right - left, bottom - top, _SWP_NOZORDER | _SWP_NOACTIVATE | _SWP_FRAMECHANGED)
+
+
+def resize_window(hwnd: int, width: int, height: int) -> None:
+    _set_window_pos(hwnd, 0, 0, width, height, _SWP_NOMOVE | _SWP_NOZORDER | _SWP_NOACTIVATE)
 
 
 def refresh_window_frame(hwnd: int) -> None:
     """Force a WM_NCCALCSIZE round trip without moving the window."""
-    flags = (
-        win32con.SWP_FRAMECHANGED
-        | win32con.SWP_NOSIZE
-        | win32con.SWP_NOMOVE
-        | win32con.SWP_NOZORDER
-        | win32con.SWP_NOACTIVATE
-    )
-    set_window_pos(hwnd, 0, 0, 0, 0, flags)
+    flags = _SWP_FRAMECHANGED | _SWP_NOSIZE | _SWP_NOMOVE | _SWP_NOZORDER | _SWP_NOACTIVATE
+    _set_window_pos(hwnd, 0, 0, 0, 0, flags)
+
+
+_GetWindowRect = windll.user32.GetWindowRect
+_GetWindowRect.argtypes = [HWND, POINTER(RECT)]
+_GetWindowRect.restype = BOOL
 
 
 def get_window_rect(hwnd: int) -> tuple[int, int, int, int]:
-    return win32gui.GetWindowRect(hwnd)
+    rect = RECT()
+    _GetWindowRect(hwnd, byref(rect))
+    return rect.left, rect.top, rect.right, rect.bottom
 
 
-def get_window_placement(hwnd: int) -> tuple:
-    return win32gui.GetWindowPlacement(hwnd)
+_SW_MAXIMIZE = 3
 
 
-def set_window_placement(hwnd: int, placement: tuple) -> None:
-    win32gui.SetWindowPlacement(hwnd, placement)
+class WindowPlacement(NamedTuple):
+    flags: int
+    show_cmd: int
+    min_position: tuple[int, int]
+    max_position: tuple[int, int]
+    normal_rect: tuple[int, int, int, int]
+
+    @property
+    def shows_maximized(self) -> bool:
+        return self.show_cmd == _SW_MAXIMIZE
 
 
-def maximize_window(hwnd: int) -> None:
-    win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+class WINDOWPLACEMENT(Structure):
+    _fields_ = [
+        ("length", UINT),
+        ("flags", UINT),
+        ("showCmd", UINT),
+        ("ptMinPosition", POINT),
+        ("ptMaxPosition", POINT),
+        ("rcNormalPosition", RECT),
+    ]
+
+
+_GetWindowPlacement = windll.user32.GetWindowPlacement
+_GetWindowPlacement.argtypes = [HWND, POINTER(WINDOWPLACEMENT)]
+_GetWindowPlacement.restype = BOOL
+
+
+def get_window_placement(hwnd: int) -> WindowPlacement | None:
+    data = WINDOWPLACEMENT(length=sizeof(WINDOWPLACEMENT))
+    if not _GetWindowPlacement(hwnd, byref(data)):
+        return None
+
+    minimum, maximum, normal = data.ptMinPosition, data.ptMaxPosition, data.rcNormalPosition
+    return WindowPlacement(
+        flags=data.flags,
+        show_cmd=data.showCmd,
+        min_position=(minimum.x, minimum.y),
+        max_position=(maximum.x, maximum.y),
+        normal_rect=(normal.left, normal.top, normal.right, normal.bottom),
+    )
 
 
 def is_maximized(hwnd: int) -> bool:
-    placement = win32gui.GetWindowPlacement(hwnd)
-    if not placement:
-        return False
+    placement = get_window_placement(hwnd)
+    return placement is not None and placement.shows_maximized
 
-    return placement[1] == win32con.SW_MAXIMIZE
+
+_SetWindowPlacement = windll.user32.SetWindowPlacement
+_SetWindowPlacement.argtypes = [HWND, POINTER(WINDOWPLACEMENT)]
+_SetWindowPlacement.restype = BOOL
+
+
+def set_window_placement(hwnd: int, placement: WindowPlacement) -> None:
+    data = WINDOWPLACEMENT(
+        length=sizeof(WINDOWPLACEMENT),
+        flags=placement.flags,
+        showCmd=placement.show_cmd,
+        ptMinPosition=POINT(*placement.min_position),
+        ptMaxPosition=POINT(*placement.max_position),
+        rcNormalPosition=RECT(*placement.normal_rect),
+    )
+    _SetWindowPlacement(hwnd, byref(data))
+
+
+_ShowWindow = windll.user32.ShowWindow
+_ShowWindow.argtypes = [HWND, c_int]
+_ShowWindow.restype = BOOL
+
+
+def maximize_window(hwnd: int) -> None:
+    _ShowWindow(hwnd, _SW_MAXIMIZE)
+
+
+_IsIconic = windll.user32.IsIconic
+_IsIconic.argtypes = [HWND]
+_IsIconic.restype = BOOL
 
 
 def is_minimized(hwnd: int) -> bool:
-    return bool(win32gui.IsIconic(hwnd))
+    return bool(_IsIconic(hwnd))
 
 
-def set_style_flag(hwnd: int, flag: int, *, enabled: bool) -> None:
-    style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-    style = style | flag if enabled else style & ~flag
-    win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style)
+_GWL_STYLE = -16
+_WS_THICKFRAME = 0x00040000
+_WS_MAXIMIZE = 0x01000000
+
+_GetWindowLongPtr = windll.user32.GetWindowLongPtrW
+_GetWindowLongPtr.argtypes = [HWND, c_int]
+_GetWindowLongPtr.restype = c_ssize_t
+
+_SetWindowLongPtr = windll.user32.SetWindowLongPtrW
+_SetWindowLongPtr.argtypes = [HWND, c_int, c_ssize_t]
+_SetWindowLongPtr.restype = c_ssize_t
+
+
+def strip_maximize_style(hwnd: int) -> None:
+    style = _GetWindowLongPtr(hwnd, _GWL_STYLE)
+    _SetWindowLongPtr(hwnd, _GWL_STYLE, style & ~_WS_MAXIMIZE)
 
 
 def prevent_window_resize_for(hwnd: int) -> None:
     # Guarding on the live style keeps this idempotent without caching by
     # handle value, which would go stale once the OS recycles an HWND.
-    style = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-    if style & win32con.WS_THICKFRAME:
-        win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, style & ~win32con.WS_THICKFRAME)
+    style = _GetWindowLongPtr(hwnd, _GWL_STYLE)
+    if style & _WS_THICKFRAME:
+        _SetWindowLongPtr(hwnd, _GWL_STYLE, style & ~_WS_THICKFRAME)
 
 
 class MonitorInfo(NamedTuple):
@@ -119,22 +199,53 @@ class MonitorInfo(NamedTuple):
     work_area: tuple[int, int, int, int]
 
 
-def get_monitor_info_for_rect(rect: tuple[int, int, int, int]) -> MonitorInfo | None:
-    monitor = win32api.MonitorFromRect(rect, win32con.MONITOR_DEFAULTTONEAREST)
-    return _monitor_info(monitor)
+class MONITORINFO(Structure):
+    _fields_ = [
+        ("cbSize", DWORD),
+        ("rcMonitor", RECT),
+        ("rcWork", RECT),
+        ("dwFlags", DWORD),
+    ]
 
 
-def get_monitor_info_for_window(hwnd: int) -> MonitorInfo | None:
-    monitor = win32api.MonitorFromWindow(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-    return _monitor_info(monitor)
+_MONITOR_DEFAULTTONEAREST = 2
+
+_GetMonitorInfo = windll.user32.GetMonitorInfoW
+_GetMonitorInfo.argtypes = [HANDLE, POINTER(MONITORINFO)]
+_GetMonitorInfo.restype = BOOL
 
 
-def _monitor_info(monitor: int) -> MonitorInfo | None:
+def _monitor_info(monitor: int | None) -> MonitorInfo | None:
     if not monitor:
         return None
 
-    info = win32api.GetMonitorInfo(monitor)
-    return MonitorInfo(monitor_rect=info["Monitor"], work_area=info["Work"])
+    info = MONITORINFO(cbSize=sizeof(MONITORINFO))
+    if not _GetMonitorInfo(monitor, byref(info)):
+        return None
+
+    monitor_rect = (info.rcMonitor.left, info.rcMonitor.top, info.rcMonitor.right, info.rcMonitor.bottom)
+    work_area = (info.rcWork.left, info.rcWork.top, info.rcWork.right, info.rcWork.bottom)
+    return MonitorInfo(monitor_rect=monitor_rect, work_area=work_area)
+
+
+_MonitorFromRect = windll.user32.MonitorFromRect
+_MonitorFromRect.argtypes = [POINTER(RECT), DWORD]
+_MonitorFromRect.restype = HANDLE
+
+
+def get_monitor_info_for_rect(rect: tuple[int, int, int, int]) -> MonitorInfo | None:
+    monitor = _MonitorFromRect(byref(RECT(*rect)), _MONITOR_DEFAULTTONEAREST)
+    return _monitor_info(monitor)
+
+
+_MonitorFromWindow = windll.user32.MonitorFromWindow
+_MonitorFromWindow.argtypes = [HWND, DWORD]
+_MonitorFromWindow.restype = HANDLE
+
+
+def get_monitor_info_for_window(hwnd: int) -> MonitorInfo | None:
+    monitor = _MonitorFromWindow(hwnd, _MONITOR_DEFAULTTONEAREST)
+    return _monitor_info(monitor)
 
 
 _GetDpiForWindow = windll.user32.GetDpiForWindow
@@ -146,11 +257,9 @@ def get_dpi_for_window(hwnd: int) -> int:
     return _GetDpiForWindow(hwnd)
 
 
-_GetDpiForSystem = windll.user32.GetDpiForSystem
-_GetDpiForSystem.argtypes = []
-_GetDpiForSystem.restype = UINT
-
-
+_SM_CYCAPTION = 4
+_SM_CXSIZEFRAME = 32
+_SM_CYSIZEFRAME = 33
 _SM_CXPADDEDBORDER = 92
 
 _GetSystemMetricsForDpi = windll.user32.GetSystemMetricsForDpi
@@ -158,26 +267,35 @@ _GetSystemMetricsForDpi.argtypes = [c_int, UINT]
 _GetSystemMetricsForDpi.restype = c_int
 
 
-def get_system_metrics_for_dpi(index: int, dpi: int) -> int:
-    return _GetSystemMetricsForDpi(index, dpi)
-
-
 def get_resize_border_thickness_for_dpi(dpi: int, *, horizontal: bool) -> int:
-    frame = win32con.SM_CXSIZEFRAME if horizontal else win32con.SM_CYSIZEFRAME
+    frame = _SM_CXSIZEFRAME if horizontal else _SM_CYSIZEFRAME
     return _GetSystemMetricsForDpi(frame, dpi) + _GetSystemMetricsForDpi(_SM_CXPADDEDBORDER, dpi)
 
 
+def get_caption_height_for_dpi(dpi: int) -> int:
+    return _GetSystemMetricsForDpi(_SM_CYCAPTION, dpi)
+
+
 _MDT_EFFECTIVE_DPI = 0
+_MONITOR_DEFAULTTOPRIMARY = 1
+
+_GetDpiForSystem = windll.user32.GetDpiForSystem
+_GetDpiForSystem.argtypes = []
+_GetDpiForSystem.restype = UINT
 
 _GetDpiForMonitor = windll.shcore.GetDpiForMonitor
 _GetDpiForMonitor.argtypes = [HANDLE, UINT, POINTER(UINT), POINTER(UINT)]
 _GetDpiForMonitor.restype = LONG
 
+_MonitorFromPoint = windll.user32.MonitorFromPoint
+_MonitorFromPoint.argtypes = [POINT, DWORD]
+_MonitorFromPoint.restype = HANDLE
+
 
 def get_primary_monitor_dpi() -> int:
-    primary = win32api.MonitorFromPoint((0, 0), win32con.MONITOR_DEFAULTTOPRIMARY)
+    primary = _MonitorFromPoint(POINT(0, 0), _MONITOR_DEFAULTTOPRIMARY)
     dpi, unused = UINT(), UINT()
-    if _GetDpiForMonitor(int(primary), _MDT_EFFECTIVE_DPI, byref(dpi), byref(unused)) != 0:
+    if _GetDpiForMonitor(primary, _MDT_EFFECTIVE_DPI, byref(dpi), byref(unused)) != 0:
         return _GetDpiForSystem()
     return dpi.value
 
@@ -286,7 +404,7 @@ def read_hit_test_point(l_param: int) -> tuple[int, int]:
     return x, y
 
 
-class PWINDOWPOS(Structure):
+class WINDOWPOS(Structure):
     _fields_ = [
         ("hWnd", HWND),
         ("hwndInsertAfter", HWND),
@@ -299,7 +417,7 @@ class PWINDOWPOS(Structure):
 
 
 class NCCALCSIZE_PARAMS(Structure):
-    _fields_ = [("rgrc", RECT * 3), ("lppos", POINTER(PWINDOWPOS))]
+    _fields_ = [("rgrc", RECT * 3), ("lppos", POINTER(WINDOWPOS))]
 
 
 _LPNCCALCSIZE_PARAMS = POINTER(NCCALCSIZE_PARAMS)

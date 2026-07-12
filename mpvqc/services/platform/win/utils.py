@@ -39,11 +39,7 @@ def is_fullscreen(hwnd: int) -> bool:
     if is_maximized(hwnd):
         return False
 
-    win_rect = get_window_rect(hwnd)
-    if not win_rect:
-        return False
-
-    return covers_monitor(win_rect)
+    return covers_monitor(get_window_rect(hwnd))
 
 
 def covers_monitor(rect: tuple[int, int, int, int]) -> bool:

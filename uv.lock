@@ -142,7 +142,6 @@ dependencies = [
     { name = "jinja2" },
     { name = "mpv" },
     { name = "pyside6-essentials" },
-    { name = "pywin32", marker = "sys_platform == 'win32'" },
 ]
 
 [package.dev-dependencies]
@@ -161,7 +160,6 @@ requires-dist = [
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "mpv", specifier = ">=1.0.8" },
     { name = "pyside6-essentials", specifier = "==6.11.1" },
-    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=312" },
 ]
 
 [package.metadata.requires-dev]
@@ -306,16 +304,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", hash = "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c", size = 386536, upload-time = "2026-06-19T10:58:31.347Z" },
-]
-
-[[package]]
-name = "pywin32"
-version = "312"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2d/41/12fbfd7f36ed2146d8bc9de96c2741296bf0d490b98508496cff322e274c/pywin32-312-cp313-cp313-win32.whl", hash = "sha256:7a27df850933d16a8eabfbaeb73d52b273e2da667f80d70b01a89d1f6828d02c", size = 6370184, upload-time = "2026-06-04T07:49:36.253Z" },
-    { url = "https://files.pythonhosted.org/packages/ba/db/36a78e3403099d31d9746d13fdcde5accc43c1155f375a34d15983a479a7/pywin32-312-cp313-cp313-win_amd64.whl", hash = "sha256:c53e878d15a1c44788082bfe712a905433473aa38f86375b7cf8b45e3acbaaf9", size = 6914298, upload-time = "2026-06-04T07:49:38.876Z" },
-    { url = "https://files.pythonhosted.org/packages/84/37/c1697194092b76de9ed47ca124323f02c57ffc8a45c06f88a3d5acaf01eb/pywin32-312-cp313-cp313-win_arm64.whl", hash = "sha256:59aba5d5940842075343a5ddc6b11f1cdf0d1567fe745290359dfbcc7c2eb831", size = 6727640, upload-time = "2026-06-04T07:49:41.083Z" },
 ]
 
 [[package]]

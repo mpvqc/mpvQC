@@ -11,10 +11,9 @@ from PySide6.QtGui import QWindow
 if sys.platform != "win32":
     pytest.skip("Requires Windows", allow_module_level=True)
 
-import win32con
-
 from mpvqc.services.platform.win import fullscreen
 from mpvqc.services.platform.win.fullscreen import WindowsFullscreenHandler
+from mpvqc.services.platform.win.native import WindowPlacement
 
 NORMAL_RECT = (100, 100, 900, 700)
 MONITOR = (0, 0, 1920, 1080)
@@ -22,12 +21,17 @@ BORDER = 8
 OVERHANG_RECT = (-BORDER, 0, 1920 + BORDER, 1080 + BORDER)
 MINIMIZED_RECT = (-32000, -32000, -31840, -31840)
 
+SW_SHOWNORMAL = 1
+SW_SHOWMAXIMIZED = 3
+
+INITIAL_PLACEMENT = WindowPlacement(0, SW_SHOWNORMAL, (-1, -1), (-1, -1), NORMAL_RECT)
+
 
 @dataclass
 class FakeWin32Window:
     """Models the Windows state the fullscreen handler reads and writes."""
 
-    placement: tuple = (0, win32con.SW_SHOWNORMAL, (-1, -1), (-1, -1), NORMAL_RECT)
+    placement: WindowPlacement = INITIAL_PLACEMENT
     maximized: bool = False
     minimized: bool = False
     rect: tuple = NORMAL_RECT
@@ -41,25 +45,25 @@ class FakeWin32Window:
         m_left, m_top, m_right, m_bottom = self.monitor
         return left <= m_left and top <= m_top and right >= m_right and bottom >= m_bottom
 
-    def get_window_placement(self) -> tuple:
-        show_cmd = win32con.SW_SHOWMAXIMIZED if self.maximized else win32con.SW_SHOWNORMAL
-        return (self.placement[0], show_cmd, self.placement[2], self.placement[3], self.placement[4])
+    def get_window_placement(self) -> WindowPlacement:
+        show_cmd = SW_SHOWMAXIMIZED if self.maximized else SW_SHOWNORMAL
+        return self.placement._replace(show_cmd=show_cmd)
 
-    def set_window_placement(self, placement: tuple) -> None:
+    def set_window_placement(self, placement: WindowPlacement) -> None:
         self.calls.append(("set_placement", placement))
-        self.placement = tuple(placement)
-        if placement[1] == win32con.SW_SHOWMAXIMIZED:
+        self.placement = placement
+        if placement.shows_maximized:
             self.maximized = True
         else:
             self.maximized = False
-            self.rect = placement[4]
+            self.rect = placement.normal_rect
 
     def set_outer_window_rect(self, rect: tuple) -> None:
         self.calls.append(("rect", rect))
         self.rect = rect
         if not self.maximized:
             # Windows tracks a restored window's outer rect as its normal geometry
-            self.placement = (*self.placement[:4], rect)
+            self.placement = self.placement._replace(normal_rect=rect)
 
     def maximize(self) -> None:
         self.calls.append(("maximize",))
@@ -70,17 +74,16 @@ class FakeWin32Window:
 def fake(monkeypatch) -> FakeWin32Window:
     fake = FakeWin32Window()
 
-    def set_style_flag(_hwnd, flag, *, enabled):
-        fake.calls.append(("style", flag, enabled))
-        if flag == win32con.WS_MAXIMIZE:
-            fake.maximized = enabled
+    def strip_maximize_style(_hwnd):
+        fake.calls.append(("strip_maximize",))
+        fake.maximized = False
 
     monkeypatch.setattr(fullscreen, "get_monitor_rect", lambda _hwnd: fake.monitor)
     monkeypatch.setattr(fullscreen, "get_resize_border_thickness", lambda _hwnd, *, horizontal=True: BORDER)
     monkeypatch.setattr(fullscreen, "is_maximized", lambda _hwnd: fake.maximized)
     monkeypatch.setattr(fullscreen, "is_minimized", lambda _hwnd: fake.minimized)
     monkeypatch.setattr(fullscreen, "is_fullscreen", lambda _hwnd: not fake.maximized and fake.covers_monitor())
-    monkeypatch.setattr(fullscreen, "set_style_flag", set_style_flag)
+    monkeypatch.setattr(fullscreen, "strip_maximize_style", strip_maximize_style)
     monkeypatch.setattr(fullscreen, "set_outer_window_rect", lambda _hwnd, rect: fake.set_outer_window_rect(rect))
     monkeypatch.setattr(
         fullscreen,
@@ -172,7 +175,7 @@ def test_exit_to_maximized_repins_normal_geometry(fake, handler, window):
     handler.exit(window)
 
     assert fake.maximized is True
-    assert fake.placement[4] == NORMAL_RECT
+    assert fake.placement.normal_rect == NORMAL_RECT
     disabled = fake.calls.index(("transitions", False))
     maximize = fake.calls.index(("maximize",))
     enabled = fake.calls.index(("transitions", True))
@@ -208,7 +211,7 @@ def test_enter_with_abandoned_session_saves_fresh_placement(fake, handler, windo
     handler.exit(window)
 
     assert fake.maximized is True
-    assert fake.placement[4] == NORMAL_RECT
+    assert fake.placement.normal_rect == NORMAL_RECT
 
 
 @dataclass(frozen=True)
@@ -270,7 +273,7 @@ def test_is_active(case: IsActiveCase, fake, handler, window):
     assert handler.is_active(window) is case.expected
 
     expected_normal_rect = NORMAL_RECT if case.expects_repin else OVERHANG_RECT
-    assert fake.placement[4] == expected_normal_rect
+    assert fake.placement.normal_rect == expected_normal_rect
     if not case.expected:
         assert ("marker", False) in fake.calls
         assert not handler.is_active(window)
