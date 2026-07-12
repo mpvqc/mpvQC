@@ -100,10 +100,17 @@ def covers_monitor(rect: tuple[int, int, int, int]) -> bool:
 
 
 def get_monitor_rect_for(rect: tuple[int, int, int, int]) -> tuple[int, int, int, int] | None:
+    monitor_info = get_monitor_info_for(rect)
+    if monitor_info is None:
+        return None
+    return monitor_info["Monitor"]
+
+
+def get_monitor_info_for(rect: tuple[int, int, int, int]) -> Mapping[str, Any] | None:
     monitor = win32api.MonitorFromRect(rect, win32con.MONITOR_DEFAULTTONEAREST)
     if not monitor:
         return None
-    return win32api.GetMonitorInfo(monitor)["Monitor"]
+    return win32api.GetMonitorInfo(monitor)
 
 
 def get_monitor_rect(hwnd: int) -> tuple[int, int, int, int] | None:
@@ -152,13 +159,8 @@ class Taskbar:
         return bool(taskbar_state & Taskbar.ABS_AUTOHIDE)
 
     @classmethod
-    def get_position(cls, hwnd: int) -> int:
-        monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-        if not monitor_info:
-            return cls.NO_POSITION
-
-        monitor = RECT(*monitor_info["Monitor"])
-        appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, monitor, 0)
+    def get_position(cls, monitor_rect: tuple[int, int, int, int]) -> int:
+        appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, RECT(*monitor_rect), 0)
         positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
         for position in positions:
             appbar_data.uEdge = position

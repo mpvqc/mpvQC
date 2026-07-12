@@ -22,8 +22,7 @@ from .c_structures import LPNCCALCSIZE_PARAMS
 from .utils import (
     Taskbar,
     covers_monitor,
-    get_monitor_info,
-    get_monitor_rect_for,
+    get_monitor_info_for,
     get_resize_border_thickness,
     get_window_size,
     is_fullscreen,
@@ -57,29 +56,30 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
 
 def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
     rect = cast(l_param, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
-    proposed = (rect.left, rect.top, rect.right, rect.bottom)
+    destination = (rect.left, rect.top, rect.right, rect.bottom)
 
     # Qt's own handling (DefWindowProc frame plus the negative caption margin) is
     # only wrong when maximized, where the caption correction overshoots the work
     # area, and when fullscreen.
-    if is_maximized(hwnd):
-        monitor_info = get_monitor_info(hwnd, win32con.MONITOR_DEFAULTTONEAREST)
-        if monitor_info is None:
-            return False, 0
-        rect.left, rect.top, rect.right, rect.bottom = monitor_info["Work"]
-    elif covers_monitor(proposed):
+    maximized = is_maximized(hwnd)
+    fullscreen = not maximized and covers_monitor(destination)
+    if not (maximized or fullscreen):
+        return False, 0
+
+    destination_monitor = get_monitor_info_for(destination)
+    if destination_monitor is None:
+        return False, 0
+
+    if maximized:
+        rect.left, rect.top, rect.right, rect.bottom = destination_monitor["Work"]
+    else:
         # The fullscreen window is deliberately larger than the monitor: DWM
         # permanently drops maximize/restore animations once a client rect fills
         # the whole window.
-        monitor_rect = get_monitor_rect_for(proposed)
-        if monitor_rect is None:
-            return False, 0
-        rect.left, rect.top, rect.right, rect.bottom = monitor_rect
-    else:
-        return False, 0
+        rect.left, rect.top, rect.right, rect.bottom = destination_monitor["Monitor"]
 
     if Taskbar.is_auto_hide():
-        position = Taskbar.get_position(hwnd)
+        position = Taskbar.get_position(destination_monitor["Monitor"])
         if position == Taskbar.TOP:
             rect.top += Taskbar.AUTO_HIDE_THICKNESS
         elif position == Taskbar.BOTTOM:
