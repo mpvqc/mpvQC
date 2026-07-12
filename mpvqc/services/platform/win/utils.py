@@ -14,7 +14,10 @@ from ctypes import (
     POINTER,
     WINFUNCTYPE,  # pyrefly: ignore[missing-module-attribute]
     byref,
+    c_int,
+    c_size_t,
     c_void_p,
+    c_wchar_p,
     cast,
     sizeof,
     windll,  # pyrefly: ignore[missing-module-attribute]
@@ -35,6 +38,26 @@ if TYPE_CHECKING:
 
 SM_CXPADDEDBORDER = 92
 
+SetWindowPos = windll.user32.SetWindowPos
+SetWindowPos.argtypes = [HWND, HWND, c_int, c_int, c_int, c_int, UINT]
+SetWindowPos.restype = BOOL
+
+GetDpiForWindow = windll.user32.GetDpiForWindow
+GetDpiForWindow.argtypes = [HWND]
+GetDpiForWindow.restype = UINT
+
+GetDpiForSystem = windll.user32.GetDpiForSystem
+GetDpiForSystem.argtypes = []
+GetDpiForSystem.restype = UINT
+
+GetSystemMetricsForDpi = windll.user32.GetSystemMetricsForDpi
+GetSystemMetricsForDpi.argtypes = [c_int, UINT]
+GetSystemMetricsForDpi.restype = c_int
+
+SHAppBarMessage = windll.shell32.SHAppBarMessage
+SHAppBarMessage.argtypes = [DWORD, POINTER(APPBARDATA)]
+SHAppBarMessage.restype = c_size_t  # UINT_PTR
+
 
 def get_window_size(hwnd: int) -> tuple[int, int, int, int]:
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
@@ -47,7 +70,7 @@ def set_outer_window_rect(hwnd: int, rect: tuple[int, int, int, int]) -> None:
     """Set the outer rect, frame included."""
     left, top, right, bottom = rect
     flags = win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED
-    windll.user32.SetWindowPos(hwnd, None, left, top, right - left, bottom - top, flags)
+    SetWindowPos(hwnd, None, left, top, right - left, bottom - top, flags)
 
 
 def refresh_window_frame(hwnd: int) -> None:
@@ -59,7 +82,7 @@ def refresh_window_frame(hwnd: int) -> None:
         | win32con.SWP_NOZORDER
         | win32con.SWP_NOACTIVATE
     )
-    windll.user32.SetWindowPos(hwnd, None, 0, 0, 0, 0, flags)
+    SetWindowPos(hwnd, None, 0, 0, 0, 0, flags)
 
 
 def is_maximized(hwnd: int) -> bool:
@@ -141,8 +164,8 @@ def get_resize_border_thickness(hwnd: int, *, horizontal: bool = True) -> int:
 
 
 def get_system_metrics(hwnd: int, index: int) -> int:
-    dpi = windll.user32.GetDpiForWindow(hwnd)
-    return windll.user32.GetSystemMetricsForDpi(index, dpi)
+    dpi = GetDpiForWindow(hwnd)
+    return GetSystemMetricsForDpi(index, dpi)
 
 
 GetDpiForMonitor = windll.shcore.GetDpiForMonitor
@@ -156,7 +179,7 @@ def get_primary_monitor_dpi() -> int:
     primary = win32api.MonitorFromPoint((0, 0), win32con.MONITOR_DEFAULTTOPRIMARY)
     dpi, unused = UINT(), UINT()
     if GetDpiForMonitor(int(primary), MDT_EFFECTIVE_DPI, byref(dpi), byref(unused)) != 0:
-        return windll.user32.GetDpiForSystem()
+        return GetDpiForSystem()
     return dpi.value
 
 
@@ -176,7 +199,7 @@ class Taskbar:
     @staticmethod
     def is_auto_hide() -> bool:
         appbar_data = APPBARDATA(sizeof(APPBARDATA), 0, 0, 0, RECT(0, 0, 0, 0), 0)
-        taskbar_state = windll.shell32.SHAppBarMessage(Taskbar.ABM_GETSTATE, byref(appbar_data))
+        taskbar_state = SHAppBarMessage(Taskbar.ABM_GETSTATE, byref(appbar_data))
 
         return bool(taskbar_state & Taskbar.ABS_AUTOHIDE)
 
@@ -186,7 +209,7 @@ class Taskbar:
         positions = [cls.LEFT, cls.TOP, cls.RIGHT, cls.BOTTOM]
         for position in positions:
             appbar_data.uEdge = position
-            if windll.shell32.SHAppBarMessage(cls.ABM_GETAUTOHIDEBAREX, byref(appbar_data)):
+            if SHAppBarMessage(cls.ABM_GETAUTOHIDEBAREX, byref(appbar_data)):
                 return position
 
         return cls.NO_POSITION
@@ -216,18 +239,33 @@ _CLSID_TASKBAR_LIST = "{56FDF344-FD6D-11D0-958A-006097C9A090}"
 _IID_ITASKBAR_LIST_2 = "{602D4995-B13A-429B-A66E-1935E44F4317}"
 _CLSCTX_INPROC_SERVER = 1
 
+CoInitialize = windll.ole32.CoInitialize
+CoInitialize.argtypes = [c_void_p]
+CoInitialize.restype = LONG
+
+CLSIDFromString = windll.ole32.CLSIDFromString
+CLSIDFromString.argtypes = [c_wchar_p, POINTER(GUID)]
+CLSIDFromString.restype = LONG
+
+IIDFromString = windll.ole32.IIDFromString
+IIDFromString.argtypes = [c_wchar_p, POINTER(GUID)]
+IIDFromString.restype = LONG
+
+CoCreateInstance = windll.ole32.CoCreateInstance
+CoCreateInstance.argtypes = [POINTER(GUID), c_void_p, DWORD, POINTER(GUID), POINTER(c_void_p)]
+CoCreateInstance.restype = LONG
+
 
 @lru_cache(maxsize=1)
 def _taskbar_list_2() -> tuple[c_void_p, Any] | None:
-    ole32 = windll.ole32
-    ole32.CoInitialize(None)
+    CoInitialize(None)
 
     clsid, iid = GUID(), GUID()
-    ole32.CLSIDFromString(_CLSID_TASKBAR_LIST, byref(clsid))
-    ole32.IIDFromString(_IID_ITASKBAR_LIST_2, byref(iid))
+    CLSIDFromString(_CLSID_TASKBAR_LIST, byref(clsid))
+    IIDFromString(_IID_ITASKBAR_LIST_2, byref(iid))
 
     interface = c_void_p()
-    if ole32.CoCreateInstance(byref(clsid), None, _CLSCTX_INPROC_SERVER, byref(iid), byref(interface)) != 0:
+    if CoCreateInstance(byref(clsid), None, _CLSCTX_INPROC_SERVER, byref(iid), byref(interface)) != 0:
         return None
 
     # IUnknown (0-2) | ITaskbarList: HrInit 3 ... | ITaskbarList2: MarkFullscreenWindow 8
