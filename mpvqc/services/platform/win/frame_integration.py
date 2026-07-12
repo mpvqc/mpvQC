@@ -7,11 +7,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import win32con
-import win32gui
 from PySide6.QtCore import QMargins, Qt
 
 from .event import WindowsEventFilter
-from .utils import SM_CXPADDEDBORDER, GetSystemMetricsForDpi, SetWindowPos, get_primary_monitor_dpi
+from .native import (
+    get_primary_monitor_dpi,
+    get_resize_border_thickness_for_dpi,
+    get_system_metrics_for_dpi,
+    get_window_rect,
+    set_window_pos,
+)
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
@@ -44,8 +49,8 @@ class WindowsFrameIntegration:
 
 def _caption_inset() -> int:
     dpi = get_primary_monitor_dpi()
-    border = GetSystemMetricsForDpi(win32con.SM_CYSIZEFRAME, dpi) + GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi)
-    caption = GetSystemMetricsForDpi(win32con.SM_CYCAPTION, dpi)
+    border = get_resize_border_thickness_for_dpi(dpi, horizontal=False)
+    caption = get_system_metrics_for_dpi(win32con.SM_CYCAPTION, dpi)
     return border + caption
 
 
@@ -53,8 +58,8 @@ def _sync_qt_frame_bookkeeping(hwnd: int) -> None:
     # Qt corrects its frame margins only on a geometry event, and the Qt Quick
     # scene follows only on a real size change: the initial scene is sized with
     # the stale margins while the QWindow property keeps the requested value.
-    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    left, top, right, bottom = get_window_rect(int(hwnd))
     width, height = right - left, bottom - top
     flags = win32con.SWP_NOMOVE | win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE
-    SetWindowPos(int(hwnd), None, 0, 0, width, height + 1, flags)
-    SetWindowPos(int(hwnd), None, 0, 0, width, height, flags)
+    set_window_pos(int(hwnd), 0, 0, width, height + 1, flags)
+    set_window_pos(int(hwnd), 0, 0, width, height, flags)

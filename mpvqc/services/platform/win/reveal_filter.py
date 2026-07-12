@@ -11,7 +11,8 @@ from typing import TYPE_CHECKING, override
 from PySide6.QtCore import QEvent, QObject, Qt, Slot
 from PySide6.QtQuick import QQuickItem, QQuickWindow
 
-from .utils import set_window_cloaked, wait_for_next_composition
+from .native import set_window_cloaked
+from .utils import wait_for_next_composition
 
 if TYPE_CHECKING:
     from collections.abc import Callable

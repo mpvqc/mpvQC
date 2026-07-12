@@ -7,21 +7,25 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import win32con
-import win32gui
 
+from .native import (
+    get_window_placement,
+    is_maximized,
+    is_minimized,
+    maximize_window,
+    refresh_window_frame,
+    set_outer_window_rect,
+    set_style_flag,
+    set_window_border_visible,
+    set_window_corners_rounded,
+    set_window_placement,
+    set_window_transitions_enabled,
+)
 from .utils import (
     get_monitor_rect,
     get_resize_border_thickness,
     is_fullscreen,
-    is_maximized,
-    is_minimized,
-    refresh_window_frame,
-    set_outer_window_rect,
     set_shell_fullscreen_marker,
-    set_style_flag,
-    set_window_border_visible,
-    set_window_corners_rounded,
-    set_window_transitions_enabled,
 )
 
 if TYPE_CHECKING:
@@ -61,7 +65,7 @@ class WindowsFullscreenHandler:
         if self._saved_placement is not None and not is_fullscreen(hwnd):
             self._retire_abandoned_session(hwnd)
         if self._saved_placement is None:
-            self._saved_placement = win32gui.GetWindowPlacement(hwnd)
+            self._saved_placement = get_window_placement(hwnd)
 
         # The frame styles stay on, so Windows 11 would keep the rounded corners
         # and accent border over the fullscreen surface.
@@ -105,16 +109,16 @@ class WindowsFullscreenHandler:
             # animates; suppressing transitions keeps this one instant.
             set_window_transitions_enabled(hwnd, enabled=False)
             try:
-                win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+                maximize_window(hwnd)
             finally:
                 set_window_transitions_enabled(hwnd, enabled=True)
 
-            # ShowWindow re-derived the placement from the poisoned monitor-rect
+            # Maximizing re-derived the placement from the poisoned monitor-rect
             # geometry; point the normal geometry back at the pre-fullscreen one.
-            flags, show_cmd, min_pos, max_pos, _ = win32gui.GetWindowPlacement(hwnd)
-            win32gui.SetWindowPlacement(hwnd, (flags, show_cmd, min_pos, max_pos, placement[4]))
+            flags, show_cmd, min_pos, max_pos, _ = get_window_placement(hwnd)
+            set_window_placement(hwnd, (flags, show_cmd, min_pos, max_pos, placement[4]))
         else:
-            win32gui.SetWindowPlacement(hwnd, placement)
+            set_window_placement(hwnd, placement)
         refresh_window_frame(hwnd)
 
     def is_active(self, window: QWindow) -> bool:
@@ -147,5 +151,5 @@ class WindowsFullscreenHandler:
         # one, or a later restore-down yields a monitor-sized window. Only safe while
         # maximized: applying a placement to a restored window would move it.
         if is_maximized(hwnd):
-            flags, show_cmd, min_pos, max_pos, _ = win32gui.GetWindowPlacement(hwnd)
-            win32gui.SetWindowPlacement(hwnd, (flags, show_cmd, min_pos, max_pos, placement[4]))
+            flags, show_cmd, min_pos, max_pos, _ = get_window_placement(hwnd)
+            set_window_placement(hwnd, (flags, show_cmd, min_pos, max_pos, placement[4]))

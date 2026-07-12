@@ -10,24 +10,26 @@
 
 from __future__ import annotations
 
-import ctypes.wintypes
-from ctypes import cast
 from typing import override
 
 import PySide6.QtCore
-import win32api
 import win32con
 
-from .c_structures import LPNCCALCSIZE_PARAMS
+from .native import (
+    get_monitor_info_for_rect,
+    is_maximized,
+    prevent_window_resize_for,
+    read_hit_test_point,
+    read_nccalcsize_proposed_rect,
+    read_window_message,
+    write_nccalcsize_client_rect,
+)
 from .utils import (
     Taskbar,
-    get_monitor_info_for,
     get_resize_border_thickness,
     get_window_size,
     is_fullscreen,
-    is_maximized,
     overhangs_monitor,
-    prevent_window_resize_for,
 )
 
 
@@ -39,8 +41,9 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
         return False, 0
 
     x, y, w, _ = get_window_size(hwnd)
-    x_pos = (win32api.LOWORD(l_param) - x) % 65536
-    y_pos = (win32api.HIWORD(l_param) - y) % 65536
+    cursor_x, cursor_y = read_hit_test_point(l_param)
+    x_pos = cursor_x - x
+    y_pos = cursor_y - y
 
     band = get_resize_border_thickness(hwnd, horizontal=False)
     if y_pos >= band:
@@ -55,8 +58,7 @@ def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
 
 
 def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int]:
-    rect = cast(l_param, LPNCCALCSIZE_PARAMS).contents.rgrc[0]
-    destination = (rect.left, rect.top, rect.right, rect.bottom)
+    destination = read_nccalcsize_proposed_rect(l_param)
 
     # Qt's own handling (DefWindowProc frame plus the negative caption margin) is
     # only wrong when maximized, where the caption correction overshoots the work
@@ -66,29 +68,30 @@ def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int
     if not (maximized or fullscreen):
         return False, 0
 
-    destination_monitor = get_monitor_info_for(destination)
+    destination_monitor = get_monitor_info_for_rect(destination)
     if destination_monitor is None:
         return False, 0
 
     if maximized:
-        rect.left, rect.top, rect.right, rect.bottom = destination_monitor["Work"]
+        left, top, right, bottom = destination_monitor.work_area
     else:
         # The fullscreen window is deliberately larger than the monitor: DWM
         # permanently drops maximize/restore animations once a client rect fills
         # the whole window.
-        rect.left, rect.top, rect.right, rect.bottom = destination_monitor["Monitor"]
+        left, top, right, bottom = destination_monitor.monitor_rect
 
     if Taskbar.is_auto_hide():
-        position = Taskbar.get_position(destination_monitor["Monitor"])
+        position = Taskbar.get_position(destination_monitor.monitor_rect)
         if position == Taskbar.TOP:
-            rect.top += Taskbar.AUTO_HIDE_THICKNESS
+            top += Taskbar.AUTO_HIDE_THICKNESS
         elif position == Taskbar.BOTTOM:
-            rect.bottom -= Taskbar.AUTO_HIDE_THICKNESS
+            bottom -= Taskbar.AUTO_HIDE_THICKNESS
         elif position == Taskbar.LEFT:
-            rect.left += Taskbar.AUTO_HIDE_THICKNESS
+            left += Taskbar.AUTO_HIDE_THICKNESS
         elif position == Taskbar.RIGHT:
-            rect.right -= Taskbar.AUTO_HIDE_THICKNESS
+            right -= Taskbar.AUTO_HIDE_THICKNESS
 
+    write_nccalcsize_client_rect(l_param, (left, top, right, bottom))
     return True, win32con.WVR_REDRAW
 
 
@@ -108,9 +111,9 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     def nativeEventFilter(
         self, _: PySide6.QtCore.QByteArray | bytes | bytearray | memoryview, message: int
     ) -> tuple[bool, int]:
-        msg = ctypes.wintypes.MSG.from_address(int(message))
+        msg = read_window_message(int(message))
 
-        hwnd = msg.hWnd
+        hwnd = msg.hwnd
 
         match hwnd:
             case None:
@@ -129,8 +132,8 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
 
         match msg.message:
             case win32con.WM_NCHITTEST:
-                return handle_non_client_hit_test(hwnd, msg.lParam)
-            case win32con.WM_NCCALCSIZE if msg.wParam:
-                return handle_non_client_calculate_size(hwnd, msg.lParam)
+                return handle_non_client_hit_test(hwnd, msg.l_param)
+            case win32con.WM_NCCALCSIZE if msg.w_param:
+                return handle_non_client_calculate_size(hwnd, msg.l_param)
             case _:
                 return False, 0
