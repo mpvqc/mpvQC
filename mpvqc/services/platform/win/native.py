@@ -8,9 +8,10 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""Every Windows API call used by this package lives here, as a ctypes
-binding with declared argument and return types, wrapped in a small
-function that uses plain Python types.
+"""Everything that touches Win32 lives here: every API call as a ctypes
+binding with declared argument and return types, and the readers and
+writers for the raw structures that arrive with window messages. All of
+it is wrapped in small functions that use plain Python types.
 
 One block per API call: its constants, its structures, its raw binding and
 the wrappers the rest of the package uses.
