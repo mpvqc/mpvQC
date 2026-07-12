@@ -437,6 +437,10 @@ _CLSID_TASKBAR_LIST = "{56FDF344-FD6D-11D0-958A-006097C9A090}"
 _IID_ITASKBAR_LIST_2 = "{602D4995-B13A-429B-A66E-1935E44F4317}"
 _CLSCTX_INPROC_SERVER = 1
 
+_S_OK = 0
+_S_FALSE = 1  # COM already started on this thread
+_RPC_E_CHANGED_MODE = -2147417850  # COM already started with the other threading model; still usable
+
 
 class GUID(Structure):
     _fields_ = [
@@ -464,9 +468,12 @@ _CoCreateInstance.argtypes = [POINTER(GUID), c_void_p, DWORD, POINTER(GUID), POI
 _CoCreateInstance.restype = LONG
 
 
+# The single instance deliberately lives until process exit; the OS reclaims
+# COM and the interface with it.
 @lru_cache(maxsize=1)
 def _taskbar_list_2() -> tuple[c_void_p, Any] | None:
-    _CoInitialize(None)
+    if _CoInitialize(None) not in {_S_OK, _S_FALSE, _RPC_E_CHANGED_MODE}:
+        return None
 
     clsid, iid = GUID(), GUID()
     _CLSIDFromString(_CLSID_TASKBAR_LIST, byref(clsid))
