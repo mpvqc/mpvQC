@@ -61,10 +61,9 @@ class FakeWin32Window:
             # Windows tracks a restored window's outer rect as its normal geometry
             self.placement = (*self.placement[:4], rect)
 
-    def show_window(self, cmd: int) -> None:
-        self.calls.append(("show", cmd))
-        if cmd == win32con.SW_MAXIMIZE:
-            self.maximized = True
+    def maximize(self) -> None:
+        self.calls.append(("maximize",))
+        self.maximized = True
 
 
 @pytest.fixture
@@ -100,9 +99,9 @@ def fake(monkeypatch) -> FakeWin32Window:
         lambda _hwnd, *, enabled: fake.calls.append(("transitions", enabled)),
     )
     monkeypatch.setattr(fullscreen, "refresh_window_frame", lambda _hwnd: fake.calls.append(("refresh",)))
-    monkeypatch.setattr(fullscreen.win32gui, "GetWindowPlacement", lambda _hwnd: fake.get_window_placement())
-    monkeypatch.setattr(fullscreen.win32gui, "SetWindowPlacement", lambda _hwnd, p: fake.set_window_placement(p))
-    monkeypatch.setattr(fullscreen.win32gui, "ShowWindow", lambda _hwnd, cmd: fake.show_window(cmd))
+    monkeypatch.setattr(fullscreen, "get_window_placement", lambda _hwnd: fake.get_window_placement())
+    monkeypatch.setattr(fullscreen, "set_window_placement", lambda _hwnd, p: fake.set_window_placement(p))
+    monkeypatch.setattr(fullscreen, "maximize_window", lambda _hwnd: fake.maximize())
     return fake
 
 
@@ -175,7 +174,7 @@ def test_exit_to_maximized_repins_normal_geometry(fake, handler, window):
     assert fake.maximized is True
     assert fake.placement[4] == NORMAL_RECT
     disabled = fake.calls.index(("transitions", False))
-    maximize = fake.calls.index(("show", win32con.SW_MAXIMIZE))
+    maximize = fake.calls.index(("maximize",))
     enabled = fake.calls.index(("transitions", True))
     assert disabled < maximize < enabled
 
