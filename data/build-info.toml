@@ -14,7 +14,7 @@ is_release = false                # CI replaces this
 [[dependency]]
 name = "inject"
 package = "inject"
-version = "5.4.1"                                      # Real version, updated by script
+version = "5.5.0"                                      # Real version, updated by script
 url = "https://github.com/ivankorobkov/python-inject"
 licence = "Apache-2.0"
 platforms = ["linux", "win32"]                         # Match sys.platform values
