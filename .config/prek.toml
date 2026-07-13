@@ -15,7 +15,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/biomejs/pre-commit"
-rev = "v2.5.1"
+rev = "v2.5.3"
 hooks = [
     {
         id = "biome-check",
@@ -28,7 +28,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/tombi-toml/tombi-pre-commit"
-rev = "v1.1.5"
+rev = "v1.2.0"
 hooks = [
     {
         id = "tombi-format",
@@ -53,7 +53,7 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/rvben/rumdl-pre-commit"
-rev = "v0.2.28"
+rev = "v0.2.32"
 hooks = [
     {
         id = "rumdl",
