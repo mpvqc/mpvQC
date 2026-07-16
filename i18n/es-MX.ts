@@ -11,7 +11,7 @@
     <message>
         <source>Website</source>
         <extracomment>Label of the row linking to the project website</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sitio web</translation>
     </message>
     <message>
         <source>GNU General Public License, version 3 or later</source>
@@ -44,32 +44,32 @@
     <message>
         <source>About</source>
         <extracomment>Label of the button displaying general application information</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <source>Credits</source>
         <extracomment>Label of the button displaying contributors and translators</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Créditos</translation>
     </message>
     <message>
         <source>Licenses</source>
         <extracomment>Label of the button displaying third-party dependencies and their licenses</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Licencias</translation>
     </message>
     <message>
         <source>Playback</source>
         <extracomment>Section title in the licenses view above the media playback libraries</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Reproducción</translation>
     </message>
     <message>
         <source>Libraries</source>
         <extracomment>Section title in the licenses view above the code dependencies</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bibliotecas</translation>
     </message>
     <message>
         <source>Fonts and icons</source>
         <extracomment>Section title in the licenses view above the bundled font and icon sets</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fuentes e iconos</translation>
     </message>
 </context>
 <context>
@@ -413,19 +413,19 @@
     <message>
         <source>Unsupported document format version</source>
         <extracomment>Shown beneath a rejected document declaring a format version this mpvQC release does not know</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Versión de formato de documento no compatible</translation>
     </message>
     <message>
         <source>Not a valid QC document</source>
         <extracomment>Shown beneath a rejected document that does not parse as any known QC document format</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No es un documento de QC válido</translation>
     </message>
     <message numerus="yes">
         <source>%Ln QC document(s) could not be imported:</source>
         <extracomment>Header above the list of QC documents the importer rejected</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>No se pudo importar %Ln documento de QC:</numerusform>
+            <numerusform>No se pudieron importar %Ln documentos de QC:</numerusform>
         </translation>
     </message>
 </context>
@@ -743,7 +743,7 @@
     <message>
         <source>No shortcuts found</source>
         <extracomment>Shown in the keyboard shortcut dialog when the search matches no shortcut</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No se encontraron atajos</translation>
     </message>
     <message>
         <source>Open QC Document(s)</source>
@@ -807,7 +807,7 @@
     </message>
     <message>
         <source>With embedded subtitle tracks, seeking is limited to lines mpv has already buffered. External subtitle files work across the whole video.</source>
-        <translation type="unfinished"></translation>
+        <translation>Con pistas de subtítulos incrustadas, la búsqueda se limita a las líneas que mpv ya ha almacenado en el búfer. Los archivos de subtítulos externos funcionan en todo el video.</translation>
     </message>
     <message>
         <source>Toggle Fullscreen</source>
@@ -835,11 +835,11 @@
     </message>
     <message>
         <source>Seek to Previous Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ir al subtítulo anterior</translation>
     </message>
     <message>
         <source>Seek to Next Subtitle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ir al subtítulo siguiente</translation>
     </message>
     <message>
         <source>Decrease Volume</source>
@@ -863,7 +863,7 @@
     </message>
     <message>
         <source>Set/Clear A-B Loop</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer/Borrar bucle A-B</translation>
     </message>
     <message>
         <source>Cycle Through Subtitle Tracks</source>
@@ -871,7 +871,7 @@
     </message>
     <message>
         <source>Cycle Through Subtitle Tracks Backwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar pista de subtítulos hacia atrás</translation>
     </message>
     <message>
         <source>Video Screenshot (Unscaled)</source>
