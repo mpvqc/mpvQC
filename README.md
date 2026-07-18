@@ -8,6 +8,16 @@ SPDX-License-Identifier: MIT
 
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
+[![Latest release](https://img.shields.io/github/v/release/mpvqc/mpvQC)](https://github.com/mpvqc/mpvQC/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/mpvqc/mpvQC/total)](https://github.com/mpvqc/mpvQC/releases)
+[![Pipeline](https://github.com/mpvqc/mpvQC/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/mpvqc/mpvQC/actions/workflows/release.yml)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSES/GPL-3.0-or-later.txt)
+[![REUSE status](https://api.reuse.software/badge/github.com/mpvqc/mpvQC)](https://api.reuse.software/info/github.com/mpvqc/mpvQC)
+
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Pyrefly](https://img.shields.io/endpoint?url=https://pyrefly.org/badge.json)](https://github.com/facebook/pyrefly)
+
 A simple libmpv-based application for creating video file quality control reports.\
 <https://mpvqc.github.io>
 
