@@ -7,7 +7,7 @@ from __future__ import annotations
 import logging
 
 import inject
-from PySide6.QtCore import QObject, Qt, Signal, Slot
+from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import ImporterService
@@ -30,7 +30,7 @@ class MpvqcDialogLoaderViewModel(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._active_dialog_vm: QObject | None = None
-        self._importer.unfinished_plan_ready.connect(self._request_import_wizard, Qt.ConnectionType.QueuedConnection)
+        self._importer.unfinished_plan_ready.connect(self._request_import_wizard)
 
     @Slot()
     def releaseActiveDialog(self) -> None:

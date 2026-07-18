@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from collections import deque
 from collections.abc import Callable, Generator
 from importlib.util import find_spec
 from typing import Any
@@ -108,6 +109,26 @@ def make_spy():
         return MySpy(signal)
 
     return _make
+
+
+class ManualJobExecutor:
+    def __init__(self) -> None:
+        self.pending: deque[Callable[[], None]] = deque()
+
+    def execute(self, work: Callable[[], None]) -> None:
+        self.pending.append(work)
+
+    def run_next(self) -> None:
+        self.pending.popleft()()
+
+    def drain(self) -> None:
+        while self.pending:
+            self.run_next()
+
+
+@pytest.fixture
+def manual_executor() -> ManualJobExecutor:
+    return ManualJobExecutor()
 
 
 @pytest.fixture(scope="session")

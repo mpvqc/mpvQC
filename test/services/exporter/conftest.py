@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from collections.abc import Callable
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -63,6 +64,11 @@ def configure_injections(
         binder.bind(StateService, state_service_mock)
 
     common_bindings_with(custom_bindings)
+
+
+@pytest.fixture
+def wait_for_jobs(manual_executor) -> Callable[[], None]:
+    return manual_executor.drain
 
 
 @pytest.fixture

@@ -6,13 +6,14 @@ from __future__ import annotations
 
 import logging
 import re
+from functools import partial
 from pathlib import Path
-from threading import Lock
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import inject
-from PySide6.QtCore import QCoreApplication, QObject, QStandardPaths, Qt, QThreadPool, Signal
+from PySide6.QtCore import QCoreApplication, QObject, QStandardPaths, Signal
 
+from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
 from mpvqc.services.comments import CommentsService
@@ -24,6 +25,9 @@ from mpvqc.services.state import StateService
 from .backup import backup as create_backup
 from .context import RenderContext
 from .writer import ExportError, export_classic, export_custom, save
+
+if TYPE_CHECKING:
+    from mpvqc.jobs import Result
 
 logger = logging.getLogger(__name__)
 
@@ -45,12 +49,10 @@ class ExportService(QObject):
     _comments = inject.attr(CommentsService)
 
     export_error_occurred = Signal(str, int)
-    _document_saved = Signal(Path)
 
     def __init__(self) -> None:
         super().__init__()
-        self._lock = Lock()
-        self._document_saved.connect(self._state.record_save, Qt.ConnectionType.QueuedConnection)
+        self._jobs = SerialJobRunner()
 
     def _capture(self) -> RenderContext:
         return RenderContext(
@@ -81,57 +83,47 @@ class ExportService(QObject):
         return Path(video_directory).joinpath(file_name).absolute()
 
     def save(self, document: Path) -> None:
-        context = self._capture()
+        def on_result(result: Result[None]) -> None:
+            match result:
+                case Ok():
+                    self._state.record_save(document)
+                case Err(ExportError(message, lineno)):
+                    self.export_error_occurred.emit(message, lineno)
+                case Err(error):
+                    logger.error("Failed to save document", exc_info=error)
 
-        def _job() -> None:
-            with self._lock:
-                try:
-                    save(document, context)
-                    self._document_saved.emit(document)
-                except ExportError as e:
-                    self.export_error_occurred.emit(e.message, e.lineno)
-                except Exception:
-                    logger.exception("Failed to save document")
-
-        QThreadPool.globalInstance().start(_job)
+        self._jobs.run(work=partial(save, document, self._capture()), on_result=on_result)
 
     def export_classic(self, document: Path) -> None:
-        context = self._capture()
-
-        def _job() -> None:
-            with self._lock:
-                try:
-                    export_classic(document, self._resources, context)
-                except ExportError as e:
-                    self.export_error_occurred.emit(e.message, e.lineno)
-                except Exception:
-                    logger.exception("Failed to export document")
-
-        QThreadPool.globalInstance().start(_job)
+        self._jobs.run(
+            work=partial(export_classic, document, self._resources, self._capture()),
+            on_result=self._on_exported,
+        )
 
     def export_custom(self, document: Path, template: Path) -> None:
-        context = self._capture()
+        self._jobs.run(
+            work=partial(export_custom, document, template, self._capture()),
+            on_result=self._on_exported,
+        )
 
-        def _job() -> None:
-            with self._lock:
-                try:
-                    export_custom(document, template, context)
-                except ExportError as e:
-                    self.export_error_occurred.emit(e.message, e.lineno)
-                except Exception:
-                    logger.exception("Failed to export document")
-
-        QThreadPool.globalInstance().start(_job)
+    def _on_exported(self, result: Result[None]) -> None:
+        match result:
+            case Ok():
+                pass
+            case Err(ExportError(message, lineno)):
+                self.export_error_occurred.emit(message, lineno)
+            case Err(error):
+                logger.error("Failed to export document", exc_info=error)
 
     def backup(self) -> None:
-        backup_dir = self._paths.dir_backup
-        context = self._capture()
+        def on_result(result: Result[None]) -> None:
+            match result:
+                case Ok():
+                    pass
+                case Err(error):
+                    logger.error("Failed to create backup", exc_info=error)
 
-        def _job() -> None:
-            with self._lock:
-                try:
-                    create_backup(backup_dir, context)
-                except Exception:
-                    logger.exception("Failed to create backup")
-
-        QThreadPool.globalInstance().start(_job)
+        self._jobs.run(
+            work=partial(create_backup, self._paths.dir_backup, self._capture()),
+            on_result=on_result,
+        )

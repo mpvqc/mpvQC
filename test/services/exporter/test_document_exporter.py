@@ -10,15 +10,18 @@ from typing import NamedTuple
 from unittest.mock import MagicMock
 
 import pytest
-from PySide6.QtCore import QStandardPaths, QThreadPool
+from PySide6.QtCore import QStandardPaths
 
 from mpvqc.datamodels import Comment
+from mpvqc.jobs import SerialJobRunner
 from mpvqc.services import ExportService
 
 
 @pytest.fixture
-def service(qt_app) -> ExportService:
-    return ExportService()
+def service(qt_app, manual_executor) -> ExportService:
+    service = ExportService()
+    service._jobs = SerialJobRunner(manual_executor)
+    return service
 
 
 @pytest.fixture
@@ -48,10 +51,6 @@ def configure_mocks(qt_app, comments_service_mock, settings_service, player_serv
         player_service_mock.external_subtitles = tuple(str(s) for s in subtitles or ())
 
     return _make_mock
-
-
-def wait_for_jobs() -> None:
-    QThreadPool.globalInstance().waitForDone()
 
 
 @dataclass
@@ -107,7 +106,7 @@ def test_generates_file_path_proposals(case, configure_mocks, service):
     assert actual == case.expected
 
 
-def test_save_writes_v1_document(configure_mocks, service, tmp_path, make_spy):
+def test_save_writes_v1_document(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     file = tmp_path / "saved.json"
@@ -119,7 +118,7 @@ def test_save_writes_v1_document(configure_mocks, service, tmp_path, make_spy):
     assert error_spy.count() == 0
 
 
-def test_save_signals_on_write_failure(configure_mocks, service, make_spy):
+def test_save_signals_on_write_failure(configure_mocks, service, make_spy, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     file_mock = MagicMock()
@@ -132,31 +131,29 @@ def test_save_signals_on_write_failure(configure_mocks, service, make_spy):
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_save_records_save(configure_mocks, service, tmp_path, state_service_mock, qt_app):
+def test_save_records_save(configure_mocks, service, tmp_path, state_service_mock, wait_for_jobs):
     configure_mocks()
     file = tmp_path / "saved.txt"
 
     service.save(file)
     wait_for_jobs()
-    qt_app.processEvents()
 
     state_service_mock.record_save.assert_called_once_with(file)
 
 
-def test_save_failure_does_not_record_save(configure_mocks, service, state_service_mock, qt_app):
+def test_save_failure_does_not_record_save(configure_mocks, service, state_service_mock, wait_for_jobs):
     configure_mocks()
     file_mock = MagicMock()
     file_mock.write_text.side_effect = PermissionError("read-only target")
 
     service.save(file_mock)
     wait_for_jobs()
-    qt_app.processEvents()
 
     state_service_mock.record_save.assert_not_called()
 
 
 def test_export_classic_writes_classic_document_without_recording(
-    configure_mocks, service, tmp_path, state_service_mock
+    configure_mocks, service, tmp_path, state_service_mock, wait_for_jobs
 ):
     configure_mocks()
     file = tmp_path / "export.txt"
@@ -168,7 +165,7 @@ def test_export_classic_writes_classic_document_without_recording(
     state_service_mock.record_save.assert_not_called()
 
 
-def test_export_classic_signals_on_write_failure(configure_mocks, service, make_spy):
+def test_export_classic_signals_on_write_failure(configure_mocks, service, make_spy, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     file_mock = MagicMock()
@@ -181,7 +178,7 @@ def test_export_classic_signals_on_write_failure(configure_mocks, service, make_
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_export_custom_succeeds(configure_mocks, service, tmp_path, make_spy):
+def test_export_custom_succeeds(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):
     configure_mocks(nickname="lorem")
     error_spy = make_spy(service.export_error_occurred)
     template = tmp_path / "template.jinja"
@@ -203,7 +200,7 @@ def test_export_custom_succeeds(configure_mocks, service, tmp_path, make_spy):
     ],
 )
 def test_export_custom_signals_on_render_failure(
-    configure_mocks, service, tmp_path, make_spy, template_content, expected_lineno
+    configure_mocks, service, tmp_path, make_spy, template_content, expected_lineno, wait_for_jobs
 ):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
@@ -226,7 +223,9 @@ def test_export_custom_signals_on_render_failure(
         "{{ comments.append(1) }}",
     ],
 )
-def test_export_custom_blocks_unsafe_templates(configure_mocks, service, tmp_path, make_spy, template_content):
+def test_export_custom_blocks_unsafe_templates(
+    configure_mocks, service, tmp_path, make_spy, template_content, wait_for_jobs
+):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     file = tmp_path / "export.txt"
@@ -247,7 +246,7 @@ def test_export_custom_blocks_unsafe_templates(configure_mocks, service, tmp_pat
         FileNotFoundError("template gone"),
     ],
 )
-def test_export_custom_signals_on_template_read_failure(configure_mocks, service, make_spy, read_error):
+def test_export_custom_signals_on_template_read_failure(configure_mocks, service, make_spy, read_error, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     template_mock = MagicMock()
@@ -260,7 +259,7 @@ def test_export_custom_signals_on_template_read_failure(configure_mocks, service
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_export_custom_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy):
+def test_export_custom_signals_on_write_failure(configure_mocks, service, tmp_path, make_spy, wait_for_jobs):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
     template = tmp_path / "template.jinja"
@@ -275,7 +274,7 @@ def test_export_custom_signals_on_write_failure(configure_mocks, service, tmp_pa
     assert error_spy.at(invocation=0, argument=1) == -1
 
 
-def test_backup_writes_archive(configure_mocks, service, application_paths_service_mock, tmp_path):
+def test_backup_writes_archive(configure_mocks, service, application_paths_service_mock, tmp_path, wait_for_jobs):
     application_paths_service_mock.dir_backup = tmp_path
     configure_mocks(comments=[Comment(time=50 * 1000, comment_type="Spelling", comment="My comment")])
 
@@ -285,7 +284,9 @@ def test_backup_writes_archive(configure_mocks, service, application_paths_servi
     assert len(list(tmp_path.glob("*.zip"))) == 1
 
 
-def test_backup_failure_is_logged(configure_mocks, service, application_paths_service_mock, tmp_path, caplog):
+def test_backup_failure_is_logged(
+    configure_mocks, service, application_paths_service_mock, tmp_path, caplog, wait_for_jobs
+):
     application_paths_service_mock.dir_backup = tmp_path / "does-not-exist"
     configure_mocks()
 
@@ -333,7 +334,9 @@ class UnexpectedErrorCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_unexpected_error_is_logged_and_not_signaled(case, configure_mocks, service, tmp_path, make_spy, caplog):
+def test_unexpected_error_is_logged_and_not_signaled(
+    case, configure_mocks, service, tmp_path, make_spy, caplog, wait_for_jobs
+):
     configure_mocks()
     error_spy = make_spy(service.export_error_occurred)
 

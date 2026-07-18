@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 class ExportError(Exception):
+    __match_args__ = ("message", "lineno")
+
     def __init__(self, message: str, lineno: int = -1) -> None:
         super().__init__(message)
         self.message = message
