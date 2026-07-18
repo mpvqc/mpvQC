@@ -14,6 +14,7 @@ from PySide6.QtTest import QSignalSpy
 
 from mpvqc.datamodels import Comment, VideoSource
 from mpvqc.enums import ImportFoundVideo
+from mpvqc.jobs import SerialJobRunner
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.importer import FinishedPlan, ImporterService, ScanResult, session, subtitles, video
 from mpvqc.services.player import PlayerService
@@ -22,12 +23,7 @@ from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
-
-@pytest.fixture(autouse=True)
-def stub_threadpool(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("mpvqc.services.importer.service.QThreadPool", MagicMock())
+    from test.conftest import ManualJobExecutor
 
 
 @pytest.fixture
@@ -80,8 +76,10 @@ def configure_inject(
 
 
 @pytest.fixture
-def service() -> ImporterService:
-    return ImporterService()
+def service(manual_executor: ManualJobExecutor) -> ImporterService:
+    service = ImporterService()
+    service._jobs = SerialJobRunner(manual_executor)
+    return service
 
 
 NOOP_PLAN = FinishedPlan(
@@ -305,21 +303,6 @@ def test_execute_without_comments_imports_nothing(
     comments_service_mock.import_comments.assert_not_called()
 
 
-class InlineThreadPool:
-    @staticmethod
-    def globalInstance() -> type[InlineThreadPool]:
-        return InlineThreadPool
-
-    @staticmethod
-    def start(job: Callable[[], None]) -> None:
-        job()
-
-
-@pytest.fixture
-def run_jobs_inline(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("mpvqc.services.importer.service.QThreadPool", InlineThreadPool)
-
-
 EMPTY_SCAN = ScanResult(videos=(), subtitles=(), comments=(), rejected_documents=())
 UNRESOLVED_SCAN = ScanResult(
     videos=(VideoSource(path=V, found_in_document=True),),
@@ -331,15 +314,15 @@ UNRESOLVED_SCAN = ScanResult(
 
 def test_open_routes_resolvable_scan_to_execute(
     qt_app,
-    run_jobs_inline: None,
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
+    manual_executor: ManualJobExecutor,
 ) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: EMPTY_SCAN)
     unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
 
     service.open([], [], [])
-    qt_app.processEvents()
+    manual_executor.drain()
 
     assert unfinished_spy.count() == 0
     assert service.busy is False
@@ -347,15 +330,15 @@ def test_open_routes_resolvable_scan_to_execute(
 
 def test_open_routes_unresolvable_scan_to_wizard(
     qt_app,
-    run_jobs_inline: None,
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
+    manual_executor: ManualJobExecutor,
 ) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: UNRESOLVED_SCAN)
     unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
 
     service.open([], [], [])
-    qt_app.processEvents()
+    manual_executor.drain()
 
     assert unfinished_spy.count() == 1
     assert service.busy is True
@@ -363,9 +346,9 @@ def test_open_routes_unresolvable_scan_to_wizard(
 
 def test_open_recovers_when_scan_raises(
     qt_app,
-    run_jobs_inline: None,
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
+    manual_executor: ManualJobExecutor,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     def raise_scan_error(*_args: object) -> ScanResult:
@@ -375,7 +358,7 @@ def test_open_recovers_when_scan_raises(
     monkeypatch.setattr("mpvqc.services.importer.service.scan", raise_scan_error)
 
     service.open([], [], [])
-    qt_app.processEvents()
+    manual_executor.drain()
 
     assert service.busy is False
     assert "Import scan failed" in caplog.text
