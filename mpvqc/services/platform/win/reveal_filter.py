@@ -10,8 +10,7 @@ from typing import TYPE_CHECKING, override
 from PySide6.QtCore import QEvent, QObject, Qt, Slot
 from PySide6.QtQuick import QQuickItem, QQuickWindow
 
-from .native import set_window_cloaked
-from .utils import wait_for_next_composition
+from .native import dwm_flush, set_window_cloaked
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -83,7 +82,7 @@ class _RevealOnFirstFrame:
         # frameSwapped only means the frame is queued: give the compositor one
         # composition pass to consume it before uncloaking. One pass usually
         # suffices, but nothing guarantees it.
-        wait_for_next_composition()
+        dwm_flush()
         set_window_cloaked(hwnd, cloaked=False)
 
 

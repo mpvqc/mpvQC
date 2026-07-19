@@ -10,6 +10,7 @@ from .native import (
     get_window_placement,
     is_maximized,
     is_minimized,
+    mark_fullscreen_window,
     maximize_window,
     refresh_window_frame,
     set_outer_window_rect,
@@ -23,7 +24,6 @@ from .utils import (
     get_monitor_rect,
     get_resize_border_thickness,
     is_fullscreen,
-    set_shell_fullscreen_marker,
 )
 
 if TYPE_CHECKING:
@@ -94,7 +94,10 @@ class WindowsFullscreenHandler:
             else:
                 set_outer_window_rect(hwnd, fullscreen_rect)
 
-            set_shell_fullscreen_marker(hwnd, fullscreen=True)
+            # The shell hides the taskbar only for windows that match the monitor
+            # rect exactly. Ours is larger by the frame border on purpose, so the
+            # shell must be told explicitly.
+            mark_fullscreen_window(hwnd, fullscreen=True)
         finally:
             self._entering = False
 
@@ -164,7 +167,7 @@ class WindowsFullscreenHandler:
 
     @staticmethod
     def _restore_frame_chrome(hwnd: int) -> None:
-        set_shell_fullscreen_marker(hwnd, fullscreen=False)
+        mark_fullscreen_window(hwnd, fullscreen=False)
         set_window_corners_rounded(hwnd, rounded=True)
         set_window_border_visible(hwnd, visible=True)
 

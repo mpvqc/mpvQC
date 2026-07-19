@@ -87,7 +87,7 @@ def fake(monkeypatch) -> FakeWin32Window:
     monkeypatch.setattr(fullscreen, "set_outer_window_rect", lambda _hwnd, rect: fake.set_outer_window_rect(rect))
     monkeypatch.setattr(
         fullscreen,
-        "set_shell_fullscreen_marker",
+        "mark_fullscreen_window",
         lambda _hwnd, *, fullscreen: fake.calls.append(("marker", fullscreen)),
     )
     monkeypatch.setattr(

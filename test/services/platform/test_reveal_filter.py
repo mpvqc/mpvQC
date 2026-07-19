@@ -26,7 +26,7 @@ def configure_injections(common_bindings_with):
 def cloak_calls(monkeypatch):
     calls: list[bool] = []
     monkeypatch.setattr(reveal_filter, "set_window_cloaked", lambda _hwnd, *, cloaked: calls.append(cloaked))
-    monkeypatch.setattr(reveal_filter, "wait_for_next_composition", lambda: None)
+    monkeypatch.setattr(reveal_filter, "dwm_flush", lambda: None)
     return calls
 
 
