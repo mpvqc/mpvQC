@@ -6,18 +6,18 @@ SPDX-License-Identifier: MIT
 
 # Configuring mpvQC
 
-mpvQC can be configured using the following environment variables:
+These environment variables configure mpvQC:
 
 - **`MPVQC_DEBUG`**
 
   - **Default Value:** not set
   - **Operating System:** All
-  - **Description:** Enables debug mode for development and testing purposes.
+  - **Description:** Enables debug mode for development and testing.
   - **Possible Values:** *not set* or *any value*
 
 - **`MPVQC_PLAYER_LOG`**
 
-  - **Default Value:** enabled if `MPVQC_DEBUG` set, disabled else
+  - **Default Value:** enabled if `MPVQC_DEBUG` is set, otherwise disabled
   - **Operating System:** All
   - **Description:** Enables mpv player logging
   - **Possible Values:** *not set* or *any value*
