@@ -13,15 +13,12 @@ import pytest
 from PySide6.QtCore import QStandardPaths
 
 from mpvqc.datamodels import Comment
-from mpvqc.jobs import SerialJobRunner
 from mpvqc.services import ExportService
 
 
 @pytest.fixture
 def service(qt_app, manual_executor) -> ExportService:
-    service = ExportService()
-    service._jobs = SerialJobRunner(manual_executor)
-    return service
+    return ExportService(manual_executor)
 
 
 @pytest.fixture

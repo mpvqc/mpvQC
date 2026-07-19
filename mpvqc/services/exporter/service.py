@@ -27,7 +27,7 @@ from .context import RenderContext
 from .writer import ExportError, export_classic, export_custom, save
 
 if TYPE_CHECKING:
-    from mpvqc.jobs import Result
+    from mpvqc.jobs import JobExecutor, Result
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +50,9 @@ class ExportService(QObject):
 
     export_error_occurred = Signal(str, int)
 
-    def __init__(self) -> None:
+    def __init__(self, executor: JobExecutor | None = None) -> None:
         super().__init__()
-        self._jobs = SerialJobRunner()
+        self._jobs = SerialJobRunner(executor)
 
     def _capture(self) -> RenderContext:
         return RenderContext(

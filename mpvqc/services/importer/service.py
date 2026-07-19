@@ -25,7 +25,7 @@ from .scanner import scan
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from mpvqc.jobs import Result
+    from mpvqc.jobs import JobExecutor, Result
 
 
 logger = logging.getLogger(__name__)
@@ -41,10 +41,10 @@ class ImporterService(QObject):
     unfinished_plan_ready = Signal(UnfinishedPlan)
     busy_changed = Signal(bool)
 
-    def __init__(self) -> None:
+    def __init__(self, executor: JobExecutor | None = None) -> None:
         super().__init__()
         self._busy = False
-        self._jobs = SerialJobRunner()
+        self._jobs = SerialJobRunner(executor)
 
     @Property(bool, notify=busy_changed)
     def busy(self) -> bool:
