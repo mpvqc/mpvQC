@@ -4,27 +4,32 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QObject, Qt, QThreadPool, Signal, Slot
+import logging
+from typing import TYPE_CHECKING
 
+from PySide6.QtCore import QObject, Signal
+
+from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.platform.window_buttons import DEFAULT_WINDOW_BUTTON_PREFERENCE, WindowButtonPreference
 
 from .portals import SettingsPortal
 
+if TYPE_CHECKING:
+    from mpvqc.jobs import JobExecutor, Result
+
+logger = logging.getLogger(__name__)
+
 
 class WindowButtonDetector(QObject):
     preference_changed = Signal(WindowButtonPreference)
-    _preference_detected = Signal(WindowButtonPreference)
 
-    def __init__(self) -> None:
+    def __init__(self, executor: JobExecutor | None = None) -> None:
         super().__init__()
         self._preference = DEFAULT_WINDOW_BUTTON_PREFERENCE
-        self._preference_detected.connect(self._apply_preference, Qt.ConnectionType.QueuedConnection)
+        self._jobs = SerialJobRunner(executor)
 
     def detect(self) -> None:
-        QThreadPool.globalInstance().start(self._run_detection)
-
-    def _run_detection(self) -> None:
-        self._preference_detected.emit(self._read_preference())
+        self._jobs.run(work=self._read_preference, on_result=self._apply_preference)
 
     @staticmethod
     def _read_preference() -> WindowButtonPreference:
@@ -41,11 +46,14 @@ class WindowButtonDetector(QObject):
             close="close" in buttons,
         )
 
-    @Slot(WindowButtonPreference)
-    def _apply_preference(self, preference: WindowButtonPreference) -> None:
-        if preference != self._preference:
-            self._preference = preference
-            self.preference_changed.emit(preference)
+    def _apply_preference(self, result: Result[WindowButtonPreference]) -> None:
+        match result:
+            case Ok(preference):
+                if preference != self._preference:
+                    self._preference = preference
+                    self.preference_changed.emit(preference)
+            case Err(error):
+                logger.error("Window button detection failed", exc_info=error)
 
     @property
     def preference(self) -> WindowButtonPreference:
