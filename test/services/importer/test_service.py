@@ -14,7 +14,7 @@ import pytest
 from mpvqc.datamodels import Comment, VideoSource
 from mpvqc.enums import ImportFoundVideo
 from mpvqc.services.comments import CommentsService
-from mpvqc.services.importer import FinishedPlan, ImporterService, ScanResult, session, subtitles, video
+from mpvqc.services.importer import FinishedPlan, ImporterService, UnfinishedPlan, errors, session, subtitles, video
 from mpvqc.services.player import PlayerService
 from mpvqc.services.resetter import ResetService
 from mpvqc.services.settings import SettingsService
@@ -299,12 +299,12 @@ def test_execute_without_comments_imports_nothing(
     comments_service_mock.import_comments.assert_not_called()
 
 
-EMPTY_SCAN = ScanResult(videos=(), subtitles=(), comments=(), rejected_documents=())
-UNRESOLVED_SCAN = ScanResult(
-    videos=(VideoSource(path=V, found_in_document=True),),
-    subtitles=(),
+UNRESOLVED_PLAN = UnfinishedPlan(
     comments=(),
-    rejected_documents=(),
+    session=session.Merge(),
+    video=video.Unresolved(candidates=(VideoSource(path=V, found_in_document=True),)),
+    subtitles=subtitles.Skip(),
+    errors=errors.Absent(),
 )
 
 
@@ -315,7 +315,7 @@ def test_open_routes_resolvable_scan_to_execute(
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: EMPTY_SCAN)
+    monkeypatch.setattr("mpvqc.services.importer.service.plan_import", lambda *_args, **_kwargs: NOOP_PLAN)
     unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -332,7 +332,7 @@ def test_open_routes_unresolvable_scan_to_wizard(
     manual_executor: ManualJobExecutor,
     make_spy,
 ) -> None:
-    monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: UNRESOLVED_SCAN)
+    monkeypatch.setattr("mpvqc.services.importer.service.plan_import", lambda *_args, **_kwargs: UNRESOLVED_PLAN)
     unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
@@ -349,11 +349,11 @@ def test_open_recovers_when_scan_raises(
     manual_executor: ManualJobExecutor,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    def raise_scan_error(*_args: object) -> ScanResult:
+    def raise_scan_error(*_args: object, **_kwargs: object) -> FinishedPlan | UnfinishedPlan:
         msg = "scan exploded"
         raise RuntimeError(msg)
 
-    monkeypatch.setattr("mpvqc.services.importer.service.scan", raise_scan_error)
+    monkeypatch.setattr("mpvqc.services.importer.service.plan_import", raise_scan_error)
 
     service.open([], [], [])
     manual_executor.drain()

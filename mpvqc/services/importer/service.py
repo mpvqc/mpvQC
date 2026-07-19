@@ -19,8 +19,7 @@ from mpvqc.services.settings import SettingsService
 from mpvqc.services.state import StateService
 
 from .concerns import session, subtitles, video
-from .plan import FinishedPlan, UnfinishedPlan, make_plan
-from .scanner import scan
+from .plan import FinishedPlan, UnfinishedPlan, plan_import
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -71,15 +70,14 @@ class ImporterService(QObject):
         found_video_setting = ImportFoundVideo(self._settings.import_found_video)
         current_video = self._player.path
 
-        def scan_for_plan() -> FinishedPlan | UnfinishedPlan:
-            scan_result = scan(document_paths, video_paths, subtitle_paths)
-            return make_plan(
-                scan_result,
+        def build_plan() -> FinishedPlan | UnfinishedPlan:
+            return plan_import(
+                document_paths,
+                video_paths,
+                subtitle_paths,
                 found_video_setting=found_video_setting,
                 has_existing_comments=has_existing_comments,
-                any_candidate_loaded=PlayerService.is_video_path_loaded(
-                    current_video, (v.path for v in scan_result.videos)
-                ),
+                is_any_candidate_loaded=lambda paths: PlayerService.is_video_path_loaded(current_video, paths),
             )
 
         def on_result(result: Result[FinishedPlan | UnfinishedPlan]) -> None:
@@ -92,7 +90,7 @@ class ImporterService(QObject):
                     logger.error("Import scan failed", exc_info=error)
                     self.cancel_pending()
 
-        self._jobs.run(work=scan_for_plan, on_result=on_result)
+        self._jobs.run(work=build_plan, on_result=on_result)
 
     @Slot(FinishedPlan)
     def execute(self, plan: FinishedPlan) -> None:
