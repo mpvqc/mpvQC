@@ -20,7 +20,7 @@ SPDX-License-Identifier: MIT
 - [ ] mpv.conf for Linux updated: `data/config/mpv-linux.conf`
 - [ ] mpv.conf for Windows updated: `data/config/mpv-windows.conf`
 - [ ] input.conf updated: `data/config/input.conf`
-- [ ] No new untranslated strings verified: `just update-translations`
+- [ ] Verify there are no new untranslated strings: `just update-translations`
 
 Run the formatter before committing.
 
@@ -58,13 +58,13 @@ This is the final gate before tagging.
 
 #### Window chrome verification
 
-The Linux window chrome (drop shadow, rounded corners, frameless resizing) is self-drawn and compositor-dependent,
-so CI cannot cover it. Verify it on the locally built Flatpak before tagging, on both setups:
+The Linux window chrome (drop shadow, rounded corners, frameless resizing) is self-drawn and compositor-dependent, so CI
+cannot cover it. Verify it on the locally built Flatpak before tagging, on both setups:
 
 ##### Desktop environment (e.g. GNOME, KDE Plasma)
 
 - [ ] Drop shadow is drawn around the window and strengthens while it is focused
-- [ ] Corners are rounded (top corners and bottom-right; the video corner may stay square in the horizontal layout)
+- [ ] Corners are rounded (top corners and bottom-right). The video corner may stay square in the horizontal layout
 - [ ] Menu bar, close button and footer hover highlights stay within the rounded corners
 - [ ] Maximize, fullscreen and back to normal land in the expected state (no flicker back to normal)
 - [ ] Window drags to the top edge and resizes from every edge and corner
@@ -107,10 +107,10 @@ These steps apply to the [mpvQC-flatpak](https://github.com/mpvqc/mpvQC-flatpak)
 - [ ] Commit changes to mpvQC-flatpak repository
 - [ ] Trigger a new flatpak build **manually** via GitHub Actions in the `Build Flatpak` section.
 
-Once the build succeeds, it will be automatically committed to the flatpak repository.
-Users will receive the new version via regular updates.
+Once the build succeeds, it will be automatically committed to the flatpak repository. Users will receive the new
+version via regular updates.
 
 ### Website update
 
 - [ ] Screenshots updated
-- [ ] New version for api calls updated: `static/api/v1/public/version`
+- [ ] Version endpoint updated: `static/api/v1/public/version`

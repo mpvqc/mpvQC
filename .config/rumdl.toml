@@ -8,3 +8,6 @@ line-length = 120
 
 [per-file-ignores]
 "README.md" = ["MD033"]
+
+[MD013]
+reflow = true

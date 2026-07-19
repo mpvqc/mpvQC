@@ -6,9 +6,8 @@ SPDX-License-Identifier: MIT
 
 # Internationalization
 
-Translations live as `.ts` files under `i18n/` (Qt's translation source format).
-The build pipeline compiles them to `.qm` binaries that ship with the application.
-Editing happens in Qt Linguist; everything else is a `just` recipe.
+Translations live as `.ts` files under `i18n/` (Qt's translation source format). The build pipeline compiles them to
+`.qm` binaries that ship with the application. Editing happens in Qt Linguist. Everything else is a `just` recipe.
 
 For setup, see [development.md](development.md).
 
@@ -28,8 +27,8 @@ For setup, see [development.md](development.md).
    pyside6-linguist i18n/<locale>.ts
    ```
 
-3. Add the new language to the `LANGUAGES` list in `mpvqc/datamodels.py` so it appears in the application's language menu.
-   List the translator(s) on the same entry to credit them in the About dialog.
+3. Add the new language to the `LANGUAGES` list in `mpvqc/datamodels.py` so it appears in the application's language
+   menu. List the translator(s) on the same entry to credit them in the About dialog.
 
 4. Recompile resources and test:
 
@@ -37,7 +36,8 @@ For setup, see [development.md](development.md).
    just build-develop
    ```
 
-   Start the application, switch to the new locale through the application's settings, and verify the strings render correctly.
+   Start the application, switch to the new locale through the application's settings, and verify the strings render
+   correctly.
 
 ## Updating existing translations
 
@@ -51,5 +51,5 @@ This scans Python and QML for translatable strings and merges new entries into t
 
 ## See also
 
-- [development.md](development.md) — setup and tooling
-- [releasing.md](releasing.md) — translation checks in the release flow
+- [development.md](development.md): setup and tooling
+- [releasing.md](releasing.md): translation checks in the release flow

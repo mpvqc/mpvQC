@@ -43,8 +43,9 @@ including a JSON Schema for third-party tooling.
 
 ## Internationalization
 
-If you want to translate this application into more languages, see the [internationalization guide](docs/internationalization.md).
-Feel free to open a new issue if you need further assistance.
+If you want to translate this application into more languages, see the
+[internationalization guide](docs/internationalization.md). Feel free to open a new issue if you need further
+assistance.
 
 ## Licenses
 
