@@ -10,6 +10,7 @@ import inject
 import pytest
 
 from mpvqc.services import BuildInfoService, VersionCheckerService
+from mpvqc.services.version_checker import NewVersionAvailable, ServerError, ServerNotReachable, UpToDate
 
 MODULE = "mpvqc.services.version_checker"
 
@@ -52,9 +53,9 @@ def test_version_checker_latest(service, build_info_service_mock):
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, body='{ "latest": "0.1.0" }')
-        actual_title, _ = service.check_for_new_version()
+        outcome = service.check_for_new_version()
 
-    assert actual_title == "👌"
+    assert outcome == UpToDate()
 
 
 def test_version_checker_new_version_available(service, build_info_service_mock):
@@ -62,20 +63,19 @@ def test_version_checker_new_version_available(service, build_info_service_mock)
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, body='{ "latest": "0.1.2" }')
-        actual_title, _ = service.check_for_new_version()
+        outcome = service.check_for_new_version()
 
-    assert actual_title == "New Version Available"
+    assert outcome == NewVersionAvailable(version="0.1.2")
 
 
-def test_version_checker_escapes_remote_version(service, build_info_service_mock):
+def test_version_checker_reports_remote_version_verbatim(service, build_info_service_mock):
     build_info_service_mock.version = "0.1.1"
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, body='{ "latest": "1.2.3<script>" }')
-        _, actual_text = service.check_for_new_version()
+        outcome = service.check_for_new_version()
 
-    assert "&lt;script&gt;" in actual_text
-    assert "1.2.3<script>" not in actual_text
+    assert outcome == NewVersionAvailable(version="1.2.3<script>")
 
 
 def test_version_checker_service_error(service):
@@ -83,9 +83,9 @@ def test_version_checker_service_error(service):
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, error=error)
-        actual_title, _ = service.check_for_new_version()
+        outcome = service.check_for_new_version()
 
-    assert actual_title == "Server Error"
+    assert outcome == ServerError(code=500)
 
 
 def test_version_checker_url_error(service):
@@ -93,6 +93,6 @@ def test_version_checker_url_error(service):
 
     with patch(f"{MODULE}.urllib.request.urlopen") as mock_request:
         mock_response(mock_request, error=error)
-        actual_title, _ = service.check_for_new_version()
+        outcome = service.check_for_new_version()
 
-    assert actual_title == "Server Not Reachable"
+    assert outcome == ServerNotReachable()

@@ -2,14 +2,52 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from html import escape
+from typing import assert_never
+
 import inject
-from PySide6.QtCore import Property, QObject, QRunnable, Qt, QThreadPool, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, QRunnable, Qt, QThreadPool, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.services import VersionCheckerService
+from mpvqc.services.version_checker import (
+    HOME_URL,
+    CheckOutcome,
+    NewVersionAvailable,
+    ServerError,
+    ServerNotReachable,
+    UpToDate,
+)
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
+
+
+def present_outcome(outcome: CheckOutcome) -> tuple[str, str]:
+    # fmt: off
+    match outcome:
+        case ServerError(code):
+            title = QCoreApplication.translate("VersionCheckDialog", "Server Error")
+            text = QCoreApplication.translate("VersionCheckDialog", "The server returned error code {}.").format(code)
+            return title, text
+        case ServerNotReachable():
+            title = QCoreApplication.translate("VersionCheckDialog", "Server Not Reachable")
+            text = QCoreApplication.translate("VersionCheckDialog", "A connection to the server could not be established.")
+            return title, text
+        case NewVersionAvailable(version):
+            new_version = f"<i>{escape(version)}</i>"
+            home_url = f'<a href="{HOME_URL}">{HOME_URL}</a>'
+            title = QCoreApplication.translate("VersionCheckDialog", "New Version Available")
+            text = QCoreApplication.translate("VersionCheckDialog", "There is a new version of mpvQC available ({}). Visit {} to download it.") \
+                .format(new_version, home_url)
+            return title, text
+        case UpToDate():
+            title = "👌"
+            text = QCoreApplication.translate("VersionCheckDialog", "You are already using the most recent version of mpvQC!")
+            return title, text
+        case _:
+            assert_never(outcome)
+    # fmt: on
 
 
 @QmlElement
@@ -18,7 +56,7 @@ class MpvqcVersionCheckMessageBoxViewModel(QObject):
 
     titleChanged = Signal()
     textChanged = Signal()
-    _result_ready = Signal(str, str)
+    _result_ready = Signal(object)  # CheckOutcome union; Qt signals can't carry type aliases
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -29,14 +67,15 @@ class MpvqcVersionCheckMessageBoxViewModel(QObject):
 
     def _check_for_new_version(self) -> None:
         def check_version() -> None:
-            title, text = self._checker.check_for_new_version()
-            self._result_ready.emit(title, text)
+            outcome = self._checker.check_for_new_version()
+            self._result_ready.emit(outcome)
 
         runnable = QRunnable.create(check_version)
         QThreadPool.globalInstance().start(runnable)
 
-    @Slot(str, str)
-    def _apply_result(self, title: str, text: str) -> None:
+    @Slot(object)
+    def _apply_result(self, outcome: CheckOutcome) -> None:
+        title, text = present_outcome(outcome)
         self._set_title(title)
         self._set_text(text)
 

@@ -5,15 +5,39 @@
 import json
 import urllib.error
 import urllib.request
-from html import escape
+from dataclasses import dataclass
 
 import inject
-from PySide6.QtCore import QCoreApplication
 
 from .build_info import BuildInfoService
 
-_HOME_URL = "https://mpvqc.github.io"
-_UPDATE_URL = f"{_HOME_URL}/api/v1/public/version"
+HOME_URL = "https://mpvqc.github.io"
+_UPDATE_URL = f"{HOME_URL}/api/v1/public/version"
+
+
+@dataclass(frozen=True)
+class NewVersionAvailable:
+    version: str
+
+
+@dataclass(frozen=True)
+class UpToDate:
+    """The running build matches the latest published version."""
+
+
+@dataclass(frozen=True)
+class ServerError:
+    """The update server answered with an error status."""
+
+    code: int
+
+
+@dataclass(frozen=True)
+class ServerNotReachable:
+    """No connection to the update server."""
+
+
+type CheckOutcome = NewVersionAvailable | UpToDate | ServerError | ServerNotReachable
 
 
 class VersionCheckerService:
@@ -30,29 +54,14 @@ class VersionCheckerService:
             self._cached_version = version
         return version
 
-    def check_for_new_version(self) -> tuple[str, str]:
-        # fmt: off
+    def check_for_new_version(self) -> CheckOutcome:
         try:
             latest_version = self._get_latest_version()
         except urllib.error.HTTPError as e:
-            title = QCoreApplication.translate("VersionCheckDialog", "Server Error")
-            text = QCoreApplication.translate("VersionCheckDialog", "The server returned error code {}.").format(e.code)
-            return title, text
+            return ServerError(code=e.code)
         except urllib.error.URLError:
-            title = QCoreApplication.translate("VersionCheckDialog", "Server Not Reachable")
-            text = QCoreApplication.translate("VersionCheckDialog", "A connection to the server could not be established.")
-            return title, text
+            return ServerNotReachable()
 
         if self._build_info.version != latest_version:
-            new_version = f"<i>{escape(latest_version)}</i>"
-            home_url = f'<a href="{_HOME_URL}">{_HOME_URL}</a>'
-
-            title = QCoreApplication.translate("VersionCheckDialog", "New Version Available")
-            text = QCoreApplication.translate("VersionCheckDialog", "There is a new version of mpvQC available ({}). Visit {} to download it.") \
-                .format(new_version, home_url)
-            return title, text
-
-        title = "👌"
-        text = QCoreApplication.translate("VersionCheckDialog", "You are already using the most recent version of mpvQC!")
-        return title, text
-        # fmt: on
+            return NewVersionAvailable(version=latest_version)
+        return UpToDate()
