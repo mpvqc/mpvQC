@@ -2,13 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+import logging
 from html import escape
-from typing import assert_never
+from typing import TYPE_CHECKING, assert_never
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, QRunnable, Qt, QThreadPool, Signal, Slot
+from PySide6.QtCore import Property, QCoreApplication, QObject, Signal
 from PySide6.QtQml import QmlElement
 
+from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services import VersionCheckerService
 from mpvqc.services.version_checker import (
     HOME_URL,
@@ -19,8 +23,13 @@ from mpvqc.services.version_checker import (
     UpToDate,
 )
 
+if TYPE_CHECKING:
+    from mpvqc.jobs import JobExecutor, Result
+
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
+
+logger = logging.getLogger(__name__)
 
 
 def present_outcome(outcome: CheckOutcome) -> tuple[str, str]:
@@ -56,28 +65,25 @@ class MpvqcVersionCheckMessageBoxViewModel(QObject):
 
     titleChanged = Signal()
     textChanged = Signal()
-    _result_ready = Signal(object)  # CheckOutcome union; Qt signals can't carry type aliases
 
-    def __init__(self, parent: QObject | None = None) -> None:
+    def __init__(self, parent: QObject | None = None, executor: JobExecutor | None = None) -> None:
         super().__init__(parent)
         self._title = ""
         self._text = ""
-        self._result_ready.connect(self._apply_result, Qt.ConnectionType.QueuedConnection)
+        self._jobs = SerialJobRunner(executor)
         self._check_for_new_version()
 
     def _check_for_new_version(self) -> None:
-        def check_version() -> None:
-            outcome = self._checker.check_for_new_version()
-            self._result_ready.emit(outcome)
+        self._jobs.run(work=self._checker.check_for_new_version, on_result=self._present)
 
-        runnable = QRunnable.create(check_version)
-        QThreadPool.globalInstance().start(runnable)
-
-    @Slot(object)
-    def _apply_result(self, outcome: CheckOutcome) -> None:
-        title, text = present_outcome(outcome)
-        self._set_title(title)
-        self._set_text(text)
+    def _present(self, result: Result[CheckOutcome]) -> None:
+        match result:
+            case Ok(outcome):
+                title, text = present_outcome(outcome)
+                self._set_title(title)
+                self._set_text(text)
+            case Err(error):
+                logger.error("Version check failed", exc_info=error)
 
     @Property(str, notify=titleChanged)
     def title(self) -> str:
