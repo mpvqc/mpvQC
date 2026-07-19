@@ -235,6 +235,7 @@ files = [
     "mpvqc/services/platform/window_reveal.py",
     "mpvqc/services/player/__init__.py",
     "mpvqc/services/player/coordinators.py",
+    "mpvqc/services/player/events.py",
     "mpvqc/services/player/service.py",
     "mpvqc/services/player/state.py",
     "mpvqc/services/quit.py",

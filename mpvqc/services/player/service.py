@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QObject, Qt, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
@@ -18,6 +18,7 @@ from mpvqc.services.main_window import MainWindowService
 from mpvqc.services.type_mapper import TypeMapperService
 
 from .coordinators import SubtitleLoadCoordinator
+from .events import EventMarshal
 from .state import OBSERVED_PROPERTIES, PlayerState, make_observer, reduce_update
 
 if TYPE_CHECKING:
@@ -55,15 +56,19 @@ class PlayerService(QObject):
 
     file_loaded = Signal()
 
-    _property_updated = Signal(str, object)
-
     def __init__(self) -> None:
         super().__init__()
 
         self._mpv: MPV | None = None
         self._shutdown_hook: Callable[[], None] | None = None
+
         self._state = PlayerState()
         self._subtitle_coordinator = SubtitleLoadCoordinator(on_add=self._load_subtitles_now)
+
+        self._marshal = EventMarshal()
+        self._post_property_update = self._marshal.channel(self._apply_property_update)
+        self._post_file_loaded = self._marshal.channel(self.file_loaded.emit)
+
         self._notifiers: dict[str, SignalInstance] = {
             "duration": self.duration_changed,
             "percent_pos": self.percent_pos_changed,
@@ -79,8 +84,7 @@ class PlayerService(QObject):
             "external_subtitles": self.external_subtitles_changed,
         }
 
-        self._property_updated.connect(self._apply_property_update, Qt.ConnectionType.QueuedConnection)
-        self.file_loaded.connect(self._on_file_loaded, Qt.ConnectionType.QueuedConnection)
+        self.file_loaded.connect(self._on_file_loaded)
 
     def init(self, win_id: int | None = None) -> None:
         args = {"vo": "libmpv"} if win_id is None else {"wid": win_id}
@@ -91,9 +95,9 @@ class PlayerService(QObject):
         mpv = MPV(**merged_args)
 
         for spec in OBSERVED_PROPERTIES:
-            mpv.observe_property(spec.name, make_observer(spec, self._property_updated.emit))
+            mpv.observe_property(spec.name, make_observer(spec, self._post_property_update))
 
-        mpv.event_callback("file-loaded")(lambda _event: self.file_loaded.emit())
+        mpv.event_callback("file-loaded")(lambda _event: self._post_file_loaded())
 
         self._mpv = mpv
 
@@ -122,7 +126,6 @@ class PlayerService(QObject):
 
         return args
 
-    @Slot(str, object)
     def _apply_property_update(self, name: str, raw: RawPropertyValue) -> None:
         old = self._state
         new = reduce_update(old, name, raw)
