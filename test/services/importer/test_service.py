@@ -13,7 +13,6 @@ import pytest
 
 from mpvqc.datamodels import Comment, VideoSource
 from mpvqc.enums import ImportFoundVideo
-from mpvqc.jobs import SerialJobRunner
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.importer import FinishedPlan, ImporterService, ScanResult, session, subtitles, video
 from mpvqc.services.player import PlayerService
@@ -76,9 +75,7 @@ def configure_inject(
 
 @pytest.fixture
 def service(manual_executor: ManualJobExecutor) -> ImporterService:
-    service = ImporterService()
-    service._jobs = SerialJobRunner(manual_executor)
-    return service
+    return ImporterService(manual_executor)
 
 
 NOOP_PLAN = FinishedPlan(

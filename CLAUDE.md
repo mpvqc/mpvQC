@@ -61,7 +61,7 @@ SPDX-License-Identifier: MIT
 
 - Prefer data-driven Python tests.
 - Prefer testing important areas in the code. Don't go for coverage only.
-- Swap background execution in Python tests by assigning `service._jobs = SerialJobRunner(manual_executor)`;
+- Swap background execution in Python tests by passing `manual_executor` to the service constructor;
   the `manual_executor` fixture lives in `test/conftest.py`.
 - Don't assert inside Qt slots or `on_result` callbacks: PySide swallows exceptions at the emit boundary.
   Record values and assert after the drain.
