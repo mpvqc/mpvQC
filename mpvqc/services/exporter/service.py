@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import logging
 import re
-from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
@@ -92,17 +91,21 @@ class ExportService(QObject):
                 case Err(error):
                     logger.error("Failed to save document", exc_info=error)
 
-        self._jobs.run(work=partial(save, document, self._capture()), on_result=on_result)
+        context = self._capture()
+        self._jobs.run(work=lambda: save(document, context), on_result=on_result)
 
     def export_classic(self, document: Path) -> None:
+        resources = self._resources
+        context = self._capture()
         self._jobs.run(
-            work=partial(export_classic, document, self._resources, self._capture()),
+            work=lambda: export_classic(document, resources, context),
             on_result=self._on_exported,
         )
 
     def export_custom(self, document: Path, template: Path) -> None:
+        context = self._capture()
         self._jobs.run(
-            work=partial(export_custom, document, template, self._capture()),
+            work=lambda: export_custom(document, template, context),
             on_result=self._on_exported,
         )
 
@@ -123,7 +126,9 @@ class ExportService(QObject):
                 case Err(error):
                     logger.error("Failed to create backup", exc_info=error)
 
+        backup_dir = self._paths.dir_backup
+        context = self._capture()
         self._jobs.run(
-            work=partial(create_backup, self._paths.dir_backup, self._capture()),
+            work=lambda: create_backup(backup_dir, context),
             on_result=on_result,
         )

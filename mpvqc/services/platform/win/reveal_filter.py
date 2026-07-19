@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import contextlib
-from functools import partial
 from typing import TYPE_CHECKING, override
 
 from PySide6.QtCore import QEvent, QObject, Qt, Slot
@@ -51,7 +50,7 @@ class _RevealOnFirstFrame:
         hwnd = window.winId()
         set_window_cloaked(hwnd, cloaked=True)
 
-        gate = _FirstFrameGate(partial(self._reveal, window))
+        gate = _FirstFrameGate(lambda: self._reveal(window))
         self._pending[window] = (hwnd, gate)
         window.frameSwapped.connect(gate.notify, Qt.ConnectionType.QueuedConnection)
 
@@ -118,7 +117,7 @@ class _TransientConcealment(QObject):
         # The destroyed signal passes a new Python wrapper typed as plain
         # QObject, which never equals the dict key. Capture the tracked wrapper
         # here, at connect time.
-        window.destroyed.connect(partial(self._forget, window))
+        window.destroyed.connect(lambda: self._forget(window))
 
     @Slot(bool)
     def _conceal_on_hide(self, visible: bool) -> None:
