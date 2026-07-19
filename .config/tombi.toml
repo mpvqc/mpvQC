@@ -4,6 +4,9 @@
 
 toml-version = "v1.1.0"
 
+[schema]
+enabled = false
+
 [format]
 [format.rules]
 indent-style = "space"
