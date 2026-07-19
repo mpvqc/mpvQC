@@ -39,7 +39,7 @@ from ctypes import (
 )
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, HWND, LONG, LPARAM, LPCVOID, MSG, POINT, RECT, UINT, WORD
 from functools import lru_cache
-from typing import TYPE_CHECKING, Literal, NamedTuple
+from typing import TYPE_CHECKING, Literal, NamedTuple, SupportsInt
 
 if TYPE_CHECKING:
     from typing import Any
@@ -407,8 +407,8 @@ class WindowMessage(NamedTuple):
     l_param: int
 
 
-def read_window_message(address: int) -> WindowMessage:
-    msg = MSG.from_address(address)
+def read_window_message(address: SupportsInt) -> WindowMessage:
+    msg = MSG.from_address(int(address))
     return WindowMessage(msg.hWnd, msg.message, msg.wParam, msg.lParam)
 
 

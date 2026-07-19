@@ -101,7 +101,7 @@ def set_shell_fullscreen_marker(hwnd: int, *, fullscreen: bool) -> None:
     """The shell hides the taskbar only for windows that match the monitor rect
     exactly. Our fullscreen window is larger by the frame border on purpose, so
     the shell must be told explicitly."""
-    mark_fullscreen_window(int(hwnd), fullscreen=fullscreen)
+    mark_fullscreen_window(hwnd, fullscreen=fullscreen)
 
 
 def wait_for_next_composition() -> None:
