@@ -42,7 +42,7 @@ jobs:
       - name: Generate Resources
         run: just prepare-tests
       - name: Run Linter and Formatter
-        run: just format
+        run: just format --verbose
       - name: Lint Qml
         run: just lint-qml
 
