@@ -10,7 +10,6 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtTest import QSignalSpy
 
 from mpvqc.datamodels import Comment, VideoSource
 from mpvqc.enums import ImportFoundVideo
@@ -90,32 +89,32 @@ NOOP_PLAN = FinishedPlan(
 )
 
 
-def test_second_open_while_busy_is_ignored(service: ImporterService) -> None:
+def test_second_open_while_busy_is_ignored(service: ImporterService, make_spy) -> None:
     service.open([], [], [])
-    spy = QSignalSpy(service.busy_changed)
+    spy = make_spy(service.busy_changed)
     service.open([], [], [])
     assert service.busy is True
     assert spy.count() == 0
 
 
-def test_cancel_pending_unblocks_next_open(service: ImporterService) -> None:
+def test_cancel_pending_unblocks_next_open(service: ImporterService, make_spy) -> None:
     service.open([], [], [])
     service.cancel_pending()
-    spy = QSignalSpy(service.busy_changed)
+    spy = make_spy(service.busy_changed)
     service.open([], [], [])
     assert service.busy is True
     assert spy.count() == 1
-    assert spy.at(0) == [True]
+    assert spy.at(invocation=0, argument=0) is True
 
 
-def test_execute_unblocks_next_open(service: ImporterService) -> None:
+def test_execute_unblocks_next_open(service: ImporterService, make_spy) -> None:
     service.open([], [], [])
     service.execute(NOOP_PLAN)
-    spy = QSignalSpy(service.busy_changed)
+    spy = make_spy(service.busy_changed)
     service.open([], [], [])
     assert service.busy is True
     assert spy.count() == 1
-    assert spy.at(0) == [True]
+    assert spy.at(invocation=0, argument=0) is True
 
 
 V = Path("/movies/v.mp4")
@@ -317,9 +316,10 @@ def test_open_routes_resolvable_scan_to_execute(
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
     manual_executor: ManualJobExecutor,
+    make_spy,
 ) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: EMPTY_SCAN)
-    unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
+    unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
     manual_executor.drain()
@@ -333,9 +333,10 @@ def test_open_routes_unresolvable_scan_to_wizard(
     monkeypatch: pytest.MonkeyPatch,
     service: ImporterService,
     manual_executor: ManualJobExecutor,
+    make_spy,
 ) -> None:
     monkeypatch.setattr("mpvqc.services.importer.service.scan", lambda *_args: UNRESOLVED_SCAN)
-    unfinished_spy = QSignalSpy(service.unfinished_plan_ready)
+    unfinished_spy = make_spy(service.unfinished_plan_ready)
 
     service.open([], [], [])
     manual_executor.drain()
