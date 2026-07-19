@@ -17,13 +17,6 @@ class Comment:
 
 
 @dataclass(frozen=True)
-class SearchResult:
-    index: int
-    current: int
-    total: int
-
-
-@dataclass(frozen=True)
 class VideoSource:
     path: Path
     explicitly_provided: bool = False

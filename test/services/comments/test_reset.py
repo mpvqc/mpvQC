@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from mpvqc.services.comments import Found, NoMatches
+
 
 def test_reset_empties_store(comments):
     comments.reset()
@@ -39,11 +41,13 @@ def test_reset_clears_selection(comments):
 
 
 def test_reset_invalidates_search(comments):
-    assert comments.search("Word", include_current_row=True, top_down=True).total == 5
+    outcome = comments.search("Word", include_current_row=True, top_down=True)
+    assert isinstance(outcome, Found)
+    assert outcome.total == 5
 
     comments.reset()
 
-    assert comments.search("Word", include_current_row=True, top_down=True).total == 0
+    assert comments.search("Word", include_current_row=True, top_down=True) == NoMatches()
 
 
 def test_reset_does_not_mark_dirty(comments, make_spy):
