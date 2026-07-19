@@ -90,11 +90,11 @@ class MainWindowService(QObject):
         self._active_window.setVisible(True)
 
     def show_fullscreen(self) -> None:
-        self._platform.fullscreen_handler.enter(self._active_window)
+        self._platform.enter_fullscreen(self._active_window)
         self._sync_window_state()
 
     def exit_fullscreen(self) -> None:
-        self._platform.fullscreen_handler.exit(self._active_window)
+        self._platform.exit_fullscreen(self._active_window)
         self._sync_window_state()
 
     def show_maximized(self) -> None:
@@ -199,7 +199,7 @@ class MainWindowService(QObject):
 
     def _apply_window_state(self) -> None:
         window = self._active_window
-        is_fullscreen = self._platform.fullscreen_handler.is_active(window)
+        is_fullscreen = self._platform.is_fullscreen(window)
 
         # While fullscreen the OS-level maximized state is parked (Windows drops the
         # style bit), so keep reporting the value from before entering.
