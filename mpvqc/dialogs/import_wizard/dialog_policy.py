@@ -32,16 +32,24 @@ class FooterState:
     show_back: bool
 
 
-class WizardFooterPolicy:
+class WizardDialogPolicy:
     def __init__(self, plan: UnfinishedPlan, steps: tuple[StepKind, ...]) -> None:
         self._steps = steps
         self._has_valid_content = has_valid_content(plan)
+        self._close_only = steps == (StepKind.ERRORS,) and not self._has_valid_content
+
+    @property
+    def title(self) -> str:
+        if self._close_only:
+            #: Title of the import wizard dialog when no valid content can be imported
+            return QCoreApplication.translate("ImportWizardDialog", "Import Error")
+        #: Title of the import wizard dialog
+        return QCoreApplication.translate("ImportWizardDialog", "Confirm Import")
 
     def state_for(self, current_index: int) -> FooterState:
-        step = self._steps[current_index]
         is_last = current_index == len(self._steps) - 1
 
-        if is_last and not self._has_valid_content and step is StepKind.ERRORS:
+        if self._close_only:
             #: Primary button when the wizard only lists unreadable documents
             label = QCoreApplication.translate("ImportWizardDialog", "Close")
             action = PrimaryAction.REJECT
