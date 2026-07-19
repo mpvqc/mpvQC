@@ -27,6 +27,10 @@ SPDX-License-Identifier: MIT
 - Follow clean code principles.
 - Don't use structural comments like `# region` or `# ---`.
 - Avoid comments unless absolutely necessary.
+- Run background work through `SerialJobRunner` from `mpvqc/jobs.py`.
+  Don't use `QThreadPool`, locks, or private queued signals in services directly.
+- Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix.
+  Helpers that aren't in `injections.py` live at the top level of `mpvqc/`.
 - Use the `signal name(value: type)` notation instead of the old `signal name(type value)` notation in QML signals.
 - Import `QtQuick.Controls` for controls.
   - Never import `QtQuick.Controls.Material` unnamespaced: it resolves controls to Material directly
@@ -57,6 +61,12 @@ SPDX-License-Identifier: MIT
 
 - Prefer data-driven Python tests.
 - Prefer testing important areas in the code. Don't go for coverage only.
+- Swap background execution in Python tests by assigning `service._jobs = SerialJobRunner(manual_executor)`;
+  the `manual_executor` fixture lives in `test/conftest.py`.
+- Don't assert inside Qt slots or `on_result` callbacks: PySide swallows exceptions at the emit boundary.
+  Record values and assert after the drain.
+- Don't wait for thread pool work with `QSignalSpy.wait()`: it holds the GIL and the pool job never runs.
+  Use `QThreadPool.waitForDone()` plus `processEvents()`.
 - Prefer data-driven QML tests and construct the object being tested using `makeControl` / `makeSpy` and `createTemporaryObject`.
 - Ensure tests pass on Linux and Windows
 - Don't use hard timeouts in QML tests.
@@ -64,5 +74,6 @@ SPDX-License-Identifier: MIT
 ## Committing
 
 - Run all pre-commit hooks via `just fmt` to confirm everything's fine before commiting.
+- `just fmt` checks tracked files only. `git add` new files before trusting it.
 - Verify the documentation is up to date before commiting.
 - Use the [Conventional Commits](https://www.conventionalcommits.org/) format.
