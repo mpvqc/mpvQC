@@ -11,7 +11,6 @@
 from __future__ import annotations
 
 from .native import (
-    dwm_flush,
     find_auto_hide_app_bar_edge,
     get_dpi_for_window,
     get_monitor_info_for_rect,
@@ -20,7 +19,6 @@ from .native import (
     get_window_rect,
     is_app_bar_auto_hide,
     is_maximized,
-    mark_fullscreen_window,
 )
 
 
@@ -95,14 +93,3 @@ def reserve_auto_hide_taskbar_strip(
             return left, top, right, bottom - strip
         case _:
             return client_rect
-
-
-def set_shell_fullscreen_marker(hwnd: int, *, fullscreen: bool) -> None:
-    """The shell hides the taskbar only for windows that match the monitor rect
-    exactly. Our fullscreen window is larger by the frame border on purpose, so
-    the shell must be told explicitly."""
-    mark_fullscreen_window(hwnd, fullscreen=fullscreen)
-
-
-def wait_for_next_composition() -> None:
-    dwm_flush()
