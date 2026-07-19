@@ -28,9 +28,10 @@ from .view_action import AnimatedSelection, NoViewAction, QuickSelection, QuickS
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from mpvqc.datamodels import Comment, SearchResult
+    from mpvqc.datamodels import Comment
 
     from .commands import Command
+    from .search import SearchOutcome
     from .view_action import ViewAction
 
 
@@ -68,7 +69,7 @@ class CommentsService(QObject):
     def comment_at(self, row: int) -> Comment:
         return self._store.item(row).comment
 
-    def search(self, query: str, *, include_current_row: bool, top_down: bool) -> SearchResult:
+    def search(self, query: str, *, include_current_row: bool, top_down: bool) -> SearchOutcome:
         return self._search.search(query, include_current_row=include_current_row, top_down=top_down)
 
     def add_row(self, time: int, comment_type: str) -> None:
