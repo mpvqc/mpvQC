@@ -40,8 +40,8 @@ init ARGS='--group dev':
     fi
 
 [group('dev')]
-format:
-    uv run prek --config .config/prek.toml run --all-files
+format *ARGS:
+    uv run prek --config .config/prek.toml run --all-files {{ ARGS }}
 
 [group('dev')]
 update-python-dependencies:
