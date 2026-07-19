@@ -32,6 +32,7 @@ from mpvqc.services.platform.fullscreen import QtFullscreenHandler
 from mpvqc.services.platform.window_buttons import StaticWindowButtons
 from mpvqc.services.platform.window_configuration import NoWindowConfigurator
 from mpvqc.services.platform.window_reveal import NoWindowRevealer
+from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 
@@ -167,8 +168,8 @@ class VideoResizeServiceOverride(VideoResizeService):
 
 class VersionCheckerServiceOverride(VersionCheckerService):
     @override
-    def check_for_new_version(self) -> tuple[str, str]:
-        return "stub-title", "stub-text"
+    def check_for_new_version(self) -> CheckOutcome:
+        return UpToDate()
 
 
 class DesktopServiceOverride(DesktopService):
