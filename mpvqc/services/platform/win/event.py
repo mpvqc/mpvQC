@@ -119,7 +119,7 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
     def nativeEventFilter(
         self, _: PySide6.QtCore.QByteArray | bytes | bytearray | memoryview, message: int
     ) -> tuple[bool, int]:
-        msg = read_window_message(int(message))
+        msg = read_window_message(message)
 
         hwnd = msg.hwnd
 

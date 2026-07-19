@@ -48,7 +48,7 @@ class _RevealOnFirstFrame:
         if window in self._pending:
             return
 
-        hwnd = int(window.winId())
+        hwnd = window.winId()
         set_window_cloaked(hwnd, cloaked=True)
 
         gate = _FirstFrameGate(partial(self._reveal, window))
@@ -106,13 +106,13 @@ class _TransientConcealment(QObject):
             # A transient window shown without content is being torn down. Do
             # not arm a reveal: a late frame from the emptied window would
             # uncloak it and flash white.
-            set_window_cloaked(int(window.winId()), cloaked=True)
+            set_window_cloaked(window.winId(), cloaked=True)
 
     def _track(self, window: QQuickWindow) -> None:
         if window in self._hwnds:
             return
 
-        self._hwnds[window] = int(window.winId())
+        self._hwnds[window] = window.winId()
         window.visibleChanged.connect(self._conceal_on_hide)
         window.contentItem().childrenChanged.connect(self._conceal_on_content_teardown)
         # The destroyed signal passes a new Python wrapper typed as plain
@@ -177,7 +177,7 @@ class WindowRevealFilter(QObject):
         self._transients = _TransientConcealment(self._reveal)
 
     def install(self, app: QGuiApplication, main_window: QWindow) -> None:
-        self._main_hwnd = int(main_window.winId())
+        self._main_hwnd = main_window.winId()
         # An application-wide filter runs for every event of every object.
         # Qt has no signal for "a window was created", so this is the only
         # reliable way to catch each new window's first Show.
@@ -193,4 +193,4 @@ class WindowRevealFilter(QObject):
         return False
 
     def _is_main_window(self, window: QQuickWindow) -> bool:
-        return self._main_hwnd is not None and int(window.winId()) == self._main_hwnd
+        return self._main_hwnd is not None and window.winId() == self._main_hwnd

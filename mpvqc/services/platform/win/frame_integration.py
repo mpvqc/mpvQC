@@ -60,11 +60,11 @@ def _sync_qt_frame_bookkeeping(hwnd: int) -> None:
     # Qt Quick scene resizes only on a real size change. Without this, the first
     # scene keeps the stale margins even though the QWindow property already
     # holds the new value. Resizing by one pixel and back forces both to update.
-    rect = get_window_rect(int(hwnd))
+    rect = get_window_rect(hwnd)
     if rect is None:
         return
 
     left, top, right, bottom = rect
     width, height = right - left, bottom - top
-    resize_window(int(hwnd), width, height + 1)
-    resize_window(int(hwnd), width, height)
+    resize_window(hwnd, width, height + 1)
+    resize_window(hwnd, width, height)

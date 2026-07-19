@@ -135,7 +135,7 @@ def test_enter_from_maximized_wraps_move_in_transitions(fake, handler, window):
 
     handler.enter(window)
 
-    assert fake.maximized is False
+    assert not fake.maximized
     assert fake.rect == OVERHANG_RECT
     disabled = fake.calls.index(("transitions", False))
     moved = fake.calls.index(("rect", OVERHANG_RECT))
@@ -159,7 +159,7 @@ def test_exit_restores_normal_placement(fake, handler, window):
     handler.exit(window)
 
     assert fake.rect == NORMAL_RECT
-    assert fake.maximized is False
+    assert not fake.maximized
     assert ("marker", False) in fake.calls
     assert ("corners", True) in fake.calls
     assert ("border", True) in fake.calls
@@ -174,7 +174,7 @@ def test_exit_to_maximized_repins_normal_geometry(fake, handler, window):
 
     handler.exit(window)
 
-    assert fake.maximized is True
+    assert fake.maximized
     assert fake.placement.normal_rect == NORMAL_RECT
     disabled = fake.calls.index(("transitions", False))
     maximize = fake.calls.index(("maximize",))
@@ -205,12 +205,12 @@ def test_enter_with_abandoned_session_saves_fresh_placement(fake, handler, windo
 
     handler.enter(window)
 
-    assert fake.maximized is False
+    assert not fake.maximized
     assert fake.rect == OVERHANG_RECT
 
     handler.exit(window)
 
-    assert fake.maximized is True
+    assert fake.maximized
     assert fake.placement.normal_rect == NORMAL_RECT
 
 

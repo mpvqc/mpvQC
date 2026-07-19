@@ -54,7 +54,7 @@ class WindowsFullscreenHandler:
         self._entering = False
 
     def enter(self, window: QWindow) -> None:
-        hwnd = int(window.winId())
+        hwnd = window.winId()
 
         monitor_rect = get_monitor_rect(hwnd)
         if monitor_rect is None:
@@ -104,7 +104,7 @@ class WindowsFullscreenHandler:
             return
 
         self._saved_placement = None
-        hwnd = int(window.winId())
+        hwnd = window.winId()
 
         self._restore_frame_chrome(hwnd)
 
@@ -136,7 +136,7 @@ class WindowsFullscreenHandler:
 
         # Windows moves a minimized window off-screen; that does not end the
         # fullscreen session.
-        hwnd = int(window.winId())
+        hwnd = window.winId()
         if is_fullscreen(hwnd) or is_minimized(hwnd):
             return True
 
