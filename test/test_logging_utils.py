@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import logging
+import sys
 from typing import NamedTuple
 
 import pytest
@@ -88,6 +89,21 @@ def test_formatter_color(case: FormatterColorCase):
     formatter = MpvqcFormatter(colored=case.colored)
     record = logging.LogRecord("mpvqc", logging.INFO, "path", 1, "the message", None, None)
     assert ("\033[" in formatter.format(record)) == case.expect_ansi
+
+
+def test_formatter_appends_exception_traceback():
+    formatter = MpvqcFormatter(colored=False)
+    try:
+        msg = "boom"
+        raise ValueError(msg)
+    except ValueError:
+        record = logging.LogRecord("mpvqc", logging.ERROR, "path", 1, "the message", None, sys.exc_info())
+
+    formatted = formatter.format(record)
+
+    assert "the message" in formatted
+    assert "Traceback" in formatted
+    assert "ValueError: boom" in formatted
 
 
 @pytest.fixture

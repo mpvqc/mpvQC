@@ -82,12 +82,19 @@ class MpvqcFormatter(logging.Formatter):
                 f"{color}{record.getMessage()}{reset}"
             )
 
-        return (
+        message = (
             f"{color}{timestamp}{reset} | "
             f"{color}{level}{reset} | "
             f"{cyan}{record.name}:{record.lineno}{reset} | "
             f"{color}{record.getMessage()}{reset}"
         )
+
+        if record.exc_info and not record.exc_text:
+            record.exc_text = self.formatException(record.exc_info)
+        if record.exc_text:
+            message = f"{message}\n{record.exc_text}"
+
+        return message
 
 
 def setup_mpvqc_logging() -> None:
