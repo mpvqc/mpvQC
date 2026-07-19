@@ -138,7 +138,7 @@ files = [
     "mpvqc/dialogs/export_settings.py",
     "mpvqc/dialogs/import_settings.py",
     "mpvqc/dialogs/import_wizard/__init__.py",
-    "mpvqc/dialogs/import_wizard/footer_policy.py",
+    "mpvqc/dialogs/import_wizard/dialog_policy.py",
     "mpvqc/dialogs/import_wizard/steps/__init__.py",
     "mpvqc/dialogs/import_wizard/steps/errors.py",
     "mpvqc/dialogs/import_wizard/steps/session.py",

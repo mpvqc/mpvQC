@@ -7,13 +7,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, assert_never
 
 import inject
-from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.enums import StepKind
 from mpvqc.services import ImporterService
 
-from .footer_policy import PrimaryAction, WizardFooterPolicy
+from .dialog_policy import PrimaryAction, WizardDialogPolicy
 from .steps import (
     MpvqcImportWizardErrorsStepViewModel,
     MpvqcImportWizardSessionStepViewModel,
@@ -24,7 +23,7 @@ from .steps import (
     build_subtitles_step,
     build_video_step,
 )
-from .wizard_helpers import build_finished_plan, compute_steps, has_valid_content
+from .wizard_helpers import build_finished_plan, compute_steps
 
 if TYPE_CHECKING:
     from mpvqc.services.importer import UnfinishedPlan
@@ -49,7 +48,7 @@ class MpvqcImportWizardViewModel(QObject):
         self._current_step_index = 0
 
         self._steps = compute_steps(unfinished_plan)
-        self._footer = WizardFooterPolicy(unfinished_plan, self._steps)
+        self._policy = WizardDialogPolicy(unfinished_plan, self._steps)
 
         self._errors_step = build_errors_step(self, unfinished_plan.errors)
         self._session_step = build_session_step(self, unfinished_plan.session)
@@ -76,23 +75,19 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Property(str, constant=True, final=True)
     def title(self) -> str:
-        if self._steps == (StepKind.ERRORS,) and not has_valid_content(self._unfinished_plan):
-            #: Title of the import wizard dialog when no valid content can be imported
-            return QCoreApplication.translate("ImportWizardDialog", "Import Error")
-        #: Title of the import wizard dialog
-        return QCoreApplication.translate("ImportWizardDialog", "Confirm Import")
+        return self._policy.title
 
     @Property(str, notify=currentStepChanged, final=True)
     def primaryLabel(self) -> str:
-        return self._footer.state_for(self._current_step_index).primary_label
+        return self._policy.state_for(self._current_step_index).primary_label
 
     @Property(bool, notify=currentStepChanged, final=True)
     def showBack(self) -> bool:
-        return self._footer.state_for(self._current_step_index).show_back
+        return self._policy.state_for(self._current_step_index).show_back
 
     @Property(bool, notify=currentStepChanged, final=True)
     def showCancel(self) -> bool:
-        return self._footer.state_for(self._current_step_index).show_cancel
+        return self._policy.state_for(self._current_step_index).show_cancel
 
     @Property(MpvqcImportWizardErrorsStepViewModel, constant=True, final=True)
     def errorsStepViewModel(self) -> MpvqcImportWizardErrorsStepViewModel | None:
@@ -124,7 +119,7 @@ class MpvqcImportWizardViewModel(QObject):
 
     @Slot()
     def primaryClicked(self) -> None:
-        action = self._footer.state_for(self._current_step_index).primary_action
+        action = self._policy.state_for(self._current_step_index).primary_action
         match action:
             case PrimaryAction.ADVANCE:
                 self.next()

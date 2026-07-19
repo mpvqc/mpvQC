@@ -11,7 +11,7 @@ from typing import NamedTuple
 import pytest
 
 from mpvqc.datamodels import Comment, DocumentRejectionReason, RejectedDocument, VideoSource
-from mpvqc.dialogs.import_wizard import FooterState, PrimaryAction, WizardFooterPolicy
+from mpvqc.dialogs.import_wizard import FooterState, PrimaryAction, WizardDialogPolicy
 from mpvqc.enums import StepKind
 from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 
@@ -139,5 +139,46 @@ CASES = [
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c.name)
 def test_footer_state(case: FooterCase) -> None:
-    policy = WizardFooterPolicy(case.plan, case.steps)
+    policy = WizardDialogPolicy(case.plan, case.steps)
     assert policy.state_for(case.index) == case.expected
+
+
+class TitleCase(NamedTuple):
+    name: str
+    plan: UnfinishedPlan
+    steps: tuple[StepKind, ...]
+    expected: str
+
+
+TITLE_CASES = [
+    TitleCase(
+        name="errors-only, no content -> close-only -> Import Error",
+        plan=replace(EMPTY, errors=PRESENT_ERRORS),
+        steps=(StepKind.ERRORS,),
+        expected="Import Error",
+    ),
+    TitleCase(
+        name="errors-only, valid content survives -> Confirm Import",
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=video.Load(path=VIDEO_A)),
+        steps=(StepKind.ERRORS,),
+        expected="Confirm Import",
+    ),
+    TitleCase(
+        name="errors+video, no content -> Confirm Import",
+        plan=replace(EMPTY, errors=PRESENT_ERRORS, video=UNRESOLVED_VIDEO),
+        steps=(StepKind.ERRORS, StepKind.VIDEO),
+        expected="Confirm Import",
+    ),
+    TitleCase(
+        name="video-only, no content -> Confirm Import",
+        plan=replace(EMPTY, video=UNRESOLVED_VIDEO),
+        steps=(StepKind.VIDEO,),
+        expected="Confirm Import",
+    ),
+]
+
+
+@pytest.mark.parametrize("case", TITLE_CASES, ids=lambda c: c.name)
+def test_title(case: TitleCase) -> None:
+    policy = WizardDialogPolicy(case.plan, case.steps)
+    assert policy.title == case.expected

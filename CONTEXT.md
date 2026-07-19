@@ -19,3 +19,5 @@ is not listed here.
 - **FinishedPlan**: every Concern resolved. The only input `ImporterService.execute()` accepts.
 - **Wizard step**: one page of the import wizard, one per unresolved Concern, in canonical order: errors, session,
   video, subtitles.
+- **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
+  close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
