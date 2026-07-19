@@ -38,3 +38,31 @@ def test_gnome_parse_button_layout(settings_portal_mock, layout, expected):
     settings_portal_mock.read_one.return_value = layout
 
     assert WindowButtonDetector._read_preference() == expected
+
+
+def test_detect_applies_preference_on_drain(qt_app, settings_portal_mock, manual_executor, make_spy):
+    settings_portal_mock.read_one.return_value = ":close"
+
+    detector = WindowButtonDetector(manual_executor)
+    spy = make_spy(detector.preference_changed)
+
+    detector.detect()
+    assert detector.preference == WindowButtonPreference(True, True, True)
+
+    manual_executor.drain()
+
+    assert detector.preference == WindowButtonPreference(False, False, True)
+    assert spy.count() == 1
+
+
+def test_detect_keeps_default_when_portal_reports_default(qt_app, settings_portal_mock, manual_executor, make_spy):
+    settings_portal_mock.read_one.return_value = None
+
+    detector = WindowButtonDetector(manual_executor)
+    spy = make_spy(detector.preference_changed)
+
+    detector.detect()
+    manual_executor.drain()
+
+    assert detector.preference == WindowButtonPreference(True, True, True)
+    assert spy.count() == 0
