@@ -12,7 +12,6 @@ from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.enums import StepKind
 from mpvqc.services import ImporterService
-from mpvqc.services.importer import FinishedPlan
 
 from .footer_policy import PrimaryAction, WizardFooterPolicy
 from .steps import (
@@ -24,11 +23,8 @@ from .steps import (
     build_session_step,
     build_subtitles_step,
     build_video_step,
-    resolve_session,
-    resolve_subtitles,
-    resolve_video,
 )
-from .wizard_helpers import compute_steps, has_valid_content
+from .wizard_helpers import build_finished_plan, compute_steps, has_valid_content
 
 if TYPE_CHECKING:
     from mpvqc.services.importer import UnfinishedPlan
@@ -145,10 +141,5 @@ class MpvqcImportWizardViewModel(QObject):
         self.rejectRequested.emit()
 
     def _commit(self) -> None:
-        plan = FinishedPlan(
-            comments=self._unfinished_plan.comments,
-            session=resolve_session(self._session_step, self._unfinished_plan.session),
-            video=resolve_video(self._video_step, self._unfinished_plan.video),
-            subtitles=resolve_subtitles(self._subtitles_step, self._unfinished_plan.subtitles),
-        )
+        plan = build_finished_plan(self._unfinished_plan, self._session_step, self._video_step, self._subtitles_step)
         self._importer.execute(plan)
