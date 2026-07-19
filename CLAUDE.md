@@ -63,9 +63,10 @@ SPDX-License-Identifier: MIT
 - Prefer testing important areas in the code. Don't go for coverage only.
 - Swap background execution in Python tests by passing `manual_executor` to the service constructor;
   the `manual_executor` fixture lives in `test/conftest.py`.
+- Spy on signals with the `make_spy` fixture instead of raw `QSignalSpy`.
 - Don't assert inside Qt slots or `on_result` callbacks: PySide swallows exceptions at the emit boundary.
   Record values and assert after the drain.
-- Don't wait for thread pool work with `QSignalSpy.wait()`: it holds the GIL and the pool job never runs.
+- Don't wait for thread pool work with a spy's `wait()`: it holds the GIL and the pool job never runs.
   Use `QThreadPool.waitForDone()` plus `processEvents()`.
 - Prefer data-driven QML tests and construct the object being tested using `makeControl` / `makeSpy` and `createTemporaryObject`.
 - Ensure tests pass on Linux and Windows
