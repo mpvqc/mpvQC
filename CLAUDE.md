@@ -29,6 +29,8 @@ SPDX-License-Identifier: MIT
 - Avoid comments unless absolutely necessary.
 - Run background work through `SerialJobRunner` from `mpvqc/jobs.py`.
   Don't use `QThreadPool`, locks, or private queued signals in services directly.
+- Prefer constructs the type checker can verify: use closures or lambdas instead of `functools.partial`;
+  pyrefly doesn't check the arguments bound by a partial.
 - Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix.
   Helpers that aren't in `injections.py` live at the top level of `mpvqc/`.
 - Use the `signal name(value: type)` notation instead of the old `signal name(type value)` notation in QML signals.
@@ -74,6 +76,7 @@ SPDX-License-Identifier: MIT
 
 ## Committing
 
+- Never commit before the user has reviewed the changes.
 - Run all pre-commit hooks via `just fmt` to confirm everything's fine before commiting.
 - `just fmt` checks tracked files only. `git add` new files before trusting it.
 - Verify the documentation is up to date before commiting.

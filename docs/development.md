@@ -65,6 +65,13 @@ When iterating on test code only, `just test-qml` and `just test-python` run dir
 | `build-aux/` | Generator scripts: `pyproject.toml` files-list updater, qrc generator, lupdate project file, Wayland symbol-name regenerator |
 | `docs/`      | These docs                                                                                                                   |
 
+## Conventions
+
+- Prefer constructs the tooling can verify. When two forms are equivalent, pick the one the type checker
+  and linters actually check. For example, use a closure or lambda instead of `functools.partial`:
+  pyrefly validates the call inside a closure, but not the arguments bound by a partial, so a misspelled
+  or missing argument only surfaces at runtime.
+
 ## See also
 
 - [architecture.md](architecture.md) — high-level overview of how Python, QML, and the test harness fit together
