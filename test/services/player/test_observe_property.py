@@ -229,8 +229,8 @@ def test_video_dimensions_emitted_again_after_new_video(player_service, make_spy
     assert spy.at(0, 1) == case.height
 
 
-def test_property_updates_apply_after_event_loop_hop(qt_app, player_service):
-    player_service._property_updated.emit("path", "/movies/a.mkv")
+def test_property_updates_hop_through_the_marshal(qt_app, player_service):
+    player_service._post_property_update("path", "/movies/a.mkv")
 
     assert not player_service.path
     qt_app.processEvents()
