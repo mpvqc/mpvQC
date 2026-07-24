@@ -42,7 +42,7 @@ class ArgumentValidator:
 
 class ProjectFileUpdater:
     _FILENAME = "pyproject.toml"
-    _EXTENSIONS_IGNORED = frozenset({".pyc", ".qm"})
+    _EXTENSIONS_IGNORED = frozenset({".pyc", ".qm", ".rcc"})
     _NAMES_IGNORED = frozenset({"rc_project.py"})
 
     def __init__(self, root_dir: Path) -> None:
