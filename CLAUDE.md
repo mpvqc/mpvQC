@@ -85,3 +85,19 @@ SPDX-License-Identifier: MIT
 - `just fmt` checks tracked files only. `git add` new files before trusting it.
 - Verify the documentation is up to date before committing.
 - Use the [Conventional Commits](https://www.conventionalcommits.org/) format.
+
+## Agent skills
+
+### Issue tracker
+
+User reports and triage live on GitHub Issues; larger chunks of work are planned as local markdown under
+`.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See
+`docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
