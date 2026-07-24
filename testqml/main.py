@@ -7,7 +7,7 @@ import os
 import pathlib
 import sys
 
-from PySide6.QtCore import QCoreApplication, QObject, Qt, Slot
+from PySide6.QtCore import QCoreApplication, QObject, QResource, Qt, Slot
 from PySide6.QtQml import QQmlEngine
 from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
 
@@ -17,9 +17,11 @@ from testqml.injections import TEMP_ROOT, configure_injections
 
 
 class MpvqcTestSetup(QObject):
+    _resources_registered = False
+
     @Slot(QQmlEngine)
     def qmlEngineAvailable(self, engine: QQmlEngine) -> None:
-        import testqml.rc_project  # noqa: F401
+        self._register_resources()
 
         startup.configure_qt_application_data()
         startup.configure_qt_settings()
@@ -29,6 +31,16 @@ class MpvqcTestSetup(QObject):
         startup.import_mpvqc_bindings()
 
         engine.rootContext().setContextProperty("mpvqcTestMode", True)
+
+    @classmethod
+    def _register_resources(cls) -> None:
+        if cls._resources_registered:
+            return
+        resources = pathlib.Path(__file__).resolve().parent / "project.rcc"
+        if not QResource.registerResource(str(resources)):
+            msg = f"Can not register resource file '{resources}'"
+            raise FileNotFoundError(msg)
+        cls._resources_registered = True
 
 
 def parse_cli() -> argparse.Namespace:

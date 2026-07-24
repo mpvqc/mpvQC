@@ -4,12 +4,12 @@
 
 from collections import deque
 from collections.abc import Callable, Generator
-from importlib.util import find_spec
+from pathlib import Path
 from typing import Any
 
 import inject
 import pytest
-from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QObject, Signal, SignalInstance
+from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QObject, QResource, Signal, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
@@ -181,13 +181,13 @@ def qt_app() -> Generator[MpvqcApplication, Any]:
 
 @pytest.fixture(scope="session", autouse=True)
 def check_generated_resources():
-    if find_spec("test.rc_project") is None:
+    resources = Path(__file__).resolve().parent / "project.rcc"
+    if not QResource.registerResource(str(resources)):
         message = (
-            "Can not find resource module 'test.rc_project'\n"
+            f"Can not register resource file '{resources}'\n"
             "To execute individual tests, please run 'just test-python' once before"
         )
         raise FileNotFoundError(message)
-    import test.rc_project  # noqa: F401
 
 
 @pytest.fixture(scope="session")

@@ -113,12 +113,13 @@ shape that fits its scope.
 
 ## Build & resources
 
-QML, icons, fonts, default configs, and translations are bundled into a single Python file via Qt's resource compiler:
+QML, icons, fonts, default configs, and translations are bundled into a single binary file via Qt's resource compiler:
 
-- `just build-develop` runs Qt's resource compiler to produce a generated Python module (`rc_project.py`) at the repo
-  root that bundles every asset behind `qrc:/...` URLs. The application imports this module on startup. The file is
-  gitignored. It is a build artifact and can be regenerated from sources.
-- `just prepare-tests` rebuilds the bundle and stages it for the test harnesses, so they can import it the same way the
+- `just build-develop` runs `pyside6-rcc --binary` to produce a resource bundle (`project.rcc`) at the repo root that
+  packs every asset behind `qrc:/...` URLs. On startup, `main.py` registers the file with
+  `QResource.registerResource()` before anything reads from `qrc:/`. The file is gitignored. It is a build artifact and
+  can be regenerated from sources.
+- `just prepare-tests` rebuilds the bundle and stages copies for the test harnesses, which register it the same way the
   application does.
 - Release builds pre-compile QML files to bytecode for faster startup. Development and test runs load plain QML
   directly.

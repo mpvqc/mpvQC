@@ -80,12 +80,13 @@ set-build-info:
     mkdir -p build/release
     cp -r mpvqc build/release
     cp main.py build/release
-    cp rc_project.py build/release
+    cp project.rcc build/release
 
 # Build and compile resources into source directory
 [group('build')]
 @build-develop: _update_pyproject_file
     uv run pyside6-project build
+    uv run pyside6-rcc --binary project.qrc -o project.rcc
     grep -qxF 'depends QtQml.Models' io/github/mpvqc/mpvQC/Python/qmldir || echo 'depends QtQml.Models' >> io/github/mpvqc/mpvQC/Python/qmldir
 
 # Remove ALL generated files
@@ -93,7 +94,7 @@ set-build-info:
 @clean:
     find i18n -name "*.qm" -type f -delete
     find qt/qml -name "*.qmlc" -type f -delete
-    rm -rf build io test/rc_project.py testqml/rc_project.py rc_project.py project.json project.qrc
+    rm -rf build io test/project.rcc testqml/project.rcc project.rcc test/rc_project.py testqml/rc_project.py rc_project.py project.json project.qrc
 
 # Build release artifact (⚠️ modifies working tree)
 [group('ci')]
@@ -120,8 +121,8 @@ build-release:
 [group('test')]
 prepare-tests: build-develop
     rm -f test/rc_project.py testqml/rc_project.py
-    cp rc_project.py test/rc_project.py
-    cp rc_project.py testqml/rc_project.py
+    cp project.rcc test/project.rcc
+    cp project.rcc testqml/project.rcc
 
 # Run Python and QML tests
 [group('test')]
@@ -158,8 +159,8 @@ test-qml-debug TARGET:
 
 @_prepare-tests: build-develop
     rm -f test/rc_project.py testqml/rc_project.py
-    cp rc_project.py test/rc_project.py
-    cp rc_project.py testqml/rc_project.py
+    cp project.rcc test/project.rcc
+    cp project.rcc testqml/project.rcc
 
 @_update_pyproject_file: _generate-qrc-file
     uv run python build-aux/update_pyproject_file.py \
@@ -169,8 +170,7 @@ test-qml-debug TARGET:
         --include-directory mpvqc \
         --include-directory testqml \
         --include-directory i18n \
-        --include-file main.py \
-        --include-file project.qrc
+        --include-file main.py
 
 _generate-qrc-file:
     #!/usr/bin/env bash

@@ -26,7 +26,7 @@ Clone the repository, then from the repo root:
 
 ```shell
 just init           # install dependencies and configure dev tooling
-just build-develop  # compile QML, data, and translations into rc_project.py
+just build-develop  # compile QML, data, and translations into project.rcc
 uv run main.py      # launch the application
 ```
 

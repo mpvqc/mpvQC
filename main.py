@@ -12,10 +12,22 @@ def main() -> Never:
     if sys.platform == "win32":
         _add_directory_to_path()
 
-    import rc_project  # noqa: F401
+    _register_resources()
+
     from mpvqc.startup import perform_startup
 
     perform_startup()
+
+
+def _register_resources() -> None:
+    from pathlib import Path
+
+    from PySide6.QtCore import QResource
+
+    resources = Path(__file__).resolve().parent / "project.rcc"
+    if not QResource.registerResource(str(resources)):
+        msg = f"Can not register resource file '{resources}'"
+        raise FileNotFoundError(msg)
 
 
 def _add_directory_to_path() -> None:

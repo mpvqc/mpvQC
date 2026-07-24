@@ -234,6 +234,7 @@ jobs:
             --include-data-files=.venv/Lib/site-packages/PySide6/translations/qtbase_pt_BR.qm=PySide6/translations/ \
             --include-data-files=LICENSES/*.txt=LICENSES/ \
             --include-data-files=NOTICE.txt=NOTICE.txt \
+            --include-data-files=project.rcc=project.rcc \
             --include-qt-plugins=qml,platforms \
             --include-windows-runtime-dlls=yes \
             --mode=onefile \
