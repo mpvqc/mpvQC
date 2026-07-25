@@ -6,8 +6,9 @@ SPDX-License-Identifier: MIT
 
 # Domain glossary
 
-Terms the code uses for the import pipeline. Keep entries short. Add a term when you name a module after a concept that
-is not listed here.
+Terms the code uses. Keep entries short. Add a term when you name a module after a concept that is not listed here.
+
+## Import pipeline
 
 - **Concern**: one dimension of an import that may need user input (`errors`, `session`, `video`, `subtitles`). Each is
   a tagged union with resolved variants (such as `Merge`, `Load`, `Skip`) and an `Unresolved` variant carrying the data
@@ -21,3 +22,12 @@ is not listed here.
   video, subtitles.
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
+
+## Build origin
+
+- **Channel**: the store an official build ships through, stamped into build-info at build time (`github-releases`,
+  `mpvqc-flatpak`). Empty in git and in every build the release pipelines did not stamp. A channel names a store,
+  never a packaging format ("flatpak" is not a channel; Flathub would be a different channel).
+- **Build origin**: whether this binary came from a project release pipeline: `Official(channel)` or `Unofficial`.
+  Declared by the pipeline, never inferred at runtime; the Flatpak app ID can veto an official claim but never grant
+  one.
