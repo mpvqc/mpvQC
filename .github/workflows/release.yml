@@ -147,6 +147,8 @@ jobs:
         run: just init '--no-group dev'
       - name: Build
         run: just build-release
+        env:
+          MPVQC_BUILD_CHANNEL: ${{ github.repository == 'mpvqc/mpvQC' && github.ref_type == 'tag' && 'github-releases' || '' }}
       - name: Set Artifact Name
         id: artifact_name
         run: |

@@ -10,6 +10,7 @@ domain = "mpvqc.github.io"
 version = ">>>tag<<<"             # CI replaces this
 commit = ">>>commit-id<<<"        # CI replaces this
 is_release = false                # CI replaces this
+channel = ""                      # CI replaces this. Empty means unofficial
 
 [[dependency]]
 name = "inject"

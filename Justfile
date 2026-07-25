@@ -7,6 +7,7 @@ set lazy := true
 
 GIT_TAG := `git describe --tags --abbrev=0`
 GIT_COMMIT := `git rev-parse HEAD | head -c 8`
+GIT_IS_RELEASE := `git describe --exact-match HEAD > /dev/null 2>&1 && echo true || echo false`
 
 alias fmt := format
 
@@ -56,21 +57,10 @@ update-git-hook-dependencies:
 # Stamp version info into data/build-info.toml
 [group('build')]
 set-build-info:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if git describe --exact-match HEAD 2>/dev/null; then
-        IS_RELEASE="true"
-    else
-        IS_RELEASE="false"
-    fi
-    if [ -n "${FLATPAK_ID:-}" ]; then
-        VERSION="{{ GIT_TAG }}-flatpak"
-    else
-        VERSION="{{ GIT_TAG }}"
-    fi
-    sed -i "1,13s/^version = .*/version = \"$VERSION\"/" data/build-info.toml
-    sed -i "1,13s/^commit = .*/commit = \"{{ GIT_COMMIT }}\"/" data/build-info.toml
-    sed -i "1,13s/^is_release = .*/is_release = $IS_RELEASE/" data/build-info.toml
+    uv run python build-aux/set_build_info.py \
+        --tag '{{ GIT_TAG }}' \
+        --commit '{{ GIT_COMMIT }}' \
+        --is-release '{{ GIT_IS_RELEASE }}'
     cat data/build-info.toml
 
 # Build full project into build/release
