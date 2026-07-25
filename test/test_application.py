@@ -6,6 +6,8 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
+from PySide6.QtCore import QCoreApplication
+from PySide6.QtQuick import QQuickWindow
 
 from mpvqc.services import (
     FileStartupService,
@@ -67,6 +69,18 @@ def test_language_change_triggers_retranslation(qt_app, internationalization_ser
     settings_service.language_changed.emit("he-IL")
 
     assert internationalization_service_mock.retranslate.call_count == 2
+
+
+def test_first_frame_rendered_emitted_once_despite_multiple_frames(qt_app, make_spy):
+    spy = make_spy(qt_app.first_frame_rendered)
+    window = QQuickWindow()
+
+    qt_app._announce_first_frame(window)
+    window.frameSwapped.emit()
+    window.frameSwapped.emit()
+    QCoreApplication.processEvents()
+
+    assert spy.count() == 1
 
 
 def test_retranslation_happens_before_engine_language_set(qt_app, internationalization_service_mock):
