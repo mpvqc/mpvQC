@@ -21,6 +21,15 @@ def main() -> None:
     perform_startup(process_started_at=_PROCESS_STARTED_AT)
 
 
+def _add_directory_to_path() -> None:
+    import os
+    import sys
+    from pathlib import Path
+
+    os.environ["PATH"] = str(Path(sys.argv[0]).parent) + os.pathsep + os.environ["PATH"]
+    os.environ["PATH"] = str(Path(__file__).parent) + os.pathsep + os.environ["PATH"]
+
+
 def _register_resources() -> None:
     from pathlib import Path
 
@@ -30,14 +39,6 @@ def _register_resources() -> None:
     if not QResource.registerResource(str(resources)):
         msg = f"Can not register resource file '{resources}'"
         raise FileNotFoundError(msg)
-
-
-def _add_directory_to_path() -> None:
-    import os
-    import sys
-
-    os.environ["PATH"] = os.path.dirname(sys.argv[0]) + os.pathsep + os.environ["PATH"]  # noqa: PTH120
-    os.environ["PATH"] = os.path.dirname(__file__) + os.pathsep + os.environ["PATH"]  # noqa: PTH120
 
 
 if __name__ == "__main__":
