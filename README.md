@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # mpvQC
 
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>

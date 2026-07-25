@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Configuring mpvQC
 
 These environment variables configure mpvQC:

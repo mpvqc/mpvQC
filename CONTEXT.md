@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Domain glossary
 
 Terms the code uses. Keep entries short. Add a term when you name a module after a concept that is not listed here.

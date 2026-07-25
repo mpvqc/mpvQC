@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Development
 
 This guide covers what you need to set up the project, run it locally, and contribute changes. For a high-level tour of

@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Claude Code
 
 ## Project structure

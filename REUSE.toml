@@ -5,40 +5,36 @@
 version = 1
 
 [[annotations]]
-path = ".github/ISSUE_TEMPLATE/**"
+path = "**/*.md"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "mpvQC developers"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = [
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/[QC]_screenshot-qc.txt",
+    ".github/screenshots/**",
+    "build-aux/windows-icon.ico",
+    "build-aux/windows-splash.png",
+    "data/themes.json",
+    "data/config/**",
+    "i18n/**",
+    "testqml/fixtures/**",
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
-path = ".github/[QC]_screenshot-qc.txt"
+path = [
+    ".idea/inspectionProfiles/Project_Default.xml",
+    "docs/document-format/*.json",
+    "uv.lock",
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = ".github/screenshots/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = "build-aux/windows-icon.ico"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = "build-aux/windows-splash.png"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = "data/themes.json"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = "data/fonts/**"
@@ -53,43 +49,7 @@ SPDX-FileCopyrightText = "Google Inc."
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
-path = "data/config/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = "docs/document-format/*.json"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "MIT"
-
-[[annotations]]
-path = "i18n/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
 path = "NOTICE.txt"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "mpvQC developers"
 SPDX-License-Identifier = "Apache-2.0 AND BSD-3-Clause AND GPL-2.0-or-later AND GPL-3.0-or-later AND LGPL-3.0-only AND MIT AND OFL-1.1"
-
-[[annotations]]
-path = "uv.lock"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "MIT"
-
-[[annotations]]
-path = "testqml/fixtures/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = ".idea/inspectionProfiles/Project_Default.xml"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "mpvQC developers"
-SPDX-License-Identifier = "MIT"

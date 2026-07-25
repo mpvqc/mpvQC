@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Declare build origin in the release pipeline instead of detecting it at runtime
 
 Bug reports need to tell official builds (the Windows zip on GitHub Releases, the project's Flatpak remote) apart from
