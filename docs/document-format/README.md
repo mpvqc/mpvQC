@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # mpvQC document format
 
 A structured, versioned file format for QC reports: timestamped comments on a video file. It is designed for tooling

@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Internationalization
 
 Translations live as `.ts` files under `i18n/` (Qt's translation source format). The build pipeline compiles them to

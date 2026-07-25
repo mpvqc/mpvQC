@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Contributing to mpvQC
 
 Thank you for taking the time to contribute! We appreciate any help in improving mpvQC, whether it’s fixing bugs or

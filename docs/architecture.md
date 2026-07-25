@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Architecture
 
 mpvQC is a PySide6 desktop application that follows an MVVM split: QML owns presentation, Python owns logic, and a

@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Issue tracker: GitHub + Local Markdown
 
 This repo uses two trackers:

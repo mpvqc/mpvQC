@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: mpvQC developers
-
-SPDX-License-Identifier: MIT
--->
-
 # Ship Qt resources as a binary .rcc bundle
 
 The standard `pyside6-project` flow compiles `project.qrc` into a generated Python module (`rc_project.py`, ~8.4 MB)
