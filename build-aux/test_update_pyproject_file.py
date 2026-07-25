@@ -5,7 +5,30 @@
 import textwrap
 
 import pytest
-from update_pyproject_file import determine_new_pyproject_lines  # type: ignore[missing-import]
+from update_pyproject_file import ProjectFileUpdater, determine_new_pyproject_lines  # type: ignore[missing-import]
+
+
+@pytest.mark.parametrize(
+    ("filename", "expected_included"),
+    [
+        ("Main.qml", True),
+        ("module.py", True),
+        ("app-icon.svg", True),
+        ("Main.qmlc", False),
+        ("module.pyc", False),
+        ("de-DE.qm", False),
+        ("project.rcc", False),
+        ("rc_project.py", False),
+    ],
+)
+def test_file_eligibility(tmp_path, filename, expected_included):
+    (tmp_path / filename).touch()
+
+    updater = ProjectFileUpdater(tmp_path)
+    updater.add(directories=[tmp_path], files=[])
+    updater.make_files_relative()
+
+    assert (filename in updater.sorted_files_as_str()) == expected_included
 
 
 def test_raises_tool_pyside6_project_missing():

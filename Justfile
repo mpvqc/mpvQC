@@ -84,7 +84,7 @@ set-build-info:
 
 # Build and compile resources into source directory
 [group('build')]
-@build-develop: _update_pyproject_file
+@build-develop: _generate-qrc-file _update_pyproject_file
     uv run pyside6-project build
     uv run pyside6-rcc --binary project.qrc -o project.rcc
     grep -qxF 'depends QtQml.Models' io/github/mpvqc/mpvQC/Python/qmldir || echo 'depends QtQml.Models' >> io/github/mpvqc/mpvQC/Python/qmldir
@@ -162,7 +162,7 @@ test-qml-debug TARGET:
     cp project.rcc test/project.rcc
     cp project.rcc testqml/project.rcc
 
-@_update_pyproject_file: _generate-qrc-file
+@_update_pyproject_file:
     uv run python build-aux/update_pyproject_file.py \
         --relative-to . \
         --include-directory qt/qml \
@@ -203,7 +203,6 @@ _generate-qrc-file:
         --include-directory mpvqc \
         --include-directory i18n \
         --include-file main.py \
-        --include-file project.qrc \
         --out-file project.json
 
 # Update dependency versions in build-info.toml
