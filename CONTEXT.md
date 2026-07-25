@@ -28,6 +28,6 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Channel**: the store an official build ships through, stamped into build-info at build time (`github-releases`,
   `mpvqc-flatpak`). Empty in git and in every build the release pipelines did not stamp. A channel names a store,
   never a packaging format ("flatpak" is not a channel; Flathub would be a different channel).
-- **Build origin**: whether this binary came from a project release pipeline: `Official(channel)` or `Unofficial`.
-  Declared by the pipeline, never inferred at runtime; the Flatpak app ID can veto an official claim but never grant
-  one.
+- **Build origin**: whether this binary came from a project release pipeline: `ChannelRelease(channel)` or
+  `Unofficial`. Declared by the pipeline, never inferred at runtime; the Flatpak app ID can veto an official claim
+  but never grant one.

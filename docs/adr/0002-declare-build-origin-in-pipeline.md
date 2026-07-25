@@ -18,7 +18,7 @@ git and written only by `build-aux/set_build_info.py`, from the `MPVQC_BUILD_CHA
 two workflow steps set the variable: the tag-gated `build_windows` job in `release.yml` (`github-releases`) and the
 main-gated flatter step in the mpvQC-flatpak repository (`mpvqc-flatpak`, carried into the build sandbox via the
 manifest's `secret-env`). At runtime the app treats the channel as an opaque string: a build is official when the
-channel is non-empty and, inside Flatpak, the `/.flatpak-info` app ID matches the app ID in build-info. The ID can
+channel is non-empty and, inside Flatpak, the sandbox's `FLATPAK_ID` matches the app ID in build-info. The ID can
 veto a claim, never grant one.
 
 ## Consequences

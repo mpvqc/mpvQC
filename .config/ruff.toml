@@ -81,6 +81,10 @@ ignore = [
     "SLF",     # Ignore access to private members
 ]
 
+"main.py" = [
+    "T20"      # Allow print for the --version output
+]
+
 "testqml/**" = [
     "T20"         # Allow print statements
 ]
