@@ -148,7 +148,7 @@ jobs:
       - name: Build
         run: just build-release
         env:
-          MPVQC_BUILD_CHANNEL: ${{ github.repository == 'mpvqc/mpvQC' && github.ref_type == 'tag' && 'github-releases' || '' }}
+          MPVQC_BUILD_CHANNEL: ${{ github.repository == 'mpvqc/mpvQC' && github.ref_type == 'tag' && 'mpvqc-github' || '' }}
       - name: Set Artifact Name
         id: artifact_name
         run: |

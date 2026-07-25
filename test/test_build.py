@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.build import ChannelRelease, Unofficial, determine_build_origin
+from mpvqc.build import determine_build_origin
 
 APP_ID = "io.github.mpvqc.mpvQC"
 
@@ -15,31 +15,31 @@ APP_ID = "io.github.mpvqc.mpvQC"
         pytest.param(
             "",
             None,
-            Unofficial(),
+            "unofficial",
             id="empty-channel",
         ),
         pytest.param(
-            "github-releases",
+            "mpvqc-github",
             None,
-            ChannelRelease("github-releases"),
+            "mpvqc-github",
             id="channel-set-outside-flatpak",
         ),
         pytest.param(
             "mpvqc-flatpak",
             APP_ID,
-            ChannelRelease("mpvqc-flatpak"),
+            "mpvqc-flatpak",
             id="channel-set-with-matching-id",
         ),
         pytest.param(
             "mpvqc-flatpak",
             "com.example.Rebuild",
-            Unofficial(),
+            "unofficial",
             id="mismatched-id",
         ),
         pytest.param(
             "mpvqc-flatpak",
             "",
-            Unofficial(),
+            "unofficial",
             id="empty-flatpak-id",
         ),
     ],

@@ -48,7 +48,11 @@ class BuildInfoService:
         return self._build_info.dev_dependencies
 
     @cached_property
-    def combined_version_info(self) -> str:
-        if self.is_release:
-            return f"{self.version} - {self.commit}"
-        return f"dev build - {self.commit}"
+    def version_info(self) -> str:
+        app = self._build_info.application
+        version = app.version if app.is_release else "dev build"
+        return f"{version} ({app.commit}) {app.origin}"
+
+    @cached_property
+    def full_version_info(self) -> str:
+        return f"{self.name} {self.version_info}"

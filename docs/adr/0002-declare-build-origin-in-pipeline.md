@@ -13,13 +13,25 @@ upstream ID (Fedora Flatpaks reuse it, and Flathub derives IDs from the upstream
 self-verification fails too: the verifier ships inside the third-party binary, and a signature over a constant can be
 copied along with it.
 
-So the pipeline declares the origin at build time. `data/build-info.toml` carries a `channel` field that is empty in
-git and written only by `build-aux/set_build_info.py`, from the `MPVQC_BUILD_CHANNEL` environment variable. Exactly
-two workflow steps set the variable: the tag-gated `build_windows` job in `release.yml` (`github-releases`) and the
+So the pipeline declares the origin at build time. `data/build-info.toml` carries a `channel` field that is empty in git
+and written only by `build-aux/set_build_info.py`, from the `MPVQC_BUILD_CHANNEL` environment variable. Exactly two
+workflow steps set the variable: the tag-gated `build_windows` job in `release.yml` (`mpvqc-github`) and the
 main-gated flatter step in the mpvQC-flatpak repository (`mpvqc-flatpak`, carried into the build sandbox via the
-manifest's `secret-env`). At runtime the app treats the channel as an opaque string: a build is official when the
-channel is non-empty and, inside Flatpak, the sandbox's `FLATPAK_ID` matches the app ID in build-info. The ID can
-veto a claim, never grant one.
+manifest's `secret-env`). At runtime the app treats the channel as an opaque string: a build reports its channel when
+the channel is non-empty and, inside Flatpak, the sandbox's `FLATPAK_ID` matches the app ID in build-info; otherwise it
+reports `unofficial`. The ID can veto a claim, never grant one.
+
+## Official channels
+
+Two official channels exist, and only the project's pipelines may stamp them:
+
+- `mpvqc-github`: used in our windows release pipeline.
+- `mpvqc-flatpak`: used in our flatpak release pipeline.
+
+Every unstamped build carries an empty channel and reports `unofficial`. Packagers may stamp a channel of their own,
+and we encourage it: a build that names its channel is easier to triage. The official channel names are reserved for
+the project's release pipelines and must not be stamped into any other build. Maintainers may refuse to investigate a
+bug that does not reproduce in a build from an official channel.
 
 ## Consequences
 
