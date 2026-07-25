@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-from typing import Never
+import time
+
+_PROCESS_STARTED_AT = time.perf_counter()
 
 
-def main() -> Never:
+def main() -> None:
     import sys
 
     if sys.platform == "win32":
@@ -16,7 +18,7 @@ def main() -> Never:
 
     from mpvqc.startup import perform_startup
 
-    perform_startup()
+    perform_startup(process_started_at=_PROCESS_STARTED_AT)
 
 
 def _register_resources() -> None:

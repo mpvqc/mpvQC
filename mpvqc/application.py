@@ -4,16 +4,14 @@
 
 from __future__ import annotations
 
-import os
 import sys
-import tempfile
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import QUrl, Slot
-from PySide6.QtGui import QGuiApplication, QIcon, QWindow
+from PySide6.QtCore import Qt, QUrl, Signal, Slot
+from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtQuick import QQuickWindow
 
 from mpvqc.close_event_filter import CloseEventFilter
 from mpvqc.services import (
@@ -38,6 +36,9 @@ class MpvqcApplication(QGuiApplication):
     _main_window = inject.attr(MainWindowService)
     _platform = inject.attr(PlatformService)
     _settings = inject.attr(SettingsService)
+
+    about_to_show = Signal()
+    first_frame_rendered = Signal()
 
     def __init__(self, arguments: Sequence[str]) -> None:
         super().__init__(arguments)
@@ -89,22 +90,20 @@ class MpvqcApplication(QGuiApplication):
             sys.exit(-1)
 
         root_window = root_objects[0]
-        if not isinstance(root_window, QWindow):
+        if not isinstance(root_window, QQuickWindow):
             sys.exit(-1)
 
         self._main_window.initialize(root_window)
         self._main_window.install_event_filter(self._close_event_filter)
 
-        remove_nuitka_splash_screen()
+        self._announce_first_frame(root_window)
+
+        self.about_to_show.emit()
         self._main_window.show()
 
-
-def remove_nuitka_splash_screen() -> None:
-    parent_pid = os.environ.get("NUITKA_ONEFILE_PARENT")
-    if parent_pid is None:
-        return
-
-    splash_filename = Path(tempfile.gettempdir()) / f"onefile_{parent_pid}_splash_feedback.tmp"
-
-    if splash_filename.exists():
-        splash_filename.unlink()
+    def _announce_first_frame(self, window: QQuickWindow) -> None:
+        # frameSwapped is emitted from the render thread; a queued connection moves delivery to the GUI thread.
+        connection_type = Qt.ConnectionType(
+            Qt.ConnectionType.QueuedConnection.value | Qt.ConnectionType.SingleShotConnection.value
+        )
+        window.frameSwapped.connect(self.first_frame_rendered, connection_type)

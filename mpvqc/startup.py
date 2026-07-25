@@ -6,7 +6,7 @@
 from typing import Never
 
 
-def perform_startup() -> Never:
+def perform_startup(process_started_at: float) -> Never:
     configure_qt_application_data()
     configure_qt_style()
     configure_qt_settings()
@@ -16,7 +16,7 @@ def perform_startup() -> Never:
 
     import_mpvqc_bindings()
 
-    start_application()
+    start_application(process_started_at)
 
 
 def configure_qt_application_data() -> None:
@@ -74,13 +74,40 @@ def import_mpvqc_bindings() -> None:
     import mpvqc.views  # noqa: F401
 
 
-def start_application() -> Never:
+def start_application(process_started_at: float) -> Never:
     import sys
 
     from mpvqc.application import MpvqcApplication
 
     app = MpvqcApplication(sys.argv)
     app.configure()
+
+    app.about_to_show.connect(remove_nuitka_splash_screen)
+    app.first_frame_rendered.connect(lambda: log_startup_time(process_started_at))
+
     app.start()
 
     sys.exit(app.exec())
+
+
+def log_startup_time(process_started_at: float) -> None:
+    import logging
+    import time
+
+    elapsed_ms = (time.perf_counter() - process_started_at) * 1000
+    logging.getLogger(__name__).info("Startup took %.0f ms", elapsed_ms)
+
+
+def remove_nuitka_splash_screen() -> None:
+    import os
+    import tempfile
+    from pathlib import Path
+
+    parent_pid = os.environ.get("NUITKA_ONEFILE_PARENT")
+    if parent_pid is None:
+        return
+
+    splash_filename = Path(tempfile.gettempdir()) / f"onefile_{parent_pid}_splash_feedback.tmp"
+
+    if splash_filename.exists():
+        splash_filename.unlink()
