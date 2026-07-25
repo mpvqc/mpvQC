@@ -10,29 +10,6 @@ from functools import cache
 
 
 @dataclass(frozen=True)
-class ChannelRelease:
-    """The build declares the channel it was published through."""
-
-    channel: str
-
-
-@dataclass(frozen=True)
-class Unofficial:
-    """The build declares no channel."""
-
-
-type BuildOrigin = ChannelRelease | Unofficial
-
-
-def determine_build_origin(channel: str, app_id: str, flatpak_id: str | None) -> BuildOrigin:
-    if not channel:
-        return Unofficial()
-    if flatpak_id is not None and flatpak_id != app_id:
-        return Unofficial()
-    return ChannelRelease(channel)
-
-
-@dataclass(frozen=True)
 class ApplicationInfo:
     name: str
     app_id: str
@@ -41,7 +18,7 @@ class ApplicationInfo:
     version: str
     commit: str
     is_release: bool
-    origin: BuildOrigin
+    origin: str
 
 
 @dataclass(frozen=True)
@@ -125,3 +102,11 @@ def get_build_info() -> BuildInfo:
         dependencies=tuple(dependencies),
         dev_dependencies=tuple(dev_dependencies),
     )
+
+
+def determine_build_origin(channel: str, app_id: str, flatpak_id: str | None) -> str:
+    if not channel:
+        return "unofficial"
+    if flatpak_id is not None and flatpak_id != app_id:
+        return "unofficial"
+    return channel

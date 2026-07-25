@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: mpvQC developers
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-from unittest.mock import PropertyMock
 
+import inject
 import pytest
 
+from mpvqc.build import ApplicationInfo, BuildInfo
 from mpvqc.services import BuildInfoService
 
 
@@ -37,23 +38,64 @@ def test_build_info(build_info_service):
         assert dep.platforms
 
 
+def make_build_info(*, is_release: bool, origin: str) -> BuildInfo:
+    return BuildInfo(
+        application=ApplicationInfo(
+            name="mpvQC",
+            app_id="io.github.mpvqc.mpvQC",
+            organization="mpvQC",
+            domain="mpvqc.github.io",
+            version="1.0.0",
+            commit="abc12345",
+            is_release=is_release,
+            origin=origin,
+        ),
+        dependencies=(),
+        dev_dependencies=(),
+    )
+
+
 @pytest.mark.parametrize(
-    ("is_release", "version", "commit", "expected"),
+    ("is_release", "origin", "expected"),
     [
-        (True, "1.0.0", "abc12345", "1.0.0 - abc12345"),
-        (False, "1.0.0", "abc12345", "dev build - abc12345"),
+        pytest.param(
+            True,
+            "mpvqc-github",
+            "1.0.0 (abc12345) mpvqc-github",
+            id="release-channel",
+        ),
+        pytest.param(
+            True,
+            "unofficial",
+            "1.0.0 (abc12345) unofficial",
+            id="release-unofficial",
+        ),
+        pytest.param(
+            False,
+            "unofficial",
+            "dev build (abc12345) unofficial",
+            id="dev-unofficial",
+        ),
+        pytest.param(
+            False,
+            "mpvqc-flatpak",
+            "dev build (abc12345) mpvqc-flatpak",
+            id="dev-channel",
+        ),
     ],
 )
-def test_combined_version_info(
-    build_info_service: BuildInfoService,
-    monkeypatch,
-    is_release: bool,
-    version: str,
-    commit: str,
-    expected: str,
-):
-    monkeypatch.setattr(type(build_info_service), "is_release", PropertyMock(return_value=is_release))
-    monkeypatch.setattr(type(build_info_service), "version", PropertyMock(return_value=version))
-    monkeypatch.setattr(type(build_info_service), "commit", PropertyMock(return_value=commit))
+def test_version_info(build_info_service: BuildInfoService, is_release: bool, origin: str, expected: str):
+    # noinspection PyProtectedMember
+    build_info_service._build_info = make_build_info(is_release=is_release, origin=origin)
 
-    assert build_info_service.combined_version_info == expected
+    assert build_info_service.version_info == expected
+    assert build_info_service.full_version_info == f"mpvQC {expected}"
+
+
+def test_instantiates_without_inject_container():
+    inject.clear()
+
+    service = BuildInfoService()
+
+    assert service.name
+    assert service.full_version_info.startswith(service.name)

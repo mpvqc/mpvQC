@@ -41,7 +41,7 @@ def test_replaces_tag_commit_and_is_release(is_release, expected_line):
 @pytest.mark.parametrize(
     ("channel", "expected_line"),
     [
-        ("github-releases", 'channel = "github-releases"\n'),
+        ("mpvqc-github", 'channel = "mpvqc-github"\n'),
         ("mpvqc-flatpak", 'channel = "mpvqc-flatpak"\n'),
         ("", 'channel = ""\n'),
     ],
@@ -83,7 +83,7 @@ def test_preserves_formatting_and_leaves_other_sections_untouched():
         tag="0.9.0",
         commit="abcd1234",
         is_release=True,
-        channel="github-releases",
+        channel="mpvqc-github",
     )
 
     expected = textwrap.dedent("""\
@@ -97,7 +97,7 @@ def test_preserves_formatting_and_leaves_other_sections_untouched():
         version = "0.9.0"
         commit = "abcd1234"
         is_release = true
-        channel = "github-releases"
+        channel = "mpvqc-github"
 
         [[dependency]]
         name = "inject"
@@ -130,7 +130,7 @@ def test_raises_on_incomplete_template(template, missing):
     ("env", "expected"),
     [
         ({}, ""),
-        ({"MPVQC_BUILD_CHANNEL": "github-releases"}, "github-releases"),
+        ({"MPVQC_BUILD_CHANNEL": "mpvqc-github"}, "mpvqc-github"),
     ],
 )
 def test_channel_comes_from_environment_and_defaults_to_empty(env, expected):

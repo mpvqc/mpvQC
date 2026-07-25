@@ -27,7 +27,7 @@ class MpvqcAboutDialogViewModel(QObject):
 
     @Property(str, constant=True, final=True)
     def applicationVersion(self) -> str:
-        return self._build_info.combined_version_info
+        return self._build_info.version_info
 
     @Property(str, constant=True, final=True)
     def pythonVersion(self) -> str:
@@ -47,5 +47,4 @@ class MpvqcAboutDialogViewModel(QObject):
 
     @Slot()
     def copyVersionInfoToClipboard(self) -> None:
-        # pyrefly: ignore [bad-argument-type]
-        QGuiApplication.clipboard().setText(self.applicationVersion)
+        QGuiApplication.clipboard().setText(self._build_info.version_info)

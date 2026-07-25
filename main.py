@@ -35,17 +35,9 @@ def _add_directory_to_path() -> None:
 
 
 def _print_version() -> None:
-    from mpvqc.build import ChannelRelease, Unofficial, get_build_info
+    from mpvqc.services import BuildInfoService
 
-    app = get_build_info().application
-    match app.origin:
-        case ChannelRelease(channel):
-            origin_line = f"build-origin: official ({channel})"
-        case Unofficial():
-            origin_line = "build-origin: unofficial"
-
-    print(f"{app.name} {app.version} ({app.commit})")
-    print(origin_line)
+    print(BuildInfoService().full_version_info)
 
 
 def _register_resources() -> None:
