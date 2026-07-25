@@ -81,6 +81,7 @@ cannot cover it. Verify it on the locally built Flatpak before tagging, on both 
 - [ ] Create annotated tag: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
 - [ ] Push tag to trigger CI: `git push origin vX.Y.Z`
 - [ ] Download `mpvQC-X.Y.Z-{commit}-win-x86_64.zip`
+- [ ] Downloaded Windows build reports `mpvqc-github` (version line in Help → About)
 - [ ] Download `release-build-linux.zip`
 - [ ] Download `release-build-windows.zip`
 - [ ] Download complete CI build-log and upload to release issue on GitHub
@@ -106,6 +107,7 @@ These steps apply to the [mpvQC-flatpak](https://github.com/mpvqc/mpvQC-flatpak)
   - [ ] Update screenshots if UI changed
 - [ ] Commit changes to mpvQC-flatpak repository
 - [ ] Trigger a new flatpak build **manually** via GitHub Actions in the `Build Flatpak` section.
+- [ ] Updated Flatpak reports `mpvqc-flatpak`: `flatpak run io.github.mpvqc.mpvQC --version`
 
 Once the build succeeds, it will be automatically committed to the flatpak repository. Users will receive the new
 version via regular updates.
