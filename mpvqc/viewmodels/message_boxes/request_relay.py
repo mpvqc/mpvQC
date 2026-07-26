@@ -13,7 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcMessageBoxLoaderViewModel(QObject):
+class MpvqcMessageBoxRequestRelayViewModel(QObject):
     _exporter = inject.attr(ExportService)
     _quit = inject.attr(QuitService)
 

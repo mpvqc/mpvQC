@@ -2,80 +2,31 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma ComponentBehavior: Bound
-
 import QtQuick
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
 
-Loader {
+MpvqcOverlayLoader {
     id: root
     objectName: "messageBoxLoader"
 
-    readonly property MpvqcMessageBoxLoaderViewModel viewModel: MpvqcMessageBoxLoaderViewModel {}
+    readonly property var _urlsByKind: ({
+            [MpvqcMessageBoxKind.MessageBoxKind.CUSTOM_EXPORT]: Qt.resolvedUrl("MpvqcCustomExportMessageBox.qml"),
+            [MpvqcMessageBoxKind.MessageBoxKind.EXPORT_ERROR]: Qt.resolvedUrl("MpvqcExportErrorMessageBox.qml"),
+            [MpvqcMessageBoxKind.MessageBoxKind.QUIT]: Qt.resolvedUrl("MpvqcQuitMessageBox.qml"),
+            [MpvqcMessageBoxKind.MessageBoxKind.RESET]: Qt.resolvedUrl("MpvqcResetMessageBox.qml"),
+            [MpvqcMessageBoxKind.MessageBoxKind.VERSION_CHECK]: Qt.resolvedUrl("MpvqcVersionCheckMessageBox.qml")
+        })
 
-    readonly property url messageBoxCustomExport: Qt.resolvedUrl("MpvqcCustomExportMessageBox.qml")
-    readonly property url messageBoxExportError: Qt.resolvedUrl("MpvqcExportErrorMessageBox.qml")
-    readonly property url messageBoxQuit: Qt.resolvedUrl("MpvqcQuitMessageBox.qml")
-    readonly property url messageBoxReset: Qt.resolvedUrl("MpvqcResetMessageBox.qml")
-    readonly property url messageBoxVersionCheck: Qt.resolvedUrl("MpvqcVersionCheckMessageBox.qml")
-
-    signal messageBoxClosed
-
-    asynchronous: true
-    active: false
-    visible: status === Loader.Ready
-
-    function openCustomExportsMessageBox(): void {
-        setSource(messageBoxCustomExport);
-        active = true;
+    function openMessageBox(kind: int): void {
+        root.open(root._urlsByKind[kind]);
     }
 
-    function openExportErrorMessageBox(message: string, lineNr: int): void {
-        setSource(messageBoxExportError, {
-            errorMessage: message,
-            errorLine: lineNr
+    function openExportErrorMessageBox(errorMessage: string, errorLine: int): void {
+        root.open(root._urlsByKind[MpvqcMessageBoxKind.MessageBoxKind.EXPORT_ERROR], {
+            errorMessage: errorMessage,
+            errorLine: errorLine
         });
-        active = true;
-    }
-
-    function openQuitMessageBox(): void {
-        setSource(messageBoxQuit);
-        active = true;
-    }
-
-    function openResetMessageBox(): void {
-        setSource(messageBoxReset);
-        active = true;
-    }
-
-    function openVersionCheckMessageBox(): void {
-        setSource(messageBoxVersionCheck);
-        active = true;
-    }
-
-    onLoaded: item.open() // qmllint disable
-
-    Connections {
-        enabled: root.item
-        target: root.item
-
-        function onClosed(): void {
-            root.active = false;
-            root.source = "";
-            root.messageBoxClosed();
-        }
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onExportErrorOccurred(message: string, line: int): void {
-            root.openExportErrorMessageBox(message, line);
-        }
-
-        function onConfirmQuit(): void {
-            root.openQuitMessageBox();
-        }
     }
 }
