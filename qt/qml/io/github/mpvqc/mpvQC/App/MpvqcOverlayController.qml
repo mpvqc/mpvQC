@@ -35,14 +35,20 @@ Item {
     MpvqcMessageBoxLoader {
         id: _messageBoxLoader
 
-        onMessageBoxClosed: root.focusWanted()
+        onClosed: root.focusWanted()
+    }
+
+    MpvqcMessageBoxRequestRelayViewModel {
+        onExportErrorOccurred: (message, line) => _messageBoxLoader.openExportErrorMessageBox(message, line)
+
+        onConfirmQuit: _messageBoxLoader.openMessageBox(MpvqcMessageBoxKind.MessageBoxKind.QUIT)
     }
 
     Connections {
         target: root.viewModel
 
         function onConfirmResetRequested(): void {
-            _messageBoxLoader.openResetMessageBox();
+            _messageBoxLoader.openMessageBox(MpvqcMessageBoxKind.MessageBoxKind.RESET);
         }
 
         function onOpenQcDocumentsRequested(): void {
@@ -113,12 +119,8 @@ Item {
             _dialogLoader.openAboutDialog();
         }
 
-        function onUpdateDialogRequested(): void {
-            _messageBoxLoader.openVersionCheckMessageBox();
-        }
-
-        function onCustomExportDialogRequested(): void {
-            _messageBoxLoader.openCustomExportsMessageBox();
+        function onMessageBoxRequested(kind: int): void {
+            _messageBoxLoader.openMessageBox(kind);
         }
     }
 }

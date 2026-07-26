@@ -8,6 +8,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
+from mpvqc.enums import MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
@@ -107,6 +108,24 @@ def test_request_classic_export(view_model, make_spy):
     view_model.requestExportQcDocumentClassic()
 
     assert spy.count() == 1
+
+
+def test_request_check_for_updates(view_model, make_spy):
+    spy = make_spy(view_model.messageBoxRequested)
+
+    view_model.requestOpenCheckForUpdatesDialog()
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == MessageBoxKind.VERSION_CHECK
+
+
+def test_request_custom_exports(view_model, make_spy):
+    spy = make_spy(view_model.messageBoxRequested)
+
+    view_model.requestOpenCustomExportsDialog()
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == MessageBoxKind.CUSTOM_EXPORT
 
 
 def test_open_app_data_folder(view_model, desktop_service_mock):

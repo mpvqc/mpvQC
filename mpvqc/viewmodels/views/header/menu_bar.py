@@ -9,6 +9,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.enums import MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
@@ -49,10 +50,10 @@ class MpvqcMenuBarViewModel(QObject):
     importSettingsDialogRequested = Signal()
     editMpvConfigDialogRequested = Signal()
     editInputConfigDialogRequested = Signal()
-    updateDialogRequested = Signal()
     keyboardShortcutsDialogRequested = Signal()
-    customExportDialogRequested = Signal()
     aboutDialogRequested = Signal()
+
+    messageBoxRequested = Signal(int)
 
     closeAppRequested = Signal()
 
@@ -154,7 +155,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenCheckForUpdatesDialog(self) -> None:
-        self.updateDialogRequested.emit()
+        self.messageBoxRequested.emit(MessageBoxKind.VERSION_CHECK)
 
     @Slot()
     def requestOpenKeyboardShortcutsDialog(self) -> None:
@@ -162,7 +163,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenCustomExportsDialog(self) -> None:
-        self.customExportDialogRequested.emit()
+        self.messageBoxRequested.emit(MessageBoxKind.CUSTOM_EXPORT)
 
     @Slot()
     def requestOpenAboutDialog(self) -> None:
