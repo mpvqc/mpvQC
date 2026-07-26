@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from mpvqc.services.platform.backend import PlatformBackend
 from mpvqc.services.platform.embedded_player import NoEmbeddedPlayerTracker
+from mpvqc.services.platform.surface import NoSurfaceHandler
 from mpvqc.services.platform.window_configuration import NoWindowConfigurator
 from mpvqc.services.platform.window_reveal import NoWindowRevealer
 from mpvqc.services.platform.window_state import QtWindowStateHandler
@@ -17,17 +18,16 @@ _ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplicationLinux.qml"
 
 
 def create_desktop_backend() -> PlatformBackend:
-    surface = SurfaceController()
-
     # Transparent padding around the content that the QML drop shadow is
     # painted into. Must exceed the widest shadow blur plus offset, otherwise
     # the soft edge clips at the surface boundary.
-    shadow_margin = 88
+    surface = SurfaceController(shadow_margin=88)
 
     return PlatformBackend(
         root_qml_url=_ROOT_QML_URL,
         owns_window_geometry=False,
-        window_state=QtWindowStateHandler(shadow_margin=shadow_margin, margins_applier=surface),
+        window_state=QtWindowStateHandler(),
+        surface=surface,
         window_configuration=surface,
         window_reveal=NoWindowRevealer(),
         embedded_player=NoEmbeddedPlayerTracker(),
@@ -44,6 +44,7 @@ def create_window_manager_backend() -> PlatformBackend:
         root_qml_url=_ROOT_QML_URL,
         owns_window_geometry=owns_window_geometry,
         window_state=QtWindowStateHandler(),
+        surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
         window_reveal=NoWindowRevealer(),
         embedded_player=NoEmbeddedPlayerTracker(),

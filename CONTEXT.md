@@ -17,6 +17,11 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
 
+## Platform
+
+- **Surface**: the client-side-decorated padding around the window content. Carries the drop shadow and collapses to
+  zero while the window is maximized or fullscreen. Only the Linux desktop backend has one.
+
 ## Build origin
 
 - **Channel**: the store a build ships through, stamped into build-info at build time. `mpvqc-github` and

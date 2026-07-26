@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 from mpvqc.services.platform.backend import PlatformBackend
+from mpvqc.services.platform.surface import NoSurfaceHandler
 from mpvqc.services.platform.window_buttons import StaticWindowButtons
 
 from .frame_integration import WindowsFrameIntegration
@@ -18,6 +19,7 @@ def create_windows_backend() -> PlatformBackend:
         root_qml_url="qrc:/qt/qml/MpvqcApplicationWindows.qml",
         owns_window_geometry=False,
         window_state=WindowsWindowStateHandler(),
+        surface=NoSurfaceHandler(),
         window_configuration=frame,
         window_reveal=WindowRevealFilter(),
         embedded_player=frame,

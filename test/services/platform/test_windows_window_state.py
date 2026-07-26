@@ -29,7 +29,13 @@ SW_SHOWMINIMIZED = 2
 SW_SHOWMAXIMIZED = 3
 WPF_RESTORETOMAXIMIZED = 2
 
-INITIAL_PLACEMENT = WindowPlacement(0, SW_SHOWNORMAL, (-1, -1), (-1, -1), NORMAL_RECT)
+INITIAL_PLACEMENT = WindowPlacement(
+    flags=0,
+    show_cmd=SW_SHOWNORMAL,
+    min_position=(-1, -1),
+    max_position=(-1, -1),
+    normal_rect=NORMAL_RECT,
+)
 
 
 @dataclass
@@ -512,16 +518,5 @@ def test_state_read_does_not_create_the_native_window(fake, handler, make_record
     window = make_recording_window()
 
     handler.read_state(window)
-    handler.shadow_margin(window)
 
     assert window.win_id_calls == 0
-
-
-def test_shadow_margin_is_always_zero(fake, handler, window):
-    assert handler.shadow_margin(window) == 0
-
-    handler.enter_fullscreen(window)
-    assert handler.shadow_margin(window) == 0
-
-    handler.apply_content_margins(88)
-    assert handler.shadow_margin(window) == 0

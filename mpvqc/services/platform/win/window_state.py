@@ -44,8 +44,6 @@ class WindowsWindowStateHandler:
     flag Windows uses to restore a minimized window to maximized. Minimizing
     through ShowWindow leaves that flag to Windows, and Qt only observes.
 
-    DWM draws the window shadow, so the shadow margin is always zero.
-
     Fullscreen enters as one atomic move to the monitor rect. Qt instead swaps
     window styles, restores, then re-maximizes, which flashes intermediate frames.
 
@@ -199,12 +197,6 @@ class WindowsWindowStateHandler:
         # window exists, winId() would create it, and the frame configuration
         # would come too late to reclaim the caption.
         return bool(states & Qt.WindowState.WindowMaximized)
-
-    def shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
-        return 0
-
-    def apply_content_margins(self, margin: int) -> None:
-        pass
 
     def _retire_abandoned_session(self, hwnd: int) -> None:
         placement = self._saved_placement
