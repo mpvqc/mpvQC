@@ -9,7 +9,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import MessageBoxKind
+from mpvqc.enums import FileDialogKind, MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
@@ -34,13 +34,9 @@ class MpvqcMenuBarViewModel(QObject):
 
     confirmResetRequested = Signal()
 
-    openQcDocumentsRequested = Signal()
-    savePathRequested = Signal()
-    classicExportRequested = Signal()
+    fileDialogRequested = Signal(int)
     customExportRequested = Signal(QUrl)
 
-    openVideoRequested = Signal()
-    openSubtitlesRequested = Signal()
     resizeVideoRequested = Signal()
 
     appearanceDialogRequested = Signal()
@@ -92,7 +88,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenQcDocuments(self) -> None:
-        self.openQcDocumentsRequested.emit()
+        self.fileDialogRequested.emit(FileDialogKind.IMPORT_DOCUMENTS)
 
     @Slot()
     def requestSaveQcDocument(self) -> None:
@@ -103,11 +99,11 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestSaveQcDocumentAs(self) -> None:
-        self.savePathRequested.emit()
+        self.fileDialogRequested.emit(FileDialogKind.SAVE_DOCUMENT)
 
     @Slot()
     def requestExportQcDocumentClassic(self) -> None:
-        self.classicExportRequested.emit()
+        self.fileDialogRequested.emit(FileDialogKind.EXPORT_CLASSIC_DOCUMENT)
 
     @Slot(str, QUrl)
     def requestExportQcDocumentCustom(self, _: str, exportTemplate: QUrl) -> None:
@@ -115,11 +111,11 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenVideo(self) -> None:
-        self.openVideoRequested.emit()
+        self.fileDialogRequested.emit(FileDialogKind.IMPORT_VIDEO)
 
     @Slot()
     def requestOpenSubtitles(self) -> None:
-        self.openSubtitlesRequested.emit()
+        self.fileDialogRequested.emit(FileDialogKind.IMPORT_SUBTITLES)
 
     @Slot()
     def requestResizeVideo(self) -> None:

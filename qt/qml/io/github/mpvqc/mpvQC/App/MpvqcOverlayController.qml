@@ -29,7 +29,7 @@ Item {
     MpvqcFileDialogLoader {
         id: _fileDialogLoader
 
-        onDialogClosed: root.focusWanted()
+        onClosed: root.focusWanted()
     }
 
     MpvqcMessageBoxLoader {
@@ -51,32 +51,16 @@ Item {
             _messageBoxLoader.openMessageBox(MpvqcMessageBoxKind.MessageBoxKind.RESET);
         }
 
-        function onOpenQcDocumentsRequested(): void {
-            _fileDialogLoader.openImportQcDocumentsDialog();
-        }
-
-        function onSavePathRequested(): void {
-            _fileDialogLoader.openDocumentSaveDialog();
-        }
-
-        function onClassicExportRequested(): void {
-            _fileDialogLoader.openClassicDocumentExportDialog();
+        function onFileDialogRequested(kind: int): void {
+            _fileDialogLoader.openFileDialog(kind);
         }
 
         function onCustomExportRequested(template: url): void {
-            _fileDialogLoader.openCustomDocumentExportDialog(template);
+            _fileDialogLoader.openCustomExportFileDialog(template);
         }
 
         function onCloseAppRequested(): void {
             root.closeAppRequested();
-        }
-
-        function onOpenVideoRequested(): void {
-            _fileDialogLoader.openImportVideoDialog();
-        }
-
-        function onOpenSubtitlesRequested(): void {
-            _fileDialogLoader.openImportSubtitlesDialog();
         }
 
         function onResizeVideoRequested(): void {

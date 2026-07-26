@@ -2,86 +2,37 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma ComponentBehavior: Bound
-
 import QtQuick
 
-Loader {
+import io.github.mpvqc.mpvQC.Components
+import io.github.mpvqc.mpvQC.Python
+
+MpvqcOverlayLoader {
     id: root
     objectName: "fileDialogLoader"
 
-    readonly property url exportClassicDocumentDialog: Qt.resolvedUrl("MpvqcExportClassicDocumentFileDialog.qml")
-    readonly property url exportCustomDocumentDialog: Qt.resolvedUrl("MpvqcExportCustomDocumentFileDialog.qml")
-    readonly property url importDocumentsDialog: Qt.resolvedUrl("MpvqcImportDocumentsFileDialog.qml")
-    readonly property url importSubtitlesDialog: Qt.resolvedUrl("MpvqcImportSubtitlesFileDialog.qml")
-    readonly property url importVideoDialog: Qt.resolvedUrl("MpvqcImportVideoFileDialog.qml")
-    readonly property url saveDocumentDialog: Qt.resolvedUrl("MpvqcSaveDocumentFileDialog.qml")
+    readonly property var _urlsByKind: ({
+            [MpvqcFileDialogKind.FileDialogKind.EXPORT_CLASSIC_DOCUMENT]: Qt.resolvedUrl("MpvqcExportClassicDocumentFileDialog.qml"),
+            [MpvqcFileDialogKind.FileDialogKind.EXPORT_CUSTOM_DOCUMENT]: Qt.resolvedUrl("MpvqcExportCustomDocumentFileDialog.qml"),
+            [MpvqcFileDialogKind.FileDialogKind.IMPORT_DOCUMENTS]: Qt.resolvedUrl("MpvqcImportDocumentsFileDialog.qml"),
+            [MpvqcFileDialogKind.FileDialogKind.IMPORT_SUBTITLES]: Qt.resolvedUrl("MpvqcImportSubtitlesFileDialog.qml"),
+            [MpvqcFileDialogKind.FileDialogKind.IMPORT_VIDEO]: Qt.resolvedUrl("MpvqcImportVideoFileDialog.qml"),
+            [MpvqcFileDialogKind.FileDialogKind.SAVE_DOCUMENT]: Qt.resolvedUrl("MpvqcSaveDocumentFileDialog.qml")
+        })
 
-    readonly property int cleanupDelay: 250
-
-    signal dialogClosed
-
-    asynchronous: true
-    active: false
-    visible: active
-
-    function openDocumentSaveDialog(): void {
-        setSource(saveDocumentDialog);
-        active = true;
+    function openFileDialog(kind: int): void {
+        root.open(root._urlsByKind[kind]);
     }
 
-    function openClassicDocumentExportDialog(): void {
-        setSource(exportClassicDocumentDialog);
-        active = true;
-    }
-
-    function openCustomDocumentExportDialog(exportTemplate: url): void {
-        setSource(exportCustomDocumentDialog, {
+    function openCustomExportFileDialog(exportTemplate: url): void {
+        root.open(root._urlsByKind[MpvqcFileDialogKind.FileDialogKind.EXPORT_CUSTOM_DOCUMENT], {
             exportTemplate: exportTemplate
         });
-        active = true;
     }
 
-    function openImportQcDocumentsDialog(): void {
-        setSource(importDocumentsDialog);
-        active = true;
-    }
+    teardownTrigger: MpvqcOverlayLoader.TeardownTrigger.AcceptedOrRejected
 
-    function openImportSubtitlesDialog(): void {
-        setSource(importSubtitlesDialog);
-        active = true;
-    }
-
-    function openImportVideoDialog(): void {
-        setSource(importVideoDialog);
-        active = true;
-    }
-
-    onLoaded: item.open() // qmllint disable
-
-    Connections {
-        enabled: root.item
-        target: root.item
-        ignoreUnknownSignals: true
-
-        function onAccepted(): void {
-            _delayCleanupTimer.restart();
-        }
-
-        function onRejected(): void {
-            _delayCleanupTimer.restart();
-        }
-    }
-
-    Timer {
-        id: _delayCleanupTimer
-
-        interval: root.cleanupDelay
-
-        onTriggered: {
-            root.active = false;
-            root.source = "";
-            root.dialogClosed();
-        }
-    }
+    // Native file dialogs must outlive the accept/reject signal they emit, so
+    // teardown is deferred. The magnitude is historical, not measured.
+    teardownDelay: 250
 }
