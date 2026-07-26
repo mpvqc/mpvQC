@@ -12,7 +12,7 @@ import pytest
 from PySide6.QtCore import QCoreApplication, QEvent, QObject
 
 from mpvqc.datamodels import DocumentRejectionReason, RejectedDocument
-from mpvqc.dialogs import MpvqcDialogLoaderViewModel
+from mpvqc.dialogs.import_wizard import MpvqcImportWizardRequestRelayViewModel
 from mpvqc.services import ImporterService, SettingsService
 from mpvqc.services.importer import UnfinishedPlan, errors, session, subtitles, video
 
@@ -34,9 +34,9 @@ def configure_inject(common_bindings_with, importer_service_mock, settings_servi
 
 
 @pytest.fixture
-def loader(qt_app) -> MpvqcDialogLoaderViewModel:
+def relay(qt_app) -> MpvqcImportWizardRequestRelayViewModel:
     # noinspection PyCallingNonCallable
-    return MpvqcDialogLoaderViewModel()
+    return MpvqcImportWizardRequestRelayViewModel()
 
 
 def _assert_view_model_collected(ref: weakref.ref) -> None:
@@ -45,9 +45,9 @@ def _assert_view_model_collected(ref: weakref.ref) -> None:
     assert ref() is None
 
 
-def test_releases_view_model_after_wizard(loader):
+def test_releases_view_model_after_wizard(relay):
     captured: list[weakref.ref] = []
-    loader.importWizardDialogRequested.connect(lambda vm: captured.append(weakref.ref(vm)))
+    relay.importWizardRequested.connect(lambda vm: captured.append(weakref.ref(vm)))
 
     unfinished_plan = UnfinishedPlan(
         comments=(),
@@ -59,15 +59,15 @@ def test_releases_view_model_after_wizard(loader):
         ),
     )
 
-    loader._request_import_wizard(unfinished_plan)
-    loader.releaseActiveDialog()
+    relay._request_import_wizard(unfinished_plan)
+    relay.releaseWizardViewModel()
 
     _assert_view_model_collected(captured[0])
 
 
-def test_does_not_request_wizard_when_plan_has_no_steps(loader, importer_service_mock):
+def test_does_not_request_wizard_when_plan_has_no_steps(relay, importer_service_mock):
     requested: list[QObject] = []
-    loader.importWizardDialogRequested.connect(lambda vm: requested.append(vm))
+    relay.importWizardRequested.connect(lambda vm: requested.append(vm))
 
     unfinished_plan = UnfinishedPlan(
         comments=(),
@@ -77,26 +77,26 @@ def test_does_not_request_wizard_when_plan_has_no_steps(loader, importer_service
         errors=errors.Absent(),
     )
 
-    loader._request_import_wizard(unfinished_plan)
+    relay._request_import_wizard(unfinished_plan)
 
     assert requested == []
-    assert loader._active_dialog_vm is None
+    assert relay._wizard_vm is None
     importer_service_mock.cancel_pending.assert_called_once_with()
 
 
-def test_release_cancels_pending_when_importer_busy(loader, importer_service_mock):
+def test_release_cancels_pending_when_importer_busy(relay, importer_service_mock):
     importer_service_mock.busy = True
-    loader._active_dialog_vm = QObject()
+    relay._wizard_vm = QObject()
 
-    loader.releaseActiveDialog()
+    relay.releaseWizardViewModel()
 
     importer_service_mock.cancel_pending.assert_called_once_with()
 
 
-def test_release_does_not_cancel_pending_when_importer_idle(loader, importer_service_mock):
+def test_release_does_not_cancel_pending_when_importer_idle(relay, importer_service_mock):
     importer_service_mock.busy = False
-    loader._active_dialog_vm = QObject()
+    relay._wizard_vm = QObject()
 
-    loader.releaseActiveDialog()
+    relay.releaseWizardViewModel()
 
     importer_service_mock.cancel_pending.assert_not_called()

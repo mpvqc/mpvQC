@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from .dialog_kind import DialogKind as DialogKind
+from .dialog_kind import MpvqcDialogKind as MpvqcDialogKind
 from .file_dialog_kind import FileDialogKind as FileDialogKind
 from .file_dialog_kind import MpvqcFileDialogKind as MpvqcFileDialogKind
 from .import_found_video import ImportFoundVideo as ImportFoundVideo

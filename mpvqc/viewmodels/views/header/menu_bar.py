@@ -9,7 +9,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import FileDialogKind, MessageBoxKind
+from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
@@ -39,15 +39,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     resizeVideoRequested = Signal()
 
-    appearanceDialogRequested = Signal()
-    commentTypesDialogRequested = Signal()
-    backupSettingsDialogRequested = Signal()
-    exportSettingsDialogRequested = Signal()
-    importSettingsDialogRequested = Signal()
-    editMpvConfigDialogRequested = Signal()
-    editInputConfigDialogRequested = Signal()
-    keyboardShortcutsDialogRequested = Signal()
-    aboutDialogRequested = Signal()
+    dialogRequested = Signal(int)
 
     messageBoxRequested = Signal(int)
 
@@ -123,31 +115,31 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenAppearanceDialog(self) -> None:
-        self.appearanceDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.APPEARANCE)
 
     @Slot()
     def requestOpenCommentTypesDialog(self) -> None:
-        self.commentTypesDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.COMMENT_TYPES)
 
     @Slot()
     def requestOpenBackupSettingsDialog(self) -> None:
-        self.backupSettingsDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.BACKUP_SETTINGS)
 
     @Slot()
     def requestOpenExportSettingsDialog(self) -> None:
-        self.exportSettingsDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.EXPORT_SETTINGS)
 
     @Slot()
     def requestOpenImportSettingsDialog(self) -> None:
-        self.importSettingsDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.IMPORT_SETTINGS)
 
     @Slot()
     def requestOpenEditMpvConfigDialog(self) -> None:
-        self.editMpvConfigDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.EDIT_MPV_CONFIG)
 
     @Slot()
     def requestOpenEditInputConfigDialog(self) -> None:
-        self.editInputConfigDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.EDIT_INPUT_CONFIG)
 
     @Slot()
     def requestOpenCheckForUpdatesDialog(self) -> None:
@@ -155,7 +147,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenKeyboardShortcutsDialog(self) -> None:
-        self.keyboardShortcutsDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.KEYBOARD_SHORTCUTS)
 
     @Slot()
     def requestOpenCustomExportsDialog(self) -> None:
@@ -163,7 +155,7 @@ class MpvqcMenuBarViewModel(QObject):
 
     @Slot()
     def requestOpenAboutDialog(self) -> None:
-        self.aboutDialogRequested.emit()
+        self.dialogRequested.emit(DialogKind.ABOUT)
 
     @Slot()
     def openAppDataFolder(self) -> None:

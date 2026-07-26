@@ -34,7 +34,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-@QmlUncreatable("constructed by MpvqcDialogLoaderViewModel with an UnfinishedPlan")
+@QmlUncreatable("constructed by MpvqcImportWizardRequestRelayViewModel with an UnfinishedPlan")
 class MpvqcImportWizardViewModel(QObject):
     _importer = inject.attr(ImporterService)
 

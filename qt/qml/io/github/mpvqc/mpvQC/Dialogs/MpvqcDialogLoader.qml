@@ -2,106 +2,35 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pragma ComponentBehavior: Bound
-
 import QtQuick
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
 
-Loader {
+MpvqcOverlayLoader {
     id: root
     objectName: "dialogLoader"
 
-    readonly property MpvqcDialogLoaderViewModel viewModel: MpvqcDialogLoaderViewModel {}
+    readonly property var _urlsByKind: ({
+            [MpvqcDialogKind.DialogKind.ABOUT]: Qt.resolvedUrl("About/MpvqcAboutDialog.qml"),
+            [MpvqcDialogKind.DialogKind.APPEARANCE]: Qt.resolvedUrl("MpvqcAppearanceDialog.qml"),
+            [MpvqcDialogKind.DialogKind.BACKUP_SETTINGS]: Qt.resolvedUrl("MpvqcBackupDialog.qml"),
+            [MpvqcDialogKind.DialogKind.COMMENT_TYPES]: Qt.resolvedUrl("CommentTypes/MpvqcCommentTypesDialog.qml"),
+            [MpvqcDialogKind.DialogKind.EDIT_INPUT_CONFIG]: Qt.resolvedUrl("MpvqcEditInputDialog.qml"),
+            [MpvqcDialogKind.DialogKind.EDIT_MPV_CONFIG]: Qt.resolvedUrl("MpvqcEditMpvDialog.qml"),
+            [MpvqcDialogKind.DialogKind.EXPORT_SETTINGS]: Qt.resolvedUrl("MpvqcExportSettingsDialog.qml"),
+            [MpvqcDialogKind.DialogKind.IMPORT_SETTINGS]: Qt.resolvedUrl("MpvqcImportSettingsDialog.qml"),
+            [MpvqcDialogKind.DialogKind.IMPORT_WIZARD]: Qt.resolvedUrl("ImportWizard/MpvqcImportWizardDialog.qml"),
+            [MpvqcDialogKind.DialogKind.KEYBOARD_SHORTCUTS]: Qt.resolvedUrl("Shortcuts/MpvqcShortcutDialog.qml")
+        })
 
-    readonly property url aboutDialog: Qt.resolvedUrl("About/MpvqcAboutDialog.qml")
-    readonly property url appearanceDialog: Qt.resolvedUrl("MpvqcAppearanceDialog.qml")
-    readonly property url backupSettingsDialog: Qt.resolvedUrl("MpvqcBackupDialog.qml")
-    readonly property url commentTypeDialog: Qt.resolvedUrl("CommentTypes/MpvqcCommentTypesDialog.qml")
-    readonly property url editInputDialog: Qt.resolvedUrl("MpvqcEditInputDialog.qml")
-    readonly property url editMpvDialog: Qt.resolvedUrl("MpvqcEditMpvDialog.qml")
-    readonly property url exportSettingsDialog: Qt.resolvedUrl("MpvqcExportSettingsDialog.qml")
-    readonly property url importSettingsDialog: Qt.resolvedUrl("MpvqcImportSettingsDialog.qml")
-    readonly property url importWizardDialog: Qt.resolvedUrl("ImportWizard/MpvqcImportWizardDialog.qml")
-    readonly property url shortcutsDialog: Qt.resolvedUrl("Shortcuts/MpvqcShortcutDialog.qml")
-
-    signal dialogClosed
-
-    asynchronous: true
-    active: false
-    visible: active
-
-    function openAboutDialog(): void {
-        setSource(aboutDialog);
-        active = true;
-    }
-
-    function openAppearanceDialog(): void {
-        setSource(appearanceDialog);
-        active = true;
-    }
-
-    function openBackupSettingsDialog(): void {
-        setSource(backupSettingsDialog);
-        active = true;
-    }
-
-    function openCommentTypesDialog(): void {
-        setSource(commentTypeDialog);
-        active = true;
-    }
-
-    function openEditInputDialog(): void {
-        setSource(editInputDialog);
-        active = true;
-    }
-
-    function openEditMpvDialog(): void {
-        setSource(editMpvDialog);
-        active = true;
-    }
-
-    function openExportSettingsDialog(): void {
-        setSource(exportSettingsDialog);
-        active = true;
-    }
-
-    function openImportSettingsDialog(): void {
-        setSource(importSettingsDialog);
-        active = true;
+    function openDialog(kind: int): void {
+        root.open(root._urlsByKind[kind]);
     }
 
     function openImportWizardDialog(viewModel: MpvqcImportWizardViewModel): void {
-        setSource(importWizardDialog, {
+        root.open(root._urlsByKind[MpvqcDialogKind.DialogKind.IMPORT_WIZARD], {
             viewModel: viewModel
         });
-        active = true;
-    }
-
-    function openShortcutsDialog(): void {
-        setSource(shortcutsDialog);
-        active = true;
-    }
-
-    onLoaded: item.open() // qmllint disable
-
-    Connections {
-        target: root.item
-        ignoreUnknownSignals: true
-
-        function onClosed(): void {
-            root.active = false;
-            root.source = "";
-            root.dialogClosed();
-            root.viewModel.releaseActiveDialog();
-        }
-    }
-
-    Connections {
-        target: root.viewModel
-
-        function onImportWizardDialogRequested(viewModel: MpvqcImportWizardViewModel): void {
-            root.openImportWizardDialog(viewModel);
-        }
     }
 }
