@@ -74,6 +74,8 @@
 ## Writing
 
 - Load the `plain-english` skill before writing documentation and when communicating with the user.
+- In ADRs and `CONTEXT.md`, name the thing, not where it lives. Paths and file names go stale, so describe the component
+  or the command instead. Setup and workflow docs are the exception: there the path is the point.
 
 ## Committing
 
