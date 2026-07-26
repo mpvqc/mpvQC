@@ -31,6 +31,12 @@ def handler() -> MpvqcWindowVisibilityViewModel:
     return MpvqcWindowVisibilityViewModel()
 
 
+def test_minimize_delegates_to_service(handler, main_window_service_mock):
+    handler.minimize()
+
+    main_window_service_mock.minimize.assert_called_once()
+
+
 class ToggleTestCase(NamedTuple):
     tag: str
     fullscreen: bool

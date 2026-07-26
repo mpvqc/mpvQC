@@ -21,10 +21,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Transparent padding the self-drawn drop shadow lives in. Must exceed the
-# widest shadow blur + offset, otherwise the soft edge clips at the surface.
-_SHADOW_MARGIN = 88
-
 
 class MainWindowService(QObject):
     _platform = inject.attr(PlatformService)
@@ -98,10 +94,13 @@ class MainWindowService(QObject):
         self._sync_window_state()
 
     def show_maximized(self) -> None:
-        self._active_window.setWindowStates(Qt.WindowState.WindowMaximized)
+        self._platform.maximize(self._active_window)
 
     def show_normal(self) -> None:
-        self._active_window.setWindowStates(Qt.WindowState.WindowNoState)
+        self._platform.show_normal(self._active_window)
+
+    def minimize(self) -> None:
+        self._platform.minimize(self._active_window)
 
     @property
     def _active_window(self) -> QWindow:
@@ -154,13 +153,6 @@ class MainWindowService(QObject):
             raise RuntimeError(msg)
         return screen
 
-    def _compute_shadow_margin(self) -> int:
-        if not self._platform.draws_own_shadow:
-            return 0
-        if self._is_fullscreen or self._is_maximized:
-            return 0
-        return _SHADOW_MARGIN
-
     @Slot(int)
     def _on_width_changed(self, width: int) -> None:
         if width == self._outer_width:
@@ -199,14 +191,10 @@ class MainWindowService(QObject):
 
     def _apply_window_state(self) -> None:
         window = self._active_window
+        # Fullscreen first: on some platforms that read also retires an ended
+        # fullscreen session, which is_maximized answers from.
         is_fullscreen = self._platform.is_fullscreen(window)
-
-        # While fullscreen the OS-level maximized state is parked (Windows drops the
-        # style bit), so keep reporting the value from before entering.
-        if is_fullscreen:
-            is_maximized = self._is_maximized
-        else:
-            is_maximized = bool(window.windowStates() & Qt.WindowState.WindowMaximized)
+        is_maximized = self._platform.is_maximized(window)
 
         if is_fullscreen != self._is_fullscreen:
             self._is_fullscreen = is_fullscreen
@@ -217,7 +205,7 @@ class MainWindowService(QObject):
             self.is_maximized_changed.emit(is_maximized)
 
     def _refresh_shadow_margin(self) -> None:
-        margin = self._compute_shadow_margin()
+        margin = self._platform.shadow_margin(self._active_window)
         if margin == self._shadow_margin:
             return
 

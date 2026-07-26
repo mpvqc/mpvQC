@@ -36,21 +36,35 @@ class PlatformService(QObject):
         return self._backend.root_qml_url
 
     @property
-    def draws_own_shadow(self) -> bool:
-        return self._backend.draws_own_shadow
-
-    @property
     def owns_window_geometry(self) -> bool:
         return self._backend.owns_window_geometry
 
+    def minimize(self, window: QWindow) -> None:
+        self._backend.window_state.minimize(window)
+
+    def maximize(self, window: QWindow) -> None:
+        self._backend.window_state.maximize(window)
+
+    def show_normal(self, window: QWindow) -> None:
+        self._backend.window_state.show_normal(window)
+
     def enter_fullscreen(self, window: QWindow) -> None:
-        self._backend.fullscreen.enter(window)
+        self._backend.window_state.enter_fullscreen(window)
 
     def exit_fullscreen(self, window: QWindow) -> None:
-        self._backend.fullscreen.exit(window)
+        self._backend.window_state.exit_fullscreen(window)
 
     def is_fullscreen(self, window: QWindow) -> bool:
-        return self._backend.fullscreen.is_active(window)
+        return self._backend.window_state.is_fullscreen(window)
+
+    def is_maximized(self, window: QWindow) -> bool:
+        return self._backend.window_state.is_maximized(window)
+
+    def shadow_margin(self, window: QWindow) -> int:
+        return self._backend.window_state.shadow_margin(window)
+
+    def apply_content_margins(self, margin: int) -> None:
+        self._backend.window_state.apply_content_margins(margin)
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.window_configuration.configure_window(app, window)
@@ -58,6 +72,3 @@ class PlatformService(QObject):
 
     def track_embedded_player(self, win_id: int) -> None:
         self._backend.embedded_player.track(win_id)
-
-    def apply_content_margins(self, margin: int) -> None:
-        self._backend.content_margins.apply_content_margins(margin)

@@ -7,7 +7,6 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QWindow
 
 from mpvqc.services import MainWindowService, PlatformService
@@ -16,8 +15,9 @@ from mpvqc.services import MainWindowService, PlatformService
 @pytest.fixture
 def platform_service_mock():
     mock = MagicMock(spec_set=PlatformService)
-    mock.draws_own_shadow = True
     mock.is_fullscreen.return_value = False
+    mock.is_maximized.return_value = False
+    mock.shadow_margin.return_value = 0
     return mock
 
 
@@ -32,39 +32,6 @@ def configure_injections(common_bindings_with, platform_service_mock):
 @pytest.fixture
 def service() -> MainWindowService:
     return MainWindowService()
-
-
-class ShadowMarginTestCase(NamedTuple):
-    name: str
-    draws_own_shadow: bool
-    is_fullscreen: bool
-    is_maximized: bool
-    expected: int
-
-
-@pytest.mark.parametrize(
-    "case",
-    [
-        ShadowMarginTestCase(
-            "normal_window_draws_shadow", draws_own_shadow=True, is_fullscreen=False, is_maximized=False, expected=88
-        ),
-        ShadowMarginTestCase(
-            "no_shadow_no_margin", draws_own_shadow=False, is_fullscreen=False, is_maximized=False, expected=0
-        ),
-        ShadowMarginTestCase(
-            "fullscreen_has_no_margin", draws_own_shadow=True, is_fullscreen=True, is_maximized=False, expected=0
-        ),
-        ShadowMarginTestCase(
-            "maximized_has_no_margin", draws_own_shadow=True, is_fullscreen=False, is_maximized=True, expected=0
-        ),
-    ],
-    ids=lambda case: case.name,
-)
-def test_compute_shadow_margin(case: ShadowMarginTestCase, service, platform_service_mock):
-    platform_service_mock.draws_own_shadow = case.draws_own_shadow
-    service._is_fullscreen = case.is_fullscreen
-    service._is_maximized = case.is_maximized
-    assert service._compute_shadow_margin() == case.expected
 
 
 def test_width_and_height_subtract_the_shadow_margin(service):
@@ -83,10 +50,11 @@ def test_width_and_height_equal_surface_without_margin(service):
     assert service.content_height == 720
 
 
-def test_refresh_shadow_margin_applies_and_emits_content_size(service, platform_service_mock):
+def test_refresh_shadow_margin_applies_and_emits_content_size(qt_app, service, platform_service_mock):
+    service._window = QWindow()
     service._outer_width = 1280
     service._outer_height = 720
-    platform_service_mock.draws_own_shadow = True
+    platform_service_mock.shadow_margin.return_value = 88
 
     margins: list[int] = []
     widths: list[int] = []
@@ -101,8 +69,8 @@ def test_refresh_shadow_margin_applies_and_emits_content_size(service, platform_
     assert widths == [1280 - 2 * 88]
 
 
-def test_refresh_shadow_margin_is_noop_when_unchanged(service, platform_service_mock):
-    platform_service_mock.draws_own_shadow = False
+def test_refresh_shadow_margin_is_noop_when_unchanged(qt_app, service, platform_service_mock):
+    service._window = QWindow()
 
     margins: list[int] = []
     service.shadow_margin_changed.connect(margins.append)
@@ -116,7 +84,7 @@ def test_refresh_shadow_margin_is_noop_when_unchanged(service, platform_service_
 
 class InitializeBroadcastTestCase(NamedTuple):
     name: str
-    draws_own_shadow: bool
+    shadow_margin: int
     expected_width: int
     expected_height: int
 
@@ -125,16 +93,22 @@ class InitializeBroadcastTestCase(NamedTuple):
     "case",
     [
         InitializeBroadcastTestCase(
-            "with_shadow_margin", draws_own_shadow=True, expected_width=1280 - 2 * 88, expected_height=720 - 2 * 88
+            "with_shadow_margin",
+            shadow_margin=88,
+            expected_width=1280 - 2 * 88,
+            expected_height=720 - 2 * 88,
         ),
         InitializeBroadcastTestCase(
-            "without_shadow_margin", draws_own_shadow=False, expected_width=1280, expected_height=720
+            "without_shadow_margin",
+            shadow_margin=0,
+            expected_width=1280,
+            expected_height=720,
         ),
     ],
     ids=lambda case: case.name,
 )
 def test_initialize_broadcasts_content_size(case, qt_app, service, platform_service_mock, make_spy):
-    platform_service_mock.draws_own_shadow = case.draws_own_shadow
+    platform_service_mock.shadow_margin.return_value = case.shadow_margin
 
     window = QWindow()
     window.resize(1280, 720)
@@ -150,19 +124,89 @@ def test_initialize_broadcasts_content_size(case, qt_app, service, platform_serv
     assert height_spy.at(height_spy.count() - 1, 0) == case.expected_height
 
 
-def test_fullscreen_delegates_to_platform(qt_app, service, platform_service_mock):
+def test_minimize_delegates_to_platform(qt_app, service, platform_service_mock):
     window = QWindow()
     service._window = window
 
-    platform_service_mock.is_fullscreen.return_value = True
+    service.minimize()
+
+    platform_service_mock.minimize.assert_called_once_with(window)
+
+
+def test_show_maximized_delegates_to_platform(qt_app, service, platform_service_mock):
+    window = QWindow()
+    service._window = window
+
+    service.show_maximized()
+
+    platform_service_mock.maximize.assert_called_once_with(window)
+
+
+def test_show_normal_delegates_to_platform(qt_app, service, platform_service_mock):
+    window = QWindow()
+    service._window = window
+
+    service.show_normal()
+
+    platform_service_mock.show_normal.assert_called_once_with(window)
+
+
+def test_show_fullscreen_delegates_to_platform(qt_app, service, platform_service_mock):
+    window = QWindow()
+    service._window = window
+
     service.show_fullscreen()
+
     platform_service_mock.enter_fullscreen.assert_called_once_with(window)
+
+
+def test_exit_fullscreen_delegates_to_platform(qt_app, service, platform_service_mock):
+    window = QWindow()
+    service._window = window
+
+    service.exit_fullscreen()
+
+    platform_service_mock.exit_fullscreen.assert_called_once_with(window)
+
+
+def test_state_reads_report_platform_answers(qt_app, service, platform_service_mock):
+    service._window = QWindow()
+
+    platform_service_mock.is_fullscreen.return_value = True
+    platform_service_mock.is_maximized.return_value = True
+    service._sync_window_state()
     assert service.is_fullscreen
+    assert service.is_maximized
 
     platform_service_mock.is_fullscreen.return_value = False
-    service.exit_fullscreen()
-    platform_service_mock.exit_fullscreen.assert_called_once_with(window)
+    platform_service_mock.is_maximized.return_value = False
+    service._sync_window_state()
     assert not service.is_fullscreen
+    assert not service.is_maximized
+
+
+def test_state_sync_reads_fullscreen_before_maximized(qt_app, service, platform_service_mock):
+    service._window = QWindow()
+
+    service._sync_window_state()
+
+    calls = [name for name, *_ in platform_service_mock.mock_calls]
+    assert calls.index("is_fullscreen") < calls.index("is_maximized")
+
+
+def test_unchanged_states_emit_nothing(qt_app, service, platform_service_mock, make_spy):
+    service._window = QWindow()
+    platform_service_mock.is_fullscreen.return_value = True
+    platform_service_mock.is_maximized.return_value = True
+
+    fullscreen_spy = make_spy(service.is_fullscreen_changed)
+    maximized_spy = make_spy(service.is_maximized_changed)
+
+    service._sync_window_state()
+    service._sync_window_state()
+
+    assert fullscreen_spy.count() == 1
+    assert maximized_spy.count() == 1
 
 
 def test_exit_fullscreen_without_prior_enter_emits_nothing(qt_app, service, platform_service_mock, make_spy):
@@ -188,28 +232,6 @@ def test_repeated_show_fullscreen_emits_once(qt_app, service, platform_service_m
 
     assert service.is_fullscreen
     assert spy.count() == 1
-
-
-def test_is_maximized_stays_parked_while_platform_fullscreen(qt_app, service, platform_service_mock):
-    window = QWindow()
-    window.setWindowStates(Qt.WindowState.WindowMaximized)
-    service._window = window
-
-    service._sync_window_state()
-    assert service.is_maximized
-
-    # Windows parks the WS_MAXIMIZE style bit while fullscreen
-    platform_service_mock.is_fullscreen.return_value = True
-    window.setWindowStates(Qt.WindowState.WindowNoState)
-    service._sync_window_state()
-    assert service.is_fullscreen
-    assert service.is_maximized
-
-    platform_service_mock.is_fullscreen.return_value = False
-    window.setWindowStates(Qt.WindowState.WindowMaximized)
-    service._sync_window_state()
-    assert not service.is_fullscreen
-    assert service.is_maximized
 
 
 def test_position_only_change_updates_fullscreen_state(qt_app, service, platform_service_mock):

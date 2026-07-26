@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from PySide6.QtCore import Qt
+
 from .native import (
     get_window_placement,
     is_maximized,
@@ -32,8 +34,11 @@ if TYPE_CHECKING:
     from .native import WindowPlacement
 
 
-class WindowsFullscreenHandler:
-    """Enters fullscreen as one atomic move to the monitor rect. Qt instead swaps
+class WindowsWindowStateHandler:
+    """Minimize, maximize and show-normal go through Qt. DWM draws the window
+    shadow, so the shadow margin is always zero.
+
+    Fullscreen enters as one atomic move to the monitor rect. Qt instead swaps
     window styles, restores, then re-maximizes, which flashes intermediate frames.
 
     Windows fixes the geometry of a maximized window, so WS_MAXIMIZE is removed
@@ -53,7 +58,16 @@ class WindowsFullscreenHandler:
         self._saved_placement: WindowPlacement | None = None
         self._entering = False
 
-    def enter(self, window: QWindow) -> None:
+    def minimize(self, window: QWindow) -> None:
+        window.showMinimized()
+
+    def maximize(self, window: QWindow) -> None:
+        window.setWindowStates(Qt.WindowState.WindowMaximized)
+
+    def show_normal(self, window: QWindow) -> None:
+        window.setWindowStates(Qt.WindowState.WindowNoState)
+
+    def enter_fullscreen(self, window: QWindow) -> None:
         hwnd = window.winId()
 
         monitor_rect = get_monitor_rect(hwnd)
@@ -101,7 +115,7 @@ class WindowsFullscreenHandler:
         finally:
             self._entering = False
 
-    def exit(self, window: QWindow) -> None:
+    def exit_fullscreen(self, window: QWindow) -> None:
         placement = self._saved_placement
         if placement is None:
             return
@@ -127,10 +141,10 @@ class WindowsFullscreenHandler:
             set_window_placement(hwnd, placement)
         refresh_window_frame(hwnd)
 
-    def is_active(self, window: QWindow) -> bool:
-        # enter() briefly puts the window into a state that looks like an
-        # abandoned session. A reentrant call must not clear the session that
-        # is being built.
+    def is_fullscreen(self, window: QWindow) -> bool:
+        # enter_fullscreen() briefly puts the window into a state that looks
+        # like an abandoned session. A reentrant call must not clear the
+        # session that is being built.
         if self._entering:
             return self._saved_placement is not None
 
@@ -149,6 +163,19 @@ class WindowsFullscreenHandler:
         # again after a later minimize.
         self._retire_abandoned_session(hwnd)
         return False
+
+    def is_maximized(self, window: QWindow) -> bool:
+        # While a fullscreen session is active, WS_MAXIMIZE is stripped from
+        # the style; the placement saved at enter remembers the true state.
+        if self._saved_placement is not None:
+            return self._saved_placement.shows_maximized
+        return bool(window.windowStates() & Qt.WindowState.WindowMaximized)
+
+    def shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
+        return 0
+
+    def apply_content_margins(self, margin: int) -> None:
+        pass
 
     def _retire_abandoned_session(self, hwnd: int) -> None:
         placement = self._saved_placement
