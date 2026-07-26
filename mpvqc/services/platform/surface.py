@@ -4,7 +4,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, ClassVar, Protocol
+
+from PySide6.QtCore import QObject, Signal
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QWindow
@@ -12,18 +14,17 @@ if TYPE_CHECKING:
 
 class SurfaceHandler(Protocol):
     """Owns the decorated padding around the window content: the state-aware
-    margin read and the content-margin write."""
+    margin read and the edge-triggered push when the margin changes."""
+
+    shadow_margin_changed: ClassVar[Signal]
 
     def shadow_margin(self, window: QWindow) -> int: ...
 
-    def apply_content_margins(self, margin: int) -> None: ...
 
-
-class NoSurfaceHandler:
+class NoSurfaceHandler(QObject):
     """For platforms without a client-side-decorated surface."""
+
+    shadow_margin_changed = Signal(int)
 
     def shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
         return 0
-
-    def apply_content_margins(self, margin: int) -> None:
-        pass

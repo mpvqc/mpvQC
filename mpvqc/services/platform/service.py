@@ -20,13 +20,16 @@ if TYPE_CHECKING:
 
 class PlatformService(QObject):
     window_button_preference_changed = Signal(WindowButtonPreference)
+    shadow_margin_changed = Signal(int)
 
     def __init__(self, backend: PlatformBackend | None = None) -> None:
         super().__init__()
         self._backend = backend or select_platform_backend()
-        # Signal.__get__ is typed for QObject owners only, which the protocol cannot promise
+        # Signal.__get__ is typed for QObject owners only, which the protocols cannot promise
         # pyrefly: ignore [no-matching-overload]
         self._backend.window_buttons.preference_changed.connect(self.window_button_preference_changed)
+        # pyrefly: ignore [no-matching-overload]
+        self._backend.surface.shadow_margin_changed.connect(self.shadow_margin_changed)
 
     @property
     def window_button_preference(self) -> WindowButtonPreference:
@@ -60,9 +63,6 @@ class PlatformService(QObject):
 
     def shadow_margin(self, window: QWindow) -> int:
         return self._backend.surface.shadow_margin(window)
-
-    def apply_content_margins(self, margin: int) -> None:
-        self._backend.surface.apply_content_margins(margin)
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.window_configuration.configure_window(app, window)
