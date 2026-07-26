@@ -27,6 +27,7 @@ class RecordingWindow(QWindow):
     def setWindowStates(self, states: Qt.WindowState) -> None:
         self.requests.append(states)
         self._states = states
+        self.windowStateChanged.emit(states)
 
     @override
     def showMinimized(self) -> None:

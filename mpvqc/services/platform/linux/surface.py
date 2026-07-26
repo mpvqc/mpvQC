@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from PySide6.QtCore import QEvent, QObject, Qt
+from PySide6.QtCore import QEvent, QObject, Qt, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QRegion
 
 from .resize_filter import MARGIN_RESIZE_BAND, WindowResizeFilter
@@ -35,12 +35,15 @@ class WindowExposeFilter(QObject):
         return False
 
 
-class SurfaceController:
+class SurfaceController(QObject):
     """Manages the client-side-decorated surface: the shadow margin around the
     content, the input mask that lets clicks fall through the shadow, and the
     resize band along the content edge."""
 
+    shadow_margin_changed = Signal(int)
+
     def __init__(self, *, shadow_margin: int) -> None:
+        super().__init__()
         self._composed_margin = shadow_margin
         self._window: QWindow | None = None
         self._event_filter: WindowResizeFilter | None = None
@@ -50,7 +53,6 @@ class SurfaceController:
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._window = window
         self._event_filter = event_filter = WindowResizeFilter(window, app)
-        event_filter.set_resize_margin(self._applied_margin)
         window.installEventFilter(event_filter)
 
         # The inset and mask need a created and mapped surface, which does not
@@ -62,6 +64,9 @@ class SurfaceController:
         window.visibleChanged.connect(self._on_visible_changed)
         window.widthChanged.connect(self._apply_input_mask)
         window.heightChanged.connect(self._apply_input_mask)
+        window.windowStateChanged.connect(self._sync_margin)
+
+        self._sync_margin()
 
     def shadow_margin(self, window: QWindow) -> int:
         states = window.windowStates()
@@ -70,12 +75,22 @@ class SurfaceController:
             return 0
         return self._composed_margin
 
-    def apply_content_margins(self, margin: int) -> None:
+    @Slot()
+    def _sync_margin(self) -> None:
+        if self._window is None:
+            return
+
+        margin = self.shadow_margin(self._window)
+        if margin == self._applied_margin:
+            return
+
         self._applied_margin = margin
         if self._event_filter is not None:
             self._event_filter.set_resize_margin(margin)
         self._reassert_surface()
+        self.shadow_margin_changed.emit(margin)
 
+    @Slot(bool)
     def _on_visible_changed(self, visible: bool) -> None:
         if visible:
             self._reassert_surface()
@@ -95,6 +110,7 @@ class SurfaceController:
         # X11 (platformName "xcb") is NOT supported and is not planned. If it is
         # ever wanted, someone has to implement and maintain that support here.
 
+    @Slot()
     def _apply_input_mask(self) -> None:
         # Without a mask the whole padded surface, transparent shadow included,
         # swallows clicks. Restrict input to the content plus the resize band so

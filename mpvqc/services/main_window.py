@@ -8,7 +8,7 @@ import logging
 from typing import TYPE_CHECKING, override
 
 import inject
-from PySide6.QtCore import QEvent, QObject, Qt, Signal, Slot
+from PySide6.QtCore import QEvent, QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication, QWindow
 
 from .platform import PlatformService
@@ -63,15 +63,18 @@ class MainWindowService(QObject):
 
         # Sync QML bindings that were created during engine.load(), before the window
         # size was known. Margin first: content size reads it.
-        self._refresh_shadow_margin()
+        self._on_shadow_margin_changed(self._platform.shadow_margin(window))
         self.content_width_changed.emit(self.content_width)
         self.content_height_changed.emit(self.content_height)
 
+        self._platform.shadow_margin_changed.connect(self._on_shadow_margin_changed)
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
-        window.xChanged.connect(self._on_position_changed)
-        window.yChanged.connect(self._on_position_changed)
-        window.windowStateChanged.connect(self._on_window_state_changed)
+        # Moving without resizing (keyboard move via the system menu) can also take
+        # the window out of fullscreen without any window state event.
+        window.xChanged.connect(self._apply_window_state)
+        window.yChanged.connect(self._apply_window_state)
+        window.windowStateChanged.connect(self._apply_window_state)
         app.focusWindowChanged.connect(self._on_focus_window_changed)
 
         self._zoom_monitor = zoom_monitor = _DisplayZoomMonitor(window, self._on_zoom_factor_changed)
@@ -87,11 +90,11 @@ class MainWindowService(QObject):
 
     def show_fullscreen(self) -> None:
         self._platform.enter_fullscreen(self._active_window)
-        self._sync_window_state()
+        self._apply_window_state()
 
     def exit_fullscreen(self) -> None:
         self._platform.exit_fullscreen(self._active_window)
-        self._sync_window_state()
+        self._apply_window_state()
 
     def show_maximized(self) -> None:
         self._platform.maximize(self._active_window)
@@ -175,20 +178,7 @@ class MainWindowService(QObject):
             self.content_height_changed.emit(self.content_height)
         self._apply_window_state()
 
-    @Slot(int)
-    def _on_position_changed(self, _: int) -> None:
-        # Moving without resizing (keyboard move via the system menu) can also take
-        # the window out of fullscreen without any window state event.
-        self._apply_window_state()
-
-    @Slot(Qt.WindowState)
-    def _on_window_state_changed(self, _state: Qt.WindowState) -> None:
-        self._sync_window_state()
-
-    def _sync_window_state(self) -> None:
-        self._apply_window_state()
-        self._refresh_shadow_margin()
-
+    @Slot()
     def _apply_window_state(self) -> None:
         state = self._platform.read_state(self._active_window)
 
@@ -200,15 +190,14 @@ class MainWindowService(QObject):
             self._is_maximized = state.is_maximized
             self.is_maximized_changed.emit(state.is_maximized)
 
-    def _refresh_shadow_margin(self) -> None:
-        margin = self._platform.shadow_margin(self._active_window)
+    @Slot(int)
+    def _on_shadow_margin_changed(self, margin: int) -> None:
         if margin == self._shadow_margin:
             return
 
         previous_width = self.content_width
         previous_height = self.content_height
         self._shadow_margin = margin
-        self._platform.apply_content_margins(margin)
         self.shadow_margin_changed.emit(margin)
 
         if self.content_width != previous_width:
