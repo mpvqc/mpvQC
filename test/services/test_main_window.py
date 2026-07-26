@@ -10,13 +10,13 @@ import pytest
 from PySide6.QtGui import QWindow
 
 from mpvqc.services import MainWindowService, PlatformService
+from mpvqc.services.platform.window_state import WindowStateSnapshot
 
 
 @pytest.fixture
 def platform_service_mock():
     mock = MagicMock(spec_set=PlatformService)
-    mock.is_fullscreen.return_value = False
-    mock.is_maximized.return_value = False
+    mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
     mock.shadow_margin.return_value = 0
     return mock
 
@@ -169,35 +169,23 @@ def test_exit_fullscreen_delegates_to_platform(qt_app, service, platform_service
     platform_service_mock.exit_fullscreen.assert_called_once_with(window)
 
 
-def test_state_reads_report_platform_answers(qt_app, service, platform_service_mock):
+def test_state_read_reports_platform_answers(qt_app, service, platform_service_mock):
     service._window = QWindow()
 
-    platform_service_mock.is_fullscreen.return_value = True
-    platform_service_mock.is_maximized.return_value = True
+    platform_service_mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
     service._sync_window_state()
     assert service.is_fullscreen
     assert service.is_maximized
 
-    platform_service_mock.is_fullscreen.return_value = False
-    platform_service_mock.is_maximized.return_value = False
+    platform_service_mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
     service._sync_window_state()
     assert not service.is_fullscreen
     assert not service.is_maximized
 
 
-def test_state_sync_reads_fullscreen_before_maximized(qt_app, service, platform_service_mock):
-    service._window = QWindow()
-
-    service._sync_window_state()
-
-    calls = [name for name, *_ in platform_service_mock.mock_calls]
-    assert calls.index("is_fullscreen") < calls.index("is_maximized")
-
-
 def test_unchanged_states_emit_nothing(qt_app, service, platform_service_mock, make_spy):
     service._window = QWindow()
-    platform_service_mock.is_fullscreen.return_value = True
-    platform_service_mock.is_maximized.return_value = True
+    platform_service_mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=True)
 
     fullscreen_spy = make_spy(service.is_fullscreen_changed)
     maximized_spy = make_spy(service.is_maximized_changed)
@@ -223,7 +211,7 @@ def test_exit_fullscreen_without_prior_enter_emits_nothing(qt_app, service, plat
 
 def test_repeated_show_fullscreen_emits_once(qt_app, service, platform_service_mock, make_spy):
     service._window = QWindow()
-    platform_service_mock.is_fullscreen.return_value = True
+    platform_service_mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
 
     spy = make_spy(service.is_fullscreen_changed)
 
@@ -237,12 +225,12 @@ def test_repeated_show_fullscreen_emits_once(qt_app, service, platform_service_m
 def test_position_only_change_updates_fullscreen_state(qt_app, service, platform_service_mock):
     service._window = QWindow()
 
-    platform_service_mock.is_fullscreen.return_value = True
+    platform_service_mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=True, is_maximized=False)
     service.show_fullscreen()
     assert service.is_fullscreen
 
     # The OS moved the window off the monitor without resizing it (keyboard move)
-    platform_service_mock.is_fullscreen.return_value = False
+    platform_service_mock.read_state.return_value = WindowStateSnapshot(is_fullscreen=False, is_maximized=False)
     service._on_position_changed(50)
 
     assert not service.is_fullscreen

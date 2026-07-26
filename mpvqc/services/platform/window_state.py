@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, NamedTuple, Protocol
 
 from PySide6.QtCore import Qt
 
@@ -16,12 +16,19 @@ if TYPE_CHECKING:
     from .content_margins import ContentMarginsApplier
 
 
-class WindowStateHandler(Protocol):
-    """Drives every window-state change and answers the state reads, so
-    platform quirks stay in platform code and out of shared services.
+class WindowStateSnapshot(NamedTuple):
+    """Both window-state flags, taken in one read.
 
     `is_maximized` reports the logical state: the state the window returns
     to, even while it is minimized or fullscreen covers it."""
+
+    is_fullscreen: bool
+    is_maximized: bool
+
+
+class WindowStateHandler(Protocol):
+    """Drives every window-state change and answers the combined state read,
+    so platform quirks stay in platform code and out of shared services."""
 
     def minimize(self, window: QWindow) -> None: ...
 
@@ -33,9 +40,7 @@ class WindowStateHandler(Protocol):
 
     def exit_fullscreen(self, window: QWindow) -> None: ...
 
-    def is_fullscreen(self, window: QWindow) -> bool: ...
-
-    def is_maximized(self, window: QWindow) -> bool: ...
+    def read_state(self, window: QWindow) -> WindowStateSnapshot: ...
 
     def shadow_margin(self, window: QWindow) -> int: ...
 
@@ -73,14 +78,16 @@ class QtWindowStateHandler:
         states = window.windowStates() & ~Qt.WindowState.WindowFullScreen
         window.setWindowStates(states)
 
-    def is_fullscreen(self, window: QWindow) -> bool:
-        return bool(window.windowStates() & Qt.WindowState.WindowFullScreen)
-
-    def is_maximized(self, window: QWindow) -> bool:
-        return bool(window.windowStates() & Qt.WindowState.WindowMaximized)
+    def read_state(self, window: QWindow) -> WindowStateSnapshot:
+        states = window.windowStates()
+        return WindowStateSnapshot(
+            is_fullscreen=bool(states & Qt.WindowState.WindowFullScreen),
+            is_maximized=bool(states & Qt.WindowState.WindowMaximized),
+        )
 
     def shadow_margin(self, window: QWindow) -> int:
-        if self.is_fullscreen(window) or self.is_maximized(window):
+        state = self.read_state(window)
+        if state.is_fullscreen or state.is_maximized:
             return 0
         return self._shadow_margin
 

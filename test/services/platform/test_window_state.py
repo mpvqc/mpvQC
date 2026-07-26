@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QWindow
 
-from mpvqc.services.platform.window_state import QtWindowStateHandler
+from mpvqc.services.platform.window_state import QtWindowStateHandler, WindowStateSnapshot
 
 NO_STATE = Qt.WindowState.WindowNoState
 MINIMIZED = Qt.WindowState.WindowMinimized
@@ -110,27 +110,45 @@ def test_operations_request_expected_states(case: OperationTestCase, make_record
 class StateReadTestCase(NamedTuple):
     name: str
     states: Qt.WindowState
-    is_fullscreen: bool
-    is_maximized: bool
+    expected: WindowStateSnapshot
 
 
 @pytest.mark.parametrize(
     "case",
     [
-        StateReadTestCase("normal", NO_STATE, is_fullscreen=False, is_maximized=False),
-        StateReadTestCase("maximized", MAXIMIZED, is_fullscreen=False, is_maximized=True),
-        StateReadTestCase("fullscreen", FULLSCREEN, is_fullscreen=True, is_maximized=False),
-        StateReadTestCase("fullscreen_over_maximized", FULLSCREEN | MAXIMIZED, is_fullscreen=True, is_maximized=True),
-        StateReadTestCase("minimized_from_maximized", MAXIMIZED | MINIMIZED, is_fullscreen=False, is_maximized=True),
+        StateReadTestCase(
+            "normal",
+            NO_STATE,
+            WindowStateSnapshot(is_fullscreen=False, is_maximized=False),
+        ),
+        StateReadTestCase(
+            "maximized",
+            MAXIMIZED,
+            WindowStateSnapshot(is_fullscreen=False, is_maximized=True),
+        ),
+        StateReadTestCase(
+            "fullscreen",
+            FULLSCREEN,
+            WindowStateSnapshot(is_fullscreen=True, is_maximized=False),
+        ),
+        StateReadTestCase(
+            "fullscreen_over_maximized",
+            FULLSCREEN | MAXIMIZED,
+            WindowStateSnapshot(is_fullscreen=True, is_maximized=True),
+        ),
+        StateReadTestCase(
+            "minimized_from_maximized",
+            MAXIMIZED | MINIMIZED,
+            WindowStateSnapshot(is_fullscreen=False, is_maximized=True),
+        ),
     ],
     ids=lambda case: case.name,
 )
-def test_state_reads(case: StateReadTestCase, make_recording_window):
+def test_read_state(case: StateReadTestCase, make_recording_window):
     window = make_recording_window(case.states)
     handler = QtWindowStateHandler()
 
-    assert handler.is_fullscreen(window) is case.is_fullscreen
-    assert handler.is_maximized(window) is case.is_maximized
+    assert handler.read_state(window) == case.expected
 
 
 class ShadowMarginTestCase(NamedTuple):
