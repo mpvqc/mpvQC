@@ -20,6 +20,9 @@ Item {
     signal closeAppRequested
     signal resizeVideoRequested
 
+    // Three loaders, never one: an export error opens a message box while the
+    // file dialog tears down, and an UnfinishedPlan opens the wizard while
+    // that teardown is pending. Sharing would drop the second overlay.
     MpvqcDialogLoader {
         id: _dialogLoader
 
