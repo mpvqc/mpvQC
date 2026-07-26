@@ -197,7 +197,7 @@ def test_enter_from_normal(fake, handler, window):
     assert ("corners", False) in fake.calls
     assert ("border", False) in fake.calls
     assert all(call[0] != "transitions" for call in fake.calls)
-    assert handler.is_fullscreen(window)
+    assert handler.read_state(window).is_fullscreen
 
 
 def test_enter_from_maximized_wraps_move_in_transitions(fake, handler, window):
@@ -220,7 +220,7 @@ def test_enter_without_monitor_is_noop(fake, handler, window):
     handler.enter_fullscreen(window)
 
     assert fake.calls == []
-    assert not handler.is_fullscreen(window)
+    assert not handler.read_state(window).is_fullscreen
 
 
 def test_exit_restores_normal_placement(fake, handler, window):
@@ -235,7 +235,7 @@ def test_exit_restores_normal_placement(fake, handler, window):
     assert ("corners", True) in fake.calls
     assert ("border", True) in fake.calls
     assert ("refresh",) in fake.calls
-    assert not handler.is_fullscreen(window)
+    assert not handler.read_state(window).is_fullscreen
 
 
 def test_exit_to_maximized_repins_normal_geometry(fake, handler, window):
@@ -286,7 +286,7 @@ def test_enter_with_abandoned_session_saves_fresh_placement(fake, handler, windo
 
 
 @dataclass(frozen=True)
-class IsFullscreenCase:
+class FullscreenReadCase:
     name: str
     maximized: bool
     minimized: bool
@@ -298,7 +298,7 @@ class IsFullscreenCase:
 @pytest.mark.parametrize(
     "case",
     [
-        IsFullscreenCase(
+        FullscreenReadCase(
             name="covering_monitor_is_fullscreen",
             maximized=False,
             minimized=False,
@@ -306,7 +306,7 @@ class IsFullscreenCase:
             expected=True,
             expects_repin=False,
         ),
-        IsFullscreenCase(
+        FullscreenReadCase(
             name="minimized_session_survives",
             maximized=False,
             minimized=True,
@@ -314,7 +314,7 @@ class IsFullscreenCase:
             expected=True,
             expects_repin=False,
         ),
-        IsFullscreenCase(
+        FullscreenReadCase(
             # Known limitation: the restored path deliberately skips the repin
             name="restored_window_retires_without_repin",
             maximized=False,
@@ -323,7 +323,7 @@ class IsFullscreenCase:
             expected=False,
             expects_repin=False,
         ),
-        IsFullscreenCase(
+        FullscreenReadCase(
             # Win+Up out of fullscreen on a setup whose work area equals the monitor
             name="maximized_covering_monitor_retires",
             maximized=True,
@@ -335,19 +335,19 @@ class IsFullscreenCase:
     ],
     ids=lambda case: case.name,
 )
-def test_is_fullscreen(case: IsFullscreenCase, fake, handler, window):
+def test_read_state_fullscreen(case: FullscreenReadCase, fake, handler, window):
     handler.enter_fullscreen(window)
     fake.maximized = case.maximized
     fake.minimized = case.minimized
     fake.rect = case.rect
 
-    assert handler.is_fullscreen(window) is case.expected
+    assert handler.read_state(window).is_fullscreen is case.expected
 
     expected_normal_rect = NORMAL_RECT if case.expects_repin else OVERHANG_RECT
     assert fake.placement.normal_rect == expected_normal_rect
     if not case.expected:
         assert ("marker", False) in fake.calls
-        assert not handler.is_fullscreen(window)
+        assert not handler.read_state(window).is_fullscreen
 
 
 class QtMechanismTestCase(NamedTuple):
@@ -389,7 +389,7 @@ def test_minimize_dispatches_to_native_wrapper(fake, handler, make_recording_win
     assert window.requests == []
 
 
-class IsMaximizedCase(NamedTuple):
+class MaximizedReadCase(NamedTuple):
     name: str
     fullscreen_session: bool
     entered_from_maximized: bool
@@ -401,7 +401,7 @@ class IsMaximizedCase(NamedTuple):
 @pytest.mark.parametrize(
     "case",
     [
-        IsMaximizedCase(
+        MaximizedReadCase(
             "plain_answers_from_qt_states",
             fullscreen_session=False,
             entered_from_maximized=False,
@@ -409,7 +409,7 @@ class IsMaximizedCase(NamedTuple):
             restores_to_maximized=False,
             expected=True,
         ),
-        IsMaximizedCase(
+        MaximizedReadCase(
             "plain_normal_window",
             fullscreen_session=False,
             entered_from_maximized=False,
@@ -417,7 +417,7 @@ class IsMaximizedCase(NamedTuple):
             restores_to_maximized=False,
             expected=False,
         ),
-        IsMaximizedCase(
+        MaximizedReadCase(
             # WS_MAXIMIZE is stripped while fullscreen; the saved placement remembers
             "session_from_maximized_stays_maximized",
             fullscreen_session=True,
@@ -426,7 +426,7 @@ class IsMaximizedCase(NamedTuple):
             restores_to_maximized=False,
             expected=True,
         ),
-        IsMaximizedCase(
+        MaximizedReadCase(
             "session_from_normal",
             fullscreen_session=True,
             entered_from_maximized=False,
@@ -434,7 +434,7 @@ class IsMaximizedCase(NamedTuple):
             restores_to_maximized=False,
             expected=False,
         ),
-        IsMaximizedCase(
+        MaximizedReadCase(
             # Win+D while fullscreen: the saved placement outranks the minimized read
             "session_survives_minimize",
             fullscreen_session=True,
@@ -443,7 +443,7 @@ class IsMaximizedCase(NamedTuple):
             restores_to_maximized=False,
             expected=True,
         ),
-        IsMaximizedCase(
+        MaximizedReadCase(
             # The original repro: Qt lost the Maximized bit; the restore flag remembers
             "minimized_answers_from_restore_flag",
             fullscreen_session=False,
@@ -452,7 +452,7 @@ class IsMaximizedCase(NamedTuple):
             restores_to_maximized=True,
             expected=True,
         ),
-        IsMaximizedCase(
+        MaximizedReadCase(
             "minimized_from_normal",
             fullscreen_session=False,
             entered_from_maximized=False,
@@ -463,7 +463,7 @@ class IsMaximizedCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_is_maximized(case: IsMaximizedCase, fake, handler, window):
+def test_read_state_maximized(case: MaximizedReadCase, fake, handler, window):
     if case.fullscreen_session:
         fake.maximized = case.entered_from_maximized
         if fake.maximized:
@@ -474,7 +474,7 @@ def test_is_maximized(case: IsMaximizedCase, fake, handler, window):
     fake.minimized = bool(case.qt_states & Qt.WindowState.WindowMinimized)
     fake.restores_to_maximized = case.restores_to_maximized
 
-    assert handler.is_maximized(window) is case.expected
+    assert handler.read_state(window).is_maximized is case.expected
 
 
 def test_minimize_from_maximized_reports_maximized_until_restored(fake, handler, window):
@@ -483,33 +483,35 @@ def test_minimize_from_maximized_reports_maximized_until_restored(fake, handler,
     handler.minimize(window)
     # Qt observes the native minimize through window messages
     window.setWindowStates(Qt.WindowState.WindowMinimized)
-    assert handler.is_maximized(window)
+    assert handler.read_state(window).is_maximized
 
     # Windows restored the window maximized; Qt observed it
     fake.minimized = False
     window.setWindowStates(Qt.WindowState.WindowMaximized)
-    assert handler.is_maximized(window)
+    assert handler.read_state(window).is_maximized
 
 
-def test_is_maximized_after_retired_session_answers_from_qt_states(fake, handler, window):
+def test_abandoned_session_snapshot_answers_maximized_from_qt(fake, handler, window):
     handler.enter_fullscreen(window)
-    # The OS restored the window behind the app's back
-    fake.rect = NORMAL_RECT
-
-    assert not handler.is_fullscreen(window)
-
+    # The OS re-maximized the window behind the app's back (Win+Up); Qt observed it
+    fake.maximized = True
+    fake.rect = MONITOR
     window.setWindowStates(Qt.WindowState.WindowMaximized)
-    assert handler.is_maximized(window)
+
+    snapshot = handler.read_state(window)
+
+    # The stale placement saved at enter would answer not-maximized
+    assert not snapshot.is_fullscreen
+    assert snapshot.is_maximized
 
 
-def test_state_reads_do_not_create_the_native_window(fake, handler, make_recording_window):
+def test_state_read_does_not_create_the_native_window(fake, handler, make_recording_window):
     # Startup reads the state before the frame is configured. winId() on a
     # window without a native handle creates it, and the frame configuration
     # arrives too late to reclaim the caption: two title bars.
     window = make_recording_window()
 
-    handler.is_fullscreen(window)
-    handler.is_maximized(window)
+    handler.read_state(window)
     handler.shadow_margin(window)
 
     assert window.win_id_calls == 0

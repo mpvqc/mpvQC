@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 
+from mpvqc.services.platform.window_state import WindowStateSnapshot
+
 from .native import (
     get_window_placement,
     is_maximized,
@@ -147,7 +149,15 @@ class WindowsWindowStateHandler:
             set_window_placement(hwnd, placement)
         refresh_window_frame(hwnd)
 
-    def is_fullscreen(self, window: QWindow) -> bool:
+    def read_state(self, window: QWindow) -> WindowStateSnapshot:
+        # The fullscreen read must run first: it retires a fullscreen session
+        # the OS ended behind the app's back, and the maximized read answers
+        # from the saved placement as long as a session exists.
+        fullscreen = self._read_fullscreen(window)
+        maximized = self._read_maximized(window)
+        return WindowStateSnapshot(is_fullscreen=fullscreen, is_maximized=maximized)
+
+    def _read_fullscreen(self, window: QWindow) -> bool:
         # enter_fullscreen() briefly puts the window into a state that looks
         # like an abandoned session. A reentrant call must not clear the
         # session that is being built.
@@ -164,13 +174,13 @@ class WindowsWindowStateHandler:
             return True
 
         # Visible but not covering the monitor: the OS ended fullscreen on its
-        # own (Win+Up, snap, display change). This query clears the session on
+        # own (Win+Up, snap, display change). This read clears the session on
         # purpose: otherwise the saved placement would make this return True
         # again after a later minimize.
         self._retire_abandoned_session(hwnd)
         return False
 
-    def is_maximized(self, window: QWindow) -> bool:
+    def _read_maximized(self, window: QWindow) -> bool:
         # While a fullscreen session is active, WS_MAXIMIZE is stripped from
         # the style; the placement saved at enter remembers the true state.
         if self._saved_placement is not None:

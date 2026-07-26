@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QWindow
 
     from .backend import PlatformBackend
+    from .window_state import WindowStateSnapshot
 
 
 class PlatformService(QObject):
@@ -54,11 +55,8 @@ class PlatformService(QObject):
     def exit_fullscreen(self, window: QWindow) -> None:
         self._backend.window_state.exit_fullscreen(window)
 
-    def is_fullscreen(self, window: QWindow) -> bool:
-        return self._backend.window_state.is_fullscreen(window)
-
-    def is_maximized(self, window: QWindow) -> bool:
-        return self._backend.window_state.is_maximized(window)
+    def read_state(self, window: QWindow) -> WindowStateSnapshot:
+        return self._backend.window_state.read_state(window)
 
     def shadow_margin(self, window: QWindow) -> int:
         return self._backend.window_state.shadow_margin(window)
