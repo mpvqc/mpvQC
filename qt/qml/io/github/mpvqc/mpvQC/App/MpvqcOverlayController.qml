@@ -23,7 +23,10 @@ Item {
     MpvqcDialogLoader {
         id: _dialogLoader
 
-        onDialogClosed: root.focusWanted()
+        onClosed: {
+            root.focusWanted();
+            _importWizardRelay.releaseWizardViewModel();
+        }
     }
 
     MpvqcFileDialogLoader {
@@ -36,6 +39,12 @@ Item {
         id: _messageBoxLoader
 
         onClosed: root.focusWanted()
+    }
+
+    MpvqcImportWizardRequestRelayViewModel {
+        id: _importWizardRelay
+
+        onImportWizardRequested: viewModel => _dialogLoader.openImportWizardDialog(viewModel)
     }
 
     MpvqcMessageBoxRequestRelayViewModel {
@@ -67,40 +76,8 @@ Item {
             root.resizeVideoRequested();
         }
 
-        function onAppearanceDialogRequested(): void {
-            _dialogLoader.openAppearanceDialog();
-        }
-
-        function onCommentTypesDialogRequested(): void {
-            _dialogLoader.openCommentTypesDialog();
-        }
-
-        function onBackupSettingsDialogRequested(): void {
-            _dialogLoader.openBackupSettingsDialog();
-        }
-
-        function onExportSettingsDialogRequested(): void {
-            _dialogLoader.openExportSettingsDialog();
-        }
-
-        function onImportSettingsDialogRequested(): void {
-            _dialogLoader.openImportSettingsDialog();
-        }
-
-        function onEditMpvConfigDialogRequested(): void {
-            _dialogLoader.openEditMpvDialog();
-        }
-
-        function onEditInputConfigDialogRequested(): void {
-            _dialogLoader.openEditInputDialog();
-        }
-
-        function onKeyboardShortcutsDialogRequested(): void {
-            _dialogLoader.openShortcutsDialog();
-        }
-
-        function onAboutDialogRequested(): void {
-            _dialogLoader.openAboutDialog();
+        function onDialogRequested(kind: int): void {
+            _dialogLoader.openDialog(kind);
         }
 
         function onMessageBoxRequested(kind: int): void {

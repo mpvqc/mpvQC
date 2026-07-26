@@ -13,7 +13,8 @@ from PySide6.QtQml import QmlElement
 from mpvqc.services import ImporterService
 from mpvqc.services.importer import UnfinishedPlan
 
-from .import_wizard import MpvqcImportWizardViewModel, compute_steps
+from .wizard_helpers import compute_steps
+from .wizard_viewmodel import MpvqcImportWizardViewModel
 
 logger = logging.getLogger(__name__)
 
@@ -22,21 +23,21 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcDialogLoaderViewModel(QObject):
+class MpvqcImportWizardRequestRelayViewModel(QObject):
     _importer = inject.attr(ImporterService)
 
-    importWizardDialogRequested = Signal(QObject)
+    importWizardRequested = Signal(QObject)
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._active_dialog_vm: QObject | None = None
+    def __init__(self, parent: QObject | None = None) -> None:
+        super().__init__(parent)
+        self._wizard_vm: QObject | None = None
         self._importer.unfinished_plan_ready.connect(self._request_import_wizard)
 
     @Slot()
-    def releaseActiveDialog(self) -> None:
-        if self._active_dialog_vm is not None:
-            self._active_dialog_vm.deleteLater()
-            self._active_dialog_vm = None
+    def releaseWizardViewModel(self) -> None:
+        if self._wizard_vm is not None:
+            self._wizard_vm.deleteLater()
+            self._wizard_vm = None
             if self._importer.busy:
                 self._importer.cancel_pending()
 
@@ -47,5 +48,5 @@ class MpvqcDialogLoaderViewModel(QObject):
             self._importer.cancel_pending()
             return
 
-        self._active_dialog_vm = MpvqcImportWizardViewModel(self, unfinished_plan)
-        self.importWizardDialogRequested.emit(self._active_dialog_vm)
+        self._wizard_vm = MpvqcImportWizardViewModel(self, unfinished_plan)
+        self.importWizardRequested.emit(self._wizard_vm)

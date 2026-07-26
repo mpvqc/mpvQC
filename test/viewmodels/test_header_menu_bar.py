@@ -9,7 +9,7 @@ import inject
 import pytest
 from PySide6.QtCore import QUrl
 
-from mpvqc.enums import FileDialogKind, MessageBoxKind
+from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
@@ -131,6 +131,29 @@ def test_request_custom_export(view_model, make_spy):
 
     assert spy.count() == 1
     assert spy.at(0, 0) == template
+
+
+@pytest.mark.parametrize(
+    ("request_dialog", "expected_kind"),
+    [
+        (lambda vm: vm.requestOpenAppearanceDialog(), DialogKind.APPEARANCE),
+        (lambda vm: vm.requestOpenCommentTypesDialog(), DialogKind.COMMENT_TYPES),
+        (lambda vm: vm.requestOpenBackupSettingsDialog(), DialogKind.BACKUP_SETTINGS),
+        (lambda vm: vm.requestOpenExportSettingsDialog(), DialogKind.EXPORT_SETTINGS),
+        (lambda vm: vm.requestOpenImportSettingsDialog(), DialogKind.IMPORT_SETTINGS),
+        (lambda vm: vm.requestOpenEditMpvConfigDialog(), DialogKind.EDIT_MPV_CONFIG),
+        (lambda vm: vm.requestOpenEditInputConfigDialog(), DialogKind.EDIT_INPUT_CONFIG),
+        (lambda vm: vm.requestOpenKeyboardShortcutsDialog(), DialogKind.KEYBOARD_SHORTCUTS),
+        (lambda vm: vm.requestOpenAboutDialog(), DialogKind.ABOUT),
+    ],
+)
+def test_request_dialog(view_model, make_spy, request_dialog, expected_kind):
+    spy = make_spy(view_model.dialogRequested)
+
+    request_dialog(view_model)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == expected_kind
 
 
 def test_request_check_for_updates(view_model, make_spy):
