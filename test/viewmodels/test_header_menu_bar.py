@@ -7,8 +7,9 @@ from unittest.mock import MagicMock
 
 import inject
 import pytest
+from PySide6.QtCore import QUrl
 
-from mpvqc.enums import MessageBoxKind
+from mpvqc.enums import FileDialogKind, MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
@@ -77,7 +78,7 @@ def test_request_reset_app_state(view_model, configure_state, reset_service_mock
 
 
 def test_save(view_model, make_spy, configure_state, export_service_mock):
-    spy = make_spy(view_model.savePathRequested)
+    spy = make_spy(view_model.fileDialogRequested)
 
     configure_state(document=None)
     view_model.requestSaveQcDocumentAs()
@@ -87,6 +88,7 @@ def test_save(view_model, make_spy, configure_state, export_service_mock):
     configure_state(document=None)
     view_model.requestSaveQcDocument()
     assert spy.count() == 2
+    assert spy.at(1, 0) == FileDialogKind.SAVE_DOCUMENT
     export_service_mock.save.assert_not_called()
 
     path = Path() / "test_document.txt"
@@ -102,12 +104,33 @@ def test_save(view_model, make_spy, configure_state, export_service_mock):
     assert spy.count() == 3
 
 
-def test_request_classic_export(view_model, make_spy):
-    spy = make_spy(view_model.classicExportRequested)
+@pytest.mark.parametrize(
+    ("request_file_dialog", "expected_kind"),
+    [
+        (lambda vm: vm.requestOpenQcDocuments(), FileDialogKind.IMPORT_DOCUMENTS),
+        (lambda vm: vm.requestSaveQcDocumentAs(), FileDialogKind.SAVE_DOCUMENT),
+        (lambda vm: vm.requestExportQcDocumentClassic(), FileDialogKind.EXPORT_CLASSIC_DOCUMENT),
+        (lambda vm: vm.requestOpenVideo(), FileDialogKind.IMPORT_VIDEO),
+        (lambda vm: vm.requestOpenSubtitles(), FileDialogKind.IMPORT_SUBTITLES),
+    ],
+)
+def test_request_file_dialog(view_model, make_spy, request_file_dialog, expected_kind):
+    spy = make_spy(view_model.fileDialogRequested)
 
-    view_model.requestExportQcDocumentClassic()
+    request_file_dialog(view_model)
 
     assert spy.count() == 1
+    assert spy.at(0, 0) == expected_kind
+
+
+def test_request_custom_export(view_model, make_spy):
+    spy = make_spy(view_model.customExportRequested)
+    template = QUrl.fromLocalFile("template.jinja")
+
+    view_model.requestExportQcDocumentCustom("custom", template)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == template
 
 
 def test_request_check_for_updates(view_model, make_spy):
