@@ -8,12 +8,8 @@ from typing import TYPE_CHECKING, NamedTuple, Protocol
 
 from PySide6.QtCore import Qt
 
-from .content_margins import NoContentMarginsApplier
-
 if TYPE_CHECKING:
     from PySide6.QtGui import QWindow
-
-    from .content_margins import ContentMarginsApplier
 
 
 class WindowStateSnapshot(NamedTuple):
@@ -42,18 +38,10 @@ class WindowStateHandler(Protocol):
 
     def read_state(self, window: QWindow) -> WindowStateSnapshot: ...
 
-    def shadow_margin(self, window: QWindow) -> int: ...
-
-    def apply_content_margins(self, margin: int) -> None: ...
-
 
 class QtWindowStateHandler:
     """Requests window states through Qt for platforms whose window system
     honors them directly."""
-
-    def __init__(self, *, shadow_margin: int = 0, margins_applier: ContentMarginsApplier | None = None) -> None:
-        self._shadow_margin = shadow_margin
-        self._margins_applier = margins_applier if margins_applier is not None else NoContentMarginsApplier()
 
     def minimize(self, window: QWindow) -> None:
         # Keep the other state bits while minimized. Replacing the set would
@@ -84,12 +72,3 @@ class QtWindowStateHandler:
             is_fullscreen=bool(states & Qt.WindowState.WindowFullScreen),
             is_maximized=bool(states & Qt.WindowState.WindowMaximized),
         )
-
-    def shadow_margin(self, window: QWindow) -> int:
-        state = self.read_state(window)
-        if state.is_fullscreen or state.is_maximized:
-            return 0
-        return self._shadow_margin
-
-    def apply_content_margins(self, margin: int) -> None:
-        self._margins_applier.apply_content_margins(margin)

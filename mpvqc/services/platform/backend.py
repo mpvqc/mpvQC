@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .embedded_player import EmbeddedPlayerTracker
+    from .surface import SurfaceHandler
     from .window_buttons import WindowButtonSource
     from .window_configuration import WindowConfigurator
     from .window_reveal import WindowRevealer
@@ -25,6 +26,7 @@ class PlatformBackend:
     owns_window_geometry: bool
 
     window_state: WindowStateHandler
+    surface: SurfaceHandler
     window_configuration: WindowConfigurator
     window_reveal: WindowRevealer
     embedded_player: EmbeddedPlayerTracker

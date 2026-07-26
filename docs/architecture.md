@@ -51,9 +51,10 @@ to QML, such as the comment store and its selection state. Each service sits in 
 `mpvqc/injections.py` registers the bindings for the inject container.
 
 Platform differences live behind `PlatformService`. At startup it selects a per-platform backend: a record of
-capabilities such as window-state driving (minimize, maximize, fullscreen, the combined state read, and the window's
-shadow margin), window configuration, and window buttons. Linux drives window states through Qt; Windows integrates
-with the native window frame. Shared services stay platform-free and reach the capabilities through `PlatformService`.
+capabilities such as window-state driving (minimize, maximize, fullscreen, and the combined state read), the surface
+(the decorated padding around the window content and its shadow margin), window configuration, and window buttons.
+Linux drives window states through Qt; Windows integrates with the native window frame. Shared services stay
+platform-free and reach the capabilities through `PlatformService`.
 
 ### Bootstrap
 

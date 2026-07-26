@@ -27,6 +27,7 @@ from mpvqc.services import (
 )
 from mpvqc.services.platform.backend import PlatformBackend
 from mpvqc.services.platform.embedded_player import NoEmbeddedPlayerTracker
+from mpvqc.services.platform.surface import NoSurfaceHandler
 from mpvqc.services.platform.window_buttons import StaticWindowButtons
 from mpvqc.services.platform.window_configuration import NoWindowConfigurator
 from mpvqc.services.platform.window_reveal import NoWindowRevealer
@@ -49,6 +50,7 @@ def _headless_platform_backend() -> PlatformBackend:
         root_qml_url="qrc:/qt/qml/MpvqcApplicationLinux.qml",
         owns_window_geometry=False,
         window_state=QtWindowStateHandler(),
+        surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
         window_reveal=NoWindowRevealer(),
         embedded_player=NoEmbeddedPlayerTracker(),

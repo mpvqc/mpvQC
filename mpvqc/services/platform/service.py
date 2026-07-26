@@ -59,10 +59,10 @@ class PlatformService(QObject):
         return self._backend.window_state.read_state(window)
 
     def shadow_margin(self, window: QWindow) -> int:
-        return self._backend.window_state.shadow_margin(window)
+        return self._backend.surface.shadow_margin(window)
 
     def apply_content_margins(self, margin: int) -> None:
-        self._backend.window_state.apply_content_margins(margin)
+        self._backend.surface.apply_content_margins(margin)
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._backend.window_configuration.configure_window(app, window)

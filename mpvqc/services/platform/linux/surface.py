@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from PySide6.QtCore import QEvent, QObject
+from PySide6.QtCore import QEvent, QObject, Qt
 from PySide6.QtGui import QGuiApplication, QRegion
 
 from .resize_filter import MARGIN_RESIZE_BAND, WindowResizeFilter
@@ -40,16 +40,17 @@ class SurfaceController:
     content, the input mask that lets clicks fall through the shadow, and the
     resize band along the content edge."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, shadow_margin: int) -> None:
+        self._composed_margin = shadow_margin
         self._window: QWindow | None = None
         self._event_filter: WindowResizeFilter | None = None
         self._expose_filter: WindowExposeFilter | None = None
-        self._margin = 0
+        self._applied_margin = 0
 
     def configure_window(self, app: QGuiApplication, window: QWindow) -> None:
         self._window = window
         self._event_filter = event_filter = WindowResizeFilter(window, app)
-        event_filter.set_resize_margin(self._margin)
+        event_filter.set_resize_margin(self._applied_margin)
         window.installEventFilter(event_filter)
 
         # The inset and mask need a created and mapped surface, which does not
@@ -62,8 +63,15 @@ class SurfaceController:
         window.widthChanged.connect(self._apply_input_mask)
         window.heightChanged.connect(self._apply_input_mask)
 
+    def shadow_margin(self, window: QWindow) -> int:
+        states = window.windowStates()
+        collapsed = Qt.WindowState.WindowMaximized | Qt.WindowState.WindowFullScreen
+        if states & collapsed:
+            return 0
+        return self._composed_margin
+
     def apply_content_margins(self, margin: int) -> None:
-        self._margin = margin
+        self._applied_margin = margin
         if self._event_filter is not None:
             self._event_filter.set_resize_margin(margin)
         self._reassert_surface()
@@ -81,7 +89,7 @@ class SurfaceController:
             return
 
         if QGuiApplication.platformName() == "wayland":
-            apply_wayland_content_margins(self._window, self._margin)
+            apply_wayland_content_margins(self._window, self._applied_margin)
             return
 
         # X11 (platformName "xcb") is NOT supported and is not planned. If it is
@@ -97,5 +105,5 @@ class SurfaceController:
         width = self._window.width()
         height = self._window.height()
 
-        inset = max(0, self._margin - MARGIN_RESIZE_BAND)
+        inset = max(0, self._applied_margin - MARGIN_RESIZE_BAND)
         self._window.setMask(QRegion(inset, inset, width - 2 * inset, height - 2 * inset))

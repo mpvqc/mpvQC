@@ -17,14 +17,6 @@ MAXIMIZED = Qt.WindowState.WindowMaximized
 FULLSCREEN = Qt.WindowState.WindowFullScreen
 
 
-class RecordingApplier:
-    def __init__(self) -> None:
-        self.margins: list[int] = []
-
-    def apply_content_margins(self, margin: int) -> None:
-        self.margins.append(margin)
-
-
 class OperationTestCase(NamedTuple):
     name: str
     operation: Callable[[QtWindowStateHandler, QWindow], None]
@@ -149,72 +141,3 @@ def test_read_state(case: StateReadTestCase, make_recording_window):
     handler = QtWindowStateHandler()
 
     assert handler.read_state(window) == case.expected
-
-
-class ShadowMarginTestCase(NamedTuple):
-    name: str
-    composed_margin: int
-    states: Qt.WindowState
-    expected: int
-
-
-@pytest.mark.parametrize(
-    "case",
-    [
-        ShadowMarginTestCase(
-            "composed_margin_defaults_to_zero",
-            composed_margin=0,
-            states=NO_STATE,
-            expected=0,
-        ),
-        ShadowMarginTestCase(
-            "normal_uses_composed_margin",
-            composed_margin=88,
-            states=NO_STATE,
-            expected=88,
-        ),
-        ShadowMarginTestCase(
-            "maximized_collapses_margin",
-            composed_margin=88,
-            states=MAXIMIZED,
-            expected=0,
-        ),
-        ShadowMarginTestCase(
-            "fullscreen_collapses_margin",
-            composed_margin=88,
-            states=FULLSCREEN,
-            expected=0,
-        ),
-        ShadowMarginTestCase(
-            "minimized_from_maximized_stays_collapsed",
-            composed_margin=88,
-            states=MAXIMIZED | MINIMIZED,
-            expected=0,
-        ),
-        ShadowMarginTestCase(
-            "minimized_from_normal_keeps_margin",
-            composed_margin=88,
-            states=MINIMIZED,
-            expected=88,
-        ),
-    ],
-    ids=lambda case: case.name,
-)
-def test_shadow_margin(case: ShadowMarginTestCase, make_recording_window):
-    window = make_recording_window(case.states)
-    handler = QtWindowStateHandler(shadow_margin=case.composed_margin)
-
-    assert handler.shadow_margin(window) == case.expected
-
-
-def test_apply_content_margins_forwards_to_applier():
-    applier = RecordingApplier()
-    handler = QtWindowStateHandler(shadow_margin=88, margins_applier=applier)
-
-    handler.apply_content_margins(42)
-
-    assert applier.margins == [42]
-
-
-def test_default_applier_accepts_margins():
-    QtWindowStateHandler().apply_content_margins(42)
