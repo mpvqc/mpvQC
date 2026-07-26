@@ -98,6 +98,8 @@ def get_window_rect(hwnd: int) -> tuple[int, int, int, int] | None:
 
 
 _SW_MAXIMIZE = 3
+_SW_MINIMIZE = 6
+_WPF_RESTORETOMAXIMIZED = 0x0002
 
 
 class WindowPlacement(NamedTuple):
@@ -110,6 +112,10 @@ class WindowPlacement(NamedTuple):
     @property
     def shows_maximized(self) -> bool:
         return self.show_cmd == _SW_MAXIMIZE
+
+    @property
+    def restores_to_maximized(self) -> bool:
+        return bool(self.flags & _WPF_RESTORETOMAXIMIZED)
 
 
 class _WINDOWPLACEMENT(Structure):
@@ -172,6 +178,10 @@ _ShowWindow.restype = BOOL
 
 def maximize_window(hwnd: int) -> None:
     _ShowWindow(hwnd, _SW_MAXIMIZE)
+
+
+def minimize_window(hwnd: int) -> None:
+    _ShowWindow(hwnd, _SW_MINIMIZE)
 
 
 _IsIconic = _user32.IsIconic

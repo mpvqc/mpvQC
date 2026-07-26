@@ -14,6 +14,7 @@ from .native import (
     is_minimized,
     mark_fullscreen_window,
     maximize_window,
+    minimize_window,
     refresh_window_frame,
     set_outer_window_rect,
     set_window_border_visible,
@@ -35,8 +36,13 @@ if TYPE_CHECKING:
 
 
 class WindowsWindowStateHandler:
-    """Minimize, maximize and show-normal go through Qt. DWM draws the window
-    shadow, so the shadow margin is always zero.
+    """Maximize and show-normal go through Qt. Minimize is native: Qt's
+    showMinimized() replaces the window states, and the Windows QPA takes the
+    dropped Maximized bit literally and clears WPF_RESTORETOMAXIMIZED — the
+    flag Windows uses to restore a minimized window to maximized. Minimizing
+    through ShowWindow leaves that flag to Windows, and Qt only observes.
+
+    DWM draws the window shadow, so the shadow margin is always zero.
 
     Fullscreen enters as one atomic move to the monitor rect. Qt instead swaps
     window styles, restores, then re-maximizes, which flashes intermediate frames.
@@ -59,7 +65,7 @@ class WindowsWindowStateHandler:
         self._entering = False
 
     def minimize(self, window: QWindow) -> None:
-        window.showMinimized()
+        minimize_window(window.winId())
 
     def maximize(self, window: QWindow) -> None:
         window.setWindowStates(Qt.WindowState.WindowMaximized)
@@ -169,7 +175,20 @@ class WindowsWindowStateHandler:
         # the style; the placement saved at enter remembers the true state.
         if self._saved_placement is not None:
             return self._saved_placement.shows_maximized
-        return bool(window.windowStates() & Qt.WindowState.WindowMaximized)
+
+        states = window.windowStates()
+
+        # While minimized, Qt's bookkeeping can lose the Maximized bit; the
+        # restore flag remembers the restore target. A minimized window always
+        # exists natively, so winId() cannot create it here.
+        if states & Qt.WindowState.WindowMinimized:
+            placement = get_window_placement(window.winId())
+            return placement is not None and placement.restores_to_maximized
+
+        # Answering from Qt keeps this read free of winId(): before the native
+        # window exists, winId() would create it, and the frame configuration
+        # would come too late to reclaim the caption.
+        return bool(states & Qt.WindowState.WindowMaximized)
 
     def shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
         return 0

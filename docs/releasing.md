@@ -43,6 +43,9 @@ This is the final gate before tagging.
   - [ ] Video playback works
   - [ ] Basic export writes a real file via the native file dialog
   - [ ] Smoke-click each menu and the window chrome (close/minimize/maximize)
+  - [ ] A maximized window minimized with the title-bar button restores from the taskbar as maximized
+  - [ ] Fullscreen enters and exits cleanly from both a normal and a maximized window
+  - [ ] Win+D while fullscreen, then restoring the window, returns to fullscreen
 - [ ] Manual testing on Linux (on the locally built Flatpak):
   - [ ] Flatpak builds locally
   - [ ] Flatpak installs locally

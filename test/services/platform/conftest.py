@@ -17,6 +17,7 @@ class RecordingWindow(QWindow):
         super().__init__()
         self._states = states
         self.requests: list[object] = []
+        self.win_id_calls = 0
 
     @override
     def windowStates(self) -> Qt.WindowState:
@@ -30,6 +31,11 @@ class RecordingWindow(QWindow):
     @override
     def showMinimized(self) -> None:
         self.requests.append("showMinimized")
+
+    @override
+    def winId(self) -> int:
+        self.win_id_calls += 1
+        return 0
 
 
 @pytest.fixture
