@@ -25,7 +25,9 @@ OVERHANG_RECT = (-BORDER, 0, 1920 + BORDER, 1080 + BORDER)
 MINIMIZED_RECT = (-32000, -32000, -31840, -31840)
 
 SW_SHOWNORMAL = 1
+SW_SHOWMINIMIZED = 2
 SW_SHOWMAXIMIZED = 3
+WPF_RESTORETOMAXIMIZED = 2
 
 INITIAL_PLACEMENT = WindowPlacement(0, SW_SHOWNORMAL, (-1, -1), (-1, -1), NORMAL_RECT)
 
@@ -37,6 +39,7 @@ class FakeWin32Window:
     placement: WindowPlacement = INITIAL_PLACEMENT
     maximized: bool = False
     minimized: bool = False
+    restores_to_maximized: bool = False
     rect: tuple = NORMAL_RECT
     monitor: tuple | None = MONITOR
     calls: list[tuple] = field(default_factory=list)
@@ -49,8 +52,14 @@ class FakeWin32Window:
         return left <= m_left and top <= m_top and right >= m_right and bottom >= m_bottom
 
     def get_window_placement(self) -> WindowPlacement:
-        show_cmd = SW_SHOWMAXIMIZED if self.maximized else SW_SHOWNORMAL
-        return self.placement._replace(show_cmd=show_cmd)
+        if self.minimized:
+            show_cmd = SW_SHOWMINIMIZED
+        elif self.maximized:
+            show_cmd = SW_SHOWMAXIMIZED
+        else:
+            show_cmd = SW_SHOWNORMAL
+        flags = WPF_RESTORETOMAXIMIZED if self.restores_to_maximized else 0
+        return self.placement._replace(flags=flags, show_cmd=show_cmd)
 
     def set_window_placement(self, placement: WindowPlacement) -> None:
         self.calls.append(("set_placement", placement))
@@ -71,6 +80,12 @@ class FakeWin32Window:
     def maximize(self) -> None:
         self.calls.append(("maximize",))
         self.maximized = True
+
+    def minimize(self) -> None:
+        self.calls.append(("minimize",))
+        self.restores_to_maximized = self.maximized
+        self.maximized = False
+        self.minimized = True
 
 
 @pytest.fixture
@@ -155,6 +170,11 @@ def fake(monkeypatch) -> FakeWin32Window:
         window_state,
         "maximize_window",
         lambda _hwnd: fake.maximize(),
+    )
+    monkeypatch.setattr(
+        window_state,
+        "minimize_window",
+        lambda _hwnd: fake.minimize(),
     )
     return fake
 
@@ -340,11 +360,6 @@ class QtMechanismTestCase(NamedTuple):
     "case",
     [
         QtMechanismTestCase(
-            "minimize_via_show_minimized",
-            WindowsWindowStateHandler.minimize,
-            "showMinimized",
-        ),
-        QtMechanismTestCase(
             "maximize_replaces_states",
             WindowsWindowStateHandler.maximize,
             Qt.WindowState.WindowMaximized,
@@ -365,11 +380,21 @@ def test_operations_use_qt_mechanisms(case: QtMechanismTestCase, handler, make_r
     assert window.requests == [case.expected_request]
 
 
+def test_minimize_dispatches_to_native_wrapper(fake, handler, make_recording_window):
+    window = make_recording_window()
+
+    handler.minimize(window)
+
+    assert ("minimize",) in fake.calls
+    assert window.requests == []
+
+
 class IsMaximizedCase(NamedTuple):
     name: str
     fullscreen_session: bool
     entered_from_maximized: bool
     qt_states: Qt.WindowState
+    restores_to_maximized: bool
     expected: bool
 
 
@@ -381,6 +406,7 @@ class IsMaximizedCase(NamedTuple):
             fullscreen_session=False,
             entered_from_maximized=False,
             qt_states=Qt.WindowState.WindowMaximized,
+            restores_to_maximized=False,
             expected=True,
         ),
         IsMaximizedCase(
@@ -388,6 +414,7 @@ class IsMaximizedCase(NamedTuple):
             fullscreen_session=False,
             entered_from_maximized=False,
             qt_states=Qt.WindowState.WindowNoState,
+            restores_to_maximized=False,
             expected=False,
         ),
         IsMaximizedCase(
@@ -396,6 +423,7 @@ class IsMaximizedCase(NamedTuple):
             fullscreen_session=True,
             entered_from_maximized=True,
             qt_states=Qt.WindowState.WindowNoState,
+            restores_to_maximized=False,
             expected=True,
         ),
         IsMaximizedCase(
@@ -403,6 +431,33 @@ class IsMaximizedCase(NamedTuple):
             fullscreen_session=True,
             entered_from_maximized=False,
             qt_states=Qt.WindowState.WindowNoState,
+            restores_to_maximized=False,
+            expected=False,
+        ),
+        IsMaximizedCase(
+            # Win+D while fullscreen: the saved placement outranks the minimized read
+            "session_survives_minimize",
+            fullscreen_session=True,
+            entered_from_maximized=True,
+            qt_states=Qt.WindowState.WindowMinimized,
+            restores_to_maximized=False,
+            expected=True,
+        ),
+        IsMaximizedCase(
+            # The original repro: Qt lost the Maximized bit; the restore flag remembers
+            "minimized_answers_from_restore_flag",
+            fullscreen_session=False,
+            entered_from_maximized=False,
+            qt_states=Qt.WindowState.WindowMinimized,
+            restores_to_maximized=True,
+            expected=True,
+        ),
+        IsMaximizedCase(
+            "minimized_from_normal",
+            fullscreen_session=False,
+            entered_from_maximized=False,
+            qt_states=Qt.WindowState.WindowMinimized,
+            restores_to_maximized=False,
             expected=False,
         ),
     ],
@@ -416,8 +471,24 @@ def test_is_maximized(case: IsMaximizedCase, fake, handler, window):
         handler.enter_fullscreen(window)
 
     window.setWindowStates(case.qt_states)
+    fake.minimized = bool(case.qt_states & Qt.WindowState.WindowMinimized)
+    fake.restores_to_maximized = case.restores_to_maximized
 
     assert handler.is_maximized(window) is case.expected
+
+
+def test_minimize_from_maximized_reports_maximized_until_restored(fake, handler, window):
+    fake.maximized = True
+
+    handler.minimize(window)
+    # Qt observes the native minimize through window messages
+    window.setWindowStates(Qt.WindowState.WindowMinimized)
+    assert handler.is_maximized(window)
+
+    # Windows restored the window maximized; Qt observed it
+    fake.minimized = False
+    window.setWindowStates(Qt.WindowState.WindowMaximized)
+    assert handler.is_maximized(window)
 
 
 def test_is_maximized_after_retired_session_answers_from_qt_states(fake, handler, window):
@@ -429,6 +500,19 @@ def test_is_maximized_after_retired_session_answers_from_qt_states(fake, handler
 
     window.setWindowStates(Qt.WindowState.WindowMaximized)
     assert handler.is_maximized(window)
+
+
+def test_state_reads_do_not_create_the_native_window(fake, handler, make_recording_window):
+    # Startup reads the state before the frame is configured. winId() on a
+    # window without a native handle creates it, and the frame configuration
+    # arrives too late to reclaim the caption: two title bars.
+    window = make_recording_window()
+
+    handler.is_fullscreen(window)
+    handler.is_maximized(window)
+    handler.shadow_margin(window)
+
+    assert window.win_id_calls == 0
 
 
 def test_shadow_margin_is_always_zero(fake, handler, window):

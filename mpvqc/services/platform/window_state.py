@@ -21,7 +21,7 @@ class WindowStateHandler(Protocol):
     platform quirks stay in platform code and out of shared services.
 
     `is_maximized` reports the logical state: the state the window returns
-    to, even while fullscreen covers it."""
+    to, even while it is minimized or fullscreen covers it."""
 
     def minimize(self, window: QWindow) -> None: ...
 
