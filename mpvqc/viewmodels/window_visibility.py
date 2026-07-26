@@ -17,6 +17,10 @@ class MpvqcWindowVisibilityViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
 
     @Slot()
+    def minimize(self) -> None:
+        self._main_window.minimize()
+
+    @Slot()
     def toggleMaximized(self) -> None:
         if self._main_window.is_maximized:
             self._main_window.show_normal()

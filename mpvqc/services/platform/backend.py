@@ -10,12 +10,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .content_margins import ContentMarginsApplier
     from .embedded_player import EmbeddedPlayerTracker
-    from .fullscreen import FullscreenHandler
     from .window_buttons import WindowButtonSource
     from .window_configuration import WindowConfigurator
     from .window_reveal import WindowRevealer
+    from .window_state import WindowStateHandler
 
 logger = logging.getLogger(__name__)
 
@@ -23,14 +22,12 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True, kw_only=True)
 class PlatformBackend:
     root_qml_url: str
-    draws_own_shadow: bool
     owns_window_geometry: bool
 
-    fullscreen: FullscreenHandler
+    window_state: WindowStateHandler
     window_configuration: WindowConfigurator
     window_reveal: WindowRevealer
     embedded_player: EmbeddedPlayerTracker
-    content_margins: ContentMarginsApplier
     window_buttons: WindowButtonSource
 
 

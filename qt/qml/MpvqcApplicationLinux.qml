@@ -65,7 +65,7 @@ ApplicationWindow {
             windowWidth: _frame.width
 
             onCloseRequested: root.close()
-            onMinimizeRequested: root.showMinimized()
+            onMinimizeRequested: _windowVisibilityHandler.minimize()
             onStartSystemMoveRequested: root.startSystemMove()
 
             onToggleMaximizeRequested: _windowVisibilityHandler.toggleMaximized()

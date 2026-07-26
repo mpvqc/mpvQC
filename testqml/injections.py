@@ -26,12 +26,11 @@ from mpvqc.services import (
     VideoResizeService,
 )
 from mpvqc.services.platform.backend import PlatformBackend
-from mpvqc.services.platform.content_margins import NoContentMarginsApplier
 from mpvqc.services.platform.embedded_player import NoEmbeddedPlayerTracker
-from mpvqc.services.platform.fullscreen import QtFullscreenHandler
 from mpvqc.services.platform.window_buttons import StaticWindowButtons
 from mpvqc.services.platform.window_configuration import NoWindowConfigurator
 from mpvqc.services.platform.window_reveal import NoWindowRevealer
+from mpvqc.services.platform.window_state import QtWindowStateHandler
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
@@ -48,14 +47,11 @@ TEMP_SAVES_DIR.mkdir()
 def _headless_platform_backend() -> PlatformBackend:
     return PlatformBackend(
         root_qml_url="qrc:/qt/qml/MpvqcApplicationLinux.qml",
-        # Tests load bare components, not the shadowed shell, so there is no margin.
-        draws_own_shadow=False,
         owns_window_geometry=False,
-        fullscreen=QtFullscreenHandler(),
+        window_state=QtWindowStateHandler(),
         window_configuration=NoWindowConfigurator(),
         window_reveal=NoWindowRevealer(),
         embedded_player=NoEmbeddedPlayerTracker(),
-        content_margins=NoContentMarginsApplier(),
         window_buttons=StaticWindowButtons(),
     )
 
