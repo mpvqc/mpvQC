@@ -13,6 +13,7 @@ MpvqcKeyboardFocusableButtonBox MpvqcKeyboardFocusableButtonBox.qml
 MpvqcKeycap MpvqcKeycap.qml
 MpvqcMenu MpvqcMenu.qml
 MpvqcMessageBox MpvqcMessageBox.qml
+MpvqcOverlayLoader MpvqcOverlayLoader.qml
 MpvqcPositionedMenu MpvqcPositionedMenu.qml
 MpvqcSpinBoxRow MpvqcSpinBoxRow.qml
 MpvqcSwitchRow MpvqcSwitchRow.qml
