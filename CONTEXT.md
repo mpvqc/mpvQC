@@ -17,6 +17,12 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
 
+## UI
+
+- **Overlay**: a dialog, file dialog, or message box: a transient surface that floats above the app, is loaded on
+  demand, and returns focus on close. Defined by behavior, not rendering; in windowed-popup mode some overlays are
+  real OS windows and still count.
+
 ## Platform
 
 - **Surface**: the client-side-decorated padding around the window content. Carries the drop shadow and collapses to
