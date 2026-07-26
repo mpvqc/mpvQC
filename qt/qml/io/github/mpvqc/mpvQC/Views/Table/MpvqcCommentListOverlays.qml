@@ -14,7 +14,7 @@ Item {
     required property MpvqcCommentTableViewModel viewModel
     required property ListView listView
 
-    readonly property bool anyModalActive: _editLoader.active || _contextMenuLoader.active || _messageBoxLoader.active
+    readonly property bool anyModalActive: _editLoader.active || _contextMenuLoader.active || _deleteConfirmationLoader.active
     readonly property string searchQuery: _searchBoxLoader.searchQuery
 
     signal focusWanted
@@ -50,13 +50,13 @@ Item {
         }
 
         function onDeleteCommentRequested(index: int, time: int, commentType: string, commentText: string): void {
-            _messageBoxLoader.requestDeletion(index, time, commentType, commentText);
+            _deleteConfirmationLoader.requestDeletion(index, time, commentType, commentText);
         }
 
         function onCommentsAboutToBeImported(): void {
             _editLoader.abortEdit();
             _contextMenuLoader.dismiss();
-            _messageBoxLoader.dismiss();
+            _deleteConfirmationLoader.dismiss();
         }
     }
 
@@ -82,8 +82,8 @@ Item {
         onDismissed: root.focusWanted()
     }
 
-    MpvqcMessageBoxLoader {
-        id: _messageBoxLoader
+    MpvqcDeleteConfirmationLoader {
+        id: _deleteConfirmationLoader
 
         onDeleteConfirmed: index => root.viewModel.removeRow(index)
         onClosed: root.focusWanted()
