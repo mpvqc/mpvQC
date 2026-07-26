@@ -18,34 +18,39 @@ Item {
     readonly property string searchQuery: _searchBoxLoader.searchQuery
 
     signal focusWanted
+    signal selectRequested(index: int)
+
+    function openTimeEditor(index: int, time: int, coordinates: point): void {
+        _editLoader.startEditingTime(index, time, coordinates, root.viewModel.videoDuration);
+    }
+
+    function openCommentTypeEditor(index: int, commentType: string, coordinates: point): void {
+        _editLoader.startEditingCommentType(index, commentType, coordinates, root.viewModel.commentTypes);
+    }
+
+    function openCommentEditor(index: int): void {
+        root.listView.positionViewAtIndex(index, ListView.Contain);
+        const item = root.listView.itemAtIndex(index) as MpvqcCommentListDelegate;
+        _editLoader.startEditingComment(index, item.comment, item.commentLabel);
+    }
+
+    function openContextMenu(index: int, coordinates: point): void {
+        _contextMenuLoader.show(index, coordinates);
+    }
+
+    function openSearchBox(): void {
+        _searchBoxLoader.show();
+    }
 
     Connections {
         target: root.viewModel
 
-        function onTimeEditRequested(index: int, time: int, coordinates: point): void {
-            _editLoader.startEditingTime(index, time, coordinates, root.viewModel.videoDuration);
-        }
-
-        function onCommentTypeEditRequested(index: int, commentType: string, coordinates: point): void {
-            _editLoader.startEditingCommentType(index, commentType, coordinates, root.viewModel.commentTypes);
-        }
-
-        function onCommentEditRequested(index: int, comment: string): void {
-            root.listView.positionViewAtIndex(index, ListView.Contain);
-            const item = root.listView.itemAtIndex(index) as MpvqcCommentListDelegate;
-            _editLoader.startEditingComment(index, comment, item.commentLabel);
-        }
-
-        function onContextMenuRequested(index: int, coordinates: point): void {
-            _contextMenuLoader.show(index, coordinates);
+        function onCommentEditRequested(index: int): void {
+            root.openCommentEditor(index);
         }
 
         function onDeleteCommentRequested(index: int, time: int, commentType: string, commentText: string): void {
             _messageBoxLoader.requestDeletion(index, time, commentType, commentText);
-        }
-
-        function onSearchRequested(): void {
-            _searchBoxLoader.show();
         }
 
         function onCommentsAboutToBeImported(): void {
@@ -71,7 +76,7 @@ Item {
     MpvqcContextMenuLoader {
         id: _contextMenuLoader
 
-        onEditCommentRequested: index => root.viewModel.startEditingComment(index)
+        onEditCommentRequested: index => root.openCommentEditor(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
         onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
         onDismissed: root.focusWanted()
@@ -87,7 +92,7 @@ Item {
     MpvqcSearchBoxLoader {
         id: _searchBoxLoader
 
-        onHighlightRequested: index => root.viewModel.select(index)
+        onHighlightRequested: index => root.selectRequested(index)
         onClosed: root.focusWanted()
     }
 

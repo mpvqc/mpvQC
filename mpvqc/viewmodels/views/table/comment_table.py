@@ -5,7 +5,7 @@
 from typing import assert_never
 
 import inject
-from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, QPointF, Signal, Slot
+from PySide6.QtCore import Property, QAbstractItemModel, QCoreApplication, QObject, Signal, Slot
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QmlElement
 
@@ -40,13 +40,9 @@ class MpvqcCommentTableViewModel(QObject):
     quickSelectionRequested = Signal(int)
     selectionRequested = Signal(int)
 
-    timeEditRequested = Signal(int, int, QPointF)
-    commentTypeEditRequested = Signal(int, str, QPointF)
-    commentEditRequested = Signal(int, str)  # index, comment
+    commentEditRequested = Signal(int)
 
-    contextMenuRequested = Signal(int, QPointF)
     deleteCommentRequested = Signal(int, int, str, str)  # index, time, commentType, commentText
-    searchRequested = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -67,7 +63,7 @@ class MpvqcCommentTableViewModel(QObject):
                 self.quickSelectionRequested.emit(row)
             case QuickSelectionAndEdit(row=row):
                 self.quickSelectionRequested.emit(row)
-                self.startEditingComment(row)
+                self.commentEditRequested.emit(row)
             case NoViewAction():
                 pass
             case _ as unreachable:
@@ -89,35 +85,6 @@ class MpvqcCommentTableViewModel(QObject):
     @Property(SelectionState, constant=True, final=True)
     def selection(self) -> SelectionState:
         return self._comments.selection
-
-    @Slot(int)
-    def select(self, index: int) -> None:
-        self.selectionRequested.emit(index)
-
-    @Slot(int)
-    def selectQuickly(self, index: int) -> None:
-        self.quickSelectionRequested.emit(index)
-
-    @Slot(int, int, QPointF)
-    def startEditingTime(self, index: int, time: int, coordinates: QPointF) -> None:
-        self.timeEditRequested.emit(index, time, coordinates)
-
-    @Slot(int, str, QPointF)
-    def startEditingCommentType(self, index: int, comment_type: str, coordinates: QPointF) -> None:
-        self.commentTypeEditRequested.emit(index, comment_type, coordinates)
-
-    @Slot(int)
-    def startEditingComment(self, index: int) -> None:
-        comment = self._comments.comment_at(index).comment
-        self.commentEditRequested.emit(index, comment)
-
-    @Slot(int, QPointF)
-    def openContextMenu(self, index: int, coordinates: QPointF) -> None:
-        self.contextMenuRequested.emit(index, coordinates)
-
-    @Slot()
-    def openSearchBox(self) -> None:
-        self.searchRequested.emit()
 
     @Slot(int)
     def askToDeleteRow(self, index: int) -> None:

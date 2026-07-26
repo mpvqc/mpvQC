@@ -188,9 +188,7 @@ TestCase {
         const newLastIndex = control.commentCount - 1;
         list.currentIndex = newLastIndex;
         waitForRendering(control);
-        control.viewModel.startEditingComment(newLastIndex);
-        _wait.editControlOpened(control);
-        waitForRendering(control);
+        _openEditorAt(newLastIndex);
 
         const bottomOnOpen = _delegateBottomInViewport(list, newLastIndex);
         verify(bottomOnOpen <= list.height + 1, `After deletion: last delegate bottom on open (${bottomOnOpen}) within viewport (${list.height})`);
