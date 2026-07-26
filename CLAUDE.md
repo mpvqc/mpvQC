@@ -79,6 +79,7 @@
 - `just fmt` checks tracked files only. `git add` new files before trusting it.
 - Verify the documentation is up to date before committing.
 - Use the [Conventional Commits](https://www.conventionalcommits.org/) format.
+- Don't add yourself as a co-author.
 
 ## Agent skills
 
