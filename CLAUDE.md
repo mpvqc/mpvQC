@@ -21,10 +21,12 @@
 
 - Follow clean code principles.
 - Don't use structural comments like `# region` or `# ---`.
-- Avoid comments unless absolutely necessary.
+- Avoid comments unless absolutely necessary. In any case, keep them short.
 - Run background work through `SerialJobRunner` from `mpvqc/jobs.py`. Don't use `QThreadPool`, locks, or private queued
   signals in services directly.
-- Prefer code the type checker can verify: use closures instead of `functools.partial`.
+- Prefer code the type checker can verify:
+  - Use closures instead of `functools.partial`
+  - Don't use getattr
 - Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix. Helpers that aren't in
   `injections.py` live at the top level of `mpvqc/`.
 - Use the `signal name(value: type)` notation instead of the old `signal name(type value)` notation in QML signals.
