@@ -20,6 +20,17 @@ ListView {
     readonly property int _animationDuration: 50
     property bool _instantHighlight: false
 
+    signal editTimeRequested(index: int, time: int, coordinates: point)
+    signal editCommentTypeRequested(index: int, commentType: string, coordinates: point)
+    signal editCommentRequested(index: int)
+    signal contextMenuRequested(index: int, coordinates: point)
+    signal searchRequested
+
+    function selectRow(index: int): void {
+        _nudgeCurrentIndex(index);
+        root.currentIndex = index;
+    }
+
     /**
      *  Set currentIndex to a value different from `target` so a subsequent
      *  assignment to `target` is a real change. Required to trigger Qt's
@@ -83,32 +94,32 @@ ListView {
         searchQuery: root.searchQuery
 
         onPlayButtonPressed: {
-            root.viewModel.select(index);
+            root.selectRow(index);
             if (!root.modalActive) {
                 root.viewModel.jumpToTime(time);
             }
         }
 
-        onRowPressed: root.viewModel.select(index)
+        onRowPressed: root.selectRow(index)
 
         onTimeLabelDoubleClicked: coordinates => {
             root.viewModel.pauseVideo();
             root.viewModel.jumpToTime(time);
-            root.viewModel.startEditingTime(index, time, coordinates);
+            root.editTimeRequested(index, time, coordinates);
         }
 
         onCommentTypeLabelDoubleClicked: coordinates => {
-            root.viewModel.startEditingCommentType(index, commentType, coordinates);
+            root.editCommentTypeRequested(index, commentType, coordinates);
         }
 
         onCommentLabelDoubleClicked: {
-            root.viewModel.startEditingComment(index);
+            root.editCommentRequested(index);
         }
 
         onRightMouseButtonPressed: coordinates => {
             if (!root.modalActive) {
-                root.viewModel.select(index);
-                root.viewModel.openContextMenu(index, coordinates);
+                root.selectRow(index);
+                root.contextMenuRequested(index, coordinates);
             }
         }
 
@@ -187,8 +198,7 @@ ListView {
         }
 
         function onSelectionRequested(index: int): void {
-            root._nudgeCurrentIndex(index);
-            root.currentIndex = index;
+            root.selectRow(index);
         }
     }
 
@@ -199,10 +209,10 @@ ListView {
         ignoreEvents: root.modalActive
         currentIndex: root.currentIndex
 
-        onEditCommentRequested: index => root.viewModel.startEditingComment(index)
+        onEditCommentRequested: index => root.editCommentRequested(index)
         onDeleteCommentRequested: index => root.viewModel.askToDeleteRow(index)
         onCopyCommentRequested: index => root.viewModel.copyToClipboard(index)
-        onSearchRequested: root.viewModel.openSearchBox()
+        onSearchRequested: root.searchRequested()
         onUndoRequested: root.viewModel.undo()
         onRedoRequested: root.viewModel.redo()
     }

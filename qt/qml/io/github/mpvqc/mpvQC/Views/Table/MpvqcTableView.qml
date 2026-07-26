@@ -35,6 +35,12 @@ Item {
 
         modalActive: _overlays.anyModalActive
         searchQuery: _overlays.searchQuery
+
+        onEditTimeRequested: (index, time, coordinates) => _overlays.openTimeEditor(index, time, coordinates)
+        onEditCommentTypeRequested: (index, commentType, coordinates) => _overlays.openCommentTypeEditor(index, commentType, coordinates)
+        onEditCommentRequested: index => _overlays.openCommentEditor(index)
+        onContextMenuRequested: (index, coordinates) => _overlays.openContextMenu(index, coordinates)
+        onSearchRequested: _overlays.openSearchBox()
     }
 
     MpvqcCommentListOverlays {
@@ -46,6 +52,7 @@ Item {
         listView: _commentList
 
         onFocusWanted: _commentList.forceActiveFocus()
+        onSelectRequested: index => _commentList.selectRow(index)
     }
 
     MpvqcPlaceholderView {
