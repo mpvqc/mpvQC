@@ -22,8 +22,7 @@ def create_desktop_backend() -> PlatformBackend:
     surface = SurfaceController(drop_shadow_margin=88)
 
     return PlatformBackend(
-        desktop_sizes_window=False,
-        window_state=QtWindowStateHandler(),
+        window_state=QtWindowStateHandler(sizes_own_window=True),
         surface=surface,
         window_configuration=surface,
         window_reveal=NoWindowRevealer(),
@@ -34,8 +33,7 @@ def create_desktop_backend() -> PlatformBackend:
 
 def create_tiling_backend() -> PlatformBackend:
     return PlatformBackend(
-        desktop_sizes_window=True,
-        window_state=QtWindowStateHandler(),
+        window_state=QtWindowStateHandler(sizes_own_window=False),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
         window_reveal=NoWindowRevealer(),

@@ -11,7 +11,6 @@ from PySide6.QtCore import Qt
 
 from mpvqc.services import (
     MainWindowService,
-    PlatformService,
     PlayerService,
     SettingsService,
     VideoResizeService,
@@ -160,13 +159,7 @@ def main_window_service_mock() -> MagicMock:
     mock.screen_height = 1440
     mock.display_zoom_factor = 1.0
     mock.drop_shadow_margin = 0
-    return mock
-
-
-@pytest.fixture
-def platform_mock() -> MagicMock:
-    mock = MagicMock(spec_set=PlatformService)
-    mock.desktop_sizes_window = False
+    mock.sizes_own_window = True
     return mock
 
 
@@ -176,13 +169,11 @@ def configure_injections(
     player_mock,
     settings_mock,
     main_window_service_mock,
-    platform_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_mock)
         binder.bind(SettingsService, settings_mock)
         binder.bind(MainWindowService, main_window_service_mock)
-        binder.bind(PlatformService, platform_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -265,20 +256,24 @@ def test_compute_resize_grows_window_by_drop_shadow_margin(service, main_window_
     )
 
 
-class ResizesOnVideoLoadTestCase(NamedTuple):
+class SizesOwnWindowTestCase(NamedTuple):
     name: str
-    desktop_sizes_window: bool
-    expected: bool
+    sizes_own_window: bool
+    expected: ResizeResult | None
 
 
 @pytest.mark.parametrize(
     "case",
     [
-        ResizesOnVideoLoadTestCase("desktop", desktop_sizes_window=False, expected=True),
-        ResizesOnVideoLoadTestCase("tiling desktop", desktop_sizes_window=True, expected=False),
+        SizesOwnWindowTestCase(
+            "desktop",
+            sizes_own_window=True,
+            expected=ResizeResult(window_width=854, window_height=726, table_width=854, table_height=200),
+        ),
+        SizesOwnWindowTestCase("tiling desktop", sizes_own_window=False, expected=None),
     ],
     ids=lambda case: case.name,
 )
-def test_resizes_on_video_load_follows_platform(service, platform_mock, case: ResizesOnVideoLoadTestCase):
-    platform_mock.desktop_sizes_window = case.desktop_sizes_window
-    assert service.resizes_on_video_load is case.expected
+def test_compute_resize_follows_who_sizes_the_window(service, main_window_service_mock, case: SizesOwnWindowTestCase):
+    main_window_service_mock.sizes_own_window = case.sizes_own_window
+    assert service.compute_resize(VIEW_DIMS) == case.expected

@@ -23,6 +23,7 @@ class PlatformServiceStub(QObject):
     def __init__(self) -> None:
         super().__init__()
         self.read_state = MagicMock(return_value=WindowStateSnapshot(is_fullscreen=False, is_maximized=False))
+        self.sizes_own_window = MagicMock(return_value=True)
         self.drop_shadow_margin = MagicMock(return_value=0)
         self.configure_window = MagicMock()
         self.minimize = MagicMock()
@@ -186,6 +187,15 @@ def test_exit_fullscreen_delegates_to_platform(qt_app, service, platform_service
     service.exit_fullscreen()
 
     platform_service_stub.exit_fullscreen.assert_called_once_with(window)
+
+
+def test_sizes_own_window_asks_the_platform_about_its_own_window(qt_app, service, platform_service_stub):
+    window = QWindow()
+    service._window = window
+    platform_service_stub.sizes_own_window.return_value = False
+
+    assert service.sizes_own_window is False
+    platform_service_stub.sizes_own_window.assert_called_once_with(window)
 
 
 def test_state_read_reports_platform_answers(qt_app, service, platform_service_stub):

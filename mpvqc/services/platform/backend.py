@@ -22,8 +22,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True, kw_only=True)
 class PlatformBackend:
-    desktop_sizes_window: bool
-
     window_state: WindowStateHandler
     surface: SurfaceHandler
     window_configuration: WindowConfigurator
