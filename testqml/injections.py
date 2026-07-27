@@ -59,7 +59,6 @@ TEMP_SAVES_DIR.mkdir()
 
 def _headless_platform_backend() -> PlatformBackend:
     return PlatformBackend(
-        root_qml_url="qrc:/qt/qml/MpvqcApplication.qml",
         desktop_sizes_window=False,
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),

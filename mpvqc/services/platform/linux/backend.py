@@ -14,8 +14,6 @@ from mpvqc.services.platform.window_state import QtWindowStateHandler
 from .surface import SurfaceController
 from .window_button_detector import WindowButtonDetector
 
-_ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplication.qml"
-
 
 def create_desktop_backend() -> PlatformBackend:
     # Transparent padding around the content that the QML drop shadow is
@@ -24,7 +22,6 @@ def create_desktop_backend() -> PlatformBackend:
     surface = SurfaceController(shadow_margin=88)
 
     return PlatformBackend(
-        root_qml_url=_ROOT_QML_URL,
         desktop_sizes_window=False,
         window_state=QtWindowStateHandler(),
         surface=surface,
@@ -37,7 +34,6 @@ def create_desktop_backend() -> PlatformBackend:
 
 def create_tiling_backend() -> PlatformBackend:
     return PlatformBackend(
-        root_qml_url=_ROOT_QML_URL,
         desktop_sizes_window=True,
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
