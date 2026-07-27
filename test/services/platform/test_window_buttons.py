@@ -55,6 +55,19 @@ def test_detect_applies_preference_on_drain(qt_app, settings_portal_mock, manual
     assert spy.count() == 1
 
 
+def test_detect_pushes_preference_to_registered_callback(qt_app, settings_portal_mock, manual_executor):
+    settings_portal_mock.read_one.return_value = ":close"
+
+    detector = WindowButtonDetector(manual_executor)
+    pushed: list[WindowButtonPreference] = []
+    detector.on_preference_changed(pushed.append)
+
+    detector.detect()
+    manual_executor.drain()
+
+    assert pushed == [WindowButtonPreference(False, False, True)]
+
+
 def test_detect_keeps_default_when_portal_reports_default(qt_app, settings_portal_mock, manual_executor, make_spy):
     settings_portal_mock.read_one.return_value = None
 

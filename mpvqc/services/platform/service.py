@@ -25,11 +25,8 @@ class PlatformService(QObject):
     def __init__(self, backend: PlatformBackend | None = None) -> None:
         super().__init__()
         self._backend = backend or select_platform_backend()
-        # Signal.__get__ is typed for QObject owners only, which the protocols cannot promise
-        # pyrefly: ignore [no-matching-overload]
-        self._backend.window_buttons.preference_changed.connect(self.window_button_preference_changed)
-        # pyrefly: ignore [no-matching-overload]
-        self._backend.surface.drop_shadow_margin_changed.connect(self.drop_shadow_margin_changed)
+        self._backend.window_buttons.on_preference_changed(self.window_button_preference_changed.emit)
+        self._backend.surface.on_drop_shadow_margin_changed(self.drop_shadow_margin_changed.emit)
 
     @property
     def window_button_preference(self) -> WindowButtonPreference:

@@ -75,6 +75,9 @@ class SurfaceController(QObject):
             return 0
         return self._normal_drop_shadow_margin
 
+    def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None:
+        self.drop_shadow_margin_changed.connect(callback)
+
     @Slot()
     def _sync_drop_shadow_margin(self) -> None:
         if self._window is None:

@@ -5,11 +5,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Protocol
-
-from PySide6.QtCore import QObject, Signal
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import Final
 
 
@@ -24,17 +23,18 @@ DEFAULT_WINDOW_BUTTON_PREFERENCE: Final = WindowButtonPreference(minimize=True, 
 
 
 class WindowButtonSource(Protocol):
-    preference_changed: ClassVar[Signal]
-
     @property
     def preference(self) -> WindowButtonPreference: ...
 
+    def on_preference_changed(self, callback: Callable[[WindowButtonPreference], None]) -> None: ...
 
-class StaticWindowButtons(QObject):
+
+class StaticWindowButtons:
     """For platforms without a detectable window button preference."""
-
-    preference_changed = Signal(WindowButtonPreference)
 
     @property
     def preference(self) -> WindowButtonPreference:
         return DEFAULT_WINDOW_BUTTON_PREFERENCE
+
+    def on_preference_changed(self, callback: Callable[[WindowButtonPreference], None]) -> None:
+        """The preference never changes here, so nothing ever pushes."""
