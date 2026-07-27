@@ -13,14 +13,14 @@ Loader {
 
     readonly property bool isTestMode: typeof mpvqcTestMode !== "undefined"
 
-    readonly property url windowsPlayer: Qt.resolvedUrl("MpvqcPlayerWindows.qml")
-    readonly property url linuxPlayer: Qt.resolvedUrl("MpvqcPlayerLinux.qml")
+    readonly property url embeddedPlayer: Qt.resolvedUrl("MpvqcPlayerEmbedded.qml")
+    readonly property url inScenePlayer: Qt.resolvedUrl("MpvqcPlayerInScene.qml")
     readonly property url stubPlayer: Qt.resolvedUrl("MpvqcPlayerStub.qml")
 
     signal addNewCommentMenuRequested
     signal toggleFullScreenRequested
 
-    source: isTestMode ? stubPlayer : viewModel.embedsNativePlayer ? windowsPlayer : linuxPlayer
+    source: isTestMode ? stubPlayer : viewModel.embedsNativePlayer ? embeddedPlayer : inScenePlayer
     asynchronous: true
 
     MpvqcPlayerInputArea {
