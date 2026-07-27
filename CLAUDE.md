@@ -60,7 +60,7 @@
 
 ## Testing
 
-- Prefer data-driven Python tests.
+- Prefer data-driven Python tests but clarity always wins.
 - Prefer testing important areas in the code. Don't go for coverage only.
 - Swap background execution in Python tests by passing `manual_executor` to the service constructor. The
   `manual_executor` fixture lives in `test/conftest.py`.
