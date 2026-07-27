@@ -24,6 +24,7 @@ def create_desktop_backend() -> PlatformBackend:
     return PlatformBackend(
         keeps_native_frame=False,
         draws_drop_shadow=True,
+        embeds_native_player=False,
         window_state=QtWindowStateHandler(sizes_own_window=True),
         surface=surface,
         window_configuration=surface,
@@ -37,6 +38,7 @@ def create_tiling_backend() -> PlatformBackend:
     return PlatformBackend(
         keeps_native_frame=False,
         draws_drop_shadow=False,
+        embeds_native_player=False,
         window_state=QtWindowStateHandler(sizes_own_window=False),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),

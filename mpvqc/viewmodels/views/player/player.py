@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtCore import QObject, Slot
+from PySide6.QtCore import Property, QObject, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService
+from mpvqc.services import PlatformService, PlayerService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -15,6 +15,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcPlayerViewModel(QObject):
     _player = inject.attr(PlayerService)
+    _platform = inject.attr(PlatformService)
+
+    @Property(bool, constant=True)
+    def embedsNativePlayer(self) -> bool:
+        return self._platform.embeds_native_player
 
     @Slot(int, int)
     def moveMouse(self, x: int, y: int) -> None:

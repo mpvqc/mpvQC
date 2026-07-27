@@ -37,6 +37,10 @@ class PlatformService(QObject):
         return self._backend.draws_drop_shadow
 
     @property
+    def embeds_native_player(self) -> bool:
+        return self._backend.embeds_native_player
+
+    @property
     def window_button_preference(self) -> WindowButtonPreference:
         return self._backend.window_buttons.preference
 
