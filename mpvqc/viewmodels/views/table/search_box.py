@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import CommentsService, MainWindowService
+from mpvqc.services import CommentsService
 from mpvqc.services.comments import Found, NoMatches, NoQuery
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -20,21 +20,17 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 class MpvqcSearchBoxViewModel(QObject):
     _comments_service = inject.attr(CommentsService)
-    _main_window = inject.attr(MainWindowService)
 
     searchQueryChanged = Signal(str)
     hasMultipleResultsChanged = Signal(bool)
     statusLabelChanged = Signal(str)
     highlightRequested = Signal(int)
-    isMainWindowFocusedChanged = Signal(bool)
 
     def __init__(self) -> None:
         super().__init__()
         self._search_query = ""
         self._has_multiple_results = False
         self._status_label = ""
-
-        self._main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
 
     @Property(str, notify=searchQueryChanged)
     def searchQuery(self) -> str:
@@ -47,10 +43,6 @@ class MpvqcSearchBoxViewModel(QObject):
     @Property(str, notify=statusLabelChanged)
     def statusLabel(self) -> str:
         return self._status_label
-
-    @Property(bool, notify=isMainWindowFocusedChanged)
-    def isMainWindowFocused(self) -> bool:
-        return self._main_window.is_main_window_focused
 
     def _update_search_state(self, query: str, *, label: str, has_multiple: bool) -> None:
         if self._search_query != query:

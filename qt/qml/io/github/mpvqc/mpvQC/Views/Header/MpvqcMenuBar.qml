@@ -269,49 +269,49 @@ MenuBar {
 
     Shortcut {
         sequence: "CTRL+N"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestResetAppState()
     }
 
     Shortcut {
         sequence: "CTRL+O"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestOpenQcDocuments()
     }
 
     Shortcut {
         sequence: "CTRL+S"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestSaveQcDocument()
     }
 
     Shortcut {
         sequence: "CTRL+Shift+S"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestSaveQcDocumentAs()
     }
 
     Shortcut {
         sequence: "CTRL+Q"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestClose()
     }
 
     Shortcut {
         sequence: "CTRL+Alt+O"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestOpenVideo()
     }
 
     Shortcut {
         sequence: "CTRL+R"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestResizeVideo()
     }
 
     Shortcut {
         sequence: "?"
-        enabled: root.viewModel.isMainWindowFocused
+        enabled: MpvqcWindowUtility.isMainWindowFocused
         onActivated: root.viewModel.requestOpenKeyboardShortcutsDialog()
     }
 }
