@@ -20,6 +20,8 @@
 ## Coding
 
 - Follow clean code principles.
+- Prefer the correct term over the term already in the repo. When a name contradicts the spec or the project it refers
+  to, rename it and record the term in `CONTEXT.md`. Don't keep a wrong name to match other wrong names.
 - Don't use structural comments like `# region` or `# ---`.
 - Avoid comments unless absolutely necessary. In any case, keep them short.
 - Run background work through `SerialJobRunner` from `mpvqc/jobs.py`. Don't use `QThreadPool`, locks, or private queued

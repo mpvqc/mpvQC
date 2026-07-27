@@ -25,8 +25,18 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 
 ## Platform
 
-- **Surface**: the client-side-decorated padding around the window content. Carries the drop shadow and collapses to
-  zero while the window is maximized or fullscreen. Only the Linux desktop backend has one.
+- **Surface**: the whole rectangle the client paints into. When the client draws its own decorations it extends past
+  the visible window by the shadow margin; otherwise the two are the same rectangle.
+- **Window geometry**: the visible bounds of the window, what the compositor aligns, snaps and constrains against. The
+  client declares it; drop shadows sit outside it.
+- **Shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding the
+  resize band. GTK calls the same quantity shadow width. Zero when maximized, fullscreen, on a tiling desktop, and on
+  Windows.
+- **Compositor**: the process that composites the screen. On Wayland it also places and sizes windows, so it absorbs
+  the window manager role. On Windows, DWM composites but does not place or size; the system does.
+- **Window manager**: on X11, a separate client that places and sizes windows. Wayland has no such separate process.
+- **Tiling desktop**: a session where the compositor or window manager places and sizes windows for the user, so the
+  app must not resize itself. The name says neither compositor nor window manager because both kinds tile.
 
 ## Build origin
 
