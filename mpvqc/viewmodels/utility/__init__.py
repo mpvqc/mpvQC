@@ -5,5 +5,5 @@
 from .fonts import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .label_width_calculator import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
 from .theme import MpvqcThemeViewModel as MpvqcThemeViewModel
+from .window_frame import MpvqcWindowFrameViewModel as MpvqcWindowFrameViewModel
 from .window_properties import MpvqcWindowPropertiesViewModel as MpvqcWindowPropertiesViewModel
-from .window_radius import MpvqcWindowRadiusViewModel as MpvqcWindowRadiusViewModel

@@ -13,10 +13,10 @@ import io.github.mpvqc.mpvQC.Views.Player
 Item {
     id: root
 
-    readonly property MpvqcAppViewModel viewModel: MpvqcAppViewModel {}
-
     required property bool windowActive
     required property real windowWidth
+
+    readonly property MpvqcAppViewModel _viewModel: MpvqcAppViewModel {}
 
     property bool _initialFocusDone: false
 
@@ -66,7 +66,7 @@ Item {
         anchors.fill: parent
 
         header: _header
-        layoutOrientation: root.viewModel.layoutOrientation
+        layoutOrientation: root._viewModel.layoutOrientation
         headerHeight: _header.height
 
         onAppWindowSizeRequested: (width, height) => root.appWindowSizeRequested(width, height)
@@ -115,6 +115,6 @@ Item {
 
         onOpenCommentMenuRequested: _commentMenu.popup()
         onToggleFullScreenRequested: root.toggleFullScreenRequested()
-        onForwardKeyToPlayerRequested: (key, modifiers) => root.viewModel.forwardKeyToPlayer(key, modifiers)
+        onForwardKeyToPlayerRequested: (key, modifiers) => root._viewModel.forwardKeyToPlayer(key, modifiers)
     }
 }

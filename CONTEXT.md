@@ -32,11 +32,42 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding the
   resize band. GTK calls the same quantity shadow width. Zero when maximized, fullscreen, on a tiling desktop, and on
   Windows.
+- **Window frame**: the rounded rectangle the app paints for itself, inset from the surface edge by the shadow margin.
+  It only exists where the app draws its own decorations. Where the OS draws the frame, both the margin and the corner
+  radius are 0.
 - **Compositor**: the process that composites the screen. On Wayland it also places and sizes windows, so it absorbs
   the window manager role. On Windows, DWM composites but does not place or size; the system does.
 - **Window manager**: on X11, a separate client that places and sizes windows. Wayland has no such separate process.
 - **Tiling desktop**: a session where the compositor or window manager places and sizes windows for the user, so the
   app must not resize itself. The name says neither compositor nor window manager because both kinds tile.
+
+**Linux desktop**, where the app draws its own decorations:
+
+```text
+┌───────────────────────────────────────┐  surface
+│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│
+│░░╭─────────────────────────────────╮░░│  window frame, drawn by the app,
+│░░│                                 │░░│  with rounded corners
+│░░│           app content           │░░│
+│░░│                                 │░░│  its edge is the window geometry
+│░░╰─────────────────────────────────╯░░│
+│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│
+└───────────────────────────────────────┘
+
+░ = shadow margin: transparent, carries the drop shadow and the resize band
+```
+
+**Windows**, and any Linux tiling desktop, where the app draws no frame of its own:
+
+```text
+┌───────────────────────────────────────┐  surface and window geometry, one
+│                                       │  rectangle: shadow margin 0, corner
+│                                       │  radius 0, no frame of the app's own
+│              app content              │
+│                                       │  on Windows the OS draws the border,
+│                                       │  the shadow and the rounded corners
+└───────────────────────────────────────┘
+```
 
 ## Build origin
 

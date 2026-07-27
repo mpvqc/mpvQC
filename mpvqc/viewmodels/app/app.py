@@ -8,7 +8,6 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.services import (
     KeyCommandGeneratorService,
-    MainWindowService,
     PlayerService,
     SettingsService,
 )
@@ -19,22 +18,15 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcAppViewModel(QObject):
-    _main_window = inject.attr(MainWindowService)
     _settings = inject.attr(SettingsService)
     _player = inject.attr(PlayerService)
     _command_generator = inject.attr(KeyCommandGeneratorService)
 
-    shadowMarginChanged = Signal(int)
     layoutOrientationChanged = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._main_window.shadow_margin_changed.connect(self.shadowMarginChanged)
         self._settings.layout_orientation_changed.connect(self.layoutOrientationChanged)
-
-    @Property(int, notify=shadowMarginChanged)
-    def shadowMargin(self) -> int:
-        return self._main_window.shadow_margin
 
     @Property(int, notify=layoutOrientationChanged)
     def layoutOrientation(self) -> int:

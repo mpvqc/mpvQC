@@ -15,14 +15,20 @@ _WINDOW_RADIUS = 8
 
 
 @QmlElement
-class MpvqcWindowRadiusViewModel(QObject):
+class MpvqcWindowFrameViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
 
+    shadowMarginChanged = Signal(int)
     radiusChanged = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
+        self._main_window.shadow_margin_changed.connect(self.shadowMarginChanged)
         self._main_window.shadow_margin_changed.connect(self.radiusChanged)
+
+    @Property(int, notify=shadowMarginChanged)
+    def shadowMargin(self) -> int:
+        return self._main_window.shadow_margin
 
     @Property(int, notify=radiusChanged)
     def radius(self) -> int:

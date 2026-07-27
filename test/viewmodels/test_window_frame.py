@@ -8,7 +8,7 @@ import inject
 import pytest
 
 from mpvqc.services import MainWindowService
-from mpvqc.viewmodels import MpvqcWindowRadiusViewModel
+from mpvqc.viewmodels import MpvqcWindowFrameViewModel
 
 
 @pytest.fixture
@@ -28,14 +28,15 @@ def configure_injections(common_bindings_with, main_window_service_mock):
     ("shadow_margin", "expected_radius"),
     [
         (0, 0),
-        (88, 8),
         (1, 8),
+        (88, 8),
     ],
 )
-def test_radius_follows_shadow_margin(main_window_service_mock, shadow_margin, expected_radius):
+def test_frame_follows_shadow_margin(main_window_service_mock, shadow_margin, expected_radius):
     main_window_service_mock.shadow_margin = shadow_margin
 
     # noinspection PyCallingNonCallable
-    view_model = MpvqcWindowRadiusViewModel()
+    view_model = MpvqcWindowFrameViewModel()
 
+    assert view_model.shadowMargin == shadow_margin
     assert view_model.radius == expected_radius
