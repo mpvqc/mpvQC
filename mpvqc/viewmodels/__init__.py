@@ -16,6 +16,7 @@ from .utility import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalcul
 from .utility import MpvqcThemeViewModel as MpvqcThemeViewModel
 from .utility import MpvqcWindowFrameViewModel as MpvqcWindowFrameViewModel
 from .utility import MpvqcWindowPropertiesViewModel as MpvqcWindowPropertiesViewModel
+from .utility import MpvqcWindowViewModel as MpvqcWindowViewModel
 from .views import MpvqcBackupTimerViewModel as MpvqcBackupTimerViewModel
 from .views import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
 from .views import MpvqcFooterViewModel as MpvqcFooterViewModel

@@ -269,6 +269,7 @@ files = [
     "mpvqc/viewmodels/utility/fonts.py",
     "mpvqc/viewmodels/utility/label_width_calculator.py",
     "mpvqc/viewmodels/utility/theme.py",
+    "mpvqc/viewmodels/utility/window.py",
     "mpvqc/viewmodels/utility/window_frame.py",
     "mpvqc/viewmodels/utility/window_properties.py",
     "mpvqc/viewmodels/views/__init__.py",
