@@ -19,9 +19,9 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 
 ## UI
 
-4- **Overlay**: a dialog, file dialog, or message box that floats above the app, is loaded on demand, and returns focus
-  on close. Behavior defines it, not rendering. In windowed-popup mode some overlays are real OS windows and still
-  count.
+- **Overlay**: a dialog, file dialog, or message box that floats above the app, is loaded on demand, and returns focus
+  on close. Behavior defines it, not rendering: where the app prefers Qt's Window popup type, an overlay is a real OS
+  window and still counts.
 
 ## Platform
 
@@ -30,12 +30,16 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   the window manager role. On Windows, DWM composites but does not place or size.
 - **Tiling desktop**: a session where the compositor or window manager places and sizes windows for the user, so the
   app must not resize itself. The name says neither compositor nor window manager because both kinds tile.
+- **Embedded player**: the player as a native child window of the app's own window, painted by the OS above the scene
+  instead of into it. Only Windows does this. Everywhere else the player renders in-scene.
 - **Window geometry**: the visible bounds of the window, what the compositor aligns, snaps and constrains against. Drop
   shadows sit outside it.
-- **Decorations**: the border, title bar, drop shadow and resize band around the app content. Either the OS draws them
-  or the app does. Wayland names the two modes server-side and client-side. mpvQC draws all of them itself on Linux, on
-  X11 and Wayland alike. Its border is a rounded rectangle filling the window geometry. On Windows the OS keeps the
-  border, the drop shadow and the rounded corners. The app draws the title bar into the caption strip it reclaims.
+- **Decorations**: the border, title bar, drop shadow and resize band around the app content. The OS draws them, or the
+  app does, or nobody does. Wayland names the first two server-side and client-side. mpvQC draws its own title bar
+  everywhere. On Windows the OS keeps the border, the drop shadow and the rounded corners, and the app draws the title
+  bar into the caption strip it reclaims. On a floating Linux desktop the app draws the rest too, on X11 and Wayland
+  alike: a rounded border filling the window geometry, a drop shadow and a resize band. On a tiling desktop nobody
+  draws them, because the compositor packs windows edge to edge and the app skips its border, shadow and resize band.
 - **Surface**: the whole rectangle the client paints into. When the client draws its own decorations, it extends past
   the visible window by the drop shadow margin. Otherwise, the two are the same rectangle.
 - **Drop shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding
