@@ -14,7 +14,8 @@
 - Run Python tests via `just test-python ARGS`. `ARGS` is passed to `pytest`.
 - Prepare QML tests via `just prepare-tests` when you've changed production QML, data, or translation files.
 - Run a single QML test file via `just test-qml-debug <TARGET>`.
-- Run all QML tests via `just test-qml`.
+- Run all QML tests via `just test-qml`, one process per file. `just test-qml 1` uses a single process, as Windows
+  and CI always do.
 
 ## Coding
 

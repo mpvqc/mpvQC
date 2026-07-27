@@ -122,9 +122,10 @@ prepare-tests: build-develop
 test-python *ARGS="build-aux test":
     QT_QPA_PLATFORM=offscreen uv run pytest {{ ARGS }}
 
+# Run all QML tests, JOBS files at a time ('1' = single process)
 [group('test')]
-test-qml:
-    uv run -m testqml.main
+test-qml JOBS='auto':
+    uv run -m testqml.runner --jobs '{{ JOBS }}'
 
 # TARGET = file by name recursively matched under qt/qml
 [group('test')]

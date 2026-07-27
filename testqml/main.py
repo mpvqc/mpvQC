@@ -49,6 +49,11 @@ def parse_cli() -> argparse.Namespace:
         "--target",
         help="Run a single file by name (matches anywhere under qt/qml/).",
     )
+    parser.add_argument(
+        "--silent",
+        action="store_true",
+        help="Report failures only, leaving out the line per passing test.",
+    )
     return parser.parse_args()
 
 
@@ -89,7 +94,9 @@ def main() -> int:
 
     qt_argv = [sys.argv[0]]
 
-    # qt_argv += ["-silent"]
+    if args.silent:
+        qt_argv += ["-silent"]
+
     # qt_argv += ["-eventdelay", "50"]
 
     if sys.platform == "linux":

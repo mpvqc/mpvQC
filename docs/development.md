@@ -34,7 +34,7 @@ bundle. Configure your IDE to run it before launching the app.
 | `just test`                   | Run Python tests and QML tests (recompiles resources first)                      |
 | `just prepare-tests`          | Recompile resources for testing (runs `build-develop` then stages it)            |
 | `just test-python`            | Run Python tests only (does **not** recompile)                                   |
-| `just test-qml`               | Run QML tests only (does **not** recompile)                                      |
+| `just test-qml [JOBS]`        | Run QML tests only (does **not** recompile), one process per file                |
 | `just test-qml-debug TARGET`  | Run a single QML test file matched by name (useful for iteration)                |
 | `just fmt`                    | Format and lint Python, QML, JSON, TOML, YAML, Markdown                          |
 | `just lint-qml`               | Run pyside6-qmllint                                                              |

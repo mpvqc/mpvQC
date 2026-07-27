@@ -86,7 +86,9 @@ ignore = [
 ]
 
 "testqml/**" = [
-    "T20"         # Allow print statements
+    "T20",        # Allow print statements
+    "S404",       # The parallel runner spawns the test processes
+    "S603",       # ... with arguments it builds itself
 ]
 
 "**/test_*.py" = [

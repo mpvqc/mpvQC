@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import tempfile
 from pathlib import Path
@@ -39,8 +40,19 @@ from mpvqc.viewmodels import MpvqcBackupTimerViewModel
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+
+def _temp_root() -> Path:
+    # The parallel runner hands out the directories and deletes them once the processes are gone.
+    configured = os.environ.get("MPVQC_TEST_TEMP_ROOT")
+    if configured:
+        root = Path(configured)
+        root.mkdir(parents=True, exist_ok=True)
+        return root
+    return Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
+
+
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
-TEMP_ROOT = Path(tempfile.mkdtemp(prefix="mpvqc-qmltest-"))
+TEMP_ROOT = _temp_root()
 TEMP_SAVES_DIR = TEMP_ROOT / "saves"
 TEMP_SAVES_DIR.mkdir()
 
