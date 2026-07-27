@@ -19,14 +19,13 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QMouseEvent, QWindow
 
 
-RESIZE_BAND_WIDTH = 8  # width of the resize strip just outside the content, inside the drop shadow margin
+RESIZE_BAND_WIDTH = 8
 
 _HANDLED_MOUSE_EVENTS = frozenset({QEvent.Type.MouseButtonPress, QEvent.Type.MouseMove})
 
 
 def resize_edges_at(x: int, y: int, window_width: int, window_height: int, drop_shadow_margin: int) -> Qt.Edge:
-    # The content is inset by the drop shadow margin. The resize strip sits just
-    # outside it, in the transparent shadow, like GTK client-side decorations.
+    # The band sits outside the content, in the drop shadow margin.
     band = RESIZE_BAND_WIDTH
     edges = Qt.Edge(0)
     if drop_shadow_margin - band <= x < drop_shadow_margin:

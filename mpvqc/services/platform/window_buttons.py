@@ -37,4 +37,4 @@ class StaticWindowButtons:
         return DEFAULT_WINDOW_BUTTON_PREFERENCE
 
     def on_preference_changed(self, callback: Callable[[WindowButtonPreference], None]) -> None:
-        """The preference never changes here, so nothing ever pushes."""
+        """The preference never changes here."""

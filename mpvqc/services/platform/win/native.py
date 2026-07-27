@@ -8,17 +8,15 @@
 #  - https://github.com/zhiyiYo/PyQt-Frameless-Window
 #  - https://gitee.com/Virace/pyside6-qml-frameless-window/tree/main
 
-"""Everything that touches Win32 lives here: every API call as a ctypes
-binding with declared argument and return types, and the readers and
-writers for the raw structures that arrive with window messages. All of
-it is wrapped in small functions that use plain Python types.
+"""Everything that touches Win32 lives here: each API call as a ctypes binding
+with declared types, wrapped in a small function that takes and returns plain
+Python types.
 
-One block per API call: its constants, its structures, its raw binding and
-the wrappers the rest of the package uses.
+One block per API call: its constants, its structures, its raw binding and the
+wrappers the rest of the package uses.
 
-All calls are best-effort: queries report failure through their return
-value, setters fail silently — broken window decoration is not worth an
-exception."""
+All calls are best-effort: queries report failure through their return value,
+setters fail silently. A broken decoration is not worth an exception."""
 
 from __future__ import annotations
 

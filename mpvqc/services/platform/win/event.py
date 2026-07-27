@@ -44,9 +44,8 @@ _WVR_REDRAW = 0x0300
 
 
 def handle_non_client_hit_test(hwnd: int, l_param: int) -> tuple[bool, int]:
-    # Only the top edge needs help: the client covers the strip where the native
-    # caption and its resize band would live. Left, right and bottom keep real
-    # non-client bands, hit-tested natively.
+    # Only the top edge needs help: the client covers the caption strip. Left,
+    # right and bottom keep real non-client bands, hit-tested natively.
     if is_maximized(hwnd):
         return False, 0
 
@@ -83,18 +82,16 @@ def handle_non_client_calculate_size(hwnd: int, l_param: int) -> tuple[bool, int
     if destination_monitor is None:
         return False, 0
 
-    # Qt's own handling (the DefWindowProc frame plus the negative caption
-    # margin) is wrong in only two cases: maximized, where the caption
-    # correction overshoots the work area, and fullscreen.
+    # Qt's frame plus the negative caption margin is wrong in only two cases:
+    # maximized, where the correction overshoots the work area, and fullscreen.
     maximized = is_maximized(hwnd)
     fullscreen = not maximized and overhangs(destination, destination_monitor.monitor_rect)
     if not (maximized or fullscreen):
         return False, 0
 
-    # A maximized window gets the work area as its client rect. A fullscreen
-    # window gets the monitor rect while the window itself is larger on
-    # purpose: DWM permanently stops animating maximize/restore once a client
-    # rect fills the whole window.
+    # A fullscreen window stays larger than its client rect on purpose: DWM
+    # permanently stops animating maximize and restore once a client rect fills
+    # the whole window.
     client_rect = destination_monitor.work_area if maximized else destination_monitor.monitor_rect
 
     client_rect = reserve_auto_hide_taskbar_strip(client_rect, destination_monitor.monitor_rect)
@@ -131,13 +128,13 @@ class WindowsEventFilter(PySide6.QtCore.QAbstractNativeEventFilter):
             case self._top_lvl_hwnd:
                 pass
             case _:
-                # Every other window is a windowed popup, and popups must not
-                # be resizable. The style is checked on each message on
-                # purpose: Windows reuses handle values and Qt can add the
-                # frame back at any time.
+                # Every other window is a popup, and popups must not be
+                # resizable. The style is checked per message because Windows
+                # reuses handle values and Qt can add the frame back at any
+                # time.
                 #
-                # SetWindowLong sends WM_STYLECHANGING/WM_STYLECHANGED back into
-                # this filter synchronously. Handling them would call
+                # The style messages are skipped: SetWindowLong sends them back
+                # into this filter synchronously, so handling them would call
                 # SetWindowLong again, recursing until win32k's nested-message
                 # limit.
                 if msg.message not in {_WM_STYLECHANGING, _WM_STYLECHANGED}:

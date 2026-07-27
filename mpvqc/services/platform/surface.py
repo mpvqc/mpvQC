@@ -13,8 +13,7 @@ if TYPE_CHECKING:
 
 
 class SurfaceHandler(Protocol):
-    """Owns the decorated padding around the window content: the state-aware
-    margin read and the edge-triggered push when the margin changes."""
+    """Owns the drop shadow margin."""
 
     def drop_shadow_margin(self, window: QWindow) -> int: ...
 
@@ -22,10 +21,10 @@ class SurfaceHandler(Protocol):
 
 
 class NoSurfaceHandler:
-    """For platforms without a client-side-decorated surface."""
+    """For platforms where the app draws no drop shadow."""
 
     def drop_shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
         return 0
 
     def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None:
-        """The margin is always zero here, so nothing ever pushes."""
+        """The margin is always zero here, so it never changes."""

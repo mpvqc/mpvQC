@@ -2,12 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Wayland-only workaround: tell the compositor the window's real rectangle.
-
-A frameless window with a transparent drop shadow margin gives the compositor
-the whole padded surface. The content then cannot sit flush at screen edges,
-and snapping and maximizing use the padded rectangle instead of the visible one.
-QWaylandWindow::setCustomMargins declares the real geometry inset. It is
+"""Wayland-only: declare the window geometry inside the surface, so the
+compositor aligns and snaps against what the user sees rather than against the
+drop shadow margin. QWaylandWindow::setCustomMargins takes the inset. It is
 private Qt API, reached through ctypes.
 
 DELETE WHEN: PySide6 exposes a public window-geometry inset (a real QWindow
@@ -16,8 +13,8 @@ apply_wayland_content_margins with the public call and drop the ctypes code.
 
 The mangled symbol names below are regenerated from the bundled Qt by the
 dependency updater script (`just update-python-dependencies`); do not edit
-them by hand. _QOBJECT_BASE_OFFSET is sizeof(QObject) — two pointers — so it
-is correct on both 32- and 64-bit builds.
+them by hand. _QOBJECT_BASE_OFFSET is sizeof(QObject), two pointers, so it is
+correct on both 32- and 64-bit builds.
 """
 
 from __future__ import annotations
@@ -62,8 +59,7 @@ def _qt_lib(name: str) -> str:
 
 @lru_cache(maxsize=1)
 def _resolve_symbols() -> tuple[Callable[..., int | None], Callable[..., None]] | None:
-    # Cached so resolution (and a missing-symbol failure) happens once: the
-    # warning logs a single time, not on every margin or visibility change.
+    # Cached so a missing symbol warns once, not on every margin or visibility change.
     try:
         gui = ctypes.CDLL(_qt_lib("Qt6Gui"))
         wayland = ctypes.CDLL(_qt_lib("Qt6WaylandClient"))
@@ -89,7 +85,7 @@ def apply_wayland_content_margins(window: QWindow, margin: int) -> None:
     qwindow_ptr = shiboken6.Shiboken.getCppPointer(window)[0]
     platform_ptr = handle(c_void_p(qwindow_ptr))
     if not platform_ptr:
-        # Platform window not created yet; nothing to inset.
+        # Platform window not created yet, nothing to inset.
         return
 
     wayland_window_ptr = platform_ptr - _QOBJECT_BASE_OFFSET

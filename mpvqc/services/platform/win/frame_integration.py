@@ -22,10 +22,8 @@ if TYPE_CHECKING:
 
 
 class WindowsFrameIntegration:
-    """Keeps the full native window frame and reclaims only the caption strip for
-    the QML title bar, via Qt's "_q_windowsCustomMargins". The left/right/bottom
-    resize bands stay in the invisible non-client frame outside the content;
-    shadows, borders, corners and DWM animations stay native.
+    """Keeps the native frame and reclaims only the caption strip for the QML
+    title bar, through Qt's "_q_windowsCustomMargins".
 
     Also owns and installs the package's native event filter."""
 
@@ -56,10 +54,9 @@ def _caption_inset() -> int:
 
 
 def _sync_qt_frame_bookkeeping(hwnd: int) -> None:
-    # Qt corrects its frame margins only when a geometry event arrives, and the
-    # Qt Quick scene resizes only on a real size change. Without this, the first
-    # scene keeps the stale margins even though the QWindow property already
-    # holds the new value. Resizing by one pixel and back forces both to update.
+    # Qt corrects its frame margins only on a geometry event, and the scene
+    # resizes only on a real size change, so the first scene would keep the
+    # stale margins. One pixel out and back settles both.
     rect = get_window_rect(hwnd)
     if rect is None:
         return

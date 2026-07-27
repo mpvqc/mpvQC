@@ -39,10 +39,10 @@ if TYPE_CHECKING:
 
 class WindowsWindowStateHandler:
     """Maximize and show-normal go through Qt. Minimize is native: Qt's
-    showMinimized() replaces the window states, and the Windows QPA takes the
-    dropped Maximized bit literally and clears WPF_RESTORETOMAXIMIZED — the
-    flag Windows uses to restore a minimized window to maximized. Minimizing
-    through ShowWindow leaves that flag to Windows, and Qt only observes.
+    showMinimized() replaces the window states, and the Windows QPA reads the
+    dropped Maximized bit literally and clears WPF_RESTORETOMAXIMIZED, the flag
+    Windows uses to restore a minimized window to maximized. ShowWindow leaves
+    that flag alone and Qt only observes.
 
     Fullscreen enters as one atomic move to the monitor rect. Qt instead swaps
     window styles, restores, then re-maximizes, which flashes intermediate frames.
@@ -51,11 +51,9 @@ class WindowsWindowStateHandler:
     from the style while fullscreen. Restoring the saved placement on exit brings
     back the previous state, including the remembered normal geometry.
 
-    The window extends past the screen by the frame border on the left, right and
-    bottom. Qt's frame arithmetic then produces a scene of exactly the monitor
-    rect, and the small non-client area that remains keeps DWM animations alive:
-    DWM permanently stops animating a window once its client rect ever fills the
-    whole window.
+    The fullscreen window extends past the screen by the frame border on the
+    left, right and bottom. Qt's frame arithmetic then yields a scene of exactly
+    the monitor rect, and the non-client area that remains keeps DWM animating.
 
     Assumes a single top-level window: one saved placement at a time, always for
     the same window."""
@@ -198,7 +196,7 @@ class WindowsWindowStateHandler:
 
         # Answering from Qt keeps this read free of winId(): before the native
         # window exists, winId() would create it, and the frame configuration
-        # would come too late to reclaim the caption.
+        # would come too late to reclaim the caption strip.
         return bool(states & Qt.WindowState.WindowMaximized)
 
     def _retire_abandoned_session(self, hwnd: int) -> None:
