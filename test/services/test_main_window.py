@@ -51,22 +51,22 @@ def service() -> MainWindowService:
 
 
 def test_width_and_height_subtract_the_shadow_margin(service):
-    service._outer_width = 1280
-    service._outer_height = 720
+    service._surface_width = 1280
+    service._surface_height = 720
     service._shadow_margin = 64
-    assert service.content_width == 1280 - 2 * 64
-    assert service.content_height == 720 - 2 * 64
+    assert service.window_geometry_width == 1280 - 2 * 64
+    assert service.window_geometry_height == 720 - 2 * 64
 
 
 def test_width_and_height_equal_surface_without_margin(service):
-    service._outer_width = 1280
-    service._outer_height = 720
+    service._surface_width = 1280
+    service._surface_height = 720
     service._shadow_margin = 0
-    assert service.content_width == 1280
-    assert service.content_height == 720
+    assert service.window_geometry_width == 1280
+    assert service.window_geometry_height == 720
 
 
-def test_pushed_margin_updates_mirror_and_emits_content_size(qt_app, service, platform_service_stub):
+def test_pushed_margin_updates_shadow_margin_and_emits_window_geometry(qt_app, service, platform_service_stub):
     window = QWindow()
     window.resize(1280, 720)
     service.initialize(window)
@@ -75,8 +75,8 @@ def test_pushed_margin_updates_mirror_and_emits_content_size(qt_app, service, pl
     widths: list[int] = []
     heights: list[int] = []
     service.shadow_margin_changed.connect(margins.append)
-    service.content_width_changed.connect(widths.append)
-    service.content_height_changed.connect(heights.append)
+    service.window_geometry_width_changed.connect(widths.append)
+    service.window_geometry_height_changed.connect(heights.append)
 
     platform_service_stub.shadow_margin_changed.emit(88)
 
@@ -92,7 +92,7 @@ def test_pushed_unchanged_margin_emits_nothing(qt_app, service, platform_service
     service.initialize(window)
 
     margin_spy = make_spy(service.shadow_margin_changed)
-    width_spy = make_spy(service.content_width_changed)
+    width_spy = make_spy(service.window_geometry_width_changed)
 
     platform_service_stub.shadow_margin_changed.emit(0)
 
@@ -126,14 +126,14 @@ class InitializeBroadcastTestCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_initialize_broadcasts_content_size(case, qt_app, service, platform_service_stub, make_spy):
+def test_initialize_broadcasts_window_geometry(case, qt_app, service, platform_service_stub, make_spy):
     platform_service_stub.shadow_margin.return_value = case.shadow_margin
 
     window = QWindow()
     window.resize(1280, 720)
 
-    width_spy = make_spy(service.content_width_changed)
-    height_spy = make_spy(service.content_height_changed)
+    width_spy = make_spy(service.window_geometry_width_changed)
+    height_spy = make_spy(service.window_geometry_height_changed)
 
     service.initialize(window)
 
@@ -257,14 +257,14 @@ def test_position_only_change_updates_fullscreen_state(qt_app, service, platform
     assert not service.is_fullscreen
 
 
-def test_on_width_changed_reports_content_width(qt_app, service):
+def test_on_width_changed_reports_window_geometry_width(qt_app, service):
     service._window = QWindow()
     service._shadow_margin = 64
 
     widths: list[int] = []
-    service.content_width_changed.connect(widths.append)
+    service.window_geometry_width_changed.connect(widths.append)
 
     service._on_width_changed(1280)
 
-    assert service.content_width == 1280 - 2 * 64
+    assert service.window_geometry_width == 1280 - 2 * 64
     assert widths == [1280 - 2 * 64]
