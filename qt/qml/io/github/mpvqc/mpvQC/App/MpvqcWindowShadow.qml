@@ -33,6 +33,8 @@ Item {
     }
 
     Behavior on _focus {
+        enabled: root.visible
+
         NumberAnimation {
             duration: 180
             easing.type: Easing.OutCubic

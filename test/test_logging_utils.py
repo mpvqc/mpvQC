@@ -51,8 +51,8 @@ class LoggerNameCase(NamedTuple):
     [
         LoggerNameCase(
             name="qrc root file",
-            raw="qrc:/qt/qml/MpvqcApplicationLinux.qml",
-            expected="MpvqcApplicationLinux",
+            raw="qrc:/qt/qml/MpvqcApplication.qml",
+            expected="MpvqcApplication",
         ),
         LoggerNameCase(
             name="trailing qml chars kept",
