@@ -18,8 +18,8 @@ _WINDOW_RADIUS = 8
 class MpvqcWindowViewModel(QObject):
     _main_window = inject.attr(MainWindowService)
 
-    appWidthChanged = Signal(int)
-    appHeightChanged = Signal(int)
+    windowGeometryWidthChanged = Signal(int)
+    windowGeometryHeightChanged = Signal(int)
     isFullscreenChanged = Signal(bool)
     isMaximizedChanged = Signal(bool)
     shadowMarginChanged = Signal(int)
@@ -28,21 +28,21 @@ class MpvqcWindowViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._main_window.content_width_changed.connect(self.appWidthChanged)
-        self._main_window.content_height_changed.connect(self.appHeightChanged)
+        self._main_window.window_geometry_width_changed.connect(self.windowGeometryWidthChanged)
+        self._main_window.window_geometry_height_changed.connect(self.windowGeometryHeightChanged)
         self._main_window.is_fullscreen_changed.connect(self.isFullscreenChanged)
         self._main_window.is_maximized_changed.connect(self.isMaximizedChanged)
         self._main_window.shadow_margin_changed.connect(self.shadowMarginChanged)
         self._main_window.shadow_margin_changed.connect(self.radiusChanged)
         self._main_window.is_main_window_focused_changed.connect(self.isMainWindowFocusedChanged)
 
-    @Property(int, notify=appWidthChanged)
-    def appWidth(self) -> int:
-        return self._main_window.content_width
+    @Property(int, notify=windowGeometryWidthChanged)
+    def windowGeometryWidth(self) -> int:
+        return self._main_window.window_geometry_width
 
-    @Property(int, notify=appHeightChanged)
-    def appHeight(self) -> int:
-        return self._main_window.content_height
+    @Property(int, notify=windowGeometryHeightChanged)
+    def windowGeometryHeight(self) -> int:
+        return self._main_window.window_geometry_height
 
     @Property(bool, notify=isFullscreenChanged)
     def isFullscreen(self) -> bool:

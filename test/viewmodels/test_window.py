@@ -14,8 +14,8 @@ from mpvqc.viewmodels import MpvqcWindowViewModel
 
 
 class MainWindowServiceFake(QObject):
-    content_width_changed = Signal(int)
-    content_height_changed = Signal(int)
+    window_geometry_width_changed = Signal(int)
+    window_geometry_height_changed = Signal(int)
     shadow_margin_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
@@ -23,21 +23,21 @@ class MainWindowServiceFake(QObject):
 
     def __init__(self):
         super().__init__()
-        self.content_width = 0
-        self.content_height = 0
+        self.window_geometry_width = 0
+        self.window_geometry_height = 0
         self.shadow_margin = 0
         self.is_fullscreen = False
         self.is_maximized = False
         self.is_main_window_focused = False
         self.commands: list[str] = []
 
-    def set_content_width(self, width: int) -> None:
-        self.content_width = width
-        self.content_width_changed.emit(width)
+    def set_window_geometry_width(self, width: int) -> None:
+        self.window_geometry_width = width
+        self.window_geometry_width_changed.emit(width)
 
-    def set_content_height(self, height: int) -> None:
-        self.content_height = height
-        self.content_height_changed.emit(height)
+    def set_window_geometry_height(self, height: int) -> None:
+        self.window_geometry_height = height
+        self.window_geometry_height_changed.emit(height)
 
     def set_shadow_margin(self, margin: int) -> None:
         self.shadow_margin = margin
@@ -93,14 +93,14 @@ def view_model() -> MpvqcWindowViewModel:
 @pytest.mark.parametrize(
     "member",
     [
-        "content_width",
-        "content_height",
+        "window_geometry_width",
+        "window_geometry_height",
         "shadow_margin",
         "is_fullscreen",
         "is_maximized",
         "is_main_window_focused",
-        "content_width_changed",
-        "content_height_changed",
+        "window_geometry_width_changed",
+        "window_geometry_height_changed",
         "shadow_margin_changed",
         "is_fullscreen_changed",
         "is_maximized_changed",
@@ -128,8 +128,12 @@ class ForwardCase(NamedTuple):
 @pytest.mark.parametrize(
     "test_case",
     [
-        ForwardCase("appWidth", lambda s: s.set_content_width(640), lambda vm: vm.appWidth, 640),
-        ForwardCase("appHeight", lambda s: s.set_content_height(480), lambda vm: vm.appHeight, 480),
+        ForwardCase(
+            "windowGeometryWidth", lambda s: s.set_window_geometry_width(640), lambda vm: vm.windowGeometryWidth, 640
+        ),
+        ForwardCase(
+            "windowGeometryHeight", lambda s: s.set_window_geometry_height(480), lambda vm: vm.windowGeometryHeight, 480
+        ),
         ForwardCase("isFullscreen", lambda s: s.set_is_fullscreen(True), lambda vm: vm.isFullscreen, True),
         ForwardCase("isMaximized", lambda s: s.set_is_maximized(True), lambda vm: vm.isMaximized, True),
         ForwardCase("shadowMargin", lambda s: s.set_shadow_margin(12), lambda vm: vm.shadowMargin, 12),
@@ -158,8 +162,18 @@ class RelayCase(NamedTuple):
 @pytest.mark.parametrize(
     "test_case",
     [
-        RelayCase("appWidthChanged", lambda s: s.set_content_width(640), lambda vm: vm.appWidthChanged, (640,)),
-        RelayCase("appHeightChanged", lambda s: s.set_content_height(480), lambda vm: vm.appHeightChanged, (480,)),
+        RelayCase(
+            "windowGeometryWidthChanged",
+            lambda s: s.set_window_geometry_width(640),
+            lambda vm: vm.windowGeometryWidthChanged,
+            (640,),
+        ),
+        RelayCase(
+            "windowGeometryHeightChanged",
+            lambda s: s.set_window_geometry_height(480),
+            lambda vm: vm.windowGeometryHeightChanged,
+            (480,),
+        ),
         RelayCase(
             "isFullscreenChanged", lambda s: s.set_is_fullscreen(True), lambda vm: vm.isFullscreenChanged, (True,)
         ),

@@ -12,8 +12,8 @@ QtObject {
 
     readonly property MpvqcWindowViewModel _viewModel: MpvqcWindowViewModel {}
 
-    readonly property int appWidth: _viewModel.appWidth
-    readonly property int appHeight: _viewModel.appHeight
+    readonly property int windowGeometryWidth: _viewModel.windowGeometryWidth
+    readonly property int windowGeometryHeight: _viewModel.windowGeometryHeight
     readonly property bool isFullscreen: _viewModel.isFullscreen
     readonly property bool isMaximized: _viewModel.isMaximized
     readonly property int windowRadius: _viewModel.radius
