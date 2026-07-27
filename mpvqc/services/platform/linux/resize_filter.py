@@ -19,23 +19,23 @@ if TYPE_CHECKING:
     from PySide6.QtGui import QGuiApplication, QMouseEvent, QWindow
 
 
-MARGIN_RESIZE_BAND = 8  # width of the resize strip just outside the content, inside the shadow margin
+RESIZE_BAND_WIDTH = 8  # width of the resize strip just outside the content, inside the drop shadow margin
 
 _HANDLED_MOUSE_EVENTS = frozenset({QEvent.Type.MouseButtonPress, QEvent.Type.MouseMove})
 
 
-def resize_edges_at(x: int, y: int, window_width: int, window_height: int, margin: int) -> Qt.Edge:
-    # The content is inset by `margin`. The resize strip sits just outside
-    # it, in the transparent shadow, like GTK client-side decorations.
-    band = MARGIN_RESIZE_BAND
+def resize_edges_at(x: int, y: int, window_width: int, window_height: int, drop_shadow_margin: int) -> Qt.Edge:
+    # The content is inset by the drop shadow margin. The resize strip sits just
+    # outside it, in the transparent shadow, like GTK client-side decorations.
+    band = RESIZE_BAND_WIDTH
     edges = Qt.Edge(0)
-    if margin - band <= x < margin:
+    if drop_shadow_margin - band <= x < drop_shadow_margin:
         edges |= Qt.Edge.LeftEdge
-    if window_width - margin <= x < window_width - margin + band:
+    if window_width - drop_shadow_margin <= x < window_width - drop_shadow_margin + band:
         edges |= Qt.Edge.RightEdge
-    if margin - band <= y < margin:
+    if drop_shadow_margin - band <= y < drop_shadow_margin:
         edges |= Qt.Edge.TopEdge
-    if window_height - margin <= y < window_height - margin + band:
+    if window_height - drop_shadow_margin <= y < window_height - drop_shadow_margin + band:
         edges |= Qt.Edge.BottomEdge
     return edges
 
@@ -65,11 +65,11 @@ class WindowResizeFilter(QObject):
         self._window = window
         self._app = app
         self._cursor_override_active = False
-        self._resize_margin = 0
+        self._drop_shadow_margin = 0
         window.windowStateChanged.connect(self._clear_cursor_override)
 
-    def set_resize_margin(self, margin: int) -> None:
-        self._resize_margin = margin
+    def set_drop_shadow_margin(self, margin: int) -> None:
+        self._drop_shadow_margin = margin
 
     def _clear_cursor_override(self) -> None:
         if self._cursor_override_active:
@@ -87,7 +87,7 @@ class WindowResizeFilter(QObject):
             self._clear_cursor_override()
             return False
 
-        margin = self._resize_margin
+        margin = self._drop_shadow_margin
         if not margin:
             self._clear_cursor_override()
             return False

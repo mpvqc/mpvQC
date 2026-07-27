@@ -15,15 +15,15 @@ from mpvqc.services.platform.window_state import WindowStateSnapshot
 
 
 class PlatformServiceStub(QObject):
-    """Carries a real shadow_margin_changed signal so tests can drive pushes;
+    """Carries a real drop_shadow_margin_changed signal so tests can drive pushes;
     everything else is a mock."""
 
-    shadow_margin_changed = Signal(int)
+    drop_shadow_margin_changed = Signal(int)
 
     def __init__(self) -> None:
         super().__init__()
         self.read_state = MagicMock(return_value=WindowStateSnapshot(is_fullscreen=False, is_maximized=False))
-        self.shadow_margin = MagicMock(return_value=0)
+        self.drop_shadow_margin = MagicMock(return_value=0)
         self.configure_window = MagicMock()
         self.minimize = MagicMock()
         self.maximize = MagicMock()
@@ -50,10 +50,10 @@ def service() -> MainWindowService:
     return MainWindowService()
 
 
-def test_width_and_height_subtract_the_shadow_margin(service):
+def test_width_and_height_subtract_the_drop_shadow_margin(service):
     service._surface_width = 1280
     service._surface_height = 720
-    service._shadow_margin = 64
+    service._drop_shadow_margin = 64
     assert service.window_geometry_width == 1280 - 2 * 64
     assert service.window_geometry_height == 720 - 2 * 64
 
@@ -61,12 +61,12 @@ def test_width_and_height_subtract_the_shadow_margin(service):
 def test_width_and_height_equal_surface_without_margin(service):
     service._surface_width = 1280
     service._surface_height = 720
-    service._shadow_margin = 0
+    service._drop_shadow_margin = 0
     assert service.window_geometry_width == 1280
     assert service.window_geometry_height == 720
 
 
-def test_pushed_margin_updates_shadow_margin_and_emits_window_geometry(qt_app, service, platform_service_stub):
+def test_pushed_margin_updates_drop_shadow_margin_and_emits_window_geometry(qt_app, service, platform_service_stub):
     window = QWindow()
     window.resize(1280, 720)
     service.initialize(window)
@@ -74,13 +74,13 @@ def test_pushed_margin_updates_shadow_margin_and_emits_window_geometry(qt_app, s
     margins: list[int] = []
     widths: list[int] = []
     heights: list[int] = []
-    service.shadow_margin_changed.connect(margins.append)
+    service.drop_shadow_margin_changed.connect(margins.append)
     service.window_geometry_width_changed.connect(widths.append)
     service.window_geometry_height_changed.connect(heights.append)
 
-    platform_service_stub.shadow_margin_changed.emit(88)
+    platform_service_stub.drop_shadow_margin_changed.emit(88)
 
-    assert service.shadow_margin == 88
+    assert service.drop_shadow_margin == 88
     assert margins == [88]
     assert widths == [1280 - 2 * 88]
     assert heights == [720 - 2 * 88]
@@ -91,19 +91,19 @@ def test_pushed_unchanged_margin_emits_nothing(qt_app, service, platform_service
     window.resize(1280, 720)
     service.initialize(window)
 
-    margin_spy = make_spy(service.shadow_margin_changed)
+    margin_spy = make_spy(service.drop_shadow_margin_changed)
     width_spy = make_spy(service.window_geometry_width_changed)
 
-    platform_service_stub.shadow_margin_changed.emit(0)
+    platform_service_stub.drop_shadow_margin_changed.emit(0)
 
-    assert service.shadow_margin == 0
+    assert service.drop_shadow_margin == 0
     assert margin_spy.count() == 0
     assert width_spy.count() == 0
 
 
 class InitializeBroadcastTestCase(NamedTuple):
     name: str
-    shadow_margin: int
+    drop_shadow_margin: int
     expected_width: int
     expected_height: int
 
@@ -112,14 +112,14 @@ class InitializeBroadcastTestCase(NamedTuple):
     "case",
     [
         InitializeBroadcastTestCase(
-            "with_shadow_margin",
-            shadow_margin=88,
+            "with_drop_shadow_margin",
+            drop_shadow_margin=88,
             expected_width=1280 - 2 * 88,
             expected_height=720 - 2 * 88,
         ),
         InitializeBroadcastTestCase(
-            "without_shadow_margin",
-            shadow_margin=0,
+            "without_drop_shadow_margin",
+            drop_shadow_margin=0,
             expected_width=1280,
             expected_height=720,
         ),
@@ -127,7 +127,7 @@ class InitializeBroadcastTestCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_initialize_broadcasts_window_geometry(case, qt_app, service, platform_service_stub, make_spy):
-    platform_service_stub.shadow_margin.return_value = case.shadow_margin
+    platform_service_stub.drop_shadow_margin.return_value = case.drop_shadow_margin
 
     window = QWindow()
     window.resize(1280, 720)
@@ -259,7 +259,7 @@ def test_position_only_change_updates_fullscreen_state(qt_app, service, platform
 
 def test_on_width_changed_reports_window_geometry_width(qt_app, service):
     service._window = QWindow()
-    service._shadow_margin = 64
+    service._drop_shadow_margin = 64
 
     widths: list[int] = []
     service.window_geometry_width_changed.connect(widths.append)

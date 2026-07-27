@@ -78,8 +78,8 @@ class VideoResizeService:
                 raise ValueError(msg)
 
         # The layout math yields the visible content extent; grow it to the outer
-        # surface so the shadow margin does not eat into the fitted video.
-        margin = self._main_window.shadow_margin
+        # surface so the drop shadow margin does not eat into the fitted video.
+        margin = self._main_window.drop_shadow_margin
         return replace(
             result,
             window_width=result.window_width + 2 * margin,

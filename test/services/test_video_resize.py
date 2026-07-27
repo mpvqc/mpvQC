@@ -159,7 +159,7 @@ def main_window_service_mock() -> MagicMock:
     mock.screen_width = 2560
     mock.screen_height = 1440
     mock.display_zoom_factor = 1.0
-    mock.shadow_margin = 0
+    mock.drop_shadow_margin = 0
     return mock
 
 
@@ -254,8 +254,8 @@ def test_compute_resize_applies_display_zoom_factor(service, main_window_service
     assert result.window_width == 427
 
 
-def test_compute_resize_grows_window_by_shadow_margin(service, main_window_service_mock):
-    main_window_service_mock.shadow_margin = 64
+def test_compute_resize_grows_window_by_drop_shadow_margin(service, main_window_service_mock):
+    main_window_service_mock.drop_shadow_margin = 64
     result = service.compute_resize(VIEW_DIMS)
     assert result == ResizeResult(
         window_width=854 + 2 * 64,
