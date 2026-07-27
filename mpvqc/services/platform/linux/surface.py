@@ -36,9 +36,8 @@ class WindowExposeFilter(QObject):
 
 
 class SurfaceController(QObject):
-    """Manages the client-side-decorated surface: the drop shadow margin around
-    the content, the input mask that lets clicks fall through the shadow, and
-    the resize band along the content edge."""
+    """Keeps the drop shadow margin, the input mask and the resize band in step
+    with the window state."""
 
     drop_shadow_margin_changed = Signal(int)
 
@@ -55,10 +54,9 @@ class SurfaceController(QObject):
         self._event_filter = event_filter = WindowResizeFilter(window, app)
         window.installEventFilter(event_filter)
 
-        # The inset and mask need a created and mapped surface, which does not
-        # exist yet when the QML loads. On the first show, the inset is also
-        # ignored until the surface is actually exposed, so apply both again on
-        # show and on expose.
+        # The inset and the mask need a mapped surface, and the inset is
+        # ignored until it is exposed, so apply both again on show and on
+        # expose.
         self._expose_filter = expose_filter = WindowExposeFilter(window, self._reassert_surface)
         window.installEventFilter(expose_filter)
         window.visibleChanged.connect(self._on_visible_changed)
@@ -110,14 +108,13 @@ class SurfaceController(QObject):
             apply_wayland_content_margins(self._window, self._applied_drop_shadow_margin)
             return
 
-        # X11 (platformName "xcb") is NOT supported and is not planned. If it is
-        # ever wanted, someone has to implement and maintain that support here.
+        # Someone who cares would need to add X11 (platformName "xcb") support here
 
     @Slot()
     def _apply_input_mask(self) -> None:
-        # Without a mask the whole padded surface, transparent shadow included,
-        # swallows clicks. Restrict input to the content plus the resize band so
-        # clicks on the shadow fall through to whatever sits behind the window.
+        # Without a mask the transparent shadow swallows clicks. Restrict input
+        # to the content plus the resize band so they fall through to whatever
+        # sits behind the window.
         if self._window is None:
             return
 

@@ -23,13 +23,13 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True, kw_only=True)
 class PlatformBackend:
     keeps_native_frame: bool
-    """If True, the app keeps the native frame: the OS draws the border, drop shadow and rounded corners."""
+    """If True, the app keeps the native frame and reclaims only the caption strip."""
 
     draws_drop_shadow: bool
-    """If True, the app paints its own drop shadow into the surface beyond the window geometry."""
+    """If True, the app paints its own drop shadow into the drop shadow margin."""
 
     embeds_native_player: bool
-    """If True, the app embeds the player as a native child window of its own window."""
+    """If True, the player is embedded instead of rendered in-scene."""
 
     window_state: WindowStateHandler
     surface: SurfaceHandler

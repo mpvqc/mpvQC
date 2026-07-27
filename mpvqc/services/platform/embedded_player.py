@@ -12,7 +12,7 @@ class EmbeddedPlayerTracker(Protocol):
 
 
 class NoEmbeddedPlayerTracker:
-    """For platforms that do not track the embedded player's native window."""
+    """For platforms without an embedded player."""
 
     def track(self, win_id: int) -> None:
         pass

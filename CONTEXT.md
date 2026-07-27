@@ -40,6 +40,8 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   bar into the caption strip it reclaims. On a floating Linux desktop the app draws the rest too, on X11 and Wayland
   alike: a rounded border filling the window geometry, a drop shadow and a resize band. On a tiling desktop nobody
   draws them, because the compositor packs windows edge to edge and the app skips its border, shadow and resize band.
+- **Caption strip**: on Windows, the band at the top of the window where the OS would draw the title bar, plus the
+  resize border above it.
 - **Surface**: the whole rectangle the client paints into. When the client draws its own decorations, it extends past
   the visible window by the drop shadow margin. Otherwise, the two are the same rectangle.
 - **Drop shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding

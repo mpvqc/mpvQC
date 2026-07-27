@@ -23,9 +23,8 @@ class WindowStateSnapshot(NamedTuple):
 
 
 class WindowStateHandler(Protocol):
-    """Drives every window-state change and answers reads about size and
-    state, so platform quirks stay in platform code and out of shared
-    services."""
+    """Drives every window-state change and answers reads about it, so platform
+    quirks stay out of the shared services."""
 
     def minimize(self, window: QWindow) -> None: ...
 
@@ -40,8 +39,8 @@ class WindowStateHandler(Protocol):
     def read_state(self, window: QWindow) -> WindowStateSnapshot: ...
 
     def sizes_own_window(self, window: QWindow) -> bool:
-        """Whether the app decides this window's size, rather than the
-        compositor or window manager deciding it."""
+        """Whether the app decides this window's size, rather than a tiling
+        desktop deciding it."""
         ...
 
 
@@ -53,9 +52,9 @@ class QtWindowStateHandler:
         self._sizes_own_window = sizes_own_window
 
     def minimize(self, window: QWindow) -> None:
-        # Keep the other state bits while minimized. Replacing the set would
-        # drop the Maximized bit, and the window system would restore the
-        # window to its normal geometry instead of maximized.
+        # Keep the other state bits: replacing the set would drop Maximized,
+        # and the window would restore to its normal geometry instead of
+        # maximized.
         states = window.windowStates() | Qt.WindowState.WindowMinimized
         window.setWindowStates(states)
 
