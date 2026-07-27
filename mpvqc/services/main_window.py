@@ -133,6 +133,10 @@ class MainWindowService(QObject):
         return self._is_maximized
 
     @property
+    def sizes_own_window(self) -> bool:
+        return self._platform.sizes_own_window(self._active_window)
+
+    @property
     def is_main_window_focused(self) -> bool:
         return self._is_main_window_focused
 

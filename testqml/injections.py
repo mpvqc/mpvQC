@@ -59,8 +59,7 @@ TEMP_SAVES_DIR.mkdir()
 
 def _headless_platform_backend() -> PlatformBackend:
     return PlatformBackend(
-        desktop_sizes_window=False,
-        window_state=QtWindowStateHandler(),
+        window_state=QtWindowStateHandler(sizes_own_window=True),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
         window_reveal=NoWindowRevealer(),

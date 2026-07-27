@@ -23,8 +23,9 @@ class WindowStateSnapshot(NamedTuple):
 
 
 class WindowStateHandler(Protocol):
-    """Drives every window-state change and answers the combined state read,
-    so platform quirks stay in platform code and out of shared services."""
+    """Drives every window-state change and answers reads about size and
+    state, so platform quirks stay in platform code and out of shared
+    services."""
 
     def minimize(self, window: QWindow) -> None: ...
 
@@ -38,10 +39,18 @@ class WindowStateHandler(Protocol):
 
     def read_state(self, window: QWindow) -> WindowStateSnapshot: ...
 
+    def sizes_own_window(self, window: QWindow) -> bool:
+        """Whether the app decides this window's size, rather than the
+        compositor or window manager deciding it."""
+        ...
+
 
 class QtWindowStateHandler:
     """Requests window states through Qt for platforms whose window system
     honors them directly."""
+
+    def __init__(self, *, sizes_own_window: bool) -> None:
+        self._sizes_own_window = sizes_own_window
 
     def minimize(self, window: QWindow) -> None:
         # Keep the other state bits while minimized. Replacing the set would
@@ -72,3 +81,6 @@ class QtWindowStateHandler:
             is_fullscreen=bool(states & Qt.WindowState.WindowFullScreen),
             is_maximized=bool(states & Qt.WindowState.WindowMaximized),
         )
+
+    def sizes_own_window(self, window: QWindow) -> bool:  # noqa: ARG002
+        return self._sizes_own_window

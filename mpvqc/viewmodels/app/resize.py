@@ -34,8 +34,7 @@ class MpvqcResizeViewModel(QObject):
         self._table_width = 0
         self._table_height = 0
 
-        if self._resize_service.resizes_on_video_load:
-            self._player.video_dimensions_changed.connect(self.recalculateSizes)
+        self._player.video_dimensions_changed.connect(self.recalculateSizes)
 
     @Property(int, notify=headerHeightChanged)
     def headerHeight(self) -> int:

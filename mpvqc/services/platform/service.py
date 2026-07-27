@@ -32,10 +32,6 @@ class PlatformService(QObject):
     def window_button_preference(self) -> WindowButtonPreference:
         return self._backend.window_buttons.preference
 
-    @property
-    def desktop_sizes_window(self) -> bool:
-        return self._backend.desktop_sizes_window
-
     def minimize(self, window: QWindow) -> None:
         self._backend.window_state.minimize(window)
 
@@ -53,6 +49,9 @@ class PlatformService(QObject):
 
     def read_state(self, window: QWindow) -> WindowStateSnapshot:
         return self._backend.window_state.read_state(window)
+
+    def sizes_own_window(self, window: QWindow) -> bool:
+        return self._backend.window_state.sizes_own_window(window)
 
     def drop_shadow_margin(self, window: QWindow) -> int:
         return self._backend.surface.drop_shadow_margin(window)

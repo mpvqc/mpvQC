@@ -155,6 +155,9 @@ class WindowsWindowStateHandler:
         maximized = self._read_maximized(window)
         return WindowStateSnapshot(is_fullscreen=fullscreen, is_maximized=maximized)
 
+    def sizes_own_window(self, window: QWindow) -> bool:  # noqa: ARG002
+        return True
+
     def _read_fullscreen(self, window: QWindow) -> bool:
         # enter_fullscreen() briefly puts the window into a state that looks
         # like an abandoned session. A reentrant call must not clear the

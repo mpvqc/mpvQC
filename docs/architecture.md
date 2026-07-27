@@ -50,12 +50,6 @@ classes that other services and view models pull in via `inject.attr`. A few def
 through to QML, such as the comment store and its selection state. Each service sits in its own module or package, and
 `mpvqc/injections.py` registers the bindings for the inject container.
 
-Platform differences live behind `PlatformService`. At startup it selects a per-platform backend: a record of
-capabilities such as window-state driving (minimize, maximize, fullscreen, and the combined state read), the surface
-(the rectangle the client paints into and its drop shadow margin), window configuration, and window buttons.
-Linux drives window states through Qt; Windows integrates with the native window frame. Shared services stay
-platform-free and reach the capabilities through `PlatformService`.
-
 ### Bootstrap
 
 The application's entry point sets up the inject container, hands it to the QML engine, and loads the root window. From
