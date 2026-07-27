@@ -18,6 +18,8 @@ QtObject {
     readonly property bool isMaximized: _viewModel.isMaximized
     readonly property int windowRadius: _viewModel.radius
     readonly property int dropShadowMargin: _viewModel.dropShadowMargin
+    readonly property bool keepsNativeFrame: _viewModel.keepsNativeFrame
+    readonly property bool drawsDropShadow: _viewModel.drawsDropShadow
     readonly property bool isMainWindowFocused: _viewModel.isMainWindowFocused
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 

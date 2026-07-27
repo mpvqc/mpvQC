@@ -12,9 +12,7 @@ import io.github.mpvqc.mpvQC.Utility
 ApplicationWindow {
     id: root
 
-    readonly property bool _osDrawsDecorations: Qt.platform.os === "windows"
-
-    flags: root._osDrawsDecorations ? Qt.CustomizeWindowHint | Qt.Window : Qt.FramelessWindowHint | Qt.Window
+    flags: MpvqcWindowUtility.keepsNativeFrame ? Qt.CustomizeWindowHint | Qt.Window : Qt.FramelessWindowHint | Qt.Window
 
     width: 1280
     height: 720
@@ -23,7 +21,7 @@ ApplicationWindow {
     minimumHeight: 540
 
     visible: false
-    color: root._osDrawsDecorations ? M.Material.background : "transparent"
+    color: MpvqcWindowUtility.drawsDropShadow ? "transparent" : M.Material.background
 
     font: MpvqcFonts.applicationFont
 
