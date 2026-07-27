@@ -66,7 +66,7 @@ cannot cover it. Verify it on the locally built Flatpak before tagging, on both 
 - [ ] Maximize, fullscreen and back to normal land in the expected state (no flicker back to normal)
 - [ ] Window drags to the top edge and resizes from every edge and corner
 
-##### Tiling window manager (e.g. Sway, Hyprland, niri)
+##### Tiling compositor (e.g. Sway, Hyprland, niri)
 
 - [ ] Window sits flush with no transparent margin and no drop shadow
 - [ ] Corners are square

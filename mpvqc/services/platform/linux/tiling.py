@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 
-_TILING_WINDOW_MANAGERS = frozenset(
+_TILING_DESKTOPS = frozenset(
     {
         "awesome",
         "bspwm",
@@ -35,7 +35,7 @@ _TILING_WINDOW_MANAGERS = frozenset(
 )
 
 
-def is_tiling_window_manager() -> bool:
+def is_tiling_desktop() -> bool:
     xdg_current_desktop = os.environ.get("XDG_CURRENT_DESKTOP", "")
     desktops = {d.lower() for d in xdg_current_desktop.split(":")}
-    return bool(desktops & _TILING_WINDOW_MANAGERS)
+    return bool(desktops & _TILING_DESKTOPS)

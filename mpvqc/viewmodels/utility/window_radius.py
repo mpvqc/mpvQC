@@ -27,5 +27,5 @@ class MpvqcWindowRadiusViewModel(QObject):
     @Property(int, notify=radiusChanged)
     def radius(self) -> int:
         # Rounded only while we draw our own shadow and the window floats free. The
-        # shadow margin is already 0 on Windows, tiling WMs, maximized and fullscreen.
+        # shadow margin is already 0 on Windows, tiling desktops, maximized and fullscreen.
         return _WINDOW_RADIUS if self._main_window.shadow_margin > 0 else 0
