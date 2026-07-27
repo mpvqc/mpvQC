@@ -5,6 +5,9 @@
 from __future__ import annotations
 
 import os
+import re
+
+_SEPARATORS = re.compile(r"[:;]")
 
 _TILING_DESKTOPS = frozenset(
     {
@@ -19,7 +22,7 @@ _TILING_DESKTOPS = frozenset(
         "japokwm",
         "leftwm",
         "mango",
-        "mangowc",
+        "miracle-wm",
         "niri",
         "notion",
         "qtile",
@@ -37,5 +40,5 @@ _TILING_DESKTOPS = frozenset(
 
 def is_tiling_desktop() -> bool:
     xdg_current_desktop = os.environ.get("XDG_CURRENT_DESKTOP", "")
-    desktops = {d.lower() for d in xdg_current_desktop.split(":")}
+    desktops = {name.strip().lower() for name in _SEPARATORS.split(xdg_current_desktop)}
     return bool(desktops & _TILING_DESKTOPS)
