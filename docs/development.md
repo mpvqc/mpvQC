@@ -51,9 +51,9 @@ so the test runners load an up-to-date resource bundle. When iterating on test c
 
 | Path         | Contents                                                                                                                     |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `mpvqc/`     | Python: services (business logic), viewmodels (Qt-exposed glue), application bootstrap                                       |
+| `mpvqc/`     | Python: services (business logic), view models (Qt-exposed glue), application bootstrap                                      |
 | `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources                                      |
-| `test/`      | Python tests (pytest): services and viewmodels in isolation                                                                  |
+| `test/`      | Python tests (pytest): services and view models in isolation                                                                 |
 | `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides                                                |
 | `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, themes, `build-info.toml`                                                   |
 | `i18n/`      | Translations as `.ts` source files. The `.qm` binaries are generated                                                         |
