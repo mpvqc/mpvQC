@@ -18,6 +18,7 @@ def create_windows_backend() -> PlatformBackend:
     return PlatformBackend(
         keeps_native_frame=True,
         draws_drop_shadow=False,
+        embeds_native_player=True,
         window_state=WindowsWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=frame,

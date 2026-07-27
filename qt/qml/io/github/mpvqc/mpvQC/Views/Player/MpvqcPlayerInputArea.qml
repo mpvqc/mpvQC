@@ -9,8 +9,9 @@ import io.github.mpvqc.mpvQC.Utility
 MouseArea {
     id: root
 
+    required property bool embedsNativePlayer
+
     readonly property bool isFullScreen: MpvqcWindowUtility.isFullscreen
-    readonly property bool isWindows: Qt.platform.os === "windows"
     readonly property bool isWindowActive: Window.window ? Window.window.active : true
 
     property bool showCursor: true
@@ -56,7 +57,7 @@ MouseArea {
     }
 
     onPressed: event => {
-        if (root.isWindows && !root.isWindowActive) {
+        if (root.embedsNativePlayer && !root.isWindowActive) {
             root.windowActivationRequested();
         }
 

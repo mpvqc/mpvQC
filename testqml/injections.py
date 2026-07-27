@@ -61,6 +61,7 @@ def _headless_platform_backend() -> PlatformBackend:
     return PlatformBackend(
         keeps_native_frame=False,
         draws_drop_shadow=False,
+        embeds_native_player=False,
         window_state=QtWindowStateHandler(sizes_own_window=True),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),

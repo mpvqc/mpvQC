@@ -28,6 +28,9 @@ class PlatformBackend:
     draws_drop_shadow: bool
     """If True, the app paints its own drop shadow into the surface beyond the window geometry."""
 
+    embeds_native_player: bool
+    """If True, the app embeds the player as a native child window of its own window."""
+
     window_state: WindowStateHandler
     surface: SurfaceHandler
     window_configuration: WindowConfigurator

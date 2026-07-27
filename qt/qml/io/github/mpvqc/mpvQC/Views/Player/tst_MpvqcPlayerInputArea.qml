@@ -20,6 +20,8 @@ TestCase {
         MpvqcPlayerInputArea {
             width: 200
             height: 200
+
+            embedsNativePlayer: false
         }
     }
 
@@ -140,40 +142,45 @@ TestCase {
         compare(spy.count, 1);
     }
 
-    function test_pressOnWindowsWithInactiveWindowEmitsActivationRequested() {
-        const control = makeControl({
-            isWindows: true,
-            isWindowActive: false
-        });
-        const spy = makeSpy(control, "windowActivationRequested");
-
-        mousePress(control, 50, 50, Qt.LeftButton);
-
-        compare(spy.count, 1);
+    function test_pressRequestsWindowActivation_data(): var {
+        return [
+            {
+                tag: "embedded player, window inactive",
+                embedsNativePlayer: true,
+                isWindowActive: false,
+                expected: 1
+            },
+            {
+                tag: "embedded player, window active",
+                embedsNativePlayer: true,
+                isWindowActive: true,
+                expected: 0
+            },
+            {
+                tag: "no embedded player, window inactive",
+                embedsNativePlayer: false,
+                isWindowActive: false,
+                expected: 0
+            },
+            {
+                tag: "no embedded player, window active",
+                embedsNativePlayer: false,
+                isWindowActive: true,
+                expected: 0
+            }
+        ];
     }
 
-    function test_pressOnWindowsWithActiveWindowDoesNotEmitActivation() {
+    function test_pressRequestsWindowActivation(data) {
         const control = makeControl({
-            isWindows: true,
-            isWindowActive: true
+            embedsNativePlayer: data.embedsNativePlayer,
+            isWindowActive: data.isWindowActive
         });
         const spy = makeSpy(control, "windowActivationRequested");
 
         mousePress(control, 50, 50, Qt.LeftButton);
 
-        compare(spy.count, 0);
-    }
-
-    function test_pressOnNonWindowsDoesNotEmitActivation() {
-        const control = makeControl({
-            isWindows: false,
-            isWindowActive: false
-        });
-        const spy = makeSpy(control, "windowActivationRequested");
-
-        mousePress(control, 50, 50, Qt.LeftButton);
-
-        compare(spy.count, 0);
+        compare(spy.count, data.expected);
     }
 
     function test_cursorHidesAfterTimerWhenFullscreen() {
