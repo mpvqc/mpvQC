@@ -11,13 +11,14 @@ import io.github.mpvqc.mpvQC.Python
 QtObject {
 
     readonly property MpvqcWindowPropertiesViewModel viewModel: MpvqcWindowPropertiesViewModel {}
-    readonly property MpvqcWindowRadiusViewModel radiusViewModel: MpvqcWindowRadiusViewModel {}
+    readonly property MpvqcWindowFrameViewModel frameViewModel: MpvqcWindowFrameViewModel {}
 
     readonly property int appWidth: viewModel.appWidth
     readonly property int appHeight: viewModel.appHeight
     readonly property bool isFullscreen: viewModel.isFullscreen
     readonly property bool isMaximized: viewModel.isMaximized
-    readonly property int windowRadius: radiusViewModel.radius
+    readonly property int windowRadius: frameViewModel.radius
+    readonly property int shadowMargin: frameViewModel.shadowMargin
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
     property Item contentFrame: null

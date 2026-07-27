@@ -13,8 +13,6 @@ import io.github.mpvqc.mpvQC.Utility
 ApplicationWindow {
     id: root
 
-    readonly property int shadowMargin: _content.viewModel.shadowMargin
-
     flags: Qt.FramelessWindowHint | Qt.Window
 
     width: 1280
@@ -43,7 +41,7 @@ ApplicationWindow {
 
     MpvqcWindowShadow {
         anchors.fill: _frame
-        margin: root.shadowMargin
+        margin: MpvqcWindowUtility.shadowMargin
         radius: _frame.radius
         windowActive: root.active
     }
@@ -52,7 +50,7 @@ ApplicationWindow {
         id: _frame
 
         anchors.fill: parent
-        anchors.margins: root.shadowMargin
+        anchors.margins: MpvqcWindowUtility.shadowMargin
         radius: MpvqcWindowUtility.windowRadius
         color: M.Material.background
 
