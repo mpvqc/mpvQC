@@ -35,7 +35,7 @@ def create_desktop_backend() -> PlatformBackend:
     )
 
 
-def create_window_manager_backend() -> PlatformBackend:
+def create_tiling_backend() -> PlatformBackend:
     # Ideally true only while the compositor actually tiles the window,
     # but Qt cannot tell, so assume it always does.
     owns_window_geometry = True

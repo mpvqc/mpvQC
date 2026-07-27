@@ -49,12 +49,12 @@ def select_platform_backend() -> PlatformBackend:
 
 
 def _select_linux_backend() -> PlatformBackend:
-    from .linux.backend import create_desktop_backend, create_window_manager_backend
-    from .linux.tiling import is_tiling_window_manager
+    from .linux.backend import create_desktop_backend, create_tiling_backend
+    from .linux.tiling import is_tiling_desktop
 
-    if is_tiling_window_manager():
-        backend = create_window_manager_backend()
-        logger.info("Using Linux window manager platform backend")
+    if is_tiling_desktop():
+        backend = create_tiling_backend()
+        logger.info("Using Linux tiling desktop platform backend")
         return backend
 
     backend = create_desktop_backend()

@@ -275,7 +275,7 @@ class ResizesOnVideoLoadTestCase(NamedTuple):
     "case",
     [
         ResizesOnVideoLoadTestCase("desktop", owns_window_geometry=False, expected=True),
-        ResizesOnVideoLoadTestCase("tiling wm", owns_window_geometry=True, expected=False),
+        ResizesOnVideoLoadTestCase("tiling desktop", owns_window_geometry=True, expected=False),
     ],
     ids=lambda case: case.name,
 )
