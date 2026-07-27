@@ -7,7 +7,6 @@ import QtQuick.Controls
 import QtQuick.Controls.Material as M
 
 import io.github.mpvqc.mpvQC.App
-import io.github.mpvqc.mpvQC.Python
 import io.github.mpvqc.mpvQC.Utility
 
 ApplicationWindow {
@@ -65,12 +64,12 @@ ApplicationWindow {
             windowWidth: _frame.width
 
             onCloseRequested: root.close()
-            onMinimizeRequested: _windowVisibilityHandler.minimize()
+            onMinimizeRequested: MpvqcWindowUtility.minimize()
             onStartSystemMoveRequested: root.startSystemMove()
 
-            onToggleMaximizeRequested: _windowVisibilityHandler.toggleMaximized()
-            onToggleFullScreenRequested: _windowVisibilityHandler.toggleFullScreen()
-            onDisableFullScreenRequested: _windowVisibilityHandler.disableFullScreen()
+            onToggleMaximizeRequested: MpvqcWindowUtility.toggleMaximized()
+            onToggleFullScreenRequested: MpvqcWindowUtility.toggleFullScreen()
+            onDisableFullScreenRequested: MpvqcWindowUtility.disableFullScreen()
 
             onAppWindowSizeRequested: (width, height) => {
                 if (width >= root.minimumWidth && height >= root.minimumHeight) {
@@ -79,9 +78,5 @@ ApplicationWindow {
                 }
             }
         }
-    }
-
-    MpvqcWindowVisibilityViewModel {
-        id: _windowVisibilityHandler
     }
 }

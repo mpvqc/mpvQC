@@ -10,18 +10,34 @@ import io.github.mpvqc.mpvQC.Python
 
 QtObject {
 
-    readonly property MpvqcWindowPropertiesViewModel viewModel: MpvqcWindowPropertiesViewModel {}
-    readonly property MpvqcWindowFrameViewModel frameViewModel: MpvqcWindowFrameViewModel {}
+    readonly property MpvqcWindowViewModel _viewModel: MpvqcWindowViewModel {}
 
-    readonly property int appWidth: viewModel.appWidth
-    readonly property int appHeight: viewModel.appHeight
-    readonly property bool isFullscreen: viewModel.isFullscreen
-    readonly property bool isMaximized: viewModel.isMaximized
-    readonly property int windowRadius: frameViewModel.radius
-    readonly property int shadowMargin: frameViewModel.shadowMargin
+    readonly property int appWidth: _viewModel.appWidth
+    readonly property int appHeight: _viewModel.appHeight
+    readonly property bool isFullscreen: _viewModel.isFullscreen
+    readonly property bool isMaximized: _viewModel.isMaximized
+    readonly property int windowRadius: _viewModel.radius
+    readonly property int shadowMargin: _viewModel.shadowMargin
+    readonly property bool isMainWindowFocused: _viewModel.isMainWindowFocused
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
     property Item contentFrame: null
+
+    function minimize(): void {
+        _viewModel.minimize();
+    }
+
+    function toggleMaximized(): void {
+        _viewModel.toggleMaximized();
+    }
+
+    function toggleFullScreen(): void {
+        _viewModel.toggleFullScreen();
+    }
+
+    function disableFullScreen(): void {
+        _viewModel.disableFullScreen();
+    }
 
     /**
      * Resolves the visible content frame to measure against. Falls back to the
