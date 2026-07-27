@@ -41,21 +41,22 @@
 - Respect the recommended QML file layout:
   01. id
   02. Required properties
-  03. Aliases (property alias / readonly property alias)
-  04. Readonly value properties (public)
-  05. Mutable properties (public)
-  06. Private properties (underscore-prefixed)
-  07. Signal declarations
-  08. Enums
-  09. JavaScript functions
-  10. Own object property bindings (height, width, anchors, color, etc.)
-  11. Attached property bindings (Material. *, ListView.* bindings, Layout.\*)
-  12. Property change handlers (onXChanged)
-  13. Attached signal handlers (ListView.onPooled/onReused, Component.onCompleted/onDestruction, Keys.onPressed)
-  14. Child objects (visual children)
-  15. Behaviors
-  16. States
-  17. Transitions
+  03. The view model property, even when it is private
+  04. Aliases (property alias / readonly property alias)
+  05. Readonly value properties (public)
+  06. Mutable properties (public)
+  07. Private properties (underscore-prefixed)
+  08. Signal declarations
+  09. Enums
+  10. JavaScript functions
+  11. Own object property bindings (height, width, anchors, color, etc.)
+  12. Attached property bindings (Material. *, ListView.* bindings, Layout.\*)
+  13. Property change handlers (onXChanged)
+  14. Attached signal handlers (ListView.onPooled/onReused, Component.onCompleted/onDestruction, Keys.onPressed)
+  15. Child objects (visual children)
+  16. Behaviors
+  17. States
+  18. Transitions
 
 ## Testing
 
