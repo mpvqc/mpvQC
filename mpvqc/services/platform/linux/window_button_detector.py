@@ -15,6 +15,8 @@ from mpvqc.services.platform.window_buttons import DEFAULT_WINDOW_BUTTON_PREFERE
 from .portals import SettingsPortal
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from mpvqc.jobs import JobExecutor, Result
 
 logger = logging.getLogger(__name__)
@@ -58,3 +60,6 @@ class WindowButtonDetector(QObject):
     @property
     def preference(self) -> WindowButtonPreference:
         return self._preference
+
+    def on_preference_changed(self, callback: Callable[[WindowButtonPreference], None]) -> None:
+        self.preference_changed.connect(callback)
