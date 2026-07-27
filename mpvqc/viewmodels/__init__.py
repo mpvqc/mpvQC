@@ -14,8 +14,6 @@ from .message_boxes import MpvqcVersionCheckMessageBoxViewModel as MpvqcVersionC
 from .utility import MpvqcFontsViewModel as MpvqcFontsViewModel
 from .utility import MpvqcLabelWidthCalculatorViewModel as MpvqcLabelWidthCalculatorViewModel
 from .utility import MpvqcThemeViewModel as MpvqcThemeViewModel
-from .utility import MpvqcWindowFrameViewModel as MpvqcWindowFrameViewModel
-from .utility import MpvqcWindowPropertiesViewModel as MpvqcWindowPropertiesViewModel
 from .utility import MpvqcWindowViewModel as MpvqcWindowViewModel
 from .views import MpvqcBackupTimerViewModel as MpvqcBackupTimerViewModel
 from .views import MpvqcCommentTableViewModel as MpvqcCommentTableViewModel
@@ -29,4 +27,3 @@ from .views import MpvqcSearchBoxViewModel as MpvqcSearchBoxViewModel
 from .views import MpvqcTableUtilityViewModel as MpvqcTableUtilityViewModel
 from .views import MpvqcToolBarViewModel as MpvqcToolBarViewModel
 from .views import MpvqcWindowButtonsViewModel as MpvqcWindowButtonsViewModel
-from .window_visibility import MpvqcWindowVisibilityViewModel as MpvqcWindowVisibilityViewModel
