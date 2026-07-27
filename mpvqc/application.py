@@ -20,12 +20,13 @@ from mpvqc.services import (
     FontLoaderService,
     InternationalizationService,
     MainWindowService,
-    PlatformService,
     SettingsService,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+_ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplication.qml"
 
 
 class MpvqcApplication(QGuiApplication):
@@ -34,7 +35,6 @@ class MpvqcApplication(QGuiApplication):
     _font_loader = inject.attr(FontLoaderService)
     _i18n = inject.attr(InternationalizationService)
     _main_window = inject.attr(MainWindowService)
-    _platform = inject.attr(PlatformService)
     _settings = inject.attr(SettingsService)
 
     about_to_show = Signal()
@@ -82,8 +82,7 @@ class MpvqcApplication(QGuiApplication):
         self._i18n.retranslate(app=self, language_code=language_code)
 
     def start(self) -> None:
-        url = QUrl(self._platform.root_qml_url)
-        self._engine.load(url)
+        self._engine.load(QUrl(_ROOT_QML_URL))
 
         root_objects = self._engine.rootObjects()
         if not root_objects:

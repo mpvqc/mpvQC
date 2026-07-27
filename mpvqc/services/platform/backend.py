@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True, kw_only=True)
 class PlatformBackend:
-    root_qml_url: str
     desktop_sizes_window: bool
 
     window_state: WindowStateHandler

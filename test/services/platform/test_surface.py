@@ -159,7 +159,6 @@ def test_no_surface_handler_reads_zero_and_never_emits(make_recording_window, ma
 def test_platform_service_forwards_shadow_margin_changed(qt_app, make_spy):
     surface = NoSurfaceHandler()
     backend = PlatformBackend(
-        root_qml_url="",
         desktop_sizes_window=False,
         window_state=QtWindowStateHandler(),
         surface=surface,

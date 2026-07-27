@@ -36,10 +36,6 @@ class PlatformService(QObject):
         return self._backend.window_buttons.preference
 
     @property
-    def root_qml_url(self) -> str:
-        return self._backend.root_qml_url
-
-    @property
     def desktop_sizes_window(self) -> bool:
         return self._backend.desktop_sizes_window
 
