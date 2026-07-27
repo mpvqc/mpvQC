@@ -35,6 +35,10 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Window frame**: the rounded rectangle the app paints for itself, inset from the surface edge by the shadow margin.
   It only exists where the app draws its own decorations. Where the OS draws the frame, both the margin and the corner
   radius are 0.
+- **Decorations**: the border, title bar, shadow and resize band around the app content. Either the OS draws them or
+  the app does; Wayland names the two modes server-side and client-side. mpvQC draws all of them itself on Linux, on
+  X11 and Wayland alike. On Windows the OS keeps the border, the shadow and the rounded corners, and the app draws the
+  title bar into the caption strip it reclaims.
 - **Compositor**: the process that composites the screen. On Wayland it also places and sizes windows, so it absorbs
   the window manager role. On Windows, DWM composites but does not place or size; the system does.
 - **Window manager**: on X11, a separate client that places and sizes windows. Wayland has no such separate process.

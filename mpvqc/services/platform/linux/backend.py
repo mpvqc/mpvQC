@@ -14,7 +14,7 @@ from mpvqc.services.platform.window_state import QtWindowStateHandler
 from .surface import SurfaceController
 from .window_button_detector import WindowButtonDetector
 
-_ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplicationLinux.qml"
+_ROOT_QML_URL = "qrc:/qt/qml/MpvqcApplication.qml"
 
 
 def create_desktop_backend() -> PlatformBackend:
