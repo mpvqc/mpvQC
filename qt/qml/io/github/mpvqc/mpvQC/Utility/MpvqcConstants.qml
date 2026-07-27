@@ -5,13 +5,15 @@
 pragma Singleton
 
 import QtQuick
+import QtQuick.Controls
 
 QtObject {
 
-    // Native popup windows float above the main window and can leave its
-    // geometry. On Windows they are also why the platform backend's window
-    // reveal capability must cover transient windows against white flashes.
-    readonly property bool usesWindowedPopups: Qt.platform.os === "windows"
+    // On Windows the player is a native child window and paints over the scene,
+    // so popups have to be windows of their own to stay visible above it.
+    // Everywhere else the player renders in-scene, and in-scene popups stay the
+    // better choice while Qt's popup windows carry bugs like QTBUG-145585.
+    readonly property int preferredPopupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
 
     readonly property int smallDialogContentWidth: 370
     readonly property int mediumDialogContentWidth: 500

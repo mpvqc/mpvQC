@@ -28,7 +28,7 @@ Item {
 
     parent: Overlay.overlay
     anchors.fill: parent
-    visible: MpvqcConstants.usesWindowedPopups && _menuOpen && root.menu !== null
+    visible: MpvqcConstants.preferredPopupType === Popup.Window && _menuOpen && root.menu !== null
 
     Connections {
         target: root.menu
