@@ -160,7 +160,7 @@ def test_platform_service_forwards_shadow_margin_changed(qt_app, make_spy):
     surface = NoSurfaceHandler()
     backend = PlatformBackend(
         root_qml_url="",
-        owns_window_geometry=False,
+        desktop_sizes_window=False,
         window_state=QtWindowStateHandler(),
         surface=surface,
         window_configuration=NoWindowConfigurator(),

@@ -25,7 +25,7 @@ def create_desktop_backend() -> PlatformBackend:
 
     return PlatformBackend(
         root_qml_url=_ROOT_QML_URL,
-        owns_window_geometry=False,
+        desktop_sizes_window=False,
         window_state=QtWindowStateHandler(),
         surface=surface,
         window_configuration=surface,
@@ -36,13 +36,9 @@ def create_desktop_backend() -> PlatformBackend:
 
 
 def create_tiling_backend() -> PlatformBackend:
-    # Ideally true only while the compositor actually tiles the window,
-    # but Qt cannot tell, so assume it always does.
-    owns_window_geometry = True
-
     return PlatformBackend(
         root_qml_url=_ROOT_QML_URL,
-        owns_window_geometry=owns_window_geometry,
+        desktop_sizes_window=True,
         window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),

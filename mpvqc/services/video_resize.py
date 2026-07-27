@@ -38,7 +38,7 @@ class VideoResizeService:
 
     @property
     def resizes_on_video_load(self) -> bool:
-        return not self._platform.owns_window_geometry
+        return not self._platform.desktop_sizes_window
 
     def compute_resize(self, dimensions: ViewDimensions) -> ResizeResult | None:
         if self._main_window.is_fullscreen or self._main_window.is_maximized:
