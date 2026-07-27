@@ -24,7 +24,7 @@ Item {
 
     parent: Overlay.overlay
     anchors.fill: parent
-    visible: MpvqcConstants.usesWindowedPopups && (editLoader.isEditingCommentType || contextMenuLoader.active)
+    visible: MpvqcConstants.preferredPopupType === Popup.Window && (editLoader.isEditingCommentType || contextMenuLoader.active)
 
     MouseArea {
         anchors.fill: parent

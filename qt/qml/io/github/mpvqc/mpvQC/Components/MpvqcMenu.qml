@@ -15,7 +15,7 @@ Menu {
 
     z: 2
     transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
-    popupType: MpvqcConstants.usesWindowedPopups ? Popup.Window : Popup.Item
+    popupType: MpvqcConstants.preferredPopupType
     dim: false
 
     width: calculateMenuWidths()

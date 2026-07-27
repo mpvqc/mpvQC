@@ -15,7 +15,7 @@ Dialog {
 
     property string text
 
-    popupType: MpvqcConstants.usesWindowedPopups ? Popup.Window : Popup.Item
+    popupType: MpvqcConstants.preferredPopupType
     contentWidth: 420
     z: 2
     standardButtons: Dialog.Ok

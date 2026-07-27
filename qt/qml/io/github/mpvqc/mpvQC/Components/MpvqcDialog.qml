@@ -15,7 +15,7 @@ Dialog {
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
-    popupType: MpvqcConstants.usesWindowedPopups ? Popup.Window : Popup.Item
+    popupType: MpvqcConstants.preferredPopupType
     anchors.centerIn: Overlay.overlay
     contentWidth: MpvqcConstants.smallDialogContentWidth
     modal: true
