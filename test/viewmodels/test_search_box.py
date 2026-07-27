@@ -8,7 +8,7 @@ import inject
 import pytest
 
 from mpvqc.datamodels import Comment
-from mpvqc.services import CommentsService, MainWindowService
+from mpvqc.services import CommentsService
 from mpvqc.viewmodels import MpvqcSearchBoxViewModel
 
 DEFAULT_COMMENTS_SEARCH = (
@@ -37,10 +37,7 @@ def model() -> CommentsService:
 
 @pytest.fixture(autouse=True)
 def configure_inject(common_bindings_with):
-    def custom_bindings(binder: inject.Binder):
-        binder.bind_to_constructor(MainWindowService, MainWindowService)
-
-    common_bindings_with(custom_bindings)
+    common_bindings_with()
 
 
 @pytest.fixture

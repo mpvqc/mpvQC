@@ -13,7 +13,6 @@ from mpvqc.enums import DialogKind, FileDialogKind, MessageBoxKind
 from mpvqc.services import (
     DesktopService,
     ExportService,
-    MainWindowService,
     ResetService,
     SettingsService,
     StateService,
@@ -57,7 +56,6 @@ def configure_inject(
         binder.bind(ResetService, reset_service_mock)
         binder.bind(SettingsService, settings_service)
         binder.bind(ExportService, export_service_mock)
-        binder.bind_to_constructor(MainWindowService, MainWindowService)
 
     common_bindings_with(custom_bindings)
 

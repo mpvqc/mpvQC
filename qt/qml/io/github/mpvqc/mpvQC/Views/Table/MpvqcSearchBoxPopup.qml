@@ -269,7 +269,7 @@ Popup {
     }
 
     Shortcut {
-        enabled: root.visible && root.viewModel.isMainWindowFocused
+        enabled: root.visible && MpvqcWindowUtility.isMainWindowFocused
         sequence: "ctrl+f"
         autoRepeat: false
         onActivated: {
@@ -280,7 +280,7 @@ Popup {
     }
 
     Shortcut {
-        enabled: root.visible && root.viewModel.isMainWindowFocused
+        enabled: root.visible && MpvqcWindowUtility.isMainWindowFocused
         sequence: "esc"
         autoRepeat: false
         onActivated: root.close()
