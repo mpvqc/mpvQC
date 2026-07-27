@@ -12,7 +12,7 @@ For setup and daily workflow, see [development.md](development.md).
 ```mermaid
 flowchart LR
     QML["QML Views<br/>qt/qml/"]
-    VM["ViewModels<br/>mpvqc/viewmodels/"]
+    VM["View models<br/>mpvqc/viewmodels/"]
     SVC["Services<br/>mpvqc/services/"]
 
     QML -->|"properties, slots,<br/>signals"| VM
@@ -28,17 +28,17 @@ flowchart LR
 
 ### Views: `qt/qml/`
 
-QML files describe what the user sees and how they interact. Views hold no business logic. They bind to a viewmodel's
+QML files describe what the user sees and how they interact. Views hold no business logic. They bind to a view model's
 properties, call its slots in response to user actions, and react to its signals.
 
 QML modules under `qt/qml/` follow a reverse-DNS naming convention that starts at the project's namespace. Imports use
 the full module URI, not relative paths. The QQuickStyle override directory is the one intentional exception. It lives
 outside the dotted tree because Qt resolves styles by a single directory name at the root of an import path.
 
-### ViewModels: `mpvqc/viewmodels/`
+### View models: `mpvqc/viewmodels/`
 
-ViewModels are Python `QObject` subclasses exposed to QML via PySide6's `@QmlElement`. They translate between Qt's
-signal/slot world and the underlying services: a viewmodel pulls in services with `inject.attr`, exposes the data the
+View models are Python `QObject` subclasses exposed to QML via PySide6's `@QmlElement`. They translate between Qt's
+signal/slot world and the underlying services: a view model pulls in services with `inject.attr`, exposes the data the
 view needs as Qt properties, and turns user actions (`Slot`s) into service calls. They register into a single QML module
 that follows the same reverse-DNS convention as the QML-side modules. The folder layout under `mpvqc/viewmodels/` groups
 files by the consuming QML module.
@@ -46,8 +46,8 @@ files by the consuming QML module.
 ### Services: `mpvqc/services/`
 
 Services hold the application's logic and own its mutable state. QML never talks to them directly: they are Python
-classes that other services and viewmodels pull in via `inject.attr`. A few define Qt types that viewmodels hand through
-to QML, such as the comment store and its selection state. Each service sits in its own module or package, and
+classes that other services and view models pull in via `inject.attr`. A few define Qt types that view models hand
+through to QML, such as the comment store and its selection state. Each service sits in its own module or package, and
 `mpvqc/injections.py` registers the bindings for the inject container.
 
 Platform differences live behind `PlatformService`. At startup it selects a per-platform backend: a record of
@@ -59,7 +59,7 @@ platform-free and reach the capabilities through `PlatformService`.
 ### Bootstrap
 
 The application's entry point sets up the inject container, hands it to the QML engine, and loads the root window. From
-there, viewmodels resolve their service dependencies on demand. Startup wires the window-level services so they're
+there, view models resolve their service dependencies on demand. Startup wires the window-level services so they're
 available before the first user interaction.
 
 ## Testing
@@ -72,10 +72,10 @@ flowchart TB
         I1["Drives the application end-to-end<br/>through real menus, dialogs, services"]
     end
     subgraph QmlUnit["QML unit tests: qt/qml/.../tst_*.qml (colocated)"]
-        Q1["A single component against<br/>a mocked or real viewmodel"]
+        Q1["A single component against<br/>a mocked or real view model"]
     end
     subgraph PyUnit["Python tests: test/"]
-        P1["A service or viewmodel<br/>in isolation, with pytest"]
+        P1["A service or view model<br/>in isolation, with pytest"]
     end
 
     Integration --> QmlUnit
@@ -91,14 +91,14 @@ flowchart TB
 
 ### Python tests: `test/`
 
-Standard pytest suite. Each service and viewmodel has its own test module that exercises it in isolation, often with
+Standard pytest suite. Each service and view model has its own test module that exercises it in isolation, often with
 stubbed collaborators. Run with `just test-python`.
 
 ### QML unit tests: colocated `tst_*.qml`
 
 Each non-trivial QML file has a sibling `tst_<Name>.qml` that exercises that component in isolation. Where the component
-depends on a viewmodel, the test instantiates a mock viewmodel inline. A small number of tests use a real viewmodel to
-cover model-binding paths that mocks can't fake. Run together with the integration tests via `just test-qml`.
+depends on a view model, the test instantiates a mock view model inline. A small number of tests use a real view model
+to cover model-binding paths that mocks can't fake. Run together with the integration tests via `just test-qml`.
 
 ### QML integration tests: `tst_MpvqcApplicationContent_*.qml`
 
