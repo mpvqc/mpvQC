@@ -40,8 +40,8 @@ class PlatformService(QObject):
         return self._backend.root_qml_url
 
     @property
-    def owns_window_geometry(self) -> bool:
-        return self._backend.owns_window_geometry
+    def desktop_sizes_window(self) -> bool:
+        return self._backend.desktop_sizes_window
 
     def minimize(self, window: QWindow) -> None:
         self._backend.window_state.minimize(window)

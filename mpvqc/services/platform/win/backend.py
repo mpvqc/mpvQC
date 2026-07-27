@@ -17,7 +17,7 @@ def create_windows_backend() -> PlatformBackend:
     frame = WindowsFrameIntegration()
     return PlatformBackend(
         root_qml_url="qrc:/qt/qml/MpvqcApplicationWindows.qml",
-        owns_window_geometry=False,
+        desktop_sizes_window=False,
         window_state=WindowsWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=frame,

@@ -166,7 +166,7 @@ def main_window_service_mock() -> MagicMock:
 @pytest.fixture
 def platform_mock() -> MagicMock:
     mock = MagicMock(spec_set=PlatformService)
-    mock.owns_window_geometry = False
+    mock.desktop_sizes_window = False
     return mock
 
 
@@ -267,18 +267,18 @@ def test_compute_resize_grows_window_by_shadow_margin(service, main_window_servi
 
 class ResizesOnVideoLoadTestCase(NamedTuple):
     name: str
-    owns_window_geometry: bool
+    desktop_sizes_window: bool
     expected: bool
 
 
 @pytest.mark.parametrize(
     "case",
     [
-        ResizesOnVideoLoadTestCase("desktop", owns_window_geometry=False, expected=True),
-        ResizesOnVideoLoadTestCase("tiling desktop", owns_window_geometry=True, expected=False),
+        ResizesOnVideoLoadTestCase("desktop", desktop_sizes_window=False, expected=True),
+        ResizesOnVideoLoadTestCase("tiling desktop", desktop_sizes_window=True, expected=False),
     ],
     ids=lambda case: case.name,
 )
 def test_resizes_on_video_load_follows_platform(service, platform_mock, case: ResizesOnVideoLoadTestCase):
-    platform_mock.owns_window_geometry = case.owns_window_geometry
+    platform_mock.desktop_sizes_window = case.desktop_sizes_window
     assert service.resizes_on_video_load is case.expected
