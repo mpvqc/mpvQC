@@ -29,6 +29,14 @@ class PlatformService(QObject):
         self._backend.surface.on_drop_shadow_margin_changed(self.drop_shadow_margin_changed.emit)
 
     @property
+    def keeps_native_frame(self) -> bool:
+        return self._backend.keeps_native_frame
+
+    @property
+    def draws_drop_shadow(self) -> bool:
+        return self._backend.draws_drop_shadow
+
+    @property
     def window_button_preference(self) -> WindowButtonPreference:
         return self._backend.window_buttons.preference
 

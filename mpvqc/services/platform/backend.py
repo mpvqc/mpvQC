@@ -22,6 +22,12 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True, kw_only=True)
 class PlatformBackend:
+    keeps_native_frame: bool
+    """If True, the app keeps the native frame: the OS draws the border, drop shadow and rounded corners."""
+
+    draws_drop_shadow: bool
+    """If True, the app paints its own drop shadow into the surface beyond the window geometry."""
+
     window_state: WindowStateHandler
     surface: SurfaceHandler
     window_configuration: WindowConfigurator

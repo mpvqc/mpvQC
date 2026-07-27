@@ -16,6 +16,8 @@ from .window_state import WindowsWindowStateHandler
 def create_windows_backend() -> PlatformBackend:
     frame = WindowsFrameIntegration()
     return PlatformBackend(
+        keeps_native_frame=True,
+        draws_drop_shadow=False,
         window_state=WindowsWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=frame,
