@@ -40,9 +40,9 @@ ApplicationWindow {
         root.requestActivate();
     }
 
-    MpvqcWindowShadow {
+    MpvqcWindowDropShadow {
         anchors.fill: _frame
-        margin: MpvqcWindowUtility.shadowMargin
+        margin: MpvqcWindowUtility.dropShadowMargin
         radius: _frame.radius
         windowActive: root.active
     }
@@ -51,7 +51,7 @@ ApplicationWindow {
         id: _frame
 
         anchors.fill: parent
-        anchors.margins: MpvqcWindowUtility.shadowMargin
+        anchors.margins: MpvqcWindowUtility.dropShadowMargin
         radius: MpvqcWindowUtility.windowRadius
         color: M.Material.background
 

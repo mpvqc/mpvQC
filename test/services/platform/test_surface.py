@@ -26,9 +26,9 @@ MAXIMIZED = Qt.WindowState.WindowMaximized
 FULLSCREEN = Qt.WindowState.WindowFullScreen
 
 
-class ShadowMarginTestCase(NamedTuple):
+class DropShadowMarginTestCase(NamedTuple):
     name: str
-    composed_margin: int
+    drop_shadow_margin: int
     states: Qt.WindowState
     expected: int
 
@@ -36,50 +36,50 @@ class ShadowMarginTestCase(NamedTuple):
 @pytest.mark.parametrize(
     "case",
     [
-        ShadowMarginTestCase(
-            "zero_composed_margin_reads_zero",
-            composed_margin=0,
+        DropShadowMarginTestCase(
+            "zero_margin_reads_zero",
+            drop_shadow_margin=0,
             states=NO_STATE,
             expected=0,
         ),
-        ShadowMarginTestCase(
-            "normal_uses_composed_margin",
-            composed_margin=88,
+        DropShadowMarginTestCase(
+            "normal_keeps_margin",
+            drop_shadow_margin=88,
             states=NO_STATE,
             expected=88,
         ),
-        ShadowMarginTestCase(
+        DropShadowMarginTestCase(
             "maximized_collapses_margin",
-            composed_margin=88,
+            drop_shadow_margin=88,
             states=MAXIMIZED,
             expected=0,
         ),
-        ShadowMarginTestCase(
+        DropShadowMarginTestCase(
             "fullscreen_collapses_margin",
-            composed_margin=88,
+            drop_shadow_margin=88,
             states=FULLSCREEN,
             expected=0,
         ),
-        ShadowMarginTestCase(
+        DropShadowMarginTestCase(
             "minimized_from_maximized_stays_collapsed",
-            composed_margin=88,
+            drop_shadow_margin=88,
             states=MAXIMIZED | MINIMIZED,
             expected=0,
         ),
-        ShadowMarginTestCase(
+        DropShadowMarginTestCase(
             "minimized_from_normal_keeps_margin",
-            composed_margin=88,
+            drop_shadow_margin=88,
             states=MINIMIZED,
             expected=88,
         ),
     ],
     ids=lambda case: case.name,
 )
-def test_shadow_margin(case: ShadowMarginTestCase, make_recording_window):
+def test_drop_shadow_margin(case: DropShadowMarginTestCase, make_recording_window):
     window = make_recording_window(case.states)
-    handler: SurfaceHandler = SurfaceController(shadow_margin=case.composed_margin)
+    handler: SurfaceHandler = SurfaceController(drop_shadow_margin=case.drop_shadow_margin)
 
-    assert handler.shadow_margin(window) == case.expected
+    assert handler.drop_shadow_margin(window) == case.expected
 
 
 class EmissionTestCase(NamedTuple):
@@ -93,7 +93,7 @@ class EmissionTestCase(NamedTuple):
     "case",
     [
         EmissionTestCase(
-            "configure_normal_emits_composed_margin",
+            "configure_normal_emits_margin",
             initial_states=NO_STATE,
             transitions=[],
             emitted=[88],
@@ -131,10 +131,10 @@ class EmissionTestCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_shadow_margin_changed_emissions(case: EmissionTestCase, qt_app, make_recording_window, make_spy):
+def test_drop_shadow_margin_changed_emissions(case: EmissionTestCase, qt_app, make_recording_window, make_spy):
     window = make_recording_window(case.initial_states)
-    controller = SurfaceController(shadow_margin=88)
-    spy = make_spy(controller.shadow_margin_changed)
+    controller = SurfaceController(drop_shadow_margin=88)
+    spy = make_spy(controller.drop_shadow_margin_changed)
 
     controller.configure_window(qt_app, window)
     for states in case.transitions:
@@ -146,17 +146,17 @@ def test_shadow_margin_changed_emissions(case: EmissionTestCase, qt_app, make_re
 def test_no_surface_handler_reads_zero_and_never_emits(make_recording_window, make_spy):
     no_surface = NoSurfaceHandler()
     handler: SurfaceHandler = no_surface
-    spy = make_spy(no_surface.shadow_margin_changed)
+    spy = make_spy(no_surface.drop_shadow_margin_changed)
 
     for states in (NO_STATE, MINIMIZED, MAXIMIZED, FULLSCREEN):
         window = make_recording_window(states)
-        assert handler.shadow_margin(window) == 0
+        assert handler.drop_shadow_margin(window) == 0
         window.setWindowStates(states)
 
     assert spy.count() == 0
 
 
-def test_platform_service_forwards_shadow_margin_changed(qt_app, make_spy):
+def test_platform_service_forwards_drop_shadow_margin_changed(qt_app, make_spy):
     surface = NoSurfaceHandler()
     backend = PlatformBackend(
         desktop_sizes_window=False,
@@ -168,9 +168,9 @@ def test_platform_service_forwards_shadow_margin_changed(qt_app, make_spy):
         window_buttons=StaticWindowButtons(),
     )
     service = PlatformService(backend=backend)
-    spy = make_spy(service.shadow_margin_changed)
+    spy = make_spy(service.drop_shadow_margin_changed)
 
-    surface.shadow_margin_changed.emit(88)
+    surface.drop_shadow_margin_changed.emit(88)
 
     assert spy.count() == 1
     assert spy.at(0, 0) == 88

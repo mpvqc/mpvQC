@@ -294,7 +294,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/App/MpvqcFileDropArea.qml",
     "qt/qml/io/github/mpvqc/mpvQC/App/MpvqcLayout.qml",
     "qt/qml/io/github/mpvqc/mpvQC/App/MpvqcOverlayController.qml",
-    "qt/qml/io/github/mpvqc/mpvQC/App/MpvqcWindowShadow.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/App/MpvqcWindowDropShadow.qml",
     "qt/qml/io/github/mpvqc/mpvQC/App/qmldir",
     "qt/qml/io/github/mpvqc/mpvQC/App/TestHelpers.qml",
     "qt/qml/io/github/mpvqc/mpvQC/App/tst_MpvqcApplicationContent_FileMenu.qml",

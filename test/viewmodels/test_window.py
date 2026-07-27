@@ -16,7 +16,7 @@ from mpvqc.viewmodels import MpvqcWindowViewModel
 class MainWindowServiceFake(QObject):
     window_geometry_width_changed = Signal(int)
     window_geometry_height_changed = Signal(int)
-    shadow_margin_changed = Signal(int)
+    drop_shadow_margin_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
     is_main_window_focused_changed = Signal(bool)
@@ -25,7 +25,7 @@ class MainWindowServiceFake(QObject):
         super().__init__()
         self.window_geometry_width = 0
         self.window_geometry_height = 0
-        self.shadow_margin = 0
+        self.drop_shadow_margin = 0
         self.is_fullscreen = False
         self.is_maximized = False
         self.is_main_window_focused = False
@@ -39,9 +39,9 @@ class MainWindowServiceFake(QObject):
         self.window_geometry_height = height
         self.window_geometry_height_changed.emit(height)
 
-    def set_shadow_margin(self, margin: int) -> None:
-        self.shadow_margin = margin
-        self.shadow_margin_changed.emit(margin)
+    def set_drop_shadow_margin(self, margin: int) -> None:
+        self.drop_shadow_margin = margin
+        self.drop_shadow_margin_changed.emit(margin)
 
     def set_is_fullscreen(self, is_fullscreen: bool) -> None:
         self.is_fullscreen = is_fullscreen
@@ -95,13 +95,13 @@ def view_model() -> MpvqcWindowViewModel:
     [
         "window_geometry_width",
         "window_geometry_height",
-        "shadow_margin",
+        "drop_shadow_margin",
         "is_fullscreen",
         "is_maximized",
         "is_main_window_focused",
         "window_geometry_width_changed",
         "window_geometry_height_changed",
-        "shadow_margin_changed",
+        "drop_shadow_margin_changed",
         "is_fullscreen_changed",
         "is_maximized_changed",
         "is_main_window_focused_changed",
@@ -136,7 +136,7 @@ class ForwardCase(NamedTuple):
         ),
         ForwardCase("isFullscreen", lambda s: s.set_is_fullscreen(True), lambda vm: vm.isFullscreen, True),
         ForwardCase("isMaximized", lambda s: s.set_is_maximized(True), lambda vm: vm.isMaximized, True),
-        ForwardCase("shadowMargin", lambda s: s.set_shadow_margin(12), lambda vm: vm.shadowMargin, 12),
+        ForwardCase("dropShadowMargin", lambda s: s.set_drop_shadow_margin(12), lambda vm: vm.dropShadowMargin, 12),
         ForwardCase(
             "isMainWindowFocused",
             lambda s: s.set_is_main_window_focused(True),
@@ -178,8 +178,13 @@ class RelayCase(NamedTuple):
             "isFullscreenChanged", lambda s: s.set_is_fullscreen(True), lambda vm: vm.isFullscreenChanged, (True,)
         ),
         RelayCase("isMaximizedChanged", lambda s: s.set_is_maximized(True), lambda vm: vm.isMaximizedChanged, (True,)),
-        RelayCase("shadowMarginChanged", lambda s: s.set_shadow_margin(12), lambda vm: vm.shadowMarginChanged, (12,)),
-        RelayCase("radiusChanged", lambda s: s.set_shadow_margin(12), lambda vm: vm.radiusChanged, ()),
+        RelayCase(
+            "dropShadowMarginChanged",
+            lambda s: s.set_drop_shadow_margin(12),
+            lambda vm: vm.dropShadowMarginChanged,
+            (12,),
+        ),
+        RelayCase("radiusChanged", lambda s: s.set_drop_shadow_margin(12), lambda vm: vm.radiusChanged, ()),
         RelayCase(
             "isMainWindowFocusedChanged",
             lambda s: s.set_is_main_window_focused(True),
@@ -200,17 +205,17 @@ def test_notify_relays_service_signal(view_model, main_window_service, make_spy,
 
 
 @pytest.mark.parametrize(
-    ("shadow_margin", "expected_radius"),
+    ("drop_shadow_margin", "expected_radius"),
     [
         (0, 0),
         (1, 8),
         (88, 8),
     ],
 )
-def test_radius_follows_shadow_margin(view_model, main_window_service, shadow_margin, expected_radius):
-    main_window_service.set_shadow_margin(shadow_margin)
+def test_radius_follows_drop_shadow_margin(view_model, main_window_service, drop_shadow_margin, expected_radius):
+    main_window_service.set_drop_shadow_margin(drop_shadow_margin)
 
-    assert view_model.shadowMargin == shadow_margin
+    assert view_model.dropShadowMargin == drop_shadow_margin
     assert view_model.radius == expected_radius
 
 

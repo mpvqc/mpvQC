@@ -32,14 +32,15 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   app must not resize itself. The name says neither compositor nor window manager because both kinds tile.
 - **Window geometry**: the visible bounds of the window, what the compositor aligns, snaps and constrains against. Drop
   shadows sit outside it.
-- **Decorations**: the border, title bar, shadow and resize band around the app content. Either the OS draws them or
-  the app does. Wayland names the two modes server-side and client-side. mpvQC draws all of them itself on Linux, on
+- **Decorations**: the border, title bar, drop shadow and resize band around the app content. Either the OS draws them
+  or the app does. Wayland names the two modes server-side and client-side. mpvQC draws all of them itself on Linux, on
   X11 and Wayland alike. Its border is a rounded rectangle filling the window geometry. On Windows the OS keeps the
-  border, the shadow and the rounded corners. The app draws the title bar into the caption strip it reclaims.
+  border, the drop shadow and the rounded corners. The app draws the title bar into the caption strip it reclaims.
 - **Surface**: the whole rectangle the client paints into. When the client draws its own decorations, it extends past
-  the visible window by the shadow margin. Otherwise, the two are the same rectangle.
-- **Shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding the
-  resize band. Zero when maximized, fullscreen, on a tiling desktop, and on Windows.
+  the visible window by the drop shadow margin. Otherwise, the two are the same rectangle.
+- **Drop shadow margin**: how far the surface extends past the window geometry, painted with the drop shadow and holding
+  the resize band. Zero when maximized, fullscreen, on a tiling desktop, and on Windows. On Wayland the compositor draws
+  no drop shadow for a frameless client, so an app that wants one has to paint it itself.
 
 **Linux desktop**, where the app draws its own decorations:
 
@@ -54,18 +55,18 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│
 └───────────────────────────────────────┘
 
-░ = shadow margin: transparent, carries the drop shadow and the resize band
+░ = drop shadow margin: transparent, carries the drop shadow and the resize band
 ```
 
 **Windows**, and any Linux tiling desktop, where the app draws no border of its own:
 
 ```text
 ┌───────────────────────────────────────┐  surface and window geometry, one
-│                                       │  rectangle: shadow margin 0, corner
-│                                       │  radius 0, no border of the app's own
+│                                       │  rectangle: drop shadow margin 0,
+│                                       │  corner radius 0, no border of its own
 │              app content              │
 │                                       │  on Windows the OS draws the border,
-│                                       │  the shadow and the rounded corners
+│                                       │  the drop shadow and the rounded corners
 └───────────────────────────────────────┘
 ```
 

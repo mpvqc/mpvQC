@@ -27,7 +27,7 @@ class MainWindowService(QObject):
 
     window_geometry_width_changed = Signal(int)
     window_geometry_height_changed = Signal(int)
-    shadow_margin_changed = Signal(int)
+    drop_shadow_margin_changed = Signal(int)
     is_fullscreen_changed = Signal(bool)
     is_maximized_changed = Signal(bool)
     is_main_window_focused_changed = Signal(bool)
@@ -39,7 +39,7 @@ class MainWindowService(QObject):
         self._zoom_monitor: _DisplayZoomMonitor | None = None
         self._surface_width = 0
         self._surface_height = 0
-        self._shadow_margin = 0
+        self._drop_shadow_margin = 0
         self._is_fullscreen = False
         self._is_maximized = False
         self._is_main_window_focused = True
@@ -63,11 +63,11 @@ class MainWindowService(QObject):
 
         # Sync QML bindings that were created during engine.load(), before the window
         # size was known. Margin first: the window geometry is derived from it.
-        self._on_shadow_margin_changed(self._platform.shadow_margin(window))
+        self._on_drop_shadow_margin_changed(self._platform.drop_shadow_margin(window))
         self.window_geometry_width_changed.emit(self.window_geometry_width)
         self.window_geometry_height_changed.emit(self.window_geometry_height)
 
-        self._platform.shadow_margin_changed.connect(self._on_shadow_margin_changed)
+        self._platform.drop_shadow_margin_changed.connect(self._on_drop_shadow_margin_changed)
         window.widthChanged.connect(self._on_width_changed)
         window.heightChanged.connect(self._on_height_changed)
         # Moving without resizing (keyboard move via the system menu) can also take
@@ -114,15 +114,15 @@ class MainWindowService(QObject):
 
     @property
     def window_geometry_width(self) -> int:
-        return self._surface_width - 2 * self._shadow_margin
+        return self._surface_width - 2 * self._drop_shadow_margin
 
     @property
     def window_geometry_height(self) -> int:
-        return self._surface_height - 2 * self._shadow_margin
+        return self._surface_height - 2 * self._drop_shadow_margin
 
     @property
-    def shadow_margin(self) -> int:
-        return self._shadow_margin
+    def drop_shadow_margin(self) -> int:
+        return self._drop_shadow_margin
 
     @property
     def is_fullscreen(self) -> bool:
@@ -191,14 +191,14 @@ class MainWindowService(QObject):
             self.is_maximized_changed.emit(state.is_maximized)
 
     @Slot(int)
-    def _on_shadow_margin_changed(self, margin: int) -> None:
-        if margin == self._shadow_margin:
+    def _on_drop_shadow_margin_changed(self, margin: int) -> None:
+        if margin == self._drop_shadow_margin:
             return
 
         previous_width = self.window_geometry_width
         previous_height = self.window_geometry_height
-        self._shadow_margin = margin
-        self.shadow_margin_changed.emit(margin)
+        self._drop_shadow_margin = margin
+        self.drop_shadow_margin_changed.emit(margin)
 
         if self.window_geometry_width != previous_width:
             self.window_geometry_width_changed.emit(self.window_geometry_width)

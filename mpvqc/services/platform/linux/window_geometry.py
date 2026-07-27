@@ -4,9 +4,9 @@
 
 """Wayland-only workaround: tell the compositor the window's real rectangle.
 
-A frameless window with a transparent shadow margin gives the compositor the
-whole padded surface. The content then cannot sit flush at screen edges, and
-snapping and maximizing use the padded rectangle instead of the visible one.
+A frameless window with a transparent drop shadow margin gives the compositor
+the whole padded surface. The content then cannot sit flush at screen edges,
+and snapping and maximizing use the padded rectangle instead of the visible one.
 QWaylandWindow::setCustomMargins declares the real geometry inset. It is
 private Qt API, reached through ctypes.
 

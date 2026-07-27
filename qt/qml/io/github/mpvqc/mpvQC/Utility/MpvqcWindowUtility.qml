@@ -17,7 +17,7 @@ QtObject {
     readonly property bool isFullscreen: _viewModel.isFullscreen
     readonly property bool isMaximized: _viewModel.isMaximized
     readonly property int windowRadius: _viewModel.radius
-    readonly property int shadowMargin: _viewModel.shadowMargin
+    readonly property int dropShadowMargin: _viewModel.dropShadowMargin
     readonly property bool isMainWindowFocused: _viewModel.isMainWindowFocused
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 

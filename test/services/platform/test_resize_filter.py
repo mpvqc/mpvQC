@@ -16,7 +16,7 @@ from mpvqc.services.platform.linux.resize_filter import (
 
 WIDTH = 800
 HEIGHT = 600
-MARGIN = 20
+DROP_SHADOW_MARGIN = 20
 
 NO_EDGES = Qt.Edge(0)
 
@@ -30,7 +30,7 @@ class EdgeCase(NamedTuple):
 
 EDGE_CASES = [
     EdgeCase("interior center", 400, 300, NO_EDGES),
-    EdgeCase("interior boundary just inside content", MARGIN, 300, NO_EDGES),
+    EdgeCase("interior boundary just inside content", DROP_SHADOW_MARGIN, 300, NO_EDGES),
     EdgeCase("deep shadow outside the band", 5, 5, NO_EDGES),
     EdgeCase("left band outer boundary", 12, 300, Qt.Edge.LeftEdge),
     EdgeCase("left band inner boundary", 19, 300, Qt.Edge.LeftEdge),
@@ -50,7 +50,7 @@ EDGE_CASES = [
 
 @pytest.mark.parametrize("case", EDGE_CASES, ids=lambda case: case.name)
 def test_resize_edges(case: EdgeCase) -> None:
-    assert resize_edges_at(case.x, case.y, WIDTH, HEIGHT, MARGIN) == case.expected
+    assert resize_edges_at(case.x, case.y, WIDTH, HEIGHT, DROP_SHADOW_MARGIN) == case.expected
 
 
 class CursorCase(NamedTuple):
@@ -95,7 +95,7 @@ def window(qt_app) -> QWindow:
 @pytest.fixture
 def resize_filter(window, qt_app, restore_cursor) -> WindowResizeFilter:
     event_filter = WindowResizeFilter(window, qt_app)
-    event_filter.set_resize_margin(MARGIN)
+    event_filter.set_drop_shadow_margin(DROP_SHADOW_MARGIN)
     return event_filter
 
 

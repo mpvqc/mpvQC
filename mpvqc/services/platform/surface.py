@@ -16,15 +16,15 @@ class SurfaceHandler(Protocol):
     """Owns the decorated padding around the window content: the state-aware
     margin read and the edge-triggered push when the margin changes."""
 
-    shadow_margin_changed: ClassVar[Signal]
+    drop_shadow_margin_changed: ClassVar[Signal]
 
-    def shadow_margin(self, window: QWindow) -> int: ...
+    def drop_shadow_margin(self, window: QWindow) -> int: ...
 
 
 class NoSurfaceHandler(QObject):
     """For platforms without a client-side-decorated surface."""
 
-    shadow_margin_changed = Signal(int)
+    drop_shadow_margin_changed = Signal(int)
 
-    def shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
+    def drop_shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
         return 0

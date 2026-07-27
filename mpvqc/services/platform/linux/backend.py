@@ -19,7 +19,7 @@ def create_desktop_backend() -> PlatformBackend:
     # Transparent padding around the content that the QML drop shadow is
     # painted into. Must exceed the widest shadow blur plus offset, otherwise
     # the soft edge clips at the surface boundary.
-    surface = SurfaceController(shadow_margin=88)
+    surface = SurfaceController(drop_shadow_margin=88)
 
     return PlatformBackend(
         desktop_sizes_window=False,

@@ -16,8 +16,9 @@ visible rectangle through Qt's private margin API.
 
 ## Consequences
 
-- The frameless window flags, the shadow margin the Linux desktop backend picks, the input mask and the resize band all
-  assume the declaration happens. Remove the ctypes call and they stay, but the window is placed by its padding.
+- The frameless window flags, the drop shadow margin the Linux desktop backend picks, the input mask and the resize
+  band all assume the declaration happens. Remove the ctypes call and they stay, but the window is placed by its
+  padding.
 - The two mangled names are generated, never written. `just update-python-dependencies` runs the symbol updater, which
   demangles the bundled libraries and rewrites both constants. Hand-editing them defeats the check. When nothing in a
   library demangles to the wanted signature the updater stops with an error: that is the signal that the private API
