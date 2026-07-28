@@ -9,8 +9,16 @@ import sys
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from .embedded_player import NoEmbeddedPlayerTracker
+from .surface import NoSurfaceHandler
+from .window_buttons import StaticWindowButtons
+from .window_configuration import NoWindowConfigurator
+from .window_reveal import NoWindowRevealer
+from .window_state import QtWindowStateHandler
+
 if TYPE_CHECKING:
     from .embedded_player import EmbeddedPlayerTracker
+    from .linux import WindowButtonDetector
     from .surface import SurfaceHandler
     from .window_buttons import WindowButtonSource
     from .window_configuration import WindowConfigurator
@@ -42,27 +50,80 @@ class PlatformBackend:
 def select_platform_backend() -> PlatformBackend:
     match sys.platform:
         case "win32":
-            from .win.backend import create_windows_backend
-
-            backend = create_windows_backend()
+            backend = _create_windows_backend()
             logger.info("Using Windows platform backend")
             return backend
         case "linux":
-            return _select_linux_backend()
+            from .linux import is_tiling_desktop
+
+            if is_tiling_desktop():
+                backend = _create_linux_tiling_backend()
+                logger.info("Using Linux tiling desktop platform backend")
+                return backend
+
+            backend = _create_linux_desktop_backend()
+            logger.info("Using Linux desktop platform backend")
+            return backend
         case _:
             msg = f"Unsupported platform for window integration: {sys.platform}"
             raise NotImplementedError(msg)
 
 
-def _select_linux_backend() -> PlatformBackend:
-    from .linux.backend import create_desktop_backend, create_tiling_backend
-    from .linux.tiling import is_tiling_desktop
+def _create_windows_backend() -> PlatformBackend:
+    from .win import WindowRevealFilter, WindowsFrameIntegration, WindowsWindowStateHandler
 
-    if is_tiling_desktop():
-        backend = create_tiling_backend()
-        logger.info("Using Linux tiling desktop platform backend")
-        return backend
+    frame = WindowsFrameIntegration()
 
-    backend = create_desktop_backend()
-    logger.info("Using Linux desktop platform backend")
-    return backend
+    return PlatformBackend(
+        keeps_native_frame=True,
+        draws_drop_shadow=False,
+        embeds_native_player=True,
+        window_state=WindowsWindowStateHandler(),
+        surface=NoSurfaceHandler(),
+        window_configuration=frame,
+        window_reveal=WindowRevealFilter(),
+        embedded_player=frame,
+        window_buttons=StaticWindowButtons(),
+    )
+
+
+def _create_linux_desktop_backend() -> PlatformBackend:
+    from .linux import SurfaceController
+
+    # The margin must exceed the widest shadow blur plus offset, otherwise the
+    # soft edge clips at the surface boundary.
+    surface = SurfaceController(drop_shadow_margin=88)
+
+    return PlatformBackend(
+        keeps_native_frame=False,
+        draws_drop_shadow=True,
+        embeds_native_player=False,
+        window_state=QtWindowStateHandler(sizes_own_window=True),
+        surface=surface,
+        window_configuration=surface,
+        window_reveal=NoWindowRevealer(),
+        embedded_player=NoEmbeddedPlayerTracker(),
+        window_buttons=_create_linux_window_button_detector(),
+    )
+
+
+def _create_linux_tiling_backend() -> PlatformBackend:
+    return PlatformBackend(
+        keeps_native_frame=False,
+        draws_drop_shadow=False,
+        embeds_native_player=False,
+        window_state=QtWindowStateHandler(sizes_own_window=False),
+        surface=NoSurfaceHandler(),
+        window_configuration=NoWindowConfigurator(),
+        window_reveal=NoWindowRevealer(),
+        embedded_player=NoEmbeddedPlayerTracker(),
+        window_buttons=_create_linux_window_button_detector(),
+    )
+
+
+def _create_linux_window_button_detector() -> WindowButtonDetector:
+    from .linux import WindowButtonDetector
+
+    detector = WindowButtonDetector()
+    detector.detect()
+    return detector
