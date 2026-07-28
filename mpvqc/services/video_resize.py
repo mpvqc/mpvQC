@@ -36,9 +36,11 @@ class VideoResizeService:
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
 
+    @property
+    def resizes_on_video_change(self) -> bool:
+        return self._platform.sizes_own_window
+
     def compute_resize(self, dimensions: ViewDimensions) -> ResizeResult | None:
-        if not self._platform.sizes_own_window:
-            return None
         if self._main_window.is_fullscreen or self._main_window.is_maximized:
             return None
         if not self._player.video_loaded:

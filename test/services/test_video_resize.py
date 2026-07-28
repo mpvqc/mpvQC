@@ -265,24 +265,25 @@ def test_compute_resize_grows_window_by_drop_shadow_margin(service, main_window_
     )
 
 
-class SizesOwnWindowTestCase(NamedTuple):
-    name: str
-    sizes_own_window: bool
-    expected: ResizeResult | None
-
-
 @pytest.mark.parametrize(
-    "case",
-    [
-        SizesOwnWindowTestCase(
-            "desktop",
-            sizes_own_window=True,
-            expected=ResizeResult(window_width=854, window_height=726, table_width=854, table_height=200),
-        ),
-        SizesOwnWindowTestCase("tiling desktop", sizes_own_window=False, expected=None),
-    ],
-    ids=lambda case: case.name,
+    "sizes_own_window",
+    [True, False],
+    ids=["desktop", "tiling desktop"],
 )
-def test_compute_resize_follows_who_sizes_the_window(service, platform_service_mock, case: SizesOwnWindowTestCase):
-    platform_service_mock.sizes_own_window = case.sizes_own_window
-    assert service.compute_resize(VIEW_DIMS) == case.expected
+def test_resizes_on_video_change_follows_who_sizes_the_window(
+    service,
+    platform_service_mock,
+    sizes_own_window: bool,
+):
+    platform_service_mock.sizes_own_window = sizes_own_window
+    assert service.resizes_on_video_change is sizes_own_window
+
+
+def test_compute_resize_ignores_who_sizes_the_window(service, platform_service_mock):
+    platform_service_mock.sizes_own_window = False
+    assert service.compute_resize(VIEW_DIMS) == ResizeResult(
+        window_width=854,
+        window_height=726,
+        table_width=854,
+        table_height=200,
+    )

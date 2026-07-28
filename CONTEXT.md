@@ -28,8 +28,8 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Window manager**: on X11, a separate client that places and sizes windows. Wayland has no such separate process.
 - **Compositor**: the process that composites the screen. On Wayland it also places and sizes windows, so it absorbs
   the window manager role. On Windows, DWM composites but does not place or size.
-- **Tiling desktop**: a session where the compositor or window manager places and sizes windows for the user, so the
-  app must not resize itself. The name says neither compositor nor window manager because both kinds tile.
+- **Tiling desktop**: a session where the compositor or window manager places and sizes windows for the user, so app
+  size requests might be ignored. The name says neither compositor nor window manager because both kinds tile.
 - **Embedded player**: the player as a native child window of the app's own window, painted by the OS above the scene
   instead of into it. Only Windows does this. Everywhere else the player renders in-scene.
 - **Window geometry**: the visible bounds of the window, what the compositor aligns, snaps and constrains against. Drop
