@@ -10,7 +10,8 @@ import io.github.mpvqc.mpvQC.Python
 
 QtObject {
 
-    readonly property MpvqcWindowViewModel _viewModel: MpvqcWindowViewModel {}
+    // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
+    property MpvqcWindowViewModel _viewModel: MpvqcWindowViewModel {}
 
     readonly property int windowGeometryWidth: _viewModel.windowGeometryWidth
     readonly property int windowGeometryHeight: _viewModel.windowGeometryHeight

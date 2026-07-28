@@ -5,11 +5,12 @@
 import os
 import uuid
 from pathlib import Path
+from typing import NamedTuple
 from zipfile import ZipFile
 
 import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
-from PySide6.QtQml import QmlElement
+from PySide6.QtQml import QmlElement, QQmlEngine, QQmlProperty
 
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
@@ -21,6 +22,12 @@ from mpvqc.services import (
     PlayerService,
     SettingsService,
     StateService,
+)
+from mpvqc.viewmodels import (
+    MpvqcLabelWidthCalculatorViewModel,
+    MpvqcTableUtilityViewModel,
+    MpvqcThemeViewModel,
+    MpvqcWindowViewModel,
 )
 from testqml import import_wizard_fixtures
 from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections, rebind_main_window
@@ -87,12 +94,67 @@ def _create_multi_video_qc_documents() -> tuple[Path, Path]:
     return doc_a, doc_b
 
 
+class _SwappedViewModel(NamedTuple):
+    module_uri: str
+    singleton_name: str
+    property_name: str
+    view_model_class: type[QObject]
+
+
+# Singleton-held view models subscribe to service signals when constructed, so
+# resetState() swaps in fresh instances wired to the freshly configured services.
+_SWAPPED_VIEW_MODELS = (
+    _SwappedViewModel(
+        "io.github.mpvqc.mpvQC.Utility",
+        "MpvqcWindowUtility",
+        "_viewModel",
+        MpvqcWindowViewModel,
+    ),
+    _SwappedViewModel(
+        "io.github.mpvqc.mpvQC.Utility",
+        "MpvqcTheme",
+        "_viewModel",
+        MpvqcThemeViewModel,
+    ),
+    _SwappedViewModel(
+        "io.github.mpvqc.mpvQC.Utility",
+        "MpvqcLabelWidthCalculator",
+        "viewModel",
+        MpvqcLabelWidthCalculatorViewModel,
+    ),
+    _SwappedViewModel(
+        "io.github.mpvqc.mpvQC.Views.Table",
+        "MpvqcTableUtility",
+        "viewModel",
+        MpvqcTableUtilityViewModel,
+    ),
+)
+
+
 @QmlElement
 class MpvqcTestBridge(QObject):
     @Slot()
     def resetState(self) -> None:
         configure_injections()
         rebind_main_window()
+        self._recreate_and_replace_singleton_view_models()
+
+    def _recreate_and_replace_singleton_view_models(self) -> None:
+        context = QQmlEngine.contextForObject(self)
+        engine = context.engine()
+        for entry in _SWAPPED_VIEW_MODELS:
+            singleton = engine.singletonInstance(entry.module_uri, entry.singleton_name)
+            if not isinstance(singleton, QObject):
+                msg = f"Cannot resolve singleton {entry.singleton_name}"
+                raise TypeError(msg)
+            previous = [child for child in singleton.children() if isinstance(child, entry.view_model_class)]
+            view_model = entry.view_model_class()
+            view_model.setParent(singleton)
+            if not QQmlProperty.write(singleton, entry.property_name, view_model):
+                msg = f"Cannot swap {entry.property_name} on {entry.singleton_name}"
+                raise RuntimeError(msg)
+            for old in previous:
+                old.deleteLater()
 
     @Slot()
     def resetComments(self) -> None:
