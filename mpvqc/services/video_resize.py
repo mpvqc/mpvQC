@@ -8,6 +8,7 @@ import inject
 from PySide6.QtCore import Qt
 
 from .main_window import MainWindowService
+from .platform import PlatformService
 from .player import PlayerService
 from .settings import SettingsService
 
@@ -31,11 +32,12 @@ class ResizeResult:
 
 class VideoResizeService:
     _main_window = inject.attr(MainWindowService)
+    _platform = inject.attr(PlatformService)
     _player = inject.attr(PlayerService)
     _settings = inject.attr(SettingsService)
 
     def compute_resize(self, dimensions: ViewDimensions) -> ResizeResult | None:
-        if not self._main_window.sizes_own_window:
+        if not self._platform.sizes_own_window:
             return None
         if self._main_window.is_fullscreen or self._main_window.is_maximized:
             return None

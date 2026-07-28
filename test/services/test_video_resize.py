@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt
 
 from mpvqc.services import (
     MainWindowService,
+    PlatformService,
     PlayerService,
     SettingsService,
     VideoResizeService,
@@ -159,6 +160,12 @@ def main_window_service_mock() -> MagicMock:
     mock.screen_height = 1440
     mock.display_zoom_factor = 1.0
     mock.drop_shadow_margin = 0
+    return mock
+
+
+@pytest.fixture
+def platform_service_mock() -> MagicMock:
+    mock = MagicMock(spec_set=PlatformService)
     mock.sizes_own_window = True
     return mock
 
@@ -169,11 +176,13 @@ def configure_injections(
     player_mock,
     settings_mock,
     main_window_service_mock,
+    platform_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(PlayerService, player_mock)
         binder.bind(SettingsService, settings_mock)
         binder.bind(MainWindowService, main_window_service_mock)
+        binder.bind(PlatformService, platform_service_mock)
 
     common_bindings_with(custom_bindings)
 
@@ -274,6 +283,6 @@ class SizesOwnWindowTestCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_compute_resize_follows_who_sizes_the_window(service, main_window_service_mock, case: SizesOwnWindowTestCase):
-    main_window_service_mock.sizes_own_window = case.sizes_own_window
+def test_compute_resize_follows_who_sizes_the_window(service, platform_service_mock, case: SizesOwnWindowTestCase):
+    platform_service_mock.sizes_own_window = case.sizes_own_window
     assert service.compute_resize(VIEW_DIMS) == case.expected

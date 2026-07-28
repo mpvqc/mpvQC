@@ -13,11 +13,6 @@ if TYPE_CHECKING:
 
 
 class WindowStateSnapshot(NamedTuple):
-    """Both window-state flags, taken in one read.
-
-    `is_maximized` reports the logical state: the state the window returns
-    to, even while it is minimized or fullscreen covers it."""
-
     is_fullscreen: bool
     is_maximized: bool
 
@@ -38,18 +33,10 @@ class WindowStateHandler(Protocol):
 
     def read_state(self, window: QWindow) -> WindowStateSnapshot: ...
 
-    def sizes_own_window(self, window: QWindow) -> bool:
-        """Whether the app decides this window's size, rather than a tiling
-        desktop deciding it."""
-        ...
-
 
 class QtWindowStateHandler:
     """Requests window states through Qt for platforms whose window system
     honors them directly."""
-
-    def __init__(self, *, sizes_own_window: bool) -> None:
-        self._sizes_own_window = sizes_own_window
 
     def minimize(self, window: QWindow) -> None:
         # Keep the other state bits: replacing the set would drop Maximized,
@@ -80,6 +67,3 @@ class QtWindowStateHandler:
             is_fullscreen=bool(states & Qt.WindowState.WindowFullScreen),
             is_maximized=bool(states & Qt.WindowState.WindowMaximized),
         )
-
-    def sizes_own_window(self, window: QWindow) -> bool:  # noqa: ARG002
-        return self._sizes_own_window
