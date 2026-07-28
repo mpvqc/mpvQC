@@ -252,7 +252,6 @@ jobs:
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/Universal/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/Windows/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Controls/designer/*' \
-            --noinclude-data-files='PySide6/qml/QtQuick/Effects/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/LocalStorage/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/NativeStyle/*' \
             --noinclude-data-files='PySide6/qml/QtQuick/Particles/*' \
@@ -277,7 +276,6 @@ jobs:
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/Universal/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/Windows/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Controls/designer/*' \
-            --noinclude-dlls='PySide6/qml/QtQuick/Effects/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/LocalStorage/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/NativeStyle/*' \
             --noinclude-dlls='PySide6/qml/QtQuick/Particles/*' \
@@ -335,7 +333,6 @@ jobs:
             --noinclude-dlls='qt6quickcontrols2imagine*.dll' \
             --noinclude-dlls='qt6quickcontrols2universal*.dll' \
             --noinclude-dlls='qt6quickcontrols2windows*.dll' \
-            --noinclude-dlls='qt6quickeffects.dll' \
             --noinclude-dlls='qt6quickparticles.dll' \
             --noinclude-dlls='qt6quickshapes.dll' \
             --noinclude-dlls='qt6quicktest.dll' \
