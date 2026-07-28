@@ -18,7 +18,9 @@ def player_mock() -> MagicMock:
 
 @pytest.fixture
 def resize_service_mock() -> MagicMock:
-    return MagicMock(spec_set=VideoResizeService)
+    mock = MagicMock(spec_set=VideoResizeService)
+    mock.resizes_on_video_change = True
+    return mock
 
 
 @pytest.fixture(autouse=True)
@@ -30,10 +32,22 @@ def configure_injections(common_bindings_with, player_mock, resize_service_mock)
     common_bindings_with(custom_bindings)
 
 
-def test_recalculates_on_every_video_load(player_mock):
+@pytest.mark.parametrize(
+    ("resizes_on_video_change", "expected_connections"),
+    [(True, 1), (False, 0)],
+    ids=["app sizes its window", "desktop sizes it"],
+)
+def test_video_loads_recalculate_only_when_the_app_resizes_itself(
+    resizes_on_video_change: bool,
+    expected_connections: int,
+    player_mock,
+    resize_service_mock,
+):
+    resize_service_mock.resizes_on_video_change = resizes_on_video_change
+
     MpvqcResizeViewModel()
 
-    player_mock.video_dimensions_changed.connect.assert_called_once()
+    assert player_mock.video_dimensions_changed.connect.call_count == expected_connections
 
 
 def test_no_size_is_requested_when_the_service_declines(resize_service_mock, make_spy):
