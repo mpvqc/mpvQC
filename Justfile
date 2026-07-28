@@ -35,6 +35,15 @@ init ARGS='--group dev':
       echo "Runs application in portable mode by storing all files in the <git-repo>/appdata directory" >> portable
       echo "just init: Configured portable mode ..."
 
+      # Claude Code only discovers skills under .claude/skills, so symlink it
+      mkdir -p .claude
+      if [[ "{{ os() }}" == "windows" ]]; then
+        [[ -e .claude/skills ]] || cmd //c mklink /J ".claude\\skills" ".agents\\skills" > /dev/null
+      else
+        ln -sfn ../.agents/skills .claude/skills
+      fi
+      echo "just init: Linked .claude/skills to .agents/skills ..."
+
       mkdir -p appdata/export-templates
       cp data/config/export-template.jinja appdata/export-templates/export-working.jinja
       echo '{{ '{{' }}' > appdata/export-templates/export-error.jinja
@@ -147,11 +156,6 @@ test-qml-debug TARGET:
 [group('i18n')]
 @update-translations: _update_pyproject_file _update_lupdate_project_file
     uv run pyside6-lupdate -locations none -project project.json
-
-@_prepare-tests: build-develop
-    rm -f test/rc_project.py testqml/rc_project.py
-    cp project.rcc test/project.rcc
-    cp project.rcc testqml/project.rcc
 
 @_update_pyproject_file:
     uv run python build-aux/update_pyproject_file.py \
