@@ -57,7 +57,8 @@ QtObject {
         }
     }
 
-    readonly property MpvqcThemeViewModel _viewModel: MpvqcThemeViewModel {}
+    // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
+    property MpvqcThemeViewModel _viewModel: MpvqcThemeViewModel {}
 
     // qmlformat off
     readonly property AnimatedColor _background: AnimatedColor { value: root._viewModel.palette.background }
