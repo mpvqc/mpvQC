@@ -12,14 +12,12 @@
 - Run linter and formatter via `just fmt`.
 - Run the QML linter via `just lint-qml`.
 - Run Python tests via `just test-python ARGS`. `ARGS` is passed to `pytest`.
-- Prepare QML tests via `just prepare-tests` when you've changed production QML, data, or translation files.
-- Run a single QML test file via `just test-qml-debug <TARGET>`.
-- Run all QML tests via `just test-qml`, one process per file. `just test-qml 1` uses a single process, as Windows
-  and CI always do.
+- Run QML tests via `just test-qml`.
+- Rebuild the test resource bundle via `just prepare-tests` after changing production QML, data, or translation files.
+  `just test-python` and `just test-qml` don't rebuild it, and tests pass against a stale bundle without a warning.
 
 ## Coding
 
-- Follow clean code principles.
 - Prefer the correct term over the term already in the repo. When a name contradicts the spec or the project it refers
   to, rename it and record the term in `CONTEXT.md`. Don't keep a wrong name to match other wrong names.
 - Don't use structural comments like `# region` or `# ---`.
@@ -31,52 +29,14 @@
   - Don't use getattr
 - Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix. Helpers that aren't in
   `injections.py` live at the top level of `mpvqc/`.
-- Use the `signal name(value: type)` notation instead of the old `signal name(type value)` notation in QML signals.
-- Import `QtQuick.Controls` for controls.
-  - Never import `QtQuick.Controls.Material` unnamespaced: it resolves controls to Material directly and silently
-    bypasses the MpvqcStyle overrides, regardless of import order.
-  - For Material attached properties, use `import QtQuick.Controls.Material as M` and reference `M.Material.*`.
-  - Only files inside `qt/qml/MpvqcStyle/` import the Material style unnamespaced.
-- Follow official QML coding conventions.
-- Respect the recommended QML file layout:
-  01. id
-  02. Required properties
-  03. The view model property, even when it is private
-  04. Aliases (property alias / readonly property alias)
-  05. Readonly value properties (public)
-  06. Mutable properties (public)
-  07. Private properties (underscore-prefixed)
-  08. Signal declarations
-  09. Enums
-  10. JavaScript functions
-  11. Own object property bindings (height, width, anchors, color, etc.)
-  12. Attached property bindings (Material. *, ListView.* bindings, Layout.\*)
-  13. Property change handlers (onXChanged)
-  14. Attached signal handlers (ListView.onPooled/onReused, Component.onCompleted/onDestruction, Keys.onPressed)
-  15. Child objects (visual children)
-  16. Behaviors
-  17. States
-  18. Transitions
+- Load the `writing-qml` skill before writing or editing a QML file.
 
 ## Testing
 
-- Prefer data-driven Python tests but clarity always wins.
-- Prefer testing important areas in the code. Don't go for coverage only.
-- Swap background execution in Python tests by passing `manual_executor` to the service constructor. The
-  `manual_executor` fixture lives in `test/conftest.py`.
-- Spy on signals with the `make_spy` fixture instead of raw `QSignalSpy`.
-- Don't assert inside Qt slots or `on_result` callbacks: PySide swallows exceptions at the emit boundary. Record values
-  and assert after the drain.
-- Don't wait for thread pool work with a spy's `wait()`: it holds the GIL and the pool job never runs. Use
-  `QThreadPool.waitForDone()` plus `processEvents()`.
-- Prefer data-driven QML tests and construct the object being tested using `makeControl` / `makeSpy` and
-  `createTemporaryObject`.
-- Ensure tests pass on Linux and Windows.
-- Don't use hard timeouts in QML tests.
+- Load the `writing-tests` skill before writing or changing a test.
 
 ## Writing
 
-- Load the `plain-english` skill before writing documentation and when communicating with the user.
 - Spell it "view model", two words, in all prose: docs, commit messages, tickets, comments. The closed form belongs to
   identifiers only, where a space is impossible: the `ViewModel` class suffix, the `mpvqc/viewmodels/` package, the
   `viewModel` QML property.
@@ -85,12 +45,7 @@
 
 ## Committing
 
-- Never commit before the user has reviewed the changes.
-- Run all pre-commit hooks via `just fmt` to confirm everything's fine before committing.
-- `just fmt` checks tracked files only. `git add` new files before trusting it.
-- Verify the documentation is up to date before committing.
-- Use the [Conventional Commits](https://www.conventionalcommits.org/) format.
-- Don't add yourself as a co-author.
+- Load the `committing` skill before committing.
 
 ## Agent skills
 

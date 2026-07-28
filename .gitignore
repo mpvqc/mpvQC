@@ -524,6 +524,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,qt,qtcreator,vscode,sublimetext,qml,linux,windows,macos,vim,emacs
 
 # Directories
+/.claude/skills
 /.flatpak-builder
 /.qtcreator
 /appdata
