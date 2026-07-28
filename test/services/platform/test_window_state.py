@@ -92,7 +92,7 @@ class OperationTestCase(NamedTuple):
 )
 def test_operations_request_expected_states(case: OperationTestCase, make_recording_window):
     window = make_recording_window(case.initial)
-    handler = QtWindowStateHandler(sizes_own_window=True)
+    handler = QtWindowStateHandler()
 
     case.operation(handler, window)
 
@@ -138,26 +138,6 @@ class StateReadTestCase(NamedTuple):
 )
 def test_read_state(case: StateReadTestCase, make_recording_window):
     window = make_recording_window(case.states)
-    handler = QtWindowStateHandler(sizes_own_window=True)
+    handler = QtWindowStateHandler()
 
     assert handler.read_state(window) == case.expected
-
-
-class SizesOwnWindowTestCase(NamedTuple):
-    name: str
-    sizes_own_window: bool
-
-
-@pytest.mark.parametrize(
-    "case",
-    [
-        SizesOwnWindowTestCase("desktop", sizes_own_window=True),
-        SizesOwnWindowTestCase("tiling desktop", sizes_own_window=False),
-    ],
-    ids=lambda case: case.name,
-)
-def test_sizes_own_window_answers_the_configured_flag(case: SizesOwnWindowTestCase, make_recording_window):
-    window = make_recording_window()
-    handler = QtWindowStateHandler(sizes_own_window=case.sizes_own_window)
-
-    assert handler.sizes_own_window(window) is case.sizes_own_window

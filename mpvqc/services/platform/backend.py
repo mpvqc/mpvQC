@@ -39,6 +39,9 @@ class PlatformBackend:
     embeds_native_player: bool
     """If True, the player is embedded instead of rendered in-scene."""
 
+    sizes_own_window: bool
+    """If True, the app decides its window size."""
+
     window_state: WindowStateHandler
     surface: SurfaceHandler
     window_configuration: WindowConfigurator
@@ -78,6 +81,7 @@ def _create_windows_backend() -> PlatformBackend:
         keeps_native_frame=True,
         draws_drop_shadow=False,
         embeds_native_player=True,
+        sizes_own_window=True,
         window_state=WindowsWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=frame,
@@ -98,7 +102,8 @@ def _create_linux_desktop_backend() -> PlatformBackend:
         keeps_native_frame=False,
         draws_drop_shadow=True,
         embeds_native_player=False,
-        window_state=QtWindowStateHandler(sizes_own_window=True),
+        sizes_own_window=True,
+        window_state=QtWindowStateHandler(),
         surface=surface,
         window_configuration=surface,
         window_reveal=NoWindowRevealer(),
@@ -112,7 +117,8 @@ def _create_linux_tiling_backend() -> PlatformBackend:
         keeps_native_frame=False,
         draws_drop_shadow=False,
         embeds_native_player=False,
-        window_state=QtWindowStateHandler(sizes_own_window=False),
+        sizes_own_window=False,
+        window_state=QtWindowStateHandler(),
         surface=NoSurfaceHandler(),
         window_configuration=NoWindowConfigurator(),
         window_reveal=NoWindowRevealer(),
