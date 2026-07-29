@@ -15,6 +15,12 @@ QtObject {
     // better choice while Qt's popup windows carry bugs like QTBUG-145585.
     readonly property int preferredPopupType: Qt.platform.os === "windows" ? Popup.Window : Popup.Item
 
+    // Stacking order inside the window overlay, low to high.
+    readonly property int zInlineEditor: 0
+    readonly property int zSearchBox: 1
+    readonly property int zModal: 2
+    readonly property int zTooltip: 10
+
     readonly property int smallDialogContentWidth: 370
     readonly property int mediumDialogContentWidth: 500
     readonly property int smallDialogContentHeight: 450

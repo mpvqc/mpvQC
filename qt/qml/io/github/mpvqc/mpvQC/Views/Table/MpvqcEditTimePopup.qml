@@ -51,6 +51,7 @@ Popup {
 
     x: mirrored ? openedAt.x - width : openedAt.x
     y: isOpenedInBottomRegion ? openedAt.y - height : openedAt.y
+    z: MpvqcConstants.zModal
     transformOrigin: isOpenedInBottomRegion ? (mirrored ? Popup.BottomRight : Popup.BottomLeft) : (mirrored ? Popup.TopRight : Popup.TopLeft)
 
     dim: false

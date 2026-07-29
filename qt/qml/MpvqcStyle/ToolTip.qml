@@ -14,7 +14,7 @@ T.ToolTip {
 
     x: parent ? (parent.width - implicitWidth) / 2 : 0
     y: -implicitHeight - 16
-    z: 10
+    z: MpvqcConstants.zTooltip
 
     implicitWidth: Math.min(380, Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding))
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding)

@@ -22,6 +22,12 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Overlay**: a dialog, file dialog, or message box that floats above the app, is loaded on demand, and returns focus
   on close. Behavior defines it, not rendering: where the app prefers Qt's Window popup type, an overlay is a real OS
   window and still counts.
+- **Overlay layer**: where an in-scene popup sits in the stack Qt's overlay keeps, picked through its `z`. Every popup
+  is a sibling there, so the layer decides what covers what. Low to high: the inline editor, the search box, modal
+  popups, tooltips.
+- **Row popup**: a popup the user opened for one row: an editor, context menu or confirmation. The list holds still
+  until it is dismissed. The search box is not one, no row opened it. Modal ones also take input away from everything
+  beneath them, an inline editor does not.
 
 ## Platform
 

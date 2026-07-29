@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Templates as T
 
 Loader {
     id: root
@@ -13,6 +14,10 @@ Loader {
     readonly property url editTimePopup: Qt.resolvedUrl("MpvqcEditTimePopup.qml")
 
     readonly property bool isEditingCommentType: active && source === editCommentTypeMenu
+
+    // The template type, not the Controls one: Menu and Popup are siblings under Controls,
+    // so a menu cast to Controls.Popup comes back null and would count as not modal.
+    readonly property bool modalPopupOpen: (item as T.Popup)?.modal ?? false
 
     signal timeTemporaryChanged(time: int)
     signal timeKept(oldTime: int)

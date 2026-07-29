@@ -14,7 +14,7 @@ ListView {
     id: root
 
     required property MpvqcCommentTableViewModel viewModel
-    required property bool modalActive
+    required property bool rowPopupOpen
     required property string searchQuery
 
     readonly property int _animationDuration: 50
@@ -52,12 +52,12 @@ ListView {
     focus: true
     reuseItems: true
 
-    interactive: !root.modalActive
+    interactive: !root.rowPopupOpen
     boundsBehavior: Flickable.StopAtBounds
 
     highlightMoveDuration: _instantHighlight ? 0 : _animationDuration
     highlightMoveVelocity: -1
-    highlightResizeDuration: root.modalActive ? 0 : _animationDuration
+    highlightResizeDuration: root.rowPopupOpen ? 0 : _animationDuration
     highlightResizeVelocity: -1
 
     move: Transition {
@@ -95,7 +95,7 @@ ListView {
 
         onPlayButtonPressed: {
             root.selectRow(index);
-            if (!root.modalActive) {
+            if (!root.rowPopupOpen) {
                 root.viewModel.jumpToTime(time);
             }
         }
@@ -117,7 +117,7 @@ ListView {
         }
 
         onRightMouseButtonPressed: coordinates => {
-            if (!root.modalActive) {
+            if (!root.rowPopupOpen) {
                 root.selectRow(index);
                 root.contextMenuRequested(index, coordinates);
             }
@@ -206,7 +206,7 @@ ListView {
         id: _keyHandler
 
         hasComments: root.count > 0
-        ignoreEvents: root.modalActive
+        ignoreEvents: root.rowPopupOpen
         currentIndex: root.currentIndex
 
         onEditCommentRequested: index => root.editCommentRequested(index)

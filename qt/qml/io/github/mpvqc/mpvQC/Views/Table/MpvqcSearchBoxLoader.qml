@@ -11,6 +11,8 @@ import io.github.mpvqc.mpvQC.Python
 Loader {
     id: root
 
+    required property bool modalPopupOpen
+
     readonly property MpvqcSearchBoxViewModel viewModel: MpvqcSearchBoxViewModel {
         onHighlightRequested: index => root.highlightRequested(index)
     }
@@ -34,6 +36,7 @@ Loader {
     sourceComponent: MpvqcSearchBoxPopup {
         parent: root.parent
         viewModel: root.viewModel
+        modalPopupOpen: root.modalPopupOpen
         onClosed: root.closed()
     }
 

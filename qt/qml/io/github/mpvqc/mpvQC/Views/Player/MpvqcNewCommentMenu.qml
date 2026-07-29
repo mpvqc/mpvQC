@@ -24,7 +24,6 @@ MpvqcPositionedMenu {
     }
 
     visible: false
-    z: 2
     exit: null
 
     onAboutToShow: {

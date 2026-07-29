@@ -32,7 +32,7 @@ Menu {
         return item instanceof MenuSeparator;
     }
 
-    z: 2
+    z: MpvqcConstants.zModal
     transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
     popupType: MpvqcConstants.preferredPopupType
     dim: false
