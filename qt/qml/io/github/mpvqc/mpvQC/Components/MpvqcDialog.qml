@@ -20,7 +20,7 @@ Dialog {
     contentWidth: MpvqcConstants.smallDialogContentWidth
     modal: true
     dim: false
-    z: 2
+    z: MpvqcConstants.zModal
     closePolicy: Popup.CloseOnEscape
 
     M.Material.background: MpvqcTheme.palette.dialogBackground

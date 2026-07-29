@@ -34,7 +34,7 @@ Item {
 
         viewModel: root.viewModel
 
-        modalActive: _overlays.anyModalActive
+        rowPopupOpen: _overlays.anyRowPopupOpen
         searchQuery: _overlays.searchQuery
 
         onEditTimeRequested: (index, time, coordinates) => _overlays.openTimeEditor(index, time, coordinates)

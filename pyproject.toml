@@ -464,6 +464,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_EditingTime.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_SearchBox.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_SearchBoxPosition.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_SearchBoxStacking.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_Selection.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Views/Table/tst_MpvqcTableView_Undo.qml",
     "qt/qml/MpvqcApplication.qml",

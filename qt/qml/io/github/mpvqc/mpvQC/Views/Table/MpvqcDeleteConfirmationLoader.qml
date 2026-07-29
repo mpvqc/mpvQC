@@ -14,6 +14,8 @@ import io.github.mpvqc.mpvQC.Utility
 Loader {
     id: root
 
+    readonly property bool modalPopupOpen: (item as MpvqcMessageBox)?.modal ?? false
+
     property int commentIndex: -1
     property int commentTime: 0
     property string commentType: ""

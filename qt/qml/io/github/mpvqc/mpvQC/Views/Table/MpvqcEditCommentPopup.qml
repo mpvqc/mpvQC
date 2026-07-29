@@ -20,6 +20,8 @@ Popup {
 
     width: root.parent.width
 
+    z: MpvqcConstants.zInlineEditor
+
     background: null
     dim: false
     modal: false

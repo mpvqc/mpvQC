@@ -134,52 +134,42 @@ TestCase {
         tryVerify(() => Math.abs(popup.y - _bottomY()) <= 1);
     }
 
-    function test_cursorBehavior_data(): list<var> {
+    // The override covers the whole box while a drag is on or a modal popup is open.
+    // Hover delivery freezes during an exclusive grab, so hovered is not asserted here.
+    function _expectOverrideCursor(cursor: int, phase: string): void {
+        const popup = _find.searchBoxPopup(control);
+        const handler = testCase.findChild(popup, "cursorOverrideHandler");
+        verify(handler, "cursorOverrideHandler");
+        compare(popup._overrideCursor, cursor, `${phase}: override claim`);
+        compare(handler.cursorShape, cursor, phase);
+    }
+
+    function test_grabSpotCursors_data(): list<var> {
         return [
             {
                 tag: "search-icon",
                 widget: () => _find.searchIconLabel(control),
-                cursorHandler: _widget => testCase.findChild(_find.searchBoxPopup(control), "popupBackgroundCursorHandler"),
-                hoverCursor: Qt.OpenHandCursor,
-                pressCursor: Qt.ClosedHandCursor,
-                scalesOnPress: true
-            },
-            {
-                tag: "text-field",
-                widget: () => _find.searchTextField(control),
-                cursorHandler: widget => testCase.findChild(widget, "searchTextFieldCursorHandler"),
-                hoverCursor: Qt.IBeamCursor,
-                pressCursor: Qt.IBeamCursor,
-                scalesOnPress: false
+                cursorHandler: _widget => testCase.findChild(_find.searchBoxPopup(control), "popupBackgroundCursorHandler")
             },
             {
                 tag: "status-label",
                 widget: () => _find.searchStatusLabel(control),
-                cursorHandler: _widget => testCase.findChild(_find.searchBoxPopup(control), "popupBackgroundCursorHandler"),
-                hoverCursor: Qt.OpenHandCursor,
-                pressCursor: Qt.ClosedHandCursor,
-                scalesOnPress: true
+                cursorHandler: _widget => testCase.findChild(_find.searchBoxPopup(control), "popupBackgroundCursorHandler")
             },
             {
                 tag: "previous-button-disabled",
                 widget: () => _find.searchPreviousButton(control),
-                cursorHandler: widget => testCase.findChild(widget.parent, "previousButtonDisabledCursorHandler"),
-                hoverCursor: Qt.OpenHandCursor,
-                pressCursor: Qt.ClosedHandCursor,
-                scalesOnPress: true
+                cursorHandler: widget => testCase.findChild(widget.parent, "previousButtonCursorHandler")
             },
             {
                 tag: "next-button-disabled",
                 widget: () => _find.searchNextButton(control),
-                cursorHandler: widget => testCase.findChild(widget.parent, "nextButtonDisabledCursorHandler"),
-                hoverCursor: Qt.OpenHandCursor,
-                pressCursor: Qt.ClosedHandCursor,
-                scalesOnPress: true
+                cursorHandler: widget => testCase.findChild(widget.parent, "nextButtonCursorHandler")
             },
         ];
     }
 
-    function test_cursorBehavior(data): void {
+    function test_grabSpotCursors(data): void {
         const popup = _find.searchBoxPopup(control);
         const dragArea = _find.searchDragArea(control);
         const widget = data.widget();
@@ -190,40 +180,56 @@ TestCase {
         const cx = widgetCenter.x;
         const cy = widgetCenter.y;
 
-        // Hover → expected cursor, no scale
+        // Hover → open hand, no scale
         mouseMove(dragArea, cx, cy);
-        compare(cursorHandler.cursorShape, data.hoverCursor, "hover");
+        compare(cursorHandler.cursorShape, Qt.OpenHandCursor, "hover");
         fuzzyCompare(popup.scale, 1, 0.02, "hover-scale");
 
-        // Press → cursor depends on widget, scale depends on widget
+        // Press → closed hand, scaled up
         mousePress(dragArea, cx, cy);
-        compare(cursorHandler.cursorShape, data.pressCursor, "press");
-        if (data.scalesOnPress) {
-            tryVerify(() => popup.scale > 1.037, 500, "press-scale-up");
-        } else {
-            fuzzyCompare(popup.scale, 1, 0.02, "press-no-scale");
-        }
+        compare(cursorHandler.cursorShape, Qt.ClosedHandCursor, "press");
+        tryVerify(() => popup.scale > 1.037, 500, "press-scale-up");
 
-        // Release without moving → back to hover cursor and scale 1
+        // Release without moving → back to open hand and scale 1
         mouseRelease(dragArea, cx, cy);
-        compare(cursorHandler.cursorShape, data.hoverCursor, "release");
-        if (data.scalesOnPress) {
-            tryVerify(() => Math.abs(popup.scale - 1) < 0.01, 500, "release-scale-down");
-        }
+        compare(cursorHandler.cursorShape, Qt.OpenHandCursor, "release");
+        tryVerify(() => Math.abs(popup.scale - 1) < 0.01, 500, "release-scale-down");
 
-        // Drag → closed hand throughout, scaled up
+        // Drag → the override handler takes over with a closed hand, scaled up
         mousePress(dragArea, cx, cy);
         waitForRendering(control);
-        compare(cursorHandler.cursorShape, data.pressCursor, "drag-press");
+        compare(cursorHandler.cursorShape, Qt.ClosedHandCursor, "drag-press");
 
         mouseMove(dragArea, cx, cy - 100);
         waitForRendering(control);
-        compare(cursorHandler.cursorShape, Qt.ClosedHandCursor, "drag-move");
+        _expectOverrideCursor(Qt.ClosedHandCursor, "drag-move");
         tryVerify(() => popup.scale > 1.037, 500, "drag-scale-up");
 
         mouseRelease(dragArea, cx, cy - 100);
-        compare(cursorHandler.cursorShape, data.hoverCursor, "drag-release");
+        compare(cursorHandler.cursorShape, Qt.OpenHandCursor, "drag-release");
         tryVerify(() => Math.abs(popup.scale - 1) < 0.01, 2000, "drag-release-scale-down");
+    }
+
+    function test_textFieldPressDoesNotPickTheBoxUp(): void {
+        const popup = _find.searchBoxPopup(control);
+        const dragArea = _find.searchDragArea(control);
+        const textField = _find.searchTextField(control);
+
+        const center = textField.mapToItem(dragArea, textField.width / 2, textField.height / 2);
+
+        // The press is for the text field itself, so nothing lifts
+        mouseMove(dragArea, center.x, center.y);
+        mousePress(dragArea, center.x, center.y);
+        verify(!popup._shouldScaleUp, "press");
+
+        // Only an actual drag picks the box up, and then the override covers the text field too
+        mouseMove(dragArea, center.x, center.y - 100);
+        waitForRendering(control);
+        _expectOverrideCursor(Qt.ClosedHandCursor, "drag-move");
+        tryVerify(() => popup.scale > 1.037, 500, "drag-scale-up");
+
+        mouseRelease(dragArea, center.x, center.y - 100);
+        verify(popup._overrideCursor === undefined, "the override retires once the drag ends");
     }
 
     function test_cursorBehaviorNavButtonsEnabled_data(): list<var> {
@@ -231,13 +237,13 @@ TestCase {
             {
                 tag: "previous-button-enabled",
                 widget: () => _find.searchPreviousButton(control),
-                cursorHandler: widget => testCase.findChild(widget, "previousButtonEnabledCursorHandler"),
+                cursorHandler: widget => testCase.findChild(widget.parent, "previousButtonCursorHandler"),
                 needsMultipleResults: true
             },
             {
                 tag: "next-button-enabled",
                 widget: () => _find.searchNextButton(control),
-                cursorHandler: widget => testCase.findChild(widget, "nextButtonEnabledCursorHandler"),
+                cursorHandler: widget => testCase.findChild(widget.parent, "nextButtonCursorHandler"),
                 needsMultipleResults: true
             },
             {
@@ -297,12 +303,12 @@ TestCase {
         mouseRelease(dragArea, cx, cy);
         compare(cursorHandler.cursorShape, Qt.ArrowCursor, "release-enabled");
 
-        // Drag → closed hand
+        // Drag → the override handler takes over with a closed hand
         mousePress(dragArea, cx, cy);
         waitForRendering(control);
         mouseMove(dragArea, cx, cy - 100);
         waitForRendering(control);
-        compare(cursorHandler.cursorShape, Qt.ClosedHandCursor, "drag-move-enabled");
+        _expectOverrideCursor(Qt.ClosedHandCursor, "drag-move-enabled");
 
         mouseRelease(dragArea, cx, cy - 100);
         compare(cursorHandler.cursorShape, Qt.ArrowCursor, "drag-release-enabled");

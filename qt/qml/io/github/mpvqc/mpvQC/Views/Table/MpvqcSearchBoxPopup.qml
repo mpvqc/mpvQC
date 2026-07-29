@@ -17,6 +17,10 @@ Popup {
 
     required property MpvqcSearchBoxViewModel viewModel
 
+    // While one is open it owns the input, so every cursor this popup would show and
+    // every grab it would take is a promise it cannot keep.
+    required property bool modalPopupOpen
+
     readonly property bool isApplicationFullScreen: MpvqcWindowUtility.isFullscreen
     readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""
 
@@ -27,8 +31,19 @@ Popup {
 
     readonly property real _dragScaleFactor: 1.0375
 
-    readonly property bool _anyChildHovered: _textFieldHover.hovered || (_previousButton.enabled && _previousButton.hovered) || (_nextButton.enabled && _nextButton.hovered) || _closeButton.hovered
-    readonly property bool _shouldScaleUp: _dragHandler.active || (_dragHandler.isPressed && !_anyChildHovered)
+    readonly property bool _anyChildHovered: _textField.hovered || (_previousButton.enabled && _previousButton.hovered) || (_nextButton.enabled && _nextButton.hovered) || _closeButton.hovered
+
+    // The drag handler grabs any press inside these bounds, including one that landed on
+    // a popup drawn above. Hovering does respect what is on top, so it says whether the
+    // press was really meant for us. Once a drag is under way the pointer may leave.
+    readonly property bool _shouldScaleUp: _dragHandler.active || (_dragHandler.isPressed && _backgroundHover.hovered && !_anyChildHovered)
+
+    readonly property int _grabCursor: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+
+    // A modal popup owns the input, so a plain arrow is the only honest cursor anywhere
+    // in the box; during a drag the whole box is in hand. Undefined stands down and lets
+    // the cursors below through, the text field's built-in I-beam included.
+    readonly property var _overrideCursor: modalPopupOpen ? Qt.ArrowCursor : (_dragHandler.active ? Qt.ClosedHandCursor : undefined)
 
     function closeWithoutAnimation(): void {
         const exitAnimation = exit;
@@ -39,7 +54,7 @@ Popup {
 
     x: mirrored ? edgeMarginHorizontal : parent.width - width - edgeMarginHorizontal
     y: parent.height - height - edgeMarginVertical
-    z: 1
+    z: MpvqcConstants.zSearchBox
 
     width: 450
     height: _textField.height + topPadding + bottomPadding
@@ -87,8 +102,9 @@ Popup {
     }
 
     HoverHandler {
+        id: _backgroundHover
         objectName: "popupBackgroundCursorHandler"
-        cursorShape: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+        cursorShape: root._grabCursor
     }
 
     RowLayout {
@@ -117,6 +133,7 @@ Popup {
 
             focus: false
             selectByMouse: true
+            hoverEnabled: true
             horizontalAlignment: Text.AlignLeft
 
             Layout.fillWidth: true
@@ -136,12 +153,6 @@ Popup {
                 background.fillColor = "transparent";
                 background.outlineColor = "transparent";
                 background.focusedOutlineColor = "transparent";
-            }
-
-            HoverHandler {
-                id: _textFieldHover
-                objectName: "searchTextFieldCursorHandler"
-                cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.IBeamCursor
             }
         }
 
@@ -177,17 +188,11 @@ Popup {
                 }
 
                 onClicked: root.viewModel.selectPrevious()
-
-                HoverHandler {
-                    objectName: "previousButtonEnabledCursorHandler"
-                    cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
-                }
             }
 
             HoverHandler {
-                objectName: "previousButtonDisabledCursorHandler"
-                enabled: !_previousButton.enabled
-                cursorShape: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                objectName: "previousButtonCursorHandler"
+                cursorShape: _previousButton.enabled ? Qt.ArrowCursor : root._grabCursor
             }
         }
 
@@ -212,17 +217,11 @@ Popup {
                 }
 
                 onClicked: root.viewModel.selectNext()
-
-                HoverHandler {
-                    objectName: "nextButtonEnabledCursorHandler"
-                    cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
-                }
             }
 
             HoverHandler {
-                objectName: "nextButtonDisabledCursorHandler"
-                enabled: !_nextButton.enabled
-                cursorShape: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                objectName: "nextButtonCursorHandler"
+                cursorShape: _nextButton.enabled ? Qt.ArrowCursor : root._grabCursor
             }
         }
 
@@ -247,8 +246,21 @@ Popup {
 
             HoverHandler {
                 objectName: "closeButtonCursorHandler"
-                cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+                cursorShape: Qt.ArrowCursor
             }
+        }
+    }
+
+    // Topmost while it claims a cursor, so the claim beats every cursor below, including
+    // the text field's built-in I-beam. Hidden otherwise: an always-on cover would steal
+    // the hover highlights from the controls beneath.
+    Item {
+        anchors.fill: parent
+        visible: root._overrideCursor !== undefined
+
+        HoverHandler {
+            objectName: "cursorOverrideHandler"
+            cursorShape: root._overrideCursor
         }
     }
 
@@ -286,6 +298,7 @@ Popup {
         id: _dragHandler
 
         parent: root.contentItem
+        enabled: !root.modalPopupOpen
 
         edgeMarginVertical: root.edgeMarginVertical
         parentHeight: root.parent.height

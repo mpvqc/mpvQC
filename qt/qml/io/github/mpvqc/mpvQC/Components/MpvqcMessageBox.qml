@@ -17,7 +17,7 @@ Dialog {
 
     popupType: MpvqcConstants.preferredPopupType
     contentWidth: 420
-    z: 2
+    z: MpvqcConstants.zModal
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: Overlay.overlay
