@@ -16,7 +16,7 @@ RowLayout {
     property alias fontWeight: _textField.font.weight
     property alias implicitTextFieldWidth: _textField.implicitWidth
 
-    signal textChanged(string text)
+    signal textChanged(text: string)
 
     Label {
         id: _label

@@ -58,10 +58,6 @@ Popup {
     width: 155
     padding: 6
 
-    M.Material.background: MpvqcTheme.palette.popupBackground
-    M.Material.foreground: MpvqcTheme.palette.popupText
-    M.Material.roundedScale: M.Material.SmallScale
-
     contentItem: SpinBox {
         id: _spinBox
         objectName: "timeSpinBox"
@@ -106,6 +102,18 @@ Popup {
         }
     }
 
+    M.Material.background: MpvqcTheme.palette.popupBackground
+    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.roundedScale: M.Material.SmallScale
+
+    onAboutToHide: {
+        if (acceptValue && root.currentTime !== _spinBox.value) {
+            root.timeEdited(root.currentListIndex, _spinBox.value);
+        } else {
+            root.timeKept(root.currentTime);
+        }
+    }
+
     MouseArea {
         anchors.fill: _spinBox.contentItem
         hoverEnabled: true
@@ -118,14 +126,6 @@ Popup {
             } else {
                 root.decrementValue();
             }
-        }
-    }
-
-    onAboutToHide: {
-        if (acceptValue && root.currentTime !== _spinBox.value) {
-            root.timeEdited(root.currentListIndex, _spinBox.value);
-        } else {
-            root.timeKept(root.currentTime);
         }
     }
 

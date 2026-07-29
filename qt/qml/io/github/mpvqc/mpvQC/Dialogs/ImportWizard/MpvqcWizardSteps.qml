@@ -13,10 +13,24 @@ StackView {
     id: root
 
     required property MpvqcImportWizardViewModel viewModel
-    property int animationDuration: 120
     readonly property real slideDistance: width / 4
+    property int animationDuration: 120
 
     property int _lastIndex: 0
+
+    function _stepComponentFor(kind: int): Component {
+        switch (kind) {
+        case MpvqcImportWizardStepKind.StepKind.ERRORS:
+            return _errorsStep;
+        case MpvqcImportWizardStepKind.StepKind.SESSION:
+            return _sessionStep;
+        case MpvqcImportWizardStepKind.StepKind.VIDEO:
+            return _videoStep;
+        case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
+            return _subtitlesStep;
+        }
+        return null;
+    }
 
     initialItem: root._stepComponentFor(root.viewModel.stepKinds[0])
 
@@ -109,20 +123,6 @@ StackView {
             }
             root._lastIndex = currentIndex;
         }
-    }
-
-    function _stepComponentFor(kind: int): Component {
-        switch (kind) {
-        case MpvqcImportWizardStepKind.StepKind.ERRORS:
-            return _errorsStep;
-        case MpvqcImportWizardStepKind.StepKind.SESSION:
-            return _sessionStep;
-        case MpvqcImportWizardStepKind.StepKind.VIDEO:
-            return _videoStep;
-        case MpvqcImportWizardStepKind.StepKind.SUBTITLES:
-            return _subtitlesStep;
-        }
-        return null;
     }
 
     Component {

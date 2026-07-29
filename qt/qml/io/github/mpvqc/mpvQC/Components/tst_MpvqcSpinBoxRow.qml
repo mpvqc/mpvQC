@@ -14,12 +14,12 @@ Item {
     MpvqcSpinBoxRow {
         id: objectUnderTest
 
+        property int newValue: -1
+
         prefWidth: testHelper.width
         valueFrom: 15
         value: 30
         valueTo: 45
-
-        property int newValue: -1
 
         onValueModified: value => {
             objectUnderTest.newValue = value;
@@ -28,12 +28,6 @@ Item {
         TestCase {
             name: "MpvqcSpinBoxRow"
             when: windowShown
-
-            SignalSpy {
-                id: valueModifiedSpy
-                target: objectUnderTest
-                signalName: "valueModified"
-            }
 
             function init() {
                 valueModifiedSpy.clear();
@@ -58,6 +52,12 @@ Item {
                 data.exec();
                 compare(objectUnderTest.newValue, data.value);
                 compare(valueModifiedSpy.count, 1);
+            }
+
+            SignalSpy {
+                id: valueModifiedSpy
+                target: objectUnderTest
+                signalName: "valueModified"
             }
         }
     }

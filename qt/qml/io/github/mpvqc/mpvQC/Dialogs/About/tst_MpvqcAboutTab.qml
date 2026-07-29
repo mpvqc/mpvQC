@@ -22,15 +22,6 @@ TestCase {
 
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcAboutTab {
-            anchors.fill: parent
-            viewModel: MpvqcAboutDialogViewModel {}
-        }
-    }
-
     function makeTab(): Item {
         const tab = createTemporaryObject(objectUnderTest, testCase);
         verify(tab);
@@ -62,5 +53,14 @@ TestCase {
         compare(copyRow.icon.source, MpvqcIcons.contentCopy);
         mouseClick(copyRow);
         compare(copyRow.icon.source, MpvqcIcons.check);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcAboutTab {
+            anchors.fill: parent
+            viewModel: MpvqcAboutDialogViewModel {}
+        }
     }
 }

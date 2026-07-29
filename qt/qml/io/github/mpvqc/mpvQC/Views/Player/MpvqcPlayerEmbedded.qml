@@ -9,6 +9,14 @@ import io.github.mpvqc.mpvQC.Python // qmllint disable unused-imports
 WindowContainer {
     id: root
 
+    function _resyncChildGeometry(): void {
+        const w = root.width;
+        if (w > 1) {
+            root.window.width = w - 1;
+            root.window.width = w;
+        }
+    }
+
     window: MpvWindowPyObject {} // qmllint disable import
 
     // Workaround: on Windows, when the top-level transitions through
@@ -22,14 +30,6 @@ WindowContainer {
             if (visibility !== Window.Minimized) {
                 Qt.callLater(root._resyncChildGeometry);
             }
-        }
-    }
-
-    function _resyncChildGeometry(): void {
-        const w = root.width;
-        if (w > 1) {
-            root.window.width = w - 1;
-            root.window.width = w;
         }
     }
 }

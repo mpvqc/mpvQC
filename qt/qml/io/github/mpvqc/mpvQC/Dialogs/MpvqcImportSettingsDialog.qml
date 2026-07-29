@@ -25,26 +25,27 @@ MpvqcDialog {
         spacing: 10
 
         RowLayout {
-            Layout.topMargin: 20
             spacing: 30
 
-            Label {
-                Layout.preferredWidth: 165
+            Layout.topMargin: 20
 
+            Label {
                 text: qsTranslate("ImportSettingsDialog", "Open video if found")
                 horizontalAlignment: Text.AlignRight
                 wrapMode: Text.Wrap
+
+                Layout.preferredWidth: 165
             }
 
             ComboBox {
                 objectName: "importFoundVideoComboBox"
 
-                Layout.preferredWidth: 165
-
                 textRole: "text"
                 valueRole: "value"
 
                 model: ImportOptionsModel {}
+
+                Layout.preferredWidth: 165
 
                 onActivated: value => {
                     root.viewModel.importFoundVideo = value;

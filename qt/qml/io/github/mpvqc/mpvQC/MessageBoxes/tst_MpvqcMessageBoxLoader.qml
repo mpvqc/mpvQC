@@ -20,12 +20,6 @@ TestCase {
 
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcMessageBoxLoader {}
-    }
-
     function makeControl(): MpvqcMessageBoxLoader {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
@@ -76,5 +70,11 @@ TestCase {
         waitUntilOpened(control);
         compare(control.item.objectName, data.objectName);
         testCase.bridge.waitForBackgroundJobs();
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcMessageBoxLoader {}
     }
 }

@@ -16,12 +16,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -142,5 +136,11 @@ TestCase {
 
         keyClick(Qt.Key_Escape);
         tryVerify(() => !findChild(control, "searchBoxPopup")?.searchActive);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

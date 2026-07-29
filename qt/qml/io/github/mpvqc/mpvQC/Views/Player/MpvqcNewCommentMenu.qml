@@ -16,12 +16,12 @@ MpvqcPositionedMenu {
 
     property var viewModel: MpvqcNewCommentMenuViewModel {}
 
+    signal commentTypeChosen(commentType: string)
+
     function calculatePosition(): point {
         const global = viewModel.cursorPosition();
         return parent.mapFromGlobal(global);
     }
-
-    signal commentTypeChosen(commentType: string)
 
     visible: false
     z: 2

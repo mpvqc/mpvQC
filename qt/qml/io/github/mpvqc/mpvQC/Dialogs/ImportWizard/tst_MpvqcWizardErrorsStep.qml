@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material // qmllint disable unused-imports
+import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -16,26 +16,6 @@ TestCase {
     visible: true
     when: windowShown
     name: "MpvqcWizardErrorsStep"
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardErrorsStep {
-            id: step
-
-            anchors.fill: parent
-
-            property alias documentsModel: _documents
-
-            viewModel: QtObject {
-                readonly property ListModel documents: _documents
-            }
-
-            ListModel {
-                id: _documents
-            }
-        }
-    }
 
     function makeControl(properties = {}): Item {
         const step = createTemporaryObject(objectUnderTest, testCase, properties);
@@ -89,5 +69,25 @@ TestCase {
         const item = list.itemAtIndex(0);
         verify(item);
         compare(item.ToolTip.text, "/full/path/to/broken.qc");
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardErrorsStep {
+            id: step
+
+            property alias documentsModel: _documents
+
+            anchors.fill: parent
+
+            viewModel: QtObject {
+                readonly property ListModel documents: _documents
+            }
+
+            ListModel {
+                id: _documents
+            }
+        }
     }
 }

@@ -16,28 +16,6 @@ TestCase {
     when: windowShown
     name: "MpvqcWizardVideoStep"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardVideoStep {
-            id: _step
-
-            anchors.fill: parent
-
-            property alias rowsModel: _rows
-            property int selected: 0
-
-            viewModel: QtObject {
-                readonly property ListModel candidates: _rows
-                property int selectedIndex: _step.selected
-            }
-
-            ListModel {
-                id: _rows
-            }
-        }
-    }
-
     function makeControl(properties = {}): Item {
         const step = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(step);
@@ -98,5 +76,27 @@ TestCase {
         seed(step, [candidate("a.mp4", "/movies/a.mp4"), candidate("b.mkv", "/movies/b.mkv"), candidate("c.mp4", "/movies/c.mp4"),]);
         mouseClick(rowAt(step, data.rowIndex));
         compare(step.viewModel.selectedIndex, data.rowIndex);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardVideoStep {
+            id: _step
+
+            property alias rowsModel: _rows
+            property int selected: 0
+
+            anchors.fill: parent
+
+            viewModel: QtObject {
+                readonly property ListModel candidates: _rows
+                property int selectedIndex: _step.selected
+            }
+
+            ListModel {
+                id: _rows
+            }
+        }
     }
 }

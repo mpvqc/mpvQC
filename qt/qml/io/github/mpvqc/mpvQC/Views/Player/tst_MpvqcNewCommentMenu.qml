@@ -14,39 +14,6 @@ TestCase {
     when: windowShown
     name: "MpvqcNewCommentMenu"
 
-    Component {
-        id: signalSpy
-
-        SignalSpy {
-            function invocation(invocation: int): var {
-                const inv = signalArguments[invocation];
-                return {
-                    arg: index => inv[index]
-                };
-            }
-        }
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcNewCommentMenu {
-            id: menu
-
-            property int pausePlayerCount: 0
-
-            viewModel: QtObject {
-                readonly property var commentTypes: ["1", "ABC", "3", "4"]
-                function cursorPosition(): point {
-                    return Qt.point(0, 0);
-                }
-                function pausePlayer(): void {
-                    menu.pausePlayerCount += 1;
-                }
-            }
-        }
-    }
-
     function makeControl(): var {
         const control = createTemporaryObject(objectUnderTest, testCase, {});
         verify(control);
@@ -95,5 +62,38 @@ TestCase {
 
         control.close();
         tryCompare(control, "visible", false);
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {
+            function invocation(invocation: int): var {
+                const inv = signalArguments[invocation];
+                return {
+                    arg: index => inv[index]
+                };
+            }
+        }
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcNewCommentMenu {
+            id: menu
+
+            property int pausePlayerCount: 0
+
+            viewModel: QtObject {
+                readonly property var commentTypes: ["1", "ABC", "3", "4"]
+                function cursorPosition(): point {
+                    return Qt.point(0, 0);
+                }
+                function pausePlayer(): void {
+                    menu.pausePlayerCount += 1;
+                }
+            }
+        }
     }
 }

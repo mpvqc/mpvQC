@@ -13,17 +13,6 @@ Menu {
 
     readonly property bool isMirrored: Application.layoutDirection === Qt.RightToLeft
 
-    z: 2
-    transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
-    popupType: MpvqcConstants.preferredPopupType
-    dim: false
-
-    width: calculateMenuWidths()
-
-    M.Material.background: MpvqcTheme.palette.popupBackground
-    M.Material.foreground: MpvqcTheme.palette.popupText
-    M.Material.roundedScale: M.Material.SmallScale
-
     function calculateMenuWidths(): int {
         // Adapted from: https://martin.rpdev.net/2018/03/13/qt-quick-controls-2-automatically-set-the-width-of-menus.html
         let result = 0;
@@ -42,6 +31,17 @@ Menu {
     function isMenuSeparator(item: Item): bool {
         return item instanceof MenuSeparator;
     }
+
+    z: 2
+    transformOrigin: isMirrored ? Popup.TopRight : Popup.TopLeft
+    popupType: MpvqcConstants.preferredPopupType
+    dim: false
+
+    width: calculateMenuWidths()
+
+    M.Material.background: MpvqcTheme.palette.popupBackground
+    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.roundedScale: M.Material.SmallScale
 
     Binding {
         when: root.popupType === Popup.Window && root.contentItem

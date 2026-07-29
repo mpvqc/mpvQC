@@ -10,18 +10,6 @@ TestCase {
 
     name: "MpvqcContentKeyHandler"
 
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcContentKeyHandler {}
-    }
-
     function makeControl(): var {
         const control = createTemporaryObject(objectUnderTest, testCase, {});
         verify(control);
@@ -239,5 +227,17 @@ TestCase {
         compare(spy.signalArguments[0][0], data.event.key);
         compare(spy.signalArguments[0][1], data.event.modifiers);
         compare(data.event.accepted, true);
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcContentKeyHandler {}
     }
 }

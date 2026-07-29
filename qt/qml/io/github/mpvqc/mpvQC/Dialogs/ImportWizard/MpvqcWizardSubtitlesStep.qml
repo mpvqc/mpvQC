@@ -50,9 +50,6 @@ ColumnLayout {
         id: _listView
         objectName: "subtitleList"
 
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
         model: root.viewModel.subtitles
         clip: true
         boundsBehavior: Flickable.StopAtBounds
@@ -99,19 +96,22 @@ ColumnLayout {
                 Label {
                     objectName: "label"
 
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-
                     text: _delegate.filename
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Text.Wrap
                     maximumLineCount: 2
                     elide: Text.ElideRight
+
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
                 }
             }
 
             onClicked: root.viewModel.toggle(_delegate.index)
         }
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         ScrollBar.vertical: ScrollBar {
             id: _scrollBar

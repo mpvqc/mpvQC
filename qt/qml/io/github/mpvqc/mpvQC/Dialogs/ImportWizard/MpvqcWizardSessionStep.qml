@@ -28,9 +28,6 @@ ColumnLayout {
         id: _listView
         objectName: "sessionOptions"
 
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
         model: [
             {
                 mode: MpvqcImportWizardSessionMode.SessionMode.MERGE,
@@ -53,6 +50,7 @@ ColumnLayout {
 
         delegate: ItemDelegate {
             id: _delegate
+            objectName: _delegate.modelData.objectName
 
             required property int index
             required property var modelData
@@ -60,7 +58,6 @@ ColumnLayout {
             readonly property bool selected: root.viewModel.mode === _delegate.modelData.mode
             readonly property int iconSize: 24
 
-            objectName: _delegate.modelData.objectName
             width: ListView.view.width
             verticalPadding: 16
 
@@ -79,18 +76,21 @@ ColumnLayout {
                 Label {
                     objectName: "label"
 
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-
                     text: _delegate.modelData.text
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Text.Wrap
                     maximumLineCount: 2
                     elide: Text.ElideRight
+
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
                 }
             }
 
             onClicked: root.viewModel.mode = _delegate.modelData.mode
         }
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
     }
 }

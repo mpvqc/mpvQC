@@ -19,50 +19,6 @@ TestCase {
     when: windowShown
     name: "MpvqcPositionedMenu"
 
-    Component {
-        id: container
-
-        Item {
-            width: testCase.width
-            height: testCase.height
-        }
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcPositionedMenu {
-            MenuItem {
-                text: "Test Item 1"
-            }
-            MenuItem {
-                text: "Test Item 2"
-            }
-            MenuItem {
-                text: "Test Item 3"
-            }
-        }
-    }
-
-    Component {
-        id: objectUnderTestOverwriteCalculatePosition
-
-        MpvqcPositionedMenu {
-            function calculatePosition(): point {
-                return Qt.point(200, 300);
-            }
-            MenuItem {
-                text: "Test Item 1"
-            }
-            MenuItem {
-                text: "Test Item 2"
-            }
-            MenuItem {
-                text: "Test Item 3"
-            }
-        }
-    }
-
     function makeControl(properties = {}): Item {
         const parent = createTemporaryObject(container, testCase);
         verify(parent);
@@ -205,5 +161,49 @@ TestCase {
         // Menu should use the overridden position
         fuzzyCompare(menu.x, 200, 2);
         fuzzyCompare(menu.y, 300, 2);
+    }
+
+    Component {
+        id: container
+
+        Item {
+            width: testCase.width
+            height: testCase.height
+        }
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcPositionedMenu {
+            MenuItem {
+                text: "Test Item 1"
+            }
+            MenuItem {
+                text: "Test Item 2"
+            }
+            MenuItem {
+                text: "Test Item 3"
+            }
+        }
+    }
+
+    Component {
+        id: objectUnderTestOverwriteCalculatePosition
+
+        MpvqcPositionedMenu {
+            function calculatePosition(): point {
+                return Qt.point(200, 300);
+            }
+            MenuItem {
+                text: "Test Item 1"
+            }
+            MenuItem {
+                text: "Test Item 2"
+            }
+            MenuItem {
+                text: "Test Item 3"
+            }
+        }
     }
 }

@@ -63,8 +63,6 @@ Loader {
                 }
 
                 Label {
-                    Layout.fillWidth: true
-                    Layout.topMargin: 20
                     textFormat: Text.StyledText
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Label.WordWrap
@@ -83,6 +81,9 @@ Loader {
 
                         return `${time}${separator}${type}${separator}${comment}`;
                     }
+
+                    Layout.fillWidth: true
+                    Layout.topMargin: 20
                 }
             }
 

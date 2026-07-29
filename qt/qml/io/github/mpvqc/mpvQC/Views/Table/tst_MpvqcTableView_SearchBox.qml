@@ -10,30 +10,24 @@ import QtTest
 TestCase {
     id: testCase
 
-    readonly property int timeout: 2000
-
-    TestHelpers {
-        id: _helpers
-
-        testCase: testCase
-    }
-
-    readonly property alias _clickHelper: _helpers.clickHelper
-    readonly property alias _expect: _helpers.expect
-    readonly property alias _find: _helpers.find
-    readonly property alias _wait: _helpers.wait
-
     width: 600
     height: 400
     visible: true
     when: windowShown
     name: "MpvqcTableView::SearchBox"
 
+    readonly property alias _clickHelper: _helpers.clickHelper
+    readonly property alias _expect: _helpers.expect
+    readonly property alias _find: _helpers.find
+    readonly property alias _wait: _helpers.wait
+
+    readonly property int timeout: 2000
+
+    property var control: null
+
     function initTestCase(): void {
         _helpers.initTestCase();
     }
-
-    property var control: null
 
     function init(): void {
         control = _helpers.makeControl();
@@ -352,5 +346,11 @@ TestCase {
         keyPress(Qt.Key_F, Qt.ControlModifier);
         _wait.searchBoxOpened(control);
         _expect.hasSearchBoxOpen(control);
+    }
+
+    TestHelpers {
+        id: _helpers
+
+        testCase: testCase
     }
 }

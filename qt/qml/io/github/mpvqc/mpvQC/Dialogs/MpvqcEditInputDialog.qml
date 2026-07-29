@@ -19,15 +19,6 @@ MpvqcDialog {
     readonly property MpvqcEditInputDialogViewModel viewModel: MpvqcEditInputDialogViewModel {}
     readonly property var mpvqcTheme: MpvqcTheme
 
-    title: qsTranslate("InputConfEditDialog", "Edit input.conf")
-    contentWidth: Math.min(1080, MpvqcWindowUtility.windowGeometryWidth * 0.75)
-    contentHeight: Math.min(1080, MpvqcWindowUtility.windowGeometryHeight * 0.70)
-    standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
-
-    onAccepted: _textArea.textDocument.save()
-
-    onReset: _textArea.text = viewModel.defaultInputConfiguration
-
     component Separator: Rectangle {
         property int topMargin: 0
 
@@ -37,6 +28,11 @@ MpvqcDialog {
         Layout.preferredHeight: 1
         Layout.fillWidth: true
     }
+
+    title: qsTranslate("InputConfEditDialog", "Edit input.conf")
+    contentWidth: Math.min(1080, MpvqcWindowUtility.windowGeometryWidth * 0.75)
+    contentHeight: Math.min(1080, MpvqcWindowUtility.windowGeometryHeight * 0.70)
+    standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
     contentItem: ColumnLayout {
 
@@ -54,15 +50,15 @@ MpvqcDialog {
             Layout.topMargin: 20
             Layout.fillWidth: true
 
+            ToolTip.delay: 350
+            ToolTip.text: url
+            ToolTip.visible: hoveredLink
+
             onLinkActivated: link => root.viewModel.openLink(link)
 
             HoverHandler {
                 cursorShape: _label.hoveredLink ? Qt.PointingHandCursor : undefined
             }
-
-            ToolTip.delay: 350
-            ToolTip.text: url
-            ToolTip.visible: hoveredLink
         }
 
         Separator {
@@ -96,4 +92,8 @@ MpvqcDialog {
 
         Separator {}
     }
+
+    onAccepted: _textArea.textDocument.save()
+
+    onReset: _textArea.text = viewModel.defaultInputConfiguration
 }

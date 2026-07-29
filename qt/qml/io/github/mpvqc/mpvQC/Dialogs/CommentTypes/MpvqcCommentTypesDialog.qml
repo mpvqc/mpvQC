@@ -23,6 +23,50 @@ MpvqcDialog {
     title: qsTranslate("CommentTypesDialog", "Comment Types")
     standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Reset
 
+    contentItem: ColumnLayout {
+        spacing: 10
+
+        MpvqcCommentTypesDraftField {
+            id: _draftField
+
+            validationError: _viewState.validationError
+            addEnabled: _viewState.isAddEnabled
+
+            Layout.fillWidth: true
+            Layout.topMargin: 20
+
+            onAddRequested: _viewState.addType()
+        }
+
+        RowLayout {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            MpvqcCommentTypesListView {
+                id: _listView
+
+                rowHeight: MpvqcConstants.listRowHeight
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+
+            MpvqcCommentTypesActions {
+                id: _actions
+
+                moveUpEnabled: _viewState.isMoveUpEnabled
+                moveDownEnabled: _viewState.isMoveDownEnabled
+                deleteEnabled: _viewState.isDeleteEnabled
+
+                Layout.alignment: Qt.AlignTop
+
+                onMoveUpRequested: _viewState.moveUp()
+                onMoveDownRequested: _viewState.moveDown()
+                onDeleteRequested: _viewState.deleteCurrent()
+            }
+        }
+    }
+
     onAboutToShow: {
         // trigger the populate animation
         _listView.model = root.viewModel.commentTypesModel;
@@ -74,50 +118,6 @@ MpvqcDialog {
             root.viewModel.move(idx, idx + 1);
             _listView.currentIndex = idx + 1;
             _listView.ensureVisible(-1);
-        }
-    }
-
-    contentItem: ColumnLayout {
-        spacing: 10
-
-        MpvqcCommentTypesDraftField {
-            id: _draftField
-
-            Layout.fillWidth: true
-            Layout.topMargin: 20
-
-            validationError: _viewState.validationError
-            addEnabled: _viewState.isAddEnabled
-
-            onAddRequested: _viewState.addType()
-        }
-
-        RowLayout {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            MpvqcCommentTypesListView {
-                id: _listView
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                rowHeight: MpvqcConstants.listRowHeight
-            }
-
-            MpvqcCommentTypesActions {
-                id: _actions
-
-                Layout.alignment: Qt.AlignTop
-
-                moveUpEnabled: _viewState.isMoveUpEnabled
-                moveDownEnabled: _viewState.isMoveDownEnabled
-                deleteEnabled: _viewState.isDeleteEnabled
-
-                onMoveUpRequested: _viewState.moveUp()
-                onMoveDownRequested: _viewState.moveDown()
-                onDeleteRequested: _viewState.deleteCurrent()
-            }
         }
     }
 }

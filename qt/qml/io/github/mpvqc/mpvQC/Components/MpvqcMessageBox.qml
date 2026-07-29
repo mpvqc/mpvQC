@@ -23,8 +23,6 @@ Dialog {
     anchors.centerIn: Overlay.overlay
     dim: false
 
-    M.Material.background: MpvqcTheme.palette.dialogBackground
-
     contentItem: Label {
         text: root.text
         horizontalAlignment: Text.AlignLeft
@@ -41,6 +39,8 @@ Dialog {
     }
 
     footer: MpvqcKeyboardFocusableButtonBox {}
+
+    M.Material.background: MpvqcTheme.palette.dialogBackground
 
     Binding {
         when: root.popupType === Popup.Window

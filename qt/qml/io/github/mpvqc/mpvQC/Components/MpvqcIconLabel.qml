@@ -11,8 +11,9 @@ import io.github.mpvqc.mpvQC.Utility
 IconLabel {
     id: root
 
-    property string toolTipText: ""
     property alias iconColor: root.icon.color
+
+    property string toolTipText: ""
 
     display: IconLabel.IconOnly
 

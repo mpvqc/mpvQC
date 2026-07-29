@@ -26,9 +26,6 @@ ColumnLayout {
         id: _listView
         objectName: "videoList"
 
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
         model: root.viewModel.candidates
         clip: true
         boundsBehavior: Flickable.StopAtBounds
@@ -45,6 +42,9 @@ ColumnLayout {
 
             onClicked: root.viewModel.selectedIndex = index
         }
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         ScrollBar.vertical: ScrollBar {
             id: _scrollBar

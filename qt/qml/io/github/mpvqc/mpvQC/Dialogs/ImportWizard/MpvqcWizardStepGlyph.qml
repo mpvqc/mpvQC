@@ -17,9 +17,6 @@ Item {
     property int size: 20
     property int animationDuration: 150
 
-    implicitWidth: root.size
-    implicitHeight: root.size
-
     component StateIcon: MpvqcIconLabel {
         required property bool active
 
@@ -36,6 +33,9 @@ Item {
             }
         }
     }
+
+    implicitWidth: root.size
+    implicitHeight: root.size
 
     StateIcon {
         objectName: "upcomingStateIcon"

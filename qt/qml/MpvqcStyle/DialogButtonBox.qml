@@ -20,9 +20,6 @@ T.DialogButtonBox {
     alignment: Qt.AlignRight
     buttonLayout: T.DialogButtonBox.AndroidLayout
 
-    M.Material.foreground: M.Material.accent
-    M.Material.roundedScale: M.Material.ExtraLargeScale
-
     delegate: Button {
         flat: true
     }
@@ -45,4 +42,7 @@ T.DialogButtonBox {
         bottomPadding: control.position === T.DialogButtonBox.Header ? -radius : 0
         clip: true
     }
+
+    M.Material.foreground: M.Material.accent
+    M.Material.roundedScale: M.Material.ExtraLargeScale
 }

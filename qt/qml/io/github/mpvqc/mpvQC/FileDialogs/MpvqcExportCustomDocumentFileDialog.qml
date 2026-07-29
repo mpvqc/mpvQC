@@ -9,9 +9,9 @@ import io.github.mpvqc.mpvQC.Python
 FileDialog {
     objectName: "exportCustomDocumentFileDialog"
 
-    readonly property MpvqcExportFileDialogViewModel viewModel: MpvqcExportFileDialogViewModel {}
-
     required property url exportTemplate
+
+    readonly property MpvqcExportFileDialogViewModel viewModel: MpvqcExportFileDialogViewModel {}
 
     title: qsTranslate("FileInteractionDialogs", "Save QC Document As")
     fileMode: FileDialog.SaveFile

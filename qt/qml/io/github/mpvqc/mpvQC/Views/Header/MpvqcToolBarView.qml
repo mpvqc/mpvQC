@@ -23,8 +23,6 @@ Item {
 
     readonly property bool anyButtonVisible: root.viewModel.frameStepActive || root.viewModel.subtitleActive || root.viewModel.audioActive
 
-    width: _row.width
-
     component MpvqcToolBarSlot: Item {
         id: _slot
 
@@ -77,6 +75,8 @@ Item {
             }
         }
     }
+
+    width: _row.width
 
     QtObject {
         id: _stagger

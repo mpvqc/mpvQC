@@ -17,12 +17,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -431,5 +425,11 @@ TestCase {
         const control = it.makeControl();
         it.menu.triggerSubItem(control, "optionsMenu", "languageMenu", `languageMenuItem_${data.identifier}`);
         tryVerify(() => it.settings.language() === data.identifier);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

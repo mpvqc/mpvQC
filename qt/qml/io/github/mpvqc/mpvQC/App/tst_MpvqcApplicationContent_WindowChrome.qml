@@ -16,12 +16,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -120,5 +114,11 @@ TestCase {
         mouseDoubleClickSequence(inputArea, inputArea.width / 2, inputArea.height / 2, Qt.LeftButton);
 
         tryVerify(() => spy.count === 1);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

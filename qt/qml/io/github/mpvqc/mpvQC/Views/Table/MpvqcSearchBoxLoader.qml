@@ -31,11 +31,11 @@ Loader {
     active: false
     visible: active
 
-    onLoaded: (item as MpvqcSearchBoxPopup).open()
-
     sourceComponent: MpvqcSearchBoxPopup {
         parent: root.parent
         viewModel: root.viewModel
         onClosed: root.closed()
     }
+
+    onLoaded: (item as MpvqcSearchBoxPopup).open()
 }

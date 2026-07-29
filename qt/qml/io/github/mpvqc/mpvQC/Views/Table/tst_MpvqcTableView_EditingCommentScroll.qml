@@ -10,32 +10,26 @@ import QtTest
 TestCase {
     id: testCase
 
-    readonly property int timeout: 2000
-
-    TestHelpers {
-        id: _helpers
-
-        testCase: testCase
-    }
-
-    readonly property alias _clickHelper: _helpers.clickHelper
-    readonly property alias _expect: _helpers.expect
-    readonly property alias _find: _helpers.find
-    readonly property alias _wait: _helpers.wait
-
     width: 600
     height: 400
     visible: true
     when: windowShown
     name: "MpvqcTableView::EditingCommentScroll"
 
-    function initTestCase(): void {
-        _helpers.initTestCase();
-    }
+    readonly property alias _clickHelper: _helpers.clickHelper
+    readonly property alias _expect: _helpers.expect
+    readonly property alias _find: _helpers.find
+    readonly property alias _wait: _helpers.wait
+
+    readonly property int timeout: 2000
 
     property var control: null
 
     readonly property string _longComment: "This is a very long comment that should wrap across multiple lines and force the inline editor to grow significantly larger than its initial single-line height, exercising the scroll-on-grow behaviour for the row being edited."
+
+    function initTestCase(): void {
+        _helpers.initTestCase();
+    }
 
     function init(): void {
         control = _helpers.makeControl();
@@ -200,5 +194,11 @@ TestCase {
 
         const bottomAfterTyping = _delegateBottomInViewport(list, newLastIndex);
         verify(bottomAfterTyping <= list.height + 1, `After typing: last delegate bottom (${bottomAfterTyping}) within viewport (${list.height})`);
+    }
+
+    TestHelpers {
+        id: _helpers
+
+        testCase: testCase
     }
 }

@@ -124,8 +124,6 @@ Item {
         active: false
         asynchronous: true
 
-        onLoaded: (item as MpvqcFooterContextMenu).open()
-
         sourceComponent: MpvqcFooterContextMenu {
             x: isMirrored ? _toolButtonContainer.x : _toolButtonContainer.x + _toolButtonContainer.width - width
             y: -height
@@ -143,6 +141,8 @@ Item {
             onHideTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.EMPTY
             onPercentToggled: root.viewModel.toggleStatusbarPercentage()
         }
+
+        onLoaded: (item as MpvqcFooterContextMenu).open()
     }
 
     MpvqcFooterContextMenuClickGuard {

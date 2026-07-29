@@ -18,15 +18,6 @@ TestCase {
     when: windowShown
     name: "MpvqcShortcutRow"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcShortcutRow {
-            width: 380
-            label: "label"
-        }
-    }
-
     function makeControl(properties = {}): Item {
         const control = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(control);
@@ -220,5 +211,14 @@ TestCase {
 
         compare(keycaps[1].text, "Delete");
         verify(keycaps[1].contentItem.icon.source.toString() === "");
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcShortcutRow {
+            width: 380
+            label: "label"
+        }
     }
 }

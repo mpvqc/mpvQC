@@ -14,18 +14,6 @@ TestCase {
     name: "MpvqcSwitchRow"
     visible: true
 
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcSwitchRow {}
-    }
-
     function test_toggle() {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
@@ -45,5 +33,17 @@ TestCase {
         mouseClick(control.toggle);
         compare(spy.count, 2);
         verify(!control.checked);
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcSwitchRow {}
     }
 }

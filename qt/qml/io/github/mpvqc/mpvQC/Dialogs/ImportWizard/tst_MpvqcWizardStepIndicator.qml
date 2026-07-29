@@ -18,19 +18,7 @@ TestCase {
     when: windowShown
     name: "MpvqcWizardStepIndicator"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardStepIndicator {
-            anchors.fill: parent
-        }
-    }
-
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
+    readonly property var allKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO, MpvqcImportWizardStepKind.StepKind.SUBTITLES,]
 
     function makeControl(properties = {}): Item {
         const indicator = createTemporaryObject(objectUnderTest, testCase, properties);
@@ -46,8 +34,6 @@ TestCase {
         verify(spy);
         return spy;
     }
-
-    readonly property var allKinds: [MpvqcImportWizardStepKind.StepKind.ERRORS, MpvqcImportWizardStepKind.StepKind.SESSION, MpvqcImportWizardStepKind.StepKind.VIDEO, MpvqcImportWizardStepKind.StepKind.SUBTITLES,]
 
     function collect(root: Item, objectName: string): list<Item> {
         const found = [];
@@ -164,5 +150,19 @@ TestCase {
         verify(connectors[0].visible);
         verify(connectors[1].visible);
         verify(!connectors[2].visible);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardStepIndicator {
+            anchors.fill: parent
+        }
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
     }
 }

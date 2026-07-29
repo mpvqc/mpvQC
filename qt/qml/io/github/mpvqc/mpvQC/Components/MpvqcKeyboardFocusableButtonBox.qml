@@ -53,6 +53,9 @@ DialogButtonBox {
         snapMode: ListView.SnapToItem
     }
 
+    LayoutMirroring.enabled: isMirrored
+    LayoutMirroring.childrenInherit: true
+
     Component.onCompleted: {
         _initFocus();
     }
@@ -98,7 +101,4 @@ DialogButtonBox {
             root._updateVisualFocus();
         }
     }
-
-    LayoutMirroring.enabled: isMirrored
-    LayoutMirroring.childrenInherit: true
 }

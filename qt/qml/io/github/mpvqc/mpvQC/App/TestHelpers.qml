@@ -17,37 +17,6 @@ QtObject {
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
     readonly property MpvqcTestSettings settings: MpvqcTestSettings {}
 
-    readonly property Component _contentComponent: Component {
-        MpvqcApplicationContent {
-            anchors.fill: parent
-            windowActive: true
-            windowWidth: root.testCase.width
-        }
-    }
-
-    readonly property Component _signalSpy: Component {
-        SignalSpy {}
-    }
-
-    function resetState(): void {
-        root.bridge.resetState();
-    }
-
-    function makeControl(): MpvqcApplicationContent {
-        const control = root.testCase.createTemporaryObject(root._contentComponent, root.testCase);
-        root.testCase.verify(control);
-        return control;
-    }
-
-    function makeSpy(target, signalName: string): SignalSpy {
-        const spy = root.testCase.createTemporaryObject(root._signalSpy, root.testCase, {
-            target: target,
-            signalName: signalName
-        });
-        root.testCase.verify(spy);
-        return spy;
-    }
-
     readonly property var menu: QtObject {
         function trigger(control: Item, menuName: string, itemName: string): void {
             const menu = root.testCase.findChild(control, menuName);
@@ -250,5 +219,36 @@ QtObject {
             root.testCase.verify(btn, "cancelButton not found");
             root.testCase.mouseClick(btn);
         }
+    }
+
+    readonly property Component _contentComponent: Component {
+        MpvqcApplicationContent {
+            anchors.fill: parent
+            windowActive: true
+            windowWidth: root.testCase.width
+        }
+    }
+
+    readonly property Component _signalSpy: Component {
+        SignalSpy {}
+    }
+
+    function resetState(): void {
+        root.bridge.resetState();
+    }
+
+    function makeControl(): MpvqcApplicationContent {
+        const control = root.testCase.createTemporaryObject(root._contentComponent, root.testCase);
+        root.testCase.verify(control);
+        return control;
+    }
+
+    function makeSpy(target, signalName: string): SignalSpy {
+        const spy = root.testCase.createTemporaryObject(root._signalSpy, root.testCase, {
+            target: target,
+            signalName: signalName
+        });
+        root.testCase.verify(spy);
+        return spy;
     }
 }

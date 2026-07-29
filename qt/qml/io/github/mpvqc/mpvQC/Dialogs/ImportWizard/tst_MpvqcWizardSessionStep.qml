@@ -18,24 +18,6 @@ TestCase {
     when: windowShown
     name: "MpvqcWizardSessionStep"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardSessionStep {
-            id: _step
-
-            anchors.fill: parent
-
-            property int sessionMode: MpvqcImportWizardSessionMode.SessionMode.MERGE
-            property int incomingCount: 0
-
-            viewModel: QtObject {
-                readonly property int incomingCommentCount: _step.incomingCount
-                property int mode: _step.sessionMode
-            }
-        }
-    }
-
     function makeControl(properties = {}): Item {
         const step = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(step);
@@ -73,5 +55,23 @@ TestCase {
         });
         const header = findChild(step, "question");
         verify(header.text.indexOf("5") >= 0);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardSessionStep {
+            id: _step
+
+            property int sessionMode: MpvqcImportWizardSessionMode.SessionMode.MERGE
+            property int incomingCount: 0
+
+            anchors.fill: parent
+
+            viewModel: QtObject {
+                readonly property int incomingCommentCount: _step.incomingCount
+                property int mode: _step.sessionMode
+            }
+        }
     }
 }

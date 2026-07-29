@@ -5,7 +5,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls.Material // qmllint disable unused-imports
+import QtQuick.Controls
 import QtTest
 
 TestCase {
@@ -16,28 +16,6 @@ TestCase {
     visible: true
     when: windowShown
     name: "MpvqcWizardVideoStepDelegate"
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardVideoStepDelegate {
-            anchors.fill: parent
-
-            index: 0
-            filename: "foobar.mp4"
-            fullPath: "/movies/foobar.mp4"
-            foundInDocument: false
-            foundInSubtitle: false
-            isNoVideo: false
-            selected: false
-        }
-    }
-
-    Component {
-        id: spyComponent
-
-        SignalSpy {}
-    }
 
     function makeControl(properties = {}): Item {
         const delegate = createTemporaryObject(objectUnderTest, testCase, properties);
@@ -160,5 +138,27 @@ TestCase {
         const label = findChild(delegate, "label");
         verify(label);
         compare(label.ToolTip.text, "/movies/foobar.mp4");
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardVideoStepDelegate {
+            anchors.fill: parent
+
+            index: 0
+            filename: "foobar.mp4"
+            fullPath: "/movies/foobar.mp4"
+            foundInDocument: false
+            foundInSubtitle: false
+            isNoVideo: false
+            selected: false
+        }
+    }
+
+    Component {
+        id: spyComponent
+
+        SignalSpy {}
     }
 }

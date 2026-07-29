@@ -13,6 +13,12 @@ import io.github.mpvqc.mpvQC.Utility
 TestCase {
     id: testCase
 
+    width: 600
+    height: 400
+    visible: true
+    when: windowShown
+    name: "MpvqcTableView::Backup"
+
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
     readonly property Component control: Component {
@@ -23,12 +29,6 @@ TestCase {
             width: testCase.width
         }
     }
-
-    width: 600
-    height: 400
-    visible: true
-    when: windowShown
-    name: "MpvqcTableView::Backup"
 
     function initTestCase(): void {
         MpvqcLabelWidthCalculator.timeLabelWidth = 50;
