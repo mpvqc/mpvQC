@@ -16,8 +16,8 @@ import QtQuick.Controls.Material as M
 ```
 
 An unnamespaced `import QtQuick.Controls.Material` resolves controls to Material directly and bypasses the MpvqcStyle
-overrides, whatever the import order and without a warning. The three files in `qt/qml/MpvqcStyle/` are the only ones
-that import it unnamespaced, because they are the overrides.
+overrides, whatever the import order and without a warning. Only the files in `qt/qml/MpvqcStyle/` import it
+unnamespaced, because they are the overrides.
 
 ## Signals
 
@@ -71,12 +71,17 @@ Reactions
 
 Children and motion
 
-21. Child objects, visual or not (`Rectangle`, `RowLayout`, `Shortcut`, `Binding`, `HoverHandler`)
+21. Child objects, written without a property name (`Rectangle`, `RowLayout`, `Shortcut`, `Binding`, `HoverHandler`)
 22. `Behavior`
 23. States
 24. Transitions
 
 Every nested child object descends the same ladder inside its own braces, starting at rung 5.
+
+An assignment stays on rung 17 however big its value is. `contentItem: ColumnLayout {}`,
+`background: Rectangle {}`, `delegate: SelectionDelegate {}` and `model: MpvqcShortcutsModel {}` all
+configure this object, so they sit with the other own bindings and above the attached ones. What tells
+the two apart is the property name, not the braces.
 
 Put anything unlisted on the rung whose group it belongs to: it declares the interface, configures this
 object, reacts to a change, or is a child.
@@ -90,4 +95,5 @@ under the `id`. The rest of the ladder follows from rung 7.
 
 - The Material style is imported under a namespace, unless the file is one of the style overrides.
 - Signal parameters read name first.
+- Object-valued assignments sit with the own bindings, not with the children.
 - You have read the file top to bottom and the rung numbers never decrease.

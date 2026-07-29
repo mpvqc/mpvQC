@@ -55,6 +55,17 @@ cannot be seen in the app.
 Group by arrangement, then by area. Skip an arrangement no subagent reached: a Linux-only branch gets no Windows
 heading.
 
+Every heading is one arrangement. There is no shared bucket, no `Any arrangement`, no `All platforms`, no item parked
+outside an arrangement. The boxes are how the user records which machine they sat at, so a box that spans arrangements
+records nothing and they have to start over.
+
+Repetition is the point, not waste. Write the same check under every arrangement it reaches, and where an arrangement
+changes what the user should see, say that in its copy rather than bolting a parenthetical onto a shared line.
+
+Lead every arrangement heading with its emoji, so the user finds their machine by shape before they read a word:
+🪟 Windows, 🐧 Linux desktop, 🧱 Linux tiling. An arrangement the catalogue grows later picks up its own emoji and
+keeps it from then on.
+
 Name an area after the thing the user touches: `Window controls`, `Video resize`, `Overlays`. Not after the module.
 
 Write each item as the state that should hold, present tense, one observable per line:
@@ -62,20 +73,31 @@ Write each item as the state that should hold, present tense, one observable per
 ```markdown
 ## Manual checks before merging
 
-### Windows
+### 🪟 Windows
 
 #### Window controls
 
 - [ ] Loading a video resizes the window to fit it
 - [ ] Escape leaves fullscreen
+
+### 🧱 Linux tiling
+
+#### Window controls
+
+- [ ] Escape leaves fullscreen
+- [ ] Known and accepted: loading a video leaves the window alone, the compositor decides the size
 ```
+
+Escape repeats because it reaches both arrangements. Resize is written twice, differently, because the two
+arrangements owe the user different behaviour.
 
 Every line under a heading is a checkbox. Setup a check needs rides inside the item. A quirk the branch knowingly
 leaves behind is still an item, marked `Known and accepted:`.
 
 Boxes ship unchecked. The user ticks them.
 
-Done when every item passes the blast radius filter.
+Done when every item passes the blast radius filter, and every item sits under exactly one emoji-led arrangement
+heading.
 
 ### 5. Place it
 
