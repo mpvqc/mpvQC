@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
+import QtQuick.Dialogs
 
 import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Python
@@ -35,4 +36,8 @@ MpvqcOverlayLoader {
     // Native file dialogs must outlive the accept/reject signal they emit, so
     // teardown is deferred. The magnitude is historical, not measured.
     teardownDelay: 250
+
+    MpvqcModalOverlayTracker {
+        open: (root.item as FileDialog)?.visible ?? false
+    }
 }

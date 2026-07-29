@@ -14,8 +14,6 @@ import io.github.mpvqc.mpvQC.Utility
 Loader {
     id: root
 
-    readonly property bool modalPopupOpen: (item as MpvqcPositionedMenu)?.modal ?? false
-
     property int currentListIndex: -1
     property point openedAt: Qt.point(0, 0)
 

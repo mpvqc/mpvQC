@@ -43,6 +43,10 @@ Menu {
     M.Material.foreground: MpvqcTheme.palette.popupText
     M.Material.roundedScale: M.Material.SmallScale
 
+    MpvqcModalOverlayTracker {
+        open: root.modal && root.visible
+    }
+
     Binding {
         when: root.popupType === Popup.Window && root.contentItem
         target: root.contentItem

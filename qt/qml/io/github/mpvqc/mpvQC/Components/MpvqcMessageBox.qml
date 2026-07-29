@@ -21,6 +21,7 @@ Dialog {
     standardButtons: Dialog.Ok
     closePolicy: Popup.CloseOnEscape
     anchors.centerIn: Overlay.overlay
+    modal: true
     dim: false
 
     contentItem: Label {
@@ -41,6 +42,10 @@ Dialog {
     footer: MpvqcKeyboardFocusableButtonBox {}
 
     M.Material.background: MpvqcTheme.palette.dialogBackground
+
+    MpvqcModalOverlayTracker {
+        open: root.modal && root.visible
+    }
 
     Binding {
         when: root.popupType === Popup.Window

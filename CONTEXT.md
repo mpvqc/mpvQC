@@ -28,6 +28,8 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Row popup**: a popup the user opened for one row: an editor, context menu or confirmation. The list holds still
   until it is dismissed. The search box is not one, no row opened it. Modal ones also take input away from everything
   beneath them, an inline editor does not.
+- **Modal overlay**: anything that owns the window's input while open: a dialog, message box, modal menu, modal row
+  popup, or native file dialog.
 
 ## Platform
 

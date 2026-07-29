@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material as M
 
+import io.github.mpvqc.mpvQC.Components
 import io.github.mpvqc.mpvQC.Utility
 
 Popup {
@@ -113,6 +114,10 @@ Popup {
         } else {
             root.timeKept(root.currentTime);
         }
+    }
+
+    MpvqcModalOverlayTracker {
+        open: root.modal && root.visible
     }
 
     MouseArea {
