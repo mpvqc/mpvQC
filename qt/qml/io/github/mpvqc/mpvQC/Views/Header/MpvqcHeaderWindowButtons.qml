@@ -14,7 +14,7 @@ import io.github.mpvqc.mpvQC.Utility
 Row {
     id: root
 
-    readonly property MpvqcWindowButtonsViewModel windowButtons: MpvqcWindowButtonsViewModel {}
+    readonly property MpvqcWindowButtonsViewModel viewModel: MpvqcWindowButtonsViewModel {}
 
     // Deliberate platform polish: Windows paints its close button in its own
     // caption red, every other desktop uses the theme's error color.
@@ -28,7 +28,7 @@ Row {
         id: _minimizeButton
         objectName: "minimizeButton"
 
-        visible: root.windowButtons.showMinimizeButton
+        visible: root.viewModel.showMinimizeButton
         height: root.height
         focusPolicy: Qt.NoFocus
         icon.width: 20
@@ -50,7 +50,7 @@ Row {
         readonly property url iconMaximize: MpvqcIcons.openInFull
         readonly property url iconNormalize: MpvqcIcons.closeFullscreen
 
-        visible: root.windowButtons.showMaximizeButton
+        visible: root.viewModel.showMaximizeButton
         height: root.height
         focusPolicy: Qt.NoFocus
         icon.width: 18
@@ -73,7 +73,7 @@ Row {
         readonly property color idleIconColor: MpvqcTheme.palette.foreground
         readonly property color backgroundColor: root.isWindows ? "#C42C1E" : MpvqcTheme.palette.error
 
-        visible: root.windowButtons.showCloseButton
+        visible: root.viewModel.showCloseButton
         height: root.height
         focusPolicy: Qt.NoFocus
 
