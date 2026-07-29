@@ -7,6 +7,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtTest
 
+import io.github.mpvqc.mpvQC.Components
+
 TestCase {
     id: testCase
 
@@ -222,6 +224,38 @@ TestCase {
         compare(data.cursor(), Qt.ArrowCursor, "the search box offered a cursor it cannot honour while a modal popup is open");
     }
 
+    function test_searchBoxShowsAPlainCursorUnderAnApplicationModal(): void {
+        const messageBox = createTemporaryObject(_messageBoxFactory, testCase);
+        verify(messageBox);
+
+        messageBox.open();
+        tryVerify(() => messageBox.visible);
+
+        compare(_cursorOverGrip(), Qt.ArrowCursor, "the search box offered a cursor it cannot honour while an application modal is open");
+        compare(_cursorOverTextField(), Qt.ArrowCursor, "the search box offered a cursor it cannot honour while an application modal is open");
+
+        messageBox.close();
+        tryVerify(() => !messageBox.visible);
+
+        const popup = _find.searchBoxPopup(control);
+        tryVerify(() => popup._overrideCursor === undefined, testCase.timeout, "closing the application modal must hand the cursors back");
+    }
+
+    function test_searchBoxDropsHoverFeedbackUnderAModalPopup(): void {
+        const popup = _find.searchBoxPopup(control);
+        const textField = _find.searchTextField(control);
+        verify(textField.hoverEnabled, "hover feedback should be on while no modal popup is open");
+
+        _openEditor(_clickHelper.centerOfTimeLabel(control, 0), "timePopup");
+
+        verify(!textField.hoverEnabled, "the text field still shows hover feedback under a modal popup");
+        for (const name of ["previousButton", "nextButton", "closeButton"]) {
+            const button = findChild(popup, name);
+            verify(button, name);
+            verify(!button.hoverEnabled, `${name} still shows hover feedback under a modal popup`);
+        }
+    }
+
     // The inline editor is not modal and sits below, so the search box keeps its cursors
     function test_searchBoxKeepsItsCursorsUnderTheInlineEditor(): void {
         _openEditor(_clickHelper.centerOfCommentLabel(control, 2), "commentPopup");
@@ -243,5 +277,11 @@ TestCase {
         id: _helpers
 
         testCase: testCase
+    }
+
+    Component {
+        id: _messageBoxFactory
+
+        MpvqcMessageBox {}
     }
 }

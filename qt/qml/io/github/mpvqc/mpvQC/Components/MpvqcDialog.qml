@@ -25,6 +25,10 @@ Dialog {
 
     M.Material.background: MpvqcTheme.palette.dialogBackground
 
+    MpvqcModalOverlayTracker {
+        open: root.modal && root.visible
+    }
+
     Binding {
         when: root.popupType === Popup.Window
         target: root

@@ -15,7 +15,6 @@ Item {
     required property ListView listView
 
     readonly property bool anyRowPopupOpen: _editLoader.active || _contextMenuLoader.active || _deleteConfirmationLoader.active
-    readonly property bool anyModalPopupOpen: _editLoader.modalPopupOpen || _contextMenuLoader.modalPopupOpen || _deleteConfirmationLoader.modalPopupOpen
 
     readonly property string searchQuery: _searchBoxLoader.searchQuery
 
@@ -93,8 +92,6 @@ Item {
 
     MpvqcSearchBoxLoader {
         id: _searchBoxLoader
-
-        modalPopupOpen: root.anyModalPopupOpen
 
         onHighlightRequested: index => root.selectRequested(index)
         onClosed: root.focusWanted()

@@ -17,10 +17,6 @@ Popup {
 
     required property MpvqcSearchBoxViewModel viewModel
 
-    // While one is open it owns the input, so every cursor this popup would show and
-    // every grab it would take is a promise it cannot keep.
-    required property bool modalPopupOpen
-
     readonly property bool isApplicationFullScreen: MpvqcWindowUtility.isFullscreen
     readonly property string searchQuery: searchActive ? viewModel.searchQuery : ""
 
@@ -28,6 +24,10 @@ Popup {
     readonly property int edgeMarginVertical: 15
 
     property bool searchActive: false
+
+    // While one is open it owns the input, so cursor claims, the drag grab, and
+    // hover feedback all stand down.
+    readonly property bool _modalOverlayOpen: MpvqcModalState.anyModalOverlayOpen
 
     readonly property real _dragScaleFactor: 1.0375
 
@@ -40,10 +40,10 @@ Popup {
 
     readonly property int _grabCursor: _dragHandler.isPressed || _dragHandler.active ? Qt.ClosedHandCursor : Qt.OpenHandCursor
 
-    // A modal popup owns the input, so a plain arrow is the only honest cursor anywhere
+    // A modal overlay owns the input, so a plain arrow is the only honest cursor anywhere
     // in the box; during a drag the whole box is in hand. Undefined stands down and lets
     // the cursors below through, the text field's built-in I-beam included.
-    readonly property var _overrideCursor: modalPopupOpen ? Qt.ArrowCursor : (_dragHandler.active ? Qt.ClosedHandCursor : undefined)
+    readonly property var _overrideCursor: _modalOverlayOpen ? Qt.ArrowCursor : (_dragHandler.active ? Qt.ClosedHandCursor : undefined)
 
     function closeWithoutAnimation(): void {
         const exitAnimation = exit;
@@ -133,7 +133,7 @@ Popup {
 
             focus: false
             selectByMouse: true
-            hoverEnabled: true
+            hoverEnabled: !root._modalOverlayOpen
             horizontalAlignment: Text.AlignLeft
 
             Layout.fillWidth: true
@@ -182,6 +182,7 @@ Popup {
 
                 enabled: root.viewModel.hasMultipleResults
                 focusPolicy: Qt.NoFocus
+                hoverEnabled: !root._modalOverlayOpen
 
                 icon {
                     source: MpvqcIcons.keyboardArrowUp
@@ -211,6 +212,7 @@ Popup {
 
                 enabled: root.viewModel.hasMultipleResults
                 focusPolicy: Qt.NoFocus
+                hoverEnabled: !root._modalOverlayOpen
 
                 icon {
                     source: MpvqcIcons.keyboardArrowDown
@@ -230,6 +232,7 @@ Popup {
             objectName: "closeButton"
 
             focusPolicy: Qt.NoFocus
+            hoverEnabled: !root._modalOverlayOpen
 
             icon {
                 width: 18
@@ -298,7 +301,7 @@ Popup {
         id: _dragHandler
 
         parent: root.contentItem
-        enabled: !root.modalPopupOpen
+        enabled: !root._modalOverlayOpen
 
         edgeMarginVertical: root.edgeMarginVertical
         parentHeight: root.parent.height
