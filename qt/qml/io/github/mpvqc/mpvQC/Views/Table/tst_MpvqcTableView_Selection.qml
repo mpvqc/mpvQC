@@ -10,30 +10,24 @@ import QtTest
 TestCase {
     id: testCase
 
-    readonly property int timeout: 2000
-
-    TestHelpers {
-        id: _helpers
-
-        testCase: testCase
-    }
-
-    readonly property alias _clickHelper: _helpers.clickHelper
-    readonly property alias _expect: _helpers.expect
-    readonly property alias _find: _helpers.find
-    readonly property alias _wait: _helpers.wait
-
     width: 600
     height: 400
     visible: true
     when: windowShown
     name: "MpvqcTableView::Selection"
 
+    readonly property alias _clickHelper: _helpers.clickHelper
+    readonly property alias _expect: _helpers.expect
+    readonly property alias _find: _helpers.find
+    readonly property alias _wait: _helpers.wait
+
+    readonly property int timeout: 2000
+
+    property var control: null
+
     function initTestCase(): void {
         _helpers.initTestCase();
     }
-
-    property var control: null
 
     function init(): void {
         control = _helpers.makeControl();
@@ -464,5 +458,11 @@ TestCase {
         const items = _helpers.getCommentTypeItems(control);
         const expected = ["Comment Type 1", "Comment Type 2", "Comment Type 3", "Comment Type 4", "Comment Type 5", "Legacy Type"];
         compare(items.map(item => item.commentType), expected);
+    }
+
+    TestHelpers {
+        id: _helpers
+
+        testCase: testCase
     }
 }

@@ -19,15 +19,13 @@ RowLayout {
     Label {
         id: _label
 
-        Layout.fillWidth: true
-
         horizontalAlignment: Text.AlignRight
         wrapMode: Text.Wrap
+
+        Layout.fillWidth: true
     }
 
     MpvqcIconLabel {
-        Layout.preferredWidth: visible ? implicitWidth : 0
-
         visible: root.toolTip
         toolTipText: root.toolTip
 
@@ -37,5 +35,7 @@ RowLayout {
             height: 18
             color: MpvqcTheme.palette.hint
         }
+
+        Layout.preferredWidth: visible ? implicitWidth : 0
     }
 }

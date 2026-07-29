@@ -18,9 +18,71 @@ MpvqcDialog {
     id: root
     objectName: "aboutDialog"
 
+    readonly property MpvqcAboutDialogViewModel viewModel: MpvqcAboutDialogViewModel {}
+
     readonly property alias currentIndex: _pages.currentIndex
 
-    readonly property MpvqcAboutDialogViewModel viewModel: MpvqcAboutDialogViewModel {}
+    component MpvqcNavigationButton: ToolButton {
+        id: _button
+
+        readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : highlighted ? MpvqcTheme.palette.accent : MpvqcTheme.palette.foreground
+        readonly property real _collapsedWidth: leftPadding + icon.width + rightPadding
+        readonly property real _expandedWidth: _collapsedWidth + spacing + _navLabel.implicitWidth
+
+        width: highlighted ? _expandedWidth : _collapsedWidth
+        clip: true
+        leftPadding: 16
+        rightPadding: 16
+
+        contentItem: Row {
+            spacing: _button.spacing
+
+            LayoutMirroring.enabled: _button.mirrored
+
+            MpvqcIconLabel {
+                icon.source: _button.icon.source
+                icon.width: _button.icon.width
+                icon.height: _button.icon.height
+                iconColor: _button._contentColor
+
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Label {
+                id: _navLabel
+
+                text: _button.text
+                color: _button._contentColor
+                visible: _button.highlighted || _widthAnimation.running
+
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
+        background: MImpl.Ripple {
+            implicitWidth: M.Material.touchTarget
+            implicitHeight: M.Material.touchTarget
+
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
+            width: parent.width
+            height: Math.min(parent.height, 36)
+            clip: true
+            clipRadius: height / 2
+            pressed: _button.pressed
+            anchor: _button
+            active: _button.enabled && (_button.down || _button.visualFocus || _button.hovered || _button.highlighted)
+            color: Qt.alpha(_button._contentColor, 0.1)
+        }
+
+        Behavior on width {
+            NumberAnimation {
+                id: _widthAnimation
+
+                duration: 150
+            }
+        }
+    }
 
     function showPage(index: int): void {
         if (index === _pages.currentIndex) {
@@ -123,67 +185,5 @@ MpvqcDialog {
         to: 1
         duration: 100
         easing.type: Easing.OutCubic
-    }
-
-    component MpvqcNavigationButton: ToolButton {
-        id: _button
-
-        readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : highlighted ? MpvqcTheme.palette.accent : MpvqcTheme.palette.foreground
-        readonly property real _collapsedWidth: leftPadding + icon.width + rightPadding
-        readonly property real _expandedWidth: _collapsedWidth + spacing + _navLabel.implicitWidth
-
-        width: highlighted ? _expandedWidth : _collapsedWidth
-        clip: true
-        leftPadding: 16
-        rightPadding: 16
-
-        contentItem: Row {
-            spacing: _button.spacing
-
-            LayoutMirroring.enabled: _button.mirrored
-
-            MpvqcIconLabel {
-                icon.source: _button.icon.source
-                icon.width: _button.icon.width
-                icon.height: _button.icon.height
-                iconColor: _button._contentColor
-
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Label {
-                id: _navLabel
-
-                text: _button.text
-                color: _button._contentColor
-                visible: _button.highlighted || _widthAnimation.running
-
-                anchors.verticalCenter: parent.verticalCenter
-            }
-        }
-
-        background: MImpl.Ripple {
-            implicitWidth: M.Material.touchTarget
-            implicitHeight: M.Material.touchTarget
-
-            x: (parent.width - width) / 2
-            y: (parent.height - height) / 2
-            width: parent.width
-            height: Math.min(parent.height, 36)
-            clip: true
-            clipRadius: height / 2
-            pressed: _button.pressed
-            anchor: _button
-            active: _button.enabled && (_button.down || _button.visualFocus || _button.hovered || _button.highlighted)
-            color: Qt.alpha(_button._contentColor, 0.1)
-        }
-
-        Behavior on width {
-            NumberAnimation {
-                id: _widthAnimation
-
-                duration: 150
-            }
-        }
     }
 }

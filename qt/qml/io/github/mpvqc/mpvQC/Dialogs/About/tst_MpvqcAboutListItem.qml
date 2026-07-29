@@ -17,21 +17,6 @@ TestCase {
     when: windowShown
     name: "MpvqcAboutListItem"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcAboutListItem {
-            width: 360
-            text: "headline"
-        }
-    }
-
-    Component {
-        id: spyComponent
-
-        SignalSpy {}
-    }
-
     function makeControl(properties = {}): Item {
         const control = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(control);
@@ -124,5 +109,20 @@ TestCase {
         mouseClick(control);
 
         compare(spy.count, data.expectedCount);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcAboutListItem {
+            width: 360
+            text: "headline"
+        }
+    }
+
+    Component {
+        id: spyComponent
+
+        SignalSpy {}
     }
 }

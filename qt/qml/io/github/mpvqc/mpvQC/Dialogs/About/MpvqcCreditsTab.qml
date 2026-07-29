@@ -63,10 +63,11 @@ ScrollView {
                 model: MpvqcLanguageModel {}
 
                 MpvqcAboutListItem {
+                    objectName: "languageCredit"
+
                     required property string language
                     required property var translators
 
-                    objectName: "languageCredit"
                     visible: translators.length > 0
                     text: qsTranslate("Languages", language)
                     supportingText: root.joinNames(translators)

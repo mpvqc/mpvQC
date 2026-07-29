@@ -17,14 +17,6 @@ TestCase {
     when: windowShown
     name: "MpvqcCreditsTab"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcCreditsTab {
-            anchors.fill: parent
-        }
-    }
-
     function makeTab(mirrored = false): Item {
         const tab = createTemporaryObject(objectUnderTest, testCase, {
             "LayoutMirroring.enabled": mirrored,
@@ -80,6 +72,14 @@ TestCase {
 
         for (let i = 0; i < rows.length; ++i) {
             compare(rows[i].visible, rows[i].supportingText !== "");
+        }
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcCreditsTab {
+            anchors.fill: parent
         }
     }
 }

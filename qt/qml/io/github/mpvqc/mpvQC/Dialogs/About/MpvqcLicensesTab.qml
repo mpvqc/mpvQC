@@ -23,6 +23,32 @@ ScrollView {
 
     readonly property bool isScrollBarShown: contentHeight > height
 
+    component MpvqcSectionTitle: Label {
+        color: MpvqcTheme.palette.accent
+        font.pointSize: root.font.pointSize - 1
+        font.weight: Font.DemiBold
+        horizontalAlignment: Text.AlignLeft
+        leftPadding: 16
+        rightPadding: 16
+        topPadding: 16
+        bottomPadding: 8
+
+        Layout.fillWidth: true
+    }
+
+    component MpvqcLicensesListItem: MpvqcAboutListItem {
+        required property var modelData
+
+        text: modelData.name
+        supportingText: modelData.version ? root.joinDetails([modelData.version, modelData.licence]) : modelData.licence
+        icon.source: modelData.icon
+        link: modelData.url
+
+        Layout.fillWidth: true
+
+        onClicked: root.viewModel.openLink(link)
+    }
+
     function joinDetails(parts): string {
         // Reversed in RTL so the first entry sits rightmost, where reading starts
         return mirrored ? [...parts].reverse().join(" · ") : parts.join(" · ");
@@ -94,31 +120,5 @@ ScrollView {
                 MpvqcLicensesListItem {}
             }
         }
-    }
-
-    component MpvqcSectionTitle: Label {
-        color: MpvqcTheme.palette.accent
-        font.pointSize: root.font.pointSize - 1
-        font.weight: Font.DemiBold
-        horizontalAlignment: Text.AlignLeft
-        leftPadding: 16
-        rightPadding: 16
-        topPadding: 16
-        bottomPadding: 8
-
-        Layout.fillWidth: true
-    }
-
-    component MpvqcLicensesListItem: MpvqcAboutListItem {
-        required property var modelData
-
-        text: modelData.name
-        supportingText: modelData.version ? root.joinDetails([modelData.version, modelData.licence]) : modelData.licence
-        icon.source: modelData.icon
-        link: modelData.url
-
-        Layout.fillWidth: true
-
-        onClicked: root.viewModel.openLink(link)
     }
 }

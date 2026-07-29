@@ -24,16 +24,6 @@ MpvqcDialog {
     contentHeight: MpvqcConstants.smallDialogContentHeight
     closePolicy: Popup.NoAutoClose
 
-    Connections {
-        target: root.viewModel
-        function onAcceptRequested(): void {
-            root.accept();
-        }
-        function onRejectRequested(): void {
-            root.reject();
-        }
-    }
-
     contentItem: ColumnLayout {
         spacing: 40
 
@@ -41,11 +31,11 @@ MpvqcDialog {
             id: _stepIndicator
             objectName: "stepIndicator"
 
-            Layout.fillWidth: true
-            Layout.topMargin: 32
-
             stepKinds: root.viewModel.stepKinds
             currentStepIndex: root.viewModel.currentStepIndex
+
+            Layout.fillWidth: true
+            Layout.topMargin: 32
 
             onStepClicked: index => root.viewModel.currentStepIndex = index
         }
@@ -53,13 +43,13 @@ MpvqcDialog {
         MpvqcWizardSteps {
             objectName: "stepView"
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.topMargin: _stepIndicator.visible ? 0 : 32
-
             clip: true
 
             viewModel: root.viewModel
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.topMargin: _stepIndicator.visible ? 0 : 32
         }
     }
 
@@ -71,5 +61,15 @@ MpvqcDialog {
         onBackClicked: root.viewModel.back()
         onCancelClicked: root.viewModel.cancelClicked()
         onPrimaryClicked: root.viewModel.primaryClicked()
+    }
+
+    Connections {
+        target: root.viewModel
+        function onAcceptRequested(): void {
+            root.accept();
+        }
+        function onRejectRequested(): void {
+            root.reject();
+        }
     }
 }

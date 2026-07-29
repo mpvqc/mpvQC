@@ -10,13 +10,13 @@ import QtTest
 TestCase {
     id: testCase
 
+    width: 600
+    height: 400
+    visible: true
+    when: windowShown
+    name: "MpvqcTableView::Integration"
+
     readonly property int timeout: 2000
-
-    TestHelpers {
-        id: _helpers
-
-        testCase: testCase
-    }
 
     readonly property Component emptyControl: Component {
         MpvqcTableView {
@@ -26,12 +26,6 @@ TestCase {
             width: testCase.width
         }
     }
-
-    width: 600
-    height: 400
-    visible: true
-    when: windowShown
-    name: "MpvqcTableView::Integration"
 
     function initTestCase(): void {
         _helpers.initTestCase();
@@ -101,5 +95,11 @@ TestCase {
         control.forceActiveFocus();
 
         tryVerify(() => control.commentList.activeFocus);
+    }
+
+    TestHelpers {
+        id: _helpers
+
+        testCase: testCase
     }
 }

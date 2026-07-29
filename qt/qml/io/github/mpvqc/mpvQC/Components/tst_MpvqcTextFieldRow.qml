@@ -25,12 +25,6 @@ Item {
         TestCase {
             name: "MpvqcTextFieldRow"
 
-            SignalSpy {
-                id: textChangedSpy
-                target: objectUnderTest
-                signalName: "textChanged"
-            }
-
             function init() {
                 objectUnderTest.newText = '';
                 textChangedSpy.clear();
@@ -47,6 +41,12 @@ Item {
                 objectUnderTest.input = secondText;
                 verify(objectUnderTest.newText, secondText);
                 compare(textChangedSpy.count, 2);
+            }
+
+            SignalSpy {
+                id: textChangedSpy
+                target: objectUnderTest
+                signalName: "textChanged"
             }
         }
     }

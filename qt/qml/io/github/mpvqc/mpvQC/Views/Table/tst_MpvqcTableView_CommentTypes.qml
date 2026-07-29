@@ -10,24 +10,18 @@ import QtTest
 TestCase {
     id: testCase
 
-    readonly property int timeout: 2000
-
-    TestHelpers {
-        id: _helpers
-
-        testCase: testCase
-    }
+    width: 600
+    height: 400
+    visible: true
+    when: windowShown
+    name: "MpvqcTableView::CommentTypes"
 
     readonly property alias _clickHelper: _helpers.clickHelper
     readonly property alias _expect: _helpers.expect
     readonly property alias _find: _helpers.find
     readonly property alias _wait: _helpers.wait
 
-    width: 600
-    height: 400
-    visible: true
-    when: windowShown
-    name: "MpvqcTableView::CommentTypes"
+    readonly property int timeout: 2000
 
     function initTestCase(): void {
         _helpers.initTestCase();
@@ -49,5 +43,11 @@ TestCase {
         for (const commentType of expected) {
             verify(menu.commentTypes.includes(commentType), `Missing comment type: ${commentType}. Menu has types: ${menu.commentTypes.join(", ")} includes`);
         }
+    }
+
+    TestHelpers {
+        id: _helpers
+
+        testCase: testCase
     }
 }

@@ -20,21 +20,15 @@ Control {
     signal cancelClicked
     signal primaryClicked
 
-    spacing: 8
-    horizontalPadding: 8
-    verticalPadding: 2
-
-    implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
-    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding, M.Material.dialogButtonBoxHeight)
-
     component FooterButton: Button {
         required property bool shown
 
         visible: opacity > 0
         opacity: shown ? 1 : 0
-        Layout.preferredWidth: shown ? implicitWidth : 0
         flat: true
         clip: true
+
+        Layout.preferredWidth: shown ? implicitWidth : 0
 
         Behavior on opacity {
             NumberAnimation {
@@ -43,6 +37,13 @@ Control {
             }
         }
     }
+
+    spacing: 8
+    horizontalPadding: 8
+    verticalPadding: 2
+
+    implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
+    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding, M.Material.dialogButtonBoxHeight)
 
     contentItem: RowLayout {
         spacing: root.spacing

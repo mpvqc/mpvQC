@@ -17,12 +17,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -224,5 +218,11 @@ TestCase {
         it.menu.trigger(control, "fileMenu", "exitMpvqcMenuItem");
 
         tryVerify(() => spy.count === 1);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

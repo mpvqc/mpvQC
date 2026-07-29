@@ -9,6 +9,11 @@ import QtQuick
 Loader {
     id: root
 
+    enum TeardownTrigger {
+        Closed,
+        AcceptedOrRejected
+    }
+
     property int teardownTrigger: MpvqcOverlayLoader.TeardownTrigger.Closed
 
     // Teardown must never destroy the item while the signal that triggered it
@@ -18,11 +23,6 @@ Loader {
     property int teardownDelay: 0
 
     signal closed
-
-    enum TeardownTrigger {
-        Closed,
-        AcceptedOrRejected
-    }
 
     function open(overlay: url, properties: var): void {
         _teardownTimer.stop();

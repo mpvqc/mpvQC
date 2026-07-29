@@ -18,24 +18,6 @@ TestCase {
 
     readonly property url stubUrl: Qt.resolvedUrl("MpvqcOverlayStub.qml")
 
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcOverlayLoader {}
-    }
-
-    Component {
-        id: timerFactory
-
-        Timer {}
-    }
-
     function makeControl(properties = {}): MpvqcOverlayLoader {
         const control = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(control);
@@ -235,5 +217,23 @@ TestCase {
         compare(control.item.openCalls, 1);
         control.item.emitTrigger("closed");
         compare(spy.count, 2);
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcOverlayLoader {}
+    }
+
+    Component {
+        id: timerFactory
+
+        Timer {}
     }
 }

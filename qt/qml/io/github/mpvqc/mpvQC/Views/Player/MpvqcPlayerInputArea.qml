@@ -16,19 +16,6 @@ MouseArea {
 
     property bool showCursor: true
 
-    signal addNewCommentMenuRequested
-    signal toggleFullScreenRequested
-    signal windowActivationRequested
-
-    signal mouseMoved(real x, real y)
-    signal wheelScrolledUp
-    signal wheelScrolledDown
-    signal leftMousePressed
-    signal leftMouseReleased
-    signal middleMousePressed
-    signal backMousePressed
-    signal forwardMousePressed
-
     property var cursorTimer: Timer {
         running: root.showCursor && root.isFullScreen && root.containsMouse
         repeat: true
@@ -38,6 +25,19 @@ MouseArea {
             root.showCursor = false;
         }
     }
+
+    signal addNewCommentMenuRequested
+    signal toggleFullScreenRequested
+    signal windowActivationRequested
+
+    signal mouseMoved(x: real, y: real)
+    signal wheelScrolledUp
+    signal wheelScrolledDown
+    signal leftMousePressed
+    signal leftMouseReleased
+    signal middleMousePressed
+    signal backMousePressed
+    signal forwardMousePressed
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton | Qt.BackButton | Qt.ForwardButton
     cursorShape: !root.showCursor && root.isFullScreen ? Qt.BlankCursor : Qt.ArrowCursor

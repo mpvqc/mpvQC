@@ -31,13 +31,6 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         height: parent.height
 
-        Binding {
-            target: _list
-            property: "width"
-            value: Math.min(_list.contentWidth, _list.parent.width)
-            delayed: true
-        }
-
         implicitHeight: 28
         cacheBuffer: 100000
 
@@ -139,12 +132,17 @@ Item {
                 }
             }
         }
+
+        Binding {
+            target: _list
+            property: "width"
+            value: Math.min(_list.contentWidth, _list.parent.width)
+            delayed: true
+        }
     }
 
     Rectangle {
         objectName: "leftFade"
-
-        LayoutMirroring.enabled: false
 
         anchors {
             left: _list.left
@@ -166,6 +164,8 @@ Item {
             }
         }
 
+        LayoutMirroring.enabled: false
+
         Behavior on opacity {
             NumberAnimation {
                 duration: root.animationDuration
@@ -175,8 +175,6 @@ Item {
 
     Rectangle {
         objectName: "rightFade"
-
-        LayoutMirroring.enabled: false
 
         anchors {
             right: _list.right
@@ -197,6 +195,8 @@ Item {
                 color: MpvqcTheme.palette.background
             }
         }
+
+        LayoutMirroring.enabled: false
 
         Behavior on opacity {
             NumberAnimation {

@@ -17,12 +17,6 @@ TestCase {
     when: windowShown
     name: "MpvqcAboutDialog"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcAboutDialog {}
-    }
-
     function makeDialog(): Dialog {
         const dialog = createTemporaryObject(objectUnderTest, testCase);
         verify(dialog, "dialog not created");
@@ -80,5 +74,11 @@ TestCase {
         mouseClick(find(dialog, "aboutNavigationButton"));
 
         compare(dialog.currentIndex, 0);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcAboutDialog {}
     }
 }

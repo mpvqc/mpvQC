@@ -16,12 +16,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -150,5 +144,11 @@ TestCase {
         it.expect.commentCount(control, 0);
         it.expect.noOpenedVideo();
         it.expect.openedSubtitleCount(0);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

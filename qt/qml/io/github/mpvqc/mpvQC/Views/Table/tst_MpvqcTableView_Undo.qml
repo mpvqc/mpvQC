@@ -10,86 +10,24 @@ import QtTest
 TestCase {
     id: testCase
 
-    readonly property int timeout: 2000
-
-    readonly property alias _clickHelper: _helpers.clickHelper
-    readonly property alias _expect: _helpers.expect
-    readonly property alias _find: _helpers.find
-    readonly property alias _wait: _helpers.wait
-
-    TestHelpers {
-        id: _helpers
-
-        testCase: testCase
-    }
-
-    QtObject {
-        id: _undoHelpers
-
-        function importMixedComments(count: int): void {
-            const longText = "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.";
-            const filler = [];
-            for (let i = 0; i < count; i++) {
-                const isLong = i % 10 === 0;
-                filler.push({
-                    "time": 100 + i,
-                    "commentType": "Comment Type 1",
-                    "comment": isLong ? `Row ${i}: ${longText}` : `Row ${i}`
-                });
-            }
-            _helpers.bridge.importComments(filler);
-            testCase.waitForRendering(testCase.control);
-        }
-
-        function editComment(row: int, newText: string): string {
-            const originalText = _helpers.bridge.comment(row).comment;
-            testCase.control.commentList.currentIndex = row;
-            testCase.waitForRendering(testCase.control);
-            testCase.control.viewModel.updateComment(row, newText);
-            testCase.waitForRendering(testCase.control);
-            testCase.compare(_helpers.bridge.comment(row).comment, newText);
-            return originalText;
-        }
-
-        function editTime(srcRow: int, newTime: int): var {
-            const original = _helpers.bridge.comment(srcRow);
-            testCase.control.commentList.currentIndex = srcRow;
-            testCase.waitForRendering(testCase.control);
-            testCase.control.viewModel.updateTime(srcRow, newTime);
-            testCase.tryVerify(() => testCase.control.viewModel.selection.selectedRowVisible === true);
-            const dstRow = testCase.control.commentList.currentIndex;
-            testCase.compare(_helpers.bridge.comment(dstRow).time, newTime);
-            return {
-                "dstRow": dstRow,
-                "originalTime": original.time,
-                "originalComment": original.comment
-            };
-        }
-
-        function scrollSelectionOffscreen(): void {
-            const list = testCase.control.commentList;
-            for (let i = 0; i < 20; i++) {
-                if (!testCase.control.viewModel.selection.selectedRowVisible) {
-                    break;
-                }
-                testCase.mouseWheel(list, list.width / 2, list.height / 2, 0, -120, Qt.NoButton, Qt.NoModifier);
-            }
-            testCase.waitForRendering(testCase.control);
-            testCase.tryVerify(() => testCase.control.viewModel.selection.selectedRowVisible === false);
-        }
-    }
-
     width: 600
     height: 400
     visible: true
     when: windowShown
     name: "MpvqcTableView::Undo"
 
+    readonly property alias _clickHelper: _helpers.clickHelper
+    readonly property alias _expect: _helpers.expect
+    readonly property alias _find: _helpers.find
+    readonly property alias _wait: _helpers.wait
+
+    readonly property int timeout: 2000
+
+    property var control: null
+
     function initTestCase(): void {
         _helpers.initTestCase();
     }
-
-    property var control: null
 
     function init(): void {
         control = _helpers.makeControl();
@@ -362,5 +300,67 @@ TestCase {
         tryVerify(() => _helpers.bridge.comment(6).comment === "second");
         compare(_helpers.bridge.comment(6).time, 8 * 1000);
         compare(_helpers.bridge.comment(0).comment, "first edited");
+    }
+
+    TestHelpers {
+        id: _helpers
+
+        testCase: testCase
+    }
+
+    QtObject {
+        id: _undoHelpers
+
+        function importMixedComments(count: int): void {
+            const longText = "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.";
+            const filler = [];
+            for (let i = 0; i < count; i++) {
+                const isLong = i % 10 === 0;
+                filler.push({
+                    "time": 100 + i,
+                    "commentType": "Comment Type 1",
+                    "comment": isLong ? `Row ${i}: ${longText}` : `Row ${i}`
+                });
+            }
+            _helpers.bridge.importComments(filler);
+            testCase.waitForRendering(testCase.control);
+        }
+
+        function editComment(row: int, newText: string): string {
+            const originalText = _helpers.bridge.comment(row).comment;
+            testCase.control.commentList.currentIndex = row;
+            testCase.waitForRendering(testCase.control);
+            testCase.control.viewModel.updateComment(row, newText);
+            testCase.waitForRendering(testCase.control);
+            testCase.compare(_helpers.bridge.comment(row).comment, newText);
+            return originalText;
+        }
+
+        function editTime(srcRow: int, newTime: int): var {
+            const original = _helpers.bridge.comment(srcRow);
+            testCase.control.commentList.currentIndex = srcRow;
+            testCase.waitForRendering(testCase.control);
+            testCase.control.viewModel.updateTime(srcRow, newTime);
+            testCase.tryVerify(() => testCase.control.viewModel.selection.selectedRowVisible === true);
+            const dstRow = testCase.control.commentList.currentIndex;
+            testCase.compare(_helpers.bridge.comment(dstRow).time, newTime);
+            return {
+                "dstRow": dstRow,
+                "originalTime": original.time,
+                "originalComment": original.comment
+            };
+        }
+
+        function scrollSelectionOffscreen(): void {
+            const list = testCase.control.commentList;
+            for (let i = 0; i < 20; i++) {
+                if (!testCase.control.viewModel.selection.selectedRowVisible) {
+                    break;
+                }
+                testCase.mouseWheel(list, list.width / 2, list.height / 2, 0, -120, Qt.NoButton, Qt.NoModifier);
+            }
+            testCase.waitForRendering(testCase.control);
+            testCase.tryVerify(() => testCase.control.viewModel.selection.selectedRowVisible === false);
+        }
     }
 }

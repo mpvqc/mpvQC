@@ -16,6 +16,10 @@ import io.github.mpvqc.mpvQC.Utility
 T.Button {
     id: control
 
+    readonly property bool hasIcon: icon.name.length > 0 || icon.source.toString().length > 0
+
+    readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : (flat && highlighted) || (checked && !highlighted) ? Material.accentColor : highlighted ? Material.primaryHighlightedTextColor : Material.foreground
+
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding)
 
@@ -28,13 +32,6 @@ T.Button {
 
     icon.width: 24
     icon.height: 24
-
-    readonly property bool hasIcon: icon.name.length > 0 || icon.source.toString().length > 0
-
-    readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : (flat && highlighted) || (checked && !highlighted) ? Material.accentColor : highlighted ? Material.primaryHighlightedTextColor : Material.foreground
-
-    Material.elevation: control.down ? 8 : 2
-    Material.roundedScale: Material.FullScale
 
     contentItem: IconLabel {
         spacing: control.spacing
@@ -75,4 +72,7 @@ T.Button {
             color: Qt.alpha(control._contentColor, 0.1)
         }
     }
+
+    Material.elevation: control.down ? 8 : 2
+    Material.roundedScale: Material.FullScale
 }

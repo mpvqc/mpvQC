@@ -14,30 +14,6 @@ TestCase {
     when: windowShown
     name: "MpvqcPlayerInputArea"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcPlayerInputArea {
-            width: 200
-            height: 200
-
-            embedsNativePlayer: false
-        }
-    }
-
-    Component {
-        id: signalSpy
-
-        SignalSpy {
-            function invocation(invocation: int): var {
-                const inv = signalArguments[invocation];
-                return {
-                    arg: index => inv[index]
-                };
-            }
-        }
-    }
-
     function makeControl(initProperties = {}) {
         const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
         verify(control);
@@ -211,5 +187,29 @@ TestCase {
         compare(control.cursorTimer.running, false);
         compare(control.showCursor, true);
         compare(control.cursorShape, Qt.ArrowCursor);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcPlayerInputArea {
+            width: 200
+            height: 200
+
+            embedsNativePlayer: false
+        }
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {
+            function invocation(invocation: int): var {
+                const inv = signalArguments[invocation];
+                return {
+                    arg: index => inv[index]
+                };
+            }
+        }
     }
 }

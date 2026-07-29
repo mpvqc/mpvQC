@@ -19,15 +19,6 @@ TestCase {
     when: windowShown
     name: "MpvqcLicensesTab"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcLicensesTab {
-            anchors.fill: parent
-            viewModel: MpvqcAboutDialogViewModel {}
-        }
-    }
-
     function makeTab(mirrored = false): Item {
         const tab = createTemporaryObject(objectUnderTest, testCase, {
             "LayoutMirroring.enabled": mirrored,
@@ -55,5 +46,14 @@ TestCase {
     function test_joinDetailsFollowsLayoutDirection(data): void {
         const tab = makeTab(data.mirrored);
         compare(tab.joinDetails(["1.0", "GPL-2.0+"]), data.expected);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcLicensesTab {
+            anchors.fill: parent
+            viewModel: MpvqcAboutDialogViewModel {}
+        }
     }
 }

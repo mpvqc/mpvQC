@@ -22,12 +22,13 @@ Popup {
 
     readonly property int edgeMarginHorizontal: 30
     readonly property int edgeMarginVertical: 15
+
+    property bool searchActive: false
+
     readonly property real _dragScaleFactor: 1.0375
 
     readonly property bool _anyChildHovered: _textFieldHover.hovered || (_previousButton.enabled && _previousButton.hovered) || (_nextButton.enabled && _nextButton.hovered) || _closeButton.hovered
     readonly property bool _shouldScaleUp: _dragHandler.active || (_dragHandler.isPressed && !_anyChildHovered)
-
-    property bool searchActive: false
 
     function closeWithoutAnimation(): void {
         const exitAnimation = exit;
@@ -46,18 +47,7 @@ Popup {
 
     scale: _shouldScaleUp ? _dragScaleFactor : 1
 
-    Behavior on scale {
-        enabled: root.opened
-        NumberAnimation {
-            duration: 75
-        }
-    }
-
     closePolicy: Popup.NoAutoClose
-
-    M.Material.background: MpvqcTheme.palette.popupBackground
-    M.Material.foreground: MpvqcTheme.palette.popupText
-    M.Material.roundedScale: M.Material.SmallScale
 
     enter: Transition {
         NumberAnimation {
@@ -75,6 +65,10 @@ Popup {
             easing.type: Easing.OutCubic
         }
     }
+
+    M.Material.background: MpvqcTheme.palette.popupBackground
+    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.roundedScale: M.Material.SmallScale
 
     onAboutToShow: {
         root.searchActive = true;
@@ -105,8 +99,6 @@ Popup {
 
         MpvqcIconLabel {
             objectName: "searchIconLabel"
-            Layout.leftMargin: 8
-            Layout.rightMargin: 4
 
             icon {
                 source: MpvqcIcons.search
@@ -114,16 +106,20 @@ Popup {
                 width: 24
                 color: MpvqcTheme.palette.hint
             }
+
+            Layout.leftMargin: 8
+            Layout.rightMargin: 4
         }
 
         TextField {
             id: _textField
             objectName: "searchTextField"
 
-            Layout.fillWidth: true
             focus: false
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
+
+            Layout.fillWidth: true
 
             ContextMenu.menu: null
 
@@ -136,16 +132,16 @@ Popup {
                 }
             }
 
-            HoverHandler {
-                id: _textFieldHover
-                objectName: "searchTextFieldCursorHandler"
-                cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.IBeamCursor
-            }
-
             Component.onCompleted: {
                 background.fillColor = "transparent";
                 background.outlineColor = "transparent";
                 background.focusedOutlineColor = "transparent";
+            }
+
+            HoverHandler {
+                id: _textFieldHover
+                objectName: "searchTextFieldCursorHandler"
+                cursorShape: _dragHandler.active ? Qt.ClosedHandCursor : Qt.IBeamCursor
             }
         }
 
@@ -234,11 +230,6 @@ Popup {
             id: _closeButton
             objectName: "closeButton"
 
-            Layout.preferredWidth: 36
-            Layout.preferredHeight: 36
-            Layout.leftMargin: 3
-            Layout.rightMargin: 3
-
             focusPolicy: Qt.NoFocus
 
             icon {
@@ -246,6 +237,11 @@ Popup {
                 height: 18
                 source: MpvqcIcons.close
             }
+
+            Layout.preferredWidth: 36
+            Layout.preferredHeight: 36
+            Layout.leftMargin: 3
+            Layout.rightMargin: 3
 
             onClicked: root.close()
 
@@ -302,5 +298,12 @@ Popup {
         target: root
         property: "y"
         value: _dragHandler.snapToBottom && !_dragHandler.active ? _dragHandler.maxY : _dragHandler.targetY
+    }
+
+    Behavior on scale {
+        enabled: root.opened
+        NumberAnimation {
+            duration: 75
+        }
     }
 }

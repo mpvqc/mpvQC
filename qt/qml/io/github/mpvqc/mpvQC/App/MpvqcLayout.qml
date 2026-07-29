@@ -41,6 +41,12 @@ Page {
 
     background: null
 
+    Component.onCompleted: {
+        const width = Math.round(_splitView.width * root.defaultSplitRatio);
+        const height = Math.round(_splitView.height * root.defaultSplitRatio);
+        _tableContainer.setPreferredSizes(width, height);
+    }
+
     SplitView {
         id: _splitView
         objectName: "applicationSplitView"
@@ -64,15 +70,15 @@ Page {
         Column {
             id: _tableContainer
 
+            function setPreferredSizes(width: real, height: real): void {
+                SplitView.preferredWidth = width;
+                SplitView.preferredHeight = height;
+            }
+
             visible: !MpvqcWindowUtility.isFullscreen
 
             SplitView.minimumHeight: root.minContainerHeight
             SplitView.minimumWidth: root.minContainerWidth
-
-            function setPreferredSizes(width, height) {
-                SplitView.preferredWidth = width;
-                SplitView.preferredHeight = height;
-            }
 
             MpvqcTableView {
                 id: _mpvqcCommentTable
@@ -114,11 +120,5 @@ Page {
         onSplitViewTableSizeRequested: (width, height) => {
             _tableContainer.setPreferredSizes(width, height);
         }
-    }
-
-    Component.onCompleted: {
-        const width = Math.round(_splitView.width * root.defaultSplitRatio);
-        const height = Math.round(_splitView.height * root.defaultSplitRatio);
-        _tableContainer.setPreferredSizes(width, height);
     }
 }

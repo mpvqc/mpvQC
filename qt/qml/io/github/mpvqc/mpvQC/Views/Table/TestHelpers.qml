@@ -47,6 +47,10 @@ QtObject {
         MpvqcTableView {
             id: _mockVmControl
 
+            function getItem(index: int, property: string): var {
+                return root.bridge.comment(index)[property];
+            }
+
             backupEnabled: false
 
             viewModel: MpvqcCommentTableViewModel {
@@ -93,32 +97,7 @@ QtObject {
                 ]);
                 _mockVmControl.commentList.currentIndex = 0;
             }
-
-            function getItem(index: int, property: string): var {
-                return root.bridge.comment(index)[property];
-            }
         }
-    }
-
-    function initTestCase(): void {
-        MpvqcLabelWidthCalculator.timeLabelWidth = 50;
-        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 150;
-    }
-
-    function makeControl(): var {
-        root.bridge.resetComments();
-        const control = root.testCase.createTemporaryObject(root.objectUnderTest, root.testCase);
-        root.testCase.verify(control);
-        root.testCase.waitForRendering(control);
-        return control;
-    }
-
-    function makeRealCommentTypesControl(): var {
-        root.bridge.resetComments();
-        const control = root.testCase.createTemporaryObject(root.objectWithRealCommentTypes, root.testCase);
-        root.testCase.verify(control);
-        root.testCase.waitForRendering(control);
-        return control;
     }
 
     readonly property var clickHelper: QtObject {
@@ -244,6 +223,12 @@ QtObject {
     readonly property var expect: QtObject {
         id: _expect
 
+        readonly property var _editorObjectNames: ({
+                "timePopup": "editTimePopup",
+                "commentTypeMenu": "editCommentTypeMenu",
+                "commentPopup": "editCommentPopup"
+            })
+
         function _anyEditorOpen(control: MpvqcTableView): bool {
             const tc = root.testCase;
             for (const name of ["editTimePopup", "editCommentPopup", "editCommentTypeMenu"]) {
@@ -331,12 +316,6 @@ QtObject {
         function hasEventuallyCount(control: MpvqcTableView, expected: int): void {
             root.testCase.tryVerify(() => control.commentCount === expected);
         }
-
-        readonly property var _editorObjectNames: ({
-                "timePopup": "editTimePopup",
-                "commentTypeMenu": "editCommentTypeMenu",
-                "commentPopup": "editCommentPopup"
-            })
 
         function isEditorShowing(control: MpvqcTableView, editor: string): void {
             const name = _editorObjectNames[editor];
@@ -465,6 +444,27 @@ QtObject {
             root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.searchActive);
             root.testCase.tryVerify(() => !root.testCase.findChild(control, "searchBoxPopup")?.opened);
         }
+    }
+
+    function initTestCase(): void {
+        MpvqcLabelWidthCalculator.timeLabelWidth = 50;
+        MpvqcLabelWidthCalculator.commentTypesLabelWidth = 150;
+    }
+
+    function makeControl(): var {
+        root.bridge.resetComments();
+        const control = root.testCase.createTemporaryObject(root.objectUnderTest, root.testCase);
+        root.testCase.verify(control);
+        root.testCase.waitForRendering(control);
+        return control;
+    }
+
+    function makeRealCommentTypesControl(): var {
+        root.bridge.resetComments();
+        const control = root.testCase.createTemporaryObject(root.objectWithRealCommentTypes, root.testCase);
+        root.testCase.verify(control);
+        root.testCase.waitForRendering(control);
+        return control;
     }
 
     function typeWord(word: string): void {

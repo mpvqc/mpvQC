@@ -16,19 +16,13 @@ TestCase {
     when: windowShown
     name: "MpvqcWizardStepGlyph"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardStepGlyph {}
-    }
+    readonly property var stateIconNames: ["upcomingStateIcon", "currentStateIcon", "completedStateIcon"]
 
     function makeControl(properties = {}): Item {
         const glyph = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(glyph);
         return glyph;
     }
-
-    readonly property var stateIconNames: ["upcomingStateIcon", "currentStateIcon", "completedStateIcon"]
 
     function test_activatesCorrectIcon_data() {
         return [
@@ -63,5 +57,11 @@ TestCase {
             verify(icon, `${name} should exist`);
             compare(icon.active, name === data.expectActive, `${name}.active`);
         }
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardStepGlyph {}
     }
 }

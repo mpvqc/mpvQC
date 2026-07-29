@@ -18,21 +18,6 @@ TestCase {
     when: windowShown
     name: "MpvqcHeaderWindowButtons"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcHeaderWindowButtons {
-            height: 40
-            width: testCase.width
-        }
-    }
-
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
     function makeControl(initProperties = {}) {
         const control = createTemporaryObject(objectUnderTest, testCase, initProperties);
         verify(control);
@@ -146,5 +131,20 @@ TestCase {
         const button = findChild(control, "closeButton");
 
         compare(button.idleIconColor, MpvqcTheme.palette.foreground);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcHeaderWindowButtons {
+            height: 40
+            width: testCase.width
+        }
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
     }
 }

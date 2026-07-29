@@ -18,24 +18,6 @@ TestCase {
     when: windowShown
     name: "MpvqcFooterView"
 
-    Component {
-        id: objectUnderTest
-
-        Item {
-            width: testCase.width
-            height: testCase.height
-
-            MpvqcFooterView {
-                objectName: "footer"
-                selectedCommentIndex: 0
-                totalCommentCount: 0
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-            }
-        }
-    }
-
     function makeControl(props): var {
         const control = createTemporaryObject(objectUnderTest, testCase);
         verify(control);
@@ -262,5 +244,23 @@ TestCase {
         mouseClick(button, button.width / 2, button.height / 2);
         tryVerify(() => menuItem.visible);
         compare(menuItem.checked, data.expectedChecked);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        Item {
+            width: testCase.width
+            height: testCase.height
+
+            MpvqcFooterView {
+                objectName: "footer"
+                selectedCommentIndex: 0
+                totalCommentCount: 0
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+            }
+        }
     }
 }

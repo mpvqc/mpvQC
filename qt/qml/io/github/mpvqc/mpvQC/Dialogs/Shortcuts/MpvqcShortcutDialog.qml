@@ -54,9 +54,6 @@ MpvqcDialog {
             clip: true
             boundsBehavior: Flickable.StopAtBounds
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
             model: MpvqcShortcutsModel {
                 query: _searchField.text
             }
@@ -100,6 +97,9 @@ MpvqcDialog {
                     rightPadding: 8
                 }
             }
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
             ScrollBar.vertical: ScrollBar {
                 id: _scrollBar

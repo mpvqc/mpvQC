@@ -14,10 +14,11 @@ import io.github.mpvqc.mpvQC.Utility
 Row {
     id: root
 
+    readonly property MpvqcWindowButtonsViewModel windowButtons: MpvqcWindowButtonsViewModel {}
+
     // Deliberate platform polish: Windows paints its close button in its own
     // caption red, every other desktop uses the theme's error color.
     readonly property bool isWindows: Qt.platform.os === "windows"
-    readonly property MpvqcWindowButtonsViewModel windowButtons: MpvqcWindowButtonsViewModel {}
 
     signal minimizeRequested
     signal toggleMaximizeRequested

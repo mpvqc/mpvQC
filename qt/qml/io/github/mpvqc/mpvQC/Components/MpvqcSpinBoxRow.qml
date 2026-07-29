@@ -11,8 +11,6 @@ RowLayout {
 
     required property int prefWidth
 
-    property int spinBoxWidth: 130
-
     property alias spinBox: _input
     property alias label: _label.text
     property alias suffix: _suffix.text
@@ -20,7 +18,9 @@ RowLayout {
     property alias valueFrom: _input.from
     property alias valueTo: _input.to
 
-    signal valueModified(int value)
+    property int spinBoxWidth: 130
+
+    signal valueModified(value: int)
 
     Label {
         id: _label

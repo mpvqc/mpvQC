@@ -84,13 +84,14 @@ Item {
         Label {
             id: _title
 
-            Layout.fillWidth: true
-            Layout.preferredHeight: root.menuBarHeight
-            Layout.rightMargin: root.minTitleSpacing
             text: root.viewModel.windowTitle
             elide: Text.ElideLeft
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: root.menuBarHeight
+            Layout.rightMargin: root.minTitleSpacing
         }
 
         MpvqcHeaderWindowButtons {

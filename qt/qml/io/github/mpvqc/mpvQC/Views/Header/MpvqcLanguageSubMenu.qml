@@ -14,14 +14,14 @@ MpvqcMenuBarMenu {
     id: root
     objectName: "languageMenu"
 
+    // Applying the language retranslates and reshuffles the menu's geometry;
+    // deferring until onClosed hides that churn from the user.
+    property string _pendingLanguage: ""
+
     signal languageSelected(identifier: string)
 
     title: qsTranslate("MainWindow", "Language")
     icon.source: MpvqcIcons.language
-
-    // Applying the language retranslates and reshuffles the menu's geometry;
-    // deferring until onClosed hides that churn from the user.
-    property string _pendingLanguage: ""
 
     onClosed: {
         if (_pendingLanguage) {

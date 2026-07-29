@@ -11,6 +11,9 @@ import io.github.mpvqc.mpvQC.Python
 QtObject {
     id: root
 
+    // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
+    property MpvqcThemeViewModel _viewModel: MpvqcThemeViewModel {}
+
     readonly property bool isDark: root._viewModel.isDark
 
     readonly property color listStripe: Qt.alpha(palette.foreground, isDark ? 0.04 : 0.08)
@@ -47,19 +50,6 @@ QtObject {
         }
     }
 
-    component AnimatedColor: QtObject {
-        required property color value
-
-        Behavior on value {
-            ColorAnimation {
-                duration: 150
-            }
-        }
-    }
-
-    // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
-    property MpvqcThemeViewModel _viewModel: MpvqcThemeViewModel {}
-
     // qmlformat off
     readonly property AnimatedColor _background: AnimatedColor { value: root._viewModel.palette.background }
     readonly property AnimatedColor _foreground: AnimatedColor { value: root._viewModel.palette.foreground }
@@ -82,4 +72,14 @@ QtObject {
     readonly property AnimatedColor _rowSelected: AnimatedColor { value: root._viewModel.palette.rowSelected }
     readonly property AnimatedColor _rowSelectedText: AnimatedColor { value: root._viewModel.palette.rowSelectedText }
     // qmlformat on
+
+    component AnimatedColor: QtObject {
+        required property color value
+
+        Behavior on value {
+            ColorAnimation {
+                duration: 150
+            }
+        }
+    }
 }

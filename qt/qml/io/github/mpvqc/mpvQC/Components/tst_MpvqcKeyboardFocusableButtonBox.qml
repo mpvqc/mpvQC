@@ -17,38 +17,6 @@ TestCase {
     when: windowShown
     name: "MpvqcKeyboardFocusableButtonBox"
 
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcKeyboardFocusableButtonBox {
-            property alias acceptButton: _accept
-            property alias rejectButton: _reject
-            property alias destructiveButton: _destructive
-
-            Button {
-                id: _accept
-                text: "Accept"
-                DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
-            }
-            Button {
-                id: _reject
-                text: "Reject"
-                DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
-            }
-            Button {
-                id: _destructive
-                text: "Destructive"
-                DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
-            }
-        }
-    }
-
     function makeControl(properties = {}): Item {
         const box = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(box);
@@ -152,5 +120,37 @@ TestCase {
         const startIndex = box._focusedIndex;
         keyPress(Qt.Key_Left);
         compare(box._focusedIndex, (startIndex - 1 + box.count) % box.count);
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcKeyboardFocusableButtonBox {
+            property alias acceptButton: _accept
+            property alias rejectButton: _reject
+            property alias destructiveButton: _destructive
+
+            Button {
+                id: _accept
+                text: "Accept"
+                DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole
+            }
+            Button {
+                id: _reject
+                text: "Reject"
+                DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
+            }
+            Button {
+                id: _destructive
+                text: "Destructive"
+                DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole
+            }
+        }
     }
 }

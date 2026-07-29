@@ -16,12 +16,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -65,5 +59,11 @@ TestCase {
         it.menu.trigger(control, "helpMenu", "openAboutDialogMenuItem");
 
         it.find.openedDialog(control, "aboutDialog");
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

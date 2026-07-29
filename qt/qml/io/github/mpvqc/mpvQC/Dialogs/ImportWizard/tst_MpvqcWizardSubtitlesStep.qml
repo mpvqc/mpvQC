@@ -16,41 +16,6 @@ TestCase {
     when: windowShown
     name: "MpvqcWizardSubtitlesStep"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcWizardSubtitlesStep {
-            id: _step
-
-            anchors.fill: parent
-
-            property alias rowsModel: _rows
-            property int triState: Qt.Unchecked
-
-            viewModel: QtObject {
-                readonly property ListModel subtitles: _rows
-                property int selectAllTriState: _step.triState
-
-                property int lastToggleIndex: -1
-                property int toggleCount: 0
-                property int toggleSelectAllCount: 0
-
-                function toggle(index) {
-                    lastToggleIndex = index;
-                    toggleCount += 1;
-                }
-
-                function toggleSelectAll() {
-                    toggleSelectAllCount += 1;
-                }
-            }
-
-            ListModel {
-                id: _rows
-            }
-        }
-    }
-
     function makeControl(properties = {}): Item {
         const step = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(step);
@@ -216,5 +181,40 @@ TestCase {
         const selectAll = findChild(step, "selectAll");
         verify(selectAll);
         tryCompare(selectAll, "visible", data.expectVisible);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcWizardSubtitlesStep {
+            id: _step
+
+            property alias rowsModel: _rows
+            property int triState: Qt.Unchecked
+
+            anchors.fill: parent
+
+            viewModel: QtObject {
+                readonly property ListModel subtitles: _rows
+                property int selectAllTriState: _step.triState
+
+                property int lastToggleIndex: -1
+                property int toggleCount: 0
+                property int toggleSelectAllCount: 0
+
+                function toggle(index) {
+                    lastToggleIndex = index;
+                    toggleCount += 1;
+                }
+
+                function toggleSelectAll() {
+                    toggleSelectAllCount += 1;
+                }
+            }
+
+            ListModel {
+                id: _rows
+            }
+        }
     }
 }

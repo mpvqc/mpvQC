@@ -11,11 +11,12 @@ Item {
     objectName: "tableView"
 
     property MpvqcCommentTableViewModel viewModel: MpvqcCommentTableViewModel {}
-    property bool backupEnabled: true
 
     readonly property alias commentCount: _commentList.count
     readonly property alias selectedCommentIndex: _commentList.currentIndex
     readonly property alias commentList: _commentList
+
+    property bool backupEnabled: true
 
     function forceActiveFocus(): void {
         _commentList.forceActiveFocus();

@@ -37,11 +37,6 @@ MpvqcDialog {
         readonly property int staggerInterval: 15
     }
 
-    contentHeight: MpvqcConstants.smallDialogContentHeight
-
-    title: qsTranslate("AppearanceDialog", "Appearance")
-    standardButtons: Dialog.Ok | Dialog.Cancel
-
     component SelectionDelegate: ItemDelegate {
         id: delegateRoot
 
@@ -50,7 +45,7 @@ MpvqcDialog {
         required property color displayColor
         required property int index
 
-        signal selected(int index)
+        signal selected(index: int)
 
         width: itemSize
         height: itemSize
@@ -62,6 +57,19 @@ MpvqcDialog {
             width: parent.width - 2 * delegateRoot.borderSize
             color: delegateRoot.displayColor
             radius: M.Material.LargeScale
+        }
+
+        MouseArea {
+            anchors.fill: parent
+
+            onPressed: {
+                delegateRoot.scale = root.animations.scalePressed;
+                delegateRoot.selected(delegateRoot.index);
+            }
+
+            onReleased: delegateRoot.scale = root.animations.scaleNormal
+
+            onCanceled: delegateRoot.scale = root.animations.scaleNormal
         }
 
         Behavior on scale {
@@ -83,19 +91,6 @@ MpvqcDialog {
                 duration: root.animations.appearDuration
                 easing.type: Easing.OutCubic
             }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-
-            onPressed: {
-                delegateRoot.scale = root.animations.scalePressed;
-                delegateRoot.selected(delegateRoot.index);
-            }
-
-            onReleased: delegateRoot.scale = root.animations.scaleNormal
-
-            onCanceled: delegateRoot.scale = root.animations.scaleNormal
         }
     }
 
@@ -146,6 +141,11 @@ MpvqcDialog {
         }
     }
 
+    contentHeight: MpvqcConstants.smallDialogContentHeight
+
+    title: qsTranslate("AppearanceDialog", "Appearance")
+    standardButtons: Dialog.Ok | Dialog.Cancel
+
     contentItem: ScrollView {
         contentWidth: root.contentWidth
 
@@ -161,9 +161,6 @@ MpvqcDialog {
             ListView {
                 id: _themeListView
                 objectName: "themeListView"
-
-                Layout.preferredHeight: root.dimensions.itemSize
-                Layout.fillWidth: true
 
                 model: MpvqcThemePreviewModel {}
                 currentIndex: root.viewModel.themeIndex
@@ -194,6 +191,9 @@ MpvqcDialog {
 
                     onSelected: root.viewModel.setTheme(identifier)
                 }
+
+                Layout.preferredHeight: root.dimensions.itemSize
+                Layout.fillWidth: true
             }
 
             MpvqcHeader {
@@ -205,12 +205,6 @@ MpvqcDialog {
             GridView {
                 id: _gridView
                 objectName: "colorGridView"
-
-                Layout.preferredHeight: {
-                    const d = root.dimensions;
-                    return (d.itemSize + d.itemPadding) * d.colorGridRows;
-                }
-                Layout.fillWidth: true
 
                 model: MpvqcPrimaryColorModel {}
 
@@ -240,6 +234,12 @@ MpvqcDialog {
 
                     onSelected: root.viewModel.setPrimaryColor(identifier)
                 }
+
+                Layout.preferredHeight: {
+                    const d = root.dimensions;
+                    return (d.itemSize + d.itemPadding) * d.colorGridRows;
+                }
+                Layout.fillWidth: true
             }
         }
     }

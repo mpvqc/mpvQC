@@ -17,12 +17,6 @@ TestCase {
     when: windowShown
     name: "MpvqcShortcutDialog"
 
-    Component {
-        id: objectUnderTest
-
-        MpvqcShortcutDialog {}
-    }
-
     function makeDialog(): Dialog {
         const dialog = createTemporaryObject(objectUnderTest, testCase, {
             contentHeight: 540
@@ -113,5 +107,11 @@ TestCase {
 
         searchField.text = "ctrl+n";
         tryCompare(listView, "count", 1);
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcShortcutDialog {}
     }
 }

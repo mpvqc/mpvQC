@@ -14,22 +14,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    Component {
-        id: signalSpy
-
-        SignalSpy {}
-    }
-
-    Component {
-        id: objectUnderTest
-
-        MpvqcCommentListKeyHandler {
-            hasComments: true
-            ignoreEvents: false
-            currentIndex: 0
-        }
-    }
-
     function makeControl(properties: var): var {
         const control = createTemporaryObject(objectUnderTest, testCase, properties ?? {});
         verify(control);
@@ -442,5 +426,21 @@ TestCase {
         });
         control.handleKeyPress(data.event);
         data.verify(spy, data.event);
+    }
+
+    Component {
+        id: signalSpy
+
+        SignalSpy {}
+    }
+
+    Component {
+        id: objectUnderTest
+
+        MpvqcCommentListKeyHandler {
+            hasComments: true
+            ignoreEvents: false
+            currentIndex: 0
+        }
     }
 }

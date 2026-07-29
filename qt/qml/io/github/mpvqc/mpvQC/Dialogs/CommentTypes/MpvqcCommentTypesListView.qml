@@ -150,11 +150,6 @@ ListView {
         leftInset: LayoutMirroring.enabled ? _scrollBar.visibleWidth : 0
         rightInset: LayoutMirroring.enabled ? 0 : _scrollBar.visibleWidth
 
-        M.Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.palette.rowSelectedText : foregroundColor
-        M.Material.background: backgroundColor
-
-        onPressed: root.currentIndex = index
-
         background: Rectangle {
             parent: _delegate.parent
             y: _delegate.y
@@ -173,6 +168,11 @@ ListView {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
         }
+
+        M.Material.foreground: ListView.isCurrentItem ? root.mpvqcTheme.palette.rowSelectedText : foregroundColor
+        M.Material.background: backgroundColor
+
+        onPressed: root.currentIndex = index
     }
 
     ScrollBar.vertical: ScrollBar {

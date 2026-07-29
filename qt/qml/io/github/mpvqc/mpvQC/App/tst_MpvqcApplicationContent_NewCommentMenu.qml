@@ -16,12 +16,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -86,5 +80,11 @@ TestCase {
         tryVerify(() => !menu.opened);
         it.expect.commentCount(control, 0);
         it.expect.commentListHasFocus(control);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

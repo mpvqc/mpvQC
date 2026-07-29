@@ -45,29 +45,26 @@ ItemDelegate {
         Label {
             objectName: "label"
 
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
-
             text: root.isNoVideo ? qsTranslate("ImportWizardDialog", "Skip video") : root.filename
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.Wrap
             maximumLineCount: 2
             elide: Text.ElideRight
 
-            HoverHandler {
-                id: _labelHover
-            }
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
 
             ToolTip.text: root.fullPath
             ToolTip.visible: !root.isNoVideo && _labelHover.hovered
             ToolTip.delay: MpvqcConstants.tooltipDelay
+
+            HoverHandler {
+                id: _labelHover
+            }
         }
 
         MpvqcIconLabel {
             objectName: "fromDocumentIcon"
-
-            Layout.preferredWidth: root.iconSize
-            Layout.preferredHeight: root.iconSize
 
             visible: root.foundInDocument
             iconColor: MpvqcTheme.palette.hint
@@ -77,13 +74,13 @@ ItemDelegate {
 
             //: Tooltip on the per-row icon — the candidate video is referenced by one of the QC documents being imported
             toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported QC document")
+
+            Layout.preferredWidth: root.iconSize
+            Layout.preferredHeight: root.iconSize
         }
 
         MpvqcIconLabel {
             objectName: "fromSubtitleIcon"
-
-            Layout.preferredWidth: root.iconSize
-            Layout.preferredHeight: root.iconSize
 
             visible: root.foundInSubtitle
             iconColor: MpvqcTheme.palette.hint
@@ -93,6 +90,9 @@ ItemDelegate {
 
             //: Tooltip on the per-row icon — the candidate video is referenced by one of the subtitle files being imported
             toolTipText: qsTranslate("ImportWizardDialog", "Referenced by an imported subtitle file")
+
+            Layout.preferredWidth: root.iconSize
+            Layout.preferredHeight: root.iconSize
         }
     }
 }

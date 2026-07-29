@@ -16,12 +16,6 @@ TestCase {
     visible: true
     when: windowShown
 
-    TestHelpers {
-        id: it
-
-        testCase: testCase
-    }
-
     function init(): void {
         it.resetState();
     }
@@ -60,5 +54,11 @@ TestCase {
         tryVerify(() => spy.count === 1);
         compare(spy.signalArguments[0][0], 800);
         compare(spy.signalArguments[0][1], 600);
+    }
+
+    TestHelpers {
+        id: it
+
+        testCase: testCase
     }
 }

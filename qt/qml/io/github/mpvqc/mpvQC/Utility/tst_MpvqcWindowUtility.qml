@@ -11,12 +11,6 @@ TestCase {
     id: testCase
     name: "MpvqcWindowUtility"
 
-    Item {
-        id: frame
-        width: 300
-        height: 200
-    }
-
     function cleanup(): void {
         MpvqcWindowUtility.contentFrame = null;
     }
@@ -108,5 +102,11 @@ TestCase {
         const result = MpvqcWindowUtility.isInBottomRegion(frame, 0, data.y, data.pixels);
 
         compare(result, data.expected);
+    }
+
+    Item {
+        id: frame
+        width: 300
+        height: 200
     }
 }

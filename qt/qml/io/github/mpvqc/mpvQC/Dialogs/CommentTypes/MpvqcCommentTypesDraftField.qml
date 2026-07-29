@@ -39,12 +39,12 @@ ColumnLayout {
             id: _addField
             objectName: "commentTypeTextField"
 
-            Layout.fillWidth: true
-            ContextMenu.menu: null
-
             selectByMouse: true
             horizontalAlignment: Text.AlignLeft
             placeholderText: qsTranslate("CommentTypesDialog", "New comment type")
+
+            Layout.fillWidth: true
+            ContextMenu.menu: null
 
             onAccepted: root.addRequested()
         }

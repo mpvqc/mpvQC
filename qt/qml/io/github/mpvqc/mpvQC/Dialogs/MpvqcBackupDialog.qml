@@ -31,11 +31,11 @@ MpvqcDialog {
         MpvqcSwitchRow {
             objectName: "backupEnabledRow"
 
-            Layout.topMargin: 20
-            Layout.fillWidth: true
-
             label: qsTranslate("BackupDialog", "Backup Enabled")
             checked: root.viewModel.temporaryBackupEnabled
+
+            Layout.topMargin: 20
+            Layout.fillWidth: true
 
             onToggled: state => {
                 root.viewModel.temporaryBackupEnabled = state;
@@ -64,14 +64,15 @@ MpvqcDialog {
             text: qsTranslate("BackupDialog", "Backup Location")
             icon.source: MpvqcIcons.folderOpen
             hoverEnabled: true
+
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 40
-
-            onPressed: root.viewModel.openBackupDirectory()
 
             ToolTip.delay: 350
             ToolTip.text: root.viewModel.backupDirectory
             ToolTip.visible: hovered
+
+            onPressed: root.viewModel.openBackupDirectory()
         }
 
         Item {

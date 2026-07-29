@@ -20,10 +20,6 @@ TestCase {
 
     readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
 
-    readonly property Component _dialogComponent: Component {
-        MpvqcImportWizardDialog {}
-    }
-
     readonly property var open: QtObject {
         function scenario(name: string): QtObject {
             const viewModel = testCase.bridge.buildWizardViewModel(name);
@@ -95,26 +91,6 @@ TestCase {
         }
     }
 
-    function _collectAll(root: Item, objectName: string): list<Item> {
-        const found = [];
-        function visit(item: Item): void {
-            if (!item) {
-                return;
-            }
-            if (item.objectName === objectName) {
-                found.push(item);
-            }
-            const kids = item.children;
-            if (kids) {
-                for (let i = 0; i < kids.length; i++) {
-                    visit(kids[i]);
-                }
-            }
-        }
-        visit(root);
-        return found;
-    }
-
     readonly property var pick: QtObject {
         function video(dlg: QtObject, index: int): void {
             const list = testCase.find.videoList(dlg);
@@ -162,13 +138,6 @@ TestCase {
         }
     }
 
-    function _waitForStepSettled(dlg: QtObject): void {
-        const stepView = findChild(dlg.contentItem, "stepView");
-        verify(stepView, "stepView not found");
-        tryVerify(() => !stepView.busy);
-        waitForRendering(dlg.contentItem);
-    }
-
     readonly property var expect: QtObject {
         function currentStep(dlg: QtObject, index: int): void {
             testCase.tryCompare(dlg.viewModel, "currentStepIndex", index);
@@ -214,6 +183,37 @@ TestCase {
                 return opened.length === names.length && names.every(n => opened.indexOf(n) >= 0);
             });
         }
+    }
+
+    readonly property Component _dialogComponent: Component {
+        MpvqcImportWizardDialog {}
+    }
+
+    function _collectAll(root: Item, objectName: string): list<Item> {
+        const found = [];
+        function visit(item: Item): void {
+            if (!item) {
+                return;
+            }
+            if (item.objectName === objectName) {
+                found.push(item);
+            }
+            const kids = item.children;
+            if (kids) {
+                for (let i = 0; i < kids.length; i++) {
+                    visit(kids[i]);
+                }
+            }
+        }
+        visit(root);
+        return found;
+    }
+
+    function _waitForStepSettled(dlg: QtObject): void {
+        const stepView = findChild(dlg.contentItem, "stepView");
+        verify(stepView, "stepView not found");
+        tryVerify(() => !stepView.busy);
+        waitForRendering(dlg.contentItem);
     }
 
     function init(): void {

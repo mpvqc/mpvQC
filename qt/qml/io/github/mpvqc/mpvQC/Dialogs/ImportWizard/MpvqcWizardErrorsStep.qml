@@ -30,9 +30,6 @@ ColumnLayout {
         id: _listView
         objectName: "errorList"
 
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
         model: root.viewModel.documents
         clip: true
         boundsBehavior: Flickable.StopAtBounds
@@ -60,39 +57,39 @@ ColumnLayout {
                 spacing: 12
 
                 MpvqcIconLabel {
-                    Layout.preferredWidth: _delegate.iconSize
-                    Layout.preferredHeight: _delegate.iconSize
-
                     iconColor: MpvqcTheme.palette.error
                     icon.source: MpvqcIcons.error
                     icon.width: _delegate.iconSize
                     icon.height: _delegate.iconSize
+
+                    Layout.preferredWidth: _delegate.iconSize
+                    Layout.preferredHeight: _delegate.iconSize
                 }
 
                 ColumnLayout {
-                    Layout.fillWidth: true
-
                     spacing: 2
+
+                    Layout.fillWidth: true
 
                     Label {
                         objectName: "filenameLabel"
 
-                        Layout.fillWidth: true
-
                         text: _delegate.filename
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
+
+                        Layout.fillWidth: true
                     }
 
                     Label {
                         objectName: "reasonLabel"
 
-                        Layout.fillWidth: true
-
                         text: _delegate.reason
                         color: MpvqcTheme.palette.hint
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
+
+                        Layout.fillWidth: true
                     }
                 }
             }
@@ -101,6 +98,9 @@ ColumnLayout {
             ToolTip.visible: hovered
             ToolTip.delay: MpvqcConstants.tooltipDelay
         }
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         ScrollBar.vertical: ScrollBar {
             id: _scrollBar
