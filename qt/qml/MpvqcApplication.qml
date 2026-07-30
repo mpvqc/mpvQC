@@ -17,8 +17,9 @@ ApplicationWindow {
     width: 1280
     height: 720
 
-    minimumWidth: 960
-    minimumHeight: 540
+    // The minimum is meant for the window geometry; the surface adds the drop shadow margin on both sides.
+    minimumWidth: 960 + 2 * MpvqcWindowUtility.dropShadowMargin
+    minimumHeight: 540 + 2 * MpvqcWindowUtility.dropShadowMargin
 
     visible: false
     color: MpvqcWindowUtility.drawsDropShadow ? "transparent" : M.Material.background
@@ -47,11 +48,15 @@ ApplicationWindow {
 
     Rectangle {
         id: _frame
+        objectName: "windowFrame"
 
         anchors.fill: parent
         anchors.margins: MpvqcWindowUtility.dropShadowMargin
         radius: MpvqcWindowUtility.windowRadius
         color: M.Material.background
+
+        // Overflowing content must not paint into the drop shadow margin.
+        clip: MpvqcWindowUtility.dropShadowMargin > 0
 
         MpvqcApplicationContent {
             id: _content
