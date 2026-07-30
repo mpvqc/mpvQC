@@ -13,12 +13,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcImportFoundVideo(QObject):
+    @QEnum
     class ImportFoundVideo(IntEnum):
         ALWAYS = 0
         ASK_EVERY_TIME = 1
         NEVER = 2
-
-    QEnum(ImportFoundVideo)
 
 
 ImportFoundVideo = MpvqcImportFoundVideo.ImportFoundVideo

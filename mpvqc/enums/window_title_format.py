@@ -13,12 +13,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcWindowTitleFormat(QObject):
+    @QEnum
     class WindowTitleFormat(IntEnum):
         DEFAULT = 0
         FILE_NAME = 1
         FILE_PATH = 2
-
-    QEnum(WindowTitleFormat)
 
 
 WindowTitleFormat = MpvqcWindowTitleFormat.WindowTitleFormat

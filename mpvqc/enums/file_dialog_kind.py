@@ -13,6 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcFileDialogKind(QObject):
+    @QEnum
     class FileDialogKind(IntEnum):
         EXPORT_CLASSIC_DOCUMENT = auto()
         EXPORT_CUSTOM_DOCUMENT = auto()
@@ -20,8 +21,6 @@ class MpvqcFileDialogKind(QObject):
         IMPORT_SUBTITLES = auto()
         IMPORT_VIDEO = auto()
         SAVE_DOCUMENT = auto()
-
-    QEnum(FileDialogKind)
 
 
 FileDialogKind = MpvqcFileDialogKind.FileDialogKind

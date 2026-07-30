@@ -13,13 +13,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcTimeFormat(QObject):
+    @QEnum
     class TimeFormat(IntEnum):
         EMPTY = 0
         CURRENT_TIME = 1
         REMAINING_TIME = 2
         CURRENT_TOTAL_TIME = 3
-
-    QEnum(TimeFormat)
 
 
 TimeFormat = MpvqcTimeFormat.TimeFormat
