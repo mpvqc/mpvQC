@@ -64,6 +64,10 @@ class CommentsService(QObject):
     def count(self) -> int:
         return self._store.rowCount()
 
+    @property
+    def distinct_comment_types(self) -> frozenset[str]:
+        return self._store.distinct_comment_types()
+
     def comments(self) -> tuple[Comment, ...]:
         return self._store.comments()
 

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import bisect
 import itertools
+from collections import Counter
 from dataclasses import dataclass
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Protocol, override
@@ -15,13 +16,40 @@ from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelInde
 from .roles import ROLE_NAMES, Role
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
 
     from PySide6.QtCore import QByteArray, QObject
 
     from mpvqc.datamodels import Comment
 
 _seq_counter = itertools.count()
+
+
+class TypeTally:
+    def __init__(self) -> None:
+        self._counts: Counter[str] = Counter()
+
+    def add(self, comment_type: str) -> None:
+        self._counts[comment_type] += 1
+
+    def remove(self, comment_type: str) -> None:
+        remaining = self._counts[comment_type] - 1
+        if remaining > 0:
+            self._counts[comment_type] = remaining
+        else:
+            del self._counts[comment_type]
+
+    def swap(self, old: str, new: str) -> None:
+        if old == new:
+            return
+        self.remove(old)
+        self.add(new)
+
+    def rebuild(self, comment_types: Iterable[str]) -> None:
+        self._counts = Counter(comment_types)
+
+    def distinct(self) -> frozenset[str]:
+        return frozenset(self._counts)
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +87,10 @@ class CommentStore(QAbstractListModel):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._rows: list[StoreItem] = []
+        self._types = TypeTally()
+
+    def distinct_comment_types(self) -> frozenset[str]:
+        return self._types.distinct()
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
@@ -121,20 +153,24 @@ class CommentStore(QAbstractListModel):
         self.aboutToInsertRow.emit(row)
         self.beginInsertRows(QModelIndex(), row, row)
         self._rows.insert(row, item)
+        self._types.add(item.comment.comment_type)
         self.endInsertRows()
 
     def remove(self, row: int) -> None:
         self.aboutToRemoveRow.emit(row)
         self.beginRemoveRows(QModelIndex(), row, row)
+        self._types.remove(self._rows[row].comment.comment_type)
         del self._rows[row]
         self.endRemoveRows()
 
     def replace(self, row: int, new_comment: Comment, role: Role) -> None:
+        self._types.swap(self._rows[row].comment.comment_type, new_comment.comment_type)
         self._rows[row] = StoreItem(new_comment, self._rows[row].seq)
         idx = self.index(row)
         self.dataChanged.emit(idx, idx, [role])
 
     def move_replace(self, src: int, dst: int, new_comment: Comment, role: Role) -> None:
+        self._types.swap(self._rows[src].comment.comment_type, new_comment.comment_type)
         seq = self._rows[src].seq
         if src == dst:
             self._rows[src] = StoreItem(new_comment, seq)
@@ -152,4 +188,5 @@ class CommentStore(QAbstractListModel):
     def reset(self, items: Sequence[StoreItem]) -> None:
         self.beginResetModel()
         self._rows = list(items)
+        self._types.rebuild(r.comment.comment_type for r in self._rows)
         self.endResetModel()
