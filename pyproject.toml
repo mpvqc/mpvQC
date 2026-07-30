@@ -248,6 +248,7 @@ files = [
     "mpvqc/services/settings.py",
     "mpvqc/services/state.py",
     "mpvqc/services/theme.py",
+    "mpvqc/services/time_format_policy.py",
     "mpvqc/services/type_mapper.py",
     "mpvqc/services/version_checker.py",
     "mpvqc/services/video_resize.py",
