@@ -16,8 +16,14 @@ TestCase {
 
     property Component utilityComponent: Qt.createComponent("MpvqcTableUtility.qml")
 
-    function makeUtility(properties: var): var {
-        const utility = createTemporaryObject(utilityComponent, testCase, properties ?? {});
+    function makeUtility(useLongFormat = false): var {
+        const viewModel = createTemporaryObject(viewModelMockComponent, testCase, {
+            tableLongFormat: useLongFormat
+        });
+        verify(viewModel);
+        const utility = createTemporaryObject(utilityComponent, testCase, {
+            viewModel
+        });
         verify(utility);
         return utility;
     }
@@ -100,9 +106,7 @@ TestCase {
     }
 
     function test_formatTime(data): void {
-        const utility = makeUtility({
-            useLongFormat: data.useLongFormat
-        });
+        const utility = makeUtility(data.useLongFormat);
         compare(utility.formatTime(data.milliseconds), data.expected);
     }
 
@@ -162,7 +166,7 @@ TestCase {
     }
 
     function test_sanitizeText(data): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
 
         // Call twice with the same fresh input to guard against accidental
         // statefulness in the shared `_reForbidden` regex (e.g. lastIndex
@@ -225,40 +229,48 @@ TestCase {
     }
 
     function test_highlightComment(data): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
         compare(utility.highlightComment(data.comment, data.highlight), data.expected);
     }
 
     function test_highlightComment_isStableAcrossRepeatedQueries(): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
         compare(utility.highlightComment("Hello world", "world"), "Hello <b><u>world</u></b>");
         compare(utility.highlightComment("another world here", "world"), "another <b><u>world</u></b> here");
         compare(utility.highlightComment("no match here", "world"), "no match here");
     }
 
     function test_highlightComment_recompilesWhenQueryChanges(): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
         compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
         compare(utility.highlightComment("foo bar", "bar"), "foo <b><u>bar</u></b>");
         compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
     }
 
     function test_highlightComment_returnsCommentUnchangedForEmptyQuery(): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
         compare(utility.highlightComment("Hello world", ""), "Hello world");
     }
 
     function test_highlightComment_emptyQueryBetweenSameQueryStillHighlights(): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
         compare(utility.highlightComment("Hello world", "world"), "Hello <b><u>world</u></b>");
         compare(utility.highlightComment("Hello world", ""), "Hello world");
         compare(utility.highlightComment("Hello world", "world"), "Hello <b><u>world</u></b>");
     }
 
     function test_highlightComment_emptyQueryBetweenDifferentQueriesStillHighlights(): void {
-        const utility = makeUtility({});
+        const utility = makeUtility();
         compare(utility.highlightComment("foo bar", "foo"), "<b><u>foo</u></b> bar");
         compare(utility.highlightComment("foo bar", ""), "foo bar");
         compare(utility.highlightComment("foo bar", "bar"), "foo <b><u>bar</u></b>");
+    }
+
+    Component {
+        id: viewModelMockComponent
+
+        QtObject {
+            property bool tableLongFormat: false
+        }
     }
 }

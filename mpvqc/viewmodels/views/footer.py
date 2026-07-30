@@ -7,12 +7,16 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.enums import TimeFormat
-from mpvqc.services import LabelWidthCalculatorService, PlayerService, SettingsService, TimeFormatterService
+from mpvqc.services import (
+    LabelWidthCalculatorService,
+    PlayerService,
+    SettingsService,
+    TimeFormatPolicyService,
+    TimeFormatterService,
+)
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
-
-SECONDS_PER_HOUR = 3600
 
 
 @QmlElement
@@ -186,7 +190,7 @@ class MpvqcFooterViewModel(QObject):
     def _derive_time_text(self) -> str:
         if not self._video_loaded:
             return ""
-        long_format = self._duration >= SECONDS_PER_HOUR
+        long_format = TimeFormatPolicyService.uses_long_format(self._duration)
         match self._time_format:
             case TimeFormat.CURRENT_TIME:
                 return self._formatter.format_time_to_string(self._time_pos, long_format=long_format)

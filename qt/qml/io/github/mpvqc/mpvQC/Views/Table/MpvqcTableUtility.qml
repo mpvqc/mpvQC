@@ -10,9 +10,9 @@ import io.github.mpvqc.mpvQC.Python
 
 QtObject {
     // Mutable, not readonly: the QML test harness swaps in a fresh view model per test.
-    property MpvqcTableUtilityViewModel viewModel: MpvqcTableUtilityViewModel {}
+    property var viewModel: MpvqcTableUtilityViewModel {}
 
-    readonly property bool useLongFormat: viewModel.duration >= 3600
+    readonly property bool useLongFormat: viewModel.tableLongFormat
     readonly property var _reForbidden: /[\u00AD\r\n]/gi
 
     readonly property var _highlightCache: ({

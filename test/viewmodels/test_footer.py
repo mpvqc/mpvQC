@@ -82,6 +82,9 @@ def test_percentText(view_model):
         (True, TimeFormat.REMAINING_TIME.value, 7200.0, 3661, 3539, "-00:58:59"),
         (True, TimeFormat.CURRENT_TOTAL_TIME.value, 125.0, 65, 60, "01:05/02:05"),
         (True, TimeFormat.CURRENT_TOTAL_TIME.value, 7200.0, 3661, 3539, "01:01:01/02:00:00"),
+        (True, TimeFormat.CURRENT_TIME.value, 3599.0, 65, 3534, "01:05"),
+        (True, TimeFormat.CURRENT_TIME.value, 3600.0, 65, 3535, "00:01:05"),
+        (True, TimeFormat.CURRENT_TOTAL_TIME.value, 3600.0, 3600, 0, "01:00:00/01:00:00"),
     ],
 )
 def test_timeText(view_model, video_loaded, time_format, duration, time_pos, time_remaining, expected):

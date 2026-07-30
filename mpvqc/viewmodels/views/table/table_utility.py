@@ -6,7 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import PlayerService
+from mpvqc.services import TimeFormatPolicyService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -14,14 +14,14 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcTableUtilityViewModel(QObject):
-    _player = inject.attr(PlayerService)
+    _policy = inject.attr(TimeFormatPolicyService)
 
-    durationChanged = Signal(float)
+    tableLongFormatChanged = Signal(bool)
 
     def __init__(self, /) -> None:
         super().__init__()
-        self._player.duration_changed.connect(self.durationChanged)
+        self._policy.table_long_format_changed.connect(self.tableLongFormatChanged)
 
-    @Property(float, notify=durationChanged)
-    def duration(self) -> float:
-        return self._player.duration
+    @Property(bool, notify=tableLongFormatChanged)
+    def tableLongFormat(self) -> bool:
+        return self._policy.table_long_format
