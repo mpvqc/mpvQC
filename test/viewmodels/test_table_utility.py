@@ -38,45 +38,45 @@ def _comment_at(time: int) -> Comment:
 
 def test_long_comment_flips_to_long_format_without_video(view_model, comments, make_spy):
     spy = make_spy(view_model.tableLongFormatChanged)
-    assert view_model.tableLongFormat is False
+    assert not view_model.tableLongFormat
 
     comments.import_comments([_comment_at(ONE_HOUR_MS)])
 
-    assert view_model.tableLongFormat is True
+    assert view_model.tableLongFormat
     assert spy.count() == 1
     assert spy.at(invocation=0, argument=0) is True
 
 
 def test_long_comment_with_shorter_video_uses_long_format(view_model, comments, player_service_mock):
     player_service_mock.update(video_loaded=True, duration=125.0)
-    assert view_model.tableLongFormat is False
+    assert not view_model.tableLongFormat
 
     comments.import_comments([_comment_at(5_400_000)])
 
-    assert view_model.tableLongFormat is True
+    assert view_model.tableLongFormat
 
 
 def test_undo_returns_to_short_format(view_model, comments):
     comments.import_comments([_comment_at(ONE_HOUR_MS)])
-    assert view_model.tableLongFormat is True
+    assert view_model.tableLongFormat
 
     comments.undo()
 
-    assert view_model.tableLongFormat is False
+    assert not view_model.tableLongFormat
 
 
 def test_reset_returns_to_short_format(view_model, comments):
     comments.import_comments([_comment_at(ONE_HOUR_MS)])
-    assert view_model.tableLongFormat is True
+    assert view_model.tableLongFormat
 
     comments.reset()
 
-    assert view_model.tableLongFormat is False
+    assert not view_model.tableLongFormat
 
 
 def test_duration_of_exactly_one_hour_uses_long_format(view_model, player_service_mock):
     player_service_mock.update(duration=3600.0)
-    assert view_model.tableLongFormat is True
+    assert view_model.tableLongFormat
 
     player_service_mock.update(duration=3599.0)
-    assert view_model.tableLongFormat is False
+    assert not view_model.tableLongFormat

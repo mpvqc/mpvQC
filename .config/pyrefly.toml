@@ -5,6 +5,7 @@
 python-version = "3.13"
 project-includes = ["../**/*.py*"]
 search-path = [".."]
+min-severity = "warn"
 
 [errors]
 missing-override-decorator = "error"
