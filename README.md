@@ -3,7 +3,9 @@
 <img alt="Logo" src="data/icon.svg" width="128" height="128"/>
 
 [![Latest release](https://img.shields.io/github/v/release/mpvqc/mpvQC)](https://github.com/mpvqc/mpvQC/releases/latest)
+[![Platforms](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-informational)](https://github.com/mpvqc/mpvQC/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/mpvqc/mpvQC/total)](https://github.com/mpvqc/mpvQC/releases)
+
 [![Pipeline](https://github.com/mpvqc/mpvQC/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/mpvqc/mpvQC/actions/workflows/release.yml)
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSES/GPL-3.0-or-later.txt)
 [![REUSE status](https://api.reuse.software/badge/github.com/mpvqc/mpvQC)](https://api.reuse.software/info/github.com/mpvqc/mpvQC)
