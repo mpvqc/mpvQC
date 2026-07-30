@@ -23,7 +23,7 @@ class SurfaceHandler(Protocol):
 class NoSurfaceHandler:
     """For platforms where the app draws no drop shadow."""
 
-    def drop_shadow_margin(self, window: QWindow) -> int:  # noqa: ARG002
+    def drop_shadow_margin(self, window: QWindow) -> int:  # ruff: ignore[unused-method-argument]
         return 0
 
     def on_drop_shadow_margin_changed(self, callback: Callable[[int], None]) -> None:

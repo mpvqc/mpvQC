@@ -11,7 +11,7 @@ from PySide6.QtCore import QCoreApplication, QObject, QResource, Qt, Slot
 from PySide6.QtQml import QQmlEngine
 from PySide6.QtQuickTest import QUICK_TEST_MAIN_WITH_SETUP
 
-import testqml.bridge  # noqa: F401, registers MpvqcTestBridge
+import testqml.bridge  # ruff: ignore[unused-import], registers MpvqcTestBridge
 from mpvqc import startup
 from testqml.injections import TEMP_ROOT, configure_injections
 

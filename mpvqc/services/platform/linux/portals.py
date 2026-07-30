@@ -111,7 +111,7 @@ class SettingsPortal:
             return None
 
     def _read_setting(self, interface: QDBusInterface, namespace: str, key: str, portal_version: int) -> str | None:
-        if portal_version >= 2:  # noqa: PLR2004
+        if portal_version >= 2:  # ruff: ignore[magic-value-comparison]
             method_name = "ReadOne"
         else:
             method_name = "Read"
@@ -125,7 +125,7 @@ class SettingsPortal:
 
         dbus_variant = reply.arguments()[0]
 
-        if portal_version >= 2:  # noqa: SIM108,PLR2004
+        if portal_version >= 2:  # ruff: ignore[if-else-block-instead-of-if-exp, magic-value-comparison]
             value = dbus_variant.variant()
         else:
             value = dbus_variant.variant().variant()
