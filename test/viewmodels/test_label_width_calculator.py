@@ -90,14 +90,15 @@ def test_comment_types_width_follows_displayable_types(view_model, comment_types
 
 
 def test_comment_types_width_recomputes_on_retranslation(qt_app, view_model, comment_types_policy_mock, make_spy):
-    comment_types_policy_mock.change_displayable_types("Translation")
+    # "Spelling" -> "Rechtschreibung" grows on every font engine; near-equal pairs tie on Windows.
+    comment_types_policy_mock.change_displayable_types("Spelling")
     spy = make_spy(view_model.commentTypesLabelWidthChanged)
     english_width = view_model.commentTypesLabelWidth
     assert english_width > 0
 
     inject.instance(InternationalizationService).retranslate(qt_app, "de-DE")
 
-    assert view_model.commentTypesLabelWidth != english_width
+    assert view_model.commentTypesLabelWidth > english_width
     assert spy.count() == 1
     assert spy.at(invocation=0, argument=0) == view_model.commentTypesLabelWidth
 
