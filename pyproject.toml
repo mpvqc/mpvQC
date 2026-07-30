@@ -172,6 +172,7 @@ files = [
     "mpvqc/services/application_paths.py",
     "mpvqc/services/build_info.py",
     "mpvqc/services/comment_type_validator.py",
+    "mpvqc/services/comment_types_policy.py",
     "mpvqc/services/comments/__init__.py",
     "mpvqc/services/comments/commands.py",
     "mpvqc/services/comments/history.py",

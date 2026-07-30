@@ -17,6 +17,15 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Close-only mode**: wizard state when errors are the only step and nothing importable remains. The user can only
   close the wizard. `WizardDialogPolicy` decides this once for both title and footer.
 
+## Comments
+
+- **Unknown comment type**: a type a comment carries that is not in the configured list. Imported documents introduce
+  them; removing a configured type leaves them behind. They render and export verbatim, since they have no translation
+  catalog entry.
+- **Displayable comment types**: the types the comment table may show: every configured type plus every type present in
+  the document. The table reserves label space for all of them. The new-comment menu (configured types only) and the
+  edit-type menu (configured types plus the row's own type) show different sets by design.
+
 ## UI
 
 - **Overlay**: a dialog, file dialog, or message box that floats above the app, is loaded on demand, and returns focus
