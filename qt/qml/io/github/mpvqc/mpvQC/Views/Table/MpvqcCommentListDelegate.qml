@@ -142,8 +142,10 @@ Item {
 
             text: qsTranslate("CommentTypes", root.commentType)
             horizontalAlignment: Text.AlignLeft
+            elide: Text.ElideRight
 
-            width: MpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding
+            // Capped so a pathological type name cannot squeeze the comment column out.
+            width: Math.min(MpvqcLabelWidthCalculator.commentTypesLabelWidth + leftPadding + rightPadding, root.width / 3)
             height: root.height
 
             leftPadding: root.horizontalItemPadding
