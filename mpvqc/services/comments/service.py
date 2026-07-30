@@ -40,6 +40,7 @@ class CommentsService(QObject):
 
     view_action = Signal(object)  # ViewAction union; Qt sigs can't carry type aliases
     dirty = Signal()
+    comments_changed = Signal()
     about_to_import = Signal()
 
     def __init__(self, parent: QObject | None = None) -> None:
@@ -119,6 +120,7 @@ class CommentsService(QObject):
         self._store.reset(())
         # pyrefly: ignore [bad-assignment]
         self._selection.selectedRow = -1
+        self.comments_changed.emit()
 
     def undo(self) -> None:
         self._history.disarm_merge()
@@ -147,6 +149,7 @@ class CommentsService(QObject):
         if cmd.invalidates_search:
             self._search.invalidate()
         self.dirty.emit()
+        self.comments_changed.emit()
         self._emit_view_action(action)
 
     def _emit_view_action(self, action: ViewAction) -> None:
