@@ -13,11 +13,10 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcImportWizardSessionMode(QObject):
+    @QEnum
     class SessionMode(IntEnum):
         MERGE = auto()
         REPLACE = auto()
-
-    QEnum(SessionMode)
 
 
 SessionMode = MpvqcImportWizardSessionMode.SessionMode

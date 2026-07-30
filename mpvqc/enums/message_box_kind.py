@@ -13,14 +13,13 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcMessageBoxKind(QObject):
+    @QEnum
     class MessageBoxKind(IntEnum):
         CUSTOM_EXPORT = auto()
         EXPORT_ERROR = auto()
         QUIT = auto()
         RESET = auto()
         VERSION_CHECK = auto()
-
-    QEnum(MessageBoxKind)
 
 
 MessageBoxKind = MpvqcMessageBoxKind.MessageBoxKind

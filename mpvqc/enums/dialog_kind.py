@@ -13,6 +13,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcDialogKind(QObject):
+    @QEnum
     class DialogKind(IntEnum):
         ABOUT = auto()
         APPEARANCE = auto()
@@ -24,8 +25,6 @@ class MpvqcDialogKind(QObject):
         IMPORT_SETTINGS = auto()
         IMPORT_WIZARD = auto()
         KEYBOARD_SHORTCUTS = auto()
-
-    QEnum(DialogKind)
 
 
 DialogKind = MpvqcDialogKind.DialogKind

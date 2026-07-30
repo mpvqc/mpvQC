@@ -13,13 +13,12 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcImportWizardStepKind(QObject):
+    @QEnum
     class StepKind(IntEnum):
         ERRORS = auto()
         SESSION = auto()
         VIDEO = auto()
         SUBTITLES = auto()
-
-    QEnum(StepKind)
 
 
 StepKind = MpvqcImportWizardStepKind.StepKind
