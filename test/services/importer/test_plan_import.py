@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from mpvqc.enums import ImportFoundVideo
+from mpvqc.datamodels import ImportFoundVideo
 from mpvqc.services.importer import FinishedPlan, UnfinishedPlan, errors, session, subtitles, video
 from mpvqc.services.importer.plan import plan_import
 

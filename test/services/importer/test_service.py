@@ -11,8 +11,7 @@ from unittest.mock import MagicMock
 import inject
 import pytest
 
-from mpvqc.datamodels import Comment, VideoSource
-from mpvqc.enums import ImportFoundVideo
+from mpvqc.datamodels import Comment, ImportFoundVideo, VideoSource
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.importer import FinishedPlan, ImporterService, UnfinishedPlan, errors, session, subtitles, video
 from mpvqc.services.player import PlayerService

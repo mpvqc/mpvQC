@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum, IntEnum, auto
 from pathlib import Path
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP
@@ -29,6 +29,12 @@ class SubtitleSource:
     path: Path
     explicitly_provided: bool = False
     found_in_document: bool = False
+
+
+class ImportFoundVideo(IntEnum):
+    ALWAYS = 0
+    ASK_EVERY_TIME = 1
+    NEVER = 2
 
 
 class DocumentRejectionReason(Enum):

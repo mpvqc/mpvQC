@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, override
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import ImportFoundVideo
+from mpvqc.datamodels import ImportFoundVideo
 
 if TYPE_CHECKING:
     from typing import Any

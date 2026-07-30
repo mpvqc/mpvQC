@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 
-from mpvqc.enums import ImportFoundVideo
+from mpvqc.datamodels import ImportFoundVideo
 from mpvqc.jobs import Err, Ok, SerialJobRunner
 from mpvqc.services.comments import CommentsService
 from mpvqc.services.player import PlayerService
