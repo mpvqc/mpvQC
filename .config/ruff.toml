@@ -65,6 +65,14 @@ ignore = [
     "INP",          # build-aux is not a package
 ]
 
+"build-aux/pyside_project_build.py" = [
+    "SLF",                               # The driver's job is patching private PySide6 internals
+]
+
+"build-aux/test_pyside_project_build.py" = [
+    "SLF",                                    # Pins the source of the private upstream functions the driver mirrors
+]
+
 "test/**" = [                 # Adjust rules for test files
     "ANN",                    # Ignore missing type annotations in tests
     "ARG",                    # Ignore unused arguments (common in fixtures)

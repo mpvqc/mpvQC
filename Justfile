@@ -84,7 +84,8 @@ set-build-info:
 # Build and compile resources into source directory
 [group('build')]
 @build-develop: _generate-qrc-file _update_pyproject_file
-    uv run pyside6-project build
+    # Fast replacement for: uv run pyside6-project build
+    uv run python build-aux/pyside_project_build.py
     uv run pyside6-rcc --binary project.qrc -o project.rcc
     grep -qxF 'depends QtQml.Models' io/github/mpvqc/mpvQC/Python/qmldir || echo 'depends QtQml.Models' >> io/github/mpvqc/mpvQC/Python/qmldir
 
