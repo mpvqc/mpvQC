@@ -484,6 +484,7 @@ files = [
     "qt/qml/MpvqcStyle/ToolButton.qml",
     "qt/qml/MpvqcStyle/ToolSeparator.qml",
     "qt/qml/MpvqcStyle/ToolTip.qml",
+    "qt/qml/tst_MpvqcApplication.qml",
     "testqml/__init__.py",
     "testqml/bridge.py",
     "testqml/fixtures/portable-root/appdata/backups/.keep",
