@@ -20,8 +20,8 @@ from PySide6.QtCore import (
     Signal,
 )
 
-from mpvqc.datamodels import LANGUAGES
-from mpvqc.enums import ImportFoundVideo, TimeFormat, WindowTitleFormat
+from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
+from mpvqc.enums import TimeFormat, WindowTitleFormat
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService

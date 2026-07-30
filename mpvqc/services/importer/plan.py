@@ -14,8 +14,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
     from pathlib import Path
 
-    from mpvqc.datamodels import Comment
-    from mpvqc.enums import ImportFoundVideo
+    from mpvqc.datamodels import Comment, ImportFoundVideo
 
     from .scanner import ScanResult
 

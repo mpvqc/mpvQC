@@ -7,7 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, assert_never
 
-from mpvqc.enums import ImportFoundVideo
+from mpvqc.datamodels import ImportFoundVideo
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -152,7 +152,6 @@ files = [
     "mpvqc/enums/__init__.py",
     "mpvqc/enums/dialog_kind.py",
     "mpvqc/enums/file_dialog_kind.py",
-    "mpvqc/enums/import_found_video.py",
     "mpvqc/enums/import_wizard_session_mode.py",
     "mpvqc/enums/import_wizard_step_kind.py",
     "mpvqc/enums/message_box_kind.py",
