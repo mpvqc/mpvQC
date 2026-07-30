@@ -48,7 +48,7 @@ class VersionCheckerService:
 
     def _get_latest_version(self) -> str:
         if (version := self._cached_version) is None:
-            with urllib.request.urlopen(_UPDATE_URL, timeout=5) as connection:  # noqa: S310
+            with urllib.request.urlopen(_UPDATE_URL, timeout=5) as connection:  # ruff: ignore[suspicious-url-open-usage]
                 text = connection.read().decode("utf-8").strip()
                 version = f"{json.loads(text)['latest']}".strip()
             self._cached_version = version

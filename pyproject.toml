@@ -17,7 +17,7 @@ classifiers = [
 dependencies = [
     "Jinja2>=3.1.6",
     "PySide6-Essentials==6.11.1",
-    "inject>=5.4.1",
+    "inject>=5.5.0",
     "mpv>=1.0.8",
 ]
 
@@ -29,13 +29,16 @@ Repository = "https://github.com/mpvqc/mpvQC"
 [dependency-groups]
 dev = [
     "jsonschema>=4.26.0",
-    "materialyoucolor>=3.0.2",
-    "prek>=0.4.5",
+    "materialyoucolor>=3.0.3",
+    "prek>=0.4.11",
     "pyrefly>=1.1.1",
     "pytest>=9.1.1",
-    "ruff>=0.15.20",
+    "ruff>=0.16.0",
     "types-jsonschema>=4.26.0.20260518",
 ]
+
+[tool.uv]
+required-version = ">=0.12.0"
 
 [tool.pyside6-project]
 files = [

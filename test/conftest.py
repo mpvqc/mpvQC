@@ -43,7 +43,7 @@ class PlayerMock(QObject):
         self.time_remaining = 0
         self.percent_pos = 0
 
-    def update(self, **kwargs):  # noqa: C901
+    def update(self, **kwargs):  # ruff: ignore[complex-structure]
         for key, value in kwargs.items():
             if hasattr(self, key):
                 old_value = getattr(self, key)

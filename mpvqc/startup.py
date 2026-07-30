@@ -67,11 +67,11 @@ def configure_environment_variables() -> None:
 
 
 def import_mpvqc_bindings() -> None:
-    import mpvqc.dialogs  # noqa: F401
-    import mpvqc.enums  # noqa: F401
-    import mpvqc.models  # noqa: F401
-    import mpvqc.viewmodels  # noqa: F401
-    import mpvqc.views  # noqa: F401
+    import mpvqc.dialogs  # ruff: ignore[unused-import]
+    import mpvqc.enums  # ruff: ignore[unused-import]
+    import mpvqc.models  # ruff: ignore[unused-import]
+    import mpvqc.viewmodels  # ruff: ignore[unused-import]
+    import mpvqc.views  # ruff: ignore[unused-import]
 
 
 def start_application(process_started_at: float) -> Never:
