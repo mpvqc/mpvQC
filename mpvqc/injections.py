@@ -11,6 +11,7 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
     binder.bind_to_constructor(s.CommentsService, s.CommentsService)
+    binder.bind_to_constructor(s.CommentTypesPolicyService, s.CommentTypesPolicyService)
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)
     binder.bind_to_constructor(s.DesktopService, s.DesktopService)
     binder.bind_to_constructor(s.ExportService, s.ExportService)

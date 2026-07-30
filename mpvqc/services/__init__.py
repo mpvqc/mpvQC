@@ -5,6 +5,7 @@
 from .application_paths import ApplicationPathsService as ApplicationPathsService
 from .build_info import BuildInfoService as BuildInfoService
 from .comment_type_validator import CommentTypeValidatorService as CommentTypeValidatorService
+from .comment_types_policy import CommentTypesPolicyService as CommentTypesPolicyService
 from .comments import CommentsService as CommentsService
 from .desktop import DesktopService as DesktopService
 from .exporter import ExportService as ExportService
