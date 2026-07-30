@@ -30,6 +30,8 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   beneath them, an inline editor does not.
 - **Modal overlay**: anything that owns the window's input while open: a dialog, message box, modal menu, modal row
   popup, or native file dialog.
+- **Long time format**: a time rendered with hours, `HH:MM:SS`; the short format is `MM:SS`. A surface uses the long
+  format when any time it may display can reach one hour. Exported documents always use the long format.
 
 ## Platform
 
