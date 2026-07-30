@@ -31,6 +31,17 @@ def test_empty_input_yields_zero(calculator):
     assert calculator.calculate_width_for([]) == 0
 
 
+def test_empty_generator_yields_zero(calculator):
+    empty: list[str] = []
+    assert calculator.calculate_width_for(text for text in empty) == 0
+
+
+def test_one_shot_generator_measures_like_a_list(calculator):
+    expected = calculator.calculate_width_for(["i", "Wwwwwwwwww"])
+
+    assert calculator.calculate_width_for(text for text in ["i", "Wwwwwwwwww"]) == expected
+
+
 def test_width_is_the_advance_width_rounded_up(calculator):
     advance = QFontMetricsF(inject.instance(FontLoaderService).application_font()).horizontalAdvance("Translation")
 
