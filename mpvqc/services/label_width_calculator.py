@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Collection
+from collections.abc import Iterable
 from functools import cached_property
 from math import ceil
 
@@ -19,7 +19,5 @@ class LabelWidthCalculatorService:
     def _font_metrics(self) -> QFontMetricsF:
         return QFontMetricsF(self._font_loader.application_font())
 
-    def calculate_width_for(self, texts: Collection[str]) -> int:
-        if not texts:
-            return 0
-        return ceil(max(self._font_metrics.horizontalAdvance(text) for text in texts))
+    def calculate_width_for(self, texts: Iterable[str]) -> int:
+        return ceil(max((self._font_metrics.horizontalAdvance(text) for text in texts), default=0))

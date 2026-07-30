@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from collections.abc import Iterator
 
 import inject
 from PySide6.QtCore import Property, QCoreApplication, QObject, Signal, Slot
@@ -18,9 +19,9 @@ QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
 
-def _time_candidates(*, long_format: bool) -> list[str]:
+def _time_candidates(*, long_format: bool) -> Iterator[str]:
     pattern = "{0}{0}:" * (3 if long_format else 2)
-    return [pattern.format(digit)[:-1] for digit in range(10)]
+    return (pattern.format(digit)[:-1] for digit in range(10))
 
 
 @QmlElement
@@ -67,7 +68,7 @@ class MpvqcLabelWidthCalculatorViewModel(QObject):
 
     def _compute_comment_types_label_width(self) -> int:
         types = self._comment_types_policy.displayable_comment_types
-        labels = [QCoreApplication.translate("CommentTypes", ct) for ct in types]
+        labels = (QCoreApplication.translate("CommentTypes", ct) for ct in types)
         return self._width_service.calculate_width_for(labels)
 
     def _compute_time_label_width(self) -> int:

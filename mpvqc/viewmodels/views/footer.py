@@ -206,4 +206,4 @@ class MpvqcFooterViewModel(QObject):
     def _derive_time_width(self) -> int:
         if not self._time_text:
             return 0
-        return self._label_calculator.calculate_width_for([self._time_text])
+        return self._label_calculator.calculate_width_for((self._time_text,))
