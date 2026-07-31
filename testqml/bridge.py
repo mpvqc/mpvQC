@@ -10,7 +10,7 @@ from zipfile import ZipFile
 
 import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
-from PySide6.QtQml import QmlElement, QQmlEngine, QQmlProperty
+from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
@@ -150,8 +150,16 @@ class MpvqcTestBridge(QObject):
             previous = [child for child in singleton.children() if isinstance(child, entry.view_model_class)]
             view_model = entry.view_model_class()
             view_model.setParent(singleton)
-            if not QQmlProperty.write(singleton, entry.property_name, view_model):
-                msg = f"Cannot swap {entry.property_name} on {entry.singleton_name}"
+            # Assign through a JS expression, not QQmlProperty.write: only a JS
+            # assignment removes the property's declarative initializer. Left in
+            # place, it re-fires when the previous view model is destroyed and
+            # stomps the fresh one with null.
+            swap_context = QQmlContext(engine.rootContext())
+            swap_context.setContextProperty("__freshViewModel", view_model)
+            expression = QQmlExpression(swap_context, singleton, f"{entry.property_name} = __freshViewModel")
+            expression.evaluate()
+            if expression.hasError():
+                msg = f"Cannot swap {entry.property_name} on {entry.singleton_name}: {expression.error()}"
                 raise RuntimeError(msg)
             for old in previous:
                 old.deleteLater()
