@@ -86,7 +86,9 @@ set-build-info:
 @build-develop: _generate-qrc-file _update_pyproject_file
     # Fast replacement for: uv run pyside6-project build
     uv run python build-aux/pyside_project_build.py
-    uv run pyside6-rcc --binary project.qrc -o project.rcc
+    # Replace by rename: a running app has the old bundle mmapped
+    uv run pyside6-rcc --binary project.qrc -o project.rcc.tmp
+    mv project.rcc.tmp project.rcc
     grep -qxF 'depends QtQml.Models' io/github/mpvqc/mpvQC/Python/qmldir || echo 'depends QtQml.Models' >> io/github/mpvqc/mpvQC/Python/qmldir
 
 # Remove ALL generated files
@@ -121,8 +123,8 @@ build-release:
 [group('test')]
 prepare-tests: build-develop
     rm -f test/rc_project.py testqml/rc_project.py
-    cp project.rcc test/project.rcc
-    cp project.rcc testqml/project.rcc
+    cp project.rcc test/project.rcc.tmp && mv test/project.rcc.tmp test/project.rcc
+    cp project.rcc testqml/project.rcc.tmp && mv testqml/project.rcc.tmp testqml/project.rcc
 
 # Run Python and QML tests
 [group('test')]
