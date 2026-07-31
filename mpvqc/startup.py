@@ -77,6 +77,8 @@ def import_mpvqc_bindings() -> None:
 def start_application(process_started_at: float) -> Never:
     import sys
 
+    from PySide6.QtCore import QThreadPool
+
     from mpvqc.application import MpvqcApplication
 
     app = MpvqcApplication(sys.argv)
@@ -87,7 +89,10 @@ def start_application(process_started_at: float) -> Never:
 
     app.start()
 
-    sys.exit(app.exec())
+    exit_code = app.exec()
+    # A pool worker still calling into Python during interpreter teardown segfaults
+    QThreadPool.globalInstance().waitForDone()
+    sys.exit(exit_code)
 
 
 def log_startup_time(process_started_at: float) -> None:
