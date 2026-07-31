@@ -26,13 +26,13 @@ def state_service_mock():
 @pytest.fixture(autouse=True)
 def configure_inject(
     common_bindings_with,
-    player_service_mock,
+    fake_player_service,
     settings_service,
     state_service_mock,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind_to_constructor(CommentsService, CommentsService)
-        binder.bind(PlayerService, player_service_mock)
+        binder.bind(PlayerService, fake_player_service)
         binder.bind(StateService, state_service_mock)
         binder.bind(SettingsService, settings_service)
 
@@ -75,8 +75,8 @@ def test_state_changes_on_mutation(make_view_model, state_service_mock):
     assert state_service_mock.record_change.call_count == 2
 
 
-def test_add_row_captures_exact_player_time(make_view_model, player_service_mock):
-    player_service_mock.exact_time_pos = 12.3454
+def test_add_row_captures_exact_player_time(make_view_model, fake_player_service):
+    fake_player_service.update(time_pos=12.3454)
     vm = make_view_model(comments=[])
 
     vm.addRow("Translation")

@@ -5,71 +5,86 @@
 from collections import deque
 from collections.abc import Callable, Generator
 from pathlib import Path
-from typing import Any
+from typing import Any, override
 
 import inject
 import pytest
-from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QObject, QResource, Signal, SignalInstance
+from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     BuildInfoService,
     CommentsService,
+    PlayerService,
     ResourceService,
     SettingsService,
     StateService,
     TimeFormatterService,
     TypeMapperService,
 )
+from mpvqc.services.player.state import OBSERVED_PROPERTIES, RawPropertyValue, make_observer
 
 
-class PlayerMock(QObject):
-    video_loaded_changed = Signal(bool)
-    path_changed = Signal(str)
-    filename_changed = Signal(str)
-    duration_changed = Signal(float)
-    percent_pos_changed = Signal(int)
-    time_pos_changed = Signal(int)
-    time_remaining_changed = Signal(int)
+class FakePlayerService(PlayerService):
+    """Stands in for mpv: raw values pass through the production observers,
+    so coercion, dedupe, and signal emission match the real service."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.video_loaded = False
-        self.path = None
-        self.filename = None
-        self.duration = 0.0
-        self.time_pos = 0
-        self.time_remaining = 0
-        self.percent_pos = 0
+        self._raw_time_pos: float | None = None
+        self._observers = {spec.name: make_observer(spec, self._apply_property_update) for spec in OBSERVED_PROPERTIES}
 
-    def update(self, **kwargs):  # ruff: ignore[complex-structure]
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                old_value = getattr(self, key)
-                if old_value != value:
-                    setattr(self, key, value)
+    @property
+    @override
+    def exact_time_pos(self) -> float:
+        if self._raw_time_pos is not None:
+            return self._raw_time_pos
+        return super().exact_time_pos
 
-                    match key:
-                        case "video_loaded":
-                            self.video_loaded_changed.emit(value)
-                        case "path":
-                            self.path_changed.emit(value or "")
-                        case "filename":
-                            self.filename_changed.emit(value or "")
-                        case "duration":
-                            self.duration_changed.emit(value)
-                        case "time_pos":
-                            self.time_pos_changed.emit(value)
-                        case "time_remaining":
-                            self.time_remaining_changed.emit(value)
-                        case "percent_pos":
-                            self.percent_pos_changed.emit(value)
+    def load_video(self, path: str) -> None:
+        self._observe("path", path)
+        self._observe("filename", Path(path).name)
+
+    def unload_video(self) -> None:
+        self._raw_time_pos = None
+        self._observe("path", None)
+
+    def update(
+        self,
+        *,
+        duration: float | None = None,
+        percent_pos: float | None = None,
+        time_pos: float | None = None,
+        time_remaining: float | None = None,
+        height: int | None = None,
+        width: int | None = None,
+        track_list: list[dict] | None = None,
+    ) -> None:
+        if duration is not None:
+            # the reducer matches float instances, an int literal would be dropped
+            self._observe("duration", duration + 0.0)
+        if percent_pos is not None:
+            self._observe("percent-pos", percent_pos)
+        if time_pos is not None:
+            self._raw_time_pos = time_pos
+            self._observe("time-pos", time_pos)
+        if time_remaining is not None:
+            self._observe("time-remaining", time_remaining)
+        if height is not None:
+            self._observe("height", height)
+        if width is not None:
+            self._observe("width", width)
+        if track_list is not None:
+            self._observe("track-list", track_list)
+
+    def _observe(self, name: str, raw: RawPropertyValue) -> None:
+        self._observers[name](name, raw)
 
 
 @pytest.fixture
-def player_service_mock() -> PlayerMock:
-    return PlayerMock()
+def fake_player_service() -> FakePlayerService:
+    return FakePlayerService()
 
 
 class MySpy:

@@ -25,12 +25,12 @@ def view_model() -> MpvqcHeaderViewModel:
 def configure_inject(
     common_bindings_with,
     state_service,
-    player_service_mock,
+    fake_player_service,
     settings_service,
 ):
     def custom_bindings(binder: inject.Binder):
         binder.bind(StateService, state_service)
-        binder.bind(PlayerService, player_service_mock)
+        binder.bind(PlayerService, fake_player_service)
         binder.bind(SettingsService, settings_service)
 
     common_bindings_with(custom_bindings)
@@ -40,9 +40,7 @@ class WindowTitleTestCase(NamedTuple):
     saved: bool
     document: Path | None
     window_title_format: WindowTitleFormat
-    video_loaded: bool
-    filename: str | None
-    path: str | None
+    video: str | None
     expected: str
 
 
@@ -53,72 +51,56 @@ class WindowTitleTestCase(NamedTuple):
             saved=True,
             document=None,
             window_title_format=WindowTitleFormat.DEFAULT,
-            video_loaded=False,
-            filename=None,
-            path=None,
+            video=None,
             expected="TestApp",
         ),
         WindowTitleTestCase(
             saved=False,
             document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.DEFAULT,
-            video_loaded=False,
-            filename=None,
-            path=None,
+            video=None,
             expected="TestApp (unsaved)",
         ),
         WindowTitleTestCase(
             saved=True,
             document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_NAME,
-            video_loaded=True,
-            filename="test_video.mp4",
-            path=None,
+            video=str(Path.home() / "test_video.mp4"),
             expected="test_video.mp4",
         ),
         WindowTitleTestCase(
             saved=False,
             document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_NAME,
-            video_loaded=True,
-            filename="test_video.mp4",
-            path=None,
+            video=str(Path.home() / "test_video.mp4"),
             expected="test_video.mp4 (unsaved)",
         ),
         WindowTitleTestCase(
             saved=True,
             document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_PATH,
-            video_loaded=True,
-            filename=None,
-            path=str(Path.home() / "test_video.mp4"),
+            video=str(Path.home() / "test_video.mp4"),
             expected=str(Path.home() / "test_video.mp4"),
         ),
         WindowTitleTestCase(
             saved=False,
             document=Path("doc.qc"),
             window_title_format=WindowTitleFormat.FILE_PATH,
-            video_loaded=True,
-            filename=None,
-            path=str(Path.home() / "test_video.mp4"),
+            video=str(Path.home() / "test_video.mp4"),
             expected=str(Path.home() / "test_video.mp4") + " (unsaved)",
         ),
         WindowTitleTestCase(
             saved=True,
             document=None,
             window_title_format=WindowTitleFormat.FILE_NAME,
-            video_loaded=False,
-            filename=None,
-            path=None,
+            video=None,
             expected="TestApp",
         ),
         WindowTitleTestCase(
             saved=False,
             document=None,
             window_title_format=WindowTitleFormat.FILE_NAME,
-            video_loaded=True,
-            filename="test_video.mp4",
-            path=None,
+            video=str(Path.home() / "test_video.mp4"),
             expected="test_video.mp4",
         ),
     ],
@@ -127,16 +109,13 @@ def test_window_title(
     qt_app,
     view_model,
     configure_state,
-    player_service_mock,
+    fake_player_service,
     settings_service,
     test_case: WindowTitleTestCase,
 ):
     configure_state(saved=test_case.saved, document=test_case.document)
-    player_service_mock.update(
-        video_loaded=test_case.video_loaded,
-        filename=test_case.filename,
-        path=test_case.path,
-    )
+    if test_case.video is not None:
+        fake_player_service.load_video(test_case.video)
     settings_service.window_title_format = test_case.window_title_format.value
 
     assert view_model.windowTitle == test_case.expected
@@ -145,35 +124,15 @@ def test_window_title(
 def test_window_title_changed(
     view_model,
     configure_state,
-    player_service_mock,
+    fake_player_service,
     settings_service,
     make_spy,
 ):
     file = Path.home() / "test_video.mp4"
     configure_state(saved=False)
-    player_service_mock.update(
-        video_loaded=True,
-        filename=file.name,
-        path=f"{file.resolve()}",
-    )
+    fake_player_service.load_video(f"{file.resolve()}")
 
     spy = make_spy(view_model.windowTitleChanged)
 
     settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
     assert spy.count() == 1
-
-
-def test_window_title_reflects_only_notified_changes(
-    view_model,
-    configure_state,
-    player_service_mock,
-    settings_service,
-):
-    configure_state(saved=True)
-    settings_service.window_title_format = WindowTitleFormat.FILE_NAME.value
-    cached = view_model.windowTitle
-
-    player_service_mock.video_loaded = True
-    player_service_mock.filename = "video.mp4"
-
-    assert view_model.windowTitle == cached

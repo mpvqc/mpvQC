@@ -47,9 +47,9 @@ def comment_types_policy_mock() -> CommentTypesPolicyServiceMock:
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, player_service_mock, comment_types_policy_mock):
+def configure_inject(common_bindings_with, fake_player_service, comment_types_policy_mock):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, player_service_mock)
+        binder.bind(PlayerService, fake_player_service)
         binder.bind(CommentTypesPolicyService, comment_types_policy_mock)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
         binder.bind_to_constructor(InternationalizationService, InternationalizationService)
@@ -122,19 +122,19 @@ def test_comment_types_width_of_same_value_does_not_emit(view_model, comment_typ
     assert spy.count() == 0
 
 
-def test_time_width_flips_with_format(view_model, player_service_mock, make_spy):
+def test_time_width_flips_with_format(view_model, fake_player_service, make_spy):
     spy = make_spy(view_model.timeLabelWidthChanged)
     short_width = view_model.timeLabelWidth
     assert short_width > 0
 
-    player_service_mock.update(duration=3600.0)
+    fake_player_service.update(duration=3600.0)
 
     long_width = view_model.timeLabelWidth
     assert long_width > short_width
     assert spy.count() == 1
     assert spy.at(invocation=0, argument=0) == long_width
 
-    player_service_mock.update(duration=3599.0)
+    fake_player_service.update(duration=3599.0)
 
     assert view_model.timeLabelWidth == short_width
     assert spy.count() == 2
