@@ -155,7 +155,7 @@ files = [
     "mpvqc/enums/import_wizard_session_mode.py",
     "mpvqc/enums/import_wizard_step_kind.py",
     "mpvqc/enums/message_box_kind.py",
-    "mpvqc/enums/time_format.py",
+    "mpvqc/enums/time_display_mode.py",
     "mpvqc/enums/window_title_format.py",
     "mpvqc/injections.py",
     "mpvqc/jobs.py",

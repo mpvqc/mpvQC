@@ -129,16 +129,16 @@ Item {
             y: -height
             transformOrigin: isMirrored ? Popup.BottomLeft : Popup.BottomRight
 
-            isDefaultFormatChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.CURRENT_TOTAL_TIME
-            isCurrentTimeChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.CURRENT_TIME
-            isRemainingTimeChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.REMAINING_TIME
-            isHideTimeChecked: root.viewModel.timeFormat === MpvqcTimeFormat.TimeFormat.EMPTY
+            isDefaultFormatChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TOTAL_TIME
+            isCurrentTimeChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TIME
+            isRemainingTimeChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.REMAINING_TIME
+            isHideTimeChecked: root.viewModel.timeDisplayMode === MpvqcTimeDisplayMode.TimeDisplayMode.NONE
             isPercentChecked: root.viewModel.statusbarPercentage
 
-            onDefaultFormatPicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.CURRENT_TOTAL_TIME
-            onCurrentTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.CURRENT_TIME
-            onRemainingTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.REMAINING_TIME
-            onHideTimePicked: root.viewModel.timeFormat = MpvqcTimeFormat.TimeFormat.EMPTY
+            onDefaultFormatPicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TOTAL_TIME
+            onCurrentTimePicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.CURRENT_TIME
+            onRemainingTimePicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.REMAINING_TIME
+            onHideTimePicked: root.viewModel.timeDisplayMode = MpvqcTimeDisplayMode.TimeDisplayMode.NONE
             onPercentToggled: root.viewModel.toggleStatusbarPercentage()
         }
 

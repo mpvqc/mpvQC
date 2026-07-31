@@ -12,7 +12,7 @@ from .import_wizard_step_kind import MpvqcImportWizardStepKind as MpvqcImportWiz
 from .import_wizard_step_kind import StepKind as StepKind
 from .message_box_kind import MessageBoxKind as MessageBoxKind
 from .message_box_kind import MpvqcMessageBoxKind as MpvqcMessageBoxKind
-from .time_format import MpvqcTimeFormat as MpvqcTimeFormat
-from .time_format import TimeFormat as TimeFormat
+from .time_display_mode import MpvqcTimeDisplayMode as MpvqcTimeDisplayMode
+from .time_display_mode import TimeDisplayMode as TimeDisplayMode
 from .window_title_format import MpvqcWindowTitleFormat as MpvqcWindowTitleFormat
 from .window_title_format import WindowTitleFormat as WindowTitleFormat

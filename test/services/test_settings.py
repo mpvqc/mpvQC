@@ -98,33 +98,33 @@ def test_backup_interval_signal_emission(settings_service, make_spy):
     assert spy.count() == 1
 
 
-def test_time_format_default(settings_service):
-    assert settings_service.time_format == 3
+def test_time_display_mode_default(settings_service):
+    assert settings_service.time_display_mode == 3
 
 
-def test_time_format_set_and_get(settings_service):
-    test_format = 1
-    settings_service.time_format = test_format
-    assert settings_service.time_format == test_format
+def test_time_display_mode_set_and_get(settings_service):
+    test_mode = 1
+    settings_service.time_display_mode = test_mode
+    assert settings_service.time_display_mode == test_mode
 
 
-def test_time_format_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.time_format_changed)
+def test_time_display_mode_signal_emission(settings_service, make_spy):
+    spy = make_spy(settings_service.time_display_mode_changed)
 
-    test_format = 2
-    settings_service.time_format = test_format
+    test_mode = 2
+    settings_service.time_display_mode = test_mode
     assert spy.count() == 1
-    assert spy.at(0, 0) == test_format
+    assert spy.at(0, 0) == test_mode
 
-    settings_service.time_format = test_format
+    settings_service.time_display_mode = test_mode
     assert spy.count() == 1
 
 
 def test_multiple_property_changes(settings_service):
     settings_service.backup_interval = 30
     settings_service.theme_identifier = "test-theme"
-    settings_service.time_format = 1
+    settings_service.time_display_mode = 1
 
     assert settings_service.backup_interval == 30
     assert settings_service.theme_identifier == "test-theme"
-    assert settings_service.time_format == 1
+    assert settings_service.time_display_mode == 1
