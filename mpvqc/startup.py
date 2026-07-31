@@ -13,6 +13,7 @@ def perform_startup(process_started_at: float) -> Never:
     configure_logging()
     configure_dependency_injection()
     configure_environment_variables()
+    pin_windows_ui_library()
 
     import_mpvqc_bindings()
 
@@ -64,6 +65,21 @@ def configure_environment_variables() -> None:
 
     # Requirement for mpv
     os.environ["LC_NUMERIC"] = "C"
+
+
+def pin_windows_ui_library() -> None:
+    import sys
+
+    if sys.platform != "win32":
+        return
+
+    import ctypes
+
+    # mpv's and Qt's shutdown do not go well together: Windows may unload this
+    # library while Qt still holds pointers into it, crashing on exit. An extra
+    # reference keeps it loaded until the process ends.
+    # pyrefly: ignore [missing-attribute]
+    ctypes.WinDLL("Windows.UI.dll")
 
 
 def import_mpvqc_bindings() -> None:
