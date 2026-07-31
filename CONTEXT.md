@@ -41,6 +41,8 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   popup, or native file dialog.
 - **Long time format**: a time rendered with hours, `HH:MM:SS`; the short format is `MM:SS`. A surface uses the long
   format when any time it may display can reach one hour. Exported documents always use the long format.
+- **Time display mode**: which time the footer shows: current, remaining, current over total, or none. Independent of
+  the long and short time format, which only decides whether hours render.
 
 ## Platform
 
