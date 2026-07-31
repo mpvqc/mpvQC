@@ -9,7 +9,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.enums import TimeFormat
+from mpvqc.enums import TimeDisplayMode
 from mpvqc.services import (
     LabelWidthCalculatorService,
     PlayerService,
@@ -51,7 +51,7 @@ def derive_footer_props(inputs: FooterInputs, measure_width: Callable[[str], int
         time_display_mode=inputs.time_display_mode,
         is_percent_visible=inputs.video_loaded and inputs.statusbar_percentage,
         percent_text=f"{inputs.percent_pos}%",
-        is_time_visible=inputs.video_loaded and inputs.time_display_mode != TimeFormat.EMPTY,
+        is_time_visible=inputs.video_loaded and inputs.time_display_mode != TimeDisplayMode.NONE,
         time_text=time_text,
         time_width=measure_width(time_text) if time_text else 0,
     )
@@ -63,11 +63,11 @@ def _derive_time_text(inputs: FooterInputs) -> str:
     long_format = TimeFormatPolicyService.uses_long_format(inputs.duration)
     to_string = TimeFormatterService.format_time_to_string
     match inputs.time_display_mode:
-        case TimeFormat.CURRENT_TIME:
+        case TimeDisplayMode.CURRENT_TIME:
             return to_string(inputs.time_pos, long_format=long_format)
-        case TimeFormat.REMAINING_TIME:
+        case TimeDisplayMode.REMAINING_TIME:
             return f"-{to_string(inputs.time_remaining, long_format=long_format)}"
-        case TimeFormat.CURRENT_TOTAL_TIME:
+        case TimeDisplayMode.CURRENT_TOTAL_TIME:
             current = to_string(inputs.time_pos, long_format=long_format)
             total = to_string(inputs.duration, long_format=long_format)
             return f"{current}/{total}"
@@ -82,7 +82,7 @@ class MpvqcFooterViewModel(QObject):
     _label_calculator = inject.attr(LabelWidthCalculatorService)
 
     statusbarPercentageChanged = Signal(bool)
-    timeFormatChanged = Signal(int)
+    timeDisplayModeChanged = Signal(int)
     isPercentVisibleChanged = Signal(bool)
     percentTextChanged = Signal(str)
     isTimeVisibleChanged = Signal(bool)
@@ -99,12 +99,12 @@ class MpvqcFooterViewModel(QObject):
             time_remaining=self._player.time_remaining,
             duration=self._player.duration,
             statusbar_percentage=self._settings.statusbar_percentage,
-            time_display_mode=self._settings.time_format,
+            time_display_mode=self._settings.time_display_mode,
         )
         self._props = self._derive()
 
         self._settings.statusbar_percentage_changed.connect(self._fold_statusbar_percentage)
-        self._settings.time_format_changed.connect(self._fold_time_display_mode)
+        self._settings.time_display_mode_changed.connect(self._fold_time_display_mode)
         self._player.video_loaded_changed.connect(self._fold_video_loaded)
         self._player.percent_pos_changed.connect(self._fold_percent_pos)
         self._player.time_pos_changed.connect(self._fold_time_pos)
@@ -154,7 +154,7 @@ class MpvqcFooterViewModel(QObject):
         if new.statusbar_percentage != old.statusbar_percentage:
             self.statusbarPercentageChanged.emit(new.statusbar_percentage)
         if new.time_display_mode != old.time_display_mode:
-            self.timeFormatChanged.emit(new.time_display_mode)
+            self.timeDisplayModeChanged.emit(new.time_display_mode)
         if new.is_percent_visible != old.is_percent_visible:
             self.isPercentVisibleChanged.emit(new.is_percent_visible)
         if new.percent_text != old.percent_text:
@@ -170,13 +170,13 @@ class MpvqcFooterViewModel(QObject):
     def statusbarPercentage(self) -> bool:
         return self._props.statusbar_percentage
 
-    @Property(int, notify=timeFormatChanged)
-    def timeFormat(self) -> int:
+    @Property(int, notify=timeDisplayModeChanged)
+    def timeDisplayMode(self) -> int:
         return self._props.time_display_mode
 
-    @timeFormat.setter
-    def timeFormat(self, value: int) -> None:
-        self._settings.time_format = value
+    @timeDisplayMode.setter
+    def timeDisplayMode(self, value: int) -> None:
+        self._settings.time_display_mode = value
 
     @Property(bool, notify=isPercentVisibleChanged)
     def isPercentVisible(self) -> bool:

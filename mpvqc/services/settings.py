@@ -21,7 +21,7 @@ from PySide6.QtCore import (
 )
 
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
-from mpvqc.enums import TimeFormat, WindowTitleFormat
+from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
 
 from .application_paths import ApplicationPathsService
 from .type_mapper import TypeMapperService
@@ -193,12 +193,12 @@ class SettingsService(QObject):
         signal=lambda s: s.statusbar_percentage_changed,
     )
 
-    time_format_changed = Signal(int)
-    time_format = _Setting(
+    time_display_mode_changed = Signal(int)
+    time_display_mode = _Setting(
         "StatusBar/timeFormat",
-        default=TimeFormat.CURRENT_TOTAL_TIME.value,
+        default=TimeDisplayMode.CURRENT_TOTAL_TIME.value,
         type_=int,
-        signal=lambda s: s.time_format_changed,
+        signal=lambda s: s.time_display_mode_changed,
     )
 
     last_directory_video_changed = Signal(QUrl)
