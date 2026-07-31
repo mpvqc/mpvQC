@@ -13,9 +13,9 @@ TimeFormat = MpvqcTimeFormat.TimeFormat
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, player_service_mock, settings_service):
+def configure_inject(common_bindings_with, fake_player_service, settings_service):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, player_service_mock)
+        binder.bind(PlayerService, fake_player_service)
         binder.bind(SettingsService, settings_service)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
         binder.bind(LabelWidthCalculatorService, LabelWidthCalculatorService())

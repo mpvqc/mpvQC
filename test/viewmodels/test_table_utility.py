@@ -13,9 +13,9 @@ ONE_HOUR_MS = 3_600_000
 
 
 @pytest.fixture(autouse=True)
-def configure_inject(common_bindings_with, player_service_mock):
+def configure_inject(common_bindings_with, fake_player_service):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(PlayerService, player_service_mock)
+        binder.bind(PlayerService, fake_player_service)
         binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
 
     common_bindings_with(custom_bindings)
@@ -47,8 +47,9 @@ def test_long_comment_flips_to_long_format_without_video(view_model, comments, m
     assert spy.at(invocation=0, argument=0) is True
 
 
-def test_long_comment_with_shorter_video_uses_long_format(view_model, comments, player_service_mock):
-    player_service_mock.update(video_loaded=True, duration=125.0)
+def test_long_comment_with_shorter_video_uses_long_format(view_model, comments, fake_player_service):
+    fake_player_service.load_video("/videos/video.mkv")
+    fake_player_service.update(duration=125.0)
     assert not view_model.tableLongFormat
 
     comments.import_comments([_comment_at(5_400_000)])
@@ -74,9 +75,9 @@ def test_reset_returns_to_short_format(view_model, comments):
     assert not view_model.tableLongFormat
 
 
-def test_duration_of_exactly_one_hour_uses_long_format(view_model, player_service_mock):
-    player_service_mock.update(duration=3600.0)
+def test_duration_of_exactly_one_hour_uses_long_format(view_model, fake_player_service):
+    fake_player_service.update(duration=3600.0)
     assert view_model.tableLongFormat
 
-    player_service_mock.update(duration=3599.0)
+    fake_player_service.update(duration=3599.0)
     assert not view_model.tableLongFormat
