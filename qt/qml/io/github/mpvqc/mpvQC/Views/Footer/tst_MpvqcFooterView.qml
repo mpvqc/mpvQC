@@ -18,23 +18,31 @@ TestCase {
     when: windowShown
     name: "MpvqcFooterView"
 
-    function makeControl(props): var {
-        const control = createTemporaryObject(objectUnderTest, testCase);
+    readonly property MpvqcTestBridge bridge: MpvqcTestBridge {}
+
+    function init(): void {
+        bridge.resetState();
+    }
+
+    function makeControl(properties = {}): MpvqcFooterView {
+        const control = createTemporaryObject(objectUnderTest, testCase, properties);
         verify(control);
-        const footer = findChild(control, "footer");
-        for (const key in (props ?? {})) {
-            footer[key] = props[key];
-        }
         waitForRendering(control);
         return control;
     }
 
-    function configureStatusbar(control: Item, enabled: bool): void {
-        const footer = findChild(control, "footer");
-        if (footer.viewModel.statusbarPercentage !== enabled) {
-            footer.viewModel.toggleStatusbarPercentage();
+    function configureStatusbar(control: MpvqcFooterView, enabled: bool): void {
+        if (control.viewModel.statusbarPercentage !== enabled) {
+            control.viewModel.toggleStatusbarPercentage();
         }
-        compare(footer.viewModel.statusbarPercentage, enabled);
+        compare(control.viewModel.statusbarPercentage, enabled);
+    }
+
+    function openContextMenuItem(control: Item, menuItem: string): var {
+        const button = findChild(control, "contextMenuButton");
+        mouseClick(button, button.width / 2, button.height / 2);
+        tryVerify(() => findChild(control, menuItem) !== null);
+        return findChild(control, menuItem);
     }
 
     function test_commentCountLabel_data(): var {
@@ -125,142 +133,58 @@ TestCase {
         verify(!percentLabel.visible);
         compare(timeLabel.text, "");
 
-        const button = findChild(control, "contextMenuButton");
-        mouseClick(button, button.width / 2, button.height / 2);
-
-        tryVerify(() => findChild(control, data.menuItem) !== null);
-        const menuItem = findChild(control, data.menuItem);
+        const menuItem = openContextMenuItem(control, data.menuItem);
         mouseClick(menuItem, menuItem.width / 2, menuItem.height / 2);
 
         verify(!timeLabel.visible);
         compare(timeLabel.text, "");
         verify(!percentLabel.visible);
 
+        const button = findChild(control, "contextMenuButton");
         mouseClick(button, button.width / 2, button.height / 2);
         tryVerify(() => menuItem.visible);
         verify(menuItem.checked);
     }
 
-    function test_timeLabelWithVideoLoaded_data(): var {
-        return [
-            {
-                tag: "default format",
-                menuItem: "defaultFormatMenuItem",
-                initialTimeFormat: MpvqcTimeFormat.TimeFormat.EMPTY,
-                expectedText: "01:05/02:05"
-            },
-            {
-                tag: "current time",
-                menuItem: "currentTimeMenuItem",
-                initialTimeFormat: MpvqcTimeFormat.TimeFormat.EMPTY,
-                expectedText: "01:05"
-            },
-            {
-                tag: "remaining time",
-                menuItem: "remainingTimeMenuItem",
-                initialTimeFormat: MpvqcTimeFormat.TimeFormat.EMPTY,
-                expectedText: "-01:00"
-            },
-            {
-                tag: "hide time",
-                menuItem: "hideTimeMenuItem",
-                initialTimeFormat: MpvqcTimeFormat.TimeFormat.CURRENT_TIME,
-                expectedText: ""
-            },
-        ];
-    }
-
-    function test_timeLabelWithVideoLoaded(data): void {
+    function test_contextMenuDrivesLabelsOverLoadedVideo(): void {
         const control = makeControl();
-        const footer = findChild(control, "footer");
-
-        footer.viewModel.setVideoLoaded(true);
-        footer.viewModel.setDuration(125.0);
-        footer.viewModel.setTimePos(65);
-        footer.viewModel.setTimeRemaining(60);
-        footer.viewModel.setPercentPos(42);
-        footer.viewModel.timeFormat = data.initialTimeFormat;
-        configureStatusbar(control, true);
+        bridge.loadVideo({
+            duration: 125,
+            timePos: 65,
+            timeRemaining: 60,
+            percentPos: 42
+        });
 
         const timeLabel = findChild(control, "timeLabel");
         const percentLabel = findChild(control, "percentLabel");
-
-        const button = findChild(control, "contextMenuButton");
-        mouseClick(button, button.width / 2, button.height / 2);
-
-        tryVerify(() => findChild(control, data.menuItem) !== null);
-        const menuItem = findChild(control, data.menuItem);
-        mouseClick(menuItem, menuItem.width / 2, menuItem.height / 2);
-
-        compare(timeLabel.visible, data.expectedText !== "");
-        compare(timeLabel.text, data.expectedText);
+        tryVerify(() => timeLabel.visible);
+        compare(timeLabel.text, "01:05/02:05");
         verify(percentLabel.visible);
         compare(percentLabel.text, "42%");
 
-        mouseClick(button, button.width / 2, button.height / 2);
-        tryVerify(() => menuItem.visible);
-        verify(menuItem.checked);
-    }
+        const currentTimeItem = openContextMenuItem(control, "currentTimeMenuItem");
+        mouseClick(currentTimeItem, currentTimeItem.width / 2, currentTimeItem.height / 2);
 
-    function test_percentLabelToggleWithVideoLoaded_data(): var {
-        return [
-            {
-                tag: "off to on",
-                initial: false,
-                expectedVisible: true,
-                expectedChecked: true
-            },
-            {
-                tag: "on to off",
-                initial: true,
-                expectedVisible: false,
-                expectedChecked: false
-            },
-        ];
-    }
+        tryCompare(timeLabel, "text", "01:05");
+        verify(timeLabel.visible);
 
-    function test_percentLabelToggleWithVideoLoaded(data): void {
-        const control = makeControl();
-        const footer = findChild(control, "footer");
+        const percentItem = openContextMenuItem(control, "percentMenuItem");
+        mouseClick(percentItem, percentItem.width / 2, percentItem.height / 2);
 
-        footer.viewModel.setVideoLoaded(true);
-        footer.viewModel.setPercentPos(42);
-        configureStatusbar(control, data.initial);
-
-        const percentLabel = findChild(control, "percentLabel");
-
-        const button = findChild(control, "contextMenuButton");
-        mouseClick(button, button.width / 2, button.height / 2);
-
-        tryVerify(() => findChild(control, "percentMenuItem") !== null);
-        const menuItem = findChild(control, "percentMenuItem");
-        mouseClick(menuItem, menuItem.width / 2, menuItem.height / 2);
-
-        compare(percentLabel.visible, data.expectedVisible);
-        if (data.expectedVisible) {
-            compare(percentLabel.text, "42%");
-        }
-
-        mouseClick(button, button.width / 2, button.height / 2);
-        tryVerify(() => menuItem.visible);
-        compare(menuItem.checked, data.expectedChecked);
+        tryVerify(() => !percentLabel.visible);
+        verify(timeLabel.visible);
+        compare(timeLabel.text, "01:05");
     }
 
     Component {
         id: objectUnderTest
 
-        Item {
-            width: testCase.width
-            height: testCase.height
-
-            MpvqcFooterView {
-                objectName: "footer"
-                selectedCommentIndex: 0
-                totalCommentCount: 0
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-            }
+        MpvqcFooterView {
+            selectedCommentIndex: 0
+            totalCommentCount: 0
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
         }
     }
 }

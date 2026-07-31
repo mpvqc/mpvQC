@@ -2,12 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from dataclasses import replace
+from typing import NamedTuple
+
 import inject
 import pytest
 
 from mpvqc.enums import MpvqcTimeFormat
 from mpvqc.services import FontLoaderService, LabelWidthCalculatorService, PlayerService, SettingsService
 from mpvqc.viewmodels import MpvqcFooterViewModel
+from mpvqc.viewmodels.views.footer import FooterInputs, FooterProps, derive_footer_props
 
 TimeFormat = MpvqcTimeFormat.TimeFormat
 
@@ -29,105 +33,285 @@ def qt_app_must_be_running(qt_app):
 
 
 @pytest.fixture
-def view_model():
-    # noinspection PyCallingNonCallable
-    return MpvqcFooterViewModel()
+def make_view_model():
+    def _make() -> MpvqcFooterViewModel:
+        # noinspection PyCallingNonCallable
+        return MpvqcFooterViewModel()
+
+    return _make
 
 
-def test_statusbarPercentage(view_model, settings_service):
-    settings_service.statusbar_percentage = False
-    assert not view_model.statusbarPercentage
+@pytest.fixture
+def spy_notifies(make_spy):
+    def _spy(view_model: MpvqcFooterViewModel) -> dict:
+        return {
+            "statusbarPercentage": make_spy(view_model.statusbarPercentageChanged),
+            "timeFormat": make_spy(view_model.timeFormatChanged),
+            "isPercentVisible": make_spy(view_model.isPercentVisibleChanged),
+            "percentText": make_spy(view_model.percentTextChanged),
+            "isTimeVisible": make_spy(view_model.isTimeVisibleChanged),
+            "timeText": make_spy(view_model.timeTextChanged),
+            "timeWidth": make_spy(view_model.timeWidthChanged),
+        }
 
-    settings_service.statusbar_percentage = True
-    assert view_model.statusbarPercentage
+    return _spy
 
 
-def test_timeFormat(view_model, settings_service):
-    settings_service.time_format = TimeFormat.REMAINING_TIME.value
-    assert view_model.timeFormat == TimeFormat.REMAINING_TIME.value
+def emissions(spies: dict) -> dict[str, int]:
+    return {name: spy.count() for name, spy in spies.items() if spy.count()}
 
-    view_model.timeFormat = TimeFormat.CURRENT_TIME.value
-    assert settings_service.time_format == TimeFormat.CURRENT_TIME.value
+
+def measure_stub(text: str) -> int:
+    return 10 + len(text)
+
+
+BASE_INPUTS = FooterInputs(
+    video_loaded=True,
+    percent_pos=42,
+    time_pos=65,
+    time_remaining=60,
+    duration=125.0,
+    statusbar_percentage=True,
+    time_display_mode=TimeFormat.CURRENT_TOTAL_TIME,
+)
+
+
+class DerivationCase(NamedTuple):
+    name: str
+    inputs: FooterInputs
+    expected: FooterProps
 
 
 @pytest.mark.parametrize(
-    ("setting", "video_loaded", "visible"),
+    "case",
     [
-        (False, False, False),
-        (False, True, False),
-        (True, False, False),
-        (True, True, True),
+        DerivationCase(
+            name="current over total joins both times",
+            inputs=BASE_INPUTS,
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.CURRENT_TOTAL_TIME,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="01:05/02:05",
+                time_width=21,
+            ),
+        ),
+        DerivationCase(
+            name="current time",
+            inputs=replace(BASE_INPUTS, time_display_mode=TimeFormat.CURRENT_TIME),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.CURRENT_TIME,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="01:05",
+                time_width=15,
+            ),
+        ),
+        DerivationCase(
+            name="remaining time carries a minus prefix",
+            inputs=replace(BASE_INPUTS, time_display_mode=TimeFormat.REMAINING_TIME),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.REMAINING_TIME,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="-01:00",
+                time_width=16,
+            ),
+        ),
+        DerivationCase(
+            name="empty mode hides the time and zeroes the width",
+            inputs=replace(BASE_INPUTS, time_display_mode=TimeFormat.EMPTY),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.EMPTY,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=False,
+                time_text="",
+                time_width=0,
+            ),
+        ),
+        DerivationCase(
+            name="one hour flips to the long format",
+            inputs=replace(BASE_INPUTS, time_display_mode=TimeFormat.CURRENT_TIME, duration=3600.0),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.CURRENT_TIME,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="00:01:05",
+                time_width=18,
+            ),
+        ),
+        DerivationCase(
+            name="just under one hour stays short",
+            inputs=replace(BASE_INPUTS, time_display_mode=TimeFormat.CURRENT_TIME, duration=3599.0),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.CURRENT_TIME,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="01:05",
+                time_width=15,
+            ),
+        ),
+        DerivationCase(
+            name="long format joins in total mode",
+            inputs=replace(BASE_INPUTS, duration=7200.0),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.CURRENT_TOTAL_TIME,
+                is_percent_visible=True,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="00:01:05/02:00:00",
+                time_width=27,
+            ),
+        ),
+        DerivationCase(
+            name="no video blanks the time and hides both labels",
+            inputs=replace(BASE_INPUTS, video_loaded=False),
+            expected=FooterProps(
+                statusbar_percentage=True,
+                time_display_mode=TimeFormat.CURRENT_TOTAL_TIME,
+                is_percent_visible=False,
+                percent_text="42%",
+                is_time_visible=False,
+                time_text="",
+                time_width=0,
+            ),
+        ),
+        DerivationCase(
+            name="statusbar setting off hides percent despite video",
+            inputs=replace(BASE_INPUTS, statusbar_percentage=False),
+            expected=FooterProps(
+                statusbar_percentage=False,
+                time_display_mode=TimeFormat.CURRENT_TOTAL_TIME,
+                is_percent_visible=False,
+                percent_text="42%",
+                is_time_visible=True,
+                time_text="01:05/02:05",
+                time_width=21,
+            ),
+        ),
     ],
+    ids=lambda case: case.name,
 )
-def test_isPercentVisible(view_model, setting, video_loaded, visible):
-    view_model.setStatusbarPercentage(setting)
-    view_model.setVideoLoaded(video_loaded)
-
-    assert view_model.isPercentVisible is visible
+def test_derivation(case: DerivationCase):
+    assert derive_footer_props(case.inputs, measure_stub) == case.expected
 
 
-def test_percentText(view_model):
-    view_model.setPercentPos(42)
-    assert view_model.percentText == "42%"
+def test_video_loaded_fold(make_view_model, fake_player_service, spy_notifies):
+    view_model = make_view_model()
+    spies = spy_notifies(view_model)
 
+    fake_player_service.load_video("/videos/movie.mkv")
 
-@pytest.mark.parametrize(
-    ("video_loaded", "time_format", "duration", "time_pos", "time_remaining", "expected"),
-    [
-        (False, TimeFormat.CURRENT_TIME.value, 125.0, 65, 60, ""),
-        (True, TimeFormat.EMPTY.value, 125.0, 65, 60, ""),
-        (True, TimeFormat.CURRENT_TIME.value, 125.0, 65, 60, "01:05"),
-        (True, TimeFormat.CURRENT_TIME.value, 7200.0, 3661, 3539, "01:01:01"),
-        (True, TimeFormat.REMAINING_TIME.value, 125.0, 65, 60, "-01:00"),
-        (True, TimeFormat.REMAINING_TIME.value, 7200.0, 3661, 3539, "-00:58:59"),
-        (True, TimeFormat.CURRENT_TOTAL_TIME.value, 125.0, 65, 60, "01:05/02:05"),
-        (True, TimeFormat.CURRENT_TOTAL_TIME.value, 7200.0, 3661, 3539, "01:01:01/02:00:00"),
-        (True, TimeFormat.CURRENT_TIME.value, 3599.0, 65, 3534, "01:05"),
-        (True, TimeFormat.CURRENT_TIME.value, 3600.0, 65, 3535, "00:01:05"),
-        (True, TimeFormat.CURRENT_TOTAL_TIME.value, 3600.0, 3600, 0, "01:00:00/01:00:00"),
-    ],
-)
-def test_timeText(view_model, video_loaded, time_format, duration, time_pos, time_remaining, expected):
-    view_model.setVideoLoaded(video_loaded)
-    view_model.setDuration(duration)
-    view_model.setTimePos(time_pos)
-    view_model.setTimeRemaining(time_remaining)
-    view_model.setTimeFormat(time_format)
-
-    assert view_model.timeText == expected
-    assert view_model.isTimeVisible is bool(expected)
-
-
-def test_timeWidth(view_model):
-    view_model.setTimeFormat(TimeFormat.CURRENT_TIME.value)
-    view_model.setDuration(125.0)
-    assert view_model.timeWidth == 0
-
-    view_model.setVideoLoaded(True)
-    view_model.setTimeFormat(TimeFormat.EMPTY.value)
-    assert view_model.timeWidth == 0
-
-    view_model.setTimeFormat(TimeFormat.CURRENT_TIME.value)
-    short_width = view_model.timeWidth
-    assert short_width > 0
-
-    view_model.setDuration(7200.0)
-    assert view_model.timeWidth > short_width
-
-
-def test_timeWidth_recomputes_when_video_loaded_toggles_after_duration_and_format(view_model):
-    view_model.setTimeFormat(TimeFormat.CURRENT_TIME.value)
-    view_model.setDuration(125.0)
-    assert view_model.timeWidth == 0
-
-    view_model.setVideoLoaded(True)
+    assert emissions(spies) == {"isPercentVisible": 1, "isTimeVisible": 1, "timeText": 1, "timeWidth": 1}
+    assert spies["timeText"].at(0, 0) == "00:00/00:00"
     assert view_model.timeWidth > 0
 
-    view_model.setVideoLoaded(False)
-    assert view_model.timeWidth == 0
+
+def test_percent_pos_fold(make_view_model, fake_player_service, spy_notifies):
+    view_model = make_view_model()
+    spies = spy_notifies(view_model)
+
+    fake_player_service.update(percent_pos=42.0)
+
+    assert emissions(spies) == {"percentText": 1}
+    assert spies["percentText"].at(0, 0) == "42%"
 
 
-def test_toggleStatusbarPercentage(view_model, settings_service):
+def test_time_pos_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
+    fake_player_service.load_video("/videos/movie.mkv")
+    fake_player_service.update(time_pos=1.0)
+    settings_service.time_format = TimeFormat.CURRENT_TIME.value
+    view_model = make_view_model()
+    assert view_model.timeText == "00:01"
+    spies = spy_notifies(view_model)
+
+    # 1 -> 10 permutes the same glyphs, so the width stays put on every font engine
+    fake_player_service.update(time_pos=10.0)
+
+    assert emissions(spies) == {"timeText": 1}
+    assert spies["timeText"].at(0, 0) == "00:10"
+
+
+def test_time_remaining_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
+    fake_player_service.load_video("/videos/movie.mkv")
+    fake_player_service.update(time_remaining=1.0)
+    settings_service.time_format = TimeFormat.REMAINING_TIME.value
+    view_model = make_view_model()
+    assert view_model.timeText == "-00:01"
+    spies = spy_notifies(view_model)
+
+    # 1 -> 10 permutes the same glyphs, so the width stays put on every font engine
+    fake_player_service.update(time_remaining=10.0)
+
+    assert emissions(spies) == {"timeText": 1}
+    assert spies["timeText"].at(0, 0) == "-00:10"
+
+
+def test_duration_fold(make_view_model, fake_player_service, spy_notifies):
+    fake_player_service.load_video("/videos/movie.mkv")
+    view_model = make_view_model()
+    assert view_model.timeText == "00:00/00:00"
+    spies = spy_notifies(view_model)
+
+    fake_player_service.update(duration=3600.0)
+
+    assert emissions(spies) == {"timeText": 1, "timeWidth": 1}
+    assert spies["timeText"].at(0, 0) == "00:00:00/01:00:00"
+    assert spies["timeWidth"].at(0, 0) == view_model.timeWidth
+
+
+def test_statusbar_percentage_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
+    fake_player_service.load_video("/videos/movie.mkv")
+    view_model = make_view_model()
+    assert view_model.isPercentVisible
+    spies = spy_notifies(view_model)
+
+    settings_service.statusbar_percentage = False
+
+    assert emissions(spies) == {"statusbarPercentage": 1, "isPercentVisible": 1}
+    assert spies["isPercentVisible"].at(0, 0) is False
+
+
+def test_time_display_mode_fold(make_view_model, fake_player_service, settings_service, spy_notifies):
+    fake_player_service.load_video("/videos/movie.mkv")
+    fake_player_service.update(duration=125.0, time_pos=65.0, time_remaining=60.0)
+    view_model = make_view_model()
+    assert view_model.timeText == "01:05/02:05"
+    spies = spy_notifies(view_model)
+
+    settings_service.time_format = TimeFormat.EMPTY.value
+
+    assert emissions(spies) == {"timeFormat": 1, "isTimeVisible": 1, "timeText": 1, "timeWidth": 1}
+    assert not spies["timeText"].at(0, 0)
+    assert spies["timeWidth"].at(0, 0) == 0
+
+
+def test_time_format_property_writes_through_to_settings(make_view_model, settings_service, make_spy):
+    view_model = make_view_model()
+    spy = make_spy(view_model.timeFormatChanged)
+
+    view_model.timeFormat = TimeFormat.REMAINING_TIME.value
+
+    assert settings_service.time_format == TimeFormat.REMAINING_TIME.value
+    assert view_model.timeFormat == TimeFormat.REMAINING_TIME.value
+    assert spy.count() == 1
+
+
+def test_toggle_statusbar_percentage_writes_through_to_settings(make_view_model, settings_service):
+    view_model = make_view_model()
     initial = view_model.statusbarPercentage
 
     view_model.toggleStatusbarPercentage()

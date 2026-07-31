@@ -33,6 +33,7 @@ from mpvqc.services.platform.window_buttons import StaticWindowButtons
 from mpvqc.services.platform.window_configuration import NoWindowConfigurator
 from mpvqc.services.platform.window_reveal import NoWindowRevealer
 from mpvqc.services.platform.window_state import QtWindowStateHandler
+from mpvqc.services.player.state import OBSERVED_PROPERTIES, make_observer
 from mpvqc.services.version_checker import CheckOutcome, UpToDate
 from mpvqc.services.video_resize import ResizeResult, ViewDimensions
 from mpvqc.viewmodels import MpvqcBackupTimerViewModel
@@ -98,6 +99,25 @@ class PlayerServiceOverride(PlayerService):
         super().__init__()
         self.opened_video: Path | None = None
         self.opened_subtitles: tuple[Path, ...] = ()
+        self._observers = {spec.name: make_observer(spec, self._apply_property_update) for spec in OBSERVED_PROPERTIES}
+
+    def load_video(
+        self,
+        path: str,
+        *,
+        duration: float,
+        time_pos: float,
+        time_remaining: float,
+        percent_pos: float,
+    ) -> None:
+        for name, raw in (
+            ("path", path),
+            ("duration", duration),
+            ("time-pos", time_pos),
+            ("time-remaining", time_remaining),
+            ("percent-pos", percent_pos),
+        ):
+            self._observers[name](name, raw)
 
     @override
     def is_any_video_loaded(self, videos: Iterable[Path]) -> bool:

@@ -30,7 +30,14 @@ from mpvqc.viewmodels import (
     MpvqcWindowViewModel,
 )
 from testqml import import_wizard_fixtures
-from testqml.injections import FIXTURES_DIR, TEMP_ROOT, TEMP_SAVES_DIR, configure_injections, rebind_main_window
+from testqml.injections import (
+    FIXTURES_DIR,
+    TEMP_ROOT,
+    TEMP_SAVES_DIR,
+    PlayerServiceOverride,
+    configure_injections,
+    rebind_main_window,
+)
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -223,6 +230,20 @@ class MpvqcTestBridge(QObject):
     @Slot(result=list)
     def importMultiVideoDocuments(self) -> list[QUrl]:
         return [QUrl.fromLocalFile(str(p)) for p in _create_multi_video_qc_documents()]
+
+    @Slot(dict)
+    def loadVideo(self, values: dict) -> None:
+        player = inject.instance(PlayerService)
+        if not isinstance(player, PlayerServiceOverride):
+            msg = "loadVideo needs the player service override binding"
+            raise TypeError(msg)
+        player.load_video(
+            values.get("path", "/videos/movie.mkv"),
+            duration=float(values.get("duration", 0.0)),
+            time_pos=float(values.get("timePos", 0.0)),
+            time_remaining=float(values.get("timeRemaining", 0.0)),
+            percent_pos=float(values.get("percentPos", 0.0)),
+        )
 
     @Slot(result=str)
     def openedVideoName(self) -> str:
