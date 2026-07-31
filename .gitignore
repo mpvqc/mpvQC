@@ -550,6 +550,7 @@ $RECYCLE.BIN/
 
 rc_project.py
 project.rcc
+project.rcc.tmp
 
 # Share the PyCharm inspection profiles
 !.idea/
