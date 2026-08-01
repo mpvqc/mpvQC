@@ -62,9 +62,10 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
   The Qt term, as in QPalette. Material 3 calls this bundle a color scheme.
 - **Color role**: one named entry in the palette: background, hint, row base. The Qt term. The emphasis role is named
   accent; "accent role" is the rendered color, "accent color" the user's key, and the two rarely match exactly.
-- **Theme**: legacy term, not part of the language: color scheme and palette now cover it. Still in code until the
-  color scheme preference is stored directly. Don't use it in new names; naming the leftover entity itself — its
-  identifier, its catalog — is fine until it dies.
+- **Theme**: legacy term, not part of the language: color scheme and palette now cover it. Settings store the color
+  scheme preference directly now, but the entity is still in code until its catalog and identifier die. Don't use it
+  in new names; naming the leftover entity itself — its identifier, its catalog, the appearance keyed by it — is fine
+  until it dies.
 
 ## Platform
 

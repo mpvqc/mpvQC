@@ -3,13 +3,19 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
+from PySide6.QtGui import QGuiApplication
 
 import mpvqc.services as s
+
+
+def _color_scheme_service() -> s.ColorSchemeService:
+    return s.ColorSchemeService(s.QtStyleHints(QGuiApplication.styleHints()))
 
 
 def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
+    binder.bind_to_constructor(s.ColorSchemeService, _color_scheme_service)
     binder.bind_to_constructor(s.CommentsService, s.CommentsService)
     binder.bind_to_constructor(s.CommentTypesPolicyService, s.CommentTypesPolicyService)
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)

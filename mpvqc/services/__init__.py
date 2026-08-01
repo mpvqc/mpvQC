@@ -4,6 +4,9 @@
 
 from .application_paths import ApplicationPathsService as ApplicationPathsService
 from .build_info import BuildInfoService as BuildInfoService
+from .color_scheme import ColorSchemeService as ColorSchemeService
+from .color_scheme import QtStyleHints as QtStyleHints
+from .color_scheme import StyleHints as StyleHints
 from .comment_type_validator import CommentTypeValidatorService as CommentTypeValidatorService
 from .comment_types_policy import CommentTypesPolicyService as CommentTypesPolicyService
 from .comments import CommentsService as CommentsService
