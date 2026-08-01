@@ -42,6 +42,7 @@
   `viewModel` QML property.
 - In ADRs and `CONTEXT.md`, name the thing, not where it lives. Paths and file names go stale, so describe the component
   or the command instead. Setup and workflow docs are the exception: there the path is the point.
+- Load the `writing-glossary` skill before adding or changing a term in `CONTEXT.md`.
 
 ## Committing
 
