@@ -52,7 +52,6 @@ def configure_inject(common_bindings_with, fake_player_service, comment_types_po
         binder.bind(PlayerService, fake_player_service)
         binder.bind(CommentTypesPolicyService, comment_types_policy_mock)
         binder.bind_to_constructor(FontLoaderService, FontLoaderService)
-        binder.bind_to_constructor(InternationalizationService, InternationalizationService)
         binder.bind_to_constructor(LabelWidthCalculatorService, LabelWidthCalculatorService)
         binder.bind_to_constructor(TimeFormatPolicyService, TimeFormatPolicyService)
 

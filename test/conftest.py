@@ -16,6 +16,7 @@ from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     BuildInfoService,
     CommentsService,
+    InternationalizationService,
     PlayerService,
     ResourceService,
     SettingsService,
@@ -186,6 +187,12 @@ def restore_default_locale():
     QLocale.setDefault(locale)
 
 
+@pytest.fixture(autouse=True)
+def clear_injector():
+    yield
+    inject.clear()
+
+
 @pytest.fixture
 def qt_app() -> Generator[MpvqcApplication, Any]:
     QCoreApplication.setApplicationName("TestApp")
@@ -212,6 +219,7 @@ def common_bindings_with():
             # Common & shared services
             binder.bind_to_constructor(BuildInfoService, BuildInfoService)
             binder.bind_to_constructor(CommentsService, CommentsService)
+            binder.bind_to_constructor(InternationalizationService, InternationalizationService)
             binder.bind_to_constructor(ResourceService, ResourceService)
             binder.bind_to_constructor(StateService, StateService)
             binder.bind_to_constructor(TimeFormatterService, TimeFormatterService)

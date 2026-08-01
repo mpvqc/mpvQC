@@ -34,7 +34,6 @@ def configure_inject(
         binder.bind(StateService, state_service)
         binder.bind(PlayerService, fake_player_service)
         binder.bind(SettingsService, settings_service)
-        binder.bind_to_constructor(InternationalizationService, InternationalizationService)
 
     common_bindings_with(custom_bindings)
 
