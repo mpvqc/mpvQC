@@ -26,8 +26,16 @@ Sourcing is per-field by default: the view model subscribes to the per-field sig
 
 The unchanged-inputs guard — returning early when the folded inputs equal the previous snapshot — is a conditional
 element, not part of the base pattern. While every upstream dedupes at its source, the guard is unreachable and
-untestable through the seam. It is added only when an upstream can refire an unchanged payload; the first expected
-case is a payload-free trigger like retranslation.
+untestable through the seam. It is added only when an upstream can refire an unchanged payload. Retranslation is not
+that case: under the trigger fold it is an ordinary fold of a real value.
+
+**Trigger fold** — the fold for a payload-free trigger signal — is how ambient state enters the snapshot. The
+handler re-reads exactly the ambient values the signal announces, nothing else, and folds them into dedicated inputs
+fields, so the derivation stays pure over the inputs snapshot alone — no injected callables for ambient state.
+Constants read once at construction may sit in the inputs snapshot without a fold. The first case is retranslation:
+the header view model folds the translated unsaved-title template on the internationalization service's retranslated
+signal, which fires only after the translators are installed — the read-at-trigger is as trustworthy as a payload,
+and ordering is structural instead of connection-order luck.
 
 **Burst coalescing** — a trailing debounce between fold and cycle — is likewise a conditional element, added only
 when a consumer needs one settled emission per upstream burst. Folds still apply every payload immediately; the
