@@ -23,11 +23,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 
 @QmlElement
-class MpvqcPrimaryColorModel(QAbstractListModel):
+class MpvqcAccentColorModel(QAbstractListModel):
     _themes = inject.attr(ThemeService)
     _settings = inject.attr(SettingsService)
 
-    IdentifierRole = Qt.ItemDataRole.UserRole + 1
+    AccentColorRole = Qt.ItemDataRole.UserRole + 1
     DisplayColorRole = Qt.ItemDataRole.UserRole + 2
 
     def __init__(self, parent: QObject | None = None) -> None:
@@ -56,7 +56,7 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
         if overlap > 0:
             first = self.index(0)
             last = self.index(overlap - 1)
-            self.dataChanged.emit(first, last, [self.IdentifierRole, self.DisplayColorRole])
+            self.dataChanged.emit(first, last, [self.AccentColorRole, self.DisplayColorRole])
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
@@ -72,7 +72,7 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
         palette = self._themes.theme(self._theme_identifier).palettes[index.row()]
 
         match role:
-            case self.IdentifierRole:
+            case self.AccentColorRole:
                 return palette.accent_color
             case self.DisplayColorRole:
                 return palette.row_selected
@@ -82,6 +82,6 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
     @override
     def roleNames(self) -> dict[int, QByteArray]:
         return {
-            self.IdentifierRole: QByteArray(b"identifier"),
+            self.AccentColorRole: QByteArray(b"accentColor"),
             self.DisplayColorRole: QByteArray(b"displayColor"),
         }

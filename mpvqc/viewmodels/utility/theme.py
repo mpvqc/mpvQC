@@ -119,7 +119,7 @@ class MpvqcThemeViewModel(QObject):
         self._theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
         self._palette = MpvqcThemePalette(self, palette=self._current_palette)
         self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
-        self._settings.primary_color_changed.connect(self._on_primary_color_changed)
+        self._settings.primary_color_changed.connect(self._on_accent_color_changed)
 
     @property
     def _current_palette(self) -> Palette:
@@ -133,7 +133,7 @@ class MpvqcThemeViewModel(QObject):
         self.themeChanged.emit()
 
     @Slot()
-    def _on_primary_color_changed(self) -> None:
+    def _on_accent_color_changed(self) -> None:
         self._palette.update(self._current_palette)
 
     @Property(bool, notify=themeChanged)

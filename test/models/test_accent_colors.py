@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.models import MpvqcPrimaryColorModel
+from mpvqc.models import MpvqcAccentColorModel
 from mpvqc.services import SettingsService, ThemeService
 
 PALETTE_COUNTS = {"small": 1, "medium": 2, "large": 4}
@@ -44,10 +44,10 @@ def configure_injections(common_bindings_with, theme_service_mock, settings_serv
 
 @pytest.fixture
 def make_model(settings_service_mock):
-    def _make(initial: str) -> MpvqcPrimaryColorModel:
+    def _make(initial: str) -> MpvqcAccentColorModel:
         settings_service_mock.theme_identifier = initial
         # noinspection PyCallingNonCallable
-        return MpvqcPrimaryColorModel()
+        return MpvqcAccentColorModel()
 
     return _make
 

@@ -19,15 +19,15 @@ class MpvqcAppearanceDialogViewModel(QObject):
     _settings = inject.attr(SettingsService)
 
     themeIndexChanged = Signal(int)
-    colorIndexChanged = Signal(int)
+    accentColorIndexChanged = Signal(int)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._original_theme_identifier = self._settings.theme_identifier
-        self._original_primary_color = self._settings.primary_color
+        self._original_accent_color = self._settings.primary_color
         theme_identifier = ThemeIdentifier(self._settings.theme_identifier)
         self._theme_index = self._themes.theme_index(theme_identifier)
-        self._color_index = self._themes.theme(theme_identifier).palette_index(
+        self._accent_color_index = self._themes.theme(theme_identifier).palette_index(
             AccentColor(self._settings.primary_color)
         )
         self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
@@ -41,20 +41,20 @@ class MpvqcAppearanceDialogViewModel(QObject):
             self._theme_index = value
             self.themeIndexChanged.emit(value)
 
-    @Property(int, notify=colorIndexChanged)
-    def colorIndex(self) -> int:
-        return self._color_index
+    @Property(int, notify=accentColorIndexChanged)
+    def accentColorIndex(self) -> int:
+        return self._accent_color_index
 
-    def _set_color_index(self, value: int) -> None:
-        if self._color_index != value:
-            self._color_index = value
-            self.colorIndexChanged.emit(value)
+    def _set_accent_color_index(self, value: int) -> None:
+        if self._accent_color_index != value:
+            self._accent_color_index = value
+            self.accentColorIndexChanged.emit(value)
 
     @Slot(str)
     def _on_theme_identifier_changed(self, theme_identifier: str) -> None:
         theme = self._themes.theme(ThemeIdentifier(theme_identifier))
         new_index = theme.palette_index(AccentColor(self._settings.primary_color))
-        self._set_color_index(new_index)
+        self._set_accent_color_index(new_index)
 
     @Slot(str)
     def setTheme(self, theme_identifier: str) -> None:
@@ -63,13 +63,13 @@ class MpvqcAppearanceDialogViewModel(QObject):
         self._settings.theme_identifier = theme_identifier
 
     @Slot(str)
-    def setPrimaryColor(self, identifier: str) -> None:
+    def setAccentColor(self, identifier: str) -> None:
         theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
         new_index = theme.palette_index(AccentColor(identifier))
-        self._set_color_index(new_index)
+        self._set_accent_color_index(new_index)
         self._settings.primary_color = identifier
 
     @Slot()
     def reject(self) -> None:
         self._settings.theme_identifier = self._original_theme_identifier
-        self._settings.primary_color = self._original_primary_color
+        self._settings.primary_color = self._original_accent_color

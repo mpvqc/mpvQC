@@ -309,7 +309,7 @@ class MpvqcTestSettings(QObject):
         return inject.instance(SettingsService).theme_identifier
 
     @Slot(result=str)
-    def primaryColor(self) -> str:
+    def accentColor(self) -> str:
         return inject.instance(SettingsService).primary_color
 
     @Slot(result=list)

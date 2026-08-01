@@ -206,9 +206,9 @@ MpvqcDialog {
                 id: _gridView
                 objectName: "colorGridView"
 
-                model: MpvqcPrimaryColorModel {}
+                model: MpvqcAccentColorModel {}
 
-                currentIndex: root.viewModel.colorIndex
+                currentIndex: root.viewModel.accentColorIndex
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
 
@@ -227,12 +227,12 @@ MpvqcDialog {
                 }
 
                 delegate: SelectionDelegate {
-                    required property string identifier
+                    required property string accentColor
 
                     itemSize: root.dimensions.itemSize
                     borderSize: root.dimensions.borderSize
 
-                    onSelected: root.viewModel.setPrimaryColor(identifier)
+                    onSelected: root.viewModel.setAccentColor(accentColor)
                 }
 
                 Layout.preferredHeight: {
