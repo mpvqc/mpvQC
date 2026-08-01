@@ -10,7 +10,7 @@ import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, Qt
 from PySide6.QtQml import QmlElement
 
-from mpvqc.services import ThemeService
+from mpvqc.services import PaletteCatalogService
 
 if TYPE_CHECKING:
     from typing import Any
@@ -24,7 +24,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcThemePreviewModel(QAbstractListModel):
-    _themes = inject.attr(ThemeService)
+    _catalog = inject.attr(PaletteCatalogService)
 
     IdentifierRole = Qt.ItemDataRole.UserRole + 1
     PreviewRole = Qt.ItemDataRole.UserRole + 2
@@ -33,20 +33,20 @@ class MpvqcThemePreviewModel(QAbstractListModel):
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         if parent is not None and parent.isValid():
             return 0
-        return len(self._themes.themes)
+        return len(self._catalog.palette_families)
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
 
-        preview = self._themes.themes[index.row()]
+        palette_family = self._catalog.palette_families[index.row()]
 
         match role:
             case self.IdentifierRole:
-                return preview.identifier
+                return palette_family.identifier
             case self.PreviewRole:
-                return preview.preview
+                return palette_family.preview
 
         return None
 

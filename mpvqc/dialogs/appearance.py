@@ -10,7 +10,7 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.appearance import AccentColor, ThemeAppearance, ThemeIdentifier
-from mpvqc.services import SettingsService, ThemeService
+from mpvqc.services import PaletteCatalogService, SettingsService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -35,7 +35,7 @@ def derive_appearance_dialog_props(
 
 @QmlElement
 class MpvqcAppearanceDialogViewModel(QObject):
-    _themes = inject.attr(ThemeService)
+    _catalog = inject.attr(PaletteCatalogService)
     _settings = inject.attr(SettingsService)
 
     themeIndexChanged = Signal(int)
@@ -45,17 +45,22 @@ class MpvqcAppearanceDialogViewModel(QObject):
         super().__init__(parent)
         self._baseline_theme_identifier = self._settings.theme_identifier
         self._baseline_accents = {
-            theme.identifier: self._settings.theme_accent_color_for(theme.identifier) for theme in self._themes.themes
+            palette_family.identifier: self._settings.theme_accent_color_for(palette_family.identifier)
+            for palette_family in self._catalog.palette_families
         }
         self._appearance = self._settings.theme_appearance
         self._props = self._derive()
         self._settings.theme_appearance_changed.connect(self._fold_appearance)
 
     def _derive(self) -> AppearanceDialogProps:
-        return derive_appearance_dialog_props(self._appearance, self._themes.theme_index, self._accent_color_index_for)
+        return derive_appearance_dialog_props(
+            self._appearance,
+            self._catalog.palette_family_index_for_identifier,
+            self._accent_color_index_for,
+        )
 
     def _accent_color_index_for(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> int:
-        return self._themes.theme(theme_identifier).palette_index(accent_color)
+        return self._catalog.palette_family_for_identifier(theme_identifier).palette_index(accent_color)
 
     @Slot(ThemeAppearance)
     def _fold_appearance(self, appearance: ThemeAppearance) -> None:

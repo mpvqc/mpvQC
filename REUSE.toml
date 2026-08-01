@@ -17,7 +17,7 @@ path = [
     ".github/screenshots/**",
     "build-aux/windows-icon.ico",
     "build-aux/windows-splash.png",
-    "data/themes.json",
+    "data/palette-catalog.json",
     "data/config/**",
     "i18n/**",
     "testqml/fixtures/**",

@@ -55,7 +55,7 @@ so the test runners load an up-to-date resource bundle. When iterating on test c
 | `qt/qml/`    | QML modules following a reverse-DNS layout, with unit tests colocated alongside sources                                      |
 | `test/`      | Python tests (pytest): services and view models in isolation                                                                 |
 | `testqml/`   | Test harness for QML integration tests: bridge, fixtures, injection overrides                                                |
-| `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, themes, `build-info.toml`                                                   |
+| `data/`      | Fonts, icons, default `mpv.conf` / `input.conf`, the palette catalog, `build-info.toml`                                      |
 | `i18n/`      | Translations as `.ts` source files. The `.qm` binaries are generated                                                         |
 | `build-aux/` | Generator scripts: `pyproject.toml` files-list updater, qrc generator, lupdate project file, Wayland symbol-name regenerator |
 | `docs/`      | These docs                                                                                                                   |

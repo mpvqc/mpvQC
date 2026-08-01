@@ -20,8 +20,8 @@ class ResourceService:
         return _read_resource(":/data/config/mpv-linux.conf")
 
     @cached_property
-    def themes_json(self) -> str:
-        return _read_resource(":/data/themes.json")
+    def palette_catalog_json(self) -> str:
+        return _read_resource(":/data/palette-catalog.json")
 
     @cached_property
     def default_export_template(self) -> str:

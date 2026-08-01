@@ -11,8 +11,8 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import ThemeAppearance
-from mpvqc.services import SettingsService, ThemeService
+from mpvqc.appearance import EffectiveColorScheme, ThemeAppearance
+from mpvqc.services import PaletteCatalogService, SettingsService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from PySide6.QtCore import SignalInstance
 
     from mpvqc.appearance import ThemeIdentifier
-    from mpvqc.services.theme import Theme
+    from mpvqc.services.palette_catalog import PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -51,11 +51,14 @@ class PaletteProps:
     row_selected_text: str
 
 
-def derive_palette_props(appearance: ThemeAppearance, theme_for: Callable[[ThemeIdentifier], Theme]) -> PaletteProps:
-    theme = theme_for(appearance.theme_identifier)
-    palette = theme.palette_for(appearance.stored_accent)
+def derive_palette_props(
+    appearance: ThemeAppearance,
+    palette_family_for: Callable[[ThemeIdentifier], PaletteFamily],
+) -> PaletteProps:
+    palette_family = palette_family_for(appearance.theme_identifier)
+    palette = palette_family.palette_for(appearance.stored_accent)
     return PaletteProps(
-        is_dark=theme.is_dark,
+        is_dark=palette_family.color_scheme is EffectiveColorScheme.DARK,
         background=palette.background,
         foreground=palette.foreground,
         hint=palette.hint,
@@ -81,7 +84,7 @@ def derive_palette_props(appearance: ThemeAppearance, theme_for: Callable[[Theme
 
 @QmlElement
 class MpvqcPaletteViewModel(QObject):
-    _themes = inject.attr(ThemeService)
+    _catalog = inject.attr(PaletteCatalogService)
     _settings = inject.attr(SettingsService)
 
     isDarkChanged = Signal(bool)
@@ -113,7 +116,7 @@ class MpvqcPaletteViewModel(QObject):
         self._settings.theme_appearance_changed.connect(self._fold_appearance)
 
     def _derive(self) -> PaletteProps:
-        return derive_palette_props(self._appearance, self._themes.theme)
+        return derive_palette_props(self._appearance, self._catalog.palette_family_for_identifier)
 
     @Slot(ThemeAppearance)
     def _fold_appearance(self, appearance: ThemeAppearance) -> None:

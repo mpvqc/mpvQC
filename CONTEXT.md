@@ -46,26 +46,22 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 
 ## Appearance
 
-- **Color scheme**: whether the UI renders light or dark. Always one of two stages: the preference the user sets and the
-  effective value that results, so a bare "color scheme" should say which stage it means. The freedesktop and Qt term.
+- **Color scheme**: whether the UI renders light or dark. The term comes in two stages, the preference the user sets
+  and the effective value that results, so a bare "color scheme" should say which one it means. The freedesktop and Qt
+  term.
 - **Color scheme preference**: what the user asks for: light, dark, or follow the system. A request, not a result.
-- **Effective color scheme**: the preference resolved against the system: light or dark. What everything visual keys
-  on.
-- **Accent color**: the color choice that selects the colored variant of what it colors. Remembered separately per
-  color scheme, and each color scheme offers its own accent color set, so a choice is meaningless outside its set. A
-  color scheme with no stored choice renders its default accent. A key, not a promise: what renders is derived from
-  it. The freedesktop term.
-- **Appearance**: the user's choice of how the app looks: color scheme and accent color together. The appearance
-  dialog edits it, settings remember it, and the palette is the appearance rendered. The desktop term: GNOME and macOS
-  group exactly these choices under Appearance.
-- **Palette**: the bundle of named colors the UI binds, resolved for one effective color scheme and one accent color.
-  The Qt term, as in QPalette. Material 3 calls this bundle a color scheme.
-- **Color role**: one named entry in the palette: background, hint, row base. The Qt term. The emphasis role is named
-  accent; "accent role" is the rendered color, "accent color" the user's key, and the two rarely match exactly.
-- **Theme**: legacy term, not part of the language: color scheme and palette now cover it. Settings store the color
-  scheme preference directly now, but the entity is still in code until its catalog and identifier die. Don't use it
-  in new names; naming the leftover entity itself — its identifier, its catalog, the appearance keyed by it — is fine
-  until it dies.
+- **Effective color scheme**: the preference resolved against the system: light or dark. What everything visual keys on.
+- **Accent color**: the user's color pick, deciding which palette renders within one effective color scheme. The
+  freedesktop term.
+- **Appearance**: the user's choice of how the app looks: color scheme preference and accent color together. The
+  desktop term: GNOME and macOS group exactly these choices under Appearance.
+- **Palette**: the bundle of named colors the UI uses. The Qt term, as in QPalette. Material 3 calls this bundle a
+  color scheme.
+- **Palette family**: palettes for one effective color scheme.
+- **Palette catalog**: every palette family the app knows.
+- **Color role**: one named entry in the palette: background, hint, row base. The Qt term.
+- **Theme**: legacy term for a color scheme and its palettes bundled as one entity. Color scheme, palette and palette
+  family cover it now, so don't use it in new names. A few leftovers still carry it until they die.
 
 ## Platform
 

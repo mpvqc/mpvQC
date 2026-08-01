@@ -9,22 +9,22 @@ import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
 from mpvqc.models import MpvqcAccentColorModel
-from mpvqc.services import SettingsService, ThemeService
+from mpvqc.services import PaletteCatalogService, SettingsService
 
 PALETTE_COUNTS = {"small": 1, "medium": 2, "large": 4}
 
 
-def _theme(palette_count: int) -> MagicMock:
-    theme = MagicMock()
-    theme.palette_count = palette_count
-    theme.palettes = [MagicMock(accent_color=f"p{i}", row_selected="#000000") for i in range(palette_count)]
-    return theme
+def _palette_family(palette_count: int) -> MagicMock:
+    palette_family = MagicMock()
+    palette_family.palette_count = palette_count
+    palette_family.palettes = [MagicMock(accent_color=f"p{i}", row_selected="#000000") for i in range(palette_count)]
+    return palette_family
 
 
 @pytest.fixture
-def theme_service_mock():
-    mock = MagicMock(spec_set=ThemeService)
-    mock.theme.side_effect = lambda identifier: _theme(PALETTE_COUNTS[identifier])
+def catalog_mock():
+    mock = MagicMock(spec_set=PaletteCatalogService)
+    mock.palette_family_for_identifier.side_effect = lambda identifier: _palette_family(PALETTE_COUNTS[identifier])
     return mock
 
 
@@ -34,9 +34,9 @@ def settings_service_mock():
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with, theme_service_mock, settings_service_mock):
+def configure_injections(common_bindings_with, catalog_mock, settings_service_mock):
     def custom_bindings(binder: inject.Binder):
-        binder.bind(ThemeService, theme_service_mock)
+        binder.bind(PaletteCatalogService, catalog_mock)
         binder.bind(SettingsService, settings_service_mock)
 
     common_bindings_with(custom_bindings)
@@ -52,7 +52,7 @@ def make_model(settings_service_mock):
     return _make
 
 
-def test_rowcount_reflects_active_theme(make_model):
+def test_rowcount_reflects_the_active_palette_family(make_model):
     assert make_model("large").rowCount() == 4
 
 

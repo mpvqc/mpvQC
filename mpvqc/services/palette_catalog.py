@@ -8,7 +8,7 @@ from functools import cached_property
 
 import inject
 
-from mpvqc.appearance import AccentColor, Palette, ThemeIdentifier
+from mpvqc.appearance import AccentColor, EffectiveColorScheme, Palette, ThemeIdentifier
 
 from .resource import ResourceService
 from .settings import default_theme_identifier
@@ -67,11 +67,11 @@ def _light_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette
 
 
 @dataclass(frozen=True)
-class Theme:
+class PaletteFamily:
     identifier: ThemeIdentifier
     name: str
     preview: str
-    is_dark: bool
+    color_scheme: EffectiveColorScheme
     default_accent: AccentColor
     palettes: tuple[Palette, ...]
 
@@ -99,39 +99,51 @@ class Theme:
         return accent_color
 
 
-def _parse_theme(data: dict) -> Theme:
-    make_palette = _dark_palette if data["is_dark"] else _light_palette
-    return Theme(
+def _parse_palette_family(data: dict) -> PaletteFamily:
+    color_scheme = EffectiveColorScheme(data["color_scheme"])
+    make_palette = _dark_palette if color_scheme is EffectiveColorScheme.DARK else _light_palette
+    return PaletteFamily(
         identifier=ThemeIdentifier(data["identifier"]),
         name=data["name"],
         preview=data["preview"],
-        is_dark=data["is_dark"],
+        color_scheme=color_scheme,
         default_accent=AccentColor(data["default_accent"]),
         palettes=tuple(make_palette(AccentColor(p["identifier"]), p["colors"]) for p in data["palettes"]),
     )
 
 
-class ThemeService:
+class PaletteCatalogService:
     _resource = inject.attr(ResourceService)
 
     def __init__(self) -> None:
-        raw = json.loads(self._resource.themes_json)
-        self._themes = tuple(_parse_theme(t) for t in raw)
-        self._id_to_theme: dict[ThemeIdentifier, Theme] = {t.identifier: t for t in self._themes}
-        self._id_to_index: dict[ThemeIdentifier, int] = {t.identifier: idx for idx, t in enumerate(self._themes)}
+        raw = json.loads(self._resource.palette_catalog_json)
+        self._palette_families = tuple(_parse_palette_family(entry) for entry in raw)
+        self._by_scheme: dict[EffectiveColorScheme, PaletteFamily] = {}
+        for palette_family in self._palette_families:
+            self._by_scheme.setdefault(palette_family.color_scheme, palette_family)
+        self._by_identifier: dict[ThemeIdentifier, PaletteFamily] = {p.identifier: p for p in self._palette_families}
+        self._index_by_identifier: dict[ThemeIdentifier, int] = {
+            p.identifier: idx for idx, p in enumerate(self._palette_families)
+        }
 
     @property
-    def themes(self) -> tuple[Theme, ...]:
-        return self._themes
+    def palette_families(self) -> tuple[PaletteFamily, ...]:
+        return self._palette_families
 
-    def theme(self, theme_identifier: ThemeIdentifier) -> Theme:
-        theme = self._id_to_theme.get(theme_identifier)
-        if theme is None:
-            return self._id_to_theme[default_theme_identifier()]
-        return theme
+    def palette_family_for(self, color_scheme: EffectiveColorScheme) -> PaletteFamily:
+        return self._by_scheme[color_scheme]
 
-    def theme_index(self, theme_identifier: ThemeIdentifier) -> int:
-        index = self._id_to_index.get(theme_identifier)
+    def preview_color_for(self, color_scheme: EffectiveColorScheme) -> str:
+        return self.palette_family_for(color_scheme).preview
+
+    def palette_family_for_identifier(self, theme_identifier: ThemeIdentifier) -> PaletteFamily:
+        palette_family = self._by_identifier.get(theme_identifier)
+        if palette_family is None:
+            return self._by_identifier[default_theme_identifier()]
+        return palette_family
+
+    def palette_family_index_for_identifier(self, theme_identifier: ThemeIdentifier) -> int:
+        index = self._index_by_identifier.get(theme_identifier)
         if index is None:
-            return self._id_to_index[default_theme_identifier()]
+            return self._index_by_identifier[default_theme_identifier()]
         return index

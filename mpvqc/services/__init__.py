@@ -21,6 +21,7 @@ from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorServic
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
 from .main_window import MainWindowService as MainWindowService
 from .mimetype_provider import MimetypeProviderService as MimetypeProviderService
+from .palette_catalog import PaletteCatalogService as PaletteCatalogService
 from .platform import PlatformService as PlatformService
 from .platform import WindowButtonPreference as WindowButtonPreference
 from .player import PlayerService as PlayerService
@@ -30,7 +31,6 @@ from .resource import ResourceService as ResourceService
 from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
 from .settings import SettingsService as SettingsService
 from .state import StateService as StateService
-from .theme import ThemeService as ThemeService
 from .time_format_policy import TimeFormatPolicyService as TimeFormatPolicyService
 from .type_mapper import TypeMapperService as TypeMapperService
 from .version_checker import VersionCheckerService as VersionCheckerService

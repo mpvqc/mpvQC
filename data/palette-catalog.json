@@ -3,7 +3,7 @@
         "identifier": "material-you",
         "name": "Material You",
         "preview": "#f5f2fa",
-        "is_dark": false,
+        "color_scheme": "light",
         "default_accent": "#3f51b5",
         "palettes": [
             {
@@ -1032,7 +1032,7 @@
         "identifier": "material-you-dark",
         "name": "Material You Dark",
         "preview": "#121318",
-        "is_dark": true,
+        "color_scheme": "dark",
         "default_accent": "#3f51b5",
         "palettes": [
             {

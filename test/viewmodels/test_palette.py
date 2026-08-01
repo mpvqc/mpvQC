@@ -9,7 +9,7 @@ import inject
 import pytest
 
 from mpvqc.appearance import AccentColor, Palette, ThemeAppearance, ThemeIdentifier
-from mpvqc.services import ResourceService, SettingsService, ThemeService
+from mpvqc.services import PaletteCatalogService, ResourceService, SettingsService
 from mpvqc.viewmodels.utility.palette import MpvqcPaletteViewModel, PaletteProps, derive_palette_props
 
 LIGHT = ThemeIdentifier("material-you")
@@ -17,22 +17,26 @@ DARK = ThemeIdentifier("material-you-dark")
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with, settings_service, make_theme_data, make_resource_service):
-    light = make_theme_data(identifier=str(LIGHT), is_dark=False, default_accent="#l2", accents=["#l1", "#l2"])
-    dark = make_theme_data(identifier=str(DARK), is_dark=True, default_accent="#d1", accents=["#d1", "#d2", "#d3"])
+def configure_injections(common_bindings_with, settings_service, make_palette_family_data, make_resource_service):
+    light = make_palette_family_data(
+        identifier=str(LIGHT), color_scheme="light", default_accent="#l2", accents=["#l1", "#l2"]
+    )
+    dark = make_palette_family_data(
+        identifier=str(DARK), color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2", "#d3"]
+    )
     fake = make_resource_service(light, dark)
 
     def custom_bindings(binder: inject.Binder):
         binder.bind(ResourceService, fake)
         binder.bind(SettingsService, settings_service)
-        binder.bind_to_constructor(ThemeService, ThemeService)
+        binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
 
     common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
-def theme_service() -> ThemeService:
-    return inject.instance(ThemeService)
+def catalog() -> PaletteCatalogService:
+    return inject.instance(PaletteCatalogService)
 
 
 @pytest.fixture(autouse=True)
@@ -95,10 +99,10 @@ class DerivationCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_derivation(case: DerivationCase, theme_service):
-    props = derive_palette_props(case.appearance, theme_service.theme)
+def test_derivation(case: DerivationCase, catalog):
+    props = derive_palette_props(case.appearance, catalog.palette_family_for_identifier)
 
-    palette = theme_service.theme(case.appearance.theme_identifier).palette_for(case.resolves_to)
+    palette = catalog.palette_family_for_identifier(case.appearance.theme_identifier).palette_for(case.resolves_to)
     assert props == _props_from(palette, is_dark=case.is_dark)
 
 
@@ -149,13 +153,13 @@ def _changed_roles(before: Palette, after: Palette) -> dict[str, str]:
     }
 
 
-def test_initial_snapshot_reads_settings_at_construction(make_view_model, settings_service, theme_service):
+def test_initial_snapshot_reads_settings_at_construction(make_view_model, settings_service, catalog):
     settings_service.theme_identifier = str(LIGHT)
     settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
 
     view_model = make_view_model()
 
-    palette = theme_service.theme(LIGHT).palette_for(AccentColor("#l1"))
+    palette = catalog.palette_family_for_identifier(LIGHT).palette_for(AccentColor("#l1"))
     assert view_model.isDark is False
     assert view_model.background == palette.background
     assert view_model.accent == palette.accent
@@ -163,7 +167,7 @@ def test_initial_snapshot_reads_settings_at_construction(make_view_model, settin
 
 
 def test_theme_switch_emits_is_dark_once_and_only_the_changed_roles(
-    make_view_model, settings_service, theme_service, make_spy, spy_roles
+    make_view_model, settings_service, catalog, make_spy, spy_roles
 ):
     view_model = make_view_model()
     is_dark_spy = make_spy(view_model.isDarkChanged)
@@ -171,8 +175,11 @@ def test_theme_switch_emits_is_dark_once_and_only_the_changed_roles(
 
     settings_service.theme_identifier = str(LIGHT)
 
-    changed = _changed_roles(theme_service.theme(DARK).palette_for(None), theme_service.theme(LIGHT).palette_for(None))
-    assert changed, "the fake themes must differ in at least one color role"
+    changed = _changed_roles(
+        catalog.palette_family_for_identifier(DARK).palette_for(None),
+        catalog.palette_family_for_identifier(LIGHT).palette_for(None),
+    )
+    assert changed, "the fake palette families must differ in at least one color role"
     assert is_dark_spy.count() == 1
     assert is_dark_spy.at(0, 0) is False
     for name, spy in spies.items():
@@ -184,7 +191,7 @@ def test_theme_switch_emits_is_dark_once_and_only_the_changed_roles(
 
 
 def test_current_theme_accent_write_emits_a_color_subset_and_no_is_dark(
-    make_view_model, settings_service, theme_service, make_spy, spy_roles
+    make_view_model, settings_service, catalog, make_spy, spy_roles
 ):
     view_model = make_view_model()
     is_dark_spy = make_spy(view_model.isDarkChanged)
@@ -192,8 +199,8 @@ def test_current_theme_accent_write_emits_a_color_subset_and_no_is_dark(
 
     settings_service.set_theme_accent_color(DARK, AccentColor("#d2"))
 
-    theme = theme_service.theme(DARK)
-    changed = _changed_roles(theme.palette_for(None), theme.palette_for(AccentColor("#d2")))
+    palette_family = catalog.palette_family_for_identifier(DARK)
+    changed = _changed_roles(palette_family.palette_for(None), palette_family.palette_for(AccentColor("#d2")))
     assert changed, "the fake accents must differ in at least one color role"
     assert is_dark_spy.count() == 0
     for name, spy in spies.items():
@@ -216,12 +223,12 @@ def test_accent_write_for_another_theme_emits_nothing(make_view_model, settings_
         assert spy.count() == 0, name
 
 
-def test_props_swap_completes_before_the_first_emission(make_view_model, settings_service, theme_service):
+def test_props_swap_completes_before_the_first_emission(make_view_model, settings_service, catalog):
     view_model = make_view_model()
     observed: list[tuple[bool, str]] = []
     view_model.isDarkChanged.connect(lambda _: observed.append((view_model.isDark, view_model.background)))
 
     settings_service.theme_identifier = str(LIGHT)
 
-    palette = theme_service.theme(LIGHT).palette_for(None)
+    palette = catalog.palette_family_for_identifier(LIGHT).palette_for(None)
     assert observed == [(False, palette.background)]

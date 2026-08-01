@@ -90,43 +90,46 @@ def fake_player_service() -> FakePlayerService:
 
 
 class FakeResourceService(ResourceService):
-    def __init__(self, themes_json: str) -> None:
-        self._themes_json = themes_json
+    def __init__(self, palette_catalog_json: str) -> None:
+        self._palette_catalog_json = palette_catalog_json
 
     @property
     @override
-    def themes_json(self) -> str:
-        return self._themes_json
+    def palette_catalog_json(self) -> str:
+        return self._palette_catalog_json
 
 
 @pytest.fixture(scope="session")
-def make_theme_data():
+def make_palette_family_data():
     def _make(
         *,
         default_accent: str,
         accents: list[str],
         identifier: str | None = None,
-        is_dark: bool | None = None,
+        color_scheme: str | None = None,
+        preview: str | None = None,
     ) -> dict:
-        theme = json.loads(ResourceService().themes_json)[0]
-        palettes = theme["palettes"][: len(accents)]
+        palette_family = json.loads(ResourceService().palette_catalog_json)[0]
+        palettes = palette_family["palettes"][: len(accents)]
         for palette, accent in zip(palettes, accents, strict=True):
             palette["identifier"] = accent
         if identifier is not None:
-            theme["identifier"] = identifier
-        if is_dark is not None:
-            theme["is_dark"] = is_dark
-        theme["palettes"] = palettes
-        theme["default_accent"] = default_accent
-        return theme
+            palette_family["identifier"] = identifier
+        if color_scheme is not None:
+            palette_family["color_scheme"] = color_scheme
+        if preview is not None:
+            palette_family["preview"] = preview
+        palette_family["palettes"] = palettes
+        palette_family["default_accent"] = default_accent
+        return palette_family
 
     return _make
 
 
 @pytest.fixture(scope="session")
 def make_resource_service():
-    def _make(*themes: dict) -> ResourceService:
-        return FakeResourceService(json.dumps(list(themes)))
+    def _make(*palette_families: dict) -> ResourceService:
+        return FakeResourceService(json.dumps(list(palette_families)))
 
     return _make
 

@@ -11,7 +11,7 @@ from PySide6.QtCore import QAbstractListModel, QByteArray, QModelIndex, Qt, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.appearance import ThemeIdentifier
-from mpvqc.services import SettingsService, ThemeService
+from mpvqc.services import PaletteCatalogService, SettingsService
 
 if TYPE_CHECKING:
     from typing import Any
@@ -24,7 +24,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class MpvqcAccentColorModel(QAbstractListModel):
-    _themes = inject.attr(ThemeService)
+    _catalog = inject.attr(PaletteCatalogService)
     _settings = inject.attr(SettingsService)
 
     AccentColorRole = Qt.ItemDataRole.UserRole + 1
@@ -39,7 +39,7 @@ class MpvqcAccentColorModel(QAbstractListModel):
     def _set_theme_identifier(self, raw_identifier: str) -> None:
         theme_identifier = ThemeIdentifier(raw_identifier)
         old_count = self.rowCount()
-        new_count = self._themes.theme(theme_identifier).palette_count
+        new_count = self._catalog.palette_family_for_identifier(theme_identifier).palette_count
 
         if new_count > old_count:
             self.beginInsertRows(QModelIndex(), old_count, new_count - 1)
@@ -62,14 +62,14 @@ class MpvqcAccentColorModel(QAbstractListModel):
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         if parent is not None and parent.isValid():
             return 0
-        return self._themes.theme(self._theme_identifier).palette_count
+        return self._catalog.palette_family_for_identifier(self._theme_identifier).palette_count
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
 
-        palette = self._themes.theme(self._theme_identifier).palettes[index.row()]
+        palette = self._catalog.palette_family_for_identifier(self._theme_identifier).palettes[index.row()]
 
         match role:
             case self.AccentColorRole:

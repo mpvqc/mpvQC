@@ -13,29 +13,33 @@ from mpvqc.dialogs.appearance import (
     MpvqcAppearanceDialogViewModel,
     derive_appearance_dialog_props,
 )
-from mpvqc.services import ResourceService, SettingsService, ThemeService
+from mpvqc.services import PaletteCatalogService, ResourceService, SettingsService
 
 LIGHT = ThemeIdentifier("material-you")
 DARK = ThemeIdentifier("material-you-dark")
 
 
 @pytest.fixture(autouse=True)
-def configure_injections(common_bindings_with, settings_service, make_theme_data, make_resource_service):
-    light = make_theme_data(identifier=str(LIGHT), default_accent="#l2", accents=["#l1", "#l2"])
-    dark = make_theme_data(identifier=str(DARK), default_accent="#d1", accents=["#d1", "#d2", "#d3"])
+def configure_injections(common_bindings_with, settings_service, make_palette_family_data, make_resource_service):
+    light = make_palette_family_data(
+        identifier=str(LIGHT), color_scheme="light", default_accent="#l2", accents=["#l1", "#l2"]
+    )
+    dark = make_palette_family_data(
+        identifier=str(DARK), color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2", "#d3"]
+    )
     fake = make_resource_service(light, dark)
 
     def custom_bindings(binder: inject.Binder):
         binder.bind(ResourceService, fake)
         binder.bind(SettingsService, settings_service)
-        binder.bind_to_constructor(ThemeService, ThemeService)
+        binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
 
     common_bindings_with(custom_bindings)
 
 
 @pytest.fixture
-def theme_service() -> ThemeService:
-    return inject.instance(ThemeService)
+def catalog() -> PaletteCatalogService:
+    return inject.instance(PaletteCatalogService)
 
 
 @pytest.fixture(autouse=True)
@@ -94,11 +98,13 @@ class DerivationCase(NamedTuple):
     ],
     ids=lambda case: case.name,
 )
-def test_derivation(case: DerivationCase, theme_service):
+def test_derivation(case: DerivationCase, catalog):
     def accent_color_index_for(theme_identifier: ThemeIdentifier, accent: AccentColor | None) -> int:
-        return theme_service.theme(theme_identifier).palette_index(accent)
+        return catalog.palette_family_for_identifier(theme_identifier).palette_index(accent)
 
-    props = derive_appearance_dialog_props(case.appearance, theme_service.theme_index, accent_color_index_for)
+    props = derive_appearance_dialog_props(
+        case.appearance, catalog.palette_family_index_for_identifier, accent_color_index_for
+    )
 
     assert props == case.expected
 
