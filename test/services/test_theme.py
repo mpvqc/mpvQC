@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtGui import QColor
 
 from mpvqc.appearance import AccentColor, Palette, ThemeIdentifier
-from mpvqc.services import ResourceService, SettingsService, ThemeService
+from mpvqc.services import ResourceService, ThemeService
 
 
 @pytest.fixture(autouse=True)
@@ -119,15 +119,6 @@ def test_palette_index_resolves_missing_and_stale_to_declared_default(theme_serv
     theme = service.themes[0]
 
     assert theme.palette_index(stored) == 1
-
-
-def test_shipped_themes_declare_the_global_default_accent(theme_service):
-    default = SettingsService.primary_color.default
-
-    for theme in theme_service.themes:
-        assert theme.default_accent == default, (
-            f"theme {theme.identifier!r} declares {theme.default_accent!r} instead of the global default {default!r}"
-        )
 
 
 def test_every_theme_declares_a_default_accent_from_its_own_accent_set(theme_service):

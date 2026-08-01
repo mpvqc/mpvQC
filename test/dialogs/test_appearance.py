@@ -178,20 +178,18 @@ def test_set_theme_writes_the_identifier_and_moves_the_indices(make_view_model, 
     assert view_model.accentColorIndex == 1
 
 
-def test_set_accent_color_writes_the_current_theme_entry_and_the_legacy_global(make_view_model, settings_service):
+def test_set_accent_color_writes_the_current_theme_entry(make_view_model, settings_service):
     view_model = make_view_model()
 
     view_model.setAccentColor("#d2")
 
     assert settings_service.accent_color_for(DARK) == "#d2"
     assert settings_service.accent_color_for(LIGHT) is None
-    assert settings_service.primary_color == "#d2"
     assert view_model.accentColorIndex == 1
 
 
 def test_reject_restores_every_entry_and_both_indices(make_view_model, settings_service):
     settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
-    legacy_accent = settings_service.primary_color
     view_model = make_view_model()
     assert view_model.themeIndex == 1
     assert view_model.accentColorIndex == 0
@@ -206,6 +204,5 @@ def test_reject_restores_every_entry_and_both_indices(make_view_model, settings_
     assert settings_service.theme_identifier == str(DARK)
     assert settings_service.accent_color_for(DARK) is None
     assert settings_service.accent_color_for(LIGHT) == "#l1"
-    assert settings_service.primary_color == legacy_accent
     assert view_model.themeIndex == 1
     assert view_model.accentColorIndex == 0

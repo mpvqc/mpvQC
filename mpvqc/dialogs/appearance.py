@@ -47,8 +47,6 @@ class MpvqcAppearanceDialogViewModel(QObject):
         self._baseline_accents = {
             theme.identifier: self._settings.accent_color_for(theme.identifier) for theme in self._themes.themes
         }
-        # kept alongside the dual-write until the palette view model migrates
-        self._baseline_legacy_accent = self._settings.primary_color
         self._appearance = self._settings.appearance
         self._props = self._derive()
         self._settings.appearance_changed.connect(self._fold_appearance)
@@ -84,12 +82,9 @@ class MpvqcAppearanceDialogViewModel(QObject):
     @Slot(str)
     def setAccentColor(self, identifier: str) -> None:
         self._settings.set_accent_color(self._appearance.theme_identifier, AccentColor(identifier))
-        # keeps the legacy global accent reader live until the palette view model migrates
-        self._settings.primary_color = identifier
 
     @Slot()
     def reject(self) -> None:
         self._settings.theme_identifier = self._baseline_theme_identifier
         for theme_identifier, accent_color in self._baseline_accents.items():
             self._settings.set_accent_color(theme_identifier, accent_color)
-        self._settings.primary_color = self._baseline_legacy_accent

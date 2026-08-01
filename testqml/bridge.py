@@ -25,8 +25,8 @@ from mpvqc.services import (
 )
 from mpvqc.viewmodels import (
     MpvqcLabelWidthCalculatorViewModel,
+    MpvqcPaletteViewModel,
     MpvqcTableUtilityViewModel,
-    MpvqcThemeViewModel,
     MpvqcWindowViewModel,
 )
 from testqml import import_wizard_fixtures
@@ -121,7 +121,7 @@ _SWAPPED_VIEW_MODELS = (
         "io.github.mpvqc.mpvQC.Utility",
         "MpvqcTheme",
         "_viewModel",
-        MpvqcThemeViewModel,
+        MpvqcPaletteViewModel,
     ),
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Utility",
@@ -310,7 +310,7 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=str)
     def accentColor(self) -> str:
-        return inject.instance(SettingsService).primary_color
+        return inject.instance(SettingsService).appearance.stored_accent or ""
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:

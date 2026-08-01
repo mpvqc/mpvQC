@@ -255,14 +255,6 @@ class SettingsService(QObject):
         signal=lambda s: s.theme_identifier_changed,
     )
 
-    primary_color_changed = Signal(str)
-    primary_color = _Setting(
-        "Theme/primaryColor",
-        default="#3f51b5",
-        type_=str,
-        signal=lambda s: s.primary_color_changed,
-    )
-
     appearance_changed = Signal(Appearance)
 
     window_title_format_changed = Signal(int)
