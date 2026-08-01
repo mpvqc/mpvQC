@@ -6,6 +6,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.appearance import AccentColor, ThemeIdentifier
 from mpvqc.services import SettingsService, ThemeService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -24,8 +25,11 @@ class MpvqcAppearanceDialogViewModel(QObject):
         super().__init__(parent)
         self._original_theme_identifier = self._settings.theme_identifier
         self._original_primary_color = self._settings.primary_color
-        self._theme_index = self._themes.theme_index()
-        self._color_index = self._themes.theme().palette_index(self._settings.primary_color)
+        theme_identifier = ThemeIdentifier(self._settings.theme_identifier)
+        self._theme_index = self._themes.theme_index(theme_identifier)
+        self._color_index = self._themes.theme(theme_identifier).palette_index(
+            AccentColor(self._settings.primary_color)
+        )
         self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
 
     @Property(int, notify=themeIndexChanged)
@@ -48,18 +52,20 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     @Slot(str)
     def _on_theme_identifier_changed(self, theme_identifier: str) -> None:
-        new_index = self._themes.theme(theme_identifier).palette_index(self._settings.primary_color)
+        theme = self._themes.theme(ThemeIdentifier(theme_identifier))
+        new_index = theme.palette_index(AccentColor(self._settings.primary_color))
         self._set_color_index(new_index)
 
     @Slot(str)
     def setTheme(self, theme_identifier: str) -> None:
-        new_index = self._themes.theme_index(theme_identifier)
+        new_index = self._themes.theme_index(ThemeIdentifier(theme_identifier))
         self._set_theme_index(new_index)
         self._settings.theme_identifier = theme_identifier
 
     @Slot(str)
     def setPrimaryColor(self, identifier: str) -> None:
-        new_index = self._themes.theme().palette_index(identifier)
+        theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
+        new_index = theme.palette_index(AccentColor(identifier))
         self._set_color_index(new_index)
         self._settings.primary_color = identifier
 

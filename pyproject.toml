@@ -126,6 +126,7 @@ files = [
     "i18n/pt-PT.ts",
     "main.py",
     "mpvqc/__init__.py",
+    "mpvqc/appearance.py",
     "mpvqc/application.py",
     "mpvqc/build.py",
     "mpvqc/close_event_filter.py",

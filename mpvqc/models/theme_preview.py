@@ -33,14 +33,14 @@ class MpvqcThemePreviewModel(QAbstractListModel):
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
         if parent is not None and parent.isValid():
             return 0
-        return len(self._themes.previews)
+        return len(self._themes.themes)
 
     @override
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid() or index.row() >= self.rowCount():
             return None
 
-        preview = self._themes.previews[index.row()]
+        preview = self._themes.themes[index.row()]
 
         match role:
             case self.IdentifierRole:

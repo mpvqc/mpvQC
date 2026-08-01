@@ -98,7 +98,17 @@ def update_theme_file(color_map: dict[str, dict[str, str]], dark: bool) -> None:
         if theme == item["identifier"]:
             file[idx]["palettes"] = [{"identifier": seed, "colors": palette} for seed, palette in color_map.items()]
 
+    validate_default_accents(file)
+
     Path(path).write_text(json.dumps(file, indent=4), encoding="utf-8")
+
+
+def validate_default_accents(themes: list[dict]) -> None:
+    for theme in themes:
+        seeds = {palette["identifier"] for palette in theme["palettes"]}
+        if theme["default_accent"] not in seeds:
+            print(f"Theme {theme['identifier']}: default_accent {theme['default_accent']} is not among its seeds")
+            sys.exit(1)
 
 
 if __name__ == "__main__":

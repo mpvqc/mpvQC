@@ -10,6 +10,7 @@ import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, QModelIndex, Qt, Slot
 from PySide6.QtQml import QmlElement
 
+from mpvqc.appearance import ThemeIdentifier
 from mpvqc.services import SettingsService, ThemeService
 
 if TYPE_CHECKING:
@@ -31,11 +32,12 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._theme_identifier = self._settings.theme_identifier
+        self._theme_identifier = ThemeIdentifier(self._settings.theme_identifier)
         self._settings.theme_identifier_changed.connect(self._set_theme_identifier)
 
     @Slot(str)
-    def _set_theme_identifier(self, theme_identifier: str) -> None:
+    def _set_theme_identifier(self, raw_identifier: str) -> None:
+        theme_identifier = ThemeIdentifier(raw_identifier)
         old_count = self.rowCount()
         new_count = self._themes.theme(theme_identifier).palette_count
 
@@ -71,7 +73,7 @@ class MpvqcPrimaryColorModel(QAbstractListModel):
 
         match role:
             case self.IdentifierRole:
-                return palette.identifier
+                return palette.accent_color
             case self.DisplayColorRole:
                 return palette.row_selected
 

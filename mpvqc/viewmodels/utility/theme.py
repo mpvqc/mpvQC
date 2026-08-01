@@ -6,7 +6,8 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlAnonymous, QmlElement
 
-from mpvqc.services import SettingsService, ThemePalette, ThemeService
+from mpvqc.appearance import AccentColor, Palette, ThemeIdentifier
+from mpvqc.services import SettingsService, ThemeService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -16,11 +17,11 @@ QML_IMPORT_MAJOR_VERSION = 1
 class MpvqcThemePalette(QObject):
     paletteChanged = Signal()
 
-    def __init__(self, parent: QObject | None = None, *, palette: ThemePalette) -> None:
+    def __init__(self, parent: QObject | None = None, *, palette: Palette) -> None:
         super().__init__(parent)
         self._palette = palette
 
-    def update(self, palette: ThemePalette) -> None:
+    def update(self, palette: Palette) -> None:
         if palette != self._palette:
             self._palette = palette
             self.paletteChanged.emit()
@@ -115,18 +116,19 @@ class MpvqcThemeViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._theme = self._themes.theme()
+        self._theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
         self._palette = MpvqcThemePalette(self, palette=self._current_palette)
         self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
         self._settings.primary_color_changed.connect(self._on_primary_color_changed)
 
     @property
-    def _current_palette(self) -> ThemePalette:
-        return self._themes.theme().palette_for(self._settings.primary_color)
+    def _current_palette(self) -> Palette:
+        theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
+        return theme.palette_for(AccentColor(self._settings.primary_color))
 
     @Slot()
     def _on_theme_identifier_changed(self) -> None:
-        self._theme = self._themes.theme()
+        self._theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
         self._palette.update(self._current_palette)
         self.themeChanged.emit()
 

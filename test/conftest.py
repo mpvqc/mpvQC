@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 from collections import deque
 from collections.abc import Callable, Generator
 from pathlib import Path
@@ -86,6 +87,48 @@ class FakePlayerService(PlayerService):
 @pytest.fixture
 def fake_player_service() -> FakePlayerService:
     return FakePlayerService()
+
+
+class FakeResourceService(ResourceService):
+    def __init__(self, themes_json: str) -> None:
+        self._themes_json = themes_json
+
+    @property
+    @override
+    def themes_json(self) -> str:
+        return self._themes_json
+
+
+@pytest.fixture(scope="session")
+def make_theme_data():
+    def _make(
+        *,
+        default_accent: str,
+        accents: list[str],
+        identifier: str | None = None,
+        is_dark: bool | None = None,
+    ) -> dict:
+        theme = json.loads(ResourceService().themes_json)[0]
+        palettes = theme["palettes"][: len(accents)]
+        for palette, accent in zip(palettes, accents, strict=True):
+            palette["identifier"] = accent
+        if identifier is not None:
+            theme["identifier"] = identifier
+        if is_dark is not None:
+            theme["is_dark"] = is_dark
+        theme["palettes"] = palettes
+        theme["default_accent"] = default_accent
+        return theme
+
+    return _make
+
+
+@pytest.fixture(scope="session")
+def make_resource_service():
+    def _make(*themes: dict) -> ResourceService:
+        return FakeResourceService(json.dumps(list(themes)))
+
+    return _make
 
 
 class MySpy:

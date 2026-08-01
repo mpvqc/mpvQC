@@ -17,7 +17,7 @@ PALETTE_COUNTS = {"small": 1, "medium": 2, "large": 4}
 def _theme(palette_count: int) -> MagicMock:
     theme = MagicMock()
     theme.palette_count = palette_count
-    theme.palettes = [MagicMock(identifier=f"p{i}", row_selected="#000000") for i in range(palette_count)]
+    theme.palettes = [MagicMock(accent_color=f"p{i}", row_selected="#000000") for i in range(palette_count)]
     return theme
 
 

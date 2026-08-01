@@ -20,6 +20,7 @@ from PySide6.QtCore import (
     Signal,
 )
 
+from mpvqc.appearance import ThemeIdentifier
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
 
@@ -32,8 +33,8 @@ if TYPE_CHECKING:
     from PySide6.QtCore import SignalInstance
 
 
-def default_theme_identifier() -> str:
-    return "material-you-dark"
+def default_theme_identifier() -> ThemeIdentifier:
+    return ThemeIdentifier("material-you-dark")
 
 
 def default_username() -> str:
@@ -269,10 +270,6 @@ class SettingsService(QObject):
         super().__init__(parent)
         file = ini_file if ini_file is not None else self._type_mapper.map_path_to_str(self._paths.file_settings)
         self.qsettings = QSettings(file, QSettings.Format.IniFormat)
-
-    @staticmethod
-    def default_theme_identifier() -> str:
-        return default_theme_identifier()
 
     @staticmethod
     def default_comment_types() -> list[str]:

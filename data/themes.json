@@ -4,6 +4,7 @@
         "name": "Material You",
         "preview": "#f5f2fa",
         "is_dark": false,
+        "default_accent": "#3f51b5",
         "palettes": [
             {
                 "identifier": "#f44336",
@@ -1032,6 +1033,7 @@
         "name": "Material You Dark",
         "preview": "#121318",
         "is_dark": true,
+        "default_accent": "#3f51b5",
         "palettes": [
             {
                 "identifier": "#f44336",

@@ -3,9 +3,9 @@
 The accent color was one global stored hex that had to exist in every theme — an invariant nothing stated or
 enforced, holding only because both shipped themes carry identical seed sets. A future theme with its own accent set
 would have broken accent persistence silently. We scope the accent color choice to its theme instead: settings
-remember one accent per theme, sparse, and every theme declares its own default accent, validated against its own set
-at catalog load. Today's themes are one per color scheme, so this is the per-scheme accent storage the planned color
-scheme preference rework needs anyway.
+remember one accent per theme, sparse, and every theme declares its own default accent, checked against its own set
+by the color generator before it writes and by a test over the shipped bundle. Today's themes are one per color
+scheme, so this is the per-scheme accent storage the planned color scheme preference rework needs anyway.
 
 Because a theme switch changes two things in one observation — the identifier and which stored accent entry is
 relevant — settings publish the appearance (theme identifier plus that theme's stored accent) as a single deduped
