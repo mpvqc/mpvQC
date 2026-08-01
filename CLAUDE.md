@@ -52,7 +52,8 @@
 ### Issue tracker
 
 User reports and triage live on GitHub Issues; larger chunks of work are planned as local markdown under
-`.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+`.scratch/<feature>/`, and internally found bugs go to `.scratch/bugs/` — never to the public tracker. See
+`docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

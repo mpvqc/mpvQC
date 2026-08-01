@@ -6,8 +6,10 @@ This repo uses two trackers:
 - **Local markdown** under `.scratch/` — the working tracker for a larger chunk of work: the spec and the implementation
   tickets derived from it.
 
-Routing rule: anything public-facing (user reports, triage, discussion with reporters) lives on GitHub. Internal working
-state for a feature effort (specs, implementation tickets, wayfinder maps) lives in `.scratch/`.
+Routing rule: anything public-facing (user reports, triage, discussion with reporters) lives on GitHub. Everything that
+starts inside the project lives in `.scratch/`: working state for a feature effort (specs, implementation tickets,
+wayfinder maps) and bugs we find ourselves. Only reports from users open GitHub issues — a bug found by the maintainer
+or an agent goes to `.scratch/bugs/`, never to the public tracker.
 
 ## GitHub Issues (public tracker)
 
@@ -29,6 +31,8 @@ _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` r
 ## Local markdown (working tracker)
 
 - One feature per directory: `.scratch/<feature-slug>/`
+- Bugs found internally that belong to no feature effort: one file per bug at `.scratch/bugs/<NN>-<slug>.md`, numbered
+  from `01`, with a `Status:` line near the top
 - The spec is `.scratch/<feature-slug>/spec.md`
 - Implementation issues are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01` —
   never a single combined tickets file
@@ -42,6 +46,7 @@ _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` r
 - Triage outcomes, or comments and labels on a user report → GitHub, via `gh`.
 - A spec or implementation tickets for a feature effort → files under `.scratch/<feature-slug>/` (creating the directory
   if needed).
+- A bug found while working, unrelated to the current effort → a file under `.scratch/bugs/`.
 
 ## When a skill says "fetch the relevant ticket"
 
