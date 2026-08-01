@@ -44,6 +44,28 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Time display mode**: which time the footer shows: current, remaining, current over total, or none. Independent of
   the long and short time format, which only decides whether hours render.
 
+## Appearance
+
+- **Color scheme**: whether the UI renders light or dark. Always one of two stages: the preference the user sets and the
+  effective value that results, so a bare "color scheme" should say which stage it means. The freedesktop and Qt term.
+- **Color scheme preference**: what the user asks for: light, dark, or follow the system. A request, not a result.
+- **Effective color scheme**: the preference resolved against the system: light or dark. What everything visual keys
+  on.
+- **Accent color**: the color choice that selects the colored variant of what it colors. Remembered separately per
+  color scheme, and each color scheme offers its own accent color set, so a choice is meaningless outside its set. A
+  color scheme with no stored choice renders its default accent. A key, not a promise: what renders is derived from
+  it. The freedesktop term.
+- **Appearance**: the user's choice of how the app looks: color scheme and accent color together. The appearance
+  dialog edits it, settings remember it, and the palette is the appearance rendered. The desktop term: GNOME and macOS
+  group exactly these choices under Appearance.
+- **Palette**: the bundle of named colors the UI binds, resolved for one effective color scheme and one accent color.
+  The Qt term, as in QPalette. Material 3 calls this bundle a color scheme.
+- **Color role**: one named entry in the palette: background, hint, row base. The Qt term. The emphasis role is named
+  accent; "accent role" is the rendered color, "accent color" the user's key, and the two rarely match exactly.
+- **Theme**: legacy term, not part of the language: color scheme and palette now cover it. Still in code until the
+  color scheme preference is stored directly. Don't use it in new names; naming the leftover entity itself — its
+  identifier, its catalog — is fine until it dies.
+
 ## Platform
 
 - **Window manager**: on X11, a separate client that places and sizes windows. Wayland has no such separate process.
