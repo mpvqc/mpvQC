@@ -4,26 +4,31 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import EffectiveColorScheme, ThemeAppearance
-from mpvqc.services import PaletteCatalogService, SettingsService
+from mpvqc.appearance import Appearance, EffectiveColorScheme
+from mpvqc.services import ColorSchemeService, PaletteCatalogService, SettingsService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtCore import SignalInstance
 
-    from mpvqc.appearance import ThemeIdentifier
     from mpvqc.services.palette_catalog import PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
+
+
+@dataclass(frozen=True)
+class PaletteInputs:
+    appearance: Appearance
+    color_scheme: EffectiveColorScheme
 
 
 @dataclass(frozen=True)
@@ -52,13 +57,13 @@ class PaletteProps:
 
 
 def derive_palette_props(
-    appearance: ThemeAppearance,
-    palette_family_for: Callable[[ThemeIdentifier], PaletteFamily],
+    inputs: PaletteInputs,
+    palette_family_for: Callable[[EffectiveColorScheme], PaletteFamily],
 ) -> PaletteProps:
-    palette_family = palette_family_for(appearance.theme_identifier)
-    palette = palette_family.palette_for(appearance.stored_accent)
+    palette_family = palette_family_for(inputs.color_scheme)
+    palette = palette_family.palette_for(inputs.appearance.accent_color_for(inputs.color_scheme))
     return PaletteProps(
-        is_dark=palette_family.color_scheme is EffectiveColorScheme.DARK,
+        is_dark=inputs.color_scheme is EffectiveColorScheme.DARK,
         background=palette.background,
         foreground=palette.foreground,
         hint=palette.hint,
@@ -85,6 +90,7 @@ def derive_palette_props(
 @QmlElement
 class MpvqcPaletteViewModel(QObject):
     _catalog = inject.attr(PaletteCatalogService)
+    _color_scheme_service = inject.attr(ColorSchemeService)
     _settings = inject.attr(SettingsService)
 
     isDarkChanged = Signal(bool)
@@ -111,17 +117,32 @@ class MpvqcPaletteViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._appearance = self._settings.theme_appearance
+
+        self._inputs = PaletteInputs(
+            appearance=self._settings.appearance,
+            color_scheme=self._color_scheme_service.effective_color_scheme,
+        )
         self._props = self._derive()
-        self._settings.theme_appearance_changed.connect(self._fold_appearance)
+
+        self._settings.appearance_changed.connect(self._fold_appearance)
+        self._color_scheme_service.effective_color_scheme_changed.connect(self._fold_color_scheme)
 
     def _derive(self) -> PaletteProps:
-        return derive_palette_props(self._appearance, self._catalog.palette_family_for_identifier)
+        return derive_palette_props(self._inputs, self._catalog.palette_family_for)
 
-    @Slot(ThemeAppearance)
-    def _fold_appearance(self, appearance: ThemeAppearance) -> None:
-        self._appearance = appearance
+    @Slot(Appearance)
+    def _fold_appearance(self, value: Appearance) -> None:
+        self._update(replace(self._inputs, appearance=value))
+
+    @Slot(EffectiveColorScheme)
+    def _fold_color_scheme(self, value: EffectiveColorScheme) -> None:
+        self._update(replace(self._inputs, color_scheme=value))
+
+    def _update(self, inputs: PaletteInputs) -> None:
+        self._inputs = inputs
         new, old = self._derive(), self._props
+        if new == old:
+            return
         self._props = new
         self._emit_if_changed(self.isDarkChanged, new.is_dark, old.is_dark)
         self._emit_if_changed(self.backgroundChanged, new.background, old.background)

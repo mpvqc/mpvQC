@@ -10,7 +10,7 @@ from typing import Any, override
 
 import inject
 import pytest
-from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, SignalInstance
+from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, Qt, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
 from mpvqc.application import MpvqcApplication
@@ -130,6 +130,53 @@ def make_palette_family_data():
 def make_resource_service():
     def _make(*palette_families: dict) -> ResourceService:
         return FakeResourceService(json.dumps(list(palette_families)))
+
+    return _make
+
+
+class FakeStyleHints:
+    """Stands in for the application's style hints: what the system reports,
+    the override the app pushes back, and the change notification."""
+
+    def __init__(self, system_color_scheme: Qt.ColorScheme) -> None:
+        self._system_color_scheme = system_color_scheme
+        self._override: Qt.ColorScheme | None = None
+        self._callbacks: list[Callable[[], None]] = []
+        self.calls: list[str] = []
+
+    @property
+    def color_scheme(self) -> Qt.ColorScheme:
+        return self._system_color_scheme if self._override is None else self._override
+
+    def set_color_scheme(self, color_scheme: Qt.ColorScheme) -> None:
+        self.calls.append(f"set {color_scheme.name}")
+        override = None if color_scheme is Qt.ColorScheme.Unknown else color_scheme
+        self._apply(override=override, system_color_scheme=self._system_color_scheme)
+
+    def unset_color_scheme(self) -> None:
+        self.calls.append("unset")
+        self._apply(override=None, system_color_scheme=self._system_color_scheme)
+
+    def on_color_scheme_changed(self, callback: Callable[[], None]) -> None:
+        self._callbacks.append(callback)
+
+    def system_reports(self, color_scheme: Qt.ColorScheme) -> None:
+        """The desktop flipped its color scheme."""
+        self._apply(override=self._override, system_color_scheme=color_scheme)
+
+    def _apply(self, *, override: Qt.ColorScheme | None, system_color_scheme: Qt.ColorScheme) -> None:
+        before = self.color_scheme
+        self._override = override
+        self._system_color_scheme = system_color_scheme
+        if self.color_scheme is not before:
+            for callback in self._callbacks:
+                callback()
+
+
+@pytest.fixture(scope="session")
+def make_style_hints():
+    def _make(system_color_scheme: Qt.ColorScheme) -> FakeStyleHints:
+        return FakeStyleHints(system_color_scheme)
 
     return _make
 
