@@ -46,6 +46,7 @@ class PaletteProps:
     popup_text: str
     menu_background: str
     dialog_background: str
+    section_card: str
     tooltip_background: str
     tooltip_text: str
     row_base: str
@@ -76,6 +77,7 @@ def derive_palette_props(
         popup_text=palette.popup_text,
         menu_background=palette.menu_background,
         dialog_background=palette.dialog_background,
+        section_card=palette.section_card,
         tooltip_background=palette.tooltip_background,
         tooltip_text=palette.tooltip_text,
         row_base=palette.row_base,
@@ -106,6 +108,7 @@ class MpvqcPaletteViewModel(QObject):
     popupTextChanged = Signal(str)
     menuBackgroundChanged = Signal(str)
     dialogBackgroundChanged = Signal(str)
+    sectionCardChanged = Signal(str)
     tooltipBackgroundChanged = Signal(str)
     tooltipTextChanged = Signal(str)
     rowBaseChanged = Signal(str)
@@ -157,6 +160,7 @@ class MpvqcPaletteViewModel(QObject):
         self._emit_if_changed(self.popupTextChanged, new.popup_text, old.popup_text)
         self._emit_if_changed(self.menuBackgroundChanged, new.menu_background, old.menu_background)
         self._emit_if_changed(self.dialogBackgroundChanged, new.dialog_background, old.dialog_background)
+        self._emit_if_changed(self.sectionCardChanged, new.section_card, old.section_card)
         self._emit_if_changed(self.tooltipBackgroundChanged, new.tooltip_background, old.tooltip_background)
         self._emit_if_changed(self.tooltipTextChanged, new.tooltip_text, old.tooltip_text)
         self._emit_if_changed(self.rowBaseChanged, new.row_base, old.row_base)
@@ -222,6 +226,10 @@ class MpvqcPaletteViewModel(QObject):
     @Property(str, notify=dialogBackgroundChanged)
     def dialogBackground(self) -> str:
         return self._props.dialog_background
+
+    @Property(str, notify=sectionCardChanged)
+    def sectionCard(self) -> str:
+        return self._props.section_card
 
     @Property(str, notify=tooltipBackgroundChanged)
     def tooltipBackground(self) -> str:

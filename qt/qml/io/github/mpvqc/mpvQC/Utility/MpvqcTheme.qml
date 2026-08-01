@@ -32,6 +32,7 @@ QtObject {
         readonly property color popupText: root._popupText.value
         readonly property color menuBackground: root._menuBackground.value
         readonly property color dialogBackground: root._dialogBackground.value
+        readonly property color sectionCard: root._sectionCard.value
         readonly property color tooltipBackground: root._tooltipBackground.value
         readonly property color tooltipText: root._tooltipText.value
         readonly property color rowBase: root._rowBase.value
@@ -63,6 +64,7 @@ QtObject {
     readonly property AnimatedColor _popupText: AnimatedColor { value: root._viewModel.popupText }
     readonly property AnimatedColor _menuBackground: AnimatedColor { value: root._viewModel.menuBackground }
     readonly property AnimatedColor _dialogBackground: AnimatedColor { value: root._viewModel.dialogBackground }
+    readonly property AnimatedColor _sectionCard: AnimatedColor { value: root._viewModel.sectionCard }
     readonly property AnimatedColor _tooltipBackground: AnimatedColor { value: root._viewModel.tooltipBackground }
     readonly property AnimatedColor _tooltipText: AnimatedColor { value: root._viewModel.tooltipText }
     readonly property AnimatedColor _rowBase: AnimatedColor { value: root._viewModel.rowBase }

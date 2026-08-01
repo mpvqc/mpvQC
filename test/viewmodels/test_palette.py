@@ -182,6 +182,7 @@ def spy_roles(make_spy):
             "popup_text": make_spy(view_model.popupTextChanged),
             "menu_background": make_spy(view_model.menuBackgroundChanged),
             "dialog_background": make_spy(view_model.dialogBackgroundChanged),
+            "section_card": make_spy(view_model.sectionCardChanged),
             "tooltip_background": make_spy(view_model.tooltipBackgroundChanged),
             "tooltip_text": make_spy(view_model.tooltipTextChanged),
             "row_base": make_spy(view_model.rowBaseChanged),

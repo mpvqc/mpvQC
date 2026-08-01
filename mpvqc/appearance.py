@@ -70,6 +70,7 @@ class Palette:
     popup_text: str
     menu_background: str
     dialog_background: str
+    section_card: str
     tooltip_background: str
     tooltip_text: str
     row_base: str
