@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from __future__ import annotations
+from dataclasses import dataclass, replace
 
 import inject
 from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
@@ -12,6 +12,28 @@ from mpvqc.services import PlayerService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
+
+
+@dataclass(frozen=True)
+class ToolbarInputs:
+    video_loaded: bool
+    audio_track_count: int
+    subtitle_track_count: int
+
+
+@dataclass(frozen=True)
+class ToolbarProps:
+    frame_step_active: bool
+    subtitle_active: bool
+    audio_active: bool
+
+
+def derive_toolbar_props(inputs: ToolbarInputs) -> ToolbarProps:
+    return ToolbarProps(
+        frame_step_active=inputs.video_loaded,
+        subtitle_active=inputs.video_loaded and inputs.subtitle_track_count > 0,
+        audio_active=inputs.video_loaded and inputs.audio_track_count > 0,
+    )
 
 
 @QmlElement
@@ -24,67 +46,64 @@ class MpvqcToolBarViewModel(QObject):
 
     _BURST_WINDOW_MS = 300
 
-    def __init__(self, parent: QObject | None = None) -> None:
+    def __init__(self, parent: QObject | None = None, *, burst_window_ms: int = _BURST_WINDOW_MS) -> None:
         super().__init__(parent)
-        self._frame_step_active = False
-        self._subtitle_active = False
-        self._audio_active = False
+        self._inputs = ToolbarInputs(
+            video_loaded=self._player.video_loaded,
+            audio_track_count=self._player.audio_track_count,
+            subtitle_track_count=self._player.subtitle_track_count,
+        )
+        self._props = derive_toolbar_props(self._inputs)
 
-        self._refresh_timer = QTimer(self)
-        self._refresh_timer.setSingleShot(True)
-        self._refresh_timer.setInterval(self._BURST_WINDOW_MS)
-        self._refresh_timer.timeout.connect(self._refresh)
+        self._settle_timer = QTimer(self)
+        self._settle_timer.setSingleShot(True)
+        self._settle_timer.setInterval(burst_window_ms)
+        self._settle_timer.timeout.connect(self._derive_and_emit)
 
-        self._player.video_loaded_changed.connect(self._schedule_refresh)
-        self._player.audio_track_count_changed.connect(self._schedule_refresh)
-        self._player.subtitle_track_count_changed.connect(self._schedule_refresh)
-        self._player.file_loaded.connect(self._schedule_refresh)
+        self._player.video_loaded_changed.connect(self._fold_video_loaded)
+        self._player.audio_track_count_changed.connect(self._fold_audio_track_count)
+        self._player.subtitle_track_count_changed.connect(self._fold_subtitle_track_count)
+
+    @Slot(bool)
+    def _fold_video_loaded(self, value: bool) -> None:
+        self._apply(replace(self._inputs, video_loaded=value))
+
+    @Slot(int)
+    def _fold_audio_track_count(self, value: int) -> None:
+        self._apply(replace(self._inputs, audio_track_count=value))
+
+    @Slot(int)
+    def _fold_subtitle_track_count(self, value: int) -> None:
+        self._apply(replace(self._inputs, subtitle_track_count=value))
+
+    def _apply(self, inputs: ToolbarInputs) -> None:
+        self._inputs = inputs
+        self._settle_timer.start()
 
     @Slot()
-    def _schedule_refresh(self) -> None:
-        self._refresh_timer.start()
-
-    @Slot()
-    def _refresh(self) -> None:
-        video_loaded = self._player.video_loaded
-        if video_loaded:
-            # pyrefly: ignore [bad-assignment]
-            self.frameStepActive = True
-
-        # pyrefly: ignore [bad-assignment, unsupported-operation]
-        self.subtitleActive = video_loaded and self._player.subtitle_track_count > 0
-        # pyrefly: ignore [bad-assignment, unsupported-operation]
-        self.audioActive = video_loaded and self._player.audio_track_count > 0
+    def _derive_and_emit(self) -> None:
+        new, old = derive_toolbar_props(self._inputs), self._props
+        if new == old:
+            return
+        self._props = new
+        if new.frame_step_active != old.frame_step_active:
+            self.frameStepActiveChanged.emit(new.frame_step_active)
+        if new.subtitle_active != old.subtitle_active:
+            self.subtitleActiveChanged.emit(new.subtitle_active)
+        if new.audio_active != old.audio_active:
+            self.audioActiveChanged.emit(new.audio_active)
 
     @Property(bool, notify=frameStepActiveChanged)
     def frameStepActive(self) -> bool:
-        return self._frame_step_active
-
-    @frameStepActive.setter
-    def frameStepActive(self, value: bool) -> None:
-        if self._frame_step_active != value:
-            self._frame_step_active = value
-            self.frameStepActiveChanged.emit(value)
+        return self._props.frame_step_active
 
     @Property(bool, notify=subtitleActiveChanged)
     def subtitleActive(self) -> bool:
-        return self._subtitle_active
-
-    @subtitleActive.setter
-    def subtitleActive(self, value: bool) -> None:
-        if self._subtitle_active != value:
-            self._subtitle_active = value
-            self.subtitleActiveChanged.emit(value)
+        return self._props.subtitle_active
 
     @Property(bool, notify=audioActiveChanged)
     def audioActive(self) -> bool:
-        return self._audio_active
-
-    @audioActive.setter
-    def audioActive(self, value: bool) -> None:
-        if self._audio_active != value:
-            self._audio_active = value
-            self.audioActiveChanged.emit(value)
+        return self._props.audio_active
 
     @Slot()
     def requestFrameStepBackward(self) -> None:
