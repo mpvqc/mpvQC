@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import inject
-from PySide6.QtCore import Property, QObject, Signal, Slot
+from PySide6.QtCore import QObject, Signal, Slot
 
 from mpvqc.services.application_paths import ApplicationPathsService
 from mpvqc.services.build_info import BuildInfoService
@@ -215,11 +215,11 @@ class PlayerService(QObject):
     def external_subtitles(self) -> tuple[str, ...]:
         return self._state.external_subtitles
 
-    @Property(int, notify=audio_track_count_changed)
+    @property
     def audio_track_count(self) -> int:
         return self._state.audio_track_count
 
-    @Property(int, notify=subtitle_track_count_changed)
+    @property
     def subtitle_track_count(self) -> int:
         return self._state.subtitle_track_count
 
