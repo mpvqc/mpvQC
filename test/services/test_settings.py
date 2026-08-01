@@ -187,6 +187,29 @@ def test_current_theme_accent_write_emits_the_new_appearance_once(settings_servi
     assert spy.count() == 1
 
 
+def test_set_accent_color_none_clears_the_stored_entry(settings_service):
+    dark = ThemeIdentifier("material-you-dark")
+    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
+
+    settings_service.set_accent_color(dark, None)
+
+    assert settings_service.accent_color_for(dark) is None
+
+
+def test_clearing_the_current_theme_accent_emits_the_new_appearance(settings_service, make_spy):
+    dark = ThemeIdentifier("material-you-dark")
+    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
+    spy = make_spy(settings_service.appearance_changed)
+
+    settings_service.set_accent_color(dark, None)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == Appearance(theme_identifier=dark, stored_accent=None)
+
+    settings_service.set_accent_color(dark, None)
+    assert spy.count() == 1
+
+
 def test_other_theme_accent_write_stores_silently(settings_service, make_spy):
     spy = make_spy(settings_service.appearance_changed)
     light = ThemeIdentifier("material-you")

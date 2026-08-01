@@ -38,6 +38,10 @@ def default_theme_identifier() -> ThemeIdentifier:
     return ThemeIdentifier("material-you-dark")
 
 
+def _accent_key(theme_identifier: ThemeIdentifier) -> str:
+    return f"Theme/accent/{theme_identifier}"
+
+
 def default_username() -> str:
     return os.environ.get("USERNAME", os.environ.get("USER", "nickname"))
 
@@ -285,17 +289,20 @@ class SettingsService(QObject):
         return Appearance(theme_identifier=theme_identifier, stored_accent=self.accent_color_for(theme_identifier))
 
     def accent_color_for(self, theme_identifier: ThemeIdentifier) -> AccentColor | None:
-        key = f"Theme/accent/{theme_identifier}"
+        key = _accent_key(theme_identifier)
         if self.qsettings.contains(key):
             value = self.qsettings.value(key, type=str)
             if isinstance(value, str):
                 return AccentColor(value)
         return None
 
-    def set_accent_color(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor) -> None:
+    def set_accent_color(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> None:
         if self.accent_color_for(theme_identifier) == accent_color:
             return
-        self.qsettings.setValue(f"Theme/accent/{theme_identifier}", accent_color)
+        if accent_color is None:
+            self.qsettings.remove(_accent_key(theme_identifier))
+        else:
+            self.qsettings.setValue(_accent_key(theme_identifier), accent_color)
         if theme_identifier == self.theme_identifier:
             self.appearance_changed.emit(self.appearance)
 

@@ -2,15 +2,35 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from collections.abc import Callable
+from dataclasses import dataclass
+
 import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import AccentColor, ThemeIdentifier
+from mpvqc.appearance import AccentColor, Appearance, ThemeIdentifier
 from mpvqc.services import SettingsService, ThemeService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
+
+
+@dataclass(frozen=True)
+class AppearanceDialogProps:
+    theme_index: int
+    accent_color_index: int
+
+
+def derive_appearance_dialog_props(
+    appearance: Appearance,
+    theme_index_for: Callable[[ThemeIdentifier], int],
+    accent_color_index_for: Callable[[ThemeIdentifier, AccentColor | None], int],
+) -> AppearanceDialogProps:
+    return AppearanceDialogProps(
+        theme_index=theme_index_for(appearance.theme_identifier),
+        accent_color_index=accent_color_index_for(appearance.theme_identifier, appearance.stored_accent),
+    )
 
 
 @QmlElement
@@ -23,53 +43,53 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._original_theme_identifier = self._settings.theme_identifier
-        self._original_accent_color = self._settings.primary_color
-        theme_identifier = ThemeIdentifier(self._settings.theme_identifier)
-        self._theme_index = self._themes.theme_index(theme_identifier)
-        self._accent_color_index = self._themes.theme(theme_identifier).palette_index(
-            AccentColor(self._settings.primary_color)
-        )
-        self._settings.theme_identifier_changed.connect(self._on_theme_identifier_changed)
+        self._baseline_theme_identifier = self._settings.theme_identifier
+        self._baseline_accents = {
+            theme.identifier: self._settings.accent_color_for(theme.identifier) for theme in self._themes.themes
+        }
+        # kept alongside the dual-write until the palette view model migrates
+        self._baseline_legacy_accent = self._settings.primary_color
+        self._appearance = self._settings.appearance
+        self._props = self._derive()
+        self._settings.appearance_changed.connect(self._fold_appearance)
+
+    def _derive(self) -> AppearanceDialogProps:
+        return derive_appearance_dialog_props(self._appearance, self._themes.theme_index, self._accent_color_index_for)
+
+    def _accent_color_index_for(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> int:
+        return self._themes.theme(theme_identifier).palette_index(accent_color)
+
+    @Slot(Appearance)
+    def _fold_appearance(self, appearance: Appearance) -> None:
+        self._appearance = appearance
+        new, old = self._derive(), self._props
+        self._props = new
+        if new.theme_index != old.theme_index:
+            self.themeIndexChanged.emit(new.theme_index)
+        if new.accent_color_index != old.accent_color_index:
+            self.accentColorIndexChanged.emit(new.accent_color_index)
 
     @Property(int, notify=themeIndexChanged)
     def themeIndex(self) -> int:
-        return self._theme_index
-
-    def _set_theme_index(self, value: int) -> None:
-        if self._theme_index != value:
-            self._theme_index = value
-            self.themeIndexChanged.emit(value)
+        return self._props.theme_index
 
     @Property(int, notify=accentColorIndexChanged)
     def accentColorIndex(self) -> int:
-        return self._accent_color_index
-
-    def _set_accent_color_index(self, value: int) -> None:
-        if self._accent_color_index != value:
-            self._accent_color_index = value
-            self.accentColorIndexChanged.emit(value)
-
-    @Slot(str)
-    def _on_theme_identifier_changed(self, theme_identifier: str) -> None:
-        theme = self._themes.theme(ThemeIdentifier(theme_identifier))
-        new_index = theme.palette_index(AccentColor(self._settings.primary_color))
-        self._set_accent_color_index(new_index)
+        return self._props.accent_color_index
 
     @Slot(str)
     def setTheme(self, theme_identifier: str) -> None:
-        new_index = self._themes.theme_index(ThemeIdentifier(theme_identifier))
-        self._set_theme_index(new_index)
         self._settings.theme_identifier = theme_identifier
 
     @Slot(str)
     def setAccentColor(self, identifier: str) -> None:
-        theme = self._themes.theme(ThemeIdentifier(self._settings.theme_identifier))
-        new_index = theme.palette_index(AccentColor(identifier))
-        self._set_accent_color_index(new_index)
+        self._settings.set_accent_color(self._appearance.theme_identifier, AccentColor(identifier))
+        # keeps the legacy global accent reader live until the palette view model migrates
         self._settings.primary_color = identifier
 
     @Slot()
     def reject(self) -> None:
-        self._settings.theme_identifier = self._original_theme_identifier
-        self._settings.primary_color = self._original_accent_color
+        self._settings.theme_identifier = self._baseline_theme_identifier
+        for theme_identifier, accent_color in self._baseline_accents.items():
+            self._settings.set_accent_color(theme_identifier, accent_color)
+        self._settings.primary_color = self._baseline_legacy_accent
