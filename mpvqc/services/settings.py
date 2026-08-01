@@ -21,7 +21,7 @@ from PySide6.QtCore import (
     Slot,
 )
 
-from mpvqc.appearance import AccentColor, Appearance, ThemeIdentifier
+from mpvqc.appearance import AccentColor, ThemeAppearance, ThemeIdentifier
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
 
@@ -38,7 +38,7 @@ def default_theme_identifier() -> ThemeIdentifier:
     return ThemeIdentifier("material-you-dark")
 
 
-def _accent_key(theme_identifier: ThemeIdentifier) -> str:
+def _theme_accent_key(theme_identifier: ThemeIdentifier) -> str:
     return f"Theme/accent/{theme_identifier}"
 
 
@@ -255,7 +255,7 @@ class SettingsService(QObject):
         signal=lambda s: s.theme_identifier_changed,
     )
 
-    appearance_changed = Signal(Appearance)
+    theme_appearance_changed = Signal(ThemeAppearance)
 
     window_title_format_changed = Signal(int)
     window_title_format = _Setting(
@@ -273,30 +273,32 @@ class SettingsService(QObject):
 
     @Slot()
     def _on_theme_identifier_changed(self) -> None:
-        self.appearance_changed.emit(self.appearance)
+        self.theme_appearance_changed.emit(self.theme_appearance)
 
     @property
-    def appearance(self) -> Appearance:
+    def theme_appearance(self) -> ThemeAppearance:
         theme_identifier = ThemeIdentifier(self.theme_identifier)
-        return Appearance(theme_identifier=theme_identifier, stored_accent=self.accent_color_for(theme_identifier))
+        return ThemeAppearance(
+            theme_identifier=theme_identifier, stored_accent=self.theme_accent_color_for(theme_identifier)
+        )
 
-    def accent_color_for(self, theme_identifier: ThemeIdentifier) -> AccentColor | None:
-        key = _accent_key(theme_identifier)
+    def theme_accent_color_for(self, theme_identifier: ThemeIdentifier) -> AccentColor | None:
+        key = _theme_accent_key(theme_identifier)
         if self.qsettings.contains(key):
             value = self.qsettings.value(key, type=str)
             if isinstance(value, str):
                 return AccentColor(value)
         return None
 
-    def set_accent_color(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> None:
-        if self.accent_color_for(theme_identifier) == accent_color:
+    def set_theme_accent_color(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> None:
+        if self.theme_accent_color_for(theme_identifier) == accent_color:
             return
         if accent_color is None:
-            self.qsettings.remove(_accent_key(theme_identifier))
+            self.qsettings.remove(_theme_accent_key(theme_identifier))
         else:
-            self.qsettings.setValue(_accent_key(theme_identifier), accent_color)
+            self.qsettings.setValue(_theme_accent_key(theme_identifier), accent_color)
         if theme_identifier == self.theme_identifier:
-            self.appearance_changed.emit(self.appearance)
+            self.theme_appearance_changed.emit(self.theme_appearance)
 
     @staticmethod
     def default_comment_types() -> list[str]:

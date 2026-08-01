@@ -11,7 +11,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import Appearance
+from mpvqc.appearance import ThemeAppearance
 from mpvqc.services import SettingsService, ThemeService
 
 if TYPE_CHECKING:
@@ -51,7 +51,7 @@ class PaletteProps:
     row_selected_text: str
 
 
-def derive_palette_props(appearance: Appearance, theme_for: Callable[[ThemeIdentifier], Theme]) -> PaletteProps:
+def derive_palette_props(appearance: ThemeAppearance, theme_for: Callable[[ThemeIdentifier], Theme]) -> PaletteProps:
     theme = theme_for(appearance.theme_identifier)
     palette = theme.palette_for(appearance.stored_accent)
     return PaletteProps(
@@ -108,15 +108,15 @@ class MpvqcPaletteViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._appearance = self._settings.appearance
+        self._appearance = self._settings.theme_appearance
         self._props = self._derive()
-        self._settings.appearance_changed.connect(self._fold_appearance)
+        self._settings.theme_appearance_changed.connect(self._fold_appearance)
 
     def _derive(self) -> PaletteProps:
         return derive_palette_props(self._appearance, self._themes.theme)
 
-    @Slot(Appearance)
-    def _fold_appearance(self, appearance: Appearance) -> None:
+    @Slot(ThemeAppearance)
+    def _fold_appearance(self, appearance: ThemeAppearance) -> None:
         self._appearance = appearance
         new, old = self._derive(), self._props
         self._props = new

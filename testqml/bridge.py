@@ -310,7 +310,7 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=str)
     def accentColor(self) -> str:
-        return inject.instance(SettingsService).appearance.stored_accent or ""
+        return inject.instance(SettingsService).theme_appearance.stored_accent or ""
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:

@@ -9,7 +9,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import AccentColor, Appearance, ThemeIdentifier
+from mpvqc.appearance import AccentColor, ThemeAppearance, ThemeIdentifier
 from mpvqc.services import SettingsService, ThemeService
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
@@ -23,7 +23,7 @@ class AppearanceDialogProps:
 
 
 def derive_appearance_dialog_props(
-    appearance: Appearance,
+    appearance: ThemeAppearance,
     theme_index_for: Callable[[ThemeIdentifier], int],
     accent_color_index_for: Callable[[ThemeIdentifier, AccentColor | None], int],
 ) -> AppearanceDialogProps:
@@ -45,11 +45,11 @@ class MpvqcAppearanceDialogViewModel(QObject):
         super().__init__(parent)
         self._baseline_theme_identifier = self._settings.theme_identifier
         self._baseline_accents = {
-            theme.identifier: self._settings.accent_color_for(theme.identifier) for theme in self._themes.themes
+            theme.identifier: self._settings.theme_accent_color_for(theme.identifier) for theme in self._themes.themes
         }
-        self._appearance = self._settings.appearance
+        self._appearance = self._settings.theme_appearance
         self._props = self._derive()
-        self._settings.appearance_changed.connect(self._fold_appearance)
+        self._settings.theme_appearance_changed.connect(self._fold_appearance)
 
     def _derive(self) -> AppearanceDialogProps:
         return derive_appearance_dialog_props(self._appearance, self._themes.theme_index, self._accent_color_index_for)
@@ -57,8 +57,8 @@ class MpvqcAppearanceDialogViewModel(QObject):
     def _accent_color_index_for(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> int:
         return self._themes.theme(theme_identifier).palette_index(accent_color)
 
-    @Slot(Appearance)
-    def _fold_appearance(self, appearance: Appearance) -> None:
+    @Slot(ThemeAppearance)
+    def _fold_appearance(self, appearance: ThemeAppearance) -> None:
         self._appearance = appearance
         new, old = self._derive(), self._props
         self._props = new
@@ -81,10 +81,10 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     @Slot(str)
     def setAccentColor(self, identifier: str) -> None:
-        self._settings.set_accent_color(self._appearance.theme_identifier, AccentColor(identifier))
+        self._settings.set_theme_accent_color(self._appearance.theme_identifier, AccentColor(identifier))
 
     @Slot()
     def reject(self) -> None:
         self._settings.theme_identifier = self._baseline_theme_identifier
         for theme_identifier, accent_color in self._baseline_accents.items():
-            self._settings.set_accent_color(theme_identifier, accent_color)
+            self._settings.set_theme_accent_color(theme_identifier, accent_color)

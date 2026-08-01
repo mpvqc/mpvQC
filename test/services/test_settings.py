@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 from PySide6.QtCore import QLocale
 
-from mpvqc.appearance import AccentColor, Appearance, ThemeIdentifier
+from mpvqc.appearance import AccentColor, ThemeAppearance, ThemeIdentifier
 from mpvqc.services.settings import default_language
 
 
@@ -121,23 +121,23 @@ def test_time_display_mode_signal_emission(settings_service, make_spy):
     assert spy.count() == 1
 
 
-def test_accent_color_for_returns_none_when_nothing_stored(settings_service):
-    assert settings_service.accent_color_for(ThemeIdentifier("material-you-dark")) is None
+def test_theme_accent_color_for_returns_none_when_nothing_stored(settings_service):
+    assert settings_service.theme_accent_color_for(ThemeIdentifier("material-you-dark")) is None
 
 
-def test_set_accent_color_stores_one_value_per_theme(settings_service):
+def test_set_theme_accent_color_stores_one_value_per_theme(settings_service):
     dark = ThemeIdentifier("material-you-dark")
     light = ThemeIdentifier("material-you")
 
-    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
-    settings_service.set_accent_color(light, AccentColor("#ff5722"))
+    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
+    settings_service.set_theme_accent_color(light, AccentColor("#ff5722"))
 
-    assert settings_service.accent_color_for(dark) == "#3f51b5"
-    assert settings_service.accent_color_for(light) == "#ff5722"
+    assert settings_service.theme_accent_color_for(dark) == "#3f51b5"
+    assert settings_service.theme_accent_color_for(light) == "#ff5722"
 
 
-def test_set_accent_color_writes_into_the_theme_ini_section(settings_service, tmp_path):
-    settings_service.set_accent_color(ThemeIdentifier("material-you"), AccentColor("#3f51b5"))
+def test_set_theme_accent_color_writes_into_the_theme_ini_section(settings_service, tmp_path):
+    settings_service.set_theme_accent_color(ThemeIdentifier("material-you"), AccentColor("#3f51b5"))
     settings_service.qsettings.sync()
 
     ini = (tmp_path / "test_settings.ini").read_text()
@@ -146,78 +146,80 @@ def test_set_accent_color_writes_into_the_theme_ini_section(settings_service, tm
     assert r"accent\material-you=#3f51b5" in theme_section
 
 
-def test_appearance_projects_the_current_theme_and_its_stored_accent(settings_service):
+def test_theme_appearance_projects_the_current_theme_and_its_stored_accent(settings_service):
     dark = ThemeIdentifier("material-you-dark")
     light = ThemeIdentifier("material-you")
 
-    assert settings_service.appearance == Appearance(theme_identifier=dark, stored_accent=None)
+    assert settings_service.theme_appearance == ThemeAppearance(theme_identifier=dark, stored_accent=None)
 
-    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
-    assert settings_service.appearance == Appearance(theme_identifier=dark, stored_accent=AccentColor("#3f51b5"))
+    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
+    assert settings_service.theme_appearance == ThemeAppearance(
+        theme_identifier=dark, stored_accent=AccentColor("#3f51b5")
+    )
 
     settings_service.theme_identifier = str(light)
-    assert settings_service.appearance == Appearance(theme_identifier=light, stored_accent=None)
+    assert settings_service.theme_appearance == ThemeAppearance(theme_identifier=light, stored_accent=None)
 
 
-def test_theme_write_emits_the_new_appearance(settings_service, make_spy):
-    spy = make_spy(settings_service.appearance_changed)
+def test_theme_write_emits_the_new_theme_appearance(settings_service, make_spy):
+    spy = make_spy(settings_service.theme_appearance_changed)
     light = ThemeIdentifier("material-you")
-    settings_service.set_accent_color(light, AccentColor("#ff5722"))
+    settings_service.set_theme_accent_color(light, AccentColor("#ff5722"))
     spy.reset()
 
     settings_service.theme_identifier = str(light)
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == Appearance(theme_identifier=light, stored_accent=AccentColor("#ff5722"))
+    assert spy.at(0, 0) == ThemeAppearance(theme_identifier=light, stored_accent=AccentColor("#ff5722"))
 
     settings_service.theme_identifier = str(light)
     assert spy.count() == 1
 
 
-def test_current_theme_accent_write_emits_the_new_appearance_once(settings_service, make_spy):
-    spy = make_spy(settings_service.appearance_changed)
+def test_current_theme_accent_write_emits_the_theme_appearance_once(settings_service, make_spy):
+    spy = make_spy(settings_service.theme_appearance_changed)
     dark = ThemeIdentifier("material-you-dark")
 
-    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
+    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == Appearance(theme_identifier=dark, stored_accent=AccentColor("#3f51b5"))
+    assert spy.at(0, 0) == ThemeAppearance(theme_identifier=dark, stored_accent=AccentColor("#3f51b5"))
 
-    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
+    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
     assert spy.count() == 1
 
 
-def test_set_accent_color_none_clears_the_stored_entry(settings_service):
+def test_set_theme_accent_color_none_clears_the_stored_entry(settings_service):
     dark = ThemeIdentifier("material-you-dark")
-    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
+    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
 
-    settings_service.set_accent_color(dark, None)
+    settings_service.set_theme_accent_color(dark, None)
 
-    assert settings_service.accent_color_for(dark) is None
+    assert settings_service.theme_accent_color_for(dark) is None
 
 
-def test_clearing_the_current_theme_accent_emits_the_new_appearance(settings_service, make_spy):
+def test_clearing_the_current_theme_accent_emits_the_theme_appearance(settings_service, make_spy):
     dark = ThemeIdentifier("material-you-dark")
-    settings_service.set_accent_color(dark, AccentColor("#3f51b5"))
-    spy = make_spy(settings_service.appearance_changed)
+    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
+    spy = make_spy(settings_service.theme_appearance_changed)
 
-    settings_service.set_accent_color(dark, None)
+    settings_service.set_theme_accent_color(dark, None)
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == Appearance(theme_identifier=dark, stored_accent=None)
+    assert spy.at(0, 0) == ThemeAppearance(theme_identifier=dark, stored_accent=None)
 
-    settings_service.set_accent_color(dark, None)
+    settings_service.set_theme_accent_color(dark, None)
     assert spy.count() == 1
 
 
 def test_other_theme_accent_write_stores_silently(settings_service, make_spy):
-    spy = make_spy(settings_service.appearance_changed)
+    spy = make_spy(settings_service.theme_appearance_changed)
     light = ThemeIdentifier("material-you")
 
-    settings_service.set_accent_color(light, AccentColor("#ff5722"))
+    settings_service.set_theme_accent_color(light, AccentColor("#ff5722"))
 
     assert spy.count() == 0
-    assert settings_service.accent_color_for(light) == "#ff5722"
+    assert settings_service.theme_accent_color_for(light) == "#ff5722"
 
 
 def test_multiple_property_changes(settings_service):

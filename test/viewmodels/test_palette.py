@@ -8,7 +8,7 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.appearance import AccentColor, Appearance, Palette, ThemeIdentifier
+from mpvqc.appearance import AccentColor, Palette, ThemeAppearance, ThemeIdentifier
 from mpvqc.services import ResourceService, SettingsService, ThemeService
 from mpvqc.viewmodels.utility.palette import MpvqcPaletteViewModel, PaletteProps, derive_palette_props
 
@@ -48,7 +48,7 @@ def _props_from(palette: Palette, *, is_dark: bool) -> PaletteProps:
 
 class DerivationCase(NamedTuple):
     name: str
-    appearance: Appearance
+    appearance: ThemeAppearance
     resolves_to: AccentColor
     is_dark: bool
 
@@ -58,37 +58,37 @@ class DerivationCase(NamedTuple):
     [
         DerivationCase(
             name="dark theme with stored accent",
-            appearance=Appearance(theme_identifier=DARK, stored_accent=AccentColor("#d2")),
+            appearance=ThemeAppearance(theme_identifier=DARK, stored_accent=AccentColor("#d2")),
             resolves_to=AccentColor("#d2"),
             is_dark=True,
         ),
         DerivationCase(
             name="dark theme without stored accent resolves to its default",
-            appearance=Appearance(theme_identifier=DARK, stored_accent=None),
+            appearance=ThemeAppearance(theme_identifier=DARK, stored_accent=None),
             resolves_to=AccentColor("#d1"),
             is_dark=True,
         ),
         DerivationCase(
             name="dark theme with stale accent resolves to its default",
-            appearance=Appearance(theme_identifier=DARK, stored_accent=AccentColor("#gone")),
+            appearance=ThemeAppearance(theme_identifier=DARK, stored_accent=AccentColor("#gone")),
             resolves_to=AccentColor("#d1"),
             is_dark=True,
         ),
         DerivationCase(
             name="light theme with stored accent",
-            appearance=Appearance(theme_identifier=LIGHT, stored_accent=AccentColor("#l1")),
+            appearance=ThemeAppearance(theme_identifier=LIGHT, stored_accent=AccentColor("#l1")),
             resolves_to=AccentColor("#l1"),
             is_dark=False,
         ),
         DerivationCase(
             name="light theme without stored accent resolves to its default",
-            appearance=Appearance(theme_identifier=LIGHT, stored_accent=None),
+            appearance=ThemeAppearance(theme_identifier=LIGHT, stored_accent=None),
             resolves_to=AccentColor("#l2"),
             is_dark=False,
         ),
         DerivationCase(
             name="light theme with stale accent resolves to its default",
-            appearance=Appearance(theme_identifier=LIGHT, stored_accent=AccentColor("#gone")),
+            appearance=ThemeAppearance(theme_identifier=LIGHT, stored_accent=AccentColor("#gone")),
             resolves_to=AccentColor("#l2"),
             is_dark=False,
         ),
@@ -151,7 +151,7 @@ def _changed_roles(before: Palette, after: Palette) -> dict[str, str]:
 
 def test_initial_snapshot_reads_settings_at_construction(make_view_model, settings_service, theme_service):
     settings_service.theme_identifier = str(LIGHT)
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
 
     view_model = make_view_model()
 
@@ -190,7 +190,7 @@ def test_current_theme_accent_write_emits_a_color_subset_and_no_is_dark(
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    settings_service.set_accent_color(DARK, AccentColor("#d2"))
+    settings_service.set_theme_accent_color(DARK, AccentColor("#d2"))
 
     theme = theme_service.theme(DARK)
     changed = _changed_roles(theme.palette_for(None), theme.palette_for(AccentColor("#d2")))
@@ -209,7 +209,7 @@ def test_accent_write_for_another_theme_emits_nothing(make_view_model, settings_
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
 
     assert is_dark_spy.count() == 0
     for name, spy in spies.items():

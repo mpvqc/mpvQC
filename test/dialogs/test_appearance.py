@@ -7,7 +7,7 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.appearance import AccentColor, Appearance, ThemeIdentifier
+from mpvqc.appearance import AccentColor, ThemeAppearance, ThemeIdentifier
 from mpvqc.dialogs.appearance import (
     AppearanceDialogProps,
     MpvqcAppearanceDialogViewModel,
@@ -54,7 +54,7 @@ def make_view_model():
 
 class DerivationCase(NamedTuple):
     name: str
-    appearance: Appearance
+    appearance: ThemeAppearance
     expected: AppearanceDialogProps
 
 
@@ -63,32 +63,32 @@ class DerivationCase(NamedTuple):
     [
         DerivationCase(
             name="dark theme with stored accent",
-            appearance=Appearance(theme_identifier=DARK, stored_accent=AccentColor("#d2")),
+            appearance=ThemeAppearance(theme_identifier=DARK, stored_accent=AccentColor("#d2")),
             expected=AppearanceDialogProps(theme_index=1, accent_color_index=1),
         ),
         DerivationCase(
             name="dark theme without stored accent resolves to its default",
-            appearance=Appearance(theme_identifier=DARK, stored_accent=None),
+            appearance=ThemeAppearance(theme_identifier=DARK, stored_accent=None),
             expected=AppearanceDialogProps(theme_index=1, accent_color_index=0),
         ),
         DerivationCase(
             name="dark theme with stale accent resolves to its default",
-            appearance=Appearance(theme_identifier=DARK, stored_accent=AccentColor("#gone")),
+            appearance=ThemeAppearance(theme_identifier=DARK, stored_accent=AccentColor("#gone")),
             expected=AppearanceDialogProps(theme_index=1, accent_color_index=0),
         ),
         DerivationCase(
             name="light theme with stored accent",
-            appearance=Appearance(theme_identifier=LIGHT, stored_accent=AccentColor("#l1")),
+            appearance=ThemeAppearance(theme_identifier=LIGHT, stored_accent=AccentColor("#l1")),
             expected=AppearanceDialogProps(theme_index=0, accent_color_index=0),
         ),
         DerivationCase(
             name="light theme without stored accent resolves to its default",
-            appearance=Appearance(theme_identifier=LIGHT, stored_accent=None),
+            appearance=ThemeAppearance(theme_identifier=LIGHT, stored_accent=None),
             expected=AppearanceDialogProps(theme_index=0, accent_color_index=1),
         ),
         DerivationCase(
             name="light theme with stale accent resolves to its default",
-            appearance=Appearance(theme_identifier=LIGHT, stored_accent=AccentColor("#gone")),
+            appearance=ThemeAppearance(theme_identifier=LIGHT, stored_accent=AccentColor("#gone")),
             expected=AppearanceDialogProps(theme_index=0, accent_color_index=1),
         ),
     ],
@@ -105,7 +105,7 @@ def test_derivation(case: DerivationCase, theme_service):
 
 def test_initial_snapshot_reads_settings_at_construction(make_view_model, settings_service):
     settings_service.theme_identifier = str(LIGHT)
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
 
     view_model = make_view_model()
 
@@ -114,8 +114,8 @@ def test_initial_snapshot_reads_settings_at_construction(make_view_model, settin
 
 
 def test_theme_write_moving_both_indices_emits_both_notifies_once(make_view_model, settings_service, make_spy):
-    settings_service.set_accent_color(DARK, AccentColor("#d2"))
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(DARK, AccentColor("#d2"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
     theme_spy = make_spy(view_model.themeIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
@@ -129,7 +129,7 @@ def test_theme_write_moving_both_indices_emits_both_notifies_once(make_view_mode
 
 
 def test_theme_write_keeping_the_accent_index_emits_only_the_theme_notify(make_view_model, settings_service, make_spy):
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
     assert view_model.accentColorIndex == 0
     theme_spy = make_spy(view_model.themeIndexChanged)
@@ -149,7 +149,7 @@ def test_external_accent_write_for_the_current_theme_moves_the_accent_index(
     theme_spy = make_spy(view_model.themeIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
 
-    settings_service.set_accent_color(DARK, AccentColor("#d3"))
+    settings_service.set_theme_accent_color(DARK, AccentColor("#d3"))
 
     assert accent_spy.count() == 1
     assert accent_spy.at(0, 0) == 2
@@ -162,7 +162,7 @@ def test_accent_write_for_another_theme_emits_nothing(make_view_model, settings_
     theme_spy = make_spy(view_model.themeIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
 
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
 
     assert theme_spy.count() == 0
     assert accent_spy.count() == 0
@@ -183,13 +183,13 @@ def test_set_accent_color_writes_the_current_theme_entry(make_view_model, settin
 
     view_model.setAccentColor("#d2")
 
-    assert settings_service.accent_color_for(DARK) == "#d2"
-    assert settings_service.accent_color_for(LIGHT) is None
+    assert settings_service.theme_accent_color_for(DARK) == "#d2"
+    assert settings_service.theme_accent_color_for(LIGHT) is None
     assert view_model.accentColorIndex == 1
 
 
 def test_reject_restores_every_entry_and_both_indices(make_view_model, settings_service):
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_theme_accent_color(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
     assert view_model.themeIndex == 1
     assert view_model.accentColorIndex == 0
@@ -202,7 +202,7 @@ def test_reject_restores_every_entry_and_both_indices(make_view_model, settings_
     view_model.reject()
 
     assert settings_service.theme_identifier == str(DARK)
-    assert settings_service.accent_color_for(DARK) is None
-    assert settings_service.accent_color_for(LIGHT) == "#l1"
+    assert settings_service.theme_accent_color_for(DARK) is None
+    assert settings_service.theme_accent_color_for(LIGHT) == "#l1"
     assert view_model.themeIndex == 1
     assert view_model.accentColorIndex == 0
