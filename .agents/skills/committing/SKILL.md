@@ -43,8 +43,15 @@ Agent-facing rules live in `CLAUDE.md` and the skills beside this one. A rule th
 
 The body says why, not what. The diff already shows what. No bullet list of individual changes.
 
-Plain, everyday English, the casual register of an open source log. When the work came from a plan, the message stands
-without it: a reader who never saw the plan still understands it.
+Plain, everyday English, the casual register of an open source log: common words and short sentences a non-native
+reader follows on the first pass. When the work came from a plan, the message stands without it: a reader who never
+saw the plan still understands it.
+
+Modest claims: the message promises only what you verified. A change that narrows a symptom narrows it; "fixes" is
+for behaviour you watched fail and then pass.
+
+Faults are behaviour, not blame: say what the code did and stop there. No author, no culprit commit, no project at
+fault, no talk of reporting anything upstream.
 
 ## After
 
@@ -55,3 +62,4 @@ When a larger chunk of work is done, offer to push, and to write the manual chec
 - The new files this change brings are added, and nothing else is.
 - `just fmt` came back clean, and whatever it rewrote outside this change stayed out of the commit.
 - Each doc in the table that the change reaches now describes what the code does.
+- The message claims only what was verified, in everyday words, and names no culprit.
