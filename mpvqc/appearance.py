@@ -10,6 +10,12 @@ AccentColor = NewType("AccentColor", str)
 
 
 @dataclass(frozen=True)
+class Appearance:
+    theme_identifier: ThemeIdentifier
+    stored_accent: AccentColor | None
+
+
+@dataclass(frozen=True)
 class Palette:
     accent_color: AccentColor
     background: str

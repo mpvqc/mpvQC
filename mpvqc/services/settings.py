@@ -18,9 +18,10 @@ from PySide6.QtCore import (
     Qt,
     QUrl,
     Signal,
+    Slot,
 )
 
-from mpvqc.appearance import ThemeIdentifier
+from mpvqc.appearance import AccentColor, Appearance, ThemeIdentifier
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
 
@@ -258,6 +259,8 @@ class SettingsService(QObject):
         signal=lambda s: s.primary_color_changed,
     )
 
+    appearance_changed = Signal(Appearance)
+
     window_title_format_changed = Signal(int)
     window_title_format = _Setting(
         "Window/titleFormat",
@@ -270,6 +273,31 @@ class SettingsService(QObject):
         super().__init__(parent)
         file = ini_file if ini_file is not None else self._type_mapper.map_path_to_str(self._paths.file_settings)
         self.qsettings = QSettings(file, QSettings.Format.IniFormat)
+        self.theme_identifier_changed.connect(self._on_theme_identifier_changed)
+
+    @Slot()
+    def _on_theme_identifier_changed(self) -> None:
+        self.appearance_changed.emit(self.appearance)
+
+    @property
+    def appearance(self) -> Appearance:
+        theme_identifier = ThemeIdentifier(self.theme_identifier)
+        return Appearance(theme_identifier=theme_identifier, stored_accent=self.accent_color_for(theme_identifier))
+
+    def accent_color_for(self, theme_identifier: ThemeIdentifier) -> AccentColor | None:
+        key = f"Theme/accent/{theme_identifier}"
+        if self.qsettings.contains(key):
+            value = self.qsettings.value(key, type=str)
+            if isinstance(value, str):
+                return AccentColor(value)
+        return None
+
+    def set_accent_color(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor) -> None:
+        if self.accent_color_for(theme_identifier) == accent_color:
+            return
+        self.qsettings.setValue(f"Theme/accent/{theme_identifier}", accent_color)
+        if theme_identifier == self.theme_identifier:
+            self.appearance_changed.emit(self.appearance)
 
     @staticmethod
     def default_comment_types() -> list[str]:
