@@ -29,6 +29,13 @@ element, not part of the base pattern. While every upstream dedupes at its sourc
 untestable through the seam. It is added only when an upstream can refire an unchanged payload; the first expected
 case is a payload-free trigger like retranslation.
 
+**Burst coalescing** — a trailing debounce between fold and cycle — is likewise a conditional element, added only
+when a consumer needs one settled emission per upstream burst. Folds still apply every payload immediately; the
+timer defers only derive-and-emit, so the cycle runs once against settled inputs and emits only the deltas that
+survive the burst. The toolbar view model is the first case: its button cascade animation is designed to settle once
+per change, and the player reports a transient no-path on every video switch — the debounce absorbs that
+video-loaded flip before it can reach QML.
+
 ## Consequences
 
 - The interface holds only what the view binds: the properties, their notifies, and real slots. Service wiring is
