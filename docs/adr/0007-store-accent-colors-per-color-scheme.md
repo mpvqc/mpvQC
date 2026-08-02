@@ -1,4 +1,4 @@
-# Store accent colors per color scheme and publish the appearance
+# Store accent colors per color scheme and publish the appearance preference
 
 The accent color was one global stored hex that had to exist in every palette family — an invariant nothing stated or
 enforced, holding only because both shipped families are built from identical accent colors. A future family with its
@@ -9,10 +9,10 @@ bundle. Palette families are one per color scheme, so this is the per-scheme acc
 preference rework needs anyway.
 
 Because a color scheme switch changes two things in one observation — which scheme renders and which stored accent
-color is relevant — settings publish the appearance as a single deduped value, and consumers fold that one payload.
-This instantiates the snapshot-pattern ADR's revisit clause for co-changing fields; it is a projection of settings' own
-stored state, not derivation. The payload carries the color scheme preference and both schemes' accent color
-preferences, so any accent color write publishes, current scheme or not.
+color is relevant — settings publish the appearance preference as a single deduped value, and consumers fold that one
+payload. This instantiates the snapshot-pattern ADR's revisit clause for co-changing fields; it is a projection of
+settings' own stored state, not derivation. The payload carries the color scheme preference and both schemes' accent
+color preferences, so any accent color write publishes, current scheme or not.
 
 ## Considered options
 

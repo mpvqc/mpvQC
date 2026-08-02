@@ -58,8 +58,10 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Accent color preference**: per color scheme, the user's pick: an accent color, or no preference when they never
   confirmed one. Under no preference the palette family's default renders, tracking the shipped default across
   releases.
-- **Appearance**: the user's choice of how the app looks: color scheme preference and accent color preference
-  together. The desktop term: GNOME and macOS group these choices under Appearance.
+- **Appearance**: how the app looks: the palette in force and the color scheme it belongs to.
+- **Appearance preference**: the user's choice of how the app looks: color scheme preference and accent color
+  preference together. GNOME and macOS group these choices in a panel named Appearance; the panel is named for the
+  thing it controls.
 - **Palette**: the bundle of named colors the UI uses. The Qt term, as in QPalette. Material 3 calls this bundle a
   color scheme.
 - **Palette family**: palettes for one color scheme.

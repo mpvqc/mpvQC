@@ -7,7 +7,7 @@ import pytest
 from mpvqc.appearance.domain import (
     COLOR_SCHEME_PREFERENCES,
     AccentColor,
-    Appearance,
+    AppearancePreference,
     Dark,
     FollowSystem,
     Light,
@@ -89,11 +89,11 @@ def test_every_preference_is_offered_once_in_dialog_order():
         (DARK, AccentColor("#d1")),
     ],
 )
-def test_appearance_accent_color_preference_for_reads_the_scheme_entry(color_scheme, expected):
-    appearance = Appearance(
+def test_appearance_preference_reads_the_accent_color_preference_of_the_asked_scheme(color_scheme, expected):
+    appearance_preference = AppearancePreference(
         color_scheme_preference=SYSTEM,
         light_accent_color_preference=AccentColor("#l1"),
         dark_accent_color_preference=AccentColor("#d1"),
     )
 
-    assert appearance.accent_color_preference_for(color_scheme) == expected
+    assert appearance_preference.accent_color_preference_for(color_scheme) == expected

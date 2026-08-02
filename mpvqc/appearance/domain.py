@@ -110,7 +110,7 @@ def resolve_color_scheme(
 
 
 @dataclass(frozen=True)
-class Appearance:
+class AppearancePreference:
     color_scheme_preference: ColorSchemePreference
     light_accent_color_preference: AccentColorPreference
     dark_accent_color_preference: AccentColorPreference

@@ -13,7 +13,7 @@ from PySide6.QtQml import QmlElement
 
 from mpvqc.appearance.domain import (
     COLOR_SCHEME_PREFERENCES,
-    Appearance,
+    AppearancePreference,
     Dark,
     FollowSystem,
     Light,
@@ -56,8 +56,8 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._rows = self._build_rows()
-        self._accents = self._accents_of(self._settings.appearance)
-        self._settings.appearance_changed.connect(self._fold_appearance)
+        self._accents = self._accents_of(self._settings.appearance_preference)
+        self._settings.appearance_preference_changed.connect(self._fold_appearance_preference)
 
     def _build_rows(self) -> tuple[_Row, ...]:
         return tuple(self._build_row(preference) for preference in COLOR_SCHEME_PREFERENCES)
@@ -89,21 +89,26 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
             case _:
                 assert_never(preference)
 
-    def _accents_of(self, appearance: Appearance) -> tuple[str, ...]:
-        return tuple(self._accent_of(row.preference, appearance) for row in self._rows)
+    def _accents_of(self, appearance_preference: AppearancePreference) -> tuple[str, ...]:
+        return tuple(self._accent_of(row.preference, appearance_preference) for row in self._rows)
 
-    def _accent_of(self, preference: ColorSchemePreference, appearance: Appearance) -> str:
-        match preference:
+    def _accent_of(
+        self,
+        color_scheme_preference: ColorSchemePreference,
+        appearance_preference: AppearancePreference,
+    ) -> str:
+        match color_scheme_preference:
             case FollowSystem():
                 return ""
             case Light() | Dark():
-                return self._catalog.palette_family_for(preference).palette_of(appearance).row_selected
+                family = self._catalog.palette_family_for(color_scheme_preference)
+                return family.palette_of(appearance_preference).row_selected
             case _:
-                assert_never(preference)
+                assert_never(color_scheme_preference)
 
-    @Slot(Appearance)
-    def _fold_appearance(self, appearance: Appearance) -> None:
-        new, old = self._accents_of(appearance), self._accents
+    @Slot(AppearancePreference)
+    def _fold_appearance_preference(self, appearance_preference: AppearancePreference) -> None:
+        new, old = self._accents_of(appearance_preference), self._accents
         self._accents = new
         for row, (new_accent, old_accent) in enumerate(zip(new, old, strict=True)):
             if new_accent != old_accent:

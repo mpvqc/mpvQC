@@ -9,7 +9,7 @@ from PySide6.QtCore import QLocale
 
 from mpvqc.appearance.domain import (
     AccentColor,
-    Appearance,
+    AppearancePreference,
     Dark,
     FollowSystem,
     Light,
@@ -182,8 +182,8 @@ def test_set_accent_color_preference_writes_into_the_appearance_ini_section(sett
     assert r"accentColor\light=#ff5722" in appearance_section
 
 
-def test_appearance_projects_the_preference_and_both_stored_accents(settings_service):
-    assert settings_service.appearance == Appearance(
+def test_appearance_preference_projects_the_color_scheme_preference_and_both_stored_accents(settings_service):
+    assert settings_service.appearance_preference == AppearancePreference(
         color_scheme_preference=SYSTEM,
         light_accent_color_preference=NO_PREFERENCE,
         dark_accent_color_preference=NO_PREFERENCE,
@@ -192,20 +192,20 @@ def test_appearance_projects_the_preference_and_both_stored_accents(settings_ser
     settings_service.color_scheme_preference = DARK
     settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
 
-    assert settings_service.appearance == Appearance(
+    assert settings_service.appearance_preference == AppearancePreference(
         color_scheme_preference=DARK,
         light_accent_color_preference=AccentColor("#ff5722"),
         dark_accent_color_preference=NO_PREFERENCE,
     )
 
 
-def test_preference_write_emits_the_appearance(settings_service, make_spy):
-    spy = make_spy(settings_service.appearance_changed)
+def test_preference_write_emits_the_appearance_preference(settings_service, make_spy):
+    spy = make_spy(settings_service.appearance_preference_changed)
 
     settings_service.color_scheme_preference = LIGHT
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == Appearance(
+    assert spy.at(0, 0) == AppearancePreference(
         color_scheme_preference=LIGHT,
         light_accent_color_preference=NO_PREFERENCE,
         dark_accent_color_preference=NO_PREFERENCE,
@@ -220,8 +220,8 @@ def test_preference_write_emits_the_appearance(settings_service, make_spy):
     [LIGHT, DARK],
     ids=["light", "dark"],
 )
-def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_service, make_spy, color_scheme):
-    spy = make_spy(settings_service.appearance_changed)
+def test_accent_write_for_either_scheme_emits_the_appearance_preference_once(settings_service, make_spy, color_scheme):
+    spy = make_spy(settings_service.appearance_preference_changed)
 
     settings_service.set_accent_color_preference(color_scheme, AccentColor("#ff5722"))
 

@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtGui import QColor
 
-from mpvqc.appearance.domain import AccentColor, Appearance, Dark, FollowSystem, Light, NoPreference
+from mpvqc.appearance.domain import AccentColor, AppearancePreference, Dark, FollowSystem, Light, NoPreference
 from mpvqc.appearance.services import PaletteCatalogService
 from mpvqc.services import ResourceService
 
@@ -16,8 +16,8 @@ SYSTEM = FollowSystem()
 NO_PREFERENCE = NoPreference()
 
 
-def _appearance(*, light_accent: str | None = None, dark_accent: str | None = None) -> Appearance:
-    return Appearance(
+def _appearance_preference(*, light_accent: str | None = None, dark_accent: str | None = None) -> AppearancePreference:
+    return AppearancePreference(
         color_scheme_preference=SYSTEM,
         light_accent_color_preference=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
         dark_accent_color_preference=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
@@ -95,8 +95,8 @@ def test_color_scheme_tag_selects_the_palette_mapping(catalog_with, make_palette
     colors = light["palettes"][0]["colors"]
     catalog = catalog_with(light, dark)
 
-    light_palette = catalog.palette_family_for(Light()).palette_of(_appearance())
-    dark_palette = catalog.palette_family_for(Dark()).palette_of(_appearance())
+    light_palette = catalog.palette_family_for(Light()).palette_of(_appearance_preference())
+    dark_palette = catalog.palette_family_for(Dark()).palette_of(_appearance_preference())
 
     assert light_palette.background == colors["surfaceContainerLow"]
     assert dark_palette.background == colors["surface"]
@@ -106,29 +106,29 @@ def test_palette_of_resolves_by_accent_color(fake_catalog):
     palette_family = fake_catalog.palette_family_for(Dark())
     expected = palette_family.palettes[2]
 
-    assert palette_family.palette_of(_appearance(dark_accent="#d3")) is expected
+    assert palette_family.palette_of(_appearance_preference(dark_accent="#d3")) is expected
 
 
 def test_palette_index_of_returns_position(fake_catalog):
     palette_family = fake_catalog.palette_family_for(Dark())
 
-    assert palette_family.palette_index_of(_appearance(dark_accent="#d2")) == 1
+    assert palette_family.palette_index_of(_appearance_preference(dark_accent="#d2")) == 1
 
 
 def test_each_family_reads_only_its_own_schemes_accent(fake_catalog):
-    appearance = _appearance(light_accent="#l1", dark_accent="#d3")
+    appearance_preference = _appearance_preference(light_accent="#l1", dark_accent="#d3")
 
-    assert fake_catalog.palette_family_for(Light()).palette_index_of(appearance) == 0
-    assert fake_catalog.palette_family_for(Dark()).palette_index_of(appearance) == 2
+    assert fake_catalog.palette_family_for(Light()).palette_index_of(appearance_preference) == 0
+    assert fake_catalog.palette_family_for(Dark()).palette_index_of(appearance_preference) == 2
 
 
 @pytest.mark.parametrize("stored", [None, "#stale"], ids=["no-preference", "stale"])
 def test_palette_resolves_missing_and_stale_to_the_declared_default(fake_catalog, stored):
     palette_family = fake_catalog.palette_family_for(Light())
-    appearance = _appearance(light_accent=stored)
+    appearance_preference = _appearance_preference(light_accent=stored)
 
-    assert palette_family.palette_of(appearance) is palette_family.palettes[1]
-    assert palette_family.palette_index_of(appearance) == 1
+    assert palette_family.palette_of(appearance_preference) is palette_family.palettes[1]
+    assert palette_family.palette_index_of(appearance_preference) == 1
 
 
 def test_the_first_family_tagged_with_a_scheme_wins(catalog_with, make_palette_family_data):

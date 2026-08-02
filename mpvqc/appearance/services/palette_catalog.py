@@ -11,7 +11,7 @@ import inject
 
 from mpvqc.appearance.domain import (
     AccentColor,
-    Appearance,
+    AppearancePreference,
     ColorScheme,
     Dark,
     Light,
@@ -91,14 +91,14 @@ class PaletteFamily:
     def _index_by_accent(self) -> dict[AccentColor, int]:
         return {palette.accent_color: idx for idx, palette in enumerate(self.palettes)}
 
-    def palette_of(self, appearance: Appearance) -> Palette:
-        return self._palette_by_accent[self._resolve(appearance)]
+    def palette_of(self, appearance_preference: AppearancePreference) -> Palette:
+        return self._palette_by_accent[self._resolve(appearance_preference)]
 
-    def palette_index_of(self, appearance: Appearance) -> int:
-        return self._index_by_accent[self._resolve(appearance)]
+    def palette_index_of(self, appearance_preference: AppearancePreference) -> int:
+        return self._index_by_accent[self._resolve(appearance_preference)]
 
-    def _resolve(self, appearance: Appearance) -> AccentColor:
-        preference = appearance.accent_color_preference_for(self.color_scheme)
+    def _resolve(self, appearance_preference: AppearancePreference) -> AccentColor:
+        preference = appearance_preference.accent_color_preference_for(self.color_scheme)
         match preference:
             case NoPreference():
                 return self.default_accent

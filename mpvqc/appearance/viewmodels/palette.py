@@ -11,7 +11,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance.domain import Appearance, ColorScheme, Dark
+from mpvqc.appearance.domain import AppearancePreference, ColorScheme, Dark
 from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
 from mpvqc.services import SettingsService
 
@@ -28,7 +28,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @dataclass(frozen=True)
 class PaletteInputs:
-    appearance: Appearance
+    appearance_preference: AppearancePreference
     color_scheme: ColorScheme
 
 
@@ -62,7 +62,7 @@ def derive_palette_props(
     inputs: PaletteInputs,
     palette_family_for: Callable[[ColorScheme], PaletteFamily],
 ) -> PaletteProps:
-    palette = palette_family_for(inputs.color_scheme).palette_of(inputs.appearance)
+    palette = palette_family_for(inputs.color_scheme).palette_of(inputs.appearance_preference)
     return PaletteProps(
         is_dark=isinstance(inputs.color_scheme, Dark),
         background=palette.background,
@@ -122,20 +122,20 @@ class MpvqcPaletteViewModel(QObject):
         super().__init__(parent)
 
         self._inputs = PaletteInputs(
-            appearance=self._settings.appearance,
+            appearance_preference=self._settings.appearance_preference,
             color_scheme=self._color_scheme_service.color_scheme,
         )
         self._props = self._derive()
 
-        self._settings.appearance_changed.connect(self._fold_appearance)
+        self._settings.appearance_preference_changed.connect(self._fold_appearance_preference)
         self._color_scheme_service.color_scheme_changed.connect(self._fold_color_scheme)
 
     def _derive(self) -> PaletteProps:
         return derive_palette_props(self._inputs, self._catalog.palette_family_for)
 
-    @Slot(Appearance)
-    def _fold_appearance(self, value: Appearance) -> None:
-        self._update(replace(self._inputs, appearance=value))
+    @Slot(AppearancePreference)
+    def _fold_appearance_preference(self, value: AppearancePreference) -> None:
+        self._update(replace(self._inputs, appearance_preference=value))
 
     @Slot(object)
     def _fold_color_scheme(self, value: ColorScheme) -> None:

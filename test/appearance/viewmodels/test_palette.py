@@ -10,7 +10,7 @@ import pytest
 
 from mpvqc.appearance.domain import (
     AccentColor,
-    Appearance,
+    AppearancePreference,
     ColorSchemePreference,
     Dark,
     FollowSystem,
@@ -67,13 +67,13 @@ def qt_app_must_be_running(qt_app):
     pass
 
 
-def _appearance(
+def _appearance_preference(
     *,
     preference: ColorSchemePreference = SYSTEM,
     light_accent: str | None = None,
     dark_accent: str | None = None,
-) -> Appearance:
-    return Appearance(
+) -> AppearancePreference:
+    return AppearancePreference(
         color_scheme_preference=preference,
         light_accent_color_preference=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
         dark_accent_color_preference=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
@@ -86,7 +86,7 @@ def _props_from(palette: Palette, *, is_dark: bool) -> PaletteProps:
     return PaletteProps(is_dark=is_dark, **roles)
 
 
-BASE_INPUTS = PaletteInputs(appearance=_appearance(), color_scheme=DARK)
+BASE_INPUTS = PaletteInputs(appearance_preference=_appearance_preference(), color_scheme=DARK)
 
 
 class DerivationCase(NamedTuple):
@@ -101,7 +101,7 @@ class DerivationCase(NamedTuple):
     [
         DerivationCase(
             name="dark scheme with stored accent",
-            inputs=replace(BASE_INPUTS, appearance=_appearance(dark_accent="#d2")),
+            inputs=replace(BASE_INPUTS, appearance_preference=_appearance_preference(dark_accent="#d2")),
             resolves_to=AccentColor("#d2"),
             is_dark=True,
         ),
@@ -113,19 +113,21 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="dark scheme with stale accent resolves to its default",
-            inputs=replace(BASE_INPUTS, appearance=_appearance(dark_accent="#gone")),
+            inputs=replace(BASE_INPUTS, appearance_preference=_appearance_preference(dark_accent="#gone")),
             resolves_to=AccentColor("#d1"),
             is_dark=True,
         ),
         DerivationCase(
             name="dark scheme ignores the light accent",
-            inputs=replace(BASE_INPUTS, appearance=_appearance(light_accent="#l1")),
+            inputs=replace(BASE_INPUTS, appearance_preference=_appearance_preference(light_accent="#l1")),
             resolves_to=AccentColor("#d1"),
             is_dark=True,
         ),
         DerivationCase(
             name="light scheme with stored accent",
-            inputs=replace(BASE_INPUTS, appearance=_appearance(light_accent="#l1"), color_scheme=LIGHT),
+            inputs=replace(
+                BASE_INPUTS, appearance_preference=_appearance_preference(light_accent="#l1"), color_scheme=LIGHT
+            ),
             resolves_to=AccentColor("#l1"),
             is_dark=False,
         ),
@@ -137,13 +139,17 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="light scheme with stale accent resolves to its default",
-            inputs=replace(BASE_INPUTS, appearance=_appearance(light_accent="#gone"), color_scheme=LIGHT),
+            inputs=replace(
+                BASE_INPUTS, appearance_preference=_appearance_preference(light_accent="#gone"), color_scheme=LIGHT
+            ),
             resolves_to=AccentColor("#l2"),
             is_dark=False,
         ),
         DerivationCase(
             name="light scheme ignores the dark accent",
-            inputs=replace(BASE_INPUTS, appearance=_appearance(dark_accent="#d2"), color_scheme=LIGHT),
+            inputs=replace(
+                BASE_INPUTS, appearance_preference=_appearance_preference(dark_accent="#d2"), color_scheme=LIGHT
+            ),
             resolves_to=AccentColor("#l2"),
             is_dark=False,
         ),
@@ -151,7 +157,7 @@ class DerivationCase(NamedTuple):
             name="the preference never enters the derivation",
             inputs=replace(
                 BASE_INPUTS,
-                appearance=_appearance(preference=LIGHT, dark_accent="#d2"),
+                appearance_preference=_appearance_preference(preference=LIGHT, dark_accent="#d2"),
             ),
             resolves_to=AccentColor("#d2"),
             is_dark=True,
@@ -162,7 +168,7 @@ class DerivationCase(NamedTuple):
 def test_derivation(case: DerivationCase, catalog):
     props = derive_palette_props(case.inputs, catalog.palette_family_for)
 
-    resolved = _appearance(light_accent=case.resolves_to.identifier, dark_accent=case.resolves_to.identifier)
+    resolved = _appearance_preference(light_accent=case.resolves_to.identifier, dark_accent=case.resolves_to.identifier)
     palette = catalog.palette_family_for(case.inputs.color_scheme).palette_of(resolved)
     assert props == _props_from(palette, is_dark=case.is_dark)
 
@@ -254,7 +260,7 @@ def test_initial_snapshot_renders_the_desktops_scheme(
 
     view_model = make_view_model()
 
-    palette = catalog.palette_family_for(expected_color_scheme).palette_of(_appearance())
+    palette = catalog.palette_family_for(expected_color_scheme).palette_of(_appearance_preference())
     _assert_renders(view_model, palette, is_dark=expected_color_scheme == DARK)
 
 
@@ -266,7 +272,7 @@ def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
 
     view_model = make_view_model()
 
-    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance()), is_dark=False)
+    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
 def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_view_model, settings_service, catalog):
@@ -276,7 +282,7 @@ def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_vie
     view_model = make_view_model()
 
     _assert_renders(
-        view_model, catalog.palette_family_for(DARK).palette_of(_appearance(dark_accent="#d2")), is_dark=True
+        view_model, catalog.palette_family_for(DARK).palette_of(_appearance_preference(dark_accent="#d2")), is_dark=True
     )
 
 
@@ -294,8 +300,8 @@ def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            catalog.palette_family_for(DARK).palette_of(_appearance()),
-            catalog.palette_family_for(LIGHT).palette_of(_appearance()),
+            catalog.palette_family_for(DARK).palette_of(_appearance_preference()),
+            catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()),
         ),
     )
 
@@ -310,7 +316,9 @@ def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
     style_hints.system_reports(LIGHT)
 
     _assert_renders(
-        view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance(light_accent="#l1")), is_dark=False
+        view_model,
+        catalog.palette_family_for(LIGHT).palette_of(_appearance_preference(light_accent="#l1")),
+        is_dark=False,
     )
 
 
@@ -341,8 +349,8 @@ def test_preference_change_switching_the_scheme_emits_is_dark_once_and_only_the_
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            catalog.palette_family_for(DARK).palette_of(_appearance()),
-            catalog.palette_family_for(LIGHT).palette_of(_appearance()),
+            catalog.palette_family_for(DARK).palette_of(_appearance_preference()),
+            catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()),
         ),
     )
 
@@ -371,7 +379,8 @@ def test_accent_write_for_the_apps_scheme_emits_a_color_subset_and_no_is_dark(
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            palette_family.palette_of(_appearance()), palette_family.palette_of(_appearance(dark_accent="#d2"))
+            palette_family.palette_of(_appearance_preference()),
+            palette_family.palette_of(_appearance_preference(dark_accent="#d2")),
         ),
     )
 
@@ -393,5 +402,5 @@ def test_props_swap_completes_before_the_first_emission(make_view_model, style_h
 
     style_hints.system_reports(LIGHT)
 
-    palette = catalog.palette_family_for(LIGHT).palette_of(_appearance())
+    palette = catalog.palette_family_for(LIGHT).palette_of(_appearance_preference())
     assert observed == [(False, palette.background)]

@@ -9,7 +9,7 @@ import pytest
 
 from mpvqc.appearance.domain import (
     AccentColor,
-    Appearance,
+    AppearancePreference,
     ColorSchemePreference,
     Dark,
     FollowSystem,
@@ -79,7 +79,7 @@ def _inputs(
     dark_accent: str | None = None,
 ) -> AppearanceDialogInputs:
     return AppearanceDialogInputs(
-        appearance=Appearance(
+        appearance_preference=AppearancePreference(
             color_scheme_preference=preference,
             light_accent_color_preference=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
             dark_accent_color_preference=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,

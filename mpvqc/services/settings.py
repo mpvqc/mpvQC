@@ -23,7 +23,7 @@ from PySide6.QtCore import (
 from mpvqc.appearance.domain import (
     AccentColor,
     AccentColorPreference,
-    Appearance,
+    AppearancePreference,
     ColorScheme,
     ColorSchemePreference,
     Dark,
@@ -270,7 +270,7 @@ class SettingsService(QObject):
     )
 
     color_scheme_preference_changed = Signal(object)  # ColorSchemePreference union; Qt sigs can't carry type aliases
-    appearance_changed = Signal(Appearance)
+    appearance_preference_changed = Signal(AppearancePreference)
 
     window_title_format_changed = Signal(int)
     window_title_format = _Setting(
@@ -296,11 +296,11 @@ class SettingsService(QObject):
             return
         self.qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, format_color_scheme_preference(preference))
         self.color_scheme_preference_changed.emit(preference)
-        self.appearance_changed.emit(self.appearance)
+        self.appearance_preference_changed.emit(self.appearance_preference)
 
     @property
-    def appearance(self) -> Appearance:
-        return Appearance(
+    def appearance_preference(self) -> AppearancePreference:
+        return AppearancePreference(
             color_scheme_preference=self.color_scheme_preference,
             light_accent_color_preference=self.accent_color_preference_for(Light()),
             dark_accent_color_preference=self.accent_color_preference_for(Dark()),
@@ -313,7 +313,7 @@ class SettingsService(QObject):
         if self.accent_color_preference_for(color_scheme) == preference:
             return
         self._store_accent_color_preference(_accent_color_key(color_scheme), preference)
-        self.appearance_changed.emit(self.appearance)
+        self.appearance_preference_changed.emit(self.appearance_preference)
 
     def _stored_accent_color_preference(self, key: str) -> AccentColorPreference:
         """The stored accent color preference. An absent key is the user never having confirmed a pick."""
