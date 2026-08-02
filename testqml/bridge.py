@@ -18,6 +18,7 @@ from mpvqc.appearance.domain import (
     format_color_scheme_preference,
     parse_color_scheme,
 )
+from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
@@ -31,7 +32,6 @@ from mpvqc.services import (
 )
 from mpvqc.viewmodels import (
     MpvqcLabelWidthCalculatorViewModel,
-    MpvqcPaletteViewModel,
     MpvqcTableUtilityViewModel,
     MpvqcWindowViewModel,
 )

@@ -20,8 +20,8 @@ from mpvqc.appearance.domain import (
     Light,
     parse_color_scheme_preference,
 )
+from mpvqc.appearance.models import MpvqcAccentColorModel
 from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
-from mpvqc.models import MpvqcAccentColorModel
 from mpvqc.services import SettingsService
 
 if TYPE_CHECKING:

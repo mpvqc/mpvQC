@@ -21,13 +21,13 @@ from mpvqc.appearance.domain import (
 )
 from mpvqc.appearance.services.color_scheme import ColorSchemeService
 from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
-from mpvqc.services import ResourceService, SettingsService
-from mpvqc.viewmodels.utility.palette import (
+from mpvqc.appearance.viewmodels.palette import (
     MpvqcPaletteViewModel,
     PaletteInputs,
     PaletteProps,
     derive_palette_props,
 )
+from mpvqc.services import ResourceService, SettingsService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()
