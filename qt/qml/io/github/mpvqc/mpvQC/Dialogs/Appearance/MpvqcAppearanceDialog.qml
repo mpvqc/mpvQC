@@ -45,7 +45,7 @@ MpvqcDialog {
             spacing: root._sectionSpacing
 
             MpvqcAppearanceSection {
-                objectName: "colorSchemeSection"
+                objectName: "colorSchemePreferenceSection"
 
                 title: qsTranslate("AppearanceDialog", "Color scheme")
 
@@ -53,7 +53,7 @@ MpvqcDialog {
                 Layout.topMargin: root._sectionSpacing
 
                 Item {
-                    objectName: "colorSchemePicker"
+                    objectName: "colorSchemePreferencePicker"
 
                     // A repeater builds every swatch up front, so the row stands at its
                     // full height from the first layout pass
