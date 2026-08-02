@@ -19,14 +19,14 @@ from mpvqc.appearance.domain import (
     Palette,
     Unknown,
 )
-from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
+from mpvqc.appearance.services import AppearanceSettingsService, ColorSchemeService, PaletteCatalogService
 from mpvqc.appearance.viewmodels import (
     MpvqcPalette,
     MpvqcPaletteViewModel,
     PaletteInputs,
     derive_palette_props,
 )
-from mpvqc.services import ResourceService, SettingsService
+from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()
@@ -42,7 +42,7 @@ def style_hints(make_style_hints):
 
 @pytest.fixture(autouse=True)
 def configure_injections(
-    common_bindings_with, settings_service, style_hints, make_palette_family_data, make_resource_service
+    common_bindings_with, appearance_settings_service, style_hints, make_palette_family_data, make_resource_service
 ):
     light = make_palette_family_data(color_scheme="light", default_accent_color="#l2", accents=["#l1", "#l2"])
     dark = make_palette_family_data(color_scheme="dark", default_accent_color="#d1", accents=["#d1", "#d2", "#d3"])
@@ -50,7 +50,7 @@ def configure_injections(
 
     def custom_bindings(binder: inject.Binder):
         binder.bind(ResourceService, fake)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(AppearanceSettingsService, appearance_settings_service)
         binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
         binder.bind_to_constructor(ColorSchemeService, lambda: ColorSchemeService(style_hints))
 
@@ -217,9 +217,9 @@ def test_initial_snapshot_renders_the_desktops_scheme(
 
 
 def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
-    make_view_model, settings_service, style_hints, catalog
+    make_view_model, appearance_settings_service, style_hints, catalog
 ):
-    settings_service.color_scheme_preference = LIGHT
+    appearance_settings_service.color_scheme_preference = LIGHT
     style_hints.system_reports(DARK)
 
     view_model = make_view_model()
@@ -227,9 +227,11 @@ def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
     _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
-def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_view_model, settings_service, catalog):
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
+def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(
+    make_view_model, appearance_settings_service, catalog
+):
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
 
     view_model = make_view_model()
 
@@ -251,10 +253,10 @@ def test_desktop_flip_pushes_the_palette_and_emits_is_dark_once(make_view_model,
 
 
 def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
-    make_view_model, settings_service, style_hints, catalog
+    make_view_model, appearance_settings_service, style_hints, catalog
 ):
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
     view_model = make_view_model()
 
     style_hints.system_reports(LIGHT)
@@ -267,9 +269,9 @@ def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
 
 
 def test_desktop_flip_under_an_explicit_preference_emits_nothing(
-    make_view_model, settings_service, style_hints, spy_on
+    make_view_model, appearance_settings_service, style_hints, spy_on
 ):
-    settings_service.color_scheme_preference = DARK
+    appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
     is_dark_spy, palette_spy = spy_on(view_model)
 
@@ -279,12 +281,12 @@ def test_desktop_flip_under_an_explicit_preference_emits_nothing(
 
 
 def test_preference_change_switching_the_scheme_pushes_the_palette_and_emits_is_dark_once(
-    make_view_model, settings_service, catalog, spy_on
+    make_view_model, appearance_settings_service, catalog, spy_on
 ):
     view_model = make_view_model()
     is_dark_spy, palette_spy = spy_on(view_model)
 
-    settings_service.color_scheme_preference = LIGHT
+    appearance_settings_service.color_scheme_preference = LIGHT
 
     assert is_dark_spy.count() == 1
     assert is_dark_spy.at(0, 0) is False
@@ -292,22 +294,22 @@ def test_preference_change_switching_the_scheme_pushes_the_palette_and_emits_is_
     _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
-def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, settings_service, spy_on):
+def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, appearance_settings_service, spy_on):
     view_model = make_view_model()
     is_dark_spy, palette_spy = spy_on(view_model)
 
-    settings_service.color_scheme_preference = DARK
+    appearance_settings_service.color_scheme_preference = DARK
 
     _assert_nothing_emitted(is_dark_spy, palette_spy)
 
 
 def test_accent_write_for_the_apps_scheme_pushes_the_palette_without_is_dark(
-    make_view_model, settings_service, catalog, spy_on
+    make_view_model, appearance_settings_service, catalog, spy_on
 ):
     view_model = make_view_model()
     is_dark_spy, palette_spy = spy_on(view_model)
 
-    settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
 
     assert is_dark_spy.count() == 0
     assert palette_spy.count() == 1
@@ -318,11 +320,11 @@ def test_accent_write_for_the_apps_scheme_pushes_the_palette_without_is_dark(
     )
 
 
-def test_accent_write_for_the_other_scheme_emits_nothing(make_view_model, settings_service, spy_on):
+def test_accent_write_for_the_other_scheme_emits_nothing(make_view_model, appearance_settings_service, spy_on):
     view_model = make_view_model()
     is_dark_spy, palette_spy = spy_on(view_model)
 
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
     _assert_nothing_emitted(is_dark_spy, palette_spy)
 

@@ -16,8 +16,8 @@ from mpvqc.appearance.domain import (
     NoPreference,
 )
 from mpvqc.appearance.models import MpvqcColorSchemePreferenceModel
-from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
-from mpvqc.services import ResourceService, SettingsService
+from mpvqc.appearance.services import AppearanceSettingsService, ColorSchemeService, PaletteCatalogService
+from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()
@@ -35,7 +35,7 @@ def style_hints(make_style_hints):
 
 @pytest.fixture(autouse=True)
 def configure_injections(
-    common_bindings_with, settings_service, style_hints, make_palette_family_data, make_resource_service
+    common_bindings_with, appearance_settings_service, style_hints, make_palette_family_data, make_resource_service
 ):
     light = make_palette_family_data(
         color_scheme="light", preview_color=LIGHT_PREVIEW_COLOR, default_accent_color="#l2", accents=["#l1", "#l2"]
@@ -47,7 +47,7 @@ def configure_injections(
 
     def custom_bindings(binder: inject.Binder):
         binder.bind(ResourceService, fake)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(AppearanceSettingsService, appearance_settings_service)
         binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
         binder.bind_to_constructor(ColorSchemeService, lambda: ColorSchemeService(style_hints))
 
@@ -130,9 +130,11 @@ def test_only_the_system_row_follows_the_system(make_model):
     ]
 
 
-def test_badges_render_each_schemes_stored_pick_and_system_carries_none(make_model, settings_service, catalog):
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
+def test_badges_render_each_schemes_stored_pick_and_system_carries_none(
+    make_model, appearance_settings_service, catalog
+):
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
     model = make_model()
 
     accent_preview_colors = [
@@ -149,11 +151,11 @@ def test_an_unstored_accent_renders_the_palette_familys_default(make_model, cata
     assert _read(model, 2, MpvqcColorSchemePreferenceModel.AccentPreviewColorRole) == _badge(catalog, DARK, None)
 
 
-def test_an_accent_write_changes_only_its_own_row(make_model, settings_service, catalog, make_spy):
+def test_an_accent_write_changes_only_its_own_row(make_model, appearance_settings_service, catalog, make_spy):
     model = make_model()
     spy = make_spy(model.dataChanged)
 
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
     assert spy.count() == 1
     assert spy.at(0, 0).row() == 1
@@ -162,11 +164,11 @@ def test_an_accent_write_changes_only_its_own_row(make_model, settings_service, 
     assert _read(model, 1, MpvqcColorSchemePreferenceModel.AccentPreviewColorRole) == _badge(catalog, LIGHT, "#l1")
 
 
-def test_a_preference_write_leaves_the_rows_alone(make_model, settings_service, make_spy):
+def test_a_preference_write_leaves_the_rows_alone(make_model, appearance_settings_service, make_spy):
     model = make_model()
     spy = make_spy(model.dataChanged)
 
-    settings_service.color_scheme_preference = LIGHT
+    appearance_settings_service.color_scheme_preference = LIGHT
 
     assert spy.count() == 0
 
@@ -183,10 +185,10 @@ def test_a_desktop_flip_under_system_leaves_the_badges_alone(make_model, style_h
     assert [_read(model, row, MpvqcColorSchemePreferenceModel.AccentPreviewColorRole) for row in range(3)] == before
 
 
-def test_accent_writes_satisfy_the_item_model_protocol(make_model, settings_service):
+def test_accent_writes_satisfy_the_item_model_protocol(make_model, appearance_settings_service):
     model = make_model()
     QAbstractItemModelTester(model, QAbstractItemModelTester.FailureReportingMode.Fatal, model)
 
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
-    settings_service.set_accent_color_preference(LIGHT, NO_PREFERENCE)
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
+    appearance_settings_service.set_accent_color_preference(LIGHT, NO_PREFERENCE)

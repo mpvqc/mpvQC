@@ -16,14 +16,14 @@ from mpvqc.appearance.domain import (
     Light,
     NoPreference,
 )
-from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
+from mpvqc.appearance.services import AppearanceSettingsService, ColorSchemeService, PaletteCatalogService
 from mpvqc.appearance.viewmodels import (
     AppearanceDialogInputs,
     AppearanceDialogProps,
     MpvqcAppearanceDialogViewModel,
     derive_appearance_dialog_props,
 )
-from mpvqc.services import ResourceService, SettingsService
+from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()
@@ -38,7 +38,7 @@ def style_hints(make_style_hints):
 
 @pytest.fixture(autouse=True)
 def configure_injections(
-    common_bindings_with, settings_service, style_hints, make_palette_family_data, make_resource_service
+    common_bindings_with, appearance_settings_service, style_hints, make_palette_family_data, make_resource_service
 ):
     light = make_palette_family_data(color_scheme="light", default_accent_color="#l2", accents=["#l1", "#l2"])
     dark = make_palette_family_data(color_scheme="dark", default_accent_color="#d1", accents=["#d1", "#d2", "#d3"])
@@ -46,7 +46,7 @@ def configure_injections(
 
     def custom_bindings(binder: inject.Binder):
         binder.bind(ResourceService, fake)
-        binder.bind(SettingsService, settings_service)
+        binder.bind(AppearanceSettingsService, appearance_settings_service)
         binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
         binder.bind_to_constructor(ColorSchemeService, lambda: ColorSchemeService(style_hints))
 
@@ -186,9 +186,9 @@ def test_derivation(case: DerivationCase, catalog):
     assert props == case.expected
 
 
-def test_initial_snapshot_reads_settings_at_construction(make_view_model, settings_service):
-    settings_service.color_scheme_preference = LIGHT
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+def test_initial_snapshot_reads_settings_at_construction(make_view_model, appearance_settings_service):
+    appearance_settings_service.color_scheme_preference = LIGHT
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
     view_model = make_view_model()
 
@@ -199,16 +199,16 @@ def test_initial_snapshot_reads_settings_at_construction(make_view_model, settin
 
 
 def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
-    make_view_model, settings_service, make_spy
+    make_view_model, appearance_settings_service, make_spy
 ):
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
     preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
     visible_spy = make_spy(view_model.accentColorSectionVisibleChanged)
     assert view_model.accentColorModel.rowCount() == 0
 
-    settings_service.color_scheme_preference = LIGHT
+    appearance_settings_service.color_scheme_preference = LIGHT
 
     assert preference_spy.count() == 1
     assert preference_spy.at(0, 0) == 1
@@ -219,26 +219,30 @@ def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
     assert view_model.accentColorModel.rowCount() == 2
 
 
-def test_a_preference_write_between_two_schemes_keeps_the_section_open(make_view_model, settings_service, make_spy):
-    settings_service.color_scheme_preference = LIGHT
+def test_a_preference_write_between_two_schemes_keeps_the_section_open(
+    make_view_model, appearance_settings_service, make_spy
+):
+    appearance_settings_service.color_scheme_preference = LIGHT
     view_model = make_view_model()
     visible_spy = make_spy(view_model.accentColorSectionVisibleChanged)
     assert view_model.accentColorModel.rowCount() == 2
 
-    settings_service.color_scheme_preference = DARK
+    appearance_settings_service.color_scheme_preference = DARK
 
     assert visible_spy.count() == 0
     assert view_model.accentColorModel.rowCount() == 3
     assert view_model.accentColorIndex == 0
 
 
-def test_an_accent_write_for_the_selected_scheme_moves_the_accent_index(make_view_model, settings_service, make_spy):
-    settings_service.color_scheme_preference = DARK
+def test_an_accent_write_for_the_selected_scheme_moves_the_accent_index(
+    make_view_model, appearance_settings_service, make_spy
+):
+    appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
     preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
 
-    settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
 
     assert accent_spy.count() == 1
     assert accent_spy.at(0, 0) == 2
@@ -246,13 +250,13 @@ def test_an_accent_write_for_the_selected_scheme_moves_the_accent_index(make_vie
     assert preference_spy.count() == 0
 
 
-def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, settings_service, make_spy):
-    settings_service.color_scheme_preference = DARK
+def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, appearance_settings_service, make_spy):
+    appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
     preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
 
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
     assert preference_spy.count() == 0
     assert accent_spy.count() == 0
@@ -267,38 +271,38 @@ def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, set
     ],
 )
 def test_set_color_scheme_preference_writes_the_setting(
-    make_view_model, settings_service, text, preference, expected_index, expected_accent_count
+    make_view_model, appearance_settings_service, text, preference, expected_index, expected_accent_count
 ):
     view_model = make_view_model()
 
     view_model.setColorSchemePreference(text)
 
-    assert settings_service.color_scheme_preference == preference
+    assert appearance_settings_service.color_scheme_preference == preference
     assert view_model.colorSchemePreferenceIndex == expected_index
     assert view_model.accentColorModel.rowCount() == expected_accent_count
 
 
-def test_set_accent_color_writes_the_selected_schemes_entry_only(make_view_model, settings_service):
-    settings_service.color_scheme_preference = DARK
+def test_set_accent_color_writes_the_selected_schemes_entry_only(make_view_model, appearance_settings_service):
+    appearance_settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
 
     view_model.setAccentColor("#d2")
 
-    assert settings_service.accent_color_preference_for(DARK) == AccentColor("#d2")
-    assert settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
+    assert appearance_settings_service.accent_color_preference_for(DARK) == AccentColor("#d2")
+    assert appearance_settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
     assert view_model.accentColorIndex == 1
 
 
-def test_set_accent_color_under_system_writes_nothing(make_view_model, settings_service):
+def test_set_accent_color_under_system_writes_nothing(make_view_model, appearance_settings_service):
     view_model = make_view_model()
 
     view_model.setAccentColor("#d2")
 
-    assert settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
-    assert settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
+    assert appearance_settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
+    assert appearance_settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
 
 
-def test_props_swap_completes_before_the_first_emission(make_view_model, settings_service):
+def test_props_swap_completes_before_the_first_emission(make_view_model, appearance_settings_service):
     view_model = make_view_model()
     observed: list[tuple[int, int, bool]] = []
     view_model.accentColorSectionVisibleChanged.connect(
@@ -307,7 +311,7 @@ def test_props_swap_completes_before_the_first_emission(make_view_model, setting
         )
     )
 
-    settings_service.color_scheme_preference = DARK
+    appearance_settings_service.color_scheme_preference = DARK
 
     assert observed == [(2, 0, True)]
 
@@ -331,9 +335,9 @@ def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints,
     assert view_model.accentColorModel.rowCount() == 0
 
 
-def test_reject_restores_the_preference_and_both_accents(make_view_model, settings_service):
-    settings_service.color_scheme_preference = DARK
-    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+def test_reject_restores_the_preference_and_both_accents(make_view_model, appearance_settings_service):
+    appearance_settings_service.color_scheme_preference = DARK
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
     assert view_model.colorSchemePreferenceIndex == 2
     assert view_model.accentColorIndex == 0
@@ -346,9 +350,9 @@ def test_reject_restores_the_preference_and_both_accents(make_view_model, settin
 
     view_model.reject()
 
-    assert settings_service.color_scheme_preference == DARK
-    assert settings_service.accent_color_preference_for(LIGHT) == AccentColor("#l1")
-    assert settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
+    assert appearance_settings_service.color_scheme_preference == DARK
+    assert appearance_settings_service.accent_color_preference_for(LIGHT) == AccentColor("#l1")
+    assert appearance_settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
     assert view_model.colorSchemePreferenceIndex == 2
     assert view_model.accentColorIndex == 0
     assert view_model.accentColorSectionVisible is True

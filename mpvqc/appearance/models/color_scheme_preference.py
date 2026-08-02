@@ -19,8 +19,7 @@ from mpvqc.appearance.domain import (
     Light,
     format_color_scheme_preference,
 )
-from mpvqc.appearance.services import PaletteCatalogService
-from mpvqc.services import SettingsService
+from mpvqc.appearance.services import AppearanceSettingsService, PaletteCatalogService
 
 if TYPE_CHECKING:
     from typing import Any
@@ -45,7 +44,7 @@ class _Row:
 @QmlElement
 class MpvqcColorSchemePreferenceModel(QAbstractListModel):
     _catalog = inject.attr(PaletteCatalogService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(AppearanceSettingsService)
 
     PreferenceRole = Qt.ItemDataRole.UserRole + 1
     CaptionRole = Qt.ItemDataRole.UserRole + 2

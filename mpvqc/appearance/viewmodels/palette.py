@@ -12,8 +12,7 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.appearance.domain import AppearancePreference, ColorScheme, Dark
-from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
-from mpvqc.services import SettingsService
+from mpvqc.appearance.services import AppearanceSettingsService, ColorSchemeService, PaletteCatalogService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -149,7 +148,7 @@ class MpvqcPalette(QObject):
 class MpvqcPaletteViewModel(QObject):
     _catalog = inject.attr(PaletteCatalogService)
     _color_scheme_service = inject.attr(ColorSchemeService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(AppearanceSettingsService)
 
     isDarkChanged = Signal(bool)
 

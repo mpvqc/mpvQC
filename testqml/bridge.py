@@ -18,6 +18,7 @@ from mpvqc.appearance.domain import (
     format_color_scheme_preference,
     parse_color_scheme,
 )
+from mpvqc.appearance.services import AppearanceSettingsService
 from mpvqc.appearance.viewmodels import MpvqcPaletteViewModel
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
@@ -312,11 +313,11 @@ class MpvqcTestSettings(QObject):
 
     @Slot(result=str)
     def colorSchemePreference(self) -> str:
-        return format_color_scheme_preference(inject.instance(SettingsService).color_scheme_preference)
+        return format_color_scheme_preference(inject.instance(AppearanceSettingsService).color_scheme_preference)
 
     @Slot(str, result=str)
     def accentColor(self, color_scheme: str) -> str:
-        settings = inject.instance(SettingsService)
+        settings = inject.instance(AppearanceSettingsService)
         preference = settings.accent_color_preference_for(parse_color_scheme(color_scheme))
         match preference:
             case NoPreference():

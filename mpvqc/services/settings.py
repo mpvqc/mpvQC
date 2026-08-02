@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, assert_never, cast, overload
+from typing import TYPE_CHECKING, cast, overload
 
 from PySide6.QtCore import (
     QT_TRANSLATE_NOOP,
@@ -19,19 +19,6 @@ from PySide6.QtCore import (
     Signal,
 )
 
-from mpvqc.appearance.domain import (
-    AccentColor,
-    AccentColorPreference,
-    AppearancePreference,
-    ColorScheme,
-    ColorSchemePreference,
-    Dark,
-    Light,
-    NoPreference,
-    format_color_scheme,
-    format_color_scheme_preference,
-    parse_color_scheme_preference_or_default,
-)
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
 
@@ -39,12 +26,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtCore import SignalInstance
-
-_COLOR_SCHEME_PREFERENCE_KEY = "Appearance/colorSchemePreference"
-
-
-def _accent_color_key(color_scheme: ColorScheme) -> str:
-    return f"Appearance/accentColor/{format_color_scheme(color_scheme)}"
 
 
 def default_username() -> str:
@@ -249,9 +230,6 @@ class SettingsService(QObject):
         signal=lambda s: s.layout_orientation_changed,
     )
 
-    color_scheme_preference_changed = Signal(object)  # ColorSchemePreference union; Qt sigs can't carry type aliases
-    appearance_preference_changed = Signal(AppearancePreference)
-
     window_title_format_changed = Signal(int)
     window_title_format = _Setting(
         "Window/titleFormat",
@@ -263,53 +241,6 @@ class SettingsService(QObject):
     def __init__(self, qsettings: QSettings, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self.qsettings = qsettings
-
-    @property
-    def color_scheme_preference(self) -> ColorSchemePreference:
-        stored = self.qsettings.value(_COLOR_SCHEME_PREFERENCE_KEY, type=str)
-        return parse_color_scheme_preference_or_default(stored if isinstance(stored, str) else None)
-
-    @color_scheme_preference.setter
-    def color_scheme_preference(self, preference: ColorSchemePreference) -> None:
-        if self.color_scheme_preference == preference:
-            return
-        self.qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, format_color_scheme_preference(preference))
-        self.color_scheme_preference_changed.emit(preference)
-        self.appearance_preference_changed.emit(self.appearance_preference)
-
-    @property
-    def appearance_preference(self) -> AppearancePreference:
-        return AppearancePreference(
-            color_scheme_preference=self.color_scheme_preference,
-            light_accent_color_preference=self.accent_color_preference_for(Light()),
-            dark_accent_color_preference=self.accent_color_preference_for(Dark()),
-        )
-
-    def accent_color_preference_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
-        return self._stored_accent_color_preference(_accent_color_key(color_scheme))
-
-    def set_accent_color_preference(self, color_scheme: ColorScheme, preference: AccentColorPreference) -> None:
-        if self.accent_color_preference_for(color_scheme) == preference:
-            return
-        self._store_accent_color_preference(_accent_color_key(color_scheme), preference)
-        self.appearance_preference_changed.emit(self.appearance_preference)
-
-    def _stored_accent_color_preference(self, key: str) -> AccentColorPreference:
-        """The stored accent color preference. An absent key is the user never having confirmed a pick."""
-        if self.qsettings.contains(key):
-            value = self.qsettings.value(key, type=str)
-            if isinstance(value, str):
-                return AccentColor(value)
-        return NoPreference()
-
-    def _store_accent_color_preference(self, key: str, preference: AccentColorPreference) -> None:
-        match preference:
-            case NoPreference():
-                self.qsettings.remove(key)
-            case AccentColor():
-                self.qsettings.setValue(key, preference.identifier)
-            case _:
-                assert_never(preference)
 
     @staticmethod
     def default_comment_types() -> list[str]:

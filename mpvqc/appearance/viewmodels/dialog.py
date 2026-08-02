@@ -21,8 +21,7 @@ from mpvqc.appearance.domain import (
     parse_color_scheme_preference,
 )
 from mpvqc.appearance.models import MpvqcAccentColorModel
-from mpvqc.appearance.services import PaletteCatalogService
-from mpvqc.services import SettingsService
+from mpvqc.appearance.services import AppearanceSettingsService, PaletteCatalogService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -78,7 +77,7 @@ def derive_appearance_dialog_props(
 @QmlElement
 class MpvqcAppearanceDialogViewModel(QObject):
     _catalog = inject.attr(PaletteCatalogService)
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(AppearanceSettingsService)
 
     colorSchemePreferenceIndexChanged = Signal(int)
     accentColorIndexChanged = Signal(int)

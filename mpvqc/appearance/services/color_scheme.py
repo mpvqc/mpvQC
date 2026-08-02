@@ -9,15 +9,16 @@ from typing import TYPE_CHECKING, Protocol, assert_never
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
-from mpvqc.appearance.domain import Dark, FollowSystem, Light, Unknown, resolve_color_scheme
-from mpvqc.services.settings import SettingsService
+from mpvqc.appearance.domain import AppearancePreference, Dark, FollowSystem, Light, Unknown, resolve_color_scheme
+
+from .settings import AppearanceSettingsService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtGui import QStyleHints
 
-    from mpvqc.appearance.domain import ColorScheme, ColorSchemePreference, SystemColorScheme
+    from mpvqc.appearance.domain import ColorScheme, SystemColorScheme
 
 
 class StyleHints(Protocol):
@@ -63,18 +64,18 @@ class QtStyleHints:
 
 
 class ColorSchemeService(QObject):
-    _settings = inject.attr(SettingsService)
+    _settings = inject.attr(AppearanceSettingsService)
 
     color_scheme_changed = Signal(object)  # ColorScheme union; Qt sigs can't carry type aliases
 
     def __init__(self, style_hints: StyleHints, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._style_hints = style_hints
-        self._preference = self._settings.color_scheme_preference
+        self._preference = self._settings.appearance_preference.color_scheme_preference
         self._push_preference()
         self._color_scheme = self._resolve()
         style_hints.on_color_scheme_changed(self._on_system_color_scheme_changed)
-        self._settings.color_scheme_preference_changed.connect(self._on_preference_changed)
+        self._settings.appearance_preference_changed.connect(self._fold_appearance_preference)
 
     @property
     def color_scheme(self) -> ColorScheme:
@@ -94,8 +95,11 @@ class ColorSchemeService(QObject):
             case _:
                 assert_never(preference)
 
-    @Slot(object)
-    def _on_preference_changed(self, preference: ColorSchemePreference) -> None:
+    @Slot(AppearancePreference)
+    def _fold_appearance_preference(self, appearance_preference: AppearancePreference) -> None:
+        preference = appearance_preference.color_scheme_preference
+        if preference == self._preference:
+            return
         self._preference = preference
         self._push_preference()
         self._publish()
