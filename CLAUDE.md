@@ -21,7 +21,6 @@
 - Prefer the correct term over the term already in the repo. When a name contradicts the spec or the project it refers
   to, rename it and record the term in `CONTEXT.md`. Don't keep a wrong name to match other wrong names.
 - Don't use structural comments like `# region` or `# ---`.
-- Avoid comments unless absolutely necessary. In any case, keep them short.
 - Run background work through `SerialJobRunner` from `mpvqc/jobs.py`. Don't use `QThreadPool`, locks, or private queued
   signals in services directly.
 - Prefer code the type checker can verify:
@@ -32,6 +31,7 @@
   composition root calls them.
 - Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
   has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
+- Load the `load-bearing-comments` skill before adding a comment or docstring, and when reviewing code.
 - Load the `writing-qml` skill before writing or editing a QML file.
 - Load the `writing-view-models` skill before writing or editing a view model that reads service state.
 
