@@ -420,6 +420,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/MpvqcVersionCheckMessageBox.qml",
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/qmldir",
     "qt/qml/io/github/mpvqc/mpvQC/MessageBoxes/tst_MpvqcMessageBoxLoader.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/Utility/MpvqcAnimatedPalette.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Utility/MpvqcAppearance.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Utility/MpvqcConstants.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Utility/MpvqcFonts.qml",

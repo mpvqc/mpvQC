@@ -4,6 +4,8 @@
 
 module io.github.mpvqc.mpvQC.Utility
 
+MpvqcAnimatedPalette MpvqcAnimatedPalette.qml
+
 singleton MpvqcAppearance MpvqcAppearance.qml
 singleton MpvqcConstants MpvqcConstants.qml
 singleton MpvqcFonts MpvqcFonts.qml
