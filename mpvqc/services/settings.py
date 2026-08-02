@@ -23,8 +23,11 @@ from PySide6.QtCore import (
 from mpvqc.appearance import (
     AccentColor,
     Appearance,
+    ColorScheme,
     ColorSchemePreference,
-    EffectiveColorScheme,
+    Dark,
+    Light,
+    format_color_scheme,
 )
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
@@ -44,8 +47,8 @@ def default_color_scheme_preference() -> ColorSchemePreference:
     return ColorSchemePreference.SYSTEM
 
 
-def _accent_color_key(color_scheme: EffectiveColorScheme) -> str:
-    return f"Appearance/accentColor/{color_scheme.value}"
+def _accent_color_key(color_scheme: ColorScheme) -> str:
+    return f"Appearance/accentColor/{format_color_scheme(color_scheme)}"
 
 
 def _parse_color_scheme_preference(stored: str | None) -> ColorSchemePreference:
@@ -293,14 +296,14 @@ class SettingsService(QObject):
     def appearance(self) -> Appearance:
         return Appearance(
             color_scheme_preference=self.color_scheme_preference,
-            light_accent_color=self.accent_color_for(EffectiveColorScheme.LIGHT),
-            dark_accent_color=self.accent_color_for(EffectiveColorScheme.DARK),
+            light_accent_color=self.accent_color_for(Light()),
+            dark_accent_color=self.accent_color_for(Dark()),
         )
 
-    def accent_color_for(self, color_scheme: EffectiveColorScheme) -> AccentColor | None:
+    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColor | None:
         return self._stored_accent_color(_accent_color_key(color_scheme))
 
-    def set_accent_color(self, color_scheme: EffectiveColorScheme, accent_color: AccentColor | None) -> None:
+    def set_accent_color(self, color_scheme: ColorScheme, accent_color: AccentColor | None) -> None:
         if self.accent_color_for(color_scheme) == accent_color:
             return
         self._store_accent_color(_accent_color_key(color_scheme), accent_color)

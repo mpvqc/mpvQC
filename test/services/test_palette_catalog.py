@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtGui import QColor
 
-from mpvqc.appearance import AccentColor, EffectiveColorScheme
+from mpvqc.appearance import AccentColor, Dark, Light
 from mpvqc.services import PaletteCatalogService, ResourceService
 
 
@@ -56,8 +56,8 @@ def fake_catalog(catalog_with, make_palette_family_data):
 @pytest.mark.parametrize(
     ("color_scheme", "default_accent"),
     [
-        (EffectiveColorScheme.LIGHT, "#l2"),
-        (EffectiveColorScheme.DARK, "#d1"),
+        (Light(), "#l2"),
+        (Dark(), "#d1"),
     ],
     ids=["light", "dark"],
 )
@@ -68,8 +68,8 @@ def test_lookup_by_color_scheme_returns_the_family_tagged_with_it(fake_catalog, 
 @pytest.mark.parametrize(
     ("color_scheme", "preview"),
     [
-        (EffectiveColorScheme.LIGHT, "#f0f0f0"),
-        (EffectiveColorScheme.DARK, "#101010"),
+        (Light(), "#f0f0f0"),
+        (Dark(), "#101010"),
     ],
     ids=["light", "dark"],
 )
@@ -83,22 +83,22 @@ def test_color_scheme_tag_selects_the_palette_mapping(catalog_with, make_palette
     colors = light["palettes"][0]["colors"]
     catalog = catalog_with(light, dark)
 
-    light_palette = catalog.palette_family_for(EffectiveColorScheme.LIGHT).palette_for(None)
-    dark_palette = catalog.palette_family_for(EffectiveColorScheme.DARK).palette_for(None)
+    light_palette = catalog.palette_family_for(Light()).palette_for(None)
+    dark_palette = catalog.palette_family_for(Dark()).palette_for(None)
 
     assert light_palette.background == colors["surfaceContainerLow"]
     assert dark_palette.background == colors["surface"]
 
 
 def test_palette_for_resolves_by_accent_color(fake_catalog):
-    palette_family = fake_catalog.palette_family_for(EffectiveColorScheme.DARK)
+    palette_family = fake_catalog.palette_family_for(Dark())
     expected = palette_family.palettes[2]
 
     assert palette_family.palette_for(expected.accent_color) is expected
 
 
 def test_palette_index_returns_position(fake_catalog):
-    palette_family = fake_catalog.palette_family_for(EffectiveColorScheme.DARK)
+    palette_family = fake_catalog.palette_family_for(Dark())
     target = palette_family.palettes[1]
 
     assert palette_family.palette_index(target.accent_color) == 1
@@ -106,7 +106,7 @@ def test_palette_index_returns_position(fake_catalog):
 
 @pytest.mark.parametrize("stored", [None, AccentColor("#stale")], ids=["none", "stale"])
 def test_palette_resolves_missing_and_stale_to_the_declared_default(fake_catalog, stored):
-    palette_family = fake_catalog.palette_family_for(EffectiveColorScheme.LIGHT)
+    palette_family = fake_catalog.palette_family_for(Light())
 
     assert palette_family.palette_for(stored) is palette_family.palettes[1]
     assert palette_family.palette_index(stored) == 1
@@ -118,23 +118,23 @@ def test_the_first_family_tagged_with_a_scheme_wins(catalog_with, make_palette_f
 
     catalog = catalog_with(first, second)
 
-    assert catalog.palette_family_for(EffectiveColorScheme.LIGHT).default_accent == "#a"
+    assert catalog.palette_family_for(Light()).default_accent == "#a"
 
 
 def test_palette_count_counts_the_accent_palettes(fake_catalog):
-    assert fake_catalog.palette_family_for(EffectiveColorScheme.LIGHT).palette_count == 2
-    assert fake_catalog.palette_family_for(EffectiveColorScheme.DARK).palette_count == 3
+    assert fake_catalog.palette_family_for(Light()).palette_count == 2
+    assert fake_catalog.palette_family_for(Dark()).palette_count == 3
 
 
 def test_shipped_light_palette_family(catalog):
-    light = catalog.palette_family_for(EffectiveColorScheme.LIGHT)
+    light = catalog.palette_family_for(Light())
 
     assert light.preview == "#f5f2fa"
     assert light.palette_count == 17
 
 
 def test_shipped_dark_palette_family(catalog):
-    dark = catalog.palette_family_for(EffectiveColorScheme.DARK)
+    dark = catalog.palette_family_for(Dark())
 
     assert dark.preview == "#121318"
     assert dark.palette_count == 17

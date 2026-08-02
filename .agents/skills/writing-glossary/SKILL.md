@@ -32,7 +32,7 @@ Say what the term is, in one or two sentences, in plain words.
 Every noun in an entry is plain English or another term in the file. A compound invented while writing the entry —
 "accent palette", "one design" — is a new term you now owe a definition; use an existing one instead.
 
-Where a word has stages, name the stage: "one effective color scheme", never a bare "color scheme".
+Where a word needs a qualifier, name it: "the system's color scheme", never a bare "color scheme".
 
 ## Done when
 

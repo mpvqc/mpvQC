@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Protocol
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
-from mpvqc.appearance import ColorSchemePreference, EffectiveColorScheme, resolve_color_scheme
+from mpvqc.appearance import ColorSchemePreference, resolve_color_scheme
 
 from .settings import SettingsService
 
@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtGui import QStyleHints
+
+    from mpvqc.appearance import ColorScheme
 
 
 class StyleHints(Protocol):
@@ -55,22 +57,22 @@ class QtStyleHints:
 class ColorSchemeService(QObject):
     _settings = inject.attr(SettingsService)
 
-    effective_color_scheme_changed = Signal(EffectiveColorScheme)
+    color_scheme_changed = Signal(object)  # ColorScheme union; Qt sigs can't carry type aliases
 
     def __init__(self, style_hints: StyleHints, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._style_hints = style_hints
         self._preference = self._settings.color_scheme_preference
         self._push_preference()
-        self._effective_color_scheme = self._resolve()
+        self._color_scheme = self._resolve()
         style_hints.on_color_scheme_changed(self._on_system_color_scheme_changed)
         self._settings.color_scheme_preference_changed.connect(self._on_preference_changed)
 
     @property
-    def effective_color_scheme(self) -> EffectiveColorScheme:
-        return self._effective_color_scheme
+    def color_scheme(self) -> ColorScheme:
+        return self._color_scheme
 
-    def _resolve(self) -> EffectiveColorScheme:
+    def _resolve(self) -> ColorScheme:
         return resolve_color_scheme(self._preference, self._style_hints.color_scheme)
 
     def _push_preference(self) -> None:
@@ -92,8 +94,8 @@ class ColorSchemeService(QObject):
         self._publish()
 
     def _publish(self) -> None:
-        effective_color_scheme = self._resolve()
-        if effective_color_scheme is self._effective_color_scheme:
+        color_scheme = self._resolve()
+        if color_scheme == self._color_scheme:
             return
-        self._effective_color_scheme = effective_color_scheme
-        self.effective_color_scheme_changed.emit(effective_color_scheme)
+        self._color_scheme = color_scheme
+        self.color_scheme_changed.emit(color_scheme)

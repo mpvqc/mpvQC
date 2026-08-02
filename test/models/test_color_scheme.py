@@ -7,12 +7,12 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance import AccentColor, ColorSchemePreference, EffectiveColorScheme
+from mpvqc.appearance import AccentColor, ColorScheme, ColorSchemePreference, Dark, Light
 from mpvqc.models import MpvqcColorSchemeModel
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 LIGHT_PREVIEW = "#lightpreview"
 DARK_PREVIEW = "#darkpreview"
@@ -67,7 +67,7 @@ def _read(model: MpvqcColorSchemeModel, row: int, role: int):
     return model.data(model.index(row), role)
 
 
-def _badge(catalog: PaletteCatalogService, color_scheme: EffectiveColorScheme, accent: str | None) -> str:
+def _badge(catalog: PaletteCatalogService, color_scheme: ColorScheme, accent: str | None) -> str:
     return catalog.palette_family_for(color_scheme).palette_for(AccentColor(accent) if accent else None).row_selected
 
 

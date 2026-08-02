@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import NewType
+from typing import NewType, assert_never
 
 from PySide6.QtCore import Qt
 
@@ -18,32 +18,61 @@ class ColorSchemePreference(StrEnum):
     DARK = "dark"
 
 
-class EffectiveColorScheme(StrEnum):
-    LIGHT = "light"
-    DARK = "dark"
+@dataclass(frozen=True)
+class Light:
+    """The UI renders light."""
 
 
-def explicit_color_scheme(preference: ColorSchemePreference) -> EffectiveColorScheme | None:
+@dataclass(frozen=True)
+class Dark:
+    """The UI renders dark."""
+
+
+type ColorScheme = Light | Dark
+
+
+def parse_color_scheme(text: str) -> ColorScheme:
+    """Read a color scheme off a boundary."""
+    if text == "light":
+        return Light()
+    if text == "dark":
+        return Dark()
+    message = f"{text!r} names no color scheme"
+    raise ValueError(message)
+
+
+def format_color_scheme(color_scheme: ColorScheme) -> str:
+    """Write a color scheme to a boundary."""
+    match color_scheme:
+        case Light():
+            return "light"
+        case Dark():
+            return "dark"
+        case _:
+            assert_never(color_scheme)
+
+
+def explicit_color_scheme(preference: ColorSchemePreference) -> ColorScheme | None:
     """The color scheme a preference names, or nothing when it names none."""
     if preference is ColorSchemePreference.LIGHT:
-        return EffectiveColorScheme.LIGHT
+        return Light()
     if preference is ColorSchemePreference.DARK:
-        return EffectiveColorScheme.DARK
+        return Dark()
     return None
 
 
 def resolve_color_scheme(
     preference: ColorSchemePreference,
     system_color_scheme: Qt.ColorScheme,
-) -> EffectiveColorScheme:
+) -> ColorScheme:
     if preference is ColorSchemePreference.LIGHT:
-        return EffectiveColorScheme.LIGHT
+        return Light()
     if preference is ColorSchemePreference.DARK:
-        return EffectiveColorScheme.DARK
+        return Dark()
     if system_color_scheme is Qt.ColorScheme.Light:
-        return EffectiveColorScheme.LIGHT
+        return Light()
     # Dark also when the system cannot answer: mpvQC's historic default
-    return EffectiveColorScheme.DARK
+    return Dark()
 
 
 @dataclass(frozen=True)
@@ -52,10 +81,14 @@ class Appearance:
     light_accent_color: AccentColor | None
     dark_accent_color: AccentColor | None
 
-    def accent_color_for(self, color_scheme: EffectiveColorScheme) -> AccentColor | None:
-        if color_scheme is EffectiveColorScheme.LIGHT:
-            return self.light_accent_color
-        return self.dark_accent_color
+    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColor | None:
+        match color_scheme:
+            case Light():
+                return self.light_accent_color
+            case Dark():
+                return self.dark_accent_color
+            case _:
+                assert_never(color_scheme)
 
 
 @dataclass(frozen=True)

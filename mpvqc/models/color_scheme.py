@@ -11,7 +11,7 @@ import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import Appearance, ColorSchemePreference, EffectiveColorScheme
+from mpvqc.appearance import Appearance, ColorSchemePreference, Dark, Light
 from mpvqc.services import PaletteCatalogService, SettingsService
 
 if TYPE_CHECKING:
@@ -19,12 +19,14 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import QModelIndex, QObject, QPersistentModelIndex
 
+    from mpvqc.appearance import ColorScheme
+
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 
 @dataclass(frozen=True)
@@ -33,7 +35,7 @@ class _Row:
     caption: str
     preview: str
     alternate_preview: str
-    color_scheme: EffectiveColorScheme | None
+    color_scheme: ColorScheme | None
 
 
 @QmlElement

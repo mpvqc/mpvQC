@@ -9,7 +9,7 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.appearance import AccentColor, Appearance, ColorSchemePreference, EffectiveColorScheme, Palette
+from mpvqc.appearance import AccentColor, Appearance, ColorSchemePreference, Dark, Light, Palette
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 from mpvqc.viewmodels.utility.palette import (
     MpvqcPaletteViewModel,
@@ -18,8 +18,8 @@ from mpvqc.viewmodels.utility.palette import (
     derive_palette_props,
 )
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 
 @pytest.fixture
@@ -254,9 +254,7 @@ def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
     _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_for(None), is_dark=False)
 
 
-def test_initial_snapshot_renders_the_accent_stored_for_the_effective_scheme(
-    make_view_model, settings_service, catalog
-):
+def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_view_model, settings_service, catalog):
     settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
     settings_service.set_accent_color(DARK, AccentColor("#d2"))
 
@@ -340,7 +338,7 @@ def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, set
     _assert_nothing_emitted(is_dark_spy, spies)
 
 
-def test_accent_write_for_the_effective_scheme_emits_a_color_subset_and_no_is_dark(
+def test_accent_write_for_the_apps_scheme_emits_a_color_subset_and_no_is_dark(
     make_view_model, settings_service, catalog, make_spy, spy_roles
 ):
     view_model = make_view_model()

@@ -9,12 +9,15 @@ from mpvqc.appearance import (
     AccentColor,
     Appearance,
     ColorSchemePreference,
-    EffectiveColorScheme,
+    Dark,
+    Light,
+    format_color_scheme,
+    parse_color_scheme,
     resolve_color_scheme,
 )
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 
 @pytest.mark.parametrize(
@@ -32,7 +35,19 @@ DARK = EffectiveColorScheme.DARK
     ],
 )
 def test_resolve_color_scheme(preference, system_color_scheme, expected):
-    assert resolve_color_scheme(preference, system_color_scheme) is expected
+    assert resolve_color_scheme(preference, system_color_scheme) == expected
+
+
+@pytest.mark.parametrize(("text", "color_scheme"), [("light", LIGHT), ("dark", DARK)])
+def test_a_color_scheme_survives_the_round_trip_through_its_boundary_text(text, color_scheme):
+    assert parse_color_scheme(text) == color_scheme
+    assert format_color_scheme(color_scheme) == text
+
+
+@pytest.mark.parametrize("text", ["", "system", "Light", "nonsense"])
+def test_parsing_text_that_names_no_color_scheme_raises(text):
+    with pytest.raises(ValueError, match="color scheme"):
+        parse_color_scheme(text)
 
 
 @pytest.mark.parametrize(

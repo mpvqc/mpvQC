@@ -12,7 +12,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
-from mpvqc.appearance import EffectiveColorScheme
+from mpvqc.appearance import parse_color_scheme
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
@@ -312,7 +312,7 @@ class MpvqcTestSettings(QObject):
     @Slot(str, result=str)
     def accentColor(self, color_scheme: str) -> str:
         settings = inject.instance(SettingsService)
-        return settings.accent_color_for(EffectiveColorScheme(color_scheme)) or ""
+        return settings.accent_color_for(parse_color_scheme(color_scheme)) or ""
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:

@@ -12,8 +12,10 @@ from PySide6.QtQml import QmlElement
 from mpvqc.appearance import (
     AccentColor,
     Appearance,
+    ColorScheme,
     ColorSchemePreference,
-    EffectiveColorScheme,
+    Dark,
+    Light,
     explicit_color_scheme,
 )
 from mpvqc.models import MpvqcAccentColorModel
@@ -22,8 +24,8 @@ from mpvqc.services import PaletteCatalogService, SettingsService
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 
 @dataclass(frozen=True)
@@ -31,12 +33,12 @@ class AppearanceDialogProps:
     color_scheme_preference_index: int
     accent_color_index: int
     accent_section_visible: bool
-    accent_section_color_scheme: EffectiveColorScheme | None
+    accent_section_color_scheme: ColorScheme | None
 
 
 def derive_appearance_dialog_props(
     appearance: Appearance,
-    accent_color_index_for: Callable[[EffectiveColorScheme, AccentColor | None], int],
+    accent_color_index_for: Callable[[ColorScheme, AccentColor | None], int],
 ) -> AppearanceDialogProps:
     preference = appearance.color_scheme_preference
     preference_index = list(ColorSchemePreference).index(preference)
@@ -79,7 +81,7 @@ class MpvqcAppearanceDialogViewModel(QObject):
     def _derive(self) -> AppearanceDialogProps:
         return derive_appearance_dialog_props(self._appearance, self._accent_color_index_for)
 
-    def _accent_color_index_for(self, color_scheme: EffectiveColorScheme, accent_color: AccentColor | None) -> int:
+    def _accent_color_index_for(self, color_scheme: ColorScheme, accent_color: AccentColor | None) -> int:
         return self._catalog.palette_family_for(color_scheme).palette_index(accent_color)
 
     @Slot(Appearance)

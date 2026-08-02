@@ -11,7 +11,8 @@ from mpvqc.appearance import (
     AccentColor,
     Appearance,
     ColorSchemePreference,
-    EffectiveColorScheme,
+    Dark,
+    Light,
 )
 from mpvqc.services.settings import default_language
 
@@ -145,28 +146,28 @@ def test_unreadable_color_scheme_preference_falls_back_to_system(settings_servic
 
 
 def test_accent_color_for_returns_none_when_nothing_stored(settings_service):
-    assert settings_service.accent_color_for(EffectiveColorScheme.LIGHT) is None
-    assert settings_service.accent_color_for(EffectiveColorScheme.DARK) is None
+    assert settings_service.accent_color_for(Light()) is None
+    assert settings_service.accent_color_for(Dark()) is None
 
 
 def test_set_accent_color_stores_one_value_per_color_scheme(settings_service):
-    settings_service.set_accent_color(EffectiveColorScheme.LIGHT, AccentColor("#ff5722"))
-    settings_service.set_accent_color(EffectiveColorScheme.DARK, AccentColor("#3f51b5"))
+    settings_service.set_accent_color(Light(), AccentColor("#ff5722"))
+    settings_service.set_accent_color(Dark(), AccentColor("#3f51b5"))
 
-    assert settings_service.accent_color_for(EffectiveColorScheme.LIGHT) == "#ff5722"
-    assert settings_service.accent_color_for(EffectiveColorScheme.DARK) == "#3f51b5"
+    assert settings_service.accent_color_for(Light()) == "#ff5722"
+    assert settings_service.accent_color_for(Dark()) == "#3f51b5"
 
 
 def test_set_accent_color_none_clears_the_stored_entry(settings_service):
-    settings_service.set_accent_color(EffectiveColorScheme.DARK, AccentColor("#3f51b5"))
+    settings_service.set_accent_color(Dark(), AccentColor("#3f51b5"))
 
-    settings_service.set_accent_color(EffectiveColorScheme.DARK, None)
+    settings_service.set_accent_color(Dark(), None)
 
-    assert settings_service.accent_color_for(EffectiveColorScheme.DARK) is None
+    assert settings_service.accent_color_for(Dark()) is None
 
 
 def test_set_accent_color_writes_into_the_appearance_ini_section(settings_service, tmp_path):
-    settings_service.set_accent_color(EffectiveColorScheme.LIGHT, AccentColor("#ff5722"))
+    settings_service.set_accent_color(Light(), AccentColor("#ff5722"))
     settings_service.qsettings.sync()
 
     ini = (tmp_path / "test_settings.ini").read_text()
@@ -183,7 +184,7 @@ def test_appearance_projects_the_preference_and_both_stored_accents(settings_ser
     )
 
     settings_service.color_scheme_preference = ColorSchemePreference.DARK
-    settings_service.set_accent_color(EffectiveColorScheme.LIGHT, AccentColor("#ff5722"))
+    settings_service.set_accent_color(Light(), AccentColor("#ff5722"))
 
     assert settings_service.appearance == Appearance(
         color_scheme_preference=ColorSchemePreference.DARK,
@@ -210,7 +211,8 @@ def test_preference_write_emits_the_appearance(settings_service, make_spy):
 
 @pytest.mark.parametrize(
     "color_scheme",
-    [EffectiveColorScheme.LIGHT, EffectiveColorScheme.DARK],
+    [Light(), Dark()],
+    ids=["light", "dark"],
 )
 def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_service, make_spy, color_scheme):
     spy = make_spy(settings_service.appearance_changed)

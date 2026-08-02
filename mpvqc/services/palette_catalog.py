@@ -5,10 +5,11 @@
 import json
 from dataclasses import dataclass
 from functools import cached_property
+from typing import assert_never
 
 import inject
 
-from mpvqc.appearance import AccentColor, EffectiveColorScheme, Palette
+from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light, Palette, parse_color_scheme
 
 from .resource import ResourceService
 
@@ -70,7 +71,7 @@ def _light_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette
 @dataclass(frozen=True)
 class PaletteFamily:
     preview: str
-    color_scheme: EffectiveColorScheme
+    color_scheme: ColorScheme
     default_accent: AccentColor
     palettes: tuple[Palette, ...]
 
@@ -99,8 +100,14 @@ class PaletteFamily:
 
 
 def _parse_palette_family(data: dict) -> PaletteFamily:
-    color_scheme = EffectiveColorScheme(data["color_scheme"])
-    make_palette = _dark_palette if color_scheme is EffectiveColorScheme.DARK else _light_palette
+    color_scheme = parse_color_scheme(data["color_scheme"])
+    match color_scheme:
+        case Light():
+            make_palette = _light_palette
+        case Dark():
+            make_palette = _dark_palette
+        case _:
+            assert_never(color_scheme)
     return PaletteFamily(
         preview=data["preview"],
         color_scheme=color_scheme,
@@ -115,7 +122,7 @@ class PaletteCatalogService:
     def __init__(self) -> None:
         raw = json.loads(self._resource.palette_catalog_json)
         self._palette_families = tuple(_parse_palette_family(entry) for entry in raw)
-        self._by_scheme: dict[EffectiveColorScheme, PaletteFamily] = {}
+        self._by_scheme: dict[ColorScheme, PaletteFamily] = {}
         for palette_family in self._palette_families:
             self._by_scheme.setdefault(palette_family.color_scheme, palette_family)
 
@@ -123,8 +130,8 @@ class PaletteCatalogService:
     def palette_families(self) -> tuple[PaletteFamily, ...]:
         return self._palette_families
 
-    def palette_family_for(self, color_scheme: EffectiveColorScheme) -> PaletteFamily:
+    def palette_family_for(self, color_scheme: ColorScheme) -> PaletteFamily:
         return self._by_scheme[color_scheme]
 
-    def preview_color_for(self, color_scheme: EffectiveColorScheme) -> str:
+    def preview_color_for(self, color_scheme: ColorScheme) -> str:
         return self.palette_family_for(color_scheme).preview

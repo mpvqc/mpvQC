@@ -11,7 +11,7 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import Appearance, EffectiveColorScheme
+from mpvqc.appearance import Appearance, ColorScheme, Dark
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, SettingsService
 
 if TYPE_CHECKING:
@@ -28,7 +28,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 @dataclass(frozen=True)
 class PaletteInputs:
     appearance: Appearance
-    color_scheme: EffectiveColorScheme
+    color_scheme: ColorScheme
 
 
 @dataclass(frozen=True)
@@ -59,12 +59,12 @@ class PaletteProps:
 
 def derive_palette_props(
     inputs: PaletteInputs,
-    palette_family_for: Callable[[EffectiveColorScheme], PaletteFamily],
+    palette_family_for: Callable[[ColorScheme], PaletteFamily],
 ) -> PaletteProps:
     palette_family = palette_family_for(inputs.color_scheme)
     palette = palette_family.palette_for(inputs.appearance.accent_color_for(inputs.color_scheme))
     return PaletteProps(
-        is_dark=inputs.color_scheme is EffectiveColorScheme.DARK,
+        is_dark=isinstance(inputs.color_scheme, Dark),
         background=palette.background,
         foreground=palette.foreground,
         hint=palette.hint,
@@ -123,12 +123,12 @@ class MpvqcPaletteViewModel(QObject):
 
         self._inputs = PaletteInputs(
             appearance=self._settings.appearance,
-            color_scheme=self._color_scheme_service.effective_color_scheme,
+            color_scheme=self._color_scheme_service.color_scheme,
         )
         self._props = self._derive()
 
         self._settings.appearance_changed.connect(self._fold_appearance)
-        self._color_scheme_service.effective_color_scheme_changed.connect(self._fold_color_scheme)
+        self._color_scheme_service.color_scheme_changed.connect(self._fold_color_scheme)
 
     def _derive(self) -> PaletteProps:
         return derive_palette_props(self._inputs, self._catalog.palette_family_for)
@@ -137,8 +137,8 @@ class MpvqcPaletteViewModel(QObject):
     def _fold_appearance(self, value: Appearance) -> None:
         self._update(replace(self._inputs, appearance=value))
 
-    @Slot(EffectiveColorScheme)
-    def _fold_color_scheme(self, value: EffectiveColorScheme) -> None:
+    @Slot(object)
+    def _fold_color_scheme(self, value: ColorScheme) -> None:
         self._update(replace(self._inputs, color_scheme=value))
 
     def _update(self, inputs: PaletteInputs) -> None:

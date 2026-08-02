@@ -6,12 +6,12 @@ import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance import EffectiveColorScheme
+from mpvqc.appearance import ColorScheme, Dark, Light
 from mpvqc.models import MpvqcAccentColorModel
 from mpvqc.services import PaletteCatalogService, ResourceService
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 
 @pytest.fixture(autouse=True)
@@ -34,7 +34,7 @@ def catalog() -> PaletteCatalogService:
 
 @pytest.fixture
 def make_model():
-    def _make(color_scheme: EffectiveColorScheme | None = None) -> MpvqcAccentColorModel:
+    def _make(color_scheme: ColorScheme | None = None) -> MpvqcAccentColorModel:
         # noinspection PyCallingNonCallable
         model = MpvqcAccentColorModel()
         model.set_color_scheme(color_scheme)

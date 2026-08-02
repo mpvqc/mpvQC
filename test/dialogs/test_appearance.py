@@ -8,7 +8,7 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.appearance import AccentColor, Appearance, ColorSchemePreference, EffectiveColorScheme
+from mpvqc.appearance import AccentColor, Appearance, ColorScheme, ColorSchemePreference, Dark, Light
 from mpvqc.dialogs.appearance import (
     AppearanceDialogProps,
     MpvqcAppearanceDialogViewModel,
@@ -20,8 +20,8 @@ SYSTEM = ColorSchemePreference.SYSTEM
 LIGHT_PREFERENCE = ColorSchemePreference.LIGHT
 DARK_PREFERENCE = ColorSchemePreference.DARK
 
-LIGHT = EffectiveColorScheme.LIGHT
-DARK = EffectiveColorScheme.DARK
+LIGHT = Light()
+DARK = Dark()
 
 
 @pytest.fixture
@@ -181,7 +181,7 @@ class DerivationCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_derivation(case: DerivationCase, catalog):
-    def accent_color_index_for(color_scheme: EffectiveColorScheme, accent: AccentColor | None) -> int:
+    def accent_color_index_for(color_scheme: ColorScheme, accent: AccentColor | None) -> int:
         return catalog.palette_family_for(color_scheme).palette_index(accent)
 
     props = derive_appearance_dialog_props(case.appearance, accent_color_index_for)
