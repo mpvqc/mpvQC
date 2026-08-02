@@ -38,7 +38,7 @@ UNKNOWN = Unknown()
         (DARK, UNKNOWN, DARK),
         (SYSTEM, LIGHT, LIGHT),
         (SYSTEM, DARK, DARK),
-        (SYSTEM, UNKNOWN, DARK),
+        (SYSTEM, UNKNOWN, LIGHT),
     ],
     ids=[
         "light-over-light",
@@ -49,7 +49,7 @@ UNKNOWN = Unknown()
         "dark-over-unknown",
         "system-follows-light",
         "system-follows-dark",
-        "system-unknown-is-dark",
+        "system-unknown-is-light",
     ],
 )
 def test_resolve_color_scheme(preference, system_color_scheme, expected):

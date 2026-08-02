@@ -27,9 +27,9 @@ def configure_injections(common_bindings_with, appearance_settings_service):
     [
         (LIGHT, LIGHT),
         (DARK, DARK),
-        (UNKNOWN, DARK),
+        (UNKNOWN, LIGHT),
     ],
-    ids=["light", "dark", "unknown-is-dark"],
+    ids=["light", "dark", "unknown-is-light"],
 )
 def test_following_the_system_takes_the_system_answer(make_style_hints, system_color_scheme, expected):
     style_hints = make_style_hints(system_color_scheme)
@@ -62,28 +62,35 @@ def test_explicit_preference_ignores_the_system_and_pushes_into_qt(
     assert style_hints.calls == [expected_call]
 
 
-def test_system_flip_publishes_the_new_scheme(make_spy, make_style_hints):
-    style_hints = make_style_hints(LIGHT)
+@pytest.mark.parametrize(
+    ("starts_at", "flips_to", "expected"),
+    [
+        (LIGHT, DARK, DARK),
+        (DARK, UNKNOWN, LIGHT),
+    ],
+    ids=["light-to-dark", "dark-to-unknown-is-light"],
+)
+def test_system_flip_publishes_the_new_scheme(make_spy, make_style_hints, starts_at, flips_to, expected):
+    style_hints = make_style_hints(starts_at)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    style_hints.system_reports(DARK)
+    style_hints.system_reports(flips_to)
 
     assert spy.count() == 1
-    assert spy.at(0, 0) == DARK
-    assert service.color_scheme == DARK
+    assert spy.at(0, 0) == expected
+    assert service.color_scheme == expected
 
 
 def test_system_answer_resolving_to_the_same_scheme_publishes_nothing(make_spy, make_style_hints):
-    # the system moves off unknown, but unknown and dark both resolve to dark
     style_hints = make_style_hints(UNKNOWN)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    style_hints.system_reports(DARK)
+    style_hints.system_reports(LIGHT)
 
     assert spy.count() == 0
-    assert service.color_scheme == DARK
+    assert service.color_scheme == LIGHT
 
 
 def test_system_flip_under_an_explicit_preference_publishes_nothing(

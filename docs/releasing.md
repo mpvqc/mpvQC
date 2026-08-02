@@ -72,6 +72,7 @@ before tagging, on both setups:
       `gsettings set org.gnome.desktop.interface color-scheme prefer-dark`, on KDE Plasma
       `plasma-apply-colorscheme BreezeDark` (`prefer-light` and `BreezeLight` flip back)
 - [ ] An explicit Light or Dark under Options → Appearance survives that flip untouched
+- [ ] On GNOME, `gsettings set org.gnome.desktop.interface color-scheme default` renders light
 
 ##### Tiling compositor (e.g. Sway, Hyprland, niri)
 

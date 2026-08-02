@@ -51,8 +51,8 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Color scheme preference**: what the user asks for: a color scheme held regardless of the system, or follow the
   system. A request, not a result. Every color scheme is itself a preference; following the system is the one
   preference that is not a color scheme.
-- **System color scheme**: the OS's answer when asked for its color scheme: a color scheme, or unknown when it cannot
-  say.
+- **System color scheme**: the OS's answer when asked for its color scheme: a color scheme, or unknown. Unknown is any
+  answer that names no color scheme, whether the OS cannot say or declines to pick.
 - **Accent color**: the color a palette is built around; within a palette family, it is what tells one palette from
   another. The freedesktop term.
 - **Accent color preference**: per color scheme, the user's pick: an accent color, or no preference when they never

@@ -111,7 +111,7 @@ def resolve_color_scheme(
                 case Light() | Dark():
                     return system_color_scheme
                 case Unknown():
-                    return Dark()  # mpvQC's historic default
+                    return Light()
                 case _:
                     assert_never(system_color_scheme)
         case Light() | Dark():

@@ -201,9 +201,9 @@ def _assert_renders(view_model, palette: Palette, *, is_dark: bool) -> None:
     [
         (LIGHT, LIGHT),
         (DARK, DARK),
-        (UNKNOWN, DARK),
+        (UNKNOWN, LIGHT),
     ],
-    ids=["light", "dark", "unknown-is-dark"],
+    ids=["light", "dark", "unknown-is-light"],
 )
 def test_initial_snapshot_renders_the_desktops_scheme(
     make_view_model, style_hints, catalog, desktop_reports, expected_color_scheme
