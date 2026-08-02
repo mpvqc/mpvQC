@@ -18,8 +18,9 @@ MpvqcDialog {
 
     readonly property MpvqcAppearanceDialogViewModel viewModel: MpvqcAppearanceDialogViewModel {}
 
+    property int highlightMoveDuration: 200
+
     readonly property int _sectionSpacing: 12
-    readonly property int _highlightMoveDuration: 200
 
     // the ring surrounds the swatch, so both read the same frame size
     readonly property int _swatchFrameSize: 70
@@ -62,7 +63,12 @@ MpvqcDialog {
                     Layout.fillWidth: true
 
                     Rectangle {
-                        x: root.viewModel.colorSchemePreferenceIndex * (root._swatchFrameSize + _colorSchemePreferences.spacing)
+                        objectName: "colorSchemePreferenceSelectionRing"
+
+                        // Not readonly: the Behavior below writes the interpolated values into it
+                        property real _slotX: root.viewModel.colorSchemePreferenceIndex * (root._swatchFrameSize + _colorSchemePreferences.spacing)
+
+                        x: _colorSchemePreferences.x + (_colorSchemePreferences.effectiveLayoutDirection === Qt.RightToLeft ? _colorSchemePreferences.width - width - _slotX : _slotX)
                         width: root._swatchFrameSize
                         height: root._swatchFrameSize
                         radius: root._ringRadius
@@ -73,9 +79,11 @@ MpvqcDialog {
                             color: MpvqcAppearance.palette.accent
                         }
 
-                        Behavior on x {
+                        // The slot animates rather than x itself: x also moves when the row
+                        // settles or flips direction, and that is not motion anybody asked for
+                        Behavior on _slotX {
                             NumberAnimation {
-                                duration: root._highlightMoveDuration
+                                duration: root.highlightMoveDuration
                                 easing.type: Easing.OutCubic
                             }
                         }
@@ -84,6 +92,7 @@ MpvqcDialog {
                     Row {
                         id: _colorSchemePreferences
 
+                        anchors.left: parent.left
                         spacing: root._swatchSpacing
 
                         Repeater {

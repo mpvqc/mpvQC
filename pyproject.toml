@@ -361,6 +361,7 @@ files = [
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/Appearance/MpvqcColorSchemePreferenceSwatch.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/Appearance/qmldir",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/Appearance/tst_MpvqcAccentColorSwatch.qml",
+    "qt/qml/io/github/mpvqc/mpvQC/Dialogs/Appearance/tst_MpvqcAppearanceDialog.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/Appearance/tst_MpvqcAppearanceSection.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/Appearance/tst_MpvqcColorSchemePreferenceSwatch.qml",
     "qt/qml/io/github/mpvqc/mpvQC/Dialogs/CommentTypes/MpvqcCommentTypesActions.qml",
