@@ -14,7 +14,7 @@ import io.github.mpvqc.mpvQC.Utility
 T.ToolButton {
     id: control
 
-    readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : checked || highlighted ? Material.accent : Material.foreground
+    readonly property color _contentColor: !enabled ? MpvqcAppearance.palette.hint : checked || highlighted ? Material.accent : Material.foreground
 
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding)

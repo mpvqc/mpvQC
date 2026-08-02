@@ -38,9 +38,9 @@ Control {
     contentItem: IconLabel {
         text: root.text
         font: root.font
-        color: MpvqcTheme.palette.foreground
+        color: MpvqcAppearance.palette.foreground
         icon.source: root._iconSource
-        icon.color: MpvqcTheme.palette.foreground
+        icon.color: MpvqcAppearance.palette.foreground
         icon.width: root._iconSize
         icon.height: root._iconSize
         display: root.text ? IconLabel.TextOnly : IconLabel.IconOnly
@@ -48,6 +48,6 @@ Control {
 
     background: Rectangle {
         radius: 4
-        color: Qt.alpha(MpvqcTheme.palette.foreground, MpvqcTheme.isDark ? 0.08 : 0.12)
+        color: Qt.alpha(MpvqcAppearance.palette.foreground, MpvqcAppearance.isDark ? 0.08 : 0.12)
     }
 }

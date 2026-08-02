@@ -25,7 +25,7 @@ MpvqcDialog {
     component MpvqcNavigationButton: ToolButton {
         id: _button
 
-        readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : highlighted ? MpvqcTheme.palette.accent : MpvqcTheme.palette.foreground
+        readonly property color _contentColor: !enabled ? MpvqcAppearance.palette.hint : highlighted ? MpvqcAppearance.palette.accent : MpvqcAppearance.palette.foreground
         readonly property real _collapsedWidth: leftPadding + icon.width + rightPadding
         readonly property real _expandedWidth: _collapsedWidth + spacing + _navLabel.implicitWidth
 

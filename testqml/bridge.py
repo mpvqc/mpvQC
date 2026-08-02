@@ -120,7 +120,7 @@ _SWAPPED_VIEW_MODELS = (
     ),
     _SwappedViewModel(
         "io.github.mpvqc.mpvQC.Utility",
-        "MpvqcTheme",
+        "MpvqcAppearance",
         "_viewModel",
         MpvqcPaletteViewModel,
     ),

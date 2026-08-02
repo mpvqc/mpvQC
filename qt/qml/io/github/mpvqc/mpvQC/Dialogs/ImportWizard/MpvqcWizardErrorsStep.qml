@@ -57,7 +57,7 @@ ColumnLayout {
                 spacing: 12
 
                 MpvqcIconLabel {
-                    iconColor: MpvqcTheme.palette.error
+                    iconColor: MpvqcAppearance.palette.error
                     icon.source: MpvqcIcons.error
                     icon.width: _delegate.iconSize
                     icon.height: _delegate.iconSize
@@ -85,7 +85,7 @@ ColumnLayout {
                         objectName: "reasonLabel"
 
                         text: _delegate.reason
-                        color: MpvqcTheme.palette.hint
+                        color: MpvqcAppearance.palette.hint
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
 

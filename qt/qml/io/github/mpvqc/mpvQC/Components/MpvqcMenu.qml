@@ -39,8 +39,8 @@ Menu {
 
     width: calculateMenuWidths()
 
-    M.Material.background: MpvqcTheme.palette.popupBackground
-    M.Material.foreground: MpvqcTheme.palette.popupText
+    M.Material.background: MpvqcAppearance.palette.popupBackground
+    M.Material.foreground: MpvqcAppearance.palette.popupText
     M.Material.roundedScale: M.Material.SmallScale
 
     MpvqcModalOverlayTracker {

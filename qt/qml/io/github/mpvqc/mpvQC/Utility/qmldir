@@ -4,10 +4,10 @@
 
 module io.github.mpvqc.mpvQC.Utility
 
+singleton MpvqcAppearance MpvqcAppearance.qml
 singleton MpvqcConstants MpvqcConstants.qml
 singleton MpvqcFonts MpvqcFonts.qml
 singleton MpvqcIcons MpvqcIcons.qml
 singleton MpvqcLabelWidthCalculator MpvqcLabelWidthCalculator.qml
 singleton MpvqcModalState MpvqcModalState.qml
-singleton MpvqcTheme MpvqcTheme.qml
 singleton MpvqcWindowUtility MpvqcWindowUtility.qml

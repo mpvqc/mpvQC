@@ -128,7 +128,7 @@ Item {
                     source: Application.layoutDirection === Qt.RightToLeft ? MpvqcIcons.keyboardArrowLeft : MpvqcIcons.keyboardArrowRight
                     width: root.glyphSize
                     height: root.glyphSize
-                    color: MpvqcTheme.palette.hint
+                    color: MpvqcAppearance.palette.hint
                 }
             }
         }
@@ -156,7 +156,7 @@ Item {
             orientation: Gradient.Horizontal
             GradientStop {
                 position: 0
-                color: MpvqcTheme.palette.background
+                color: MpvqcAppearance.palette.background
             }
             GradientStop {
                 position: 1
@@ -192,7 +192,7 @@ Item {
             }
             GradientStop {
                 position: 1
-                color: MpvqcTheme.palette.background
+                color: MpvqcAppearance.palette.background
             }
         }
 

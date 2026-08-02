@@ -25,7 +25,7 @@ Item {
         opacity: active ? 1 : 0
         icon.width: root.size
         icon.height: root.size
-        icon.color: MpvqcTheme.palette.foreground
+        icon.color: MpvqcAppearance.palette.foreground
 
         Behavior on opacity {
             NumberAnimation {

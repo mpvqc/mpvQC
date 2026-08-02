@@ -100,7 +100,7 @@ Item {
                 width: parent.width + 1
 
                 background: Rectangle {
-                    color: _toolButton.hovered ? MpvqcTheme.hoverHighlight : "transparent"
+                    color: _toolButton.hovered ? MpvqcAppearance.hoverHighlight : "transparent"
                     bottomLeftRadius: MpvqcWindowUtility.isMirrored ? MpvqcWindowUtility.windowRadius : 0
                     bottomRightRadius: MpvqcWindowUtility.isMirrored ? 0 : MpvqcWindowUtility.windowRadius
                 }

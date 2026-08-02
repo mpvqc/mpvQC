@@ -39,7 +39,7 @@ TestCase {
         const control = makeControl();
         const card = findChild(control, "sectionCard");
         verify(card);
-        tryCompare(card, "color", MpvqcTheme.palette.sectionCard);
+        tryCompare(card, "color", MpvqcAppearance.palette.sectionCard);
     }
 
     function test_expandedSectionHoldsItsContent(): void {

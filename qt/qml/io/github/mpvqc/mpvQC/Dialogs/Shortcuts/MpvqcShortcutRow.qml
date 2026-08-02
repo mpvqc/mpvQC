@@ -43,7 +43,7 @@ Control {
             icon.source: MpvqcIcons.info
             icon.width: 16
             icon.height: 16
-            iconColor: MpvqcTheme.palette.hint
+            iconColor: MpvqcAppearance.palette.hint
             toolTipText: root.note
         }
 
@@ -113,6 +113,6 @@ Control {
 
     background: Rectangle {
         radius: 4
-        color: root.striped ? MpvqcTheme.listStripe : "transparent"
+        color: root.striped ? MpvqcAppearance.listStripe : "transparent"
     }
 }

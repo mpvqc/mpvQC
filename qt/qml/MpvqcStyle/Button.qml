@@ -18,7 +18,7 @@ T.Button {
 
     readonly property bool hasIcon: icon.name.length > 0 || icon.source.toString().length > 0
 
-    readonly property color _contentColor: !enabled ? MpvqcTheme.palette.hint : (flat && highlighted) || (checked && !highlighted) ? Material.accentColor : highlighted ? Material.primaryHighlightedTextColor : Material.foreground
+    readonly property color _contentColor: !enabled ? MpvqcAppearance.palette.hint : (flat && highlighted) || (checked && !highlighted) ? Material.accentColor : highlighted ? Material.primaryHighlightedTextColor : Material.foreground
 
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset, implicitContentWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitContentHeight + topPadding + bottomPadding)

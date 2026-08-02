@@ -70,7 +70,7 @@ MpvqcDialog {
 
                         border {
                             width: root._ringBorder
-                            color: MpvqcTheme.palette.accent
+                            color: MpvqcAppearance.palette.accent
                         }
 
                         Behavior on x {

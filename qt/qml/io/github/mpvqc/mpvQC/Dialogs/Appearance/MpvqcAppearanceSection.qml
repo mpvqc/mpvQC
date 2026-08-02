@@ -37,7 +37,7 @@ Item {
 
         anchors.fill: parent
         radius: 20
-        color: MpvqcTheme.palette.sectionCard
+        color: MpvqcAppearance.palette.sectionCard
     }
 
     ColumnLayout {

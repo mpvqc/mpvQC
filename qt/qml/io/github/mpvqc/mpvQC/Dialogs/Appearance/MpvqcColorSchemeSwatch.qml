@@ -173,7 +173,7 @@ Column {
 
         width: root.frameSize
         text: root.caption
-        color: root.selected ? MpvqcTheme.palette.accent : MpvqcTheme.palette.foreground
+        color: root.selected ? MpvqcAppearance.palette.accent : MpvqcAppearance.palette.foreground
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignHCenter
         font.pointSize: MpvqcFonts.applicationFont.pointSize - 1

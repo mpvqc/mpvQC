@@ -19,6 +19,6 @@ T.MenuSeparator {
     contentItem: Rectangle {
         implicitWidth: 200
         implicitHeight: 1
-        color: MpvqcTheme.palette.separator
+        color: MpvqcAppearance.palette.separator
     }
 }
