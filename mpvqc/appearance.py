@@ -13,6 +13,7 @@ AccentColor = NewType("AccentColor", str)
 
 
 class ColorSchemePreference(StrEnum):
+    # Declaration order is the order the appearance dialog offers them in
     SYSTEM = "system"
     LIGHT = "light"
     DARK = "dark"
@@ -21,6 +22,15 @@ class ColorSchemePreference(StrEnum):
 class EffectiveColorScheme(StrEnum):
     LIGHT = "light"
     DARK = "dark"
+
+
+def explicit_color_scheme(preference: ColorSchemePreference) -> EffectiveColorScheme | None:
+    """The color scheme a preference names, or nothing when it names none."""
+    if preference is ColorSchemePreference.LIGHT:
+        return EffectiveColorScheme.LIGHT
+    if preference is ColorSchemePreference.DARK:
+        return EffectiveColorScheme.DARK
+    return None
 
 
 def resolve_color_scheme(

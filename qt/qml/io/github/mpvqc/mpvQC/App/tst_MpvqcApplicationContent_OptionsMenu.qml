@@ -32,57 +32,88 @@ TestCase {
         return menu;
     }
 
-    function test_appearanceDialog_accept_persistsThemeAndColor(): void {
-        const control = it.makeControl();
-
+    function openAppearanceDialog(control: Item): QtObject {
         it.menu.trigger(control, "optionsMenu", "openAppearanceDialogMenuItem");
-        const dialog = it.find.openedDialog(control, "appearanceDialog");
+        return it.find.openedDialog(control, "appearanceDialog");
+    }
 
-        const themeListView = findChild(dialog, "themeListView");
-        verify(themeListView, "themeListView not found");
-        const colorGridView = findChild(dialog, "colorGridView");
-        verify(colorGridView, "colorGridView not found");
+    function pickColorScheme(dialog: QtObject, preference: string): void {
+        const swatch = it.find.visualChild(dialog, `colorSchemeSwatch_${preference}`);
+        verify(swatch, `colorSchemeSwatch_${preference} not found`);
+        mouseClick(swatch);
+        tryVerify(() => it.settings.colorSchemePreference() === preference);
+    }
 
-        const newThemeIdx = themeListView.currentIndex === 0 ? 1 : 0;
-        const themeDelegate = themeListView.itemAtIndex(newThemeIdx);
-        const expectedThemeId = themeDelegate.identifier;
-        mouseClick(themeDelegate);
+    function pickOtherAccentColor(dialog: QtObject): string {
+        const section = it.find.visualChild(dialog, "accentColorSection");
+        verify(section, "accentColorSection not found");
+        const flow = it.find.visualChild(dialog, "accentColorFlow");
+        verify(flow, "accentColorFlow not found");
+        tryVerify(() => flow.height > 0 && flow.mapToItem(section, 0, flow.height).y <= section.height, 5000, "the accent section should unfold fully");
 
-        const newColorIdx = colorGridView.currentIndex === 0 ? 1 : 0;
-        const expectedColorId = colorGridView.itemAtIndex(newColorIdx).accentColor;
-        mouseClick(colorGridView.itemAtIndex(newColorIdx));
+        const index = dialog.viewModel.accentColorIndex === 0 ? 1 : 0;
+        const swatch = it.find.visualChild(dialog, `accentColorSwatch_${index}`);
+        verify(swatch, `accentColorSwatch_${index} not found`);
+        mouseClick(swatch);
+        return swatch.accentColor;
+    }
 
-        tryVerify(() => it.settings.themeIdentifier() === expectedThemeId);
-        tryVerify(() => it.settings.accentColor() === expectedColorId);
+    function test_appearanceDialog_accept_persistsColorSchemeAndAccent(): void {
+        const control = it.makeControl();
+        const dialog = openAppearanceDialog(control);
+
+        pickColorScheme(dialog, "light");
+
+        const section = findChild(dialog, "accentColorSection");
+        verify(section, "accentColorSection not found");
+        tryVerify(() => section.expanded);
+
+        const expectedAccent = pickOtherAccentColor(dialog);
+        tryVerify(() => it.settings.accentColor("light") === expectedAccent);
 
         it.dialog.accept(dialog);
 
-        tryVerify(() => it.settings.themeIdentifier() === expectedThemeId);
-        tryVerify(() => it.settings.accentColor() === expectedColorId);
+        tryVerify(() => it.settings.colorSchemePreference() === "light");
+        tryVerify(() => it.settings.accentColor("light") === expectedAccent);
     }
 
-    function test_appearanceDialog_reject_revertsThemeAndColor(): void {
+    function test_appearanceDialog_systemHidesTheAccentSection(): void {
         const control = it.makeControl();
-        const initialTheme = it.settings.themeIdentifier();
-        const initialColor = it.settings.accentColor();
+        const dialog = openAppearanceDialog(control);
 
-        it.menu.trigger(control, "optionsMenu", "openAppearanceDialogMenuItem");
-        const dialog = it.find.openedDialog(control, "appearanceDialog");
+        const section = findChild(dialog, "accentColorSection");
+        verify(section, "accentColorSection not found");
 
-        const themeListView = findChild(dialog, "themeListView");
-        const colorGridView = findChild(dialog, "colorGridView");
+        pickColorScheme(dialog, "dark");
+        tryVerify(() => section.expanded);
 
-        const newThemeIdx = themeListView.currentIndex === 0 ? 1 : 0;
-        mouseClick(themeListView.itemAtIndex(newThemeIdx));
-        const newColorIdx = colorGridView.currentIndex === 0 ? 1 : 0;
-        mouseClick(colorGridView.itemAtIndex(newColorIdx));
+        pickColorScheme(dialog, "system");
 
-        tryVerify(() => it.settings.themeIdentifier() !== initialTheme);
+        tryVerify(() => !section.expanded);
+        tryVerify(() => !section.visible);
+    }
+
+    function test_appearanceDialog_reject_revertsColorSchemeAndBothAccents(): void {
+        const control = it.makeControl();
+        const initialPreference = it.settings.colorSchemePreference();
+        const initialLightAccent = it.settings.accentColor("light");
+        const initialDarkAccent = it.settings.accentColor("dark");
+
+        const dialog = openAppearanceDialog(control);
+
+        pickColorScheme(dialog, "light");
+        const lightAccent = pickOtherAccentColor(dialog);
+        tryVerify(() => it.settings.accentColor("light") === lightAccent);
+
+        pickColorScheme(dialog, "dark");
+        const darkAccent = pickOtherAccentColor(dialog);
+        tryVerify(() => it.settings.accentColor("dark") === darkAccent);
 
         it.dialog.reject(dialog);
 
-        tryVerify(() => it.settings.themeIdentifier() === initialTheme);
-        tryVerify(() => it.settings.accentColor() === initialColor);
+        tryVerify(() => it.settings.colorSchemePreference() === initialPreference);
+        tryVerify(() => it.settings.accentColor("light") === initialLightAccent);
+        tryVerify(() => it.settings.accentColor("dark") === initialDarkAccent);
     }
 
     function test_commentTypesDialog_deleteAndAdd_persistsAndUpdatesNewCommentMenu(): void {
