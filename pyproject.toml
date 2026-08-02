@@ -163,7 +163,7 @@ files = [
     "mpvqc/logging_utils.py",
     "mpvqc/models/__init__.py",
     "mpvqc/models/accent_colors.py",
-    "mpvqc/models/color_scheme.py",
+    "mpvqc/models/color_scheme_preference.py",
     "mpvqc/models/dependencies.py",
     "mpvqc/models/export_templates.py",
     "mpvqc/models/import_options.py",

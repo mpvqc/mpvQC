@@ -87,7 +87,7 @@ MpvqcDialog {
                         spacing: root._swatchSpacing
 
                         Repeater {
-                            model: MpvqcColorSchemeModel {}
+                            model: MpvqcColorSchemePreferenceModel {}
 
                             delegate: MpvqcColorSchemeSwatch {
                                 id: _colorSchemeSwatch

@@ -7,7 +7,7 @@ import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
 from mpvqc.appearance import AccentColor, Appearance, ColorScheme, Dark, FollowSystem, Light, NoPreference
-from mpvqc.models import MpvqcColorSchemeModel
+from mpvqc.models import MpvqcColorSchemePreferenceModel
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 
 SYSTEM = FollowSystem()
@@ -57,14 +57,14 @@ def catalog() -> PaletteCatalogService:
 
 @pytest.fixture
 def make_model():
-    def _make() -> MpvqcColorSchemeModel:
+    def _make() -> MpvqcColorSchemePreferenceModel:
         # noinspection PyCallingNonCallable
-        return MpvqcColorSchemeModel()
+        return MpvqcColorSchemePreferenceModel()
 
     return _make
 
 
-def _read(model: MpvqcColorSchemeModel, row: int, role: int):
+def _read(model: MpvqcColorSchemePreferenceModel, row: int, role: int):
     return model.data(model.index(row), role)
 
 
@@ -82,7 +82,7 @@ def test_the_model_offers_the_three_preferences_in_order(make_model):
     model = make_model()
 
     assert model.rowCount() == 3
-    assert [_read(model, row, MpvqcColorSchemeModel.PreferenceRole) for row in range(3)] == [
+    assert [_read(model, row, MpvqcColorSchemePreferenceModel.PreferenceRole) for row in range(3)] == [
         "system",
         "light",
         "dark",
@@ -92,14 +92,18 @@ def test_the_model_offers_the_three_preferences_in_order(make_model):
 def test_every_row_is_captioned(make_model):
     model = make_model()
 
-    assert [_read(model, row, MpvqcColorSchemeModel.CaptionRole) for row in range(3)] == ["System", "Light", "Dark"]
+    assert [_read(model, row, MpvqcColorSchemePreferenceModel.CaptionRole) for row in range(3)] == [
+        "System",
+        "Light",
+        "Dark",
+    ]
 
 
 def test_previews_come_from_the_catalog_and_system_carries_both(make_model):
     model = make_model()
 
-    previews = [_read(model, row, MpvqcColorSchemeModel.PreviewRole) for row in range(3)]
-    alternates = [_read(model, row, MpvqcColorSchemeModel.AlternatePreviewRole) for row in range(3)]
+    previews = [_read(model, row, MpvqcColorSchemePreferenceModel.PreviewRole) for row in range(3)]
+    alternates = [_read(model, row, MpvqcColorSchemePreferenceModel.AlternatePreviewRole) for row in range(3)]
 
     assert previews == [LIGHT_PREVIEW, LIGHT_PREVIEW, DARK_PREVIEW]
     assert alternates == [DARK_PREVIEW, "", ""]
@@ -110,7 +114,7 @@ def test_accents_render_each_schemes_stored_pick_and_system_carries_none(make_mo
     settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
     model = make_model()
 
-    accents = [_read(model, row, MpvqcColorSchemeModel.AccentRole) for row in range(3)]
+    accents = [_read(model, row, MpvqcColorSchemePreferenceModel.AccentRole) for row in range(3)]
 
     assert accents == ["", _badge(catalog, LIGHT, "#l1"), _badge(catalog, DARK, "#d3")]
 
@@ -118,8 +122,8 @@ def test_accents_render_each_schemes_stored_pick_and_system_carries_none(make_mo
 def test_an_unstored_accent_renders_the_palette_familys_default(make_model, catalog):
     model = make_model()
 
-    assert _read(model, 1, MpvqcColorSchemeModel.AccentRole) == _badge(catalog, LIGHT, None)
-    assert _read(model, 2, MpvqcColorSchemeModel.AccentRole) == _badge(catalog, DARK, None)
+    assert _read(model, 1, MpvqcColorSchemePreferenceModel.AccentRole) == _badge(catalog, LIGHT, None)
+    assert _read(model, 2, MpvqcColorSchemePreferenceModel.AccentRole) == _badge(catalog, DARK, None)
 
 
 def test_an_accent_write_changes_only_its_own_row(make_model, settings_service, catalog, make_spy):
@@ -131,8 +135,8 @@ def test_an_accent_write_changes_only_its_own_row(make_model, settings_service, 
     assert spy.count() == 1
     assert spy.at(0, 0).row() == 1
     assert spy.at(0, 1).row() == 1
-    assert spy.at(0, 2) == [MpvqcColorSchemeModel.AccentRole]
-    assert _read(model, 1, MpvqcColorSchemeModel.AccentRole) == _badge(catalog, LIGHT, "#l1")
+    assert spy.at(0, 2) == [MpvqcColorSchemePreferenceModel.AccentRole]
+    assert _read(model, 1, MpvqcColorSchemePreferenceModel.AccentRole) == _badge(catalog, LIGHT, "#l1")
 
 
 def test_a_preference_write_leaves_the_rows_alone(make_model, settings_service, make_spy):
@@ -147,13 +151,13 @@ def test_a_preference_write_leaves_the_rows_alone(make_model, settings_service, 
 def test_a_desktop_flip_under_system_leaves_the_badges_alone(make_model, style_hints, catalog, make_spy):
     inject.instance(ColorSchemeService)
     model = make_model()
-    before = [_read(model, row, MpvqcColorSchemeModel.AccentRole) for row in range(3)]
+    before = [_read(model, row, MpvqcColorSchemePreferenceModel.AccentRole) for row in range(3)]
     spy = make_spy(model.dataChanged)
 
     style_hints.system_reports(LIGHT)
 
     assert spy.count() == 0
-    assert [_read(model, row, MpvqcColorSchemeModel.AccentRole) for row in range(3)] == before
+    assert [_read(model, row, MpvqcColorSchemePreferenceModel.AccentRole) for row in range(3)] == before
 
 
 def test_accent_writes_satisfy_the_item_model_protocol(make_model, settings_service):
