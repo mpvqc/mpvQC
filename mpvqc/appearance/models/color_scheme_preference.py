@@ -52,6 +52,7 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
     PreviewColorRole = Qt.ItemDataRole.UserRole + 3
     AlternatePreviewColorRole = Qt.ItemDataRole.UserRole + 4
     AccentPreviewColorRole = Qt.ItemDataRole.UserRole + 5
+    FollowsSystemRole = Qt.ItemDataRole.UserRole + 6
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -77,14 +78,14 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
                     preference=preference,
                     caption=translate("AppearanceDialog", "Light"),
                     preview_color=self._catalog.preview_color_for(preference),
-                    alternate_preview_color="",
+                    alternate_preview_color="transparent",
                 )
             case Dark():
                 return _Row(
                     preference=preference,
                     caption=translate("AppearanceDialog", "Dark"),
                     preview_color=self._catalog.preview_color_for(preference),
-                    alternate_preview_color="",
+                    alternate_preview_color="transparent",
                 )
             case _:
                 assert_never(preference)
@@ -99,7 +100,7 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
     ) -> str:
         match color_scheme_preference:
             case FollowSystem():
-                return ""
+                return "transparent"
             case Light() | Dark():
                 family = self._catalog.palette_family_for(color_scheme_preference)
                 return family.palette_of(appearance_preference).row_selected
@@ -139,6 +140,8 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
                 return row.alternate_preview_color
             case self.AccentPreviewColorRole:
                 return self._accent_preview_colors[index.row()]
+            case self.FollowsSystemRole:
+                return isinstance(row.preference, FollowSystem)
 
         return None
 
@@ -150,4 +153,5 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
             self.PreviewColorRole: QByteArray(b"previewColor"),
             self.AlternatePreviewColorRole: QByteArray(b"alternatePreviewColor"),
             self.AccentPreviewColorRole: QByteArray(b"accentPreviewColor"),
+            self.FollowsSystemRole: QByteArray(b"followsSystem"),
         }

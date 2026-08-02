@@ -19,17 +19,19 @@ TestCase {
     readonly property var systemRow: ({
             preference: "system",
             caption: "System",
+            followsSystem: true,
             previewColor: "#f5f2fa",
             alternatePreviewColor: "#121318",
-            accentPreviewColor: "",
+            accentPreviewColor: "transparent",
             selected: false
         })
 
     readonly property var lightRow: ({
             preference: "light",
             caption: "Light",
+            followsSystem: false,
             previewColor: "#f5f2fa",
-            alternatePreviewColor: "",
+            alternatePreviewColor: "transparent",
             accentPreviewColor: "#00ff00",
             selected: false
         })
@@ -57,7 +59,7 @@ TestCase {
         compare(caption.text, "System");
     }
 
-    function test_splitPreviewOnlyWithASecondPreviewColor_data() {
+    function test_splitPreviewOnlyForTheSystemRow_data() {
         return [
             {
                 tag: "system",
@@ -72,7 +74,7 @@ TestCase {
         ];
     }
 
-    function test_splitPreviewOnlyWithASecondPreviewColor(data): void {
+    function test_splitPreviewOnlyForTheSystemRow(data): void {
         const control = makeControl(data.properties);
         const split = findChild(control, "splitPreview");
         verify(split);
@@ -80,7 +82,7 @@ TestCase {
         compare(split.visible, data.expectSplit);
     }
 
-    function test_badgeOnlyWithAnAccentPreviewColor_data() {
+    function test_badgeOnEveryRowButSystem_data() {
         return [
             {
                 tag: "system",
@@ -95,7 +97,7 @@ TestCase {
         ];
     }
 
-    function test_badgeOnlyWithAnAccentPreviewColor(data): void {
+    function test_badgeOnEveryRowButSystem(data): void {
         const control = makeControl(data.properties);
         const badge = findChild(control, "accentBadge");
         verify(badge);

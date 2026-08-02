@@ -16,14 +16,15 @@ Column {
 
     required property string preference
     required property string caption
+    required property bool followsSystem
     required property color previewColor
-    required property string alternatePreviewColor
-    required property string accentPreviewColor
+    required property color alternatePreviewColor
+    required property color accentPreviewColor
     required property bool selected
 
-    // System owns no color scheme: it carries the second preview color and no accent color
-    readonly property bool split: root.alternatePreviewColor !== ""
-    readonly property bool badged: root.accentPreviewColor !== ""
+    // System owns no color scheme: it carries both preview colors and no accent pick
+    readonly property bool split: root.followsSystem
+    readonly property bool badged: !root.followsSystem
 
     property int frameSize: 70
 

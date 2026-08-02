@@ -117,7 +117,17 @@ def test_preview_colors_come_from_the_catalog_and_system_carries_both(make_model
     ]
 
     assert preview_colors == [LIGHT_PREVIEW_COLOR, LIGHT_PREVIEW_COLOR, DARK_PREVIEW_COLOR]
-    assert alternate_preview_colors == [DARK_PREVIEW_COLOR, "", ""]
+    assert alternate_preview_colors == [DARK_PREVIEW_COLOR, "transparent", "transparent"]
+
+
+def test_only_the_system_row_follows_the_system(make_model):
+    model = make_model()
+
+    assert [_read(model, row, MpvqcColorSchemePreferenceModel.FollowsSystemRole) for row in range(3)] == [
+        True,
+        False,
+        False,
+    ]
 
 
 def test_badges_render_each_schemes_stored_pick_and_system_carries_none(make_model, settings_service, catalog):
@@ -129,7 +139,7 @@ def test_badges_render_each_schemes_stored_pick_and_system_carries_none(make_mod
         _read(model, row, MpvqcColorSchemePreferenceModel.AccentPreviewColorRole) for row in range(3)
     ]
 
-    assert accent_preview_colors == ["", _badge(catalog, LIGHT, "#l1"), _badge(catalog, DARK, "#d3")]
+    assert accent_preview_colors == ["transparent", _badge(catalog, LIGHT, "#l1"), _badge(catalog, DARK, "#d3")]
 
 
 def test_an_unstored_accent_renders_the_palette_familys_default(make_model, catalog):
