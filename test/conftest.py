@@ -107,7 +107,7 @@ def make_palette_family_data():
         default_accent: str,
         accents: list[str],
         color_scheme: str | None = None,
-        preview: str | None = None,
+        preview_color: str | None = None,
     ) -> dict:
         palette_family = json.loads(ResourceService().palette_catalog_json)[0]
         palettes = palette_family["palettes"][: len(accents)]
@@ -115,8 +115,8 @@ def make_palette_family_data():
             palette["identifier"] = accent
         if color_scheme is not None:
             palette_family["color_scheme"] = color_scheme
-        if preview is not None:
-            palette_family["preview"] = preview
+        if preview_color is not None:
+            palette_family["preview_color"] = preview_color
         palette_family["palettes"] = palettes
         palette_family["default_accent"] = default_accent
         return palette_family

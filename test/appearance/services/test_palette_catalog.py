@@ -52,13 +52,13 @@ def catalog_with(common_bindings_with, make_resource_service):
 def fake_catalog(catalog_with, make_palette_family_data):
     light = make_palette_family_data(
         color_scheme="light",
-        preview="#f0f0f0",
+        preview_color="#f0f0f0",
         default_accent="#l2",
         accents=["#l1", "#l2"],
     )
     dark = make_palette_family_data(
         color_scheme="dark",
-        preview="#101010",
+        preview_color="#101010",
         default_accent="#d1",
         accents=["#d1", "#d2", "#d3"],
     )
@@ -78,15 +78,15 @@ def test_lookup_by_color_scheme_returns_the_family_tagged_with_it(fake_catalog, 
 
 
 @pytest.mark.parametrize(
-    ("color_scheme", "preview"),
+    ("color_scheme", "preview_color"),
     [
         (Light(), "#f0f0f0"),
         (Dark(), "#101010"),
     ],
     ids=["light", "dark"],
 )
-def test_preview_color_per_color_scheme(fake_catalog, color_scheme, preview):
-    assert fake_catalog.preview_color_for(color_scheme) == preview
+def test_preview_color_per_color_scheme(fake_catalog, color_scheme, preview_color):
+    assert fake_catalog.preview_color_for(color_scheme) == preview_color
 
 
 def test_color_scheme_tag_selects_the_palette_mapping(catalog_with, make_palette_family_data):
@@ -141,17 +141,17 @@ def test_the_first_family_tagged_with_a_scheme_wins(catalog_with, make_palette_f
 
 
 @pytest.mark.parametrize(
-    ("color_scheme", "preview"),
+    ("color_scheme", "preview_color"),
     [
         (Light(), "#f5f2fa"),
         (Dark(), "#121318"),
     ],
     ids=["light", "dark"],
 )
-def test_shipped_palette_families(catalog, color_scheme, preview):
+def test_shipped_palette_families(catalog, color_scheme, preview_color):
     palette_family = catalog.palette_family_for(color_scheme)
 
-    assert palette_family.preview == preview
+    assert palette_family.preview_color == preview_color
     assert len(palette_family.palettes) == 17
 
 

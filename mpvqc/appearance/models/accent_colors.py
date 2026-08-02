@@ -30,7 +30,7 @@ class MpvqcAccentColorModel(QAbstractListModel):
     _catalog = inject.attr(PaletteCatalogService)
 
     AccentColorRole = Qt.ItemDataRole.UserRole + 1
-    DisplayColorRole = Qt.ItemDataRole.UserRole + 2
+    PreviewColorRole = Qt.ItemDataRole.UserRole + 2
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -58,7 +58,7 @@ class MpvqcAccentColorModel(QAbstractListModel):
         if overlap > 0:
             first = self.index(0)
             last = self.index(overlap - 1)
-            self.dataChanged.emit(first, last, [self.AccentColorRole, self.DisplayColorRole])
+            self.dataChanged.emit(first, last, [self.AccentColorRole, self.PreviewColorRole])
 
     def _palettes_of(self, preference: ColorSchemePreference) -> tuple[Palette, ...]:
         match preference:
@@ -86,7 +86,7 @@ class MpvqcAccentColorModel(QAbstractListModel):
         match role:
             case self.AccentColorRole:
                 return palette.accent_color.identifier
-            case self.DisplayColorRole:
+            case self.PreviewColorRole:
                 return palette.row_selected
 
         return None
@@ -95,5 +95,5 @@ class MpvqcAccentColorModel(QAbstractListModel):
     def roleNames(self) -> dict[int, QByteArray]:
         return {
             self.AccentColorRole: QByteArray(b"accentColor"),
-            self.DisplayColorRole: QByteArray(b"displayColor"),
+            self.PreviewColorRole: QByteArray(b"previewColor"),
         }

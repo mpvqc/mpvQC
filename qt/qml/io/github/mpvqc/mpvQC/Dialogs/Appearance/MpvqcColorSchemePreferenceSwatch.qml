@@ -16,13 +16,13 @@ Column {
 
     required property string preference
     required property string caption
-    required property color preview
-    required property string alternatePreview
+    required property color previewColor
+    required property string alternatePreviewColor
     required property string accent
     required property bool selected
 
-    // System owns no color scheme: it carries the second preview and no accent
-    readonly property bool split: root.alternatePreview !== ""
+    // System owns no color scheme: it carries the second preview color and no accent
+    readonly property bool split: root.alternatePreviewColor !== ""
     readonly property bool badged: root.accent !== ""
 
     property int frameSize: 70
@@ -54,7 +54,7 @@ Column {
             width: root._swatchSize
             height: root._swatchSize
             radius: root._swatchRadius
-            color: root.split ? "transparent" : root.preview
+            color: root.split ? "transparent" : root.previewColor
 
             // Both halves are paths of their own: a half painted over a full
             // rounded rectangle blends its antialiased edge into the color
@@ -68,7 +68,7 @@ Column {
                 preferredRendererType: Shape.CurveRenderer
 
                 ShapePath {
-                    fillColor: root.alternatePreview
+                    fillColor: root.alternatePreviewColor
                     strokeColor: "transparent"
                     startX: root._swatchSize - root._swatchRadius + root._splitOffset
                     startY: root._swatchRadius - root._splitOffset
@@ -102,7 +102,7 @@ Column {
                 }
 
                 ShapePath {
-                    fillColor: root.preview
+                    fillColor: root.previewColor
                     strokeColor: "transparent"
                     startX: root._swatchRadius
                     startY: 0

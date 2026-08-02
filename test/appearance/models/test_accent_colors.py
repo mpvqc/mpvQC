@@ -77,15 +77,17 @@ def test_falling_back_to_system_empties_the_model(make_model):
     assert model.rowCount() == 0
 
 
-def test_the_rows_carry_the_preferences_accents_and_display_colors(make_model, catalog):
+def test_the_rows_carry_the_preferences_accents_and_preview_colors(make_model, catalog):
     model = make_model(LIGHT)
 
     palettes = catalog.palette_family_for(LIGHT).palettes
     accents = [model.data(model.index(row), MpvqcAccentColorModel.AccentColorRole) for row in range(model.rowCount())]
-    displays = [model.data(model.index(row), MpvqcAccentColorModel.DisplayColorRole) for row in range(model.rowCount())]
+    preview_colors = [
+        model.data(model.index(row), MpvqcAccentColorModel.PreviewColorRole) for row in range(model.rowCount())
+    ]
 
     assert accents == [palette.accent_color.identifier for palette in palettes]
-    assert displays == [palette.row_selected for palette in palettes]
+    assert preview_colors == [palette.row_selected for palette in palettes]
 
 
 def test_switching_between_equal_sized_families_repaints_every_row(qt_app, equal_sized_catalog, make_model, make_spy):
@@ -96,10 +98,12 @@ def test_switching_between_equal_sized_families_repaints_every_row(qt_app, equal
 
     palettes = equal_sized_catalog.palette_family_for(DARK).palettes
     accents = [model.data(model.index(row), MpvqcAccentColorModel.AccentColorRole) for row in range(model.rowCount())]
-    displays = [model.data(model.index(row), MpvqcAccentColorModel.DisplayColorRole) for row in range(model.rowCount())]
+    preview_colors = [
+        model.data(model.index(row), MpvqcAccentColorModel.PreviewColorRole) for row in range(model.rowCount())
+    ]
 
     assert accents == [palette.accent_color.identifier for palette in palettes]
-    assert displays == [palette.row_selected for palette in palettes]
+    assert preview_colors == [palette.row_selected for palette in palettes]
     assert spy.count() == 1
     assert spy.at(0, 0).row() == 0
     assert spy.at(0, 1).row() == 1

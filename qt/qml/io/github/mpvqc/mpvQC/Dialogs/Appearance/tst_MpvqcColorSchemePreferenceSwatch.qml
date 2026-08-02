@@ -19,8 +19,8 @@ TestCase {
     readonly property var systemRow: ({
             preference: "system",
             caption: "System",
-            preview: "#f5f2fa",
-            alternatePreview: "#121318",
+            previewColor: "#f5f2fa",
+            alternatePreviewColor: "#121318",
             accent: "",
             selected: false
         })
@@ -28,8 +28,8 @@ TestCase {
     readonly property var lightRow: ({
             preference: "light",
             caption: "Light",
-            preview: "#f5f2fa",
-            alternatePreview: "",
+            previewColor: "#f5f2fa",
+            alternatePreviewColor: "",
             accent: "#00ff00",
             selected: false
         })
@@ -57,7 +57,7 @@ TestCase {
         compare(caption.text, "System");
     }
 
-    function test_splitPreviewOnlyWithASecondPreview_data() {
+    function test_splitPreviewOnlyWithASecondPreviewColor_data() {
         return [
             {
                 tag: "system",
@@ -72,7 +72,7 @@ TestCase {
         ];
     }
 
-    function test_splitPreviewOnlyWithASecondPreview(data): void {
+    function test_splitPreviewOnlyWithASecondPreviewColor(data): void {
         const control = makeControl(data.properties);
         const split = findChild(control, "splitPreview");
         verify(split);

@@ -78,7 +78,7 @@ def _light_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette
 
 @dataclass(frozen=True)
 class PaletteFamily:
-    preview: str
+    preview_color: str
     color_scheme: ColorScheme
     default_accent: AccentColor
     palettes: tuple[Palette, ...]
@@ -118,7 +118,7 @@ def _parse_palette_family(data: dict) -> PaletteFamily:
         case _:
             assert_never(color_scheme)
     return PaletteFamily(
-        preview=data["preview"],
+        preview_color=data["preview_color"],
         color_scheme=color_scheme,
         default_accent=AccentColor(data["default_accent"]),
         palettes=tuple(make_palette(AccentColor(p["identifier"]), p["colors"]) for p in data["palettes"]),
@@ -143,4 +143,4 @@ class PaletteCatalogService:
         return self._by_scheme[color_scheme]
 
     def preview_color_for(self, color_scheme: ColorScheme) -> str:
-        return self.palette_family_for(color_scheme).preview
+        return self.palette_family_for(color_scheme).preview_color

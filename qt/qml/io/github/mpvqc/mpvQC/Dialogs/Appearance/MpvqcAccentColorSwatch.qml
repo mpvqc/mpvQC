@@ -12,7 +12,7 @@ Item {
 
     required property int index
     required property string accentColor
-    required property color displayColor
+    required property color previewColor
     required property bool selected
 
     readonly property int frameSize: 52
@@ -33,7 +33,7 @@ Item {
         height: width
         // the selected swatch grows and morphs toward a rounded square
         radius: root.selected ? root.selectedRadius : width / 2
-        color: root.displayColor
+        color: root.previewColor
 
         Behavior on width {
             NumberAnimation {

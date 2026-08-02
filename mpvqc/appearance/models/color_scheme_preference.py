@@ -38,8 +38,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 class _Row:
     preference: ColorSchemePreference
     caption: str
-    preview: str
-    alternate_preview: str
+    preview_color: str
+    alternate_preview_color: str
 
 
 @QmlElement
@@ -49,8 +49,8 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
 
     PreferenceRole = Qt.ItemDataRole.UserRole + 1
     CaptionRole = Qt.ItemDataRole.UserRole + 2
-    PreviewRole = Qt.ItemDataRole.UserRole + 3
-    AlternatePreviewRole = Qt.ItemDataRole.UserRole + 4
+    PreviewColorRole = Qt.ItemDataRole.UserRole + 3
+    AlternatePreviewColorRole = Qt.ItemDataRole.UserRole + 4
     AccentRole = Qt.ItemDataRole.UserRole + 5
 
     def __init__(self, parent: QObject | None = None) -> None:
@@ -69,22 +69,22 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
                 return _Row(
                     preference=preference,
                     caption=translate("AppearanceDialog", "System"),
-                    preview=self._catalog.preview_color_for(Light()),
-                    alternate_preview=self._catalog.preview_color_for(Dark()),
+                    preview_color=self._catalog.preview_color_for(Light()),
+                    alternate_preview_color=self._catalog.preview_color_for(Dark()),
                 )
             case Light():
                 return _Row(
                     preference=preference,
                     caption=translate("AppearanceDialog", "Light"),
-                    preview=self._catalog.preview_color_for(preference),
-                    alternate_preview="",
+                    preview_color=self._catalog.preview_color_for(preference),
+                    alternate_preview_color="",
                 )
             case Dark():
                 return _Row(
                     preference=preference,
                     caption=translate("AppearanceDialog", "Dark"),
-                    preview=self._catalog.preview_color_for(preference),
-                    alternate_preview="",
+                    preview_color=self._catalog.preview_color_for(preference),
+                    alternate_preview_color="",
                 )
             case _:
                 assert_never(preference)
@@ -133,10 +133,10 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
                 return format_color_scheme_preference(row.preference)
             case self.CaptionRole:
                 return row.caption
-            case self.PreviewRole:
-                return row.preview
-            case self.AlternatePreviewRole:
-                return row.alternate_preview
+            case self.PreviewColorRole:
+                return row.preview_color
+            case self.AlternatePreviewColorRole:
+                return row.alternate_preview_color
             case self.AccentRole:
                 return self._accents[index.row()]
 
@@ -147,7 +147,7 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
         return {
             self.PreferenceRole: QByteArray(b"preference"),
             self.CaptionRole: QByteArray(b"caption"),
-            self.PreviewRole: QByteArray(b"preview"),
-            self.AlternatePreviewRole: QByteArray(b"alternatePreview"),
+            self.PreviewColorRole: QByteArray(b"previewColor"),
+            self.AlternatePreviewColorRole: QByteArray(b"alternatePreviewColor"),
             self.AccentRole: QByteArray(b"accent"),
         }

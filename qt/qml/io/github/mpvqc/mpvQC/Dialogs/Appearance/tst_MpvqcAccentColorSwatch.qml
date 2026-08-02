@@ -32,9 +32,9 @@ TestCase {
         return spy;
     }
 
-    function test_theSwatchWearsItsDisplayColor(): void {
+    function test_theSwatchWearsItsPreviewColor(): void {
         const control = makeControl({
-            displayColor: "#00ff00"
+            previewColor: "#00ff00"
         });
         const swatch = findChild(control, "swatch");
         verify(swatch);
@@ -73,7 +73,7 @@ TestCase {
         MpvqcAccentColorSwatch {
             index: 0
             accentColor: "#f44336"
-            displayColor: "#f44336"
+            previewColor: "#f44336"
             selected: false
         }
     }

@@ -1,6 +1,6 @@
 [
     {
-        "preview": "#f5f2fa",
+        "preview_color": "#f5f2fa",
         "color_scheme": "light",
         "default_accent": "#3f51b5",
         "palettes": [
@@ -1027,7 +1027,7 @@
         ]
     },
     {
-        "preview": "#121318",
+        "preview_color": "#121318",
         "color_scheme": "dark",
         "default_accent": "#3f51b5",
         "palettes": [

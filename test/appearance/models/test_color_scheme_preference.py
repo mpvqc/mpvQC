@@ -24,8 +24,8 @@ LIGHT = Light()
 DARK = Dark()
 NO_PREFERENCE = NoPreference()
 
-LIGHT_PREVIEW = "#lightpreview"
-DARK_PREVIEW = "#darkpreview"
+LIGHT_PREVIEW_COLOR = "#lightpreviewcolor"
+DARK_PREVIEW_COLOR = "#darkpreviewcolor"
 
 
 @pytest.fixture
@@ -38,10 +38,10 @@ def configure_injections(
     common_bindings_with, settings_service, style_hints, make_palette_family_data, make_resource_service
 ):
     light = make_palette_family_data(
-        color_scheme="light", preview=LIGHT_PREVIEW, default_accent="#l2", accents=["#l1", "#l2"]
+        color_scheme="light", preview_color=LIGHT_PREVIEW_COLOR, default_accent="#l2", accents=["#l1", "#l2"]
     )
     dark = make_palette_family_data(
-        color_scheme="dark", preview=DARK_PREVIEW, default_accent="#d1", accents=["#d1", "#d2", "#d3"]
+        color_scheme="dark", preview_color=DARK_PREVIEW_COLOR, default_accent="#d1", accents=["#d1", "#d2", "#d3"]
     )
     fake = make_resource_service(light, dark)
 
@@ -108,14 +108,16 @@ def test_every_row_is_captioned(make_model):
     ]
 
 
-def test_previews_come_from_the_catalog_and_system_carries_both(make_model):
+def test_preview_colors_come_from_the_catalog_and_system_carries_both(make_model):
     model = make_model()
 
-    previews = [_read(model, row, MpvqcColorSchemePreferenceModel.PreviewRole) for row in range(3)]
-    alternates = [_read(model, row, MpvqcColorSchemePreferenceModel.AlternatePreviewRole) for row in range(3)]
+    preview_colors = [_read(model, row, MpvqcColorSchemePreferenceModel.PreviewColorRole) for row in range(3)]
+    alternate_preview_colors = [
+        _read(model, row, MpvqcColorSchemePreferenceModel.AlternatePreviewColorRole) for row in range(3)
+    ]
 
-    assert previews == [LIGHT_PREVIEW, LIGHT_PREVIEW, DARK_PREVIEW]
-    assert alternates == [DARK_PREVIEW, "", ""]
+    assert preview_colors == [LIGHT_PREVIEW_COLOR, LIGHT_PREVIEW_COLOR, DARK_PREVIEW_COLOR]
+    assert alternate_preview_colors == [DARK_PREVIEW_COLOR, "", ""]
 
 
 def test_accents_render_each_schemes_stored_pick_and_system_carries_none(make_model, settings_service, catalog):
