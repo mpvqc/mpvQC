@@ -26,8 +26,8 @@ if TYPE_CHECKING:
 
 _COLOR_SCHEME_PREFERENCE_KEY = "Appearance/colorSchemePreference"
 
-LIGHT = Light()
-DARK = Dark()
+_LIGHT = Light()
+_DARK = Dark()
 
 
 def _accent_color_key(color_scheme: ColorScheme) -> str:
@@ -45,8 +45,8 @@ class AppearanceSettingsService(QObject):
     def appearance_preference(self) -> AppearancePreference:
         return AppearancePreference(
             color_scheme_preference=self.color_scheme_preference,
-            light_accent_color_preference=self.accent_color_preference_for(LIGHT),
-            dark_accent_color_preference=self.accent_color_preference_for(DARK),
+            light_accent_color_preference=self.accent_color_preference_for(_LIGHT),
+            dark_accent_color_preference=self.accent_color_preference_for(_DARK),
         )
 
     @property
@@ -79,8 +79,8 @@ class AppearanceSettingsService(QObject):
         if self.appearance_preference == appearance_preference:
             return
         self._store_color_scheme_preference(appearance_preference.color_scheme_preference)
-        self._store_accent_color_preference(LIGHT, appearance_preference.light_accent_color_preference)
-        self._store_accent_color_preference(DARK, appearance_preference.dark_accent_color_preference)
+        self._store_accent_color_preference(_LIGHT, appearance_preference.light_accent_color_preference)
+        self._store_accent_color_preference(_DARK, appearance_preference.dark_accent_color_preference)
         self.appearance_preference_changed.emit(self.appearance_preference)
 
     def _store_color_scheme_preference(self, preference: ColorSchemePreference) -> None:

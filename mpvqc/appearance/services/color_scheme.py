@@ -71,7 +71,7 @@ class ColorSchemeService(QObject):
     def __init__(self, style_hints: StyleHints, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._style_hints = style_hints
-        self._preference = self._settings.appearance_preference.color_scheme_preference
+        self._preference = self._settings.color_scheme_preference
         self._push_preference()
         self._color_scheme = self._resolve()
         style_hints.on_color_scheme_changed(self._on_system_color_scheme_changed)
