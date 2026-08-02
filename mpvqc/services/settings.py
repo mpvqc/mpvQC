@@ -26,12 +26,11 @@ from mpvqc.appearance.domain import (
     ColorScheme,
     ColorSchemePreference,
     Dark,
-    FollowSystem,
     Light,
     NoPreference,
     format_color_scheme,
     format_color_scheme_preference,
-    parse_color_scheme_preference,
+    parse_color_scheme_preference_or_default,
 )
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
@@ -44,20 +43,8 @@ if TYPE_CHECKING:
 _COLOR_SCHEME_PREFERENCE_KEY = "Appearance/colorSchemePreference"
 
 
-def default_color_scheme_preference() -> ColorSchemePreference:
-    return FollowSystem()
-
-
 def _accent_color_key(color_scheme: ColorScheme) -> str:
     return f"Appearance/accentColor/{format_color_scheme(color_scheme)}"
-
-
-def _read_color_scheme_preference(stored: str | None) -> ColorSchemePreference:
-    """The stored preference. Nothing stored, or a stale value, falls back to the default."""
-    try:
-        return parse_color_scheme_preference(stored or "")
-    except ValueError:
-        return default_color_scheme_preference()
 
 
 def default_username() -> str:
@@ -280,7 +267,7 @@ class SettingsService(QObject):
     @property
     def color_scheme_preference(self) -> ColorSchemePreference:
         stored = self.qsettings.value(_COLOR_SCHEME_PREFERENCE_KEY, type=str)
-        return _read_color_scheme_preference(stored if isinstance(stored, str) else None)
+        return parse_color_scheme_preference_or_default(stored if isinstance(stored, str) else None)
 
     @color_scheme_preference.setter
     def color_scheme_preference(self, preference: ColorSchemePreference) -> None:

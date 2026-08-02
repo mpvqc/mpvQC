@@ -80,6 +80,17 @@ def parse_color_scheme_preference(text: str) -> ColorSchemePreference:
         raise ValueError(message) from None
 
 
+def parse_color_scheme_preference_or_default(text: str | None) -> ColorSchemePreference:
+    try:
+        return parse_color_scheme_preference(text or "")
+    except ValueError:
+        return default_color_scheme_preference()
+
+
+def default_color_scheme_preference() -> ColorSchemePreference:
+    return FollowSystem()
+
+
 def format_color_scheme_preference(preference: ColorSchemePreference) -> str:
     match preference:
         case FollowSystem():

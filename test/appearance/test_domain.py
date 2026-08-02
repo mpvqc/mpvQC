@@ -12,10 +12,12 @@ from mpvqc.appearance.domain import (
     FollowSystem,
     Light,
     Unknown,
+    default_color_scheme_preference,
     format_color_scheme,
     format_color_scheme_preference,
     parse_color_scheme,
     parse_color_scheme_preference,
+    parse_color_scheme_preference_or_default,
     resolve_color_scheme,
 )
 
@@ -76,6 +78,20 @@ def test_a_preference_survives_the_round_trip_through_its_boundary_text(text, pr
 def test_parsing_text_that_names_no_preference_raises(text):
     with pytest.raises(ValueError, match="color scheme preference"):
         parse_color_scheme_preference(text)
+
+
+def test_the_default_preference_follows_the_system():
+    assert default_color_scheme_preference() == SYSTEM
+
+
+@pytest.mark.parametrize(("text", "preference"), [("system", SYSTEM), ("light", LIGHT), ("dark", DARK)])
+def test_stored_text_naming_a_preference_parses_to_it(text, preference):
+    assert parse_color_scheme_preference_or_default(text) == preference
+
+
+@pytest.mark.parametrize("text", [None, "", "System", "sepia", "nonsense"])
+def test_stored_text_naming_no_preference_falls_back_to_the_default(text):
+    assert parse_color_scheme_preference_or_default(text) == default_color_scheme_preference()
 
 
 def test_every_preference_is_offered_once_in_dialog_order():
