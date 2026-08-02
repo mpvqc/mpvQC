@@ -19,7 +19,7 @@ from mpvqc.appearance.domain import (
     Light,
     format_color_scheme_preference,
 )
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.appearance.services import PaletteCatalogService
 from mpvqc.services import SettingsService
 
 if TYPE_CHECKING:

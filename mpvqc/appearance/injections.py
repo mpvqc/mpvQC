@@ -5,8 +5,7 @@
 import inject
 from PySide6.QtGui import QGuiApplication
 
-from mpvqc.appearance.services.color_scheme import ColorSchemeService, QtStyleHints
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService, QtStyleHints
 
 
 def _color_scheme_service() -> ColorSchemeService:

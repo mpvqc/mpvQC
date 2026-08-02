@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtGui import QColor
 
 from mpvqc.appearance.domain import AccentColor, Appearance, Dark, FollowSystem, Light, NoPreference
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.appearance.services import PaletteCatalogService
 from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()

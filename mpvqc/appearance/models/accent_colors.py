@@ -11,7 +11,7 @@ from PySide6.QtCore import QAbstractListModel, QByteArray, QModelIndex, Qt
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
 from mpvqc.appearance.domain import Dark, FollowSystem, Light
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.appearance.services import PaletteCatalogService
 
 if TYPE_CHECKING:
     from typing import Any

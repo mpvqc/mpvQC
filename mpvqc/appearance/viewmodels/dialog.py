@@ -21,14 +21,14 @@ from mpvqc.appearance.domain import (
     parse_color_scheme_preference,
 )
 from mpvqc.appearance.models import MpvqcAccentColorModel
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.appearance.services import PaletteCatalogService
 from mpvqc.services import SettingsService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from mpvqc.appearance.domain import ColorScheme
-    from mpvqc.appearance.services.palette_catalog import PaletteFamily
+    from mpvqc.appearance.services import PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

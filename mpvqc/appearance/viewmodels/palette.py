@@ -12,8 +12,7 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.appearance.domain import Appearance, ColorScheme, Dark
-from mpvqc.appearance.services.color_scheme import ColorSchemeService
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
 from mpvqc.services import SettingsService
 
 if TYPE_CHECKING:
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import SignalInstance
 
-    from mpvqc.appearance.services.palette_catalog import PaletteFamily
+    from mpvqc.appearance.services import PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

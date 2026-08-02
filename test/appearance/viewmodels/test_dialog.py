@@ -16,9 +16,8 @@ from mpvqc.appearance.domain import (
     Light,
     NoPreference,
 )
-from mpvqc.appearance.services.color_scheme import ColorSchemeService
-from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
-from mpvqc.appearance.viewmodels.dialog import (
+from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
+from mpvqc.appearance.viewmodels import (
     AppearanceDialogInputs,
     AppearanceDialogProps,
     MpvqcAppearanceDialogViewModel,
