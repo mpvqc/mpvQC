@@ -30,6 +30,7 @@
 - Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix. Helpers that aren't in
   `injections.py` live at the top level of `mpvqc/`.
 - Load the `writing-qml` skill before writing or editing a QML file.
+- Load the `writing-view-models` skill before writing or editing a view model that reads service state.
 
 ## Testing
 
