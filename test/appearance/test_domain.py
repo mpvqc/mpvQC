@@ -4,7 +4,7 @@
 
 import pytest
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     COLOR_SCHEME_PREFERENCES,
     AccentColor,
     Appearance,

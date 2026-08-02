@@ -11,15 +11,17 @@ import inject
 from PySide6.QtCore import Property, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import Appearance, ColorScheme, Dark
-from mpvqc.services import ColorSchemeService, PaletteCatalogService, SettingsService
+from mpvqc.appearance.domain import Appearance, ColorScheme, Dark
+from mpvqc.appearance.services.color_scheme import ColorSchemeService
+from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.services import SettingsService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtCore import SignalInstance
 
-    from mpvqc.services.palette_catalog import PaletteFamily
+    from mpvqc.appearance.services.palette_catalog import PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

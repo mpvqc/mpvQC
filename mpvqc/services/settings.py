@@ -20,7 +20,7 @@ from PySide6.QtCore import (
     Signal,
 )
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     AccentColor,
     AccentColorPreference,
     Appearance,

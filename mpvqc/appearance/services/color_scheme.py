@@ -9,16 +9,15 @@ from typing import TYPE_CHECKING, Protocol, assert_never
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
-from mpvqc.appearance import Dark, FollowSystem, Light, Unknown, resolve_color_scheme
-
-from .settings import SettingsService
+from mpvqc.appearance.domain import Dark, FollowSystem, Light, Unknown, resolve_color_scheme
+from mpvqc.services.settings import SettingsService
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from PySide6.QtGui import QStyleHints
 
-    from mpvqc.appearance import ColorScheme, ColorSchemePreference, SystemColorScheme
+    from mpvqc.appearance.domain import ColorScheme, ColorSchemePreference, SystemColorScheme
 
 
 class StyleHints(Protocol):

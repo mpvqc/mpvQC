@@ -9,7 +9,7 @@ from typing import assert_never
 
 import inject
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     AccentColor,
     Appearance,
     ColorScheme,
@@ -19,8 +19,7 @@ from mpvqc.appearance import (
     Palette,
     parse_color_scheme,
 )
-
-from .resource import ResourceService
+from mpvqc.services.resource import ResourceService
 
 
 def _dark_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette:

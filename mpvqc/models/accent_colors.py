@@ -10,15 +10,15 @@ import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, QModelIndex, Qt
 from PySide6.QtQml import QmlElement, QmlUncreatable
 
-from mpvqc.appearance import Dark, FollowSystem, Light
-from mpvqc.services import PaletteCatalogService
+from mpvqc.appearance.domain import Dark, FollowSystem, Light
+from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
 
 if TYPE_CHECKING:
     from typing import Any
 
     from PySide6.QtCore import QObject, QPersistentModelIndex
 
-    from mpvqc.appearance import ColorSchemePreference, Palette
+    from mpvqc.appearance.domain import ColorSchemePreference, Palette
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1

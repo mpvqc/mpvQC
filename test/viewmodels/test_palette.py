@@ -8,7 +8,7 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     AccentColor,
     Appearance,
     ColorSchemePreference,
@@ -19,7 +19,9 @@ from mpvqc.appearance import (
     Palette,
     Unknown,
 )
-from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
+from mpvqc.appearance.services.color_scheme import ColorSchemeService
+from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.services import ResourceService, SettingsService
 from mpvqc.viewmodels.utility.palette import (
     MpvqcPaletteViewModel,
     PaletteInputs,

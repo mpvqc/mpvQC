@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 from PySide6.QtCore import QLocale
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     AccentColor,
     Appearance,
     Dark,

@@ -7,7 +7,7 @@ from typing import NamedTuple
 import inject
 import pytest
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     AccentColor,
     Appearance,
     ColorSchemePreference,
@@ -16,13 +16,15 @@ from mpvqc.appearance import (
     Light,
     NoPreference,
 )
+from mpvqc.appearance.services.color_scheme import ColorSchemeService
+from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
 from mpvqc.dialogs.appearance import (
     AppearanceDialogInputs,
     AppearanceDialogProps,
     MpvqcAppearanceDialogViewModel,
     derive_appearance_dialog_props,
 )
-from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
+from mpvqc.services import ResourceService, SettingsService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()

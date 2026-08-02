@@ -8,8 +8,9 @@ import inject
 import pytest
 from PySide6.QtGui import QColor
 
-from mpvqc.appearance import AccentColor, Appearance, Dark, FollowSystem, Light, NoPreference
-from mpvqc.services import PaletteCatalogService, ResourceService
+from mpvqc.appearance.domain import AccentColor, Appearance, Dark, FollowSystem, Light, NoPreference
+from mpvqc.appearance.services.palette_catalog import PaletteCatalogService
+from mpvqc.services import ResourceService
 
 SYSTEM = FollowSystem()
 NO_PREFERENCE = NoPreference()

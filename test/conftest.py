@@ -13,7 +13,7 @@ import pytest
 from PySide6.QtCore import QByteArray, QCoreApplication, QLocale, QResource, SignalInstance
 from PySide6.QtTest import QSignalSpy
 
-from mpvqc.appearance import ColorScheme, SystemColorScheme
+from mpvqc.appearance.domain import ColorScheme, SystemColorScheme
 from mpvqc.application import MpvqcApplication
 from mpvqc.services import (
     BuildInfoService,

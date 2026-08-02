@@ -12,7 +12,7 @@ import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
-from mpvqc.appearance import (
+from mpvqc.appearance.domain import (
     AccentColor,
     NoPreference,
     format_color_scheme_preference,

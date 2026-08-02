@@ -3,19 +3,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import inject
-from PySide6.QtGui import QGuiApplication
 
 import mpvqc.services as s
-
-
-def _color_scheme_service() -> s.ColorSchemeService:
-    return s.ColorSchemeService(s.QtStyleHints(QGuiApplication.styleHints()))
+from mpvqc.appearance.injections import bindings as appearance_bindings
 
 
 def bindings(binder: inject.Binder) -> None:
+    appearance_bindings(binder)
+
     binder.bind_to_constructor(s.ApplicationPathsService, s.ApplicationPathsService)
     binder.bind_to_constructor(s.BuildInfoService, s.BuildInfoService)
-    binder.bind_to_constructor(s.ColorSchemeService, _color_scheme_service)
     binder.bind_to_constructor(s.CommentsService, s.CommentsService)
     binder.bind_to_constructor(s.CommentTypesPolicyService, s.CommentTypesPolicyService)
     binder.bind_to_constructor(s.CommentTypeValidatorService, s.CommentTypeValidatorService)
@@ -29,7 +26,6 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.LabelWidthCalculatorService, s.LabelWidthCalculatorService)
     binder.bind_to_constructor(s.MainWindowService, s.MainWindowService)
     binder.bind_to_constructor(s.MimetypeProviderService, s.MimetypeProviderService)
-    binder.bind_to_constructor(s.PaletteCatalogService, s.PaletteCatalogService)
     binder.bind_to_constructor(s.PlatformService, s.PlatformService)
     binder.bind_to_constructor(s.PlayerService, s.PlayerService)
     binder.bind_to_constructor(s.QuitService, s.QuitService)

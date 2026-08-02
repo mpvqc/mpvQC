@@ -4,9 +4,6 @@
 
 from .application_paths import ApplicationPathsService as ApplicationPathsService
 from .build_info import BuildInfoService as BuildInfoService
-from .color_scheme import ColorSchemeService as ColorSchemeService
-from .color_scheme import QtStyleHints as QtStyleHints
-from .color_scheme import StyleHints as StyleHints
 from .comment_type_validator import CommentTypeValidatorService as CommentTypeValidatorService
 from .comment_types_policy import CommentTypesPolicyService as CommentTypesPolicyService
 from .comments import CommentsService as CommentsService
@@ -21,7 +18,6 @@ from .key_command import KeyCommandGeneratorService as KeyCommandGeneratorServic
 from .label_width_calculator import LabelWidthCalculatorService as LabelWidthCalculatorService
 from .main_window import MainWindowService as MainWindowService
 from .mimetype_provider import MimetypeProviderService as MimetypeProviderService
-from .palette_catalog import PaletteCatalogService as PaletteCatalogService
 from .platform import PlatformService as PlatformService
 from .platform import WindowButtonPreference as WindowButtonPreference
 from .player import PlayerService as PlayerService

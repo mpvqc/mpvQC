@@ -27,8 +27,11 @@
 - Prefer code the type checker can verify:
   - Use closures instead of `functools.partial`
   - Don't use getattr
-- Only inject-wired classes live in `mpvqc/services/` and carry the `Service` suffix. Helpers that aren't in
-  `injections.py` live at the top level of `mpvqc/`.
+- A feature package under `mpvqc/<feature>/` bundles everything one area needs: `domain.py` at its root, plus role
+  directories (`services/`, `models/`, `viewmodels/`) for what the area owns. It contributes its own bindings and the
+  composition root calls them.
+- Inject-wired classes carry the `Service` suffix wherever they live. `mpvqc/services/` holds what no feature package
+  has claimed; helpers that aren't inject-wired live at the top level of `mpvqc/`.
 - Load the `writing-qml` skill before writing or editing a QML file.
 - Load the `writing-view-models` skill before writing or editing a view model that reads service state.
 
