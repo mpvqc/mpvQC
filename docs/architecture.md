@@ -54,9 +54,10 @@ its own bindings, and `mpvqc/injections.py` calls them.
 ### Feature packages: `mpvqc/<feature>/`
 
 Some areas are grouped by what they are about instead of by layer. A feature package holds its own domain types and the
-services, models, and view models the area owns, and brings its own bindings. Appearance is the first one. The layer
-packages hold everything no feature package has claimed. See
-[ADR 0009](adr/0009-group-a-feature-into-a-feature-package.md).
+services, models, and view models the area owns, and brings its own bindings. It also owns the settings keys its area
+means, reading the file through the shared settings file service. Appearance is the first one. The layer packages hold
+everything no feature package has claimed. See [ADR 0009](adr/0009-group-a-feature-into-a-feature-package.md) and
+[ADR 0010](adr/0010-let-a-feature-package-own-its-settings-keys.md).
 
 ### Bootstrap
 

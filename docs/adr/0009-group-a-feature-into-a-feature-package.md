@@ -28,12 +28,9 @@ Role directories are plural, matching the vocabulary the repo already uses. They
 across roles: the color scheme is a domain type, a service, and a model, and without the directory each would grow a
 role suffix to stay distinct. The directory carries the role, so the concept keeps its name everywhere.
 
-The two `__init__` levels do opposite jobs. The package root stays empty, and that is load-bearing: an empty root is
-what keeps the horizontal seams importable from inside a feature package. The settings service reads the appearance
-domain, and the color scheme service reads the settings service; a root that pulled its own services in would close
-that loop, and the import fails outright. Role `__init__` files re-export what their modules hold. Call sites then name
-the role they are pulling from, a reader sees which one that is, and the file layout under the role stays free to
-change without a wide edit.
+The two `__init__` levels do opposite jobs. The package root stays empty. Role `__init__` files re-export what their
+modules hold. Call sites then name the role they are pulling from, a reader sees which one that is, and the file layout
+under the role stays free to change without a wide edit.
 
 A feature package brings its own bindings. Its `bindings(binder)` is called by the composition root, first, and how a
 service is assembled — the style-hints adapter wrapping Qt's, in particular — is knowledge that stops at the package
@@ -46,9 +43,11 @@ pulls its modules in.
 
 ## What stays horizontal
 
-Settings and resources stay in the layer packages, and the palette data file stays where the resource bundle wants it.
-Both are shared boundary services: several areas read through them, and appearance is one caller among many. A feature
-package owns what its area means, not the I/O under it — it reads through those seams rather than absorbing them.
+The settings file and the resource bundle stay in the layer packages, and the palette data file stays where the
+resource bundle wants it. Both are shared boundary services: several areas read through them, and appearance is one
+caller among many. A feature package owns what its area means, not the I/O under it — it reads through those seams
+rather than absorbing them. The file is the seam, not what is stored in it: which settings keys an area owns is a
+separate question, and [ADR 0010](0010-let-a-feature-package-own-its-settings-keys.md) answers it.
 
 ## Consequences
 
