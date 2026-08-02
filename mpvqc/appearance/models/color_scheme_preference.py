@@ -44,11 +44,6 @@ class _Row:
 
 @QmlElement
 class MpvqcColorSchemePreferenceModel(QAbstractListModel):
-    """Every color scheme preference, in the order the appearance dialog offers them in.
-
-    Following the system owns no color scheme: it carries both previews for the split swatch and no accent.
-    """
-
     _catalog = inject.attr(PaletteCatalogService)
     _settings = inject.attr(SettingsService)
 

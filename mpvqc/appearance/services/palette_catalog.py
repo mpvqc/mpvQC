@@ -98,7 +98,6 @@ class PaletteFamily:
         return self._index_by_accent[self._resolve(appearance)]
 
     def _resolve(self, appearance: Appearance) -> AccentColor:
-        """No preference and an accent the family no longer offers both fall to the family's default."""
         preference = appearance.accent_color_preference_for(self.color_scheme)
         match preference:
             case NoPreference():

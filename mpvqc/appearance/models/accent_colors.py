@@ -27,8 +27,6 @@ QML_IMPORT_MAJOR_VERSION = 1
 @QmlElement
 @QmlUncreatable("constructed by MpvqcAppearanceDialogViewModel")
 class MpvqcAccentColorModel(QAbstractListModel):
-    """The palette family's accent colors, one row each; following the system owns no family, so no rows."""
-
     _catalog = inject.attr(PaletteCatalogService)
 
     AccentColorRole = Qt.ItemDataRole.UserRole + 1

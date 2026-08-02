@@ -21,8 +21,6 @@ if TYPE_CHECKING:
 
 
 class StyleHints(Protocol):
-    """The color scheme slice of the application's style hints."""
-
     @property
     def color_scheme(self) -> SystemColorScheme: ...
 
@@ -34,10 +32,6 @@ class StyleHints(Protocol):
 
 
 class QtStyleHints:
-    """Reads the system's color scheme from Qt and pushes explicit preferences back into it.
-
-    The only place Qt's color scheme enum meets the domain's."""
-
     def __init__(self, style_hints: QStyleHints) -> None:
         self._style_hints = style_hints
 

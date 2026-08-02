@@ -8,14 +8,12 @@ from typing import assert_never
 
 @dataclass(frozen=True)
 class AccentColor:
-    """A color pick within one color scheme."""
-
     identifier: str
 
 
 @dataclass(frozen=True)
 class NoPreference:
-    """The user never confirmed an accent color pick, so the shipped default renders."""
+    pass
 
 
 type AccentColorPreference = NoPreference | AccentColor
@@ -23,12 +21,12 @@ type AccentColorPreference = NoPreference | AccentColor
 
 @dataclass(frozen=True)
 class Light:
-    """The UI renders light."""
+    pass
 
 
 @dataclass(frozen=True)
 class Dark:
-    """The UI renders dark."""
+    pass
 
 
 type ColorScheme = Light | Dark
@@ -36,26 +34,24 @@ type ColorScheme = Light | Dark
 
 @dataclass(frozen=True)
 class FollowSystem:
-    """The UI renders whatever the system says."""
+    pass
 
 
 type ColorSchemePreference = FollowSystem | ColorScheme
 
-# Every preference there is, in the order the appearance dialog offers them in.
-# Plain values, not shared singletons: preferences compare with ==, never with is.
+# The order the appearance dialog offers the preferences in: the index is the dialog's selected index.
 COLOR_SCHEME_PREFERENCES: tuple[ColorSchemePreference, ...] = (FollowSystem(), Light(), Dark())
 
 
 @dataclass(frozen=True)
 class Unknown:
-    """The system has no answer."""
+    pass
 
 
 type SystemColorScheme = ColorScheme | Unknown
 
 
 def parse_color_scheme(text: str) -> ColorScheme:
-    """Read a color scheme off a boundary."""
     if text == "light":
         return Light()
     if text == "dark":
@@ -65,7 +61,6 @@ def parse_color_scheme(text: str) -> ColorScheme:
 
 
 def format_color_scheme(color_scheme: ColorScheme) -> str:
-    """Write a color scheme to a boundary."""
     match color_scheme:
         case Light():
             return "light"
@@ -76,7 +71,6 @@ def format_color_scheme(color_scheme: ColorScheme) -> str:
 
 
 def parse_color_scheme_preference(text: str) -> ColorSchemePreference:
-    """Read a color scheme preference off a boundary."""
     if text == "system":
         return FollowSystem()
     try:
@@ -87,7 +81,6 @@ def parse_color_scheme_preference(text: str) -> ColorSchemePreference:
 
 
 def format_color_scheme_preference(preference: ColorSchemePreference) -> str:
-    """Write a color scheme preference to a boundary."""
     match preference:
         case FollowSystem():
             return "system"
