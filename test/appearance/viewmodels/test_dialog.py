@@ -335,6 +335,19 @@ def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints,
     assert view_model.accentColorModel.rowCount() == 0
 
 
+def test_reject_restores_in_one_write_pass(make_view_model, appearance_settings_service, make_spy):
+    view_model = make_view_model()
+    view_model.setColorSchemePreference("light")
+    view_model.setAccentColor("#l1")
+    view_model.setColorSchemePreference("dark")
+    view_model.setAccentColor("#d3")
+    spy = make_spy(appearance_settings_service.appearance_preference_changed)
+
+    view_model.reject()
+
+    assert spy.count() == 1
+
+
 def test_reject_restores_the_preference_and_both_accents(make_view_model, appearance_settings_service):
     appearance_settings_service.color_scheme_preference = DARK
     appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))

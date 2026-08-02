@@ -32,9 +32,6 @@ if TYPE_CHECKING:
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
 
-LIGHT = Light()
-DARK = Dark()
-
 
 @dataclass(frozen=True)
 class AppearanceDialogInputs:
@@ -150,6 +147,4 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     @Slot()
     def reject(self) -> None:
-        self._settings.color_scheme_preference = self._baseline.color_scheme_preference
-        self._settings.set_accent_color_preference(LIGHT, self._baseline.light_accent_color_preference)
-        self._settings.set_accent_color_preference(DARK, self._baseline.dark_accent_color_preference)
+        self._settings.restore(self._baseline)

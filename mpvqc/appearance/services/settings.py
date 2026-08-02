@@ -58,7 +58,7 @@ class AppearanceSettingsService(QObject):
     def color_scheme_preference(self, preference: ColorSchemePreference) -> None:
         if self.color_scheme_preference == preference:
             return
-        self._qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, format_color_scheme_preference(preference))
+        self._store_color_scheme_preference(preference)
         self.appearance_preference_changed.emit(self.appearance_preference)
 
     def accent_color_preference_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
@@ -74,6 +74,17 @@ class AppearanceSettingsService(QObject):
             return
         self._store_accent_color_preference(color_scheme, preference)
         self.appearance_preference_changed.emit(self.appearance_preference)
+
+    def restore(self, appearance_preference: AppearancePreference) -> None:
+        if self.appearance_preference == appearance_preference:
+            return
+        self._store_color_scheme_preference(appearance_preference.color_scheme_preference)
+        self._store_accent_color_preference(LIGHT, appearance_preference.light_accent_color_preference)
+        self._store_accent_color_preference(DARK, appearance_preference.dark_accent_color_preference)
+        self.appearance_preference_changed.emit(self.appearance_preference)
+
+    def _store_color_scheme_preference(self, preference: ColorSchemePreference) -> None:
+        self._qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, format_color_scheme_preference(preference))
 
     def _store_accent_color_preference(self, color_scheme: ColorScheme, preference: AccentColorPreference) -> None:
         key = _accent_color_key(color_scheme)

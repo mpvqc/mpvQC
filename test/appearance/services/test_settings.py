@@ -118,6 +118,31 @@ def test_preference_write_emits_the_appearance_preference(appearance_settings_se
     assert spy.count() == 1
 
 
+def test_restore_writes_every_key_and_emits_once(appearance_settings_service, make_spy):
+    appearance_settings_service.color_scheme_preference = DARK
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
+    baseline = appearance_settings_service.appearance_preference
+    appearance_settings_service.color_scheme_preference = LIGHT
+    appearance_settings_service.set_accent_color_preference(LIGHT, AccentColor("#3f51b5"))
+    appearance_settings_service.set_accent_color_preference(DARK, AccentColor("#009688"))
+    spy = make_spy(appearance_settings_service.appearance_preference_changed)
+
+    appearance_settings_service.restore(baseline)
+
+    assert spy.count() == 1
+    assert spy.at(0, 0) == baseline
+    assert appearance_settings_service.appearance_preference == baseline
+
+
+def test_restore_of_what_is_already_stored_emits_nothing(appearance_settings_service, make_spy):
+    appearance_settings_service.color_scheme_preference = DARK
+    spy = make_spy(appearance_settings_service.appearance_preference_changed)
+
+    appearance_settings_service.restore(appearance_settings_service.appearance_preference)
+
+    assert spy.count() == 0
+
+
 @pytest.mark.parametrize(
     "color_scheme",
     [LIGHT, DARK],
