@@ -9,7 +9,7 @@ import io.github.mpvqc.mpvQC.Python
 QtObject {
     id: root
 
-    required property MpvqcPaletteViewModel viewModel
+    required property MpvqcPalette palette
 
     readonly property color background: root._background.value
     readonly property color foreground: root._foreground.value
@@ -34,27 +34,27 @@ QtObject {
     readonly property color rowSelectedText: root._rowSelectedText.value
 
     // qmlformat off
-    readonly property AnimatedColor _background: AnimatedColor { value: root.viewModel.background }
-    readonly property AnimatedColor _foreground: AnimatedColor { value: root.viewModel.foreground }
-    readonly property AnimatedColor _hint: AnimatedColor { value: root.viewModel.hint }
-    readonly property AnimatedColor _accent: AnimatedColor { value: root.viewModel.accent }
-    readonly property AnimatedColor _separator: AnimatedColor { value: root.viewModel.separator }
-    readonly property AnimatedColor _error: AnimatedColor { value: root.viewModel.error }
-    readonly property AnimatedColor _errorText: AnimatedColor { value: root.viewModel.errorText }
-    readonly property AnimatedColor _headerBackground: AnimatedColor { value: root.viewModel.headerBackground }
-    readonly property AnimatedColor _popupBackground: AnimatedColor { value: root.viewModel.popupBackground }
-    readonly property AnimatedColor _popupText: AnimatedColor { value: root.viewModel.popupText }
-    readonly property AnimatedColor _menuBackground: AnimatedColor { value: root.viewModel.menuBackground }
-    readonly property AnimatedColor _dialogBackground: AnimatedColor { value: root.viewModel.dialogBackground }
-    readonly property AnimatedColor _sectionCard: AnimatedColor { value: root.viewModel.sectionCard }
-    readonly property AnimatedColor _tooltipBackground: AnimatedColor { value: root.viewModel.tooltipBackground }
-    readonly property AnimatedColor _tooltipText: AnimatedColor { value: root.viewModel.tooltipText }
-    readonly property AnimatedColor _rowBase: AnimatedColor { value: root.viewModel.rowBase }
-    readonly property AnimatedColor _rowBaseText: AnimatedColor { value: root.viewModel.rowBaseText }
-    readonly property AnimatedColor _rowStripe: AnimatedColor { value: root.viewModel.rowStripe }
-    readonly property AnimatedColor _rowStripeText: AnimatedColor { value: root.viewModel.rowStripeText }
-    readonly property AnimatedColor _rowSelected: AnimatedColor { value: root.viewModel.rowSelected }
-    readonly property AnimatedColor _rowSelectedText: AnimatedColor { value: root.viewModel.rowSelectedText }
+    readonly property AnimatedColor _background: AnimatedColor { value: root.palette.background }
+    readonly property AnimatedColor _foreground: AnimatedColor { value: root.palette.foreground }
+    readonly property AnimatedColor _hint: AnimatedColor { value: root.palette.hint }
+    readonly property AnimatedColor _accent: AnimatedColor { value: root.palette.accent }
+    readonly property AnimatedColor _separator: AnimatedColor { value: root.palette.separator }
+    readonly property AnimatedColor _error: AnimatedColor { value: root.palette.error }
+    readonly property AnimatedColor _errorText: AnimatedColor { value: root.palette.errorText }
+    readonly property AnimatedColor _headerBackground: AnimatedColor { value: root.palette.headerBackground }
+    readonly property AnimatedColor _popupBackground: AnimatedColor { value: root.palette.popupBackground }
+    readonly property AnimatedColor _popupText: AnimatedColor { value: root.palette.popupText }
+    readonly property AnimatedColor _menuBackground: AnimatedColor { value: root.palette.menuBackground }
+    readonly property AnimatedColor _dialogBackground: AnimatedColor { value: root.palette.dialogBackground }
+    readonly property AnimatedColor _sectionCard: AnimatedColor { value: root.palette.sectionCard }
+    readonly property AnimatedColor _tooltipBackground: AnimatedColor { value: root.palette.tooltipBackground }
+    readonly property AnimatedColor _tooltipText: AnimatedColor { value: root.palette.tooltipText }
+    readonly property AnimatedColor _rowBase: AnimatedColor { value: root.palette.rowBase }
+    readonly property AnimatedColor _rowBaseText: AnimatedColor { value: root.palette.rowBaseText }
+    readonly property AnimatedColor _rowStripe: AnimatedColor { value: root.palette.rowStripe }
+    readonly property AnimatedColor _rowStripeText: AnimatedColor { value: root.palette.rowStripeText }
+    readonly property AnimatedColor _rowSelected: AnimatedColor { value: root.palette.rowSelected }
+    readonly property AnimatedColor _rowSelectedText: AnimatedColor { value: root.palette.rowSelectedText }
     // qmlformat on
 
     component AnimatedColor: QtObject {

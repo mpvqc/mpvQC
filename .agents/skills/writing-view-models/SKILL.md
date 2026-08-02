@@ -19,7 +19,9 @@ Two frozen dataclasses, both private to the view model in intent:
 
 - **Inputs snapshot** — `<Name>Inputs`. One field per consumed upstream signal, holding the scalar the derivation
   reads. Never an embedded service object: the field list is a projection that names the exact dependency set.
-- **Props snapshot** — `<Name>Props`. One field per QML-facing property, holding its value.
+- **Props snapshot** — `<Name>Props`. One field per QML-facing property, holding its value. Props that always
+  co-change are one composite field behind one notify, where the consumer dedupes at the sink: the palette view model
+  carries the whole palette that way and hands QML a read-only object over it. ADR 0006 holds the measurements.
 
 ## The cycle
 
@@ -74,13 +76,6 @@ notify sees fully consistent state, whatever the connection order.
 
 Each notify then fires exactly when its own field changed, carrying the new value.
 
-Past a dozen props the inlined comparisons trip ruff's `PLR0912`. Route them through a private static helper instead,
-as the palette view model does:
-
-```python
-self._emit_if_changed(self.backgroundChanged, new.background, old.background)
-```
-
 ## Conditional elements
 
 Three additions that are not part of the base pattern. Each one names the upstream that needs it, in a comment or in
@@ -117,7 +112,8 @@ view_model.isDarkChanged.connect(lambda _: observed.append((view_model.isDark, v
 
 ## Done when
 
-- Every QML-facing property returns a props field, and no derived value is stored anywhere else.
+- Every QML-facing property returns a props field, or an object the view model publishes over one, and no derived
+  value is stored anywhere else.
 - Services are named in `__init__` and in the slots that write back to them, nowhere else.
 - The public surface is the properties, their notifies, and the slots the view binds. No member exists so that
   something can push state in.

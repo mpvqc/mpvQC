@@ -24,6 +24,17 @@ property. The cycle between them is three motions:
 
 Sourcing is per-field by default: the view model subscribes to the per-field signals the services already emit.
 
+**Props granularity follows the props' co-change structure.** One field per QML-facing property with its own notify is
+the default. Fields that always co-change belong in one composite field behind one notify, as long as the consumer
+dedupes at the sink. The palette is the first case: measured against the shipped catalog, an accent switch moves 17 of
+21 color roles in the light family and 19 of 21 in the dark one, and a scheme switch moves all 21 plus `isDark`. A
+benchmark flipping between two dark-family accents, where 19 roles move, wakes exactly 19 sinks under every wiring —
+21 signals, one signal, or a map payload alike — because QML's own change detection discards the roles that did not
+move, and timing came out at parity, ~0.3ms per flip either way. So the palette crosses as one object carrying one
+`changed` signal, over which the color roles stay named read-only properties so the QML linter keeps checking them,
+and `isDark` keeps its own notify because it is the one value that moves on its own. This mirrors the reasoning on the
+inputs side: granularity earns its wiring where it saves a wake, not where the consumer already dedupes.
+
 The unchanged-inputs guard — returning early when the folded inputs equal the previous snapshot — is a conditional
 element, not part of the base pattern. While every upstream dedupes at its source, the guard is unreachable and
 untestable through the seam. It is added only when an upstream can refire an unchanged payload. Retranslation is not
@@ -59,8 +70,11 @@ video-loaded flip before it can reach QML.
 
 ## Dropped alternatives
 
-- **A shared single notify** for all properties: one signal on any change makes QML re-read every property and
-  loses per-property change granularity.
+- **A shared single notify** across props that move independently: one signal on any change makes QML re-read every
+  property and loses per-property change granularity. Co-changing props are the exception the granularity clause
+  above carves out.
+- **A map payload** for a composite field, the roles crossing as one `QVariantMap`: cheaper in lines and the fastest
+  wiring measured, and the only one that gives up linter checking on the role names.
 - **Per-value selector objects**, one per derived value with its own recompute and signal: more objects and
   connection order back in play, for the same observable behavior.
 - **Descriptor or dependency-graph primitives** that declare fields once and generate the wiring: speculative

@@ -63,6 +63,9 @@ so the test runners load an up-to-date resource bundle. When iterating on test c
 ## Conventions
 
 - Prefer code the tooling can verify. Example: use a closure instead of `functools.partial`
+- Two Python files holding `@QmlElement` classes must not share a file name. The build writes one `.qmltypes` per
+  source file into one flat directory, named after the file, so same-named files overwrite each other and the QML
+  linter silently loses the types of whichever lost the race.
 
 ## See also
 

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dataclasses import asdict, replace
+from dataclasses import replace
 from typing import NamedTuple
 
 import inject
@@ -21,9 +21,9 @@ from mpvqc.appearance.domain import (
 )
 from mpvqc.appearance.services import ColorSchemeService, PaletteCatalogService
 from mpvqc.appearance.viewmodels import (
+    MpvqcPalette,
     MpvqcPaletteViewModel,
     PaletteInputs,
-    PaletteProps,
     derive_palette_props,
 )
 from mpvqc.services import ResourceService, SettingsService
@@ -78,12 +78,6 @@ def _appearance_preference(
         light_accent_color_preference=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
         dark_accent_color_preference=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
     )
-
-
-def _props_from(palette: Palette, *, is_dark: bool) -> PaletteProps:
-    roles = asdict(palette)
-    del roles["accent_color"]
-    return PaletteProps(is_dark=is_dark, **roles)
 
 
 BASE_INPUTS = PaletteInputs(appearance_preference=_appearance_preference(), color_scheme=DARK)
@@ -168,9 +162,9 @@ class DerivationCase(NamedTuple):
 def test_derivation(case: DerivationCase, catalog):
     props = derive_palette_props(case.inputs, catalog.palette_family_for)
 
-    resolved = _appearance_preference(light_accent=case.resolves_to.identifier, dark_accent=case.resolves_to.identifier)
-    palette = catalog.palette_family_for(case.inputs.color_scheme).palette_of(resolved)
-    assert props == _props_from(palette, is_dark=case.is_dark)
+    assert props.palette in catalog.palette_family_for(case.inputs.color_scheme).palettes
+    assert props.palette.accent_color == case.resolves_to
+    assert props.is_dark is case.is_dark
 
 
 @pytest.fixture
@@ -183,65 +177,23 @@ def make_view_model():
 
 
 @pytest.fixture
-def spy_roles(make_spy):
-    def _spy(view_model: MpvqcPaletteViewModel) -> dict:
-        return {
-            "background": make_spy(view_model.backgroundChanged),
-            "foreground": make_spy(view_model.foregroundChanged),
-            "hint": make_spy(view_model.hintChanged),
-            "accent": make_spy(view_model.accentChanged),
-            "separator": make_spy(view_model.separatorChanged),
-            "error": make_spy(view_model.errorChanged),
-            "error_text": make_spy(view_model.errorTextChanged),
-            "header_background": make_spy(view_model.headerBackgroundChanged),
-            "popup_background": make_spy(view_model.popupBackgroundChanged),
-            "popup_text": make_spy(view_model.popupTextChanged),
-            "menu_background": make_spy(view_model.menuBackgroundChanged),
-            "dialog_background": make_spy(view_model.dialogBackgroundChanged),
-            "section_card": make_spy(view_model.sectionCardChanged),
-            "tooltip_background": make_spy(view_model.tooltipBackgroundChanged),
-            "tooltip_text": make_spy(view_model.tooltipTextChanged),
-            "row_base": make_spy(view_model.rowBaseChanged),
-            "row_base_text": make_spy(view_model.rowBaseTextChanged),
-            "row_stripe": make_spy(view_model.rowStripeChanged),
-            "row_stripe_text": make_spy(view_model.rowStripeTextChanged),
-            "row_selected": make_spy(view_model.rowSelectedChanged),
-            "row_selected_text": make_spy(view_model.rowSelectedTextChanged),
-        }
+def spy_on(make_spy):
+    def _spy(view_model) -> tuple:
+        return make_spy(view_model.isDarkChanged), make_spy(view_model.palette.changed)
 
     return _spy
 
 
-def _changed_roles(before: Palette, after: Palette) -> dict[str, str]:
-    before_roles, after_roles = asdict(before), asdict(after)
-    return {
-        name: after_roles[name]
-        for name in before_roles
-        if name != "accent_color" and before_roles[name] != after_roles[name]
-    }
-
-
-def _assert_only_changed_roles_emitted(spies: dict, changed: dict[str, str]) -> None:
-    assert changed, "the fake palettes must differ in at least one color role"
-    for name, spy in spies.items():
-        if name in changed:
-            assert spy.count() == 1, name
-            assert spy.at(0, 0) == changed[name], name
-        else:
-            assert spy.count() == 0, name
-
-
-def _assert_nothing_emitted(is_dark_spy, spies: dict) -> None:
+def _assert_nothing_emitted(is_dark_spy, palette_spy) -> None:
     assert is_dark_spy.count() == 0
-    for name, spy in spies.items():
-        assert spy.count() == 0, name
+    assert palette_spy.count() == 0
 
 
-def _assert_renders(view_model: MpvqcPaletteViewModel, palette: Palette, *, is_dark: bool) -> None:
+def _assert_renders(view_model, palette: Palette, *, is_dark: bool) -> None:
     assert view_model.isDark is is_dark
-    assert view_model.background == palette.background
-    assert view_model.accent == palette.accent
-    assert view_model.rowSelectedText == palette.row_selected_text
+    assert view_model.palette.background == palette.background
+    assert view_model.palette.accent == palette.accent
+    assert view_model.palette.rowSelectedText == palette.row_selected_text
 
 
 @pytest.mark.parametrize(
@@ -286,24 +238,16 @@ def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_vie
     )
 
 
-def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
-    make_view_model, style_hints, catalog, make_spy, spy_roles
-):
+def test_desktop_flip_pushes_the_palette_and_emits_is_dark_once(make_view_model, style_hints, catalog, spy_on):
     view_model = make_view_model()
-    is_dark_spy = make_spy(view_model.isDarkChanged)
-    spies = spy_roles(view_model)
+    is_dark_spy, palette_spy = spy_on(view_model)
 
     style_hints.system_reports(LIGHT)
 
     assert is_dark_spy.count() == 1
     assert is_dark_spy.at(0, 0) is False
-    _assert_only_changed_roles_emitted(
-        spies,
-        _changed_roles(
-            catalog.palette_family_for(DARK).palette_of(_appearance_preference()),
-            catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()),
-        ),
-    )
+    assert palette_spy.count() == 1
+    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
 def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
@@ -323,84 +267,142 @@ def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
 
 
 def test_desktop_flip_under_an_explicit_preference_emits_nothing(
-    make_view_model, settings_service, style_hints, make_spy, spy_roles
+    make_view_model, settings_service, style_hints, spy_on
 ):
     settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
-    is_dark_spy = make_spy(view_model.isDarkChanged)
-    spies = spy_roles(view_model)
+    is_dark_spy, palette_spy = spy_on(view_model)
 
     style_hints.system_reports(LIGHT)
 
-    _assert_nothing_emitted(is_dark_spy, spies)
+    _assert_nothing_emitted(is_dark_spy, palette_spy)
 
 
-def test_preference_change_switching_the_scheme_emits_is_dark_once_and_only_the_changed_roles(
-    make_view_model, settings_service, catalog, make_spy, spy_roles
+def test_preference_change_switching_the_scheme_pushes_the_palette_and_emits_is_dark_once(
+    make_view_model, settings_service, catalog, spy_on
 ):
     view_model = make_view_model()
-    is_dark_spy = make_spy(view_model.isDarkChanged)
-    spies = spy_roles(view_model)
+    is_dark_spy, palette_spy = spy_on(view_model)
 
     settings_service.color_scheme_preference = LIGHT
 
     assert is_dark_spy.count() == 1
     assert is_dark_spy.at(0, 0) is False
-    _assert_only_changed_roles_emitted(
-        spies,
-        _changed_roles(
-            catalog.palette_family_for(DARK).palette_of(_appearance_preference()),
-            catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()),
-        ),
-    )
+    assert palette_spy.count() == 1
+    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance_preference()), is_dark=False)
 
 
-def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, settings_service, make_spy, spy_roles):
+def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, settings_service, spy_on):
     view_model = make_view_model()
-    is_dark_spy = make_spy(view_model.isDarkChanged)
-    spies = spy_roles(view_model)
+    is_dark_spy, palette_spy = spy_on(view_model)
 
     settings_service.color_scheme_preference = DARK
 
-    _assert_nothing_emitted(is_dark_spy, spies)
+    _assert_nothing_emitted(is_dark_spy, palette_spy)
 
 
-def test_accent_write_for_the_apps_scheme_emits_a_color_subset_and_no_is_dark(
-    make_view_model, settings_service, catalog, make_spy, spy_roles
+def test_accent_write_for_the_apps_scheme_pushes_the_palette_without_is_dark(
+    make_view_model, settings_service, catalog, spy_on
 ):
     view_model = make_view_model()
-    is_dark_spy = make_spy(view_model.isDarkChanged)
-    spies = spy_roles(view_model)
+    is_dark_spy, palette_spy = spy_on(view_model)
 
     settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
 
-    palette_family = catalog.palette_family_for(DARK)
     assert is_dark_spy.count() == 0
-    _assert_only_changed_roles_emitted(
-        spies,
-        _changed_roles(
-            palette_family.palette_of(_appearance_preference()),
-            palette_family.palette_of(_appearance_preference(dark_accent="#d2")),
-        ),
+    assert palette_spy.count() == 1
+    _assert_renders(
+        view_model,
+        catalog.palette_family_for(DARK).palette_of(_appearance_preference(dark_accent="#d2")),
+        is_dark=True,
     )
 
 
-def test_accent_write_for_the_other_scheme_emits_nothing(make_view_model, settings_service, make_spy, spy_roles):
+def test_accent_write_for_the_other_scheme_emits_nothing(make_view_model, settings_service, spy_on):
     view_model = make_view_model()
-    is_dark_spy = make_spy(view_model.isDarkChanged)
-    spies = spy_roles(view_model)
+    is_dark_spy, palette_spy = spy_on(view_model)
 
     settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
-    _assert_nothing_emitted(is_dark_spy, spies)
+    _assert_nothing_emitted(is_dark_spy, palette_spy)
 
 
 def test_props_swap_completes_before_the_first_emission(make_view_model, style_hints, catalog):
     view_model = make_view_model()
-    observed: list[tuple[bool, str]] = []
-    view_model.isDarkChanged.connect(lambda _: observed.append((view_model.isDark, view_model.background)))
+    observed: list[tuple[str, bool, str]] = []
+
+    def observe(notify: str) -> None:
+        observed.append((notify, view_model.isDark, view_model.palette.background))
+
+    view_model.palette.changed.connect(lambda: observe("palette"))
+    view_model.isDarkChanged.connect(lambda _: observe("isDark"))
 
     style_hints.system_reports(LIGHT)
 
     palette = catalog.palette_family_for(LIGHT).palette_of(_appearance_preference())
-    assert observed == [(False, palette.background)]
+    assert observed == [("palette", False, palette.background), ("isDark", False, palette.background)]
+
+
+SELF_NAMING = Palette(
+    accent_color=AccentColor("#accent"),
+    background="background",
+    foreground="foreground",
+    hint="hint",
+    accent="accent",
+    separator="separator",
+    error="error",
+    error_text="error_text",
+    header_background="header_background",
+    popup_background="popup_background",
+    popup_text="popup_text",
+    menu_background="menu_background",
+    dialog_background="dialog_background",
+    section_card="section_card",
+    tooltip_background="tooltip_background",
+    tooltip_text="tooltip_text",
+    row_base="row_base",
+    row_base_text="row_base_text",
+    row_stripe="row_stripe",
+    row_stripe_text="row_stripe_text",
+    row_selected="row_selected",
+    row_selected_text="row_selected_text",
+)
+
+
+@pytest.fixture
+def palette_object() -> MpvqcPalette:
+    # noinspection PyCallingNonCallable
+    return MpvqcPalette(SELF_NAMING)
+
+
+def test_every_role_reads_its_own_field(palette_object):
+    assert palette_object.background == "background"
+    assert palette_object.foreground == "foreground"
+    assert palette_object.hint == "hint"
+    assert palette_object.accent == "accent"
+    assert palette_object.separator == "separator"
+    assert palette_object.error == "error"
+    assert palette_object.errorText == "error_text"
+    assert palette_object.headerBackground == "header_background"
+    assert palette_object.popupBackground == "popup_background"
+    assert palette_object.popupText == "popup_text"
+    assert palette_object.menuBackground == "menu_background"
+    assert palette_object.dialogBackground == "dialog_background"
+    assert palette_object.sectionCard == "section_card"
+    assert palette_object.tooltipBackground == "tooltip_background"
+    assert palette_object.tooltipText == "tooltip_text"
+    assert palette_object.rowBase == "row_base"
+    assert palette_object.rowBaseText == "row_base_text"
+    assert palette_object.rowStripe == "row_stripe"
+    assert palette_object.rowStripeText == "row_stripe_text"
+    assert palette_object.rowSelected == "row_selected"
+    assert palette_object.rowSelectedText == "row_selected_text"
+
+
+def test_a_push_renders_the_new_palette_and_emits_changed(palette_object, make_spy):
+    spy = make_spy(palette_object.changed)
+
+    palette_object.set_palette(replace(SELF_NAMING, background="pushed"))
+
+    assert spy.count() == 1
+    assert palette_object.background == "pushed"

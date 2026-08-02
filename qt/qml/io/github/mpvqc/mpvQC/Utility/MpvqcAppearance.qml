@@ -20,6 +20,6 @@ QtObject {
     readonly property color hoverHighlight: Qt.alpha(palette.foreground, isDark ? 0.15 : 0.24)
 
     readonly property MpvqcAnimatedPalette palette: MpvqcAnimatedPalette {
-        viewModel: root._viewModel
+        palette: root._viewModel.palette
     }
 }
