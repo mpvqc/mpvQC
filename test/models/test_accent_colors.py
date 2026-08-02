@@ -67,7 +67,7 @@ def test_the_rows_carry_the_schemes_accents_and_display_colors(make_model, catal
     accents = [model.data(model.index(row), MpvqcAccentColorModel.AccentColorRole) for row in range(model.rowCount())]
     displays = [model.data(model.index(row), MpvqcAccentColorModel.DisplayColorRole) for row in range(model.rowCount())]
 
-    assert accents == [palette.accent_color for palette in palettes]
+    assert accents == [palette.accent_color.identifier for palette in palettes]
     assert displays == [palette.row_selected for palette in palettes]
 
 

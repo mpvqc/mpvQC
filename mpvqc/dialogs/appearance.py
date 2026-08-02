@@ -13,6 +13,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.appearance import (
     COLOR_SCHEME_PREFERENCES,
     AccentColor,
+    AccentColorPreference,
     Appearance,
     ColorScheme,
     Dark,
@@ -40,7 +41,7 @@ class AppearanceDialogProps:
 
 def derive_appearance_dialog_props(
     appearance: Appearance,
-    accent_color_index_for: Callable[[ColorScheme, AccentColor | None], int],
+    accent_color_index_for: Callable[[ColorScheme, AccentColorPreference], int],
 ) -> AppearanceDialogProps:
     preference = appearance.color_scheme_preference
     preference_index = COLOR_SCHEME_PREFERENCES.index(preference)
@@ -85,7 +86,7 @@ class MpvqcAppearanceDialogViewModel(QObject):
     def _derive(self) -> AppearanceDialogProps:
         return derive_appearance_dialog_props(self._appearance, self._accent_color_index_for)
 
-    def _accent_color_index_for(self, color_scheme: ColorScheme, accent_color: AccentColor | None) -> int:
+    def _accent_color_index_for(self, color_scheme: ColorScheme, accent_color: AccentColorPreference) -> int:
         return self._catalog.palette_family_for(color_scheme).palette_index(accent_color)
 
     @Slot(Appearance)

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast, overload
+from typing import TYPE_CHECKING, assert_never, cast, overload
 
 import inject
 from PySide6.QtCore import (
@@ -22,12 +22,14 @@ from PySide6.QtCore import (
 
 from mpvqc.appearance import (
     AccentColor,
+    AccentColorPreference,
     Appearance,
     ColorScheme,
     ColorSchemePreference,
     Dark,
     FollowSystem,
     Light,
+    NoPreference,
     format_color_scheme,
     format_color_scheme_preference,
     parse_color_scheme_preference,
@@ -304,27 +306,31 @@ class SettingsService(QObject):
             dark_accent_color=self.accent_color_for(Dark()),
         )
 
-    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColor | None:
+    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
         return self._stored_accent_color(_accent_color_key(color_scheme))
 
-    def set_accent_color(self, color_scheme: ColorScheme, accent_color: AccentColor | None) -> None:
+    def set_accent_color(self, color_scheme: ColorScheme, accent_color: AccentColorPreference) -> None:
         if self.accent_color_for(color_scheme) == accent_color:
             return
         self._store_accent_color(_accent_color_key(color_scheme), accent_color)
         self.appearance_changed.emit(self.appearance)
 
-    def _stored_accent_color(self, key: str) -> AccentColor | None:
+    def _stored_accent_color(self, key: str) -> AccentColorPreference:
+        """The stored accent color. An absent key is the user never having confirmed a pick."""
         if self.qsettings.contains(key):
             value = self.qsettings.value(key, type=str)
             if isinstance(value, str):
                 return AccentColor(value)
-        return None
+        return NoPreference()
 
-    def _store_accent_color(self, key: str, accent_color: AccentColor | None) -> None:
-        if accent_color is None:
-            self.qsettings.remove(key)
-        else:
-            self.qsettings.setValue(key, accent_color)
+    def _store_accent_color(self, key: str, accent_color: AccentColorPreference) -> None:
+        match accent_color:
+            case NoPreference():
+                self.qsettings.remove(key)
+            case AccentColor():
+                self.qsettings.setValue(key, accent_color.identifier)
+            case _:
+                assert_never(accent_color)
 
     @staticmethod
     def default_comment_types() -> list[str]:

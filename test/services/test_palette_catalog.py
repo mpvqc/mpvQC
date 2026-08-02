@@ -8,8 +8,10 @@ import inject
 import pytest
 from PySide6.QtGui import QColor
 
-from mpvqc.appearance import AccentColor, Dark, Light
+from mpvqc.appearance import AccentColor, Dark, Light, NoPreference
 from mpvqc.services import PaletteCatalogService, ResourceService
+
+NO_PREFERENCE = NoPreference()
 
 
 @pytest.fixture(autouse=True)
@@ -62,7 +64,7 @@ def fake_catalog(catalog_with, make_palette_family_data):
     ids=["light", "dark"],
 )
 def test_lookup_by_color_scheme_returns_the_family_tagged_with_it(fake_catalog, color_scheme, default_accent):
-    assert fake_catalog.palette_family_for(color_scheme).default_accent == default_accent
+    assert fake_catalog.palette_family_for(color_scheme).default_accent == AccentColor(default_accent)
 
 
 @pytest.mark.parametrize(
@@ -83,8 +85,8 @@ def test_color_scheme_tag_selects_the_palette_mapping(catalog_with, make_palette
     colors = light["palettes"][0]["colors"]
     catalog = catalog_with(light, dark)
 
-    light_palette = catalog.palette_family_for(Light()).palette_for(None)
-    dark_palette = catalog.palette_family_for(Dark()).palette_for(None)
+    light_palette = catalog.palette_family_for(Light()).palette_for(NO_PREFERENCE)
+    dark_palette = catalog.palette_family_for(Dark()).palette_for(NO_PREFERENCE)
 
     assert light_palette.background == colors["surfaceContainerLow"]
     assert dark_palette.background == colors["surface"]
@@ -104,7 +106,7 @@ def test_palette_index_returns_position(fake_catalog):
     assert palette_family.palette_index(target.accent_color) == 1
 
 
-@pytest.mark.parametrize("stored", [None, AccentColor("#stale")], ids=["none", "stale"])
+@pytest.mark.parametrize("stored", [NO_PREFERENCE, AccentColor("#stale")], ids=["no-preference", "stale"])
 def test_palette_resolves_missing_and_stale_to_the_declared_default(fake_catalog, stored):
     palette_family = fake_catalog.palette_family_for(Light())
 
@@ -118,7 +120,7 @@ def test_the_first_family_tagged_with_a_scheme_wins(catalog_with, make_palette_f
 
     catalog = catalog_with(first, second)
 
-    assert catalog.palette_family_for(Light()).default_accent == "#a"
+    assert catalog.palette_family_for(Light()).default_accent == AccentColor("#a")
 
 
 def test_palette_count_counts_the_accent_palettes(fake_catalog):
@@ -149,14 +151,14 @@ def test_all_palette_colors_are_valid_colors(catalog):
 
                 assert QColor(color_str).isValid(), (
                     f"Invalid color '{color_str}' in the {palette_family.color_scheme} palette family "
-                    f"palette '{palette.accent_color}' role '{role}'"
+                    f"palette '{palette.accent_color.identifier}' role '{role}'"
                 )
 
 
 def test_palettes_have_accent_colors(catalog):
     for palette_family in catalog.palette_families:
         for palette in palette_family.palettes:
-            assert palette.accent_color, (
+            assert palette.accent_color.identifier, (
                 f"palette in the {palette_family.color_scheme} palette family is missing an accent color"
             )
 

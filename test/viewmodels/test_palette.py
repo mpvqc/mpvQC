@@ -15,6 +15,7 @@ from mpvqc.appearance import (
     Dark,
     FollowSystem,
     Light,
+    NoPreference,
     Palette,
     Unknown,
 )
@@ -30,6 +31,7 @@ SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 UNKNOWN = Unknown()
+NO_PREFERENCE = NoPreference()
 
 
 @pytest.fixture
@@ -72,8 +74,8 @@ def _appearance(
 ) -> Appearance:
     return Appearance(
         color_scheme_preference=preference,
-        light_accent_color=AccentColor(light_accent) if light_accent else None,
-        dark_accent_color=AccentColor(dark_accent) if dark_accent else None,
+        light_accent_color=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
+        dark_accent_color=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
     )
 
 
@@ -250,7 +252,7 @@ def test_initial_snapshot_renders_the_desktops_scheme(
 
     view_model = make_view_model()
 
-    palette = catalog.palette_family_for(expected_color_scheme).palette_for(None)
+    palette = catalog.palette_family_for(expected_color_scheme).palette_for(NO_PREFERENCE)
     _assert_renders(view_model, palette, is_dark=expected_color_scheme == DARK)
 
 
@@ -262,7 +264,7 @@ def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
 
     view_model = make_view_model()
 
-    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_for(None), is_dark=False)
+    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE), is_dark=False)
 
 
 def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_view_model, settings_service, catalog):
@@ -288,8 +290,8 @@ def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            catalog.palette_family_for(DARK).palette_for(None),
-            catalog.palette_family_for(LIGHT).palette_for(None),
+            catalog.palette_family_for(DARK).palette_for(NO_PREFERENCE),
+            catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE),
         ),
     )
 
@@ -333,8 +335,8 @@ def test_preference_change_switching_the_scheme_emits_is_dark_once_and_only_the_
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            catalog.palette_family_for(DARK).palette_for(None),
-            catalog.palette_family_for(LIGHT).palette_for(None),
+            catalog.palette_family_for(DARK).palette_for(NO_PREFERENCE),
+            catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE),
         ),
     )
 
@@ -361,7 +363,7 @@ def test_accent_write_for_the_apps_scheme_emits_a_color_subset_and_no_is_dark(
     palette_family = catalog.palette_family_for(DARK)
     assert is_dark_spy.count() == 0
     _assert_only_changed_roles_emitted(
-        spies, _changed_roles(palette_family.palette_for(None), palette_family.palette_for(AccentColor("#d2")))
+        spies, _changed_roles(palette_family.palette_for(NO_PREFERENCE), palette_family.palette_for(AccentColor("#d2")))
     )
 
 
@@ -382,5 +384,5 @@ def test_props_swap_completes_before_the_first_emission(make_view_model, style_h
 
     style_hints.system_reports(LIGHT)
 
-    palette = catalog.palette_family_for(LIGHT).palette_for(None)
+    palette = catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE)
     assert observed == [(False, palette.background)]

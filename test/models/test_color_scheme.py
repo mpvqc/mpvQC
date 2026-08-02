@@ -6,12 +6,13 @@ import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light
+from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light, NoPreference
 from mpvqc.models import MpvqcColorSchemeModel
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 
 LIGHT = Light()
 DARK = Dark()
+NO_PREFERENCE = NoPreference()
 
 LIGHT_PREVIEW = "#lightpreview"
 DARK_PREVIEW = "#darkpreview"
@@ -67,7 +68,8 @@ def _read(model: MpvqcColorSchemeModel, row: int, role: int):
 
 
 def _badge(catalog: PaletteCatalogService, color_scheme: ColorScheme, accent: str | None) -> str:
-    return catalog.palette_family_for(color_scheme).palette_for(AccentColor(accent) if accent else None).row_selected
+    accent_color = AccentColor(accent) if accent else NO_PREFERENCE
+    return catalog.palette_family_for(color_scheme).palette_for(accent_color).row_selected
 
 
 def test_the_model_offers_the_three_preferences_in_order(make_model):
@@ -154,4 +156,4 @@ def test_accent_writes_satisfy_the_item_model_protocol(make_model, settings_serv
 
     settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
     settings_service.set_accent_color(DARK, AccentColor("#d3"))
-    settings_service.set_accent_color(LIGHT, None)
+    settings_service.set_accent_color(LIGHT, NO_PREFERENCE)

@@ -81,7 +81,7 @@ class MpvqcAccentColorModel(QAbstractListModel):
 
         match role:
             case self.AccentColorRole:
-                return palette.accent_color
+                return palette.accent_color.identifier
             case self.DisplayColorRole:
                 return palette.row_selected
 

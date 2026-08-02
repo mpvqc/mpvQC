@@ -5,14 +5,19 @@
 import os
 import uuid
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, assert_never
 from zipfile import ZipFile
 
 import inject
 from PySide6.QtCore import Property, QObject, QThreadPool, QUrl, Slot
 from PySide6.QtQml import QmlElement, QQmlContext, QQmlEngine, QQmlExpression
 
-from mpvqc.appearance import format_color_scheme_preference, parse_color_scheme
+from mpvqc.appearance import (
+    AccentColor,
+    NoPreference,
+    format_color_scheme_preference,
+    parse_color_scheme,
+)
 from mpvqc.datamodels import Comment
 from mpvqc.dialogs.import_wizard import MpvqcImportWizardViewModel
 from mpvqc.services import (
@@ -312,7 +317,14 @@ class MpvqcTestSettings(QObject):
     @Slot(str, result=str)
     def accentColor(self, color_scheme: str) -> str:
         settings = inject.instance(SettingsService)
-        return settings.accent_color_for(parse_color_scheme(color_scheme)) or ""
+        accent_color = settings.accent_color_for(parse_color_scheme(color_scheme))
+        match accent_color:
+            case NoPreference():
+                return ""
+            case AccentColor():
+                return accent_color.identifier
+            case _:
+                assert_never(accent_color)
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:

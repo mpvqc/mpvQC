@@ -9,7 +9,16 @@ from typing import assert_never
 
 import inject
 
-from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light, Palette, parse_color_scheme
+from mpvqc.appearance import (
+    AccentColor,
+    AccentColorPreference,
+    ColorScheme,
+    Dark,
+    Light,
+    NoPreference,
+    Palette,
+    parse_color_scheme,
+)
 
 from .resource import ResourceService
 
@@ -87,16 +96,21 @@ class PaletteFamily:
     def _index_by_accent(self) -> dict[AccentColor, int]:
         return {palette.accent_color: idx for idx, palette in enumerate(self.palettes)}
 
-    def palette_for(self, accent_color: AccentColor | None) -> Palette:
+    def palette_for(self, accent_color: AccentColorPreference) -> Palette:
         return self._palette_by_accent[self._resolve(accent_color)]
 
-    def palette_index(self, accent_color: AccentColor | None) -> int:
+    def palette_index(self, accent_color: AccentColorPreference) -> int:
         return self._index_by_accent[self._resolve(accent_color)]
 
-    def _resolve(self, accent_color: AccentColor | None) -> AccentColor:
-        if accent_color is None or accent_color not in self._palette_by_accent:
-            return self.default_accent
-        return accent_color
+    def _resolve(self, accent_color: AccentColorPreference) -> AccentColor:
+        """No preference and an accent the family no longer offers both fall to the family's default."""
+        match accent_color:
+            case NoPreference():
+                return self.default_accent
+            case AccentColor():
+                return accent_color if accent_color in self._palette_by_accent else self.default_accent
+            case _:
+                assert_never(accent_color)
 
 
 def _parse_palette_family(data: dict) -> PaletteFamily:

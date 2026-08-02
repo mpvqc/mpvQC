@@ -3,9 +3,22 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import dataclass
-from typing import NewType, assert_never
+from typing import assert_never
 
-AccentColor = NewType("AccentColor", str)
+
+@dataclass(frozen=True)
+class AccentColor:
+    """A color pick within one color scheme."""
+
+    identifier: str
+
+
+@dataclass(frozen=True)
+class NoPreference:
+    """The user never confirmed an accent color pick, so the shipped default renders."""
+
+
+type AccentColorPreference = NoPreference | AccentColor
 
 
 @dataclass(frozen=True)
@@ -106,10 +119,10 @@ def resolve_color_scheme(
 @dataclass(frozen=True)
 class Appearance:
     color_scheme_preference: ColorSchemePreference
-    light_accent_color: AccentColor | None
-    dark_accent_color: AccentColor | None
+    light_accent_color: AccentColorPreference
+    dark_accent_color: AccentColorPreference
 
-    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColor | None:
+    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
         match color_scheme:
             case Light():
                 return self.light_accent_color

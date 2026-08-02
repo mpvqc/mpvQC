@@ -9,12 +9,14 @@ import pytest
 
 from mpvqc.appearance import (
     AccentColor,
+    AccentColorPreference,
     Appearance,
     ColorScheme,
     ColorSchemePreference,
     Dark,
     FollowSystem,
     Light,
+    NoPreference,
 )
 from mpvqc.dialogs.appearance import (
     AppearanceDialogProps,
@@ -26,6 +28,7 @@ from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceSe
 SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
+NO_PREFERENCE = NoPreference()
 
 
 @pytest.fixture
@@ -77,8 +80,8 @@ def _appearance(
 ) -> Appearance:
     return Appearance(
         color_scheme_preference=preference,
-        light_accent_color=AccentColor(light_accent) if light_accent else None,
-        dark_accent_color=AccentColor(dark_accent) if dark_accent else None,
+        light_accent_color=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
+        dark_accent_color=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
     )
 
 
@@ -185,7 +188,7 @@ class DerivationCase(NamedTuple):
     ids=lambda case: case.name,
 )
 def test_derivation(case: DerivationCase, catalog):
-    def accent_color_index_for(color_scheme: ColorScheme, accent: AccentColor | None) -> int:
+    def accent_color_index_for(color_scheme: ColorScheme, accent: AccentColorPreference) -> int:
         return catalog.palette_family_for(color_scheme).palette_index(accent)
 
     props = derive_appearance_dialog_props(case.appearance, accent_color_index_for)
@@ -291,8 +294,8 @@ def test_set_accent_color_writes_the_selected_schemes_entry_only(make_view_model
 
     view_model.setAccentColor("#d2")
 
-    assert settings_service.accent_color_for(DARK) == "#d2"
-    assert settings_service.accent_color_for(LIGHT) is None
+    assert settings_service.accent_color_for(DARK) == AccentColor("#d2")
+    assert settings_service.accent_color_for(LIGHT) == NO_PREFERENCE
     assert view_model.accentColorIndex == 1
 
 
@@ -301,8 +304,8 @@ def test_set_accent_color_under_system_writes_nothing(make_view_model, settings_
 
     view_model.setAccentColor("#d2")
 
-    assert settings_service.accent_color_for(DARK) is None
-    assert settings_service.accent_color_for(LIGHT) is None
+    assert settings_service.accent_color_for(DARK) == NO_PREFERENCE
+    assert settings_service.accent_color_for(LIGHT) == NO_PREFERENCE
 
 
 def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints, make_spy):
@@ -340,8 +343,8 @@ def test_reject_restores_the_preference_and_both_accents(make_view_model, settin
     view_model.reject()
 
     assert settings_service.color_scheme_preference == DARK
-    assert settings_service.accent_color_for(LIGHT) == "#l1"
-    assert settings_service.accent_color_for(DARK) is None
+    assert settings_service.accent_color_for(LIGHT) == AccentColor("#l1")
+    assert settings_service.accent_color_for(DARK) == NO_PREFERENCE
     assert view_model.colorSchemePreferenceIndex == 2
     assert view_model.accentColorIndex == 0
     assert view_model.accentSectionVisible is True
