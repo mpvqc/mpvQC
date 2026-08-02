@@ -4,19 +4,21 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import assert_never
 
 import inject
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Signal, Slot
 from PySide6.QtQml import QmlElement
 
 from mpvqc.appearance import (
+    COLOR_SCHEME_PREFERENCES,
     AccentColor,
     Appearance,
     ColorScheme,
-    ColorSchemePreference,
     Dark,
+    FollowSystem,
     Light,
-    explicit_color_scheme,
+    parse_color_scheme_preference,
 )
 from mpvqc.models import MpvqcAccentColorModel
 from mpvqc.services import PaletteCatalogService, SettingsService
@@ -41,23 +43,25 @@ def derive_appearance_dialog_props(
     accent_color_index_for: Callable[[ColorScheme, AccentColor | None], int],
 ) -> AppearanceDialogProps:
     preference = appearance.color_scheme_preference
-    preference_index = list(ColorSchemePreference).index(preference)
-    color_scheme = explicit_color_scheme(preference)
+    preference_index = COLOR_SCHEME_PREFERENCES.index(preference)
 
-    if color_scheme is None:
-        return AppearanceDialogProps(
-            color_scheme_preference_index=preference_index,
-            accent_color_index=-1,
-            accent_section_visible=False,
-            accent_section_color_scheme=None,
-        )
-
-    return AppearanceDialogProps(
-        color_scheme_preference_index=preference_index,
-        accent_color_index=accent_color_index_for(color_scheme, appearance.accent_color_for(color_scheme)),
-        accent_section_visible=True,
-        accent_section_color_scheme=color_scheme,
-    )
+    match preference:
+        case FollowSystem():
+            return AppearanceDialogProps(
+                color_scheme_preference_index=preference_index,
+                accent_color_index=-1,
+                accent_section_visible=False,
+                accent_section_color_scheme=None,
+            )
+        case Light() | Dark():
+            return AppearanceDialogProps(
+                color_scheme_preference_index=preference_index,
+                accent_color_index=accent_color_index_for(preference, appearance.accent_color_for(preference)),
+                accent_section_visible=True,
+                accent_section_color_scheme=preference,
+            )
+        case _:
+            assert_never(preference)
 
 
 @QmlElement
@@ -115,7 +119,7 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     @Slot(str)
     def setColorSchemePreference(self, preference: str) -> None:
-        self._settings.color_scheme_preference = ColorSchemePreference(preference)
+        self._settings.color_scheme_preference = parse_color_scheme_preference(preference)
 
     @Slot(str)
     def setAccentColor(self, accent_color: str) -> None:

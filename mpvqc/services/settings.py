@@ -26,8 +26,11 @@ from mpvqc.appearance import (
     ColorScheme,
     ColorSchemePreference,
     Dark,
+    FollowSystem,
     Light,
     format_color_scheme,
+    format_color_scheme_preference,
+    parse_color_scheme_preference,
 )
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
@@ -44,16 +47,17 @@ _COLOR_SCHEME_PREFERENCE_KEY = "Appearance/colorSchemePreference"
 
 
 def default_color_scheme_preference() -> ColorSchemePreference:
-    return ColorSchemePreference.SYSTEM
+    return FollowSystem()
 
 
 def _accent_color_key(color_scheme: ColorScheme) -> str:
     return f"Appearance/accentColor/{format_color_scheme(color_scheme)}"
 
 
-def _parse_color_scheme_preference(stored: str | None) -> ColorSchemePreference:
+def _read_color_scheme_preference(stored: str | None) -> ColorSchemePreference:
+    """The stored preference. Nothing stored, or a stale value, falls back to the default."""
     try:
-        return ColorSchemePreference(stored)
+        return parse_color_scheme_preference(stored or "")
     except ValueError:
         return default_color_scheme_preference()
 
@@ -263,7 +267,7 @@ class SettingsService(QObject):
         signal=lambda s: s.layout_orientation_changed,
     )
 
-    color_scheme_preference_changed = Signal(ColorSchemePreference)
+    color_scheme_preference_changed = Signal(object)  # ColorSchemePreference union; Qt sigs can't carry type aliases
     appearance_changed = Signal(Appearance)
 
     window_title_format_changed = Signal(int)
@@ -282,13 +286,13 @@ class SettingsService(QObject):
     @property
     def color_scheme_preference(self) -> ColorSchemePreference:
         stored = self.qsettings.value(_COLOR_SCHEME_PREFERENCE_KEY, type=str)
-        return _parse_color_scheme_preference(stored if isinstance(stored, str) else None)
+        return _read_color_scheme_preference(stored if isinstance(stored, str) else None)
 
     @color_scheme_preference.setter
     def color_scheme_preference(self, preference: ColorSchemePreference) -> None:
-        if self.color_scheme_preference is preference:
+        if self.color_scheme_preference == preference:
             return
-        self.qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, preference.value)
+        self.qsettings.setValue(_COLOR_SCHEME_PREFERENCE_KEY, format_color_scheme_preference(preference))
         self.color_scheme_preference_changed.emit(preference)
         self.appearance_changed.emit(self.appearance)
 

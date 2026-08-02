@@ -9,7 +9,7 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.appearance import AccentColor, Appearance, ColorSchemePreference, Dark, Light, Palette
+from mpvqc.appearance import AccentColor, Appearance, ColorSchemePreference, Dark, FollowSystem, Light, Palette
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 from mpvqc.viewmodels.utility.palette import (
     MpvqcPaletteViewModel,
@@ -18,6 +18,7 @@ from mpvqc.viewmodels.utility.palette import (
     derive_palette_props,
 )
 
+SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 
@@ -56,7 +57,7 @@ def qt_app_must_be_running(qt_app):
 
 def _appearance(
     *,
-    preference: ColorSchemePreference = ColorSchemePreference.SYSTEM,
+    preference: ColorSchemePreference = SYSTEM,
     light_accent: str | None = None,
     dark_accent: str | None = None,
 ) -> Appearance:
@@ -138,7 +139,7 @@ class DerivationCase(NamedTuple):
             name="the preference never enters the derivation",
             inputs=replace(
                 BASE_INPUTS,
-                appearance=_appearance(preference=ColorSchemePreference.LIGHT, dark_accent="#d2"),
+                appearance=_appearance(preference=LIGHT, dark_accent="#d2"),
             ),
             resolves_to=AccentColor("#d2"),
             is_dark=True,
@@ -240,13 +241,13 @@ def test_initial_snapshot_renders_the_desktops_scheme(
     view_model = make_view_model()
 
     palette = catalog.palette_family_for(expected_color_scheme).palette_for(None)
-    _assert_renders(view_model, palette, is_dark=expected_color_scheme is DARK)
+    _assert_renders(view_model, palette, is_dark=expected_color_scheme == DARK)
 
 
 def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
     make_view_model, settings_service, style_hints, catalog
 ):
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     style_hints.system_reports(Qt.ColorScheme.Dark)
 
     view_model = make_view_model()
@@ -298,7 +299,7 @@ def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
 def test_desktop_flip_under_an_explicit_preference_emits_nothing(
     make_view_model, settings_service, style_hints, make_spy, spy_roles
 ):
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
+    settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
@@ -315,7 +316,7 @@ def test_preference_change_switching_the_scheme_emits_is_dark_once_and_only_the_
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
 
     assert is_dark_spy.count() == 1
     assert is_dark_spy.at(0, 0) is False
@@ -333,7 +334,7 @@ def test_preference_change_keeping_the_scheme_emits_nothing(make_view_model, set
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
+    settings_service.color_scheme_preference = DARK
 
     _assert_nothing_emitted(is_dark_spy, spies)
 

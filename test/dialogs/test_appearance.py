@@ -8,7 +8,15 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.appearance import AccentColor, Appearance, ColorScheme, ColorSchemePreference, Dark, Light
+from mpvqc.appearance import (
+    AccentColor,
+    Appearance,
+    ColorScheme,
+    ColorSchemePreference,
+    Dark,
+    FollowSystem,
+    Light,
+)
 from mpvqc.dialogs.appearance import (
     AppearanceDialogProps,
     MpvqcAppearanceDialogViewModel,
@@ -16,10 +24,7 @@ from mpvqc.dialogs.appearance import (
 )
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 
-SYSTEM = ColorSchemePreference.SYSTEM
-LIGHT_PREFERENCE = ColorSchemePreference.LIGHT
-DARK_PREFERENCE = ColorSchemePreference.DARK
-
+SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 
@@ -109,7 +114,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="light with stored accent",
-            appearance=_appearance(LIGHT_PREFERENCE, light_accent="#l1"),
+            appearance=_appearance(LIGHT, light_accent="#l1"),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=0,
@@ -119,7 +124,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="light without stored accent resolves to its default",
-            appearance=_appearance(LIGHT_PREFERENCE),
+            appearance=_appearance(LIGHT),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=1,
@@ -129,7 +134,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="light with stale accent resolves to its default",
-            appearance=_appearance(LIGHT_PREFERENCE, light_accent="#gone"),
+            appearance=_appearance(LIGHT, light_accent="#gone"),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=1,
@@ -139,7 +144,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="light ignores the dark accent",
-            appearance=_appearance(LIGHT_PREFERENCE, dark_accent="#d3"),
+            appearance=_appearance(LIGHT, dark_accent="#d3"),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=1,
@@ -149,7 +154,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="dark with stored accent",
-            appearance=_appearance(DARK_PREFERENCE, dark_accent="#d2"),
+            appearance=_appearance(DARK, dark_accent="#d2"),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=2,
                 accent_color_index=1,
@@ -159,7 +164,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="dark without stored accent resolves to its default",
-            appearance=_appearance(DARK_PREFERENCE),
+            appearance=_appearance(DARK),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=2,
                 accent_color_index=0,
@@ -169,7 +174,7 @@ class DerivationCase(NamedTuple):
         ),
         DerivationCase(
             name="dark ignores the light accent",
-            appearance=_appearance(DARK_PREFERENCE, light_accent="#l1"),
+            appearance=_appearance(DARK, light_accent="#l1"),
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=2,
                 accent_color_index=0,
@@ -190,7 +195,7 @@ def test_derivation(case: DerivationCase, catalog):
 
 
 def test_initial_snapshot_reads_settings_at_construction(make_view_model, settings_service):
-    settings_service.color_scheme_preference = LIGHT_PREFERENCE
+    settings_service.color_scheme_preference = LIGHT
     settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
 
     view_model = make_view_model()
@@ -211,7 +216,7 @@ def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
     visible_spy = make_spy(view_model.accentSectionVisibleChanged)
     assert view_model.accentColorModel.rowCount() == 0
 
-    settings_service.color_scheme_preference = LIGHT_PREFERENCE
+    settings_service.color_scheme_preference = LIGHT
 
     assert preference_spy.count() == 1
     assert preference_spy.at(0, 0) == 1
@@ -223,12 +228,12 @@ def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
 
 
 def test_a_preference_write_between_two_schemes_keeps_the_section_open(make_view_model, settings_service, make_spy):
-    settings_service.color_scheme_preference = LIGHT_PREFERENCE
+    settings_service.color_scheme_preference = LIGHT
     view_model = make_view_model()
     visible_spy = make_spy(view_model.accentSectionVisibleChanged)
     assert view_model.accentColorModel.rowCount() == 2
 
-    settings_service.color_scheme_preference = DARK_PREFERENCE
+    settings_service.color_scheme_preference = DARK
 
     assert visible_spy.count() == 0
     assert view_model.accentColorModel.rowCount() == 3
@@ -236,7 +241,7 @@ def test_a_preference_write_between_two_schemes_keeps_the_section_open(make_view
 
 
 def test_an_accent_write_for_the_selected_scheme_moves_the_accent_index(make_view_model, settings_service, make_spy):
-    settings_service.color_scheme_preference = DARK_PREFERENCE
+    settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
     preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
@@ -250,7 +255,7 @@ def test_an_accent_write_for_the_selected_scheme_moves_the_accent_index(make_vie
 
 
 def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, settings_service, make_spy):
-    settings_service.color_scheme_preference = DARK_PREFERENCE
+    settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
     preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
@@ -262,27 +267,27 @@ def test_an_accent_write_for_the_other_scheme_emits_nothing(make_view_model, set
 
 
 @pytest.mark.parametrize(
-    ("preference", "expected_index", "expected_accent_count"),
+    ("text", "preference", "expected_index", "expected_accent_count"),
     [
-        (SYSTEM, 0, 0),
-        (LIGHT_PREFERENCE, 1, 2),
-        (DARK_PREFERENCE, 2, 3),
+        ("system", SYSTEM, 0, 0),
+        ("light", LIGHT, 1, 2),
+        ("dark", DARK, 2, 3),
     ],
 )
 def test_set_color_scheme_preference_writes_the_setting(
-    make_view_model, settings_service, preference, expected_index, expected_accent_count
+    make_view_model, settings_service, text, preference, expected_index, expected_accent_count
 ):
     view_model = make_view_model()
 
-    view_model.setColorSchemePreference(preference.value)
+    view_model.setColorSchemePreference(text)
 
-    assert settings_service.color_scheme_preference is preference
+    assert settings_service.color_scheme_preference == preference
     assert view_model.colorSchemePreferenceIndex == expected_index
     assert view_model.accentColorModel.rowCount() == expected_accent_count
 
 
 def test_set_accent_color_writes_the_selected_schemes_entry_only(make_view_model, settings_service):
-    settings_service.color_scheme_preference = DARK_PREFERENCE
+    settings_service.color_scheme_preference = DARK
     view_model = make_view_model()
 
     view_model.setAccentColor("#d2")
@@ -321,21 +326,21 @@ def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints,
 
 
 def test_reject_restores_the_preference_and_both_accents(make_view_model, settings_service):
-    settings_service.color_scheme_preference = DARK_PREFERENCE
+    settings_service.color_scheme_preference = DARK
     settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
     view_model = make_view_model()
     assert view_model.colorSchemePreferenceIndex == 2
     assert view_model.accentColorIndex == 0
 
-    view_model.setColorSchemePreference(LIGHT_PREFERENCE.value)
+    view_model.setColorSchemePreference("light")
     view_model.setAccentColor("#l2")
-    view_model.setColorSchemePreference(DARK_PREFERENCE.value)
+    view_model.setColorSchemePreference("dark")
     view_model.setAccentColor("#d3")
-    view_model.setColorSchemePreference(SYSTEM.value)
+    view_model.setColorSchemePreference("system")
 
     view_model.reject()
 
-    assert settings_service.color_scheme_preference is DARK_PREFERENCE
+    assert settings_service.color_scheme_preference == DARK
     assert settings_service.accent_color_for(LIGHT) == "#l1"
     assert settings_service.accent_color_for(DARK) is None
     assert view_model.colorSchemePreferenceIndex == 2

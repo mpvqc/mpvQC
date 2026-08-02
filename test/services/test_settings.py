@@ -10,11 +10,15 @@ from PySide6.QtCore import QLocale
 from mpvqc.appearance import (
     AccentColor,
     Appearance,
-    ColorSchemePreference,
     Dark,
+    FollowSystem,
     Light,
 )
 from mpvqc.services.settings import default_language
+
+SYSTEM = FollowSystem()
+LIGHT = Light()
+DARK = Dark()
 
 
 @pytest.mark.parametrize(
@@ -106,32 +110,32 @@ def test_time_display_mode_signal_emission(settings_service, make_spy):
 
 
 def test_color_scheme_preference_defaults_to_system(settings_service):
-    assert settings_service.color_scheme_preference is ColorSchemePreference.SYSTEM
+    assert settings_service.color_scheme_preference == SYSTEM
 
 
 @pytest.mark.parametrize(
     "preference",
-    [ColorSchemePreference.SYSTEM, ColorSchemePreference.LIGHT, ColorSchemePreference.DARK],
+    [SYSTEM, LIGHT, DARK],
 )
 def test_color_scheme_preference_set_and_get(settings_service, preference):
     settings_service.color_scheme_preference = preference
 
-    assert settings_service.color_scheme_preference is preference
+    assert settings_service.color_scheme_preference == preference
 
 
 def test_color_scheme_preference_signal_emission(settings_service, make_spy):
     spy = make_spy(settings_service.color_scheme_preference_changed)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     assert spy.count() == 1
-    assert spy.at(0, 0) is ColorSchemePreference.LIGHT
+    assert spy.at(0, 0) == LIGHT
 
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     assert spy.count() == 1
 
 
 def test_color_scheme_preference_writes_into_the_appearance_ini_section(settings_service, tmp_path):
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     settings_service.qsettings.sync()
 
     ini = (tmp_path / "test_settings.ini").read_text()
@@ -142,32 +146,32 @@ def test_color_scheme_preference_writes_into_the_appearance_ini_section(settings
 def test_unreadable_color_scheme_preference_falls_back_to_system(settings_service):
     settings_service.qsettings.setValue("Appearance/colorSchemePreference", "sepia")
 
-    assert settings_service.color_scheme_preference is ColorSchemePreference.SYSTEM
+    assert settings_service.color_scheme_preference == SYSTEM
 
 
 def test_accent_color_for_returns_none_when_nothing_stored(settings_service):
-    assert settings_service.accent_color_for(Light()) is None
-    assert settings_service.accent_color_for(Dark()) is None
+    assert settings_service.accent_color_for(LIGHT) is None
+    assert settings_service.accent_color_for(DARK) is None
 
 
 def test_set_accent_color_stores_one_value_per_color_scheme(settings_service):
-    settings_service.set_accent_color(Light(), AccentColor("#ff5722"))
-    settings_service.set_accent_color(Dark(), AccentColor("#3f51b5"))
+    settings_service.set_accent_color(LIGHT, AccentColor("#ff5722"))
+    settings_service.set_accent_color(DARK, AccentColor("#3f51b5"))
 
-    assert settings_service.accent_color_for(Light()) == "#ff5722"
-    assert settings_service.accent_color_for(Dark()) == "#3f51b5"
+    assert settings_service.accent_color_for(LIGHT) == "#ff5722"
+    assert settings_service.accent_color_for(DARK) == "#3f51b5"
 
 
 def test_set_accent_color_none_clears_the_stored_entry(settings_service):
-    settings_service.set_accent_color(Dark(), AccentColor("#3f51b5"))
+    settings_service.set_accent_color(DARK, AccentColor("#3f51b5"))
 
-    settings_service.set_accent_color(Dark(), None)
+    settings_service.set_accent_color(DARK, None)
 
-    assert settings_service.accent_color_for(Dark()) is None
+    assert settings_service.accent_color_for(DARK) is None
 
 
 def test_set_accent_color_writes_into_the_appearance_ini_section(settings_service, tmp_path):
-    settings_service.set_accent_color(Light(), AccentColor("#ff5722"))
+    settings_service.set_accent_color(LIGHT, AccentColor("#ff5722"))
     settings_service.qsettings.sync()
 
     ini = (tmp_path / "test_settings.ini").read_text()
@@ -178,16 +182,16 @@ def test_set_accent_color_writes_into_the_appearance_ini_section(settings_servic
 
 def test_appearance_projects_the_preference_and_both_stored_accents(settings_service):
     assert settings_service.appearance == Appearance(
-        color_scheme_preference=ColorSchemePreference.SYSTEM,
+        color_scheme_preference=SYSTEM,
         light_accent_color=None,
         dark_accent_color=None,
     )
 
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
-    settings_service.set_accent_color(Light(), AccentColor("#ff5722"))
+    settings_service.color_scheme_preference = DARK
+    settings_service.set_accent_color(LIGHT, AccentColor("#ff5722"))
 
     assert settings_service.appearance == Appearance(
-        color_scheme_preference=ColorSchemePreference.DARK,
+        color_scheme_preference=DARK,
         light_accent_color=AccentColor("#ff5722"),
         dark_accent_color=None,
     )
@@ -196,22 +200,22 @@ def test_appearance_projects_the_preference_and_both_stored_accents(settings_ser
 def test_preference_write_emits_the_appearance(settings_service, make_spy):
     spy = make_spy(settings_service.appearance_changed)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
 
     assert spy.count() == 1
     assert spy.at(0, 0) == Appearance(
-        color_scheme_preference=ColorSchemePreference.LIGHT,
+        color_scheme_preference=LIGHT,
         light_accent_color=None,
         dark_accent_color=None,
     )
 
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     assert spy.count() == 1
 
 
 @pytest.mark.parametrize(
     "color_scheme",
-    [Light(), Dark()],
+    [LIGHT, DARK],
     ids=["light", "dark"],
 )
 def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_service, make_spy, color_scheme):
@@ -228,9 +232,9 @@ def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_servi
 
 def test_multiple_property_changes(settings_service):
     settings_service.backup_interval = 30
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     settings_service.time_display_mode = 1
 
     assert settings_service.backup_interval == 30
-    assert settings_service.color_scheme_preference is ColorSchemePreference.LIGHT
+    assert settings_service.color_scheme_preference == LIGHT
     assert settings_service.time_display_mode == 1

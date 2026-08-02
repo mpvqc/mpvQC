@@ -7,7 +7,7 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance import AccentColor, ColorScheme, ColorSchemePreference, Dark, Light
+from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light
 from mpvqc.models import MpvqcColorSchemeModel
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 
@@ -76,9 +76,9 @@ def test_the_model_offers_the_three_preferences_in_order(make_model):
 
     assert model.rowCount() == 3
     assert [_read(model, row, MpvqcColorSchemeModel.PreferenceRole) for row in range(3)] == [
-        ColorSchemePreference.SYSTEM.value,
-        ColorSchemePreference.LIGHT.value,
-        ColorSchemePreference.DARK.value,
+        "system",
+        "light",
+        "dark",
     ]
 
 
@@ -132,7 +132,7 @@ def test_a_preference_write_leaves_the_rows_alone(make_model, settings_service, 
     model = make_model()
     spy = make_spy(model.dataChanged)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
 
     assert spy.count() == 0
 

@@ -5,13 +5,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, assert_never, override
 
 import inject
 from PySide6.QtCore import QAbstractListModel, QByteArray, QCoreApplication, Qt, Slot
 from PySide6.QtQml import QmlElement
 
-from mpvqc.appearance import Appearance, ColorSchemePreference, Dark, Light
+from mpvqc.appearance import (
+    COLOR_SCHEME_PREFERENCES,
+    Appearance,
+    Dark,
+    FollowSystem,
+    Light,
+    format_color_scheme_preference,
+)
 from mpvqc.services import PaletteCatalogService, SettingsService
 
 if TYPE_CHECKING:
@@ -19,14 +26,11 @@ if TYPE_CHECKING:
 
     from PySide6.QtCore import QModelIndex, QObject, QPersistentModelIndex
 
-    from mpvqc.appearance import ColorScheme
+    from mpvqc.appearance import ColorSchemePreference
 
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
-
-LIGHT = Light()
-DARK = Dark()
 
 
 @dataclass(frozen=True)
@@ -35,14 +39,13 @@ class _Row:
     caption: str
     preview: str
     alternate_preview: str
-    color_scheme: ColorScheme | None
 
 
 @QmlElement
 class MpvqcColorSchemeModel(QAbstractListModel):
-    """The three color scheme preferences, in System, Light, Dark order.
+    """Every color scheme preference, in the order the appearance dialog offers them in.
 
-    System owns no color scheme: it carries both previews for the split swatch and no accent.
+    Following the system owns no color scheme: it carries both previews for the split swatch and no accent.
     """
 
     _catalog = inject.attr(PaletteCatalogService)
@@ -61,41 +64,47 @@ class MpvqcColorSchemeModel(QAbstractListModel):
         self._settings.appearance_changed.connect(self._fold_appearance)
 
     def _build_rows(self) -> tuple[_Row, ...]:
+        return tuple(self._build_row(preference) for preference in COLOR_SCHEME_PREFERENCES)
+
+    def _build_row(self, preference: ColorSchemePreference) -> _Row:
         translate = QCoreApplication.translate
-        light = self._catalog.preview_color_for(LIGHT)
-        dark = self._catalog.preview_color_for(DARK)
-        return (
-            _Row(
-                preference=ColorSchemePreference.SYSTEM,
-                caption=translate("AppearanceDialog", "System"),
-                preview=light,
-                alternate_preview=dark,
-                color_scheme=None,
-            ),
-            _Row(
-                preference=ColorSchemePreference.LIGHT,
-                caption=translate("AppearanceDialog", "Light"),
-                preview=light,
-                alternate_preview="",
-                color_scheme=LIGHT,
-            ),
-            _Row(
-                preference=ColorSchemePreference.DARK,
-                caption=translate("AppearanceDialog", "Dark"),
-                preview=dark,
-                alternate_preview="",
-                color_scheme=DARK,
-            ),
-        )
+        match preference:
+            case FollowSystem():
+                return _Row(
+                    preference=preference,
+                    caption=translate("AppearanceDialog", "System"),
+                    preview=self._catalog.preview_color_for(Light()),
+                    alternate_preview=self._catalog.preview_color_for(Dark()),
+                )
+            case Light():
+                return _Row(
+                    preference=preference,
+                    caption=translate("AppearanceDialog", "Light"),
+                    preview=self._catalog.preview_color_for(preference),
+                    alternate_preview="",
+                )
+            case Dark():
+                return _Row(
+                    preference=preference,
+                    caption=translate("AppearanceDialog", "Dark"),
+                    preview=self._catalog.preview_color_for(preference),
+                    alternate_preview="",
+                )
+            case _:
+                assert_never(preference)
 
     def _accents_of(self, appearance: Appearance) -> tuple[str, ...]:
-        return tuple(self._accent_of(row, appearance) for row in self._rows)
+        return tuple(self._accent_of(row.preference, appearance) for row in self._rows)
 
-    def _accent_of(self, row: _Row, appearance: Appearance) -> str:
-        if row.color_scheme is None:
-            return ""
-        palette_family = self._catalog.palette_family_for(row.color_scheme)
-        return palette_family.palette_for(appearance.accent_color_for(row.color_scheme)).row_selected
+    def _accent_of(self, preference: ColorSchemePreference, appearance: Appearance) -> str:
+        match preference:
+            case FollowSystem():
+                return ""
+            case Light() | Dark():
+                palette_family = self._catalog.palette_family_for(preference)
+                return palette_family.palette_for(appearance.accent_color_for(preference)).row_selected
+            case _:
+                assert_never(preference)
 
     @Slot(Appearance)
     def _fold_appearance(self, appearance: Appearance) -> None:
@@ -121,7 +130,7 @@ class MpvqcColorSchemeModel(QAbstractListModel):
 
         match role:
             case self.PreferenceRole:
-                return row.preference.value
+                return format_color_scheme_preference(row.preference)
             case self.CaptionRole:
                 return row.caption
             case self.PreviewRole:

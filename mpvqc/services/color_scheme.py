@@ -4,12 +4,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Protocol, assert_never
 
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
-from mpvqc.appearance import ColorSchemePreference, resolve_color_scheme
+from mpvqc.appearance import Dark, FollowSystem, Light, resolve_color_scheme
 
 from .settings import SettingsService
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
     from PySide6.QtGui import QStyleHints
 
-    from mpvqc.appearance import ColorScheme
+    from mpvqc.appearance import ColorScheme, ColorSchemePreference
 
 
 class StyleHints(Protocol):
@@ -77,14 +77,18 @@ class ColorSchemeService(QObject):
 
     def _push_preference(self) -> None:
         # An explicit scheme also makes Qt ignore the system from here on
-        if self._preference is ColorSchemePreference.LIGHT:
-            self._style_hints.set_color_scheme(Qt.ColorScheme.Light)
-        elif self._preference is ColorSchemePreference.DARK:
-            self._style_hints.set_color_scheme(Qt.ColorScheme.Dark)
-        else:
-            self._style_hints.unset_color_scheme()
+        preference = self._preference
+        match preference:
+            case FollowSystem():
+                self._style_hints.unset_color_scheme()
+            case Light():
+                self._style_hints.set_color_scheme(Qt.ColorScheme.Light)
+            case Dark():
+                self._style_hints.set_color_scheme(Qt.ColorScheme.Dark)
+            case _:
+                assert_never(preference)
 
-    @Slot(ColorSchemePreference)
+    @Slot(object)
     def _on_preference_changed(self, preference: ColorSchemePreference) -> None:
         self._preference = preference
         self._push_preference()

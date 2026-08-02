@@ -3,19 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dataclasses import dataclass
-from enum import StrEnum
 from typing import NewType, assert_never
 
 from PySide6.QtCore import Qt
 
 AccentColor = NewType("AccentColor", str)
-
-
-class ColorSchemePreference(StrEnum):
-    # Declaration order is the order the appearance dialog offers them in
-    SYSTEM = "system"
-    LIGHT = "light"
-    DARK = "dark"
 
 
 @dataclass(frozen=True)
@@ -52,27 +44,54 @@ def format_color_scheme(color_scheme: ColorScheme) -> str:
             assert_never(color_scheme)
 
 
-def explicit_color_scheme(preference: ColorSchemePreference) -> ColorScheme | None:
-    """The color scheme a preference names, or nothing when it names none."""
-    if preference is ColorSchemePreference.LIGHT:
-        return Light()
-    if preference is ColorSchemePreference.DARK:
-        return Dark()
-    return None
+@dataclass(frozen=True)
+class FollowSystem:
+    """The UI renders whatever the system says."""
+
+
+type ColorSchemePreference = FollowSystem | ColorScheme
+
+# Every preference there is, in the order the appearance dialog offers them in.
+# Plain values, not shared singletons: preferences compare with ==, never with is.
+COLOR_SCHEME_PREFERENCES: tuple[ColorSchemePreference, ...] = (FollowSystem(), Light(), Dark())
+
+
+def parse_color_scheme_preference(text: str) -> ColorSchemePreference:
+    """Read a color scheme preference off a boundary."""
+    if text == "system":
+        return FollowSystem()
+    try:
+        return parse_color_scheme(text)
+    except ValueError:
+        message = f"{text!r} names no color scheme preference"
+        raise ValueError(message) from None
+
+
+def format_color_scheme_preference(preference: ColorSchemePreference) -> str:
+    """Write a color scheme preference to a boundary."""
+    match preference:
+        case FollowSystem():
+            return "system"
+        case Light() | Dark():
+            return format_color_scheme(preference)
+        case _:
+            assert_never(preference)
 
 
 def resolve_color_scheme(
     preference: ColorSchemePreference,
     system_color_scheme: Qt.ColorScheme,
 ) -> ColorScheme:
-    if preference is ColorSchemePreference.LIGHT:
-        return Light()
-    if preference is ColorSchemePreference.DARK:
-        return Dark()
-    if system_color_scheme is Qt.ColorScheme.Light:
-        return Light()
-    # Dark also when the system cannot answer: mpvQC's historic default
-    return Dark()
+    match preference:
+        case FollowSystem():
+            if system_color_scheme is Qt.ColorScheme.Light:
+                return Light()
+            # Dark also when the system cannot answer: mpvQC's historic default
+            return Dark()
+        case Light() | Dark():
+            return preference
+        case _:
+            assert_never(preference)
 
 
 @dataclass(frozen=True)

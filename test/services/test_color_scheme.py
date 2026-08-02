@@ -6,9 +6,10 @@ import inject
 import pytest
 from PySide6.QtCore import Qt
 
-from mpvqc.appearance import ColorSchemePreference, Dark, Light
+from mpvqc.appearance import Dark, FollowSystem, Light
 from mpvqc.services import ColorSchemeService, SettingsService
 
+SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 
@@ -29,7 +30,7 @@ def configure_injections(common_bindings_with, settings_service):
         (Qt.ColorScheme.Unknown, DARK),
     ],
 )
-def test_system_preference_takes_the_system_answer(make_style_hints, system_color_scheme, expected):
+def test_following_the_system_takes_the_system_answer(make_style_hints, system_color_scheme, expected):
     style_hints = make_style_hints(system_color_scheme)
 
     service = ColorSchemeService(style_hints)
@@ -41,10 +42,10 @@ def test_system_preference_takes_the_system_answer(make_style_hints, system_colo
 @pytest.mark.parametrize(
     ("preference", "system_color_scheme", "expected", "expected_call"),
     [
-        (ColorSchemePreference.LIGHT, Qt.ColorScheme.Dark, LIGHT, "set Light"),
-        (ColorSchemePreference.LIGHT, Qt.ColorScheme.Unknown, LIGHT, "set Light"),
-        (ColorSchemePreference.DARK, Qt.ColorScheme.Light, DARK, "set Dark"),
-        (ColorSchemePreference.DARK, Qt.ColorScheme.Unknown, DARK, "set Dark"),
+        (LIGHT, Qt.ColorScheme.Dark, LIGHT, "set Light"),
+        (LIGHT, Qt.ColorScheme.Unknown, LIGHT, "set Light"),
+        (DARK, Qt.ColorScheme.Light, DARK, "set Dark"),
+        (DARK, Qt.ColorScheme.Unknown, DARK, "set Dark"),
     ],
 )
 def test_explicit_preference_ignores_the_system_and_pushes_into_qt(
@@ -84,7 +85,7 @@ def test_system_answer_resolving_to_the_same_scheme_publishes_nothing(make_spy, 
 
 
 def test_system_flip_under_an_explicit_preference_publishes_nothing(settings_service, make_spy, make_style_hints):
-    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
+    settings_service.color_scheme_preference = LIGHT
     style_hints = make_style_hints(Qt.ColorScheme.Light)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
@@ -100,7 +101,7 @@ def test_preference_change_to_explicit_pushes_into_qt_and_publishes(settings_ser
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
+    settings_service.color_scheme_preference = DARK
 
     assert spy.count() == 1
     assert spy.at(0, 0) == DARK
@@ -109,12 +110,12 @@ def test_preference_change_to_explicit_pushes_into_qt_and_publishes(settings_ser
 
 
 def test_preference_change_back_to_system_unsets_and_follows_again(settings_service, make_spy, make_style_hints):
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
+    settings_service.color_scheme_preference = DARK
     style_hints = make_style_hints(Qt.ColorScheme.Light)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.SYSTEM
+    settings_service.color_scheme_preference = SYSTEM
 
     assert spy.count() == 1
     assert spy.at(0, 0) == LIGHT
@@ -129,7 +130,7 @@ def test_preference_change_keeping_the_scheme_pushes_into_qt_but_publishes_nothi
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
+    settings_service.color_scheme_preference = DARK
 
     assert spy.count() == 0
     assert service.color_scheme == DARK
@@ -141,8 +142,8 @@ def test_following_the_system_survives_a_preference_round_trip(settings_service,
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    settings_service.color_scheme_preference = ColorSchemePreference.DARK
-    settings_service.color_scheme_preference = ColorSchemePreference.SYSTEM
+    settings_service.color_scheme_preference = DARK
+    settings_service.color_scheme_preference = SYSTEM
     style_hints.system_reports(Qt.ColorScheme.Dark)
 
     assert [spy.at(index, 0) for index in range(spy.count())] == [DARK, LIGHT, DARK]
