@@ -79,20 +79,12 @@
         <translation>Apariencia</translation>
     </message>
     <message>
-        <source>Color scheme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Accent color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Theme</source>
-        <translation type="vanished">Tema</translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="vanished">Color</translation>
+        <translation>Color</translation>
     </message>
     <message>
         <source>System</source>

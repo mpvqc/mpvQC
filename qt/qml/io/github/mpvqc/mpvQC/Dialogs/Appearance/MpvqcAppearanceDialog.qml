@@ -47,7 +47,7 @@ MpvqcDialog {
             MpvqcAppearanceSection {
                 objectName: "colorSchemePreferenceSection"
 
-                title: qsTranslate("AppearanceDialog", "Color scheme")
+                title: qsTranslate("AppearanceDialog", "Theme")
 
                 Layout.fillWidth: true
                 Layout.topMargin: root._sectionSpacing
@@ -107,7 +107,7 @@ MpvqcDialog {
             MpvqcAppearanceSection {
                 objectName: "accentColorSection"
 
-                title: qsTranslate("AppearanceDialog", "Accent color")
+                title: qsTranslate("AppearanceDialog", "Color")
                 expanded: root.viewModel.accentSectionVisible
 
                 Layout.fillWidth: true
