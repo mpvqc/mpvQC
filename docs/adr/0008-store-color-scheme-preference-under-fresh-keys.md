@@ -4,8 +4,8 @@ The old model stored a theme identifier and one accent color per theme identifie
 stores a color scheme preference and one accent color per color scheme under `Appearance/`. The two do not line up:
 the preference has a value no theme identifier can express, System, and it is the new default. The new model gets a
 fresh group, and nothing on the new path reads, writes, or deletes the old one. There is no migration. The theme
-entity keeps using its own keys for as long as it survives the rework; once it is deleted, `Theme/` is untouched by
-any code path.
+entity kept its own keys for as long as it survived the rework; now that it is deleted, `Theme/` is untouched by any
+code path.
 
 Flatpak configs outlive the app that wrote them, and users roll releases back. Reusing key names would put two
 meanings behind one key: a rolled-back build would read `system` where it expects a theme identifier, fall back to
@@ -26,15 +26,16 @@ alternative is migration code that must map a dead entity onto a live one, forev
   `material-you-dark` as an explicit Dark preference and lock users out of the System default they are most likely
   to want.
 - **Reuse the `Theme/` group with new key names** — same drift, plus a settings group named after an entity this
-  rework deletes.
+  rework deleted.
 - **Reuse the exact old keys with new values** — the case above: an old build silently misreads `system` and writes
   its own vocabulary back over it.
 
 ## Consequences
 
-- Every existing user resets to System once, with both schemes' accents empty; the declared defaults render until
-  they choose again.
+- Every existing user resets to System once, with no accent color preference for either color scheme; the declared
+  defaults render until they choose again.
 - A rollback finds the `Theme/` keys byte-identical, so the previous version keeps working.
-- `Theme/` stays in user configs once the theme entity is gone: inert data that nothing reads and nothing cleans up.
+- `Theme/` stays in user configs now that the theme entity is gone: inert data that nothing reads and nothing cleans
+  up.
 - No migration code ships, so no migration bug can. The cost of the decision is paid once, by users, visibly, rather
   than repeatedly, by the codebase, invisibly.

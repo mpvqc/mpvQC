@@ -46,24 +46,26 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 
 ## Appearance
 
-- **Color scheme**: light or dark. Whether the UI renders light or dark. Qualifiers name whose: the system's color
-  scheme is what the OS reports, the app's is the preference resolved against it. The freedesktop and Qt term.
+- **Color scheme**: whether the UI renders light or dark. Always say whose: the system color scheme is the OS's, the
+  app's is its color scheme preference resolved against that. The freedesktop and Qt term.
 - **Color scheme preference**: what the user asks for: a color scheme held regardless of the system, or follow the
-  system. A request, not a result. Every color scheme is itself a preference; follow-the-system is the one preference
-  that is not a color scheme.
+  system. A request, not a result. Every color scheme is itself a preference; following the system is the one
+  preference that is not a color scheme.
 - **System color scheme**: the OS's answer when asked for its color scheme: a color scheme, or unknown when it cannot
-  say. Under follow-the-system, unknown resolves to dark, the app's historic default.
-- **Accent color**: the user's color pick, deciding which palette renders within one color scheme. The freedesktop
-  term.
+  say.
+- **Accent color**: the color a palette is built around; within a palette family, it is what tells one palette from
+  another. The freedesktop term.
 - **Accent color preference**: per color scheme, the user's pick: an accent color, or no preference when they never
   confirmed one. Under no preference the palette family's default renders, tracking the shipped default across
-  releases. Picking is one-way: cancel aside, there is no path back to no preference.
+  releases.
 - **Appearance**: the user's choice of how the app looks: color scheme preference and accent color preference
-  together. The desktop term: GNOME and macOS group exactly these choices under Appearance.
+  together. The desktop term: GNOME and macOS group these choices under Appearance.
 - **Palette**: the bundle of named colors the UI uses. The Qt term, as in QPalette. Material 3 calls this bundle a
   color scheme.
 - **Palette family**: palettes for one color scheme.
 - **Palette catalog**: every palette family the app knows.
+- **Preview color**: a color that stands in for something on offer, so it can be recognised before it is picked. A
+  palette family has one; so does every accent color in it.
 - **Color role**: one named entry in the palette: background, hint, row base. The Qt term.
 
 ## Platform
