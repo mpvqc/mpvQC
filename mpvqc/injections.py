@@ -8,6 +8,10 @@ import mpvqc.services as s
 from mpvqc.appearance.injections import bindings as appearance_bindings
 
 
+def _settings_service() -> s.SettingsService:
+    return s.SettingsService(inject.instance(s.SettingsFileService).qsettings)
+
+
 def bindings(binder: inject.Binder) -> None:
     appearance_bindings(binder)
 
@@ -31,7 +35,8 @@ def bindings(binder: inject.Binder) -> None:
     binder.bind_to_constructor(s.QuitService, s.QuitService)
     binder.bind_to_constructor(s.ResetService, s.ResetService)
     binder.bind_to_constructor(s.ResourceService, s.ResourceService)
-    binder.bind_to_constructor(s.SettingsService, s.SettingsService)
+    binder.bind_to_constructor(s.SettingsFileService, s.SettingsFileService)
+    binder.bind_to_constructor(s.SettingsService, _settings_service)
     binder.bind_to_constructor(s.StateService, s.StateService)
     binder.bind_to_constructor(s.TimeFormatPolicyService, s.TimeFormatPolicyService)
     binder.bind_to_constructor(s.TimeFormatterService, s.TimeFormatterService)

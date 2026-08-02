@@ -256,6 +256,7 @@ files = [
     "mpvqc/services/resource.py",
     "mpvqc/services/reverse_translator.py",
     "mpvqc/services/settings.py",
+    "mpvqc/services/settings_file.py",
     "mpvqc/services/state.py",
     "mpvqc/services/time_format_policy.py",
     "mpvqc/services/type_mapper.py",

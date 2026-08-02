@@ -26,6 +26,7 @@ from .resetter import ResetService as ResetService
 from .resource import ResourceService as ResourceService
 from .reverse_translator import ReverseTranslatorService as ReverseTranslatorService
 from .settings import SettingsService as SettingsService
+from .settings_file import SettingsFileService as SettingsFileService
 from .state import StateService as StateService
 from .time_format_policy import TimeFormatPolicyService as TimeFormatPolicyService
 from .type_mapper import TypeMapperService as TypeMapperService
