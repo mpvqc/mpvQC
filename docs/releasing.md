@@ -46,17 +46,20 @@ This is the final gate before tagging.
   - [ ] Minimize a maximized window with the title-bar button: it restores from the taskbar as maximized
   - [ ] Enter and exit fullscreen from both a normal and a maximized window: both transitions are clean
   - [ ] Press Win+D while fullscreen: restoring the window returns it to fullscreen
+  - [ ] With the app running, switching the app mode under Settings → Personalization → Colors retints it live
+  - [ ] An explicit Light or Dark under Options → Appearance survives that switch untouched
 - [ ] Manual testing on Linux (on the locally built Flatpak):
   - [ ] Flatpak builds locally
   - [ ] Flatpak installs locally
   - [ ] Flatpak runs locally
   - [ ] Windows manual tests above also pass on Linux
-  - [ ] Window chrome verified on both setups (see below)
+  - [ ] Window chrome and color scheme verified on both setups (see below)
 
-#### Window chrome verification
+#### Window chrome and color scheme verification
 
-The Linux window chrome (drop shadow, rounded corners, frameless resizing) is self-drawn and compositor-dependent, so CI
-cannot cover it. Verify it on the locally built Flatpak before tagging, on both setups:
+The Linux window chrome (drop shadow, rounded corners, frameless resizing) is self-drawn and compositor-dependent, and
+the color scheme comes from the desktop's settings portal. CI runs neither, so verify both on the locally built Flatpak
+before tagging, on both setups:
 
 ##### Desktop environment (e.g. GNOME, KDE Plasma)
 
@@ -65,6 +68,10 @@ cannot cover it. Verify it on the locally built Flatpak before tagging, on both 
 - [ ] Menu bar, close button and footer hover highlights stay within the rounded corners
 - [ ] Maximize, fullscreen and back to normal land in the expected state (no flicker back to normal)
 - [ ] Window drags to the top edge and resizes from every edge and corner
+- [ ] With the app running, a desktop flip retints it live: on GNOME
+      `gsettings set org.gnome.desktop.interface color-scheme prefer-dark`, on KDE Plasma
+      `plasma-apply-colorscheme BreezeDark` (`prefer-light` and `BreezeLight` flip back)
+- [ ] An explicit Light or Dark under Options → Appearance survives that flip untouched
 
 ##### Tiling compositor (e.g. Sway, Hyprland, niri)
 
