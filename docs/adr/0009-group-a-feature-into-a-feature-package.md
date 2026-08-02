@@ -8,8 +8,9 @@ touching every layer for one idea.
 
 Appearance now lives in a feature package. `domain.py` at its root holds the types and the pure rules, and role
 directories under it hold what the area owns: the color scheme service with its style-hints seam, the palette catalog
-with its palette family. Tests mirror the same shape. The layer packages keep everything no feature package has
-claimed, and no re-export shim stays behind — call sites name the new home.
+with its palette family, the two list models the appearance dialog shows, and the palette and dialog view models.
+Tests mirror the same shape. The layer packages keep everything no feature package has claimed, and no re-export shim
+stays behind — call sites name the new home.
 
 The skeleton is the template for the next one:
 
@@ -27,10 +28,12 @@ Role directories are plural, matching the vocabulary the repo already uses. They
 across roles: the color scheme is a domain type, a service, and a model, and without the directory each would grow a
 role suffix to stay distinct. The directory carries the role, so the concept keeps its name everywhere.
 
-Package `__init__` files stay empty. Imports then name the module they mean, so a reader sees which role they are
-pulling from — and, load-bearing, an empty init is what keeps the horizontal seams importable from inside a feature
-package. The settings service reads the appearance domain, and the color scheme service reads the settings service; if
-importing a feature package pulled its own services in, that would be a cycle.
+The two `__init__` levels do opposite jobs. The package root stays empty, and that is load-bearing: an empty root is
+what keeps the horizontal seams importable from inside a feature package. The settings service reads the appearance
+domain, and the color scheme service reads the settings service; a root that pulled its own services in would close
+that loop, and the import fails outright. Role `__init__` files re-export what their modules hold. Call sites then name
+the role they are pulling from, a reader sees which one that is, and the file layout under the role stays free to
+change without a wide edit.
 
 A feature package brings its own bindings. Its `bindings(binder)` is called by the composition root, first, and how a
 service is assembled — the style-hints adapter wrapping Qt's, in particular — is knowledge that stops at the package
@@ -38,8 +41,8 @@ boundary. The root keeps deciding which packages participate. Bindings must stay
 `QGuiApplication` exists, so anything reaching for Qt's application-level state has to be constructed on demand.
 
 QML-facing classes register by decorator, when their module is imported, and startup does those imports explicitly.
-Because a feature package's inits are empty, importing the package registers nothing — the startup import has to name
-the modules that hold the classes.
+Each import names a role directory, never the bare package: the empty root would register nothing, while the role init
+pulls its modules in.
 
 ## What stays horizontal
 
@@ -69,4 +72,5 @@ package owns what its area means, not the I/O under it — it reads through thos
 - **A `common/` or `shared/` package** for what stays horizontal: renames the layer packages without changing what is
   in them, and invites everything to drift in.
 - **Keeping a re-export shim** in the layer package so call sites need not move: two spellings for one class, and the
-  old one is the one that looks correct in a review.
+  old one is the one that looks correct in a review. The role re-exports above are not this. They give a class one
+  home and one spelling; a shim leaves a second one behind in the package the class left.

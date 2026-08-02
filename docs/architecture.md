@@ -41,7 +41,7 @@ View models are Python `QObject` subclasses exposed to QML via PySide6's `@QmlEl
 signal/slot world and the underlying services: a view model pulls in services with `inject.attr`, exposes the data the
 view needs as Qt properties, and turns user actions (`Slot`s) into service calls. They register into a single QML module
 that follows the same reverse-DNS convention as the QML-side modules. The folder layout under `mpvqc/viewmodels/` groups
-files by the consuming QML module. Not every view model lives there: a feature package keeps the ones its area owns.
+files by the consuming QML module. Not every view model lives there, though: see feature packages below.
 
 ### Services: `mpvqc/services/`
 
