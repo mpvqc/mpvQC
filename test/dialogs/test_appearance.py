@@ -6,7 +6,6 @@ from typing import NamedTuple
 
 import inject
 import pytest
-from PySide6.QtCore import Qt
 
 from mpvqc.appearance import (
     AccentColor,
@@ -31,7 +30,7 @@ DARK = Dark()
 
 @pytest.fixture
 def style_hints(make_style_hints):
-    return make_style_hints(Qt.ColorScheme.Dark)
+    return make_style_hints(DARK)
 
 
 @pytest.fixture(autouse=True)
@@ -316,7 +315,7 @@ def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints,
     ]
     model_spy = make_spy(view_model.accentColorModel.modelReset)
 
-    style_hints.system_reports(Qt.ColorScheme.Light)
+    style_hints.system_reports(LIGHT)
 
     assert [spy.count() for spy in spies] == [0, 0, 0]
     assert model_spy.count() == 0

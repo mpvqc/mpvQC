@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import pytest
-from PySide6.QtCore import Qt
 
 from mpvqc.appearance import (
     COLOR_SCHEME_PREFERENCES,
@@ -12,6 +11,7 @@ from mpvqc.appearance import (
     Dark,
     FollowSystem,
     Light,
+    Unknown,
     format_color_scheme,
     format_color_scheme_preference,
     parse_color_scheme,
@@ -22,20 +22,32 @@ from mpvqc.appearance import (
 SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
+UNKNOWN = Unknown()
 
 
 @pytest.mark.parametrize(
     ("preference", "system_color_scheme", "expected"),
     [
-        (LIGHT, Qt.ColorScheme.Light, LIGHT),
-        (LIGHT, Qt.ColorScheme.Dark, LIGHT),
-        (LIGHT, Qt.ColorScheme.Unknown, LIGHT),
-        (DARK, Qt.ColorScheme.Light, DARK),
-        (DARK, Qt.ColorScheme.Dark, DARK),
-        (DARK, Qt.ColorScheme.Unknown, DARK),
-        (SYSTEM, Qt.ColorScheme.Light, LIGHT),
-        (SYSTEM, Qt.ColorScheme.Dark, DARK),
-        (SYSTEM, Qt.ColorScheme.Unknown, DARK),
+        (LIGHT, LIGHT, LIGHT),
+        (LIGHT, DARK, LIGHT),
+        (LIGHT, UNKNOWN, LIGHT),
+        (DARK, LIGHT, DARK),
+        (DARK, DARK, DARK),
+        (DARK, UNKNOWN, DARK),
+        (SYSTEM, LIGHT, LIGHT),
+        (SYSTEM, DARK, DARK),
+        (SYSTEM, UNKNOWN, DARK),
+    ],
+    ids=[
+        "light-over-light",
+        "light-over-dark",
+        "light-over-unknown",
+        "dark-over-light",
+        "dark-over-dark",
+        "dark-over-unknown",
+        "system-follows-light",
+        "system-follows-dark",
+        "system-unknown-is-dark",
     ],
 )
 def test_resolve_color_scheme(preference, system_color_scheme, expected):

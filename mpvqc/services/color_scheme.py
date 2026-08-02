@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Protocol, assert_never
 import inject
 from PySide6.QtCore import QObject, Qt, Signal, Slot
 
-from mpvqc.appearance import Dark, FollowSystem, Light, resolve_color_scheme
+from mpvqc.appearance import Dark, FollowSystem, Light, Unknown, resolve_color_scheme
 
 from .settings import SettingsService
 
@@ -18,16 +18,16 @@ if TYPE_CHECKING:
 
     from PySide6.QtGui import QStyleHints
 
-    from mpvqc.appearance import ColorScheme, ColorSchemePreference
+    from mpvqc.appearance import ColorScheme, ColorSchemePreference, SystemColorScheme
 
 
 class StyleHints(Protocol):
     """The color scheme slice of the application's style hints."""
 
     @property
-    def color_scheme(self) -> Qt.ColorScheme: ...
+    def color_scheme(self) -> SystemColorScheme: ...
 
-    def set_color_scheme(self, color_scheme: Qt.ColorScheme) -> None: ...
+    def set_color_scheme(self, color_scheme: ColorScheme) -> None: ...
 
     def unset_color_scheme(self) -> None: ...
 
@@ -35,17 +35,32 @@ class StyleHints(Protocol):
 
 
 class QtStyleHints:
-    """Reads the system's color scheme from Qt and pushes explicit preferences back into it."""
+    """Reads the system's color scheme from Qt and pushes explicit preferences back into it.
+
+    The only place Qt's color scheme enum meets the domain's."""
 
     def __init__(self, style_hints: QStyleHints) -> None:
         self._style_hints = style_hints
 
     @property
-    def color_scheme(self) -> Qt.ColorScheme:
-        return self._style_hints.colorScheme()
+    def color_scheme(self) -> SystemColorScheme:
+        scheme = self._style_hints.colorScheme()
+        match scheme:
+            case Qt.ColorScheme.Light:
+                return Light()
+            case Qt.ColorScheme.Dark:
+                return Dark()
+            case Qt.ColorScheme.Unknown:
+                return Unknown()
 
-    def set_color_scheme(self, color_scheme: Qt.ColorScheme) -> None:
-        self._style_hints.setColorScheme(color_scheme)
+    def set_color_scheme(self, color_scheme: ColorScheme) -> None:
+        match color_scheme:
+            case Light():
+                self._style_hints.setColorScheme(Qt.ColorScheme.Light)
+            case Dark():
+                self._style_hints.setColorScheme(Qt.ColorScheme.Dark)
+            case _:
+                assert_never(color_scheme)
 
     def unset_color_scheme(self) -> None:
         self._style_hints.unsetColorScheme()
@@ -81,10 +96,8 @@ class ColorSchemeService(QObject):
         match preference:
             case FollowSystem():
                 self._style_hints.unset_color_scheme()
-            case Light():
-                self._style_hints.set_color_scheme(Qt.ColorScheme.Light)
-            case Dark():
-                self._style_hints.set_color_scheme(Qt.ColorScheme.Dark)
+            case Light() | Dark():
+                self._style_hints.set_color_scheme(preference)
             case _:
                 assert_never(preference)
 

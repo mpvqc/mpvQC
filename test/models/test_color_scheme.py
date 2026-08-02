@@ -4,7 +4,6 @@
 
 import inject
 import pytest
-from PySide6.QtCore import Qt
 from PySide6.QtTest import QAbstractItemModelTester
 
 from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light
@@ -20,7 +19,7 @@ DARK_PREVIEW = "#darkpreview"
 
 @pytest.fixture
 def style_hints(make_style_hints):
-    return make_style_hints(Qt.ColorScheme.Dark)
+    return make_style_hints(DARK)
 
 
 @pytest.fixture(autouse=True)
@@ -143,7 +142,7 @@ def test_a_desktop_flip_under_system_leaves_the_badges_alone(make_model, style_h
     before = [_read(model, row, MpvqcColorSchemeModel.AccentRole) for row in range(3)]
     spy = make_spy(model.dataChanged)
 
-    style_hints.system_reports(Qt.ColorScheme.Light)
+    style_hints.system_reports(LIGHT)
 
     assert spy.count() == 0
     assert [_read(model, row, MpvqcColorSchemeModel.AccentRole) for row in range(3)] == before

@@ -4,14 +4,14 @@
 
 import inject
 import pytest
-from PySide6.QtCore import Qt
 
-from mpvqc.appearance import Dark, FollowSystem, Light
+from mpvqc.appearance import Dark, FollowSystem, Light, Unknown
 from mpvqc.services import ColorSchemeService, SettingsService
 
 SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
+UNKNOWN = Unknown()
 
 
 @pytest.fixture(autouse=True)
@@ -25,10 +25,11 @@ def configure_injections(common_bindings_with, settings_service):
 @pytest.mark.parametrize(
     ("system_color_scheme", "expected"),
     [
-        (Qt.ColorScheme.Light, LIGHT),
-        (Qt.ColorScheme.Dark, DARK),
-        (Qt.ColorScheme.Unknown, DARK),
+        (LIGHT, LIGHT),
+        (DARK, DARK),
+        (UNKNOWN, DARK),
     ],
+    ids=["light", "dark", "unknown-is-dark"],
 )
 def test_following_the_system_takes_the_system_answer(make_style_hints, system_color_scheme, expected):
     style_hints = make_style_hints(system_color_scheme)
@@ -42,11 +43,12 @@ def test_following_the_system_takes_the_system_answer(make_style_hints, system_c
 @pytest.mark.parametrize(
     ("preference", "system_color_scheme", "expected", "expected_call"),
     [
-        (LIGHT, Qt.ColorScheme.Dark, LIGHT, "set Light"),
-        (LIGHT, Qt.ColorScheme.Unknown, LIGHT, "set Light"),
-        (DARK, Qt.ColorScheme.Light, DARK, "set Dark"),
-        (DARK, Qt.ColorScheme.Unknown, DARK, "set Dark"),
+        (LIGHT, DARK, LIGHT, "set Light"),
+        (LIGHT, UNKNOWN, LIGHT, "set Light"),
+        (DARK, LIGHT, DARK, "set Dark"),
+        (DARK, UNKNOWN, DARK, "set Dark"),
     ],
+    ids=["light-over-dark", "light-over-unknown", "dark-over-light", "dark-over-unknown"],
 )
 def test_explicit_preference_ignores_the_system_and_pushes_into_qt(
     settings_service, make_style_hints, preference, system_color_scheme, expected, expected_call
@@ -61,11 +63,11 @@ def test_explicit_preference_ignores_the_system_and_pushes_into_qt(
 
 
 def test_system_flip_publishes_the_new_scheme(make_spy, make_style_hints):
-    style_hints = make_style_hints(Qt.ColorScheme.Light)
+    style_hints = make_style_hints(LIGHT)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    style_hints.system_reports(Qt.ColorScheme.Dark)
+    style_hints.system_reports(DARK)
 
     assert spy.count() == 1
     assert spy.at(0, 0) == DARK
@@ -73,12 +75,12 @@ def test_system_flip_publishes_the_new_scheme(make_spy, make_style_hints):
 
 
 def test_system_answer_resolving_to_the_same_scheme_publishes_nothing(make_spy, make_style_hints):
-    # the system moves off Unknown, which Qt reports, but dark resolves to dark either way
-    style_hints = make_style_hints(Qt.ColorScheme.Unknown)
+    # the system moves off unknown, but unknown and dark both resolve to dark
+    style_hints = make_style_hints(UNKNOWN)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    style_hints.system_reports(Qt.ColorScheme.Dark)
+    style_hints.system_reports(DARK)
 
     assert spy.count() == 0
     assert service.color_scheme == DARK
@@ -86,18 +88,18 @@ def test_system_answer_resolving_to_the_same_scheme_publishes_nothing(make_spy, 
 
 def test_system_flip_under_an_explicit_preference_publishes_nothing(settings_service, make_spy, make_style_hints):
     settings_service.color_scheme_preference = LIGHT
-    style_hints = make_style_hints(Qt.ColorScheme.Light)
+    style_hints = make_style_hints(LIGHT)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
-    style_hints.system_reports(Qt.ColorScheme.Dark)
+    style_hints.system_reports(DARK)
 
     assert spy.count() == 0
     assert service.color_scheme == LIGHT
 
 
 def test_preference_change_to_explicit_pushes_into_qt_and_publishes(settings_service, make_spy, make_style_hints):
-    style_hints = make_style_hints(Qt.ColorScheme.Light)
+    style_hints = make_style_hints(LIGHT)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
@@ -111,7 +113,7 @@ def test_preference_change_to_explicit_pushes_into_qt_and_publishes(settings_ser
 
 def test_preference_change_back_to_system_unsets_and_follows_again(settings_service, make_spy, make_style_hints):
     settings_service.color_scheme_preference = DARK
-    style_hints = make_style_hints(Qt.ColorScheme.Light)
+    style_hints = make_style_hints(LIGHT)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
@@ -126,7 +128,7 @@ def test_preference_change_back_to_system_unsets_and_follows_again(settings_serv
 def test_preference_change_keeping_the_scheme_pushes_into_qt_but_publishes_nothing(
     settings_service, make_spy, make_style_hints
 ):
-    style_hints = make_style_hints(Qt.ColorScheme.Dark)
+    style_hints = make_style_hints(DARK)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
@@ -138,13 +140,13 @@ def test_preference_change_keeping_the_scheme_pushes_into_qt_but_publishes_nothi
 
 
 def test_following_the_system_survives_a_preference_round_trip(settings_service, make_spy, make_style_hints):
-    style_hints = make_style_hints(Qt.ColorScheme.Light)
+    style_hints = make_style_hints(LIGHT)
     service = ColorSchemeService(style_hints)
     spy = make_spy(service.color_scheme_changed)
 
     settings_service.color_scheme_preference = DARK
     settings_service.color_scheme_preference = SYSTEM
-    style_hints.system_reports(Qt.ColorScheme.Dark)
+    style_hints.system_reports(DARK)
 
     assert [spy.at(index, 0) for index in range(spy.count())] == [DARK, LIGHT, DARK]
     assert service.color_scheme == DARK

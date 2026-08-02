@@ -5,8 +5,6 @@
 from dataclasses import dataclass
 from typing import NewType, assert_never
 
-from PySide6.QtCore import Qt
-
 AccentColor = NewType("AccentColor", str)
 
 
@@ -21,6 +19,26 @@ class Dark:
 
 
 type ColorScheme = Light | Dark
+
+
+@dataclass(frozen=True)
+class FollowSystem:
+    """The UI renders whatever the system says."""
+
+
+type ColorSchemePreference = FollowSystem | ColorScheme
+
+# Every preference there is, in the order the appearance dialog offers them in.
+# Plain values, not shared singletons: preferences compare with ==, never with is.
+COLOR_SCHEME_PREFERENCES: tuple[ColorSchemePreference, ...] = (FollowSystem(), Light(), Dark())
+
+
+@dataclass(frozen=True)
+class Unknown:
+    """The system has no answer."""
+
+
+type SystemColorScheme = ColorScheme | Unknown
 
 
 def parse_color_scheme(text: str) -> ColorScheme:
@@ -42,18 +60,6 @@ def format_color_scheme(color_scheme: ColorScheme) -> str:
             return "dark"
         case _:
             assert_never(color_scheme)
-
-
-@dataclass(frozen=True)
-class FollowSystem:
-    """The UI renders whatever the system says."""
-
-
-type ColorSchemePreference = FollowSystem | ColorScheme
-
-# Every preference there is, in the order the appearance dialog offers them in.
-# Plain values, not shared singletons: preferences compare with ==, never with is.
-COLOR_SCHEME_PREFERENCES: tuple[ColorSchemePreference, ...] = (FollowSystem(), Light(), Dark())
 
 
 def parse_color_scheme_preference(text: str) -> ColorSchemePreference:
@@ -80,14 +86,17 @@ def format_color_scheme_preference(preference: ColorSchemePreference) -> str:
 
 def resolve_color_scheme(
     preference: ColorSchemePreference,
-    system_color_scheme: Qt.ColorScheme,
+    system_color_scheme: SystemColorScheme,
 ) -> ColorScheme:
     match preference:
         case FollowSystem():
-            if system_color_scheme is Qt.ColorScheme.Light:
-                return Light()
-            # Dark also when the system cannot answer: mpvQC's historic default
-            return Dark()
+            match system_color_scheme:
+                case Light() | Dark():
+                    return system_color_scheme
+                case Unknown():
+                    return Dark()  # mpvQC's historic default
+                case _:
+                    assert_never(system_color_scheme)
         case Light() | Dark():
             return preference
         case _:

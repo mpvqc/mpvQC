@@ -7,9 +7,17 @@ from typing import NamedTuple
 
 import inject
 import pytest
-from PySide6.QtCore import Qt
 
-from mpvqc.appearance import AccentColor, Appearance, ColorSchemePreference, Dark, FollowSystem, Light, Palette
+from mpvqc.appearance import (
+    AccentColor,
+    Appearance,
+    ColorSchemePreference,
+    Dark,
+    FollowSystem,
+    Light,
+    Palette,
+    Unknown,
+)
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 from mpvqc.viewmodels.utility.palette import (
     MpvqcPaletteViewModel,
@@ -21,11 +29,12 @@ from mpvqc.viewmodels.utility.palette import (
 SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
+UNKNOWN = Unknown()
 
 
 @pytest.fixture
 def style_hints(make_style_hints):
-    return make_style_hints(Qt.ColorScheme.Dark)
+    return make_style_hints(DARK)
 
 
 @pytest.fixture(autouse=True)
@@ -228,10 +237,11 @@ def _assert_renders(view_model: MpvqcPaletteViewModel, palette: Palette, *, is_d
 @pytest.mark.parametrize(
     ("desktop_reports", "expected_color_scheme"),
     [
-        (Qt.ColorScheme.Light, LIGHT),
-        (Qt.ColorScheme.Dark, DARK),
-        (Qt.ColorScheme.Unknown, DARK),
+        (LIGHT, LIGHT),
+        (DARK, DARK),
+        (UNKNOWN, DARK),
     ],
+    ids=["light", "dark", "unknown-is-dark"],
 )
 def test_initial_snapshot_renders_the_desktops_scheme(
     make_view_model, style_hints, catalog, desktop_reports, expected_color_scheme
@@ -248,7 +258,7 @@ def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
     make_view_model, settings_service, style_hints, catalog
 ):
     settings_service.color_scheme_preference = LIGHT
-    style_hints.system_reports(Qt.ColorScheme.Dark)
+    style_hints.system_reports(DARK)
 
     view_model = make_view_model()
 
@@ -271,7 +281,7 @@ def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    style_hints.system_reports(Qt.ColorScheme.Light)
+    style_hints.system_reports(LIGHT)
 
     assert is_dark_spy.count() == 1
     assert is_dark_spy.at(0, 0) is False
@@ -291,7 +301,7 @@ def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
     settings_service.set_accent_color(DARK, AccentColor("#d2"))
     view_model = make_view_model()
 
-    style_hints.system_reports(Qt.ColorScheme.Light)
+    style_hints.system_reports(LIGHT)
 
     _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_for(AccentColor("#l1")), is_dark=False)
 
@@ -304,7 +314,7 @@ def test_desktop_flip_under_an_explicit_preference_emits_nothing(
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    style_hints.system_reports(Qt.ColorScheme.Light)
+    style_hints.system_reports(LIGHT)
 
     _assert_nothing_emitted(is_dark_spy, spies)
 
@@ -370,7 +380,7 @@ def test_props_swap_completes_before_the_first_emission(make_view_model, style_h
     observed: list[tuple[bool, str]] = []
     view_model.isDarkChanged.connect(lambda _: observed.append((view_model.isDark, view_model.background)))
 
-    style_hints.system_reports(Qt.ColorScheme.Light)
+    style_hints.system_reports(LIGHT)
 
     palette = catalog.palette_family_for(LIGHT).palette_for(None)
     assert observed == [(False, palette.background)]
