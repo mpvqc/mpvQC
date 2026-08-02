@@ -35,6 +35,21 @@ def catalog() -> PaletteCatalogService:
 
 
 @pytest.fixture
+def equal_sized_catalog(common_bindings_with, make_palette_family_data, make_resource_service) -> PaletteCatalogService:
+    """The shipped families hold the same number of palettes, so switching between them resizes nothing."""
+    light = make_palette_family_data(color_scheme="light", default_accent="#l1", accents=["#l1", "#l2"])
+    dark = make_palette_family_data(color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2"])
+    fake = make_resource_service(light, dark)
+
+    def custom_bindings(binder: inject.Binder):
+        binder.bind(ResourceService, fake)
+        binder.bind_to_constructor(PaletteCatalogService, PaletteCatalogService)
+
+    common_bindings_with(custom_bindings)
+    return inject.instance(PaletteCatalogService)
+
+
+@pytest.fixture
 def make_model():
     def _make(preference: ColorSchemePreference = SYSTEM) -> MpvqcAccentColorModel:
         # noinspection PyCallingNonCallable
@@ -71,6 +86,23 @@ def test_the_rows_carry_the_preferences_accents_and_display_colors(make_model, c
 
     assert accents == [palette.accent_color.identifier for palette in palettes]
     assert displays == [palette.row_selected for palette in palettes]
+
+
+def test_switching_between_equal_sized_families_repaints_every_row(qt_app, equal_sized_catalog, make_model, make_spy):
+    model = make_model(LIGHT)
+    spy = make_spy(model.dataChanged)
+
+    model.set_preference(DARK)
+
+    palettes = equal_sized_catalog.palette_family_for(DARK).palettes
+    accents = [model.data(model.index(row), MpvqcAccentColorModel.AccentColorRole) for row in range(model.rowCount())]
+    displays = [model.data(model.index(row), MpvqcAccentColorModel.DisplayColorRole) for row in range(model.rowCount())]
+
+    assert accents == [palette.accent_color.identifier for palette in palettes]
+    assert displays == [palette.row_selected for palette in palettes]
+    assert spy.count() == 1
+    assert spy.at(0, 0).row() == 0
+    assert spy.at(0, 1).row() == 1
 
 
 def test_setting_the_same_preference_changes_nothing(qt_app, make_model, make_spy):

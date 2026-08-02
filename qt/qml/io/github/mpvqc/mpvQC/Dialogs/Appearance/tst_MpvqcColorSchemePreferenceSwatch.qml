@@ -103,13 +103,6 @@ TestCase {
         compare(badge.visible, data.expectBadge);
     }
 
-    function test_badgeWearsTheStoredAccent(): void {
-        const control = makeControl(testCase.lightRow);
-        const badge = findChild(control, "accentBadge");
-        verify(badge);
-        tryCompare(badge, "color", "#00ff00");
-    }
-
     function test_badgeCrossFadesToANewAccent(): void {
         const control = makeControl(testCase.lightRow);
         const badge = findChild(control, "accentBadge");

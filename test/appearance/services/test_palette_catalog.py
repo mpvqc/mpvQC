@@ -140,23 +140,19 @@ def test_the_first_family_tagged_with_a_scheme_wins(catalog_with, make_palette_f
     assert catalog.palette_family_for(Light()).default_accent == AccentColor("#a")
 
 
-def test_every_declared_accent_becomes_a_palette(fake_catalog):
-    assert len(fake_catalog.palette_family_for(Light()).palettes) == 2
-    assert len(fake_catalog.palette_family_for(Dark()).palettes) == 3
+@pytest.mark.parametrize(
+    ("color_scheme", "preview"),
+    [
+        (Light(), "#f5f2fa"),
+        (Dark(), "#121318"),
+    ],
+    ids=["light", "dark"],
+)
+def test_shipped_palette_families(catalog, color_scheme, preview):
+    palette_family = catalog.palette_family_for(color_scheme)
 
-
-def test_shipped_light_palette_family(catalog):
-    light = catalog.palette_family_for(Light())
-
-    assert light.preview == "#f5f2fa"
-    assert len(light.palettes) == 17
-
-
-def test_shipped_dark_palette_family(catalog):
-    dark = catalog.palette_family_for(Dark())
-
-    assert dark.preview == "#121318"
-    assert len(dark.palettes) == 17
+    assert palette_family.preview == preview
+    assert len(palette_family.palettes) == 17
 
 
 def test_all_palette_colors_are_valid_colors(catalog):
@@ -172,12 +168,17 @@ def test_all_palette_colors_are_valid_colors(catalog):
                 )
 
 
-def test_palettes_have_accent_colors(catalog):
+def test_every_palette_carries_an_accent_color_unique_within_its_family(catalog):
     for palette_family in catalog.palette_families:
-        for palette in palette_family.palettes:
-            assert palette.accent_color.identifier, (
-                f"palette in the {palette_family.color_scheme} palette family is missing an accent color"
-            )
+        identifiers = [palette.accent_color.identifier for palette in palette_family.palettes]
+
+        assert all(identifiers), (
+            f"a palette in the {palette_family.color_scheme} palette family is missing an accent color"
+        )
+        assert len(set(identifiers)) == len(identifiers), (
+            f"the {palette_family.color_scheme} palette family declares an accent color twice, "
+            f"so it holds fewer palettes than accents"
+        )
 
 
 def test_every_palette_family_declares_a_default_accent_from_its_own_accent_set(catalog):

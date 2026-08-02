@@ -42,15 +42,6 @@ TestCase {
         tryCompare(card, "color", MpvqcAppearance.palette.sectionCard);
     }
 
-    function test_expandedSectionHoldsItsContent(): void {
-        const control = makeControl();
-        const content = findChild(control, "sectionContent");
-        verify(content);
-        tryVerify(() => control.implicitHeight > content.height);
-        compare(control.opacity, 1);
-        verify(control.visible);
-    }
-
     function test_foldingAwayCollapsesTheSection(): void {
         const control = makeControl();
         tryVerify(() => control.implicitHeight > 0);
@@ -66,11 +57,13 @@ TestCase {
         const control = makeControl({
             expanded: false
         });
+        const content = findChild(control, "sectionContent");
+        verify(content);
         tryCompare(control, "implicitHeight", 0);
 
         control.expanded = true;
 
-        tryVerify(() => control.implicitHeight > 0);
+        tryVerify(() => control.implicitHeight > content.height);
         tryCompare(control, "opacity", 1);
         verify(control.visible);
     }

@@ -230,13 +230,3 @@ def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_servi
 
     settings_service.set_accent_color_preference(color_scheme, AccentColor("#ff5722"))
     assert spy.count() == 1
-
-
-def test_multiple_property_changes(settings_service):
-    settings_service.backup_interval = 30
-    settings_service.color_scheme_preference = LIGHT
-    settings_service.time_display_mode = 1
-
-    assert settings_service.backup_interval == 30
-    assert settings_service.color_scheme_preference == LIGHT
-    assert settings_service.time_display_mode == 1

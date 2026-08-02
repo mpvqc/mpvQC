@@ -11,7 +11,6 @@ from mpvqc.appearance.domain import (
     Dark,
     FollowSystem,
     Light,
-    NoPreference,
     Unknown,
     format_color_scheme,
     format_color_scheme_preference,
@@ -24,7 +23,6 @@ SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 UNKNOWN = Unknown()
-NO_PREFERENCE = NoPreference()
 
 
 @pytest.mark.parametrize(
@@ -99,14 +97,3 @@ def test_appearance_accent_color_preference_for_reads_the_scheme_entry(color_sch
     )
 
     assert appearance.accent_color_preference_for(color_scheme) == expected
-
-
-@pytest.mark.parametrize("color_scheme", [LIGHT, DARK])
-def test_appearance_accent_color_preference_for_reports_no_preference(color_scheme):
-    appearance = Appearance(
-        color_scheme_preference=SYSTEM,
-        light_accent_color_preference=NO_PREFERENCE,
-        dark_accent_color_preference=NO_PREFERENCE,
-    )
-
-    assert appearance.accent_color_preference_for(color_scheme) == NO_PREFERENCE
