@@ -11,7 +11,7 @@ import inject
 
 from mpvqc.appearance import (
     AccentColor,
-    AccentColorPreference,
+    Appearance,
     ColorScheme,
     Dark,
     Light,
@@ -84,10 +84,6 @@ class PaletteFamily:
     default_accent: AccentColor
     palettes: tuple[Palette, ...]
 
-    @property
-    def palette_count(self) -> int:
-        return len(self.palettes)
-
     @cached_property
     def _palette_by_accent(self) -> dict[AccentColor, Palette]:
         return {palette.accent_color: palette for palette in self.palettes}
@@ -96,21 +92,22 @@ class PaletteFamily:
     def _index_by_accent(self) -> dict[AccentColor, int]:
         return {palette.accent_color: idx for idx, palette in enumerate(self.palettes)}
 
-    def palette_for(self, accent_color: AccentColorPreference) -> Palette:
-        return self._palette_by_accent[self._resolve(accent_color)]
+    def palette_of(self, appearance: Appearance) -> Palette:
+        return self._palette_by_accent[self._resolve(appearance)]
 
-    def palette_index(self, accent_color: AccentColorPreference) -> int:
-        return self._index_by_accent[self._resolve(accent_color)]
+    def palette_index_of(self, appearance: Appearance) -> int:
+        return self._index_by_accent[self._resolve(appearance)]
 
-    def _resolve(self, accent_color: AccentColorPreference) -> AccentColor:
+    def _resolve(self, appearance: Appearance) -> AccentColor:
         """No preference and an accent the family no longer offers both fall to the family's default."""
-        match accent_color:
+        preference = appearance.accent_color_preference_for(self.color_scheme)
+        match preference:
             case NoPreference():
                 return self.default_accent
             case AccentColor():
-                return accent_color if accent_color in self._palette_by_accent else self.default_accent
+                return preference if preference in self._palette_by_accent else self.default_accent
             case _:
-                assert_never(accent_color)
+                assert_never(preference)
 
 
 def _parse_palette_family(data: dict) -> PaletteFamily:

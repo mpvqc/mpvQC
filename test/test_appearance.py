@@ -91,22 +91,22 @@ def test_every_preference_is_offered_once_in_dialog_order():
         (DARK, AccentColor("#d1")),
     ],
 )
-def test_appearance_accent_color_for_reads_the_scheme_entry(color_scheme, expected):
+def test_appearance_accent_color_preference_for_reads_the_scheme_entry(color_scheme, expected):
     appearance = Appearance(
         color_scheme_preference=SYSTEM,
-        light_accent_color=AccentColor("#l1"),
-        dark_accent_color=AccentColor("#d1"),
+        light_accent_color_preference=AccentColor("#l1"),
+        dark_accent_color_preference=AccentColor("#d1"),
     )
 
-    assert appearance.accent_color_for(color_scheme) == expected
+    assert appearance.accent_color_preference_for(color_scheme) == expected
 
 
 @pytest.mark.parametrize("color_scheme", [LIGHT, DARK])
-def test_appearance_accent_color_for_reports_no_preference(color_scheme):
+def test_appearance_accent_color_preference_for_reports_no_preference(color_scheme):
     appearance = Appearance(
         color_scheme_preference=SYSTEM,
-        light_accent_color=NO_PREFERENCE,
-        dark_accent_color=NO_PREFERENCE,
+        light_accent_color_preference=NO_PREFERENCE,
+        dark_accent_color_preference=NO_PREFERENCE,
     )
 
-    assert appearance.accent_color_for(color_scheme) == NO_PREFERENCE
+    assert appearance.accent_color_preference_for(color_scheme) == NO_PREFERENCE

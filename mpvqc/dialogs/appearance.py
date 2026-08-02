@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from collections.abc import Callable
-from dataclasses import dataclass
-from typing import assert_never
+from __future__ import annotations
+
+from dataclasses import dataclass, replace
+from typing import TYPE_CHECKING, assert_never
 
 import inject
 from PySide6.QtCore import Property, QAbstractItemModel, QObject, Signal, Slot
@@ -13,9 +14,7 @@ from PySide6.QtQml import QmlElement
 from mpvqc.appearance import (
     COLOR_SCHEME_PREFERENCES,
     AccentColor,
-    AccentColorPreference,
     Appearance,
-    ColorScheme,
     Dark,
     FollowSystem,
     Light,
@@ -23,6 +22,12 @@ from mpvqc.appearance import (
 )
 from mpvqc.models import MpvqcAccentColorModel
 from mpvqc.services import PaletteCatalogService, SettingsService
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from mpvqc.appearance import ColorScheme
+    from mpvqc.services.palette_catalog import PaletteFamily
 
 QML_IMPORT_NAME = "io.github.mpvqc.mpvQC.Python"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -32,17 +37,22 @@ DARK = Dark()
 
 
 @dataclass(frozen=True)
+class AppearanceDialogInputs:
+    appearance: Appearance
+
+
+@dataclass(frozen=True)
 class AppearanceDialogProps:
     color_scheme_preference_index: int
     accent_color_index: int
     accent_section_visible: bool
-    accent_section_color_scheme: ColorScheme | None
 
 
 def derive_appearance_dialog_props(
-    appearance: Appearance,
-    accent_color_index_for: Callable[[ColorScheme, AccentColorPreference], int],
+    inputs: AppearanceDialogInputs,
+    palette_family_for: Callable[[ColorScheme], PaletteFamily],
 ) -> AppearanceDialogProps:
+    appearance = inputs.appearance
     preference = appearance.color_scheme_preference
     preference_index = COLOR_SCHEME_PREFERENCES.index(preference)
 
@@ -52,14 +62,12 @@ def derive_appearance_dialog_props(
                 color_scheme_preference_index=preference_index,
                 accent_color_index=-1,
                 accent_section_visible=False,
-                accent_section_color_scheme=None,
             )
         case Light() | Dark():
             return AppearanceDialogProps(
                 color_scheme_preference_index=preference_index,
-                accent_color_index=accent_color_index_for(preference, appearance.accent_color_for(preference)),
+                accent_color_index=palette_family_for(preference).palette_index_of(appearance),
                 accent_section_visible=True,
-                accent_section_color_scheme=preference,
             )
         case _:
             assert_never(preference)
@@ -76,25 +84,31 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
-        self._appearance = self._settings.appearance
-        self._baseline = self._appearance
+
+        self._inputs = AppearanceDialogInputs(appearance=self._settings.appearance)
+        self._baseline = self._inputs.appearance
         self._props = self._derive()
+
         self._accent_colors = MpvqcAccentColorModel(self)
-        self._accent_colors.set_color_scheme(self._props.accent_section_color_scheme)
+        self._accent_colors.set_preference(self._inputs.appearance.color_scheme_preference)
+
         self._settings.appearance_changed.connect(self._fold_appearance)
 
     def _derive(self) -> AppearanceDialogProps:
-        return derive_appearance_dialog_props(self._appearance, self._accent_color_index_for)
-
-    def _accent_color_index_for(self, color_scheme: ColorScheme, accent_color: AccentColorPreference) -> int:
-        return self._catalog.palette_family_for(color_scheme).palette_index(accent_color)
+        return derive_appearance_dialog_props(self._inputs, self._catalog.palette_family_for)
 
     @Slot(Appearance)
-    def _fold_appearance(self, appearance: Appearance) -> None:
-        self._appearance = appearance
+    def _fold_appearance(self, value: Appearance) -> None:
+        self._update(replace(self._inputs, appearance=value))
+
+    def _update(self, inputs: AppearanceDialogInputs) -> None:
+        self._inputs = inputs
         new, old = self._derive(), self._props
+        if new == old:
+            return
         self._props = new
-        self._accent_colors.set_color_scheme(new.accent_section_color_scheme)
+        # Safe behind the guard above: one preference index means one preference.
+        self._accent_colors.set_preference(inputs.appearance.color_scheme_preference)
         if new.color_scheme_preference_index != old.color_scheme_preference_index:
             self.colorSchemePreferenceIndexChanged.emit(new.color_scheme_preference_index)
         if new.accent_color_index != old.accent_color_index:
@@ -124,13 +138,17 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     @Slot(str)
     def setAccentColor(self, accent_color: str) -> None:
-        color_scheme = self._props.accent_section_color_scheme
-        if color_scheme is None:
-            return
-        self._settings.set_accent_color(color_scheme, AccentColor(accent_color))
+        preference = self._inputs.appearance.color_scheme_preference
+        match preference:
+            case FollowSystem():
+                return
+            case Light() | Dark():
+                self._settings.set_accent_color_preference(preference, AccentColor(accent_color))
+            case _:
+                assert_never(preference)
 
     @Slot()
     def reject(self) -> None:
         self._settings.color_scheme_preference = self._baseline.color_scheme_preference
-        self._settings.set_accent_color(LIGHT, self._baseline.light_accent_color)
-        self._settings.set_accent_color(DARK, self._baseline.dark_accent_color)
+        self._settings.set_accent_color_preference(LIGHT, self._baseline.light_accent_color_preference)
+        self._settings.set_accent_color_preference(DARK, self._baseline.dark_accent_color_preference)

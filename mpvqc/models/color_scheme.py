@@ -101,8 +101,7 @@ class MpvqcColorSchemeModel(QAbstractListModel):
             case FollowSystem():
                 return ""
             case Light() | Dark():
-                palette_family = self._catalog.palette_family_for(preference)
-                return palette_family.palette_for(appearance.accent_color_for(preference)).row_selected
+                return self._catalog.palette_family_for(preference).palette_of(appearance).row_selected
             case _:
                 assert_never(preference)
 

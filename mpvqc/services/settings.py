@@ -302,35 +302,35 @@ class SettingsService(QObject):
     def appearance(self) -> Appearance:
         return Appearance(
             color_scheme_preference=self.color_scheme_preference,
-            light_accent_color=self.accent_color_for(Light()),
-            dark_accent_color=self.accent_color_for(Dark()),
+            light_accent_color_preference=self.accent_color_preference_for(Light()),
+            dark_accent_color_preference=self.accent_color_preference_for(Dark()),
         )
 
-    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
-        return self._stored_accent_color(_accent_color_key(color_scheme))
+    def accent_color_preference_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
+        return self._stored_accent_color_preference(_accent_color_key(color_scheme))
 
-    def set_accent_color(self, color_scheme: ColorScheme, accent_color: AccentColorPreference) -> None:
-        if self.accent_color_for(color_scheme) == accent_color:
+    def set_accent_color_preference(self, color_scheme: ColorScheme, preference: AccentColorPreference) -> None:
+        if self.accent_color_preference_for(color_scheme) == preference:
             return
-        self._store_accent_color(_accent_color_key(color_scheme), accent_color)
+        self._store_accent_color_preference(_accent_color_key(color_scheme), preference)
         self.appearance_changed.emit(self.appearance)
 
-    def _stored_accent_color(self, key: str) -> AccentColorPreference:
-        """The stored accent color. An absent key is the user never having confirmed a pick."""
+    def _stored_accent_color_preference(self, key: str) -> AccentColorPreference:
+        """The stored accent color preference. An absent key is the user never having confirmed a pick."""
         if self.qsettings.contains(key):
             value = self.qsettings.value(key, type=str)
             if isinstance(value, str):
                 return AccentColor(value)
         return NoPreference()
 
-    def _store_accent_color(self, key: str, accent_color: AccentColorPreference) -> None:
-        match accent_color:
+    def _store_accent_color_preference(self, key: str, preference: AccentColorPreference) -> None:
+        match preference:
             case NoPreference():
                 self.qsettings.remove(key)
             case AccentColor():
-                self.qsettings.setValue(key, accent_color.identifier)
+                self.qsettings.setValue(key, preference.identifier)
             case _:
-                assert_never(accent_color)
+                assert_never(preference)
 
     @staticmethod
     def default_comment_types() -> list[str]:

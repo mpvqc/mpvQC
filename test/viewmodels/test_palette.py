@@ -74,8 +74,8 @@ def _appearance(
 ) -> Appearance:
     return Appearance(
         color_scheme_preference=preference,
-        light_accent_color=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
-        dark_accent_color=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
+        light_accent_color_preference=AccentColor(light_accent) if light_accent else NO_PREFERENCE,
+        dark_accent_color_preference=AccentColor(dark_accent) if dark_accent else NO_PREFERENCE,
     )
 
 
@@ -161,7 +161,8 @@ class DerivationCase(NamedTuple):
 def test_derivation(case: DerivationCase, catalog):
     props = derive_palette_props(case.inputs, catalog.palette_family_for)
 
-    palette = catalog.palette_family_for(case.inputs.color_scheme).palette_for(case.resolves_to)
+    resolved = _appearance(light_accent=case.resolves_to.identifier, dark_accent=case.resolves_to.identifier)
+    palette = catalog.palette_family_for(case.inputs.color_scheme).palette_of(resolved)
     assert props == _props_from(palette, is_dark=case.is_dark)
 
 
@@ -252,7 +253,7 @@ def test_initial_snapshot_renders_the_desktops_scheme(
 
     view_model = make_view_model()
 
-    palette = catalog.palette_family_for(expected_color_scheme).palette_for(NO_PREFERENCE)
+    palette = catalog.palette_family_for(expected_color_scheme).palette_of(_appearance())
     _assert_renders(view_model, palette, is_dark=expected_color_scheme == DARK)
 
 
@@ -264,16 +265,18 @@ def test_initial_snapshot_renders_an_explicit_preference_over_the_desktop(
 
     view_model = make_view_model()
 
-    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE), is_dark=False)
+    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance()), is_dark=False)
 
 
 def test_initial_snapshot_renders_the_accent_stored_for_the_apps_scheme(make_view_model, settings_service, catalog):
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color(DARK, AccentColor("#d2"))
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
 
     view_model = make_view_model()
 
-    _assert_renders(view_model, catalog.palette_family_for(DARK).palette_for(AccentColor("#d2")), is_dark=True)
+    _assert_renders(
+        view_model, catalog.palette_family_for(DARK).palette_of(_appearance(dark_accent="#d2")), is_dark=True
+    )
 
 
 def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
@@ -290,8 +293,8 @@ def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            catalog.palette_family_for(DARK).palette_for(NO_PREFERENCE),
-            catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE),
+            catalog.palette_family_for(DARK).palette_of(_appearance()),
+            catalog.palette_family_for(LIGHT).palette_of(_appearance()),
         ),
     )
 
@@ -299,13 +302,15 @@ def test_desktop_flip_emits_is_dark_once_and_only_the_changed_roles(
 def test_desktop_flip_swaps_to_the_other_schemes_remembered_accent(
     make_view_model, settings_service, style_hints, catalog
 ):
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color(DARK, AccentColor("#d2"))
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
     view_model = make_view_model()
 
     style_hints.system_reports(LIGHT)
 
-    _assert_renders(view_model, catalog.palette_family_for(LIGHT).palette_for(AccentColor("#l1")), is_dark=False)
+    _assert_renders(
+        view_model, catalog.palette_family_for(LIGHT).palette_of(_appearance(light_accent="#l1")), is_dark=False
+    )
 
 
 def test_desktop_flip_under_an_explicit_preference_emits_nothing(
@@ -335,8 +340,8 @@ def test_preference_change_switching_the_scheme_emits_is_dark_once_and_only_the_
     _assert_only_changed_roles_emitted(
         spies,
         _changed_roles(
-            catalog.palette_family_for(DARK).palette_for(NO_PREFERENCE),
-            catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE),
+            catalog.palette_family_for(DARK).palette_of(_appearance()),
+            catalog.palette_family_for(LIGHT).palette_of(_appearance()),
         ),
     )
 
@@ -358,12 +363,15 @@ def test_accent_write_for_the_apps_scheme_emits_a_color_subset_and_no_is_dark(
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    settings_service.set_accent_color(DARK, AccentColor("#d2"))
+    settings_service.set_accent_color_preference(DARK, AccentColor("#d2"))
 
     palette_family = catalog.palette_family_for(DARK)
     assert is_dark_spy.count() == 0
     _assert_only_changed_roles_emitted(
-        spies, _changed_roles(palette_family.palette_for(NO_PREFERENCE), palette_family.palette_for(AccentColor("#d2")))
+        spies,
+        _changed_roles(
+            palette_family.palette_of(_appearance()), palette_family.palette_of(_appearance(dark_accent="#d2"))
+        ),
     )
 
 
@@ -372,7 +380,7 @@ def test_accent_write_for_the_other_scheme_emits_nothing(make_view_model, settin
     is_dark_spy = make_spy(view_model.isDarkChanged)
     spies = spy_roles(view_model)
 
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
     _assert_nothing_emitted(is_dark_spy, spies)
 
@@ -384,5 +392,5 @@ def test_props_swap_completes_before_the_first_emission(make_view_model, style_h
 
     style_hints.system_reports(LIGHT)
 
-    palette = catalog.palette_family_for(LIGHT).palette_for(NO_PREFERENCE)
+    palette = catalog.palette_family_for(LIGHT).palette_of(_appearance())
     assert observed == [(False, palette.background)]

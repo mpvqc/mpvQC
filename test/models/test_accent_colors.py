@@ -6,10 +6,11 @@ import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance import ColorScheme, Dark, Light
+from mpvqc.appearance import ColorSchemePreference, Dark, FollowSystem, Light
 from mpvqc.models import MpvqcAccentColorModel
 from mpvqc.services import PaletteCatalogService, ResourceService
 
+SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 
@@ -34,33 +35,33 @@ def catalog() -> PaletteCatalogService:
 
 @pytest.fixture
 def make_model():
-    def _make(color_scheme: ColorScheme | None = None) -> MpvqcAccentColorModel:
+    def _make(preference: ColorSchemePreference = SYSTEM) -> MpvqcAccentColorModel:
         # noinspection PyCallingNonCallable
         model = MpvqcAccentColorModel()
-        model.set_color_scheme(color_scheme)
+        model.set_preference(preference)
         return model
 
     return _make
 
 
-def test_without_a_color_scheme_the_model_is_empty(make_model):
+def test_under_system_the_model_is_empty(make_model):
     assert make_model().rowCount() == 0
 
 
-def test_rowcount_reflects_the_schemes_palette_family(make_model):
+def test_rowcount_reflects_the_preferences_palette_family(make_model):
     assert make_model(LIGHT).rowCount() == 2
     assert make_model(DARK).rowCount() == 4
 
 
-def test_clearing_the_color_scheme_empties_the_model(make_model):
+def test_falling_back_to_system_empties_the_model(make_model):
     model = make_model(DARK)
 
-    model.set_color_scheme(None)
+    model.set_preference(SYSTEM)
 
     assert model.rowCount() == 0
 
 
-def test_the_rows_carry_the_schemes_accents_and_display_colors(make_model, catalog):
+def test_the_rows_carry_the_preferences_accents_and_display_colors(make_model, catalog):
     model = make_model(LIGHT)
 
     palettes = catalog.palette_family_for(LIGHT).palettes
@@ -71,20 +72,20 @@ def test_the_rows_carry_the_schemes_accents_and_display_colors(make_model, catal
     assert displays == [palette.row_selected for palette in palettes]
 
 
-def test_setting_the_same_color_scheme_changes_nothing(qt_app, make_model, make_spy):
+def test_setting_the_same_preference_changes_nothing(qt_app, make_model, make_spy):
     model = make_model(DARK)
     spy = make_spy(model.dataChanged)
 
-    model.set_color_scheme(DARK)
+    model.set_preference(DARK)
 
     assert spy.count() == 0
 
 
-def test_color_scheme_changes_satisfy_the_item_model_protocol(qt_app, make_model):
+def test_preference_changes_satisfy_the_item_model_protocol(qt_app, make_model):
     model = make_model(LIGHT)
     QAbstractItemModelTester(model, QAbstractItemModelTester.FailureReportingMode.Fatal, model)
 
-    model.set_color_scheme(DARK)  # grow: 2 -> 4
-    model.set_color_scheme(LIGHT)  # shrink: 4 -> 2
-    model.set_color_scheme(None)  # empty: 2 -> 0
-    model.set_color_scheme(DARK)  # grow: 0 -> 4
+    model.set_preference(DARK)  # grow: 2 -> 4
+    model.set_preference(LIGHT)  # shrink: 4 -> 2
+    model.set_preference(SYSTEM)  # empty: 2 -> 0
+    model.set_preference(DARK)  # grow: 0 -> 4

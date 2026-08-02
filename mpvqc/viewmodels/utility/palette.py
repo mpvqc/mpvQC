@@ -61,8 +61,7 @@ def derive_palette_props(
     inputs: PaletteInputs,
     palette_family_for: Callable[[ColorScheme], PaletteFamily],
 ) -> PaletteProps:
-    palette_family = palette_family_for(inputs.color_scheme)
-    palette = palette_family.palette_for(inputs.appearance.accent_color_for(inputs.color_scheme))
+    palette = palette_family_for(inputs.color_scheme).palette_of(inputs.appearance)
     return PaletteProps(
         is_dark=isinstance(inputs.color_scheme, Dark),
         background=palette.background,

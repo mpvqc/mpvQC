@@ -151,29 +151,29 @@ def test_unreadable_color_scheme_preference_falls_back_to_system(settings_servic
     assert settings_service.color_scheme_preference == SYSTEM
 
 
-def test_accent_color_for_reports_no_preference_when_nothing_stored(settings_service):
-    assert settings_service.accent_color_for(LIGHT) == NO_PREFERENCE
-    assert settings_service.accent_color_for(DARK) == NO_PREFERENCE
+def test_accent_color_preference_for_reports_no_preference_when_nothing_stored(settings_service):
+    assert settings_service.accent_color_preference_for(LIGHT) == NO_PREFERENCE
+    assert settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
 
 
-def test_set_accent_color_stores_one_value_per_color_scheme(settings_service):
-    settings_service.set_accent_color(LIGHT, AccentColor("#ff5722"))
-    settings_service.set_accent_color(DARK, AccentColor("#3f51b5"))
+def test_set_accent_color_preference_stores_one_value_per_color_scheme(settings_service):
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
+    settings_service.set_accent_color_preference(DARK, AccentColor("#3f51b5"))
 
-    assert settings_service.accent_color_for(LIGHT) == AccentColor("#ff5722")
-    assert settings_service.accent_color_for(DARK) == AccentColor("#3f51b5")
-
-
-def test_set_accent_color_to_no_preference_clears_the_stored_entry(settings_service):
-    settings_service.set_accent_color(DARK, AccentColor("#3f51b5"))
-
-    settings_service.set_accent_color(DARK, NO_PREFERENCE)
-
-    assert settings_service.accent_color_for(DARK) == NO_PREFERENCE
+    assert settings_service.accent_color_preference_for(LIGHT) == AccentColor("#ff5722")
+    assert settings_service.accent_color_preference_for(DARK) == AccentColor("#3f51b5")
 
 
-def test_set_accent_color_writes_into_the_appearance_ini_section(settings_service, tmp_path):
-    settings_service.set_accent_color(LIGHT, AccentColor("#ff5722"))
+def test_set_accent_color_preference_to_no_preference_clears_the_stored_entry(settings_service):
+    settings_service.set_accent_color_preference(DARK, AccentColor("#3f51b5"))
+
+    settings_service.set_accent_color_preference(DARK, NO_PREFERENCE)
+
+    assert settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
+
+
+def test_set_accent_color_preference_writes_into_the_appearance_ini_section(settings_service, tmp_path):
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
     settings_service.qsettings.sync()
 
     ini = (tmp_path / "test_settings.ini").read_text()
@@ -185,17 +185,17 @@ def test_set_accent_color_writes_into_the_appearance_ini_section(settings_servic
 def test_appearance_projects_the_preference_and_both_stored_accents(settings_service):
     assert settings_service.appearance == Appearance(
         color_scheme_preference=SYSTEM,
-        light_accent_color=NO_PREFERENCE,
-        dark_accent_color=NO_PREFERENCE,
+        light_accent_color_preference=NO_PREFERENCE,
+        dark_accent_color_preference=NO_PREFERENCE,
     )
 
     settings_service.color_scheme_preference = DARK
-    settings_service.set_accent_color(LIGHT, AccentColor("#ff5722"))
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#ff5722"))
 
     assert settings_service.appearance == Appearance(
         color_scheme_preference=DARK,
-        light_accent_color=AccentColor("#ff5722"),
-        dark_accent_color=NO_PREFERENCE,
+        light_accent_color_preference=AccentColor("#ff5722"),
+        dark_accent_color_preference=NO_PREFERENCE,
     )
 
 
@@ -207,8 +207,8 @@ def test_preference_write_emits_the_appearance(settings_service, make_spy):
     assert spy.count() == 1
     assert spy.at(0, 0) == Appearance(
         color_scheme_preference=LIGHT,
-        light_accent_color=NO_PREFERENCE,
-        dark_accent_color=NO_PREFERENCE,
+        light_accent_color_preference=NO_PREFERENCE,
+        dark_accent_color_preference=NO_PREFERENCE,
     )
 
     settings_service.color_scheme_preference = LIGHT
@@ -223,12 +223,12 @@ def test_preference_write_emits_the_appearance(settings_service, make_spy):
 def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_service, make_spy, color_scheme):
     spy = make_spy(settings_service.appearance_changed)
 
-    settings_service.set_accent_color(color_scheme, AccentColor("#ff5722"))
+    settings_service.set_accent_color_preference(color_scheme, AccentColor("#ff5722"))
 
     assert spy.count() == 1
-    assert spy.at(0, 0).accent_color_for(color_scheme) == AccentColor("#ff5722")
+    assert spy.at(0, 0).accent_color_preference_for(color_scheme) == AccentColor("#ff5722")
 
-    settings_service.set_accent_color(color_scheme, AccentColor("#ff5722"))
+    settings_service.set_accent_color_preference(color_scheme, AccentColor("#ff5722"))
     assert spy.count() == 1
 
 

@@ -6,10 +6,11 @@ import inject
 import pytest
 from PySide6.QtTest import QAbstractItemModelTester
 
-from mpvqc.appearance import AccentColor, ColorScheme, Dark, Light, NoPreference
+from mpvqc.appearance import AccentColor, Appearance, ColorScheme, Dark, FollowSystem, Light, NoPreference
 from mpvqc.models import MpvqcColorSchemeModel
 from mpvqc.services import ColorSchemeService, PaletteCatalogService, ResourceService, SettingsService
 
+SYSTEM = FollowSystem()
 LIGHT = Light()
 DARK = Dark()
 NO_PREFERENCE = NoPreference()
@@ -68,8 +69,13 @@ def _read(model: MpvqcColorSchemeModel, row: int, role: int):
 
 
 def _badge(catalog: PaletteCatalogService, color_scheme: ColorScheme, accent: str | None) -> str:
-    accent_color = AccentColor(accent) if accent else NO_PREFERENCE
-    return catalog.palette_family_for(color_scheme).palette_for(accent_color).row_selected
+    preference = AccentColor(accent) if accent else NO_PREFERENCE
+    appearance = Appearance(
+        color_scheme_preference=SYSTEM,
+        light_accent_color_preference=preference,
+        dark_accent_color_preference=preference,
+    )
+    return catalog.palette_family_for(color_scheme).palette_of(appearance).row_selected
 
 
 def test_the_model_offers_the_three_preferences_in_order(make_model):
@@ -100,8 +106,8 @@ def test_previews_come_from_the_catalog_and_system_carries_both(make_model):
 
 
 def test_accents_render_each_schemes_stored_pick_and_system_carries_none(make_model, settings_service, catalog):
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color(DARK, AccentColor("#d3"))
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
     model = make_model()
 
     accents = [_read(model, row, MpvqcColorSchemeModel.AccentRole) for row in range(3)]
@@ -120,7 +126,7 @@ def test_an_accent_write_changes_only_its_own_row(make_model, settings_service, 
     model = make_model()
     spy = make_spy(model.dataChanged)
 
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
 
     assert spy.count() == 1
     assert spy.at(0, 0).row() == 1
@@ -154,6 +160,6 @@ def test_accent_writes_satisfy_the_item_model_protocol(make_model, settings_serv
     model = make_model()
     QAbstractItemModelTester(model, QAbstractItemModelTester.FailureReportingMode.Fatal, model)
 
-    settings_service.set_accent_color(LIGHT, AccentColor("#l1"))
-    settings_service.set_accent_color(DARK, AccentColor("#d3"))
-    settings_service.set_accent_color(LIGHT, NO_PREFERENCE)
+    settings_service.set_accent_color_preference(LIGHT, AccentColor("#l1"))
+    settings_service.set_accent_color_preference(DARK, AccentColor("#d3"))
+    settings_service.set_accent_color_preference(LIGHT, NO_PREFERENCE)

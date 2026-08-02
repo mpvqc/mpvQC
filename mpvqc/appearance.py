@@ -119,15 +119,15 @@ def resolve_color_scheme(
 @dataclass(frozen=True)
 class Appearance:
     color_scheme_preference: ColorSchemePreference
-    light_accent_color: AccentColorPreference
-    dark_accent_color: AccentColorPreference
+    light_accent_color_preference: AccentColorPreference
+    dark_accent_color_preference: AccentColorPreference
 
-    def accent_color_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
+    def accent_color_preference_for(self, color_scheme: ColorScheme) -> AccentColorPreference:
         match color_scheme:
             case Light():
-                return self.light_accent_color
+                return self.light_accent_color_preference
             case Dark():
-                return self.dark_accent_color
+                return self.dark_accent_color_preference
             case _:
                 assert_never(color_scheme)
 

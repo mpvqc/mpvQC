@@ -317,14 +317,14 @@ class MpvqcTestSettings(QObject):
     @Slot(str, result=str)
     def accentColor(self, color_scheme: str) -> str:
         settings = inject.instance(SettingsService)
-        accent_color = settings.accent_color_for(parse_color_scheme(color_scheme))
-        match accent_color:
+        preference = settings.accent_color_preference_for(parse_color_scheme(color_scheme))
+        match preference:
             case NoPreference():
                 return ""
             case AccentColor():
-                return accent_color.identifier
+                return preference.identifier
             case _:
-                assert_never(accent_color)
+                assert_never(preference)
 
     @Slot(result=list)
     def commentTypes(self) -> list[str]:
