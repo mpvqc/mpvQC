@@ -57,12 +57,12 @@ MpvqcDialog {
 
                     // A repeater builds every swatch up front, so the row stands at its
                     // full height from the first layout pass
-                    implicitHeight: _colorSchemes.implicitHeight
+                    implicitHeight: _colorSchemePreferences.implicitHeight
 
                     Layout.fillWidth: true
 
                     Rectangle {
-                        x: root.viewModel.colorSchemePreferenceIndex * (root._swatchFrameSize + _colorSchemes.spacing)
+                        x: root.viewModel.colorSchemePreferenceIndex * (root._swatchFrameSize + _colorSchemePreferences.spacing)
                         width: root._swatchFrameSize
                         height: root._swatchFrameSize
                         radius: root._ringRadius
@@ -82,20 +82,20 @@ MpvqcDialog {
                     }
 
                     Row {
-                        id: _colorSchemes
+                        id: _colorSchemePreferences
 
                         spacing: root._swatchSpacing
 
                         Repeater {
                             model: MpvqcColorSchemePreferenceModel {}
 
-                            delegate: MpvqcColorSchemeSwatch {
-                                id: _colorSchemeSwatch
+                            delegate: MpvqcColorSchemePreferenceSwatch {
+                                id: _colorSchemePreferenceSwatch
 
                                 required property int index
 
                                 frameSize: root._swatchFrameSize
-                                selected: _colorSchemeSwatch.index === root.viewModel.colorSchemePreferenceIndex
+                                selected: _colorSchemePreferenceSwatch.index === root.viewModel.colorSchemePreferenceIndex
 
                                 onPicked: preference => root.viewModel.setColorSchemePreference(preference)
                             }

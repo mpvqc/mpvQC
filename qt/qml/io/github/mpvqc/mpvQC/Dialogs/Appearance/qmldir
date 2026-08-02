@@ -7,4 +7,4 @@ module io.github.mpvqc.mpvQC.Dialogs.Appearance
 internal MpvqcAccentColorSwatch MpvqcAccentColorSwatch.qml
 internal MpvqcAppearanceDialog MpvqcAppearanceDialog.qml
 internal MpvqcAppearanceSection MpvqcAppearanceSection.qml
-internal MpvqcColorSchemeSwatch MpvqcColorSchemeSwatch.qml
+internal MpvqcColorSchemePreferenceSwatch MpvqcColorSchemePreferenceSwatch.qml

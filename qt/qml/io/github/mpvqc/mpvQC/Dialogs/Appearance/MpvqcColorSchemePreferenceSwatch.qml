@@ -12,7 +12,7 @@ import io.github.mpvqc.mpvQC.Utility
 
 Column {
     id: root
-    objectName: `colorSchemeSwatch_${root.preference}`
+    objectName: `colorSchemePreferenceSwatch_${root.preference}`
 
     required property string preference
     required property string caption

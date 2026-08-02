@@ -10,7 +10,7 @@ import QtTest
 TestCase {
     id: testCase
 
-    name: "MpvqcColorSchemeSwatch"
+    name: "MpvqcColorSchemePreferenceSwatch"
     width: 200
     height: 200
     visible: true
@@ -148,7 +148,7 @@ TestCase {
     Component {
         id: objectUnderTest
 
-        MpvqcColorSchemeSwatch {}
+        MpvqcColorSchemePreferenceSwatch {}
     }
 
     Component {

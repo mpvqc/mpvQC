@@ -38,8 +38,8 @@ TestCase {
     }
 
     function pickColorScheme(dialog: QtObject, preference: string): void {
-        const swatch = it.find.visualChild(dialog, `colorSchemeSwatch_${preference}`);
-        verify(swatch, `colorSchemeSwatch_${preference} not found`);
+        const swatch = it.find.visualChild(dialog, `colorSchemePreferenceSwatch_${preference}`);
+        verify(swatch, `colorSchemePreferenceSwatch_${preference} not found`);
         mouseClick(swatch);
         tryVerify(() => it.settings.colorSchemePreference() === preference);
     }
