@@ -31,12 +31,8 @@ def style_hints(make_style_hints):
 def configure_injections(
     common_bindings_with, settings_service, style_hints, make_palette_family_data, make_resource_service
 ):
-    light = make_palette_family_data(
-        identifier="fake-light", color_scheme="light", default_accent="#l2", accents=["#l1", "#l2"]
-    )
-    dark = make_palette_family_data(
-        identifier="fake-dark", color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2", "#d3"]
-    )
+    light = make_palette_family_data(color_scheme="light", default_accent="#l2", accents=["#l1", "#l2"])
+    dark = make_palette_family_data(color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2", "#d3"])
     fake = make_resource_service(light, dark)
 
     def custom_bindings(binder: inject.Binder):

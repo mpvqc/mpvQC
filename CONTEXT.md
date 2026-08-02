@@ -60,8 +60,6 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **Palette family**: palettes for one effective color scheme.
 - **Palette catalog**: every palette family the app knows.
 - **Color role**: one named entry in the palette: background, hint, row base. The Qt term.
-- **Theme**: legacy term for a color scheme and its palettes bundled as one entity. Color scheme, palette and palette
-  family cover it now, so don't use it in new names. A few leftovers still carry it until they die.
 
 ## Platform
 

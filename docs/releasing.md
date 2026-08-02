@@ -26,7 +26,7 @@ Run the formatter before committing.
   - [ ] All dependencies match `pyproject.toml`
   - [ ] License identifiers match each package's actual metadata, not the project's umbrella license
   - [ ] `REUSE.toml` aggregate and `LICENSES/` texts are in sync: `reuse lint`
-- [ ] New screenshots created (both light and dark themes) for Website and Flatpak
+- [ ] New screenshots created (both light and dark color schemes) for Website and Flatpak
 - [ ] Release notes drafted
 
 ### Verify build and manual testing

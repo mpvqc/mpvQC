@@ -8,10 +8,9 @@ from functools import cached_property
 
 import inject
 
-from mpvqc.appearance import AccentColor, EffectiveColorScheme, Palette, ThemeIdentifier
+from mpvqc.appearance import AccentColor, EffectiveColorScheme, Palette
 
 from .resource import ResourceService
-from .settings import default_theme_identifier
 
 
 def _dark_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette:
@@ -70,8 +69,6 @@ def _light_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette
 
 @dataclass(frozen=True)
 class PaletteFamily:
-    identifier: ThemeIdentifier
-    name: str
     preview: str
     color_scheme: EffectiveColorScheme
     default_accent: AccentColor
@@ -105,8 +102,6 @@ def _parse_palette_family(data: dict) -> PaletteFamily:
     color_scheme = EffectiveColorScheme(data["color_scheme"])
     make_palette = _dark_palette if color_scheme is EffectiveColorScheme.DARK else _light_palette
     return PaletteFamily(
-        identifier=ThemeIdentifier(data["identifier"]),
-        name=data["name"],
         preview=data["preview"],
         color_scheme=color_scheme,
         default_accent=AccentColor(data["default_accent"]),
@@ -123,10 +118,6 @@ class PaletteCatalogService:
         self._by_scheme: dict[EffectiveColorScheme, PaletteFamily] = {}
         for palette_family in self._palette_families:
             self._by_scheme.setdefault(palette_family.color_scheme, palette_family)
-        self._by_identifier: dict[ThemeIdentifier, PaletteFamily] = {p.identifier: p for p in self._palette_families}
-        self._index_by_identifier: dict[ThemeIdentifier, int] = {
-            p.identifier: idx for idx, p in enumerate(self._palette_families)
-        }
 
     @property
     def palette_families(self) -> tuple[PaletteFamily, ...]:
@@ -137,15 +128,3 @@ class PaletteCatalogService:
 
     def preview_color_for(self, color_scheme: EffectiveColorScheme) -> str:
         return self.palette_family_for(color_scheme).preview
-
-    def palette_family_for_identifier(self, theme_identifier: ThemeIdentifier) -> PaletteFamily:
-        palette_family = self._by_identifier.get(theme_identifier)
-        if palette_family is None:
-            return self._by_identifier[default_theme_identifier()]
-        return palette_family
-
-    def palette_family_index_for_identifier(self, theme_identifier: ThemeIdentifier) -> int:
-        index = self._index_by_identifier.get(theme_identifier)
-        if index is None:
-            return self._index_by_identifier[default_theme_identifier()]
-        return index

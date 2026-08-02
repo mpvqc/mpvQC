@@ -105,7 +105,6 @@ def make_palette_family_data():
         *,
         default_accent: str,
         accents: list[str],
-        identifier: str | None = None,
         color_scheme: str | None = None,
         preview: str | None = None,
     ) -> dict:
@@ -113,8 +112,6 @@ def make_palette_family_data():
         palettes = palette_family["palettes"][: len(accents)]
         for palette, accent in zip(palettes, accents, strict=True):
             palette["identifier"] = accent
-        if identifier is not None:
-            palette_family["identifier"] = identifier
         if color_scheme is not None:
             palette_family["color_scheme"] = color_scheme
         if preview is not None:

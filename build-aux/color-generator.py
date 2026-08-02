@@ -92,10 +92,10 @@ def update_palette_catalog_file(color_map: dict[str, dict[str, str]], dark: bool
     with Path(path).open(encoding="utf-8") as f:
         file = json.load(f)
 
-    identifier = "material-you-dark" if dark else "material-you"
+    color_scheme = "dark" if dark else "light"
 
     for idx, item in enumerate(file):
-        if identifier == item["identifier"]:
+        if color_scheme == item["color_scheme"]:
             file[idx]["palettes"] = [{"identifier": seed, "colors": palette} for seed, palette in color_map.items()]
 
     validate_default_accents(file)
@@ -108,7 +108,7 @@ def validate_default_accents(palette_families: list[dict]) -> None:
         accent_colors = {palette["identifier"] for palette in palette_family["palettes"]}
         if palette_family["default_accent"] not in accent_colors:
             print(
-                f"Palette family {palette_family['identifier']}: "
+                f"The {palette_family['color_scheme']} palette family: "
                 f"default_accent {palette_family['default_accent']} is not among its accent colors"
             )
             sys.exit(1)

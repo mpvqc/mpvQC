@@ -18,7 +18,6 @@ from PySide6.QtCore import (
     Qt,
     QUrl,
     Signal,
-    Slot,
 )
 
 from mpvqc.appearance import (
@@ -26,8 +25,6 @@ from mpvqc.appearance import (
     Appearance,
     ColorSchemePreference,
     EffectiveColorScheme,
-    ThemeAppearance,
-    ThemeIdentifier,
 )
 from mpvqc.datamodels import LANGUAGES, ImportFoundVideo
 from mpvqc.enums import TimeDisplayMode, WindowTitleFormat
@@ -43,16 +40,8 @@ if TYPE_CHECKING:
 _COLOR_SCHEME_PREFERENCE_KEY = "Appearance/colorSchemePreference"
 
 
-def default_theme_identifier() -> ThemeIdentifier:
-    return ThemeIdentifier("material-you-dark")
-
-
 def default_color_scheme_preference() -> ColorSchemePreference:
     return ColorSchemePreference.SYSTEM
-
-
-def _theme_accent_key(theme_identifier: ThemeIdentifier) -> str:
-    return f"Theme/accent/{theme_identifier}"
 
 
 def _accent_color_key(color_scheme: EffectiveColorScheme) -> str:
@@ -271,16 +260,6 @@ class SettingsService(QObject):
         signal=lambda s: s.layout_orientation_changed,
     )
 
-    theme_identifier_changed = Signal(str)
-    theme_identifier = _Setting(
-        "Theme/themeIdentifier",
-        default=default_theme_identifier,
-        type_=str,
-        signal=lambda s: s.theme_identifier_changed,
-    )
-
-    theme_appearance_changed = Signal(ThemeAppearance)
-
     color_scheme_preference_changed = Signal(ColorSchemePreference)
     appearance_changed = Signal(Appearance)
 
@@ -296,29 +275,6 @@ class SettingsService(QObject):
         super().__init__(parent)
         file = ini_file if ini_file is not None else self._type_mapper.map_path_to_str(self._paths.file_settings)
         self.qsettings = QSettings(file, QSettings.Format.IniFormat)
-        self.theme_identifier_changed.connect(self._on_theme_identifier_changed)
-
-    @Slot()
-    def _on_theme_identifier_changed(self) -> None:
-        self.theme_appearance_changed.emit(self.theme_appearance)
-
-    @property
-    def theme_appearance(self) -> ThemeAppearance:
-        theme_identifier = ThemeIdentifier(self.theme_identifier)
-        return ThemeAppearance(
-            theme_identifier=theme_identifier,
-            stored_accent=self.theme_accent_color_for(theme_identifier),
-        )
-
-    def theme_accent_color_for(self, theme_identifier: ThemeIdentifier) -> AccentColor | None:
-        return self._stored_accent_color(_theme_accent_key(theme_identifier))
-
-    def set_theme_accent_color(self, theme_identifier: ThemeIdentifier, accent_color: AccentColor | None) -> None:
-        if self.theme_accent_color_for(theme_identifier) == accent_color:
-            return
-        self._store_accent_color(_theme_accent_key(theme_identifier), accent_color)
-        if theme_identifier == self.theme_identifier:
-            self.theme_appearance_changed.emit(self.theme_appearance)
 
     @property
     def color_scheme_preference(self) -> ColorSchemePreference:

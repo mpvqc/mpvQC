@@ -8,7 +8,6 @@ from typing import NewType
 
 from PySide6.QtCore import Qt
 
-ThemeIdentifier = NewType("ThemeIdentifier", str)
 AccentColor = NewType("AccentColor", str)
 
 
@@ -57,12 +56,6 @@ class Appearance:
         if color_scheme is EffectiveColorScheme.LIGHT:
             return self.light_accent_color
         return self.dark_accent_color
-
-
-@dataclass(frozen=True)
-class ThemeAppearance:
-    theme_identifier: ThemeIdentifier
-    stored_accent: AccentColor | None
 
 
 @dataclass(frozen=True)

@@ -12,26 +12,8 @@ from mpvqc.appearance import (
     Appearance,
     ColorSchemePreference,
     EffectiveColorScheme,
-    ThemeAppearance,
-    ThemeIdentifier,
 )
-from mpvqc.services import SettingsService
 from mpvqc.services.settings import default_language
-
-
-@pytest.fixture
-def stale_theme_config(tmp_path, type_mapper):
-    """A config written by a version that stored the theme identifier."""
-
-    def _make() -> SettingsService:
-        ini = tmp_path / "stale_settings.ini"
-        ini.write_text(
-            "[Theme]\nthemeIdentifier=material-you\naccent\\material-you=#3f51b5\n",
-            encoding="utf-8",
-        )
-        return SettingsService(ini_file=type_mapper.map_path_to_str(ini))
-
-    return _make
 
 
 @pytest.mark.parametrize(
@@ -78,28 +60,6 @@ def test_backup_enabled_signal_emission(settings_service, make_spy):
     assert spy.count() == 1
 
 
-def test_theme_identifier_default(settings_service):
-    assert settings_service.theme_identifier == "material-you-dark"
-
-
-def test_theme_identifier_set_and_get(settings_service):
-    test_theme = "custom-theme"
-    settings_service.theme_identifier = test_theme
-    assert settings_service.theme_identifier == test_theme
-
-
-def test_theme_identifier_signal_emission(settings_service, make_spy):
-    spy = make_spy(settings_service.theme_identifier_changed)
-
-    test_theme = "new-theme"
-    settings_service.theme_identifier = test_theme
-    assert spy.count() == 1
-    assert spy.at(0, 0) == test_theme
-
-    settings_service.theme_identifier = test_theme
-    assert spy.count() == 1
-
-
 def test_backup_interval_default(settings_service):
     assert settings_service.backup_interval == 60
 
@@ -142,107 +102,6 @@ def test_time_display_mode_signal_emission(settings_service, make_spy):
 
     settings_service.time_display_mode = test_mode
     assert spy.count() == 1
-
-
-def test_theme_accent_color_for_returns_none_when_nothing_stored(settings_service):
-    assert settings_service.theme_accent_color_for(ThemeIdentifier("material-you-dark")) is None
-
-
-def test_set_theme_accent_color_stores_one_value_per_theme(settings_service):
-    dark = ThemeIdentifier("material-you-dark")
-    light = ThemeIdentifier("material-you")
-
-    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
-    settings_service.set_theme_accent_color(light, AccentColor("#ff5722"))
-
-    assert settings_service.theme_accent_color_for(dark) == "#3f51b5"
-    assert settings_service.theme_accent_color_for(light) == "#ff5722"
-
-
-def test_set_theme_accent_color_writes_into_the_theme_ini_section(settings_service, tmp_path):
-    settings_service.set_theme_accent_color(ThemeIdentifier("material-you"), AccentColor("#3f51b5"))
-    settings_service.qsettings.sync()
-
-    ini = (tmp_path / "test_settings.ini").read_text()
-    theme_section = ini.split("[Theme]", 1)[1].split("[", 1)[0]
-    # QSettings writes the sub-key separator as a backslash in INI files
-    assert r"accent\material-you=#3f51b5" in theme_section
-
-
-def test_theme_appearance_projects_the_current_theme_and_its_stored_accent(settings_service):
-    dark = ThemeIdentifier("material-you-dark")
-    light = ThemeIdentifier("material-you")
-
-    assert settings_service.theme_appearance == ThemeAppearance(theme_identifier=dark, stored_accent=None)
-
-    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
-    assert settings_service.theme_appearance == ThemeAppearance(
-        theme_identifier=dark, stored_accent=AccentColor("#3f51b5")
-    )
-
-    settings_service.theme_identifier = str(light)
-    assert settings_service.theme_appearance == ThemeAppearance(theme_identifier=light, stored_accent=None)
-
-
-def test_theme_write_emits_the_new_theme_appearance(settings_service, make_spy):
-    spy = make_spy(settings_service.theme_appearance_changed)
-    light = ThemeIdentifier("material-you")
-    settings_service.set_theme_accent_color(light, AccentColor("#ff5722"))
-    spy.reset()
-
-    settings_service.theme_identifier = str(light)
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ThemeAppearance(theme_identifier=light, stored_accent=AccentColor("#ff5722"))
-
-    settings_service.theme_identifier = str(light)
-    assert spy.count() == 1
-
-
-def test_current_theme_accent_write_emits_the_theme_appearance_once(settings_service, make_spy):
-    spy = make_spy(settings_service.theme_appearance_changed)
-    dark = ThemeIdentifier("material-you-dark")
-
-    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ThemeAppearance(theme_identifier=dark, stored_accent=AccentColor("#3f51b5"))
-
-    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
-    assert spy.count() == 1
-
-
-def test_set_theme_accent_color_none_clears_the_stored_entry(settings_service):
-    dark = ThemeIdentifier("material-you-dark")
-    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
-
-    settings_service.set_theme_accent_color(dark, None)
-
-    assert settings_service.theme_accent_color_for(dark) is None
-
-
-def test_clearing_the_current_theme_accent_emits_the_theme_appearance(settings_service, make_spy):
-    dark = ThemeIdentifier("material-you-dark")
-    settings_service.set_theme_accent_color(dark, AccentColor("#3f51b5"))
-    spy = make_spy(settings_service.theme_appearance_changed)
-
-    settings_service.set_theme_accent_color(dark, None)
-
-    assert spy.count() == 1
-    assert spy.at(0, 0) == ThemeAppearance(theme_identifier=dark, stored_accent=None)
-
-    settings_service.set_theme_accent_color(dark, None)
-    assert spy.count() == 1
-
-
-def test_other_theme_accent_write_stores_silently(settings_service, make_spy):
-    spy = make_spy(settings_service.theme_appearance_changed)
-    light = ThemeIdentifier("material-you")
-
-    settings_service.set_theme_accent_color(light, AccentColor("#ff5722"))
-
-    assert spy.count() == 0
-    assert settings_service.theme_accent_color_for(light) == "#ff5722"
 
 
 def test_color_scheme_preference_defaults_to_system(settings_service):
@@ -365,37 +224,11 @@ def test_accent_write_for_either_scheme_emits_the_appearance_once(settings_servi
     assert spy.count() == 1
 
 
-def test_a_config_holding_only_stale_theme_keys_yields_appearance_defaults(stale_theme_config):
-    service = stale_theme_config()
-    # the legacy reader sees them, so the defaults below are a real observation
-    assert service.theme_identifier == "material-you"
-
-    assert service.appearance == Appearance(
-        color_scheme_preference=ColorSchemePreference.SYSTEM,
-        light_accent_color=None,
-        dark_accent_color=None,
-    )
-
-
-def test_writing_the_appearance_leaves_stale_theme_keys_untouched(stale_theme_config, tmp_path):
-    service = stale_theme_config()
-
-    service.color_scheme_preference = ColorSchemePreference.LIGHT
-    service.set_accent_color(EffectiveColorScheme.LIGHT, AccentColor("#ff5722"))
-    service.qsettings.sync()
-
-    ini = (tmp_path / "stale_settings.ini").read_text()
-    assert "colorSchemePreference=light" in ini  # the file was rewritten
-    theme_section = ini.split("[Theme]", 1)[1].split("[", 1)[0]
-    assert "themeIdentifier=material-you" in theme_section
-    assert r"accent\material-you=#3f51b5" in theme_section
-
-
 def test_multiple_property_changes(settings_service):
     settings_service.backup_interval = 30
-    settings_service.theme_identifier = "test-theme"
+    settings_service.color_scheme_preference = ColorSchemePreference.LIGHT
     settings_service.time_display_mode = 1
 
     assert settings_service.backup_interval == 30
-    assert settings_service.theme_identifier == "test-theme"
+    assert settings_service.color_scheme_preference is ColorSchemePreference.LIGHT
     assert settings_service.time_display_mode == 1
