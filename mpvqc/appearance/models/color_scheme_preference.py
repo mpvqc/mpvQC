@@ -51,12 +51,12 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
     CaptionRole = Qt.ItemDataRole.UserRole + 2
     PreviewColorRole = Qt.ItemDataRole.UserRole + 3
     AlternatePreviewColorRole = Qt.ItemDataRole.UserRole + 4
-    AccentRole = Qt.ItemDataRole.UserRole + 5
+    AccentPreviewColorRole = Qt.ItemDataRole.UserRole + 5
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         self._rows = self._build_rows()
-        self._accents = self._accents_of(self._settings.appearance_preference)
+        self._accent_preview_colors = self._accent_preview_colors_of(self._settings.appearance_preference)
         self._settings.appearance_preference_changed.connect(self._fold_appearance_preference)
 
     def _build_rows(self) -> tuple[_Row, ...]:
@@ -89,10 +89,10 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
             case _:
                 assert_never(preference)
 
-    def _accents_of(self, appearance_preference: AppearancePreference) -> tuple[str, ...]:
-        return tuple(self._accent_of(row.preference, appearance_preference) for row in self._rows)
+    def _accent_preview_colors_of(self, appearance_preference: AppearancePreference) -> tuple[str, ...]:
+        return tuple(self._accent_preview_color_of(row.preference, appearance_preference) for row in self._rows)
 
-    def _accent_of(
+    def _accent_preview_color_of(
         self,
         color_scheme_preference: ColorSchemePreference,
         appearance_preference: AppearancePreference,
@@ -108,12 +108,12 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
 
     @Slot(AppearancePreference)
     def _fold_appearance_preference(self, appearance_preference: AppearancePreference) -> None:
-        new, old = self._accents_of(appearance_preference), self._accents
-        self._accents = new
-        for row, (new_accent, old_accent) in enumerate(zip(new, old, strict=True)):
-            if new_accent != old_accent:
+        new, old = self._accent_preview_colors_of(appearance_preference), self._accent_preview_colors
+        self._accent_preview_colors = new
+        for row, (new_accent_preview_color, old_accent_preview_color) in enumerate(zip(new, old, strict=True)):
+            if new_accent_preview_color != old_accent_preview_color:
                 index = self.index(row)
-                self.dataChanged.emit(index, index, [self.AccentRole])
+                self.dataChanged.emit(index, index, [self.AccentPreviewColorRole])
 
     @override
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:
@@ -137,8 +137,8 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
                 return row.preview_color
             case self.AlternatePreviewColorRole:
                 return row.alternate_preview_color
-            case self.AccentRole:
-                return self._accents[index.row()]
+            case self.AccentPreviewColorRole:
+                return self._accent_preview_colors[index.row()]
 
         return None
 
@@ -149,5 +149,5 @@ class MpvqcColorSchemePreferenceModel(QAbstractListModel):
             self.CaptionRole: QByteArray(b"caption"),
             self.PreviewColorRole: QByteArray(b"previewColor"),
             self.AlternatePreviewColorRole: QByteArray(b"alternatePreviewColor"),
-            self.AccentRole: QByteArray(b"accent"),
+            self.AccentPreviewColorRole: QByteArray(b"accentPreviewColor"),
         }

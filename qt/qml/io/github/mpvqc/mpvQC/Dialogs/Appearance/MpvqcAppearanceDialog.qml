@@ -108,7 +108,7 @@ MpvqcDialog {
                 objectName: "accentColorSection"
 
                 title: qsTranslate("AppearanceDialog", "Color")
-                expanded: root.viewModel.accentSectionVisible
+                expanded: root.viewModel.accentColorSectionVisible
 
                 Layout.fillWidth: true
 

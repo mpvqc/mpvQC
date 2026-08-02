@@ -21,7 +21,7 @@ TestCase {
             caption: "System",
             previewColor: "#f5f2fa",
             alternatePreviewColor: "#121318",
-            accent: "",
+            accentPreviewColor: "",
             selected: false
         })
 
@@ -30,7 +30,7 @@ TestCase {
             caption: "Light",
             previewColor: "#f5f2fa",
             alternatePreviewColor: "",
-            accent: "#00ff00",
+            accentPreviewColor: "#00ff00",
             selected: false
         })
 
@@ -80,7 +80,7 @@ TestCase {
         compare(split.visible, data.expectSplit);
     }
 
-    function test_badgeOnlyWithAnAccent_data() {
+    function test_badgeOnlyWithAnAccentPreviewColor_data() {
         return [
             {
                 tag: "system",
@@ -95,7 +95,7 @@ TestCase {
         ];
     }
 
-    function test_badgeOnlyWithAnAccent(data): void {
+    function test_badgeOnlyWithAnAccentPreviewColor(data): void {
         const control = makeControl(data.properties);
         const badge = findChild(control, "accentBadge");
         verify(badge);
@@ -103,13 +103,13 @@ TestCase {
         compare(badge.visible, data.expectBadge);
     }
 
-    function test_badgeCrossFadesToANewAccent(): void {
+    function test_badgeCrossFadesToANewAccentPreviewColor(): void {
         const control = makeControl(testCase.lightRow);
         const badge = findChild(control, "accentBadge");
         verify(badge);
         tryCompare(badge, "color", "#00ff00");
 
-        control.accent = "#0000ff";
+        control.accentPreviewColor = "#0000ff";
 
         tryCompare(badge, "color", "#0000ff");
     }

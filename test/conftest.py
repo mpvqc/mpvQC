@@ -104,7 +104,7 @@ class FakeResourceService(ResourceService):
 def make_palette_family_data():
     def _make(
         *,
-        default_accent: str,
+        default_accent_color: str,
         accents: list[str],
         color_scheme: str | None = None,
         preview_color: str | None = None,
@@ -118,7 +118,7 @@ def make_palette_family_data():
         if preview_color is not None:
             palette_family["preview_color"] = preview_color
         palette_family["palettes"] = palettes
-        palette_family["default_accent"] = default_accent
+        palette_family["default_accent_color"] = default_accent_color
         return palette_family
 
     return _make

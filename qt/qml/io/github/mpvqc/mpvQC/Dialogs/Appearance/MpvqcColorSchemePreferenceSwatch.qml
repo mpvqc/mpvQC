@@ -18,12 +18,12 @@ Column {
     required property string caption
     required property color previewColor
     required property string alternatePreviewColor
-    required property string accent
+    required property string accentPreviewColor
     required property bool selected
 
-    // System owns no color scheme: it carries the second preview color and no accent
+    // System owns no color scheme: it carries the second preview color and no accent color
     readonly property bool split: root.alternatePreviewColor !== ""
-    readonly property bool badged: root.accent !== ""
+    readonly property bool badged: root.accentPreviewColor !== ""
 
     property int frameSize: 70
 
@@ -150,7 +150,7 @@ Column {
                 height: root._badgeSize
                 radius: root._badgeSize / 2
                 visible: root.badged
-                color: root.badged ? root.accent : "transparent"
+                color: root.badged ? root.accentPreviewColor : "transparent"
 
                 Behavior on color {
                     ColorAnimation {

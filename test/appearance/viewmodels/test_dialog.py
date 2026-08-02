@@ -40,8 +40,8 @@ def style_hints(make_style_hints):
 def configure_injections(
     common_bindings_with, settings_service, style_hints, make_palette_family_data, make_resource_service
 ):
-    light = make_palette_family_data(color_scheme="light", default_accent="#l2", accents=["#l1", "#l2"])
-    dark = make_palette_family_data(color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2", "#d3"])
+    light = make_palette_family_data(color_scheme="light", default_accent_color="#l2", accents=["#l1", "#l2"])
+    dark = make_palette_family_data(color_scheme="dark", default_accent_color="#d1", accents=["#d1", "#d2", "#d3"])
     fake = make_resource_service(light, dark)
 
     def custom_bindings(binder: inject.Binder):
@@ -102,7 +102,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=0,
                 accent_color_index=-1,
-                accent_section_visible=False,
+                accent_color_section_visible=False,
             ),
         ),
         DerivationCase(
@@ -111,7 +111,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=0,
                 accent_color_index=-1,
-                accent_section_visible=False,
+                accent_color_section_visible=False,
             ),
         ),
         DerivationCase(
@@ -120,7 +120,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=0,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
         DerivationCase(
@@ -129,7 +129,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=1,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
         DerivationCase(
@@ -138,7 +138,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=1,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
         DerivationCase(
@@ -147,7 +147,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=1,
                 accent_color_index=1,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
         DerivationCase(
@@ -156,7 +156,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=2,
                 accent_color_index=1,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
         DerivationCase(
@@ -165,7 +165,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=2,
                 accent_color_index=0,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
         DerivationCase(
@@ -174,7 +174,7 @@ class DerivationCase(NamedTuple):
             expected=AppearanceDialogProps(
                 color_scheme_preference_index=2,
                 accent_color_index=0,
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             ),
         ),
     ],
@@ -194,7 +194,7 @@ def test_initial_snapshot_reads_settings_at_construction(make_view_model, settin
 
     assert view_model.colorSchemePreferenceIndex == 1
     assert view_model.accentColorIndex == 0
-    assert view_model.accentSectionVisible is True
+    assert view_model.accentColorSectionVisible is True
     assert view_model.accentColorModel.rowCount() == 2
 
 
@@ -205,7 +205,7 @@ def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
     view_model = make_view_model()
     preference_spy = make_spy(view_model.colorSchemePreferenceIndexChanged)
     accent_spy = make_spy(view_model.accentColorIndexChanged)
-    visible_spy = make_spy(view_model.accentSectionVisibleChanged)
+    visible_spy = make_spy(view_model.accentColorSectionVisibleChanged)
     assert view_model.accentColorModel.rowCount() == 0
 
     settings_service.color_scheme_preference = LIGHT
@@ -222,7 +222,7 @@ def test_a_preference_write_unfolding_the_section_emits_every_changed_notify(
 def test_a_preference_write_between_two_schemes_keeps_the_section_open(make_view_model, settings_service, make_spy):
     settings_service.color_scheme_preference = LIGHT
     view_model = make_view_model()
-    visible_spy = make_spy(view_model.accentSectionVisibleChanged)
+    visible_spy = make_spy(view_model.accentColorSectionVisibleChanged)
     assert view_model.accentColorModel.rowCount() == 2
 
     settings_service.color_scheme_preference = DARK
@@ -301,9 +301,9 @@ def test_set_accent_color_under_system_writes_nothing(make_view_model, settings_
 def test_props_swap_completes_before_the_first_emission(make_view_model, settings_service):
     view_model = make_view_model()
     observed: list[tuple[int, int, bool]] = []
-    view_model.accentSectionVisibleChanged.connect(
+    view_model.accentColorSectionVisibleChanged.connect(
         lambda _: observed.append(
-            (view_model.colorSchemePreferenceIndex, view_model.accentColorIndex, view_model.accentSectionVisible)
+            (view_model.colorSchemePreferenceIndex, view_model.accentColorIndex, view_model.accentColorSectionVisible)
         )
     )
 
@@ -318,7 +318,7 @@ def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints,
     spies = [
         make_spy(view_model.colorSchemePreferenceIndexChanged),
         make_spy(view_model.accentColorIndexChanged),
-        make_spy(view_model.accentSectionVisibleChanged),
+        make_spy(view_model.accentColorSectionVisibleChanged),
     ]
     model_spy = make_spy(view_model.accentColorModel.modelReset)
 
@@ -327,7 +327,7 @@ def test_a_desktop_flip_under_system_moves_nothing(make_view_model, style_hints,
     assert [spy.count() for spy in spies] == [0, 0, 0]
     assert model_spy.count() == 0
     assert view_model.colorSchemePreferenceIndex == 0
-    assert view_model.accentSectionVisible is False
+    assert view_model.accentColorSectionVisible is False
     assert view_model.accentColorModel.rowCount() == 0
 
 
@@ -351,5 +351,5 @@ def test_reject_restores_the_preference_and_both_accents(make_view_model, settin
     assert settings_service.accent_color_preference_for(DARK) == NO_PREFERENCE
     assert view_model.colorSchemePreferenceIndex == 2
     assert view_model.accentColorIndex == 0
-    assert view_model.accentSectionVisible is True
+    assert view_model.accentColorSectionVisible is True
     assert view_model.accentColorModel.rowCount() == 3

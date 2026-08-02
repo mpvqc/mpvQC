@@ -46,7 +46,7 @@ class AppearanceDialogInputs:
 class AppearanceDialogProps:
     color_scheme_preference_index: int
     accent_color_index: int
-    accent_section_visible: bool
+    accent_color_section_visible: bool
 
 
 def derive_appearance_dialog_props(
@@ -62,14 +62,14 @@ def derive_appearance_dialog_props(
             return AppearanceDialogProps(
                 color_scheme_preference_index=preference_index,
                 accent_color_index=-1,
-                accent_section_visible=False,
+                accent_color_section_visible=False,
             )
         case Light() | Dark():
             family = palette_family_for(color_scheme_preference)
             return AppearanceDialogProps(
                 color_scheme_preference_index=preference_index,
                 accent_color_index=family.palette_index_of(appearance_preference),
-                accent_section_visible=True,
+                accent_color_section_visible=True,
             )
         case _:
             assert_never(color_scheme_preference)
@@ -82,7 +82,7 @@ class MpvqcAppearanceDialogViewModel(QObject):
 
     colorSchemePreferenceIndexChanged = Signal(int)
     accentColorIndexChanged = Signal(int)
-    accentSectionVisibleChanged = Signal(bool)
+    accentColorSectionVisibleChanged = Signal(bool)
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -115,8 +115,8 @@ class MpvqcAppearanceDialogViewModel(QObject):
             self.colorSchemePreferenceIndexChanged.emit(new.color_scheme_preference_index)
         if new.accent_color_index != old.accent_color_index:
             self.accentColorIndexChanged.emit(new.accent_color_index)
-        if new.accent_section_visible != old.accent_section_visible:
-            self.accentSectionVisibleChanged.emit(new.accent_section_visible)
+        if new.accent_color_section_visible != old.accent_color_section_visible:
+            self.accentColorSectionVisibleChanged.emit(new.accent_color_section_visible)
 
     @Property(int, notify=colorSchemePreferenceIndexChanged)
     def colorSchemePreferenceIndex(self) -> int:
@@ -126,9 +126,9 @@ class MpvqcAppearanceDialogViewModel(QObject):
     def accentColorIndex(self) -> int:
         return self._props.accent_color_index
 
-    @Property(bool, notify=accentSectionVisibleChanged)
-    def accentSectionVisible(self) -> bool:
-        return self._props.accent_section_visible
+    @Property(bool, notify=accentColorSectionVisibleChanged)
+    def accentColorSectionVisible(self) -> bool:
+        return self._props.accent_color_section_visible
 
     @Property(QAbstractItemModel, constant=True, final=True)
     def accentColorModel(self) -> MpvqcAccentColorModel:

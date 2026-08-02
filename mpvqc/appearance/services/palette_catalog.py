@@ -80,30 +80,30 @@ def _light_palette(accent_color: AccentColor, colors: dict[str, str]) -> Palette
 class PaletteFamily:
     preview_color: str
     color_scheme: ColorScheme
-    default_accent: AccentColor
+    default_accent_color: AccentColor
     palettes: tuple[Palette, ...]
 
     @cached_property
-    def _palette_by_accent(self) -> dict[AccentColor, Palette]:
+    def _palette_by_accent_color(self) -> dict[AccentColor, Palette]:
         return {palette.accent_color: palette for palette in self.palettes}
 
     @cached_property
-    def _index_by_accent(self) -> dict[AccentColor, int]:
+    def _index_by_accent_color(self) -> dict[AccentColor, int]:
         return {palette.accent_color: idx for idx, palette in enumerate(self.palettes)}
 
     def palette_of(self, appearance_preference: AppearancePreference) -> Palette:
-        return self._palette_by_accent[self._resolve(appearance_preference)]
+        return self._palette_by_accent_color[self._resolve(appearance_preference)]
 
     def palette_index_of(self, appearance_preference: AppearancePreference) -> int:
-        return self._index_by_accent[self._resolve(appearance_preference)]
+        return self._index_by_accent_color[self._resolve(appearance_preference)]
 
     def _resolve(self, appearance_preference: AppearancePreference) -> AccentColor:
         preference = appearance_preference.accent_color_preference_for(self.color_scheme)
         match preference:
             case NoPreference():
-                return self.default_accent
+                return self.default_accent_color
             case AccentColor():
-                return preference if preference in self._palette_by_accent else self.default_accent
+                return preference if preference in self._palette_by_accent_color else self.default_accent_color
             case _:
                 assert_never(preference)
 
@@ -120,7 +120,7 @@ def _parse_palette_family(data: dict) -> PaletteFamily:
     return PaletteFamily(
         preview_color=data["preview_color"],
         color_scheme=color_scheme,
-        default_accent=AccentColor(data["default_accent"]),
+        default_accent_color=AccentColor(data["default_accent_color"]),
         palettes=tuple(make_palette(AccentColor(p["identifier"]), p["colors"]) for p in data["palettes"]),
     )
 

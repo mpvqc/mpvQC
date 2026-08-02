@@ -2,7 +2,7 @@
     {
         "preview_color": "#f5f2fa",
         "color_scheme": "light",
-        "default_accent": "#3f51b5",
+        "default_accent_color": "#3f51b5",
         "palettes": [
             {
                 "identifier": "#f44336",
@@ -1029,7 +1029,7 @@
     {
         "preview_color": "#121318",
         "color_scheme": "dark",
-        "default_accent": "#3f51b5",
+        "default_accent_color": "#3f51b5",
         "palettes": [
             {
                 "identifier": "#f44336",

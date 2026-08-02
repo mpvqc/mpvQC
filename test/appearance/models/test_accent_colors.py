@@ -18,8 +18,10 @@ DARK = Dark()
 
 @pytest.fixture(autouse=True)
 def configure_injections(common_bindings_with, make_palette_family_data, make_resource_service):
-    light = make_palette_family_data(color_scheme="light", default_accent="#l1", accents=["#l1", "#l2"])
-    dark = make_palette_family_data(color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2", "#d3", "#d4"])
+    light = make_palette_family_data(color_scheme="light", default_accent_color="#l1", accents=["#l1", "#l2"])
+    dark = make_palette_family_data(
+        color_scheme="dark", default_accent_color="#d1", accents=["#d1", "#d2", "#d3", "#d4"]
+    )
     fake = make_resource_service(light, dark)
 
     def custom_bindings(binder: inject.Binder):
@@ -37,8 +39,8 @@ def catalog() -> PaletteCatalogService:
 @pytest.fixture
 def equal_sized_catalog(common_bindings_with, make_palette_family_data, make_resource_service) -> PaletteCatalogService:
     """The shipped families hold the same number of palettes, so switching between them resizes nothing."""
-    light = make_palette_family_data(color_scheme="light", default_accent="#l1", accents=["#l1", "#l2"])
-    dark = make_palette_family_data(color_scheme="dark", default_accent="#d1", accents=["#d1", "#d2"])
+    light = make_palette_family_data(color_scheme="light", default_accent_color="#l1", accents=["#l1", "#l2"])
+    dark = make_palette_family_data(color_scheme="dark", default_accent_color="#d1", accents=["#d1", "#d2"])
     fake = make_resource_service(light, dark)
 
     def custom_bindings(binder: inject.Binder):
