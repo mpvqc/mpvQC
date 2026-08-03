@@ -1,35 +1,40 @@
-# Store accent colors per color scheme and publish the appearance preference
+# Store accent colors per color scheme
 
-The accent color was one global stored hex that had to exist in every palette family — an invariant nothing stated or
-enforced, holding only because both shipped families are built from identical accent colors. A future family with its
-own accent colors would have broken accent persistence silently. We scope the accent color choice to its palette
-family instead: settings remember one accent color per color scheme, sparse, and every family declares its own default
-accent color, checked against its own palettes by the color generator before it writes and by a test over the shipped
-bundle. Palette families are one per color scheme, so this is the per-scheme accent storage the color scheme
-preference rework needs anyway.
+An accent color is chosen against a palette. The user picks it while looking at light surfaces or dark ones, and it is
+that pairing they are approving. One stored accent for the whole app breaks the pairing the moment the color scheme
+changes, and under the follow-the-system preference the scheme changes on its own, at dusk or when the desktop says so.
+So the accent color preference is stored per color scheme.
 
-Because a color scheme switch changes two things in one observation — which scheme renders and which stored accent
-color is relevant — settings publish the appearance preference as a single deduped value, and consumers fold that one
-payload. This instantiates the snapshot-pattern ADR's revisit clause for co-changing fields; it is a projection of
-settings' own stored state, not derivation. The payload carries the color scheme preference and both schemes' accent
-color preferences, so any accent color write publishes, current scheme or not.
+An accent the user never picked is not stored at all. The palette family's own declared default renders instead, so a
+user who never opens the dialog keeps following whatever ships, release after release.
 
-## Considered options
-
-- **A catalog-wide accent contract** — every palette family must offer one shared set of accent colors, checked at
-  load. Formalizes the restriction instead of removing it; a Solarized could never ship its own accent colors.
-- **Symbolic accent names** as stored keys: costs a data format change, a settings migration, and names for custom
-  accent colors, while keeping the shared-set restriction.
-- **Reset when the color scheme changes** (no memory): hostile to the user and contradicts per-scheme accent colors.
-- **Interpretive mapping** (nearest color in the new palette family): trades a stated restriction for a hidden
-  algorithm, and a global interpreted accent color collides with per-scheme storage later.
-- **Runtime palette generation from a free accent color**: dissolves the fixed accent colors entirely, but is a
-  product-level change and its own project.
+Settings publish all of it as one value: the color scheme preference and both schemes' accent color preferences
+together. Its consumers read across those fields rather than one at a time, since the palette needs the accent
+belonging to whichever scheme renders, and the dialog paints every scheme's row with the accent that scheme would show.
+A signal per key would make each of them rebuild a set settings already holds whole.
 
 ## Consequences
 
-- The legacy global accent value is not migrated: its stored key is abandoned in place and existing users see the
-  declared defaults once. Accent colors chosen from then on no longer bleed across color schemes.
-- A palette family may ship any accent colors, in any number; nothing outside the family's own data constrains it.
-- The appearance dialog's cancel must restore the full state its preview can dirty: the color scheme preference plus
-  every color scheme's accent color preference, captured as a baseline when the dialog opens.
+- The old global accent color key is not migrated: it is abandoned in place, and existing users see the declared
+  default accent colors once. Accent colors chosen from then on no longer bleed across color schemes.
+- A palette family may ship any accent colors, in any number. A stored accent color the family does not offer resolves
+  to that family's default, so shrinking or replacing a family's accent set costs nothing.
+- Following the system names no single color scheme to key an accent color preference to, so the appearance dialog
+  offers no accent colors while that preference is selected.
+- The appearance dialog's cancel restores everything its live preview can dirty. The dialog captures the appearance
+  preference when it opens and writes that baseline back wholesale on reject, in one restore.
+
+## Dropped alternatives
+
+- **A catalog-wide accent contract**, every palette family offering one shared set of accent colors: formalizes a
+  restriction instead of removing it, and a Solarized family could never ship its own accent colors.
+- **Symbolic accent names** as stored keys: costs a data format change, a settings migration, and names for custom
+  accent colors, while keeping the shared-set restriction.
+- **Reset when the color scheme changes**, keeping no accent memory at all: hostile to the user, and it contradicts
+  per-scheme accent colors.
+- **Interpretive mapping**, resolving a stored accent color to the nearest one in the new palette family: trades a
+  stated restriction for a hidden algorithm, and the result is still one global accent color.
+- **Runtime palette generation from a free accent color**: dissolves the fixed accent colors entirely, but it is a
+  product-level change and its own project.
+- **A signal per stored key** instead of one payload: every consumer reads across the keys, so each has to hold the
+  other keys' last values and reassemble the set the payload already is.
