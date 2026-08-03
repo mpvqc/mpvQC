@@ -46,6 +46,8 @@ class QtStyleHints:
                 return Dark()
             case Qt.ColorScheme.Unknown:
                 return Unknown()
+            case _:
+                assert_never(scheme)
 
     def set_color_scheme(self, color_scheme: ColorScheme) -> None:
         match color_scheme:
