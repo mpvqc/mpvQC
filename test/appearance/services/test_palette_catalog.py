@@ -155,36 +155,39 @@ def test_shipped_palette_families(catalog, color_scheme, preview_color):
     assert len(palette_family.palettes) == 17
 
 
-def test_all_palette_colors_are_valid_colors(catalog):
-    for palette_family in catalog.palette_families:
-        for palette in palette_family.palettes:
-            for role, color_str in asdict(palette).items():
-                if role == "accent_color":
-                    continue
+@pytest.mark.parametrize("color_scheme", [Light(), Dark()], ids=["light", "dark"])
+def test_all_palette_colors_are_valid_colors(catalog, color_scheme):
+    palette_family = catalog.palette_family_for(color_scheme)
 
-                assert QColor(color_str).isValid(), (
-                    f"Invalid color '{color_str}' in the {palette_family.color_scheme} palette family "
-                    f"palette '{palette.accent_color.identifier}' role '{role}'"
-                )
+    for palette in palette_family.palettes:
+        for role, color_str in asdict(palette).items():
+            if role == "accent_color":
+                continue
 
-
-def test_every_palette_carries_an_accent_color_unique_within_its_family(catalog):
-    for palette_family in catalog.palette_families:
-        identifiers = [palette.accent_color.identifier for palette in palette_family.palettes]
-
-        assert all(identifiers), (
-            f"a palette in the {palette_family.color_scheme} palette family is missing an accent color"
-        )
-        assert len(set(identifiers)) == len(identifiers), (
-            f"the {palette_family.color_scheme} palette family declares an accent color twice, "
-            f"so it holds fewer palettes than accents"
-        )
+            assert QColor(color_str).isValid(), (
+                f"Invalid color '{color_str}' in the {palette_family.color_scheme} palette family "
+                f"palette '{palette.accent_color.identifier}' role '{role}'"
+            )
 
 
-def test_every_palette_family_declares_a_default_accent_color_from_its_own_accent_set(catalog):
-    for palette_family in catalog.palette_families:
-        accent_colors = {palette.accent_color for palette in palette_family.palettes}
-        assert palette_family.default_accent_color in accent_colors, (
-            f"the {palette_family.color_scheme} palette family declares default accent color "
-            f"{palette_family.default_accent_color!r} which is not among its own accent colors"
-        )
+@pytest.mark.parametrize("color_scheme", [Light(), Dark()], ids=["light", "dark"])
+def test_every_palette_carries_an_accent_color_unique_within_its_family(catalog, color_scheme):
+    palette_family = catalog.palette_family_for(color_scheme)
+    identifiers = [palette.accent_color.identifier for palette in palette_family.palettes]
+
+    assert all(identifiers), f"a palette in the {palette_family.color_scheme} palette family is missing an accent color"
+    assert len(set(identifiers)) == len(identifiers), (
+        f"the {palette_family.color_scheme} palette family declares an accent color twice, "
+        f"so it holds fewer palettes than accents"
+    )
+
+
+@pytest.mark.parametrize("color_scheme", [Light(), Dark()], ids=["light", "dark"])
+def test_every_palette_family_declares_a_default_accent_color_from_its_own_accent_set(catalog, color_scheme):
+    palette_family = catalog.palette_family_for(color_scheme)
+    accent_colors = {palette.accent_color for palette in palette_family.palettes}
+
+    assert palette_family.default_accent_color in accent_colors, (
+        f"the {palette_family.color_scheme} palette family declares default accent color "
+        f"{palette_family.default_accent_color!r} which is not among its own accent colors"
+    )

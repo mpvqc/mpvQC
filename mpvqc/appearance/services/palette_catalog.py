@@ -135,10 +135,6 @@ class PaletteCatalogService:
         for palette_family in self._palette_families:
             self._by_scheme.setdefault(palette_family.color_scheme, palette_family)
 
-    @property
-    def palette_families(self) -> tuple[PaletteFamily, ...]:
-        return self._palette_families
-
     def palette_family_for(self, color_scheme: ColorScheme) -> PaletteFamily:
         return self._by_scheme[color_scheme]
 
