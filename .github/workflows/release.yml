@@ -332,7 +332,6 @@ jobs:
             --noinclude-dlls='qt6quickcontrols2universal*.dll' \
             --noinclude-dlls='qt6quickcontrols2windows*.dll' \
             --noinclude-dlls='qt6quickparticles.dll' \
-            --noinclude-dlls='qt6quickshapes.dll' \
             --noinclude-dlls='qt6quicktest.dll' \
             --noinclude-dlls='qt6quicktimeline.dll' \
             --noinclude-dlls='qt6quicktimelineblendtrees.dll' \
