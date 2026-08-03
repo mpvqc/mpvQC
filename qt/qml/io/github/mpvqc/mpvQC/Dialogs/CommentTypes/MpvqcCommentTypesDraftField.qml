@@ -18,8 +18,6 @@ ColumnLayout {
 
     readonly property alias text: _addField.text
 
-    readonly property var mpvqcAppearance: MpvqcAppearance
-
     signal addRequested
 
     function clear(): void {
@@ -78,7 +76,7 @@ ColumnLayout {
 
             text: root.validationError
             maximumLineCount: 3
-            color: root.mpvqcAppearance.palette.error
+            color: MpvqcAppearance.palette.error
             wrapMode: Label.WordWrap
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop

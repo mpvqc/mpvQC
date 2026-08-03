@@ -17,12 +17,11 @@ MpvqcDialog {
     objectName: "editMpvDialog"
 
     readonly property MpvqcEditMpvDialogViewModel viewModel: MpvqcEditMpvDialogViewModel {}
-    readonly property var mpvqcAppearance: MpvqcAppearance
 
     component Separator: Rectangle {
         property int topMargin: 0
 
-        color: root.mpvqcAppearance.palette.separator
+        color: MpvqcAppearance.palette.separator
 
         Layout.topMargin: topMargin
         Layout.preferredHeight: 1
