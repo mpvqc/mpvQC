@@ -54,7 +54,7 @@ Terms the code uses. Keep entries short. Add a term when you name a module after
 - **System color scheme**: the OS's answer when asked for its color scheme: a color scheme, or unknown. Unknown is any
   answer that names no color scheme, whether the OS cannot say or declines to pick.
 - **Accent color**: the color a palette is built around; within a palette family, it is what tells one palette from
-  another. The freedesktop term.
+  another. The freedesktop term. Material 3 calls it a seed color.
 - **Accent color preference**: per color scheme, the user's pick: an accent color, or no preference when they never
   confirmed one. Under no preference the palette family's default renders, tracking the shipped default across
   releases.
