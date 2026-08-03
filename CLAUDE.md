@@ -56,14 +56,14 @@
 
 ### Issue tracker
 
-User reports and triage live on GitHub Issues; larger chunks of work are planned as local markdown under
-`.scratch/<feature>/`, and internally found bugs go to `.scratch/bugs/` — never to the public tracker. See
-`docs/agents/issue-tracker.md`.
+Three destinations: the public GitHub tracker for user reports and triage, a private tracker for every internal work
+item, and `.scratch/` for disposable artifacts. Nothing with a status stays local, and an agent never opens an issue on
+the public tracker. Load the `filing-tickets` skill before filing anything; `docs/agents/issue-tracker.md` decides where
+it goes.
 
 ### Triage labels
 
-Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See
-`docs/agents/triage-labels.md`.
+The label vocabulary of each tracker, and which of those labels exist today. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
