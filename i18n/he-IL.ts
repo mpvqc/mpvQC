@@ -79,14 +79,12 @@
         <translation>מראה</translation>
     </message>
     <message>
-        <source>Theme</source>
-        <translatorcomment>Differs from English since in hebrew &quot;template&quot; and &quot;theme&quot; use pretty much the same word in this context. Plus, it&apos;s easier to understand what this refers to (white/dark mode).</translatorcomment>
-        <translation>סוג עיצוב</translation>
+        <source>Color scheme</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Color</source>
-        <translatorcomment>Changed TL to emphasize &quot;Accent color&quot;.</translatorcomment>
-        <translation>צבע ראשי</translation>
+        <source>Accent color</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>System</source>

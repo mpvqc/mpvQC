@@ -79,12 +79,12 @@
         <translation>Aparência</translation>
     </message>
     <message>
-        <source>Theme</source>
-        <translation>Tema</translation>
+        <source>Color scheme</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Color</source>
-        <translation>Cor</translation>
+        <source>Accent color</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>System</source>

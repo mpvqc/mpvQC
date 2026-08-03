@@ -79,12 +79,12 @@
         <translation>Erscheinungsbild</translation>
     </message>
     <message>
-        <source>Theme</source>
-        <translation>Design</translation>
+        <source>Color scheme</source>
+        <translation>Farbschema</translation>
     </message>
     <message>
-        <source>Color</source>
-        <translation>Farbe</translation>
+        <source>Accent color</source>
+        <translation>Akzentfarbe</translation>
     </message>
     <message>
         <source>System</source>
